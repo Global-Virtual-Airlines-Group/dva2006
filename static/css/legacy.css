@@ -1,0 +1,116 @@
+div#header {
+	position: absolute;
+	top: 0;
+	bottom: 86px;
+	left: 0;
+	right: 0;
+	margin-left: 0px;
+	margin-right: -6px;
+}
+
+div#sidebar {
+ position:absolute;
+ top:88px;
+ bottom 0;
+ left:0;
+ right:164px;
+}
+
+div#main {
+ position:absolute;
+ top:88px;
+ bottom 0;
+ left:165px;
+ right:0;
+ overflow:auto;
+ margin-left:2px;
+ margin-right:-2px;
+}
+
+TABLE {
+	table-layout:fixed;
+	border-collapse: separate;
+	border-spacing: 2px 2px;
+	font-family: Tahoma,Verdana;
+	color: #000000;
+	border-width: 2px 2px 2px 2px;
+	padding: 4px 4px 4px 4px;
+}
+
+TABLE#sidenav {
+	table-layout: fixed;
+	width: 154px;
+	border-collapse: separate;
+	border-spacing: 2px 2px;
+	font-family: Tahoma,Verdana;
+	text-align: center;
+	vertical-align: middle;
+	color: #000000;
+	border-width: 2px 2px 2px 2px;
+	padding: 4px 4px 4px 4px;
+}
+
+*.MenuHeader {
+ background-color: #0000A1;
+ color: #FFFFFF;
+ text-align: center;
+ font-weight:bold;
+ font-size:9pt;
+}
+
+*.SecondaryMenuHeader {
+	background-color: #008080;
+	color: #FFFFFF;
+   text-align: center;
+	font-weight:bold;
+	font-size:9pt;
+}
+
+*.MenuItem {
+ background-color: #EFEFEF;
+ text-decoration:none;
+ font-size:7pt;
+}
+
+.BoldItem {
+	font-weight: bold;
+}
+
+h1.header {
+	font-family: Trebuchet MS;
+	font-size: 17pt;
+	color: #0000A1;
+	text-align: center;
+	vertical-align: middle;
+	margin-top: 12px;
+}
+
+img.header {
+	float: right;
+	border: none;
+}
+
+BODY {
+ scrollbar-face-color:#000080;
+ scrollbar-track-color: #303030;
+ scrollbar-arrow-color:#FFFFFF;
+ color:#0000A1;
+ margin-left:2px;
+ margin-right:-2px;
+ font-family:tahoma, verdana, arial;
+ font-size:9pt;
+}
+
+a:link, a:link:visited
+{
+color:#0000A1;
+text-decoration:underline;
+font-size:9pt;
+}
+
+a:link:hover
+{
+color:#0080D1;
+text-decoration:underline;
+font-size:9pt;
+}
