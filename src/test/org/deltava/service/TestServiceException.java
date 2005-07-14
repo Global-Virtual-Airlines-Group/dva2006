@@ -1,0 +1,33 @@
+package org.deltava.service;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import org.hansel.CoverageDecorator;
+
+public class TestServiceException extends TestCase {
+    
+    public static Test suite() {
+        return new CoverageDecorator(TestServiceException.class, new Class[] { ServiceException.class } );
+    }
+
+    public void testMessage() {
+        try {
+            throw new ServiceException(1, "MSG");
+        } catch (ServiceException se) {
+            assertEquals("MSG", se.getMessage());
+            assertEquals(1, se.getCode());
+        }
+    }
+    
+    public void testCause() {
+        Exception e = new NullPointerException();
+        
+        try {
+            throw new ServiceException(1, "MSG", e);
+        } catch (ServiceException se) {
+            assertEquals("MSG", se.getMessage());
+            assertEquals(e, se.getCause());
+            assertEquals(1, se.getCode());
+        }
+    }
+}
