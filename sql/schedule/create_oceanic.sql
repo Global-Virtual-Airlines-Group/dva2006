@@ -1,0 +1,10 @@
+CREATE TABLE OCEANIC (
+ ID                     SERIAL,
+ ROUTETYPE              SMALLINT,
+ VALID_DATE             DATE NOT NULL,
+ SOURCE                 VARCHAR(96) NOT NULL,
+ ROUTE                  TEXT,
+ PRIMARY KEY (ID)
+);
+
+CREATE INDEX OCEANIC_VD_IDX ON OCEANIC(VALID_DATE);
