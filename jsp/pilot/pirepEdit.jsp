@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ page buffer="96kb" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_hash.tld" prefix="hash" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Flight ${pirep.flightCode}</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<content:js name="airportRefresh" />
+<content:sysdata var="airports" name="airports" mapValues="true" />
+<hash:airport var="airports" items="${airports}" sorter="${airportSorter}" />
+<script language="javascript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateCombo(form.airline, 'Airline')) return false;
+if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
+if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
+if (!validateCombo(form.eq, 'Equipment Type')) return false;
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
+if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
+if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
+if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return false;
+
+setSubmit();
+disableButton('SaveButton');
+disableButton('SubmitButton');
+return true;
+}
+
+function saveSubmit()
+{
+var f = document.forms[0];
+f.doSubmit.value = '1';
+return cmdPost(f.action);
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@include file="/jsp/main/header.jsp" %> 
+<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="eqTypes" name="eqtypes" />
+<content:sysdata var="airlines" name="airlines" mapValues="true" />
+<content:sysdata var="networks" name="online.networks" />
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form method="POST" action="pirep.do" linkID="${empty pirep ? '' : '0x'}${pirep.ID}" op="save" validate="return validate(this)">
+<el:table className="form" pad="default" space="default">
+<!-- PIREP Title Bar -->
+<tr class="title caps">
+<c:if test="${!empty pirep}">
+ <td colspan="2">FLIGHT ${pirep.flightCode} FLOWN ON <fmt:date fmt="d" date="${pirep.date}" /> by ${pilot.name}</td>
+</c:if>
+<c:if test="${empty pirep}">
+ <td colspan="2">NEW FLIGHT REPORT</td>
+</c:if>
+</tr>
+
+<!-- Pirep Data -->
+<tr>
+ <td class="label">Pilot Code / Rank</td>
+ <td class="data">${pilot.pilotCode} (${pilot.rank})</td>
+</tr>
+<tr>
+ <td class="label">Status</td>
+ <td class="data bld sec">${!empty pirep ? pirep.statusName : 'NEW'}</td>
+</tr>
+<tr>
+ <td class="label">Airline Name</td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this)" firstEntry="< AIRLINE >" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Number / Leg</td>
+ <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" value="${pirep.flightNumber}" />
+ <el:text name="flightLeg" idx="*" size="1" max="1" value="${pirep.leg}" /></td>
+</tr>
+<tr>
+ <td class="label">Equipment Type</td>
+ <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" firstEntry="< EQUIPMENT >" /></td>
+</tr>
+<tr>
+ <td class="label">Departed from</td>
+ <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+</tr>
+<tr>
+ <td class="label">Arrived at</td>
+ <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+</tr>
+<tr>
+ <td class="label">Flown on</td>
+ <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" onChange="setDaysInMonth(this)" />
+ <el:combo name="dateD" idx="*" size="1" options="${emptyList}" />&nbsp;
+ <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" options="${years}" /></td>
+</tr>
+<tr>
+ <td class="label">Online Flight</td>
+ <td class="data"><el:check type="radio" name="network" idx="*" width="70" firstEntry="Offline" options="${networks}" value="${fn:network(pirep)}" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="FS${pirep.FSVersion}" /></td>
+</tr>
+<tr>
+ <td class="label">Logged Time</td>
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${pirep.length / 10}" /></td>
+</tr>
+<c:if test="${isACARS}">
+<%@include file="/jsp/pilot/pirepACARS.jsp" %> 
+</c:if>
+<tr>
+ <td class="label" VALIGN="top">Remarks</td>
+ <td class="data"><el:textbox idx="*" name="remarks" width="100" height="5">${pirep.remarks}</el:textbox></td>
+</tr>
+</el:table>
+
+<!-- PIREP Button Bar -->
+<el:table className="bar" pad="default" space="default">
+<tr>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE AS DRAFT" />
+<c:if test="${access.canSubmit}">
+&nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" className="BUTTON" label="SUBMIT FLIGHT REPORT" />
+</c:if>
+</td>
+</tr>
+</el:table>
+<el:text name="doSubmit" type="HIDDEN" value="" />
+</el:form>
+<br />
+<content:copyright />
+</div>
+<script language="JavaScript" type="text/javascript">
+var f = document.forms[0];
+initDateCombos(f.dateM, f.dateD, new Date());
+f.airline.focus();
+
+if (f.airline.selectedIndex != 0) {
+	var aCode = f.airline.options[f.airline.selectedIndex].value;
+	setOptions(f.airportD, aCode);
+	setAirport(document.forms[0].airportD, '${pirep.airportD.IATA}');
+	setOptions(f.airportA, aCode);
+	setAirport(document.forms[0].airportA, '${pirep.airportA.IATA}');
+}
+</script>
+</body>
+</html>

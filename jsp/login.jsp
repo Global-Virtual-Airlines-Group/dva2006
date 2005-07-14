@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> User Login</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateText(form.firstName, 3, 'First Name')) return false;
+if (!validateText(form.lastName, 3, 'Last Name')) return false;
+if (!validateText(form.pwd, 3, 'Password')) return false;
+
+setSubmit();
+disableButton('SubmitButton');
+return true;
+}
+
+function setFocus()
+{
+var f = document.forms[0];
+if (f.firstName.value.length > 0) {
+	f.pwd.focus();
+} else {
+	f.firstName.focus();
+}
+
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body onload="void setFocus()">
+<%@include file="/jsp/main/header.jsp" %> 
+<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:getCookie name="dva_fname" default="${param.firstName}" var="fname" />
+<content:getCookie name="dva_lname" default="${param.lastName}" var="lname" />
+
+<!-- Main Body Frame -->
+<div id="main">
+Welcome to <content:airline />! In order to access the secure areas of our site, please enter 
+your first and last name or your User ID and password. Your browser must be able to accept cookies 
+in order to log into the site.<br />
+<br />
+<el:form ID="Login" method="POST" action="login.do" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr class="title">
+ <td colspan="2">USER LOGIN</td>
+</tr>
+<tr>
+ <td class="label">First / Last Name</td>
+ <td class="data"><el:text name="firstName" idx="*" size="10" max="16" value="${fname}" />
+  <el:text name="lastName" idx="*" size="16" max="24" value="${lname}" /></td>
+</tr>
+<tr>
+ <td class="label">Password</td>
+ <td class="data"><el:text type="password" name="pwd" idx="*" size="16" max="32" value="" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data sec small"><el:box name="saveInfo" idx="*" value="true" label="Remember my User ID next time I Log in" checked="${!empty fname}" /></td>
+</tr>
+<c:if test="${!empty system_message}">
+<tr>
+ <td colspan="2" class="error bld">LOGIN FAILURE - ${system_message}</td>
+</tr>
+</c:if>
+</el:table>
+<el:table className="bar" pad="default" space="default">
+<tr>
+ <td><el:button ID="SubmitButton" className="BUTTON" label="LOG IN" type="submit" /></td>
+</tr>
+</el:table>
+</el:form>
+</div>
+</body>
+</html>

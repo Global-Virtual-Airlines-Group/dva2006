@@ -1,0 +1,229 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Online Flights</title>
+<content:sysdata var="airlineName" name="airline.name" />
+<c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:css name="view" />
+<content:js name="common" />
+<content:rss title="${airlineName} Online Events" url="http://${serverName}/event_rss.ws" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateCombo(form.eqType, 'Equipment Type')) return false;
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+
+setSubmit();
+disableButton('SaveButton');
+disableButton('EditButton');
+disableButton('CancelButton');
+disableButton('AssignButton');
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@include file="/jsp/event/header.jsp" %> 
+<%@include file="/jsp/event/sideMenu.jsp" %>
+<content:sysdata var="airports" name="airports" />
+
+<!-- Main Body Frame -->
+<div id="main">
+<c:if test="${access.canSignup}">
+<c:set var="formAction" value="eventsignup.do" scope="request" />
+<c:set var="formValidate" value="return validate(this)" scope="request" />
+</c:if>
+<c:if test="${!access.canSignup}">
+<c:set var="formAction" value="event.do" scope="request" />
+<c:set var="formValidate" value="return false" scope="request" />
+</c:if>
+<el:form action="${formAction}" method="POST" linkID="0x${event.ID}" validate="${formValidate}">
+<el:table className="form view" pad="default" space="default">
+<tr class="title caps">
+ <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="hh:mm" /> -
+ <fmt:date date="${event.endTime}" fmt="t" t="hh:mm" /></td>
+</tr>
+<tr>
+ <td class="label">Signups Close on</td>
+ <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
+<tr>
+ <td class="label">Destination</td>
+ <td colspan="5" class="data bld">${event.airportA.name} (<fmt:airport airport="${event.airportA}" />)</td>
+</tr>
+<tr>
+ <td class="label" valign="top">Departing from</td>
+ <td colspan="5" class="data">
+<c:forEach var="airport" items="${event.airportD}">
+${airport.name} (<fmt:airport airport="${airport}" />)
+<c:if test="${fn:sizeof(event.airportD) > 1}"><br /></c:if>
+</c:forEach>
+ </td>
+</tr>
+<tr>
+ <td class="label" valign="top">Flight Briefing</td>
+ <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="135" height="8">${event.briefing}</el:textbox></td>
+</tr>
+<content:filter roles="Pilot">
+<c:if test="${!empty event.charts}">
+<!-- Chart Section -->
+<tr class="title caps">
+ <td colspan="6" class="left">NAVIGATION CHARTS - <fmt:int value="${fn:sizeof(event.charts)}" /> CHARTS</td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">CHART NAME</td>
+ <td colspan="2">AIRPORT</td>
+ <td>IMAGE TYPE</td>
+ <td>CHART TYPE</td>
+</tr>
+
+<c:forEach var="chart" items="${event.charts}">
+<c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="request" />
+<view:row entry="${chart}">
+ <td colspan="2" class="pri bld"><el:cmd url="chart" linkID="0x${chart.ID}">${chart.name}</el:cmd></td>
+ <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
+ <td>${chart.imgTypeName}</td>
+ <td class="sec">${chart.typeName}</td>
+</view:row>
+</c:forEach>
+</c:if>
+
+<c:if test="${!empty event.plans}">
+<!-- Flight Plans Section -->
+<tr class="title caps">
+ <td colspan="6" class="left">FLIGHT PLANS - <fmt:int value="${fn:sizeof(event.plans)}" /> PLANS</td>
+</tr>
+<tr class="title caps">
+ <td colspan="4">FLIGHT PLAN NAME</td>
+ <td>SIZE</td>
+ <td>PLAN TYPE</td>
+</tr>
+
+<c:set var="hexEventID" value="${fn:hex(event.ID)}" scope="request" />
+<c:forEach var="plan" items="${event.plans}">
+<view:row entry="${plan}">
+ <td colspan="4"><el:link url="/fplan/${hexEventID}/${plan.fileName}">${plan.airportD.name} - ${plan.airportA.name}</el:link></td>
+ <td class="sec"><fmt:int value="${plan.size}" /> bytes</td>
+ <td class="pri bld">${plan.typeName}</td>
+</view:row>
+</c:forEach>
+</c:if>
+</content:filter>
+
+<!-- Signups Section -->
+<tr class="title caps">
+ <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS</td>
+</tr>
+<tr class="title caps mid">
+ <td width="10%">ID</td>
+ <td width="25%">PILOT NAME</td>
+ <td width="10%">EQUIPMENT</td>
+ <td width="15%">${event.networkName} ID</td>
+ <td colspan="2">FLIGHT ROUTE</td>
+</tr>
+
+<c:if test="${!empty event.signups}">
+<c:set var="idx" value="${-1}" scope="request" />
+<c:forEach var="signup" items="${event.signups}">
+<c:set var="idx" value="${idx + 1}" scope="request" />
+<c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
+<c:set var="sa" value="${fn:get(sAccess, idx)}" scope="request" />
+<tr class="mid">
+<c:if test="${sa.canRelease}">
+ <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="0x${pilot.ID}" label="RELEASE" /></td>
+</c:if>
+<c:if test="${!sa.canRelease}">
+ <td class="pri bld">${pilot.pilotCode}</td>
+</c:if>
+ <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="sec bld">${signup.equipmentType}</td>
+ <td class="pri bld">${pilot.networkIDs[event.networkName]}</td>
+ <td colspan="2">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
+ (<fmt:airport airport="${signup.airportA}" />)</td>
+</tr>
+</c:forEach>
+</c:if>
+<c:if test="${empty event.signups}">
+<tr>
+ <td colspan="6" class="pri bld">No Pilots have signed up yet for this Online Event.</td>
+</tr>
+</c:if>
+
+<c:if test="${!empty pireps}">
+<!-- Flight Reports Section -->
+<tr class="title caps">
+ <td colspan="6" class="left">LOGGED FLIGHT REPORTS - <fmt:int value="${fn:sizeof(pireps)}" /> FLIGHT LEGS</td>
+</tr>
+<tr class="title caps">
+ <td>DATE</td>
+ <td>PILOT NAME</td>
+ <td>EQUIPMENT</td>
+ <td>FLIGHT NUMBER</td>
+ <td colspan="2">FLIGHT ROUTE</td>
+</tr>
+
+<c:forEach var="pirep" items="${pireps}">
+<c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
+<view:row entry="${pirep}">
+ <td class="bld"><el:cmd url="pirep" linkID="0x${pirep.ID}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
+ <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="sec bld">${pirep.equipmentType}</td>
+ <td>${pirep.flightCode}</td>
+ <td colspan="2">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
+ (<fmt:airport airport="${pirep.airportA}" />)</td>
+</view:row>
+</c:forEach>
+</c:if>
+
+<c:if test="${access.canSignup}">
+<tr class="title caps">
+ <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
+</tr>
+<tr>
+ <td class="label">Departure Airport</td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${event.airportD}" firstEntry="-" /></td>
+ <td class="label" valign="top" rowspan="2">Remarks</td> 
+ <td class="data" rowspan="2" colspan="3"><el:textbox name="body" idx="*" width="65" height="2"></el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Equipment Type</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${user.ratings}" firstEntry="-" /></td>
+</tr>
+</c:if>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td>&nbsp;
+<c:if test="${access.canSignup}">
+ <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SIGN UP FOR THIS EVENT" />
+</c:if>
+<c:if test="${access.canEdit}">
+ <el:cmdbutton ID="EditButton" url="eventedit" linkID="0x${event.ID}" label="EDIT EVENT" />
+</c:if>
+<c:if test="${access.canAssignFlights}">
+ <el:cmdbutton ID="AssignButton" url="eventassign" linkID="0x${event.ID}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
+</c:if>
+<c:if test="${access.canCancel}">
+ <el:cmdbutton ID="CancelButton" url="eventedit" linkID="0x${event.ID}" label="CANCEL EVENT" />
+</c:if>
+ </td>
+</tr>
+</el:table>
+</el:form>
+<content:copyright />
+</div>
+</body>
+</html>

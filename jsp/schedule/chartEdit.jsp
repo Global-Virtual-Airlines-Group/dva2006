@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Approach Chart</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<content:js name="airportRefresh" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateCombo(form.airport, 'Airport')) return false;
+if (!validateText(form.name, 5, 'Chart Name')) return false;
+
+setSubmit();
+disableButton('SaveButton');
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@include file="/jsp/main/header.jsp" %> 
+<%@include file="/jsp/main/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form action="chart.do" method="POST" linkID="0x${chart.ID}" op="save" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+<c:if test="${!empty chart}">
+ <td colspan="2">APPROACH CHART - ${chart.name} (<fmt:airport airport="${chart.airport}" />)</td>
+</c:if>
+<c:if test="${empty chart}">
+ <td colspan="2">NEW APPROACH CHART</td>
+</c:if>
+</tr>
+<tr>
+ <td class="label">Airport</td>
+ <td class="data">TODO</td>
+</tr>
+<tr>
+ <td class="label">Chart Name</td>
+ <td class="data">TODO</td>
+</tr>
+<tr>
+ <td class="label">Chart Type</td>
+ <td class="data">TODO</td>
+</tr>
+<c:if test="${!empty chart}">
+<tr>
+ <td class="label">Image Properties</td>
+ <td class="data">TODO</td>
+</tr>
+</c:if>
+<c:if test="${empty chart}">
+<tr>
+ <td class="label">Upload File</td>
+ <td class="data"><el:file name="img" idx="*" className="small" size="80" max="144" /></td>
+</tr>
+</c:if>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE APPROACH CHART" /></td>
+</tr>
+</el:table>
+</el:form>
+<br />
+<content:copyright />
+</div>
+</body>
+</html>
