@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<web-app id="dva2006" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" 
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+	<display-name>Delta Virtual Airlines 2006</display-name>
+	<description>Delta Virtual Airlines web site</description>
+
+	<!-- Lifecycle listeners for servlet context/session events -->
+	<listener>
+		<listener-class>org.deltava.servlet.lifecycle.SystemBootstrap</listener-class>
+	</listener>
+	<listener>
+		<listener-class>org.deltava.servlet.lifecycle.UserListener</listener-class>
+	</listener>
+	
+	<!-- Browser Type Detection Filter -->
+	<filter>
+		<filter-name>BrowserTypeFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.BrowserTypeFilter</filter-class>
+	</filter>
+	
+	<!-- Servlet Security Cookie/Wrapper Filters -->
+	<filter>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.SecurityCookieFilter</filter-class>
+	</filter>
+	<filter>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.RequestWrapperFilter</filter-class>
+	</filter>
+	
+	<!-- File Upload Filter -->
+	<filter>
+		<filter-name>FileUploadFilter</filter-name>
+		<filter-class>org.deltava.servlet.filter.FileUploadFilter</filter-class>
+	</filter>
+	
+	<!-- Web Services servlet -->
+	<servlet>
+		<servlet-name>webService</servlet-name>
+		<display-name>Web Services Servlet</display-name>
+		<load-on-startup>2</load-on-startup>
+		<servlet-class>org.deltava.servlet.WebServiceServlet</servlet-class>
+	</servlet>
+	
+	<!-- Command Controller servlet -->
+	<servlet>
+		<servlet-name>cmdController</servlet-name>
+		<display-name>Command Controller Servlet</display-name>
+		<load-on-startup>1</load-on-startup>
+		<servlet-class>org.deltava.servlet.CommandServlet</servlet-class>
+	</servlet>
+	
+	<!-- Image Serving servlet -->
+	<servlet>
+		<servlet-name>dbImage</servlet-name>
+		<display-name>Database Image Serving Servlet</display-name>
+		<load-on-startup>2</load-on-startup>
+		<servlet-class>org.deltava.servlet.ImageServlet</servlet-class>
+	</servlet>
+	
+	<!-- Flight Plan servlet -->
+	<servlet>
+		<servlet-name>flightPlan</servlet-name>
+		<display-name>Event Flight Plan Serving Servlet</display-name>
+		<load-on-startup>0</load-on-startup>
+		<servlet-class>org.deltava.servlet.FlightPlanServlet</servlet-class>
+	</servlet>
+	
+	<!-- Library Donwload servlet -->
+	<servlet>
+		<servlet-name>fleetLibrary</servlet-name>
+		<display-name>Fleet Library Content Serving Servlet</display-name>
+		<load-on-startup>3</load-on-startup>
+		<servlet-class>org.deltava.servlet.LibraryServlet</servlet-class>
+	</servlet>
+	
+	<!-- Filter mappings to Command Controller -->
+	<filter-mapping>
+		<filter-name>BrowserTypeFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>FileUploadFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<servlet-name>cmdController</servlet-name>
+	</filter-mapping>
+	
+	<!-- Filter mappings to Image Server (for charts only) -->
+	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<url-pattern>/charts/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<url-pattern>/charts/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- Filter mappings to Flight Plans -->
+	
+	<!-- Filter mappings to Fleet Library -->
+	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<servlet-name>fleetLibrary</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<servlet-name>fleetLibrary</servlet-name>
+	</filter-mapping>	
+	
+	<!-- Servlet URL mappings -->
+	<servlet-mapping>
+		<servlet-name>cmdController</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	
+	<servlet-mapping>
+		<servlet-name>webService</servlet-name>
+		<url-pattern>*.ws</url-pattern>
+	</servlet-mapping>
+    
+	<servlet-mapping>
+		<servlet-name>dbImage</servlet-name>
+		<url-pattern>/charts/*</url-pattern>
+	</servlet-mapping>
+    
+	<servlet-mapping>
+		<servlet-name>dbImage</servlet-name>
+		<url-pattern>/gallery/*</url-pattern>
+	</servlet-mapping>
+    
+	<servlet-mapping>
+		<servlet-name>dbImage</servlet-name>
+		<url-pattern>/sig/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>fleetLibrary</servlet-name>
+        <url-pattern>/fleet/*</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>fleetLibrary</servlet-name>
+        <url-pattern>/library/*</url-pattern>
+    </servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>flightPlan</servlet-name>
+		<url-pattern>/fplan/*</url-pattern>
+	</servlet-mapping>
+
+	<!-- JSP tag libraries -->
+	<taglib>
+		<taglib-uri>dva_content.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_content.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>dva_hash.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_hash.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>dva_html.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_html.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>dva_format.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_format.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>dva_view.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_view.tld</taglib-location>
+	</taglib>
+	
+	<taglib>
+		<taglib-uri>dva_jspfunc.tld</taglib-uri>
+		<taglib-location>/WEB-INF/dva_jspfunc.tld</taglib-location>
+	</taglib>
+
+	<!-- [INSERT FRAGMENT HERE] -->
+
+	<!-- Sessions time out after 20 minutes -->
+	<session-config>
+		<session-timeout>20</session-timeout> 
+	</session-config>
+
+	<!-- welcome files for the application -->
+	<welcome-file-list>
+		<welcome-file>home.do</welcome-file>
+	</welcome-file-list>
+</web-app>
