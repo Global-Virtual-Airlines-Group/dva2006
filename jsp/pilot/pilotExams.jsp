@@ -1,0 +1,46 @@
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<c:if test="${!empty exams}">
+<!-- Pilot Examination History -->
+<tr class="title caps">
+ <td colspan="${cspan + 1}">EXAMINATIONS AND CHECK RIDES</td>
+</tr>
+<tr class="title mid caps">
+ <td>&nbsp;</td>
+ <td width="30%">EXAMINATION / CHECK RIDE NAME</td>
+ <td width="15%">TYPE</td>
+ <td width="10%">SCORE</td>
+ <td width="10%">QUESTIONS</td>
+ <td width="10%">PERCENT</td>
+ <td>DATE</td>
+</tr>
+ 
+<!-- Pilot Examination Data -->
+<c:forEach var="exam" items="${exams}">
+<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="request" />
+<tr class="mid">
+<c:choose>
+<c:when test="${!fn:passed(exam) && !fn:failed(exam)}">
+ <td><el:img caption="Not Scored" x="21" y="21" src="blank.png" /></td>
+</c:when>
+<c:when test="${fn:passed(exam)}">
+ <td><el:img caption="Passed" x="21" y="21" src="testing/pass.png" /></td>
+</c:when>
+<c:when test="${fn:failed(exam)}">
+ <td><el:img caption="Failed" x="21" y="21" src="testing/fail.png" /></td>
+</c:when>
+</c:choose>
+ <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
+ <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
+ <td class="pri bld">${exam.score}</td>
+ <td class="bld">${exam.size}</td>
+<c:if test="${fn:isCheckRide(exam)}">
+ <td class="sec">N/A</td>
+</c:if>
+<c:if test="${!fn:isCheckRide(exam)}">
+ <td class="sec"><fmt:dec value="${exam.score / exam.size * 100.0}" />%</td>
+</c:if>
+ <td><fmt:date fmt="d" date="${exam.date}" /></td>
+</tr>
+</c:forEach>
+</c:if>
