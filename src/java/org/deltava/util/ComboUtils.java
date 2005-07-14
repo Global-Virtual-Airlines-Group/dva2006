@@ -1,0 +1,155 @@
+package org.deltava.util;
+
+import java.util.*;
+
+import org.deltava.beans.ComboAlias;
+
+/**
+ * A utility class to generate combobox lists.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ * @see ComboAlias
+ */
+public class ComboUtils {
+
+    private ComboUtils() { // private constructor since we are all static
+    }
+
+    private static class ComboAliasImpl implements ComboAlias {
+        
+        private String _name;
+        private String _alias;
+        
+        ComboAliasImpl(String name, String alias) {
+            super();
+            _name = name;
+            _alias = alias;
+        }
+        
+        ComboAliasImpl(String name) {
+            this(name, name);
+        }
+        
+        public String getComboAlias() {
+            return _alias;
+        }
+        
+        public String getComboName() {
+            return _name;
+        }
+    }
+
+    /**
+     * Create a list of ComboAlias objects from an array of Strings. The name/alias will be the same.
+     * @param names the array of Strings
+     * @return a List of ComboAlias objects
+     * @see ComboUtils#fromList(Collection)
+     */
+    public static List fromArray(String[] names) {
+        return fromList(Arrays.asList(names));
+    }
+
+    /**
+     * Create a ComboAlias from a String. The name/alias will be the same.
+     * @param name the String
+     * @return a ComboAlias object
+     */
+    public static ComboAlias fromString(String name) {
+        return new ComboAliasImpl(name);
+    }
+    
+    /**
+     * Create a ComboAlias from a name & alias pair.
+     * @param name the name
+     * @param alias the alias
+     * @return a ComboAlias object
+     */
+    public static ComboAlias fromString(String name, String alias) {
+        return new ComboAliasImpl(name, alias);
+    }
+    
+    /**
+     * Create a list of ComboAlias objects from a List of strings. The name/alias will be the same.
+     * @param names a List of names
+     * @return a List of ComboAlias objects
+     */
+    public static List fromList(Collection names) {
+        List results = new ArrayList(names.size());
+        for (Iterator i = names.iterator(); i.hasNext(); )
+            results.add(new ComboAliasImpl((String) i.next()));
+        
+        return results;
+    }
+    
+    /**
+     * Create a list of ComboAlias objects from a Map. The keys will be the name, the values the aliases.
+     * The aliases need not be Strings; the toString() method will be called on them to get a String representation.
+     * @param names a Map of name/value pairs
+     * @return a List of ComboAlias Objects
+     * @see ComboUtils#fromArray(String[], Object[])
+     * @see Object#toString()
+     */
+    public static List fromMap(Map names) {
+        List results = new ArrayList(names.size());
+        for (Iterator i = names.keySet().iterator(); i.hasNext(); ) {
+            String name = (String) i.next();
+            results.add(new ComboAliasImpl(name, names.get(name).toString()));
+        }
+        
+        return results;
+    }
+    
+    /**
+     * Create a list of ComboAlias objects from an array of names and aliases. The aliases need not be Strings.
+     * The toString() method will be called on them to get a String representation.
+     * @param names an array of names
+     * @param values an array of aliases.
+     * @return a List of ComboAlias objects
+     * @throws ArrayIndexOutOfBoundsException if names.length != values.length
+     */
+    public static List fromArray(String[] names, Object[] values) {
+        if (names.length != values.length)
+            throw new ArrayIndexOutOfBoundsException("Name/Alias array lengths must be the same");
+        
+        List results = new ArrayList(names.length);
+        for (int x = 0; x < names.length; x++)
+            results.add(new ComboAliasImpl(names[x], values[x].toString()));
+
+        return results;
+    }
+    
+    /**
+     * Checks through a list of ComboAlias objects and returns the name matching a given alias.
+     * @param choices the List of ComboAlias objects
+     * @param alias the alias to search for
+     * @return the first name matching the alias, or null if not found
+     * @see ComboUtils#getAlias(List, String)
+     */
+    public static String getName(List choices, String alias) {
+        for (Iterator i = choices.iterator(); i.hasNext(); ) {
+            ComboAlias ca = (ComboAlias) i.next();
+            if (ca.getComboAlias().equals(alias))
+                return ca.getComboName();
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Checks through a list of ComboAlias objects and returns the alias matching a given name.
+     * @param choices the List of ComboAlias objects
+     * @param name the name to search for
+     * @return the first alias matching the name, or null if not found
+     * @see ComboUtils#getName(List, String)
+     */
+    public static String getAlias(List choices, String name) {
+        for (Iterator i = choices.iterator(); i.hasNext(); ) {
+            ComboAlias ca = (ComboAlias) i.next();
+            if (ca.getComboName().equals(name))
+                return ca.getComboAlias();
+        }
+        
+        return null;
+    }
+}

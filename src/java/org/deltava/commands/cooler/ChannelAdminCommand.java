@@ -1,0 +1,50 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.cooler;
+
+import java.sql.Connection;
+
+import org.deltava.beans.schedule.Airline;
+import org.deltava.commands.*;
+
+import org.deltava.dao.GetCoolerChannels;
+import org.deltava.dao.DAOException;
+
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to display Water Cooler channels for administrators.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class ChannelAdminCommand extends AbstractCommand {
+
+    /**
+     * Executes the command.
+     * @param ctx the Command context
+     * @throws CommandException if an unhandled error occurs
+     */
+	public void execute(CommandContext ctx) throws CommandException {
+
+		// Get the pilot's airline
+		Airline airline = SystemData.getAirline(SystemData.get("airline.code"));
+		
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the channel list
+			GetCoolerChannels dao = new GetCoolerChannels(con);
+			ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/cooler/channelAdmin.jsp");
+		result.setSuccess(true);
+	}
+}

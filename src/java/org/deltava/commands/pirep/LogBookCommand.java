@@ -1,0 +1,69 @@
+package org.deltava.commands.pirep;
+
+import java.sql.Connection;
+
+import org.deltava.commands.*;
+
+import org.deltava.dao.DAOException;
+import org.deltava.dao.GetPilot;
+import org.deltava.dao.GetFlightReports;
+
+import org.deltava.util.ComboUtils;
+
+/**
+ * Web site command to display a Pilot's flight reports.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class LogBookCommand extends AbstractViewCommand {
+	
+    // List of query columns we can order by
+    private static final String[] SORT_COLUMNS = {"DATE DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
+    private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Flight Time"};
+
+    /**
+     * Executes the command.
+     * @param ctx the Command context
+     * @throws CommandException if an unhandled error occurs
+     */
+    public void execute(CommandContext ctx) throws CommandException {
+       
+        // Get/set start/count parameters and pilot ID
+        ViewContext vc = initView(ctx);
+        vc.setDefaultSortType("DATE DESC");
+        
+        // Determine if we display comments or not
+        boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));
+        ctx.setAttribute("comments", Boolean.valueOf(showComments), REQUEST);
+        
+        // Set sort options
+        ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_NAMES, SORT_COLUMNS), REQUEST);
+        
+        try {
+            Connection con = ctx.getConnection();
+            
+            // Get the pilot profile
+            GetPilot dao = new GetPilot(con);
+            ctx.setAttribute("pilot", dao.get(ctx.getID()), REQUEST);
+
+            // Get the DAO and set the parameters
+            GetFlightReports dao2 = new GetFlightReports(con);
+            dao2.setQueryStart(vc.getStart());
+            dao2.setQueryMax(vc.getCount());
+            
+            // Get the results
+            vc.setResults(dao2.getByPilot(ctx.getID(), vc.getSortType()));
+        } catch (DAOException de) {
+            throw new CommandException(de);
+        } finally {
+            ctx.release();
+        }
+      
+        // Set the result page and return
+        CommandResult result = ctx.getResult();
+        result.setURL("/jsp/pilot/logBook.jsp");
+        result.setSuccess(true);
+    }
+}
