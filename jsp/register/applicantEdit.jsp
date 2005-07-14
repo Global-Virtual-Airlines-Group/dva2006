@@ -1,0 +1,207 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Applicant - ${applicant.name}</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<content:js name="airportRefresh" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
+if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
+if (!validateText(form.email, 7, 'E-Mail Address')) return false;
+if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
+if (!validateCombo(form.location, 'Location')) return false;
+if (!validateCombo(form.tz, 'Time Zone')) return false;
+if (!validateText(form.df, 7, 'Date Format')) return false;
+if (!validateText(form.tf, 5, 'Time Format')) return false;
+if (!validateText(form.nf, 5, 'Number Format')) return false;
+if (!validateCombo(form.eqType, 'Equipment Program')) return false;
+if (!validateCombo(form.rank, 'Rank')) return false;
+
+setSubmit();
+disableButton('SaveButton');
+disableButton('HireButton');
+disableButton('RejectButton');
+return true;
+}
+
+function doHire()
+{
+var f = document.forms[0];
+f.doHire.value = '1';
+return cmdPost(f.action);
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@include file="/jsp/main/header.jsp" %> 
+<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="locations" name="locations" />
+<content:sysdata var="schemes" name="html.schemes" />
+<content:sysdata var="ranks" name="ranks" />
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form action="applicant.do" linkID="0x${applicant.ID}" op="save" method="POST" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="2"><content:airline /> PILOT APPLICATION</td>
+</tr>
+<tr>
+ <td class="label">First / Last Name</td>
+ <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
+</tr>
+<tr>
+ <td class="label">Home Airport</td>
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
+ <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
+</tr>
+<tr>
+ <td class="label">Location</td>
+ <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" value="${applicant.location}" /></td>
+</tr>
+<tr>
+ <td class="label">VATSIM ID#</td>
+ <td class="data"><el:text name="VATSIM_ID" idx="*" value="${applicant.networkIDs['VATSIM']}" size="10" max="9" /></td>
+</tr>
+<tr>
+ <td class="label">IVAO ID#</td>
+ <td class="data"><el:text name="IVAO_ID" idx="*" value="${applicant.networkIDs['IVAO']}" size="10" max="9" /></td>
+</tr>
+<tr>
+ <td class="label">AOL Instant Messenger</td>
+ <td class="data"><el:text name="imHandle" idx="*" size="14" max="36" value="${applicant.IMHandle}" /></td>
+</tr>
+
+<!-- E-Mail Information -->
+<tr class="title">
+ <td colspan="2">E-MAIL CONTACT INFORMATION</td>
+</tr>
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td class="data"><el:text name="email" idx="*" size="48" max="64" value="${applicant.email}" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+<c:if test="${eMailValid}">
+ <td class="data ter bld caps">E-Mail Address successfully Verified</td>
+</c:if>
+<c:if test="${!eMailValid}">
+ <td class="data warn bld caps">E-Mail Address not yet Verified</td>
+</c:if>
+</tr>
+<tr>
+ <td class="label" valign="top">E-Mail Notifications</td>
+ <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="3" separator="<div style=\"clear:both;\" />" options="${notifyOptions}" checked="${applicant.notifyOptions}" /></td>
+</tr>
+
+<!-- Pilot Preferences -->
+<tr class="title">
+ <td colspan="2">PILOT PREFERENCES</td>
+</tr>
+<tr>
+ <td class="label">Time Zone</td>
+ <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" value="${applicant.TZ}" /></td>
+</tr>
+<tr>
+ <td class="label">Date/Time Format</td>
+ <td class="data"><el:text name="df" idx="*" value="${applicant.dateFormat}" size="12" max="25" />&nbsp;
+<el:text name="tf" idx="*" value="${applicant.timeFormat}" size="6" max="9" /></td>
+</tr>
+<tr>
+ <td class="label">Number Format</td>
+ <td class="data"><el:text name="nf" idx="*" value="${applicant.numberFormat}" size="9" max="15" /></td>
+</tr>
+<tr>
+ <td class="label">Airport Codes</td>
+ <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeType}" /></td>
+</tr>
+<tr>
+ <td class="label">User Interface</td>
+ <td class="data"><el:combo name="uiScheme" idx="*" size="1" options="${schemes}" value="${applicant.UIScheme}" /></td>
+</tr>
+
+<!-- Legacy Hours -->
+<tr class="title">
+ <td colspan="2">LEGACY HOURS</td>
+</tr>
+<tr>
+ <td class="label">Legacy Flight Hours</td>
+ <td class="data"><el:text name="legacyHours" idx="*" size="4" max="7" value="${applicant.legacyHours}" /></td>
+</tr>
+<tr>
+ <td class="label">Verification URL</td>
+ <td class="data"><el:text name="legacyURL" idx="*" size="64" max="128" value="${applicant.legacyURL}" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="legacyOK" idx="*" value="1" label="Legacy Hours Verified" checked="${applicant.legacyOK}" /></td>
+</tr>
+
+<c:if test="${access.canApprove}">
+<!-- Hire Section -->
+<tr class="title">
+ <td colspan="2">APPROVE APPLICANT</td>
+</tr>
+<tr>
+ <td class="label">Pilot Questionnaire</td>
+<c:if test="${!empty questionnaire}">
+ <td class="data warn bld caps">Pilot Questionnaire Not Found</td>
+</c:if>
+<c:if test="${empty questionnaire}">
+<c:if test="${fn:passed(questionnaire)}">
+ <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
+correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
+<el:cmdbutton url="questionnaire" linkID="0x${applicant.ID}" label="VIEW QUESTIONNAIRE" /></td>
+</c:if>
+<c:if test="${fn:passed(questionnaire)}">
+ <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
+</c:if>
+</c:if>
+</tr>
+<tr>
+ <td class="label">Equipment Program</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${applicant.eqType}" /></td>
+</tr>
+<tr>
+ <td class="label">Rank</td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" value="${applicant.rank}" /></td>
+</tr>
+</c:if>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td>
+<c:if test="${access.canApprove}">
+<el:button ID="HireButton" className="BUTTON" onClick="void doHire()" label="HIRE APPLICANT" />
+</c:if> 
+<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE APPLICANT" />
+<c:if test="${access.canReject}">
+<el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT APPLICANT" />
+</c:if>
+ </td>
+</tr>
+</el:table>
+<el:text name="doHire" type="hidden" value="" />
+</el:form>
+<br />
+<content:copyright />
+</div>
+</body>
+</html>
