@@ -1,0 +1,89 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.service;
+
+import java.io.*;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletResponse;
+
+import org.deltava.beans.fleet.SystemInformation;
+
+import org.deltava.dao.SetLibrary;
+import org.deltava.dao.DAOException;
+
+/**
+ * A Web Service to save System Data sent by a Fleet Installer.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class SystemInfoService extends WebDataService {
+
+	/**
+	 * Executes the Web Service, saving local system data.
+	 * @param ctx the Web Service context
+	 * @return the HTTP status code
+	 * @throws ServiceException if an error occurs
+	 */
+	public int execute(ServiceContext ctx) throws ServiceException {
+
+		// Calculate the ID
+		String id = ctx.getRequest().getParameter("ID");
+		if (id == null)
+			id = Long.toHexString(System.currentTimeMillis());
+
+		// Populate the SystemInformation bean from the request
+		SystemInformation si = new SystemInformation(id);
+		si.setDate(new Date());
+		si.setCode(ctx.getRequest().getParameter("AC"));
+		si.setOS(ctx.getRequest().getParameter("OS"));
+		si.setDirectX(ctx.getRequest().getParameter("DX"));
+		si.setCPU(ctx.getRequest().getParameter("CPU"));
+		si.setGPU(ctx.getRequest().getParameter("GPU"));
+
+		// Parse memory size
+		try {
+			String memSize = ctx.getRequest().getParameter("MEM");
+			si.setRAM(Integer.parseInt(memSize.substring(0, memSize.indexOf("MB"))));
+		} catch (NumberFormatException nfe) {
+			si.setRAM(512);
+		}
+
+		// Parse Flight Simulator version
+		try {
+			String fsVersion = ctx.getRequest().getParameter("VER");
+			si.setFSVersion(Integer.parseInt(fsVersion.substring(2)));
+		} catch (NumberFormatException nfe) {
+			si.setFSVersion(2002);
+		}
+
+		// Write the system information to the database
+		try {
+			SetLibrary dao = new SetLibrary(_con);
+			dao.write(si);
+		} catch (DAOException de) {
+			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		}
+
+		// Generate an INI-style response for the Fleet Installer
+		StringBuffer buf = new StringBuffer("[Installer]\n");
+		buf.append("ID=");
+		buf.append(si.getID());
+		buf.append("\n\n");
+		
+		// Set the content type and length headers
+		ctx.getResponse().setContentType("text/plain");
+		ctx.getResponse().setContentLength(buf.length());
+
+		try {
+			ctx.getResponse().getWriter().print(buf.toString());
+			ctx.getResponse().flushBuffer();
+		} catch (IOException ie) {
+			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+		}
+
+		// Write result code
+		return HttpServletResponse.SC_OK;
+	}
+}

@@ -1,0 +1,49 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.util;
+
+import java.util.*;
+
+import org.deltava.beans.schedule.GeoPosition;
+
+/**
+ * A utility class for performing geocoding operations.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class GeoUtils {
+
+	// Singleton constructor
+	private GeoUtils() {
+	}
+	
+	private static void recurseMidPoint(GeoPosition start, GeoPosition end, List results, int distance) {
+		GeoPosition mPoint = start.midPoint(end);
+		results.add(results.indexOf(start) + 1, mPoint);
+		if (mPoint.distanceTo(start)  > distance)
+			recurseMidPoint(start, mPoint, results, distance);
+
+		if (mPoint.distanceTo(end) > distance)
+			recurseMidPoint(mPoint, end, results, distance);
+	}
+	
+	/**
+	 * Creates a Great Circle route between two points.
+	 * @param start the start position
+	 * @param end the end position
+	 * @param granularity the maxmimum distance between points
+	 * @return a List of GeoPositions describing the Great Circle route
+	 */
+	public static List greatCircle(GeoPosition start, GeoPosition end, int granularity) {
+		
+		// Add the start/end points
+		List results = new ArrayList();
+		results.add(start);
+		results.add(end);
+		
+		// Start looping
+		recurseMidPoint(start, end, results, granularity);
+		return results;
+	}
+}

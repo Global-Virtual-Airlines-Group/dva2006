@@ -1,0 +1,114 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.security.command;
+
+import org.deltava.security.SecurityContext;
+import org.deltava.commands.CommandSecurityException;
+
+import org.deltava.beans.cooler.Channel;
+import org.deltava.beans.cooler.MessageThread;
+
+import org.deltava.util.RoleUtils;
+
+/**
+ * An Access Controller for Water Cooler Threads.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public final class CoolerThreadAccessControl extends AccessControl {
+
+    private MessageThread _mt;
+    private Channel _c;
+    
+    private boolean _canRead;
+    private boolean _canReply;
+    private boolean _canLock;
+    private boolean _canUnlock;
+    private boolean _canResync;
+    
+	/**
+	 * Initializes the controller.
+	 * @param ctx the Command context
+	 */
+    public CoolerThreadAccessControl(SecurityContext ctx) {
+        super(ctx);
+    }
+    
+    /**
+     * Update the MessageThread to verify access to. Since this Access controller is called many times in
+     * succession, it is more efficient to update the thread and channel rather than constantly creating
+     * a new CoolerThreadAccessControl object. 
+	 * @param t the Water Cooler message thread
+	 * @param c the Water Cooler Channel
+     */
+    public void updateContext(MessageThread t, Channel c) {
+        _mt = t;
+        _c = c;
+    }
+
+    /**
+     * Calculates access rights.
+     * @throws CommandSecurityException never
+     * @throws IllegalStateException if the message thread or cooler channel were not set
+     */
+    public void validate() throws CommandSecurityException {
+        validateContext();
+        
+        // Validate that the thread has been set
+        if (_mt == null)
+            throw new IllegalStateException("Mesage Thread not set");
+        
+        // Get the roles and role state - we assume it's OK if channel is null
+        boolean isModerator = _ctx.isUserInRole("Moderator");
+        boolean isClosed = _mt.getLocked() || _mt.getHidden();
+        boolean channelAccess = (_c != null) ? RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles()) : true;
+        
+        // Validate if we can read the thread
+        _canRead = _ctx.isUserInRole("Admin") || (channelAccess && !_mt.getHidden());
+        _canReply = _ctx.isAuthenticated() && _canRead && (isModerator || !isClosed);
+        _canResync = channelAccess && isModerator;
+        _canLock = channelAccess && !isClosed && isModerator;
+        _canUnlock = channelAccess && isClosed && isModerator;
+    }
+    
+    /**
+     * Returns if the thread can be read.
+     * @return TRUE if it can be read, otherwise FALSE
+     */
+    public boolean getCanRead() {
+        return _canRead;
+    }
+
+	/**
+     * Returns if the thread can be replied to, or a new post can be made in the Channel.
+     * @return TRUE if it can be replied to, otherwise FALSE
+     */
+    public boolean getCanReply() {
+        return _canReply;
+    }
+    
+    /**
+     * Returns if the thread can be locked.
+     * @return TRUE if it can be locked, otherwise FALSE
+     */
+    public boolean getCanLock() {
+        return _canLock;
+    }
+    
+    /**
+     * Returns if the thread can be unlocked.
+     * @return TRUE if it can be unlocked, otherwise FALSE
+     */
+    public boolean getCanUnlock() {
+        return _canUnlock;
+    }
+    
+    /**
+     * Returns if the thread data can be resynchronized.
+     * @return TRUE if the data can be resynchronized, otherwise FALS
+     */
+    public boolean getCanResync() {
+    	return _canResync;
+    }
+}

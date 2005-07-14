@@ -1,0 +1,191 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.servlet;
+
+import java.util.*;
+import java.io.IOException;
+import java.sql.Connection;
+
+import javax.servlet.*;
+import javax.servlet.http.*;
+
+import org.apache.log4j.Logger;
+
+import org.deltava.jdbc.*;
+import org.deltava.security.*;
+import org.deltava.service.*;
+
+import org.deltava.dao.GetPilotDirectory;
+import org.deltava.dao.DAOException;
+
+import org.deltava.beans.Pilot;
+import org.deltava.beans.system.VersionInfo;
+
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A servlet to handle Web Service data requests.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class WebServiceServlet extends GenericServlet {
+
+	// Web services realm
+	private static final String WS_REALM = "\"DVA Web Services\"";
+
+	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
+
+	private Map _svcs;
+
+	/**
+	 * Returns the servlet description.
+	 * @return name, author and copyright info for this servlet
+	 */
+	public String getServletInfo() {
+		return "Web Service Servlet " + VersionInfo.TXT_COPYRIGHT;
+	}
+
+	/**
+	 * Initializes the servlet. This loads the service map.
+	 * @throws ServletException if an error occurs
+	 * @see ServiceFactory#load(String)
+	 */
+	public void init() throws ServletException {
+		log.info("Initializing");
+		
+		// Load the services
+		try {
+			_svcs = ServiceFactory.load(SystemData.get("config.services"));
+		} catch (IOException ie) {
+			throw new ServletException(ie);
+		}
+	}
+
+	/**
+	 * Shuts down the servlet. This just logs a message to the servlet log.
+	 */
+	public void destroy() {
+		log.info("Shutting Down");
+	}
+
+	/**
+	 * A private helper method to determine if we are authenticated.
+	 */
+	private Pilot authenticate(HttpServletRequest req) {
+
+		// Check for Authentication header
+		String authHdr = req.getHeader("Authorization");
+		if ((authHdr == null) || (!authHdr.toUpperCase().startsWith("BASIC ")))
+			return null;
+
+		// Get encoded username/password, and decode them
+		String userPwd = Base64.decodeString(authHdr.substring(6));
+		StringTokenizer tkns = new StringTokenizer(userPwd, ":");
+		if (tkns.countTokens() != 2)
+			return null;
+		
+		// Get the JDBC Connection Pool
+		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		
+		Connection con = null;
+		Pilot p = null;
+		try {
+		   
+			con = pool.getSystemConnection();
+			
+			// Get the DAO and the directory name for this user
+			GetPilotDirectory dao = new GetPilotDirectory(con);
+			String dN = dao.getDirectoryName(tkns.nextToken());
+			
+			// Authenticate the user
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			auth.authenticate(dN, tkns.nextToken());
+			
+			// If we got this far, load the user data
+			p = dao.getFromDirectory(dN);
+		} catch (SecurityException se) {
+			log.warn("Authentication failure - " + se.getMessage());
+		} catch (DAOException de) {
+			log.warn("Data load failure - " + de.getMessage());
+		} finally {
+			pool.release(con);
+		}
+
+		// Return the Pilot data
+		return p;
+	}
+
+	/**
+	 * A private helper method to get the service from the URL.
+	 */
+	private WebService getService(String rawURL) throws ServletException {
+		URLParser parser = new URLParser(rawURL);
+		String svcName = parser.getName().toLowerCase();
+
+		// Get the service class
+		String svcClass = (String) _svcs.get(svcName);
+		if (svcClass == null)
+			return null;
+
+		// Instantiate the service class
+		try {
+			Class svcC = Class.forName(svcClass);
+			return (WebService) svcC.newInstance();
+		} catch (ClassNotFoundException cnfe) {
+			throw new ServletException("Web Service " + svcClass + " not found");
+		} catch (Exception e) {
+			throw new ServletException("Error instantiating Web Service " + svcClass);
+		}
+	}
+
+	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
+
+		// Get the web service
+		WebService svc = getService(req.getRequestURI());
+		if (svc == null) {
+			rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "Unknown Service");
+			return;
+		}
+
+		// Check if we need to be authenticated
+		Pilot usr = authenticate(req);
+		if (svc.isSecure() && (usr == null)) {
+			rsp.setHeader("WWW-Authenticate", "Basic realm=" + WS_REALM);
+			rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+			return;
+		}
+		
+		// Get the JDBC Connection Pool
+		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+
+		Connection c = null;
+		try {
+			// If we're a data service, pass in a connection
+			if (svc instanceof WebDataService) {
+				c = pool.getConnection();
+				((WebDataService) svc).setConnection(c);
+			}
+			
+			// Generate the service context
+			ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
+			ctx.setUser(usr);
+			
+			// Execute the Web Service
+			log.info("Executing Web Service " + svc.getClass().getName());
+			rsp.setStatus(svc.execute(ctx));
+		} catch (DAOException de) {
+			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} catch (ServiceException se) {
+			rsp.sendError(se.getCode(), se.getMessage());
+		} finally {
+		   pool.release(c);
+			svc.release();	
+		}
+	}
+
+	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
+		doGet(req, rsp);
+	}
+}

@@ -1,0 +1,99 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.event;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.event.Event;
+import org.deltava.beans.schedule.Airport;
+import org.deltava.comparators.AirportComparator;
+
+import org.deltava.commands.*;
+
+import org.deltava.dao.GetEvent;
+import org.deltava.dao.GetChart;
+import org.deltava.dao.DAOException;
+
+import org.deltava.security.command.EventAccessControl;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to edit Online Events.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class EventEditCommand extends AbstractCommand {
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the command results
+		CommandResult result = ctx.getResult();
+		
+		// Save the airport list
+		Set airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		airports.addAll(((Map) SystemData.getObject("airports")).values());
+		ctx.setAttribute("airports", airports, REQUEST);
+		
+		// Get the event ID - if not found, assume a new event
+		if (ctx.getID() == 0) {
+			EventAccessControl access = new EventAccessControl(ctx, new Event(""));
+			access.validate();
+			if (!access.getCanCreate())
+				throw new CommandSecurityException("Cannot create new Online Event");
+			
+			// Save the access controller
+			ctx.setAttribute("access", access, REQUEST);
+			
+			// Redirect to the JSP
+			result.setURL("/jsp/event/eventEdit.jsp");
+			result.setSuccess(true);
+			return;
+		}
+		
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the event
+			GetEvent dao = new GetEvent(con);
+			Event e = dao.get(ctx.getID());
+			if (e == null)
+				throw new CommandException("Invalid Online Event - " + ctx.getID());
+			
+			// Calculate our access to the event
+			EventAccessControl access = new EventAccessControl(ctx, e);
+			access.validate();
+			if (!access.getCanEdit())
+				throw new CommandSecurityException("Cannot edit Online Event");
+			
+			// Get all of the charts for this event
+			GetChart cdao = new GetChart(con);
+			Set charts = new TreeSet();
+			for (Iterator i = e.getAirports().iterator(); i.hasNext(); ) {
+				Airport a = (Airport) i.next();
+				charts.addAll(cdao.getCharts(a));
+			}
+			
+			// Save the charts
+			ctx.setAttribute("charts", charts, REQUEST);
+			
+			// Save event and access controller
+			ctx.setAttribute("event", e, REQUEST);
+			ctx.setAttribute("access", access, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Forward to the JSP
+		result.setURL("/jsp/event/eventEdit.jsp");
+		result.setSuccess(true);
+	}
+}
