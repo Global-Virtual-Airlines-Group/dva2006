@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<commands name="default">
+
+	<!-- Main Commmands -->
+	<command id="home">
+		<name>Home Page</name>
+		<class>org.deltava.commands.main.HomeCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="roster">
+		<name>Pilot Roster</name>
+		<class>org.deltava.commands.main.RosterCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="lroster">
+		<name>Public Logbooks</name>
+		<class>org.deltava.commands.main.RosterLetterCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="centuryclub">
+		<name>Century Club</name>
+		<class>org.deltava.commands.main.CenturyClubCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="landings">
+		<name>Greased Landings</name>
+		<class>org.deltava.commands.pilot.GreasedLandingCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="recognition">
+		<name>Pilot Recognition</name>
+		<class>org.deltava.commands.main.PilotRecognitionCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="staff">
+		<name>Staff Roster</name>
+		<class>org.deltava.commands.main.StaffRosterCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="pilotsearch">
+		<name>Pilot Search</name>
+		<class>org.deltava.commands.pilot.PilotSearchCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="cookiecheck">
+		<name>Cookie Acceptance Test</name>
+		<class>org.deltava.commands.security.CookieCheckCommand</class>
+		<roles>*</roles>
+	</command>
+		
+	<command id="login">
+		<name>User Login</name>
+		<class>org.deltava.commands.security.LoginCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="logout">
+		<name>User Logout</name>
+		<class>org.deltava.commands.security.LogoutCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="users">
+		<name>Active Web Users</name>
+		<class>org.deltava.commands.main.UserListCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="activate">
+		<name>Activate Pilot</name>
+		<class>org.deltava.commands.security.PilotActivationCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="pwdreset">
+		<name>Password Reset</name>
+		<class>org.deltava.commands.security.PasswordResetCommand</class>
+		<roles>Anonymous,HR</roles>
+	</command>
+	
+	<command id="validate">
+		<name>E-Mail Validation</name>
+		<class>org.deltava.commands.security.ValidateEmailCommand</class>
+		<roles>*</roles>
+	</command>
+
+	
+	<!-- News/NOTAM Commands -->
+	<command id="news">
+		<name>System News</name>
+		<class>org.deltava.commands.news.NewsCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="newsedit">
+		<name>Edit System News</name>
+		<class>org.deltava.commands.news.NewsEditCommand</class>
+		<roles>News</roles>
+	</command>
+	
+	<command id="newssave">
+		<name>Save System News</name>
+		<class>org.deltava.commands.news.NewsSaveCommand</class>
+		<roles>News,HR</roles>
+	</command>
+	
+	<command id="notams">
+		<name>NOTAMs</name>
+		<class>org.deltava.commands.news.NOTAMCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="notamedit">
+		<name>Edit NOTAM</name>
+		<class>org.deltava.commands.news.NOTAMEditCommand</class>
+		<roles>NOTAM,HR</roles>
+	</command>
+	
+	<command id="notamsave">
+		<name>Save NOTAM</name>
+		<class>org.deltava.commands.news.NOTAMSaveCommand</class>
+		<roles>News,HR</roles>
+	</command>	
+	
+	<command id="newsdelete">
+		<name>Delete News/NOTAM</name>
+		<class>org.deltava.commands.news.NewsDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	
+	<!-- Image Gallery Commmands -->
+	<command id="fleetgallery">
+		<name>Fleet Gallery</name>
+		<class>org.deltava.commands.gallery.FleetGalleryCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="imagegallery">
+		<name>Image Gallery</name>
+		<class>org.deltava.commands.gallery.GalleryCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="image">
+		<name>Gallery Image</name>
+		<class>org.deltava.commands.gallery.GalleryImageCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="imgvote">
+		<name>Gallery Image Vote</name>
+		<class>org.deltava.commands.gallery.GalleryVoteCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="imgsave">
+		<name>Save Gallery Image</name>
+		<class>org.deltava.commands.gallery.GallerySaveCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="imgdelete">
+		<name>Delete Gallery Image</name>
+		<class>org.deltava.commands.gallery.GalleryDeleteCommand</class>
+		<roles>Gallery</roles>
+	</command>
+
+
+	<!-- Fleet/Document Library commands -->
+	<command id="doclibrary">
+		<name>Document Library</name>
+		<class>org.deltava.commands.fleet.DocumentLibraryCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="fleetlibrary">
+		<name>Fleet Library</name>
+		<class>org.deltava.commands.fleet.FleetLibraryCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="libedit">
+		<name>Edit Library Entry</name>
+		<class>org.deltava.commands.fleet.LibraryEditCommand</class>
+		<roles>Fleet</roles>	
+	</command>
+	
+	<command id="dlibsave">
+		<name>Save Manual</name>
+		<class>org.deltava.commands.fleet.ManualSaveCommand</class>
+		<roles>Fleet</roles>	
+	</command>
+	
+	<command id="flibsave">
+		<name>Save Installer</name>
+		<class>org.deltava.commands.fleet.InstallerSaveCommand</class>
+		<roles>Fleet</roles>
+	</command>
+
+	<command id="fleetlog">
+		<name>Fleet Installer Logs</name>
+		<class>org.deltava.commands.fleet.InstallerLogViewCommand</class>
+		<roles>Fleet</roles>
+	</command>
+	
+	
+	<!-- Statistics commands -->
+	<command id="airlinestats">
+		<name>Airline Totals</name>
+		<class>org.deltava.commands.stats.AirlineTotalsCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="flightstats">
+		<name>Flight Statistics</name>
+		<class>org.deltava.commands.stats.FlightStatsCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="httpstats">
+		<name>HTTP Statistics</name>
+		<class>org.deltava.commands.stats.ServerStatsCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="fleetstats">
+		<name>Fleet Installer Statistics</name>
+		<class>org.deltava.commands.stats.InstallerStatsCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	
+	<!-- Schedule/Chart/Route commands -->
+	<command id="charts">
+		<name>List Charts</name>
+		<class>org.deltava.commands.schedule.ChartsCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="chart">
+		<name>Approach Chart</name>
+		<class>org.deltava.commands.schedule.ChartCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="routes">
+		<name>Preferred Routes</name>
+		<class>org.deltava.commands.schedule.RoutesCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="route">
+		<name>View Route</name>
+		<class>org.deltava.commands.schedule.RouteCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="routedelete">
+		<name>Delete Route</name>
+		<class>org.deltava.commands.schedule.RouteDeleteCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="routepurge">
+		<name>Purge Routes</name>
+		<class>org.deltava.commands.schedule.RoutePurgeCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="routeimport">
+		<name>Import Preferred Routes</name>
+		<class>org.deltava.commands.schedule.RouteImportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="navimport">
+		<name>Import AIRAC data</name>
+		<class>org.deltava.commands.navdata.AIRACImportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="navpurge">
+		<name>Purge AIRAC data</name>
+		<class>org.deltava.commands.navdata.AIRACPurgeCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="airlines">
+		<name>Airline List</name>
+		<class>org.deltava.commands.schedule.AirlineListCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="airline">
+		<name>Airline Profile</name>
+		<class>org.deltava.commands.schedule.AirlineCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="airports">
+		<name>Airport List</name>
+		<class>org.deltava.commands.schedule.AirportListCommand</class>
+		<roles>Schedule</roles>
+	</command>
+	
+	<command id="airport">
+		<name>Airport Profile</name>
+		<class>org.deltava.commands.schedule.AirportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="airportdelete">
+		<name>Delete Airport</name>
+		<class>org.deltava.commands.schedule.AirportDeleteCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+
+	<!-- Online Event Commands -->
+	<command id="flightboard">
+		<name>Online Flight Board</name>
+		<class>org.deltava.commands.event.FlightBoardCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="event">
+		<name>View Event</name>
+		<class>org.deltava.commands.event.EventCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="events">
+		<name>Online Event List</name>
+		<class>org.deltava.commands.event.EventListCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="eventsignup">
+		<name>Event Signup</name>
+		<class>org.deltava.commands.event.EventSignupCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="eventcancel">
+		<name>Event Cancel</name>
+		<class>org.deltava.commands.event.EventCancelCommand</class>
+		<roles>Event</roles>
+	</command>
+	
+	<command id="eventedit">
+		<name>Edit Event</name>
+		<class>org.deltava.commands.event.EventEditCommand</class>
+		<roles>Event</roles>
+	</command>
+	
+	<command id="eventsave">
+		<name>Save Event</name>
+		<class>org.deltava.commands.event.EventSaveCommand</class>
+		<roles>Event</roles>
+	</command>
+	
+	<command id="eventassign">
+		<name>Assign Event Flights</name>
+		<class>org.deltava.commands.event.EventAssignCommand</class>
+		<roles>Event</roles>
+	</command>
+	
+	<command id="eventrelease">
+		<name>Release Event Signup</name>
+		<class>org.deltava.commands.event.EventReleaseCommand</class>
+		<roles>Event,Pilot</roles>
+	</command>
+	
+	
+	<!-- Water Cooler Commands -->
+	<command id="channels">
+		<name>Water Cooler Channels</name>
+		<class>org.deltava.commands.cooler.ChannelListCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="channel">
+		<name>Water Cooler Channel Display</name>
+		<class>org.deltava.commands.cooler.ThreadListCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="newthreads">
+		<name>Water Cooler New Threads</name>
+		<class>org.deltava.commands.cooler.NewThreadListCommand</class>
+		<roles>Pilot,Applicant</roles>
+	</command>
+	
+	<command id="thread">
+		<name>Show Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="threadpost">
+		<name>Water Cooler Post</name>
+		<class>org.deltava.commands.cooler.ThreadPostCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="threadreply">
+		<name>Water Cooler Reply</name>
+		<class>org.deltava.commands.cooler.ThreadReplyCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="threadlock">
+		<name>Lock Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadLockCommand</class>
+		<roles>Moderator</roles>
+	</command>
+	
+	<command id="threadunlock">
+		<name>Unlock Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadUnlockCommand</class>
+		<roles>Moderator</roles>
+	</command>
+	
+	<command id="threadmove">
+		<name>Move Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadMoveCommand</class>
+		<roles>Moderator</roles>
+	</command>
+	
+	<command id="threadsync">
+		<name>Resync Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadSyncCommand</class>
+		<roles>Moderator</roles>
+	</command>
+	
+	<command id="coolersearch">
+		<name>Water Cooler Search</name>
+		<class>org.deltava.commands.cooler.CoolerSearchCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="channeladmin">
+		<name>Water Cooler Channel Admin List</name>
+		<class>org.deltava.commands.cooler.ChannelAdminCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="chprofile">
+		<name>Water Cooler Channel Admin</name>
+		<class>org.deltava.commands.cooler.ChannelCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	
+	<!-- Pilot/PIREP Commands -->
+	<command id="pilotcenter">
+		<name>Pilot Center</name>
+		<class>org.deltava.commands.pilot.PilotCenterCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="txrequest">
+		<name>Request Equipment Transfer</name>
+		<class>org.deltava.commands.pilot.TransferRequestCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="profile">
+		<name>Pilot Profile</name>
+		<class>org.deltava.commands.pilot.ProfileCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="newstaff">
+		<name>Create Staff Profile</name>
+		<class>org.deltava.commands.pilot.StaffProfileCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="logbook">
+		<name>Pilot LogBook</name>
+		<class>org.deltava.commands.pirep.LogBookCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="pirep">
+		<name>PIREP</name>
+		<class>org.deltava.commands.pirep.PIREPCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="pirepqueue">
+		<name>PIREP Queue</name>
+		<class>org.deltava.commands.pirep.PIREPQueueCommand</class>
+		<roles>PIREP</roles>
+	</command>
+	
+	<command id="submit">
+		<name>PIREP Submit</name>
+		<class>org.deltava.commands.pirep.PIREPSubmitCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="dispose">
+		<name>PIREP Disposal</name>
+		<class>org.deltava.commands.pirep.PIREPDisposalCommand</class>
+		<roles>PIREP</roles>
+	</command>
+	
+	<command id="pirepdelete">
+		<name>PIREP Delete</name>
+		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="sigupdate">
+		<name>Water Cooler Signature Update</name>
+		<class>org.deltava.commands.cooler.SignatureUpdateCommand</class>
+		<roles>Pilot,HR,Signature</roles>
+	</command>
+	
+	
+	<!-- Flight Assignment commands -->
+	<command id="findflight">
+		<name>Find A Flight</name>
+		<class>org.deltava.commands.schedule.FindFlightCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="buildassign">
+		<name>Build Flight Assignment</name>
+		<class>org.deltava.commands.assign.BuildAssignmentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="assignments">
+		<name>Flight Assignments</name>
+		<class>org.deltava.commands.assign.AssignmentListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="assign">
+		<name>Flight Assignment</name>
+		<class>org.deltava.commands.assign.AssignmentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="assignsave">
+		<name>Save Flight Assignment</name>
+		<class>org.deltava.commands.assign.AssignmentSaveCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="myassign">
+		<name>My Assignments</name>
+		<class>org.deltava.commands.assign.MyAssignmentsCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="assignreserve">
+		<name>Reserve Assignment</name>
+		<class>org.deltava.commands.assign.AssignmentReserveCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="assignrelease">
+		<name>Release Assignment</name>
+		<class>org.deltava.commands.assign.AssignmentReleaseCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="assigndelete">
+		<name>Delete Assignment</name>
+		<class>org.deltava.commands.assign.AssignmentDeleteCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	
+	<!-- HR-related commands -->
+	<command id="massmail">
+		<name>Mass E-Mail</name>
+		<class>org.deltava.commands.admin.MassMailingCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+	
+	<command id="eqtypes">
+		<name>Equipment Profiles</name>
+		<class>org.deltava.commands.admin.EquipmentProfilesCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="eqedit">
+		<name>Edit Equipment Profile</name>
+		<class>org.deltava.commands.admin.EquipmentCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="eqsave">
+		<name>Save Equipment Profile</name>
+		<class>org.deltava.commands.admin.EquipmentSaveCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="txrequests">
+		<name>Transfer Requests</name>
+		<class>org.deltava.commands.admin.TransferListCommand</class>
+		<roles>HR,PIREP,Examination</roles>
+	</command>
+
+	<command id="txreqview">
+		<name>View Transfer Request</name>
+		<class>org.deltava.commands.admin.TransferProcessCommand</class>
+		<roles>HR,PIREP,Examination</roles>
+	</command>
+	
+	<command id="transfer">
+		<name>Approve Transfer Request</name>
+		<class>org.deltava.commands.admin.TransferApproveCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+	
+	<command id="txreqreject">
+		<name>Reject Transfer Request</name>
+		<class>org.deltava.commands.admin.TransferRejectCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+
+	
+	<!-- Testing Center Commands -->
+	<command id="testcenter">
+		<name>Testing Center</name>
+		<class>org.deltava.commands.testing.TestingCenterCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="checkride">
+		<name>Check Ride</name>
+		<class>org.deltava.commands.testing.CheckRideCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="crsubmit">
+		<name>Submit Check Ride</name>
+		<class>org.deltava.commands.testing.CheckRideSubmitCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="rideassign">
+		<name>Check Ride Assign</name>
+		<class>org.deltava.commands.testing.CheckRideAssignCommand</class>
+		<roles>Examination,HR</roles>
+	</command>
+	
+	<command id="exam">
+		<name>Examination</name>
+		<class>org.deltava.commands.testing.ExamCommand</class>
+		<roles>Pilot,Applicant</roles>
+	</command>
+	
+	<command id="newexam">
+		<name>Create Examination</name>
+		<class>org.deltava.commands.testing.ExamCreateCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="examscore">
+		<name>Score Examination</name>
+		<class>org.deltava.commands.testing.ExamScoreCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+
+	<command id="examsubmit">
+		<name>Score Examination</name>
+		<class>org.deltava.commands.testing.ExamSubmitCommand</class>
+		<roles>Pilot,Applicant</roles>
+	</command>
+	
+	<command id="examdelete">
+		<name>Delete Examination</name>
+		<class>org.deltava.commands.testing.ExamDeleteCommand</class>
+		<roles>Examination,HR</roles>		
+	</command>
+	
+	<command id="promoqueue">
+		<name>Promotion Queue</name>
+		<class>org.deltava.commands.admin.PromotionQueueCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+
+
+	<!-- Testing Admin Commands -->
+	<command id="examqueue">
+		<name>Examination Queue</name>
+		<class>org.deltava.commands.testing.ExamQueueCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+	
+	<command id="eprofiles">
+		<name>Examination Profiles</name>
+		<class>org.deltava.commands.testing.ExamProfilesCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+	
+	<command id="eprofile">
+		<name>Examination Profile</name>
+		<class>org.deltava.commands.testing.ExamProfileCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+	
+	<command id="qprofiles">
+		<name>Question Profiles</name>
+		<class>org.deltava.commands.testing.QuestionProfilesCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+	
+	<command id="qprofile">
+		<name>Question Profile</name>
+		<class>org.deltava.commands.testing.QuestionProfileCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+	
+	
+	<!-- Pilot Registration Commands -->
+	<command id="register">
+		<name>Applicant Registration</name>
+		<class>org.deltava.commands.register.RegisterCommand</class>
+		<roles>Anonymous</roles>
+	</command>
+	
+	<command id="questionnaire">
+		<name>Applicant Questionnaire</name>
+		<class>org.deltava.commands.register.QuestionnaireCommand</class>		
+		<roles>Anonymous</roles>
+	</command>
+	
+	<command id="qsubmit">
+		<name>Submit Questionnaire</name>
+		<class>org.deltava.commands.register.QuestionnaireSubmitCommand</class>		
+		<roles>Anonymous</roles>
+	</command>
+	
+	<command id="qscore">
+		<name>Score Questionnaire</name>
+		<class>org.deltava.commands.register.QuestionnaireScoreCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="applicants">
+		<name>Applicants</name>
+		<class>org.deltava.commands.register.ApplicantListCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="applicant">
+		<name>Applicant Profile</name>
+		<class>org.deltava.commands.register.ApplicantCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="apphire">
+		<name>Applicant Hire</name>
+		<class>org.deltava.commands.register.ApplicantApproveCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="appreject">
+		<name>Applicant Reject</name>
+		<class>org.deltava.commands.register.ApplicantRejectCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="welcome">
+		<name>Resend Welcome E-Mail</name>
+		<class>org.deltava.commands.register.WelcomeMessageCommand</class>
+		<roles>HR</roles>
+	</command>
+
+
+	<!-- System Commands -->
+	<command id="diag">
+		<name>System Diagnostics</name>
+		<class>org.deltava.commands.system.DiagnosticCommand</class>
+		<roles>Admin</roles>
+	</command>
+	
+	<command id="taskexec">
+		<name>Scheduled Task Execute</name>
+		<class>org.deltava.commands.system.TaskExecuteCommand</class>
+		<roles>Admin</roles>
+	</command>
+	
+	<command id="issues">
+		<name>Issue Tracker</name>
+		<class>org.deltava.commands.system.IssueListCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="issue">
+		<name>Issue</name>
+		<class>org.deltava.commands.system.IssueCommand</class>
+		<roles>*</roles>
+	</command>
+	
+	<command id="issuecomment">
+		<name>Issue Comment</name>
+		<class>org.deltava.commands.system.IssueCommentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="msgtemplates">
+		<name>Message Templates</name>
+		<class>org.deltava.commands.admin.MessageTemplatesCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="msgtemplate">
+		<name>Edit Message Template</name>
+		<class>org.deltava.commands.admin.MessageTemplateCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="msgtemplatesave">
+		<name>Save Message Template</name>
+		<class>org.deltava.commands.admin.MessageTemplateSaveCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="msgtemplatedelete">
+		<name>Delete Message Template</name>
+		<class>org.deltava.commands.admin.MessageTemplateDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+	
+	<command id="systemlog">
+		<name>View System Log</name>
+		<class>org.deltava.commands.system.LogViewCommand</class>
+		<roles>Admin</roles>
+	</command>
+	
+	<command id="systemlogpurge">
+		<name>Purge System Log</name>
+		<class>org.deltava.commands.system.LogPurgeCommand</class>
+		<roles>Admin</roles>
+	</command>
+</commands>
