@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<services name="default">
+	<service id="eqList" class="org.deltava.service.EquipmentListService" />
+	<service id="airlineList" class="org.deltava.service.AirlineListService" />
+	<service id="airportList" class="org.deltava.service.AirportListService" />
+	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
+	<service id="voiceURL" class="org.deltava.service.PrivateVoiceURLService" />
+	
+	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
+	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
+	<service id="notams_rss" class="org.deltava.service.NoticeSyndicationService" />
+	<service id="news_rss" class="org.deltava.service.NewsSyndicationService" />
+	
+	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />
+	<service id="fleet_sysinf" class="org.deltava.service.SystemInfoService" />
+	
+	<service id="schedule" class="org.deltava.service.ScheduleSearchService" />
+	
+	<service id="servinfo" class="org.deltava.service.ServInfoDataService" />
+</services>
