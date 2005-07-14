@@ -1,0 +1,217 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.register;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.system.AddressValidation;
+import org.deltava.beans.testing.*;
+
+import org.deltava.comparators.AirportComparator;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+import org.deltava.mail.*;
+
+import org.deltava.security.Authenticator;
+
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to register a new Applicant.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class RegisterCommand extends AbstractCommand {
+
+	// Package-private since ApplicantCommand uses these
+	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET };
+	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications", "Send Fleet Notifications" };
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+
+		// Get the command result
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/register/register.jsp");
+
+		// Save the notification options
+		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(NOTIFY_NAMES, NOTIFY_ALIASES), REQUEST);
+		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
+		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
+
+		// Sort and save the airports
+		Map airports = (Map) SystemData.getObject("airports");
+		Set apSet = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		apSet.addAll(airports.values());
+		ctx.setAttribute("airports", apSet, REQUEST);
+
+		// If we're just doing a get, then redirect to the JSP
+		if (ctx.getParameter("firstName") == null) {
+			result.setSuccess(true);
+			return;
+		}
+
+		// Load the data from the request
+		Applicant a = new Applicant(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
+		a.setStatus(Applicant.PENDING);
+		a.setDN("cn=" + a.getName() + "," + SystemData.get("security.applicant.baseDN"));
+		a.setPassword(ctx.getParameter("pwd1"));
+		a.setEmail(ctx.getParameter("email"));
+		a.setLocation(ctx.getParameter("location"));
+		a.setIMHandle(ctx.getParameter("imHandle"));
+		a.setNetworkID("VATSIM", ctx.getParameter("VATSIM_ID"));
+		a.setNetworkID("IVAO", ctx.getParameter("IVAO_ID"));
+		a.setLegacyURL(ctx.getParameter("legacyURL"));
+		a.setHomeAirport(ctx.getParameter("homeAirport"));
+		a.setEmailAccess(Person.AUTH_EMAIL);
+		a.setDateFormat(ctx.getParameter("df"));
+		a.setTimeFormat(ctx.getParameter("tf"));
+		a.setNumberFormat(ctx.getParameter("nf"));
+		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
+		a.setTZ(TZInfo.init(ctx.getParameter("tz")));
+		a.setUIScheme(ctx.getParameter("uiScheme"));
+		
+		// Save the registration host name
+		String hostName = ctx.getRequest().getRemoteHost();
+		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? ctx.getRequest().getRemoteAddr() : hostName);
+
+		// Parse legacy hours
+		try {
+			a.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
+		} catch (NumberFormatException nfe) {
+			a.setLegacyHours(0);
+		}
+
+		// Set Notification Options
+		Collection notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"), Collections.EMPTY_LIST);
+		for (int x = 0; x < NOTIFY_ALIASES.length; x++)
+			a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+
+		// Save the applicant in the request
+		ctx.setAttribute("applicant", a, REQUEST);
+
+		// Initialize the message context
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("applicant", a);
+
+		Examination ex = null;
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the Pilot DAO and check if we're unique
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			if (pdao.checkUnique(a.getFirstName(), a.getLastName(), a.getEmail()) != 0) {
+				ctx.release();
+				ctx.setAttribute("notUnique", Boolean.valueOf(true), REQUEST);
+				result.setSuccess(true);
+				return;
+			}
+
+			// Get the Applicant DAO and check if we're unique
+			GetApplicant adao = new GetApplicant(con);
+			if (adao.checkUnique(a.getFirstName(), a.getLastName(), a.getEmail()) != 0) {
+				ctx.release();
+				ctx.setAttribute("notUnique", Boolean.valueOf(true), REQUEST);
+				result.setSuccess(true);
+				return;
+			}
+
+			// Get the e-mail message template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("USERREGISTER"));
+
+			// Get the questionnaire profile
+			GetExamProfiles epdao = new GetExamProfiles(con);
+			ExamProfile ep = epdao.getExamProfile(Examination.QUESTIONNAIRE_NAME);
+			if (ep == null)
+				throw new CommandException("Invalid Examination - " + Examination.QUESTIONNAIRE_NAME);
+
+			// Load the question pool for the questionnaire
+			List pool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME);
+			int poolSize = (pool.size() < ep.getSize()) ? pool.size() : ep.getSize();
+			if (poolSize == 0)
+				throw new CommandException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
+
+			// Start the transaction
+			ctx.startTX();
+
+			// Get the DAO and write to the database
+			SetApplicant wdao = new SetApplicant(con);
+			wdao.write(a);
+
+			// Create an entry that marks our email as invalid
+			AddressValidation addrValid = new AddressValidation(a.getID(), a.getEmail());
+			addrValid.setHash(AddressValidationHelper.calculateHashCode(a.getEmail()));
+			ctx.setAttribute("addrValid", addrValid, REQUEST);
+			mctxt.addData("addr", addrValid);
+
+			// Create the examination
+			ex = new Examination(Examination.QUESTIONNAIRE_NAME);
+			ex.setPilotID(a.getID());
+			ex.setStage(1);
+			ex.setStatus(Test.NEW);
+			mctxt.addData("questionnaire", ex);
+
+			// Set the creation/expiration date/times
+			Calendar cld = Calendar.getInstance();
+			ex.setDate(cld.getTime());
+			cld.add(Calendar.DATE, SystemData.getInt("registration.auto_reject"));
+			cld.add(Calendar.HOUR, -1);
+			ex.setExpiryDate(cld.getTime());
+
+			// Generate a random list of questions
+			Random rnd = new Random();
+			for (int x = 1; x <= poolSize; x++) {
+				int ofs = rnd.nextInt(pool.size());
+				QuestionProfile qp = (QuestionProfile) pool.get(ofs);
+				pool.remove(qp);
+				Question q = new Question(qp);
+				q.setNumber(x);
+				ex.addQuestion(q);
+			}
+
+			// Get the DAO and write the questionnaire to the database
+			SetQuestionnaire qwdao = new SetQuestionnaire(con);
+			qwdao.write(ex);
+
+			// Get the DAO and write the address validation entry
+			SetAddressValidation wavdao = new SetAddressValidation(con);
+			wavdao.write(addrValid);
+
+			// Commit the transaction
+			ctx.commitTX();
+
+			// Write the user record to the authenticator
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			auth.addUser(a.getDN(), a.getPassword());
+		} catch (SecurityException se) {
+			ctx.rollbackTX();
+			throw new CommandException(se);
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Send an e-mail notification to the user
+		Mailer mailer = new Mailer(ctx.getUser());
+		mailer.setContext(mctxt);
+		mailer.send(a);
+
+		// Forward to the examination
+		result.setType(CommandResult.REDIRECT);
+		result.setURL("questionnaire", null, ex.getID());
+		result.setSuccess(true);
+	}
+}

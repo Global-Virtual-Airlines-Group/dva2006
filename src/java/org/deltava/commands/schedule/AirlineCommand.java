@@ -1,0 +1,121 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.schedule;
+
+import java.sql.Connection;
+
+import org.deltava.beans.schedule.Airline;
+
+import org.deltava.commands.*;
+
+import org.deltava.dao.GetAirline;
+import org.deltava.dao.SetSchedule;
+import org.deltava.dao.DAOException;
+
+/**
+ * A Web Site Command to update Airline profiles.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class AirlineCommand extends AbstractFormCommand {
+
+	/**
+	 * Callback method called when saving the Airline.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	protected void execSave(CommandContext ctx) throws CommandException {
+
+		// Get the airline code
+		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		boolean isNew = (aCode == null);
+
+		try {
+			Connection con = ctx.getConnection();
+			
+			// If we're editing an existing airline, load it
+			Airline a = null;
+			if (!isNew) {
+				GetAirline dao = new GetAirline(con);
+				a = dao.get(aCode);
+				if (a == null)
+					throw new CommandException("Invalid Airline - " + aCode);
+			} else {
+				a = new Airline(ctx.getParameter("code")); 
+			}
+			
+			// Update the airline from the request
+			a.setName(ctx.getParameter("name"));
+			a.setActive("1".equals(ctx.getParameter("active")));
+			
+			// Get the DAO and update the database
+			SetSchedule wdao = new SetSchedule(con);
+			if (isNew) {
+				wdao.create(a);
+				ctx.setAttribute("airlineCreate", Boolean.valueOf(true), REQUEST);
+			} else {
+				wdao.update(a);
+				ctx.setAttribute("airlineUpdate", Boolean.valueOf(true), REQUEST);
+			}
+			
+			// Save the airline in the request
+			ctx.setAttribute("airline", a, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REDIRECT);
+		result.setURL("airlines.do");
+	}
+
+	/**
+	 * Callback method called when editing the Airline.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	protected void execEdit(CommandContext ctx) throws CommandException {
+
+		// Get the airline code
+		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		boolean isNew = (aCode == null);
+
+		// If we're editing an existing airline, load it
+		if (!isNew) {
+			try {
+				Connection con = ctx.getConnection();
+
+				// Get the DAO and the Airline
+				GetAirline dao = new GetAirline(con);
+				Airline a = dao.get(aCode);
+				if (a == null)
+					throw new CommandException("Invalid Airline - " + aCode);
+
+				// Save the airline in the request
+				ctx.setAttribute("airline", a, REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/schedule/airlineEdit.jsp");
+		result.setSuccess(true);
+	}
+
+	/**
+	 * Callback method called when reading the Airline. <i>NOT IMPLEMENTED </i>
+	 * @param ctx the Command context
+	 * @throws UnsupportedOperationException always
+	 */
+	protected void execRead(CommandContext ctx) throws CommandException {
+		throw new UnsupportedOperationException();
+	}
+}

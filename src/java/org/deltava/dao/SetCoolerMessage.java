@@ -1,0 +1,196 @@
+package org.deltava.dao;
+
+import java.sql.*;
+
+import org.deltava.beans.cooler.*;
+
+/**
+ * A Data Access Object to handle writing Water Cooler message threads and posts.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class SetCoolerMessage extends DAO {
+
+	/**
+	 * Initializes the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public SetCoolerMessage(Connection c) {
+		super(c);
+	}
+
+	/**
+	 * Writes a new Post to the Water Cooler.
+	 * @param msg the Message
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeMessage(Message msg) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, REMOTE_ADDR, " +
+					"REMOTE_HOST, MSGBODY) VALUES (?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, msg.getThreadID());
+			_ps.setInt(2, msg.getAuthorID());
+			_ps.setTimestamp(3, createTimestamp(msg.getCreatedOn()));
+			_ps.setString(4, msg.getRemoteAddr());
+			_ps.setString(5, msg.getRemoteHost());
+			_ps.setString(6, msg.getBody());
+			
+			// Update the database
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a new Message Thread into the database
+	 * @param t the Message Thread
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws IllegalStateException if there are no Posts in the Thread
+	 */
+	public void writeThread(MessageThread t) throws DAOException {
+		
+		// Get the first post in the thread
+		Message msg = (Message) t.getPosts().get(0);
+		if (msg == null)
+			throw new IllegalStateException("Empty Message Thread");
+	    
+		try {
+		    // Do the two INSERTs as a single transaction
+		    startTransaction();
+		    
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_THREADS (ID, SUBJECT, CHANNEL, IMAGE_ID, STICKY, "
+					+ "STICKY_CHANNEL, POSTS, AUTHOR, LASTUPDATE, LASTPOSTER, VIEWS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
+			_ps.setInt(1, t.getID());
+			_ps.setString(2, t.getSubject());
+			_ps.setString(3, t.getChannel());
+			_ps.setInt(4, t.getImage());
+			_ps.setTimestamp(5, createTimestamp(t.getStickyUntil()));
+			_ps.setBoolean(6, t.getStickyInChannelOnly());
+			_ps.setInt(7, t.getPostCount());
+			_ps.setInt(8, msg.getAuthorID());
+			_ps.setTimestamp(9, createTimestamp(msg.getCreatedOn()));
+			_ps.setInt(10, msg.getAuthorID());
+
+			// Write the thread to the database
+			executeUpdate(1);
+
+			// Get the new thread ID
+			t.setID(getNewID());
+		} catch (SQLException se) {
+		    rollbackTransaction();
+			throw new DAOException(se);
+		}
+		
+		// Save the message thread ID
+		msg.setThreadID(t.getID());
+		
+		try {
+		    writeMessage(msg);
+		    commitTransaction();
+		} catch (SQLException se) {
+		    rollbackTransaction();
+		    throw new DAOException(se);
+		} catch (DAOException de) {
+		    rollbackTransaction();
+		    throw de;
+		}
+	}
+
+	/**
+	 * Marks a Message Thread has being viewed.
+	 * @param id the Message Thread ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void viewThread(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Changes the Channel for a Message Thread.
+	 * @param id the Message Thread ID
+	 * @param newChannel the new Channel name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setChannel(int id, String newChannel) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?)");
+			_ps.setString(1, newChannel);
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}		
+	}
+	
+	/**
+	 * Moderates a Thread by updating the locked and hidden flags.
+	 * @param id the thread ID
+	 * @param doHide TRUE if the thread should be hidden, otherwise FALSE
+	 * @param doLock TRUE if the thread should be locked, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void moderateThread(int id, boolean doHide, boolean doLock) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET HIDDEN=?, LOCKED=? WHERE (ID=?)");
+			_ps.setBoolean(1, doHide);
+			_ps.setBoolean(2, doLock);
+			_ps.setInt(3, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Recalculates Thread information by querying existing Thread Posts.
+	 * @param mt the Message Thread
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void synchThread(MessageThread mt) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
+					+ "WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED ASC LIMIT 1) AS AID, (SELECT P.AUTHOR_ID FROM "
+					+ "common.COOLER_POSTS P WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED DESC LIMIT 1) AS LUID, "
+					+ "MAX(P.CREATED) FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (P.THREAD_ID=T.ID) "
+					+ "WHERE (T.ID=?) GROUP BY T.ID");
+			_ps.setInt(1, mt.getID());
+			setQueryMax(1);
+			
+			// Get the thread Author ID
+			ResultSet rs = _ps.executeQuery();
+			if (!rs.next())
+				throw new DAOException("Message Thread is empty");
+			
+			// Save the post count
+			if (mt.getPosts().isEmpty())
+				mt.setPostCount(rs.getInt(1));
+			
+			// Update the author/last update and clean up
+			mt.setAuthorID(rs.getInt(2));
+			mt.setLastUpdateID(rs.getInt(3));
+			mt.setLastUpdatedOn(rs.getTimestamp(4));
+			rs.close();
+			_ps.close();
+			
+			// Update the thread entry
+			prepareStatement("UPDATE common.COOLER_THREADS SET POSTS=?, AUTHOR=?, LASTPOSTER=?, LASTUPDATE=? WHERE (ID=?)");
+			_ps.setInt(1, mt.getPostCount());
+			_ps.setInt(2, mt.getAuthorID());
+			_ps.setInt(3, mt.getLastUpdateID());
+			_ps.setTimestamp(4, createTimestamp(mt.getLastUpdatedOn()));
+			_ps.setInt(5, mt.getID());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+}

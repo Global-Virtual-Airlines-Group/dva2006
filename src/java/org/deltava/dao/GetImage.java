@@ -1,0 +1,87 @@
+package org.deltava.dao;
+
+import java.sql.*;
+
+/**
+ * A Data Access Object to retrieve image data from the database.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class GetImage extends DAO {
+
+    /**
+     * Initializes the DAO from a JDBC connection.
+     * @param c the JDBC connection
+     */
+    public GetImage(Connection c) {
+        super(c);
+    }
+    
+    /**
+     * Executes an arbitrary SQL statement, after preparing it with the image ID
+     * @param id the image ID
+     * @param sql the SQL prepared statement text
+     * @return the image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    private byte[] execute(int id, String sql) throws DAOException {
+        try {
+            // Prepare the statement
+            prepareStatement(sql);
+            _ps.setInt(1, id);
+
+            // Execute the query, if not found return null
+            ResultSet rs = _ps.executeQuery();
+            if (!rs.next())
+                return null;
+            
+            // Get the image data 
+            byte[] imgBuffer = rs.getBytes(1);
+
+            // Close the result set
+            rs.close();
+            _ps.close();
+            
+            // Return the image data
+            return imgBuffer;
+        } catch (SQLException se) {
+            throw new DAOException(se);
+        }
+    }
+
+    /**
+     * Returns a signature image for a Pilot.
+     * @param id the pilot ID
+     * @param dbName the database containing the signature
+     * @return the signature image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getSignatureImage(int id, String dbName) throws DAOException {
+    	StringBuffer sqlBuf = new StringBuffer("SELECT WC_SIG FROM ");
+    	sqlBuf.append(dbName);
+    	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
+        return execute(id, sqlBuf.toString());
+    }
+    
+    /**
+     * Returns a Chart.
+     * @param id the chart ID
+     * @return the chart image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getChart(int id) throws DAOException {
+        return execute(id, "SELECT IMG FROM common.CHARTS WHERE (ID=?)");
+    }
+    
+    /**
+     * Returns a Picture Gallery image.
+     * @param id the gallery image ID
+     * @return the gallery image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getGalleryImage(int id) throws DAOException {
+        return execute(id, "SELECT IMG FROM GALLERY WHERE (ID=?)");
+    }
+}

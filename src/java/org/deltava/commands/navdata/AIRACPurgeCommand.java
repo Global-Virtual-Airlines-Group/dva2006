@@ -1,0 +1,47 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.navdata;
+
+import java.sql.*;
+
+import org.deltava.commands.*;
+
+import org.deltava.dao.SetNavData;
+import org.deltava.dao.DAOException;
+
+/**
+ * A Web Site Command to purge Navigation data.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class AIRACPurgeCommand extends AbstractCommand {
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and purge the database
+			SetNavData dao = new SetNavData(con);
+			dao.purge();
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Set status attribute
+		ctx.setAttribute("isPurge", Boolean.TRUE, REQUEST);
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/schedule/navDataPurge.jsp");
+		result.setSuccess(true);
+	}
+}

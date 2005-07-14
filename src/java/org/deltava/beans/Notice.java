@@ -1,0 +1,51 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.beans;
+
+/**
+ * A class for storing Notice to Airmen (NOTAM) entries.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class Notice extends News implements ViewEntry {
+   
+   private boolean _active;
+
+   /**
+    * Creates a new NOTAM. The NOTAM will automatically be marked active.
+    * @param sbj the NOTAM subject
+    * @param aN the Author Name
+    * @param body the body of the NOTAM
+    * @see News#News(String, String, String)
+    */
+   public Notice(String sbj, String aN, String body) {
+      super(sbj, aN, body);
+      _active = true;
+   }
+   
+   /**
+    * Returns if this NOTAM is in effect.
+    * @return TRUE if in effect, otherwise FALSE
+    * @see Notice#setActive(boolean)
+    */
+   public boolean getActive() {
+      return _active;
+   }
+   
+   /**
+    * Updates if this NOTAM is in effect.
+    * @param active TRUE if in effect, otherwise FALSE
+    * @see Notice#getActive()
+    */
+   public void setActive(boolean active) {
+      _active = active;
+   }
+   
+   /**
+    * Returns the CSS class name if displayed in a view.
+    */
+   public String getRowClassName() {
+      return _active ? null : "opt1";
+   }
+}

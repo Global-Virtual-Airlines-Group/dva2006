@@ -1,0 +1,75 @@
+package org.deltava.commands.main;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.comparators.PilotComparator;
+import org.deltava.util.ComboUtils;
+
+/**
+ * Command to display the Pilot Roster.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class RosterCommand extends AbstractViewCommand {
+
+    // List of query columns we can order by
+    private static final String[] SORT_COLUMNS = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN", "P.CREATED",
+            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS", "HOURS", "P.STATUS"};
+    
+    private List _sortComboAliases;
+    
+    /**
+     * Initializes the command. This will create the ComboAlias lists for sorting the roster.
+     * @param id the Command ID
+     * @param cmdName the Command Name
+     * @throws CommandException if an unhandled error occurs
+     * @see AbstractCommand#init(String, String)
+     */
+    public void init(String id, String cmdName) throws CommandException {
+        super.init(id, cmdName);
+        PilotComparator cmp = new PilotComparator(0);
+        _sortComboAliases = ComboUtils.fromArray(cmp.getTypeNames(), SORT_COLUMNS);
+    }
+    
+    /**
+     * Executes the command.
+     * @param ctx the Command context
+     * @throws CommandException if an unhandled error occurs
+     */
+    public void execute(CommandContext ctx) throws CommandException {
+        
+        // Get/set start/count parameters
+        ViewContext vc = initView(ctx);
+        vc.setDefaultSortType("P.PILOT_ID");
+     
+        try {
+            Connection con = ctx.getConnection();
+            
+            // Get the roster and save in the request
+            GetPilot dao = new GetPilot(con);
+            dao.setQueryStart(vc.getStart());
+            dao.setQueryMax(vc.getCount());
+            
+            // Get the results
+            vc.setResults(dao.getActivePilots(vc.getSortType()));
+        } catch (DAOException de) {
+            throw new CommandException(de);
+        } finally {
+            ctx.release();
+        }
+        
+        // Save the sorter types in the request
+        ctx.setAttribute("sortTypes", _sortComboAliases, REQUEST);
+        
+        // Set the result page and return
+        CommandResult result = ctx.getResult();
+        result.setURL("/jsp/roster/mainRoster.jsp");
+        result.setSuccess(true);
+    }
+}

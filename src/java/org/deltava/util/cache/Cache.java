@@ -1,0 +1,108 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.util.cache;
+
+import java.util.*;
+
+/**
+ * An an abstract class to store common cache operations.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public abstract class Cache implements java.io.Serializable {
+   
+   protected Map _cache;
+   private int _maxSize;
+
+   /**
+    * Initializes the cache.
+    * @param maxSize the maximum size of the cache
+    * @throws IllegalArgumentException if maxSize is zero or negative
+    */
+   protected Cache(int maxSize) {
+      super();
+      setMaxSize(maxSize);
+      _cache = new HashMap(_maxSize + 2, 1); // Set so that rehashes never occur
+   }
+   
+   /**
+    * Adds a number of entries to the cache.
+    * @param entries a Collection of Cacheable entries
+    */
+   public void addAll(Collection entries) {
+      for (Iterator i = entries.iterator(); i.hasNext(); ) {
+         Object entry = i.next();
+         if (entry instanceof Cacheable)
+            add((Cacheable) entry);
+      }
+   }
+   
+   /**
+    * Returns if the cache contains a particular cache key.
+    * @param key the cache key
+    * @return TRUE if the cache contains the key, otherwise FALSE
+    */
+   public boolean contains(Object key) {
+      return _cache.containsKey(key);
+   }
+   
+   /**
+    * Invalidate a cache entry.
+    * @param key the entry key
+    */
+   public void remove(Object key) {
+      _cache.remove(key);
+   }
+   
+   /**
+    * Returns the current size of the cache.
+    * @return the number of entries in the cache
+    */
+   public final int size() {
+      return _cache.size();
+   }
+   
+   /**
+    * Returns the maximum size of the cache.
+    * @return the maximum number of entries in the cache
+    */
+   public final int getMaxSize() {
+      return _maxSize;
+   }
+   
+   /**
+    * Sets the maximum size of the cache.
+    * @param size the maximum number of entries
+    * @throws IllegalArgumentException if size is zero or negative
+    */
+   public final void setMaxSize(int size) {
+      if (size < 1) throw new IllegalArgumentException("Invalid size - " + size);
+
+      _maxSize = size;
+   }
+   
+   /**
+    * Automatically resizes the cache in the case of an overflow. This is done by sorting the
+    * cache entries using their natural order, and removing the first entry.
+    */
+   protected void checkOverflow() {
+      if (_cache.size() > _maxSize) {
+         TreeSet entries = new TreeSet(_cache.values());
+         _cache.values().remove(entries.first());
+      }
+   }
+   
+   /**
+    * Adds an entry to the cache.
+    * @param entry the entry to add
+    */
+   public abstract void add(Cacheable entry);
+   
+   /**
+    * Retrieves an entry from the cache. 
+    * @param key the cache key
+    * @return the cache entry, or null if the key is not present or the entry is invalid
+    */
+   public abstract Cacheable get(Object key);
+}
