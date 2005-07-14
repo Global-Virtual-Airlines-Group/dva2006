@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+	<tlibversion>1.0</tlibversion>
+	<jspversion>1.1</jspversion>
+	<shortname>content</shortname>
+	<uri>http://dva2006.deltava.org/dva2006/dvacontent</uri>
+	<info>A JSP Tag Library used to insert links to other web resources (JS/CSS)</info>
+
+	<!-- Insert CSS tag, for inserting CSS file links -->
+	<tag>
+		<name>css</name>
+		<tagclass>org.deltava.taglib.content.InsertCSSTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>browserSpecific</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>force</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>scheme</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- Insert RSS tag, for inserting RSS feed links -->
+	<tag>
+		<name>rss</name>
+		<tagclass>org.deltava.taglib.content.InsertRSSTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>title</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>url</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<!-- Insert JS tag, for inserting JavaScript file links -->
+	<tag>
+		<name>js</name>
+		<tagclass>org.deltava.taglib.content.InsertJSTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- Role Filter tag, for stripping out JSP content based on security role -->
+	<tag>
+		<name>filter</name>
+		<tagclass>org.deltava.taglib.content.RoleFilterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>roles</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- Active User Filter tag, for stripping out JSP content if a user is not logged in -->
+	<tag>
+		<name>activeUser</name>
+		<tagclass>org.deltava.taglib.content.ActiveUserFilterTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>user</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+	</tag>
+	
+	<!-- System Data access tag -->
+	<tag>
+		<name>sysdata</name>
+		<tagclass>org.deltava.taglib.content.GetSystemDataTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>mapValues</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>sort</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+	
+	<!-- Airline name tag -->
+	<tag>
+		<name>airline</name>
+		<tagclass>org.deltava.taglib.content.AirlineNameTag</tagclass>
+		<bodycontent>empty</bodycontent>
+	</tag>
+	
+	<!-- Copyright notice tag -->
+	<tag>
+		<name>copyright</name>
+		<tagclass>org.deltava.taglib.content.CopyrightTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>visible</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- GetCookie tag, for reading cookie data -->
+	<tag>
+		<name>getCookie</name>
+		<tagclass>org.deltava.taglib.content.GetCookieTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- SetCookie tag, for writing cookie data -->
+	<tag>
+		<name>setCookie</name>
+		<tagclass>org.deltava.taglib.content.SetCookieTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>path</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>domain</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>age</name>
+			<required>false</required>
+			<type>java.lang.Integer</type>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- ClearCookie tag, for clearing cookies -->
+	<tag>
+		<name>clearCookie</name>
+		<tagclass>org.deltava.taglib.content.ClearCookieTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>name</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>
