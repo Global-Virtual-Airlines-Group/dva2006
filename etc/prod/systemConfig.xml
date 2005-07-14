@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<config env="dev" default="true">
+
+	<!-- Airline Information -->
+	<airline>
+		<name>Delta Virtual Airlines</name>
+		<domain>deltava.org</domain>
+		<url>dva2006.deltava.org</url>
+		<banner>DeltaBanner.png</banner>
+		<code>DVA</code>
+		<db>DVA</db>
+		
+		<mail>
+			<info>info@deltava.org</info>
+			<webmaster>webmaster@deltava.org</webmaster>
+		</mail>
+	</airline>
+	
+	<!-- Default Time Zone -->	
+	<timezone>US/Eastern</timezone>
+	
+	<!-- If we are running in a multi-airline environment, this maps the db names to airline codes -->
+	<!-- This is mapped with the key being the database name IN LOWER CASE, the value is the code -->
+	<map name="airlineDatabases">
+		<afv>AFV</afv>
+	</map>
+
+	<!-- pilot ranks -->
+	<list name="ranks" attr="rank">
+		<rank>Trainee</rank>
+		<rank>First Officer</rank>
+		<rank>Captain</rank>
+		<rank>Senior Captain</rank>
+		<rank>Assistant Chief Pilot</rank>
+		<rank>Chief Pilot</rank>
+	</list>
+	
+	<!-- Century Club levels -->
+	<map name="centuryClubLevels">
+		<CC100>Century Club</CC100>
+		<CC200>Double Century Club</CC200>
+		<CC300>Triple Century Club</CC300>
+		<CC400>Quadricentenary Club</CC400>
+		<CC500>Quinticentenary Club</CC500>
+		<CC600>Hexacentenary Club</CC600>
+		<CC700>Pat Robertson&#0153; Club</CC700>
+		<CC800>Octocentenary Club</CC800>
+		<CC1000>Millenium Club</CC1000>
+		<CC1500>Sesquimillenium Club</CC1500>
+	</map>
+	
+	<!-- Pilot Locations -->
+	<list name="locations" attr="location">
+		<location>Northeastern United States</location>
+		<location>Southeastern United States</location>
+		<location>Midwestern United States</location>
+		<location>Western United States</location>
+		<location>Eastern Canada</location>
+		<location>Western Canada</location>
+		<location>Central America</location>
+		<location>South America</location>
+		<location>Western Europe</location>
+		<location>Scandinavia</location>
+		<location>Eastern Europe</location>
+		<location>Middle East</location>
+		<location>Southern Asia</location>
+		<location>Far East</location>
+		<location>Japan</location>
+		<location>Australia</location>
+		<location>Africa</location>
+	</list>
+	
+	<!-- Pilot Center equipment type images -->
+	<map name="pcImages">
+		<crj-200>aircraft/crj200.png</crj-200>
+		<b727-200>aircraft/b727.png</b727-200>
+		<b737-800>aircraft/b737.png</b737-800>
+		<b757-200>aircraft/b757.png</b757-200>
+		<b767-300>aircraft/b767.png</b767-300>
+		<b777-200>aircraft/b777.png</b777-200>
+		<md-11>aircraft/md11.png</md-11>
+		<md-88>aircraft/md88.png</md-88>
+		<md-90>aircraft/md90.png</md-90>
+		<l-1011>aircraft/l1011.png</l-1011>
+		<dc-8-61>aircraft/dc8.png</dc-8-61>
+		<dc-9-32>aircraft/dc9.png</dc-9-32>
+		<dc-3>aircraft/dc3.png</dc-3>
+		<cv-880>aircraft/cv880.png</cv-880>
+		<do-328>aircraft/dc8.png</do-328>		
+	</map>
+
+	<!-- equipment types -->
+	<list name="eqtypes" attr="equipment" sorted="true">
+		<equipment>ATR-72</equipment>
+		<equipment>A310</equipment>
+		<equipment>A318</equipment>
+		<equipment>A319</equipment>
+		<equipment>A320</equipment>							
+		<equipment>A321</equipment>
+		<equipment>A330</equipment>
+		<equipment>A340</equipment>
+		<equipment>ATR-72</equipment>
+		<equipment>B1900</equipment>
+		<equipment>BAE-146</equipment>
+		<equipment>B707-320</equipment>
+		<equipment>B727-200</equipment>
+		<equipment>B737-200</equipment>
+		<equipment>B737-300</equipment>
+		<equipment>B737-400</equipment>
+		<equipment>B737-500</equipment>
+		<equipment>B737-800</equipment>
+		<equipment>B737-900</equipment>		
+		<equipment>B747-100</equipment>
+		<equipment>B747-200</equipment>
+		<equipment>B747-300</equipment>
+		<equipment>B747-400</equipment>
+		<equipment>B757-200</equipment>
+		<equipment>B757-300</equipment>
+		<equipment>B767-200</equipment>
+		<equipment>B767-300</equipment>
+		<equipment>B767-400</equipment>
+		<equipment>B777-200</equipment>
+		<equipment>B777-300</equipment>
+		<equipment>Caravelle</equipment>		
+		<equipment>Comet</equipment>
+		<equipment>Concorde</equipment>
+		<equipment>Constellation</equipment>
+		<equipment>CRJ-200</equipment>
+		<equipment>CRJ-700</equipment>
+		<equipment>CV-880</equipment>
+		<equipment>CV-990</equipment>
+		<equipment>DC-10-10</equipment>
+		<equipment>DC-10-30</equipment>
+		<equipment>DC-10-40</equipment>
+		<equipment>DC-3</equipment>
+		<equipment>DC-6</equipment>
+		<equipment>DC-7</equipment>
+		<equipment>DC-8-11</equipment>
+		<equipment>DC-8-21</equipment>
+		<equipment>DC-8-33</equipment>
+		<equipment>DC-8-42</equipment>
+		<equipment>DC-8-51</equipment>
+		<equipment>DC-8-61</equipment>
+		<equipment>DC-8-62</equipment>
+		<equipment>DC-8-71</equipment>
+		<equipment>DC-8-72</equipment>
+		<equipment>DC-9-14</equipment>
+		<equipment>DC-9-32</equipment>
+		<equipment>DC-9-50</equipment>
+		<equipment>DO-328</equipment>
+		<equipment>EMB-120</equipment>
+		<equipment>ERJ-135</equipment>
+		<equipment>ERJ-145</equipment>
+		<equipment>L-10A</equipment>
+		<equipment>L-100</equipment>
+		<equipment>L-1011</equipment>
+		<equipment>MD-11</equipment>
+		<equipment>MD-88</equipment>
+		<equipment>MD-90</equipment>
+	</list>
+	
+	<!-- JDBC data source configuration -->
+	<jdbc>
+		<driver>com.mysql.jdbc.Driver</driver>
+		<url>jdbc:mysql://mysql.deltava.org/dva</url>
+		<user>dva</user>
+		<pwd>***REMOVED***</pwd>
+		
+		<map name="connectProperties">
+			<useNewIO>false</useNewIO>
+			<autoReconnect>true</autoReconnect>
+			<useCompression>true</useCompression>
+		</map>
+		
+		<pool_size type="Integer">1</pool_size>
+		<pool_max_size type="Integer">4</pool_max_size>
+		<auto_commit type="Boolean">true</auto_commit>
+	</jdbc>
+	
+	<html>
+		<table>
+			<spacing type="Integer">3</spacing>
+			<padding type="Integer">3</padding>
+			<viewSize type="Integer">60</viewSize>
+		</table>
+		
+		<list name="schemes" attr="css">
+			<css>legacy</css>
+		</list>
+	</html>
+	
+	<log>
+		<list name="names" attr="name">
+			<name>APP</name>
+			<name>ACARS</name>
+			<name>TASKS</name>
+		</list>
+		
+		<purge type="Integer">10</purge>
+	</log>
+	
+	<config>
+		<commands>/etc/commands.xml</commands>
+		<services>/etc/services.xml</services>
+		<tasks>/etc/tasks.xml</tasks>
+		<nat>http://www.natroutes.glideslope.de/html/nats.php3</nat>
+	</config>
+	
+	<online>
+		<list name="networks" attr="network">
+			<network>VATSIM</network>
+			<network>IVAO</network>
+			<network>FPI</network>
+		</list>
+		
+		<vatsim>
+			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
+			<banner>vatsim.gif</banner>
+			<url>http://www.vatsim.net/</url>
+		</vatsim>
+		
+		<ivao>
+			<status_url>http://www.ivao.org/whazzup/status.txt</status_url>
+			<banner>ivao.png</banner>
+			<url>http://www.ivao.org/</url>
+		</ivao>
+		
+		<fpi>
+			<status_url>http://dva2006.deltava.org/fpi-data.txt</status_url>
+			<banner>fpi.png</banner>
+			<url>http://www.flightproject.net/</url>
+		</fpi>
+		
+		<default_network>VATSIM</default_network>
+	</online>
+	
+	<security>
+		<desKey>super-secret extra-special 3DeS key</desKey>
+		<hash>
+			<salt>***REMOVED***</salt>
+			<algorithm>SHA-1</algorithm>
+		</hash>
+		
+		<key>
+			<googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</googleMaps>
+		</key>
+		
+		<list name="roles" attr="role" sorted="true">
+			<role>Admin</role>
+			<role>Developer</role>
+			<role>Examination</role>
+			<role>Event</role>
+			<role>Fleet</role>
+			<role>Gallery</role>			
+			<role>HR</role>
+			<role>News</role>
+			<role>NOTAM</role>
+			<role>PIREP</role>
+			<role>Moderator</role>
+			<role>Schedule</role>
+			<role>Signature</role>
+		</list>
+		
+		<auth>org.deltava.security.MigrationAuthenticator</auth>
+		<baseDN>ou=dva,o=sce</baseDN>
+		<applicant>
+			<baseDN>ou=dva_app,o=sce</baseDN>
+		</applicant>
+	</security>
+	
+	<cache>
+		<stats type="Integer">30</stats>
+		<channels type="Integer">10</channels>
+		<rss>
+			<cooler type="Integer">10</cooler>
+			<news type="Integer">240</news>
+			<events type="Integer">240</events>
+		</rss>
+	</cache>
+	
+	<path>
+		<css>css</css>
+		<js>js</js>
+		<img>img</img>
+		<library>/usr/local/www/library</library>
+		<video>/usr/local/www/video</video>
+	</path>
+	
+	<smtp>
+		<server>golgotha.deltava.org</server>
+		<errors-to>webmaster@sce.net</errors-to>
+	</smtp>
+	
+	<registration>
+		<list name="reject_domain" attr="domain">
+			<domain>yahoo.com</domain>
+			<domain>hotmail.com</domain>
+		</list>
+		
+		<auto_reject type="Integer">5</auto_reject>
+	</registration>
+	
+	<issue_track>
+		<list name="versions" attr="version" sorted="true">
+			<version>1.0</version>
+			<version>1.01</version>
+			<version>1.1</version>
+		</list>
+		
+		<assignto type="Integer">043</assignto>
+	</issue_track>
+	
+	<testing>
+		<max_video_size type="Integer">3072000</max_video_size>
+		<video_removal type="Integer">7</video_removal>
+	</testing>
+	
+	<cooler>
+		<img_max>
+			<x type="Integer">1030</x>
+			<y type="Integer">780</y>
+			<size type="Integer">327680</size>
+		</img_max>
+		
+		<sig_max>
+			<x type="Integer">520</x>
+			<y type="Integer">160</y>
+			<size type="Integer">65520</size>
+		</sig_max>
+	</cooler>
+	
+	<users>
+		<notify_days type="Integer">59</notify_days>
+		<inactive_days type="Integer">90</inactive_days>
+		<inactive_leave_days type="Integer">180</inactive_leave_days>
+		<inactive_new_days type="Integer">21</inactive_new_days>
+		
+		<user_cookie_age type="Integer">30</user_cookie_age>
+		
+		<pirep>
+			<maxDays type="Integer">1</maxDays>
+			<minDays type="Integer">45</minDays>
+			<pad_hours type="Double">0.5</pad_hours>
+		</pirep>
+		
+		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
+		<tasks_by>Ralph Snyder</tasks_by>
+	</users>
+	
+	<!-- ACARS Server Properties -->
+	<acars>
+		<enabled type="Boolean">true</enabled>
+		<daemon>org.deltava.acars.TomcatDaemon</daemon>
+		
+		<port type="Integer">15527</port>
+		<sleep type="Integer">1000</sleep>
+		<timeout type="Integer">240</timeout>
+		<position_interval type="Integer">2750</position_interval>
+		
+		<pool>
+			<size type="Integer">100</size>
+			<multiple type="Boolean">true</multiple>
+		</pool>
+		
+		<buffer>
+			<send type="Integer">2048</send>
+			<recv type="Integer">8192</recv>
+		</buffer>
+		
+		<ack>
+			<info type="Boolean">true</info>
+			<position type="Boolean">true</position>
+			<text type="Boolean">false</text>
+		</ack>
+	</acars>
+</config>
