@@ -1,12 +1,12 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.io.IOException;
-
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.schedule.GeoPosition;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP Tag to format geographic coordinates.
@@ -60,30 +60,13 @@ public class GeoFormatTag extends TagSupport {
                 out.print("\">");
             }
             
-            // Format the latitude
-            out.print(Math.abs(GeoPosition.getDegrees(_gp.getLatitude())));
-            out.print("<sup>o</sup> ");
-            out.print(GeoPosition.getMinutes(_gp.getLatitude()));
-            out.print("&#39; ");
-            out.print(GeoPosition.getSeconds(_gp.getLatitude()));
-            out.print("&quot; ");
-            out.print((GeoPosition.getDegrees(_gp.getLatitude()) < 0) ? "S " : "N ");
-            
-            // Format the longitude
-            out.print(Math.abs(GeoPosition.getDegrees(_gp.getLongitude())));
-            out.print("<sup>o</sup> ");
-            out.print(GeoPosition.getMinutes(_gp.getLongitude()));
-            out.print("&#39; ");
-            out.print(GeoPosition.getSeconds(_gp.getLongitude()));
-            out.print("&quot; ");
-            out.print((GeoPosition.getDegrees(_gp.getLongitude()) < 0) ? 'W' : 'E');
+            // Format the latitude/longitude
+            out.print(StringUtils.format(_gp, true));
 			
             if (_className != null)
                 out.print("</span>");
-        } catch (IOException ie) {
-            JspException je = new JspException(ie.getMessage());
-            je.initCause(ie);
-            throw je;
+        } catch (Exception e) {
+            throw new JspException(e);
 		}
         
         // Release state and return
