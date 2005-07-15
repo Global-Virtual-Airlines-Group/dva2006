@@ -33,5 +33,23 @@ public class Intersection extends NavigationDataBean {
     */
    public final void setName(String name) {
       throw new UnsupportedOperationException();
-   }   
+   }
+   
+   /**
+    * Return the default Google Maps icon color.
+    * @return MapEntry#White
+    */
+   public String getIconColor() {
+      return WHITE;
+   }
+   
+   /**
+    * Returns the default Google Maps infobox text.
+    * @return an HTML String
+    */
+   public String getInfoBox() {
+      StringBuffer buf = new StringBuffer(getHTMLTitle());
+      buf.append(getHTMLPosition());
+      return buf.toString();
+   }
 }

@@ -4,8 +4,10 @@ package org.deltava.beans.navdata;
 import java.io.Serializable;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.MapEntry;
 import org.deltava.beans.schedule.GeoPosition;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -15,7 +17,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Comparable, Serializable, GeoLocation, Cacheable {
+public abstract class NavigationDataBean implements Comparable, Serializable, GeoLocation, Cacheable, MapEntry {
 
    /**
     * Object type names.
@@ -157,6 +159,34 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
    public int compareTo(Object o2) {
       NavigationDataBean nb2 = (NavigationDataBean) o2;
       return _code.compareTo(nb2.getCode());
+   }
+   
+   /**
+    * Helper method to return the item type and code for HTML infoboxes.
+    * @return the HTML-formatted code and description
+    * @see MapEntry#getInfoBox()
+    */
+   protected String getHTMLTitle() {
+      StringBuffer buf = new StringBuffer("<b>");
+      buf.append(getCode());
+      buf.append("</b> (");
+      buf.append(getTypeName());
+      buf.append(")<br /><br />");
+      return buf.toString();
+   }
+   
+   /**
+    * Helper method to return the Latitude/Longitude for HTML infoboxes.
+    * @return the HTML-formatted latitude/longitude
+    * @see MapEntry#getInfoBox()
+    */
+   protected String getHTMLPosition() {
+      StringBuffer buf = new StringBuffer("Latitude: ");
+      buf.append(StringUtils.format(_gp, true, GeoLocation.LATITUDE));
+      buf.append("<br />Longitude: ");
+      buf.append(StringUtils.format(_gp, true, GeoLocation.LONGITUDE));
+      buf.append("<br />");
+      return buf.toString();
    }
    
    /**
