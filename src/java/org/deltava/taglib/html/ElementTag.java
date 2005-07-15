@@ -5,8 +5,6 @@ import java.util.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.content.InsertContentTag;
-
 /**
  * A class for supporting JSP Tags that render HTML elements.
  * 
@@ -22,22 +20,6 @@ public abstract class ElementTag extends TagSupport {
     
     protected Map _attrs;
     protected JspWriter _out;
-    
-    /**
-     * Determines if a particular content file has been inserted during this request invocation.
-     * @param contentType the type of content (css/js)
-     * @param contentName the name of the inserted content
-     * @return TRUE if the content has been added, otherwise FALSE
-     */
-    protected boolean containsContent(String contentType, String contentName) {
-
-    	// Find the content name map
-    	Set content = (Set) pageContext.findAttribute(InsertContentTag.CONTENT_MAP_ATTR);
-    	if (content == null)
-    		return false;
-    	
-    	return content.contains(contentType + "$" + contentName);
-    }
     
     /**
      * Creates a new HTML element tag with a given HTML element type.
