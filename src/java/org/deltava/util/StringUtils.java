@@ -3,6 +3,9 @@ package org.deltava.util;
 
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
+import org.deltava.beans.schedule.GeoPosition;
+
 /**
  * A common String utility class.
  * @author Luke
@@ -190,5 +193,35 @@ public final class StringUtils {
            results.add(lastEntry);
         
     	return results;
+    }
+    
+    /**
+     * Formats a Latitude/Longitude pair.
+     * @param loc the location
+     * @param asHTML TRUE if HTML formatting to be used, otherwise FALSE
+     * @return a formatted latitude/longitude
+     */
+    public static String format(GeoLocation loc, boolean asHTML) {
+       StringBuffer buf = new StringBuffer();
+       
+       // Format the latitude
+       buf.append(Math.abs(GeoPosition.getDegrees(loc.getLatitude())));
+       buf.append(asHTML ? "<sup>o</sup> " : " ");
+       buf.append(GeoPosition.getMinutes(loc.getLatitude()));
+       buf.append(asHTML ? "&#39; " : "\" ");
+       buf.append(GeoPosition.getSeconds(loc.getLatitude()));
+       buf.append(asHTML ? "&quot; " : "\" ");
+       buf.append((GeoPosition.getDegrees(loc.getLatitude()) < 0) ? "S " : "N ");
+       
+       // Format the longitude
+       buf.append(Math.abs(GeoPosition.getDegrees(loc.getLongitude())));
+       buf.append(asHTML ? "<sup>o</sup> " : " ");
+       buf.append(GeoPosition.getMinutes(loc.getLongitude()));
+       buf.append(asHTML ? "&#39; " : "\" ");
+       buf.append(GeoPosition.getSeconds(loc.getLongitude()));
+       buf.append(asHTML ? "&quot; " : "\" ");
+       buf.append((GeoPosition.getDegrees(loc.getLongitude()) < 0) ? 'W' : 'E');
+       
+       return buf.toString();
     }
 }
