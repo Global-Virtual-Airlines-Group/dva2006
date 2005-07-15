@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="deploy">
+	
+	<!-- Clean out documentation -->
+	<target name="doc_clean">
+    	<property name="path.doc" value="/usr/local/www/deltava.org/www" />		
+		<property file="data/build_doc.properties" prefix="doc" />
+
+		<ftp password="${doc.ftp.pwd}" server="${doc.ftp.server}" userid="${doc.ftp.user}"
+    	 remotedir="${path.doc}" action="del">
+    		<fileset>
+    			<include name="junit/**.*" />
+    			<include name="javadoc/**.*" />
+    		</fileset>
+    	</ftp>  
+	</target>
+
+	<!-- Buld the JavaDoc -->
+    <target name="javadoc">
+		<mkdir dir="${java.io.tmpdir}/javadoc" />
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.4" use="false"
+    		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
+        	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
+        	<fileset dir="src/java" />
+            <link href="http://java.sun.com/j2se/1.4.2/docs/api" />
+        	<link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api" />
+        	<link href="http://www.jdom.org/docs/apidocs" />
+        	<link href="http://logging.apache.org/log4j/docs/api" />
+        	<link href="http://www.servlets.com/cos/javadoc" />
+        	
+           	<doctitle><![CDATA[<h2>DVA2006 API Documentation</h2>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2005 Luke J. Kolin. All Rights Reserved.</i>]]></bottom>
+        </javadoc>
+    	
+   		<!-- Load the FTP server properties -->
+    	<property name="path.javadoc" value="/usr/local/www/deltava.org/www/javadoc" />
+   		<loadproperties srcFile="data/build_doc.properties">
+   			<filterchain>
+	   			<prefixlines prefix="javadoc." />
+   			</filterchain>
+   		</loadproperties>    	
+    	
+    	<!-- Clean out the JavaDoc -->
+		<ftp password="${javadoc.ftp.pwd}" server="${javadoc.ftp.server}" userid="${javadoc.ftp.user}"
+    	 remotedir="${path.javadoc}" action="del">
+    		<fileset>
+    			<include name="**/**.*" />
+    		</fileset>
+    	</ftp>    	
+    	
+    	<!-- Upload the JavaDoc -->
+    	<ftp password="${javadoc.ftp.pwd}" server="${javadoc.ftp.server}" userid="${javadoc.ftp.user}"
+    	 remotedir="${path.javadoc}" action="send" verbose="yes">
+    		<fileset dir="${java.io.tmpdir}/javadoc" />
+    	</ftp>
+    	
+    	<!-- Clean out the temp folder -->
+    	<delete dir="${java.io.tmpdir}/javadoc" />
+    </target>
+	
+	<target name="junit">
+		<!-- Execute the JUnit tests -->
+		<mkdir dir="${java.io.tmpdir}/junit" />
+		<junit fork="on" forkmode="perBatch" dir="${basedir}" printsummary="yes" showoutput="yes">
+		    <classpath>
+				<pathelement path="${classpath}" />
+		    	<pathelement location="./bin" />
+		    	<fileset dir="lib">
+					<include name="**/*.jar"/>
+				</fileset>
+		    </classpath>
+			
+			<formatter type="xml" />
+
+			<batchtest todir="${java.io.tmpdir}/junit">
+				<fileset dir="src/test">
+					<include name="**/Test*.java" />
+				</fileset>
+			</batchtest>
+		</junit>
+		
+		<!-- Generate the JUnit report -->
+		<mkdir dir="${java.io.tmpdir}/junit_report" />		
+		<junitreport todir="${java.io.tmpdir}/junit">
+			<fileset dir="${java.io.tmpdir}/junit">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${java.io.tmpdir}/junit_report" />
+		</junitreport>
+		
+		<!-- Load the FTP server properties -->
+		<property name="path.junit" value="/usr/local/www/deltava.org/www/junit" />
+		<property file="data/build_doc.properties" prefix="junit" />
+		
+    	<!-- Upload the JUnit report -->
+    	<ftp password="${junit.ftp.pwd}" server="${junit.ftp.server}" userid="${junit.ftp.user}"
+    	 remotedir="${path.junit}" action="send" verbose="yes">
+    		<fileset dir="${java.io.tmpdir}/junit_report" />
+    	</ftp>
+
+		<!-- Clean out the temporary paths -->
+		<delete dir="${java.io.tmpdir}/junit" />
+		<delete dir="${java.io.tmpdir}/junit_report" />
+	</target>
+
+	<!-- Compile the Java classes -->
+	<target name="compile">
+		<mkdir dir="${java.io.tmpdir}/build/classes" />
+		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
+		 debug="true" debuglevel="lines,vars,source" source="1.4" target="1.4"
+		 compiler="modern">
+	    	<classpath>
+				<pathelement path="${classpath}" />
+		    	<fileset dir="lib">
+					<include name="**/*.jar"/>
+				</fileset>
+	    	</classpath>
+		</javac>
+		
+		<!-- Compress the Java classes into a single JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true"
+		 destfile="${java.io.tmpdir}/build/dva2006.jar" />
+	</target>
+	
+	<!-- Build the ACARS Server -->
+	<target name="acars" depends="compile">
+		<mkdir dir="${java.io.tmpdir}/build/acars" />	
+		<javac srcdir="../DVA ACARS/src/java" optimize="on" destdir="${java.io.tmpdir}/build/acars"
+		 debug="true" debuglevel="lines,vars,source" source="1.4" target="1.4"
+		 compiler="modern">
+	    	<classpath>
+				<pathelement path="${classpath}" />
+		    	<fileset dir="../DVA ACARS/lib">
+					<include name="**/*.jar"/>
+				</fileset>
+	    		<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
+	    	</classpath>
+		</javac>
+
+		<!-- Compress the Java classes into a single JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/acars" compress="true" index="true"
+		 destfile="${java.io.tmpdir}/build/dva_acars.jar" />
+	</target>
+	
+	<!-- Precompile the JSP pages -->
+	<target name="jspc" depends="compile">
+		<property name="jspc.webXMLInc" value="${java.io.tmpdir}/src/jsp/include.xml" />
+		<taskdef classname="org.apache.jasper.JspC" name="jasper2"> 
+			<classpath id="jspc.classpath"> 
+				<pathelement path="${classpath}" />
+				<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
+				<fileset dir="./lib" includes="**/*.jar" /> 
+			</classpath> 
+		</taskdef>
+		
+		<!-- Precompile the files -->
+		<mkdir dir="${java.io.tmpdir}/src/jsp" />
+	    <jasper2 package="org.deltava" uriroot="." verbose="0" poolingEnabled="false" xpoweredBy="true" 
+			validateXml="false" webXmlFragment="${jspc.webXMLInc}"
+	    	outputDir="${java.io.tmpdir}/src/jsp" />
+
+		<!-- Compile the files -->
+		<mkdir dir="${java.io.tmpdir}/build/jsp" />
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
+			debuglevel="lines,source" optimize="on">
+			<classpath refid="jspc.classpath" />
+		</javac>
+		
+		<!-- Compress the Java classes into a single JAR file -->
+		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true"
+		 destfile="${java.io.tmpdir}/build/dva2006_jsp.jar" />
+		 		 
+		<!-- Merge the precompile definitions into web.xml -->
+		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
+		<copy file="WEB-INF/web_core.xml" tofile="WEB-INF/web.xml" />
+		<replace file="WEB-INF/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
+	</target>
+	
+	<target name="deploy" depends="compile,acars,jspc">
+		<!-- Load the FTP server properties -->
+		<property name="path.webapp" value="/dva2006" />
+		<property name="path.http" value="/dva2006" />
+		<loadproperties srcFile="data/build_deploy.properties" />
+		
+		<!-- Upload the root data to the FTP server -->
+		<echo message="Uploading WEB-INF configuration data" />
+		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
+		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
+	    	<fileset dir="WEB-INF">
+				<include name="web.xml" />
+	    		<include name="*.tld" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload the libraries to the FTP server -->
+		<echo message="Uploading Library Jars" />
+		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
+		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
+	    	<fileset dir="lib/deploy" />
+			<fileset dir="${java.io.tmpdir}/build">
+				<include name="*.jar" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload configuration files to the FTP server -->
+		<echo message="Uploading Configuration files" />
+		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
+		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
+			<fileset dir="etc">
+				<include name="*.*" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload static content to the HTTP server -->
+		<echo message="Uploading static content to HTTP server" />
+		<ftp server="${http.ftp.server}" userid="${http.ftp.user}" password="${http.ftp.pwd}"
+		 remotedir="${path.http}" action="send" depends="yes" verbose="yes">
+			<fileset dir="static" />
+		</ftp>
+	</target>
+	
+	<target name="clean">
+		<delete dir="${java.io.tmpdir}/build" />
+		<delete dir="${java.io.tmpdir}/src/jsp" />
+		<delete file="WEB-INF/web.xml" />
+	</target>
+	
+	<!-- Mail the daily JARs back to me -->
+	<target name="mail">
+		<mkdir dir ="${java.io.tmpdir}/dva2006/mail" />
+		<jar destfile="${java.io.tmpdir}/dva2006/mail/dva2006_java.jar"
+		compress="on" basedir="src/java" />
+		<jar destfile="${java.io.tmpdir}/dva2006/mail/dva2006_test.jar"
+		compress="on" basedir="src/test" />
+		<zip destfile="${java.io.tmpdir}/dva2006/mail/dva2006_web-inf.zip" compress="on">
+			<zipfileset dir="WEB-INF" prefix="WEB-INF" />
+			<zipfileset dir="jsp" prefix="jsp" />
+			<zipfileset dir="etc" prefix="etc" />
+			<zipfileset dir="sql" prefix="sql" />			
+		</zip>
+		
+		<mail mailhost="mail.sce.net" subject="DVA2006" message="DVA2006 Export">
+			 <from address="Lynne Kolin &lt;lynne@sce.net&gt;" />
+	 		<to address="Luke Kolin &lt;luke.kolin@cox.com&gt;" />
+			<fileset dir="${java.io.tmpdir}/dva2006/mail" />
+		</mail>
+
+		<delete dir="${java.io.tmpdir}/dva2006/mail" />
+	</target>
+	
+	<!-- Production Deployment via FTP -->
+	<target name="prod_ftp_deploy" depends="compile,acars,jspc">
+		<property name="path.webapp" value="/usr/local/www/deltava.org/webapps/dva2006" />
+		<property name="path.http" value="/usr/local/www/deltava.org/www" />
+		<loadproperties srcFile="data/build_deploy.properties" />
+
+		<!-- Upload the root data to the FTP server -->
+		<echo message="Uploading WEB-INF configuration data" />
+		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
+		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
+	    	<fileset dir="WEB-INF">
+				<include name="web.xml" />
+	    		<include name="*.tld" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload the libraries to the FTP server -->
+		<echo message="Uploading Library Jars" />
+		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
+		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
+	    	<fileset dir="lib/deploy" />
+			<fileset dir="${java.io.tmpdir}/build">
+				<include name="*.jar" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload configuration files to the FTP server -->
+		<echo message="Uploading Configuration files" />
+		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
+		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
+			<fileset dir="etc">
+				<include name="commands.xml" />
+				<include name="services.xml" />
+				<include name="tasks.xml" />
+				<include name="tt_airports.txt" />
+				<include name="prod/**" />
+			</fileset>
+		</ftp>
+		
+		<!-- Upload static content to the HTTP server -->
+		<echo message="Uploading static content to HTTP server" />
+		<ftp server="${http.ssh.server}" userid="${http.ssh.user}" password="${http.ssh.pwd}"
+		 remotedir="${path.http}" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
+			<fileset dir="static" />
+		</ftp>
+	</target>
+	
+	<!-- Production Deployment via SSH -->
+	<target name="prod_deploy" depends="compile,acars,jspc">
+		<loadproperties srcFile="data/build_deploy.properties" />
+
+		<!-- Upload the libraries to the app server -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
+			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			<fileset dir="${java.io.tmpdir}/build">
+				<include name="dva2006.jar" />
+				<include name="dva2006_jsp.jar" />
+				<include name="dva_acars.jar" />
+			</fileset>
+		</scp>
+		
+		<!-- Upload the config file to the app server -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/classes/etc"
+			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			<fileset dir="etc">
+				<include name="commands.xml" />
+				<include name="services.xml" />
+				<include name="tasks.xml" />
+				<include name="prod/**" />
+			</fileset>
+		</scp>
+	</target>
+</project>
