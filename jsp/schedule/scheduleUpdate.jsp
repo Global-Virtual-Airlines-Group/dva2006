@@ -37,7 +37,7 @@ The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been upda
 The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been removed from the
 <content:airline /> Flight Schedule.<br />
 </c:when>
-</c:when test="${isAirline}">
+<c:when test="${isAirline}">
 <div class="updateHdr">Airline Updated</div>
 <br />
 The airline ${airline.name} has been updated in the <content:airline /> Flight Schedule.<br />
