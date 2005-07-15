@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
+"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
+
+<taglib>
+	<tlibversion>1.0</tlibversion>
+	<jspversion>1.1</jspversion>
+	<shortname>map</shortname>
+	<uri>http://dva2006.deltava.org/dva2006/dvagooglemaps</uri>
+	<info>A JSP Tag Library used to support Google Maps operations</info>
+	
+	<!-- InsertGoogleAPI tag, to link to the Google Maps API -->
+	<tag>
+		<name>api</name>
+		<tagclass>org.deltava.taglib.googlemap.InsertGoogleAPITag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>version</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+	</tag>
+
+	<!-- Marker Tag, to generate a GMarker -->
+	<tag>
+		<name>marker</name>
+		<tagclass>org.deltava.taglib.googlemap.MarkerTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>point</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>org.deltava.beans.GeoLocation</type>
+		</attribute>		
+		<attribute>
+			<name>color</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>label</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- MarkerArray Tag, to generate a JavaScript array of GMarkers -->
+	<tag>
+		<name>markers</name>
+		<tagclass>org.deltava.taglib.googlemap.MarkerArrayTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>items</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<name>color</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<!-- LineTag, to generate a GPolyline -->
+	<tag>
+		<name>line</name>
+		<tagclass>org.deltava.taglib.googlemap.LineTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>src</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>color</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>width</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Double</type>
+		</attribute>
+</taglib>

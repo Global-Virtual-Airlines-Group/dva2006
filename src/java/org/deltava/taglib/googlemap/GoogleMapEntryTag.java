@@ -1,0 +1,108 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.taglib.googlemap;
+
+import java.text.DecimalFormat;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.beans.GeoLocation;
+
+import org.deltava.taglib.ContentHelper;
+
+import org.deltava.util.system.SystemData;
+
+/**
+ * An abstract class to support Google Maps JSP tags.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public abstract class GoogleMapEntryTag extends TagSupport {
+   
+   private static final DecimalFormat _nf = new DecimalFormat("##0.00000");
+   
+   /**
+    * Internal name used to check for Google Maps API inclusion.
+    */
+   static final String API_JS_NAME = "$googleAPI$";
+   
+   /**
+    * The name of the Javascript variable to create.
+    */
+   protected String _jsVarName;
+   
+   /**
+    * Sets the JavaScript variable to create.
+    * @param varName the variable name
+    */
+   public void setVar(String varName) {
+      _jsVarName = varName;
+   }
+
+   /**
+    * Executed before the Tag is rendered. This will check for the presence of required JavaScript
+    * files in the request. Tags that do not require this check can override this method.
+    * @return TagSupport.SKIP_BODY always
+    * @throws IllegalStateException if the Google Maps API or googleMaps.js not included in request
+    */
+   public int doStartTag() throws JspException {
+      super.doStartTag();
+      
+      // Check for Google Maps API
+      if (!ContentHelper.containsContent(pageContext, "JS", API_JS_NAME))
+         throw new IllegalStateException("Google Maps API not included in request");
+      
+      // Check for Google Maps support JavaScript
+      if (!ContentHelper.containsContent(pageContext, "JS", "googleMaps"))
+         throw new IllegalStateException("googleMaps.js not included in request");
+      
+      return SKIP_BODY;
+   }
+   
+   /**
+    * Resets the tag's state variables. 
+    */
+   public void release() {
+      _jsVarName = null;
+      super.release();
+   }
+   
+   /**
+    * Generates a call to googleMarker() to generate a Google Maps marker.
+    * @param loc the location
+    * @param color the icon color
+    * @param label the label HTML text, or null if none
+    * @return a JavaScript function call definition 
+    */
+   protected String generateMarker(GeoLocation loc, String color, String label) {
+      
+      // Build the buffer
+      StringBuffer buf = new StringBuffer("googleMarker(\'");
+      buf.append(SystemData.get("img.path"));
+      buf.append("\',\'");
+      buf.append(color);
+      buf.append("\',\'new GPoint(");
+
+      // Format latitude/longitude
+      synchronized (_nf) {
+         buf.append(_nf.format(loc.getLongitude()));
+         buf.append(',');
+         buf.append(_nf.format(loc.getLatitude()));
+      }
+      
+      buf.append("),");
+      
+      // Assign a label if one provided
+      if (label != null) {
+         buf.append('\'');
+         buf.append(label);
+         buf.append('\'');
+      } else {
+         buf.append("null");
+      }
+      
+      return buf.toString();
+   }
+}
