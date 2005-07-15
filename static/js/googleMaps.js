@@ -8,7 +8,9 @@ icon.shadowSize = new GSize(22, 20);
 icon.iconAnchor = new GPoint(6, 20);
 icon.infoWindowAnchor = new GPoint(5, 1);
 var marker = new GMarker(point, icon);
-GEvent.addListener(marker, 'click', function() { marker.openInfoWindowHtml(label); });
+if (label != null)
+	GEvent.addListener(marker, 'click', function() { marker.openInfoWindowHtml(label); });
+	
 return marker;
 }
 
