@@ -53,6 +53,12 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>force</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
 	</tag>
 
 	<!-- Insert JS tag, for inserting JavaScript file links -->
@@ -64,6 +70,12 @@
 			<name>name</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>force</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 	
