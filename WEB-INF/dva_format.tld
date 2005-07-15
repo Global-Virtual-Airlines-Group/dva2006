@@ -227,7 +227,7 @@
 			<name>pos</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>org.deltava.beans.schedule.GeoPosition</type>
+			<type>org.deltava.beans.GeoLocation</type>
 		</attribute>
 	</tag>
 </taglib>
