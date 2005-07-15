@@ -5,7 +5,10 @@ import javax.servlet.jsp.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
+
 import org.deltava.taglib.ContentHelper;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP Tag to generate a Google Maps Marker.
@@ -16,6 +19,8 @@ import org.deltava.taglib.ContentHelper;
 
 public class MarkerTag extends GoogleMapEntryTag {
 
+   private String _jsPointVarName;
+   
    private String _label;
    private String _color;
    private GeoLocation _entry;
@@ -47,9 +52,19 @@ public class MarkerTag extends GoogleMapEntryTag {
    }
    
    /**
+    * Sets the JavaScript point variable name. If this is specified a seperate GPoint variable
+    * will be set.
+    * @param varName the variable name
+    */
+   public void setPointVar(String varName) {
+      _jsPointVarName = varName;
+   }
+   
+   /**
     * Resets the tag's state variables.
     */
    public void release() {
+      _jsPointVarName = null;
       _label = null;
       _color = null;
       super.release();
@@ -81,11 +96,27 @@ public class MarkerTag extends GoogleMapEntryTag {
          // Call the googleMarker function
          out.print(generateMarker(_entry, _color, _label));
          out.print(';');
+         
+         // Write the point variable
+         if (_jsPointVarName != null) {
+            out.print("\nvar ");
+            out.print(_jsVarName);
+            out.print(" = new GPoint(");
+            out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));
+            out.print(',');
+            out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
+            out.print(");");
+         }
+         
       } catch (Exception e) {
          throw new JspException(e);
       }
       
-      // Mark the JavaScript variable as included
+      // Mark the JavaScript point variable as included
+      if (_jsPointVarName != null)
+         ContentHelper.addContent(pageContext, API_JS_NAME, _jsPointVarName);
+      
+      // Mark the JavaScript marker variable as included
       if (_jsVarName != null)
          ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
       

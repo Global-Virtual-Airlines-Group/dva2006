@@ -33,9 +33,14 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>pointVar</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>point</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 			<type>org.deltava.beans.GeoLocation</type>
 		</attribute>		
 		<attribute>
@@ -105,7 +110,7 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
-			<name>width</name>
+			<name>transparency</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Double</type>
