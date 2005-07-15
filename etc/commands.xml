@@ -74,6 +74,12 @@
 		<roles>*</roles>
 	</command>
 	
+	<command id="loa">
+		<name>Leave of Absence</name>
+		<class>org.deltava.commands.pilot.LeaveCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
 	<command id="activate">
 		<name>Activate Pilot</name>
 		<class>org.deltava.commands.security.PilotActivationCommand</class>
