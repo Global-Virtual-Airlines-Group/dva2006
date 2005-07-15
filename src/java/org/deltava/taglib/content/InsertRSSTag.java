@@ -3,10 +3,11 @@ package org.deltava.taglib.content;
 
 import java.net.URL;
 import java.net.MalformedURLException;
-import java.io.IOException;
 
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
+
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP Tag to insert a link to an RSS data feed.
@@ -35,8 +36,8 @@ public class InsertRSSTag extends InsertContentTag {
    public int doEndTag() throws JspException {
       
     	// Check if the content has already been added
-    	if (containsContent("RSS", _url.toString()))
-			return EVAL_PAGE;
+      if (ContentHelper.containsContent(pageContext, "RSS", _resourceName) && (!_forceInclude)) 
+         return EVAL_PAGE;
     	
     	JspWriter out = pageContext.getOut();
     	try {
@@ -45,12 +46,12 @@ public class InsertRSSTag extends InsertContentTag {
          out.print("\" href=\"");
          out.print(_url.toString());
          out.print("\" />");
-    	} catch (IOException ie) {
-    	  throw wrap(ie);
+    	} catch (Exception e) {
+    	  throw new JspException(e);
     	}
     	
     	// Mark the content as added and return
-    	addContent("RSS", _url.toString());
+    	ContentHelper.addContent(pageContext, "RSS", _url.toString());
       return EVAL_PAGE;
    }
 }
