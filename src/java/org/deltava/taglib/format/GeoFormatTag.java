@@ -4,7 +4,7 @@ package org.deltava.taglib.format;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.GeoLocation;
 
 import org.deltava.util.StringUtils;
 
@@ -17,7 +17,7 @@ import org.deltava.util.StringUtils;
 
 public class GeoFormatTag extends TagSupport {
 
-	private GeoPosition _gp;
+	private GeoLocation _gp;
 	private String _className;
 	
     /**
@@ -33,7 +33,7 @@ public class GeoFormatTag extends TagSupport {
 	 * Sets the latitude/longitude to display.
 	 * @param gp the GeoPosition to display
 	 */
-	public void setPos(GeoPosition gp) {
+	public void setPos(GeoLocation gp) {
 		_gp = gp;
 	}
 	
@@ -61,7 +61,7 @@ public class GeoFormatTag extends TagSupport {
             }
             
             // Format the latitude/longitude
-            out.print(StringUtils.format(_gp, true));
+            out.print(StringUtils.format(_gp, true, GeoLocation.ALL));
 			
             if (_className != null)
                 out.print("</span>");
