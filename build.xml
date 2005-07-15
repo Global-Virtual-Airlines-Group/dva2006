@@ -130,9 +130,8 @@
 		 compiler="modern">
 	    	<classpath>
 				<pathelement path="${classpath}" />
-		    	<fileset dir="../DVA ACARS/lib">
-					<include name="**/*.jar"/>
-				</fileset>
+	    		<pathelement location="lib/deploy/jdom-1.0.jar" />
+	    		<pathelement location="lib/deploy/log4j-1.2.9.jar" />
 	    		<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
 	    	</classpath>
 		</javac>
