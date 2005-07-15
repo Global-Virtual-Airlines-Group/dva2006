@@ -2,9 +2,14 @@
 package org.deltava.beans.acars;
 
 import java.util.Date;
+import java.io.Serializable;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.MapEntry;
+
 import org.deltava.beans.schedule.GeoPosition;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
@@ -13,7 +18,7 @@ import org.deltava.beans.schedule.GeoPosition;
  * @since 1.0
  */
 
-public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable {
+public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEntry {
 
    private Date _date;
    private GeoPosition _gpos;
@@ -27,6 +32,9 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
    private double _n2;
    private int _flaps;
    private int _flags;
+   
+   private static final int[] AP_FLAGS = {ACARSFlags.FLAG_AP_APR, ACARSFlags.FLAG_AP_HDG, ACARSFlags.FLAG_AP_NAV};
+   private static final String[] AP_FLAG_NAMES = {"APR", "HDG", "NAV"};
 
    /**
     * Creates a new ACARS Route Entry bean.
@@ -77,7 +85,7 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
    public int getFlaps() {
       return _flaps;
    }
-   
+
    /**
     * Returns the ACARS flags for this entry.
     * @return the flags
@@ -150,7 +158,7 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
    public double getN2() {
       return _n2;
    }
-   
+
    /**
     * Returns if an ACARS flag was set.
     * @param attrMask the flag attribute mask
@@ -260,11 +268,11 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
 
       _flaps = flapDetent;
    }
-   
+
    /**
     * Sets or clears an ACARS flag.
     * @param attrMask the attribute mask
-    * @param isSet TRUE if the flag is set, FALSE if it is cleared 
+    * @param isSet TRUE if the flag is set, FALSE if it is cleared
     * @see RouteEntry#setFlags(int)
     * @see RouteEntry#getFlags()
     * @see RouteEntry#isFlagSet(int)
@@ -272,7 +280,7 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
    public void setFlag(int attrMask, boolean isSet) {
       _flags = (isSet) ? (_flags | attrMask) : (_flags & (~attrMask));
    }
-   
+
    /**
     * Sets all ACARS flags for this entry.
     * @param flags the flags
@@ -291,5 +299,73 @@ public class RouteEntry implements Comparable, GeoLocation, java.io.Serializable
    public int compareTo(Object o2) {
       RouteEntry re2 = (RouteEntry) o2;
       return _date.compareTo(re2.getDate());
+   }
+
+   /**
+    * Return the default Google Maps icon color.
+    * @return MapEntry#White
+    */
+   public String getIconColor() {
+      return YELLOW;
+   }
+
+   /**
+    * Returns the default Google Maps infobox text.
+    * @return an HTML String
+    */
+   public String getInfoBox() {
+      StringBuffer buf = new StringBuffer("Position: <b>");
+      buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
+      buf.append("</b><br /> Altitude: ");
+      buf.append(StringUtils.format(_alt, "#,000"));
+      buf.append(" feet<br />Speed: ");
+      buf.append(StringUtils.format(_aSpeed, "##0"));
+      buf.append(" kts (GS: ");
+      buf.append(StringUtils.format(_gSpeed, "#,##0"));
+      buf.append(" kts)<br />Heading: ");
+      buf.append(StringUtils.format(_hdg, "000"));
+      buf.append(" degrees<br />Veritical Speed: ");
+      buf.append(StringUtils.format(_vSpeed, "###0"));
+      buf.append(" feet/min<br />N<sub>1</sub>: ");
+      buf.append(StringUtils.format(_n1, "##0.0"));
+      buf.append("%, N<sub>2</sub>: ");
+      buf.append(StringUtils.format(_n2, "##0.0"));
+      buf.append("%<br />");
+      
+      // Add flaps logging if deployed
+      if (_flaps > 0) {
+         buf.append("Flaps: ");
+         buf.append(String.valueOf(_flaps));
+         buf.append("<br />");
+      }
+      
+      // Add Autopilot flags if set
+      if (isFlagSet(ACARSFlags.FLAG_AUTOPILOT)) {
+         buf.append("Autopilot: ");
+         for (int x = 0; x < AP_FLAGS.length; x++) {
+            if (isFlagSet(AP_FLAGS[x])) {
+               buf.append(AP_FLAG_NAMES[x]);
+               buf.append(' ');
+            }
+         }
+         
+         buf.append("<br />");
+      }
+      
+      // Add Autothrottle flags if set
+      if (isFlagSet(ACARSFlags.FLAG_AUTOTHROTTLE)) {
+         buf.append("Autothrottle: ");
+         if (isFlagSet(ACARSFlags.FLAG_AT_IAS)) {
+            buf.append("IAS");
+         } else if (isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
+            buf.append("MACH");
+         } else {
+            buf.append("-");
+         }
+         
+         buf.append("<br />");
+      }
+      
+      return buf.toString();
    }
 }
