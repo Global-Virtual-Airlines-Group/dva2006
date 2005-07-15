@@ -2,6 +2,8 @@ package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
+import org.deltava.taglib.ContentHelper;
+
 /**
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
@@ -110,7 +112,7 @@ public class CommandButtonTag extends ButtonTag {
     public int doEndTag() throws JspException {
         
     	// Ensure that the common JS file has been included
-    	if (!containsContent("JS", "common"))
+    	if (!ContentHelper.containsContent(pageContext, "JS", "common"))
     		throw new IllegalStateException("common.js not included in request");
     	
     	// Render the entire command string
