@@ -1,0 +1,4 @@
+120180:NOTCP
+url0=http://dva2006.deltava.org/servinfo.ws
+;
+; END
