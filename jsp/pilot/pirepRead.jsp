@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
@@ -13,10 +14,8 @@
 <content:css name="form" />
 <content:js name="common" />
 <c:if test="${googleMap}">
-<content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="googleAPIKey" name="security.key.googleMaps" />
 <content:js name="googleMaps" />
-<content:js name="http://maps.google.com/maps?file=api&v=1&key=${googleAPIKey}" />
+<map:api version="1" />
 <c:if test="${!empty browser$ie}">
 <style type="text/css">
 v\:* {
@@ -160,15 +159,12 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 var mapC = new GPoint(${mapCenter.longitude}, ${mapCenter.latitude});
-var routePoints = new Array();
-<c:forEach var="waypoint" items="${mapRoute}">
-routePoints.push(new GPoint(${waypoint.longitude}, ${waypoint.latitude}));
-</c:forEach>
-var gRoute = new GPolyline(routePoints, '#A0C0FF', 2, 0.70);
+<map:markers var="routePoints" items="${mapRoute}" />
+<map:line var="gRoute" src="routePoints" color="#90C0FF" width="2" transparency="0.7" />
 
 // Airport markers
-var gmA = googleMarker('${imgPath}', 'yellow', routePoints[routePoints.length-1], airportLabel('${pirep.airportA.name}', '${pirep.airportA.ICAO}', '${pirep.airportA.IATA}'));
-var gmD = googleMarker('${imgPath}', 'blue', routePoints[0], airportLabel('${pirep.airportD.name}', '${pirep.airportD.ICAO}', '${pirep.airportD.IATA}'));
+<map:marker var="gmA" point="${pirep.airportA}" />
+<map:marker var="gmD" point="${pirep.airportD}" />
 
 // Build the map
 var map = new GMap(getElement("googleMap"));
