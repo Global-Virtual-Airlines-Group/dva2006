@@ -1,6 +1,8 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.navdata;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A class to store airport location data.
  * @author Luke
@@ -39,5 +41,26 @@ public class AirportLocation extends NavigationDataBean {
          throw new IllegalArgumentException("Altitude cannot be < -1500 or > 29000");
       
       _altitude = alt;
+   }
+   
+   /**
+    * Return the default Google Maps icon color.
+    * @return org.deltava.beans.MapEntry.GREEN
+    */
+   public String getIconColor() {
+      return GREEN;
+   }
+   
+   /**
+    * Returns the default Google Maps infobox text.
+    * @return an HTML String
+    */
+   public String getInfoBox() {
+      StringBuffer buf = new StringBuffer(getHTMLTitle());
+      buf.append(getHTMLPosition());
+      buf.append("Altitude: ");
+      buf.append(StringUtils.format(_altitude, "#,##0"));
+      buf.append(" feet MSL<br />");
+      return buf.toString();
    }
 }
