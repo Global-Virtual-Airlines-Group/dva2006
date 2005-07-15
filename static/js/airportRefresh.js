@@ -14,9 +14,18 @@ return true;
 
 function changeAirline(combo)
 {
+var f = document.forms[0];
+
+// Get new airline code, and existing airport codes
 var aCode = combo.options[combo.selectedIndex].value;
-setOptions(document.forms[0].airportD, aCode);
-setOptions(document.forms[0].airportA, aCode);
+var oldAA = f.airportA.options[f.airportA.selectedIndex].value;
+var oldAD = f.airportD.options[f.airportD.selectedIndex].value;
+
+// Update the option lists
+setOptions(f.airportD, aCode);
+setAirport(f.airportD, oldAD);
+setOptions(f.airportA, aCode);
+setAirport(f.airportA, oldAA);
 return true;
 }
 
