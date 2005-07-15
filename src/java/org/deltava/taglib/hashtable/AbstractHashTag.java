@@ -8,8 +8,6 @@ import java.io.IOException;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.content.InsertContentTag;
-
 /**
  * A class to support JSP tags that generate JavaScript hashtables of arrays.
  * @author Luke
@@ -52,22 +50,6 @@ public abstract class AbstractHashTag extends TagSupport {
 		_valueMethod = null;
 		_validKeys = null;
 	}
-	
-    /**
-     * Determines if a particular content file has been inserted during this request invocation.
-     * @param contentType the type of content (css/js)
-     * @param contentName the name of the content
-     * @return TRUE if the content has been added, otherwise FALSE
-     */
-    protected boolean containsContent(String contentType, String contentName) {
-
-    	// Find the content name map
-    	Set content = (Set) pageContext.findAttribute(InsertContentTag.CONTENT_MAP_ATTR);
-    	if (content == null)
-    		return false;
-    	
-    	return content.contains(contentType + "$" + contentName);
-    }
 	
 	/**
 	 * Sets the name of the JavaScript hashtable variable.

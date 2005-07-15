@@ -6,6 +6,7 @@ import java.util.Set;
 import javax.servlet.jsp.*;
 
 import org.deltava.beans.ComboAlias;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to store bean OPTION data in a JavaScript hashtable of arrays.
@@ -19,7 +20,7 @@ import org.deltava.beans.ComboAlias;
  	public int doStartTag() throws JspException {
  		
 		// Check if we've included the airportRefresh JavaScript file
-		if (!containsContent("JS", "comboRefresh"))
+		if (!ContentHelper.containsContent(pageContext, "JS", "comboRefresh"))
 			throw new IllegalStateException("comboRefresh.js must have been included");
 		
 		// Split the items into the arrays

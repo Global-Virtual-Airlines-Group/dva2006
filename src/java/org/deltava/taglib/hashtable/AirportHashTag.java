@@ -10,6 +10,8 @@ import org.deltava.beans.Person;
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.Airport;
 
+import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -96,7 +98,7 @@ public class AirportHashTag extends AbstractHashTag {
 	public int doStartTag() throws JspException {
 		
 		// Check if we've included the airportRefresh JavaScript file
-		if (!containsContent("JS", "airportRefresh"))
+		if (!ContentHelper.containsContent(pageContext, "JS", "airportRefresh"))
 			throw new IllegalStateException("airportRefresh.js must have been included");
 		
 		// Set the key property and split the hashtable

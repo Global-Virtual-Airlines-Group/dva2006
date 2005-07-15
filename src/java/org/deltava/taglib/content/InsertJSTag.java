@@ -1,9 +1,9 @@
 package org.deltava.taglib.content;
 
-import java.io.IOException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 
+import org.deltava.taglib.ContentHelper;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -23,25 +23,25 @@ public class InsertJSTag extends InsertContentTag {
 	public int doEndTag() throws JspException {
 
 		// Check if the content has already been added
-		if (containsContent("JS", _resourceName))
-			return EVAL_PAGE;
-
-		// Mark the content as added
-		addContent("JS", _resourceName);
-
-		// Calculate the resource name, if it's on the local machine
-		if (!_resourceName.startsWith("http://"))
-			_resourceName = SystemData.get("path.js") + "/" + _resourceName + ".js";
+      if (ContentHelper.containsContent(pageContext, "JS", _resourceName) && (!_forceInclude)) 
+         return EVAL_PAGE;
 
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print("<script language=\"JavaScript\" type=\"text/javascript\" src=\"");
-			out.print(_resourceName);
+			if (!_resourceName.startsWith("http://")) {
+			   out.print(SystemData.get("path.js") + "/" + _resourceName + ".js");
+			} else {
+			   out.print(_resourceName);
+			}
+			
 			out.print("\"></script>");
-		} catch (IOException ie) {
-			throw wrap(ie);
+		} catch (Exception e) {
+			throw new JspException(e);
 		}
 
+		// Mark the content as added and return
+		ContentHelper.addContent(pageContext, "JS", _resourceName);
 		return EVAL_PAGE;
 	}
 }
