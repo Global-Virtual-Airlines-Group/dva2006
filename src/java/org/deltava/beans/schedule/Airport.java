@@ -5,7 +5,9 @@ import java.util.*;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.MapEntry;
 import org.deltava.beans.TZInfo;
+import org.deltava.util.StringUtils;
 
 /**
  * A class for storing airport information.
@@ -14,7 +16,7 @@ import org.deltava.beans.TZInfo;
  * @since 1.0
  */
 
-public class Airport implements Serializable, Comparable, ComboAlias, GeoLocation {
+public class Airport implements Serializable, Comparable, ComboAlias, GeoLocation, MapEntry {
 
 	public static final int IATA = 0;
 	public static final int ICAO = 1;
@@ -228,6 +230,32 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	public boolean hasAirlineCode(String code) {
 		return _aCodes.contains(code);
 	}
+	
+   /**
+    * Return the default Google Maps icon color.
+    * @return org.deltava.beans.MapEntry.GREEN
+    */
+   public String getIconColor() {
+      return GREEN;
+   }
+   
+   /**
+    * Returns the default Google Maps infobox text.
+    * @return an HTML String
+    */
+   public String getInfoBox() {
+      StringBuffer buf = new StringBuffer("<b>");
+      buf.append(_name);
+      buf.append("</b><br /><br />IATA Code: ");
+      buf.append(_iata);
+      buf.append("<br />ICAO Code: ");
+      buf.append(_icao);
+      buf.append("<br /><br />Latitude: ");
+      buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
+      buf.append("<br />Longitude: ");
+      buf.append(StringUtils.format(_position, true, GeoLocation.LONGITUDE));
+      return buf.toString();
+   }
 
 	/**
 	 * Compares airports by ensuring that both the IATA and ICAO code are the same. This leaves the possibility open of
@@ -249,6 +277,9 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 		return (_iata + _icao).hashCode();
 	}
 
+	/**
+	 * Displays the airport name and IATA code.
+	 */
 	public String toString() {
 		StringBuffer buf = new StringBuffer(_name);
 		buf.append(" (");
