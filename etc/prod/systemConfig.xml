@@ -213,6 +213,11 @@
 			<network>FPI</network>
 		</list>
 		
+		<list name="highlightCodes" attr="code">
+			<code>DAL</code>
+			<code>DVA</code>
+		</list>
+		
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
 			<banner>vatsim.gif</banner>
