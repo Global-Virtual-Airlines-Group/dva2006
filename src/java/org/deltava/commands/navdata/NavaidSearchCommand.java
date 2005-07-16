@@ -4,8 +4,6 @@ package org.deltava.commands.navdata;
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.navdata.*;
 import org.deltava.commands.*;
 
@@ -21,8 +19,6 @@ import org.deltava.dao.DAOException;
 
 public class NavaidSearchCommand extends AbstractCommand {
    
-   private static final Logger log = Logger.getLogger(NavaidSearchCommand.class);
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -40,6 +36,7 @@ public class NavaidSearchCommand extends AbstractCommand {
          GetNavData dao = new GetNavData(con);
          NavigationDataBean nv = dao.get(code);
          ctx.setAttribute("navaid", nv, REQUEST);
+         dao.setQueryMax(0);
 
          // Don't do search if the navaid was not found
          if (nv != null) {
@@ -47,11 +44,9 @@ public class NavaidSearchCommand extends AbstractCommand {
          	
          	// Get major items within 70 miles
          	navaids.putAll(dao.getObjects(nv, 140));
-         	log.info("Found " + navaids.size() + " VOR/NDB/Airports");
          	
          	// Get minor items
          	Map intMap = dao.getIntersections(nv, 60);
-         	log.info("Found " + intMap.size() + " Intersections");
          	navaids.putAll(intMap);
          	
          	// Remove the primary result

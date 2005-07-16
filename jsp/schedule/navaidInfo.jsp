@@ -33,7 +33,7 @@ disableButton('SearchButton');
 return true;
 }
 
-function toogleNavaids()
+function toggleNavaids()
 {
 if (!showAll) {
 	for (x = 0; x < navaids.length; x++)
@@ -60,10 +60,18 @@ return true;
 <tr class="title caps">
  <td colspan="2">NAVIGATION AID</td>
 </tr>
+<c:if test="${!fn:isIntersection(navaid)}">
 <tr>
  <td class="label">Name / Code</td>
  <td class="data pri bld">${navaid.name} (${navaid.code})</td>
 </tr>
+</c:if>
+<c:if test="${fn:isIntersection(navaid)}">
+<tr>
+ <td class="label">Code</td>
+ <td class="data pri bld">${navaid.code}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Type</td>
  <td class="data sec bld">${navaid.typeName}</td>
@@ -107,7 +115,7 @@ ${navaid.frequency}</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Navigation Aid Code</td>
- <td class="data"><el:text name="navaidCode" idx="*" size="4" max="5" value="${param.navaidCode}" /></td>
+ <td class="data"><el:text name="navaidCode" idx="*" size="5" max="5" value="${param.navaidCode}" /></td>
 </tr>
 </el:table>
 
@@ -123,7 +131,7 @@ ${navaid.frequency}</span></c:if></td>
 </div>
 <script language="JavaScript" type="text/javascript">
 // Build the navaid and surrounding navaids
-<map:marker var="gmP" pointVar="navP" point="${navaid}" />
+<map:marker var="gmP" pointVar="navP" point="${navaid}" color="red" />
 <map:markers var="navaids" items="${navaids}" />
 
 // Build the map

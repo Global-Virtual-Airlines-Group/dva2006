@@ -144,7 +144,7 @@ public class GetNavData extends DAO {
 	}
 
 	/**
-	 * Returns all Navigation objects (except Intersections) within a set number of miles from a point.
+	 * Returns all Navigation objects (except Intersections/Runways) within a set number of miles from a point.
 	 * @param loc the central location
 	 * @param distance the distance in miles
 	 * @return a Map of NavigationDataBeans, with the code as the key
@@ -161,13 +161,14 @@ public class GetNavData extends DAO {
 		
 		Collection results = null;
 		try {
-			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND ((LATITUDE > ?) AND (LATITUDE < ?)) "
-					+ "AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND (ITEMTYPE <> ?) AND "
+					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
 			_ps.setInt(1, NavigationDataBean.INT);
-			_ps.setDouble(2, loc.getLatitude() - height);
-			_ps.setDouble(3, loc.getLatitude() + height);
-			_ps.setDouble(4, loc.getLongitude() - width);
-			_ps.setDouble(5, loc.getLongitude() + width);
+			_ps.setInt(2, NavigationDataBean.RUNWAY);
+			_ps.setDouble(3, loc.getLatitude() - height);
+			_ps.setDouble(4, loc.getLatitude() + height);
+			_ps.setDouble(5, loc.getLongitude() - width);
+			_ps.setDouble(6, loc.getLongitude() + width);
 			results = execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
