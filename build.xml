@@ -171,8 +171,8 @@
 		 		 
 		<!-- Merge the precompile definitions into web.xml -->
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
-		<copy file="WEB-INF/web_core.xml" tofile="WEB-INF/web.xml" />
-		<replace file="WEB-INF/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
+		<copy file="WEB-INF/web_core.xml" tofile="${java.io.tmpdir}/build/web.xml" />
+		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
 	</target>
 	
 	<target name="deploy" depends="compile,acars,jspc">
@@ -186,9 +186,9 @@
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
 	    	<fileset dir="WEB-INF">
-				<include name="web.xml" />
 	    		<include name="*.tld" />
 			</fileset>
+			<fileset file="${java.io.tmpdir}/build/web.xml" />
 		</ftp>
 		
 		<!-- Upload the libraries to the FTP server -->
