@@ -100,7 +100,7 @@ public class MarkerTag extends GoogleMapEntryTag {
          // Write the point variable
          if (_jsPointVarName != null) {
             out.print("\nvar ");
-            out.print(_jsVarName);
+            out.print(_jsPointVarName);
             out.print(" = new GPoint(");
             out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));
             out.print(',');

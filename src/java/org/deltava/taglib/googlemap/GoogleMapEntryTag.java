@@ -80,10 +80,10 @@ public abstract class GoogleMapEntryTag extends TagSupport {
       
       // Build the buffer
       StringBuffer buf = new StringBuffer("googleMarker(\'");
-      buf.append(SystemData.get("img.path"));
+      buf.append(SystemData.get("path.img"));
       buf.append("\',\'");
       buf.append(color);
-      buf.append("\',\'new GPoint(");
+      buf.append("\',new GPoint(");
 
       // Format latitude/longitude
       synchronized (_nf) {
@@ -103,6 +103,7 @@ public abstract class GoogleMapEntryTag extends TagSupport {
          buf.append("null");
       }
       
+      buf.append(')');
       return buf.toString();
    }
 }
