@@ -141,7 +141,6 @@ public class SecurityCookieFilter implements Filter {
      * Called by the servlet container when the filter is stopped. Logs a message.
      */
     public void destroy() {
-    	UserPool.clear();
         log.info("Stopped");
     }
 }
