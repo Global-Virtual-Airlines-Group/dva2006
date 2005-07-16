@@ -294,6 +294,12 @@
 		<roles>Schedule</roles>
 	</command>
 	
+	<command id="navsearch">
+		<name>Navigation Data Search</name>
+		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
 	<command id="navpurge">
 		<name>Purge AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACPurgeCommand</class>
