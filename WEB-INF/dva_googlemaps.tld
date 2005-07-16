@@ -115,4 +115,5 @@
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Double</type>
 		</attribute>
+	</tag>
 </taglib>
