@@ -168,11 +168,9 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             Element e = (Element) i.next();
             String eType = e.getName();
 
-            /*
-             * The rules for recursive processing are this; if the element is a list or map, then we process
+            /* The rules for recursive processing are this; if the element is a list or map, then we process
              * it and ignore the other children. If it doesn't have children, process it as a regular entry.
-             * Otherwise, we call this method recursively to iterate through its children.
-             */
+             * Otherwise, we call this method recursively to iterate through its children. */
             try {
                 if ("list".equals(eType)) {
                     String eName = rootName + e.getAttributeValue("name", "$unNamedList");
@@ -188,7 +186,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
                     _data.put(eName, getElementWithType(e));
                 } else {
                     String eName = rootName + eType;
-                    log.info("Processing sub-entry " + eName);
+                    log.debug("Processing sub-entry " + eName);
                     process(eName, e);
                 }
             } catch (Exception ex) {
