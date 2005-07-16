@@ -120,7 +120,8 @@
 		<equipment>B767-400</equipment>
 		<equipment>B777-200</equipment>
 		<equipment>B777-300</equipment>
-		<equipment>Caravelle</equipment>		
+		<equipment>BAE-146</equipment>
+		<equipment>Caravelle</equipment>
 		<equipment>Comet</equipment>
 		<equipment>Concorde</equipment>
 		<equipment>Constellation</equipment>
@@ -190,7 +191,6 @@
 	<log>
 		<list name="names" attr="name">
 			<name>APP</name>
-			<name>ACARS</name>
 			<name>TASKS</name>
 		</list>
 		
@@ -209,6 +209,11 @@
 			<network>VATSIM</network>
 			<network>IVAO</network>
 			<network>FPI</network>
+		</list>
+		
+		<list name="highlightCodes" attr="code">
+			<code>DAL</code>
+			<code>DVA</code>
 		</list>
 		
 		<vatsim>
