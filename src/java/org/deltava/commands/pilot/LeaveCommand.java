@@ -27,15 +27,18 @@ public class LeaveCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occrurs.
      */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the pilot ID
+		int id = (ctx.getID() == 0) ? ctx.getUser().getID() : ctx.getID();
 
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the Pilot to process
 			GetPilot rdao = new GetPilot(con);
-			Pilot p = rdao.get(ctx.getID());
+			Pilot p = rdao.get(id);
 			if (p == null)
-				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
+				throw new CommandException("Invalid Pilot ID - " + id);
 			
 			// Check our access
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
@@ -46,6 +49,7 @@ public class LeaveCommand extends AbstractCommand {
 			// Update the Pilot's status
 			SetPilot wdao = new SetPilot(con);
 			wdao.onLeave(p.getID());
+			p.setStatus(Pilot.ON_LEAVE);
 			
 			// Save the pilot in the request
 			ctx.setAttribute("pilot", p, REQUEST);

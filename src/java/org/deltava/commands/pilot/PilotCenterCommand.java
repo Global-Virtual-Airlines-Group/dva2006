@@ -9,6 +9,8 @@ import org.deltava.beans.system.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.PilotAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -36,6 +38,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.getSession().setAttribute(CommandContext.USER_ATTR_NAME, p);
+			
+			// Check our access level
+			PilotAccessControl access = new PilotAccessControl(ctx, p);
+			access.validate();
+			ctx.setAttribute("access", access, REQUEST);
 
 			// Load all PIREPs
 			GetFlightReports frdao = new GetFlightReports(con);
