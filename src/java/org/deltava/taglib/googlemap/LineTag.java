@@ -1,14 +1,14 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
-import java.text.DecimalFormat;
-
 import javax.servlet.jsp.*;
 
 import org.deltava.taglib.ContentHelper;
 
+import org.deltava.util.StringUtils;
+
 /**
- * A JSP Tag to generate a Google Maps Polyline.
+ * A JSP Tag to generate a Google Maps GPolyline created out of GMarkers.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -16,8 +16,6 @@ import org.deltava.taglib.ContentHelper;
 
 public class LineTag extends GoogleMapEntryTag {
    
-   private static final DecimalFormat _nf = new DecimalFormat("0.00");
-
    private String _srcJsVarName;
    private String _color = "#000000";
    
@@ -107,10 +105,7 @@ public class LineTag extends GoogleMapEntryTag {
          out.print("\',");
          out.print(String.valueOf(_width));
          out.print(',');
-         synchronized (_nf) {
-         	out.print(_nf.format(_transparency));
-         }
-         
+         	out.print(StringUtils.format(_transparency, "0.00"));
          out.print(");");
       } catch (Exception e) {
          throw new JspException(e);
