@@ -47,6 +47,7 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         return _callSign;
     }
     
+    // TODO JavaDoc
     public int getPilotID() {
     	return _databaseID;
     }
