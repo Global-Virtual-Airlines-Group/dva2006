@@ -85,7 +85,7 @@ public class GetExam extends DAO {
 			setQueryMax(1);
 			
 			// Execute the query
-			List results = execute();
+			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
