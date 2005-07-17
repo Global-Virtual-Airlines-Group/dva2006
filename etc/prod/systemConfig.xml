@@ -209,6 +209,7 @@
 	<online>
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
+			<network>ACARS</network>
 			<network>IVAO</network>
 			<network>FPI</network>
 		</list>
