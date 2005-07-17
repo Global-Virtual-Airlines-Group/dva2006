@@ -231,6 +231,14 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 		return _aCodes.contains(code);
 	}
 	
+	/**
+	 * Returns if the position of this Airport has been set.
+	 * @return TRUE if the position has been set, otherwise FALSE
+	 */
+	public boolean hasPosition() {
+		return (_position != null) && (_position.getLatitude() != 0) && (_position.getLongitude() != 0.0);
+	}
+	
    /**
     * Return the default Google Maps icon color.
     * @return org.deltava.beans.MapEntry.GREEN
