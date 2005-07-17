@@ -83,6 +83,24 @@
 		</attribute>
 	</tag>
 	
+	<!-- PointArray Tag, to generate a JavaScript array of GPoints -->
+	<tag>
+		<name>points</name>
+		<tagclass>org.deltava.taglib.googlemap.PointArrayTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>items</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+	</tag>
+	
 	<!-- LineTag, to generate a GPolyline -->
 	<tag>
 		<name>line</name>
