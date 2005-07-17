@@ -24,8 +24,10 @@ var oldAD = f.airportD.options[f.airportD.selectedIndex].value;
 // Update the option lists
 setOptions(f.airportD, aCode);
 setAirport(f.airportD, oldAD);
+changeAirport(f.airportD);
 setOptions(f.airportA, aCode);
 setAirport(f.airportA, oldAA);
+changeAirport(f.airportA);
 return true;
 }
 
