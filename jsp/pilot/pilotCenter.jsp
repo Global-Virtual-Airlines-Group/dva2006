@@ -45,6 +45,7 @@ return true;
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited ${pilot.loginCount} times.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
 </tr>
+<c:if test="${access.canTakeLeave}">
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
 <tr>
  <td class="mid"><el:cmd className="bld" url="loa">Request Leave of Absence</el:cmd></td>
@@ -52,6 +53,7 @@ return true;
  ${inactivity_days} days. If you are unable to do so, you can request a <span class="pri bld">Leave of 
  Absence</span> by clicking on the link on the left.</td>
 </tr>
+</c:if>
 <tr>
  <td class="mid">&nbsp;
 <c:if test="${!empty acImage}"><el:img src="${acImage}" caption="${pilot.equipmentType}" /></c:if>
