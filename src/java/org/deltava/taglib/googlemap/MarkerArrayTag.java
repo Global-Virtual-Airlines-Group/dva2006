@@ -11,7 +11,7 @@ import org.deltava.beans.MapEntry;
 import org.deltava.taglib.ContentHelper;
 
 /**
- * A JSP Tag to generate a JavaScript array of Google Maps markers.
+ * A JSP Tag to generate a JavaScript array of Google Maps GMarkers.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -64,7 +64,7 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
    
    /**
     * Renders the tag data to the JSP output stream, generating a JavaScript array with a number
-    * of Google Maps markers
+    * of Google Maps markers.
     * @return TagSupport.EVAL_PAGE always
     * @throws JspException if a network error occurs
     */
