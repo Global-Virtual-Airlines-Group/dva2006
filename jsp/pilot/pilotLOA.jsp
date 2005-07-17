@@ -10,6 +10,7 @@
 <title><content:airline /> Pilot Leave of Absence</title>
 <content:css name="main" browserSpecific="true" />
 <content:js name="common" />
+<content:css name="form" />
 </head>
 <content:copyright visible="false" />
 <body>
