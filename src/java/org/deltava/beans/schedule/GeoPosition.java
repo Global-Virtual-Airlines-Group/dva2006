@@ -71,7 +71,7 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Get the latitude of this position
+	 * Get the latitude of this position.
 	 * @return The latitude in degrees (and some fraction thereof) (values < 0 are South of the Equator)
 	 */
 	public double getLatitude() {
@@ -79,7 +79,7 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Get the longitude of this position
+	 * Get the longitude of this position.
 	 * @return The longitude in degrees (and some fraction thereof) (values < 0 are West of the Greenwich Meridian)
 	 */
 	public double getLongitude() {
@@ -99,19 +99,22 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Sets the longitude and ensures its validity
+	 * Sets the longitude and ensures its validity. If longitude values of greater than 180 degrees or
+	 * less than -180 are specified, they are "wrapped" around the International Date line
 	 * @param lng The longitude to set in degrees (values < 0 are West of the Greenwich Meridian)
-	 * @throws IllegalArgumentException The longitude is < 180 or > -180 degrees
 	 */
 	public void setLongitude(double lng) {
-		if (Math.abs(lng) > 180)
-			throw new IllegalArgumentException("Longitude cannot exceed 180 degrees");
-
-		_lon = lng;
+		if (lng > 180) {
+			_lon = -180 + (lng - 180.0);
+		} else if (lng < -180) {
+			_lon = 180 + (lng + 180.0);
+		} else {
+			_lon = lng;
+		}
 	}
 
 	/**
-	 * Set the latitude using a degree/minute/second combo
+	 * Set the latitude using a degree/minute/second combo.
 	 * @param deg Degrees (values < 0 are South of the Equator)
 	 * @param min Minutes (can be > 59)
 	 * @param sec Seconds (can be > 59)
@@ -124,7 +127,7 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Set the longitude using a degree/minute/second combo
+	 * Set the longitude using a degree/minute/second combo.
 	 * @param deg Degrees (values < 0 are West of the Greenwich Meridian)
 	 * @param min Minutes (can be > 59)
 	 * @param sec Seconds (can be > 59)
@@ -161,7 +164,7 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Calculates the midpoint of a Great Circle route between two GeoPositions
+	 * Calculates the midpoint of a Great Circle route between two GeoPositions.
 	 * @param gp2 the other Position
 	 * @return a GeoPosition storing the midpoint between the two positions
 	 * @throws NullPointerException if gp2 is null
@@ -190,15 +193,10 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Calculates equality by determining if the two positions are within 1 mile of each other
+	 * Calculates equality by determining if the two positions are within 1 mile of each other.
 	 * @see GeoPosition#distanceTo(GeoPosition)
 	 */
 	public boolean equals(Object o2) {
-		try {
-			GeoPosition gp2 = (GeoPosition) o2;
-			return (distanceTo(gp2) == 0);
-		} catch (ClassCastException cce) {
-			return false;
-		}
+		return (o2 instanceof GeoPosition) ? (distanceTo((GeoPosition) o2) < 1) : false;
 	}
 }
