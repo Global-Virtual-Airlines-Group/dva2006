@@ -111,7 +111,7 @@ public class FlightReportFunctions {
     /**
      * Returns the name of the online network used on this Flight.
      * @param fr the Flight Report
-     * @return the name of the network, or null if flown offline
+     * @return the name of the network, or &quot;Offline&quot; if flown offline
      * @see FlightReportFunctions#isOnline(FlightReport)
      * @see FlightReport#ATTR_VATSIM
      * @see FlightReport#ATTR_IVAO
@@ -119,7 +119,7 @@ public class FlightReportFunctions {
      */
     public static String network(FlightReport fr) {
     	if (fr == null) {
-    		return null;
+    		return "Offline";
     	} else if (fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
             return "VATSIM";
         } else if (fr.hasAttribute(FlightReport.ATTR_IVAO)) {
@@ -128,6 +128,6 @@ public class FlightReportFunctions {
             return "FPI";
         }
         
-        return null;
+        return "Offline";
     }
 }
