@@ -1,5 +1,8 @@
 function googleMarker(imgPath, color, point, label)
 {
+if (color == 'null')
+	return point;
+
 var icon = new GIcon();
 icon.image = '/' + imgPath + '/maps/point_' + color + '.png';
 icon.shadow = '/' + imgPath + '/maps/shadow.png';
