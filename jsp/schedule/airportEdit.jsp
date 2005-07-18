@@ -77,7 +77,7 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE AIRPORT PROFILE" />&nbsp;
-<el:cmdbutton ID="DeleteButton" url="airportdelete" linkID="${airport.IATA}" /></td>
+<el:cmdbutton ID="DeleteButton" url="airportdelete" linkID="${airport.IATA}" label="DELETE AIRPORT" /></td>
 </tr>
 </el:table>
 </el:form>
