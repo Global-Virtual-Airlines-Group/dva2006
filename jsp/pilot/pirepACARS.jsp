@@ -1,14 +1,10 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- ACARS PIREP Data -->
+<c:if test="${fn:ACARS_ID(pirep) != 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data">${fn:ACARS_ID(pirep)}</td>
-</tr>
-<c:if test="${!empty pirep.route}">
-<tr>
- <td class="label">Flight Route</td>
- <td class="data">${pirep.route}</td>
+ <td class="data">${fn:ACARS_ID(pirep)} <a href="acarsData.ws?id=${fn:ACARS_ID(pirep)}">ACARS Data (CSV)</a></td>
 </tr>
 </c:if>
 <tr>
@@ -69,3 +65,10 @@
  <td class="data bld"><fmt:int value="${pirep.time4X}" /> seconds</td>
 </tr>
 </c:if>
+<c:if test="${!empty pirep.route}">
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data">${pirep.route}</td>
+</tr>
+</c:if>
+
