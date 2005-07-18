@@ -1,5 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
+<%@ page buffer="80kb" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -7,7 +8,14 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<c:choose>
+<c:when test="${!empty browser$ie}">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+</c:when>
+<c:otherwise>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+</c:otherwise>
+</c:choose>
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
@@ -159,23 +167,36 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 var mapC = new GPoint(${mapCenter.longitude}, ${mapCenter.latitude});
-<map:markers var="routePoints" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#90C0FF" width="2" transparency="0.7" />
-
-// Airport markers
-<map:marker var="gmA" point="${pirep.airportA}" />
-<map:marker var="gmD" point="${pirep.airportD}" />
-
+<map:points var="routePoints" items="${mapRoute}" />
+<map:markers var="routeMarkers" items="${mapRoute}" />
+<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
+<c:if test="${!empty filedRoute}">
+<map:points var="filedPoints" items="${filedRoute}" />
+<map:markers var="filedMarkers" items="${filedRoute}" />
+<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
+</c:if>
 // Build the map
 var map = new GMap(getElement("googleMap"));
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
 
-// Add the airport markers and the route
+// Add the route and markers
+map.addOverlay(gRoute);
+for (x = 0; x < routeMarkers.length; x++)
+	map.addOverlay(routeMarkers[x]);
+<c:if test="${!empty filedRoute}">
+map.addOverlay(gfRoute);
+for (x = 0; x < filedMarkers.length; x++)
+	map.addOverlay(filedMarkers[x]);
+</c:if>
+<c:if test="${empty filedRoute}">
+// Airport markers
+<map:marker var="gmA" point="${pirep.airportA}" />
+<map:marker var="gmD" point="${pirep.airportD}" />
 map.addOverlay(gmA);
 map.addOverlay(gmD);
-map.addOverlay(gRoute);
+</c:if>
 </script>
 </c:if>
 </body>

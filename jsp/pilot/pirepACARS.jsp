@@ -5,6 +5,12 @@
  <td class="label">ACARS Flight ID</td>
  <td class="data">${fn:ACARS_ID(pirep)}</td>
 </tr>
+<c:if test="${!empty pirep.route}">
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data">${pirep.route}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Start Time</td>
  <td class="data"><fmt:date className="bld" date="${pirep.startTime}" />, engines started at
