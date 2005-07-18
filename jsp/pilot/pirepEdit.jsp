@@ -149,9 +149,11 @@ f.airline.focus();
 if (f.airline.selectedIndex != 0) {
 	var aCode = f.airline.options[f.airline.selectedIndex].value;
 	setOptions(f.airportD, aCode);
-	setAirport(document.forms[0].airportD, '${pirep.airportD.IATA}');
+	setAirport(f.airportD, '${pirep.airportD.IATA}');
+	changeAirport(f.airportD);
 	setOptions(f.airportA, aCode);
-	setAirport(document.forms[0].airportA, '${pirep.airportA.IATA}');
+	setAirport(f.airportA, '${pirep.airportA.IATA}');
+	changeAirport(f.airportA);
 }
 </script>
 </body>
