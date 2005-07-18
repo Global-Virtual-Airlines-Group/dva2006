@@ -146,7 +146,7 @@ public class SetSchedule extends DAO {
 	 */
 	public void delete(Airport a) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM AIRPORTS WHERE (IATA=?)");
+			prepareStatement("DELETE FROM common.AIRPORTS WHERE (IATA=?)");
 			_ps.setString(1, a.getIATA());
 			executeUpdate(1);
 		} catch (SQLException se) {
