@@ -81,43 +81,41 @@ public class ServInfoDataService extends WebDataService {
 		// Get the current date/time in UTC
 		DateTime dt = new DateTime(new Date(), TZInfo.local());
 
-		// Set the content type
-		ctx.getResponse().setContentType("text/plain");
-		ctx.getResponse().setBufferSize(16384);
+		// ServInfo header
+		ctx.println("; " + SystemData.get("airline.name") + " Online Pilot ServInfo data feed");
+		ctx.println(";");
+		
+		// GENERAL section
+		ctx.println("!GENERAL");
+		ctx.println("VERSION = 8");
+		ctx.println("RELOAD = 5");
+		ctx.println("UPDATE = " + _df.format(dt.getUTC()));
+		ctx.println("CONNECTED CLIENTS = " + users.size());
+		ctx.println(";");
+		
+		// CLIENTS section
+		ctx.println("!CLIENTS");
+		for (Iterator i = users.iterator(); i.hasNext();) {
+			Pilot p = (Pilot) i.next();
+			ctx.println(p.getRawData());
+		}
+
+		ctx.println(";");
+		
+		// Other Sections
+		ctx.println("!SERVERS");
+		ctx.println(";");
+		ctx.println("!VOICE SERVERS");
+		ctx.println(";");
+		ctx.println("!PREFILE");
+		ctx.println(";");
+		ctx.println("; END");
+		ctx.println(";");
 
 		// Write the servinfo data
 		try {
-			PrintWriter pw = ctx.getResponse().getWriter();
-			pw.println("; " + SystemData.get("airline.name") + " Online Pilot ServInfo data feed");
-			pw.println(";");
-
-			// GENERAL section
-			pw.println("!GENERAL");
-			pw.println("VERSION = 8");
-			pw.println("RELOAD = 5");
-			pw.println("UPDATE = " + _df.format(dt.getUTC()));
-			pw.println("CONNECTED CLIENTS = " + users.size());
-			pw.println(";");
-
-			// CLIENTS section
-			pw.println("!CLIENTS");
-			for (Iterator i = users.iterator(); i.hasNext();) {
-				Pilot p = (Pilot) i.next();
-				pw.println(p.getRawData());
-			}
-
-			pw.println(";");
-
-			// Other Sections
-			pw.println("!SERVERS");
-			pw.println(";");
-			pw.println("!VOICE SERVERS");
-			pw.println(";");
-			pw.println("!PREFILE");
-			pw.println(";");
-			pw.println("; END");
-			pw.println(";");
-			ctx.getResponse().flushBuffer();
+			ctx.getResponse().setContentType("text/plain");
+			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}

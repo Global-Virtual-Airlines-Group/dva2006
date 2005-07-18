@@ -38,43 +38,36 @@ public class FleetInfoService extends WebDataService {
 		}
 		
 		// Build the response
-		StringBuffer buf = new StringBuffer("[sites]\n");
+		ctx.println("[sites]");
 		
 		// Write the (legacy) mirror info
-		buf.append("options=");
-		buf.append(SystemData.get("airline.name"));
-		buf.append("\n\n");
-		buf.append("[" + SystemData.get("airline.name") + "]");
-		buf.append("host=");
-		buf.append(ctx.getRequest().getServerName());
-		buf.append("\n");
-		buf.append("path=/install\n");
-		buf.append("\n[currentMirror]\n");
-		buf.append("host=\n");
-		buf.append("path=\n");
+		ctx.print("options=");
+		ctx.println(SystemData.get("airline.name"));
+		ctx.println("\n[" + SystemData.get("airline.name") + "]");
+		ctx.print("host=");
+		ctx.println(ctx.getRequest().getServerName());
+		ctx.println("path=/install");
+		ctx.println("\n[currentMirror]");
+		ctx.println("host=");
+		ctx.println("path=");
 		
 		// Write installer version info
-		buf.append("\n[versionInfo]\n");
+		ctx.println("\n[versionInfo]");
 		for (Iterator i = entries.iterator(); i.hasNext();) {
 			Installer fe = (Installer) i.next();
 			if (fe.getCode() != null) {
-				buf.append(fe.getCode());
-				buf.append('=');
-				buf.append(String.valueOf(fe.getMajorVersion()));
-				buf.append(String.valueOf(fe.getMinorVersion()));
-				buf.append(String.valueOf(fe.getSubVersion()));
-				buf.append("\n");
+				ctx.print(fe.getCode());
+				ctx.print("=");
+				ctx.print(String.valueOf(fe.getMajorVersion()));
+				ctx.print(String.valueOf(fe.getMinorVersion()));
+				ctx.println(String.valueOf(fe.getSubVersion()));
 			}
 		}
 
 		// Set the content type and length, and flush
-		ctx.getResponse().setContentType("text/plain");
-		ctx.getResponse().setContentLength(buf.length());
-		ctx.getResponse().setBufferSize(buf.length() + 2);
-	
 		try {
-			ctx.getResponse().getWriter().print(buf.toString());
-			ctx.getResponse().flushBuffer();
+		   ctx.getResponse().setContentType("text/plain");
+		   ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}

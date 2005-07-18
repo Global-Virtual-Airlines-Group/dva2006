@@ -1,8 +1,8 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.service;
 
+import java.io.*;
 import java.util.*;
-import java.io.Serializable;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.*;
@@ -27,6 +27,34 @@ public class ServiceContext implements Serializable, SecurityContext {
    private ServletContext _sc;
    private HttpServletRequest _req;
    private HttpServletResponse _rsp;
+   private OutputBuffer _buf;
+   
+   private class OutputBuffer {
+      
+      private StringBuffer _buffer;
+      
+      private OutputBuffer() {
+         super();
+         _buffer = new StringBuffer(64);
+      }
+      
+      public void print(CharSequence value) {
+         _buffer.append(value);
+      }
+      
+      public void println(CharSequence value) {
+         print(value);
+         _buffer.append("\n");
+      }
+      
+      public int length() {
+         return _buffer.length();
+      }
+      
+      public String toString() {
+         return _buffer.toString();
+      }
+   }
    
    /**
     * Intiailizes the Web Service context.
@@ -40,6 +68,7 @@ public class ServiceContext implements Serializable, SecurityContext {
       _sc = sc;
       _req = req;
       _rsp = rsp;
+      _buf = new OutputBuffer();
    }
 
    /**
@@ -113,5 +142,38 @@ public class ServiceContext implements Serializable, SecurityContext {
     */
    public HttpServletResponse getResponse() {
       return _rsp;
+   }
+   
+   /**
+    * Prints a string to the output buffer.
+    * @param data the string to print
+    * @see ServiceContext#println(String)
+    * @see ServiceContext#commit()
+    */
+   public void print(String data) {
+      _buf.print(data);
+   }
+   
+   /**
+    * Prints a string and a trailing newline to the output buffer.
+    * @param data the string to print
+    * @see ServiceContext#print(String)
+    * @see ServiceContext#commit()
+    */
+   public void println(String data) {
+      _buf.println(data);
+   }
+   
+   /**
+    * Writes the output buffer to the HTTP servlet response, setting the Content-length header.
+    * @throws IOException if an I/O error occurs
+    * @see ServiceContext#print(String)
+    * @see ServiceContext#println(String)
+    */
+   public void commit() throws IOException {
+      _rsp.setBufferSize((_buf.length() < 32768) ? _buf.length() + 16 : 32768);
+      _rsp.setContentLength(_buf.length());
+      _rsp.getWriter().print(_buf);
+      _rsp.flushBuffer();
    }
 }
