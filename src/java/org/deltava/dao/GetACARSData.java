@@ -7,6 +7,8 @@ import java.util.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.GeoPosition;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to load ACARS route information.
  * @author Luke
@@ -14,13 +16,13 @@ import org.deltava.beans.schedule.GeoPosition;
  * @since 1.0
  */
 
-public class GetACARSRoute extends DAO {
+public class GetACARSData extends DAO {
 
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
-	public GetACARSRoute(Connection c) {
+	public GetACARSData(Connection c) {
 		super(c);
 	}
 
@@ -121,5 +123,104 @@ public class GetACARSRoute extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Returns information about a particular ACARS flight.
+	 * @param flightID the ACARS flight ID
+	 * @return the Flight Information, nor null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FlightInfo getInfo(int flightID) throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM acars.FLIGHTS WHERE (ID=?)");
+	      _ps.setInt(1, flightID);
+	      setQueryMax(1);
+	      
+	      // Get the first entry, or null
+	      List results = executeFlightInfo();
+	      return results.isEmpty() ? null : (FlightInfo) results.get(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Returns information about a particular ACARS connection. 
+	 * @param conID the ACARS connection ID
+	 * @return the Connection information, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public ConnectionEntry getConnection(int conID) throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM acars.CONS WHERE (ID=?)");
+	      _ps.setInt(1, conID);
+	      setQueryMax(1);
+	      
+	      // Get the first entry, or null
+	      List results = executeConnectionInfo();
+	      return results.isEmpty() ? null : (ConnectionEntry) results.get(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Helper method to parse Flight Info result sets.
+	 */
+	private List executeFlightInfo() throws SQLException {
+	   
+	   // Execute the query
+	   ResultSet rs = _ps.executeQuery();
+	   
+	   // Iterate through the results
+	   List results = new ArrayList();
+	   while (rs.next()) {
+	      FlightInfo info = new FlightInfo(rs.getInt(1), rs.getLong(2));
+	      info.setStartTime(rs.getTimestamp(3));
+	      info.setEndTime(rs.getTimestamp(4));
+	      info.setFlightCode(rs.getString(5));
+	      info.setEquipmentType(rs.getString(6));
+	      info.setAirportD(SystemData.getAirport(rs.getString(7)));
+	      info.setAirportA(SystemData.getAirport(rs.getString(8)));
+	      info.setRoute(rs.getString(10));
+	      info.setRemarks(rs.getString(11));
+	      info.setFSVersion(rs.getInt(12));
+	      
+	      // Add to results
+	      results.add(info);
+	   }
+	   
+	   // Clean up and return
+	   rs.close();
+	   _ps.close();
+	   return results;
+	}
+	
+	/**
+	 * Helper method to parse Connection result sets.
+	 */
+	private List executeConnectionInfo() throws SQLException {
+
+	   // Execute the query
+	   ResultSet rs = _ps.executeQuery();
+	   
+	   // Iterate through the results
+	   List results = new ArrayList();
+	   while (rs.next()) {
+	      ConnectionEntry entry = new ConnectionEntry(rs.getLong(1));
+	      entry.setPilotID(rs.getInt(2));
+	      entry.setDate(rs.getTimestamp(3));
+	      entry.setRemoteAddr(rs.getString(4));
+	      entry.setRemoteHost(rs.getString(5));
+	      
+	      // Add to results
+	      results.add(entry);
+	   }
+	   
+	   // Clean up and return
+	   rs.close();
+	   _ps.close();
+	   return results;
 	}
 }
