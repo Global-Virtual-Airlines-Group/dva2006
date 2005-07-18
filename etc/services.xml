@@ -6,6 +6,8 @@
 	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
 	<service id="voiceURL" class="org.deltava.service.PrivateVoiceURLService" />
 	
+	<service id="acarsData" class="org.deltava.service.ACARSDataService" />
+	
 	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
 	<service id="notams_rss" class="org.deltava.service.NoticeSyndicationService" />
