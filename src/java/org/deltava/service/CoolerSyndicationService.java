@@ -128,12 +128,10 @@ public class CoolerSyndicationService extends WebDataService {
 
 		// Dump the XML to the output stream
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-		String xml = xmlOut.outputString(doc);
-		ctx.getResponse().setContentType("text/xml");
-		ctx.getResponse().setContentLength(xml.length());
-
 		try {
-			ctx.getResponse().getWriter().println(xml);
+			ctx.getResponse().setContentType("text/xml");
+			ctx.println(xmlOut.outputString(doc));
+			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}

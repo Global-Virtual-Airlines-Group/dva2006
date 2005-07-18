@@ -25,9 +25,10 @@ public class PrivateVoiceURLService extends WebService {
    public int execute(ServiceContext ctx) throws ServiceException {
 
       // Write the response
-      ctx.getResponse().setContentType("text/xml");
+      ctx.println(SystemData.get("airline.voice.url"));
       try {
-         ctx.getResponse().getWriter().println(SystemData.get("airline.voice.url"));
+         ctx.getResponse().setContentType("text/plain");
+         ctx.commit();
       } catch (IOException ie) {
          throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
       }

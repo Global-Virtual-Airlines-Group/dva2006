@@ -67,18 +67,14 @@ public class SystemInfoService extends WebDataService {
 		}
 
 		// Generate an INI-style response for the Fleet Installer
-		StringBuffer buf = new StringBuffer("[Installer]\n");
-		buf.append("ID=");
-		buf.append(si.getID());
-		buf.append("\n\n");
+		ctx.println("[Installer]");
+		ctx.print("ID=");
+		ctx.println(si.getID());
+		ctx.println("");
 		
-		// Set the content type and length headers
-		ctx.getResponse().setContentType("text/plain");
-		ctx.getResponse().setContentLength(buf.length());
-
 		try {
-			ctx.getResponse().getWriter().print(buf.toString());
-			ctx.getResponse().flushBuffer();
+			ctx.getResponse().setContentType("text/plain");
+		   ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}

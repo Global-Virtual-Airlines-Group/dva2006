@@ -2,7 +2,6 @@
 package org.deltava.service;
 
 import java.util.*;
-import java.text.DecimalFormat;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -15,6 +14,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.GetSchedule;
 import org.deltava.dao.DAOException;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,8 +26,6 @@ import org.deltava.util.system.SystemData;
 
 public class ScheduleSearchService extends WebDataService {
    
-   private static final DecimalFormat _nf = new DecimalFormat("#000");
-
    /**
     * Executes the Web Service, returning a list of flights.
     * @param ctx the Web Service context
@@ -70,7 +68,7 @@ public class ScheduleSearchService extends WebDataService {
          ScheduleEntry f = (ScheduleEntry) i.next();
          Element e = new Element("flight");
          e.setAttribute("airline", f.getAirline().getCode());
-         e.setAttribute("flightNumber", _nf.format(f.getFlightNumber()));
+         e.setAttribute("flightNumber", StringUtils.format(f.getFlightNumber(), "#000"));
          e.setAttribute("leg", String.valueOf(f.getLeg()));
          e.setAttribute("historic", String.valueOf(f.isHistoric()));
          e.addContent(createElement("eqType", f.getEquipmentType()));
@@ -98,12 +96,10 @@ public class ScheduleSearchService extends WebDataService {
       
       // Dump the XML to the output stream
       XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
-      String xml = xmlOut.outputString(doc);
-      ctx.getResponse().setContentType("text/xml");
-      ctx.getResponse().setContentLength(xml.length());
-
       try {
-         ctx.getResponse().getWriter().println(xml);
+         ctx.getResponse().setContentType("text/xml");
+         ctx.println(xmlOut.outputString(doc));
+         ctx.commit();
       } catch (IOException ie) {
          throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
       }

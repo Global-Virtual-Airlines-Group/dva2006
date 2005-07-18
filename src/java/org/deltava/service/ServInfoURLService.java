@@ -2,7 +2,6 @@
 package org.deltava.service;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -25,17 +24,16 @@ public class ServInfoURLService extends WebService {
 	 */
    public int execute(ServiceContext ctx) throws ServiceException {
       
-      // Set the content type
-      ctx.getResponse().setContentType("text/plain");
-
+      // Build the URL list
+      ctx.println(DATA_HEADER);
+      ctx.println("url0=http://" + ctx.getRequest().getServerName() + "/sidata.ws");
+      ctx.println(";");
+      ctx.println("; END");
+      
       // Dump the URL list
 		try {
-		   PrintWriter pw = ctx.getResponse().getWriter();
-			pw.println(DATA_HEADER);
-			pw.println("url0=http://" + ctx.getRequest().getServerName() + "/sidata.ws");
-			pw.println(";");
-			pw.println("; END");
-			ctx.getResponse().flushBuffer();
+		   ctx.getResponse().setContentType("text/plain");
+		   ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}
