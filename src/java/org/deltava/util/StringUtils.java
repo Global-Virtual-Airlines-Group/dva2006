@@ -228,7 +228,7 @@ public final class StringUtils {
    }
    
    /**
-    * Formats an integer into a using a particular pattern.
+    * Formats an integer into a string using a particular pattern.
     * @param value the number to format
     * @param fmtPattern the formatter pattern
     * @return the formatted number
@@ -241,7 +241,7 @@ public final class StringUtils {
    }
    
    /**
-    * Formats a floating-point number into a using a particular pattern.
+    * Formats a floating-point number into a string using a particular pattern.
     * @param value the number to format
     * @param fmtPattern the formatter pattern
     * @return the formatted number
@@ -251,5 +251,17 @@ public final class StringUtils {
    public static String format(double value, String fmtPattern) {
       NumberFormat fmt = new DecimalFormat(fmtPattern);
       return fmt.format(value);
+   }
+   
+   /**
+    * Formats a date/time into a string using a particular pattern.
+    * @param dt the date/time
+    * @param fmtPattern the formatter pattern
+    * @return the formatted date/time
+    * @see DateFormat#format(Date)
+    */
+   public static String format(Date dt, String fmtPattern) {
+      DateFormat fmt = new SimpleDateFormat(fmtPattern);
+      return fmt.format(dt);
    }
 }
