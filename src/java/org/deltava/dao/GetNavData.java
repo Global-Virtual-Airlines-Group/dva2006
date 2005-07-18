@@ -80,8 +80,9 @@ public class GetNavData extends DAO {
 				results.add(_cache.get(code));
 			} else {
 				querySize++;
+				sqlBuf.append('\'');
 				sqlBuf.append(code);
-				sqlBuf.append(',');
+				sqlBuf.append("\',");
 			}
 		}
 
