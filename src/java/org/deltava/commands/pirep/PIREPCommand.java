@@ -318,7 +318,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					afr.setAirportA(SystemData.getAirport("BUF"));
 					
 					// Get the route/position data
-					GetACARSRoute ardao = new GetACARSRoute(con);
+					GetACARSData ardao = new GetACARSData(con);
 					positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS));
 					afr.setRoute(ardao.getRoute(afr.getDatabaseID(FlightReport.DBID_ACARS)));
 
