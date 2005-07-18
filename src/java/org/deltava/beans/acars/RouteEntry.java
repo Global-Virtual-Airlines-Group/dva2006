@@ -259,11 +259,11 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
    /**
     * Updates the aircraft's flap detent position.
     * @param flapDetent the detent position
-    * @throws IllegalArgumentException if flapDetent is negative or > 15
+    * @throws IllegalArgumentException if flapDetent is negative or > 100
     * @see RouteEntry#getFlaps()
     */
    public void setFlaps(int flapDetent) {
-      if ((flapDetent < 0) || (flapDetent > 15))
+      if ((flapDetent < 0) || (flapDetent > 100))
             throw new IllegalArgumentException("Invalid flap detent - " + flapDetent);
 
       _flaps = flapDetent;
