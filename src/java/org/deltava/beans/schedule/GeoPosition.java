@@ -34,6 +34,15 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 		setLatitude(lat);
 		setLongitude(lon);
 	}
+	
+	/**
+	 * Creates a GeoPosition object from another object that supports lat/lon coordinates. This
+	 * is useful when &quot;lightening&quot; an object down to a simple coordinate pair.
+	 * @param gl the GeoLocation
+	 */
+	public GeoPosition(GeoLocation gl) {
+		this(gl.getLatitude(), gl.getLongitude());
+	}
 
 	/**
 	 * Helper method to return back the minutes component of a latitude or longitude.
