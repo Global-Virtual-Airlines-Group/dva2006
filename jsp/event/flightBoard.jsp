@@ -17,7 +17,7 @@
 function setNetwork(combo)
 {
 var net = combo.options[combo.selectedIndex].text;
-location.href = '/flightboard.do?networkName=' + net;
+location.href = '/flightboard.do?id=' + net;
 return true;
 }
 </script>
@@ -34,7 +34,8 @@ return true;
 <tr class="title">
  <td colspan="4" class="left">ONLINE PILOTS - ${netInfo.name} - VALID AS OF 
  <fmt:date date="${netInfo.validDate}" /></td>
- <td colspan="3" class="right">SELECT NETWORK  <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
+ <td><el:cmd url="flightboard" op="map" linkID="${network}">FLIGHT MAP</el:cmd></td>
+ <td colspan="2" class="right">SELECT NETWORK <el:combo name="ID" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->
