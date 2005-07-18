@@ -49,7 +49,8 @@ public class AirportDeleteCommand extends AbstractCommand {
 		}
 		
 		// Set status for the JSP
-		ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
