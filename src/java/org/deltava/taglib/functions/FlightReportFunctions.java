@@ -70,6 +70,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight is a Check Ride.
+     * @param fr the Flight Report
+     * @return TRUE if the ATTR_CHECKRIDE attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_CHECKRIDE
+     */
+    public static boolean isCheckRide(FlightReport fr) {
+       return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+    }
+    
+    /**
      * Returns if the Flight was flown using a rated equipment type.
      * @param fr the Flight Report
      * @return TRUE if the NOTRATED attribute is not present, otherwise FALSE
