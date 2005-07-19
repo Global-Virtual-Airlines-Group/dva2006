@@ -660,13 +660,25 @@
 		<roles>Pilot</roles>
 	</command>
 	
-	<command id="crsubmit">
-		<name>Submit Check Ride</name>
-		<class>org.deltava.commands.testing.CheckRideSubmitCommand</class>
+	<command id="crscore">
+		<name>Score Check Ride</name>
+		<class>org.deltava.commands.testing.ScoreCommand</class>
+		<roles>Examination,HR</roles>
+	</command>
+	
+	<command id="pirepscore">
+		<name>Approve PIREP/Score Ride</name>
+		<class>org.deltava.commands.testing.CheckRidePIREPApprovalCommand</class>
+		<roles>Examination,HR</roles>
+	</command>
+	
+	<command id="crview">
+		<name>View Check Ride PIREP</name>
+		<class>org.deltava.commands.testing.CheckRidePIREPCommand</class>
 		<roles>Pilot</roles>
 	</command>
 	
-	<command id="rideassign">
+	<command id="crassign">
 		<name>Check Ride Assign</name>
 		<class>org.deltava.commands.testing.CheckRideAssignCommand</class>
 		<roles>Examination,HR</roles>

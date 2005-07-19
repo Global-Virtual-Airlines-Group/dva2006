@@ -1,64 +1,50 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.pirep;
 
-import java.util.Map;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.testing.CheckRide;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
+import org.deltava.security.command.ExamAccessControl;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to handle Flight Report status changes.
+ * A Web Site Command to approve Flight Reports and Check Rides. 
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class PIREPDisposalCommand extends AbstractCommand {
-	
-	// Operation constants
-	private static final String[] OPNAMES = { "", "", "hold", "approve", "reject" };
-
-	/**
-	 * Private helper method to convert the operation name into a code. The code returned will be the same as the new
-	 * PIREP status.
-	 */
-	private int getOperation(String opName) throws CommandException {
-		for (int x = 1; x < OPNAMES.length; x++) {
-			if (OPNAMES[x].equals(opName))
-				return x;
-		}
-
-		throw new CommandException("Invalid Operation - " + opName);
-	}
+public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
-	public void execute(CommandContext ctx) throws CommandException {
-
-		// Get the operation
-		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
-		int opCode = getOperation(opName);
-		ctx.setAttribute("opName", opName, REQUEST);
+   public void execute(CommandContext ctx) throws CommandException {
 
 		// Initialize the Message Context
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
+		
+		// Get the checkride approval
+		boolean crApproved = Boolean.getBoolean(ctx.getParameter("crApprove"));
 
 		Pilot p = null;
 		try {
-			Connection con = ctx.getConnection();
-
+		   Connection con = ctx.getConnection();
+		   
 			// Get the DAO and the Flight Report to modify
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID());
@@ -68,41 +54,39 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
 			access.validate();
-
-			// Get the Message Template DAO
-			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-
-			// Determine if we can perform the operation in question and set a request attribute
-			boolean isOK = false;
-			switch (opCode) {
-				case FlightReport.HOLD:
-					ctx.setAttribute("isHold", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPHOLD"));
-					isOK = access.getCanHold();
-					break;
-
-				case FlightReport.OK:
-					ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPAPPROVE"));
-					isOK = access.getCanApprove();
-					break;
-
-				case FlightReport.REJECTED:
-					ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
-					mctx.setTemplate(mtdao.get("PIREPREJECT"));
-					isOK = access.getCanReject();
-			}
-
-			// If we cannot perform the operation, then stop
-			if (!isOK)
-				throw new CommandSecurityException("Cannot dispose of Flight Report #" + fr.getID());
-
+			if (!access.getCanApprove())
+			   throw new CommandSecurityException("Cannot approve Flight Report");
+			
+			// Get the DAO and the CheckRide
+		   GetExam crdao = new GetExam(con);
+		   CheckRide cr = null;
+		   for (Iterator i = fr.getCaptEQType().iterator(); (i.hasNext() && (cr == null)); ) {
+		      String eqType = (String) i.next();
+		      cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), eqType);
+		   }
+		   
+		   // Get the Transfer Request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
+			if (txreq == null)
+			   throw new CommandException("Transfer Request not found");
+		   
+		   // Check our access level
+		   ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+         crAccess.validate();
+         if (!crAccess.getCanScore())
+            throw new CommandSecurityException("Cannot score Check Ride");
+         
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			if (p == null)
 			   throw new CommandException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
-			
+         
+			// Get the Message Template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctx.setTemplate(mtdao.get(crApproved ? "CRPASS" : "CRFAIL"));
+
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
 			int pirepCount = rdao.getCount(p.getID()) + 1;
 			
@@ -112,16 +96,34 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			mctx.addData("flightDate", StringUtils.format(fr.getDate(), "MM/dd/yyyy"));
 			mctx.addData("pilot", p);
 			
+			// Update the checkride
+			cr.setScore(crApproved);
+			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			cr.setComments(cr.getComments() + "\n\n" + ctx.getParameter("comments"));
+			
 			// Start a JDBC transaction
 			ctx.startTX();
 
-			// Get the write DAO and perform the operation
+			// Get the PIREP write DAO and perform the operation
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ctx.getUser(), fr.getID(), opCode);
+			wdao.dispose(ctx.getUser(), fr.getID(), FlightReport.OK);
+
+			// Get the CheckRide write DAO and update the checkride
+			SetExam ewdao = new SetExam(con);
+			ewdao.write(cr);
+			
+			// If we are approving the checkride, then approve the transfer request
+			if (cr.getPassFail()) {
+				txreq.setStatus(TransferRequest.OK);
+
+				// Write the transfer request
+				SetTransferRequest txwdao = new SetTransferRequest(con);
+				txwdao.write(txreq);
+			}
 			
 			// If we're approving and we have hit a century club milestone, log it
 			Map ccLevels = (Map) SystemData.getObject("centuryClubLevels");
-			if ((opCode == FlightReport.OK) && (ccLevels.containsKey("CC" + pirepCount))) {
+			if (ccLevels.containsKey("CC" + pirepCount)) {
 			   StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RECOGNITION);
 			   upd.setAuthorID(ctx.getUser().getID());
 			   upd.setDescription("Joined " + ccLevels.get("CC" + pirepCount));
@@ -140,14 +142,16 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 
-			// Save the flight report in the request and the Message Context
+			// Save the flight report/checkride in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
+			ctx.setAttribute("checkride", cr, REQUEST);
 			mctx.addData("pirep", fr);
+			mctx.addData("checkRide", cr);
 		} catch (DAOException de) {
 		   ctx.rollbackTX();
-			throw new CommandException(de);
+		   throw new CommandException(de);
 		} finally {
-			ctx.release();
+		   ctx.release();
 		}
 
 		// Send a notification message
@@ -160,5 +164,5 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/pilot/pirepUpdate.jsp");
 		result.setSuccess(true);
-	}
+   }
 }

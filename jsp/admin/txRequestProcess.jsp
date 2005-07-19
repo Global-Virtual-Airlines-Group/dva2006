@@ -31,7 +31,7 @@ return true;
 <body>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
-<c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'rideassign'}" scope="request" />
+<c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
 
 <!-- Main Body Frame -->
 <div id="main">

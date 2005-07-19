@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -32,6 +32,13 @@
  <td class="label">Equipment Program</td>
  <td class="data">${fn:eqType(checkRide)} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
+<c:if test="${checkRide.flightID != 0}">
+<tr>
+ <td class="label">ACARS Flight ID</td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> 
+<el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>
@@ -72,12 +79,6 @@
  <td class="label">Comments</td>
  <td class="data valign="top">${checkRide.comments}</td>
 </tr>
-<c:if test="${checkRide.size > 0}">
-<tr>
- <td class="label">Flight Video Size</td>
- <td class="data sec bld"><fmt:int value="${checkRide.size}" /> bytes</td>
-</tr>
-</c:if>
 </el:table>
 
 <!-- Button Bar -->

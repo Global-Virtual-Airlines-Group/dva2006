@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -11,17 +11,16 @@
 <title><content:airline /> Check Ride</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:js name="common" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
+if (!checkSubmit()) return false;
+if (!validateCheckBox(form.passFail, 1, 'Check Ride status')) return false;
 
-
-return true;
-}
-
-function download(fileName)
-{
-self.location='/video/' + fileName;
+setSubmit();
+disableButton('SubmitButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="crscore.do" method="POST" allowUpload="true" validate="return validate(this)">
+<el:form action="crscore.do" method="POST" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">${fn:eqType(checkRide)} CHECK RIDE FOR ${pilot.name}</td>
@@ -46,6 +45,13 @@ return true;
  <td class="label">Equipment Program</td>
  <td class="data">${fn:eqType(checkRide)} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
+<c:if test="${checkRide.flightID != 0}">
+<tr>
+ <td class="label">ACARS Flight ID</td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> 
+<el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>
@@ -61,26 +67,13 @@ return true;
 <c:if test="${access.canScore}">
 <tr>
  <td class="label">Check Ride Status</td>
- <td class="data"><el:check type="radio" name="passFail" idx="*" options="${passFail}" />
-<el:button onClick="void download('${checkRide.fileName}')" className="BUTTON" label="DOWNLOAD FLIGHT VIDEO" /></td>
-</tr>
-</c:if>
-<c:if test="${access.canSubmit}">
-<tr>
- <td class="label">Upload Flight Video</td>
- <td class="data"><el:file name="video" className="small" idx="*" size="80" max="144" /></td>
+ <td class="data"><el:check type="radio" name="passFail" idx="*" options="${passFail}" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Comments</td>
  <td class="data valign="top"><el:textbox name="comments" idx="*" width="120" height="6">${checkRide.comments}</el:textbox></td>
 </tr>
-<c:if test="${checkRide.size > 0}">
-<tr>
- <td class="label">Flight Video Size</td>
- <td class="data sec bld"><fmt:int value="${checkRide.size}" /> bytes</td>
-</tr>
-</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -88,10 +81,10 @@ return true;
 <tr>
  <td>
 <c:if test="${access.canDelete}">
- <el:cmdbutton url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
+ <el:cmdbutton ID="DeleteButton" url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
 <c:if test="${access.canScore}">
- <el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="EVALUATE CHECK RIDE" />
+ <el:button ID="SubmitButton" type="submit" className="BUTTON" label="EVALUATE CHECK RIDE" />
 </c:if>
  </td>
 </tr>
