@@ -26,17 +26,6 @@ if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
 
-// Validate password
-if ((form.pwd1) && (form.pwd2)) {
-	if (form.pwd1.value != form.pwd2.value) {
-		alert('The specified passwords must match.');
-		form.pwd1.value = '';
-		form.pwd2.value = '';
-		form.pwd1.focus();
-		return false;
-	}
-}
-
 setSubmit();
 disableButton('SaveButton');
 return true;
@@ -61,11 +50,6 @@ return true;
  <td class="label">First / Last Name</td>
  <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
 <el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${param.lastName}" /></td>
-</tr>
-<tr>
- <td class="label">Password</td>
- <td class="data"><el:text type="password" name="pwd1" idx="*" size="14" max="32" value="" />, retype:
-<el:text type="password" name="pwd2" idx="*" size="14" max="32" value="" /></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>

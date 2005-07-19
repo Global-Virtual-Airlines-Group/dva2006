@@ -10,7 +10,11 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
+import org.deltava.security.Authenticator;
 import org.deltava.security.command.ApplicantAccessControl;
+
+import org.deltava.util.PasswordGenerator;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to hire new Applicants as Pilots. 
@@ -60,6 +64,10 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			mctxt.addData("applicant", a);
 			mctxt.addData("eqType", eq);
 			
+			// Calculate the DN and password
+			a.setDN(a.getName() + "," + SystemData.get("security.baseDN"));
+			a.setPassword(PasswordGenerator.generate(8));
+			
 			// Turn off autocommits on the connection
 			ctx.startTX();
 			
@@ -106,11 +114,18 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			SetStatusUpdate updao = new SetStatusUpdate(con);
 			updao.write(updates);
 			
+			// Get the authenticator and add the user
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			auth.addUser(a.getDN(), a.getPassword());
+			
 			// Commit the transactions
 			ctx.commitTX();
 			
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
+		} catch (SecurityException se) {
+		   ctx.rollbackTX();
+		   throw new CommandException(se);
 		} catch (DAOException de) {
 		   ctx.rollbackTX();
 			throw new CommandException(de);

@@ -34,6 +34,9 @@ public class SetApplicant extends PilotWriteDAO {
          prepareStatement("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(1);
+         
+         // Update the cache
+         GetApplicant._cache.add(a);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -62,14 +65,14 @@ public class SetApplicant extends PilotWriteDAO {
             // Get the new applicant ID
             a.setID(getNewID());
             
-            prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, LDAP_DN, EMAIL, LOCATION, "
-                  + "IMHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
+            prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
+                  + "VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
                   + "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, DFORMAT, TFORMAT, NFORMAT, "
                	+ "AIRPORTCODE, TZ, UISCHEME, ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             _ps.setInt(26, a.getID());
          } else {
-            prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, LDAP_DN=?, EMAIL=?, "
-                  + "LOCATION=?, IMHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
+            prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
+                  + "IMHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
                   + "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, CREATED=?, "
                   + "REGHOSTNAME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, TZ=?, UISCHEME=?, EQTYPE=?, "
                   + "RANK=? WHERE (ID=?)");
@@ -82,28 +85,30 @@ public class SetApplicant extends PilotWriteDAO {
          _ps.setInt(1, a.getStatus());
          _ps.setString(2, a.getFirstName());
          _ps.setString(3, a.getLastName());
-         _ps.setString(4, a.getDN());
-         _ps.setString(5, a.getEmail());
-         _ps.setString(6, a.getLocation());
-         _ps.setString(7, a.getIMHandle());
-         _ps.setString(8, (String) a.getNetworkIDs().get("VATSIM"));
-         _ps.setString(9, (String) a.getNetworkIDs().get("IVAO"));
-         _ps.setDouble(10, a.getLegacyHours());
-         _ps.setString(11, a.getLegacyURL());
-         _ps.setBoolean(12, a.getLegacyVerified());
-         _ps.setString(13, a.getHomeAirport());
-         _ps.setBoolean(14, a.getNotifyOption(Person.FLEET));
-         _ps.setBoolean(15, a.getNotifyOption(Person.EVENT));
-         _ps.setBoolean(16, a.getNotifyOption(Person.NEWS));
-         _ps.setInt(17, a.getEmailAccess());
-         _ps.setTimestamp(18, createTimestamp(a.getCreatedOn()));
-         _ps.setString(19, a.getRegisterHostName());
-         _ps.setString(20, a.getDateFormat());
-         _ps.setString(21, a.getTimeFormat());
-         _ps.setString(22, a.getNumberFormat());
-         _ps.setInt(23, a.getAirportCodeType());
-         _ps.setString(24, a.getTZ().getID());
-         _ps.setString(25, a.getUIScheme());
+         _ps.setString(4, a.getEmail());
+         _ps.setString(5, a.getLocation());
+         _ps.setString(6, a.getIMHandle());
+         _ps.setString(7, (String) a.getNetworkIDs().get("VATSIM"));
+         _ps.setString(8, (String) a.getNetworkIDs().get("IVAO"));
+         _ps.setDouble(9, a.getLegacyHours());
+         _ps.setString(10, a.getLegacyURL());
+         _ps.setBoolean(11, a.getLegacyVerified());
+         _ps.setString(12, a.getHomeAirport());
+         _ps.setBoolean(13, a.getNotifyOption(Person.FLEET));
+         _ps.setBoolean(14, a.getNotifyOption(Person.EVENT));
+         _ps.setBoolean(15, a.getNotifyOption(Person.NEWS));
+         _ps.setInt(16, a.getEmailAccess());
+         _ps.setTimestamp(17, createTimestamp(a.getCreatedOn()));
+         _ps.setString(18, a.getRegisterHostName());
+         _ps.setString(19, a.getDateFormat());
+         _ps.setString(20, a.getTimeFormat());
+         _ps.setString(21, a.getNumberFormat());
+         _ps.setInt(22, a.getAirportCodeType());
+         _ps.setString(23, a.getTZ().getID());
+         _ps.setString(24, a.getUIScheme());
+         
+         // Update the cache
+         GetApplicant._cache.add(a);
          
          // Update the database and commit
          executeUpdate(1);
@@ -180,6 +185,9 @@ public class SetApplicant extends PilotWriteDAO {
          _ps.setInt(2, a.getPilotID());
          _ps.setInt(3, a.getID());
          
+         // Clear the cache
+         GetApplicant._cache.remove(new Integer(a.getID()));
+         
          // Update the database and commit
          executeUpdate(1);
          commitTransaction();
@@ -208,6 +216,9 @@ public class SetApplicant extends PilotWriteDAO {
          prepareStatement("DELETE FROM common.USERDATA WHERE (ID=?)");
          _ps.setInt(1, id);
          executeUpdate(1);
+         
+         // Clear the cache
+         GetApplicant._cache.remove(new Integer(id));
          
          // Commit the transaction
          commitTransaction();
