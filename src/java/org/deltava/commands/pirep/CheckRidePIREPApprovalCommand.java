@@ -98,6 +98,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			
 			// Update the checkride
 			cr.setScore(crApproved);
+			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			cr.setComments(cr.getComments() + "\n\n" + ctx.getParameter("comments"));
 			
