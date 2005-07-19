@@ -16,7 +16,7 @@ public class TestGetCount extends AbstractDAOTestCase {
     
     public void testCount() throws DAOException {
         int count = _dao.execute("PIREPS");
-        assertEquals(66991, count);
+        assertEquals(72770, count);
         count = _dao.execute("STAFF");
         assertEquals(21, count);
     }
