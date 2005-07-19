@@ -32,7 +32,7 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns a PIREP with a particular database ID.
 	 * @param id the database ID
-	 * @return the Flight Report
+	 * @return the Flight Report, nor null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FlightReport get(int id) throws DAOException {
@@ -40,18 +40,47 @@ public class GetFlightReports extends DAO {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
 					+ "LEFT JOIN ACARS_PIREPS APR USING (ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
 			_ps.setInt(1, id);
+			setQueryMax(1);
 
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
 			if (results.size() == 0)
 				return null;
 
+			// Get the primary equipment types
 			FlightReport fr = (FlightReport) results.get(0);
 			fr.setCaptEQType(getCaptEQType(fr.getID()));
 			return fr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Returns an ACARS-logged PIREP with a particular ACARS Flight ID.
+	 * @param acarsID the ACARS flight ID
+	 * @return the ACARSFlightReport, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public ACARSFlightReport getACARS(int acarsID) throws DAOException {
+	   try {
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR, "
+					+ "ACARS_PIREPS APR WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (APR.ACARS_ID=?)");
+			_ps.setInt(1, acarsID);
+			setQueryMax(1);
+			
+			// Execute the query, if nothing returned then give back null
+			List results = execute();
+			if (results.size() == 0)
+				return null;
+
+			// Get the primary equipment types
+			ACARSFlightReport afr = (ACARSFlightReport) results.get(0);
+			afr.setCaptEQType(getCaptEQType(afr.getID()));
+			return afr;
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
 	}
 
 	/**
@@ -130,7 +159,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.
 	 * @param id the Pilot database ID
