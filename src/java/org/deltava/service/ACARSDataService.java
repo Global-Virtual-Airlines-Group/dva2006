@@ -59,7 +59,7 @@ public class ACARSDataService extends WebDataService {
             ctx.print(",");
             ctx.print(StringUtils.format(entry.getLongitude(), "##0.0000"));
             ctx.print(",");
-            ctx.print(StringUtils.format(entry.getLatitude(), "#,##0"));
+            ctx.print(String.valueOf(entry.getAltitude()));
             ctx.print(",");
             ctx.print(StringUtils.format(entry.getHeading(), "000"));
             ctx.print(",");
@@ -93,6 +93,7 @@ public class ACARSDataService extends WebDataService {
       // Write the response
       try {
          ctx.getResponse().setContentType("text/csv");
+         ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
          ctx.commit();
       } catch (IOException ie) {
          throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
