@@ -93,6 +93,17 @@ div#main {
 	margin-right: 2px;
 }
 
+/* Result page Header */
+.updateHdr {
+	font-family: Tahoma, Verdana, sans-serif;
+	font-weight: bold;
+	font-size: 11pt;
+	background-color: #0000A1;
+	width: 800px;
+	color: #ffffff;
+	text-transform: uppercase;
+}
+
 /* Default table formatting */
 TABLE {
 	table-layout: auto;
