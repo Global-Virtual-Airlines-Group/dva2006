@@ -92,12 +92,14 @@ public class WebServiceServlet extends GenericServlet {
 		Connection con = null;
 		Pilot p = null;
 		try {
-		   
 			con = pool.getSystemConnection();
 			
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			String dN = dao.getDirectoryName(tkns.nextToken());
+			String userID = tkns.nextToken();
+			String dN = dao.getDirectoryName(userID);
+			if (dN == null)
+				throw new SecurityException("Unknown User ID - " + userID);
 			
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
@@ -149,8 +151,12 @@ public class WebServiceServlet extends GenericServlet {
 			return;
 		}
 
-		// Check if we need to be authenticated
-		Pilot usr = authenticate(req);
+		// Get our credentials if we're already logged in
+		Pilot usr = (Pilot) req.getUserPrincipal();
+		if (usr == null)
+			usr = authenticate(req);
+		
+		//	Check if we need to be authenticated
 		if (svc.isSecure() && (usr == null)) {
 			rsp.setHeader("WWW-Authenticate", "Basic realm=" + WS_REALM);
 			rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
