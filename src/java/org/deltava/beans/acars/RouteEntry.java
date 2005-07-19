@@ -314,7 +314,7 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuffer buf = new StringBuffer("Position: <b>");
+      StringBuffer buf = new StringBuffer("<span class=\"small\">Position: <b>");
       buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
       buf.append("</b><br /> Altitude: ");
       buf.append(StringUtils.format(_alt, "#,000"));
@@ -363,7 +363,7 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
             buf.append("-");
          }
          
-         buf.append("<br />");
+         buf.append("<br /></span>");
       }
       
       return buf.toString();
