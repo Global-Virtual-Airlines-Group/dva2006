@@ -71,6 +71,12 @@ This Flight Report has been approved, and an e-mail message has been sent to ${p
 <br />
 With the approval of this Flight Report, ${pilot.name} has joined the &quot;${centuryClub}&quot;.<br />
 </c:if>
+<c:if test="${!empty checkRide}">
+<br />
+This Flight Report is for a <b>${checkRide.name}</b>, and this Check Ride has been graded as part
+of the approval process for this Flight Report. This Check Ride has been <span class="sec bld">
+${checkRide.passFail ? 'APPROVED' : 'REJECTED' }</span>.<br />
+</c:if>
 </c:if>
 
 <c:if test="${isHold}">

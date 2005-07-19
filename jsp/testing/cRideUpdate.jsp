@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -18,15 +18,6 @@
 <!-- Main Body Frame -->
 <div id="main">
 <c:choose>
-<c:when test="${isSubmit}">
-<!-- Check Ride Submitted -->
-<div class="updateHdr">Check Ride Submitted</div>
-<br />
-Your ${checkRide.equipmentType} has been submitted to <content:airline />, and an e-mail message
-has been sent to ${assignedBy.name} notifying him or her of the submitted Check Ride. Please allow
-between 48 and 96 hours for this Check Ride to be evaluated and scored.<br />
-</c:when>
-
 <c:when test="${isScore}">
 <!-- Check Ride Scored -->
 <div class="updateHdr">Check Ride Scored</div>

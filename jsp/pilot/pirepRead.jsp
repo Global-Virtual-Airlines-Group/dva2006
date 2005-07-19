@@ -21,6 +21,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
+<c:set var="scoreCR" value="${access.canApprove && crAccess.canScore}" scope="request" />
 <c:if test="${googleMap}">
 <content:js name="googleMaps" />
 <map:api version="1" />
@@ -32,6 +33,19 @@ v\:* {
 </style>
 </c:if>
 </c:if>
+<c:if test="${scoreCR}">
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateCheckBox(form.crApprove, 1, 'Check Ride status')) return false;
+
+setSubmit();
+disableButton('CRButton');
+return true;
+}
+</script>
+</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -40,6 +54,9 @@ v\:* {
 
 <!-- Main Body Frame -->
 <div id="main">
+<c:if test="${scoreCR}">
+<form method="post" action="pirepscore.do?id=0x<fmt:hex value="${pirep.ID}" />" onsubmit="return valdiate(this)">
+<c:/if>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
@@ -148,8 +165,11 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" label="HOLD" />
 </c:if>
-<c:if test="${access.canApprove}">
+<c:if test="${access.canApprove && (empty scoreCR)}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
+</c:if>
+<c:if test="${scoreCR}">
+ <el:button ID="CRButton" type="submit" label="APPROVE FLIGHT / CHECK RIDE" />
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" label="REJECT FLIGHT" />
@@ -160,6 +180,9 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
+<c:if test="${scoreCR}">
+</form>
+</c:if>
 <br />
 <content:copyright />
 </div>

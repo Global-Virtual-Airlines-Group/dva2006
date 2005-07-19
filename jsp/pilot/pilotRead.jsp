@@ -78,7 +78,7 @@
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td colspan="${cspan}" class="data">${pilot.email}</td>
+ <td colspan="${cspan}" class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
 </tr>
 </c:if>
 
