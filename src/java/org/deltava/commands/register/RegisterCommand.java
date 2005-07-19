@@ -15,8 +15,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
-
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -64,8 +62,6 @@ public class RegisterCommand extends AbstractCommand {
 		// Load the data from the request
 		Applicant a = new Applicant(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
 		a.setStatus(Applicant.PENDING);
-		a.setDN("cn=" + a.getName() + "," + SystemData.get("security.applicant.baseDN"));
-		a.setPassword(ctx.getParameter("pwd1"));
 		a.setEmail(ctx.getParameter("email"));
 		a.setLocation(ctx.getParameter("location"));
 		a.setIMHandle(ctx.getParameter("imHandle"));
@@ -190,13 +186,6 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
-
-			// Write the user record to the authenticator
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.addUser(a.getDN(), a.getPassword());
-		} catch (SecurityException se) {
-			ctx.rollbackTX();
-			throw new CommandException(se);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
