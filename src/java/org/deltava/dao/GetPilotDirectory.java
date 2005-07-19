@@ -73,6 +73,10 @@ public class GetPilotDirectory extends PilotReadDAO {
 				code.append(c);
 		}
 		
+		// If we have no numbers, then abort
+		if (code.length() == 0)
+			return null;
+		
 		try {
 			prepareStatement("SELECT LDAP_DN FROM PILOTS WHERE (PILOT_ID=?)");
 			_ps.setInt(1, Integer.parseInt(code.toString()));
