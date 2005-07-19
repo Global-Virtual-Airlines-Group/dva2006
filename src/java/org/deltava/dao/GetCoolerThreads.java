@@ -128,7 +128,8 @@ public class GetCoolerThreads extends DAO {
             _ps.close();
             
             // Fetch the thread posts
-            prepareStatementWithoutLimits("SELECT * FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED");
+            prepareStatementWithoutLimits("SELECT THREAD_ID, POST_ID, AUTHOR_ID, CREATED, INET_NTOA(REMOTE_ADDR), "
+            		+ "REMOTE_HOST, MSGBODY FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED");
             _ps.setInt(1, id);
             
             // Execute the query
