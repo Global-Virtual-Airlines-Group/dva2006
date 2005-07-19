@@ -70,7 +70,7 @@ public class UserListener implements HttpSessionListener {
 		// Log the user off
 		p.logoff();
 		UserPool.removePerson(p, s.getId());
-		log.info(p.getDN() + " logged out");
+		log.info(p.getName() + " logged out");
 
 		// Get the JDBC connection pool and a system connection
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
