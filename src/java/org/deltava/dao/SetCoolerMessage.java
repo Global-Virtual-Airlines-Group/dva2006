@@ -28,8 +28,8 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void writeMessage(Message msg) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, REMOTE_ADDR, " +
-					"REMOTE_HOST, MSGBODY) VALUES (?, ?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, "
+					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY) VALUES (?, ?, ?, INET_ATON(?), ?, ?)");
 			_ps.setInt(1, msg.getThreadID());
 			_ps.setInt(2, msg.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(msg.getCreatedOn()));

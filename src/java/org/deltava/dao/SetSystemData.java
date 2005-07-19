@@ -50,7 +50,8 @@ public class SetSystemData extends DAO {
 	 */
 	public void updateSession(String sessionID, Pilot usr, String remoteAddr, String remoteHost) throws DAOException {
 		try {
-			prepareStatement("UPDATE SYS_SESSIONS SET PILOT_ID=?, REMOTE_ADDR=?, REMOTE_HOST=? WHERE (ID=?)");
+			prepareStatement("UPDATE SYS_SESSIONS SET PILOT_ID=?, REMOTE_ADDR=INET_ATON(?), "
+					+ "REMOTE_HOST=? WHERE (ID=?)");
 			_ps.setInt(1, usr.getID());
 			_ps.setString(2, remoteAddr);
 			_ps.setString(3, remoteHost);
@@ -85,7 +86,7 @@ public class SetSystemData extends DAO {
 	public void logCommand(CommandLog log) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO SYS_COMMANDS (PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, "
-					+ "BE_TIME, SUCCESS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "BE_TIME, SUCCESS) VALUES (?, INET_ATON(?), ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, log.getPilotID());
 			_ps.setString(2, log.getRemoteAddr());
 			_ps.setString(3, log.getRemoteHost());
