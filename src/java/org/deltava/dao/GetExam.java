@@ -91,6 +91,28 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Loads a Pilot Check Ride.
+	 * @param pilotID the Pilot Database ID
+	 * @param eqType the equipment type used
+	 * @return a CheckRide, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public CheckRide getCheckRide(int pilotID, String eqType) throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?)");
+	      _ps.setInt(1, pilotID);
+	      _ps.setString(2, eqType + " Check Ride");
+	      setQueryMax(1);
+	      
+			// Execute the query
+			List results = executeCheckride();
+			return results.isEmpty() ? null : (CheckRide) results.get(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
 
 	/**
 	 * Loads all examinations and check rides for a particular Pilot.
@@ -224,22 +246,21 @@ public class GetExam extends DAO {
 	   // Iterate through the results
 	   List results = new ArrayList();
 	   while (rs.next()) {
-			CheckRide vid = new CheckRide(rs.getString(2));
-			vid.setID(rs.getInt(1));
-			vid.setFileName(rs.getString(3));
-			vid.setPilotID(rs.getInt(4));
-			vid.setStatus(rs.getInt(5));
-			vid.setStage(rs.getInt(6));
-			vid.setDate(rs.getTimestamp(7));
-			vid.setSubmittedOn(rs.getTimestamp(8));
-			vid.setScoredOn(rs.getTimestamp(9));
-			vid.setScorerID(rs.getInt(10));
-			vid.setPassFail(rs.getBoolean(11));
-			vid.setComments(rs.getString(12));
-			vid.setSize(rs.getInt(13));
+			CheckRide cr = new CheckRide(rs.getString(2));
+			cr.setID(rs.getInt(1));
+			cr.setPilotID(rs.getInt(3));
+			cr.setFlightID(rs.getInt(4));
+			cr.setStatus(rs.getInt(5));
+			cr.setStage(rs.getInt(6));
+			cr.setDate(rs.getTimestamp(7));
+			cr.setSubmittedOn(rs.getTimestamp(8));
+			cr.setScoredOn(rs.getTimestamp(9));
+			cr.setScorerID(rs.getInt(10));
+			cr.setPassFail(rs.getBoolean(11));
+			cr.setComments(rs.getString(12));
 
 			// Add to results
-			results.add(vid);
+			results.add(cr);
 	   }
 	   
 	   // Clean up and return
