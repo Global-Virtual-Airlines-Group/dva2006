@@ -142,6 +142,7 @@ public class GetInstallerSystemInfo extends DAO {
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" ORDER BY ");
 		sqlBuf.append(sortLabel ? "LABEL" : "TTL");
+		sqlBuf.append(" DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
