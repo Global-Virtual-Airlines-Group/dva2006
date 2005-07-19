@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -15,7 +16,7 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
-import org.deltava.security.command.AccessControl;
+import org.deltava.security.command.ExamAccessControl;
 import org.deltava.security.command.PIREPAccessControl;
 
 import org.deltava.util.system.SystemData;
@@ -40,6 +41,9 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final List months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April", "May", "June", "July",
 			"August", "September", "October", "November", "December" }, new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
 			"10", "11" });
+	
+	// Check ride approval values
+	private static final List crApprove = ComboUtils.fromArray(new String[] { "PASS", "FAIL" }, new String[] {"true", "false"});
 
 	/**
 	 * Initialize the command.
@@ -302,11 +306,38 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetEvent evdao = new GetEvent(con);
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			}
+			
+			// Check if this is an ACARS flight - search for an open checkride
+			if (fr instanceof ACARSFlightReport) {
+			   mapType = Pilot.MAP_GOOGLE;
+			   
+			   // See if we have a checkride for this aircraft's primary type
+			   CheckRide cr = null;
+			   GetExam crdao = new GetExam(con);
+			   for (Iterator i = fr.getCaptEQType().iterator(); (i.hasNext() && (cr == null)); ) {
+			      String eqType = (String) i.next();
+			      cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), eqType);
+			   }
+			   
+			   // Save the checkride and access if found
+			   if (cr != null) {
+			      try {
+			         ctx.setAttribute("crPassFail", crApprove, REQUEST);
+			         ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+			         crAccess.validate();
+			         
+			         // Save the checkride and its access controller
+			         ctx.setAttribute("checkRide", cr, REQUEST);
+			         ctx.setAttribute("crAccess", crAccess, REQUEST);
+			      } catch (CommandSecurityException cse) {
+			      }
+			   }
+			}
 
 			// If we're set to use Google Maps, calculate the route
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
-				List positions;
+			   List positions;				
 				if (!(fr instanceof ACARSFlightReport)) {
 					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(), 100);
 				} else {
@@ -340,8 +371,6 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 				ctx.setAttribute("mapRoute", positions, REQUEST);
-			} else {
-
 			}
 
 			// Get the pilot/PIREP beans in the request
@@ -349,7 +378,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("pirep", fr, REQUEST);
 
 			// Create the access controller and stuff it in the request
-			AccessControl ac = new PIREPAccessControl(ctx, fr);
+			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {

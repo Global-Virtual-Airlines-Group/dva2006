@@ -10,8 +10,7 @@ package org.deltava.beans.testing;
 public class CheckRide extends Test {
     
 	private String _comments;
-	private String _fileName;
-	private int _size;
+	private int _acarsID;
 
     /**
      * Creates a new Check Ride/Video.
@@ -20,6 +19,15 @@ public class CheckRide extends Test {
      */
     public CheckRide(String name) {
         super(name);
+    }
+    
+    /**
+     * Returns the ACARS Flight ID for this checkride.
+     * @return the ACARS Flight ID
+     * @see CheckRide#setFlightID(int)
+     */
+    public int getFlightID() {
+       return _acarsID;
     }
 
     /**
@@ -40,23 +48,14 @@ public class CheckRide extends Test {
     }
     
     /**
-     * Returns the Flight Video file name.
-     * @return the file name
-     * @see CheckRide#setFileName(String)
-     */
-    public String getFileName() {
-       return _fileName;
-    }
-    
-    /**
-     * Returns the Flight Video size.
-     * @return the video size in bytes
+     * Returns the size of the Test. <i>Not Implemented</i>
+     * @return 1
      * @see CheckRide#setSize(int)
      */
     public int getSize() {
-    	return _size;
+       return 1;
     }
-
+    
     /**
      * Updates the Flight Video comments.
      * @param comments the comments
@@ -67,25 +66,24 @@ public class CheckRide extends Test {
     }
     
     /**
-     * Updates the Flight Video file name.
-     * @param fileName the file name
-     * @see CheckRide#getFileName()
+     * Sets the ACARS Flight ID for this check ride.
+     * @param id the ACARS Flight ID
+     * @throws IllegalArgumentException if id is negative
+     * @see CheckRide#getFlightID()
      */
-    public void setFileName(String fileName) {
-       _fileName = fileName;
+    public void setFlightID(int id) {
+       if (id != 0)
+          validateID(_acarsID, id);
+       
+       _acarsID = id;
     }
     
     /**
-     * Updates the Flight Video size.
-     * @param size the video size in bytes
-     * @throws IllegalArgumentException if size is negative
-     * @see CheckRide#getSize()
+     * Sets the size of the Test. <i>NOT IMPLEMENTED</i>
+     * @throws UnsupportedOperationException
      */
     public void setSize(int size) {
-    	if (size < 0)
-    		throw new IllegalArgumentException("Size cannot be negative");
-    	
-    	_size = size;
+       throw new UnsupportedOperationException();
     }
     
     /**
