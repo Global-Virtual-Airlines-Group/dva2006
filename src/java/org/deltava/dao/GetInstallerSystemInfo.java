@@ -31,7 +31,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 */
 	public List getOperatingSystems() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT OS FROM common.SYSINFODATA ORDER BY OS");
+			prepareStatementWithoutLimits("SELECT DISTINCT OS FROM common.SYSINFODATA ORDER BY OS DESC");
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -57,7 +57,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 */
 	public List getInstallerCodes() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT INSTALLER FROM common.SYSINFODATA ORDER BY INSTALLER");
+			prepareStatementWithoutLimits("SELECT DISTINCT INSTALLER FROM common.SYSINFODATA ORDER BY INSTALLER DESC");
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
