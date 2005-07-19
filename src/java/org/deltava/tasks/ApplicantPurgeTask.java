@@ -13,7 +13,6 @@ import org.deltava.beans.system.MessageTemplate;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
 import org.deltava.taskman.DatabaseTask;
 import org.deltava.util.system.SystemData;
 
@@ -73,16 +72,12 @@ public class ApplicantPurgeTask extends DatabaseTask {
 					if (a.getCreatedOn().before(cld.getTime())) {
 						log.info("Deleting - registered on " + a.getCreatedOn() + ", cutoff = " + cld.getTime());
 
-						// Remove from the directory, then delete the exam/applicant
-						Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+						// Delete the exam/applicant
 						try {
-							auth.removeUser(a.getDN());
 							qwdao.delete(ex.getID());
 							wdao.delete(a.getID());
-						} catch (SecurityException se) {
-							log.error("Error removing " + a.getDN() + " - " + se.getMessage());
 						} catch (DAOException de) {
-							log.error("Error removing " + a.getDN() + " - " + de.getMessage());
+							log.error("Error removing " + a.getName() + " - " + de.getMessage());
 						}
 
 						// Create the message context
