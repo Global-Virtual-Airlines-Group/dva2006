@@ -37,8 +37,3 @@ if (distance > 6100) {
 
 return 8;
 }
-
-function airportLabel(name, icao, iata)
-{
-return '<b>' + name + '</b><br /><br />ICAO: ' + icao + '<br />IATA: ' + iata + '<br />';
-}
