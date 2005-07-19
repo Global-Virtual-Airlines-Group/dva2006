@@ -153,7 +153,8 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(int conID) throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM acars.CONS WHERE (ID=?)");
+	      prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
+	      		+ "acars.CONS WHERE (ID=?)");
 	      _ps.setInt(1, conID);
 	      setQueryMax(1);
 	      

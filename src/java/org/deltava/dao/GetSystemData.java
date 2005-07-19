@@ -93,7 +93,9 @@ public class GetSystemData extends DAO {
 	 */
 	public List getCommands(java.util.Date d) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) ORDER BY CMDDATE");
+			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
+					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
+					+ "ORDER BY CMDDATE");
 			_ps.setTimestamp(1, createTimestamp(d));
 			return executeCommandLog();
 		} catch (SQLException se) {
@@ -109,7 +111,8 @@ public class GetSystemData extends DAO {
 	 */
 	public List getCommands(String cmdName) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM SYS_COMMANDS WHERE (UPPER(NAME)=?)");
+			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
+					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UPPER(NAME)=?)");
 			_ps.setString(1, cmdName.toUpperCase());
 			return executeCommandLog();
 		} catch (SQLException se) {
@@ -126,7 +129,9 @@ public class GetSystemData extends DAO {
 	 */
 	public List getCommands(java.util.Date d, String remoteAddr) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) AND " + "(UCASE(REMOTE_ADDR)=?) ORDER BY CMDDATE");
+			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
+					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
+					+ "AND (UCASE(REMOTE_ADDR)=?) ORDER BY CMDDATE");
 			_ps.setTimestamp(1, createTimestamp(d));
 			_ps.setString(2, remoteAddr.toUpperCase());
 			return executeCommandLog();
@@ -174,7 +179,8 @@ public class GetSystemData extends DAO {
 	 */
 	public List getSessions(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, S.* FROM PILOTS P, SYS_SESSIONS S WHERE "
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, S.ID, S.PILOT_ID, S.START_TIME, S.END_TIME, "
+					+ "INET_NTOA(S.REMOTE_ADDR), S.REMOTE_HOST FROM PILOTS P, SYS_SESSIONS S WHERE "
 					+ "(P.ID=S.PILOT_ID) AND (P.ID=?) ORDER BY S.START_TIME");
 			_ps.setInt(1, pilotID);
 
@@ -213,7 +219,8 @@ public class GetSystemData extends DAO {
 	 */
 	public List getSessions(java.util.Date d) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, S.* FROM PILOTS P, SYS_SESSIONS S WHERE "
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, S.ID, S.PILOT_ID, S.START_TIME, S.END_TIME, "
+					+ "INET_NTOA(S.REMOTE_ADDR), S.REMOTE_HOST FROM PILOTS P, SYS_SESSIONS S WHERE "
 					+ "(P.ID=S.PILOT_ID) AND (DATE(S.START_TIME) = DATE(?)) ORDER BY S.START_TIME");
 			_ps.setTimestamp(1, createTimestamp(d));
 
