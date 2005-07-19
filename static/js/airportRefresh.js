@@ -17,9 +17,9 @@ function changeAirline(combo)
 var f = document.forms[0];
 
 // Get new airline code, and existing airport codes
-var aCode = combo.options[combo.selectedIndex].value;
-var oldAA = f.airportA.options[f.airportA.selectedIndex].value;
-var oldAD = f.airportD.options[f.airportD.selectedIndex].value;
+var aCode = getValue(combo);
+var oldAA = getValue(f.airportA);
+var oldAD = getValue(f.airportD);
 
 // Update the option lists
 setOptions(f.airportD, aCode);
@@ -38,8 +38,19 @@ text.value = combo.options[combo.selectedIndex].value.toUpperCase();
 return true;
 }
 
+function getValue(combo)
+{
+if (combo.selectedIndex == -1)
+	return null;
+	
+return combo.options[combo.selectedIndex].value;
+}
+
 function setAirport(combo, code)
 {
+if (code == null)
+	return false;
+
 code = code.toUpperCase();
 for (x = 0; x < combo.options.length; x++) {
 	if (code == combo.options[x].value) {
