@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Passing Score</td>
- <td class="data"><el:text name="passScore" idx="*" size="1" max="1" value="${eProfile.passScore}" /></td>
+ <td class="data"><el:text name="passScore" idx="*" size="2" max="2" value="${eProfile.passScore}" /></td>
 </tr>
 <tr>
  <td class="label">Testing Time</td>
