@@ -122,14 +122,6 @@
 		<function-signature>boolean timeWarn(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 	
-	
-	<!-- Check for Check Ride -->
-	<function>
-		<name>isCheckRide</name>
-		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
-		<function-signature>boolean isCheckRide(org.deltava.beans.testing.Test)</function-signature>
-	</function>
-	
 	<!-- Check for correctly answered question -->
 	<function>
 		<name>correct</name>
