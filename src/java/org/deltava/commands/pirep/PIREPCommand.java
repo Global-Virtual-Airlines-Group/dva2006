@@ -239,6 +239,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetPilot dao2 = new GetPilot(con);
 				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
+				
+				// Set date
+				ctx.setAttribute("pirepDate", StringUtils.format(fr.getDate(), "yyyy,M,d") + ",0,0,0,0", REQUEST);
 			}
 
 			// Save airport/airline lists in the request
@@ -253,7 +256,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 			ctx.setAttribute("months", months, REQUEST);
 			ctx.setAttribute("years", _flightYears, REQUEST);
-
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
