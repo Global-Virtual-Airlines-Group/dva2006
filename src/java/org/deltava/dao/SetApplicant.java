@@ -68,17 +68,17 @@ public class SetApplicant extends PilotWriteDAO {
             prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
                   + "VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
                   + "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, DFORMAT, TFORMAT, NFORMAT, "
-               	+ "AIRPORTCODE, TZ, UISCHEME, ID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-            _ps.setInt(26, a.getID());
+               	+ "AIRPORTCODE, TZ, UISCHEME, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            _ps.setInt(25, a.getID());
          } else {
             prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
                   + "IMHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
                   + "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, CREATED=?, "
                   + "REGHOSTNAME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, TZ=?, UISCHEME=?, EQTYPE=?, "
                   + "RANK=? WHERE (ID=?)");
-            _ps.setString(26, a.getEquipmentType());
-            _ps.setString(27, a.getRank());
-            _ps.setInt(28, a.getID());
+            _ps.setString(25, a.getEquipmentType());
+            _ps.setString(26, a.getRank());
+            _ps.setInt(27, a.getID());
          }
          
          // Set the fields
