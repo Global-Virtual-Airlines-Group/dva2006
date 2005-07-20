@@ -352,7 +352,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					
 					// Get the route/position data
 					GetACARSData ardao = new GetACARSData(con);
-					positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS));
+					positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS), false);
 					afr.setRoute(ardao.getRoute(afr.getDatabaseID(FlightReport.DBID_ACARS)));
 
 					// Get the route data from the DAFIF database
