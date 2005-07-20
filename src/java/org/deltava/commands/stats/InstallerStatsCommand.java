@@ -20,7 +20,7 @@ import org.deltava.util.ComboUtils;
 
 public class InstallerStatsCommand extends AbstractCommand {
 	
-	private static final List _sortOptions = ComboUtils.fromArray(new String[] {"Instaler Code", "Operating System", "Memory Size", 
+	private static final List _sortOptions = ComboUtils.fromArray(new String[] {"Installer Code", "Operating System", "Memory Size", 
 		"Flight Simulator Version"}, new String[] {"INSTALLER", "OS", "MEMORY", "FSVERSION"});
 
 	/**
