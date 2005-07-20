@@ -51,6 +51,7 @@ return true;
 <c:if test="${!empty exams}">
 <!-- Examination Data -->
 <c:forEach var="exam" items="${exams}">
+<c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="request" />
 <tr>
 <c:choose>
 <c:when test="${!fn:passed(exam) && !fn:failed(exam)}">
@@ -63,7 +64,7 @@ return true;
  <td><el:img caption="Failed" x="21" y="21" src="testing/fail.png" /></td>
 </c:when>
 </c:choose>
- <td class="pri bld"><el:cmd url="exam" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
  <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
  <td class="pri bld">${exam.score}</td>
  <td class="bld">${exam.size}</td>
@@ -77,21 +78,6 @@ return true;
  <td colspan="7" class="pri bld">You have not completed any Pilot Examinations.</td>
 </tr>
 </c:if>
-
-<!-- Check Ride Video Section -->
-<tr class="title caps">
- <td class="left" colspan="7">CHECK RIDE FLIGHT VIDEOS</td>
-</tr>
-<tr>
- <td class="left" colspan="5">In order to switch equipment stages, you will need to submit a
- Flight Video in addition to successfully passing the First Officer's examination for that 
- aircraft type. You can upload your video (up to 4MB in size) to our web site to allow you to
- track the entire review process. Please contact the Chief Pilot of the aircraft program you
- wish to advance to, in order to determine the requirements for your Check Ride.<br />
-<br />
- Click here to find out how to record a Flight Video in Microsoft Flight Simulator.</td>
- <td colspan="2">SUBMIT VIDEO</td>
-</tr>
 
 <!-- Document Library Section -->
 <tr class="title caps">
