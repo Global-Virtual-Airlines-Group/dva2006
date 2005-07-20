@@ -10,11 +10,15 @@ import javax.servlet.http.*;
 import org.jdom.*;
 import org.jdom.input.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.ACARSHelper;
+import org.deltava.security.Authenticator;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -25,7 +29,9 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ACARSSubmitService extends WebDataService {
-	
+
+	private static final Logger log = Logger.getLogger(ACARSSubmitService.class);
+
 	/**
 	 * Executes the Web Service, writing an ACARS Flight Report to the database.
 	 * @param ctx the Web Service Context
@@ -37,7 +43,7 @@ public class ACARSSubmitService extends WebDataService {
 		// Build the XML document from this request
 		Document doc = null;
 		try {
-			String rawBody = ctx.getRequest().getParameter("XML");
+			String rawBody = ctx.getRequest().getParameter("xml");
 			SAXBuilder builder = new SAXBuilder();
 			doc = builder.build(new StringReader(rawBody));
 		} catch (IOException ie) {
@@ -62,25 +68,38 @@ public class ACARSSubmitService extends WebDataService {
 			Element e = (Element) i.next();
 			data.setProperty(e.getName(), e.getTextNormalize());
 		}
-		
-		// Get the airport list and the departure/arrival airports
-		Airport airportD = SystemData.getAirport(data.getProperty("dep_apt"));
-		Airport airportA = SystemData.getAirport(data.getProperty("arr_apt"));
+
+		// Load the user ID
+		UserID usrID = new UserID(data.getProperty("user"));
 
 		String response = null;
 		try {
+			// Figure out the DN from the Pilot ID
+			GetPilot pdao = new GetPilot(_con);
+			Pilot usr = pdao.getPilotByCode(usrID.getUserID(), usrID.getAirlineCode());
+			if ((usr == null) || (usr.getStatus() != Pilot.ACTIVE))
+				throw new SecurityException("Unknown User ID");
+
+			// Authenticate the user
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			auth.authenticate(usr.getDN(), data.getProperty("password"));
+
+			// Get the airport list and the departure/arrival airports
+			Airport airportD = SystemData.getAirport(data.getProperty("dep_apt"));
+			Airport airportA = SystemData.getAirport(data.getProperty("arr_apt"));
+
 			// See if we have any draft PIREPs for this route pair
 			GetFlightReports prdao = new GetFlightReports(_con);
-			List dFlights = prdao.getDraftReports(ctx.getUser().getID(), airportD, airportA);
-			ACARSFlightReport afr = dFlights.isEmpty() ? ACARSHelper.create(data.getProperty("flight_num")) :
-			   ACARSHelper.create((FlightReport) dFlights.get(0));
+			List dFlights = prdao.getDraftReports(usr.getID(), airportD, airportA);
+			ACARSFlightReport afr = dFlights.isEmpty() ? ACARSHelper.create(data.getProperty("flight_num")) : ACARSHelper
+					.create((FlightReport) dFlights.get(0));
 
 			// Build the PIREP
-			afr.setDatabaseID(FlightReport.DBID_PILOT, ctx.getUser().getID());
-			afr.setRank(ctx.getUser().getRank());
+			afr.setDatabaseID(FlightReport.DBID_PILOT, usr.getID());
+			afr.setRank(usr.getRank());
 			afr.setAirportD(airportD);
 			afr.setAirportA(airportA);
-			
+
 			// Check if the flight qualifies for the promotion to Captain legs
 			GetEquipmentType eqdao = new GetEquipmentType(_con);
 			Collection pTypes = eqdao.getPrimaryTypes(afr.getEquipmentType());
@@ -89,45 +108,43 @@ public class ACARSSubmitService extends WebDataService {
 
 			// Copy XML data into the PIREP
 			ACARSHelper.build(afr, data);
-			
+
 			// Start the transaction
 			_con.setAutoCommit(false);
-			
+
 			// Save the PIREP
 			SetFlightReport wdao = new SetFlightReport(_con);
 			wdao.write(afr);
 			wdao.writeACARS(afr);
 			wdao.submit(afr);
-			
+
 			// Commit the transaction
 			_con.commit();
 			response = "200 OK";
 		} catch (DAOException de) {
-		   try {
-		      _con.rollback();
-		   } catch (Exception e2) { }
-		   response = "500" + de.getMessage();
+			try {
+				_con.rollback();
+			} catch (Exception e2) {
+			}
+			response = "500 " + de.getMessage();
+			log.error(de.getMessage(), de);
+		} catch (SecurityException se) {
+			response = "401 Invalid Credentials";
 		} catch (Exception e) {
-		   response = "500" + e.getMessage();
+			response = "500 " + e.getMessage();
+			log.error(e.getMessage(), e);
 		}
-		
+
 		// Write result code
-		ctx.getResponse().setContentType("text/plain");
 		try {
-		   ctx.getResponse().getWriter().println(response);
+			ctx.getResponse().setContentType("text/plain");
+			ctx.println(response);
+			ctx.commit();
 		} catch (IOException ie) {
-		   throw new ServiceException(HttpServletResponse.SC_NO_CONTENT, ie.getMessage());
+			throw new ServiceException(HttpServletResponse.SC_NO_CONTENT, ie.getMessage());
 		}
 
 		// Return success code
 		return HttpServletResponse.SC_OK;
-	}
-
-	/**
-	 * Queries if the web services requires authentication.
-	 * @return TRUE
-	 */
-	public final boolean isSecure() {
-		return true;
 	}
 }
