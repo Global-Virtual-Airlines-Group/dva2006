@@ -43,6 +43,16 @@ public abstract class DAO implements java.io.Serializable {
          setManualCommit(!c.getAutoCommit());
       } catch(Exception e) { }
    }
+   
+   /**
+    * Converts a null date/time into a default value
+    * @param dt the date/time
+    * @param defaultValue the 32-bit timestamp to use if dt is null
+    */
+   protected void convertDate(java.util.Date dt, long defaultValue) {
+      if (dt == null)
+         dt = new Date(defaultValue);
+   }
 
    /**
     * Tells the Data Access Object that all transaction control will be handled by the calling code, for use in
