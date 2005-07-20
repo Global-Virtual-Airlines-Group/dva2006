@@ -39,6 +39,7 @@ Examinations. To view all Questions in these Examinations, select one from the l
 This Pilot Examination has been succsfully updated in the database.<br />
 <br />
 To view this Examination Profile, <el:cmd url="eprofile" linkID="${exam.name}">Click Here</el:cmd>.<br />
+To view all Examination Profiles, <el:cmd url="eprofiles">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
