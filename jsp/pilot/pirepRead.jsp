@@ -56,7 +56,7 @@ return true;
 <div id="main">
 <c:if test="${scoreCR}">
 <form method="post" action="pirepscore.do?id=0x<fmt:hex value="${pirep.ID}" />" onsubmit="return valdiate(this)">
-<c:/if>
+</c:if>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
