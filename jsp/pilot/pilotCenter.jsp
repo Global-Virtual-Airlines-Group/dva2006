@@ -288,7 +288,26 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 database.</td>
 </tr>
 </content:filter>
-
+<content:filter roles="HR">
+<!-- ACARS Logging Section -->
+<tr class="title caps">
+ <td colspan="2">ACARS SERVER DATA</td>
+</tr>
+<content:filter roles="Admin">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarspool">Connection Pool</el:cmd></td>
+ <td class="data">You can view current connections to the <content:airline /> ACARS server.</td>
+</tr>
+</content:filter>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarslogc">Connection Log</el:cmd></td>
+ <td class="data">You can view the <content:airline /> ACARS server Connection log.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarslogm">Text Message Log</el:cmd></td>
+ <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
+</tr>
+</content:filter>
 <content:filter roles="Admin">
 <!-- System Admin Section -->
 <tr class="title caps">
