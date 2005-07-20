@@ -80,9 +80,9 @@
 		<function-signature>boolean isACARS(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 	
-	<!-- Check for Check Ride -->
+	<!-- Check for Check Flight -->
 	<function>
-		<name>isCheckRide</name>
+		<name>isCheckFlight</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean isCheckRide(org.deltava.beans.FlightReport)</function-signature>
 	</function>
@@ -120,6 +120,13 @@
 		<name>timeWarn</name>
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean timeWarn(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+	
+	<!-- Check for Check Ride -->
+	<function>
+		<name>isCheckRide</name>
+		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
+		<function-signature>boolean isCheckRide(org.deltava.beans.testing.Test)</function-signature>
 	</function>
 	
 	<!-- Check for correctly answered question -->
