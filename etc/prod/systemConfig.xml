@@ -289,7 +289,6 @@
 		<js>js</js>
 		<img>img</img>
 		<library>/usr/local/www/library</library>
-		<video>/usr/local/www/video</video>
 	</path>
 	
 	<smtp>
