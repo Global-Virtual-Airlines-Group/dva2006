@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -15,7 +16,6 @@ import org.deltava.security.command.EquipmentAccessControl;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class EquipmentCommand extends AbstractCommand {
