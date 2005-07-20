@@ -25,7 +25,7 @@ public class ConnectionPoolCommand extends AbstractCommand {
 
       // Get the ACARS Connection pool data and save in the request
       ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
-      ctx.setAttribute("acarsPool", acarsPool, REQUEST);
+      ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
