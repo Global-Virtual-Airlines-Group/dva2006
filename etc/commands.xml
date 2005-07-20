@@ -662,19 +662,19 @@
 	
 	<command id="crscore">
 		<name>Score Check Ride</name>
-		<class>org.deltava.commands.testing.ScoreCommand</class>
+		<class>org.deltava.commands.testing.CheckRideScoreCommand</class>
 		<roles>Examination,HR</roles>
 	</command>
 	
 	<command id="pirepscore">
 		<name>Approve PIREP/Score Ride</name>
-		<class>org.deltava.commands.testing.CheckRidePIREPApprovalCommand</class>
+		<class>org.deltava.commands.pirep.CheckRidePIREPApprovalCommand</class>
 		<roles>Examination,HR</roles>
 	</command>
 	
 	<command id="crview">
 		<name>View Check Ride PIREP</name>
-		<class>org.deltava.commands.testing.CheckRidePIREPCommand</class>
+		<class>org.deltava.commands.pirep.CheckRidePIREPCommand</class>
 		<roles>Pilot</roles>
 	</command>
 	
