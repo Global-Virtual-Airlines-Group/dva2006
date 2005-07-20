@@ -143,7 +143,8 @@ return cmdPost(f.action);
 </div>
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
-initDateCombos(f.dateM, f.dateD, new Date());
+var d = new Date(${(empty pirepDate) ? '' : pirepDate});
+initDateCombos(f.dateM, f.dateD, d);
 f.airline.focus();
 
 if (f.airline.selectedIndex != 0) {
