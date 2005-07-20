@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Data Access Object to load ACARS route information.
+ * A Data Access Object to load ACARS information.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -34,7 +34,8 @@ public class GetACARSData extends DAO {
 	 */
 	public List getRoutePositions(int flightID) throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT LAT, LNG FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+			prepareStatement("SELECT DISTINCT LAT, LNG FROM acars.POSITIONS WHERE (FLIGHT_ID=?) "
+			      + "ORDER BY REPORT_TIME");
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -57,10 +58,11 @@ public class GetACARSData extends DAO {
 	/**
 	 * Loads complete route data for a particular ACARS flight ID.
 	 * @param flightID the ACARS flight ID
+	 * @param includeOnGround TRUE if entries on the ground are RouteEntry beans, otherwise FALSE
 	 * @return a List of RouteEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getRouteEntries(int flightID) throws DAOException {
+	public List getRouteEntries(int flightID, boolean includeOnGround) throws DAOException {
 		try {
 			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, "
 					+ "N2, FLAPS, FLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
@@ -84,7 +86,7 @@ public class GetACARSData extends DAO {
 				entry.setFlags(rs.getInt(12));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
-				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
+				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && (!includeOnGround)) {
 					results.add(new GeoPosition(entry));
 				} else {
 					results.add(entry);
@@ -151,11 +153,11 @@ public class GetACARSData extends DAO {
 	 * @return the Connection information, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public ConnectionEntry getConnection(int conID) throws DAOException {
+	public ConnectionEntry getConnection(long conID) throws DAOException {
 	   try {
 	      prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
 	      		+ "acars.CONS WHERE (ID=?)");
-	      _ps.setInt(1, conID);
+	      _ps.setLong(1, conID);
 	      setQueryMax(1);
 	      
 	      // Get the first entry, or null
@@ -169,7 +171,7 @@ public class GetACARSData extends DAO {
 	/**
 	 * Helper method to parse Flight Info result sets.
 	 */
-	private List executeFlightInfo() throws SQLException {
+	protected List executeFlightInfo() throws SQLException {
 	   
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
@@ -201,7 +203,7 @@ public class GetACARSData extends DAO {
 	/**
 	 * Helper method to parse Connection result sets.
 	 */
-	private List executeConnectionInfo() throws SQLException {
+	protected List executeConnectionInfo() throws SQLException {
 
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
