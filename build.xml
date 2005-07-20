@@ -258,9 +258,9 @@
 		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
 		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
 	    	<fileset dir="WEB-INF">
-				<include name="web.xml" />
 	    		<include name="*.tld" />
 			</fileset>
+			<fileset file="${java.io.tmpdir}/build/web.xml" />
 		</ftp>
 		
 		<!-- Upload the libraries to the FTP server -->
