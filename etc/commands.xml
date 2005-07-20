@@ -875,4 +875,36 @@
 		<class>org.deltava.commands.system.LogPurgeCommand</class>
 		<roles>Admin</roles>
 	</command>
+	
+	
+	<!-- ACARS log/data commands -->
+	<command id="acarspool">
+		<name>ACARS Connection Pool</name>
+		<class>org.deltava.commands.acars.ConnectionPoolCommand</class>
+		<roles>Admin</roles>
+	</command>
+	
+	<command id="acarsinfo">
+		<name>ACARS Flight Info</name>
+		<class>org.deltava.commands.acars.FlightInfoCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="acarslogc">
+		<name>ACARS Connection Log</name>
+		<class>org.deltava.commands.acars.ConnectionLogCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="acarslogf">
+		<name>ACARS Flight Log</name>
+		<class>org.deltava.commands.acars.FlightLogCommand</class>
+		<roles>HR</roles>
+	</command>
+	
+	<command id="acarslogm">
+		<name>ACARS Message Log</name>
+		<class>org.deltava.commands.acars.MessageLogCommand</class>
+		<roles>HR</roles>
+	</command>
 </commands>
