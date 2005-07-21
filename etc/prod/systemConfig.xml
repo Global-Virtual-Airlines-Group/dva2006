@@ -372,6 +372,10 @@
 			<recv type="Integer">8192</recv>
 		</buffer>
 		
+		<list name="login_msgs" attr="msg">
+			<msg>All messages are logged by user ID and IP address.</msg>
+		</list>
+		
 		<ack>
 			<info type="Boolean">true</info>
 			<position type="Boolean">true</position>

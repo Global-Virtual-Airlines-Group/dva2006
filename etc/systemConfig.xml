@@ -376,5 +376,10 @@
 			<position type="Boolean">true</position>
 			<text type="Boolean">false</text>
 		</ack>
+		
+		<list name="login_msgs" attr="msg">
+			<msg>All messages are logged by user ID and IP address.</msg>
+			<msg>Don't be a goof.</msg>
+		</list>
 	</acars>
 </config>
