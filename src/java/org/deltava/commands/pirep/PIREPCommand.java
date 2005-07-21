@@ -344,11 +344,6 @@ public class PIREPCommand extends AbstractFormCommand {
 					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(), 100);
 				} else {
 					ACARSFlightReport afr = (ACARSFlightReport) fr;
-					afr.setDatabaseID(FlightReport.DBID_ACARS, 10);
-					
-					// FIXME This is for map testing only; remove me
-					afr.setAirportD(SystemData.getAirport("PIT"));
-					afr.setAirportA(SystemData.getAirport("BUF"));
 					
 					// Get the route/position data
 					GetACARSData ardao = new GetACARSData(con);
