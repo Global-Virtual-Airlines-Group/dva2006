@@ -68,4 +68,18 @@ public class MiscFunctions {
 		DateFormat df = new SimpleDateFormat(fmt);
 		return (dt == null) ? "" : df.format(dt);
 	}
+	
+   /**
+    * Displays the time difference between two date/times. Both date/times are assumed to be
+    * in the same time zone.
+    * @param d1 the first date/time
+    * @param d2 the second date/time
+    * @return the difference in seconds, or 0 if either date is null 
+    */
+   public static int difference(Date d1, Date d2) {
+      if ((d1 == null) || (d2 == null))
+         return 0;
+      
+      return (int) ((d2.getTime() - d1.getTime()) / 1000);
+   }
 }
