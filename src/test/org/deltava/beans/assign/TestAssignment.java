@@ -30,11 +30,6 @@ public class TestAssignment extends AbstractBeanTestCase {
         assertEquals("DVA", _a.getAirline().getCode());
         assertEquals(123, _a.getFlightNumber());
         assertEquals(1, _a.getLeg());
-        assertFalse(_a.isComplete());
-        assertEquals("opt1", _a.getRowClassName());
-        _a.setComplete(true);
-        assertTrue(_a.isComplete());
-        assertNull(_a.getRowClassName());
     }
     
     public void testLength() {
