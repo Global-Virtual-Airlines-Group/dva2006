@@ -22,7 +22,8 @@
 </tr>
 <tr>
  <td class="label">Takeoff Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.takeoffTime}" />, (XX minutes after start)</td>
+ <td class="data"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
+(<fmt:int value="${fn:delta(pirep.takeoffTime, pirep.startTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Takeoff Information</td>
@@ -32,17 +33,19 @@
 </tr>
 <tr>
  <td class="label">Landing Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.landingTime}" />, (XX minutes after start)</td>
+ <td class="data"><fmt:date className="bld" date="${pirep.landingTime}" />, 
+(<fmt:int value="${fn:delta(pirep.landingTime, pirep.startTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Landing Information</td>
  <td class="data"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
  feet/min, <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
- lbs total, <fmt:int value="${pirep.landingFuel}" /></td>
+ lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel</td>
 </tr>
 <tr>
  <td class="label">Arrival Time</td>
- <td class="data"><fmt:date className="sec bld" date="${pirep.endTime}" /> (XX minutes after start)</td>
+ <td class="data"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
+(<fmt:int value="${fn:delta(pirep.endTime, pirep.startTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Arrival Information</td>
@@ -51,8 +54,8 @@
 </tr>
 <tr>
  <td class="label">Flight Time</td>
- <td class="data"><fmt:date fmt="t" className="pri bld" date="${pirep.airborneTime}" />, block time
- <fmt:date fmt="t" date="${pirep.blockTime}" /></td>
+ <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" />, block time
+ <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /></td>
 </tr>
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
 <tr>
