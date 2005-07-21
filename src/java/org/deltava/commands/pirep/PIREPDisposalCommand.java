@@ -1,10 +1,11 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.pirep;
 
-import java.util.Map;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -118,6 +119,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Get the write DAO and perform the operation
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(ctx.getUser(), fr.getID(), opCode);
+			fr.setStatus(opCode);
 			
 			// If we're approving and we have hit a century club milestone, log it
 			Map ccLevels = (Map) SystemData.getObject("centuryClubLevels");
@@ -139,6 +141,23 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Commit the transaction
 			ctx.commitTX();
+			
+			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
+			int assignID = fr.getDatabaseID(FlightReport.DBID_ASSIGN);
+			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
+			   GetAssignment fadao = new GetAssignment(con);
+			   AssignmentInfo assign = fadao.get(assignID);
+			   List flights = rdao.getByAssignment(assignID);
+			   for (Iterator i = flights.iterator(); i.hasNext(); )
+			      assign.addFlight((FlightReport) i.next());
+			   
+			   // If the assignment is complete, then mark it as such
+			   if (assign.isComplete()) {
+			      SetAssignment fawdao = new SetAssignment(con);
+			      fawdao.complete(assign);
+			      ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
+			   }
+			}
 
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
