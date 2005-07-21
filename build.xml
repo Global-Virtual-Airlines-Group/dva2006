@@ -224,29 +224,6 @@
 		<delete file="WEB-INF/web.xml" />
 	</target>
 	
-	<!-- Mail the daily JARs back to me -->
-	<target name="mail">
-		<mkdir dir ="${java.io.tmpdir}/dva2006/mail" />
-		<jar destfile="${java.io.tmpdir}/dva2006/mail/dva2006_java.jar"
-		compress="on" basedir="src/java" />
-		<jar destfile="${java.io.tmpdir}/dva2006/mail/dva2006_test.jar"
-		compress="on" basedir="src/test" />
-		<zip destfile="${java.io.tmpdir}/dva2006/mail/dva2006_web-inf.zip" compress="on">
-			<zipfileset dir="WEB-INF" prefix="WEB-INF" />
-			<zipfileset dir="jsp" prefix="jsp" />
-			<zipfileset dir="etc" prefix="etc" />
-			<zipfileset dir="sql" prefix="sql" />			
-		</zip>
-		
-		<mail mailhost="mail.sce.net" subject="DVA2006" message="DVA2006 Export">
-			 <from address="Lynne Kolin &lt;lynne@sce.net&gt;" />
-	 		<to address="Luke Kolin &lt;luke.kolin@cox.com&gt;" />
-			<fileset dir="${java.io.tmpdir}/dva2006/mail" />
-		</mail>
-
-		<delete dir="${java.io.tmpdir}/dva2006/mail" />
-	</target>
-	
 	<!-- Production Deployment via FTP -->
 	<target name="prod_ftp_deploy" depends="compile,acars,jspc">
 		<property name="path.webapp" value="/usr/local/www/deltava.org/webapps/dva2006" />
@@ -303,7 +280,7 @@
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="dva2006.jar" />
-				<include name="dva2006_jsp.jar" />
+<!--				<include name="dva2006_jsp.jar" /> -->
 				<include name="dva_acars.jar" />
 			</fileset>
 		</scp>
@@ -316,6 +293,7 @@
 				<include name="services.xml" />
 				<include name="tasks.xml" />
 				<include name="prod/**" />
+				<include name="prod/systemConfig.xml" />
 			</fileset>
 		</scp>
 	</target>
