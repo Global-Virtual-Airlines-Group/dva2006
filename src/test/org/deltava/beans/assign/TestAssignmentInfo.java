@@ -88,23 +88,18 @@ public class TestAssignmentInfo extends AbstractBeanTestCase {
         AssignmentLeg a = new AssignmentLeg(new Airline("DVA"), 129, 1);
         _info.addAssignment(a);
         assertEquals(1, _info.getAssignments().size());
-        assertSame(a, _info.getAssignments().get(0));
+        assertSame(a, _info.getAssignments().iterator().next());
         
         FlightReport fr = new FlightReport(new Airline("DVA"), 123, 1);
         _info.addFlight(fr);
         assertEquals(1, _info.getFlights().size());
-        assertSame(fr, _info.getFlights().get(0));
+        assertSame(fr, _info.getFlights().iterator().next());
         assertEquals(0, fr.getDatabaseID(FlightReport.DBID_PILOT));
         
         _info.setPilotID(1234);
         fr = new FlightReport(new Airline("DVA"), 129, 1);
         _info.addFlight(fr);
         assertEquals(2, _info.getFlights().size());
-        assertSame(fr, _info.getFlights().get(1));
         assertEquals(_info.getPilotID(), fr.getDatabaseID(FlightReport.DBID_PILOT));
-        
-        assertFalse(_info.isComplete());
-        a.setComplete(true);
-        assertTrue(_info.isComplete());
     }
 }
