@@ -20,13 +20,17 @@
 
 <!-- Main Body Frame -->
 <div id="main">
-<c:if test="${isCreated && !isSubmitted}">
-<div class="updateHdr">Flight Report Created</div>
+<c:if test="${isSaved}">
+<div class="updateHdr">Flight Report Saved</div>
 <br />
-This <content:airline /> Flight Report has been successfully created and saved in the database.<br />
+This <content:airline /> Flight Report has been successfully and saved in the database.<br />
+<c:if test="${isCreated}">
 <br />
+<span class="err">Please note that you must <u>SUBMIT</u> a Flight Report if you want the flight 
+hours and flight leg to be counted here at <content:airline />. To Submit this Flight Report for 
+approval,</span> <el:cmd className="sec bld" url="submit" linkID="0x${pirep.ID}">click here</el:cmd>.<br />
 </c:if>
-
+</c:if>
 <c:if test="${isSubmitted}">
 <div class="updateHdr">Flight Report Submitted</div>
 <br />
