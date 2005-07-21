@@ -98,7 +98,8 @@ public class GetPilot extends PilotReadDAO {
 
 		StringBuffer sql = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON "
-				+ "((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE (P.STATUS IN (?, ?)) AND (P.PILOT_ID > 0) " + "GROUP BY P.ID ORDER BY ");
+				+ "((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?)) AND (P.PILOT_ID > 0) "
+				+ "GROUP BY P.ID ORDER BY ");
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
@@ -107,7 +108,6 @@ public class GetPilot extends PilotReadDAO {
 			prepareStatement(sql.toString());
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, Pilot.ACTIVE);
-			_ps.setInt(3, Pilot.ON_LEAVE);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
