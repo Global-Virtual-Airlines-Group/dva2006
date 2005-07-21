@@ -49,7 +49,7 @@ public class ExamSubmitCommand extends AbstractCommand {
          List questions = ex.getQuestions();
          for (int x = 0; x < questions.size(); x++) {
             Question q = (Question) questions.get(x);
-            q.setAnswer(ctx.getParameter("answer" + String.valueOf(x - 1))); // JSP fields are 1-offset
+            q.setAnswer(ctx.getParameter("answer" + String.valueOf(q.getNumber() - 1))); // JSP fields are 1-offset
          }
          
          // Set the status of the examination, and submitted date
