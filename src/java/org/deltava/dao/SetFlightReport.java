@@ -229,8 +229,8 @@ public class SetFlightReport extends DAO {
 			prepareStatementWithoutLimits("INSERT INTO ACARS_PIREPS (ID, ACARS_ID, START_TIME, ENGINE_START, " +
 					"TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, " +
 					"TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, " +
-					"LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, AIRBORNE_TIME, " +
-					"BLOCK_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					"LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TIME_1X, TIME_2X, " +
+					"TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setInt(1, afr.getID());
 			_ps.setInt(2, afr.getDatabaseID(FlightReport.DBID_ACARS));
@@ -255,8 +255,9 @@ public class SetFlightReport extends DAO {
 			_ps.setTimestamp(21, createTimestamp(afr.getEndTime()));
 			_ps.setInt(22, afr.getGateWeight());
 			_ps.setInt(23, afr.getGateFuel());
-			_ps.setTimestamp(24, createTimestamp(afr.getAirborneTime()));
-			_ps.setTimestamp(25, createTimestamp(afr.getBlockTime()));
+			_ps.setInt(24, afr.getTime1X());
+			_ps.setInt(25, afr.getTime2X());
+			_ps.setInt(26, afr.getTime4X());
 			
 			// Write to the database
 			executeUpdate(1);
