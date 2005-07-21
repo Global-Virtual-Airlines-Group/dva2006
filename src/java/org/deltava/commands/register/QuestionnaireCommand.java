@@ -36,7 +36,8 @@ public class QuestionnaireCommand extends AbstractCommand {
          Connection con = ctx.getConnection();
          
          // Since the ID may not be hex-encoded we need to grab it a different way
-         int id = StringUtils.parseHex((String) ctx.getCmdParameter(Command.ID, "0"));
+         Object idP = ctx.getCmdParameter(Command.ID, "0");
+         int id = (idP instanceof Integer) ? ((Integer) idP).intValue() : StringUtils.parseHex((String) idP);
          
          // Get the DAO and the Questionnaire
          GetQuestionnaire exdao = new GetQuestionnaire(con);
