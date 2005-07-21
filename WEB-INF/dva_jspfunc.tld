@@ -29,6 +29,13 @@
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>java.lang.String escape(java.lang.String)</function-signature>
 	</function>
+	
+	<!-- Calculate the difference between two date/times -->
+	<function>
+		<name>delta</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>int difference(java.util.Date, java.util.Date)</function-signature>
+	</function>
 		
 	<!-- Converts a number to a hex string -->
 	<function>
