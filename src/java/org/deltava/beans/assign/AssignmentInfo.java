@@ -34,8 +34,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     private boolean _repeating;
     private boolean _purge;
     
-    private List _assignments;
-    private List _flights;
+    private Set _assignments;
+    private Set _flights;
     
     /**
      * Creates a new Flight Assignment for a particular Equipment Type.
@@ -45,8 +45,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     public AssignmentInfo(String eqType) {
         super();
         _eqType = eqType.trim();
-        _assignments = new ArrayList();
-        _flights = new ArrayList();
+        _assignments = new HashSet();
+        _flights = new HashSet();
     }
     
     /**
@@ -54,7 +54,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return a List of AssignmentInfo beans
      * @see AssignmentInfo#addAssignment(AssignmentLeg)
      */
-    public List getAssignments() {
+    public Collection getAssignments() {
         return _assignments;
     }
     
@@ -63,7 +63,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return a List of FlightReport beans
      * @see AssignmentInfo#addFlight(FlightReport)
      */
-    public List getFlights() {
+    public Collection getFlights() {
         return _flights;
     }
     
@@ -124,13 +124,12 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     
     /**
      * Determines if all flights in this assignment are complete.
-     * @return TRUE if all assignment legs are complete, otherwise FALS
-     * @see AssignmentLeg#isComplete()
+     * @return TRUE if all assignment flights are complete, otherwise FALS
      */
     public boolean isComplete() {
-        for (Iterator i = _assignments.iterator(); i.hasNext(); ) {
-            AssignmentLeg a = (AssignmentLeg) i.next();
-            if (!a.isComplete())
+        for (Iterator i = _flights.iterator(); i.hasNext(); ) {
+            FlightReport fr = (FlightReport) i.next();
+            if ((fr.getStatus() != FlightReport.OK) && (fr.getStatus() != FlightReport.REJECTED))
                 return false;
         }
         

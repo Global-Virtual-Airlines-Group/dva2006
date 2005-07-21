@@ -8,7 +8,7 @@ import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.*;
 
 /**
- * A Data Access Object to create and update Flight Assignments. 
+ * A Data Access Object to create and update Flight Assignments.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -16,214 +16,186 @@ import org.deltava.beans.assign.*;
 
 public class SetAssignment extends DAO {
 
-	/**
-	 * Initialize the Data Access Object.
-	 * @param c the JDBC connection to use
-	 */
-	public SetAssignment(Connection c) {
-		super(c);
-	}
+   /**
+    * Initialize the Data Access Object.
+    * @param c the JDBC connection to use
+    */
+   public SetAssignment(Connection c) {
+      super(c);
+   }
 
-	/**
-	 * Writes a new Flight Assignment to the database. Any FlightReport beans within the assignment will have
-	 * the Assignment Database ID updated.
-	 * @param a the Assingment object
-	 * @param db the Database to write to
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(AssignmentInfo a, String db) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
-	   sqlBuf.append(db.toLowerCase());
-	   sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, EQTYPE, REPEATS, RANDOM, PURGEABLE) VALUES "
-	         + "(?, ?, ?, ?, ?, ?)");
-	   
-		try {
-			startTransaction();
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, a.getStatus());
-			_ps.setInt(2, a.getEventID());
-			_ps.setString(3, a.getEquipmentType());
-			_ps.setBoolean(4, a.isRepeating());
-			_ps.setBoolean(5, a.isRandom());
-			_ps.setBoolean(6, a.isPurgeable());
-			
-			// Write the assignment info
-			executeUpdate(1);
-			
-			// Update the ID
-			a.setID(getNewID());
-			
-			// Write the legs
-			writeLegs(a.getID(), a.getAssignments(), db);
-			
-			// Update the Flight Reports with the new database ID
-			for (Iterator i = a.getFlights().iterator(); i.hasNext(); ) {
-				FlightReport fr = (FlightReport) i.next();
-				fr.setDatabaseID(FlightReport.DBID_ASSIGN, a.getID());
-			}
-			
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
+   /**
+    * Writes a new Flight Assignment to the database. Any FlightReport beans within the assignment will have the
+    * Assignment Database ID updated.
+    * @param a the Assingment object
+    * @param db the Database to write to
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void write(AssignmentInfo a, String db) throws DAOException {
 
-	/**
-	 * Assigns a Flight Assignment to a particular Pilot.
-	 * @param a the Assignment, with status and assignDate properties set
-	 * @param pilotID the Pilot's Database ID
-	 * @param db the Database to write to
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void assign(AssignmentInfo a, int pilotID, String db) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("UPDATE ");
-	   sqlBuf.append(db.toLowerCase());
-	   sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=?, STATUS=?, PILOT_ID=? WHERE (ID=?)");
-	   
-		try {
-			prepareStatement(sqlBuf.toString());
-			_ps.setTimestamp(1, createTimestamp(a.getAssignDate()));
-			_ps.setInt(2, AssignmentInfo.RESERVED);
-			_ps.setInt(3, pilotID);
-			_ps.setInt(4, a.getID());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Private method to write the individual legs of a Flight Assignment to the database.
-	 */
-	private void writeLegs(int assignID, List legs, String db) throws SQLException {
-		
-		// Prepare the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
-	   sqlBuf.append(db.toLowerCase());
-	   sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?, ?)");
-	   prepareStatement(sqlBuf.toString());
-		_ps.setInt(1, assignID);
-		
-		// Write the legs
-		for (Iterator i = legs.iterator(); i.hasNext(); ) {
-			AssignmentLeg leg = (AssignmentLeg) i.next();
-			_ps.setString(2, leg.getAirline().getCode());
-			_ps.setInt(3, leg.getFlightNumber());
-			_ps.setInt(4, leg.getLeg());
-			_ps.setString(5, leg.getAirportD().getIATA());
-			_ps.setString(6, leg.getAirportA().getIATA());
-			
-			// Add to the batch update
-			_ps.addBatch();
-		}
-		
-		// Execute the update
-		_ps.executeBatch();
-		_ps.close();
-	}
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+      sqlBuf.append(db.toLowerCase());
+      sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, EQTYPE, REPEATS, RANDOM, PURGEABLE) VALUES "
+            + "(?, ?, ?, ?, ?, ?)");
 
-	/**
-	 * Marks an Assignment flight leg as Complete.
-	 * @param ai the AssignmentInfo object
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void markCompletion(AssignmentInfo ai) throws DAOException {
-		try {
-			startTransaction();
-			
-			// Init the prepared statement to update legs
-			prepareStatement("UPDATE ASSIGNLEGS SET COMPLETE=1 WHERE (ID=?) AND (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
-			_ps.setInt(1, ai.getID());
-			
-			// Mark the legs as complete
-			for (Iterator i = ai.getAssignments().iterator(); i.hasNext(); ) {
-				AssignmentLeg a = (AssignmentLeg) i.next();
-				if (a.isComplete()) {
-					_ps.setString(2, a.getAirline().getCode());
-					_ps.setInt(3, a.getFlightNumber());
-					_ps.setInt(4, a.getLeg());
-					_ps.addBatch();
-				}
-			}
-			
-			// Update the legs
-			_ps.executeBatch();
-			_ps.close();
-			
-			// Mark the assignment as complete
-			if (ai.isComplete()) {
-				prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=? WHERE (ID=?)");
-				_ps.setInt(1, AssignmentInfo.COMPLETE);
-				_ps.setTimestamp(2, createTimestamp(ai.getCompletionDate()));
-				_ps.setInt(3, ai.getID());
-				executeUpdate(1);
-			}
-			
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
+      try {
+         startTransaction();
+         prepareStatement(sqlBuf.toString());
+         _ps.setInt(1, a.getStatus());
+         _ps.setInt(2, a.getEventID());
+         _ps.setString(3, a.getEquipmentType());
+         _ps.setBoolean(4, a.isRepeating());
+         _ps.setBoolean(5, a.isRandom());
+         _ps.setBoolean(6, a.isPurgeable());
 
-	/**
-	 * Releases a Flight Assignment.
-	 * @param a the Flight Assignment bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void reset(AssignmentInfo a) throws DAOException {
-		try {
-			startTransaction();
-			
-			// Reset the legs
-			prepareStatement("UPDATE ASSIGNLEGS SET COMPLETE=0 WHERE (COMPLETE=1) AND (ID=?)");
-			_ps.setInt(1, a.getID());
-			executeUpdate(0); // This can be zero since no legs might be finished
-			
-			// Reset the assignment itself
-			prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=? WHERE (ID=?)");
-			_ps.setInt(1, AssignmentInfo.AVAILABLE);
-			_ps.setInt(2, a.getID());
-			executeUpdate(1);
-			
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
+         // Write the assignment info
+         executeUpdate(1);
 
-	/**
-	 * Deletes a Flight Assignment from the database.
-	 * @param a the Assignment
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(AssignmentInfo a) throws DAOException {
-		try {
-			startTransaction();
-			
-			// Prepare statement to delete legs
-			prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
-			_ps.setInt(1, a.getID());
-			executeUpdate(1);
-			
-			// Prepare statement to delete assignment
-			prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
-			_ps.setInt(1, a.getID());
-			executeUpdate(1);
-			
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
+         // Update the ID
+         a.setID(getNewID());
+
+         // Write the legs
+         writeLegs(a.getID(), a.getAssignments(), db);
+
+         // Update the Flight Reports with the new database ID
+         for (Iterator i = a.getFlights().iterator(); i.hasNext();) {
+            FlightReport fr = (FlightReport) i.next();
+            fr.setDatabaseID(FlightReport.DBID_ASSIGN, a.getID());
+         }
+
+         commitTransaction();
+      } catch (SQLException se) {
+         rollbackTransaction();
+         throw new DAOException(se);
+      }
+   }
+
+   /**
+    * Assigns a Flight Assignment to a particular Pilot.
+    * @param a the Assignment, with status and assignDate properties set
+    * @param pilotID the Pilot's Database ID
+    * @param db the Database to write to
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void assign(AssignmentInfo a, int pilotID, String db) throws DAOException {
+
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("UPDATE ");
+      sqlBuf.append(db.toLowerCase());
+      sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=?, STATUS=?, PILOT_ID=? WHERE (ID=?)");
+
+      try {
+         prepareStatement(sqlBuf.toString());
+         _ps.setTimestamp(1, createTimestamp(a.getAssignDate()));
+         _ps.setInt(2, AssignmentInfo.RESERVED);
+         _ps.setInt(3, pilotID);
+         _ps.setInt(4, a.getID());
+         executeUpdate(1);
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+
+   /**
+    * Private method to write the individual legs of a Flight Assignment to the database.
+    */
+   private void writeLegs(int assignID, Collection legs, String db) throws SQLException {
+
+      // Prepare the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+      sqlBuf.append(db.toLowerCase());
+      sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      prepareStatement(sqlBuf.toString());
+      _ps.setInt(1, assignID);
+
+      // Write the legs
+      for (Iterator i = legs.iterator(); i.hasNext();) {
+         AssignmentLeg leg = (AssignmentLeg) i.next();
+         _ps.setString(2, leg.getAirline().getCode());
+         _ps.setInt(3, leg.getFlightNumber());
+         _ps.setInt(4, leg.getLeg());
+         _ps.setString(5, leg.getAirportD().getIATA());
+         _ps.setString(6, leg.getAirportA().getIATA());
+
+         // Add to the batch update
+         _ps.addBatch();
+      }
+
+      // Execute the update
+      _ps.executeBatch();
+      _ps.close();
+   }
+
+   /**
+    * Marks an Assignment as Complete.
+    * @param ai the AssignmentInfo object
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void complete(AssignmentInfo ai) throws DAOException {
+      try {
+         prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=? WHERE (ID=?)");
+         _ps.setInt(1, AssignmentInfo.COMPLETE);
+         _ps.setTimestamp(2, createTimestamp(ai.getCompletionDate()));
+         _ps.setInt(3, ai.getID());
+         executeUpdate(1);
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+
+   /**
+    * Releases a Flight Assignment.
+    * @param a the Flight Assignment bean
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void reset(AssignmentInfo a) throws DAOException {
+      try {
+         startTransaction();
+
+         // Reset the legs
+         prepareStatement("UPDATE ASSIGNLEGS SET COMPLETE=0 WHERE (COMPLETE=1) AND (ID=?)");
+         _ps.setInt(1, a.getID());
+         executeUpdate(0); // This can be zero since no legs might be finished
+
+         // Reset the assignment itself
+         prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=? WHERE (ID=?)");
+         _ps.setInt(1, AssignmentInfo.AVAILABLE);
+         _ps.setInt(2, a.getID());
+         executeUpdate(1);
+
+         // Commit the transaction
+         commitTransaction();
+      } catch (SQLException se) {
+         rollbackTransaction();
+         throw new DAOException(se);
+      }
+   }
+
+   /**
+    * Deletes a Flight Assignment from the database.
+    * @param a the Assignment
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void delete(AssignmentInfo a) throws DAOException {
+      try {
+         startTransaction();
+
+         // Prepare statement to delete legs
+         prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
+         _ps.setInt(1, a.getID());
+         executeUpdate(1);
+
+         // Prepare statement to delete assignment
+         prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
+         _ps.setInt(1, a.getID());
+         executeUpdate(1);
+
+         // Commit the transaction
+         commitTransaction();
+      } catch (SQLException se) {
+         rollbackTransaction();
+         throw new DAOException(se);
+      }
+   }
 }

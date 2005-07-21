@@ -43,7 +43,7 @@ public class GetAssignment extends DAO {
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT * FROM ASSIGNLEGS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			loadFlights(results);
+			loadLegs(results);
 
 			// Return results, or null if none found
 			return results.isEmpty() ? null : (AssignmentInfo) results.get(0);
@@ -68,7 +68,7 @@ public class GetAssignment extends DAO {
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
-			loadFlights(results);
+			loadLegs(results);
 
 			return results;
 		} catch (SQLException se) {
@@ -92,7 +92,7 @@ public class GetAssignment extends DAO {
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.STATUS=?)");
 			_ps.setInt(1, status);
-			loadFlights(results);
+			loadLegs(results);
 
 			return results;
 		} catch (SQLException se) {
@@ -116,7 +116,7 @@ public class GetAssignment extends DAO {
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.EVENT_ID=?)");
 			_ps.setInt(1, eventID);
-			loadFlights(results);
+			loadLegs(results);
 
 			return results;
 		} catch (SQLException se) {
@@ -140,7 +140,7 @@ public class GetAssignment extends DAO {
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.EQTYPE=?)");
 			_ps.setString(1, eqType);
-			loadFlights(results);
+			loadLegs(results);
 
 			return results;
 		} catch (SQLException se) {
@@ -205,7 +205,7 @@ public class GetAssignment extends DAO {
 	/**
 	 * Helper method to process the assignment legs result set.
 	 */
-	private void loadFlights(List assignments) throws SQLException {
+	private void loadLegs(List assignments) throws SQLException {
 
 		// Check for empty list
 		if (assignments.isEmpty())
@@ -224,7 +224,6 @@ public class GetAssignment extends DAO {
 				leg.setEquipmentType(info.getEquipmentType());
 				leg.setAirportD(SystemData.getAirport(rs.getString(5)));
 				leg.setAirportA(SystemData.getAirport(rs.getString(6)));
-				leg.setComplete(rs.getBoolean(7));
 
 				// Add to assignment
 				info.addAssignment(leg);

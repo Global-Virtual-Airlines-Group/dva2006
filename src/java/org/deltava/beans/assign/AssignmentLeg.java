@@ -1,8 +1,6 @@
 package org.deltava.beans.assign;
 
 import org.deltava.beans.Flight;
-import org.deltava.beans.FlightReport;
-import org.deltava.beans.ViewEntry;
 
 import org.deltava.beans.schedule.Airline;
 
@@ -13,15 +11,8 @@ import org.deltava.beans.schedule.Airline;
  * @since 1.0
  */
 
-public class AssignmentLeg extends Flight implements ViewEntry {
+public class AssignmentLeg extends Flight {
     
-    /**
-     * Completed PIREP values
-     */
-    public static final int[] PIREP_COMPLETE_STATUSES = { FlightReport.OK, FlightReport.REJECTED };
-    
-    private boolean _complete;
-
     /**
      * Creates a new Assigned Flight.
      * @param a the Airline
@@ -50,30 +41,5 @@ public class AssignmentLeg extends Flight implements ViewEntry {
      */
     public final int getLength() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns if the assigned flight has been flown.
-     * @return TRUE if the associated Flight Report is Approved or Rejected
-     * @see org.deltava.beans.FlightReport#getStatus()
-     */
-    public boolean isComplete() {
-        return _complete;
-    }
-    
-    /**
-     * Updates the status of the assigned flight
-     * @param complete TRUE if the associated Flight report is Approved or Rejected 
-     */
-    public void setComplete(boolean complete) {
-        _complete = complete;
-    }
-    
-    /**
-     * Returns the CSS class name if displayed in a view table.
-     * @return null if complete, otherwise &quot;opt1&quot;
-     */
-    public String getRowClassName() {
-       return _complete ? null : "opt1";
     }
 }
