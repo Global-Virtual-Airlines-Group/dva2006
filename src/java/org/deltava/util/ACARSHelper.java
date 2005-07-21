@@ -170,6 +170,10 @@ public class ACARSHelper {
          throw new IllegalArgumentException("Invalid Time - " + nfe.getMessage());
       }
       
+      // Calculate the flight time
+      int duration = (int) ((afr.getEndTime().getTime() - afr.getStartTime().getTime()) / 1000);
+      afr.setLength(duration / 36);
+      
       // Set the weights/speeds
       try {
          afr.setTaxiFuel(Integer.parseInt(p.getProperty("fuel_at_taxi")));
