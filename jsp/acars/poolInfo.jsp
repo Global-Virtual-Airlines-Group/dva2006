@@ -34,12 +34,17 @@
 <c:forEach var="con" items="${acarsPool}">
 <tr>
  <td>${con.formatID}</td>
- <td class="pri bld"><el:cmd url="profile" linkID="${con.user.ID}">${con.user.name}</el:cmd></td>
- <td class="sec bld">${con.flightCode}</td>
+ <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
+<c:if test="${con.flightID == 0}">
+ <td class="bld">N/A</td>
+</c:if>
+<c:if test="${con.flightID > 0}">
+ <td class="sec bld">${con.info.flightCode}</td>
+</c:if>
  <td>${con.flightID}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
- <td><fmt:int value="${con.BytesIn}" /> in, <fmt:int value="${con.BytesOut}" /> out</td>
+ <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
 </tr>
 </c:forEach>
 
