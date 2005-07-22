@@ -409,7 +409,7 @@
 	<command id="newthreads">
 		<name>Water Cooler New Threads</name>
 		<class>org.deltava.commands.cooler.NewThreadListCommand</class>
-		<roles>Pilot,Applicant</roles>
+		<roles>Pilot</roles>
 	</command>
 	
 	<command id="thread">
@@ -687,7 +687,7 @@
 	<command id="exam">
 		<name>Examination</name>
 		<class>org.deltava.commands.testing.ExamCommand</class>
-		<roles>Pilot,Applicant</roles>
+		<roles>Pilot</roles>
 	</command>
 	
 	<command id="newexam">
@@ -705,7 +705,7 @@
 	<command id="examsubmit">
 		<name>Score Examination</name>
 		<class>org.deltava.commands.testing.ExamSubmitCommand</class>
-		<roles>Pilot,Applicant</roles>
+		<roles>Pilot</roles>
 	</command>
 	
 	<command id="examdelete">
