@@ -6,10 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetQuestionnaire;
-import org.deltava.dao.SetQuestionnaire;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionnaireAccessControl;
 
@@ -43,18 +40,21 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
          access.validate();
          if (!access.getCanSubmit())
             throw new CommandSecurityException("Cannot submit Questionnaire");
+
+         // Set the status of the examination, and submitted date
+         ex.setStatus(Test.SUBMITTED);
+         ex.setSubmittedOn(new Date());
          
          // Save answers from the request
          List questions = ex.getQuestions();
          for (int x = 0; x < questions.size(); x++) {
             Question q = (Question) questions.get(x);
-            q.setAnswer(ctx.getParameter("answer" + String.valueOf(q.getNumber())));
+            q.setAnswer(ctx.getParameter("answer" + String.valueOf(q.getNumber() - 1)));
          }
-
-         // Set the status of the examination, and submitted date
-         Calendar cld = Calendar.getInstance();
-         ex.setStatus(Test.SUBMITTED);
-         ex.setSubmittedOn(cld.getTime());
+         
+         // Get EMail validation results
+         GetAddressValidation avdao = new GetAddressValidation(con);
+         ctx.setAttribute("addrValid", avdao.get(ex.getPilotID()), REQUEST);
 
          // Write the examination to the database
          SetQuestionnaire wdao = new SetQuestionnaire(con);
@@ -67,8 +67,7 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REDIRECT);
-      result.setURL("appqsubmit", null, null);
+      result.setURL("/jsp/register/qComplete.jsp");
       result.setSuccess(true);
    }
 }
