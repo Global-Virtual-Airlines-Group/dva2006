@@ -39,8 +39,6 @@ public class ACARSFlightReport extends FlightReport {
     private int _time2X;
     private int _time4X;
     
-    private String _route;
-    
     /**
      * Creates a new ACARS Flight Report object with a given flight.
      * @param a the Airline
@@ -280,15 +278,6 @@ public class ACARSFlightReport extends FlightReport {
         } catch (NullPointerException npe) {
             throw new IllegalStateException("End or Start time not set");
         }
-    }
-    
-    /**
-     * Returns the Flight Route.
-     * @return the route
-     * @see ACARSFlightReport#setRoute(String)
-     */
-    public String getRoute() {
-       return _route;
     }
     
     /**
@@ -569,15 +558,6 @@ public class ACARSFlightReport extends FlightReport {
             throw new IllegalArgumentException("Fuel cannot be negative");
         
         _gateFuel = f;
-    }
-    
-    /**
-     * Updates the Flight route.
-     * @param route the route
-     * @see ACARSFlightReport#getRoute()
-     */
-    public void setRoute(String route) {
-       _route = (route == null) ? null : route.trim();
     }
     
     /**

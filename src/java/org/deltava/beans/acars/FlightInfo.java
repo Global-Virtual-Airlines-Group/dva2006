@@ -225,11 +225,11 @@ public class FlightInfo extends DatabaseBean implements Comparable {
    /**
     * Updates the Flight Simulator version used in this flight.
     * @param ver the Flight Simulator version
-    * @throws IllegalArgumentException if ver is negative or > 7 
+    * @throws IllegalArgumentException if ver is negative or > 2006
     * @see FlightInfo#getFSVersion()
     */
    public void setFSVersion(int ver) {
-      if ((ver < 0) || (ver > 7))
+      if ((ver < 0) || (ver > 2006))
          throw new IllegalArgumentException("Invalid FS Version - " + ver);
       
       _fsVersion = ver;
