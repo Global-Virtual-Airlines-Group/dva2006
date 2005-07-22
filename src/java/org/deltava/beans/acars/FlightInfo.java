@@ -13,9 +13,10 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements Comparable {
+public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntry {
 
    private long _conID;
+   private int _pilotID;
    
    private Date _startTime;
    private Date _endTime;
@@ -48,9 +49,20 @@ public class FlightInfo extends DatabaseBean implements Comparable {
     * Returns the flight's ACARS connection ID.
     * @return the connection ID
     * @see FlightInfo#setConnectionID(int)
+    * @see FlightInfo#getPilotID()
     */
    public long getConnectionID() {
       return _conID;
+   }
+   
+   /**
+    * Returns the flight's pilot ID.
+    * @return the database ID of the pilot flying this flight
+    * @see FlightInfo#setPilotID(int)
+    * @see FlightInfo#getConnectionID()
+    */
+   public int getPilotID() {
+      return _pilotID;
    }
    
    /**
@@ -158,6 +170,19 @@ public class FlightInfo extends DatabaseBean implements Comparable {
          throw new IllegalArgumentException("Invalid connection ID - " + id);
       
       _conID = id;
+   }
+   
+   /**
+    * Updates the Pilot ID for the flight.
+    * @param id the database ID of the pilot flying this flight
+    * @throws IllegalArgumentException if id is negative
+    * @see FlightInfo#getPilotID()
+    */
+   public void setPilotID(int id) {
+      if (id < 0)
+         throw new IllegalArgumentException("Invalid pilot ID - " + id);
+      
+      _pilotID = id;
    }
    
    /**
