@@ -56,9 +56,6 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         checkProperty("time1X", new Integer(421));
         checkProperty("time2X", new Integer(422));
         checkProperty("time4X", new Integer(424));
-        
-        _fr.setRoute(null);
-        assertNull(_fr.getRoute());
     }
     
     public void testTimeCalculation() {
