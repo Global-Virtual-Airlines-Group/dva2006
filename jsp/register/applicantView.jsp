@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Applicant - ${applicant.name}</title>
@@ -31,6 +32,13 @@
  <td class="label">Applicant Status</td>
  <td class="data sec bld caps">${statusName}</td>
 </tr>
+<c:if test="${!fn:pending(questionnaire)}">
+<tr>
+ <td class="label">Questionnaire Score</td>
+ <td class="data"><fmt:int value="${questionnaire.score}" /> / <fmt:int value="${questionnaire.size}" /> 
+(<fmt:dec fmt="##0.0" value="${questionnaire.score * 100 / questionnaire.size}" />%)</td>
+</tr>
+</c:if>
 <c:if test="${applicant.pilotID > 0}">
 <tr>
  <td class="label">Hired as</td>
@@ -150,10 +158,16 @@
 <el:cmdbutton url="appedit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
 </c:if>
 <c:if test="${access.canApprove}">
-<el:cmdbutton url="apphire" linkID="0x${applicant.ID}" label="HIRE APPLICANT" />
+<el:cmdbutton url="apphire" linkID="0x${applicant.ID}" label="HIRE" />
 </c:if>
 <c:if test="${access.canReject}">
-<el:cmdbutton url="appreject" linkID="0x${applicant.ID}" label="REJECT APPLICANT" />
+<el:cmdbutton url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
+</c:if>
+<c:if test="${!empty questionnaire}">
+<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
+</c:if>
+<c:if test="${access.canApprove || access.canReject}">
+<el:cmdbutton url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
 </c:if>
  </td>
 </tr>
