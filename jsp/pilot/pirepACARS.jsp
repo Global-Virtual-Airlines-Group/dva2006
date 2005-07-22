@@ -23,7 +23,7 @@
 <tr>
  <td class="label">Takeoff Time</td>
  <td class="data"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
-(<fmt:int value="${fn:delta(pirep.takeoffTime, pirep.startTime) / 60}" /> minutes after start)</td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Takeoff Information</td>
@@ -34,7 +34,7 @@
 <tr>
  <td class="label">Landing Time</td>
  <td class="data"><fmt:date className="bld" date="${pirep.landingTime}" />, 
-(<fmt:int value="${fn:delta(pirep.landingTime, pirep.startTime) / 60}" /> minutes after start)</td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Landing Information</td>
@@ -45,17 +45,20 @@
 <tr>
  <td class="label">Arrival Time</td>
  <td class="data"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
-(<fmt:int value="${fn:delta(pirep.endTime, pirep.startTime) / 60}" /> minutes after start)</td>
+(<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Arrival Information</td>
  <td class="data"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" />
  lbs fuel</td>
 </tr>
+<c:set var="airborneTime" value="${fn:delta(pirep.takeoffTime, pirep.landingTime) / 60}" scope="request" />
+<c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="request" />
 <tr>
  <td class="label">Flight Time</td>
  <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" />, block time
- <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /></td>
+ <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /> <fmt:int value="${pirep.airborneTime.time}" /> ms, 
+<fmt:int value="${pirep.blockTime.time}" /> ms</td>
 </tr>
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
 <tr>
@@ -72,6 +75,7 @@
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">
+<el:form method="post" action="pirepscore.do" linkID="0x${pirep.ID}" validate="return valdiate(this)">
 <tr class="title">
  <td class="caps" colspan="2">CHECK RIDE INFORMATION</td>
 </tr>
@@ -90,10 +94,16 @@
  <td class="data sec bld"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
 </tr>
 </c:if>
+<c:if test="${scoreCR}">
+<tr class="title mid">
+ <td colspan="2"><el:button ID="CRButton" type="submit" label="APPROVE FLIGHT / CHECK RIDE" /></td>
+</tr>
 </c:if>
-<c:if test="${!empty pirep.route}">
+</el:form>
+</c:if>
+<c:if test="${!empty flightInfo.route}">
 <tr>
  <td class="label">Flight Route</td>
- <td class="data">${pirep.route}</td>
+ <td class="data">${flightInfo.route}</td>
 </tr>
 </c:if>
