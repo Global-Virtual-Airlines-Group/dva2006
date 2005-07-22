@@ -23,73 +23,73 @@ import org.deltava.util.StringUtils;
 
 public class FlightInfoCommand extends AbstractCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and Flight Information
-         GetACARSLog dao = new GetACARSLog(con);
-         FlightInfo info = dao.getInfo(ctx.getID());
-         if (info == null)
-            throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
-         
-         // Get the Connection data (this might be null for an offline flight)
-         ConnectionEntry conInfo = dao.getConnection(info.getConnectionID());
-         
-         // Get the PIREP itself (this too might be null, but one or the other won't be)
-         GetFlightReports prdao = new GetFlightReports(con);
-         ACARSFlightReport afr = prdao.getACARS(info.getID());
-         
-         // Load the Pilot based on the connection/PIREP data
-         int pilotID = (conInfo == null) ? afr.getDatabaseID(FlightReport.DBID_PILOT) : conInfo.getPilotID();
-         GetPilot pdao = new GetPilot(con);
-         Pilot usr = pdao.get(pilotID);
-         if (usr == null)
-            throw new CommandException("Invalid Pilot ID - " + pilotID);
-         
-         // Save the data we have loaded
-         ctx.setAttribute("pilot", usr, REQUEST);
-         ctx.setAttribute("pirep", afr, REQUEST);
-         ctx.setAttribute("conInfo", conInfo, REQUEST);
-         
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the DAO and Flight Information
+			GetACARSLog dao = new GetACARSLog(con);
+			FlightInfo info = dao.getInfo(ctx.getID());
+			if (info == null)
+				throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
+
+			// Get the Connection data (this might be null for an offline flight)
+			ConnectionEntry conInfo = dao.getConnection(info.getConnectionID());
+
+			// Get the PIREP itself (this too might be null, but one or the other won't be)
+			GetFlightReports prdao = new GetFlightReports(con);
+			ACARSFlightReport afr = prdao.getACARS(info.getID());
+
+			// Load the Pilot based on the connection/PIREP data
+			int pilotID = (conInfo == null) ? afr.getDatabaseID(FlightReport.DBID_PILOT) : conInfo.getPilotID();
+			GetPilot pdao = new GetPilot(con);
+			Pilot usr = pdao.get(pilotID);
+			if (usr == null)
+				throw new CommandException("Invalid Pilot ID - " + pilotID);
+
+			// Save the data we have loaded
+			ctx.setAttribute("pilot", usr, REQUEST);
+			ctx.setAttribute("pirep", afr, REQUEST);
+			ctx.setAttribute("conInfo", conInfo, REQUEST);
+
 			// Get the route data from the DAFIF database
-			List routeEntries = StringUtils.split(afr.getRoute(), " ");
+			List routeEntries = StringUtils.split(info.getRoute(), " ");
 			List routeInfo = new ArrayList(routeEntries.size());
 			GetNavData navdao = new GetNavData(con);
-			for (Iterator i = routeEntries.iterator(); i.hasNext(); ) {
+			for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 				String navCode = (String) i.next();
 				NavigationDataBean wPoint = navdao.get(navCode);
 				if (wPoint != null)
 					routeInfo.add(wPoint);
 			}
-			
-         // Load the route data
-         List positions = dao.getRouteEntries(info.getID(), false);
-         
+
+			// Load the route data
+			List positions = dao.getRouteEntries(info.getID(), false);
+
 			// Calculate and save the map center for the Google Map
-         GeoPosition start = new GeoPosition((GeoLocation) positions.get(0));
-         GeoLocation end = (GeoLocation) positions.get(positions.size() - 1);
+			GeoPosition start = new GeoPosition((GeoLocation) positions.get(0));
+			GeoLocation end = (GeoLocation) positions.get(positions.size() - 1);
 			ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
 			ctx.setAttribute("routeLength", new Integer(start.distanceTo(end)), REQUEST);
 
-         // Save the filed/actual routes
+			// Save the filed/actual routes
 			ctx.setAttribute("filedRoute", routeInfo, REQUEST);
 			ctx.setAttribute("mapRoute", positions, REQUEST);
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
 
-      // Forward to the JSP
-      CommandResult result = ctx.getResult();
-      result.setURL("/jsp/acars/flightInfo.jsp");
-      result.setSuccess(true);
-   }
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/acars/flightInfo.jsp");
+		result.setSuccess(true);
+	}
 }
