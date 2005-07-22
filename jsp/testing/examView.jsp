@@ -70,13 +70,15 @@
 
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
-<tr>&nbsp;
+<tr>
+ <td>&nbsp;
 <c:if test="${access.canEdit}">
  <td><el:cmdbutton url="exam" linkID="0x${exam.ID}" op="edit" label="RESCORE EXAMINATION" /></td>
 </c:if>
 <c:if test="${access.canDelete}">
  <td><el:cmdbutton url="examdelete" linkID="0x${exam.ID}" label="DELETE EXAMINATION" /></td>
 </c:if>
+ </td>
 </tr>
 </el:table>
 <content:copyright />
