@@ -1,9 +1,11 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.UserDataMap;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -65,6 +67,25 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
          } else {
             vc.setResults(dao.getConnections(pilotID));
          }
+         
+         // Load the Pilot data
+         GetUserData usrdao = new GetUserData(con);
+         UserDataMap udm = usrdao.get(getPilotIDs(vc.getResults()));
+         ctx.setAttribute("userData", udm, REQUEST);
+         
+			// Get the users for each connection
+			Map pilots = new HashMap();
+			GetPilot pdao = new GetPilot(con);
+			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
+				String dbTableName = (String) i.next();
+				
+				// Get the IDs and pilots from this table
+				Set IDs = new HashSet(udm.getByTable(dbTableName));
+				pilots.putAll(pdao.getByID(IDs, dbTableName));
+			}
+
+			// Save the pilots in the request
+         ctx.setAttribute("pilots", pilots, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

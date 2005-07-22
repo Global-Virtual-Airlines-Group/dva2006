@@ -4,7 +4,9 @@ package org.deltava.commands.acars;
 import java.util.*;
 import java.text.*;
 
+import org.deltava.beans.acars.ACARSLogEntry;
 import org.deltava.commands.*;
+
 import org.deltava.util.ComboUtils;
 import org.deltava.util.StringUtils;
 
@@ -55,5 +57,20 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
       } catch (ParseException pe) {
          return null;
       }
+   }
+   
+   /**
+    * Returns a Set of Pilot IDs from the view results.
+    * @param viewEntries the view result entries
+    * @return a Set of Pilot IDs
+    */
+   protected Set getPilotIDs(Collection viewEntries) {
+      Set results = new HashSet();
+      for (Iterator i = viewEntries.iterator(); i.hasNext(); ) {
+         ACARSLogEntry entry = (ACARSLogEntry) i.next();
+         results.add(new Integer(entry.getPilotID()));
+      }
+      
+      return results;
    }
 }
