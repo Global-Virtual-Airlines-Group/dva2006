@@ -16,6 +16,9 @@ public interface ACARSFlags {
 	public static final int FLAG_AFTERBURNER = 0x0004;
 	public static final int FLAG_ONGROUND = 0x0008;
 	
+	public static final int FLAG_SPARMED = 0x0010;
+	public static final int FLAG_GEARDOWN = 0x0020;
+	
 	public static final int FLAG_AUTOPILOT = 0x0100;
 	public static final int FLAG_AP_NAV = 0x0200;
 	public static final int FLAG_AP_HDG = 0x0400;
