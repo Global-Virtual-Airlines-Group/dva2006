@@ -760,15 +760,21 @@
 		<roles>Anonymous</roles>
 	</command>
 	
+	<command id="questionnaires">
+		<name>Questionnaire Queue</name>
+		<class>org.deltava.commands.register.QuestionnaireQueueCommand</class>
+		<roles>HR</roles>
+	</command>
+	
 	<command id="questionnaire">
 		<name>Applicant Questionnaire</name>
-		<class>org.deltava.commands.register.QuestionnaireCommand</class>		
+		<class>org.deltava.commands.register.QuestionnaireCommand</class>
 		<roles>Anonymous</roles>
 	</command>
 	
 	<command id="qsubmit">
 		<name>Submit Questionnaire</name>
-		<class>org.deltava.commands.register.QuestionnaireSubmitCommand</class>		
+		<class>org.deltava.commands.register.QuestionnaireSubmitCommand</class>
 		<roles>Anonymous</roles>
 	</command>
 	
