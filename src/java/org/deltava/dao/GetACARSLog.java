@@ -110,8 +110,8 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getFlights(int pilotID) throws DAOException {
       try {
-         prepareStatement("SELECT F.* FROM acars.CONS C, acars.FLIGHTS F WHERE (C.ID=F.CON_ID) AND "
-               + "(C.PILOT_ID=?) ORDER BY F.CREATED");
+         prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.CONS C, acars.FLIGHTS F WHERE (C.ID=F.CON_ID) "
+               + "AND (C.PILOT_ID=?) ORDER BY F.CREATED");
          _ps.setInt(1, pilotID);
          return executeFlightInfo();
       } catch (SQLException se) {
@@ -133,7 +133,8 @@ public class GetACARSLog extends GetACARSData {
       convertDate(ed, System.currentTimeMillis());
       
       try {
-         prepareStatement("SELECT * FROM acars.FLIGHTS WHERE (CREATED >=?) AND (CREATED <=?) ORDER BY CREATED");
+         prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (C.ID=F.CON_ID) "
+               + " AND (F.CREATED >=?) AND (CREATED <=?) ORDER BY F.CREATED");
          _ps.setTimestamp(1, createTimestamp(sd));
          _ps.setTimestamp(2, createTimestamp(ed));
          return executeFlightInfo();
