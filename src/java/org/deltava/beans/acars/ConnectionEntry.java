@@ -13,7 +13,7 @@ import org.deltava.beans.Pilot;
  * @since 1.0
  */
 
-public class ConnectionEntry implements Comparable {
+public class ConnectionEntry implements ACARSLogEntry {
 
    private long _id;
    private int _pilotID;
@@ -36,9 +36,9 @@ public class ConnectionEntry implements Comparable {
    /**
     * Returns the date/time of this connection.
     * @return the date/time
-    * @see ConnectionEntry#setDate(Date)
+    * @see ConnectionEntry#setStartTime(Date)
     */
-   public Date getDate() {
+   public Date getStartTime() {
       return _dt;
    }
    
@@ -109,9 +109,9 @@ public class ConnectionEntry implements Comparable {
    /**
     * Returns the date/time the connection was started.
     * @param dt the date/time
-    * @see ConnectionEntry#getDate()
+    * @see ConnectionEntry#getStartTime()
     */
-   public void setDate(Date dt) {
+   public void setStartTime(Date dt) {
       _dt = dt;
    }
    
@@ -166,6 +166,6 @@ public class ConnectionEntry implements Comparable {
     */
    public int compareTo(Object o2) {
       ConnectionEntry ce2 = (ConnectionEntry) o2;
-      return _dt.compareTo(ce2.getDate());
+      return _dt.compareTo(ce2.getStartTime());
    }
 }
