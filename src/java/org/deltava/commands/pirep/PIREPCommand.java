@@ -347,6 +347,9 @@ public class PIREPCommand extends AbstractFormCommand {
 					String eqType = (String) i.next();
 					cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), eqType);
 				}
+				
+				// FIXME What we really need to do is check that the flight IDs match, or that a checkride in the primary
+				// type is open
 
 				// Save the checkride and access if found
 				if ((cr != null) && (cr.getFlightID() == flightID) && (flightID != 0)) {
