@@ -135,7 +135,8 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM acars.FLIGHTS WHERE (ID=?)");
+	      prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
+	            + "AND (F.ID=?)");
 	      _ps.setInt(1, flightID);
 	      setQueryMax(1);
 	      
@@ -190,6 +191,7 @@ public class GetACARSData extends DAO {
 	      info.setRoute(rs.getString(11));
 	      info.setRemarks(rs.getString(12));
 	      info.setFSVersion(rs.getInt(13));
+	      info.setPilotID(rs.getInt(14));
 	      
 	      // Add to results
 	      results.add(info);
@@ -214,7 +216,7 @@ public class GetACARSData extends DAO {
 	   while (rs.next()) {
 	      ConnectionEntry entry = new ConnectionEntry(rs.getLong(1));
 	      entry.setPilotID(rs.getInt(2));
-	      entry.setDate(rs.getTimestamp(3));
+	      entry.setStartTime(rs.getTimestamp(3));
 	      entry.setRemoteAddr(rs.getString(4));
 	      entry.setRemoteHost(rs.getString(5));
 	      
