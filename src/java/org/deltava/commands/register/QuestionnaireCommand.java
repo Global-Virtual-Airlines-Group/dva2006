@@ -31,13 +31,13 @@ public class QuestionnaireCommand extends AbstractCommand {
       
       // Get the command result
       CommandResult result = ctx.getResult();
+      
+      // Since the ID may not be hex-encoded we need to grab it a different way
+      Object idP = ctx.getCmdParameter(Command.ID, "0");
+      int id = (idP instanceof Integer) ? ((Integer) idP).intValue() : StringUtils.parseHex((String) idP);
 
       try {
          Connection con = ctx.getConnection();
-         
-         // Since the ID may not be hex-encoded we need to grab it a different way
-         Object idP = ctx.getCmdParameter(Command.ID, "0");
-         int id = (idP instanceof Integer) ? ((Integer) idP).intValue() : StringUtils.parseHex((String) idP);
          
          // Get the DAO and the Questionnaire
          GetQuestionnaire exdao = new GetQuestionnaire(con);
@@ -50,7 +50,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          access.validate();
          if (!access.getCanRead() && !ctx.isAuthenticated()) {
             ctx.release();
-            result.setURL("/jsp/register/questionnaireNoAccess.jsp");
+            result.setURL("/jsp/register/qNoAccess.jsp");
             result.setSuccess(true);
             return;
          } else if (!access.getCanRead()) {
@@ -69,7 +69,13 @@ public class QuestionnaireCommand extends AbstractCommand {
          ctx.setAttribute("access", access, REQUEST);
          
          // Determine the JSP to forward to
-         result.setURL(access.getCanSubmit() ? "/jsp/register/qSubmit.jsp" : "/jsp/register/qScore.jsp");
+         if (access.getCanSubmit()) {
+         	result.setURL("/jsp/register/qSubmit.jsp");
+         } else if (access.getCanScore()) {
+         	result.setURL("/jsp/register/qScore.jsp");
+         } else {
+         	result.setURL("/jsp/register/qView.jsp");
+         }
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
