@@ -54,9 +54,6 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<c:if test="${scoreCR}">
-<form method="post" action="pirepscore.do?id=0x<fmt:hex value="${pirep.ID}" />" onsubmit="return valdiate(this)">
-</c:if>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
@@ -167,9 +164,6 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canApprove && (empty scoreCR)}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
-</c:if>
-<c:if test="${scoreCR}">
- <el:button ID="CRButton" type="submit" label="APPROVE FLIGHT / CHECK RIDE" />
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" label="REJECT FLIGHT" />
