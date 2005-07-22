@@ -276,13 +276,13 @@
 		<loadproperties srcFile="data/build_deploy.properties" />
 		
 		<!-- Upload the web configuration -->
-<!--		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
 					verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
 			</fileset>
 			<fileset file="${java.io.tmpdir}/build/web.xml" />
-		</scp> -->
+		</scp>
 
 		<!-- Upload the libraries to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
