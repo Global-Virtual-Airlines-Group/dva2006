@@ -274,13 +274,22 @@
 	<!-- Production Deployment via SSH -->
 	<target name="prod_deploy" depends="compile,acars,jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
+		
+		<!-- Upload the web configuration -->
+<!--		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
+					verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+	    	<fileset dir="WEB-INF">
+	    		<include name="*.tld" />
+			</fileset>
+			<fileset file="${java.io.tmpdir}/build/web.xml" />
+		</scp> -->
 
 		<!-- Upload the libraries to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="dva2006.jar" />
-<!--				<include name="dva2006_jsp.jar" /> -->
+				<include name="dva2006_jsp.jar" />
 				<include name="dva_acars.jar" />
 			</fileset>
 		</scp>
@@ -292,8 +301,7 @@
 				<include name="commands.xml" />
 				<include name="services.xml" />
 				<include name="tasks.xml" />
-				<include name="prod/**" />
-				<include name="prod/systemConfig.xml" />
+				<include name="prod/*" />
 			</fileset>
 		</scp>
 	</target>
