@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> ACARS Flight Log</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:css name="view" />
+<content:js name="common" />
+<content:js name="datePicker" />
+<script language="JavaScript" type="text/javascript">
+function valdiate(form)
+{
+if (!checkSubmit()) return false;
+
+setSubmit();
+disableButton('SearchButton');
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@include file="/jsp/main/header.jsp" %> 
+<%@include file="/jsp/main/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form action="acarslogc.do" method="post" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="4">ACARS FLIGHT INFORMATION LOG</td>
+</tr>
+<tr>
+ <td class="label">Search Type</td>
+ <td class="data" colspan="3"><el:check name="searchType" type="radio" idx="*" options="${searchTypes}" value="${searchType}" /></td>
+</tr>
+<tr>
+ <td class="label">Pilot Code</td>
+ <td class="data" colspan="3"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
+</tr>
+<tr>
+ <td class="label">Start Date/Time</td>
+ <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${param.startDate}" />&nbsp;
+<el:text name="startTime" idx="*" size="8" max="8" value="${param.startTime}" />&nbsp;
+<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
+ <td class="label">End Date/Time</td>
+ <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${param.endDate}" />&nbsp;
+<el:text name="endTime" idx="*" size="8" max="8" value="${param.endTime}" />&nbsp;
+<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH CONNECTION LOG" />
+</tr>
+</el:table>
+</el:form>
+
+<c:if test="${!empty viewContext.results}">
+<!-- Table Log Results -->
+<view:table className="view" space="default" pad="default" cmd="acarsloc">
+<!-- Table Header Bar -->
+<tr class="title caps">
+ <td width="10%">ID</td>
+ <td width="15%">START TIME</td>
+ <td width="10%">PILOT CODE</td>
+ <td width="20%">PILOT NAME</td>
+ <td width="10%">FLIGHT NUMBER</td>
+ <td width="12%">ORIGIN</td>
+ <td width="12%">DESTINATION</td>
+ <td>FS VERSION</td>
+</tr>
+
+<!-- Log Entries -->
+<c:forEach var="flight" items="${viewContext.results}">
+<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
+<c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
+<view:row entry="${entry}">
+ <td class="pri bld"><fmt:hex value="${flight.ID}" /></td>
+ <td><fmt:date date="${flight.startTime}" /></td>
+ <td class="sec bld">${pilot.pilotCode}</td>
+ <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="bld">${flight.flightCode}</td>
+ <td class="small">${filight.airportD.name} (<fmt:airport airport="${flight.airportD}" />)</td>
+ <td class="small">${filight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
+ <td class="sec"><fmt:int value="${flight.FSVersion}" /></td>
+</view:row>
+<view:row entry="${entry}">
+ <td class="right">Route</td>
+ <td colspan="7">${flight.route}"</td>
+</view:row>
+</c:forEach>
+
+<!-- Scroll Bar -->
+<tr class="title">
+ <td colspan="8"><view:pgUp />&nbsp;<view:pgDn /></td>
+</tr>
+</view:table>
+</c:if>
+<content:copyright />
+</div>
+</body>
+</html>
