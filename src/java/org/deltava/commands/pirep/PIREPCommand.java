@@ -311,9 +311,34 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			}
 
-			// Check if this is an ACARS flight - search for an open checkride
+			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
+			List positions = null;
 			if (fr instanceof ACARSFlightReport) {
-				mapType = Pilot.MAP_GOOGLE;
+			   mapType = Pilot.MAP_GOOGLE;
+			   ACARSFlightReport afr = (ACARSFlightReport) fr;
+			   int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
+			   
+				// Get the route/position data
+				GetACARSData ardao = new GetACARSData(con);
+				positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS), false);
+				FlightInfo info = ardao.getInfo(flightID);
+
+				// Get the route data from the DAFIF database
+				if (info != null) {
+					List routeEntries = StringUtils.split(info.getRoute(), " ");
+					List routeInfo = new ArrayList(routeEntries.size());
+					GetNavData navdao = new GetNavData(con);
+					for (Iterator i = routeEntries.iterator(); i.hasNext();) {
+						String navCode = (String) i.next();
+						NavigationDataBean wPoint = navdao.get(navCode);
+						if (wPoint != null)
+							routeInfo.add(wPoint);
+					}
+					
+					// Save ACARS info
+					ctx.setAttribute("filedRoute", routeInfo, REQUEST);
+					ctx.setAttribute("flightInfo", info, REQUEST);
+				}
 
 				// See if we have a checkride for this aircraft's primary type
 				CheckRide cr = null;
@@ -324,7 +349,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				}
 
 				// Save the checkride and access if found
-				if (cr != null) {
+				if ((cr != null) && (cr.getFlightID() == flightID) && (flightID != 0)) {
 					try {
 						ctx.setAttribute("crPassFail", crApprove, REQUEST);
 						ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
@@ -341,35 +366,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			// If we're set to use Google Maps, calculate the route
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
-				List positions;
-				if (!(fr instanceof ACARSFlightReport)) {
+				if ((positions == null) || (positions.isEmpty()))
 					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(), 100);
-				} else {
-					ACARSFlightReport afr = (ACARSFlightReport) fr;
-					int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
-
-					// Get the route/position data
-					GetACARSData ardao = new GetACARSData(con);
-					positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS), false);
-					FlightInfo info = ardao.getInfo(flightID);
-
-					// Get the route data from the DAFIF database
-					if (info != null) {
-						List routeEntries = StringUtils.split(info.getRoute(), " ");
-						List routeInfo = new ArrayList(routeEntries.size());
-						GetNavData navdao = new GetNavData(con);
-						for (Iterator i = routeEntries.iterator(); i.hasNext();) {
-							String navCode = (String) i.next();
-							NavigationDataBean wPoint = navdao.get(navCode);
-							if (wPoint != null)
-								routeInfo.add(wPoint);
-						}
-						
-						// Save ACARS info
-						ctx.setAttribute("filedRoute", routeInfo, REQUEST);
-						ctx.setAttribute("flightInfo", info, REQUEST);
-					}
-				}
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
