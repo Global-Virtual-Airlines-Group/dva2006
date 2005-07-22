@@ -247,8 +247,11 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
- <td class="data">This section tracks applicants to Delta Virtual Airlines before they
- are hired on as Pilots.</td>
+ <td class="data">This section tracks applicants to <content:airline /> before they are hired on as Pilots.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="questionnaires">Applicant Questionnaires</el:cmd></td>
+ <td class="data">You can view and score pending Applicant Questionnaires.</td>
 </tr>
 </content:filter> 
 <content:filter roles="HR,Examination">
