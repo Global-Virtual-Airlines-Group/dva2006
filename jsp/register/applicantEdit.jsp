@@ -163,12 +163,12 @@ return true;
  <td class="data warn bld caps">Pilot Questionnaire Not Found</td>
 </c:if>
 <c:if test="${empty questionnaire}">
-<c:if test="${fn:passed(questionnaire)}">
+<c:if test="${!fn:pending(questionnaire)}">
  <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
 correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
 <el:cmdbutton url="questionnaire" linkID="0x${applicant.ID}" label="VIEW QUESTIONNAIRE" /></td>
 </c:if>
-<c:if test="${fn:passed(questionnaire)}">
+<c:if test="${fn:pending(questionnaire)}">
  <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
 </c:if>
 </c:if>
