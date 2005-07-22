@@ -15,8 +15,11 @@
 <script language="JavaScript" type="text/javascript">
 function sort(combo)
 {
-var sortKey = combo.options[combo.selectedIndex].value;
-self.location = '/applicants.do?' + combo.name + '=' + sortKey;
+if (combo.selectedIndex != -1) {
+	var sortKey = combo.options[combo.selectedIndex].value;
+	self.location = '/applicants.do?' + combo.name + '=' + sortKey;
+}
+
 return true;
 }
 </script>
