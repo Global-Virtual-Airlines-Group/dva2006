@@ -1,8 +1,7 @@
 package org.deltava.commands;
 
-import java.util.List;
+import java.util.Collection;
 
-import java.io.Serializable;
 import javax.servlet.ServletContext;
 import javax.servlet.jsp.PageContext;
 
@@ -12,7 +11,8 @@ import javax.servlet.jsp.PageContext;
  * @version 1.0
  * @since 1.0
  */
-public interface Command extends Serializable {
+
+public interface Command extends java.io.Serializable {
     
     public static final int APPLICATION = PageContext.APPLICATION_SCOPE;
     public static final int REQUEST = PageContext.REQUEST_SCOPE;
@@ -60,12 +60,12 @@ public interface Command extends Serializable {
      * Return the roles authorized to execute this command.
      * @return a List of role names
      */
-    public List getRoles();
+    public Collection getRoles();
     
     /**
      * Updates the roles authorized to execute this command. 
      * @param roleNames a List of role names
      * @throws IllegalStateException if the role names have already been set
      */
-    void setRoles(List roleNames) throws IllegalStateException;
+    void setRoles(Collection roleNames) throws IllegalStateException;
 }
