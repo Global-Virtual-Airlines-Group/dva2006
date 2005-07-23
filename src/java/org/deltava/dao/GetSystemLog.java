@@ -33,12 +33,17 @@ public class GetSystemLog extends DAO {
 	 * @param name the log name
 	 */
 	public void setName(String name) {
-		_logName = ("ACARS".equals(name)) ? "acars.LOG_ACARS" : ("LOG_" + name);
+		_logName = "LOG_" + name;
 	}
 
+	/**
+	 * Sets the date range to query.
+	 * @param sd the start date/time
+	 * @param ed the end date/time
+	 */
 	public void setDateRange(java.util.Date sd, java.util.Date ed) {
 		_startDate = sd;
-		_endDate = ed;
+		_endDate = ((ed == null) && (sd != null)) ? new java.util.Date() : ed;
 	}
 
 	/**
@@ -59,11 +64,11 @@ public class GetSystemLog extends DAO {
 		// Build the SQL statement
 		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ");
 		sqlBuf.append(_logName);
-		sqlBuf.append(" WHERE (PRIORITY >= ?)");
+		sqlBuf.append(" WHERE (PRIORITY >= (? * 10000))");
 		if (_startDate != null)
 			sqlBuf.append(" AND (CREATED >= ?) AND (CREATED <= ?)");
 
-		sqlBuf.append(" ORDER BY CREATED");
+		sqlBuf.append(" ORDER BY CREATED DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -95,7 +100,7 @@ public class GetSystemLog extends DAO {
 		if (_startDate != null)
 			sqlBuf.append(" AND (CREATED >= ?) AND (CREATED <= ?)");
 
-		sqlBuf.append(" ORDER BY CREATED");
+		sqlBuf.append(" ORDER BY CREATED DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
