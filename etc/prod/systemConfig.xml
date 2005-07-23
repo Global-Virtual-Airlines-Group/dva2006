@@ -17,8 +17,12 @@
 		</mail>
 	</airline>
 	
-	<!-- Default Time Zone -->	
-	<timezone>US/Eastern</timezone>
+	<!-- Default Date/Time data -->
+	<time>
+		<timezone>US/Eastern</timezone>
+		<date_format>MM/dd/yyyy</date_format>
+		<time_format>HH:mm</time_format>
+	</time>
 	
 	<!-- If we are running in a multi-airline environment, this maps the db names to airline codes -->
 	<!-- This is mapped with the key being the database name IN LOWER CASE, the value is the code -->
