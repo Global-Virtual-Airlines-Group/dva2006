@@ -78,6 +78,24 @@
 		</attribute>
 	</tag>
 	
+	<!-- Point Tag, to generate a GPoint -->
+	<tag>
+		<name>point</name>
+		<tagclass>org.deltava.taglib.googlemap.PointTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>var</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>point</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.GeoLocation</type>
+		</attribute>		
+	</tag>
+	
 	<!-- PointArray Tag, to generate a JavaScript array of GPoints -->
 	<tag>
 		<name>points</name>
