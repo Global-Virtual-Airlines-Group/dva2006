@@ -2,7 +2,6 @@ package org.deltava.beans;
 
 import java.util.Date;
 import java.util.Calendar;
-import java.util.TimeZone;
 
 import java.text.SimpleDateFormat;
 
@@ -16,7 +15,7 @@ import java.text.SimpleDateFormat;
 public class DateTime implements java.io.Serializable, Comparable {
 	
 	private Calendar _dt;
-	private TZInfo _tz = TZInfo.init(TimeZone.getDefault());
+	private TZInfo _tz = TZInfo.local();
 	private boolean _showZone = true;
 	
 	private SimpleDateFormat _df = new SimpleDateFormat("EEEE MMMM dd yyyy HH:mm:ss");

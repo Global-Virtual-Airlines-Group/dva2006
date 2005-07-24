@@ -83,7 +83,7 @@ public class TestPerson extends AbstractBeanTestCase {
         checkProperty("dateFormat", "MM/dd/yyyy");
         checkProperty("timeFormat", "hh:mm:ss");
         checkProperty("numberFormat", "#,##0.0");
-        checkProperty("TZ", TZInfo.init(TimeZone.getDefault()));
+        checkProperty("TZ", TZInfo.local());
         checkProperty("UIScheme", "legacy");
         checkProperty("IMHandle", "LJK");
         _p.setLastLogin(null);
