@@ -75,7 +75,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
      * @return a Time Zome wrapper for the local zone
      */
     public static TZInfo local() {
-       String localZone = SystemData.get("timezone");
+       String localZone = SystemData.get("time.timezone");
         return init((localZone == null) ? TimeZone.getDefault() : TimeZone.getTimeZone(localZone));
     }
     

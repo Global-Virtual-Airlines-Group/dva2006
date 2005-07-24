@@ -39,7 +39,7 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	private String _icao;
 	private String _name;
 	private GeoPosition _position;
-	private TZInfo _tz = TZInfo.init(TimeZone.getDefault());
+	private TZInfo _tz = TZInfo.local();
 	private Set _aCodes = new TreeSet();
 
 	/**

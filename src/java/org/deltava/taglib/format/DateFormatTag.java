@@ -1,18 +1,19 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.io.IOException;
 import java.util.Date;
-import java.util.TimeZone;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.DateTime;
-import org.deltava.beans.TZInfo;
+import org.deltava.beans.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A JSP tag to support the display of formatted date/time values.
@@ -23,19 +24,16 @@ import org.deltava.beans.TZInfo;
 
 public class DateFormatTag extends TagSupport {
 
-	private static final String DEFAULT_DATE_PATTERN = "MM/dd/yyyy";
-	private static final String DEFAULT_TIME_PATTERN = "hh:mm:ss";
-	private static final TZInfo _localTZ = TZInfo.init(TimeZone.getDefault());
+	private static final TZInfo _localTZ = TZInfo.local();
 
 	private static final int DATE_TIME = 0;
 	private static final int DATE_ONLY = 1;
 	private static final int TIME_ONLY = 2;
-
 	private static final String[] FORMAT = { "dt", "d", "t" };
 
 	private int _dtInclude = DateFormatTag.DATE_TIME;
-	private String _dateFormat = DEFAULT_DATE_PATTERN;
-	private String _timeFormat = DEFAULT_TIME_PATTERN;
+	private String _dateFormat = SystemData.get("time.date_format");
+	private String _timeFormat = SystemData.get("time.time_format");
 	private TZInfo _tz = _localTZ;
 	private DateTime _dt;
 
@@ -153,8 +151,8 @@ public class DateFormatTag extends TagSupport {
 	public void release() {
 		super.release();
 		_dtInclude = DateFormatTag.DATE_TIME;
-		_dateFormat = DEFAULT_DATE_PATTERN;
-		_timeFormat = DEFAULT_TIME_PATTERN;
+		_dateFormat = SystemData.get("time.date_format");
+		_timeFormat = SystemData.get("time.time_format");
 		_tz = _localTZ;
 		_dt = null;
 		_className = null;
