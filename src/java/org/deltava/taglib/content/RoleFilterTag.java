@@ -7,7 +7,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * A JSP tag to filter body content based on the user's membership in a particular role.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -15,15 +14,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 public class RoleFilterTag extends TagSupport {
     
-    private List _roles;
-
-    /**
-     * Creates a new role filtering JSP tag.
-     */
-    public RoleFilterTag() {
-        super();
-        _roles = new ArrayList();
-    }
+    private Set _roles = new HashSet();
 
     /**
      * Filters the body content by checking for the user attribute in the request, then retrieves the
@@ -75,5 +66,6 @@ public class RoleFilterTag extends TagSupport {
      */
     public void release() {
         _roles.clear();
+        super.release();
     }
 }
