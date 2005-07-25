@@ -9,6 +9,14 @@
 		<banner>DeltaBanner.png</banner>
 		<code>DVA</code>
 		<db>DVA</db>
+		<voice>
+			<url>rw.deltava.org/DAL</url>
+		</voice>
+		
+		<location>
+			<lat type="Double">34.036693</lat>
+			<lng type="Double">-84.419289</lng>
+		</location>
 		
 		<mail>
 			<info>info@deltava.org</info>
