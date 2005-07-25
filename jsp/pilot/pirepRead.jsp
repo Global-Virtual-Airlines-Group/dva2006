@@ -138,11 +138,19 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label" valign="top">Route Map</td>
 <c:if test="${googleMap}">
- <td class="data"><div id="googleMap" style="width: 620px; height: 580px" /></td>
+ <td class="label">Route Map Data</td>
+ <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="true" />
+<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="true" /> 
+<c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute')" label="Flight Plan" checked="true" /> </c:if>
+<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers')" label="Navaid Markers" checked="true" /></span></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Route Map</td>
+ <td class="data"><div id="googleMap" style="width:640px; height:580px" /></td>
 </c:if>
 <c:if test="${!googleMap}">
+ <td class="label" valign="top">Route Map</td>
  <td class="data"><img src="http://maps.fallingrain.com/perl/map.cgi?x=620&y=365&kind=topo&lat=${pirep.airportD.latitude}&long=${pirep.airportD.longitude}&name=${pirep.airportD.name}&c=1&lat=${pirep.airportA.latitude}&long=${pirep.airportA.longitude}&name=${pirep.airportA.name}&c=1"
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </c:if>
@@ -183,7 +191,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${googleMap}">
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
-var mapC = new GPoint(${mapCenter.longitude}, ${mapCenter.latitude});
+<map:point var="mapC" point="${mapCenter}" />
 <map:points var="routePoints" items="${mapRoute}" />
 <map:markers var="routeMarkers" items="${mapRoute}" />
 <map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
@@ -193,26 +201,26 @@ var mapC = new GPoint(${mapCenter.longitude}, ${mapCenter.latitude});
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
 </c:if>
 // Build the map
-var map = new GMap(getElement("googleMap"));
+var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
 
 // Add the route and markers
-map.addOverlay(gRoute);
-for (x = 0; x < routeMarkers.length; x++)
-	map.addOverlay(routeMarkers[x]);
+addMarkers(map, 'gRoute');
+addMarkers(map, 'routeMarkers');
 <c:if test="${!empty filedRoute}">
-map.addOverlay(gfRoute);
-for (x = 0; x < filedMarkers.length; x++)
-	map.addOverlay(filedMarkers[x]);
+addMarkers(map, 'gfRoute');
+addMarkers(map, 'filedMarkers');
 </c:if>
 <c:if test="${empty filedRoute}">
 // Airport markers
 <map:marker var="gmA" point="${pirep.airportA}" />
 <map:marker var="gmD" point="${pirep.airportD}" />
-map.addOverlay(gmA);
-map.addOverlay(gmD);
+var filedMarkers = [gmA, gmD];
+addMarkers(map, 'filedMarkers');
+//map.addOverlay(gmA);
+//map.addOverlay(gmD);
 </c:if>
 </script>
 </c:if>

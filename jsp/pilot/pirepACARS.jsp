@@ -57,7 +57,7 @@
 <tr>
  <td class="label">Flight Time</td>
  <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" />, block time
- <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /> <fmt:int value="${pirep.airborneTime.time}" /> ms, 
+ <fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${pirep.blockTime}" /> <fmt:int value="${pirep.airborneTime.time}" /> ms, 
 <fmt:int value="${pirep.blockTime.time}" /> ms</td>
 </tr>
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
