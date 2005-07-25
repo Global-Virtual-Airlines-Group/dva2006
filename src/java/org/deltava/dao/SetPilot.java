@@ -3,8 +3,7 @@ package org.deltava.dao;
 
 import java.sql.*;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 
 /**
  * A Data Access Object to support updating Pilot profiles.
@@ -105,5 +104,38 @@ public class SetPilot extends PilotWriteDAO {
 	        rollbackTransaction();
 	        throw new DAOException(se);
 	    }
+	}
+
+	/**
+	 * Updates this Pilot's location for the member board.
+	 * @param pilotID the Pilot's database ID
+	 * @param loc the Pilot's location
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setLocation(int pilotID, GeoLocation loc) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
+			_ps.setInt(1, pilotID);
+			_ps.setDouble(2, loc.getLatitude());
+			_ps.setDouble(3, loc.getLongitude());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Clears this Pilot's locatoin.
+	 * @param pilotID the Pilot's database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearLocation(int pilotID) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM PILOT_MAP WHERE (ID=?)");
+			_ps.setInt(1, pilotID);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }
