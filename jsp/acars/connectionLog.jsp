@@ -84,7 +84,7 @@ return true;
 <c:set var="pilotLoc" value="${userData[entry.pilotID]}" scope="request" />
 <view:row entry="${entry}">
  <td class="pri bld"><fmt:hex value="${entry.ID}" /></td>
- <td><fmt:date date="${entry.date}" /></td>
+ <td><fmt:date date="${entry.startTime}" /></td>
  <td class="sec bld">${pilot.pilotCode}</td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td>${entry.remoteAddr}</td>
