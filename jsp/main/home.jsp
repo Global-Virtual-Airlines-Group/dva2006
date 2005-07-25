@@ -67,19 +67,19 @@ our sister airline <a href="http://www.afva.net/" class="sec bld">Aviation Franç
 </table>
 </div></center>
 <br />
-If you have technical questions or comments, please direct them to our web master at 
-<a href="${infoEmail}">${infoEmail}</a>. Please do NOT send general questions to this address - if 
-you have received a pilot application or pilot ID, please post to the Water Cooler. All other 
-non-technical quesitons should be addressed to our Corporate Offices.<br />
+If you have questions or comments, please direct them to our Corporate Offices at 
+<a href="${infoEmail}">${infoEmail}</a>.<br />
 <br />
 <div style="text-align:center; vertical-align:middle;">
-<el:img caption="Firefox" src="logo/firefox.png" border="0" />&nbsp;
-<el:img caption="Powered by mySQL" src="logo/powered-by-mysql.png" border="0" />&nbsp;
-<el:img caption="Runs with Tomcat" src="logo/tomcat.png" border="0" />
-<el:img caption="Built with Eclipse" src="logo/eclipse.png" border="0" />
+<a href="http://www.mozilla.org/" target="_new"><el:img caption="Firefox" src="logo/firefox.png" border="0" /></a>
+<a href="http://www.mysql.com/" target="_new"><el:img caption="Powered by mySQL" src="logo/powered-by-mysql.png" border="0" /></a>
+<a href="http://jakarta.apache.org/tomcat/" target="_new"><el:img caption="Runs with Tomcat" src="logo/tomcat.png" border="0" /></a>
+<a href="http://www.eclipse.org" target="_new"><el:img caption="Built with Eclipse" src="logo/eclipse.png" border="0" /></a>
+<a href="http://www.freebsd.org" target="_new"><el:img caption="Powered by FreeBSD" src="logo/bsdpower.gif" border="0" /></a>
 </div>
 <br />
 <content:copyright />
+<br />
 </div>
 </body>
 </html>
