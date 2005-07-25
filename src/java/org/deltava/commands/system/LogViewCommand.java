@@ -2,7 +2,6 @@
 package org.deltava.commands.system;
 
 import java.util.*;
-import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.system.LogEntry;
@@ -23,8 +22,6 @@ import org.deltava.util.StringUtils;
 
 public class LogViewCommand extends AbstractViewCommand {
    
-   private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
-
    /**
     * Executes the command.
     * @param ctx the Command context
@@ -50,19 +47,8 @@ public class LogViewCommand extends AbstractViewCommand {
       }
       
       // Get the start/end dates
-      Date sd = null;
-      Date ed = null;
-      try {
-         synchronized (_df) {
-            sd = _df.parse(ctx.getParameter("startDate") + " " + ctx.getParameter("startTime"));
-            ed = _df.parse(ctx.getParameter("endDate")  + " " + ctx.getParameter("endTime"));
-         }
-      } catch (ParseException pe) {
-      }
-      
-		if ((sd != null) && (ed == null))
-  			ed = new Date();
-
+      Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
+      Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
       
       try {
          Connection con = ctx.getConnection();
