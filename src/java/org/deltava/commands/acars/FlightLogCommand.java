@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.UserDataMap;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.util.*;
@@ -34,7 +35,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
       CommandResult result = ctx.getResult();
       
       // If we're not displaying anything, redirect to the result page
-      if (ctx.getCmdParameter(Command.ID, null) == null) {
+      if (ctx.getParameter("searchType") == null) {
          result.setURL("/jsp/acars/flightLog.jsp");
          result.setSuccess(true);
          return;
@@ -62,7 +63,9 @@ public class FlightLogCommand extends ACARSLogViewCommand {
 
          // Depending on the search type, call the DAO query
          if (searchType == SEARCH_DATE) {
-            vc.setResults(dao.getFlights(getDate(ctx, "startDate"), getDate(ctx, "endDate")));
+         	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
+         	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
+            vc.setResults(dao.getFlights(sd, ed));
          } else {
             vc.setResults(dao.getFlights(pilotID));
          }

@@ -63,7 +63,9 @@ public class MessageLogCommand extends ACARSLogViewCommand {
          
          // Depending on the search type, call the DAO query
          if (searchType == SEARCH_DATE) {
-            vc.setResults(dao.getMessages(getDate(ctx, "startDate"), getDate(ctx, "endDate")));
+         	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
+         	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
+            vc.setResults(dao.getMessages(sd, ed));
          } else {
             vc.setResults(dao.getMessages(pilotID));
          }

@@ -35,7 +35,7 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
       CommandResult result = ctx.getResult();
 
       // If we're not displaying anything, redirect to the result page
-      if (ctx.getCmdParameter(Command.ID, null) == null) {
+      if (ctx.getParameter("searchType") == null) {
          result.setURL("/jsp/acars/connectionLog.jsp");
          result.setSuccess(true);
          return;
@@ -63,7 +63,9 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 
          // Depending on the search type, call the DAO query
          if (searchType == SEARCH_DATE) {
-            vc.setResults(dao.getConnections(getDate(ctx, "startDate"), getDate(ctx, "endDate")));
+         	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
+         	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
+            vc.setResults(dao.getConnections(sd, ed));
          } else {
             vc.setResults(dao.getConnections(pilotID));
          }
