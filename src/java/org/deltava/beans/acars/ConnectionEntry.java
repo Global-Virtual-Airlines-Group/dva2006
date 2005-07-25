@@ -158,6 +158,7 @@ public class ConnectionEntry implements ACARSLogEntry {
          throw new IllegalStateException("User bean already set");
       
       DatabaseBean.validateID(_pilotID, id);
+      _pilotID = id;
    }
    
    /**
