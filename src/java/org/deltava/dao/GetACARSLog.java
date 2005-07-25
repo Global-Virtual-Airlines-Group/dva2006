@@ -31,7 +31,8 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getConnections(int userID) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM acars.CONS WHERE (PILOT_ID=?) ORDER BY DATE DESC");
+         prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
+         		+ "acars.CONS WHERE (PILOT_ID=?) ORDER BY DATE DESC");
          _ps.setInt(1, userID);
          return executeConnectionInfo();
       } catch (SQLException se) {
@@ -53,7 +54,8 @@ public class GetACARSLog extends GetACARSData {
       convertDate(ed, System.currentTimeMillis());
       
       try {
-         prepareStatement("SELECT * FROM acars.CONS WHERE (DATE >= ?) AND (DATE <= ?) ORDER BY DATE DESC");
+         prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
+         		+ "acars.CONS WHERE (DATE >= ?) AND (DATE <= ?) ORDER BY DATE DESC");
          _ps.setTimestamp(1, createTimestamp(sd));
          _ps.setTimestamp(2, createTimestamp(ed));
          return executeConnectionInfo();
