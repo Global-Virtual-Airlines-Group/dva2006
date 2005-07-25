@@ -1,3 +1,5 @@
+var displayedMarkers = new Array();
+
 function googleMarker(imgPath, color, point, label)
 {
 if (color == 'null')
@@ -15,6 +17,42 @@ if (label != null)
 	GEvent.addListener(marker, 'click', function() { marker.openInfoWindowHtml(label); });
 	
 return marker;
+}
+
+function addMarkers(map, arrayName)
+{
+// Get the map data
+var markers = eval(arrayName);
+if (!markers) return false;
+
+// Add the map data, either an array or a single element
+if (isNaN(markers.length)) {
+	map.addOverlay(markers);
+} else if (markers.length > 0) {
+	for (x = 0; x < markers.length; x++)
+		map.addOverlay(markers[x]);
+}
+
+displayedMarkers[arrayName] = true;
+return true;
+}
+
+function removeMarkers(map, arrayName)
+{
+// Get the map data
+var markers = eval(arrayName);
+if (!markers) return false;
+
+// Remove the map data, either an array or a single element
+if (isNaN(markers.length)) {
+	map.removeOverlay(markers);
+} else if (markers.length > 0) {
+	for (x = 0; x < markers.length; x++)
+		map.removeOverlay(markers[x]);
+}
+	
+displayedMarkers[arrayName] = false;
+return true;
 }
 
 function getDefaultZoom(distance)
@@ -36,4 +74,11 @@ if (distance > 6100) {
 }
 
 return 8;
+}
+
+function toggleMarkers(map, arrayName)
+{
+// Figure out if we add or remove the markers
+var isToggled = displayedMarkers[arrayName];
+return (isToggled) ? removeMarkers(map, arrayName) : addMarkers(map, arrayName);
 }
