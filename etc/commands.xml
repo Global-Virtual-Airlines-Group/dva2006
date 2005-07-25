@@ -98,6 +98,17 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="geolocate">
+		<name>Pilot Geolocation</name>
+		<class>org.deltava.commands.pilot.PilotLocationCommand</class>
+		<roles>Pilot</roles>
+	</command>
+	
+	<command id="pilotboard">
+		<name>Pilot Location Board</name>
+		<class>org.deltava.commands.pilot.PilotBoardCommand</class>
+		<roles>*</roles>
+	</command>
 	
 	<!-- News/NOTAM Commands -->
 	<command id="news">
