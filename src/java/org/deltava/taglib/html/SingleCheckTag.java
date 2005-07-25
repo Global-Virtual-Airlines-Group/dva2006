@@ -20,7 +20,7 @@ public class SingleCheckTag extends FormElementTag {
 	 * Creates a new checkbox tag.
 	 */
 	public SingleCheckTag() {
-		super("input", true);
+		super("input", false);
 		_attrs.put("type", "checkbox");
 		_attrs.put("class", "check");
 	}
@@ -57,6 +57,14 @@ public class SingleCheckTag extends FormElementTag {
 	public void setChecked(boolean checked) {
 		if (checked)
 			_attrs.put("checked", "checked");
+	}
+	
+	/**
+	 * Sets the JavaScript <i>onChange</i> event for these checkboxes/radio buttons.
+	 * @param jsEvent the JavaScript event code
+	 */
+	public void setOnChange(String jsEvent) {
+		_attrs.put("onchange", jsEvent);
 	}
 
 	/**
