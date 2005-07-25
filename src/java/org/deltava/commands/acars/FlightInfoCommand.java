@@ -57,6 +57,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("pirep", afr, REQUEST);
 			ctx.setAttribute("conInfo", conInfo, REQUEST);
+			ctx.setAttribute("info", info, REQUEST);
 
 			// Get the route data from the DAFIF database
 			List routeEntries = StringUtils.split(info.getRoute(), " ");
@@ -70,6 +71,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			}
 
 			// Load the route data
+			dao.setQueryMax(0);
 			List positions = dao.getRouteEntries(info.getID(), false);
 
 			// Calculate and save the map center for the Google Map

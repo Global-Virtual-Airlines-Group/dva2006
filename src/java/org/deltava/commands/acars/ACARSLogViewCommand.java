@@ -2,7 +2,6 @@
 package org.deltava.commands.acars;
 
 import java.util.*;
-import java.text.*;
 
 import org.deltava.beans.acars.ACARSLogEntry;
 import org.deltava.commands.*;
@@ -19,7 +18,6 @@ import org.deltava.util.StringUtils;
 
 public abstract class ACARSLogViewCommand extends AbstractViewCommand {
    
-   private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
    private static final String[] SEARCH_TYPES = new String[] { "USR", "id", "DATE" };
    protected static final int SEARCH_USR = 0;
    protected static final int SEARCH_ID = 1;
@@ -40,23 +38,6 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
       ctx.setAttribute("searchType", SEARCH_TYPES[searchType], REQUEST);
       ctx.setAttribute("searchTypes", _searchTypes, REQUEST);
       return searchType;
-   }
-   
-   /**
-    * Loads a date parameter from the request.
-    * @param ctx the Command context
-    * @param paramName the request parameter name
-    * @return the parsed date/time or null if it cannot be parsed
-    */
-   protected Date getDate(CommandContext ctx, String paramName) {
-      
-      try {
-         synchronized (_df) {
-            return _df.parse(ctx.getParameter(paramName));
-         }
-      } catch (ParseException pe) {
-         return null;
-      }
    }
    
    /**
