@@ -4,6 +4,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.cache.Cache;
 
@@ -23,13 +24,66 @@ public class GetPilot extends PilotReadDAO {
 	public GetPilot(Connection c) {
 		super(c);
 	}
-	
+
 	/**
 	 * Returns the DAO's cache, so that commands may invalidate entries.
 	 * @return the DAO cache
 	 */
 	public static final Cache cache() {
-	   return _cache;
+		return _cache;
+	}
+
+	/**
+	 * Returns the location of the specified Pilot.
+	 * @param pilotID the Pilot's database ID
+	 * @return a GeoLocation with the pilot's location, or null if none specified
+	 * @throws DAOException
+	 */
+	public GeoLocation getLocation(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?)");
+			_ps.setInt(1, pilotID);
+			setQueryMax(1);
+			
+			// Execute the query and get results
+			ResultSet rs = _ps.executeQuery();
+			GeoLocation gl = (rs.next()) ? new GeoPosition(rs.getDouble(1), rs.getDouble(2)) : null;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return gl;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns the locations of pilots who have signed up for the Pilot location board.
+	 * @return a Map of GeoLocation objects, keyed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map getPilotBoard() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM PILOT_MAP");
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+
+			// Iterate through the result set
+			Map results = new HashMap();
+			while (rs.next()) {
+				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
+				results.put(new Integer(rs.getInt(1)), gp);
+			}
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -54,7 +108,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Pilot getPilotByCode(int pilotCode, String dbName) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
@@ -64,7 +118,7 @@ public class GetPilot extends PilotReadDAO {
 		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.OK);
@@ -87,7 +141,7 @@ public class GetPilot extends PilotReadDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all Active and On Leave Pilots.
 	 * @param orderBy the database column to sort the results by
@@ -98,8 +152,7 @@ public class GetPilot extends PilotReadDAO {
 
 		StringBuffer sql = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON "
-				+ "((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) "
-				+ "GROUP BY P.ID ORDER BY ");
+				+ "((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) " + "GROUP BY P.ID ORDER BY ");
 
 		// Add sort by column
 		sql.append((orderBy != null) ? orderBy.toUpperCase() : "P.PILOT_ID");
@@ -133,7 +186,7 @@ public class GetPilot extends PilotReadDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all active Pilots with a particular rank in a particular equipment program.
 	 * @param rank the rank
@@ -142,16 +195,16 @@ public class GetPilot extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List getPilotsByEQRank(String rank, String eqType) throws DAOException {
-	   
-	   // Get all the pilots with the rank (since this is usually used to filter out ACPs/CPs)
-	   List pilots = getPilotsByRank(rank);
-	   for (Iterator i = pilots.iterator(); i.hasNext(); ) {
-	      Pilot p = (Pilot) i.next();
-	      if (!p.getEquipmentType().equals(eqType))
-	         i.remove();
-	   }
-	   
-	   return pilots;
+
+		// Get all the pilots with the rank (since this is usually used to filter out ACPs/CPs)
+		List pilots = getPilotsByRank(rank);
+		for (Iterator i = pilots.iterator(); i.hasNext();) {
+			Pilot p = (Pilot) i.next();
+			if (!p.getEquipmentType().equals(eqType))
+				i.remove();
+		}
+
+		return pilots;
 	}
 
 	/**
@@ -252,10 +305,13 @@ public class GetPilot extends PilotReadDAO {
 
 		// Add parameters if they are non-null
 		List searchTerms = new ArrayList();
-		if (fName != null) searchTerms.add("(P.FIRSTNAME LIKE ?)");
-		if (lName != null) searchTerms.add("(P.LASTNAME LIKE ?)");
-		if (eMail != null) searchTerms.add("(P.EMAIL LIKE ?)");
-		for (Iterator i = searchTerms.iterator(); i.hasNext(); ) {
+		if (fName != null)
+			searchTerms.add("(P.FIRSTNAME LIKE ?)");
+		if (lName != null)
+			searchTerms.add("(P.LASTNAME LIKE ?)");
+		if (eMail != null)
+			searchTerms.add("(P.EMAIL LIKE ?)");
+		for (Iterator i = searchTerms.iterator(); i.hasNext();) {
 			String srchTerm = (String) i.next();
 			sqlBuf.append(srchTerm);
 			if (i.hasNext())
