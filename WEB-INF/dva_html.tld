@@ -562,6 +562,11 @@
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>
 		</attribute>
+		<attribute>
+			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
 	</tag>
 	
 	<!-- Check tag, for defining HTML radio button and checkbox fields -->
@@ -632,6 +637,11 @@
 			<name>firstEntry</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onChange</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
 	
