@@ -61,6 +61,14 @@ public class CheckTag extends FormElementTag {
 		_firstEntry = entry;
 	}
 
+	/**
+	 * Sets the JavaScript <i>onChange</i> event for these checkboxes/radio buttons.
+	 * @param jsEvent the JavaScript event code
+	 */
+	public void setOnChange(String jsEvent) {
+		_attrs.put("onchange", jsEvent);
+	}
+
 	private void openSpanTag() throws Exception {
 		// Open the formatting SPAN and set the width
 		_out.print("<span");
@@ -79,7 +87,7 @@ public class CheckTag extends FormElementTag {
 
 		_out.print('>');
 	}
-
+	
 	/**
 	 * Helper method to check if an option value is selected.
 	 */
@@ -118,7 +126,7 @@ public class CheckTag extends FormElementTag {
 		_out.print(openHTML(false));
 		if (isSelected)
 			_out.print(" checked=\"checked\"");
-
+		
 		// Figure out how to render the choice
 		_out.print(" value=\"");
 		if (isCombo) {
@@ -179,9 +187,9 @@ public class CheckTag extends FormElementTag {
 	 * Releases the tag's state data.
 	 */
 	public void release() {
+		_firstEntry = null;
 		super.release();
 		setType("checkbox");
-		_firstEntry = null;
 	}
 
 	/**
