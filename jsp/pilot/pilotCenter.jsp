@@ -36,7 +36,7 @@ return true;
 
 <!-- Pilot Information -->
 <tr class="title">
- <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.firstName} ${pilot.lastName}</span></td>
+ <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.name}</span></td>
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" linkID="0x${pilot.ID}" op="edit">Edit My Profile</el:cmd></td>
@@ -44,6 +44,21 @@ return true;
  pilot code is <span class="pri bld">${pilot.pilotCode}</span>.<br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited ${pilot.loginCount} times.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
+</tr>
+ <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
+<c:if test="${!empty geoLocation}">
+ <td class="data">You can update your location on the <content:airline /> Pilot Board.<br />
+<br />
+<i>For privacy reasons, your specific location will be altered by a random number of miles each time 
+the <content:airline /> Pilot Board is viewed.</i></td>
+</c:if>
+<c:if test="${empty geoLocation}">
+ <td class="data">You have not specified your geographic location. By doing so, you can add your 
+name to the <content:airline /> Pilot Board.<br />
+<br />
+<i>For privacy reasons, your specific location will be altered by a random number of miles each time 
+the <content:airline /> Pilot Board is viewed.</i></td>
+</c:if>
 </tr>
 <c:if test="${access.canTakeLeave}">
 <content:sysdata var="inactivity_days" name="users.inactive_days" />
@@ -305,6 +320,10 @@ database.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarslogc">Connection Log</el:cmd></td>
  <td class="data">You can view the <content:airline /> ACARS server Connection log.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarslogf">Flight Information Log</el:cmd></td>
+ <td class="data">You can view flight information from the <content:airline /> ACARS server flight log.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarslogm">Text Message Log</el:cmd></td>
