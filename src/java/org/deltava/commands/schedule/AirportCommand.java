@@ -5,6 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.TZInfo;
+import org.deltava.beans.GeoLocation;
+
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
@@ -23,9 +25,6 @@ import org.deltava.util.StringUtils;
 
 public class AirportCommand extends AbstractFormCommand {
    
-   private static final String[] LAT_DIRECTIONS = {"North", "South"};
-   private static final String[] LON_DIRECTIONS = {"East", "West"};
-
 	/**
 	 * Callback method called when saving the Airport.
 	 * @param ctx the Command context
@@ -64,12 +63,12 @@ public class AirportCommand extends AbstractFormCommand {
 				int latD = Integer.parseInt(ctx.getParameter("latD"));
 				int latM = Integer.parseInt(ctx.getParameter("latM"));
 				int latS = Integer.parseInt(ctx.getParameter("latS"));
-				latD *= (StringUtils.arrayIndexOf(LAT_DIRECTIONS, ctx.getParameter("latDir")) * -1);
+				latD *= (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) * -1);
 				
 				int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 				int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 				int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-				lonD *= (StringUtils.arrayIndexOf(LON_DIRECTIONS, ctx.getParameter("lonDir")) * -1);
+				lonD *= (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) * -1);
 
 				// Build the GeoPosition bean and update the airport
 				GeoPosition gp = new GeoPosition();
@@ -118,8 +117,8 @@ public class AirportCommand extends AbstractFormCommand {
 		
 		// Save directions and time zones in request
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-		ctx.setAttribute("latDir", Arrays.asList(LAT_DIRECTIONS), REQUEST);
-		ctx.setAttribute("lonDir", Arrays.asList(LON_DIRECTIONS), REQUEST);
+		ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
+		ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
 
 		// Validate the airport if we are not creating a new one
 		if (!isNew) {
@@ -140,11 +139,11 @@ public class AirportCommand extends AbstractFormCommand {
 				ctx.setAttribute("latD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
 				ctx.setAttribute("latM", new Integer(GeoPosition.getMinutes(gp.getLatitude())), REQUEST);
 				ctx.setAttribute("latS", new Integer(GeoPosition.getSeconds(gp.getLatitude())), REQUEST);
-				ctx.setAttribute("latNS", LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
+				ctx.setAttribute("latNS", GeoLocation.LAT_DIRECTIONS[((gp.getLatitude() < 0) ? 1 : 0)], REQUEST);
 				ctx.setAttribute("lonD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLongitude()))), REQUEST);
 				ctx.setAttribute("lonM", new Integer(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
 				ctx.setAttribute("lonS", new Integer(GeoPosition.getSeconds(gp.getLongitude())), REQUEST);
-				ctx.setAttribute("lonEW", LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
+				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
