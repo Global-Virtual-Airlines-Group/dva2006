@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> ACARS Flight Log</title>
+<title><content:airline /> ACARS Message Log</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -32,10 +32,10 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="acarslogf.do" method="post" validate="return validate(this)">
+<el:form action="acarslogm.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4">ACARS FLIGHT INFORMATION LOG</td>
+ <td colspan="4">ACARS TEXT MESSAGE LOG</td>
 </tr>
 <tr>
  <td class="label">Search Type</td>
@@ -60,7 +60,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT INFORMATION LOG" />
+ <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH TEXT MESSAGE LOG" />
 </tr>
 </el:table>
 </el:form>
@@ -70,43 +70,32 @@ return true;
 <view:table className="view" space="default" pad="default" cmd="acarsloc">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">ID</td>
- <td width="15%">START/END TIME</td>
- <td width="10%">PILOT CODE</td>
- <td width="20%">PILOT NAME</td>
- <td width="10%">FLIGHT NUMBER</td>
- <td width="12%">ORIGIN</td>
- <td width="12%">DESTINATION</td>
- <td>FS VERSION</td>
+ <td width="15%">FROM</td>
+ <td width="15%">TO</td>
+ <td>MESSAGE TEXT</td>
 </tr>
 
 <!-- Log Entries -->
-<c:forEach var="flight" items="${viewContext.results}">
-<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
-<c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
-<view:row entry="${entry}">
- <td class="pri bld"><el:cmd url="acarsinfo" linkID="0x${flight.ID}"><fmt:int value="${flight.ID}" /></el:cmd></td>
- <td><fmt:date t="HH:mm" date="${flight.startTime}" />
-<c:if test="${!empty flight.endTime}">
-<br /><fmt:date t="HH:mm" date="${flight.endTime}" />
+<c:forEach var="msg" items="${viewContext.results}">
+<c:set var="author" value="${pilots[msg.authorID]}" scope="request" />
+<c:set var="authorLoc" value="${userData[msg.authorID]}" scope="request" />
+<view:row entry="${msg}">
+ <td class="small pri bld"><el:profile location="${authorLoc}">${author.name}</el:profile></td>
+<c:if test="${msg.recipientID > 0}">
+<c:set var="recipient" value="${pilots[msg.recipientID]}" scope="request" />
+<c:set var="recipientLoc" value="${userData[msg.recipientID]}" scope="request" />
+ <td class="small bld"><el:profile location="${recipientLoc}">${recipient.name}</el:profile></td>
+ <td class="left small">${msg.message}</td>
 </c:if>
-</td>
- <td class="sec bld">${pilot.pilotCode}</td>
- <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
- <td class="bld">${flight.flightCode}</td>
- <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />)</td>
- <td class="small">${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td class="sec">${flight.FSVersion}</td>
-</view:row>
-<view:row entry="${entry}">
- <td class="right">Route</td>
- <td colspan="7">${flight.route}"</td>
+<c:if test="${msg.recipientID > 0}">
+ <td colspan="2" class="left small">${msg.message}</td>
+</c:if>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="3"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </c:if>
