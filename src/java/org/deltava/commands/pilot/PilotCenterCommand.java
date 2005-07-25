@@ -39,6 +39,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.getSession().setAttribute(CommandContext.USER_ATTR_NAME, p);
 			
+			// Save the pilot location
+			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);
+			
 			// Check our access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
