@@ -225,6 +225,7 @@ public class GetServInfo extends DAO {
 										p.setEquipmentCode(si.get(SITokens.EQCODE));
 										p.setAltitude(si.get(SITokens.ALT));
 										p.setGroundSpeed(si.get(SITokens.GSPEED));
+										p.setWayPoints(si.get(SITokens.ROUTE));
 
 										// Set departure airport position if unknown
 										if (p.getAirportD().getPosition() == null) {
