@@ -19,8 +19,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     private Date _validDate;
     private boolean _isCached;
     
-    private Set _pilots;
-    private Set _controllers;
+    private Map _pilots;
+    private Map _controllers;
     
     /**
      * Initializes this bean for a particular network name.
@@ -31,8 +31,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     public NetworkInfo(String name) {
         super();
         _name = name.toUpperCase();
-        _pilots = new TreeSet();
-        _controllers = new TreeSet();
+        _pilots = new TreeMap();
+        _controllers = new TreeMap();
     }
     
     // TODO JavaDoc
@@ -66,7 +66,7 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @see NetworkInfo#getPilots()
      */
     public Collection getControllers() {
-        return new ArrayList(_controllers);
+        return new ArrayList(_controllers.values());
     }
     
     /**
@@ -75,14 +75,14 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @see NetworkInfo#getControllers()
      */
     public Collection getPilots() {
-        return new ArrayList(_pilots);
+        return new ArrayList(_pilots.values());
     }
     
     public void setPilotIDs(Map idMap) {
     	
     	// Mash pilots + controllers together
-    	Set users = new HashSet(_pilots);
-    	users.addAll(_controllers);
+    	Set users = new HashSet(_pilots.values());
+    	users.addAll(_controllers.values());
     	
     	// Assign database IDs to active Pilots
     	for (Iterator i = users.iterator(); i.hasNext(); ) {
@@ -109,11 +109,19 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     }
     
     public void add(Controller c) {
-        _controllers.add(c);
+        _controllers.put(c.getCallsign(), c);
     }
     
     public void add(Pilot p) {
-        _pilots.add(p);
+        _pilots.put(p.getCallsign(), p);
+    }
+    
+    public Pilot getPilot(String callsign) {
+       return (Pilot) _pilots.get(callsign); 
+    }
+    
+    public Controller getController(String callsign) {
+       return (Controller) _controllers.get(callsign);
     }
     
     /**

@@ -30,6 +30,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	private Airport _airportA;
 	private String _comments;
 	private boolean _isHighlighted;
+	private List _wayPoints;
 	
 	private String _rawData;
 	private List _route;
@@ -150,6 +151,15 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 */
 	public GeoPosition getPosition() {
 		return _position;
+	}
+	
+	/**
+	 * Returns the Pilot's filed waypoints.
+	 * @return a Collection of waypoint IDs
+	 * @see Pilot#setWayPoints(String)
+	 */
+	public Collection getWayPoints() {
+	   return _wayPoints;
 	}
 	
 	/**
@@ -277,6 +287,15 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 		} catch (NumberFormatException nfe) {
 			_position = new GeoPosition(0, 0);
 		}
+	}
+	
+	/**
+	 * Updates the Pilot's filed waypoints.
+	 * @param route a space-delimited string
+	 * @see Pilot#getWayPoints()
+	 */
+	public void setWayPoints(String route) {
+	   _wayPoints = StringUtils.split(route, " ");
 	}
 
 	/**
