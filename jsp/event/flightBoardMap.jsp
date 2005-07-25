@@ -15,6 +15,7 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:js name="common" />
+<content:sysdata var="imgPath" name="path.img" />
 <content:js name="googleMaps" />
 <map:api version="1" />
 <c:if test="${!empty browser$ie}">
@@ -32,11 +33,38 @@ location.href = '/flightboard.do?id=' + net + '&op=map';
 return true;
 }
 
-function restore(overlays)
+function showRoute(pilotID)
 {
-for (x = 0; x < overlays.length; x++)
-	map.addOverlay(overlays[x]);
+// Get the network name
+var f = document.forms[0];
+var networkName = f.networkName.options[f.networkName.selectedIndex].text;
+
+// Try and load a cached route
+selectedRoute = allRoutes[pilotID];
+if (!selectedRoute) {
+	var req = GXmlHttp.create();
+	request.open('GET', 'si_route.ws?network=' + networkName + '&id=' + pilotID, true);
+	request.onreadystatechange = function()
+	{
+	if (request.readyState != 4) return false;
+	var points = new Array();
+	var xmlDoc = request.responseXML;
+	var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
+	for (var i = 0; i < navaids.length; i++) {
+		var nav = navaids[i];
+		var m = new GPoint(parseFloat(nav.getAttribute("lng")), parseFloat(nav.getAttribute("lat")));
+		points.push(googleMarker('${imgPath}',nav.getAttribute("color"),m,nav.text));
+	}
 	
+	allRoutes[pilotID] = points;
+	selectedRoute = allRoutes[pilotID];
+	return true;
+	}
+	
+	request.send();
+}
+
+addMarkers(map, 'selectedRoute');
 return true;
 }
 </script>
@@ -68,30 +96,28 @@ return true;
 </div>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap(getElement("googleMap"));
+var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 
-// Mark each pilot's position, and route in a hashmap
+// Mark each pilot's position in hashmap
 var positions = new Array();
+
+// Route cache
 var allRoutes = new Array();
 var selectedRoute;
 
 <c:forEach var="pilot" items="${netInfo.pilots}">
 <map:marker var="gPosition" point="${pilot}" />
-<c:if test="${!empty pilot.route}">
-<map:points var="routePoints" items="${pilot.route}" />
-<map:line var="gRoute" src="routePoints" color="#28405F" width="1" transparency="0.8" />
-allRoutes['${pilot.ID}'] = gRoute;
-GEvent.addListener(gPosition, 'click', function() { var sRoute = allRoutes['${pilot.ID}']; map.addOverlay(sRoute); selectedRoute = sRoute; });
-</c:if>
+GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.ID}'); return true; });
 positions.push(gPosition);
 </c:forEach>
 
 // Center the map and add positions
 map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
-restore(positions);
+addMarkers(map, 'positions');
+// restore(positions);
 </script>
 </body>
 </html>
