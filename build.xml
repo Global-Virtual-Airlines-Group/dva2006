@@ -152,6 +152,9 @@
 			</classpath> 
 		</taskdef>
 		
+		<!-- Delete the old web.xml -->
+		<delete file="${java.io.tmpdir}/build/web.xml" />
+		
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 	    <jasper2 package="org.deltava" uriroot="." verbose="0" poolingEnabled="false" xpoweredBy="true" 
@@ -221,7 +224,7 @@
 	<target name="clean">
 		<delete dir="${java.io.tmpdir}/build" />
 		<delete dir="${java.io.tmpdir}/src/jsp" />
-		<delete file="WEB-INF/web.xml" />
+		<delete file="${java.io.tmpdir}/build/web.xml" />
 	</target>
 	
 	<!-- Production Deployment via FTP -->
