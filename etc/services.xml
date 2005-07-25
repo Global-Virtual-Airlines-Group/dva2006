@@ -3,9 +3,8 @@
 	<service id="eqList" class="org.deltava.service.EquipmentListService" />
 	<service id="airlineList" class="org.deltava.service.AirlineListService" />
 	<service id="airportList" class="org.deltava.service.AirportListService" />
-	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
-	<service id="voiceURL" class="org.deltava.service.PrivateVoiceURLService" />
 	
+	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
 	<service id="acarsData" class="org.deltava.service.ACARSDataService" />
 	
 	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
@@ -19,4 +18,5 @@
 	<service id="schedule" class="org.deltava.service.ScheduleSearchService" />
 	
 	<service id="servinfo" class="org.deltava.service.ServInfoDataService" />
+	<service id="si_route" class="org.deltava.service.ServInfoRouteService" />
 </services>
