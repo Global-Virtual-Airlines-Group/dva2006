@@ -161,7 +161,8 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Shut down and remove the JDBC connection pool
 		e.getServletContext().removeAttribute("jdbcConnectionPool");
-		_jdbcPool.close();
+		if (_jdbcPool != null)
+			_jdbcPool.close();
 
 		// Close the Log4J manager
 		LogManager.shutdown();
