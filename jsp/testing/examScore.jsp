@@ -47,12 +47,10 @@
 </c:if>
 
 <!-- Exam Questions -->
-<c:set var="qnum" value="0" scope="request" />
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="qnum" value="${qnum + 1}" scope="request" />
-<!-- Question #${qnum} -->
+<!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="2" valign="top">Question #${qnum}</td>
+ <td class="label" rowspan="2" valign="top">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 <tr>
@@ -61,7 +59,7 @@
 <tr>
 
 <!-- Score / Answer -->
- <td class="mid"><input type="checkbox" class="check" name="Score${qnum}" value="1" <c:if test="${fn:correct(q)}">checked="checked"</c:if> />Correct</td>
+ <td class="mid"><input type="checkbox" class="check" name="Score${q.number}" value="1" <c:if test="${fn:correct(q)}">checked="checked"</c:if> />Correct</td>
  <td class="data bld">${q.answer}</td>
 </tr>
 </c:forEach>
@@ -70,12 +68,11 @@
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
+ <td>&nbsp;
 <c:if test="${access.canScore}">
  <td><el:button type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" /></td>
 </c:if>
-<c:if test="${!access.canScore}">
- <td>&nbsp;</td>
-</c:if>
+ </td>
 </tr>
 </el:table>
 </el:form>
