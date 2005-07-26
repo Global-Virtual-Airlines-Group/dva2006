@@ -60,7 +60,12 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Map</td>
- <td class="data"><div id="googleMap" style="width:640px; height:600px" /></td>
+ <td class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
+location. Please click on the map below to set your location. You can drag the map with your 
+mouse and zoom in and out.</span> <span class="small sec bld"><u>NOTE</u>: To protect your 
+privacy, the system will automatically randomize your location within a 3 mile circle each time
+the Pilot Location Board is displayed.</span><br /></c:if>
+<div id="googleMap" style="width:640px; height:600px" /></td>
 </tr>
 <tr>
  <td class="label">Latitude</td>
@@ -92,14 +97,17 @@ return true;
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
-map.addControl(new GSmallZoomControl());
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, getDefaultZoom(${empty newLocation ? 60 : 2000}));
+map.centerAndZoom(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
 
 // Add user's location
-var labelText = '${location.infoBox}';
+var usrLocation;
+var labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
+<c:if test="${!empty location}">
 <map:marker var="usrLocation" point="${location}" />
 addMarkers(map, 'usrLocation');
+</c:if>
 
 // Set onClick event for the map
 GEvent.addListener(map, 'click', function setLatLon(overlay, geoPosition)
