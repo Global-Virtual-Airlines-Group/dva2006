@@ -46,7 +46,7 @@ public class PilotBoardCommand extends AbstractCommand {
       }
       
       public String getIconColor() {
-         return MapEntry.BLUE;
+         return MapEntry.RED;
       }
       
       public String getInfoBox() {
@@ -95,10 +95,6 @@ public class PilotBoardCommand extends AbstractCommand {
 					pilotLocations.add(new PilotLocation(usr, gp));
 			}
 			
-			// Add the home base
-			pilotLocations.add(new SpecialLocation(SystemData.getDouble("airline.location.lat"), 
-			      SystemData.getDouble("airline.location.lng")));
-			
 			// Save the locations
 			ctx.setAttribute("locations", pilotLocations, REQUEST);
 		} catch (DAOException de) {
@@ -107,9 +103,13 @@ public class PilotBoardCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Add the home base
+		ctx.setAttribute("mapCenter", new SpecialLocation(SystemData.getDouble("airline.location.lat"), 
+		      SystemData.getDouble("airline.location.lng")), REQUEST);
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/pilot/pilotBoard.jsp");
+		result.setURL("/jsp/pilot/pilotMap.jsp");
 		result.setSuccess(true);
 	}
 }
