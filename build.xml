@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="deploy">
-	
 	<!-- Clean out documentation -->
 	<target name="doc_clean">
     	<property name="path.doc" value="/usr/local/www/deltava.org/www" />		
@@ -71,7 +70,6 @@
 		    </classpath>
 			
 			<formatter type="xml" />
-
 			<batchtest todir="${java.io.tmpdir}/junit">
 				<fileset dir="src/test">
 					<include name="**/Test*.java" />
@@ -124,7 +122,7 @@
 	
 	<!-- Build the ACARS Server -->
 	<target name="acars" depends="compile">
-		<mkdir dir="${java.io.tmpdir}/build/acars" />	
+		<mkdir dir="${java.io.tmpdir}/build/acars" />
 		<javac srcdir="../DVA ACARS/src/java" optimize="on" destdir="${java.io.tmpdir}/build/acars"
 		 debug="true" debuglevel="lines,vars,source" source="1.4" target="1.4"
 		 compiler="modern">
@@ -222,56 +220,11 @@
 		</ftp>
 	</target>
 	
+	<!-- Clean out compiled data -->
 	<target name="clean">
 		<delete dir="${java.io.tmpdir}/build" />
 		<delete dir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${java.io.tmpdir}/build/web.xml" />
-	</target>
-	
-	<!-- Production Deployment via FTP -->
-	<target name="prod_ftp_deploy" depends="compile,acars,jspc">
-		<property name="path.webapp" value="/usr/local/www/deltava.org/webapps/dva2006" />
-		<property name="path.http" value="/usr/local/www/deltava.org/www" />
-		<loadproperties srcFile="data/build_deploy.properties" />
-
-		<!-- Upload the root data to the FTP server -->
-		<echo message="Uploading WEB-INF configuration data" />
-		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
-		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
-	    	<fileset dir="WEB-INF">
-	    		<include name="*.tld" />
-			</fileset>
-			<fileset file="${java.io.tmpdir}/build/web.xml" />
-		</ftp>
-		
-		<!-- Upload the libraries to the FTP server -->
-		<echo message="Uploading Library Jars" />
-		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
-		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
-	    	<fileset dir="lib/deploy" />
-			<fileset dir="${java.io.tmpdir}/build">
-				<include name="*.jar" />
-			</fileset>
-		</ftp>
-		
-		<!-- Upload configuration files to the FTP server -->
-		<echo message="Uploading Configuration files" />
-		<ftp server="${webapp.ssh.server}" userid="${webapp.ssh.user}" password="${webapp.ssh.pwd}"
-		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
-			<fileset dir="etc">
-				<include name="commands.xml" />
-				<include name="services.xml" />
-				<include name="tasks.xml" />
-				<include name="prod/*" />
-			</fileset>
-		</ftp>
-		
-		<!-- Upload static content to the HTTP server -->
-		<echo message="Uploading static content to HTTP server" />
-		<ftp server="${http.ssh.server}" userid="${http.ssh.user}" password="${http.ssh.pwd}"
-		 remotedir="${path.http}" action="send" depends="yes" verbose="yes" timediffmillis="14400000">
-			<fileset dir="static" />
-		</ftp>
 	</target>
 	
 	<!-- Production Deployment via SSH -->
@@ -283,17 +236,33 @@
 					verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
+				<modified seldirs="false" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+				</modified>
 			</fileset>
-			<fileset file="${java.io.tmpdir}/build/web.xml" />
+			<fileset file="${java.io.tmpdir}/build/web.xml">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+				</modified>
+			</fileset>
 		</scp>
 
-		<!-- Upload the libraries to the app server -->
+		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
-			<fileset dir="${java.io.tmpdir}/build">
-				<include name="dva2006.jar" />
-				<include name="dva2006_jsp.jar" />
-				<include name="dva_acars.jar" />
+			<fileset dir="lib/deploy" includes="*.jar">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+				</modified>
 			</fileset>
 		</scp>
 		
@@ -305,6 +274,21 @@
 				<include name="services.xml" />
 				<include name="tasks.xml" />
 				<include name="prod/*.*" />
+				<modified seldirs="false" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+				</modified>
+			</fileset>
+		</scp>
+		
+		<!-- Upload static content to the HTTP server -->
+		<scp todir="${http.ssh.user}@${http.ssh.server}:${http.ssh.path}"
+			verbose="yes" trust="yes" password="${http.ssh.pwd}">
+			<fileset dir="static">
+				<modified seldirs="true" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="local_data/static.cache.txt" />
+				</modified>
 			</fileset>
 		</scp>
 	</target>
