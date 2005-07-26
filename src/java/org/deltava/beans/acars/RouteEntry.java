@@ -30,6 +30,7 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 	private int _vSpeed;
 	private double _n1;
 	private double _n2;
+	private double _mach;
 	private int _flaps;
 	private int _flags;
 
@@ -104,6 +105,15 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 	 */
 	public GeoPosition getPosition() {
 		return _gpos;
+	}
+	
+	/**
+	 * Returns the aircraft's Mach number. 
+	 * @return the Mach number
+	 * @see RouteEntry#setMach(double)
+	 */
+	public double getMach() {
+	   return _mach;
 	}
 
 	public double getLatitude() {
@@ -234,6 +244,19 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 			throw new IllegalArgumentException("Vertical speed cannot be < -7000 or > 7000");
 
 		_vSpeed = speed;
+	}
+	
+	/**
+	 * Updates the aircraft's Mach number.
+	 * @param mach the Mach number
+	 * @throws IllegalArgumentException if mach < 0 or mach > 5.0
+	 * @see RouteEntry#getMach()
+	 */
+	public void setMach(double mach) {
+	   if ((mach < 0) || (mach > 5.0))
+	      throw new IllegalArgumentException("Invalid Mach Number - " + mach);
+	   
+	   _mach = mach;
 	}
 
 	/**

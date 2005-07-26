@@ -381,6 +381,12 @@
 		<enabled type="Boolean">true</enabled>
 		<daemon>org.deltava.acars.TomcatDaemon</daemon>
 		
+		<map>
+			<lat type="Double">38.88</lat>
+			<lng type="Double">-93.25</lng>
+			<refresh type="Integer">15000</refresh>
+		</map>
+		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>

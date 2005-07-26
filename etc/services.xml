@@ -6,6 +6,7 @@
 	
 	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
 	<service id="acarsData" class="org.deltava.service.ACARSDataService" />
+	<service id="acars_map" class="org.deltava.service.ACARSMapService" />
 	
 	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
