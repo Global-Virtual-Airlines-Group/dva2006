@@ -42,8 +42,8 @@ var networkName = f.networkName.options[f.networkName.selectedIndex].text;
 // Try and load a cached route
 selectedRoute = allRoutes[pilotID];
 if (!selectedRoute) {
-	var req = GXmlHttp.create();
-	request.open('GET', 'si_route.ws?network=' + networkName + '&id=' + pilotID, true);
+	var request = GXmlHttp.create();
+	request.open("GET", "si_route.ws?network=" + networkName + "&id=" + pilotID, true);
 	request.onreadystatechange = function()
 	{
 	if (request.readyState != 4) return false;
@@ -52,16 +52,17 @@ if (!selectedRoute) {
 	var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
 	for (var i = 0; i < navaids.length; i++) {
 		var nav = navaids[i];
-		var m = new GPoint(parseFloat(nav.getAttribute("lng")), parseFloat(nav.getAttribute("lat")));
-		points.push(googleMarker('${imgPath}',nav.getAttribute("color"),m,nav.text));
+		points.push(new GPoint(parseFloat(nav.getAttribute("lng")), parseFloat(nav.getAttribute("lat"))));
 	}
 	
-	allRoutes[pilotID] = points;
+	allRoutes[pilotID] = new GPolyline(points, '#4080AF', 2, 0.8);
 	selectedRoute = allRoutes[pilotID];
+	addMarkers(map, 'selectedRoute');
 	return true;
 	}
 	
-	request.send();
+	request.send(null);
+	return true;
 }
 
 addMarkers(map, 'selectedRoute');
@@ -103,21 +104,20 @@ map.addControl(new GMapTypeControl());
 // Mark each pilot's position in hashmap
 var positions = new Array();
 
+<c:forEach var="pilot" items="${netInfo.pilots}">
+<map:marker var="gPosition" point="${pilot}" />
+GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.callsign}'); });
+positions.push(gPosition);
+</c:forEach>
+
 // Route cache
 var allRoutes = new Array();
 var selectedRoute;
-
-<c:forEach var="pilot" items="${netInfo.pilots}">
-<map:marker var="gPosition" point="${pilot}" />
-GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.ID}'); return true; });
-positions.push(gPosition);
-</c:forEach>
 
 // Center the map and add positions
 map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
-// restore(positions);
 </script>
 </body>
 </html>
