@@ -60,6 +60,9 @@
 <tr class="MenuItem">
  <td><el:cmd url="roster">PILOT ROSTER</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="pilotboard">PILOT LOCATIONS</el:cmd></td>
+</tr>
 <content:filter roles="HR">
 <tr class="MenuItem">
  <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
