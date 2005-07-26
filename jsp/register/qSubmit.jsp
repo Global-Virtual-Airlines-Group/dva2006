@@ -49,19 +49,17 @@ return true;
 </tr>
 
 <!-- Exam Questions -->
-<c:set var="qnum" value="0" scope="request" />
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="qnum" value="${qnum + 1}" scope="request" />
-<!-- Question #${qnum} -->
+<!-- Question #${q.number} -->
 <tr>
- <td class="label">Question #${qnum}</td>
+ <td class="label">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
 
 <!-- Answer# ${qnum} -->
 <tr>
- <td class="label" valign="top">Answer #${qnum}</td>
- <td class="data"><el:textbox ID="A${qnum}" name="answer${qnum}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
+ <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
+ <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
 </tr>
 </c:forEach>
 </el:table>
@@ -69,12 +67,11 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
+ <td>&nbsp;
 <c:if test="${access.canSubmit}">
  <td><el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT QUESTIONNAIRE" /></td>
 </c:if>
-<c:if test="${!access.canSubmit}">
- <td>&nbsp;</td>
-</c:if>
+ </td>
 </tr>
 </el:table>
 </el:form>
