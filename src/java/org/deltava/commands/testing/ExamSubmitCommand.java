@@ -46,10 +46,9 @@ public class ExamSubmitCommand extends AbstractCommand {
             throw new CommandSecurityException("Cannot submit Examination");
          
          // Save answers from the request
-         List questions = ex.getQuestions();
-         for (int x = 0; x < questions.size(); x++) {
-            Question q = (Question) questions.get(x);
-            q.setAnswer(ctx.getParameter("answer" + String.valueOf(q.getNumber() - 1))); // JSP fields are 1-offset
+         for (int x = 1; x < ex.getSize(); x++) {
+            Question q = ex.getQuestion(x);
+            q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
          }
          
          // Set the status of the examination, and submitted date

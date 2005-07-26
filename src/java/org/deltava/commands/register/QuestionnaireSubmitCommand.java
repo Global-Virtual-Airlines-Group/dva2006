@@ -46,10 +46,9 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
          ex.setSubmittedOn(new Date());
          
          // Save answers from the request
-         List questions = ex.getQuestions();
-         for (int x = 0; x < questions.size(); x++) {
-            Question q = (Question) questions.get(x);
-            q.setAnswer(ctx.getParameter("answer" + String.valueOf(q.getNumber() - 1)));
+         for (int x = 1; x <= ex.getSize(); x++) {
+            Question q = ex.getQuestion(x);
+            q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
          }
          
          // Get EMail validation results
