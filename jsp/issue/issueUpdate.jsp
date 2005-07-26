@@ -9,7 +9,6 @@
 <head>
 <title><content:airline /> Issue Updated</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 <meta http-equiv="refresh" content="3;url=/issue.do?id=0x<fmt:hex value="${issue.ID}" />&amp;op=read" />
 </head>
 <content:copyright visible="false" />

@@ -10,7 +10,6 @@
 <head>
 <title><content:airline /> Water Cooler Channel Updated</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>

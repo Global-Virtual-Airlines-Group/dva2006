@@ -9,8 +9,6 @@
 <head>
 <title><content:airline /> Pilot Profile Updated</title>
 <content:css name="main" browserSpecific="true" />
-<content:css name="form" />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -66,6 +64,7 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">click here</el:cmd>.<br />
 To return to the Pilot Roster, <el:cmd url="roster">click here</el:cmd><br />
 <br />
+<content:copyright />
 </div>
 </body>
 </html>
