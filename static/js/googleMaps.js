@@ -71,9 +71,11 @@ if (distance > 6100) {
 	return 10;
 } else if (distance > 90) {
 	return 9;
+} else if (distance > 50) {
+	return 8;
 }
 
-return 8;
+return 7;
 }
 
 function toggleMarkers(map, arrayName)
