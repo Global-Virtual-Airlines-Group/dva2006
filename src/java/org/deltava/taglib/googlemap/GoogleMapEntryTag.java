@@ -10,6 +10,7 @@ import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.ContentHelper;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -97,7 +98,7 @@ public abstract class GoogleMapEntryTag extends TagSupport {
       // Assign a label if one provided
       if (label != null) {
          buf.append('\'');
-         buf.append(label);
+         buf.append(StringUtils.escapeSlashes(label));
          buf.append('\'');
       } else {
          buf.append("null");
