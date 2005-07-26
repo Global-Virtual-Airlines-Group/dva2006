@@ -96,6 +96,24 @@ public final class StringUtils {
    public static String trim(String rawString) {
       return (rawString == null) ? "" : rawString.trim();
    }
+   
+   /**
+    * Escapes forward slashes for use when writing HTML using JavaScript.
+    * @param rawString the string to escape
+    * @return an escaped string
+    * @throws NullPointerException if rawString is null
+    */
+   public static String escapeSlashes(String rawString) {
+      StringBuffer buf = new StringBuffer(rawString);
+      for (int x = 0; x < buf.length(); x++) {
+         if (buf.charAt(x) == '/') {
+            buf.insert(x, '\\');
+            x++;
+         }
+      }
+      
+      return buf.toString();
+   }
 
    /**
     * Concatenates a collection of Strings into a single delimited String.
