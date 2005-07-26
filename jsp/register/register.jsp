@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -12,7 +12,10 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:sysdata var="badDomains" name="registration.reject_domain" />
 <script language="JavaScript" type="text/javascript">
+var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -25,6 +28,17 @@ if (!validateCombo(form.tz, 'Time Zone')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
+
+// Validate e-mail domain
+var eMail = form.email.value;
+var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
+for (var x = 0; x < invalidDomains.length; x++) {
+	if (usrDomain == invalidDomains[x]) {
+		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
+		form.email.focus();
+		return false;
+	}
+}
 
 setSubmit();
 disableButton('SaveButton');
