@@ -129,7 +129,7 @@ public class ServInfoDataService extends WebDataService {
 	 */
 	private HttpURLConnection getURL(String dataURL) throws IOException {
 		URL url = new URL(dataURL);
-		log.info("Loading data from " + url.toString());
+		log.debug("Loading data from " + url.toString());
 		return (HttpURLConnection) url.openConnection();
 	}
 
