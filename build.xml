@@ -157,15 +157,16 @@
 		
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
-	    <jasper2 package="org.deltava" uriroot="." verbose="0" poolingEnabled="false" xpoweredBy="true" 
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false" xpoweredBy="true" 
 			validateXml="false" webXmlFragment="${jspc.webXMLInc}"
 	    	outputDir="${java.io.tmpdir}/src/jsp" />
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
-			debuglevel="lines,source" optimize="on">
+			debuglevel="source" optimize="on">
 			<classpath refid="jspc.classpath" />
+			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
 		
 		<!-- Compress the Java classes into a single JAR file -->
@@ -261,8 +262,7 @@
 				<include name="commands.xml" />
 				<include name="services.xml" />
 				<include name="tasks.xml" />
-				<include name="tt_airports.txt" />
-				<include name="prod/**" />
+				<include name="prod/*" />
 			</fileset>
 		</ftp>
 		
@@ -304,7 +304,7 @@
 				<include name="commands.xml" />
 				<include name="services.xml" />
 				<include name="tasks.xml" />
-				<include name="prod/*" />
+				<include name="prod/*.*" />
 			</fileset>
 		</scp>
 	</target>
