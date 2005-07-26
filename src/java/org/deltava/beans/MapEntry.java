@@ -8,7 +8,7 @@ package org.deltava.beans;
  * @since 1.0
  */
 
-public interface MapEntry {
+public interface MapEntry extends GeoLocation {
    
    /**
     * Blue Google Maps icon, displayed as $static/img/maps/point_blue.png
