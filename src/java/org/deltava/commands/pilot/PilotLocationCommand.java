@@ -4,13 +4,13 @@ package org.deltava.commands.pilot;
 import java.util.Arrays;
 import java.sql.Connection;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 import org.deltava.beans.stats.PilotLocation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -39,13 +39,15 @@ public class PilotLocationCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			GeoLocation gp = dao.getLocation(ctx.getUser().getID());
 			if (gp == null) {
-				ctx.setAttribute("newLocation", Boolean.TRUE, REQUEST);
 				gp = new GeoPosition(38.88, -93.25);
+			} else {
+			   ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);   
+			   if (gp instanceof MapEntry)
+			      ctx.setAttribute("locationText", StringUtils.escapeSlashes(((MapEntry) gp).getInfoBox()), REQUEST);
 			}
 			
 			// If we have a lat/lon pair, then update the location
 			ctx.setAttribute("mapCenter", gp, REQUEST);
-			ctx.setAttribute("location", new PilotLocation((Pilot) ctx.getUser(), gp), REQUEST);
 			if (ctx.getParameter("latD") != null) {
 				// Build the pilot latitude/longitude
 				GeoPosition loc = null;
