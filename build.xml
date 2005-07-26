@@ -273,7 +273,12 @@
 				<include name="commands.xml" />
 				<include name="services.xml" />
 				<include name="tasks.xml" />
-				<include name="prod/*.*" />
+				<modified seldirs="false" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="etc/prod">
 				<modified seldirs="false" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
