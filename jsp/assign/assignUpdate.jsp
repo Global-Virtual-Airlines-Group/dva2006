@@ -10,7 +10,6 @@
 <head>
 <title><content:airline /> Flight Assignment Updated</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>

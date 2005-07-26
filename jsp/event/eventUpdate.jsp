@@ -9,7 +9,6 @@
 <head>
 <title><content:airline /> Online Event Updated</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -21,9 +20,10 @@
 <div class="updateHdr">Online Event Updated</div>
 <br />
 The <span class="pri bld">${event.name}</span> Online has been successfully updated.<br />
+To view the event just created, you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd> to display the event.<br />
 <br />
 
-
+<content:copyright />
 </div>
 </body>
 </html>

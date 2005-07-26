@@ -8,7 +8,7 @@
 <head>
 <title><content:airline /> Pilot Examination</title>
 <content:css name="main" browserSpecific="true" />
-<content:css name="form" />
+
 </head>
 <content:copyright visible="false" />
 <body>

@@ -15,7 +15,6 @@
 <title><content:airline /> NOTAM Updated</title>
 </c:if>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
