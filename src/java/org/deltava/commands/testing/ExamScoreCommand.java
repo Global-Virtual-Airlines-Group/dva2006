@@ -61,9 +61,8 @@ public class ExamScoreCommand extends AbstractCommand {
          
          // Calculate the score
          int score = 0;
-         List questions = ex.getQuestions();
-         for (int x = 0; x < questions.size(); x++) {
-            Question q = (Question) questions.get(x);
+         for (int x = 0; x < ex.getSize(); x++) {
+            Question q = ex.getQuestion(x);
             boolean isCorrect = "1".equals(ctx.getParameter("Score" + String.valueOf(x)));
             if (isCorrect) {
                log.debug("Question #" + (x+1) + " is correct");
