@@ -9,7 +9,6 @@
 <head>
 <title><content:airline /> Water Cooler Thread</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 <meta http-equiv="refresh" content="3;url=/thread.do?id=0x<fmt:hex value="${thread.ID}" />" />
 </head>
 <content:copyright visible="false" />
