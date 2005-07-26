@@ -53,7 +53,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="geolocate.do" method="post">
+<el:form action="geolocate.do" method="post" validate="return true">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">PILOT LOCATION</td>
@@ -86,6 +86,7 @@ return true;
 </el:table>
 </el:form>
 <br />
+<content:copyright />
 </div>
 <script language="JavaScript" type="text/javascript">
 // Build the map
@@ -93,7 +94,7 @@ return true;
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, getDefaultZoom(2000));
+map.centerAndZoom(mapC, getDefaultZoom(${empty newLocation ? 60 : 2000}));
 
 // Add user's location
 var labelText = '${location.infoBox}';
