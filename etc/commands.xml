@@ -109,7 +109,8 @@
 		<class>org.deltava.commands.pilot.PilotBoardCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+
 	<!-- News/NOTAM Commands -->
 	<command id="news">
 		<name>System News</name>
@@ -228,27 +229,27 @@
 		<class>org.deltava.commands.fleet.InstallerLogViewCommand</class>
 		<roles>Fleet</roles>
 	</command>
-	
-	
+
+
 	<!-- Statistics commands -->
 	<command id="airlinestats">
 		<name>Airline Totals</name>
 		<class>org.deltava.commands.stats.AirlineTotalsCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="flightstats">
 		<name>Flight Statistics</name>
 		<class>org.deltava.commands.stats.FlightStatsCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="httpstats">
 		<name>HTTP Statistics</name>
 		<class>org.deltava.commands.stats.ServerStatsCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="fleetstats">
 		<name>Fleet Installer Statistics</name>
 		<class>org.deltava.commands.stats.InstallerStatsCommand</class>
@@ -892,36 +893,42 @@
 		<class>org.deltava.commands.system.LogPurgeCommand</class>
 		<roles>Admin</roles>
 	</command>
-	
-	
+
+
 	<!-- ACARS log/data commands -->
 	<command id="acarspool">
 		<name>ACARS Connection Pool</name>
 		<class>org.deltava.commands.acars.ConnectionPoolCommand</class>
 		<roles>Admin</roles>
 	</command>
-	
+
 	<command id="acarsinfo">
 		<name>ACARS Flight Info</name>
 		<class>org.deltava.commands.acars.FlightInfoCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
 	<command id="acarslogc">
 		<name>ACARS Connection Log</name>
 		<class>org.deltava.commands.acars.ConnectionLogCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
 	<command id="acarslogf">
 		<name>ACARS Flight Log</name>
 		<class>org.deltava.commands.acars.FlightLogCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
 	<command id="acarslogm">
 		<name>ACARS Message Log</name>
 		<class>org.deltava.commands.acars.MessageLogCommand</class>
 		<roles>HR</roles>
+	</command>
+
+	<command id="acarsmap">
+		<name>ACARS Live Map</name>
+		<class>org.deltava.commands.acars.ACARSMapCommand</class>
+		<roles>*</roles>
 	</command>
 </commands>
