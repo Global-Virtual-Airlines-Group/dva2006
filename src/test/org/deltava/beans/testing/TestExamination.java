@@ -1,7 +1,6 @@
 package org.deltava.beans.testing;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
@@ -51,17 +50,25 @@ public class TestExamination extends AbstractBeanTestCase {
         
         Question q1 = new Question("Why?");
         Question q2 = new Question("Why Not?");
+        Question q4 = new Question("Out of Sequence");
+        q4.setNumber(4);
         _exam.addQuestion(q1);
         _exam.addQuestion(q2);
+        _exam.addQuestion(q4);
         
-        List qs = _exam.getQuestions();
-        assertEquals(2, qs.size());
+        List qs = new ArrayList(_exam.getQuestions());
+        assertEquals(3, qs.size());
         assertEquals(qs.size(), _exam.getSize());
         
         assertSame(q1, qs.get(0));
+        assertSame(q1, _exam.getQuestion(1));
         assertSame(q2, qs.get(1));
+        assertSame(q2, _exam.getQuestion(2));
+        assertSame(q4, qs.get(2));
+        assertSame(q4, _exam.getQuestion(4));
         assertEquals(1, q1.getNumber());
         assertEquals(2, q2.getNumber());
+        assertEquals(4, q4.getNumber());
     }
     
     public void testValidation() {
