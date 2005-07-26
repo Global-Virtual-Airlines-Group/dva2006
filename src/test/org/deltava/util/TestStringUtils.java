@@ -84,4 +84,14 @@ public class TestStringUtils extends TestCase {
        assertEquals(-1, StringUtils.arrayIndexOf(testArray, "X"));
        assertEquals(-1, StringUtils.arrayIndexOf(null, "1"));
     }
+    
+    public void testEscapeSlashes() {
+       assertEquals("Normal String", StringUtils.escapeSlashes("Normal String"));
+       assertEquals("<b>Normal String<\\/b>", StringUtils.escapeSlashes("<b>Normal String</b>"));
+       assertEquals("\\/<b>Normal String<\\/b>\\/", StringUtils.escapeSlashes("/<b>Normal String</b>/"));
+    }
+    
+    public void testFormat() {
+       assertEquals("01234", StringUtils.format(1234, "00000"));
+    }
 }
