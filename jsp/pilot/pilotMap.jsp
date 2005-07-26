@@ -60,11 +60,13 @@ v\:* {
 
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
+<map:marker var="hq" point="${mapCenter}" />
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, 15);
 addMarkers(map, 'pilotMarkers');
+addMarkers(map, 'hq');
 </script>
 </body>
 </html>
