@@ -22,10 +22,12 @@ import org.deltava.util.StringUtils;
 
 public class ACARSDataService extends WebDataService {
 
-   /*
-    * (non-Javadoc)
-    * @see org.deltava.service.WebService#execute(org.deltava.service.ServiceContext)
-    */
+	/**
+	 * Executes the Web Service, writing ACARS Flight data in CSV format.
+	 * @param ctx the Web Service Context
+	 * @return the HTTP status code
+	 * @throws ServiceException if an error occurs
+	 */
    public int execute(ServiceContext ctx) throws ServiceException {
 
       // Get the ACARS Flight ID
