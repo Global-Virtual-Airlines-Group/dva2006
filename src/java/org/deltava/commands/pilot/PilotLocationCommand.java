@@ -38,8 +38,10 @@ public class PilotLocationCommand extends AbstractCommand {
 			// Get the pilot's location
 			GetPilot dao = new GetPilot(con);
 			GeoLocation gp = dao.getLocation(ctx.getUser().getID());
-			if (gp == null)
+			if (gp == null) {
+				ctx.setAttribute("newLocation", Boolean.TRUE, REQUEST);
 				gp = new GeoPosition(38.88, -93.25);
+			}
 			
 			// If we have a lat/lon pair, then update the location
 			ctx.setAttribute("mapCenter", gp, REQUEST);
@@ -51,12 +53,12 @@ public class PilotLocationCommand extends AbstractCommand {
 					int latD = Integer.parseInt(ctx.getParameter("latD"));
 					int latM = Integer.parseInt(ctx.getParameter("latM"));
 					int latS = Integer.parseInt(ctx.getParameter("latS"));
-					latD *= (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) * -1);
+					latD *= (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 0) ? 1 : -1;
 
 					int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 					int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 					int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-					lonD *= (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) * -1);
+					lonD *= (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 0) ? 1 : -1;
 
 					// Build the GeoPosition bean and update the airport
 					loc = new GeoPosition();
