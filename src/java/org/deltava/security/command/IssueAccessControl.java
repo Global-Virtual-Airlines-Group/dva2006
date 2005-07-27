@@ -50,6 +50,7 @@ public final class IssueAccessControl extends AccessControl {
 		// If we're creating a new issue, then don't set the other access control variables
 		if (_i == null) {
 		   _canEdit = _canCreate;
+		   _canReassign = _ctx.isUserInRole("Developer");
 		   return;
 		}
 
