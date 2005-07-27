@@ -50,12 +50,12 @@ public class BrowserTypeFilter implements Filter {
         // Set request attributes based on the browser type
         switch (getBrowserType(userAgent)) {
             case MOZILLA:
-                req.setAttribute("browser$mozilla", Boolean.valueOf(true));
+                req.setAttribute("browser$mozilla", Boolean.TRUE);
                 break;
 
             case MSIE:
             default:
-                req.setAttribute("browser$ie", Boolean.valueOf(true));
+                req.setAttribute("browser$ie", Boolean.TRUE);
         }
 
         // Execute the next filter in the chain
