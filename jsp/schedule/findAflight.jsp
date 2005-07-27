@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Schedule Search</title>
@@ -120,8 +121,9 @@ return true;
 <tr class="caps title">
  <td width="20%">FLIGHT NUMBER</td>
  <td width="15%">EQUIPMENT</td>
- <td width="45%">AIRPORTS</td>
- <td>DISTANCE</td>
+ <td width="40%">AIRPORTS</td>
+ <td width="10%">DISTANCE</td>
+ <td>DURATION</td>
 </tr>
 
 <!-- Search Results -->
@@ -138,6 +140,15 @@ return true;
 <tr class="title">
  <td colspan="5"><el:cmdbutton url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
 <el:cmdbutton url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
+</tr>
+</el:table>
+</c:if>
+
+<c:if test="${doSearch && (empty fafResults)}">
+<!-- No Search Results Found -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td class="mid">No Flights matching your Search Criteria were found.</td>
 </tr>
 </el:table>
 </c:if>

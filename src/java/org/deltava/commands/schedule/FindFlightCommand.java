@@ -76,6 +76,7 @@ public class FindFlightCommand extends AbstractCommand {
 
                 // Save results in the session - since other commands may reference these
                 ctx.setAttribute("fafResults", dao.search(criteria, true), SESSION);
+                ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
             } catch (DAOException de) {
                 throw new CommandException(de);
             } finally {
