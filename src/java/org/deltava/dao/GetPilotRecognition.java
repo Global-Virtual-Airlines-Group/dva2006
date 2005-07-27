@@ -50,11 +50,12 @@ public class GetPilotRecognition extends PilotReadDAO {
     public List getPromotionQueue() throws DAOException {
        try {
           prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-                + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F WHERE (F.PILOT_ID=P.ID) AND (F.STATUS=?) AND "
-				+ "(F.CAPT_EQTYPE=P.EQTYPE)) AS CLEGS, EQ.C_LEGS FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) "
-				+ "AND (F.STATUS=?)) LEFT JOIN EQTYPES EQ ON (P.EQTYPE=EQ.EQTYPE) LEFT JOIN EXAMS EX ON ((EX.PILOT_ID=P.ID) "
-				+ "AND (EX.NAME=EQ.EXAM_CAPT)) WHERE (P.STATUS=?) AND (P.RANK=?) AND (EX.PASS=?) GROUP BY P.ID HAVING "
-				+ "(CLEGS >= EQ.C_LEGS) ORDER BY CLEGS DESC");
+                + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND "
+                + "(F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS FROM PILOTS P "
+                + "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN EQTYPES EQ ON "
+                + "(P.EQTYPE=EQ.EQTYPE) LEFT JOIN EXAMS EX ON ((EX.PILOT_ID=P.ID) AND (EX.NAME=EQ.EXAM_CAPT)) "
+                + "WHERE (P.STATUS=?) AND (P.RANK=?) AND (EX.PASS=?) GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) "
+                + "ORDER BY CLEGS DESC");
           _ps.setInt(1, FlightReport.OK);
           _ps.setInt(2, FlightReport.OK);
           _ps.setInt(3, Pilot.ACTIVE);
