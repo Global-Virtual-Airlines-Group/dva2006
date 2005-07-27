@@ -36,44 +36,44 @@ public class TestRankComparator extends TestCase {
       
       _rc.setRank1("Captain", 1);
       _rc.setRank2("First Officer", 1);
-      assertTrue(_rc.compare() < 1);
+      assertTrue(_rc.compare() > 0);
       
       _rc.setRank1("First Officer", 1);
       _rc.setRank2("Captain", 1);
-      assertTrue(_rc.compare() > 1);
+      assertTrue(_rc.compare() < 0);
    }
    
    public void testHigherStage() {
       _rc.setRank1("First Officer", 1);
       _rc.setRank2("First Officer", 3);
-      assertTrue(_rc.compare() > 1);
+      assertTrue(_rc.compare() < 0);
       
       _rc.setRank1("Captain", 1);
       _rc.setRank2("First Officer", 2);
-      assertTrue(_rc.compare() > 1);
+      assertTrue(_rc.compare() < 0);
 
       _rc.setRank1("Captain", 1);
       _rc.setRank2("Chief Pilot", 5);
-      assertTrue(_rc.compare() > 1);
+      assertTrue(_rc.compare() < 0);
 
       // James - this was what failed with you
       _rc.setRank1("Senior Captain", 2);
       _rc.setRank2("First Officer", 4);
-      assertTrue(_rc.compare() > 1);
+      assertTrue(_rc.compare() < 0);
    }
    
    public void testLowerStage() {
       _rc.setRank1("First Officer", 3);
       _rc.setRank2("First Officer", 1);
-      assertTrue(_rc.compare() < 1);
+      assertTrue(_rc.compare() > 0);
 
       _rc.setRank1("First Officer", 3);
       _rc.setRank2("Captain", 1);
-      assertTrue(_rc.compare() < 1);
+      assertTrue(_rc.compare() > 0);
       
       _rc.setRank1("Captain", 2);
       _rc.setRank2("Trainee", 1);
-      assertTrue(_rc.compare() < 1);
+      assertTrue(_rc.compare() > 0);
    }
    
    public void testValidation() {
@@ -84,5 +84,14 @@ public class TestRankComparator extends TestCase {
       _rc.setRank1(null, -3);
       _rc.setRank2("First Officer", -4);
       _rc.compare(); // just make sure we don't blow up
+      
+      RankComparator rc2 = new RankComparator(new ArrayList());
+      rc2.setRank1("First Officer", 3);
+      rc2.setRank2("First Officer", 3);
+      try {
+         rc2.compare();
+         fail("IllegalStateException expected");
+      } catch (IllegalStateException ise) {
+      }
    }
 }
