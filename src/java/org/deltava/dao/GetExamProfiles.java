@@ -118,6 +118,7 @@ import org.deltava.beans.testing.*;
 			_ps.setInt(1, id);
 			
 			// Populate the exam names
+			rs = _ps.executeQuery();
 			while (rs.next())
 				qp.addExam(rs.getString(1));
 			
