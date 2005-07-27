@@ -1,5 +1,7 @@
 package org.deltava.commands.system;
 
+import java.util.*;
+
 import org.deltava.commands.*;
 
 import org.deltava.jdbc.ConnectionPool;
@@ -36,6 +38,11 @@ public class DiagnosticCommand extends AbstractCommand {
        ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
        ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
        ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
+       
+       // Get time zone info
+       TimeZone tz = TimeZone.getDefault();
+       ctx.setAttribute("timeZone", tz, REQUEST);
+       ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
        
        // Get Servlet context properties
        ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
