@@ -216,7 +216,6 @@
 	<log>
 		<list name="names" attr="name">
 			<name>APP</name>
-			<name>ACARS</name>
 			<name>TASKS</name>
 		</list>
 		
