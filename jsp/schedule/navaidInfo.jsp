@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Navigation Database</title>
 <content:css name="main" browserSpecific="true" />
@@ -15,13 +15,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <map:api version="1" />
-<c:if test="${!empty browser$ie}">
-<style type="text/css">
-v\:* {
-	behavior:url(#default#VML);
-}
-</style>
-</c:if>
+<map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
