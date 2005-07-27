@@ -65,7 +65,7 @@ return true;
  <td class="data">${issue.majorVersion}.${issue.minorVersion}</td>
 </tr>
 <tr>
- <td class="label">Issue Description</td>
+ <td class="label" valign="top">Issue Description</td>
  <td class="data"><fmt:text value="${issue.description}" /></td>
 </tr>
 
