@@ -5,14 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<c:choose>
-<c:when test="${!empty browser$ie}">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
-</c:when>
-<c:otherwise>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-</c:otherwise>
-</c:choose>
 <head>
 <title><content:airline /> Pilot Location - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
@@ -20,13 +13,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <map:api version="1" />
-<c:if test="${!empty browser$ie}">
-<style type="text/css">
-v\:* {
-	behavior:url(#default#VML);
-}
-</style>
-</c:if>
+<map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function updateLocation()
 {
@@ -43,6 +30,16 @@ usrLocation = googleMarker('${imgPath}','blue',new GPoint(lng, lat),labelText);
 map.addOverlay(usrLocation);
 return true;
 }
+
+function validate(form)
+{
+if (!checkSubmit()) return false;
+
+setSubmit();
+disableButton('SaveButton');
+disableButton('DeleteButton');
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -53,7 +50,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="geolocate.do" method="post" validate="return true">
+<el:form action="geolocate.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">PILOT LOCATION</td>
@@ -62,9 +59,9 @@ return true;
  <td class="label" valign="top">Map</td>
  <td class="data"><c:if test="${empty location}"><span class="small">You have not selected your 
 location. Please click on the map below to set your location. You can drag the map with your 
-mouse and zoom in and out.</span> <span class="small sec bld"><u>NOTE</u>: To protect your 
-privacy, the system will automatically randomize your location within a 3 mile circle each time
-the Pilot Location Board is displayed.</span><br /></c:if>
+mouse and zoom in and out.</span><br />
+<span class="small sec bld"><u>NOTE</u>: To protect your privacy, the system will automatically 
+randomize your location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br /></c:if>
 <div id="googleMap" style="width:640px; height:600px" /></td>
 </tr>
 <tr>
@@ -86,7 +83,11 @@ the Pilot Location Board is displayed.</span><br /></c:if>
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE LOCATION" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE LOCATION" />
+<c:if test="${!empty location}">
+<el:cmdbutton ID="DeleteButton" url="geolocate" op="delete" label="DELETE LOCATION" />
+</c:if>
+ </td>
 </tr>
 </el:table>
 </el:form>
