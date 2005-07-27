@@ -138,19 +138,23 @@ import org.deltava.beans.testing.*;
 	 */
 	public List getQuestionPool(String examName) throws DAOException {
 	   
+	   // Check if we're displaying all questions
+	   boolean showAll = "ALL".equals(examName);
+	   
 	   // Build the SQL statement
 	   StringBuffer sqlBuf = new StringBuffer("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM " +
-	         "QUESTIONINFO Q, EXAMQUESTIONS EQ, QE_INFO QE WHERE  (Q.ID=EQ.QUESTION_ID) AND " +
+	         "QUESTIONINFO Q, EXAMQUESTIONS EQ, QE_INFO QE WHERE (Q.ID=EQ.QUESTION_ID) AND " +
 	         "(Q.ID=QE.QUESTION_ID) ");
 	   
-	   if (!"ALL".equals(examName))
+	   if (!showAll)
 	      sqlBuf.append("AND (QE.EXAM_NAME=?) ");
 	   
 	   sqlBuf.append("GROUP BY Q.ID ORDER BY Q.ID");
 	   
 		try {
 		   prepareStatement(sqlBuf.toString());
-			_ps.setString(1, examName);
+		   if (!showAll)
+		      _ps.setString(1, examName);
 			
 			// Execute the Query
 			List results = new ArrayList();
