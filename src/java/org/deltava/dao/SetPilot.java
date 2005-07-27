@@ -133,7 +133,7 @@ public class SetPilot extends PilotWriteDAO {
 		try {
 			prepareStatement("DELETE FROM PILOT_MAP WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
-			executeUpdate(1);
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
