@@ -31,6 +31,9 @@ public class PilotLocationCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
+		
+		// Check if we are deleting the profile
+		boolean isDelete = "delete".equals(ctx.getCmdParameter(OPERATION, null));
 
 		try {
 			Connection con = ctx.getConnection();
@@ -77,6 +80,13 @@ public class PilotLocationCommand extends AbstractCommand {
 				// Forward to the JSP
 				ctx.setAttribute("location", gp, REQUEST);
 				result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
+			} else if (isDelete) {
+			   SetPilot wdao = new SetPilot(con);
+			   wdao.clearLocation(ctx.getUser().getID());
+			   
+			   // Forward to the JSP
+			   ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
+			   result.setURL("/jsp/pilot/geoLocateUpdate.jsp");
 			} else {
 				// Convert the geoPosition into degrees, minutes, seconds
 				ctx.setAttribute("latD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
