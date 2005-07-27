@@ -37,7 +37,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data sec bld">${pilot.eqType}</td>
+ <td class="data sec bld">${pilot.equipmentType}</td>
 </tr>
 <tr>
  <td class="label">Rank</td>
