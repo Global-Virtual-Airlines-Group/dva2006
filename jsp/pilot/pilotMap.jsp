@@ -5,14 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<c:choose>
-<c:when test="${!empty browser$ie}">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
-</c:when>
-<c:otherwise>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-</c:otherwise>
-</c:choose>
 <head>
 <title><content:airline /> Pilot Map</title>
 <content:css name="main" browserSpecific="true" />
@@ -20,13 +13,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <map:api version="1" />
-<c:if test="${!empty browser$ie}">
-<style type="text/css">
-v\:* {
-	behavior:url(#default#VML);
-}
-</style>
-</c:if>
+<map:vml-ie />
 </head>
 <content:copyright visible="false" />
 <body>

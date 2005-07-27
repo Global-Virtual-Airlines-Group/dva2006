@@ -21,6 +21,13 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
+	
+	<!-- IEVMLStyleTag, for inserting a custom behavior for VML in IE -->
+	<tag>
+		<name>vml-ie</name>
+		<tagclass>org.deltava.taglib.googlemap.IEVMLStyleTag</tagclass>
+		<bodycontent>none</bodycontent>
+	</tag>
 
 	<!-- Marker Tag, to generate a GMarker -->
 	<tag>
