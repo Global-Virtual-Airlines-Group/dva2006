@@ -8,14 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<c:choose>
-<c:when test="${!empty browser$ie}">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
-</c:when>
-<c:otherwise>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-</c:otherwise>
-</c:choose>
 <head>
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
@@ -25,13 +18,7 @@
 <c:if test="${googleMap}">
 <content:js name="googleMaps" />
 <map:api version="1" />
-<c:if test="${!empty browser$ie}">
-<style type="text/css">
-v\:* {
-	behavior:url(#default#VML);
-}
-</style>
-</c:if>
+<map:vml-ie />
 </c:if>
 <c:if test="${scoreCR}">
 <script language="JavaScript" type="text/javascript">
