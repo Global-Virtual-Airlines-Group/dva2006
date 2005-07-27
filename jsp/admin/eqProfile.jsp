@@ -24,6 +24,7 @@ if (!checkSubmit()) return false;
 if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.cp, 'Chief Pilot')) return false;
 if (!validateNumber(form.stage, 1, 'Equipment Stage')) return false;
+if (!validateNumber(form.captLegs, 0, 'Flight Legs for promotion')) return false;
 if (!validateCheckbox(form.ranks, 2, 'Ranks')) return false;
 if (!validateCheckbox(form.pRatings, 1, 'Primary Rating')) return false;
 
@@ -82,6 +83,10 @@ return true;
 <tr>
  <td class="label">First Officer's Examination</td>
  <td class="data"><el:combo name="examFO" idx="*" size="1" firstEntry="" options="${exams}" value="${fn:examFO(eqType)}" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Legs for Promotion</td>
+ <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" value="${empty captLegs ? 10 : captLegs}" /></td>
 </tr>
 <tr>
  <td class="label">Captain's Examination</td>

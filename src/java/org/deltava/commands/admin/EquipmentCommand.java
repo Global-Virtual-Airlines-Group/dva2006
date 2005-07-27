@@ -46,6 +46,8 @@ public class EquipmentCommand extends AbstractCommand {
 			// Get the DAO and execute
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = (eqType == null) ? null : eqdao.get(eqType);
+			if (eq != null)
+			   ctx.setAttribute("captLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 			
 			// Get the Examination names
 			GetExamProfiles exdao = new GetExamProfiles(con);
