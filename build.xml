@@ -197,26 +197,22 @@
 		<echo message="Uploading Library Jars" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
-	    	<fileset dir="lib/deploy" />
-			<fileset dir="${java.io.tmpdir}/build">
-				<include name="*.jar" />
-			</fileset>
+			<fileset dir="lib/deploy" includes="*.jar" />
+			<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
 		</ftp>
 		
 		<!-- Upload configuration files to the FTP server -->
 		<echo message="Uploading Configuration files" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
-			<fileset dir="etc">
-				<include name="*.*" />
-			</fileset>
+			<fileset dir="etc" includes="*.*" />
 		</ftp>
 		
 		<!-- Upload static content to the HTTP server -->
 		<echo message="Uploading static content to HTTP server" />
 		<ftp server="${http.ftp.server}" userid="${http.ftp.user}" password="${http.ftp.pwd}"
 		 remotedir="${path.http}" action="send" depends="yes" verbose="yes">
-			<fileset dir="static" />
+			<fileset dir="static" includes="**/*" />
 		</ftp>
 	</target>
 	
