@@ -4,8 +4,6 @@ package org.deltava.beans;
 import java.util.*;
 import java.text.DecimalFormat;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A class for dealing with Time Zones.
  * @author Luke
@@ -75,8 +73,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
      * @return a Time Zome wrapper for the local zone
      */
     public static TZInfo local() {
-       String localZone = SystemData.get("time.timezone");
-        return init((localZone == null) ? TimeZone.getDefault() : TimeZone.getTimeZone(localZone));
+        return init(TimeZone.getDefault());
     }
     
     /**

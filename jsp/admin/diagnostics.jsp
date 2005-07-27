@@ -57,6 +57,10 @@
  <td class="label">Maximum JVM Memory</td>
  <td class="data"><fmt:int value="${maxMemory}" /> bytes</td>
 </tr>
+<tr>
+ <td class="label">Local Time Zone</td>
+ <td class="data">${timeZone.ID} - ${tzName}</td>
+</tr>
 </el:table>
 <br />
 

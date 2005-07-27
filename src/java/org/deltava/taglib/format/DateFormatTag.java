@@ -23,8 +23,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class DateFormatTag extends TagSupport {
-
-	private static final TZInfo _localTZ = TZInfo.local();
+   
+   private static final TZInfo _defaultTZ = TZInfo.init(SystemData.get("time.timezone"));
 
 	private static final int DATE_TIME = 0;
 	private static final int DATE_ONLY = 1;
@@ -34,7 +34,7 @@ public class DateFormatTag extends TagSupport {
 	private int _dtInclude = DateFormatTag.DATE_TIME;
 	private String _dateFormat = SystemData.get("time.date_format");
 	private String _timeFormat = SystemData.get("time.time_format");
-	private TZInfo _tz = _localTZ;
+	private TZInfo _tz = _defaultTZ;
 	private DateTime _dt;
 
 	private String _className;
@@ -153,7 +153,7 @@ public class DateFormatTag extends TagSupport {
 		_dtInclude = DateFormatTag.DATE_TIME;
 		_dateFormat = SystemData.get("time.date_format");
 		_timeFormat = SystemData.get("time.time_format");
-		_tz = _localTZ;
+		_tz = _defaultTZ;
 		_dt = null;
 		_className = null;
 	}
