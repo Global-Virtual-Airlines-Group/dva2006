@@ -57,21 +57,24 @@
 <tr>
  <td class="label">Flight Time</td>
  <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" />, block time
- <fmt:date fmt="t" t="HH:mm" tzName="UTC" date="${pirep.blockTime}" /> <fmt:int value="${pirep.airborneTime.time}" /> ms, 
-<fmt:int value="${pirep.blockTime.time}" /> ms</td>
+ <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /></td>
 </tr>
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
 <tr>
  <td class="label">Flight Time (1X)</td>
- <td class="data"><fmt:int value="${pirep.time1X}" /> seconds</td>
+ <td class="data"><fmt:int value="${pirep.time1X}" /> minutes</td>
 </tr>
+</c:if>
+<c:if test="${pirep.time2X > 0}">
 <tr>
  <td class="label">Flight Time (2X)</td>
- <td class="data bld"><fmt:int value="${pirep.time2X}" /> seconds</td>
+ <td class="data bld"><fmt:int value="${pirep.time2X}" /> minutes</td>
 </tr>
+</c:if>
+<c:if test="${pirep.time4X > 0}">
 <tr>
  <td class="label">Flight Time (4X)</td>
- <td class="data bld"><fmt:int value="${pirep.time4X}" /> seconds</td>
+ <td class="data bld"><fmt:int value="${pirep.time4X}" /> minutes</td>
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">
