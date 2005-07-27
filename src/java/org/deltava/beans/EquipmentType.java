@@ -103,8 +103,8 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#addPrimaryRating(String)
      * @see EquipmentType#getSecondaryRatings()
      */
-    public List getPrimaryRatings() {
-        return new ArrayList(_primaryRatings);
+    public Collection getPrimaryRatings() {
+        return new HashSet(_primaryRatings);
     }
 
     /**
@@ -113,8 +113,8 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#addSecondaryRating(String)
      * @see EquipmentType#getPrimaryRatings()
      */
-    public List getSecondaryRatings() {
-        return new ArrayList(_secondaryRatings);
+    public Collection getSecondaryRatings() {
+        return new HashSet(_secondaryRatings);
     }
     
     /**
