@@ -45,6 +45,7 @@ return true;
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited ${pilot.loginCount} times.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
 </tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
 <c:if test="${!empty geoLocation}">
  <td class="data">You can update your location on the <content:airline /> Pilot Board.<br />
