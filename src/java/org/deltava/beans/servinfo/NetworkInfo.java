@@ -35,7 +35,11 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
         _controllers = new TreeMap();
     }
     
-    // TODO JavaDoc
+    /**
+     * Returns the ServInfo data format version.
+     * @return the data format version, usually 7
+     * @see NetworkInfo#setVersion(String)
+     */
     public int getVersion() {
         return _version;
     }
@@ -56,6 +60,11 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
         return _name;
     }
     
+    /**
+     * Returns the effective date of this data.
+     * @return the date/time the data was generated
+     * @see NetworkInfo#setValidDate(Date)
+     */
     public Date getValidDate() {
         return _validDate;
     }
@@ -78,6 +87,10 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
         return new ArrayList(_pilots.values());
     }
     
+    /**
+     * Assigns Pilot IDs to online Pilots and Controllers that have user accounts.
+     * @param idMap a Map of Integers, keyed by network ID with the database ID as the value.
+     */
     public void setPilotIDs(Map idMap) {
     	
     	// Mash pilots + controllers together
@@ -96,6 +109,11 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     	}
     }
     
+    /**
+     * Updates the ServInfo data format revision.
+     * @param version the data format, typically 7
+     * @see NetworkInfo#getVersion()
+     */
     public void setVersion(String version) {
         try {
             _version = Integer.parseInt(version);
@@ -104,22 +122,57 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
         }
     }
     
+    /**
+     * Updates the validity date of this data.
+     * @param d the date/time this data was generated
+     * @see NetworkInfo#getValidDate()
+     */
     public void setValidDate(Date d) {
         _validDate = d;
     }
     
+    /**
+     * Adds a Controller entry to the data.
+     * @param c the Controller bean
+     * @see NetworkInfo#getControllers()
+     * @see NetworkInfo#getController(String)
+     * @see NetworkInfo#add(Pilot)
+     */
     public void add(Controller c) {
         _controllers.put(c.getCallsign(), c);
     }
     
+    /**
+     * Adds a Pilot entry to the data.
+     * @param p the Pilot bean
+     * @see NetworkInfo#getPilots()
+     * @see NetworkInfo#getPilot(String)
+     * @see NetworkInfo#add(Controller)
+     */
     public void add(Pilot p) {
         _pilots.put(p.getCallsign(), p);
     }
     
+    /**
+     * Returns a specific online Pilot entry.
+     * @param callsign the callsign
+     * @return a Pilot bean, or null if the callsign was not found
+     * @see NetworkInfo#add(Pilot)
+     * @see NetworkInfo#getPilots()
+     * @see NetworkInfo#getController(String)
+     */
     public Pilot getPilot(String callsign) {
        return (Pilot) _pilots.get(callsign); 
     }
     
+    /**
+     * Returns a specific online Controller entry.
+     * @param callsign the callsign
+     * @return a Controller bean, or null if the callsign was not found
+     * @see NetworkInfo#add(Controller)
+     * @see NetworkInfo#getControllers()
+     * @see NetworkInfo#getPilot(String)
+     */
     public Controller getController(String callsign) {
        return (Controller) _controllers.get(callsign);
     }

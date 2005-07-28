@@ -8,7 +8,7 @@ import org.deltava.beans.ViewEntry;
 import org.deltava.commands.CommandResult;
 
 /**
- * An object to log Web Site Command invocations.
+ * A bean to log Web Site Command invocations.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -37,7 +37,11 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
       _d = d;
    }
 
-   // TODO JavaDoc
+   /**
+    * Creates a new Command log entry.
+    * @param cmdName the Command name
+    * @param cr the CommandResult bean
+    */
    public CommandLog(String cmdName, CommandResult cr) {
       this(new Date());
       _cmdName = cmdName;
@@ -46,70 +50,164 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
       _totalTime = cr.getTime();
    }
    
+   /**
+    * Returns the date the Command was executed. 
+    * @return the execution date/time
+    */
    public Date getDate() {
       return _d;
    }
-   
+
+   /**
+    * Returns the Command name.
+    * @return the Command name
+    * @see CommandLog#setName(String)
+    */
    public String getName() {
       return _cmdName;
    }
    
+   /**
+    * Returns the IP address of the web user executing the Command.
+    * @return the IP address
+    * @see CommandLog#setRemoteAddr(String)
+    * @see CommandLog#getRemoteHost()
+    */
    public String getRemoteAddr() {
       return _remoteAddr;
    }
    
+   /**
+    * Returns the host name of the web user executing the Command.
+    * @return the host name
+    * @see CommandLog#setRemoteHost(String)
+    * @see CommandLog#getRemoteAddr()
+    */
    public String getRemoteHost() {
       return _remoteHost;
    }
    
+   /**
+    * Returns the command result data.
+    * @return the result data
+    * @see CommandLog#setResult(String)
+    */
    public String getResult() {
       return _result;
    }
    
+   /**
+    * Returns the database ID of the Pilot executing the Command.
+    * @return the database ID
+    * @see CommandLog#setPilotID(int)
+    * @see org.deltava.beans.Pilot#getID()
+    */
    public int getPilotID() {
       return _pilotID;
    }
    
+   /**
+    * Returns if the Command completed succesfully.
+    * @return TRUE if execution was successful, otherwise FALSE
+    * @see CommandLog#setSuccess(boolean) 
+    */
    public boolean getSuccess() {
       return _success;
    }
    
+   /**
+    * Returns the amount of time the database was in use.
+    * @return the time in milliseconds
+    * @see CommandLog#setBackEndTime(int)
+    * @see CommandLog#getTime()
+    */
    public int getBackEndTime() {
       return _backEndTime;
    }
    
+   /**
+    * Returns the execution time.
+    * @return the time of milliseconds
+    * @see CommandLog#setTime(int)
+    * @see CommandLog#getBackEndTime()
+    */
    public int getTime() {
       return _totalTime;
    }
    
+   /**
+    * Updates the Command name.
+    * @param cmdName the name
+    * @see CommandLog#getName()
+    */
    public void setName(String cmdName) {
       _cmdName = cmdName;
    }
    
+   /**
+    * Updates the IP address of the user executing the Command.
+    * @param addr the IP address
+    * @see CommandLog#getRemoteAddr()
+    * @see CommandLog#setRemoteHost(String)
+    */
    public void setRemoteAddr(String addr) {
       _remoteAddr = addr;
    }
    
+   /**
+    * Updates the host name of the user executing the Command.
+    * @param hostName the host name
+    * @see CommandLog#getRemoteHost()
+    * @see CommandLog#setRemoteAddr(String)
+    */
    public void setRemoteHost(String hostName) {
       _remoteHost = hostName;
    }
    
+   /**
+    * Updates the Command result data.
+    * @param msg the result data
+    * @see CommandLog#getResult()
+    */
    public void setResult(String msg) {
       _result = msg;
    }
    
+   /**
+    * Updates the database ID of the user executing this Command.
+    * @param id the Pilot's database ID
+    * @see CommandLog#getPilotID()
+    * @see org.deltava.beans.Pilot#getID()
+    */
    public void setPilotID(int id) {
       _pilotID = id;
    }
    
+   /**
+    * Marks wether this Command executed successfully.
+    * @param isOK TRUE if the Command completed successfully, otherwise FALSE
+    * @see CommandLog#getSuccess()
+    */
    public void setSuccess(boolean isOK) {
       _success = isOK;
    }
    
+   /**
+    * Updates the time spent accessing the database.
+    * @param time the time in milliseconds
+    * @see CommandLog#getBackEndTime()
+    * @see CommandLog#setTime(int)
+    */
    public void setBackEndTime(int time) {
       _backEndTime = time;
    }
    
+   /**
+    * Updates the total execution time.
+    * @param time the time in milliseconds
+    * @see CommandLog#getTime()
+    * @see CommandLog#setBackEndTime(int)
+    */
    public void setTime(int time) {
       _totalTime = time;
    }
@@ -123,6 +221,11 @@ public class CommandLog implements Serializable, Comparable, ViewEntry {
       return _d.compareTo(cl2.getDate());
    }
    
+   /**
+    * Returns the CSS table row class name.
+    * @return null or &quot;warn&quot; if execution not successful
+    * @see CommandLog#getSuccess()
+    */
    public String getRowClassName() {
       return _success ? null : "warn";
    }
