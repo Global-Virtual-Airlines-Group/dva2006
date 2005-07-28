@@ -360,11 +360,11 @@ public class ConnectionPool implements Serializable {
 	 */
 	public Collection getPoolInfo() {
 	   // Build a list of all connections
-	   List allCons = new ArrayList(_cons);
+	   Set allCons = new HashSet(_cons);
 	   allCons.addAll(_sysCons);
 	   
 	   Set results = new TreeSet();
-	   for (Iterator i = _cons.iterator(); i.hasNext(); ) {
+	   for (Iterator i = allCons.iterator(); i.hasNext(); ) {
 	      ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 	      results.add(new ConnectionInfo(cpe));
 	   }
