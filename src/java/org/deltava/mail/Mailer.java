@@ -90,6 +90,13 @@ public class Mailer extends Thread {
 	 * &quot;recipient&quot;.
 	 */
 	public void run() {
+	   
+	   // If we're in test mode, send back to the sender only
+	   boolean isTest = SystemData.getBoolean("smtp.testMode");
+	   if (isTest) {
+	      _msgTo.clear();
+	      _msgTo.add(_msgFrom);
+	   }
 		
 		// Generate a session to the STMP server
 		Properties props = System.getProperties();
@@ -115,7 +122,7 @@ public class Mailer extends Thread {
 				MimeMessage imsg = new MimeMessage(s);
 				imsg.setFrom(_msgFrom);
 				imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
-				imsg.setSubject(msg.getSubject());
+				imsg.setSubject(msg.getSubject() + (isTest ? " (TEST)" : ""));
 				try {
 					imsg.setRecipient(javax.mail.Message.RecipientType.TO, new InternetAddress(addr.getEmail(), addr.getName()));
 				} catch (UnsupportedEncodingException uee) {

@@ -317,6 +317,7 @@
 	<smtp>
 		<server>golgotha.deltava.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
+		<testMode type="Boolean">true</testMode>
 	</smtp>
 	
 	<registration>

@@ -310,12 +310,12 @@
 		<js>js</js>
 		<img>img</img>
 		<library>d:\library</library>
-		<video>d:\video</video>
 	</path>
 	
 	<smtp>
 		<server>sirius.sce.net</server>
 		<errors-to>webmaster@sce.net</errors-to>
+		<testMode type="Boolean">true</testMode>
 	</smtp>
 	
 	<registration>
