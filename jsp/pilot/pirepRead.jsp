@@ -128,7 +128,7 @@ return true;
 <c:if test="${googleMap}">
  <td class="label">Route Map Data</td>
  <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="true" />
-<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="true" /> 
+<c:if test="${fn:isACARS(pirep)}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="true" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute')" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers')" label="Navaid Markers" checked="true" /></span></td>
 </tr>
@@ -157,7 +157,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" label="HOLD" />
 </c:if>
-<c:if test="${access.canApprove && (empty scoreCR)}">
+<c:if test="${access.canApprove && (empty checkRide)}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canReject}">
@@ -169,10 +169,6 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR}">
-</form>
-</c:if>
-<br />
 <content:copyright />
 </div>
 <c:if test="${googleMap}">
