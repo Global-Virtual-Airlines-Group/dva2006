@@ -1,7 +1,6 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.event;
 
-import java.text.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -27,8 +26,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class EventSaveCommand extends AbstractCommand {
-
-	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy hh:mm");
 
 	/**
 	 * Executes the command.
@@ -57,10 +54,10 @@ public class EventSaveCommand extends AbstractCommand {
 				if (e == null)
 					throw new CommandException("Invalid Online Event - " + ctx.getID());
 
-				ctx.setAttribute("isUpdate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			} else {
 				e = new Event(ctx.getParameter("name"));
-				ctx.setAttribute("isNew", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
 			}
 
 			// Check our access
@@ -84,15 +81,9 @@ public class EventSaveCommand extends AbstractCommand {
 			e.setBriefing(ctx.getParameter("briefing"));
 
 			// Parse the start/end/deadline times
-			synchronized (_df) {
-				try {
-					e.setStartTime(_df.parse(ctx.getParameter("startDate") + " " + ctx.getParameter("startTime")));
-					e.setEndTime(_df.parse(ctx.getParameter("endDate") + " " + ctx.getParameter("endTime")));
-					e.setSignupDeadline(_df.parse(ctx.getParameter("closeDate") + " " + ctx.getParameter("closeTime")));
-				} catch (ParseException pe) {
-					throw new CommandException(pe);
-				}
-			}
+			e.setStartTime(parseDateTime(ctx, "start"));
+			e.setEndTime(parseDateTime(ctx, "end"));
+			e.setSignupDeadline(parseDateTime(ctx, "close"));
 
 			// Build the airport list to save in the field
 			StringBuffer buf = new StringBuffer();
@@ -135,7 +126,7 @@ public class EventSaveCommand extends AbstractCommand {
 			ctx.setAttribute("event", e, REQUEST);
 
 			// Get the DAO and save the event if we're not refreshing
-			if ((!isRefresh) && (!isNew)) {
+			if ((!isRefresh) && (isNew)) {
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("EVENTCREATE"));
@@ -143,17 +134,18 @@ public class EventSaveCommand extends AbstractCommand {
 
 				// Save the start/end/signup dates
 				mctxt.addData("airports", StringUtils.listConcat(e.getAirportD(), ","));
-				synchronized (_df) {
-					mctxt.addData("startDateTime", _df.format(e.getStartTime()));
-					mctxt.addData("endDateTime", _df.format(e.getEndTime()));
-					mctxt.addData("signupDeadline", _df.format(e.getSignupDeadline()));
-				}
+				mctxt.addData("startDateTime", StringUtils.format(e.getStartTime(), "MM/dd/yyyy HH:mm"));
+				mctxt.addData("endDateTime", StringUtils.format(e.getEndTime(), "MM/dd/yyyy HH:mm"));
+				mctxt.addData("signupDeadline", StringUtils.format(e.getSignupDeadline(), "MM/dd/yyyy HH:mm"));
 
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				pilots = pdao.getNotifications(Person.EVENT);
 
 				// Write the event
+				SetEvent wdao = new SetEvent(con);
+				wdao.write(e);
+			} else if (!isRefresh) {
 				SetEvent wdao = new SetEvent(con);
 				wdao.write(e);
 			}
