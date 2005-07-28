@@ -7,7 +7,9 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.navdata.NavigationDataBean;
+
 import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.Test;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -340,30 +342,30 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 				}
 
-				// See if we have a checkride for this aircraft's primary type
-				CheckRide cr = null;
+				// Get the Pilot's check rides
 				GetExam crdao = new GetExam(con);
-				for (Iterator i = fr.getCaptEQType().iterator(); (i.hasNext() && (cr == null));) {
-					String eqType = (String) i.next();
-					cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), eqType);
-				}
+				Collection rides = crdao.getCheckRides(fr.getDatabaseID(FlightReport.DBID_PILOT));
 				
-				// FIXME What we really need to do is check that the flight IDs match, or that a checkride in the primary
-				// type is open
+				// See if we have a checkride for this aircraft's primary type
+				for (Iterator i = rides.iterator(); i.hasNext(); ) {
+					CheckRide cr = (CheckRide) i.next();
+					if (cr.getFlightID() == flightID) {
+					   ctx.setAttribute("checkRide", cr, REQUEST);
+					} else if (cr.getStatus() == Test.SUBMITTED) {
+					   for (Iterator i2 = fr.getCaptEQType().iterator(); i2.hasNext(); ) {
+					      String eqType = (String) i2.next();
+					      if (cr.getName().startsWith(eqType)) {
+								ctx.setAttribute("crPassFail", crApprove, REQUEST);
+								ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+								crAccess.validate();
 
-				// Save the checkride and access if found
-				if ((cr != null) && (cr.getFlightID() == flightID) && (flightID != 0)) {
-					try {
-						ctx.setAttribute("crPassFail", crApprove, REQUEST);
-						ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
-						crAccess.validate();
-
-						// Save the checkride and its access controller
-						ctx.setAttribute("checkRide", cr, REQUEST);
-						ctx.setAttribute("crAccess", crAccess, REQUEST);
-					} catch (CommandSecurityException cse) {
+								// Save the checkride and its access controller
+								ctx.setAttribute("checkRide", cr, REQUEST);
+								ctx.setAttribute("crAccess", crAccess, REQUEST);
+					      }
+					   }
 					}
-				}
+				}					
 			}
 
 			// If we're set to use Google Maps, calculate the route
