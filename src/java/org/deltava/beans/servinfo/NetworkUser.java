@@ -4,6 +4,7 @@ package org.deltava.beans.servinfo;
 import java.io.Serializable;
 
 import org.deltava.beans.ViewEntry;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -47,7 +48,11 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         return _callSign;
     }
     
-    // TODO JavaDoc
+    /**
+     * Returns the Database ID of this network user.
+     * @return the database ID, or 0 if this user is not a member
+     * @see NetworkUser#setPilotID(int)
+     */
     public int getPilotID() {
     	return _databaseID;
     }
@@ -93,6 +98,12 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         _id = id;
     }
     
+    /**
+     * Updates the database ID of this User.
+     * @param id the database ID, or 0 if this network user is not a member
+     * @throws IllegalArgumentException if id is negative
+     * @see NetworkUser#getPilotID()
+     */
     public void setPilotID(int id) {
     	if (id < 0)
     		throw new IllegalArgumentException("Invalid Pilot ID - " + id);
@@ -109,13 +120,14 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         _name = StringUtils.properCase(name.substring(0, name.lastIndexOf(' ')));
     }
     
+    /**
+     * Returns the user type from a text string obtained from a ServInfo data feed.
+     * @param userType the user Type (PILOT or ATC)
+     * @return the user type code
+     */
     public static int getType(String userType) {
-        for (int x = 0; x < NetworkUser.CLIENTS.length; x++) {
-            if (NetworkUser.CLIENTS[x].equals(userType))
-                return x;
-        }
-        
-        return NetworkUser.PILOT;
+       int result = StringUtils.arrayIndexOf(CLIENTS, userType);
+       return (result == -1) ? PILOT : result;
     }
     
     /**
@@ -127,10 +139,16 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         return _callSign.compareTo(usr2.getCallsign());
     }
     
+    /**
+     * Checks equality by comparing callsigns.
+     */
     public final boolean equals(Object o2) {
     	return (o2 instanceof NetworkUser) ? _callSign.equals(((NetworkUser) o2).getCallsign()) : false;
     }
     
+    /**
+     * Returns the callsign's hash code.
+     */
     public final int hashCode() {
     	return _callSign.hashCode();
     }
