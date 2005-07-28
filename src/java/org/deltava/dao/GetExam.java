@@ -113,6 +113,22 @@ public class GetExam extends DAO {
 	      throw new DAOException(se);
 	   }
 	}
+	
+	/**
+	 * Loads all Check Rides for a particular Pilot
+	 * @param pilotID the pilot Database ID
+	 * @return a Collection of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection getCheckRides(int pilotID) throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) ORDER BY CREATED_ON");
+	      _ps.setInt(1, pilotID);
+	      return executeCheckride();
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
 
 	/**
 	 * Loads all examinations and check rides for a particular Pilot.
