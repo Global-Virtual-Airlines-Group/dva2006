@@ -46,7 +46,7 @@ public class ExamSubmitCommand extends AbstractCommand {
             throw new CommandSecurityException("Cannot submit Examination");
          
          // Save answers from the request
-         for (int x = 1; x < ex.getSize(); x++) {
+         for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
             q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
          }
