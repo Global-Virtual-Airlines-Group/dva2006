@@ -254,7 +254,7 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
    public String getInfoBox() {
       StringBuffer buf = new StringBuffer("<b>");
       buf.append(_name);
-      buf.append("</b><br /><br />IATA Code: ");
+      buf.append("</b><br /><span class=\"small\"><br />IATA Code: ");
       buf.append(_iata);
       buf.append("<br />ICAO Code: ");
       buf.append(_icao);
@@ -262,6 +262,7 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
       buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
       buf.append("<br />Longitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LONGITUDE));
+      buf.append("</span>");
       return buf.toString();
    }
 
