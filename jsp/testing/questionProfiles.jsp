@@ -13,11 +13,11 @@
 <content:css name="view" />
 <content:css name="form" />
 <content:js name="common" />
-<script language="JavaScript" type="text/javscript">
+<script language="JavaScript" type="text/javascript">
 function setExamName(combo)
 {
-var examName = combo.options[combo.selectedIndex].value;
-self.location = 'qprofiles.do?id=' + examName;
+var opt = combo.options[combo.selectedIndex];
+self.location = 'qprofiles.do?id=' + ((combo.selectedIndex == 0) ? opt.value : opt.text);
 return true;
 }
 </script>
@@ -34,11 +34,11 @@ return true;
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="10%">&nbsp;</td>
- <td width="5%">CORRECT</td>
- <td width="5%">ASKED</td>
- <td width="5%">PERCENT</td>
+ <td width="6%">CORRECT</td>
+ <td width="6%">ASKED</td>
+ <td width="6%">&nbsp;</td>
  <td width="40%">QUESTION TEXT</td>
- <td class="right">SELECT EXAM <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
+ <td class="right">SELECT EXAMINATION <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
 </tr>
 
 <!-- Table Question Data -->
@@ -47,7 +47,7 @@ return true;
  <td><el:cmdbutton url="qprofile" linkID="0x${q.ID}" label="VIEW" /></td>
  <td><fmt:int value="${q.correctAnswers}" /></td>
  <td><fmt:int value="${q.totalAnswers}" /></td>
- <td><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" /></td>
+ <td><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</td>
  <td class="left small" colspan="2">${q.question}</td>
 </view:row>
 </c:forEach>

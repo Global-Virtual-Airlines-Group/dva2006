@@ -49,10 +49,10 @@
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
-<c:if test="${eProfile.active}">
+<c:if test="${question.active}">
  <td class="data ter bld caps">Question is Available</td>
 </c:if>
-<c:if test="${!eProfile.active}">
+<c:if test="${!question.active}">
  <td class="data error bld caps">Question is Not Available</td>
 </c:if>
 </tr>
@@ -61,7 +61,7 @@
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="qprofile" linkID="${question.ID}" op="edit" label="EDIT QUESTION" /></td>
+ <td><el:cmdbutton url="qprofile" linkID="0x${question.ID}" op="edit" label="EDIT QUESTION" /></td>
 </tr>
 </el:table>
 <content:copyright />

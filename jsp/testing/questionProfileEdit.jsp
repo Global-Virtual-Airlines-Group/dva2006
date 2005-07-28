@@ -31,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="qprofile.do" linkID="${question.ID}" op="save" method="POST" validate="return validate(this)">
+<el:form action="qprofile.do" linkID="0x${question.ID}" op="save" method="POST" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
@@ -43,11 +43,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Correct Answer</td>
- <td class="data"><el:text name="correct" idx="*" size="120" max="129" value="${question.correctAnswer}" /></td>
+ <td class="data"><el:text name="correct" idx="*" size="120" max="192" value="${question.correctAnswer}" /></td>
 </tr>
 <tr>
- <td class="label">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="3" width="95" separator="<div style=\"clear:both;\" />" className="small" checked="${question.examNames}" options="${examNames}" /></td>
+ <td class="label" valign="top">Pilot Examinations</td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="120" separator="<div style=\"clear:both;\" />" className="small" checked="${question.examNames}" options="${examNames}" /></td>
 </tr>
 <tr>
  <td class="label">Statistics</td>
@@ -62,7 +62,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" value="1" checked="${question.active}" label="Question is Available" /></td>
+ <td class="data"><el:box name="active" className="sec" value="1" checked="${question.active}" label="Question is Available" /></td>
 </tr>
 </el:table>
 
@@ -73,6 +73,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </div>
 </body>
