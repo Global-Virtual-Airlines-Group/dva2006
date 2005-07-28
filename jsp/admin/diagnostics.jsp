@@ -62,7 +62,6 @@
  <td class="data">${timeZone.ID} - ${tzName}</td>
 </tr>
 </el:table>
-<br />
 
 <!-- JDBC Connection Pool Data Table -->
 <el:table className="view" space="default" pad="default">
@@ -103,7 +102,6 @@
 </tr>
 </c:if>
 </el:table>
-<br />
 
 <!-- Scheduled Task Pool Data Table -->
 <el:table className="view" space="default" pad="default">
