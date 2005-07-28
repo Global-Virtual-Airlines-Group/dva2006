@@ -38,7 +38,7 @@ virtual airline, designed for both the experienced pilot and the novice (and all
 between!) we welcome your interest.<br />
 <br />
 If you are interested in a virtual airline with primarily European operations, we encourage you to visit 
-our sister airline <a href="http://www.afva.net/" class="sec bld">Aviation Français Virtuel</a>.<br />
+our sister airline <a href="http://www.afva.net/" class="sec bld">Aviation Fran&ccedil;ais Virtuel</a>.<br />
 <br />
 <el:table className="view" space="default" pad="default">
 <c:forEach var="entry" items="${latestNews}">
