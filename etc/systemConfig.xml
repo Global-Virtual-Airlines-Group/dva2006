@@ -290,9 +290,6 @@
 		
 		<auth>org.deltava.security.MigrationAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
-		<applicant>
-			<baseDN>ou=dva_app,o=sce</baseDN>
-		</applicant>
 	</security>
 	
 	<cache>
@@ -361,6 +358,7 @@
 		<inactive_days type="Integer">90</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
 		<inactive_new_days type="Integer">21</inactive_new_days>
+		<inactive_assign type="Integer">5</inactive_assign>
 		
 		<user_cookie_age type="Integer">30</user_cookie_age>
 		
