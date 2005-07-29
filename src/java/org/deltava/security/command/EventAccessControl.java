@@ -20,6 +20,7 @@ public class EventAccessControl extends AccessControl {
    private boolean _canCreate;
    private boolean _canSignup;
    private boolean _canEdit;
+   private boolean _canAddPlan;
    private boolean _canAssignFlights;
    private boolean _canCancel;
 
@@ -50,9 +51,11 @@ public class EventAccessControl extends AccessControl {
          return;
 
       // Set access variables
+      boolean isEvent = _ctx.isUserInRole("Event");
       _canSignup = (_ev.getStatus() == Event.OPEN) && (!_ev.isSignedUp(_ctx.getUser().getID()));
-      _canEdit = (_ev.getStatus() != Event.COMPLETE) && _ctx.isUserInRole("Event");
-      _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && _ctx.isUserInRole("Event");
+      _canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
+      _canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
+      _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && isEvent;
       _canCancel = _canEdit;
    }
 
@@ -78,6 +81,14 @@ public class EventAccessControl extends AccessControl {
     */
    public boolean getCanEdit() {
       return _canEdit;
+   }
+   
+   /**
+    * Returns if a Flight Plan can be added to this Online Event.
+    * @return TRUE if a Flight Plan can be added, otherwise FALSE
+    */
+   public boolean getCanAddPlan() {
+	   return _canAddPlan;
    }
    
    /**
