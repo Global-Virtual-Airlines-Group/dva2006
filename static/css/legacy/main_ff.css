@@ -172,6 +172,10 @@ a:hover {
 	color: #E02010;
 }
 
+.warn {
+	color: #FF8040;
+}
+
 .small {
 	font-size: 8pt;
 }
