@@ -2,7 +2,6 @@ package org.deltava.jdbc;
 
 import java.sql.*;
 import java.util.*;
-import java.io.Serializable;
 
 import org.apache.log4j.Logger;
 
@@ -16,7 +15,8 @@ import org.deltava.util.ThreadUtils;
  * @see ConnectionPoolEntry
  * @see ConnectionMonitor
  */
-public class ConnectionPool implements Serializable {
+
+public class ConnectionPool implements Recycler {
 
 	private static final Logger log = Logger.getLogger(ConnectionPool.class);
 
