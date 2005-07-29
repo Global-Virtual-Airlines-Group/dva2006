@@ -91,32 +91,32 @@ public class ACARSSubmitService extends WebDataService {
 			// See if we have any draft PIREPs for this route pair
 			GetFlightReports prdao = new GetFlightReports(_con);
 			List dFlights = prdao.getDraftReports(usr.getID(), airportD, airportA);
-			ACARSFlightReport afr = dFlights.isEmpty() ? ACARSHelper.create(data.getProperty("flight_num")) : ACARSHelper
-					.create((FlightReport) dFlights.get(0));
+			//ACARSFlightReport afr = dFlights.isEmpty() ? ACARSHelper.create(data.getProperty("flight_num")) : ACARSHelper
+				//	.create((FlightReport) dFlights.get(0));
 
 			// Build the PIREP
-			afr.setDatabaseID(FlightReport.DBID_PILOT, usr.getID());
-			afr.setRank(usr.getRank());
-			afr.setAirportD(airportD);
-			afr.setAirportA(airportA);
+			//afr.setDatabaseID(FlightReport.DBID_PILOT, usr.getID());
+			//afr.setRank(usr.getRank());
+			//afr.setAirportD(airportD);
+			//afr.setAirportA(airportA);
 
 			// Check if the flight qualifies for the promotion to Captain legs
 			GetEquipmentType eqdao = new GetEquipmentType(_con);
-			Collection pTypes = eqdao.getPrimaryTypes(afr.getEquipmentType());
-			if (!pTypes.isEmpty())
-				afr.setCaptEQType(pTypes);
+			//Collection pTypes = eqdao.getPrimaryTypes(afr.getEquipmentType());
+			//if (!pTypes.isEmpty())
+				//afr.setCaptEQType(pTypes);
 
 			// Copy XML data into the PIREP
-			ACARSHelper.build(afr, data);
+			//ACARSHelper.build(afr, data);
 
 			// Start the transaction
 			_con.setAutoCommit(false);
 
 			// Save the PIREP
 			SetFlightReport wdao = new SetFlightReport(_con);
-			wdao.write(afr);
-			wdao.writeACARS(afr);
-			wdao.submit(afr);
+			//wdao.write(afr);
+			//wdao.writeACARS(afr);
+			//wdao.submit(afr);
 
 			// Commit the transaction
 			_con.commit();
