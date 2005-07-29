@@ -125,8 +125,8 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Figure out if this is truly a promotion
 					RankComparator rcmp = new RankComparator((List) SystemData.getObject("ranks"));
-					rcmp.setRank1(p.getRank(), eq1.getStage());
-					rcmp.setRank2(newRank, eq2.getStage());
+					rcmp.setRank2(p.getRank(), eq1.getStage());
+					rcmp.setRank1(newRank, eq2.getStage());
 
 					// Update the rank/equipment program
 					p.setRank(newRank);
@@ -144,7 +144,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
-					} else if (rChange < 0) {
+					} else {
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
