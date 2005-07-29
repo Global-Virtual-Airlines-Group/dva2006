@@ -49,7 +49,6 @@ return true;
 <%@include file="/jsp/event/header.jsp" %> 
 <%@include file="/jsp/event/sideMenu.jsp" %>
 <content:sysdata var="defaultNetwork" name="online.default_network" />
-<content:sysdata var="networks" name="online.networks" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
 
 <!-- Main Body Frame -->

@@ -24,6 +24,11 @@ public class SetEvent extends DAO {
 		super(c);
 	}
 
+	/**
+	 * Writes an Online Event to the database. This handles INSERTs and UPDATEs.
+	 * @param e the Online Event
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void write(Event e) throws DAOException {
 		try {
 			startTransaction();
@@ -47,9 +52,14 @@ public class SetEvent extends DAO {
 		}
 	}
 	
+	/**
+	 * Writes a Signup to the database.
+	 * @param s the Signup bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void signup(Signup s) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO EVENT_SIGNUPS (ID, PILOT_ID, EQTYPE, AIRPORT_D, AIRPORT_A, REMARKS) "
+			prepareStatement("INSERT INTO common.EVENT_SIGNUPS (ID, PILOT_ID, EQTYPE, AIRPORT_D, AIRPORT_A, REMARKS) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getEventID());
 			_ps.setInt(2, s.getPilotID());
@@ -65,9 +75,14 @@ public class SetEvent extends DAO {
 		}
 	}
 	
+	/**
+	 * Saves an Online Event flight plan.
+	 * @param fp the FlightPlan bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void save(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO EVENT_PLANS (ID, PLANTYPE, AIRPORT_D, AIRPORT_A, PLANDATA) "
+			prepareStatement("REPLACE INTO common.EVENT_PLANS (ID, PLANTYPE, AIRPORT_D, AIRPORT_A, PLANDATA) "
 					+ "VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getType());
@@ -82,9 +97,14 @@ public class SetEvent extends DAO {
 		}
 	}
 	
+	/**
+	 * Deletes an Online Event pilot signup.
+	 * @param s the Signup bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void delete(Signup s) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
+			prepareStatement("DELETE FROM common.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, s.getEventID());
 			_ps.setInt(2, s.getPilotID());
 			
@@ -96,9 +116,14 @@ public class SetEvent extends DAO {
 		}
 	}
 	
+	/**
+	 * Deletes an Online Event flight plan.
+	 * @param fp the FlightPlan bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public void delete(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (AIRPORT_D=?) "
+			prepareStatement("DELETE FROM common.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (AIRPORT_D=?) "
 					+ "AND (AIRPORT_A=?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getType());
@@ -116,7 +141,7 @@ public class SetEvent extends DAO {
 	private void writeCharts(Event e) throws SQLException {
 		
 		// Clear airports
-		prepareStatement("DELETE FROM EVENT_CHARTS WHERE (ID=?)");
+		prepareStatement("DELETE FROM common.EVENT_CHARTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		_ps.executeUpdate();
 		_ps.close();
@@ -126,7 +151,7 @@ public class SetEvent extends DAO {
 			return;
 		
 		// Create the prepared statement
-		prepareStatement("INSERT INTO EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
+		prepareStatement("INSERT INTO common.EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
 		
 		// Write the charts
@@ -144,13 +169,13 @@ public class SetEvent extends DAO {
 	private void writeAirports(Event e) throws SQLException {
 		
 		// Clear airports
-		prepareStatement("DELETE FROM EVENT_AIRPORTS WHERE (ID=?)");
+		prepareStatement("DELETE FROM common.EVENT_AIRPORTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		_ps.executeUpdate();
 		_ps.close();
 		
 		// Create the prepared statement
-		prepareStatement("INSERT INTO EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)");
+		prepareStatement("INSERT INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?)");
 		_ps.setInt(1, e.getID());
 		_ps.setString(3, e.getAirportA().getIATA());
 		
@@ -169,7 +194,7 @@ public class SetEvent extends DAO {
 	private void insert(Event e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatement("INSERT INTO EVENTS (TITLE, NETWORK, STARTTIME, ENDTIME, SU_DEADLINE, "
+		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STARTTIME, ENDTIME, SU_DEADLINE, "
 				+ "ROUTE, BRIEFING) VALUES (?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
@@ -187,7 +212,7 @@ public class SetEvent extends DAO {
 	private void update(Event e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatement("UPDATE EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=? "
+		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=? "
 				+ "ROUTE=?, BRIEFING=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());

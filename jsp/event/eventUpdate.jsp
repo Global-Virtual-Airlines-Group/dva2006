@@ -12,17 +12,17 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/event/header.jsp" %> 
-<%@include file="/jsp/event/sideMenu.jsp" %>
+<%@ include file="/jsp/event/header.jsp" %> 
+<%@ include file="/jsp/event/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
 <div class="updateHdr">Online Event Updated</div>
 <br />
-The <span class="pri bld">${event.name}</span> Online has been successfully updated.<br />
+The <span class="pri bld">${event.name}</span> Online EVent has been successfully updated.<br />
+<br />
 To view the event just created, you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd> to display the event.<br />
 <br />
-
 <content:copyright />
 </div>
 </body>

@@ -9,6 +9,8 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.Chart;
 import org.deltava.beans.assign.AssignmentInfo;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A class to store Online Event information.
  * @author Luke
@@ -247,18 +249,19 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     public void setStartTime(Date dt) {
         _startTime = dt;
-        _signupDeadline = new Date(dt.getTime() - 60000);
+        if (dt != null)
+        	_signupDeadline = new Date(dt.getTime() - 60000);
     }
     
     public void setEndTime(Date dt) {
-        if (dt.before(_startTime))
+        if ((dt != null) && (dt.before(_startTime)))
             throw new IllegalArgumentException("End Time cannot be before Start Time");
         
         _endTime = dt;
     }
     
     public void setSignupDeadline(Date dt) {
-        if (dt.after(_startTime))
+        if ((dt != null) && (dt.after(_startTime)))
             throw new IllegalArgumentException("Signup Deadline cannot be after Start Time");
         
         _signupDeadline = dt;
@@ -272,15 +275,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     }
     
     public void setNetwork(String networkName) {
-        for (int x = 0; x < NETWORKS.length; x++) {
-            if (NETWORKS[x].equals(networkName)) {
-                setNetwork(x);
-                return;
-            }
-        }
-        
-        // If we got this far, the name is invalid
-        throw new IllegalArgumentException("Invalid Network Name - " + networkName);
+    	setNetwork(StringUtils.arrayIndexOf(NETWORKS, networkName));
     }
 
     public void setStatus(int status) {
