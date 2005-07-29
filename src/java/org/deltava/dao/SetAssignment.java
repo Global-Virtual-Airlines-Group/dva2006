@@ -152,18 +152,24 @@ public class SetAssignment extends DAO {
    public void reset(AssignmentInfo a) throws DAOException {
       try {
          startTransaction();
-
-         // Reset the legs
-         prepareStatement("UPDATE ASSIGNLEGS SET COMPLETE=0 WHERE (COMPLETE=1) AND (ID=?)");
-         _ps.setInt(1, a.getID());
-         executeUpdate(0); // This can be zero since no legs might be finished
-
-         // Reset the assignment itself
+         
+         // Release the assignment
          prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=? WHERE (ID=?)");
          _ps.setInt(1, AssignmentInfo.AVAILABLE);
          _ps.setInt(2, a.getID());
          executeUpdate(1);
+         
+         // Delete the draft Flight Reports
+         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND (STATUS=?)");
+         _ps.setInt(1, a.getID());
+         _ps.setInt(2, FlightReport.DRAFT);
+         executeUpdate(0);
 
+         // Clear the Flight Reports
+         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?)");
+         _ps.setInt(1, a.getID());
+         executeUpdate(0);
+         
          // Commit the transaction
          commitTransaction();
       } catch (SQLException se) {
@@ -190,6 +196,21 @@ public class SetAssignment extends DAO {
          prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
          executeUpdate(1);
+         
+         // Clear the Flown Flight Reports
+         prepareStatement("UPDATE PIREPS SET ASSIGN_ID=0 WHERE (ASSIGN_ID=?) AND (STATUS IN (?, ?, ?))");
+         _ps.setInt(1, a.getID());
+         _ps.setInt(2, FlightReport.OK);
+         _ps.setInt(3, FlightReport.SUBMITTED);
+         _ps.setInt(4, FlightReport.HOLD);
+         executeUpdate(0);
+         
+         // Delete the incomplete/rejected Flight Reports
+         prepareStatement("DELETE FROM PIREPS WHERE (ASSIGN_ID=?) AND ((STATUS=?) OR (STATUS=?))");
+         _ps.setInt(1, a.getID());
+         _ps.setInt(2, FlightReport.DRAFT);
+         _ps.setInt(3, FlightReport.REJECTED);
+         executeUpdate(0);
 
          // Commit the transaction
          commitTransaction();
