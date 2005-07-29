@@ -84,6 +84,7 @@ public class TaskFactory {
       }
 
       // Return results
+      log.info("Loaded " + results.size() + " tasks");
       return results;
    }
 }
