@@ -27,6 +27,7 @@ if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 setSubmit();
 disableButton('SaveButton');
 disableButton('EditButton');
+disableButton('PlanButton');
 disableButton('CancelButton');
 disableButton('AssignButton');
 return true;
@@ -209,6 +210,9 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  <td>&nbsp;
 <c:if test="${access.canSignup}">
  <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SIGN UP FOR THIS EVENT" />
+</c:if>
+<c:if test="${access.canAddPlan}">
+ <el:cmdbutton ID="PlanButton" url="eventplan" linkID="0x${event.ID}" label="ADD FLIGHT PLAN" />
 </c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" url="eventedit" linkID="0x${event.ID}" label="EDIT EVENT" />
