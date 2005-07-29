@@ -110,7 +110,6 @@ public class TaskScheduler extends Thread {
 					log.info(t.getName() + " queued for execution");
 
 					// Pass JDBC Connection to database tasks
-					// TODO How do we get the connection back
 					if (t instanceof DatabaseTask) {
 						DatabaseTask dt = (DatabaseTask) t;
 						ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
