@@ -148,6 +148,11 @@ public class EventSaveCommand extends AbstractCommand {
 			} else if (!isRefresh) {
 				SetEvent wdao = new SetEvent(con);
 				wdao.write(e);
+			} else {
+				// Strip out ACARS as a network name
+				Set netNames = new TreeSet((List) SystemData.getObject("online.networks"));
+				netNames.remove("ACARS");
+				ctx.setAttribute("networks", netNames, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);

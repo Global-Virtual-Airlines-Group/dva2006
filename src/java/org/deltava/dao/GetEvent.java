@@ -173,7 +173,7 @@ public class GetEvent extends DAO {
 		Map airports = (Map) SystemData.getObject("airports");
 
 		// Init the prepared statement
-		prepareStatementWithoutLimits("	SELECT * FROM common.EVENT_PLANS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT * FROM common.EVENT_PLANS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 
 		// Execute the query and load the flight plans

@@ -41,6 +41,11 @@ public class EventEditCommand extends AbstractCommand {
 		airports.addAll(((Map) SystemData.getObject("airports")).values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
+		// Strip out ACARS as a network name
+		Set netNames = new TreeSet((List) SystemData.getObject("online.networks"));
+		netNames.remove("ACARS");
+		ctx.setAttribute("networks", netNames, REQUEST);
+		
 		// Get the event ID - if not found, assume a new event
 		if (ctx.getID() == 0) {
 			EventAccessControl access = new EventAccessControl(ctx, new Event(""));
