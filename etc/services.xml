@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <services name="default">
-	<service id="eqList" class="org.deltava.service.EquipmentListService" />
-	<service id="airlineList" class="org.deltava.service.AirlineListService" />
-	<service id="airportList" class="org.deltava.service.AirportListService" />
-	
 	<service id="acarsSubmit" class="org.deltava.service.ACARSSubmitService" />
 	<service id="acarsData" class="org.deltava.service.ACARSDataService" />
 	<service id="acars_map" class="org.deltava.service.ACARSMapService" />
