@@ -130,7 +130,7 @@ return cmdPost(f.action);
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE AS DRAFT" />
-<c:if test="${access.canSubmit}">
+<c:if test="${access.canSubmitIfEdit}">
 &nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" className="BUTTON" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 </td>
@@ -143,8 +143,10 @@ return cmdPost(f.action);
 </div>
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
-var d = new Date(${(empty pirepDate) ? '' : pirepDate});
-initDateCombos(f.dateM, f.dateD, d);
+<c:if test="${!empty pirepYear}">
+var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
+</c:if>
+initDateCombos(f.dateM, f.dateD, ((d == null) ? new Date() : d));
 f.airline.focus();
 
 if (f.airline.selectedIndex != 0) {
