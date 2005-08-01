@@ -66,15 +66,6 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
-     * Returns the engine start time of this flight.
-     * @return the date/time engines were started
-     * @see ACARSFlightReport#setEngineStartTime(Date)
-     */
-    public Date getEngineStartTime() {
-        return (Date) _stateChangeTimes.get("ENGINE_START_TIME");
-    }
-    
-    /**
      * Returns the date/time of pushback.
      * @return the date/time the aircraft was pushed back
      * @see ACARSFlightReport#setTaxiTime(Date)
@@ -320,15 +311,6 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setStartTime(Date dt) {
         _stateChangeTimes.put("START_TIME", dt);
-    }
-    
-    /**
-     * Updates the time the engines were started.
-     * @param dt the date/time the engines were started
-     * @see ACARSFlightReport#getEngineStartTime()
-     */
-    public void setEngineStartTime(Date dt) {
-        _stateChangeTimes.put("ENGINE_START_TIME", dt);
     }
     
     /**
