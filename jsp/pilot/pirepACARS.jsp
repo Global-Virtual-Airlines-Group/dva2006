@@ -12,8 +12,7 @@
 </c:if>
 <tr>
  <td class="label">Start Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.startTime}" />, engines started at
- <fmt:date date="${pirep.engineStartTime}" /></td>
+ <td class="data"><fmt:date className="bld" date="${pirep.startTime}" /></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>

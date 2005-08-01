@@ -226,38 +226,37 @@ public class SetFlightReport extends DAO {
 			write(afr);
 		    
 		    // Write the ACARS fields
-			prepareStatementWithoutLimits("INSERT INTO ACARS_PIREPS (ID, ACARS_ID, START_TIME, ENGINE_START, " +
-					"TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, " +
+			prepareStatementWithoutLimits("INSERT INTO ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, " +
+					"TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, " +
 					"TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, " +
 					"LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TIME_1X, TIME_2X, " +
-					"TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					"TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setInt(1, afr.getID());
 			_ps.setInt(2, afr.getDatabaseID(FlightReport.DBID_ACARS));
 			_ps.setTimestamp(3, createTimestamp(afr.getStartTime()));
-			_ps.setTimestamp(4, createTimestamp(afr.getEngineStartTime()));
-			_ps.setTimestamp(5, createTimestamp(afr.getTaxiTime()));
-			_ps.setInt(6, afr.getTaxiWeight());
-			_ps.setInt(7, afr.getTaxiFuel());
-			_ps.setTimestamp(8, createTimestamp(afr.getTakeoffTime()));
-			_ps.setInt(9, afr.getTakeoffDistance());
-			_ps.setInt(10, afr.getTakeoffSpeed());
-			_ps.setDouble(11, afr.getTakeoffN1());
-			_ps.setInt(12, afr.getTakeoffWeight());
-			_ps.setInt(13, afr.getTakeoffFuel());
-			_ps.setTimestamp(14, createTimestamp(afr.getLandingTime()));
-			_ps.setInt(15, afr.getLandingDistance());
-			_ps.setInt(16, afr.getLandingSpeed());
-			_ps.setInt(17, afr.getLandingVSpeed());
-			_ps.setDouble(18, afr.getLandingN1());
-			_ps.setInt(19, afr.getLandingWeight());
-			_ps.setInt(20, afr.getLandingFuel());
-			_ps.setTimestamp(21, createTimestamp(afr.getEndTime()));
-			_ps.setInt(22, afr.getGateWeight());
-			_ps.setInt(23, afr.getGateFuel());
-			_ps.setInt(24, afr.getTime1X());
-			_ps.setInt(25, afr.getTime2X());
-			_ps.setInt(26, afr.getTime4X());
+			_ps.setTimestamp(4, createTimestamp(afr.getTaxiTime()));
+			_ps.setInt(5, afr.getTaxiWeight());
+			_ps.setInt(6, afr.getTaxiFuel());
+			_ps.setTimestamp(7, createTimestamp(afr.getTakeoffTime()));
+			_ps.setInt(8, afr.getTakeoffDistance());
+			_ps.setInt(9, afr.getTakeoffSpeed());
+			_ps.setDouble(10, afr.getTakeoffN1());
+			_ps.setInt(11, afr.getTakeoffWeight());
+			_ps.setInt(12, afr.getTakeoffFuel());
+			_ps.setTimestamp(13, createTimestamp(afr.getLandingTime()));
+			_ps.setInt(14, afr.getLandingDistance());
+			_ps.setInt(15, afr.getLandingSpeed());
+			_ps.setInt(16, afr.getLandingVSpeed());
+			_ps.setDouble(17, afr.getLandingN1());
+			_ps.setInt(18, afr.getLandingWeight());
+			_ps.setInt(19, afr.getLandingFuel());
+			_ps.setTimestamp(20, createTimestamp(afr.getEndTime()));
+			_ps.setInt(21, afr.getGateWeight());
+			_ps.setInt(22, afr.getGateFuel());
+			_ps.setInt(23, afr.getTime1X());
+			_ps.setInt(24, afr.getTime2X());
+			_ps.setInt(25, afr.getTime4X());
 			
 			// Write to the database
 			executeUpdate(1);
