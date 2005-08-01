@@ -202,8 +202,6 @@ addMarkers(map, 'filedMarkers');
 <map:marker var="gmD" point="${pirep.airportD}" />
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
-//map.addOverlay(gmA);
-//map.addOverlay(gmD);
 </c:if>
 </script>
 </c:if>
