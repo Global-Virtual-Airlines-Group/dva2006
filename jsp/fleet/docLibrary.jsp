@@ -48,6 +48,15 @@
 </view:row>
 </c:forEach>
 
+<!-- Download Acrobat -->
+<tr valign="middle">
+ <td><a href="http://www.adobe.com/products/acrobat/readstep2.html"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td colspan="4">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
+Acrobat Reader 5</span> or newer in order to be viewed. If you are having difficulties viewing our 
+manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader.<br /> 
+This is a free download.</td>
+</tr>
+
 <!-- Scroll Bar row -->
 <tr class="title">
  <td colspan="5">&nbsp;</td>
