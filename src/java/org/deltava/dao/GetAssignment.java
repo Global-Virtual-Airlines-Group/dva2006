@@ -61,12 +61,12 @@ public class GetAssignment extends DAO {
 	public List getByPilot(int pilotID) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (PILOT_ID=?) ORDER BY ASSIGNED_ON");
+			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (PILOT_ID=?) ORDER BY ASSIGNED_ON DESC");
 			_ps.setInt(1, pilotID);
 			List results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.PILOT_ID=?)");
+			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
 			loadLegs(results);
 
@@ -85,7 +85,7 @@ public class GetAssignment extends DAO {
 	public List getByStatus(int status) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON");
+			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON DESC");
 			_ps.setInt(1, status);
 			List results = loadInfo();
 
@@ -114,7 +114,7 @@ public class GetAssignment extends DAO {
 			List results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.EVENT_ID=?)");
+			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			loadLegs(results);
 
@@ -133,12 +133,12 @@ public class GetAssignment extends DAO {
 	public List getByEquipmentType(String eqType) throws DAOException {
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?) ORDER BY STATUS, ASSIGNED_ON");
+			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?) ORDER BY STATUS, ASSIGNED_ON DESC");
 			_ps.setString(1, eqType);
 			List results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.EQTYPE=?)");
+			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EQTYPE=?)");
 			_ps.setString(1, eqType);
 			loadLegs(results);
 

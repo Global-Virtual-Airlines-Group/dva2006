@@ -1,8 +1,8 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.assign;
 
+import java.util.*;
 import java.sql.Connection;
-import java.util.Iterator;
 
 import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.AssignmentInfo;
@@ -35,6 +35,9 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
       try {
           Connection con = ctx.getConnection();
+          
+          // Start the transaction
+          ctx.startTX();
 
           // Create the Flight Assignment
           SetAssignment awdao = new SetAssignment(con);
@@ -42,23 +45,35 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
           // If the assignment has a pilot linked with it, write the draft PIREPs
           if ((info.getStatus() == AssignmentInfo.RESERVED) && (info.getPilotID() != 0)) {
-             ctx.setAttribute("pirepsWritten", Boolean.valueOf(true), REQUEST);
+             Date now = new Date();
+             info.setAssignDate(now);
+             awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
+             
+             // Write the PIREPs to the database
+             ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
               SetFlightReport pwdao = new SetFlightReport(con);
               for (Iterator i = info.getFlights().iterator(); i.hasNext();) {
                   FlightReport fr = (FlightReport) i.next();
+                  fr.setCreatedOn(now);
+                  fr.setDate(now);
                   pwdao.write(fr);
               }
           }
-
-          // Set attributes and clean up session
-          ctx.setAttribute("isCreate", Boolean.valueOf(true), REQUEST);
-          ctx.setAttribute("assign", info, REQUEST);
-          ctx.getSession().removeAttribute("buildAssign");
+          
+          // Commit the transaction
+          ctx.commitTX();
       } catch (DAOException de) {
+         ctx.rollbackTX();
           throw new CommandException(de);
       } finally {
           ctx.release();
       }
+      
+      // Set attributes and clean up session
+      ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
+      ctx.setAttribute("assign", info, REQUEST);
+      ctx.getSession().removeAttribute("buildAssign");
+      ctx.getSession().removeAttribute("fafCriteria");
 
       // Redirect to the update page
       CommandResult result = ctx.getResult();
