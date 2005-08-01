@@ -11,6 +11,13 @@ if (btn) btn.disabled = true;
 return true;
 }
 
+function enableButton(btnName)
+{
+var btn = getElement(btnName);
+if (btn) btn.disabled = false;
+return true;
+}
+
 function checkSubmit()
 {
 if (document.isSubmit) {
