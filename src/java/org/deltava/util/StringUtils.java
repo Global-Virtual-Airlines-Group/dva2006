@@ -98,7 +98,7 @@ public final class StringUtils {
    }
    
    /**
-    * Escapes forward slashes for use when writing HTML using JavaScript.
+    * Escapes forward slashes and single quotes for use when writing HTML using JavaScript.
     * @param rawString the string to escape
     * @return an escaped string
     * @throws NullPointerException if rawString is null
@@ -107,6 +107,9 @@ public final class StringUtils {
       StringBuffer buf = new StringBuffer(rawString);
       for (int x = 0; x < buf.length(); x++) {
          if (buf.charAt(x) == '/') {
+            buf.insert(x, '\\');
+            x++;
+         } else if (buf.charAt(x) == '\'') {
             buf.insert(x, '\\');
             x++;
          }
