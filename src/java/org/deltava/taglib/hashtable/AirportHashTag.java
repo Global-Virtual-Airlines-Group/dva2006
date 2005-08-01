@@ -133,7 +133,7 @@ public class AirportHashTag extends AbstractHashTag {
 				int idx = 1;
 				for (Iterator i2 = aSet.iterator(); i2.hasNext(); ) {
 					Airport a = (Airport) i2.next();
-					out.print(ARRAY_NAME + "[" + idx + "] = new Option(\'" + StringUtils.stripInlineHTML(a.getComboName()) + "\', \'");
+					out.print(ARRAY_NAME + "[" + idx + "] = new Option(\'" + StringUtils.escapeSlashes(a.getComboName()) + "\', \'");
 					if (_codeType == Airport.ICAO) {
 						out.print(a.getICAO());
 					} else {
