@@ -105,7 +105,7 @@ public class SetAssignment extends DAO {
       // Prepare the SQL statement
       StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
       sqlBuf.append(db.toLowerCase());
-      sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?, ?)");
+      sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?)");
       prepareStatement(sqlBuf.toString());
       _ps.setInt(1, assignID);
 
