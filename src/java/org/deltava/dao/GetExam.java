@@ -122,7 +122,7 @@ public class GetExam extends DAO {
 	 */
 	public Collection getCheckRides(int pilotID) throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) ORDER BY CREATED_ON");
+	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) ORDER BY CREATED");
 	      _ps.setInt(1, pilotID);
 	      return executeCheckride();
 	   } catch (SQLException se) {
