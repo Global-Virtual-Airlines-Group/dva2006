@@ -382,7 +382,7 @@
 		<map>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
-			<refresh type="Integer">15000</refresh>
+			<refresh type="Integer">15</refresh>
 		</map>
 		
 		<port type="Integer">15527</port>
@@ -405,6 +405,7 @@
 		</list>
 		
 		<ack>
+			<ping type="Boolean">false</ping>
 			<info type="Boolean">true</info>
 			<position type="Boolean">true</position>
 			<text type="Boolean">false</text>
