@@ -194,7 +194,8 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Send an e-mail notification to the user
-		Mailer mailer = new Mailer(ctx.getUser());
+		EMailAddress srcEMail = SystemData.getBoolean("smtp.testMode") ? a : ctx.getUser();
+		Mailer mailer = new Mailer(srcEMail);
 		mailer.setContext(mctxt);
 		mailer.send(a);
 
