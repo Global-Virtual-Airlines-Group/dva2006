@@ -244,8 +244,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
 
-				// Set date
-				ctx.setAttribute("pirepDate", StringUtils.format(fr.getDate(), "yyyy,M,d") + ",0,0,0,0", REQUEST);
+				// Set date - adjust date backwards by one month for JavaScript
+				Calendar cld = Calendar.getInstance();
+				cld.setTime(fr.getDate());
+				ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
+				ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
+				ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
 			}
 
 			// Save airport/airline lists in the request

@@ -84,10 +84,23 @@ public final class PIREPAccessControl extends AccessControl {
 
 	/**
 	 * Returns if the PIREP can be submitted.
-	 * @return TRUE if it can be submitted, otherwise FALSE
+	 * @return TRUE if it can be submitted and the length is non-zero, otherwise FALSE
+	 * @see PIREPAccessControl#getCanSubmitIfEdit()
+	 * @see FlightReport#getLength()
 	 */
 	public boolean getCanSubmit() {
-		return _canSubmit;
+		return _canSubmit && (_pirep.getLength() > 0);
+	}
+	
+	/**
+	 * Returns if the PIREP can be submitted when editing. This returns the same value as canSubmit, except
+	 * it does not check if the PIREP time is greater than zero. This allows us to edit a draft 0 length PIREP, and
+	 * still have the submit button available.
+	 * @return TRUE if it can be submitted, otherwise FALSE
+	 * @see PIREPAccessControl#getCanSubmit()
+	 */
+	public boolean getCanSubmitIfEdit() {
+	   return _canSubmit;
 	}
 
 	/**
