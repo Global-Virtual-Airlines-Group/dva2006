@@ -25,8 +25,8 @@ public class ACARSMapCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Check if we have a map center cookie set
-      String lat = getCookie(ctx.getRequest(), "acars_map_lat");
-      String lng = getCookie(ctx.getRequest(), "acars_map_lng");
+      String lat = getCookie(ctx.getRequest(), "acarsMapLat");
+      String lng = getCookie(ctx.getRequest(), "acarsMapLng");
       
       // Create the map center
       GeoPosition gp = null;
