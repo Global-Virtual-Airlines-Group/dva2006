@@ -87,7 +87,7 @@ public class TestStringUtils extends TestCase {
     
     public void testEscapeSlashes() {
        assertEquals("Normal String", StringUtils.escapeSlashes("Normal String"));
-       assertEquals("<b>Normal String<\\/b>", StringUtils.escapeSlashes("<b>Normal String</b>"));
+       assertEquals("<b>Normal O\\\'String<\\/b>", StringUtils.escapeSlashes("<b>Normal O\'String</b>"));
        assertEquals("\\/<b>Normal String<\\/b>\\/", StringUtils.escapeSlashes("/<b>Normal String</b>/"));
     }
     
