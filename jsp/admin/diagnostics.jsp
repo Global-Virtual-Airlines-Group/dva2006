@@ -113,21 +113,26 @@
 <!-- Scheduled Task Data Title Bar -->
 <tr class="title caps">
  <td width="20%">TASK NAME</td>
- <td width="40%">CLASS NAME</td>
+ <td width="30%">CLASS NAME</td>
  <td width="10%">INTERVAL</td>
- <td width="10%">LAST RUN</td>
- <td width="10%">NEXT RUN</td>
+ <td width="15%">LAST RUN</td>
+ <td width="15%">NEXT RUN</td>
  <td>RUN TIME</td>
 </tr>
 
 <!-- ScheduledTask Data -->
 <c:forEach var="task" items="${taskInfo}">
 <view:row entry="task">
- <td class="pri bld">${task.name}</td>
+ <td class="pri bld"><el:cmd url="taskexec" linkID="${task.ID}">${task.name}</el:cmd></td>
  <td class="small">${task.className}</td>
  <td><fmt:int value="${task.interval / 60}" /> min</td>
- <td><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
- <td><fmt:date fmt="dt" date="${task.nextStartTime}" /></td>
+<c:if test="${empty task.lastStartTime}">
+ <td>N/A</td>
+</c:if>
+<c:if test="${!empty task.lastStartTime}">
+ <td class="small"><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
+</c:if>
+ <td class="small"><fmt:date fmt="dt" date="${task.nextStartTime}" /></td>
  <td><fmt:int value="${task.lastRunTime}" /> ms</td>
 </view:row>
 </c:forEach>
