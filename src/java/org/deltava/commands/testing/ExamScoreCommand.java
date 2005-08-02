@@ -82,8 +82,8 @@ public class ExamScoreCommand extends AbstractCommand {
          mctxt.addData("exam", ex);
          
          // Check if we've passed the examination
-         if (score >= ep.getPassScore())
-            ex.setPassFail(true);
+         ex.setPassFail(score >= ep.getPassScore());
+         mctxt.addData("result", ex.getPassFail() ? "PASS" : "FAIL");
          
          // Check if we've rescored the examination
          ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == Test.SCORED), REQUEST);
@@ -100,7 +100,7 @@ public class ExamScoreCommand extends AbstractCommand {
          wdao.update(ex);
          
          // Save the exam in the request
-         ctx.setAttribute("isScore", Boolean.valueOf(true), REQUEST);
+         ctx.setAttribute("isScore", Boolean.TRUE, REQUEST);
          ctx.setAttribute("exam", ex, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
