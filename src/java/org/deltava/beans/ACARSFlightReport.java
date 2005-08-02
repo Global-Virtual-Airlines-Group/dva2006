@@ -402,7 +402,7 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setTakeoffWeight(int w) {
         if (w <= 0)
-            throw new IllegalArgumentException("Weight cannot be zero or negative");
+            throw new IllegalArgumentException("Weight cannot be zero or negative - " + w);
         
         _takeoffWeight = w;
     }
@@ -458,14 +458,10 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the vertical speed at touchdown.
      * @param s the vertical speed in feet per minute
-     * @throws IllegalArgumentException if s is positive
      * @see ACARSFlightReport#getLandingVSpeed()
      */
     public void setLandingVSpeed(int s) {
-        if (s > 0)
-            throw new IllegalArgumentException("Landing vertical speed cannot be positive");
-        
-        _landingVspeed = s;
+        _landingVspeed = (s > 0) ? s * -1 : s;
     }
     
     /**
@@ -489,7 +485,7 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setLandingWeight(int w) {
         if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be zero or negative");
+            throw new IllegalArgumentException("Weight cannot be zero or negative - " + w);
         
         _landingWeight = w;
     }
