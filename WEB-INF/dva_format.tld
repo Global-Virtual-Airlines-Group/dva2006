@@ -230,4 +230,17 @@
 			<type>org.deltava.beans.GeoLocation</type>
 		</attribute>
 	</tag>
+	
+	<!-- StackDump tag, used to format exception stack traces -->
+	<tag>
+		<name>stack</name>
+		<tagclass>org.deltava.taglib.format.StackDumpFormatTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>exception</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Throwable</type>
+		</attribute>
+	</tag>
 </taglib>
