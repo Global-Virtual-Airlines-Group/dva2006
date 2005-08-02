@@ -115,6 +115,7 @@ public class TaskScheduler extends Thread {
 						ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 						try {
 							dt.setConnection(pool.getConnection());
+							dt.setRecycler(pool);
 							t.start();
 						} catch (ConnectionPoolException cpe) {
 							log.error("Error reserving connection - " + cpe.getMessage());
@@ -143,7 +144,7 @@ public class TaskScheduler extends Thread {
 	 */
 	public Collection getTaskInfo() {
 
-		Set results = new TreeSet();
+		List results = new ArrayList();
 		for (Iterator i = _tasks.values().iterator(); i.hasNext();) {
 			Task t = (Task) i.next();
 			results.add(new TaskInfo(t));
