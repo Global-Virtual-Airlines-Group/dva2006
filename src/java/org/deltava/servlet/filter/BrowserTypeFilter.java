@@ -73,6 +73,8 @@ public class BrowserTypeFilter implements Filter {
      * Helper method to search the ident strings and return the browser type.
      */
     private int getBrowserType(String userAgent) {
+       if (userAgent == null)
+          return UNKNOWN;
 
         // Check for Gecko/Firefox
         for (int x = 0; x < MOZILLA_IDENT.length; x++) {
