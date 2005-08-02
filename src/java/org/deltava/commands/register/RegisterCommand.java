@@ -156,6 +156,7 @@ public class RegisterCommand extends AbstractCommand {
 			ex.setPilotID(a.getID());
 			ex.setStage(1);
 			ex.setStatus(Test.NEW);
+			ctx.setAttribute("questionnaire", ex, REQUEST);
 			mctxt.addData("questionnaire", ex);
 
 			// Set the creation/expiration date/times
@@ -194,14 +195,13 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Send an e-mail notification to the user
-		EMailAddress srcEMail = SystemData.getBoolean("smtp.testMode") ? a : ctx.getUser();
+		EMailAddress srcEMail = SystemData.getBoolean("smtp.testMode") ? a : null;
 		Mailer mailer = new Mailer(srcEMail);
 		mailer.setContext(mctxt);
 		mailer.send(a);
 
-		// Forward to the examination
-		result.setType(CommandResult.REDIRECT);
-		result.setURL("questionnaire", null, ex.getID());
+		// Forward to the welcome page
+		result.setURL("/jsp/register/appWelcome.jsp");
 		result.setSuccess(true);
 	}
 }
