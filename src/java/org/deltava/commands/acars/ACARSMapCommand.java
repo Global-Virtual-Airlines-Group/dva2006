@@ -36,9 +36,8 @@ public class ACARSMapCommand extends AbstractCommand {
          gp = new GeoPosition(SystemData.getDouble("acars.map.lat"), SystemData.getDouble("acars.map.lng"));
       }
       
-      // Save the map center and refresh interval
+      // Save the map center
       ctx.setAttribute("mapCenter", gp, REQUEST);
-      ctx.setAttribute("refresh", new Integer(SystemData.getInt("acars.map.refresh")), REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
