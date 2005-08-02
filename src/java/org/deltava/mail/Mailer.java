@@ -33,7 +33,6 @@ public class Mailer extends Thread {
 	private class EMailSender implements EMailAddress {
 
 		private String _name;
-
 		private String _addr;
 
 		EMailSender(String addr, String name) {
@@ -116,15 +115,22 @@ public class Mailer extends Thread {
 			_msgTo.add(_msgFrom);
 		}
 
-		// Generate a session to the STMP server
-		Properties props = System.getProperties();
-		props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
-		Session s = Session.getInstance(props);
+		Session s = null;
+		try {
+			// Generate a session to the STMP server
+			Properties props = System.getProperties();
+			props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
+			s = Session.getInstance(props);
+		} catch (Exception e) {
+			log.error("Error connecting to STMP server " + e.getMessage(), e);
+			return;
+		}
 
 		// Loop through the recipients
 		for (Iterator i = _msgTo.iterator(); i.hasNext();) {
 			EMailAddress addr = (EMailAddress) i.next();
 
+			try {
 			// Log message
 			log.info("Sending message to " + addr.getName() + " <" + addr.getEmail() + ">");
 
@@ -136,7 +142,6 @@ public class Mailer extends Thread {
 			msg.format();
 
 			// Create the message
-			try {
 				MimeMessage imsg = new MimeMessage(s);
 				imsg.setFrom(new InternetAddress(_msgFrom.getEmail(), _msgFrom.getName()));
 				imsg.addHeader("Errors-to", SystemData.get("smtp.errors-to"));
