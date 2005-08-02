@@ -32,7 +32,8 @@ public class SetApplicant extends PilotWriteDAO {
    public void reject(Applicant a) throws DAOException {
       try {
          prepareStatement("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)");
-         _ps.setInt(1, a.getID());
+         _ps.setInt(1, Applicant.REJECTED);
+         _ps.setInt(2, a.getID());
          executeUpdate(1);
          
          // Update the cache
