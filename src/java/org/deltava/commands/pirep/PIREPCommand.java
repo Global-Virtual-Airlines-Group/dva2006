@@ -100,7 +100,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			boolean hasAccess = doCreate ? ac.getCanCreate() : ac.getCanEdit();
-			doSubmit &= ac.getCanSubmit(); // If we cannot submit just turn that off
+			doSubmit &= ac.getCanSubmitIfEdit(); // If we cannot submit just turn that off
 
 			// Validate our access
 			if (!hasAccess)
