@@ -50,9 +50,9 @@ public class SetRoute extends DAO {
 		try {
 			// Init the prepared statement
 			if (sd == null) {
-				prepareStatement("DELETE FROM OCEANIC");
+				prepareStatement("DELETE FROM common.OCEANIC");
 			} else {
-				prepareStatement("DELETE FROM OCEANIC WHERE (VAILID_DATE < ?)");
+				prepareStatement("DELETE FROM common.OCEANIC WHERE (VAILID_DATE < ?)");
 				_ps.setTimestamp(1, createTimestamp(sd));
 			}
 
@@ -72,7 +72,7 @@ public class SetRoute extends DAO {
 	 */
 	public void deleteOceanic(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM OCEANIC WHERE (ID=?)");
+			prepareStatement("DELETE FROM common.OCEANIC WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -105,11 +105,12 @@ public class SetRoute extends DAO {
 	 */
 	public void write(OceanicRoute or) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO common.OCEANIC (ROUTETYPE, VALID_DATE, SOURCE, ROUTE) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, or.getType());
 			_ps.setTimestamp(2, createTimestamp(or.getDate()));
 			_ps.setString(3, or.getSource());
 			_ps.setString(4, or.getRoute());
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
