@@ -31,10 +31,10 @@ This is the stack trace:<br />
 </pre>
 <br />
 </c:if>
-<c:if test="${!empty ex.rootCause}">
+<c:if test="${!empty ex.cause}">
 This is the root cause of the exception:<br />
 <pre>
-<fmt:stack exception="${ex.rootCause}" />
+<fmt:stack exception="${ex.cause}" />
 </pre>
 <br />
 </c:if>
