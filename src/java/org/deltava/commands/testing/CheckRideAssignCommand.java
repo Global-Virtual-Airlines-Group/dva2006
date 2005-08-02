@@ -76,6 +76,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			mctxt.setTemplate(mtdao.get("RIDEASSIGN"));
 			mctxt.addData("pilot", p);
 			mctxt.addData("eqType", eq);
+			mctxt.addData("checkRide", cr);
 			
 			// Use a SQL Transaction
 			ctx.startTX();
@@ -111,7 +112,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 		mailer.send(p);
 
 		// Update status for the JSP
-		ctx.setAttribute("isAssign", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("isAssign", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
