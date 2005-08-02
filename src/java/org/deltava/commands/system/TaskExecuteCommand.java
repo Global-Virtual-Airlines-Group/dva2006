@@ -47,6 +47,9 @@ public class TaskExecuteCommand extends AbstractCommand {
          ctx.release();
       }
       
+      // Save the task info in the request
+      ctx.setAttribute("task", new TaskInfo(t), REQUEST);
+      
       // Forward to the JSP
       CommandResult result = ctx.getResult();
       result.setType(CommandResult.REQREDIRECT);
