@@ -46,6 +46,7 @@ public abstract class DatabaseTask extends Task {
     */
    public void run() {
       super.run();
-      _recycler.release(_con);
+      if (_recycler != null)
+    	  _recycler.release(_con);
    }
 }
