@@ -162,7 +162,7 @@
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
-			debuglevel="source" optimize="on">
+			debuglevel="source" optimize="on" target="1.4">
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
