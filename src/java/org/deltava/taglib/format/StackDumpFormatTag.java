@@ -33,10 +33,8 @@ public class StackDumpFormatTag extends TagSupport {
 		JspWriter out = pageContext.getOut();
 		try {
 			StackTraceElement[] traces = _ex.getStackTrace();
-			for (int x = 0; x < traces.length; x++) {
-				out.print(traces[x]);
-				out.println("<br />");
-			}
+			for (int x = 0; x < traces.length; x++)
+				out.println(traces[x]);
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
