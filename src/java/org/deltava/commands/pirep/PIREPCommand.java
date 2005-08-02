@@ -353,7 +353,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				// See if we have a checkride for this aircraft's primary type
 				for (Iterator i = rides.iterator(); i.hasNext(); ) {
 					CheckRide cr = (CheckRide) i.next();
-					if (cr.getFlightID() == flightID) {
+					if ((flightID != 0) && (cr.getFlightID() == flightID)) {
 					   ctx.setAttribute("checkRide", cr, REQUEST);
 					} else if (cr.getStatus() == Test.SUBMITTED) {
 					   for (Iterator i2 = fr.getCaptEQType().iterator(); i2.hasNext(); ) {
