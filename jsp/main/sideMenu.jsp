@@ -52,11 +52,11 @@
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>OUR PEOPLE</td></tr>
-<content:filter roles="Anonymous">
+<c:if test="${empty pageContext.request.userPrincipal}">
 <tr class="MenuItem">
  <td><el:cmd url="register">JOIN US</el:cmd></td>
 </tr>
-</content:filter>
+</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="roster">PILOT ROSTER</el:cmd></td>
 </tr>
