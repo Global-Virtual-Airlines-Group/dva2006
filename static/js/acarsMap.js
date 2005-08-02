@@ -21,10 +21,25 @@ xmlreq.onreadystatechange = function() {
 	addMarkers(map, points);
 
 	// Enable the buttons
+	enableButton('ToggleButton');
 	enableButton('RefreshButton');
 	enableButton('SettingsButton');
 	return true;
 } // function
 
 return xmlreq;
+}
+
+function toggleReload()
+{
+var btn = getElement('ToggleButton');
+if (document.doRefresh) {
+	document.doRefresh = false;
+	btn.value = 'START AUTOMATIC REFRESH';
+} else {
+	document.doRefresh = true;
+	btn.value = 'STOP AUTOMATIC REFRESH';
+}
+
+return true;
 }
