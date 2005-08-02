@@ -84,7 +84,7 @@ return true;
  <td class="sec bld"><fmt:int value="${entry.ID}" /></td>
  <td><fmt:date fmt="dt" date="${entry.date}" /></td>
  <td>${entry.name}</td>
- <td class="left">${entry.message}</td>
+ <td class="left"><fmt:text value="${entry.message}" /></td>
 </view:row>
 <c:if test="${!empty entry.error}">
 <view:row entry="${entry}">
