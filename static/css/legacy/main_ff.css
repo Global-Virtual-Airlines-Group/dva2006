@@ -86,7 +86,7 @@ TR.MenuItem {
 /* Controls the sizing and formatting of the main display section     */
 div#main {
 	position: absolute;
-	top: 88px;
+	top: 96px;
 	bottom: 1px;
 	left: 160px;
 	margin-left: 1px;
