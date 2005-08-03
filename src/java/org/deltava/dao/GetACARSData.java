@@ -149,6 +149,27 @@ public class GetACARSData extends DAO {
 	}
 	
 	/**
+	 * Returns information about a particular ACARS connection.
+	 * @param conID the ACARS connection ID
+	 * @return the last FlightInfo bean associated with a particular connection, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FlightInfo getInfo(long conID) throws DAOException {
+	   try {
+	      prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
+	            + "AND (C.ID=?) ORDER BY F.CREATED DESC");
+	      _ps.setLong(1, conID);
+	      setQueryMax(1);
+	      
+	      // Get the first entry, or null
+	      List results = executeFlightInfo();
+	      return results.isEmpty() ? null : (FlightInfo) results.get(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
 	 * Returns information about a particular ACARS connection. 
 	 * @param conID the ACARS connection ID
 	 * @return the Connection information, or null if not found
@@ -156,8 +177,10 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 	   try {
-	      prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
-	      		+ "acars.CONS WHERE (ID=?)");
+	      prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
+               + "COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C LEFT JOIN "
+         		+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) LEFT JOIN "
+         		+ "acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
 	      _ps.setLong(1, conID);
 	      setQueryMax(1);
 	      
@@ -210,6 +233,8 @@ public class GetACARSData extends DAO {
 
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
+	   ResultSetMetaData md = rs.getMetaData();
+	   boolean hasMessageCounts = (md.getColumnCount() > 5);
 	   
 	   // Iterate through the results
 	   List results = new ArrayList();
@@ -219,6 +244,11 @@ public class GetACARSData extends DAO {
 	      entry.setStartTime(rs.getTimestamp(3));
 	      entry.setRemoteAddr(rs.getString(4));
 	      entry.setRemoteHost(rs.getString(5));
+	      if (hasMessageCounts) {
+	         entry.setFlightInfoCount(rs.getInt(6));
+	         entry.setMessageCount(rs.getInt(7));
+	         entry.setPositionCount(rs.getInt(8));
+	      }
 	      
 	      // Add to results
 	      results.add(entry);
