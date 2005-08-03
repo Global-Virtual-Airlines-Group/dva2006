@@ -1,5 +1,7 @@
 package org.deltava.util;
 
+import org.apache.log4j.Logger;
+
 /**
  * A unique ID generator for messaging purposes.
  * @author Luke
@@ -8,7 +10,8 @@ package org.deltava.util;
  */
 
 public class IDGenerator {
-
+   
+   private static final Logger log = Logger.getLogger(IDGenerator.class);
 	private static long _lastID;
 
 	/**
@@ -23,6 +26,9 @@ public class IDGenerator {
 		long id = System.currentTimeMillis();
 		if (id <= _lastID)
 			id = ++_lastID;
+		
+		// Log the generated ID
+		log.debug("Generated " + Long.toHexString(id));
 
 		// Return the id
 		return id;
