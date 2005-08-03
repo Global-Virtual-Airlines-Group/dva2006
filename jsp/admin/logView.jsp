@@ -88,7 +88,7 @@ return true;
 </view:row>
 <c:if test="${!empty entry.error}">
 <view:row entry="${entry}">
- <td colspan="4"><fmt:text value="${entry.error}" /></td>
+ <td class="left" colspan="4"><fmt:text value="${entry.error}" /></td>
 </view:row>
 </c:if>
 </c:forEach>

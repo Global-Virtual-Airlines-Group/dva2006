@@ -84,7 +84,7 @@ return true;
  <td class="data"><el:combo name="version" size="1" idx="6" options="${versions}" value="${issue.majorVersion}.${issue.minorVersion}" /></td>
 </tr>
 <tr>
- <td class="label">Issue Description</td>
+ <td class="label" valign="top">Issue Description</td>
  <td class="data"><el:textbox name="desc" width="120" height="5" idx="7">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
