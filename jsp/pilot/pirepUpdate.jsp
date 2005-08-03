@@ -73,6 +73,10 @@ This Flight Report has been approved, and an e-mail message has been sent to ${p
 <br />
 With the approval of this Flight Report, ${pilot.name} has joined the &quot;${centuryClub}&quot;.<br />
 </c:if>
+<c:if test="${!empty assignComplete}">
+With the approval of this Flight Report, a Flight Assignment has been successfully completed.<br />
+<br />
+</c:if>
 <c:if test="${!empty checkRide}">
 <br />
 This Flight Report is for a <b>${checkRide.name}</b>, and this Check Ride has been graded as part
