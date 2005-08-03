@@ -252,8 +252,8 @@ abstract class PilotReadDAO extends DAO {
 			p.setAirportCodeType(rs.getInt(32));
 			p.setMapType(rs.getInt(33));
 
-			// Check if this result set has a column 34, which is the PIREP totals
-			if (columnCount > 33) {
+			// Check if this result set has a column 34-37, which is the PIREP totals
+			if (columnCount > 36) {
 				p.setLegs(rs.getInt(34));
 				p.setMiles(rs.getLong(35));
 				p.setHours(rs.getDouble(36));
@@ -265,7 +265,7 @@ abstract class PilotReadDAO extends DAO {
 				p.setHasSignature((rs.getInt(38) != 0));
 
 			// CHeck if this result set has a column 39/40, which are online legs/hours
-			if (columnCount > 38) {
+			if (columnCount > 39) {
 				p.setOnlineLegs(rs.getInt(39));
 				p.setOnlineHours(rs.getDouble(40));
 			}
