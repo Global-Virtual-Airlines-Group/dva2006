@@ -24,7 +24,7 @@
 </tr>
 <tr>
  <td class="label">Entry Title</td>
- <td class="data pri bld">${entry.subject}</td>
+ <td class="data pri bld"><fmt:text value="${entry.subject}" /></td>
 </tr>
 <tr>
  <td class="label">Entry Date</td>
