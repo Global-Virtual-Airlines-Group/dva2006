@@ -34,6 +34,13 @@
  <td class="caps"><el:cmd url="event" linkID="0x${nextEvent.ID}">${nextEvent.name}</el:cmd></td>
 </tr>
 </c:forEach>
+<tr class="MenuHeader"><td>ONLINE PILOTS</td></tr>
+<tr class="MenuItem">
+ <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
+</tr>
+<tr class="MenuItem">
+ <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
+</tr>
 <tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
 <tr class="MenuItem">
  <td><el:link url="/">HOME</el:link></td>
