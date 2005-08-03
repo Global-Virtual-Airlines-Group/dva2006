@@ -75,10 +75,16 @@ public class FlightInfoCommand extends AbstractCommand {
 			List positions = dao.getRouteEntries(info.getID(), false);
 
 			// Calculate and save the map center for the Google Map
-			GeoPosition start = new GeoPosition((GeoLocation) positions.get(0));
-			GeoLocation end = (GeoLocation) positions.get(positions.size() - 1);
-			ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
-			ctx.setAttribute("routeLength", new Integer(start.distanceTo(end)), REQUEST);
+			if (!positions.isEmpty()) {
+			   GeoPosition start = new GeoPosition((GeoLocation) positions.get(0));
+			   GeoLocation end = (GeoLocation) positions.get(positions.size() - 1);
+			   ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
+			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(end)), REQUEST);
+			} else {
+			   GeoPosition start = info.getAirportD().getPosition();
+			   ctx.setAttribute("mapCenter", start.midPoint(info.getAirportA()), REQUEST);
+			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(info.getAirportA())), REQUEST);
+			}
 
 			// Save the filed/actual routes
 			ctx.setAttribute("filedRoute", routeInfo, REQUEST);
