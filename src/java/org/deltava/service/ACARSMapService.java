@@ -47,7 +47,7 @@ public class ACARSMapService extends WebService {
 		   e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 		   e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 		   e.setAttribute("color", entry.getIconColor());
-		   e.addContent(new CDATA(StringUtils.escapeSlashes(entry.getInfoBox())));
+		   e.addContent(new CDATA(entry.getInfoBox()));
 		   re.addContent(e);
 		}
 		
@@ -63,5 +63,13 @@ public class ACARSMapService extends WebService {
 
 		// Return success code
 		return HttpServletResponse.SC_OK;
+   }
+   
+   /**
+    * Tells the Web Service Servlet not to log invocations of this service.
+    * @return FALSE
+    */
+   public final boolean isLogged() {
+	   return false;
    }
 }

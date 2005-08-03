@@ -179,7 +179,9 @@ public class WebServiceServlet extends GenericServlet {
 			ctx.setUser(usr);
 			
 			// Execute the Web Service
-			log.info("Executing Web Service " + svc.getClass().getName());
+			if (svc.isLogged())
+				log.info("Executing Web Service " + svc.getClass().getName());
+			
 			rsp.setStatus(svc.execute(ctx));
 		} catch (DAOException de) {
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
