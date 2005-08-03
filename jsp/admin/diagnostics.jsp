@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
+</head>
 <content:copyright visible="false" />
 <body>
 <%@include file="/jsp/main/header.jsp" %> 

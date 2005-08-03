@@ -32,10 +32,10 @@
 <view:row entry="${notam}">
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
- <td><el:cmd url="notamedit" linkID="0x${notam.ID}">${notam.subject}</el:cmd></td>
+ <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </view:row>
 <view:row entry="${notam}">
- <td colspan="3" class="left">${notam.body}</td>
+ <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
 </view:row>
 </c:forEach>
 
