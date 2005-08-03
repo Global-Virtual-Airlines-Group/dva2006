@@ -23,7 +23,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
    /**
     * Executes the command.
     * @param ctx the Command context
-    * @throws CommandException if an error (typically database) occurs
+    * @throws CommandException if an error occurs
     */
    public void execute(CommandContext ctx) throws CommandException {
 
@@ -53,7 +53,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
             Pilot usr = pdao.getPilotByCode(id.getUserID(), id.getAirlineCode());
             pilotID = (usr == null) ? 0 : usr.getID();
          } else if (searchType == SEARCH_ID) {
-            pilotID = ctx.getID();
+            pilotID = Integer.parseInt(ctx.getParameter("pilotCode"));
          }
 
          // Get the DAO and set start/count parameters

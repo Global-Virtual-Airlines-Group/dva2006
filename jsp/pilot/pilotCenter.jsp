@@ -345,6 +345,11 @@ database.</td>
  <td class="data">You can view and search for entries in the Application, Scheduled Task and ACARS Log 
 databases.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarsempty">Empty ACARS Log Entries</el:cmd></td>
+ <td class="data">You can view empty ACARS Connection Log and Flight Information Log entries here, as
+well as pruning empty entries from the logs.</td>
+</tr>
 </content:filter>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>

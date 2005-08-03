@@ -919,11 +919,23 @@
 		<class>org.deltava.commands.acars.ConnectionLogCommand</class>
 		<roles>HR</roles>
 	</command>
+	
+	<command id="acarsdelc">
+		<name>Delete ACARS Connection Log</name>
+		<class>org.deltava.commands.acars.ConnectionInfoDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
 
 	<command id="acarslogf">
 		<name>ACARS Flight Log</name>
 		<class>org.deltava.commands.acars.FlightLogCommand</class>
 		<roles>HR</roles>
+	</command>
+	
+	<command id="acarsdelf">
+		<name>Delete ACARS Flight Log</name>
+		<class>org.deltava.commands.acars.FlightInfoDeleteCommand</class>
+		<roles>Admin</roles>
 	</command>
 
 	<command id="acarslogm">
@@ -936,5 +948,11 @@
 		<name>ACARS Live Map</name>
 		<class>org.deltava.commands.acars.ACARSMapCommand</class>
 		<roles>*</roles>
+	</command>
+	
+	<command id="acarsempty">
+		<name>ACARS Empty Log Entries</name>
+		<class>org.deltava.commands.acars.EmptyLogEntriesCommand</class>
+		<roles>Admin</roles>
 	</command>
 </commands>
