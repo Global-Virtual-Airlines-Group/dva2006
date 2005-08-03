@@ -23,6 +23,10 @@ public class ConnectionEntry implements ACARSLogEntry {
    private String _remoteHost;
    private String _remoteAddr;
    
+   private int _msgCount;
+   private int _infoCount;
+   private int _posCount;
+   
    /**
     * Creates a new ACARS Connection entry.
     * @param id the connection id
@@ -94,6 +98,39 @@ public class ConnectionEntry implements ACARSLogEntry {
    }
    
    /**
+    * Returns the number of text messages sent by this connection. 
+    * @return the number of messages
+    * @see ConnectionEntry#setMessageCount(int)
+    * @see ConnectionEntry#getFlightInfoCount()
+    * @see ConnectionEntry#getPositionCount()
+    */
+   public int getMessageCount() {
+      return _msgCount;
+   }
+   
+   /**
+    * Returns the number of flight information messages sent by this connection.
+    * @return the number of messages
+    * @see ConnectionEntry#setFlightInfoCount(int)
+    * @see ConnectionEntry#getMessageCount()
+    * @see ConnectionEntry#getPositionCount()
+    */
+   public int getFlightInfoCount() {
+      return _infoCount;
+   }
+   
+   /**
+    * Returns the number of aircraft position messages sent by this connection.
+    * @return the number of messages
+    * @see ConnectionEntry#setPositionCount(int)
+    * @see ConnectionEntry#getMessageCount()
+    * @see ConnectionEntry#getFlightInfoCount()
+    */
+   public int getPositionCount() {
+      return _posCount;
+   }
+   
+   /**
     * Updates the ACARS connection ID.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is negative
@@ -143,6 +180,51 @@ public class ConnectionEntry implements ACARSLogEntry {
     */
    public void setUser(Pilot usr) {
       _usr = usr;
+   }
+   
+   /**
+    * Updates the number of text messages sent by this connection.
+    * @param msgs the number of messages
+    * @throws IllegalArgumentException if msgs is negative
+    * @see ConnectionEntry#getMessageCount()
+    * @see ConnectionEntry#setFlightInfoCount(int)
+    * @see ConnectionEntry#setPositionCount(int)
+    */
+   public void setMessageCount(int msgs) {
+      if (msgs < 0)
+         throw new IllegalArgumentException("Invalid message count - " + msgs);
+      
+      _msgCount = msgs;
+   }
+   
+   /**
+    * Updates the number of flight information messages sent by this connection.
+    * @param msgs the number of messages
+    * @throws IllegalArgumentException if msgs is negative
+    * @see ConnectionEntry#getFlightInfoCount()
+    * @see ConnectionEntry#setMessageCount(int)
+    * @see ConnectionEntry#setPositionCount(int)
+    */
+   public void setFlightInfoCount(int msgs) {
+      if (msgs < 0)
+         throw new IllegalArgumentException("Invalid information count - " + msgs);
+      
+      _infoCount = msgs;
+   }
+   
+   /**
+    * Updates the number of aircraft position messages sent by this connection.
+    * @param msgs the number of messages
+    * @throws IllegalArgumentException if msgs is negative
+    * @see ConnectionEntry#getPositionCount()
+    * @see ConnectionEntry#setFlightInfoCount(int)
+    * @see ConnectionEntry#setMessageCount(int)
+    */
+   public void setPositionCount(int msgs) {
+      if (msgs < 0)
+         throw new IllegalArgumentException("Invalid position count - " + msgs);
+      
+      _posCount = msgs;
    }
    
    /**

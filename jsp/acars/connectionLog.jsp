@@ -74,7 +74,9 @@ return true;
  <td width="15%">DATE/TIME</td>
  <td width="10%">PILOT CODE</td>
  <td width="20%">PILOT NAME</td>
- <td width="10%">IP ADDRESS</td>
+ <td width="6%">TEXT</td>
+ <td width="6%">INFO</td>
+ <td width="8%">POS</td>
  <td>HOST NAME</td>
 </tr>
 
@@ -87,14 +89,16 @@ return true;
  <td><fmt:date date="${entry.startTime}" /></td>
  <td class="sec bld">${pilot.pilotCode}</td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
- <td>${entry.remoteAddr}</td>
- <td>${entry.remoteHost}</td>
+ <td><fmt:int value="${entry.messageCount}" /></td>
+ <td><fmt:int value="${entry.flightInfoCount}" /></td>
+ <td><fmt:int value="${entry.positionCount}" /></td>
+ <td class="small">${entry.remoteHost} (${entry.remoteAddr})</td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="8"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </c:if>

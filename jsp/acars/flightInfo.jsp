@@ -4,8 +4,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
 <head>
@@ -91,6 +91,7 @@
 </el:table>
 </c:if>
 
+<c:if test="${fn:sizeof(mapRoute) > 0}">
 <!-- Flight Map -->
 <el:form action="acarsinfo.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
@@ -107,9 +108,20 @@
 </tr>
 </el:table>
 </el:form>
+</c:if>
+
+<!-- Button Bar -->
+<content:filter roles="Admin"><c:if test="${empty pirep}">
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:cmdbutton url="acarsdelf" linkID="0x${info.ID}" label="DELETE FLIGHT INFORMATION ENTRY" /></td>
+</tr>
+</el:table>
+</c:if></content:filter>
 <br />
 <content:copyright />
 </div>
+<c:if test="${fn:sizeof(mapRoute) > 0}">
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
@@ -132,5 +144,6 @@ addMarkers(map, 'gfRoute');
 addMarkers(map, 'routeMarkers');
 addMarkers(map, 'filedMarkers');
 </script>
+</c:if>
 </body>
 </html>
