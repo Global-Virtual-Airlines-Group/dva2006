@@ -14,23 +14,23 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
-<content:sysdata var="refreshInterval" name="acars.map.refresh" />
+<content:sysdata var="imgPath" name="path.img" />
+<content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <map:api version="1" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function reloadData()
 {
-var xmlreq = generateXMLRequest();
+var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 
 // Disable the buttons
-disableButton('ToggleButton');
 disableButton('RefreshButton');
 disableButton('SettingsButton');
 
 // Set timer to reload the data
 if (document.doRefresh)
-	window.setTimeout('void reloadData()', ${(refreshInterval * 1000) + 2500});
+	window.setTimeout('void reloadData()', ${refreshInterval + 2500});
 	
 return true;
 }
@@ -58,7 +58,6 @@ return true;
 <body>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 
 <!-- Main Body Frame -->
