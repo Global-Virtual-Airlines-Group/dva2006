@@ -391,7 +391,7 @@ public class GetFlightReports extends DAO {
 			p.setDatabaseID(FlightReport.DBID_PILOT, rs.getInt(4));
 			p.setRank(rs.getString(5));
 			p.setStatus(rs.getInt(6));
-			p.setDate(rs.getDate(7));
+			p.setDate(expandDate(rs.getDate(7)));
 			p.setAirportD(SystemData.getAirport(rs.getString(11)));
 			p.setAirportA(SystemData.getAirport(rs.getString(12)));
 			p.setEquipmentType(rs.getString(13));

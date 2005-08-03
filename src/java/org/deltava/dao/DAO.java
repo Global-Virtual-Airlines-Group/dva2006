@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Calendar;
 
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
@@ -45,13 +46,35 @@ public abstract class DAO implements java.io.Serializable {
    }
    
    /**
-    * Converts a null date/time into a default value
+    * Converts a null date/time into a default value.
     * @param dt the date/time
     * @param defaultValue the 32-bit timestamp to use if dt is null
     */
    protected void convertDate(java.util.Date dt, long defaultValue) {
       if (dt == null)
          dt = new Date(defaultValue);
+   }
+   
+   /**
+    * Converts a date-only JDBC value into a full timestamp. Since the server may be several hours ahead or
+    * behind most web users, a default time of 12 noon is applied (instead of the default midnight value) to
+    * prevent spurious date adjustments.
+    * @param dt a JDBC Date
+    * @return a Java date/time
+    */
+   protected java.util.Date expandDate(Date dt) {
+      if (dt == null)
+         return null;
+      
+      // Convert to a calendar
+      Calendar cld = Calendar.getInstance();
+      cld.setTime(dt);
+      
+      // If the hour value is zero, adjust forward by 12 hours
+      if (cld.get(Calendar.HOUR_OF_DAY) == 0)
+         cld.add(Calendar.HOUR, 12);
+      
+      return cld.getTime();
    }
 
    /**
