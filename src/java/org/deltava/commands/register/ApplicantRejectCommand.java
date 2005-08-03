@@ -4,6 +4,7 @@ package org.deltava.commands.register;
 import java.sql.Connection;
 
 import org.deltava.beans.Applicant;
+import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -51,14 +52,29 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("APPREJECT"));
 			mctxt.addData("applicant", a);
+			
+			// Start the transaction
+			ctx.startTX();
+			
+			// Remove the e-mail validation record
+			GetAddressValidation avdao = new GetAddressValidation(con);
+			AddressValidation addrValid = avdao.get(a.getID());
+			if (addrValid != null) {
+			   SetAddressValidation wavdao = new SetAddressValidation(con);
+			   wavdao.delete(addrValid.getID());
+			}
 
 			// Get the write DAO and reject the applicant
 			SetApplicant wdao = new SetApplicant(con);
 			wdao.reject(a);
+			
+			// Commit the transaction
+			ctx.startTX();
 
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
 		} catch (DAOException de) {
+		   ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
