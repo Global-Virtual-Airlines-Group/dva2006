@@ -377,20 +377,20 @@
 		<enabled type="Boolean">true</enabled>
 		<daemon>org.deltava.acars.TomcatDaemon</daemon>
 		
-		<map>
+		<livemap>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
-			<refresh type="Integer">15000</refresh>
-		</map>
+			<reload type="Integer">15000</reload>
+		</livemap>
 		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
-		<position_interval type="Integer">2750</position_interval>
+		<position_interval type="Integer">2500</position_interval>
 		
 		<pool>
 			<size type="Integer">100</size>
-			<multiple type="Boolean">true</multiple>
+			<multiple type="Boolean">false</multiple>
 		</pool>
 		
 		<buffer>
