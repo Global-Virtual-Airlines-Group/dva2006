@@ -77,14 +77,14 @@ public class ServInfoRouteService extends WebService {
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getRequest().getParameter("id"));
-		
+
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
 
 		// Generate the great circle route
-		for (Iterator i = p.getRoute().iterator(); i.hasNext(); ) {
+		for (Iterator i = p.getRoute().iterator(); i.hasNext();) {
 			GeoLocation loc = (GeoLocation) i.next();
 			Element e = new Element("navaid");
 			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
@@ -104,5 +104,13 @@ public class ServInfoRouteService extends WebService {
 
 		// Return success code
 		return HttpServletResponse.SC_OK;
+	}
+
+	/**
+	 * Tells the Web Service Servlet not to log invocations of this service.
+	 * @return FALSE
+	 */
+	public final boolean isLogged() {
+		return false;
 	}
 }

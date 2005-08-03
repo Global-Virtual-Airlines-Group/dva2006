@@ -28,6 +28,15 @@ public abstract class WebService {
    }
    
    /**
+    * Returns wether this web service calls are logged. High volume services like the Map/ServInfo route services
+    * will not be logged.
+    * @return TRUE if invocation logging should be performed by the servlet, otherwise FALSE  
+    */
+   public boolean isLogged() {
+	   return true;
+   }
+   
+   /**
     * Releases any state variables or resources used by the web service.
     */
    public void release() {
