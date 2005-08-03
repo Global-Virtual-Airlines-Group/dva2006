@@ -31,8 +31,10 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getConnections(int userID) throws DAOException {
       try {
-         prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
-         		+ "acars.CONS WHERE (PILOT_ID=?) ORDER BY DATE DESC");
+         prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
+         		+ "COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C LEFT JOIN "
+         		+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) LEFT JOIN "
+         		+ "acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.PILOT_ID=?) GROUP BY C.ID ORDER BY C.DATE DESC");
          _ps.setInt(1, userID);
          return executeConnectionInfo();
       } catch (SQLException se) {
@@ -54,10 +56,29 @@ public class GetACARSLog extends GetACARSData {
       convertDate(ed, System.currentTimeMillis());
       
       try {
-         prepareStatement("SELECT ID, PILOT_ID, DATE, INET_NTOA(REMOTE_ADDR), REMOTE_HOST FROM "
-         		+ "acars.CONS WHERE (DATE >= ?) AND (DATE <= ?) ORDER BY DATE DESC");
+         prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
+               + "COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C LEFT JOIN "
+         		+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) LEFT JOIN "
+         		+ "acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.DATE >= ?) AND (C.DATE <= ?) GROUP BY C.ID "
+         		+ "ORDER BY C.DATE DESC");
          _ps.setTimestamp(1, createTimestamp(sd));
          _ps.setTimestamp(2, createTimestamp(ed));
+         return executeConnectionInfo();
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Returns all ACARS connection log entries with no associated Flight Info logs or text messages.
+    * @return a List of ConnectionEntry beans sorted by date
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getUnusedConnections() throws DAOException {
+      try {
+         prepareStatement("SELECT C.*, COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC FROM "
+               + "acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M "
+               + "ON (C.ID=M.CON_ID) GROUP BY C.ID HAVING (MC=0) AND (FC=0) ORDER BY C.DATE");
          return executeConnectionInfo();
       } catch (SQLException se) {
          throw new DAOException(se);
@@ -143,6 +164,22 @@ public class GetACARSLog extends GetACARSData {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+   }
+   
+   /**
+    * Returns all Flight Information entries without an associated Flight Report.
+    * @return a List of InfoEntry beans sorted by date
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getUnreportedFlights() throws DAOException {
+     try {
+        prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN ACARS_PIREPS APR ON "
+              + "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (APR.ACARS_ID IS NULL) "
+              + "ORDER BY F.CREATED");
+        return executeFlightInfo();
+     } catch (SQLException se) {
+        throw new DAOException(se);
+     }
    }
    
    /**
