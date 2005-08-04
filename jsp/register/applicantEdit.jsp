@@ -149,7 +149,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="legacyOK" idx="*" value="1" label="Legacy Hours Verified" checked="${applicant.legacyOK}" /></td>
+ <td class="data"><el:box name="legacyOK" idx="*" value="1" label="Legacy Hours Verified" checked="${applicant.legacyVerified}" /></td>
 </tr>
 
 <c:if test="${access.canApprove}">
@@ -159,10 +159,10 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot Questionnaire</td>
-<c:if test="${!empty questionnaire}">
+<c:if test="${empty questionnaire}">
  <td class="data warn bld caps">Pilot Questionnaire Not Found</td>
 </c:if>
-<c:if test="${empty questionnaire}">
+<c:if test="${!empty questionnaire}">
 <c:if test="${!fn:pending(questionnaire)}">
  <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
 correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
@@ -175,7 +175,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${applicant.eqType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${applicant.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
@@ -194,6 +194,9 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE APPLICANT" />
 <c:if test="${access.canReject}">
 <el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT APPLICANT" />
+</c:if>
+<c:if test="${!empty questionnaire}">
+<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
 </c:if>
  </td>
 </tr>
