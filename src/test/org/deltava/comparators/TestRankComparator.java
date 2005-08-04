@@ -28,6 +28,12 @@ public class TestRankComparator extends TestCase {
       _rc = null;
       super.tearDown();
    }
+   
+   public void testIntPromotion() {
+      _rc.setRank1("Captain", 3);
+      _rc.setRank2("First Officer", 3);
+      assertTrue(_rc.compare() > 0);
+   }
 
    public void testSameStage() {
       _rc.setRank1("First Officer", 1);
