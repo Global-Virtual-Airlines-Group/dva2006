@@ -11,10 +11,8 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.jdbc.*;
-import org.deltava.security.*;
 import org.deltava.service.*;
 
-import org.deltava.dao.GetPilotDirectory;
 import org.deltava.dao.DAOException;
 
 import org.deltava.beans.Pilot;
@@ -30,13 +28,12 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class WebServiceServlet extends GenericServlet {
+public class WebServiceServlet extends BasicAuthServlet {
 
 	// Web services realm
 	private static final String WS_REALM = "\"DVA Web Services\"";
 
 	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
-
 	private Map _svcs;
 
 	/**
@@ -68,55 +65,6 @@ public class WebServiceServlet extends GenericServlet {
 	 */
 	public void destroy() {
 		log.info("Shutting Down");
-	}
-
-	/**
-	 * A private helper method to determine if we are authenticated.
-	 */
-	private Pilot authenticate(HttpServletRequest req) {
-
-		// Check for Authentication header
-		String authHdr = req.getHeader("Authorization");
-		if ((authHdr == null) || (!authHdr.toUpperCase().startsWith("BASIC ")))
-			return null;
-
-		// Get encoded username/password, and decode them
-		String userPwd = Base64.decodeString(authHdr.substring(6));
-		StringTokenizer tkns = new StringTokenizer(userPwd, ":");
-		if (tkns.countTokens() != 2)
-			return null;
-		
-		// Get the JDBC Connection Pool
-		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-		
-		Connection con = null;
-		Pilot p = null;
-		try {
-			con = pool.getSystemConnection();
-			
-			// Get the DAO and the directory name for this user
-			GetPilotDirectory dao = new GetPilotDirectory(con);
-			String userID = tkns.nextToken();
-			String dN = dao.getDirectoryName(userID);
-			if (dN == null)
-				throw new SecurityException("Unknown User ID - " + userID);
-			
-			// Authenticate the user
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.authenticate(dN, tkns.nextToken());
-			
-			// If we got this far, load the user data
-			p = dao.getFromDirectory(dN);
-		} catch (SecurityException se) {
-			log.warn("Authentication failure - " + se.getMessage());
-		} catch (DAOException de) {
-			log.warn("Data load failure - " + de.getMessage());
-		} finally {
-			pool.release(con);
-		}
-
-		// Return the Pilot data
-		return p;
 	}
 
 	/**
@@ -158,8 +106,7 @@ public class WebServiceServlet extends GenericServlet {
 		
 		//	Check if we need to be authenticated
 		if (svc.isSecure() && (usr == null)) {
-			rsp.setHeader("WWW-Authenticate", "Basic realm=" + WS_REALM);
-			rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, "");
+			challenge(rsp, WS_REALM);
 			return;
 		}
 		
