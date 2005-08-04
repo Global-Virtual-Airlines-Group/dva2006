@@ -27,8 +27,9 @@ virtual airlines on the Internet.<br />
 Unlike most virtual airlines that track seniority simply by hours flown or transferred from other
 virtual airlines, <content:airline /> grants promotions and type ratings based on pilot knowledge 
 and skill handling his or her aircraft. Because of our philosophy, <span class="bld">you will be
-placed in the aircraft stage on program that best matches your skills</span>. To help us determine 
-this, you'll be asked to take a short <fmt:int value="${questionnaire.size}" />-question 
+placed in the aircraft stage on program that best matches your skills</span>.<br />
+<br />
+To help us determine this, you'll be asked to take a short <fmt:int value="${qSize}" />-question 
 questionnaire. It should take just a few minutes to complete, and based upon the results we will 
 be able to place you in the right program for you.<br />
 <br />
@@ -42,4 +43,3 @@ be able to place you in the right program for you.<br />
 </div>
 </body>
 </html>
-

@@ -39,6 +39,17 @@
 (<fmt:dec fmt="##0.0" value="${questionnaire.score * 100 / questionnaire.size}" />%)</td>
 </tr>
 </c:if>
+<c:if test="${fn:pending(questionnaire)}">
+<tr>
+ <td class="label">Questionnaire Status</td>
+<c:if test="${fn:submitted(questionnaire)}">
+ <td class="data pri bld">APPLICATION QUESTIONNAIRE SUBMITTED</td>
+</c:if>
+<c:if test="${!fn:submitted(questionnaire)}">
+ <td class="data warn bld">APPLICATION QUESTIONNAIRE PENDING</td>
+</c:if>
+</tr>
+</c:if>
 <c:if test="${applicant.pilotID > 0}">
 <tr>
  <td class="label">Hired as</td>
@@ -155,7 +166,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
-<el:cmdbutton url="appedit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
+<el:cmdbutton url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
 </c:if>
 <c:if test="${access.canApprove}">
 <el:cmdbutton url="apphire" linkID="0x${applicant.ID}" label="HIRE" />
