@@ -41,6 +41,8 @@ The Issue will automatically be displayed within 3 seconds. If your browser does
 or you are impatient, you can <el:cmd className="sec bld" url="issue" linkID="0x${issue.ID}" op="read">click here</el:cmd>
 to display the Issue.<br />
 <br />
+To view all open Issues, <a class="sec bld" href="issues.do?status=Open">Click here</a>.<br />
+<br />
 <content:copyright />
 </div>
 </body>
