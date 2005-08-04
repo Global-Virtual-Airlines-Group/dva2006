@@ -53,7 +53,7 @@ public class MessageLogCommand extends ACARSLogViewCommand {
             Pilot usr = pdao.getPilotByCode(id.getUserID(), id.getAirlineCode());
             pilotID = (usr == null) ? 0 : usr.getID();
          } else if (searchType == SEARCH_ID) {
-            pilotID = ctx.getID();
+        	 pilotID = Integer.parseInt(ctx.getParameter("pilotCode"));
          }
 
          // Get the DAO and set start/count parameters

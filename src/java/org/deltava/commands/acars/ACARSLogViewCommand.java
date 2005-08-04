@@ -33,7 +33,7 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
    protected int getSearchType(CommandContext ctx) {
       int searchType = StringUtils.arrayIndexOf(SEARCH_TYPES, ctx.getParameter("searchType"));
       if (searchType == -1)
-      	searchType = SEARCH_ID;
+      	searchType = SEARCH_USR;
       
       ctx.setAttribute("searchType", SEARCH_TYPES[searchType], REQUEST);
       ctx.setAttribute("searchTypes", _searchTypes, REQUEST);
