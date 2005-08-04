@@ -156,7 +156,6 @@ public class RegisterCommand extends AbstractCommand {
 			ex.setPilotID(a.getID());
 			ex.setStage(1);
 			ex.setStatus(Test.NEW);
-			ctx.setAttribute("questionnaire", ex, REQUEST);
 			mctxt.addData("questionnaire", ex);
 
 			// Set the creation/expiration date/times
@@ -176,6 +175,9 @@ public class RegisterCommand extends AbstractCommand {
 				q.setNumber(x);
 				ex.addQuestion(q);
 			}
+			
+			// Save the examination size
+			ctx.setAttribute("qSize", new Integer(poolSize), REQUEST);
 
 			// Get the DAO and write the questionnaire to the database
 			SetQuestionnaire qwdao = new SetQuestionnaire(con);
@@ -201,7 +203,7 @@ public class RegisterCommand extends AbstractCommand {
 		mailer.send(a);
 
 		// Forward to the welcome page
-		result.setURL("/jsp/register/appWelcome.jsp");
+		result.setURL("/jsp/register/applicantWelcome.jsp");
 		result.setSuccess(true);
 	}
 }

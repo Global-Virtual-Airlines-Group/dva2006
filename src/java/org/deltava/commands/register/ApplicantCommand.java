@@ -6,6 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -130,6 +132,12 @@ public class ApplicantCommand extends AbstractFormCommand {
       ctx.setAttribute("notifyOptions", ComboUtils.fromArray(RegisterCommand.NOTIFY_NAMES, 
             RegisterCommand.NOTIFY_ALIASES), REQUEST);
 
+		// Sort and save the airports
+		Map airports = (Map) SystemData.getObject("airports");
+		Set apSet = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		apSet.addAll(airports.values());
+		ctx.setAttribute("airports", apSet, REQUEST);
+      
       try {
          Connection con = ctx.getConnection();
 
