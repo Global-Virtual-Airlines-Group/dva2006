@@ -6,7 +6,9 @@ import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.system.VersionInfo;
+
 import org.deltava.jdbc.ConnectionPool;
 
 import org.deltava.dao.*;
@@ -19,9 +21,10 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class ImageServlet extends GenericServlet {
+public class ImageServlet extends BasicAuthServlet {
 
     private static final Logger log = Logger.getLogger(ImageServlet.class);
+    private static final String IMG_REALM = "\"DVA Approach Charts\"";
     
     private static final int IMG_CHART = 0;
     private static final int IMG_GALLERY = 1;
@@ -64,6 +67,19 @@ public class ImageServlet extends GenericServlet {
             log.warn("Invalid Image type - " + url.getLastPath());
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;
+        }
+        
+        // If we're loading a chart, make sure we are authenticated
+        if (imgType == IMG_CHART) {
+        	Pilot usr = (Pilot) req.getUserPrincipal();
+    		if (usr == null)
+    			usr = authenticate(req);
+    		
+    		//	Check if we need to be authenticated
+    		if (usr == null) {
+    			challenge(rsp, IMG_REALM);
+    			return;
+    		}
         }
 
         // Get the image ID
