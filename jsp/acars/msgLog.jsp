@@ -65,7 +65,8 @@ return true;
 </el:table>
 </el:form>
 
-<c:if test="${!empty viewContext.results}">
+<c:choose>
+<c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
 <view:table className="view" space="default" pad="default" cmd="acarsloc">
 <!-- Table Header Bar -->
@@ -98,7 +99,15 @@ return true;
  <td colspan="3"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
-</c:if>
+</c:when>
+<c:otherwise>
+<el:table className="view" space="default" pad="default">
+<tr>
+ <td class="pri bld">No Messages matching your search criteria were found in the ACARS log database.</td>
+</tr>
+</el:table>
+</c:otherwise>
+</c:choose>
 <content:copyright />
 </div>
 </body>
