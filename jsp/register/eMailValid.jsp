@@ -10,19 +10,19 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
-Your e-mail address (${p.email}) has been successfuly verified. This address will be used for all 
-<content:airline />-related correspondence in the future.<br />
+Your e-mail address (${person.email}) has been successfuly verified. This address will be used 
+for all <content:airline />-related correspondence in the future.<br />
 <c:if test="${isApplicant}">
 <br />
-Thank you for verifying your e-mail address. This is an important step in the registration process here
-at <content:airline />.<br />
+Thank you for verifying your e-mail address. This is an important step in the registration 
+process here at <content:airline />.<br />
 </c:if>
 <br />
 <content:copyright />
