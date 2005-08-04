@@ -53,7 +53,7 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /><br />
+ <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /><br />
 <view:legend width="95" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
 </tr>
 </view:table>
