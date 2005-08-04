@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Live Map</td>
- <td class="data"><div id="googleMap" style="width: 840px; height: 630px" /></td>
+ <td class="data"><div id="googleMap" style="width: 720px; height: 520px" /></td>
 </tr>
 </el:table>
 
