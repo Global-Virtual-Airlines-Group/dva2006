@@ -69,7 +69,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSubmit}">
- <td><el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT QUESTIONNAIRE" /></td>
+<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT QUESTIONNAIRE" />
 </c:if>
  </td>
 </tr>
