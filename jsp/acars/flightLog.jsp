@@ -65,12 +65,13 @@ return true;
 </el:table>
 </el:form>
 
-<c:if test="${!empty viewContext.results}">
+<c:choose>
+<c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
 <view:table className="view" space="default" pad="default" cmd="acarsloc">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">ID</td>
+ <td width="8%">ID</td>
  <td width="15%">START/END TIME</td>
  <td width="10%">PILOT CODE</td>
  <td width="20%">PILOT NAME</td>
@@ -99,8 +100,7 @@ return true;
  <td class="sec">${flight.FSVersion}</td>
 </view:row>
 <view:row entry="${entry}">
- <td class="right">Route</td>
- <td colspan="7">${flight.route}"</td>
+ <td colspan="8" class="left">Route: ${flight.route}</td>
 </view:row>
 </c:forEach>
 
@@ -109,7 +109,15 @@ return true;
  <td colspan="8"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
-</c:if>
+</c:when>
+<c:otherwise>
+<el:table className="view" space="default" pad="default">
+<tr>
+ <td class="pri bld">No Flights matching your search criteria were found in the ACARS log database.</td>
+</tr>
+</el:table>
+</c:otherwise>
+</c:choose>
 <content:copyright />
 </div>
 </body>
