@@ -69,7 +69,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			wdao.reject(a);
 			
 			// Commit the transaction
-			ctx.startTX();
+			ctx.commitTX();
 
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
