@@ -15,6 +15,8 @@ import org.deltava.beans.StatusUpdate;
 
 public class SetStatusUpdate extends DAO {
    
+   private long _lastCreatedOn = 0;
+   
     /**
      * Initializes the Data Access Object.
      * @param c the JDBC connection to use
@@ -29,13 +31,22 @@ public class SetStatusUpdate extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public void write(StatusUpdate update) throws DAOException {
+       
+       // Check that the CREATED date is unique
+       long cd = update.getCreatedOn().getTime(); 
+       if (cd <= _lastCreatedOn) {
+          cd = ++_lastCreatedOn;
+       } else {
+          _lastCreatedOn = cd;
+       }
+       
         try {
            // Prepare the statement and write
             prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, "
                   + "TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
             _ps.setInt(1, update.getID());
             _ps.setInt(2, update.getAuthorID());
-            _ps.setLong(3, update.getCreatedOn().getTime());
+            _ps.setLong(3, cd);
             _ps.setInt(4, update.getType());
             _ps.setString(5, update.getDescription());
             executeUpdate(1);
