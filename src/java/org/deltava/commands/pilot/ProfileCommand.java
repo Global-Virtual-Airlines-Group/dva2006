@@ -3,6 +3,8 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.comparators.RankComparator;
@@ -22,16 +24,16 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ProfileCommand extends AbstractFormCommand {
+   
+   private static final Logger log = Logger.getLogger(ProfileCommand.class);
 
+   private static final String[] PRIVACY_ALIASES = { "0", "1", "2" };
 	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only", "Show address to Authenticated Users",
 			"Show address to All Visitors" };
 
-	private static final String[] PRIVACY_ALIASES = { "0", "1", "2" };
-
+	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.COOLER };
 	private static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications", "Send Fleet Notifications",
 			"Send Water Cooler Notifications" };
-
-	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.COOLER };
 
 	/**
 	 * Callback method called when saving the profile.
@@ -39,7 +41,6 @@ public class ProfileCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			List updates = new ArrayList();
@@ -92,12 +93,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (p_access.getCanChangeStatus() && (newStatus != null)) {
 				if (!p.getStatusName().equals(newStatus)) {
 					p.setStatus(newStatus);
-					ctx.setAttribute("statsUpdated", Boolean.valueOf(true), REQUEST);
+					ctx.setAttribute("statsUpdated", Boolean.TRUE, REQUEST);
 
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Status changed to " + p.getStatusName());
 					updates.add(upd);
+					log.info(upd.getDescription());
 				}
 			}
 
@@ -144,11 +146,13 @@ public class ProfileCommand extends AbstractFormCommand {
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
+						log.info(upd.getDescription());
 					} else {
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
+						log.info(upd.getDescription());
 					}
 				}
 			}
@@ -166,6 +170,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ","));
 					updates.add(upd);
+					log.info(upd.getDescription());
 				}
 
 				// Figure out what ratings have been removed
@@ -179,6 +184,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ","));
 					updates.add(upd);
+					log.info(upd.getDescription());
 				}
 			}
 
@@ -238,8 +244,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				int maxSize = SystemData.getInt("cooler.sig_max.size");
 				if (imgOK && (imgData.getSize() > maxSize)) {
 					imgOK = false;
-					ctx
-							.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours =" + imgData.getSize()
+					ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours =" + imgData.getSize()
 									+ " bytes");
 				}
 
@@ -247,11 +252,13 @@ public class ProfileCommand extends AbstractFormCommand {
 				if (imgOK) {
 					p.load(imgData.getBuffer());
 					sigdao.write(p);
-					ctx.setAttribute("sigUpdated", Boolean.valueOf(true), REQUEST);
+					ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
+					log.info("Signature Updated");
 				}
 			} else if ("1".equals(ctx.getParameter("removeCoolerImg"))) {
 				sigdao.delete(p.getID());
-				ctx.setAttribute("sigRemoved", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("sigRemoved", Boolean.TRUE, REQUEST);
+				log.info("Signature Removed");
 			}
 
 			// If we have access to the Staff profile, update it
@@ -270,11 +277,13 @@ public class ProfileCommand extends AbstractFormCommand {
 				SetStaff swdao = new SetStaff(con);
 				if (removeStaffProfile) {
 					swdao.delete(p.getID());
-					ctx.setAttribute("spRemoved", Boolean.valueOf(true), REQUEST);
+					ctx.setAttribute("spRemoved", Boolean.TRUE, REQUEST);
+					log.info("Staff Profile Removed");
 				} else {
 					swdao.write(s);
-					ctx.setAttribute("spUpdated", Boolean.valueOf(true), REQUEST);
+					ctx.setAttribute("spUpdated", Boolean.TRUE, REQUEST);
 					ctx.setAttribute("staff", s, REQUEST);
+					log.info("Staff Profile Updated");
 				}
 			}
 
