@@ -125,13 +125,13 @@ public class SecurityCookieFilter implements Filter {
         Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
         if (p == null) {
             p = loadPersonFromDatabase(cData.getUserID());
-            if (p != null) {
+            if (p != null)
                 s.setAttribute(CommandContext.USER_ATTR_NAME, p);
-                
-                // Add the user to the user pool
-                UserPool.addPerson(p, s.getId());
-            }
         }
+        
+        // If we have a user, check to ensure that we are in the pool
+        if (p != null)
+           UserPool.addPerson(p, s.getId());
 
         // Invoke the next filter in the chain
         fc.doFilter(req, rsp);
