@@ -20,24 +20,29 @@
 <div id="main">
 <div class="updateHdr"><content:airline /> SYSTEM ERROR</div>
 <br />
-<b>Oops. Something bad happened. Really, really bad. This is the message:</b><br />
-<br />
-<pre>${servlet_error}</pre><br />
+Oops. Something bad happened. Really, really bad.<br />
+<br>
+This is the message: <b>${servlet_error}</b><br />
 <br />
 <c:if test="${!empty ex}">
-This is the stack trace:<br />
-<pre>
-<fmt:stack exception="${ex}" />
-</pre>
+<b>${ex.class.name}</b><br />
+<pre><fmt:stack exception="${ex}" /></pre>
 <br />
 </c:if>
-<c:if test="${!empty ex.cause}">
-This is the root cause of the exception:<br />
+<c:choose>
+<c:when test="${(ex.class.name == 'javax.servlet.ServletException') && (!empty ex.rootCause)}">
+This is the root cause of the exception: <b>${ex.rootCause.class.name}</b><br />
+<pre><fmt:stack exception="${ex.rootCause}" /></pre>
+<br />
+</c:when>
+<c:when test="${!empty ex.cause}">
+This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
 <pre>
 <fmt:stack exception="${ex.cause}" />
 </pre>
 <br />
-</c:if>
+</c:when>
+</c:choose>
 <content:copyright />
 </div>
 </body>
