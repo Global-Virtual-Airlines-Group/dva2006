@@ -11,8 +11,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -33,7 +33,7 @@ To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.
 <!-- Check Ride Assigned -->
 <div class="updateHdr">Check Ride Assigned</div>
 <br />
-This <content:airline /> ${checkRide.equipmentType} Check Ride has been assigned to ${pilot.name}, 
+This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
 and an e-mail message has been sent to the Pilot.<br />
 </c:when>
 </c:choose>
