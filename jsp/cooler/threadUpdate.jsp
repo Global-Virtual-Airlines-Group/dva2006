@@ -42,7 +42,7 @@ channel.<br />
 <div class="updateHdr">Water Cooler Message Thread Unlocked</div>
 <br />
 This discussion thread has also been unlocked. All users authorized to create new posts or replies within
-the <span class="sec bld">&quot;&{thread.channel}&quot;</span> channel may create new responses within 
+the <span class="sec bld">&quot;${thread.channel}&quot;</span> channel may create new responses within 
 this discussion thread.<br />
 </c:if>
 </c:if>
