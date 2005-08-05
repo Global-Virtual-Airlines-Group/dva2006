@@ -87,18 +87,15 @@
 </tr>
 <tr>
  <td class="label">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" readOnly="${crAccess.canScore}">${checkRide.comments}</el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="100" height="5" readOnly="${crAccess.canScore}">${checkRide.comments}</el:textbox></td>
 </tr>
-<tr>
-<c:if test="${crAccess.canScore}">
+<c:if test="${scoreCR}">
 <tr>
  <td class="label">Check Ride Status</td>
  <td class="data sec bld"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
 </tr>
-</c:if>
-<c:if test="${scoreCR}">
 <tr class="title mid">
- <td colspan="2"><el:button ID="CRButton" type="submit" label="APPROVE FLIGHT / CHECK RIDE" /></td>
+ <td colspan="2"><el:button ID="CRButton" type="submit" className="BUTTON" label="APPROVE FLIGHT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
 </el:form>
