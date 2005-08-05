@@ -63,7 +63,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 				throw new CommandException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
 
 			// Generate the checkride
-			CheckRide cr = new CheckRide(eq.getName() + " Check Ride");
+			CheckRide cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
 			cr.setDate(new java.util.Date());
 			cr.setPilotID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());
