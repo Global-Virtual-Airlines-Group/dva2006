@@ -34,19 +34,23 @@ import org.deltava.util.system.SystemData;
 public class PIREPCommand extends AbstractFormCommand {
 
 	private static List _flightTimes;
+
 	private static List _flightYears;
+
 	private static final Comparator _cmp = new AirportComparator(AirportComparator.NAME);
 
 	// Flight Simulator versions
-	private static final List fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1, FlightReport.FSVERSION.length);
+	private static final List fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
+			FlightReport.FSVERSION.length);
 
 	// Month combolist values
-	private static final List months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April", "May", "June", "July",
-			"August", "September", "October", "November", "December" }, new String[] { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9",
-			"10", "11" });
+	private static final List months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April",
+			"May", "June", "July", "August", "September", "October", "November", "December" }, new String[] { "0", "1",
+			"2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
 
 	// Check ride approval values
-	private static final List crApprove = ComboUtils.fromArray(new String[] { "PASS", "FAIL" }, new String[] { "true", "false" });
+	private static final List crApprove = ComboUtils.fromArray(new String[] { "PASS", "FAIL" }, new String[] { "true",
+			"false" });
 
 	/**
 	 * Initialize the command.
@@ -163,8 +167,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Calculate the date
 			try {
-				Calendar pd = new GregorianCalendar(Integer.parseInt(ctx.getParameter("dateY")), Integer
-						.parseInt(ctx.getParameter("dateM")), Integer.parseInt(ctx.getParameter("dateD")));
+				Calendar pd = new GregorianCalendar(Integer.parseInt(ctx.getParameter("dateY")), Integer.parseInt(ctx
+						.getParameter("dateM")), Integer.parseInt(ctx.getParameter("dateD")));
 				fr.setDate(pd.getTime());
 			} catch (NumberFormatException nfe) {
 				throw new CommandException("Invalid Flight Date");
@@ -176,8 +180,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
 			backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
 			if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime())))
-				throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " (" + backwardLimit.getTime() + " - "
-						+ forwardLimit.getTime());
+				throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
+						+ backwardLimit.getTime() + " - " + forwardLimit.getTime());
 
 			// Get the DAO and write the updateed PIREP to the database
 			SetFlightReport wdao = new SetFlightReport(con);
@@ -304,7 +308,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
 			Pilot dPilot = (disposalID != 0) ? dao2.get(disposalID) : null;
 			if (dPilot != null) {
-				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getFirstName() + " " + dPilot.getLastName();
+				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getFirstName() + " "
+						+ dPilot.getLastName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
 			} else {
 				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
@@ -320,10 +325,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			List positions = null;
 			if (fr instanceof ACARSFlightReport) {
-			   mapType = Pilot.MAP_GOOGLE;
-			   ACARSFlightReport afr = (ACARSFlightReport) fr;
-			   int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
-			   
+				mapType = Pilot.MAP_GOOGLE;
+				ACARSFlightReport afr = (ACARSFlightReport) fr;
+				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
+
 				// Get the route/position data
 				GetACARSData ardao = new GetACARSData(con);
 				positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS), false);
@@ -340,7 +345,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (wPoint != null)
 							routeInfo.add(wPoint);
 					}
-					
+
 					// Save ACARS info
 					ctx.setAttribute("filedRoute", routeInfo, REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
@@ -349,38 +354,37 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Get the Pilot's check rides
 				GetExam crdao = new GetExam(con);
 				Collection rides = crdao.getCheckRides(fr.getDatabaseID(FlightReport.DBID_PILOT));
-				
+
 				// See if we have a checkride for this aircraft's primary type
-				for (Iterator i = rides.iterator(); i.hasNext(); ) {
+				for (Iterator i = rides.iterator(); i.hasNext();) {
 					CheckRide cr = (CheckRide) i.next();
 					if ((flightID != 0) && (cr.getFlightID() == flightID)) {
-					   ctx.setAttribute("checkRide", cr, REQUEST);
-					} else if (cr.getStatus() == Test.SUBMITTED) {
-					   for (Iterator i2 = fr.getCaptEQType().iterator(); i2.hasNext(); ) {
-					      String eqType = (String) i2.next();
-					      if (cr.getName().startsWith(eqType)) {
-								ctx.setAttribute("crPassFail", crApprove, REQUEST);
-								ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
-								crAccess.validate();
+						ctx.setAttribute("checkRide", cr, REQUEST);
+					} else if (cr.getStatus() == Test.NEW) {
+						if (cr.getName().startsWith(fr.getEquipmentType())) {
+							ctx.setAttribute("crPassFail", crApprove, REQUEST);
+							ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+							crAccess.validate();
 
-								// Save the checkride and its access controller
-								ctx.setAttribute("checkRide", cr, REQUEST);
-								ctx.setAttribute("crAccess", crAccess, REQUEST);
-					      }
-					   }
+							// Save the checkride and its access controller
+							ctx.setAttribute("checkRide", cr, REQUEST);
+							ctx.setAttribute("crAccess", crAccess, REQUEST);
+						}
 					}
-				}					
+				}
 			}
 
 			// If we're set to use Google Maps, calculate the route
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if ((positions == null) || (positions.isEmpty()))
-					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(), 100);
+					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(),
+							100);
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
+						REQUEST);
 				ctx.setAttribute("mapRoute", positions, REQUEST);
 			}
 
