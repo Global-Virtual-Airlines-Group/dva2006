@@ -13,8 +13,11 @@ import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
- * A Web Site command to display the Document Library.
+ * A Web Site command to display the Document Library. Note that this command will display library entries
+ * from other Airlines, with the proviso that <i>all files are in the same library path</i>.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -37,7 +40,14 @@ public class DocumentLibraryCommand extends AbstractCommand {
 			
 			// Get the DAO and the results
 			GetLibrary dao = new GetLibrary(con);
-			results = dao.getManuals();
+			results = dao.getManuals(SystemData.get("airline.db"));
+			
+			// Get the document libraries from the other airlines
+			Map dbs = (Map) SystemData.getObject("airlineDatabases");
+			for (Iterator i = dbs.keySet().iterator(); i.hasNext(); ) {
+			   String dbName = (String) i.next();
+			   results.addAll(dao.getManuals(dbName));
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

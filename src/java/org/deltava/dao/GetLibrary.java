@@ -27,14 +27,23 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns the contents of the Fleet Library.
+	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents
+	 * of other airlines' libraries.
+	 * @param dbName the database name
 	 * @return a List of Installer beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getFleet() throws DAOException {
+	public List getFleet(String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".FLEET F LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
+	   
 		try {
-			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L "
-					+ "ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME ORDER BY F.NAME");
+			prepareStatement(sqlBuf.toString());
 			return loadInstallers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -42,14 +51,23 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns the contents of the Document Library.
+	 * Returns the contents of the Document Library. This takes a database name so we can display the contents
+	 * of other airlines' libraries.
+	 * @param dbName the database name
 	 * @return a List of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getManuals() throws DAOException {
+	public List getManuals(String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOCS D LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
+	   
 		try {
-			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM DOCS D LEFT JOIN DOWNLOADS L ON "
-					+ "(D.FILENAME=L.FILENAME) GROUP BY D.NAME ORDER BY D.NAME");
+			prepareStatement(sqlBuf.toString());
 			return loadManuals();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -57,7 +75,7 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns metadata about a specific Manual.
+	 * Returns metadata about a specific Manual <i>in the current database</i>.
 	 * @param fName the filename
 	 * @return a Manual, or null if not found
 	 * @throws DAOException if a JDBC error occurs
@@ -76,6 +94,12 @@ public class GetLibrary extends DAO {
 		}
 	}
 
+	/**
+	 * Returns metadata about a specifc Installer <i>in the current database</i>. 
+	 * @param fName the filename
+	 * @return an Installer, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public Installer getInstaller(String fName) throws DAOException {
 		try {
 			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L ON "
