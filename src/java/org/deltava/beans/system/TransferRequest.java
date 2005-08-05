@@ -15,11 +15,10 @@ import org.deltava.beans.ViewEntry;
 
 public class TransferRequest extends DatabaseBean implements Comparable, ViewEntry {
    
-   public static final int NEW = 0;
    public static final int PENDING = 1;
    public static final int OK = 2;
    
-   public static final String[] STATUS = {"New Request", "Pending Check Ride", "Complete"};
+   public static final String[] STATUS = {"?", "Pending Check Ride", "Complete"};
 
    private int _checkRideID;
    private int _status;
@@ -134,7 +133,7 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
     * @return the CSS class name
     */
    public String getRowClassName() {
-      String[] ROW_CLASSES = {"opt1", "opt2", null};
+      String[] ROW_CLASSES = {null, "opt2", null};
       return ROW_CLASSES[getStatus()];
    }
 }
