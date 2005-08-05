@@ -70,7 +70,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canScore}">
- <td><el:button type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" /></td>
+<el:button type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" />
 </c:if>
  </td>
 </tr>
