@@ -18,7 +18,7 @@
 <!-- Main Body Frame -->
 <div id="main">
 <b>Oops. It looks like your browser cannot accept cookies from our site.</b> Please
-go into your brower's preferences, and ensure that you can accept cookies from
+go into your browser's preferences, and ensure that you can accept cookies from
 <span class="sec bld">${domain}</span>.<br />
 <br />
 <el:cmd url="login">Click Here</el:cmd> to return to the login page.<br />
