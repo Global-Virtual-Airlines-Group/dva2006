@@ -75,7 +75,8 @@ public class TestingHistoryHelper {
       int maxStage = 1;
       for (Iterator i = _tests.iterator(); i.hasNext();) {
          Test t = (Test) i.next();
-         if (t instanceof CheckRide) maxStage = Math.max(maxStage, t.getStage());
+         if ((t instanceof CheckRide) && t.getPassFail())
+        	 maxStage = Math.max(maxStage, t.getStage());
       }
 
       return maxStage;
@@ -137,6 +138,9 @@ public class TestingHistoryHelper {
 
       // Check if we've passed the FO exam for that program
       if (!hasPassed(eq.getExamName(Ranks.RANK_FO))) return false; 
+      
+      // Make sure we're not already in that program
+      if (_usr.getEquipmentType().equals(eq.getName())) return false;
       
       // Check if we don't have a checkride in that equipment's stage
       return (eq.getStage() > getMaxCheckRideStage());
