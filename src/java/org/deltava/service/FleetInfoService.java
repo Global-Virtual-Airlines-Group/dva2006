@@ -32,7 +32,7 @@ public class FleetInfoService extends WebDataService {
 		List entries = null;
 		try {
 			GetLibrary dao = new GetLibrary(_con);
-			entries = dao.getFleet();
+			entries = dao.getFleet(SystemData.get("airline.db"));
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
