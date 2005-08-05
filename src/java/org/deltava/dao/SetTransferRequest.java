@@ -31,6 +31,7 @@ public class SetTransferRequest extends DAO {
       try {
          if (txreq.getDate() == null) {
             prepareStatement("INSERT INTO TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, CREATED, ID) VALUES (?, ?, ?, ?, ?)");
+            txreq.setDate(new java.util.Date());
          } else {
             prepareStatement("UPDATE TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, CREATED=? WHERE (ID=?)");
          }
