@@ -309,14 +309,18 @@ public class GetFlightReports extends DAO {
 	 * @param pilotID the Pilot's Database ID
 	 * @param airportD the departure Airport
 	 * @param airportA the arrival Airport
+	 * @param dbName the database Name
 	 * @return a List of Draft FlightReports matching the above criteria
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getDraftReports(int pilotID, Airport airportD, Airport airportA) throws DAOException {
+	public List getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
 
 		// Build the prepared statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM PILOTS P, PIREPS PR "
-				+ "WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
+		StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".PIREPS PR WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
 		if ((airportD != null) && (airportA != null))
