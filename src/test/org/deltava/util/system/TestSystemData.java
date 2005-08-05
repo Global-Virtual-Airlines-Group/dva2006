@@ -9,7 +9,7 @@ public class TestSystemData extends TestCase {
 
     protected void setUp() throws Exception {
         super.setUp();
-        PropertyConfigurator.configure("etc/log4j.properties");
+        PropertyConfigurator.configure("data/log4j.test.properties");
     }
 
     public void testDefaultLoader() {
@@ -22,6 +22,11 @@ public class TestSystemData extends TestCase {
         Map jdbcProps = (Map) SystemData.getObject("jdbc.connectProperties");
         assertNotNull(jdbcProps);
         assertTrue(jdbcProps.containsKey("useNewIO"));
+        
+        // Test that ranks are in the proper order
+        List ranks = (List) SystemData.getObject("ranks");
+        assertNotNull(ranks);
+        assertTrue(ranks.indexOf("First Officer") < ranks.indexOf("Captain"));
     }
     
     public void testCustomLoader() {
