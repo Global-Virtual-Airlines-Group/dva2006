@@ -1,7 +1,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.Iterator;
+import java.util.*;
 
 import org.deltava.beans.*;
 
@@ -176,14 +176,39 @@ public class SetFlightReport extends DAO {
 	}
 	
 	/**
+	 * Helper method to write promotion equipment types.
+	 */
+	private void writePromoEQ(int id, String dbName, Collection eqTypes) throws SQLException {
+		// Delete the existing records
+		prepareStatementWithoutLimits("DELETE FROM " + dbName.toLowerCase() + ".PROMO_EQ WHERE (ID=?)");
+		_ps.setInt(1, id);
+		executeUpdate(0);
+		_ps.close();
+		
+		// Queue the new records
+		prepareStatementWithoutLimits("INSERT INTO " + dbName.toLowerCase() + ".PROMO_EQ (ID, EQTYPE) "
+				+ "VALUES (?, ?)");
+		_ps.setInt(1, id);
+		for (Iterator i = eqTypes.iterator(); i.hasNext(); ) {
+			_ps.setString(2, (String) i.next());
+			_ps.addBatch();
+		}
+		
+		// Write the entries
+		_ps.executeBatch();
+		_ps.close();
+	}
+	
+	/**
 	 * Write a Flight Report to the database.
 	 * @param fr the Flight Report
 	 * @param db the Database to write to
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(FlightReport fr, String db) throws DAOException {
-		
 		try {
+			startTransaction();
+			
 			// Initialize the prepared statement
 			if (fr.getID() == 0) {
 				insert(fr, db);
@@ -191,11 +216,18 @@ public class SetFlightReport extends DAO {
 				update(fr, db);
 			}
 			
+			// FIXME need to make this private so that the transaction handling works right
+			
 			// Write the PIREP data into the database; if we are writing a new PIREP get the database ID
 			executeUpdate(1);
 			if (fr.getID() == 0)
 				fr.setID(getNewID());
+			
+			// Write the Promotion equipment types
+			writePromoEQ(fr.getID(), db, fr.getCaptEQType());
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
