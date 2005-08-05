@@ -34,7 +34,6 @@ import org.deltava.util.system.SystemData;
 public class PIREPCommand extends AbstractFormCommand {
 
 	private static List _flightTimes;
-
 	private static List _flightYears;
 
 	private static final Comparator _cmp = new AirportComparator(AirportComparator.NAME);
@@ -115,7 +114,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			Airport ad = SystemData.getAirport(ctx.getParameter("airportD"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
-			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa);
+			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
 			if (doCreate && (!draftFlights.isEmpty()))
 				fr = (FlightReport) draftFlights.get(0);
 
