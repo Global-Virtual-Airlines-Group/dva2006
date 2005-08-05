@@ -115,11 +115,20 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      */
     protected List processList(Element root) {
         boolean isSorted = Boolean.valueOf(root.getAttributeValue("sorted", "false")).booleanValue();
-        Set results = new HashSet();
-
+        boolean isUnique = Boolean.valueOf(root.getAttributeValue("unique", "false")).booleanValue();
+        
+        // Figure out the type of collection to return
+        String className = "java.util.ArrayList";
+        if (isSorted) {
+        	className = "java.util.TreeSet";
+        } else if (isUnique) {
+        	className = "java.util.HashSet";
+        }
+        
         // If we're a sorted set, return a TreeSet instead of a HashSet
+        Collection results = null;
         try {
-            results = (Set) Class.forName((isSorted) ? "java.util.TreeSet" : "java.util.HashSet").newInstance();
+            results = (Collection) Class.forName(className).newInstance();
         } catch (Exception e) {
         }
 
