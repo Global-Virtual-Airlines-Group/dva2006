@@ -75,6 +75,7 @@ public class ExamScoreCommand extends AbstractCommand {
          GetPilot pdao = new GetPilot(con);
          usr = pdao.get(ex.getPilotID());
          ctx.setAttribute("pilot", usr, REQUEST);
+         mctxt.addData("pilot", usr);
          
          // Get the Message template
          GetMessageTemplate mtdao = new GetMessageTemplate(con);
