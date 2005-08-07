@@ -69,6 +69,9 @@ To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}">Click H
 <div class="updateHdr">Flight Report Approved</div>
 <br />
 This Flight Report has been approved, and an e-mail message has been sent to ${pilot.name}.<br />
+<c:if test="${!empty checkRide}">
+
+</c:if>
 <c:if test="${!empty centuryClub}">
 <br />
 With the approval of this Flight Report, ${pilot.name} has joined the &quot;${centuryClub}&quot;.<br />
