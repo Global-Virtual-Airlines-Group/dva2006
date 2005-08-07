@@ -34,8 +34,8 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 	private int _flaps;
 	private int _flags;
 
-	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT };
-	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT" };
+	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT , FLAG_AP_GPS};
+	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS" };
 
 	/**
 	 * Creates a new ACARS Route Entry bean.
@@ -369,7 +369,7 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 		}
 
 		// Add Autopilot flags if set
-		if (isFlagSet(ACARSFlags.FLAG_AUTOPILOT)) {
+		if (isFlagSet(ACARSFlags.FLAG_AP_ANY)) {
 			buf.append("Autopilot: ");
 			for (int x = 0; x < AP_FLAGS.length; x++) {
 				if (isFlagSet(AP_FLAGS[x])) {
