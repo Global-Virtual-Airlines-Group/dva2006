@@ -93,8 +93,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (p_access.getCanChangeStatus() && (newStatus != null)) {
 				if (!p.getStatusName().equals(newStatus)) {
 					p.setStatus(newStatus);
-					ctx.setAttribute("statsUpdated", Boolean.TRUE, REQUEST);
+					ctx.setAttribute("statusUpdated", Boolean.TRUE, REQUEST);
 
+					// Write the Status Update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Status changed to " + p.getStatusName());
@@ -290,7 +291,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Write the Pilot profile
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
-
+			
+			// If we're marking Inactive/Retired, purge any Inactivity records
+			if ((p.getStatus() != Pilot.ACTIVE) && (p.getStatus() != Pilot.ON_LEAVE)) {
+				SetInactivity idao = new SetInactivity(con);
+				idao.delete(p.getID());
+			}
+			
 			// Write the status updates
 			SetStatusUpdate stwdao = new SetStatusUpdate(con);
 			stwdao.write(updates);

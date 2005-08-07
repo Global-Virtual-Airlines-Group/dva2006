@@ -4,13 +4,13 @@ package org.deltava.commands.pilot;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.commands.*;
 
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.SetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command for Pilots to take a Leave of Absence.
@@ -46,14 +46,25 @@ public class LeaveCommand extends AbstractCommand {
 			if (!access.getCanTakeLeave())
 				throw new CommandSecurityException("Insufficient Access to place Pilot On Leave");
 			
+			// Start the transaction
+			ctx.startTX();
+			
 			// Update the Pilot's status
 			SetPilot wdao = new SetPilot(con);
 			wdao.onLeave(p.getID());
 			p.setStatus(Pilot.ON_LEAVE);
 			
+			// Add an inactivity table entry
+			SetInactivity idao = new SetInactivity(con);
+			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days"), false);
+			
+			// Commit the transaction
+			ctx.commitTX();
+			
 			// Save the pilot in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
