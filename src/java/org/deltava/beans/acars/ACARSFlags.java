@@ -19,12 +19,14 @@ public interface ACARSFlags {
 	public static final int FLAG_SPARMED = 0x0010;
 	public static final int FLAG_GEARDOWN = 0x0020;
 	
-	public static final int FLAG_AUTOPILOT = 0x0100;
+	public static final int FLAG_AP_GPS = 0x0100;
 	public static final int FLAG_AP_NAV = 0x0200;
 	public static final int FLAG_AP_HDG = 0x0400;
 	public static final int FLAG_AP_APR = 0x0800;
 	public static final int FLAG_AP_ALT = 0x1000;
+	public static final int FLAG_AP_ANY = 0x1F00;
 	
 	public static final int FLAG_AT_IAS = 0x2000;
 	public static final int FLAG_AT_MACH = 0x4000;
+	public static final int FLAG_AT_ANY = 0x6000;
 }
