@@ -89,22 +89,4 @@ public class GetPilotNotify extends PilotReadDAO {
          throw new DAOException(se);
       }
    }
-   
-   /**
-    * Returns all Pilots who have not logged in since a particular date.
-    * @param lld the last login date/time
-    * @return a List of Pilots
-    * @throws DAOException if a JDBC error occurs
-    */
-   public List getPilotsByLastLogin(java.util.Date lld) throws DAOException {
-      try {
-         prepareStatement("SELECT P.* FROM PILOTS P WHERE (P.LAST_LOGIN < ?) AND (P.STATUS=?) "
-               + "ORDER BY P.LAST_LOGIN");
-         _ps.setTimestamp(1, createTimestamp(lld));
-         _ps.setInt(2, Pilot.ACTIVE);
-         return execute();
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
 }

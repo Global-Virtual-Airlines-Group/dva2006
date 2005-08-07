@@ -73,7 +73,7 @@ public class GetExam extends DAO {
 	}
 
 	/**
-	 * Loads a Pilot Checkride.
+	 * Loads a Pilot Check Ride.
 	 * @param id the Database ID
 	 * @return the CheckRide, or null if not found
 	 * @throws DAOException if a JDBC error occurs
@@ -91,9 +91,29 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
+
+	/**
+	 * Loads a Pilot Check Ride associated with a particular ACARS Flight ID.
+	 * @param acarsID the ACARS flight ID
+	 * @return a CheckRide, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ACARS_ID=?)");
+			_ps.setInt(1, acarsID);
+			setQueryMax(1);
+
+			// Execute the query
+			List results = executeCheckride();
+			return results.isEmpty() ? null : (CheckRide) results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 	
 	/**
-	 * Loads a Pilot Check Ride.
+	 * Loads a pending Pilot Check Ride for a particular equipment type.
 	 * @param pilotID the Pilot Database ID
 	 * @param eqType the equipment type used
 	 * @return a CheckRide, or null if not found
@@ -101,9 +121,10 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int pilotID, String eqType) throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?)");
+	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?) AND (STATUS=?)");
 	      _ps.setInt(1, pilotID);
 	      _ps.setString(2, eqType + " Check Ride");
+	      _ps.setInt(3, Test.NEW);
 	      setQueryMax(1);
 	      
 			// Execute the query
