@@ -125,7 +125,8 @@ abstract class PilotReadDAO extends DAO {
 	/**
 	 * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel
 	 * list command.
-	 * @param ids a Collection of pilot IDs. This can either be a group of Integers, or a set of {@link UserData} beans
+	 * @param ids a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean}
+	 * beans
 	 * @param tableName the table to read from, in <i>DATABASE.TABLE</i> format for a remote database, or
 	 * <i>TABLE</i> for a table in the current airline's database.
 	 * @return a Map of Pilots, indexed by the pilot code
@@ -153,7 +154,7 @@ abstract class PilotReadDAO extends DAO {
 		int querySize = 0;
 		for (Iterator i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((UserData) rawID).getID());
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
 			Pilot p = (Pilot) _cache.get(id);
