@@ -65,7 +65,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			mctxt.addData("eqType", eq);
 			
 			// Calculate the DN and password
-			a.setDN(a.getName() + "," + SystemData.get("security.baseDN"));
+			a.setDN("cn=" + a.getName() + "," + SystemData.get("security.baseDN"));
 			a.setPassword(PasswordGenerator.generate(8));
 			
 			// Turn off autocommits on the connection
@@ -74,6 +74,10 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Get the write DAO and approve the applicant
 			SetApplicant wdao = new SetApplicant(con);
 			wdao.hire(a);
+			
+			// Delete the e-mail validation record
+			SetAddressValidation avdao = new SetAddressValidation(con);
+			avdao.delete(a.getID());
 			
 			// Get the Questionnaire and convert into an Examination
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
@@ -91,9 +95,13 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			cr.setComments(a.getName() + " hired into " + eq.getName() + " program");
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStage(eq.getStage());
+			cr.setStatus(CheckRide.SCORED);
+			cr.setSubmittedOn(new Date());
+			cr.setScoredOn(cr.getSubmittedOn());
 			
-			// Write the check ride
+			// Write the check ride (call the DAO twice to write all fields)
 			SetExam exwdao = new SetExam(con);
+			exwdao.write(cr);
 			exwdao.write(cr);
 			
 			// Write Status update history
@@ -101,18 +109,24 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Create a StatusUpdate for the registration
 			StatusUpdate upd = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
+			upd.setAuthorID(ctx.getUser().getID());
 			upd.setCreatedOn(a.getCreatedOn());
 			upd.setDescription("Pilot Application Submitted");
 			updates.add(upd);
 			
 			// Create a StatusUpdate for the hire
 			StatusUpdate upd2 = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);
-			upd.setDescription("Applicant Approved, Pilot Hired");
+			upd2.setAuthorID(ctx.getUser().getID());
+			upd2.setDescription("Applicant Approved, Pilot Hired");
 			updates.add(upd2);
 			
 			// Write the status updates
 			SetStatusUpdate updao = new SetStatusUpdate(con);
 			updao.write(updates);
+			
+			// Write an inactivity purge entry
+			SetInactivity idao = new SetInactivity(con);
+			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days"), false);
 			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
