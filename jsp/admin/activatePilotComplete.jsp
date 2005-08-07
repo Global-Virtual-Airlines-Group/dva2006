@@ -13,15 +13,15 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
 <div class="updateHdr">Pilot Reactivated</div>
 <br />
 ${pilot.name} has been restored to the <content:airline /> Pilot Roster as an Active ${pilot.rank} in
-the ${pilot.eqType} equipment program. This Pilot's password has been reset.<br />
+the ${pilot.equipmentType} equipment program. This Pilot's password has been reset.<br />
 <br />
 An e-mail message has been sent to ${pilot.name} containing the new password, informing ${pilot.firstName} 
 of this change in status, and welcoming him or her back to <content:airline />.<br />
