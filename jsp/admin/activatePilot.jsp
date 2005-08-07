@@ -25,12 +25,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="$activate.do" method="POST" linkID="0x${pilot.ID}" validate="return validate(this)">
+<el:form action="activate.do" method="POST" linkID="0x${pilot.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">PILOT REACTIVATION - ${pilot.name}</td>
