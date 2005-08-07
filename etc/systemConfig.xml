@@ -272,7 +272,7 @@
 			<googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQYRJWPVVk21iaQ8DXDNrYsoUMdqBT_o7t7mxqvs1dO5smwx9Pwrf_dTA</googleMaps>
 		</key>
 		
-		<list name="roles" attr="role" sorted="true">
+		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
 			<role>Developer</role>
 			<role>Examination</role>
@@ -309,6 +309,7 @@
 		<library>d:\library</library>
 	</path>
 	
+	<!-- SMTP Server configuration -->
 	<smtp>
 		<server>sirius.sce.net</server>
 		<errors-to>webmaster@sce.net</errors-to>
@@ -333,11 +334,6 @@
 		
 		<assignto type="Integer">043</assignto>
 	</issue_track>
-	
-	<testing>
-		<max_video_size type="Integer">3072000</max_video_size>
-		<video_removal type="Integer">7</video_removal>
-	</testing>
 	
 	<cooler>
 		<img_max>
