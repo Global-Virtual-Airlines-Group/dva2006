@@ -2,6 +2,7 @@ package org.deltava.taglib.html;
 
 import java.util.*;
 
+import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
 
 /**
@@ -18,7 +19,6 @@ public abstract class FormElementTag extends ElementTag {
      * The value of this input element.
      */ 
     protected Object _value;
-    
     private boolean _validateParent;
     
     /**
@@ -94,7 +94,8 @@ public abstract class FormElementTag extends ElementTag {
            throw new IllegalStateException("Form Element must contain NAME");
        
        if (_validateParent) {
-           if (getParentFormTag() == null)
+    	   boolean isConditional = (pageContext.getAttribute("isForm", PageContext.REQUEST_SCOPE) != null);
+           if ((getParentFormTag() == null) && (!isConditional))
                throw new IllegalStateException(getName() + " must be contained within a FORM tag");
        }
     }
