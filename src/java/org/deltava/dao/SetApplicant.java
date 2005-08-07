@@ -139,6 +139,7 @@ public class SetApplicant extends PilotWriteDAO {
          executeUpdate(1);
          
          // Get the new Pilot's database ID
+         a.setStatus(Applicant.APPROVED);
          a.setPilotID(getNewID());
          
          // Write the new Pilot object
@@ -146,7 +147,7 @@ public class SetApplicant extends PilotWriteDAO {
                + "IMHANDLE, LEGACY_HOURS, HOME_AIRPORT, EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, "
                + "LAST_LOGIN, LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, "
                + "UISCHEME, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, ID) VALUES (?, ?, ?, ?, ?, ?, "
-               + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ID)");
+               + "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
          _ps.setString(1, a.getFirstName());
          _ps.setString(2, a.getLastName());
          _ps.setInt(3, Pilot.ACTIVE);
