@@ -90,10 +90,12 @@
  <td class="label">Joined on</td>
  <td colspan="${cspan}" class="data"><fmt:date date="${pilot.createdOn}" fmt="d" d="EEEE MMMM dd, yyyy" /></td>
 </tr>
+<c:if test="${!empty pilot.lastLogin}">
 <tr>
  <td class="label">Logins</td>
  <td colspan="${cspan}" class="data">${pilot.loginCount}, last on <fmt:date date="${pilot.lastLogin}" /></td>
 </tr>
+</c:if>
 <c:if test="${!empty pilot.lastLogoff}">
 <tr>
  <td class="label">Last Visited on</td>
