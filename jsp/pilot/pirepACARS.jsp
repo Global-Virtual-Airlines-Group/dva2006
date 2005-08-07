@@ -76,8 +76,13 @@
  <td class="data bld"><fmt:int value="${pirep.time4X}" /> minutes</td>
 </tr>
 </c:if>
+<c:if test="${!empty flightInfo.route}">
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data">${flightInfo.route}</td>
+</tr>
+</c:if>
 <c:if test="${!empty checkRide}">
-<el:form method="post" action="pirepscore.do" linkID="0x${pirep.ID}" validate="return valdiate(this)">
 <tr class="title">
  <td class="caps" colspan="2">CHECK RIDE INFORMATION</td>
 </tr>
@@ -85,11 +90,12 @@
  <td class="label">Name</td>
  <td class="data pri bld">${checkRide.name} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
-<tr>
- <td class="label">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="100" height="5" readOnly="${crAccess.canScore}">${checkRide.comments}</el:textbox></td>
-</tr>
 <c:if test="${scoreCR}">
+<c:set var="isForm" value="true" scope="request" />
+<tr>
+ <td class="label">Check Ride Comments</td>
+ <td class="data"><textarea name="comments" cols="100" rows="5">${checkRide.comments}</textarea></td>
+</tr>
 <tr>
  <td class="label">Check Ride Status</td>
  <td class="data sec bld"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
@@ -98,11 +104,10 @@
  <td colspan="2"><el:button ID="CRButton" type="submit" className="BUTTON" label="APPROVE FLIGHT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
-</el:form>
-</c:if>
-<c:if test="${!empty flightInfo.route}">
+<c:if test="${!scoreCR}">
 <tr>
- <td class="label">Flight Route</td>
- <td class="data">${flightInfo.route}</td>
+ <td class="label">Comments</td>
+ <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
+</c:if>
 </c:if>

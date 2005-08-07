@@ -41,6 +41,9 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
+<c:if test="${scoreCR}">
+<form method="post" action="pirepscore.do?id=${fn:hex(pirep.ID)}" onsubmit="return validate(this)">
+</c:if>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
@@ -115,14 +118,14 @@ return true;
  <td class="label">Logged Time</td>
  <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours</td>
 </tr>
-<c:if test="${fn:isACARS(pirep)}">
-<%@include file="/jsp/pilot/pirepACARS.jsp" %> 
-</c:if>
 <c:if test="${!empty pirep.remarks}">
 <tr>
- <td class="label">Comments</td>
+ <td class="label">Pilot Comments</td>
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
+</c:if>
+<c:if test="${fn:isACARS(pirep)}">
+<%@include file="/jsp/pilot/pirepACARS.jsp" %> 
 </c:if>
 <tr>
 <c:if test="${googleMap}">
@@ -169,6 +172,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
+<c:if test="${scoreCR}"></form></c:if>
 <content:copyright />
 </div>
 <c:if test="${googleMap}">
