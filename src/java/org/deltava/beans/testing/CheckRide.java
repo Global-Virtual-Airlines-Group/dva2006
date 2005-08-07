@@ -29,6 +29,15 @@ public class CheckRide extends Test {
     public int getFlightID() {
        return _acarsID;
     }
+    
+    /**
+     * Returns the score for this Check Ride.
+     * @return 1 if passed, otherwise 0
+     * @see CheckRide#setScore(boolean)
+     */
+    public final int getScore() {
+    	return getPassFail() ? 1 : 0;
+    }
 
     /**
      * Returns the type of Test.
@@ -45,6 +54,15 @@ public class CheckRide extends Test {
      */
     public String getComments() {
     	return _comments;
+    }
+    
+    /**
+     * Returns the equipment type for the check ride, from the name.
+     * @return the equipment type
+     */
+    public String getEquipmentType() {
+    	String name = getName();
+    	return name.substring(0, name.indexOf(' '));
     }
     
     /**
