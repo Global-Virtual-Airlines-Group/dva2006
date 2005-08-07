@@ -1,9 +1,10 @@
+// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.io.Serializable;
 
 /**
- * A system bean to store JDBC tabel data.
+ * A system bean to store JDBC table data.
  * @author Luke
  * @version 1.0
  * @since 1.0
