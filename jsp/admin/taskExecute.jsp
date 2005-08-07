@@ -18,21 +18,22 @@
 <div id="main">
 <div class="updateHdr">Scheduled Task Executed</div>
 <br />
-<c:if test="${empty exception}">
+<c:if test="${empty ex}">
 The ${task.name} Scheduled Task (${task.className}) has been successfully executed.<br />
 </c:if>
-<c:if test="${!empty exception}">
-The ${task.name} Scheduled Task (${task.clasName}) encountered an error and did not complete successfully.<br />
+<c:if test="${!empty ex}">
+The ${task.name} Scheduled Task (${task.className}) encountered an error and did not complete successfully.<br />
 The stack dump is as follows:<br />
 <pre>
-<fmt:stack exception="${exception}" />
+<fmt:stack exception="${ex}" />
 </pre>
 <br />
-<c:if test="${!empty exception.rootCause}">
-The root cause is as follows:<br />
-<pre>${exception.rootCause.class.name}<br />
-<fmt:stack exception="${exception.rootCause}" />
+<c:if test="${!empty ex.cause}">
+This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
+<pre>
+<fmt:stack exception="${ex.cause}" />
 </pre>
+<br />
 </c:if>
 </c:if>
 <br />
