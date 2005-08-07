@@ -26,6 +26,7 @@ if (!validateCombo(form.tz, 'Time Zone')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
+if (!validateCheckBox(form.airportCodeType, 1, 'Airport Code type')) return false;
 if (!validateCombo(form.eqType, 'Equipment Program')) return false;
 if (!validateCombo(form.rank, 'Rank')) return false;
 
@@ -36,12 +37,11 @@ disableButton('RejectButton');
 return true;
 }
 
-function doHire()
+function hireApplicant()
 {
 var f = document.forms[0];
 f.doHire.value = '1';
 return cmdPost(f.action);
-return true;
 }
 </script>
 </head>
@@ -189,7 +189,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td>
 <c:if test="${access.canApprove}">
-<el:button ID="HireButton" className="BUTTON" onClick="void doHire()" label="HIRE APPLICANT" />
+<el:button ID="HireButton" className="BUTTON" onClick="void hireApplicant()" label="HIRE APPLICANT" />
 </c:if> 
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE APPLICANT" />
 <c:if test="${access.canReject}">
