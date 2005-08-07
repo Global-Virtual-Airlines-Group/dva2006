@@ -59,6 +59,29 @@ public class GetNavData extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns information about a particular airport Runway.
+	 * @param airportCode the airport ICAO code
+	 * @param rwyCode the runway name/number
+	 * @return a Runway bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Runway getRunway(String airportCode, String rwyCode) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND (UPPER(CODE)=?) "
+					+ "AND (UPPER(NAME)=?)");
+			_ps.setInt(1, NavigationDataBean.RUNWAY);
+			_ps.setString(2, airportCode.toUpperCase());
+			_ps.setString(3, rwyCode.toUpperCase());
+			
+			// Execute the query
+			List results = execute();
+			return results.isEmpty() ? null : (Runway) results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns a group of Navigation objects.
@@ -229,6 +252,7 @@ public class GetNavData extends DAO {
 					rwy.setFrequency(rs.getString(5));
 					rwy.setLength(rs.getInt(6));
 					rwy.setName(rs.getString(7));
+					rwy.setHeading(rs.getInt(8));
 					obj = rwy;
 					break;
 
