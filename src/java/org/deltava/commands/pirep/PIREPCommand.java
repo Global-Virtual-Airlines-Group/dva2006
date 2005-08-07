@@ -7,9 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 import org.deltava.beans.navdata.NavigationDataBean;
-
 import org.deltava.beans.testing.CheckRide;
-import org.deltava.beans.testing.Test;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -350,26 +348,26 @@ public class PIREPCommand extends AbstractFormCommand {
 					ctx.setAttribute("flightInfo", info, REQUEST);
 				}
 
-				// Get the Pilot's check rides
+				// Get the check ride
+				CheckRide cr = null;
 				GetExam crdao = new GetExam(con);
-				Collection rides = crdao.getCheckRides(fr.getDatabaseID(FlightReport.DBID_PILOT));
+				if (flightID != 0) 
+					cr = crdao.getACARSCheckRide(flightID);
+				
+				// If there's no checkride for this ACARS flight, check if one is pending
+				if (cr == null)
+					cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType());
 
-				// See if we have a checkride for this aircraft's primary type
-				for (Iterator i = rides.iterator(); i.hasNext();) {
-					CheckRide cr = (CheckRide) i.next();
-					if ((flightID != 0) && (cr.getFlightID() == flightID)) {
-						ctx.setAttribute("checkRide", cr, REQUEST);
-					} else if (cr.getStatus() == Test.NEW) {
-						if (cr.getName().startsWith(fr.getEquipmentType())) {
-							ctx.setAttribute("crPassFail", crApprove, REQUEST);
-							ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
-							crAccess.validate();
-
-							// Save the checkride and its access controller
-							ctx.setAttribute("checkRide", cr, REQUEST);
-							ctx.setAttribute("crAccess", crAccess, REQUEST);
-						}
-					}
+				// If we have a check ride, then save it and calculate the access level
+				if (cr != null) {
+					ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+					crAccess.validate();
+					
+					// Save the checkride and its access controller
+					ctx.setAttribute("checkRide", cr, REQUEST);
+					ctx.setAttribute("crAccess", crAccess, REQUEST);
+					if (crAccess.getCanScore())
+						ctx.setAttribute("crPassFail", crApprove, REQUEST);
 				}
 			}
 
