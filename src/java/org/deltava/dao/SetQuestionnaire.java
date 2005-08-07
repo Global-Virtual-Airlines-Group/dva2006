@@ -134,7 +134,7 @@ public class SetQuestionnaire extends DAO {
          
          // Create the Examination prepared statement
          prepareStatement("INSERT INTO EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, GRADED_ON, "
-         		+ "GRADED_BY, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+         		+ "GRADED_BY, EXPIRY_TIME, PASS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
          _ps.setString(1, e.getName());
          _ps.setInt(2, pilotID);
          _ps.setInt(3, e.getStatus());
@@ -143,6 +143,7 @@ public class SetQuestionnaire extends DAO {
          _ps.setTimestamp(6, createTimestamp(e.getScoredOn()));
          _ps.setInt(7, e.getScorerID());
          _ps.setTimestamp(8, createTimestamp(e.getExpiryDate()));
+         _ps.setBoolean(9, true);
 
          // Write the exam and get the new exam ID
          executeUpdate(1);
