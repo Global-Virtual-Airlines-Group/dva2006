@@ -40,9 +40,8 @@ var form = document.forms[0];
 form.action = url;
  
 // Execute the form validation - if any
-var sFunc = form.onsubmit;
-if (sFunc != null) {
-	submitOK = sFunc();
+if (form.onsubmit) {
+	submitOK = form.onsubmit();
 	if (!submitOK)
 		return false;
 }
