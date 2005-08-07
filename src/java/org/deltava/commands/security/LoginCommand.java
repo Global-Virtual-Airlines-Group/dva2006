@@ -76,10 +76,17 @@ public class LoginCommand extends AbstractCommand {
 
 			// Log the pilot in
 			p.login(ctx.getRequest().getRemoteHost());
+			
+			// Start the transaction
+			ctx.startTX();
 
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p);
+			
+			// Clear the inactivity interval (if any)
+			SetInactivity idao = new SetInactivity(con);
+			idao.delete(p.getID());
 			
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
@@ -91,10 +98,15 @@ public class LoginCommand extends AbstractCommand {
 			// Update the session data
 			SetSystemData swdao = new SetSystemData(con);
 			swdao.updateSession(s.getId(), p, ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (SecurityException se) {
+			ctx.release();
 			ctx.setMessage(se.getMessage());
 			return;
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
