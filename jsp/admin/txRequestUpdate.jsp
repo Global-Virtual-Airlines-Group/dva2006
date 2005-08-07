@@ -10,6 +10,7 @@
 <title><content:airline /> Transfer Request</title>
 <content:css name="main" browserSpecific="true" />
 <content:copyright visible="false" />
+</head>
 <body>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>

@@ -62,15 +62,25 @@ return true;
 <c:when test="${fn:failed(checkRide)}">
  <td class="data error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></td>
 </c:when>
-<c:when test="${fn:submitted(checkRide)}">
- <td class="data sec bld caps">CHECK RIDE SUBMITTED ON <fmt:date fmt="d" date="${checkRide.submittedOn}" />
-<el:cmdbutton url="checkride" linkID="0x${checkRide.ID}" label="VIEW CHECK RIDE" /></td>
-</c:when>
 <c:otherwise>
  <td class="data bld caps">CHECK RIDE ASSIGNED ON <fmt:date fmt="d" date="${checkRide.date}" /></td>
 </c:otherwise>
 </c:choose>
 </tr>
+<tr>
+ <td class="label">Equipment Type</td>
+ <td class="data">${checkRide.equipmentType}</td>
+</tr>
+<tr>
+ <td class="label">Comments</td>
+ <td class="data">${checkRide.comments}</td>
+</tr>
+<c:if test="${checkRide.flightID != 0}">
+<tr>
+ <td class="label">ACARS Flight ID</td>
+ <td class="data"><fmt:int value="${checkRide.flightID}" /></td>
+</tr>
+</c:if>
 </c:if>
 <c:if test="${access.canApprove}">
 <tr class="title caps">
