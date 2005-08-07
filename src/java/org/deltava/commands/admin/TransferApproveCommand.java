@@ -87,7 +87,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			rCmp.setRank2(rank, newEQ.getStage());
 			
 			// Set the status update code
-			int statusCode = (rCmp.compare() > 0) ? StatusUpdate.EXTPROMOTION : StatusUpdate.RANK_CHANGE;
+			int statusCode = (rCmp.compare() < 0) ? StatusUpdate.EXTPROMOTION : StatusUpdate.RANK_CHANGE;
 
 			// Update the equipment program and rank
 			usr.setEquipmentType(newEQ.getName());
@@ -114,7 +114,7 @@ public class TransferApproveCommand extends AbstractCommand {
 
 			// Save the message context
 			mctxt.addData("pilot", usr);
-			mctxt.addData("eqType", eqType);
+			mctxt.addData("eqType", newEQ);
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
