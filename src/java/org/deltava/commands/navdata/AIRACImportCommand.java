@@ -104,11 +104,15 @@ public class AIRACImportCommand extends AbstractCommand {
 							lat = Double.parseDouble(txtData.substring(9, 19).trim());
 							lon = Double.parseDouble(txtData.substring(19, 30).trim());
 							
+							// Convert runway length from meters to feet
+							int lenM = Integer.parseInt(txtData.substring(35, 40).trim());
+							
 							Runway rwy = new Runway(lat, lon);
 							rwy.setCode(txtData.substring(0, 5));
 							rwy.setName(txtData.substring(5, 8).toUpperCase());
 							rwy.setHeading(Integer.parseInt(txtData.substring(31, 34).trim()));
-							rwy.setLength(Integer.parseInt(txtData.substring(35, 40).trim()));
+							rwy.setLength((int) Math.round(lenM * 3.2808399));
+							rwy.setFrequency("-");
 							if (txtData.length() > 40)
 								rwy.setFrequency(txtData.substring(41, 47).trim());
 							
