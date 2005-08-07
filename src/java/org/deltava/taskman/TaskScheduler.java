@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.jdbc.ConnectionPoolException;
 
+import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -78,6 +79,9 @@ public class TaskScheduler extends Thread {
 	 */
 	public final void run() {
 		log.info("Starting");
+		
+		// Sleep for a while when we start
+		ThreadUtils.sleep(10000);
 
 		// Check loop
 		while (!isInterrupted()) {
