@@ -32,7 +32,7 @@ public class InstallerSaveCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the file name and if we are saving a new document
-      String fName = (String) ctx.getCmdParameter(Command.ID, null);
+      String fName = (String) ctx.getCmdParameter(ID, null);
       boolean isNew = (fName == null);
       if (isNew)
          fName = ctx.getParameter("fileName");
@@ -84,10 +84,10 @@ public class InstallerSaveCommand extends AbstractCommand {
          SetLibrary wdao = new SetLibrary(con);
          if (isNew) {
             wdao.createInstaller(entry);
-            ctx.setAttribute("installerAdded", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("installerAdded", Boolean.TRUE, REQUEST);
          } else {
             wdao.updateInstaller(entry);
-            ctx.setAttribute("installerUpdated", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("installerUpdated", Boolean.TRUE, REQUEST);
          }
       } catch (DAOException de) {
          throw new CommandException(de);
