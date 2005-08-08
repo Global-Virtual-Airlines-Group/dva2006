@@ -73,7 +73,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 		//TODO Create JSP for Transfer Airline
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/pilot/pilottransferred.jsp");
+		result.setURL("/jsp/pilot/pilotTransferred.jsp");
 		result.setSuccess(true);
 	}
 }
