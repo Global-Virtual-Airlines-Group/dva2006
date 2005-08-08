@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 
 import org.deltava.beans.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to support updating Pilot profiles.
@@ -72,19 +73,34 @@ public class SetPilot extends PilotWriteDAO {
 	}
 	
 	/**
-	 * Updates an existing Pilot profile.
+	 * Updates an existing Pilot profile in the current database.
 	 * @param p the Pilot profile to update
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Pilot p) throws DAOException {
+	   write(p, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Updates an existing Pilot profile.
+	 * @param p the Pilot profile to update
+	 * @param db the database to write to
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Pilot p, String db) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("UPDATE ");
+	   sqlBuf.append(db.toLowerCase());
+	   sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, " +
+	         	"IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, " +
+	            "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, UISCHEME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, " +
+	             "AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=? WHERE (ID=?)");
+	   
 	    try {
 	        // This involves a lot of reads and writes, so its written as a single transaction
 	        startTransaction();
-
-	        prepareStatementWithoutLimits("UPDATE PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, " + 
-	                "VATSIM_ID=?, IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, " +
-	                "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, UISCHEME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, " +
-	                "AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=? WHERE (ID=?)");
+	        prepareStatementWithoutLimits(sqlBuf.toString()); 
 	        _ps.setString(1, p.getEmail());
 	        _ps.setString(2, p.getLocation());
 	        _ps.setDouble(3, p.getLegacyHours());
@@ -111,8 +127,8 @@ public class SetPilot extends PilotWriteDAO {
 	        executeUpdate(1);
 	        
 		    // Update the roles/ratings
-		    writeRoles(p);
-		    writeRatings(p);
+		    writeRoles(p, db);
+		    writeRatings(p, db);
 		    
 		    // Commit the changes and update the cache
 		    commitTransaction();
