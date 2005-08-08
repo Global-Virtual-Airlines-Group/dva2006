@@ -55,6 +55,23 @@ public class SetPilot extends PilotWriteDAO {
 	}
 	
 	/**
+	 * Marks a Pilot as Transferred
+	 * @param id, pilot database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	
+	public void setTransferred(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
+			_ps.setInt(1, Pilot.TRANSFERRED);
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Updates an existing Pilot profile.
 	 * @param p the Pilot profile to update
 	 * @throws DAOException if a JDBC error occurs
