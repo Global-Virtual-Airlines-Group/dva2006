@@ -6,6 +6,8 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.fleet.SystemInformation;
 
 import org.deltava.dao.SetLibrary;
@@ -19,6 +21,8 @@ import org.deltava.dao.DAOException;
  */
 
 public class SystemInfoService extends WebDataService {
+	
+	private static final Logger log = Logger.getLogger(SystemInfoService.class);
 
 	/**
 	 * Executes the Web Service, saving local system data.
@@ -46,7 +50,7 @@ public class SystemInfoService extends WebDataService {
 		try {
 			String memSize = ctx.getRequest().getParameter("MEM");
 			si.setRAM(Integer.parseInt(memSize.substring(0, memSize.indexOf("MB"))));
-		} catch (NumberFormatException nfe) {
+		} catch (Exception e) {
 			si.setRAM(512);
 		}
 
@@ -54,8 +58,8 @@ public class SystemInfoService extends WebDataService {
 		try {
 			String fsVersion = ctx.getRequest().getParameter("VER");
 			si.setFSVersion(Integer.parseInt(fsVersion.substring(2)));
-		} catch (NumberFormatException nfe) {
-			si.setFSVersion(2002);
+		} catch (Exception e) {
+			si.setFSVersion(2004);
 		}
 
 		// Write the system information to the database
@@ -63,6 +67,7 @@ public class SystemInfoService extends WebDataService {
 			SetLibrary dao = new SetLibrary(_con);
 			dao.write(si);
 		} catch (DAOException de) {
+			log.error(de.getMessage(), de);
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
