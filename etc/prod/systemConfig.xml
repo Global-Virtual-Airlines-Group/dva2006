@@ -396,8 +396,8 @@
 		</pool>
 		
 		<buffer>
-			<send type="Integer">2048</send>
-			<recv type="Integer">8192</recv>
+			<send type="Integer">4096</send>
+			<recv type="Integer">1024</recv>
 		</buffer>
 		
 		<list name="login_msgs" attr="msg">
