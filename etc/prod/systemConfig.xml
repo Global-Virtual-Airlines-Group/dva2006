@@ -314,7 +314,7 @@
 	<smtp>
 		<server>golgotha.deltava.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
-		<testMode type="Boolean">true</testMode>
+		<testMode type="Boolean">false</testMode>
 	</smtp>
 	
 	<registration>
@@ -379,11 +379,11 @@
 		<enabled type="Boolean">true</enabled>
 		<daemon>org.deltava.acars.TomcatDaemon</daemon>
 		
-		<map>
+		<livemap>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
-			<refresh type="Integer">15</refresh>
-		</map>
+			<reload type="Integer">15000</reload>
+		</livemap>
 		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
@@ -402,6 +402,7 @@
 		
 		<list name="login_msgs" attr="msg">
 			<msg>All messages are logged by user ID and IP address.</msg>
+			<msg>Filed PIREPs will not count for logbook or promotion.</msg>
 		</list>
 		
 		<ack>
