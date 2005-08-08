@@ -21,7 +21,7 @@
 <div class="updateHdr"><content:airline /> SYSTEM ERROR</div>
 <br />
 Oops. Something bad happened. Really, really bad.<br />
-<br>
+<br />
 This is the message: <b>${servlet_error}</b><br />
 <br />
 <c:if test="${!empty ex}">
