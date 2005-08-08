@@ -95,7 +95,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			cr.setComments(a.getName() + " hired into " + eq.getName() + " program");
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStage(eq.getStage());
-			cr.setStatus(CheckRide.SCORED);
+			cr.setStatus(Test.SCORED);
 			cr.setSubmittedOn(new Date());
 			cr.setScoredOn(cr.getSubmittedOn());
 			

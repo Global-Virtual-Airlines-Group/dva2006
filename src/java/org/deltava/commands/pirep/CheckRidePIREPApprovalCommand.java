@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.TransferRequest;
-import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -98,7 +98,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			cr.setComments(ctx.getParameter("comments"));
-			cr.setStatus(CheckRide.SCORED);
+			cr.setStatus(Test.SCORED);
 
 			// Start a JDBC transaction
 			ctx.startTX();
