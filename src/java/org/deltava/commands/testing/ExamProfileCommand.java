@@ -128,7 +128,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
       // Check our access level
       ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
       access.validate();
-      if (!access.getCanRead()) throw new CommandSecurityException("Cannot view Examination Profile");
+      if (!access.getCanRead())
+         throw new CommandSecurityException("Cannot view Examination Profile");
 
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
@@ -141,6 +142,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
 
          // Save the profile in the request
          ctx.setAttribute("eProfile", ep, REQUEST);
+         ctx.setAttribute("access", access, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

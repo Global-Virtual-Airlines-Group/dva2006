@@ -62,7 +62,12 @@
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
+<c:if test="${access.canEdit}">
  <td><el:cmdbutton url="eprofile" linkID="${eProfile.name}" op="edit" label="EDIT EXAMINATION PROFILE" /></td>
+</c:if>
+<c:if test="${!access.canEdit}">
+ <td>&nbsp;</td>
+</c:if>
 </tr>
 </el:table>
 <content:copyright />
