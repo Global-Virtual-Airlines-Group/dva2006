@@ -57,7 +57,7 @@ public class GetPilotNotify extends PilotReadDAO {
       if (Person.EVENT.equals(notificationType)) {
          fieldName = "EVENT_NOTIFY";
       } else if (Person.FLEET.equals(notificationType)) {
-         fieldName = "FLEET_NOTIFY";
+         fieldName = "FILE_NOTIFY";
       } else if (Person.NEWS.equals(notificationType)) {
          fieldName = "NEWS_NOTIFY";
       } else {
