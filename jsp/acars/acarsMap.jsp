@@ -21,6 +21,7 @@
 <script language="JavaScript" type="text/javascript">
 function reloadData()
 {
+if (!document.doRefresh) return false;
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 
@@ -67,7 +68,7 @@ return true;
  <td colspan="2"><content:airline /> LIVE ACARS MAP</td>
 </tr>
 <tr>
- <td class="label">Live Map</td>
+ <td class="label" valign="top">Live Map</td>
  <td class="data"><div id="googleMap" style="width: 720px; height: 520px" /></td>
 </tr>
 </el:table>
