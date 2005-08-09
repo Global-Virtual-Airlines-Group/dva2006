@@ -262,12 +262,12 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 	/**
 	 * Updates the aircraft's average N1 speed.
 	 * @param nn1 the N1 speed as a percentage
-	 * @throws IllegalArgumentException if nn1 is negative or > 115
+	 * @throws IllegalArgumentException if nn1 is negative or > 125
 	 * @see RouteEntry#getN1()
 	 */
 	public void setN1(double nn1) {
-		if ((nn1 < 0) || (nn1 > 115.0))
-			throw new IllegalArgumentException("N1 cannot be negative or > 115.0%");
+		if ((nn1 < 0) || (nn1 > 125.0))
+			throw new IllegalArgumentException("N1 cannot be negative or > 125.0%");
 
 		_n1 = nn1;
 	}
@@ -275,12 +275,12 @@ public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEnt
 	/**
 	 * Updates the aircraft's average N2 speed.
 	 * @param nn2 the N2 speed as a percentage
-	 * @throws IllegalArgumentException if nn2 is negative or > 115
+	 * @throws IllegalArgumentException if nn2 is negative or > 125
 	 * @see RouteEntry#getN2()
 	 */
 	public void setN2(double nn2) {
-		if ((nn2 < 0) || (nn2 > 115.0))
-			throw new IllegalArgumentException("N2 cannot be negative or > 115.0%");
+		if ((nn2 < 0) || (nn2 > 125.0))
+			throw new IllegalArgumentException("N2 cannot be negative or > 125.0%");
 
 		_n2 = nn2;
 	}
