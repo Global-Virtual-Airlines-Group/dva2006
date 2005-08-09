@@ -5,6 +5,9 @@ import java.text.*;
 
 import javax.servlet.ServletContext;
 
+import org.deltava.beans.DateTime;
+import org.deltava.beans.TZInfo;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -105,24 +108,33 @@ public abstract class AbstractCommand implements Command {
 	 * @see DateFormat#parse(java.lang.String)
 	 */
 	protected Date parseDateTime(CommandContext ctx, String paramHdr, String dfmt, String tfmt) {
+	   
+	   Date dt = null;
 		try {
 			if (ctx.getParameter(paramHdr + "DateTime") != null) {
 				DateFormat df = new SimpleDateFormat(dfmt + " " + tfmt);
-				return df.parse(ctx.getParameter(paramHdr + "DateTime"));
+				dt = df.parse(ctx.getParameter(paramHdr + "DateTime"));
 			} else if ((ctx.getParameter(paramHdr + "Date") != null) && (ctx.getParameter(paramHdr + "Time") != null)) {
 				DateFormat df = new SimpleDateFormat(dfmt + " " + tfmt);
-				return df.parse(ctx.getParameter(paramHdr + "Date") + " " + ctx.getParameter(paramHdr + "Time"));
+				dt = df.parse(ctx.getParameter(paramHdr + "Date") + " " + ctx.getParameter(paramHdr + "Time"));
 			} else if (ctx.getParameter(paramHdr + "Date") != null) {
 				DateFormat df = new SimpleDateFormat(dfmt);
-				return df.parse(ctx.getParameter(paramHdr + "Date"));
+				dt = df.parse(ctx.getParameter(paramHdr + "Date"));
 			} else if (ctx.getParameter(paramHdr + "Time") != null) {
 				DateFormat df = new SimpleDateFormat(tfmt);
-				return df.parse(ctx.getParameter(paramHdr + "Time"));
+				dt = df.parse(ctx.getParameter(paramHdr + "Time"));
+			} else {
+			   return null;
 			}
 		} catch (ParseException pe) {
+		   return null;
 		}
 		
-		return null;
+		// Convert from user's time zone, or default zone to the JVM's local zone
+		TZInfo tz =  (ctx.getUser() == null) ? TZInfo.init(SystemData.get("time.timezone")) : ctx.getUser().getTZ();
+		DateTime dtf = new DateTime(dt, tz);
+		dtf.convertTo(TZInfo.local());
+		return dtf.getDate();
 	}
 
 	/**
