@@ -21,6 +21,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 5, 'Event Name')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateText(form.route, 5, 'Default Route')) return false;
 if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
 
@@ -75,19 +76,22 @@ return true;
  <td class="label">Start Date/Time</td>
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.startTime, 'MM/dd/yyyy')}" />
 &nbsp;<el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.startTime, 'HH:mm')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" /></td>
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
+&nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">End Date/Time</td>
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.endTime, 'MM/dd/yyyy')}" />
 &nbsp;<el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.endTime, 'HH:mm')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
+&nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
  <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.signupDeadline, 'MM/dd/yyyy')}" />
 &nbsp;<el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.signupDeadline, 'HH:mm')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" /></td>
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
+&nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">Destination Airport</td>
@@ -114,10 +118,16 @@ return true;
  <td class="data"><el:textbox name="briefing" idx="*" width="120" height="15">${event.briefing}</el:textbox></td>
 </tr>
 <c:if test="${!empty charts}">
-<tr>
- <td class="label" valign="top">Available Charts</td>
- <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${charts}" separator="<div style=\"clear:both;\" />" className="small" /></td>
+<tr class="title caps">
+ <td colspan="2">APPROACH CHARTS</td>
 </tr>
+<c:forEach var="chartAirport" items="${chartAirports}">
+<c:set var="apCharts" value="${charts[chartAirport]}" scope="request" />
+<tr>
+ <td class="label" valign="top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
+ <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${apCharts}" separator="<div style=\"clear:both;\" />" className="small" /></td>
+</tr>
+</c:forEach>
 </c:if>
 </el:table>
 

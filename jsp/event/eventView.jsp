@@ -221,7 +221,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  <el:cmdbutton ID="AssignButton" url="eventassign" linkID="0x${event.ID}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="eventedit" linkID="0x${event.ID}" label="CANCEL EVENT" />
+ <el:cmdbutton ID="CancelButton" url="eventcancel" linkID="0x${event.ID}" label="CANCEL EVENT" />
 </c:if>
  </td>
 </tr>
