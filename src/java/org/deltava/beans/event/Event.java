@@ -187,7 +187,9 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     public Set getAirports() {
     	Set results = new TreeSet(_airportD);
-    	results.add(_airportA);
+    	if (_airportA != null)
+    	   results.add(_airportA);
+    	
     	return results;
     }
     
