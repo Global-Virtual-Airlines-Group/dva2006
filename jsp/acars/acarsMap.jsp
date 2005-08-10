@@ -19,9 +19,10 @@
 <map:api version="1" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
-function reloadData()
+function reloadData(isAuto)
 {
-if (!document.doRefresh) return false;
+if ((!isAuto) && (!document.doRefresh)) return false;
+window.status = 'Reloading ACARS Map data...';
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 
@@ -30,9 +31,10 @@ disableButton('RefreshButton');
 disableButton('SettingsButton');
 
 // Set timer to reload the data
-if (document.doRefresh)
-	window.setTimeout('void reloadData()', ${refreshInterval + 2500});
-	
+if ((document.doRefresh) && (isAuto))
+	window.setTimeout('void reloadData(true)', ${refreshInterval + 2500});
+
+window.status = '';	
 return true;
 }
 
@@ -76,7 +78,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr class="title">
- <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData()" label="REFRESH ACARS DATA" />&nbsp;
+ <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
 <el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
 <el:button ID="ToggleButton" className="BUTTON" onClick="void toggleReload()" label="STOP AUTOMATIC REFRESH" /></td>
 </tr>
@@ -94,7 +96,7 @@ map.centerAndZoom(mapC, ${zoomLevel});
 
 // Reload ACARS data
 document.doRefresh = true;
-reloadData();
+reloadData(true);
 </script>
 </body>
 </html>
