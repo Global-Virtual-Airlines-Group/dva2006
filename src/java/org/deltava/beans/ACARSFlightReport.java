@@ -515,11 +515,11 @@ public class ACARSFlightReport extends FlightReport {
     /**
      * Updates the weight of the aircraft at the end of the flight. 
      * @param w the weight in pounds
-     * @throws IllegalArgumentException if w is zero or negative
+     * @throws IllegalArgumentException if w is negative
      * @see ACARSFlightReport#getGateWeight()
      */
     public void setGateWeight(int w) {
-        if (w <= 0)
+        if (w < 0)
             throw new IllegalArgumentException("Weight cannot be zero or negative");
         
         _gateWeight = w;
