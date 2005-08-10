@@ -79,14 +79,19 @@ public class EventEditCommand extends AbstractCommand {
 			
 			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);
-			Set charts = new TreeSet();
+			Map charts = new TreeMap();
 			for (Iterator i = e.getAirports().iterator(); i.hasNext(); ) {
 				Airport a = (Airport) i.next();
-				charts.addAll(cdao.getCharts(a));
+				List aCharts = cdao.getCharts(a);
+				if (!aCharts.isEmpty())
+				   charts.put(a, aCharts);
 			}
 			
 			// Save the charts
-			ctx.setAttribute("charts", charts, REQUEST);
+			if (!charts.isEmpty()) {
+			   ctx.setAttribute("charts", charts, REQUEST);
+			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
+			}
 			
 			// Save event and access controller
 			ctx.setAttribute("event", e, REQUEST);

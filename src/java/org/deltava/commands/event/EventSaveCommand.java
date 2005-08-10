@@ -103,25 +103,23 @@ public class EventSaveCommand extends AbstractCommand {
 			airports.removeAll(e.getAirportD());
 			ctx.setAttribute("airports", airports, REQUEST);
 
-			// Get the chart choices
+			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);
-			Set charts = new TreeSet();
-			for (Iterator i = e.getAirports().iterator(); i.hasNext();) {
+			Map charts = new TreeMap();
+			for (Iterator i = e.getAirports().iterator(); i.hasNext(); ) {
 				Airport a = (Airport) i.next();
-				charts.addAll(cdao.getCharts(a));
+				List aCharts = cdao.getCharts(a);
+				if (!aCharts.isEmpty())
+				   charts.put(a, aCharts);
 			}
-
-			// Get the selected charts
-			if (ctx.getRequest().getParameterValues("charts") != null) {
-				Set chartIDs = new HashSet(Arrays.asList(ctx.getRequest().getParameterValues("charts")));
-				for (Iterator i = chartIDs.iterator(); i.hasNext();) {
-					int id = StringUtils.parseHex((String) i.next());
-					e.addChart(cdao.get(id));
-				}
+			
+			// Save the charts
+			if (!charts.isEmpty()) {
+			   ctx.setAttribute("charts", charts, REQUEST);
+			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
 			}
 
 			// Save the charts and the event in the request
-			ctx.setAttribute("charts", charts, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 			ctx.setAttribute("event", e, REQUEST);
 
