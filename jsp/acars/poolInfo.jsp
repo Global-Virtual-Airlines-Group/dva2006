@@ -39,7 +39,7 @@
  <td class="bld">N/A</td>
 </c:if>
 <c:if test="${con.flightID > 0}">
- <td class="sec bld">${con.info.flightCode}</td>
+ <td class="sec bld">${con.flightInfo.flightCode}</td>
 </c:if>
  <td>${con.flightID}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
