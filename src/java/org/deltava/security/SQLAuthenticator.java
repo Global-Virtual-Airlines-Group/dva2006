@@ -98,15 +98,15 @@ public class SQLAuthenticator implements Authenticator {
 		log.debug("Updating password for " + dN + " in Directory");
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("UPDATE AUTH SET PWD=");
+		StringBuffer sqlBuf = new StringBuffer("REPLACE INTO AUTH (USER, PWD) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
-		sqlBuf.append("(?) WHERE (USER=?)");
-
+		sqlBuf.append("(?))");
+		
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, pwd);
-			ps.setString(2, dN);
+			ps.setString(1, dN);
+			ps.setString(2, pwd);
 
 			// Update the directory
 			int rowsUpdated = ps.executeUpdate();
