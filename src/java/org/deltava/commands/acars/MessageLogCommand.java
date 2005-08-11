@@ -94,6 +94,9 @@ public class MessageLogCommand extends ACARSLogViewCommand {
          ctx.release();
       }
       
+      // Set search complete attribute
+      ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
+      
       // Forward to the JSP
       result.setURL("/jsp/acars/msgLog.jsp");
       result.setSuccess(true);
