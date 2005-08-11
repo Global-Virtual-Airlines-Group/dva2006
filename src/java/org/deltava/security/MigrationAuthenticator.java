@@ -100,7 +100,11 @@ public class MigrationAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs, or the user is not in the Destination directory
 	 */
 	public void updatePassword(String directoryName, String pwd) throws SecurityException {
-		_dst.updatePassword(directoryName, pwd);
+		if (_dst.contains(directoryName)) {
+			_dst.updatePassword(directoryName, pwd);
+		} else {
+			_dst.addUser(directoryName, pwd);
+		}
 	}
 
 	/**
