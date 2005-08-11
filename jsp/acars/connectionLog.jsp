@@ -103,13 +103,13 @@ return true;
 </tr>
 </view:table>
 </c:when>
-<c:otherwise>
+<c:when test="${doSearch}">
 <el:table className="view" space="default" pad="default">
 <tr>
  <td class="pri bld">No Connections matching your search criteria were found in the ACARS log database.</td>
 </tr>
 </el:table>
-</c:otherwise>
+</c:when>
 </c:choose>
 <content:copyright />
 </div>
