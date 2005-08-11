@@ -66,6 +66,10 @@ public class FlightLogCommand extends ACARSLogViewCommand {
          	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
          	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
             vc.setResults(dao.getFlights(sd, ed));
+            
+            // Save start/end dates
+            ctx.setAttribute("startDate", sd, REQUEST);
+            ctx.setAttribute("endDate", ed, REQUEST);
          } else {
             vc.setResults(dao.getFlights(pilotID));
          }
@@ -93,6 +97,9 @@ public class FlightLogCommand extends ACARSLogViewCommand {
       } finally {
          ctx.release();
       }
+      
+      // Set search complete attribute
+      ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
       
       // Forward to the JSP
       result.setURL("/jsp/acars/flightLog.jsp");
