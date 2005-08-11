@@ -35,7 +35,8 @@ return true;
 <el:form action="acarslogf.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4">ACARS FLIGHT INFORMATION LOG</td>
+ <td colspan="4">ACARS FLIGHT INFORMATION LOG<c:if test="${!empty startDate}"> BETWEEN <fmt:date date="${startDate}" /> 
+ - <fmt:date date="${endDate}" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Search Type</td>
@@ -110,13 +111,13 @@ return true;
 </tr>
 </view:table>
 </c:when>
-<c:otherwise>
+<c:when test="${doSearch}">
 <el:table className="view" space="default" pad="default">
 <tr>
  <td class="pri bld">No Flights matching your search criteria were found in the ACARS log database.</td>
 </tr>
 </el:table>
-</c:otherwise>
+</c:when>
 </c:choose>
 <content:copyright />
 </div>
