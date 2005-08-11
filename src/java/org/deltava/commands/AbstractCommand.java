@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import org.deltava.beans.DateTime;
 import org.deltava.beans.TZInfo;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -115,8 +116,14 @@ public abstract class AbstractCommand implements Command {
 				DateFormat df = new SimpleDateFormat(dfmt + " " + tfmt);
 				dt = df.parse(ctx.getParameter(paramHdr + "DateTime"));
 			} else if ((ctx.getParameter(paramHdr + "Date") != null) && (ctx.getParameter(paramHdr + "Time") != null)) {
+			   String timeValue = ctx.getParameter(paramHdr + "Time");
+			   if (StringUtils.isEmpty(timeValue)) {
+			      DateFormat tf = new SimpleDateFormat(tfmt); 
+			      timeValue = tf.format(new Date(0));
+			   }
+			      
 				DateFormat df = new SimpleDateFormat(dfmt + " " + tfmt);
-				dt = df.parse(ctx.getParameter(paramHdr + "Date") + " " + ctx.getParameter(paramHdr + "Time"));
+				dt = df.parse(ctx.getParameter(paramHdr + "Date") + " " + timeValue);
 			} else if (ctx.getParameter(paramHdr + "Date") != null) {
 				DateFormat df = new SimpleDateFormat(dfmt);
 				dt = df.parse(ctx.getParameter(paramHdr + "Date"));
