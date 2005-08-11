@@ -97,14 +97,17 @@ public class LDAPAuthenticator implements Authenticator {
 		// Bind to the directory
 		try {
 			DirContext ctxt = new InitialDirContext(_env);
-			NamingEnumeration e = ctxt.search("", "(dn=" + dName + ")", null);
-			if (!e.hasMoreElements()) {
-				ctxt.close();
-				throw new NamingException(dName + " not found");
+			try {
+				SearchControls ctrls = new SearchControls();
+				ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
+			   ctxt.search(dName, "(objectClass=person)", null);
+			} catch (NameNotFoundException nnfe) {
+				addUser(dName, pwd); // Add the user entry if not found
+				return;
 			}
-
+			   
 			// Create the modifed password
-			Attribute attr = new BasicAttribute("password", pwd);
+			Attribute attr = new BasicAttribute("userPassword", pwd);
 			ModificationItem mod = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
 
 			// Modify the password
