@@ -95,7 +95,7 @@ public class SetPilot extends PilotWriteDAO {
 	   sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, " +
 	         	"IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, " +
 	            "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, UISCHEME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, " +
-	             "AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=? WHERE (ID=?)");
+	             "AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, STATUS=? WHERE (ID=?)");
 	   
 	    try {
 	        // This involves a lot of reads and writes, so its written as a single transaction
@@ -123,7 +123,8 @@ public class SetPilot extends PilotWriteDAO {
 	        _ps.setString(20, p.getIMHandle());
 	        _ps.setString(21, p.getRank());
 	        _ps.setString(22, p.getEquipmentType());
-	        _ps.setInt(23, p.getID());
+	        _ps.setInt(23, p.getStatus());
+	        _ps.setInt(24, p.getID());
 	        executeUpdate(1);
 	        
 		    // Update the roles/ratings
