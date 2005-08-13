@@ -8,9 +8,11 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 
 import org.deltava.commands.*;
+import org.deltava.commands.schedule.AirlineCommand;
 import org.deltava.dao.*;
 import org.deltava.security.command.*;
 
+import org.deltava.util.PasswordGenerator;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -33,21 +35,20 @@ public class TransferAirlineCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get PID
-	   // FIXME just use ctx.getID() - if none is provided your code will transfer the current pilot.
-		int id = (ctx.getID() == 0) ? ctx.getUser().getID() : ctx.getID();
+		int id = ctx.getID();
 		
 		// Read a request parameter called "newAirline" to get the airline to change to
-		
+
 		// Get the airlineDatabases Map from SystemData and make sure the db name is contained
 		// within map.keySet() if not, throw an exception
-		
+		String dbName = ctx.getParameter("dbName");
 		// Get connection from the pool
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get whichever pilot we're transferring
 			GetPilot rdao = new GetPilot(con);
-			Pilot p = rdao.get(id); // call ctx.getID() here
+			Pilot p = ctx.getID(); // call ctx.getID() here
 			if (p == null)
 				throw new CommandException("Invalid Pilot ID - " + id);
 			
@@ -58,12 +59,24 @@ public class TransferAirlineCommand extends AbstractCommand {
 				throw new CommandSecurityException("Insufficient access to transfer a pilot to another airline");
 			
 			// Start Transaction
-				
+			ctx.startTX();
+			
 			//TODO Change LDAP DN
 			// What I think we should do here is build the DN as cn= + p.getName() + ",ou=" + dbName + ",o=sce"
 			// Let's hard code it for now, and figure out the elegant way later
+			p.setDN("cn=" + p.getName() + ",ou=" + dbName + ",o=sce");
+			p.setPassword(PasswordGenerator.generate(8));
 			
 			// Create a new userData record and write it
+			// Luke, I'm lost...can't work out how to set a new USERDATA for a different airline
+		
+			UserData ud = new UserData(ctx.getParameter("dbName"), "PILOTS", "www.afva.net");
+			
+			SetUserData udao = new SetUserData(con);
+			p.setPilotCode("AFV0");
+			udao.write(ud);
+			
+			
 			
 			
 			// Change status at old airline to Transferred
@@ -78,6 +91,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Get the Authenticator
 			
 			// Calculate a random password, since we can't read the old password
+			p.setPassword(PasswordGenerator.generate(8));
 			
 			// Add the new DN to the authenticator with the new password
 			
