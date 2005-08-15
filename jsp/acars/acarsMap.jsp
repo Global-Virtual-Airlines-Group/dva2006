@@ -21,8 +21,11 @@
 <script language="JavaScript" type="text/javascript">
 function reloadData(isAuto)
 {
-if ((!isAuto) && (!document.doRefresh)) return false;
-window.status = 'Reloading ACARS Map data...';
+// Get auto refresh
+var f = document.forms[0];
+var doRefresh = f.autoRefresh.checked;
+
+if ((isAuto) && (!doRefresh)) return false;
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 
@@ -31,10 +34,9 @@ disableButton('RefreshButton');
 disableButton('SettingsButton');
 
 // Set timer to reload the data
-if ((document.doRefresh) && (isAuto))
-	window.setTimeout('void reloadData(true)', ${refreshInterval + 2500});
+if (doRefresh && isAuto)
+	window.setTimeout('void reloadData(true)', ${refreshInterval + 2000});
 
-window.status = '';	
 return true;
 }
 
@@ -65,9 +67,15 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
+<el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> LIVE ACARS MAP</td>
+</tr>
+<tr>
+ <td class="label">Map Options</td>
+ <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
+<el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" /></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Live Map</td>
@@ -79,10 +87,11 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr class="title">
  <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
-<el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
-<el:button ID="ToggleButton" className="BUTTON" onClick="void toggleReload()" label="STOP AUTOMATIC REFRESH" /></td>
+<el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" /></td>
 </tr>
 </el:table>
+</el:form>
+<br />
 <content:copyright />
 </div>
 <script language="JavaScript" type="text/javascript">
@@ -93,6 +102,9 @@ var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, ${zoomLevel});
+
+// Placeholder for route
+var routeData;
 
 // Reload ACARS data
 document.doRefresh = true;
