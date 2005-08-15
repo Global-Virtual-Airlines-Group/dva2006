@@ -152,6 +152,20 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
+	 * Exports the entire Flight Schedule.
+	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection export() throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM common.SCHEDULE");
+	      return execute();
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
 	 * Helper method to query the database.
 	 */
 	private List execute() throws SQLException {

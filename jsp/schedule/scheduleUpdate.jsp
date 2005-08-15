@@ -41,6 +41,22 @@ The airport ${airport.name} (<fmt:airport airport="${airport}" />) has been remo
 <br />
 The airline ${airline.name} has been updated in the <content:airline /> Flight Schedule.<br />
 </c:when>
+<c:when test="${isFlights}">
+<div class="updateHdr">Flight Schedule Updated</div>
+<br />
+The <content:airline /> Flight Schedule has been updated. <fmt:int value="${entryCount}" /> Schedule entries 
+have been imported into the database. <c:if test="${doPurge}"><span class="sec">The database was purged 
+before new entries were uploaded.</span></c:if><br />
+<c:if test="${!empty errors}">
+<br />
+The following errors occured during the import process:<br />
+<div class="small">
+<c:forEach var="error" items="${errors}">
+${error}<br />
+</c:forEach>
+</div>
+</c:if>
+</c:when>
 </c:choose>
 <br />
 <content:copyright />
