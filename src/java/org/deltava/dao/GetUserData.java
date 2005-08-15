@@ -6,8 +6,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.system.UserData;
-import org.deltava.beans.system.UserDataMap;
+import org.deltava.beans.system.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.cache.*;
@@ -32,6 +31,56 @@ public class GetUserData extends DAO {
    public GetUserData(Connection c) {
       super(c);
    }
+   
+   /**
+    * Returns cross-application Airline data for a specific Airline. 
+    * @param code the Airline code
+    * @return an AirlineInformation bean, or null if not found
+    * @throws DAOException if a JDBC error occurs
+    * @throws NullPointerException if code is null
+    * @see GetUserData#getAirlines()
+    */
+   public AirlineInformation get(String code) throws DAOException {
+      
+      // Check if we're in the cache
+      AirlineInformation result = (AirlineInformation) _cache.get(code.toUpperCase());
+      if (result != null)
+         return result;
+      
+      try {
+         prepareStatement("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?)");
+         _ps.setString(1, code.toUpperCase());
+         
+         // Get the results, if empty return null
+         List results = executeAirlineInfo();
+         result = results.isEmpty() ? null : (AirlineInformation) results.get(0);
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+      
+      // Add to the cache
+      if (result != null)
+         _cache.add(result);
+      
+      return result;
+   }
+   
+   /**
+    * Returns all available Airlines on this application server.
+    * @return a Map of AirlineInformation beans, indexed by code
+    * @throws DAOException if a JDBC error occurs
+    * @see GetUserData#getAirlines()
+    */
+   public Map getAirlines() throws DAOException {
+      try {
+         prepareStatement("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
+         List results = executeAirlineInfo();
+         _cache.addAll(results);
+         return CollectionUtils.createMap(results, "code");
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
 
    /**
     * Returns cross-application data for a particular database ID.
@@ -41,7 +90,8 @@ public class GetUserData extends DAO {
     */
    public UserData get(int id) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM common.USERDATA WHERE (ID=?)");
+         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
+               + "WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?)");
          _ps.setInt(1, id);
          setQueryMax(1);
 
@@ -61,8 +111,9 @@ public class GetUserData extends DAO {
     */
    public UserDataMap getByThread(int threadID) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM common.USERDATA UD LEFT JOIN common.COOLER_POSTS P ON "
-         		+ "(P.AUTHOR_ID=UD.ID) WHERE (P.THREAD_ID=?)");
+         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
+               + "LEFT JOIN common.COOLER_POSTS P ON (P.AUTHOR_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND "
+               + "(P.THREAD_ID=?)");
          _ps.setInt(1, threadID);
          return new UserDataMap(execute());
       } catch (SQLException se) {
@@ -78,8 +129,8 @@ public class GetUserData extends DAO {
     */
    public UserDataMap getByEvent(int eventID) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM common.USERDATA UD LEFT JOIN common.EVENT_SIGNUPS ES ON "
-         		+ "(ES.PILOT_ID=UD.ID) WHERE (ES.ID=?)");
+         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
+               + "LEFT JOIN common.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?)");
          _ps.setInt(1, eventID);
          return new UserDataMap(execute());
       } catch (SQLException se) {
@@ -96,7 +147,8 @@ public class GetUserData extends DAO {
    public UserDataMap get(Set ids) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT * FROM common.USERDATA WHERE ID IN (");
+      StringBuffer sqlBuf = new StringBuffer("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
+            + "common.AIRLINEINFO AI WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
 
       // Strip out entries already in the cache
       log.debug("Raw set size = " + ids.size());
@@ -120,7 +172,7 @@ public class GetUserData extends DAO {
       log.debug("Uncached set size = " + querySize);
       if (querySize > 0) {
          if (sqlBuf.charAt(sqlBuf.length() - 1) == ',') sqlBuf.setLength(sqlBuf.length() - 1);
-         sqlBuf.append(')');
+         sqlBuf.append("))");
          
          // Execute the query
          setQueryMax(querySize);
@@ -149,15 +201,41 @@ public class GetUserData extends DAO {
       while (rs.next()) {
          UserData usr = new UserData(rs.getInt(1));
          usr.setAirlineCode(rs.getString(2));
-         usr.setDB(rs.getString(3));
-         usr.setTable(rs.getString(4));
-         usr.setDomain(rs.getString(5));
+         usr.setTable(rs.getString(3));
+         usr.setDomain(rs.getString(4));
+         usr.setDB(rs.getString(5));
 
          // Add to results and the cache
          results.add(usr);
          _cache.add(usr);
       }
 
+      // Clean up and return
+      rs.close();
+      _ps.close();
+      return results;
+   }
+   
+   /**
+    * Helper method to iterate through AirlineInformation result sets.
+    */
+   private List executeAirlineInfo() throws SQLException {
+     
+      // Execute the query
+      ResultSet rs = _ps.executeQuery();
+      
+      // Iterate through the results
+      List results = new ArrayList();
+      while (rs.next()) {
+         AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
+         info.setDB(rs.getString(3));
+         info.setDomain(rs.getString(4));
+         info.setCanTransfer(rs.getBoolean(5));
+         
+         // Add to results
+         results.add(info);
+      }
+      
       // Clean up and return
       rs.close();
       _ps.close();

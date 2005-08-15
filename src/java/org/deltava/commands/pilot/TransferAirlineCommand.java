@@ -33,8 +33,17 @@ public class TransferAirlineCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occrurs.
      */
-	
 	public void execute(CommandContext ctx) throws CommandException {
+	   
+	   // Get the command result
+	   CommandResult result = ctx.getResult();
+	   
+	   // Check if we are transferring or just displaying the JSP
+	   if (ctx.getParameter("dbName") == null) {
+	      result.setURL("/jsp/admin/txAirline.jsp");
+	      result.setSuccess(true);
+	      return;
+	   }
 		
 		// Get the airline to change to
 		String dbName = ctx.getParameter("dbName").toLowerCase();
@@ -63,10 +72,8 @@ public class TransferAirlineCommand extends AbstractCommand {
 			String newDN = "cn=" + p.getName() + ",ou=" + dbName + ",o=sce";
 			p.setPassword(PasswordGenerator.generate(8));
 			
-			// Create a new userData record
-			// Luke, I'm lost...can't work out how to set a new USERDATA for a different airline
-			// James, looks great just needed the import statement
-			UserData ud = new UserData(dbName, "PILOTS", "www.afva.net");
+			// Create a new UserData record
+			UserData ud = new UserData(dbName, "PILOTS", "afva.net");
 
 			// WRite the user data record
 			SetUserData udao = new SetUserData(con);
@@ -109,7 +116,6 @@ public class TransferAirlineCommand extends AbstractCommand {
 		}
 		
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotTransferred.jsp");
 		result.setSuccess(true);

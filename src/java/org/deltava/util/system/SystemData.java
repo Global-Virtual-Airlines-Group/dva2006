@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A singleton object containing all of the configuration data for the application.
@@ -50,6 +51,12 @@ public class SystemData implements Serializable {
 		} catch (Exception e) {
 			_loader = new XMLSystemDataLoader();
 			log.debug("Using default loader class " + _loader.getClass().getName());
+		}
+		
+		// Reset the properties
+		if (_properties != null) {
+		   _properties.clear();
+		   _properties = null;
 		}
 
 		try {
@@ -163,7 +170,6 @@ public class SystemData implements Serializable {
 	 * Returns an Airport object.
 	 * @param airportCode the Airport code (IATA or ICAO)
 	 * @return the Airport bean, or null if not found
-	 * @throws NullPointerException if airportCode is null
 	 * @throws IllegalStateException if the &quot;airports&quot; property has not been added
 	 */
 	public static Airport getAirport(String airportCode) {
@@ -181,7 +187,6 @@ public class SystemData implements Serializable {
 	 * Returns an Airline object.
 	 * @param airlineCode the Airline code
 	 * @return the Airline bean, or null if not found
-	 * @throws NullPointerException if airlineCode is null
 	 * @throws IllegalStateException if the &quot;airlines&quot; property has not been added
 	 */
 	public static Airline getAirline(String airlineCode) {
@@ -193,5 +198,22 @@ public class SystemData implements Serializable {
 
 		Map airlines = (Map) _properties.get("airlines");
 		return (Airline) airlines.get(airlineCode.trim().toUpperCase());
+	}
+	
+	/**
+	 * Returns an Airline Information object, which is data about other virtual airlines on this server.
+	 * @param airlineCode the airline code
+	 * @return the AirlineInformation bean, or null if not found
+	 * @throws IllegalStateException if the &quot;apps&quot; property has not been added
+	 */
+	public static AirlineInformation getApp(String airlineCode) {
+	   if (airlineCode == null)
+			return null;
+	   
+	   if (!_properties.containsKey("apps"))
+			throw new IllegalStateException("Applications not Loaded");
+	   
+	   Map apps = (Map) _properties.get("apps");
+	   return (AirlineInformation) apps.get(airlineCode.trim().toUpperCase());
 	}
 }

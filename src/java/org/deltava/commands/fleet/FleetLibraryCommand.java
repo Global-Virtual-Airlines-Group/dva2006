@@ -4,7 +4,10 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
+
 import org.deltava.beans.fleet.*;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetLibrary;
@@ -51,10 +54,10 @@ public class FleetLibraryCommand extends AbstractCommand {
 
          // Get the fleet libraries from the other airlines if we're not in admin mode
          if (!isAdmin) {
-            Map dbs = (Map) SystemData.getObject("airlineDatabases");
-            for (Iterator i = dbs.keySet().iterator(); i.hasNext();) {
-               String dbName = (String) i.next();
-               results.addAll(dao.getFleet(dbName));
+            Map apps = (Map) SystemData.getObject("apps");
+            for (Iterator i = apps.values().iterator(); i.hasNext();) {
+               AirlineInformation info = (AirlineInformation) i.next();
+               results.addAll(dao.getFleet(info.getDB()));
             }
          }
       } catch (DAOException de) {
