@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands;
 
 /**
@@ -6,6 +7,7 @@ package org.deltava.commands;
  * @version 1.0
  * @since 1.0
  */
+
 public abstract class AbstractViewCommand extends AbstractCommand {
 
     protected ViewContext initView(CommandContext ctx) {
