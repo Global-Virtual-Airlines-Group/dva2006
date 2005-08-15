@@ -390,8 +390,8 @@
 		</pool>
 		
 		<buffer>
-			<send type="Integer">2048</send>
-			<recv type="Integer">8192</recv>
+			<send type="Integer">10240</send>
+			<recv type="Integer">1024</recv>
 		</buffer>
 		
 		<ack>
