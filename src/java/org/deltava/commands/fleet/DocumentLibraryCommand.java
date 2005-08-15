@@ -6,6 +6,8 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.fleet.FleetEntry;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetLibrary;
@@ -43,11 +45,11 @@ public class DocumentLibraryCommand extends AbstractCommand {
 			results = dao.getManuals(SystemData.get("airline.db"));
 			
 			// Get the document libraries from the other airlines
-			Map dbs = (Map) SystemData.getObject("airlineDatabases");
-			for (Iterator i = dbs.keySet().iterator(); i.hasNext(); ) {
-			   String dbName = (String) i.next();
-			   results.addAll(dao.getManuals(dbName));
-			}
+			Map apps = (Map) SystemData.getObject("apps");
+         for (Iterator i = apps.values().iterator(); i.hasNext();) {
+            AirlineInformation info = (AirlineInformation) i.next();
+            results.addAll(dao.getManuals(info.getDB()));
+         }
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

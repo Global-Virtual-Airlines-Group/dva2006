@@ -32,12 +32,6 @@
 		<time_format>HH:mm</time_format>
 	</time>
 	
-	<!-- If we are running in a multi-airline environment, this maps the db names to airline codes -->
-	<!-- This is mapped with the key being the database name IN LOWER CASE, the value is the code -->
-	<map name="airlineDatabases">
-		<afv>AFV</afv>
-	</map>
-
 	<!-- pilot ranks -->
 	<list name="ranks" attr="rank">
 		<rank>Trainee</rank>

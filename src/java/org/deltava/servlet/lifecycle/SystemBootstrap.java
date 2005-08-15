@@ -104,6 +104,11 @@ public class SystemBootstrap implements ServletContextListener {
 			log.info("Loading Time Zones");
 			GetTimeZone dao = new GetTimeZone(c);
 			dao.initAll();
+			
+			// Load Database information
+			log.info("Loading Cross-Application data");
+			GetUserData uddao = new GetUserData(c);
+			SystemData.add("apps", uddao.getAirlines());
 
 			// Load active airlines
 			log.info("Loading active Airlines");
@@ -163,7 +168,7 @@ public class SystemBootstrap implements ServletContextListener {
 		e.getServletContext().removeAttribute("jdbcConnectionPool");
 		if (_jdbcPool != null)
 			_jdbcPool.close();
-
+		
 		// Close the Log4J manager
 		LogManager.shutdown();
 	}

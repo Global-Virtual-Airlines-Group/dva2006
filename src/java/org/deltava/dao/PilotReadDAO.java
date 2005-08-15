@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.UserData;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
 
@@ -184,16 +185,20 @@ abstract class PilotReadDAO extends DAO {
 				throw new DAOException(se);
 			}
 
-			// This is a hack. If the database does not equal the current airline code, refresh all of the Pilot IDs with
+			// If the database does not equal the current airline code, refresh all of the Pilot IDs with
 			// the pilot number, but use the database name as the airline code.
-			if (!dbName.equals(SystemData.get("airline.code"))) {
-				Map aCodes = (Map) SystemData.getObject("airlineDatabases");
-				String airlineCode = (String) aCodes.get(dbName.toLowerCase());
-				if (airlineCode != null) {
-					for (Iterator i = uncached.iterator(); i.hasNext();) {
-						Pilot p = (Pilot) i.next();
-						p.setPilotCode(airlineCode + String.valueOf(p.getPilotNumber()));
-					}
+			if (!dbName.equals(SystemData.get("airline.db"))) {
+				Map apps = (Map) SystemData.getObject("apps");
+				for (Iterator i = apps.values().iterator(); i.hasNext(); ) {
+				   AirlineInformation info = (AirlineInformation) i.next();
+				   if (dbName.equals(info.getDB())) {
+				      for (Iterator uci = uncached.iterator(); uci.hasNext(); ) {
+				         Pilot p = (Pilot) uci.next();
+				         p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
+				      }
+				      
+				      break;
+				   }
 				}
 			}
 
