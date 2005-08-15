@@ -10,7 +10,6 @@ import org.deltava.beans.system.UserData;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * @deprecated
  */
 
 public class SetUserData extends DAO {
@@ -30,13 +29,33 @@ public class SetUserData extends DAO {
     */
    public void write(UserData usr) throws DAOException {
       try {
-         prepareStatement("INSERT INTO common.USERDATA (ID, AIRLINE, DBNAME, TABLENAME, DOMAIN) "
+         prepareStatement("REPLACE INTO common.USERDATA (ID, AIRLINE, DBNAME, TABLENAME, DOMAIN) "
                + "VALUES (?, ?, ?, ?, ?)");
          _ps.setInt(1, usr.getID());
          _ps.setString(2, usr.getAirlineCode());
          _ps.setString(3, usr.getDB());
          _ps.setString(4, usr.getTable());
          _ps.setString(5, usr.getDomain());
+         
+         // Write to the database
+         executeUpdate(1);
+         if (usr.getID() == 0)
+            usr.setID(getNewID());
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Removes a User Data entry from the database.
+    * @param id the user's database ID
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void delete(int id) throws DAOException {
+      try {
+         prepareStatement("DELETE FROM common.USERDATA WHERE (ID=?)");
+         _ps.setInt(1, id);
+         executeUpdate(1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
