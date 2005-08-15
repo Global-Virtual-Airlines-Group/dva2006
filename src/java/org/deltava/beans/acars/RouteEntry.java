@@ -4,9 +4,7 @@ package org.deltava.beans.acars;
 import java.util.Date;
 import java.io.Serializable;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
-
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
@@ -18,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class RouteEntry implements Comparable, GeoLocation, Serializable, MapEntry, ACARSFlags {
+public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation, Serializable, MapEntry, ACARSFlags {
 
 	private Date _date;
 	private GeoPosition _gpos;

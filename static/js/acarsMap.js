@@ -5,8 +5,11 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "acars_map.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
+	
+	// Check if we display the route
+	var f = document.forms[0];
+	var showProgress = f.showProgress.checked;
 
-	var points = new Array();
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
 	map.clearOverlays();
@@ -14,7 +17,14 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
-		map.addOverlay(googleMarker(imgPath,a.getAttribute("color"),p,label.data));
+		var id = parseInt(a.getAttribute("id"));
+		var mrk = googleMarker(imgPath,a.getAttribute("color"),p,label.data);
+		var flightID = a.getAttribute("flight_id");
+		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
+		if (showProgress)
+			GEvent.addListener(mrk, 'infowindowopen', function() { showProgressXML(flightID); });
+
+		map.addOverlay(mrk);
 	} // for
 	
 	// Enable the buttons
@@ -26,16 +36,28 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function toggleReload()
+function showProgressXML(id)
 {
-var btn = getElement('ToggleButton');
-if (document.doRefresh) {
-	document.doRefresh = false;
-	btn.value = 'START AUTOMATIC REFRESH';
-} else {
-	document.doRefresh = true;
-	btn.value = 'STOP AUTOMATIC REFRESH';
-}
+// Build the XML Requester
+var xreq = GXmlHttp.create();
+xreq.open("GET", "acars_progress.ws?id=" + id, true);
+xreq.onreadystatechange = function() {
+	if (xreq.readyState != 4) return false;
 
+	var xmlDoc = xreq.responseXML;
+	var pos = xmlDoc.documentElement.getElementsByTagName("pos");
+	var positions = new Array();
+	for (var i = 0; i < pos.length; i++) {
+		var pe = pos[i];
+		var p = new GPoint(parseFloat(pe.getAttribute("lng")), parseFloat(pe.getAttribute("lat")));
+		positions.push(p);
+	} // for
+	
+	routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
+	map.addOverlay(routeData);
+	return true;
+} // function
+
+xreq.send(null);
 return true;
 }
