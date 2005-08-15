@@ -302,6 +302,12 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
+<el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
+ <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
+data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd></td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data
 database.</td>
