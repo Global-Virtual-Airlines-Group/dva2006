@@ -396,7 +396,7 @@
 		</pool>
 		
 		<buffer>
-			<send type="Integer">4096</send>
+			<send type="Integer">10240</send>
 			<recv type="Integer">1024</recv>
 		</buffer>
 		
