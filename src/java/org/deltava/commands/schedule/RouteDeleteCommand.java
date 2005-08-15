@@ -9,7 +9,7 @@ import org.deltava.dao.GetRoute;
 import org.deltava.dao.SetRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 /**
  * A Web Site Command to delete Route data.
@@ -28,7 +28,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check our access level
-		RouteAccessControl access = new RouteAccessControl(ctx);
+		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanDelete())
 			throw new CommandSecurityException("Cannot delete Oceanic Route");

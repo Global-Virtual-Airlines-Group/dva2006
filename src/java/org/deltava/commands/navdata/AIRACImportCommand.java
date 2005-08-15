@@ -13,7 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.SetNavData;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.StringUtils;
 
@@ -37,6 +37,12 @@ public class AIRACImportCommand extends AbstractCommand {
 
 		// Get the Command result
 		CommandResult result = ctx.getResult();
+		
+		// Check our access level
+		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
+		access.validate();
+		if (!access.getCanImport())
+			throw new CommandSecurityException("Cannot import Navigation Data");
 
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
@@ -50,12 +56,6 @@ public class AIRACImportCommand extends AbstractCommand {
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName());
 		if (navaidType == -1)
 			throw new CommandException("Unknown Data File - " + navData.getName());
-
-		// Check our access level
-		RouteAccessControl access = new RouteAccessControl(ctx);
-		access.validate();
-		if (!access.getCanImport())
-			throw new CommandSecurityException("Cannot import Navigation Data");
 
 		List errors = new ArrayList();
 		int entryCount = 0;

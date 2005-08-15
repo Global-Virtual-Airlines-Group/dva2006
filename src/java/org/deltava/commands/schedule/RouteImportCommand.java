@@ -16,7 +16,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.SetRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -51,7 +51,7 @@ public class RouteImportCommand extends AbstractCommand {
 		}
 
 		// Check our access level
-		RouteAccessControl access = new RouteAccessControl(ctx);
+		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanImport())
 			throw new CommandSecurityException("Cannot import Preferred Routes");

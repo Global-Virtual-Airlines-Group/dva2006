@@ -8,7 +8,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.GetRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 /**
  * Web site command to return Preferred/Oceanic routes.
@@ -33,7 +33,7 @@ public class RoutesCommand extends AbstractViewCommand {
         boolean isOceanic = "oceanic".equals(ctx.getCmdParameter(Command.OPERATION, "domestic"));
         
         // Check our access
-        RouteAccessControl access = new RouteAccessControl(ctx);
+        ScheduleAccessControl access = new ScheduleAccessControl(ctx);
         access.validate();
         ctx.setAttribute("access", access, REQUEST);
         

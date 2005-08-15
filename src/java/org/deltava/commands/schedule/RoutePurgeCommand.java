@@ -11,7 +11,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.SetRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 /**
  * A Web Site Command to purge Route data.
@@ -37,7 +37,7 @@ public class RoutePurgeCommand extends AbstractCommand {
 		ctx.setAttribute("purgeDomestic", Boolean.valueOf(isDomestic), REQUEST);
 
 		// Check our access level
-		RouteAccessControl access = new RouteAccessControl(ctx);
+		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanDelete())
 			throw new CommandSecurityException("Cannot purge Routes");

@@ -8,7 +8,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.GetRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.security.command.RouteAccessControl;
+import org.deltava.security.command.ScheduleAccessControl;
 
 /**
  * A Web Site Command to display Oceanic Route data.
@@ -34,7 +34,7 @@ public class RouteCommand extends AbstractCommand {
 			ctx.setAttribute("route", dao.get(ctx.getID()), REQUEST);
 			
 			// Get our access level
-			RouteAccessControl access = new RouteAccessControl(ctx);
+			ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
