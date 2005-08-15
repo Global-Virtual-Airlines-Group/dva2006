@@ -6,10 +6,12 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
-import org.deltava.commands.schedule.AirlineCommand;
 import org.deltava.dao.*;
+
+import org.deltava.security.Authenticator;
 import org.deltava.security.command.*;
 
 import org.deltava.util.PasswordGenerator;
@@ -34,23 +36,17 @@ public class TransferAirlineCommand extends AbstractCommand {
 	
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get PID
-		int id = ctx.getID();
-		
-		// Read a request parameter called "newAirline" to get the airline to change to
+		// Get the airline to change to
+		String dbName = ctx.getParameter("dbName").toLowerCase();
 
-		// Get the airlineDatabases Map from SystemData and make sure the db name is contained
-		// within map.keySet() if not, throw an exception
-		String dbName = ctx.getParameter("dbName");
-		// Get connection from the pool
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get whichever pilot we're transferring
 			GetPilot rdao = new GetPilot(con);
-			Pilot p = ctx.getID(); // call ctx.getID() here
+			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
-				throw new CommandException("Invalid Pilot ID - " + id);
+				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
 			
 			// Check access level
 			PilotAccessControl access = new PilotAccessControl(ctx,p);
@@ -64,20 +60,18 @@ public class TransferAirlineCommand extends AbstractCommand {
 			//TODO Change LDAP DN
 			// What I think we should do here is build the DN as cn= + p.getName() + ",ou=" + dbName + ",o=sce"
 			// Let's hard code it for now, and figure out the elegant way later
-			p.setDN("cn=" + p.getName() + ",ou=" + dbName + ",o=sce");
+			String newDN = "cn=" + p.getName() + ",ou=" + dbName + ",o=sce";
 			p.setPassword(PasswordGenerator.generate(8));
 			
-			// Create a new userData record and write it
+			// Create a new userData record
 			// Luke, I'm lost...can't work out how to set a new USERDATA for a different airline
-		
-			UserData ud = new UserData(ctx.getParameter("dbName"), "PILOTS", "www.afva.net");
-			
+			// James, looks great just needed the import statement
+			UserData ud = new UserData(dbName, "PILOTS", "www.afva.net");
+
+			// WRite the user data record
 			SetUserData udao = new SetUserData(con);
 			p.setPilotCode("AFV0");
 			udao.write(ud);
-			
-			
-			
 			
 			// Change status at old airline to Transferred
 			SetPilot wdao = new SetPilot(con);
@@ -85,17 +79,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 			wdao.setTransferred(p.getID());
 			
 			// Get the ID property from the UserData object and stuff it into the existing Pilot object
+			p.setID(ud.getID());
 			
 			// Write the new pilot record in the other database
+			wdao.write(p, dbName);
 			
 			// Get the Authenticator
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			
 			// Calculate a random password, since we can't read the old password
 			p.setPassword(PasswordGenerator.generate(8));
 			
 			// Add the new DN to the authenticator with the new password
+			auth.addUser(newDN, p.getPassword());
 			
 			// Remove the old DN
+			auth.removeUser(p.getDN());
 			
 			// Commit transaction
 			
@@ -109,8 +108,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		//Forward to JSP
-		//TODO Create JSP for Transfer Airline
+		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotTransferred.jsp");
