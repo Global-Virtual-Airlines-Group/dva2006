@@ -305,16 +305,28 @@
 		<class>org.deltava.commands.navdata.AIRACImportCommand</class>
 		<roles>Schedule</roles>
 	</command>
-	
+
 	<command id="navsearch">
 		<name>Navigation Data Search</name>
 		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="navpurge">
 		<name>Purge AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACPurgeCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="schedimport">
+		<name>Schedule Import</name>
+		<class>org.deltava.commands.schedule.ScheduleImportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="schedexport">
+		<name>Schedule Export</name>
+		<class>org.deltava.commands.schedule.ScheduleExportCommand</class>
 		<roles>Schedule</roles>
 	</command>
 
