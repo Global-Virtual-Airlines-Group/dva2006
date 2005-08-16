@@ -158,7 +158,7 @@ public class GetSchedule extends DAO {
 	 */
 	public Collection export() throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM common.SCHEDULE");
+	      prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
 	      return execute();
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
