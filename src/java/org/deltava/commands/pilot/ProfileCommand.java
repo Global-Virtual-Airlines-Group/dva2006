@@ -11,6 +11,8 @@ import org.deltava.comparators.RankComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.security.Authenticator;
 import org.deltava.security.command.*;
 
 import org.deltava.util.*;
@@ -301,6 +303,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Write the status updates
 			SetStatusUpdate stwdao = new SetStatusUpdate(con);
 			stwdao.write(updates);
+			
+			// If we're updating the password, then save it
+			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
+			   Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			   auth.updatePassword(p.getDN(), ctx.getParameter("pwd1"));
+			   ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
+			}
 
 			// Commit the transaction
 			ctx.commitTX();
