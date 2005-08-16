@@ -17,12 +17,12 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
-		var id = parseInt(a.getAttribute("id"));
-		var mrk = googleMarker(imgPath,a.getAttribute("color"),p,label.data);
-		var flightID = a.getAttribute("flight_id");
+		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		mrk.ID = a.getAttribute("flight_id");
+		mrk.showFlightProgress = getProgress;
 		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
 		if (showProgress)
-			GEvent.addListener(mrk, 'infowindowopen', function() { showProgressXML(flightID); });
+			GEvent.addListener(mrk, 'infowindowopen', function() { mrk.showFlightProgress(); });
 
 		map.addOverlay(mrk);
 	} // for
@@ -36,16 +36,16 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function showProgressXML(id)
+function getProgress()
 {
 // Build the XML Requester
 var xreq = GXmlHttp.create();
-xreq.open("GET", "acars_progress.ws?id=" + id, true);
+xreq.open("GET", "acars_progress.ws?id=" + this.ID, true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
-	var xmlDoc = xreq.responseXML;
-	var pos = xmlDoc.documentElement.getElementsByTagName("pos");
+	var xdoc = xreq.responseXML;
+	var pos = xdoc.documentElement.getElementsByTagName("pos");
 	var positions = new Array();
 	for (var i = 0; i < pos.length; i++) {
 		var pe = pos[i];
