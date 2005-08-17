@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
+<content:sysdata var="showIssue" name="issue_track.show" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <!-- Sidebar Navigation Frame -->
 <div id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -38,9 +40,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
 </tr>
+<c:if test="${acarsEnabled}">
 <tr class="MenuItem">
  <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
 </tr>
+</c:if>
 <tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
 <tr class="MenuItem">
  <td><el:link url="/">HOME</el:link></td>
@@ -60,6 +64,7 @@
 <tr class="MenuItem">
  <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
 </tr>
+<c:if test="${showIssue}">
 <tr class="MenuHeader"><td>DVA 2006</td></tr>
 <tr class="MenuItem">
  <td><el:cmd url="issues">ISSUE TRACKER</el:cmd></td>
@@ -70,5 +75,6 @@
 <tr class="MenuItem">
  <td><el:link url="/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
+</c:if>
 </el:table>
 </div>

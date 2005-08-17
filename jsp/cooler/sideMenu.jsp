@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<content:sysdata var="showIssue" name="issue_track.show" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <!-- Sidebar Navigation Frame -->
 <div id="sidebar">
@@ -59,6 +60,7 @@
 <tr class="MenuItem">
  <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
 </tr>
+<c:if test="${showIssue}">
 <tr class="MenuHeader"><td>DVA 2006</td></tr>
 <tr class="MenuItem">
  <td><el:cmd url="issues">ISSUE TRACKER</el:cmd></td>
@@ -69,5 +71,6 @@
 <tr class="MenuItem">
  <td><el:link url="/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
+</c:if>
 </el:table>
 </div>
