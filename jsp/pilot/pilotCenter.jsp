@@ -28,6 +28,7 @@ return true;
 <body>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -313,6 +314,7 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
 database.</td>
 </tr>
 </content:filter>
+<c:if test="${acarsEnabled}">
 <content:filter roles="HR">
 <!-- ACARS Logging Section -->
 <tr class="title caps">
@@ -337,6 +339,7 @@ database.</td>
  <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
 </tr>
 </content:filter>
+</c:if>
 <content:filter roles="Admin">
 <!-- System Admin Section -->
 <tr class="title caps">
