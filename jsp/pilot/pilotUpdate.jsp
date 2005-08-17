@@ -42,6 +42,10 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <!-- Updated Pilot Rank -->
 <li>${pilot.firstName} has been promoted, and is now a <b>${pilot.rank}</b> in the ${pilot.equipmentType} program.</li>
 </c:if>
+<c:if test="${pwdUpdate}">
+<!-- Updated Password -->
+<li>${pilot.name}'s password has been successfully updated.</li>
+</c:if>
 <c:if test="${spUpdated}">
 <!-- Updated Staff Profile -->
 <li>The Staff Profile for ${staff.title} ${pilot.name} has been updated.</li>
