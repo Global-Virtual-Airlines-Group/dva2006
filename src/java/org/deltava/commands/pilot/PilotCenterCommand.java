@@ -73,7 +73,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (txreq == null) {
 				// Get all active equipment programs, and see which we can switch to
 				GetEquipmentType eqdao = new GetEquipmentType(con);
-				List activeEQ = eqdao.getActive();
+				Collection activeEQ = eqdao.getActive();
 				for (Iterator i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = (EquipmentType) i.next();
 					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
@@ -93,7 +93,8 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		
 		// Figure out the image to display
 		Map acImgs = (Map) SystemData.getObject("pcImages");
-		ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
+		if (acImgs != null)
+		   ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
 
 		// Redirect to the home page
 		CommandResult result = ctx.getResult();
