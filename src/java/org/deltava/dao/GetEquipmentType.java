@@ -6,6 +6,8 @@ import java.util.*;
 import org.deltava.beans.EquipmentType;
 import org.deltava.beans.Ranks;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to retrieve equipment type profiles.
  * @author Luke
@@ -51,7 +53,7 @@ public class GetEquipmentType extends DAO {
      * @return a List of EquipmentTypes
      * @throws DAOException if a JDBC error occurs
      */
-    public List getByStage(int stage) throws DAOException {
+    public Collection getByStage(int stage) throws DAOException {
         try {
             prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, " +
                     "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND " +
@@ -66,20 +68,42 @@ public class GetEquipmentType extends DAO {
     }
     
     /**
-     * Returns all Active Equipment Types.
+     * Returns all active Equipment Programs.
+     * @param dbName the database name
      * @return a List of EquipmentTypes
      * @throws DAOException if a JDBC error occurs
+     * @see GetEquipmentType#getActive()
      */
-    public List getActive() throws DAOException {
+    public Collection getActive(String dbName) throws DAOException {
+       
+       // Build the SQL statement
+       StringBuffer sqlBuf = new StringBuffer("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+             + "P.EMAIL, R.RATING_TYPE, R.RATED_EQ FROM ");
+       sqlBuf.append(dbName.toLowerCase());
+       sqlBuf.append(".EQTYPES EQ, ");
+       sqlBuf.append(dbName.toLowerCase());
+       sqlBuf.append(".PILOTS P LEFT JOIN ");
+       sqlBuf.append(dbName.toLowerCase());
+       sqlBuf.append(".EQRATINGS R ON (EQ.EQTYPE=R.EQTYPE) WHERE (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) "
+             + "ORDER BY EQ.STAGE, EQ.EQTYPE");
+       
         try {
-            prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, " +
-                    "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND " +
-                    "(EQ.EQTYPE=R.EQTYPE) AND (EQ.ACTIVE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+            prepareStatement(sqlBuf.toString());
             _ps.setBoolean(1, true);
             return execute();
         } catch (SQLException se) {
             throw new DAOException(se);
         }
+    }
+    
+    /**
+     * Returns all active Equipment Programs in the current airline.
+     * @return a List of EquipmentTypes
+     * @throws DAOException if a JDBC error occurs
+     * @see GetEquipmentType#getActive(String)
+     */
+    public Collection getActive() throws DAOException {
+       return getActive(SystemData.get("airline.db"));
     }
     
     /**
