@@ -4,7 +4,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -12,13 +11,14 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
-<content:js name="airportRefresh" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.airport, 'Airport')) return false;
 if (!validateText(form.name, 5, 'Chart Name')) return false;
+if (!validateCombo(form.chartType, 'Chart Type')) return false;
+if (!validateFile(form.img, 'gif,jpg,png', 'Chart Image')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -28,8 +28,9 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -45,20 +46,20 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data">TODO</td>
+ <td class="data"><el:combo className="bld" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" /></td>
 </tr>
 <tr>
  <td class="label">Chart Name</td>
- <td class="data">TODO</td>
+ <td class="data"><el:text className="pri bld" name="name" idx="*" size="32" max="64" value="${chart.name}" /></td>
 </tr>
 <tr>
  <td class="label">Chart Type</td>
- <td class="data">TODO</td>
+ <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" firstEntry="< SELECT >" value="${chart.typeName}" /></td>
 </tr>
 <c:if test="${!empty chart}">
 <tr>
  <td class="label">Image Properties</td>
- <td class="data">TODO</td>
+ <td class="data sec">${chart.imgTypeName} image, <fmt:int value="${chart.size}" /> bytes</td>
 </tr>
 </c:if>
 <c:if test="${empty chart}">
