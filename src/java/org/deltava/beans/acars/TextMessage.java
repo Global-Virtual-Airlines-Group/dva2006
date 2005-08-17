@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class TextMessage implements java.io.Serializable, Comparable {
+public class TextMessage implements java.io.Serializable, Comparable, ACARSLogEntry {
 
    private long _id;
    private long _conID;
@@ -64,6 +64,10 @@ public class TextMessage implements java.io.Serializable, Comparable {
    public Date getDate() {
       return _date;
    }
+   
+   public Date getStartTime() {
+      return getDate();
+   }
 
    /**
     * Returns the database ID of the message author.
@@ -74,6 +78,10 @@ public class TextMessage implements java.io.Serializable, Comparable {
     */
    public int getAuthorID() {
       return _authorID;
+   }
+   
+   public int getPilotID() {
+      return getAuthorID();
    }
 
    /**

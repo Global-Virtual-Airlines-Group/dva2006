@@ -35,7 +35,7 @@ public class MessageLogCommand extends ACARSLogViewCommand {
       CommandResult result = ctx.getResult();
       
       // If we're not displaying anything, redirect to the result page
-      if (ctx.getCmdParameter(Command.ID, null) == null) {
+      if (ctx.getParameter("searchType") == null) {
          result.setURL("/jsp/acars/msgLog.jsp");
          result.setSuccess(true);
          return;

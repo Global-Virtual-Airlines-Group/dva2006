@@ -68,9 +68,10 @@ return true;
 <c:choose>
 <c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
-<view:table className="view" space="default" pad="default" cmd="acarsloc">
+<view:table className="view" space="default" pad="default" cmd="acarslogm">
 <!-- Table Header Bar -->
 <tr class="title caps">
+ <td width="12%">DATE/TIME</td>
  <td width="15%">FROM</td>
  <td width="15%">TO</td>
  <td>MESSAGE TEXT</td>
@@ -81,14 +82,15 @@ return true;
 <c:set var="author" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="authorLoc" value="${userData[msg.authorID]}" scope="request" />
 <view:row entry="${msg}">
- <td class="small pri bld"><el:profile location="${authorLoc}">${author.name}</el:profile></td>
+ <td class="small"><fmt:date date="${msg.date}" t="HH:mm:ss" /></td>
+ <td class="pri bld"><el:profile location="${authorLoc}">${author.name}</el:profile></td>
 <c:if test="${msg.recipientID > 0}">
 <c:set var="recipient" value="${pilots[msg.recipientID]}" scope="request" />
 <c:set var="recipientLoc" value="${userData[msg.recipientID]}" scope="request" />
- <td class="small bld"><el:profile location="${recipientLoc}">${recipient.name}</el:profile></td>
+ <td class="bld"><el:profile location="${recipientLoc}">${recipient.name}</el:profile></td>
  <td class="left small">${msg.message}</td>
 </c:if>
-<c:if test="${msg.recipientID > 0}">
+<c:if test="${msg.recipientID == 0}">
  <td colspan="2" class="left small">${msg.message}</td>
 </c:if>
 </view:row>
@@ -96,7 +98,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="3"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="4"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </c:when>
