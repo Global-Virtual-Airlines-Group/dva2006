@@ -93,7 +93,7 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getMessages(int userID) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM acars.MESSAGES WHERE (AUTHOR_ID=?) OR (RECIPENT_ID=?) ORDER BY DATE");
+         prepareStatement("SELECT * FROM acars.MESSAGES WHERE (AUTHOR=?) OR (RECIPIENT=?) ORDER BY DATE");
          _ps.setInt(1, userID);
          _ps.setInt(2, userID);
          return executeMsg();
@@ -116,7 +116,8 @@ public class GetACARSLog extends GetACARSData {
       convertDate(ed, System.currentTimeMillis());
       
       try {
-         prepareStatement("SELECT * FROM acars.MESSAGES WHERE (DATE >= ?) AND (DATE <=?) ORDER BY DATE");
+         prepareStatement("SELECT M.* FROM acars.MESSAGES M WHERE (M.DATE >= ?) AND "
+               + "(M.DATE <= ?) ORDER BY M.DATE");
          _ps.setTimestamp(1, createTimestamp(sd));
          _ps.setTimestamp(2, createTimestamp(ed));
          return executeMsg();
@@ -157,7 +158,7 @@ public class GetACARSLog extends GetACARSData {
       
       try {
          prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (C.ID=F.CON_ID) "
-               + " AND (F.CREATED >=?) AND (CREATED <=?) ORDER BY F.CREATED");
+               + " AND (F.CREATED >=?) AND (F.CREATED <=?) ORDER BY F.CREATED");
          _ps.setTimestamp(1, createTimestamp(sd));
          _ps.setTimestamp(2, createTimestamp(ed));
          return executeFlightInfo();
