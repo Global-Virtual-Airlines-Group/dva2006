@@ -9,6 +9,7 @@
 <title><content:airline /> Approach Chart - ${chart.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:js name="common" />
 <script language="JavaScript" type="text/javascript">
 function setChart(combo)
 {
@@ -39,9 +40,9 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmd url="chart" linkID="0x${chart.ID}" op="print">VIEW PRINTER-FRIENDLY PAGE</el:cmd>
+ <td><el:cmdbutton url="chart" linkID="0x${chart.ID}" op="print" label="VIEW PRINTER-FRIENDLY PAGE" />
 <c:if test="${access.canEdit}">
-<el:cmd url="chart" linkID="0x${chart.ID}" op="edit">EDIT CHART</el:cmd>
+<el:cmdbutton url="chart" linkID="0x${chart.ID}" op="edit" label="EDIT CHART" />
 </c:if>
  </td> 
 </tr>
