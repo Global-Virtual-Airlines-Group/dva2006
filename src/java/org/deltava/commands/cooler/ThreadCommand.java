@@ -112,7 +112,7 @@ public class ThreadCommand extends AbstractCommand {
             // Save all channels in the thread for the move combobox
             if (ac.getCanUnlock() || ac.getCanLock()) {
                 ctx.setAttribute("channel", c, REQUEST);
-                ctx.setAttribute("channels", cdao.getChannels(airline), REQUEST);
+                ctx.setAttribute("channels", cdao.getChannels(airline, false), REQUEST);
             }
             
             // Save the thread, pilots and access controller in the request

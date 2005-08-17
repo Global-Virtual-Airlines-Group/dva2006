@@ -114,18 +114,28 @@ public class GetCoolerChannels extends DAO {
     /**
      * Retrieves all Channels for a particular airline.
      * @param al the Airline
+     * @param showHidden wether hidden threads should be returned in the last post 
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public List getChannels(Airline al) throws DAOException {
+    public List getChannels(Airline al, boolean showHidden) throws DAOException {
         
+       // Build the SQL statement optionally showing locked threads
+       StringBuffer sqlBuf = new StringBuffer("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
+       if (!showHidden) sqlBuf.append("(T.HIDDEN=?) AND ");
+       sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), "
+             + "COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T "
+             + "ON (T.CHANNEL=C.CHANNEL) WHERE (C.ACTIVE=?) GROUP BY C.CHANNEL");
+       
         Map results = new TreeMap();
         try {
-            prepareStatement("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE (T.CHANNEL=C.CHANNEL) "
-            		+ "ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM "
-					+ "common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T ON (T.CHANNEL=C.CHANNEL) WHERE "
-					+ "(C.ACTIVE=?) GROUP BY C.CHANNEL");
-            _ps.setBoolean(1, true);
+            prepareStatement(sqlBuf.toString());
+            if (showHidden) {
+               _ps.setBoolean(1, true);
+            } else {
+               _ps.setBoolean(1, false);
+               _ps.setBoolean(2, true);
+            }
             
             // Execute the query - we store results in a map for now
             ResultSet rs = _ps.executeQuery();
@@ -200,9 +210,10 @@ public class GetCoolerChannels extends DAO {
 
         // Check if we are querying for the admin role; in this case return everything
         if (roles.contains("Admin"))
-            return getChannels(al);
+            return getChannels(al, true);
 
-        List channels = getChannels(al);
+        // Check if we can display locked threads
+        List channels = getChannels(al, roles.contains("Moderator"));
         for (Iterator i = channels.iterator(); i.hasNext();) {
             Channel c = (Channel) i.next();
             if (!RoleUtils.hasAccess(roles, c.getRoles()))
