@@ -39,7 +39,11 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td colspan="2"><el:cmd url="viewchart" linkID="0x${chart.ID}" op="print">VIEW PRINTER-FRIENDLY PAGE</el:cmd></td>
+ <td><el:cmd url="chart" linkID="0x${chart.ID}" op="print">VIEW PRINTER-FRIENDLY PAGE</el:cmd>
+<c:if test="${access.canEdit}">
+<el:cmd url="chart" linkID="0x${chart.ID}" op="edit">EDIT CHART</el:cmd>
+</c:if>
+ </td> 
 </tr>
 </el:table>
 </el:form>
