@@ -86,10 +86,10 @@ public class ChartCommand extends AbstractFormCommand {
 			SetChart wdao = new SetChart(con);
 			if (isNew) {
 				wdao.write(c);
-				ctx.setAttribute("isCreate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
 			} else {
 				wdao.update(c);
-				ctx.setAttribute("isUpdate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
