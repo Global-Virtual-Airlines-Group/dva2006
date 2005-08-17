@@ -320,6 +320,7 @@
 	</registration>
 	
 	<issue_track>
+		<show type="Boolean">false</show>
 		<list name="versions" attr="version" sorted="true">
 			<version>1.0</version>
 			<version>1.01</version>
