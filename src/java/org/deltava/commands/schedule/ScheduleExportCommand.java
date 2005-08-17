@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ScheduleExportCommand extends AbstractViewCommand {
+public class ScheduleExportCommand extends AbstractCommand {
 
    /**
     * Executes the command.
@@ -42,19 +42,13 @@ public class ScheduleExportCommand extends AbstractViewCommand {
       if (!access.getCanExport())
          throw new CommandSecurityException("Cannot export Flight Schedule");
 
-      // Get the View start/count
-      ViewContext vc = initView(ctx);
-
+      Collection results = null;
       try {
          Connection con = ctx.getConnection();
 
-         // Get the DAO
+         // Get the DAO and export the schedule
          GetSchedule dao = new GetSchedule(con);
-         dao.setQueryStart(vc.getStart());
-         dao.setQueryMax(vc.getCount());
-
-         // Export the schedule
-         vc.setResults(dao.export());
+         results = dao.export();
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
@@ -79,7 +73,7 @@ public class ScheduleExportCommand extends AbstractViewCommand {
          out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results
-         for (Iterator i = vc.getResults().iterator(); i.hasNext();) {
+         for (Iterator i = results.iterator(); i.hasNext();) {
             ScheduleEntry entry = (ScheduleEntry) i.next();
 
             // Convert the entry to a string
