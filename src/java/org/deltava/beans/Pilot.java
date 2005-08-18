@@ -693,4 +693,47 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     public String getRowClassName() {
     	return ROW_CLASSES[getStatus()];
     }
+    
+    /**
+     * Shallow-clone a Pilot by copying everything except FlightReport/StatusUpdate beans.
+     * @return a copy of the current Pilot bean
+     */
+    public final Object clone() {
+       Pilot p2 = new Pilot(getFirstName(), getLastName());
+       p2.setDN(getDN());
+       p2.setAirportCodeType(getAirportCodeType());
+       p2.setCreatedOn(getCreatedOn());
+       p2.setDateFormat(getDateFormat());
+       p2.setEmail(getEmail());
+       p2.setEmailAccess(getEmailAccess());
+       p2.setEquipmentType(getEquipmentType());
+       p2.setHomeAirport(getHomeAirport());
+       p2.setIMHandle(getIMHandle());
+       p2.setLastLogin(getLastLogin());
+       p2.setLastLogoff(getLastLogoff());
+       p2.setLocation(getLocation());
+       p2.setLoginCount(getLoginCount());
+       p2.setLoginHost(getLoginHost());
+       p2.setNumberFormat(getNumberFormat());
+       p2.setPassword(getPassword());
+       p2.setRank(getRank());
+       p2.setStatus(getStatus());
+       p2.setTimeFormat(getTimeFormat());
+       p2.setTZ(getTZ());
+       p2.setUIScheme(getUIScheme());
+       p2.addRoles(getRoles());
+       p2.addRatings(getRatings());
+       p2.setPilotCode(getPilotCode());
+       p2.setHasSignature(getHasSignature());
+       p2.setHours(getHours());
+       p2.setLastFlight(getLastFlight());
+       p2.setLegs(getLegs());
+       p2.setMapType(getMapType());
+       p2.setMiles(getMiles());
+       p2.setOnlineHours(getOnlineHours());
+       p2.setOnlineLegs(getOnlineLegs());
+       p2.setShowSignatures(getShowSignatures());
+       p2.setShowSSThreads(getShowSSThreads());
+       return p2;
+    }
 }
