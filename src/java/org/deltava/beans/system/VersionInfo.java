@@ -17,5 +17,5 @@ public interface VersionInfo {
     public static final String TXT_COPYRIGHT = "Copyright (c) 2004, 2005 Luke J. Kolin. All Rights Reserved.";
     public static final String HTML_COPYRIGHT = "Copyright &copy; 2004, 2005 Luke J. Kolin. All Rights Reserved.";
     
-    public static final String APPNAME = "DVA2006 (Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
+    public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
 }
