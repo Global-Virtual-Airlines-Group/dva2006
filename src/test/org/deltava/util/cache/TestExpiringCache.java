@@ -36,6 +36,15 @@ public class TestExpiringCache extends TestCase {
       ExpiringCache.ExpiringCacheEntry entry2 = _cache.new ExpiringCacheEntry(e2);
       assertTrue(_entry.compareTo(entry2) > 0);
    }
+   
+   public void testClone() throws Exception {
+      Cacheable o1 = new MockCloneableCacheable(1);
+      _cache.add(o1);
+      assertEquals(1, _cache.size());
+      Cacheable o2 = _cache.get(new Integer(1));
+      assertNotNull(o2);
+      assertNotSame(o1, o2);
+   }
 
    public void testCacheOverflow() {
       Airline dva = new Airline("DVA", "Delta Virtual");

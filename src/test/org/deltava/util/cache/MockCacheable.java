@@ -3,7 +3,7 @@ package org.deltava.util.cache;
 
 class MockCacheable implements Cacheable {
    
-   private int _id;
+   protected int _id;
    
    public MockCacheable(int id) {
       _id = id;
