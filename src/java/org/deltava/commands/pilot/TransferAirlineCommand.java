@@ -1,12 +1,13 @@
 //Copyright (c) 2005 James Brickell. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.UserData;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -37,16 +38,6 @@ public class TransferAirlineCommand extends AbstractCommand {
 	   
 	   // Get the command result
 	   CommandResult result = ctx.getResult();
-	   
-	   // Check if we are transferring or just displaying the JSP
-	   if (ctx.getParameter("dbName") == null) {
-	      result.setURL("/jsp/admin/txAirline.jsp");
-	      result.setSuccess(true);
-	      return;
-	   }
-		
-		// Get the airline to change to
-		String dbName = ctx.getParameter("dbName").toLowerCase();
 
 		try {
 			Connection con = ctx.getConnection();
@@ -63,19 +54,51 @@ public class TransferAirlineCommand extends AbstractCommand {
 			if (!access.getCanChangeStatus())
 				throw new CommandSecurityException("Insufficient access to transfer a pilot to another airline");
 			
+			// Save pilot in request
+			ctx.setAttribute("pilot", p, REQUEST);
+			
+			// Get the databases
+			GetUserData uddao = new GetUserData(con);
+			Map airlines = uddao.getAirlines(false);
+			ctx.setAttribute("airlines", airlines.values(), REQUEST);
+			
+		   // Check if we are transferring or just displaying the JSP
+		   if (ctx.getParameter("dbName") == null) {
+		      ctx.release();
+		      result.setURL("/jsp/pilot/txAirline.jsp");
+		      result.setSuccess(true);
+		      return;
+		   }
+			
+			// Get the airline to change to
+		   AirlineInformation aInfo = (AirlineInformation) airlines.get(ctx.getParameter("dbName"));
+		   if (aInfo == null)
+		      throw new CommandException("Invalid Airline - " + ctx.getParameter("dbName"));
+			
+			// Get the equipment types
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			Collection eqTypes = eqdao.getActive(aInfo.getDB());
+			
+			// Check if we've selected an equipmentType/Rank
+			if (ctx.getParameter("eqType") == null) {
+			   ctx.release();
+			   ctx.setAttribute("eqTypes", eqTypes, REQUEST);			   
+		      result.setURL("/jsp/pilot/txAirline.jsp");
+		      result.setSuccess(true);
+		      return;
+			}
+			
 			// Start Transaction
 			ctx.startTX();
 			
-			//TODO Change LDAP DN
-			// What I think we should do here is build the DN as cn= + p.getName() + ",ou=" + dbName + ",o=sce"
-			// Let's hard code it for now, and figure out the elegant way later
-			String newDN = "cn=" + p.getName() + ",ou=" + dbName + ",o=sce";
+			// Change LDAP DN and assign a new password
+			String newDN = "cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce";
 			p.setPassword(PasswordGenerator.generate(8));
 			
 			// Create a new UserData record
-			UserData ud = new UserData(dbName, "PILOTS", "afva.net");
+			UserData ud = new UserData(aInfo.getDB(), "PILOTS", "afva.net");
 
-			// WRite the user data record
+			// Write the user data record
 			SetUserData udao = new SetUserData(con);
 			p.setPilotCode("AFV0");
 			udao.write(ud);
@@ -89,27 +112,19 @@ public class TransferAirlineCommand extends AbstractCommand {
 			p.setID(ud.getID());
 			
 			// Write the new pilot record in the other database
-			wdao.write(p, dbName);
+			wdao.write(p, aInfo.getDB());
 			
 			// Get the Authenticator
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			
-			// Calculate a random password, since we can't read the old password
-			p.setPassword(PasswordGenerator.generate(8));
-			
-			// Add the new DN to the authenticator with the new password
+			// Add the new DN to the authenticator with the new password, and remove the old DN
 			auth.addUser(newDN, p.getPassword());
-			
-			// Remove the old DN
 			auth.removeUser(p.getDN());
 			
 			// Commit transaction
-			
-			
-			// Save pilot in request
-			ctx.setAttribute("pilot", p, REQUEST);
+			ctx.commitTX();
 		} catch (DAOException de) {
-		   // Rollback transaction
+		   ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
