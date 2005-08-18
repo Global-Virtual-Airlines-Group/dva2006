@@ -676,6 +676,12 @@
 		<roles>HR,PIREP</roles>
 	</command>
 
+	<command id="txairline">
+		<name>Transfer Airline</name>
+		<class>org.deltava.commands.pilot.TransferAirlineCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	
 	<!-- Testing Center Commands -->
 	<command id="testcenter">
