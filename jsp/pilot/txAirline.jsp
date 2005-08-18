@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Airline Transfer for ${pilot.name}</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateCombo(form.dbName, 'Airline Name')) return false;
+if (!validateCombo(form.eqType, 'Equipment Program')) return false;
+
+setSubmit();
+disableButton('TransferButton');
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="ranks" name="ranks" />
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form action="txairline.do" method="post" linkID="0x${pilot.ID}" validate="return validate(this)">
+<el:table className="form" pad="default" space="default">
+<tr class="title caps">
+ <td colspan="2">INTER-AIRLINE PILOT TRANSFER FOR ${pilot.name}</td>
+</tr>
+<tr>
+ <td class="label">Current Rank / Program</td>
+ <td class="data">${pilot.rank}, <span class="sec">${pilot.equipmentType}</span></td>
+</tr>
+<tr>
+ <td class="label">New Airline</td>
+ <td class="data"><el:combo name="dbName" size="1" idx="*" options="${airlines}" firstEntry="< SELECT >" value="${param.dbName}" /></td>
+</tr>
+<c:if test="${!empty eqTypes}">
+<tr>
+ <td class="label">Equipment Program</td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="< SELECT >" /></td>
+</tr>
+<tr>
+ <td class="label">Rank</td>
+ <td class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank}" /></td>
+</tr>
+</c:if>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="button" space="default" pad="default">
+<tr>
+ <td><el:button type="submit" className="BUTTON" label="${!empty eqTypes ? 'TRANSFER PILOT' : 'SELECT AIRLINE'}" /></td>
+</tr>
+</el:table>
+</el:form>
+<br />
+<content:copyright />
+</div>
+</body>
+</html>
