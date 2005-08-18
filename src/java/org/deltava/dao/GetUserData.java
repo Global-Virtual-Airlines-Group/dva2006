@@ -10,6 +10,7 @@ import org.deltava.beans.system.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.cache.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load cross-application User data.
@@ -38,7 +39,7 @@ public class GetUserData extends DAO {
     * @return an AirlineInformation bean, or null if not found
     * @throws DAOException if a JDBC error occurs
     * @throws NullPointerException if code is null
-    * @see GetUserData#getAirlines()
+    * @see GetUserData#getAirlines(boolean)
     */
    public AirlineInformation get(String code) throws DAOException {
       
@@ -67,19 +68,33 @@ public class GetUserData extends DAO {
    
    /**
     * Returns all available Airlines on this application server.
+    * @param includeSelf TRUE if we include this Airline, otherwise FALSE
     * @return a Map of AirlineInformation beans, indexed by code
     * @throws DAOException if a JDBC error occurs
-    * @see GetUserData#getAirlines()
     */
-   public Map getAirlines() throws DAOException {
+   public Map getAirlines(boolean includeSelf) throws DAOException {
+      
+      Collection results = null;
       try {
          prepareStatement("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
-         List results = executeAirlineInfo();
+         results = executeAirlineInfo();
          _cache.addAll(results);
-         return CollectionUtils.createMap(results, "code");
+         
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+      
+      // Strip out our airline if we need to
+      if (!includeSelf) {
+         for (Iterator i = results.iterator(); i.hasNext(); ) {
+            AirlineInformation info = (AirlineInformation) i.next();
+            if (info.getCode().equals(SystemData.get("airline.code")))
+               i.remove();
+         }
+      }
+      
+      // Convert to a map
+      return CollectionUtils.createMap(results, "code");
    }
 
    /**

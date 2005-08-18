@@ -108,7 +108,7 @@ public class SystemBootstrap implements ServletContextListener {
 			// Load Database information
 			log.info("Loading Cross-Application data");
 			GetUserData uddao = new GetUserData(c);
-			SystemData.add("apps", uddao.getAirlines());
+			SystemData.add("apps", uddao.getAirlines(true));
 
 			// Load active airlines
 			log.info("Loading active Airlines");
