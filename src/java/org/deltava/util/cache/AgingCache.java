@@ -53,12 +53,14 @@ public class AgingCache extends Cache {
    
    /**
     * Adds an entry to the cache. If this operation would cause the cache to exceed its maximum size,
-    * then the entry with the earliest creation date will be removed.
-    * @param entry the entry to add to the cache 
+    * then the entry with the earliest creation date will be removed. The object's {@link Object#clone()} 
+    * method will be called to create a shallow copy of the object.
+    * @param obj the entry to add to the cache 
     */
-   public void add(Cacheable entry) {
-
+   public void add(Cacheable obj) {
+      
       // Create the cache entry
+      Cacheable entry = getClone(obj);
       AgingCacheEntry e = new AgingCacheEntry(entry);
       _cache.put(entry.cacheKey(), e);
 
