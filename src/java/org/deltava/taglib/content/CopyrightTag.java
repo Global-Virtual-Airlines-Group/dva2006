@@ -1,6 +1,5 @@
 package org.deltava.taglib.content;
 
-import java.io.IOException;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -21,18 +20,27 @@ public class CopyrightTag extends TagSupport {
      * Marks the copyright tag as visible instead of embedded in the HTML code.
      * @param isVisible TRUE if the tag should be visible, otherwise FALSE
      */
-    public void setVisible(String isVisible) {
-        _visible = Boolean.valueOf(isVisible).booleanValue();
+    public void setVisible(boolean isVisible) {
+        _visible = isVisible;
     }
   
-    private void displayCopyrightComment(JspWriter jw) throws IOException {
-        jw.print("<!-- " + VersionInfo.APPNAME + " " + VersionInfo.TXT_COPYRIGHT + " (Build " +
-              VersionInfo.BUILD + ") -->");
+    private void displayCopyrightComment() throws Exception {
+    	JspWriter jw = pageContext.getOut();
+        jw.print("<!-- ");
+        jw.print(pageContext.getServletContext().getServletContextName());
+        jw.print(" ");
+        jw.print(VersionInfo.APPNAME);
+        jw.print(" ");
+        jw.print(VersionInfo.TXT_COPYRIGHT);
+        jw.print(" (Build " + VersionInfo.BUILD + ") -->");
     }
     
-    private void displayCopyright(JspWriter jw) throws IOException {
+    private void displayCopyright() throws Exception {
+    	JspWriter jw = pageContext.getOut();
         jw.println("<hr />");
         jw.print("<span class=\"copyright\">");
+        jw.print(pageContext.getServletContext().getServletContextName());
+        jw.print(" ");
         jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD + ")");
         jw.print("</span>");
     }
@@ -45,17 +53,15 @@ public class CopyrightTag extends TagSupport {
     public int doEndTag() throws JspException {
         try {
             if (_visible) {
-                displayCopyright(pageContext.getOut());
+                displayCopyright();
             } else {
-                displayCopyrightComment(pageContext.getOut());
+                displayCopyrightComment();
             }    
-        } catch (IOException ie) {
-            JspException je = new JspException("Error writing " + getClass().getName());
-            je.initCause(ie);
-            je.setStackTrace(ie.getStackTrace());
-            throw je;
+        } catch (Exception e) {
+            throw new JspException("Error writing " + getClass().getName(), e);
         }
 
+        // Release state and return
         release();
         return EVAL_PAGE;
     }
