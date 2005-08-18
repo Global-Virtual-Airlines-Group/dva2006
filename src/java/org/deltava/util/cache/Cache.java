@@ -2,6 +2,7 @@
 package org.deltava.util.cache;
 
 import java.util.*;
+import java.lang.reflect.Method;
 
 /**
  * An an abstract class to store common cache operations.
@@ -90,6 +91,21 @@ public abstract class Cache implements java.io.Serializable {
       if (_cache.size() > _maxSize) {
          TreeSet entries = new TreeSet(_cache.values());
          _cache.values().remove(entries.first());
+      }
+   }
+   
+   /**
+    * Calls {@link Object#clone()} on a Cloneable object to create a shallow-copy.
+    * @param src the source Object
+    * @return a clone of src, or src if cloning not supported
+    */
+   protected Cacheable getClone(Cacheable src) {
+      try {
+         Method m = src.getClass().getDeclaredMethod("clone", null);
+         Object clone = m.invoke(src, null);
+         return (clone instanceof Cacheable) ? (Cacheable) clone : src;
+      } catch (Exception e) {
+         return src;
       }
    }
    
