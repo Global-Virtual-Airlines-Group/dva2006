@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <config env="dev" default="true">
 
 	<!-- Airline Information -->
@@ -13,6 +13,44 @@
 		<voice>
 			<url>rw.deltava.org/DAL</url>
 		</voice>
+		
+		<!-- Home Page Meta Tags -->
+		<meta>
+			<desc>Delta Virtual Airlines is a virtual airline based on Delta Air Lines.</desc>
+			<list name="keywords" attr="keyword">
+				<keyword>Delta Virtual Airlines</keyword>
+				<keyword>Delta</keyword>
+				<keyword>VA</keyword>
+				<keyword>virtual airlines</keyword>
+				<keyword>MSFS</keyword>
+				<keyword>FS98</keyword>
+				<keyword>FS2000</keyword>
+				<keyword>FS2002</keyword>
+				<keyword>FS2004</keyword>
+				<keyword>FS9</keyword>
+				<keyword>microsoft flight simulator</keyword>
+				<keyword>flightsim</keyword>
+				<keyword>flight simulators</keyword>
+				<keyword>flightsims</keyword>
+				<keyword>Delta Connection</keyword>
+				<keyword>Delta Shuttle</keyword>
+				<keyword>Song</keyword>
+				<keyword>ACA</keyword>
+				<keyword>ASA</keyword>
+				<keyword>Comair</keyword>
+				<keyword>SkyWest</keyword>
+				<keyword>Atlantic Southeast Airlines</keyword>
+				<keyword>Atlantic Coast Airlines</keyword>
+				<keyword>Boeing</keyword>
+				<keyword>McDonnell-Douglas</keyword>
+				<keyword>Embraer</keyword>
+			</list>
+		</meta>
+		
+		<partner>
+			<name>Aviation Français Virtuel</name>
+			<url>golgotha.afva.net</url>
+		</partner>
 		
 		<location>
 			<lat type="Double">34.036693</lat>
