@@ -9,11 +9,13 @@
 <head>
 <title><content:airline /></title>
 <content:sysdata var="airlineName" name="airline.name" />
+<content:sysdata var="desc" name="airline.meta.desc" />
+<content:sysdata var="keywords" name="airline.meta.keywords" />
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
-<meta name="Description" content="Delta Virtual Airlines is a virtual airline based on Delta Air Lines." />
-<meta name="Keywords" content="Delta Virtual Airlines, Delta, virtual airline, VA, virtual airlines, MSFS, FS98, FS2000, FS2002, FS2004, FS9, microsoft flight simulator, flightsim, flight simulators, flightsims, Delta Connection, Delta Shuttle, Song, ACA, ASA, Comair, SkyWest, Atlantic Southeast Airlines, Atlantic Coast Airlines, Boeing, McDonnell-Douglas" />
+<meta name="Description" content="${keywords}" />
+<meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 <content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
 </head>
 <content:copyright visible="false" />
@@ -21,6 +23,8 @@
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
+<content:sysdata var="partnerName" name="airline.partner.name" />
+<content:sysdata var="partnerURL" name="airline.partner.url" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -38,7 +42,7 @@ virtual airline, designed for both the experienced pilot and the novice (and all
 between!) we welcome your interest.<br />
 <br />
 If you are interested in a virtual airline with primarily European operations, we encourage you to visit 
-our sister airline <a href="http://www.afva.net/" class="sec bld">Aviation Fran&ccedil;ais Virtuel</a>.<br />
+our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br />
 <el:table className="view" space="default" pad="default">
 <c:forEach var="entry" items="${latestNews}">
