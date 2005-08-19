@@ -14,9 +14,10 @@
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
+<content:icra name="dva2006" />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
-<content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
 </head>
 <content:copyright visible="false" />
 <body>
