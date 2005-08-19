@@ -15,7 +15,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
-<content:icra name="dva2006" />
+<content:icra name="content_rating" />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 </head>
@@ -58,6 +58,7 @@ our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName
 </c:forEach>
 </el:table>
 <br />
+<c:if test="${!empty latestPilots}">
 <center><div style="width:500px;">
 <table cellspacing="3" cellpadding="3">
 <tr>
@@ -72,6 +73,7 @@ our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName
 </table>
 </div></center>
 <br />
+</c:if>
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="${infoEmail}">${infoEmail}</a>.<br />
 <br />
