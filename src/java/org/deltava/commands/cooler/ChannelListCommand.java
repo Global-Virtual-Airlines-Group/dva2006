@@ -6,8 +6,7 @@ import java.util.*;
 import org.deltava.commands.*;
 
 import org.deltava.beans.cooler.Message;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.system.UserDataMap;
+import org.deltava.beans.system.*;
 
 import org.deltava.dao.GetCoolerChannels;
 import org.deltava.dao.GetUserData;
@@ -31,8 +30,8 @@ public class ChannelListCommand extends AbstractCommand {
      */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the pilot's airline
-		Airline airline = SystemData.getAirline(SystemData.get("airline.code"));
+		// Get the default airline
+		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code").toUpperCase());
 		
 		try {
 			Connection con = ctx.getConnection();

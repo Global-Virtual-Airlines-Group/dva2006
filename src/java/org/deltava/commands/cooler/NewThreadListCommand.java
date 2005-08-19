@@ -1,14 +1,12 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.sql.Connection;
 import java.util.*;
+import java.sql.Connection;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.system.UserDataMap;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -36,19 +34,22 @@ public class NewThreadListCommand extends AbstractViewCommand {
         // Get the user for the channel list
         Person p = ctx.getUser();
         
-		// Get the pilot's airline
-		Airline airline = SystemData.getAirline(SystemData.get("airline.code"));
-		if (p instanceof Pilot) {
-			Airline a = SystemData.getAirline(((Pilot) p).getAirlineCode());
-			if (a != null)
-				airline = a;
-		}
-		
+		// Get the default airline
+        AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
+        
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
 
         try {
         	Connection con = ctx.getConnection();
+        	
+        	// Get the DAO and the Pilot's airline
+        	GetUserData uddao = new GetUserData(con);
+        	if (p != null) {
+        		UserData usrData = uddao.get(p.getID());
+        		if (usrData != null)
+        			airline = SystemData.getApp(usrData.getAirlineCode());
+        	}
         	
             // Get the channel DAO and the list of channels
             GetCoolerChannels dao = new GetCoolerChannels(con);
@@ -87,8 +88,7 @@ public class NewThreadListCommand extends AbstractViewCommand {
             }
             
 			// Get the location of all the Pilots
-			GetUserData usrdao = new GetUserData(con);
-			UserDataMap udm = usrdao.get(pilotIDs);
+			UserDataMap udm = uddao.get(pilotIDs);
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel

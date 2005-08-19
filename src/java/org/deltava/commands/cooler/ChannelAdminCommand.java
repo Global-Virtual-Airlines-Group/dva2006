@@ -3,7 +3,8 @@ package org.deltava.commands.cooler;
 
 import java.sql.Connection;
 
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetCoolerChannels;
@@ -28,7 +29,7 @@ public class ChannelAdminCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the pilot's airline
-		Airline airline = SystemData.getAirline(SystemData.get("airline.code"));
+		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 		
 		try {
 			Connection con = ctx.getConnection();
