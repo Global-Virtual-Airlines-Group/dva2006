@@ -209,10 +209,17 @@ Program to the <b>${txreq.equipmentType}</b> program.</td>
 </tr>
 </c:if>
 <tr>
+<c:if test="${pilot.legs >= 5}">
  <td class="mid"><el:cmd className="bld" url="testcenter">Testing Center</el:cmd></td>
- <td class="data">The <content:airline /> Testing Center is your single source for the written
- examinations needed for promotions and additional type ratings. Here you can see your prior tests
- and their results, in addition to writing new aircraft tests.</td>
+</c:if>
+<c:if test="${pilot.legs < 5}">
+ <td class="mid bld">Testing Center</td>
+</c:if>
+ <td class="data">The <content:airline /> Testing Center is your single source for the written 
+examinations needed for promotions and additional type ratings. Here you can see your prior tests 
+and their results, in addition to writing new aircraft tests. 
+<c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
+be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
 
 <content:filter roles="PIREP">
