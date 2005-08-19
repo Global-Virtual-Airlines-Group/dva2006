@@ -41,7 +41,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 
 			// Get the channel names
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", cdao.getChannels(SystemData.getAirline(SystemData.get("airline.code")), ctx.getRoles()), REQUEST);
+			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")), ctx.getRoles()), REQUEST);
 
 			// Check if we're doing a GET, and redirect to the results JSP
 			if (ctx.getParameter("searchStr") == null) {

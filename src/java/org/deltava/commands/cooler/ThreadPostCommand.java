@@ -13,7 +13,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -54,13 +54,9 @@ public class ThreadPostCommand extends AbstractCommand {
 
       // Get the user for the channel list
       Person p = ctx.getUser();
-
-      // Get the pilot's airline
-      Airline airline = SystemData.getAirline("DVA");
-      if (p instanceof Pilot) {
-         Airline a = SystemData.getAirline(((Pilot) p).getAirlineCode());
-         if (a != null) airline = a;
-      }
+      
+      // Get the default airline
+      AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
       // Get the channel name
       String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
@@ -68,6 +64,14 @@ public class ThreadPostCommand extends AbstractCommand {
 
       try {
          Connection con = ctx.getConnection();
+         
+         // Get the Pilot's airline
+         GetUserData uddao = new GetUserData(con);
+         if (p != null) {
+         	UserData usrData = uddao.get(p.getID());
+         	if (usrData != null)
+         		airline = SystemData.getApp(usrData.getAirlineCode());
+         }
 
          // Get the channel DAO and the list of channels
          GetCoolerChannels dao = new GetCoolerChannels(con);

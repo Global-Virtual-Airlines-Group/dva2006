@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.cooler.*;
-import org.deltava.beans.schedule.Airline;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.RoleUtils;
@@ -118,7 +118,7 @@ public class GetCoolerChannels extends DAO {
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public List getChannels(Airline al, boolean showHidden) throws DAOException {
+    public List getChannels(AirlineInformation al, boolean showHidden) throws DAOException {
         
        // Build the SQL statement optionally showing locked threads
        StringBuffer sqlBuf = new StringBuffer("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
@@ -206,7 +206,7 @@ public class GetCoolerChannels extends DAO {
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public List getChannels(Airline al, Collection roles) throws DAOException {
+    public List getChannels(AirlineInformation al, Collection roles) throws DAOException {
 
         // Check if we are querying for the admin role; in this case return everything
         if (roles.contains("Admin"))
