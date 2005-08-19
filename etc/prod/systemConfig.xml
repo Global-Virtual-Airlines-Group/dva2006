@@ -252,6 +252,11 @@
 		</list>
 		
 		<purge type="Integer">10</purge>
+		
+		<http>
+			<format>httpd-access.dva.log</format>
+			<parser>org.deltava.util.log.ApacheLogParser</parser>
+		</http>
 	</log>
 	
 	<config>
@@ -287,7 +292,7 @@
 		</ivao>
 		
 		<fpi>
-			<status_url>http://dva2006.deltava.org/fpi-data.txt</status_url>
+			<status_url>http://golgotha.deltava.org/fpi-data.txt</status_url>
 			<banner>fpi.png</banner>
 			<url>http://www.flightproject.net/</url>
 		</fpi>
@@ -341,6 +346,7 @@
 		<js>js</js>
 		<img>img</img>
 		<library>/usr/local/www/library</library>
+		<httplog>/var/log/www</httplog>
 	</path>
 	
 	<smtp>
