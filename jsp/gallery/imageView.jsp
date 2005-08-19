@@ -30,12 +30,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/gallery/header.jsp" %> 
-<%@include file="/jsp/gallery/sideMenu.jsp" %>
+<%@ include file="/jsp/gallery/header.jsp" %> 
+<%@ include file="/jsp/gallery/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="imgvote.do" method="POST" validate="return validate(this)">
+<el:form action="imgvote.do" linkID="0x${img.ID}" method="POST" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left">${img.name}</td>
@@ -65,7 +65,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
+<el:table className="form" space="default" pad="default">
 <tr class="title">
  <td>&nbsp;
 <c:if test="${access.canVote}">
