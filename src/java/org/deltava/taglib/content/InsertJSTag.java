@@ -23,18 +23,18 @@ public class InsertJSTag extends InsertContentTag {
 	public int doEndTag() throws JspException {
 
 		// Check if the content has already been added
-      if (ContentHelper.containsContent(pageContext, "JS", _resourceName) && (!_forceInclude)) 
-         return EVAL_PAGE;
+		if (ContentHelper.containsContent(pageContext, "JS", _resourceName) && (!_forceInclude))
+			return EVAL_PAGE;
 
 		JspWriter out = pageContext.getOut();
 		try {
 			out.print("<script language=\"JavaScript\" type=\"text/javascript\" src=\"");
 			if (!_resourceName.startsWith("http://")) {
-			   out.print(SystemData.get("path.js") + "/" + _resourceName + ".js");
+				out.print(SystemData.get("path.js") + "/" + _resourceName + ".js");
 			} else {
-			   out.print(_resourceName);
+				out.print(_resourceName);
 			}
-			
+
 			out.print("\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);
