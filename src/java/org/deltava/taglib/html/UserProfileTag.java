@@ -15,6 +15,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class UserProfileTag extends ElementTag {
+	
+	private UserData _usrData;
 
 	public UserProfileTag() {
 		super("a");
@@ -25,6 +27,11 @@ public class UserProfileTag extends ElementTag {
 	 * @param ud the UserData bean
 	 */
 	public void setLocation(UserData ud) {
+		
+		// Check for null
+		_usrData = ud;
+		if (ud == null)
+			return;
 		
 		// Determine the URL
 		boolean isApplicant = "APPLICANTS".equals(ud.getTable());
@@ -44,7 +51,8 @@ public class UserProfileTag extends ElementTag {
      */
     public int doStartTag() throws JspException {
         try {
-            _out.print(openHTML(true));
+        	if (_usrData != null)
+        		_out.print(openHTML(true));
         } catch(Exception e) {
             throw wrap(e);
         }
@@ -58,11 +66,13 @@ public class UserProfileTag extends ElementTag {
      */
     public int doEndTag() throws JspException {
         try {
-            _out.print(closeHTML());
+        	if (_usrData != null)
+        		_out.print(closeHTML());
         } catch(Exception e) {
             throw wrap(e);
         }
-        
+  
+        release();
         return EVAL_PAGE;
     }
 }
