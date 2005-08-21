@@ -364,6 +364,12 @@
 		<auto_reject type="Integer">5</auto_reject>
 	</registration>
 	
+	<!-- PICS content ratings -->
+	<content>
+		<safesurf>SS~~000 3</safesurf>
+		<icra>cz 1 lz 1 nz 1 oz 1 vz 1</icra>
+	</content>
+
 	<issue_track>
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">

@@ -15,7 +15,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
-<content:icra name="content_rating" />
+<content:pics />
 <meta name="Description" content="${desc}" />
 <meta name="Keywords" content="<fmt:list value="${keywords}" delim="," />" />
 </head>
