@@ -11,6 +11,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="pilotCenter" />
+<content:pics />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
