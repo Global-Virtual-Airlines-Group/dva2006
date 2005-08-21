@@ -79,18 +79,19 @@
 		</attribute>
 	</tag>
 	
-	<!-- Insert ICRA tag, for inserting ICRA rating links -->
+	<!-- Insert PICS tag, for inserting PICS 1.1 rating links -->
 	<tag>
-		<name>icra</name>
-		<tagclass>org.deltava.taglib.content.InsertICRATag</tagclass>
+		<name>pics</name>
+		<tagclass>org.deltava.taglib.content.InsertPICSTag</tagclass>
 		<bodycontent>empty</bodycontent>
 		<attribute>
-			<name>name</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
+			<name>icra</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
-			<name>force</name>
+			<name>safesurf</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Boolean</type>
