@@ -33,7 +33,7 @@
 <!-- Table Connection Data -->
 <c:forEach var="con" items="${acarsPool}">
 <tr>
- <td>${con.formatID}</td>
+ <td class="priB">${con.formatID}</td>
  <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
 <c:if test="${con.flightID == 0}">
  <td class="bld">N/A</td>
@@ -45,6 +45,11 @@
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
  <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
+</tr>
+<tr>
+ <td colspan="7">Socket settings: <fmt:int value="${con.socket.sendBufferSize}" /> bytes out, 
+<fmt:int value="${con.socket.recvBufferSize}" /> bytes in. TCP_NODELAY = ${con.socket.tcpNoDelay}, 
+SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 </tr>
 </c:forEach>
 
