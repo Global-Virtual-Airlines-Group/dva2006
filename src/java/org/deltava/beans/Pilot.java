@@ -644,7 +644,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     public void addFlight(FlightReport fr) {
         _flights.add(fr);
     }
-
+    
     /**
      * Set the pilot code for this Pilot.
      * @param code the pilot code eg. DVA043.
@@ -695,10 +695,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
-     * Shallow-clone a Pilot by copying everything except FlightReport/StatusUpdate beans.
+     * Shallow-clone a Pilot by copying everything except FlightReport/StatusUpdate beans and the database ID.
      * @return a copy of the current Pilot bean
+     * @see Pilot#clone()
      */
-    public final Object clone() {
+    public Pilot cloneExceptID() {
        Pilot p2 = new Pilot(getFirstName(), getLastName());
        p2.setDN(getDN());
        p2.setAirportCodeType(getAirportCodeType());
@@ -734,6 +735,17 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setOnlineLegs(getOnlineLegs());
        p2.setShowSignatures(getShowSignatures());
        p2.setShowSSThreads(getShowSSThreads());
+       return p2;
+    }
+    
+    /**
+     * Shallow-clone a Pilot by copying everything except FlightReport/StatusUpdate beans.
+     * @return a copy of the current Pilot bean
+     * @see Pilot#cloneExceptID()
+     */
+    public Object clone() {
+       Pilot p2 = cloneExceptID();
+       p2.setID(getID());
        return p2;
     }
 }
