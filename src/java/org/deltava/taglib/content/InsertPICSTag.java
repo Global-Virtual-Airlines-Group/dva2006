@@ -31,7 +31,7 @@ public class InsertPICSTag extends TagSupport {
 
 	/**
 	 * Controls wether an ICRA content rating tag should be displayed.
-	 * @param doSafeSurf TRUE if the rating tag should be shown, otherwise FALSE
+	 * @param doICRA TRUE if the rating tag should be shown, otherwise FALSE
 	 */
 	public void setIcra(boolean doICRA) {
 		_doICRA = doICRA && (SystemData.get("content.icra") != null);
