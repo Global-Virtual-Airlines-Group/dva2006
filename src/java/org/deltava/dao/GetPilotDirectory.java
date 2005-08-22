@@ -4,8 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.List;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -121,20 +121,24 @@ public class GetPilotDirectory extends PilotReadDAO {
 	}
 	
    /**
-    * Checks if a Pilot is unique, by checking the first/last names and the e-mail address.
-    * @param firstName the Pilot's first (given) name
-    * @param lastName the Pilot's first (family) name
-    * @param eMail the Pilot's e-mail address
+    * Checks if a Person is unique, by checking the first/last names and the e-mail address.
+    * @param p the Person
+    * @param dbName the database to search
     * @return the number of matches
     * @throws DAOException if a JDBC error occurs
     */
-	public int checkUnique(String firstName, String lastName, String eMail) throws DAOException {
+	public int checkUnique(Person p, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?)) GROUP BY ID");
+	   
       try {
-         prepareStatement("SELECT COUNT(*) FROM PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
-               + "(EMAIL=?)) GROUP BY ID");
-         _ps.setString(1, firstName);
-         _ps.setString(2, lastName);
-         _ps.setString(3, eMail);
+         prepareStatement(sqlBuf.toString());
+         _ps.setString(1, p.getFirstName());
+         _ps.setString(2, p.getLastName());
+         _ps.setString(3, p.getEmail());
 
          // Execute the query
          ResultSet rs = _ps.executeQuery();
