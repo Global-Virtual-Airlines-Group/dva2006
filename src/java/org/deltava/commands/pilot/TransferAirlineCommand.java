@@ -11,6 +11,7 @@ import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.Authenticator;
 import org.deltava.security.command.*;
@@ -38,7 +39,12 @@ public class TransferAirlineCommand extends AbstractCommand {
 	   
 	   // Get the command result
 	   CommandResult result = ctx.getResult();
+	   
+	   // Initialize the Message context
+	   MessageContext mctxt = new MessageContext();
+	   mctxt.addData("user", ctx.getUser());
 
+	   Pilot newUser = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -88,47 +94,75 @@ public class TransferAirlineCommand extends AbstractCommand {
 		      return;
 			}
 			
+			// Get the Message Template
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctxt.setTemplate(mtdao.get("TXAIRLINE"));
+			
 			// Start Transaction
 			ctx.startTX();
 			
-			// Change LDAP DN and assign a new password
-			String newDN = "cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce";
-			p.setPassword(PasswordGenerator.generate(8));
+			// Get the Pilot write DAO
+			SetPilot wdao = new SetPilot(con);
 			
-			// Create a new UserData record
-			UserData ud = new UserData(aInfo.getDB(), "PILOTS", "afva.net");
+			// Check if the user already exists in the database
+			newUser = rdao.getByName(p.getName());
+			if (newUser != null) {
+			   log.info("Reactivating " + newUser.getDN());
+			} else {
+			   log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
+			   
+			   // Clone the Pilot and update the ID
+			   newUser = p.cloneExceptID();
+			   p.setPilotCode(aInfo.getCode() + "0");
+			   
+				// Change LDAP DN and assign a new password
+				newUser.setDN("cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce");
 
-			// Write the user data record
-			SetUserData udao = new SetUserData(con);
-			p.setPilotCode("AFV0");
-			udao.write(ud);
+				// Create a new UserData record
+				UserData ud = new UserData(aInfo.getDB(), "PILOTS", aInfo.getDomain());
+				
+				// Write the user data record
+				SetUserData udao = new SetUserData(con);
+				udao.write(ud);
+
+				// Get the ID property from the UserData object and stuff it into the existing Pilot object
+				newUser.setID(ud.getID());
+			}
 			
 			// Change status at old airline to Transferred
-			SetPilot wdao = new SetPilot(con);
 			p.setStatus(Pilot.TRANSFERRED);
 			wdao.setTransferred(p.getID());
 			
-			// Get the ID property from the UserData object and stuff it into the existing Pilot object
-			p.setID(ud.getID());
-			
-			// Write the new pilot record in the other database
-			wdao.write(p, aInfo.getDB());
-			
-			// Get the Authenticator
-			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			// Save the new user
+			newUser.setStatus(Pilot.ACTIVE);
+			wdao.write(newUser, aInfo.getDB());
 			
 			// Add the new DN to the authenticator with the new password, and remove the old DN
-			auth.addUser(newDN, p.getPassword());
-			auth.removeUser(p.getDN());
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			newUser.setPassword(PasswordGenerator.generate(8));
+			auth.addUser(newUser.getDN(), newUser.getPassword());
 			
 			// Commit transaction
 			ctx.commitTX();
+			
+			// Update the message context
+			mctxt.addData("oldUser", p);
+			mctxt.addData("newUser", newUser);
+			
+			// Save Pilot beans in the request
+			ctx.setAttribute("oldUser", p, REQUEST);
+			ctx.setAttribute("newUser", newUser, REQUEST);
 		} catch (DAOException de) {
 		   ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Send status e-mail
+		Mailer mailer = new Mailer(ctx.getUser());
+		mailer.setContext(mctxt);
+		mailer.send(newUser);
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
