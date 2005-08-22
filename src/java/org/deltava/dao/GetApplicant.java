@@ -216,20 +216,25 @@ public class GetApplicant extends DAO {
 	/**
 	 * Checks if an Applicant is unique, by checking the first/last names and the e-mail address. This will not return a
 	 * match against rejected Applicants.
-	 * @param firstName the Applicant's first (given) name
-	 * @param lastName the Applicant's first (family) name
-	 * @param eMail the Applicant's e-mail address
+	 * @param p the Person
+	 * @param dbName the database to search
 	 * @return the number of matches
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int checkUnique(String firstName, String lastName, String eMail) throws DAOException {
+	public int checkUnique(Person p, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append("APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
+	         + "(EMAIL=?)) GROUP BY ID");
+	   
 		try {
-			prepareStatement("SELECT COUNT(*) FROM APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) "
-					+ "AND (LASTNAME=?)) OR (EMAIL=?)) GROUP BY ID");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Applicant.REJECTED);
-			_ps.setString(2, firstName);
-			_ps.setString(3, lastName);
-			_ps.setString(4, eMail);
+			_ps.setString(2, p.getFirstName());
+			_ps.setString(3, p.getLastName());
+			_ps.setString(4, p.getEmail());
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
