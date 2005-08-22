@@ -6,7 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.system.AddressValidation;
+
+import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.comparators.AirportComparator;
@@ -103,23 +104,34 @@ public class RegisterCommand extends AbstractCommand {
 		Examination ex = null;
 		try {
 			Connection con = ctx.getConnection();
-
-			// Get the Pilot DAO and check if we're unique
+			
+			// Get the databases
+			GetUserData uddao = new GetUserData(con);
+			Collection airlines = uddao.getAirlines(true).values();
+			
+			// Get the Pilot/Applicant Read DAOs
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			if (pdao.checkUnique(a.getFirstName(), a.getLastName(), a.getEmail()) != 0) {
-				ctx.release();
-				ctx.setAttribute("notUnique", Boolean.valueOf(true), REQUEST);
-				result.setSuccess(true);
-				return;
-			}
-
-			// Get the Applicant DAO and check if we're unique
 			GetApplicant adao = new GetApplicant(con);
-			if (adao.checkUnique(a.getFirstName(), a.getLastName(), a.getEmail()) != 0) {
-				ctx.release();
-				ctx.setAttribute("notUnique", Boolean.valueOf(true), REQUEST);
-				result.setSuccess(true);
-				return;
+			
+			// Check for unique name
+			for (Iterator i = airlines.iterator(); i.hasNext(); ) {
+			   AirlineInformation info = (AirlineInformation) i.next();
+
+			   // Check Pilots
+				if (pdao.checkUnique(a, info.getDB()) != 0) {
+					ctx.release();
+					ctx.setAttribute("notUnique", Boolean.TRUE, REQUEST);
+					result.setSuccess(true);
+					return;
+				}
+
+				// Check Applicants
+				if (adao.checkUnique(a, info.getDB()) != 0) {
+					ctx.release();
+					ctx.setAttribute("notUnique", Boolean.TRUE, REQUEST);
+					result.setSuccess(true);
+					return;
+				}
 			}
 
 			// Get the e-mail message template
