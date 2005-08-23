@@ -18,11 +18,12 @@ xmlreq.onreadystatechange = function() {
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
 		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
-		var flight_id = ac[i].getAttribute("flight_id");
-		mrk.flight_ID = flight_id;
 		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
-		if (showProgress)
-			GEvent.addListener(mrk, 'infowindowopen', function() { eval('showFlightProgress("' + flight_id + '")'); });
+		if (showProgress) {
+			mrk.flight_id = a.getAttribute("flight_id");
+			mrk.showProgress = showFlightProgress;
+			GEvent.bind(mrk, 'infowindowopen', mrk, mrk.showProgress);
+		}
 
 		map.addOverlay(mrk);
 	} // for
@@ -36,11 +37,11 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function showFlightProgress(acars_id)
+function showFlightProgress()
 {
 // Build the XML Requester
 var xreq = GXmlHttp.create();
-xreq.open("GET", "acars_progress.ws?id=" + acars_id, true);
+xreq.open("GET", "acars_progress.ws?id=" + this.flight_id, true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
@@ -59,5 +60,11 @@ xreq.onreadystatechange = function() {
 } // function
 
 xreq.send(null);
+return true;
+}
+
+function mapZoom(lat, lng, size)
+{
+map.centerAndZoom(new GPoint(lng, lat), size);
 return true;
 }
