@@ -11,6 +11,7 @@
 <title><content:airline /> Fleet Library Installers</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -26,6 +27,7 @@
  <td width="10%">CODE</td>
  <td width="10%">SIZE</td>
  <td width="10%">VERSION</td>
+ <td width="10%"><el:cmdbutton url="libedit" op="fleet" label="NEW INSTALLER" /></td>
  <td>DESCRIPTION</td>
 </tr>
 
@@ -36,13 +38,13 @@
  <td>${installer.code}</td>
  <td class="sec small"><fmt:int value="${installer.size}" /> bytes</td>
  <td class="bld">${installer.version}</td>
- <td class="small left">${installer.description}</td>
+ <td class="small left" colspan="2"><fmt:text value="${installer.description}" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Legend Bar -->
 <tr class="title">
- <td colspan="5"><view:legend width="85" labels="OK,Missing" classes=" ,warn" /></td>
+ <td colspan="6"><view:legend width="85" labels="OK,Missing" classes=" ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />

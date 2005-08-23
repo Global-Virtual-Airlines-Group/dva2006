@@ -11,11 +11,12 @@
 <title><content:airline /> Document Library</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:filter roles="Fleet">
 <c:set var="isFleetMgr" value="${true}" scope="request" />
 </content:filter>
@@ -29,6 +30,7 @@
  <td width="5%">&nbsp;</td>
  <td width="10%">SIZE</td>
  <td width="5%">VERSION</td>
+ <td width="10%"><el:cmdbutton url="libedit" op="manual" label="NEW MANUAL" /></td>
  <td>DESCRIPTION</td>
 </tr>
 
@@ -44,7 +46,7 @@
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
  <td class="sec bld"><fmt:int value="${doc.size}" /></td>
  <td class="bld">${doc.version}</td>
- <td class="small left">${doc.description}</td>
+ <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
 
@@ -59,7 +61,7 @@ This is a free download.</td>
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
