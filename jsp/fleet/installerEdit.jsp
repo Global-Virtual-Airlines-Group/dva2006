@@ -107,9 +107,11 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
-<c:if test="${access.canEdit}">
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE INSTALLER" /></td>
+ <td>&nbsp;
+<c:if test="${access.canEdit || access.canCreate}">
+<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE INSTALLER" />
 </c:if>
+ </td>
 </tr>
 </el:table>
 </el:form>
