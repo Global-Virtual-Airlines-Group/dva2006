@@ -30,7 +30,7 @@ public class LibraryEditCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Get the file name, or if we're creating a new file
-      String fName = (String) ctx.getCmdParameter(Command.ID, "NEW");
+      String fName = (String) ctx.getCmdParameter(ID, "NEW");
       ctx.setAttribute("securityOptions", ComboUtils.fromArray(FleetEntry.SECURITY_LEVELS), REQUEST);
 
       // Figure out what type of entry we are attempting to create
@@ -43,7 +43,11 @@ public class LibraryEditCommand extends AbstractCommand {
       if ("NEW".equals(fName)) {
          FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
          access.validate();
-         if (!access.getCanEdit()) throw new CommandSecurityException("Cannot create Library Entry");
+         if (!access.getCanCreate())
+            throw new CommandSecurityException("Cannot create Library Entry");
+         
+         // Save the access controller
+         ctx.setAttribute("access", access, REQUEST);
 
          // Forward to the JSP
          result.setURL(isManual ? "/jsp/fleet/manualEdit.jsp" : "/jsp/fleet/installerEdit.jsp");
