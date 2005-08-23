@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
-<script langauge="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function setSort()
 {
 var f = document.forms[0];
@@ -43,8 +43,8 @@ return true;
 <view:table className="view" space="default" pad="default" cmd="imagegallery">
 <!-- Table Sort Bar -->
 <tr class="title">
- <td colspan="3">BY MONTH <el:combo name="month" idx="*" size="1" options="${months}" firstEntry="" value="${param.op}" onChange="void setSort()" /></td>
- <td colspan="3">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="" value="${param.sortType}" onChange="setSort()" /></td>
+ <td colspan="3">BY MONTH <el:combo name="month" idx="*" size="1" options="${months}" firstEntry="-" value="${param.op}" onChange="void setSort()" /></td>
+ <td colspan="3">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" firstEntry="-" value="${param.sortType}" onChange="setSort()" /></td>
 </tr>
 
 <!-- Table Header Bar -->
