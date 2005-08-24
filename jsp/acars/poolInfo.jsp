@@ -33,7 +33,7 @@
 <!-- Table Connection Data -->
 <c:forEach var="con" items="${acarsPool}">
 <tr>
- <td class="priB">${con.formatID}</td>
+ <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
 <c:if test="${con.flightID == 0}">
  <td class="bld">N/A</td>
