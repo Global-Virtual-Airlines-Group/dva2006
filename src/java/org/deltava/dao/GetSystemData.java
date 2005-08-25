@@ -6,6 +6,9 @@ import java.sql.*;
 
 import org.deltava.beans.stats.*;
 import org.deltava.beans.system.*;
+import org.deltava.taskman.TaskLastRun;
+
+import org.deltava.util.CollectionUtils;
 
 /**
  * A Data Access Object for loading system data (Session/Command/HTTP) log tables.
@@ -249,5 +252,35 @@ public class GetSystemData extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Returns the last execution date/times for Scheduled Tasks.
+	 * @return a Map of TaskLastRun beans, ordered by task ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map getTaskExecution() throws DAOException {
+	   
+	   List results = null;
+	   try {
+	      prepareStatement("SELECT * FROM SYS_TASKS");
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+	      
+	      // Iterate through the results
+	      results = new ArrayList();
+	      while (rs.next())
+	         results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2)));
+
+	      // Clean up after ourselves
+	      rs.close();
+	      _ps.close();
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	   
+	   // Return as a map
+	   return CollectionUtils.createMap(results, "name");
 	}
 }
