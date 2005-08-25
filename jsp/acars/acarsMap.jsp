@@ -48,7 +48,7 @@ var myLng = map.getCenterLatLng().x;
 var myZoom = map.getZoomLevel();
 
 // Save the cookies
-var expiryDate = new Date(2007,11,31);
+var expiryDate = new Date(2006,11,31);
 document.cookie = 'acarsMapLat=' + myLat + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapLng=' + myLng + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapZoomLevel=' + myZoom + '; expires=' + expiryDate.toGMTString();
@@ -75,7 +75,8 @@ return true;
 <tr>
  <td class="label">Map Options</td>
  <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
-<el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" /></span></td>
+<el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" />&nbsp;
+<el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" /></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Live Map</td>
