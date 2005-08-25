@@ -9,6 +9,7 @@ xmlreq.onreadystatechange = function() {
 	// Check if we display the route
 	var f = document.forms[0];
 	var showProgress = f.showProgress.checked;
+	var showInfo = f.showInfo.checked;
 
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
@@ -17,7 +18,7 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
-		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, (showInfo ? label.data : null));
 		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
 		if (showProgress) {
 			mrk.flight_id = a.getAttribute("flight_id");
