@@ -2,11 +2,15 @@
 package org.deltava.taskman;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.jdbc.ConnectionPoolException;
+
+import org.deltava.dao.SetSystemData;
+import org.deltava.dao.DAOException;
 
 import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
@@ -26,6 +30,8 @@ public class TaskScheduler extends Thread {
 	private Map _tasks = new HashMap();
 	private int _interval = 60;
 	private long _taskCheckCount;
+	
+	private ConnectionPool _pool;
 
 	/**
 	 * Initializes the Task Scheduler.
@@ -80,6 +86,9 @@ public class TaskScheduler extends Thread {
 	public final void run() {
 		log.info("Starting");
 		
+		// Get the JDBC Connection pool
+		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		
 		// Sleep for a while when we start
 		ThreadUtils.sleep(10000);
 
@@ -112,14 +121,27 @@ public class TaskScheduler extends Thread {
 					log.debug("Task Disabled");
 				} else {
 					log.info(t.getName() + " queued for execution");
+					
+					// Log Execution date/time
+					Connection c = null;
+					try {
+					   c = _pool.getSystemConnection();
+					   
+					   // Get the DAO and log the execution time
+					   SetSystemData dao = new SetSystemData(c);
+					   dao.logTaskExecution(t.getID());
+					} catch (DAOException de) {
+					   log.error("Cannot save execution time", de);
+					} finally {
+					   _pool.release(c);
+					}
 
 					// Pass JDBC Connection to database tasks
 					if (t instanceof DatabaseTask) {
 						DatabaseTask dt = (DatabaseTask) t;
-						ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 						try {
-							dt.setConnection(pool.getConnection());
-							dt.setRecycler(pool);
+							dt.setConnection(_pool.getConnection());
+							dt.setRecycler(_pool);
 							t.start();
 						} catch (ConnectionPoolException cpe) {
 							log.error("Error reserving connection - " + cpe.getMessage());
@@ -140,6 +162,16 @@ public class TaskScheduler extends Thread {
 		}
 
 		log.info("Stopping");
+	}
+	
+	/**
+	 * Updates the last execution time of a Scheduled Task.
+	 * @param lr the TaskLastRun bean
+	 */
+	public void setLastRunTime(TaskLastRun lr) {
+	   Task t = (Task) _tasks.get(lr.getName());
+	   if (t != null)
+	      t.setStartTime(lr.getLastRun());
 	}
 
 	/**

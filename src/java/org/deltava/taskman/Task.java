@@ -1,8 +1,7 @@
 //Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taskman;
 
-import java.util.Date;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * A class to support scheduled tasks.
@@ -20,7 +19,8 @@ public abstract class Task extends Thread implements java.io.Serializable {
     private boolean _enabled;
     
     private long _maxRunTime = Task.MAX_RUNTIME;
-    private long _startTime;
+    private Calendar _startTime = Calendar.getInstance();
+    private Calendar _nextStartTime = Calendar.getInstance();
     private long _lastRunTime;
     private int _interval;
     
@@ -55,7 +55,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
      * @return the date/time this Task is scheduled for execution
      */
     public Date getNextStartTime() {
-       return (_startTime == 0) ? new Date() : new Date(_startTime + (_interval * 1000)); 
+       return _nextStartTime.getTime(); 
     }
     
     /**
@@ -63,7 +63,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
      * @return the date/time the Task was last started, or null if the Task has never been executed
      */
     public Date getStartTime() {
-        return (_startTime == 0) ? null : new Date(_startTime);
+        return _startTime.getTime();
     }
 
     /**
@@ -83,6 +83,11 @@ public abstract class Task extends Thread implements java.io.Serializable {
        return _interval;
     }
     
+    /**
+     * Returns if the Task is allowed to be executed.
+     * @return TRUE if the Task can be executed, otherwise FALSE
+     * @see Task#setEnabled(boolean)
+     */
     public boolean getEnabled() {
        return _enabled;
     }
@@ -118,6 +123,11 @@ public abstract class Task extends Thread implements java.io.Serializable {
        _maxRunTime = maxTime; 
     }
     
+    /**
+     * Marks the Task as enabled to execute.
+     * @param enabled TRUE if the task is enabled, otherwise FALES
+     * @see Task#getEnabled()
+     */
     public void setEnabled(boolean enabled) {
        _enabled = enabled;
     }
@@ -135,13 +145,26 @@ public abstract class Task extends Thread implements java.io.Serializable {
     }
     
     /**
+     * Overrides the last execution time for this Task.
+     * @param dt the date/time this Task last executed
+     * @see Task#getStartTime()
+     * @see Task#getNextStartTime()
+     */
+    public void setStartTime(Date dt) {
+       if (dt != null) {
+          _startTime.setTime(dt);
+          _nextStartTime.setTimeInMillis(dt.getTime() + _interval);
+       }
+    }
+    
+    /**
      * Executes the Task. This logs execution start/stop times and calls each Task implementation's
      * {@link Task#execute()} method.
      */
     public void run() {
-        _startTime = System.currentTimeMillis();
+        setStartTime(new Date());
         execute();
-        _lastRunTime = (System.currentTimeMillis() - _startTime);
+        _lastRunTime = (System.currentTimeMillis() - _startTime.getTimeInMillis());
     }
     
     /**
