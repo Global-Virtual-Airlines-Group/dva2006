@@ -93,6 +93,15 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
+		
+		// Start the Task Manager
+		try {
+			_taskSched = new TaskScheduler(TaskFactory.load(SystemData.get("config.tasks")));
+			SystemData.add(SystemData.TASK_POOL, _taskSched);
+			_taskSched.start();
+		} catch (IOException ie) {
+			log.error("Error loading Task Scheduler configuration - " + ie.getMessage(), ie);
+		}
 
 		// Load data from the database
 		Connection c = null;
@@ -119,6 +128,15 @@ public class SystemBootstrap implements ServletContextListener {
 			log.info("Loading Airports");
 			GetAirport dao2 = new GetAirport(c);
 			SystemData.add("airports", dao2.getAll());
+			
+			// Load last execution date/times for Scheduled Tasks
+			log.info("Loading Scheduled Task execution data");
+			GetSystemData sysdao = new GetSystemData(c);
+			Map taskInfo = sysdao.getTaskExecution();
+			for (Iterator i = taskInfo.values().iterator(); i.hasNext(); ) {
+			   TaskLastRun tlr = (TaskLastRun) i.next();
+			   _taskSched.setLastRunTime(tlr);
+			}
 		} catch (Exception ex) {
 			log.error("Error retrieving data - " + ex.getMessage());
 		} finally {
@@ -140,15 +158,6 @@ public class SystemBootstrap implements ServletContextListener {
 			_acarsThread = new Thread(_acarsServer, "ACARS Daemon");
 			_acarsThread.setDaemon(true);
 			_acarsThread.start();
-		}
-		
-		// Start the Task Manager
-		try {
-			_taskSched = new TaskScheduler(TaskFactory.load(SystemData.get("config.tasks")));
-			SystemData.add(SystemData.TASK_POOL, _taskSched);
-			_taskSched.start();
-		} catch (IOException ie) {
-			log.error("Error loading Task Scheduler configuration - " + ie.getMessage(), ie);
 		}
 	}
 

@@ -100,4 +100,19 @@ public class SetSystemData extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Logs the execution time of a Scheduled Task.
+	 * @param name the Scheduled Task name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void logTaskExecution(String name) throws DAOException {
+	   try {
+	      prepareStatement("REPLACE INTO SYS_TASKS (ID, LASTRUN) VALUES (?, NOW())");
+	      _ps.setString(1, name);
+	      executeUpdate(1);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
 }
