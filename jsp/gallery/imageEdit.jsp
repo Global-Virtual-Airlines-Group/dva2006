@@ -59,6 +59,12 @@ return true;
  <td class="label">Image Description</td>
  <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${img.description}" /></td>
 </tr>
+<content:filter roles="Fleet,Gallery">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isFleet" idx="*" value="1" checked="${img.fleet}" label="Include Image in Fleet Gallery" /></td>
+</tr>
+</content:filter>
 <c:if test="${empty img}">
 <tr>
  <td class="label">Upload Image</td>

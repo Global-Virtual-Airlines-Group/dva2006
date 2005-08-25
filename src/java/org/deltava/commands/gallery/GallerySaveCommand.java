@@ -31,7 +31,7 @@ public class GallerySaveCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if we're saving a new image
-		boolean isNew = "new".equals(ctx.getCmdParameter(Command.OPERATION, null));
+		boolean isNew = "new".equals(ctx.getCmdParameter(OPERATION, null));
 
 		Image img = null;
 		try {
@@ -47,9 +47,13 @@ public class GallerySaveCommand extends AbstractCommand {
 				// Create setName() and setDescription()
 				img.setName(ctx.getParameter("name"));
 				img.setDescription(ctx.getParameter("desc"));
+				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Flleet"))
+					img.setFleet("1".equals(ctx.getParameter("isFleet")));
 			} else {
 				img = new Image(ctx.getParameter("name").trim(), ctx.getParameter("desc").trim());
 				img.setAuthorID(ctx.getUser().getID());
+				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Flleet"))
+					img.setFleet("1".equals(ctx.getParameter("isFleet")));
 				
 				// Get the image itself
 				FileUpload imgData = ctx.getFile("img");
@@ -85,6 +89,7 @@ public class GallerySaveCommand extends AbstractCommand {
 		// Forward to the new image
 		CommandResult result = ctx.getResult();
 		result.setURL("image", null, img.getID());
+		result.setType(CommandResult.FORWARD);
 		result.setSuccess(true);
 	}
 }
