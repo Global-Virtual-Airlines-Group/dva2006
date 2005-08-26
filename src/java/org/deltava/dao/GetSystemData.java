@@ -255,6 +255,53 @@ public class GetSystemData extends DAO {
 	}
 	
 	/**
+	 * Returns Command invocation statistics.
+	 * @param orderBy the column to order results by
+	 * @return a Map of CommandStatsEntry beans, keyed by Command ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map getCommandStats(String orderBy) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
+	         + "MAX(TOTAL_TIME) AS MAXTOTAL, MAX(BE_TIME) AS MAXBE, SUM(SUCCESS) AS SC, "
+	         + "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
+	   sqlBuf.append(orderBy);
+	   
+	   List results = null;
+	   try {
+	      prepareStatement(sqlBuf.toString());
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+
+	      // Iterate through the results
+	      results = new ArrayList();
+	      while (rs.next()) {
+	         CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
+	         stat.setAvgTime(rs.getInt(2));
+	         stat.setAvgBackEndTime(rs.getInt(3));
+	         stat.setMaxTime(rs.getInt(4));
+	         stat.setMaxBackEndTime(rs.getInt(5));
+	         stat.setSuccessCount(rs.getInt(6));
+	         stat.setCount(rs.getInt(7));
+	         
+	         // Add to results
+	         results.add(stat);
+	      }
+	      
+	      // Clean up after ourselves
+	      rs.close();
+	      _ps.close();
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	   
+	   // Convert to a map
+	   return CollectionUtils.createMap(results, "name");
+	}
+	
+	/**
 	 * Returns the last execution date/times for Scheduled Tasks.
 	 * @return a Map of TaskLastRun beans, ordered by task ID
 	 * @throws DAOException if a JDBC error occurs
