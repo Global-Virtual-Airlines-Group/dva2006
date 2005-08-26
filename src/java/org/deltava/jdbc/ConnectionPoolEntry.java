@@ -9,6 +9,7 @@ import java.util.Properties;
  * @version 1.0
  * @since 1.0
  */
+
 class ConnectionPoolEntry {
 
     private Connection _c;
@@ -74,7 +75,7 @@ class ConnectionPoolEntry {
      */
     void connect() throws SQLException {
         if ((_c != null) && !_c.isClosed())
-            throw new IllegalStateException("Connection #" + _id + " already Connected");
+            throw new IllegalStateException("Connection " + toString() + " already Connected");
         
         _c = DriverManager.getConnection(_url, _props);
         _c.setAutoCommit(_autoCommit);
@@ -164,7 +165,7 @@ class ConnectionPoolEntry {
      */
     Connection reserve() {
         if (inUse())
-            throw new IllegalStateException("Connection #" + _id + " already in use");
+            throw new IllegalStateException("Connection " + toString() + " already in use");
         
         // Mark the connection as in use, and return the SQL connection
         _startTime = System.currentTimeMillis();
@@ -225,5 +226,18 @@ class ConnectionPoolEntry {
      */
     public int hashCode() {
         return _c.hashCode();
+    }
+    
+    /**
+     * Returns a text representation of the Connection ID.
+     * @return the connection ID
+     */
+    public final String toString() {
+       StringBuffer buf = new StringBuffer("#");
+       if (isSystemConnection())
+          buf.append("SYS");
+       
+       buf.append(String.valueOf(_id));
+       return buf.toString();
     }
 }
