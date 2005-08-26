@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="showIssue" name="issue_track.show" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <!-- Sidebar Navigation Frame -->
 <div id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -37,6 +38,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr class="MenuItem">
+ <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
+</tr>
+</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
 </tr>
