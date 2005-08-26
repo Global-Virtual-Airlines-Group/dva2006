@@ -16,7 +16,7 @@ class ConnectionMonitor extends Thread {
 
     private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
     
-    private List _pool = Collections.EMPTY_LIST;
+    private Collection _pool = Collections.EMPTY_LIST;
     private long _sleepTime = 300000; // 5 minute default
     private long _poolCheckCount; 
     
@@ -34,7 +34,7 @@ class ConnectionMonitor extends Thread {
      * @param cPool a List of ConnectionPoolEntries
      * @see ConnectionMonitor#setPool(List)
      */
-    ConnectionMonitor(List cPool) {
+    ConnectionMonitor(Collection cPool) {
         this();
         setPool(cPool);
     }
@@ -69,11 +69,11 @@ class ConnectionMonitor extends Thread {
     
     /**
      * Sets the JDBC connection pool to monitor.
-     * @param cPool a List of ConnectionPoolEntry objects
+     * @param cPool a Collection of ConnectionPoolEntry objects
      * @see ConnectionMonitor#addPool(List)
      * @throws IllegalThreadStateException if the thread is alive
      */
-    public void setPool(List cPool) {
+    public void setPool(Collection cPool) {
         if (isAlive())
             throw new IllegalThreadStateException("Connection Monitor already started");
         
@@ -82,11 +82,11 @@ class ConnectionMonitor extends Thread {
     
     /**
      * Adds another JDBC connection pool to monitor.
-     * @param cPool2 a List of ConnectionPoolEntry objects
+     * @param cPool2 a Collection of ConnectionPoolEntry objects
      * @see ConnectionMonitor#setPool(List)
      * @throws IllegalThreadStateException if the thread is alive
      */
-    public void addPool(List cPool2) {
+    public void addPool(Collection cPool2) {
         if (isAlive())
             throw new IllegalThreadStateException("Connection Monitor already started");
         
@@ -94,7 +94,7 @@ class ConnectionMonitor extends Thread {
     }
     
     private boolean reconnect(ConnectionPoolEntry e) {
-        log.info("JDBC Connection #" + e.getID() + " disconnected");
+        log.info("JDBC Connection " + e + " disconnected");
         e.close();
         
         // Reconnect the connection if we can
@@ -103,7 +103,7 @@ class ConnectionMonitor extends Thread {
                 e.connect();
                 return true;
             } catch (SQLException se) {
-                log.warn("Error reconnecting Connection #" + e.getID() + " - " + se.getMessage());
+                log.warn("Error reconnecting Connection " + e + " - " + se.getMessage());
             }
         }
         
@@ -127,7 +127,7 @@ class ConnectionMonitor extends Thread {
                 
                 // Check if the entry has timed out
                 if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
-                    log.warn("Releasing stale JDBC Connection #" + cpe.getID());
+                    log.warn("Releasing stale JDBC Connection " + cpe);
                     cpe.free();
                 }
                 
@@ -137,13 +137,15 @@ class ConnectionMonitor extends Thread {
                     c.setAutoCommit(c.getAutoCommit());
                 } catch (SQLException se) {
                     if ("08S01".equals(se.getSQLState())) {
-                        log.warn("Reconnecting Connection #" + cpe.getID());
+                        log.warn("Reconnecting Connection " + cpe);
                         
                         // If we cannot reconnect, then remove from the pool
                         if (!reconnect(cpe)) { 
-                            log.warn("Cannot reconnect Connection #" + cpe.getID());
+                            log.warn("Cannot reconnect Connection " + cpe);
                             i.remove();
                         }
+                    } else {
+                       log.warn("Uknown SQL Error code - " + se.getSQLState(), se);
                     }
                 }
             }
