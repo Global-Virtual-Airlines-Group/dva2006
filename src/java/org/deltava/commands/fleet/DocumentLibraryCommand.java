@@ -36,7 +36,7 @@ public class DocumentLibraryCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		List results = null;
+		List results = new ArrayList();
 		try {
 			Connection con = ctx.getConnection();
 
