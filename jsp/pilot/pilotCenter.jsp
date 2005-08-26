@@ -358,6 +358,11 @@ database.</td>
  <td class="data">You can view information about the application server and Java Virtual Machine.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="cmdstats">Command Statistics</el:cmd></td>
+ <td class="data">You can view statistics about Web Site Command invocations, application server 
+and database usage times here.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="systemlog">System Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Application, Scheduled Task and ACARS Log 
 databases.</td>
