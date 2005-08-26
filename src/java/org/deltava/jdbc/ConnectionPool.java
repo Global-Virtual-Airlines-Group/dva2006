@@ -152,13 +152,13 @@ public class ConnectionPool implements Recycler {
 
 			// If the connection pool entry is stale, release it
 			if (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME) {
-				log.warn("Releasing stale JDBC Connection #" + cpe.getID());
+				log.warn("Releasing stale JDBC Connection " + cpe);
 				cpe.free();
 			}
 
 			// If the connection pool entry is not in use, reserve it
 			if (!cpe.inUse()) {
-				log.info("Reserving JDBC Connection #" + cpe.getID());
+				log.info("Reserving JDBC Connection " + cpe);
 				return cpe.reserve();
 			}
 		}
@@ -173,7 +173,7 @@ public class ConnectionPool implements Recycler {
 			_cons.add(cpe);
 
 			// Return back the new connection
-			log.info("Reserving JDBC Connection #" + cpe.getID());
+			log.info("Reserving JDBC Connection " + cpe);
 			return cpe.reserve();
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
@@ -196,13 +196,13 @@ public class ConnectionPool implements Recycler {
 
 			// If the connection pool entry is stale, release it
 			if (cpe.getUseTime() > MAX_USE_TIME) {
-				log.warn("Releasing stale JDBC Connection #SYS" + cpe.getID());
+				log.warn("Releasing stale JDBC Connection " + cpe);
 				cpe.free();
 			}
 
 			// If the connection pool entry is not in use, reserve it
 			if (!cpe.inUse()) {
-				log.debug("Reserving JDBC Connection #SYS" + cpe.getID());
+				log.debug("Reserving JDBC Connection " + cpe);
 				return cpe.reserve();
 			}
 		}
@@ -213,7 +213,7 @@ public class ConnectionPool implements Recycler {
 			_sysCons.add(cpe);
 
 			// Return back the new connection
-			log.debug("Reserving JDBC Connection #SYS" + cpe.getID());
+			log.debug("Reserving JDBC Connection " + cpe);
 			return cpe.reserve();
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
@@ -249,9 +249,9 @@ public class ConnectionPool implements Recycler {
 			if (cpe.equals(c)) {
 				cpe.free();
 				if (cpe.isSystemConnection()) {
-					log.debug("Released JDBC Connection #SYS" + cpe.getID() + " after " + cpe.getUseTime() + "ms");
+					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				} else {
-					log.info("Released JDBC Connection #" + cpe.getID() + " after " + cpe.getUseTime() + "ms");
+					log.info("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				}
 				return cpe.getUseTime();
 			}
@@ -262,7 +262,7 @@ public class ConnectionPool implements Recycler {
 			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 			if (cpe.equals(c)) {
 				cpe.free();
-				log.debug("Released JDBC Connection #SYS" + cpe.getID() + " after " + cpe.getUseTime() + "ms");
+				log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 
 				// If we have multiple system connections, close this one down
 				if (_sysCons.size() > 1) {
@@ -320,15 +320,15 @@ public class ConnectionPool implements Recycler {
 			for (Iterator i = _cons.iterator(); i.hasNext();) {
 				ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 				if (cpe.inUse())
-					log.warn("Forcibly closing JDBC Connection #" + cpe.getID());
+					log.warn("Forcibly closing JDBC Connection " + cpe);
 
 				try {
 					cpe.getConnection().close();
 				} catch (SQLException se) {
-					log.warn("Error closing JDBC Connection #" + cpe.getID() + " - " + se.getMessage());
+					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
 				}
 
-				log.info("Closed JDBC Connection #" + cpe.getID());
+				log.info("Closed JDBC Connection " + cpe);
 			}
 
 			_cons = null;
@@ -339,15 +339,15 @@ public class ConnectionPool implements Recycler {
 			for (Iterator i = _sysCons.iterator(); i.hasNext();) {
 				ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 				if (cpe.inUse())
-					log.warn("Forcibly closing JDBC Connection #SYS" + cpe.getID());
+					log.warn("Forcibly closing JDBC Connection " + cpe);
 
 				try {
 					cpe.getConnection().close();
 				} catch (SQLException se) {
-					log.warn("Error closing JDBC Connection #SYS" + cpe.getID() + " - " + se.getMessage());
+					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
 				}
 
-				log.info("Closed JDBC Connection #SYS" + cpe.getID());
+				log.info("Closed JDBC Connection " + cpe);
 			}
 
 			_sysCons = null;
