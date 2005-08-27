@@ -8,6 +8,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Issue Updated</title>
+<content:pics />
 <content:css name="main" browserSpecific="true" />
 <meta http-equiv="refresh" content="3;url=/issue.do?id=0x<fmt:hex value="${issue.ID}" />&amp;op=read" />
 </head>

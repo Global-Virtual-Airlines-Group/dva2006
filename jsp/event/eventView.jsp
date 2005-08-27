@@ -15,6 +15,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 <content:rss title="${airlineName} Online Events" url="http://${serverName}/event_rss.ws" />
 <script language="JavaScript" type="text/javascript">

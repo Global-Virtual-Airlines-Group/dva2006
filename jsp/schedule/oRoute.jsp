@@ -9,6 +9,7 @@
 <title><content:airline /> Oceanic Route for <fmt:date fmt="d" date="${route.date}" /></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

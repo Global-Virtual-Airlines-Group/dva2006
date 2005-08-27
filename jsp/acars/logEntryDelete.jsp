@@ -9,6 +9,7 @@
 <head>
 <title>ACARS Log Entry Removal</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

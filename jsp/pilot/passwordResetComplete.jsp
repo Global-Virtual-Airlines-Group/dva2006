@@ -9,6 +9,7 @@
 <title><content:airline /> Password Reset Complete</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

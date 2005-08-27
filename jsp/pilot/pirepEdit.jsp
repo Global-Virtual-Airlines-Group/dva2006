@@ -13,6 +13,7 @@
 <title><content:airline /> Flight ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:sysdata var="eqTypes" name="eqtypes" />

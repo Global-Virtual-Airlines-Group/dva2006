@@ -10,6 +10,7 @@
 <title><content:airline /> Online Users</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

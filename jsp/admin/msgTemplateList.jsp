@@ -10,6 +10,7 @@
 <title><content:airline /> Message Templates</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

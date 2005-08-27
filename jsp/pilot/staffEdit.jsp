@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<content:pics />
 <c:if test="${access.canChangeStaffProfile && (!empty staff)}">
 <!-- Edit Staff Profile -->
 <tr class="title">

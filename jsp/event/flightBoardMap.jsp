@@ -14,6 +14,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="googleMaps" />

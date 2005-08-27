@@ -11,6 +11,7 @@
 <title><content:airline /> Fleet Library</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
 <script language="JavaScript" type="text/javascript">
