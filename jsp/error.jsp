@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> System Error</title>
 <content:css name="main" browserSpecific="true" force="true" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

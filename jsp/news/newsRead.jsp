@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> System News Entry</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

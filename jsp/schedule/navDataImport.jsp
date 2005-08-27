@@ -9,6 +9,7 @@
 <title><content:airline /> Navigation Data Import</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
 var dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];

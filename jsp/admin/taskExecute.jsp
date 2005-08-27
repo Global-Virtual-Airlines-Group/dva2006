@@ -8,6 +8,7 @@
 <head>
 <title><content:airline /> Task Executed</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <content:js name="common" />
 <content:copyright visible="false" />
 <body>

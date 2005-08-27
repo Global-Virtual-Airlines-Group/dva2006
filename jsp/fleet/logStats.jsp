@@ -12,6 +12,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
 function valdiate(form)

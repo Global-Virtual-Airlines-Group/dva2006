@@ -13,6 +13,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 <script language="javascript" type="text/javascript">
 function sort(combo)
 {
