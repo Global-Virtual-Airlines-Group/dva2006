@@ -12,6 +12,7 @@
 <title><content:airline /> Online Event</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:js name="datePicker" />
 <content:js name="airportRefresh" />

@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> Transfer Request</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <content:copyright visible="false" />
 </head>
 <body>

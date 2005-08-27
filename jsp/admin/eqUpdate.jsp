@@ -8,6 +8,7 @@
 <head>
 <title>Equipment Type Updated</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

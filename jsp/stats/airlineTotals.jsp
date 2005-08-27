@@ -11,6 +11,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

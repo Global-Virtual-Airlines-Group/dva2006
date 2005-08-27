@@ -11,6 +11,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />

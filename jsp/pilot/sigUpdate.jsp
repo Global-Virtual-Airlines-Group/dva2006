@@ -8,6 +8,7 @@
 <head>
 <title><content:airline /> Password Reset</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {

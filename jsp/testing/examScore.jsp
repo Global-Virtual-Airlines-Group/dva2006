@@ -11,6 +11,7 @@
 <title>${exam.name} - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

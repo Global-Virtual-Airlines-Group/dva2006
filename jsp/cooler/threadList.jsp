@@ -14,6 +14,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 <content:rss title="${airlineName} Water Cooler" url="http://${serverName}/cooler_rss.ws" />
 <script language="JavaScript" type="text/javascript">

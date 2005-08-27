@@ -13,6 +13,7 @@
 <title><content:airline /> Flight Report - ${pirep.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <c:set var="scoreCR" value="${access.canApprove && crAccess.canScore}" scope="request" />
 <c:if test="${googleMap}">

@@ -10,6 +10,7 @@
 <title><content:airline /> Pilot Registration</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />

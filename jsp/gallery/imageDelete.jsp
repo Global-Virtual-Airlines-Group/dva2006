@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> Image Gallery Entry Deleted</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

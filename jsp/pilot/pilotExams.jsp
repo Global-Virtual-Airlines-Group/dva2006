@@ -1,5 +1,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<content:pics />
 <c:if test="${!empty exams}">
 <!-- Pilot Examination History -->
 <tr class="title caps">

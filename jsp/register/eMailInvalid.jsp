@@ -8,6 +8,7 @@
 <head>
 <title>E-Mail Address Validation Failure</title>
 <content:css name="main" browserSpecific="true" />
+<content:pics />
 </head>
 <content:copyright visible="false" />
 <body>

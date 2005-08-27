@@ -13,6 +13,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
+<content:pics />
 <body>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>

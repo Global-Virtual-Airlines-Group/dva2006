@@ -10,6 +10,7 @@
 <title><content:airline /> Pilot Map</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
 <map:api version="1" />

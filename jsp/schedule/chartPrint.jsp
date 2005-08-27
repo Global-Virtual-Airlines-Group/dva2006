@@ -5,6 +5,7 @@
 <HEAD>
 <TITLE><content:airline /> Approach Chart - ${chart.name}</TITLE>
 <content:css name="main" />
+<content:pics />
 </HEAD>
 <content:copyright visible="false" />
 <BODY>

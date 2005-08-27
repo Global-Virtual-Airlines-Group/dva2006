@@ -11,6 +11,7 @@
 <title><content:airline /> Document Library</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:pics />
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />

@@ -11,6 +11,7 @@
 <title><content:airline /> Water Cooler Channel Administration</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
