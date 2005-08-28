@@ -19,7 +19,7 @@
 <!-- Main Body Frame -->
 <div id="main">
 <br />
-<c:if test="${installerCreated}">
+<c:if test="${installerAdded}">
 <!-- Fleet Library entry created -->
 <div class="updateHdr">Fleet Library Installler Added</div>
 <br />
