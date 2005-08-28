@@ -97,17 +97,18 @@ public class CommandFactory {
                 cmd.init(cmdID, e.getChildTextTrim("name"));
                 cmd.setRoles(getRoles(e.getChildText("roles")));
                 
+                // Save the command in the map
+                results.put(cmdID.toLowerCase(), cmd);
                 log.debug("Initialized command " + cmdID);
             } catch (CommandException ce) {
                 log.error("Error initializing " + cmdID + " - " + ce.getMessage());
             } catch (ClassNotFoundException cnfe) {
+            	log.error("Cannot find class " + cmdClassName + " for " + cmdID);
+            } catch (NoClassDefFoundError ncde) { 
                 log.error("Cannot find class " + cmdClassName + " for " + cmdID);
             } catch (Exception ex) {
                 log.error("Cannot start " + cmdID + " - "  + ex.getClass().getName());
             }
-            
-            // Save the command in the map
-            results.put(cmdID.toLowerCase(), cmd);
         }
         
         // Return the commands
