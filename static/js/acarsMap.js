@@ -5,12 +5,6 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "acars_map.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	
-	// Check if we display the route
-	var f = document.forms[0];
-	var showProgress = f.showProgress.checked;
-	var showInfo = f.showInfo.checked;
-
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
 	map.clearOverlays();
@@ -18,14 +12,14 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
-		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, (showInfo ? label.data : null));
+		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, null);
 		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
-		if (showProgress) {
-			mrk.flight_id = a.getAttribute("flight_id");
-			mrk.showProgress = showFlightProgress;
-			GEvent.bind(mrk, 'infowindowopen', mrk, mrk.showProgress);
-		}
-
+		mrk.flight_id = a.getAttribute("flight_id");
+		mrk.infoLabel = label.data;
+		mrk.infoShow = clickIcon;
+		
+		// Set the the click handler
+		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
 		map.addOverlay(mrk);
 	} // for
 	
@@ -38,11 +32,28 @@ xmlreq.onreadystatechange = function() {
 return xmlreq;
 }
 
-function showFlightProgress()
+function clickIcon()
+{
+// Check what info we display
+var f = document.forms[0];
+var isProgress = f.showProgress.checked;
+var isInfo = f.showInfo.checked;
+
+// Display the info
+if (isInfo) this.openInfoWindowHtml(this.infoLabel);
+if (isProgress) {
+	map.removeOverlay(routeData);
+	showFlightProgress(this);
+}
+
+return true;
+}
+
+function showFlightProgress(marker)
 {
 // Build the XML Requester
 var xreq = GXmlHttp.create();
-xreq.open("GET", "acars_progress.ws?id=" + this.flight_id, true);
+xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id, true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
