@@ -28,7 +28,7 @@
  <td width="10%">CODE</td>
  <td width="10%">SIZE</td>
  <td width="10%">VERSION</td>
- <td width="10%"><el:cmdbutton url="libedit" op="fleet" label="NEW INSTALLER" /></td>
+ <td width="15%"><el:cmdbutton url="libedit" op="fleet" label="NEW INSTALLER" /></td>
  <td>DESCRIPTION</td>
 </tr>
 
