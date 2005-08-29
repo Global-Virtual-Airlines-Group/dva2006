@@ -35,7 +35,7 @@ public class ACARSMapProgressService extends WebDataService {
 		// Get the Flight ID
 		int id = 0;
 		try {
-			id = Integer.parseInt(ctx.getRequest().getParameter("id"));
+			id = Integer.parseInt(ctx.getParameter("id"));
 		} catch (NumberFormatException nfe) {
 			return HttpServletResponse.SC_NOT_FOUND;
 		}

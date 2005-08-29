@@ -43,7 +43,7 @@ public class CoolerSyndicationService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the channel name
-		String channel = ctx.getRequest().getParameter("channel");
+		String channel = ctx.getParameter("channel");
 
 		List threads = null;
 		try {

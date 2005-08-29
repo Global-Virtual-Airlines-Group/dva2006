@@ -33,22 +33,22 @@ public class SystemInfoService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Calculate the ID
-		String id = ctx.getRequest().getParameter("ID");
+		String id = ctx.getParameter("ID");
 		if (id == null)
 			id = Long.toHexString(System.currentTimeMillis());
 
 		// Populate the SystemInformation bean from the request
 		SystemInformation si = new SystemInformation(id);
 		si.setDate(new Date());
-		si.setCode(ctx.getRequest().getParameter("AC"));
-		si.setOS(ctx.getRequest().getParameter("OS"));
-		si.setDirectX(ctx.getRequest().getParameter("DX"));
-		si.setCPU(ctx.getRequest().getParameter("CPU"));
-		si.setGPU(ctx.getRequest().getParameter("GPU"));
+		si.setCode(ctx.getParameter("AC"));
+		si.setOS(ctx.getParameter("OS"));
+		si.setDirectX(ctx.getParameter("DX"));
+		si.setCPU(ctx.getParameter("CPU"));
+		si.setGPU(ctx.getParameter("GPU"));
 
 		// Parse memory size
 		try {
-			String memSize = ctx.getRequest().getParameter("MEM");
+			String memSize = ctx.getParameter("MEM");
 			si.setRAM(Integer.parseInt(memSize.substring(0, memSize.indexOf("MB"))));
 		} catch (Exception e) {
 			si.setRAM(512);
@@ -56,7 +56,7 @@ public class SystemInfoService extends WebDataService {
 
 		// Parse Flight Simulator version
 		try {
-			String fsVersion = ctx.getRequest().getParameter("VER");
+			String fsVersion = ctx.getParameter("VER");
 			si.setFSVersion(Integer.parseInt(fsVersion.substring(2)));
 		} catch (Exception e) {
 			si.setFSVersion(2004);
