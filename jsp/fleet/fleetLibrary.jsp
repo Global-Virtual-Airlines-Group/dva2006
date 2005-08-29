@@ -51,9 +51,14 @@ return true;
 <tr>
  <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" /></td>
  <td valign="top"><div id="divName" class="pri bld"></div><br />
-<div id="divSize" class="sec bld"></div> 
-<div id="divDesc">Select a Fleet Installer from the list above.</div>
+<div id="divSize" class="sec bld"></div><br />
+<div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
+you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
+aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to 
+download a sound package and an operating manual from the <content:airline /> Document Library.<br />
 <br />
+Select a Fleet Installer from the list above.</div>
+</td>
 </tr>
 </el:table>
 
@@ -66,20 +71,18 @@ return true;
 <content:copyright />
 </div>
 <script language="JavaScript" type="text/javascript">
-var iName = new Array(${fn:sizeof(fleet)});
-var fName = new Array(${fn:sizeof(fleet)});
-var fSize = new Array(${fn:sizeof(fleet)});
-var fDesc = new Array(${fn:sizeof(fleet)});
-var fImgs = new Array(${fn:sizeof(fleet)});
+var iName = new Array();
+var fName = new Array();
+var fSize = new Array();
+var fDesc = new Array();
+var fImgs = new Array();
 
-<c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="entry" items="${fleet}">
-iName[${entryNumber}] = '${entry.name}';
-fName[${entryNumber}] = '${entry.fileName}';
-fSize[${entryNumber}] = '<fmt:int value="${entry.size}" /> bytes';
-fDesc[${entryNumber}] = "${fn:escape(entry.description)}";
-fImgs[${entryNumber}] = '${entry.image}';
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+iName.push('${entry.name}');
+fName.push('${entry.fileName}');
+fSize.push('<fmt:int value="${entry.size}" /> bytes');
+fDesc.push("${fn:escape(entry.description)}");
+fImgs.push('${entry.image}');
 </c:forEach>
 </script>
 </body>
