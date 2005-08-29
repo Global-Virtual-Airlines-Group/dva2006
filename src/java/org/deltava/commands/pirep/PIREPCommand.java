@@ -214,6 +214,9 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Check if we're creating a new PIREP
 		boolean isNew = (ctx.getID() == 0);
+		
+		// Get data for comboboxes
+		Calendar cld = Calendar.getInstance();
 
 		PIREPAccessControl ac = null;
 		try {
@@ -244,14 +247,15 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetPilot dao2 = new GetPilot(con);
 				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
-
-				// Set date - adjust date backwards by one month for JavaScript
-				Calendar cld = Calendar.getInstance();
+				
+				// Set PIREP date
 				cld.setTime(fr.getDate());
-				ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
-				ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
-				ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
 			}
+			
+			// Save pirepdate combobox values
+			ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
+			ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
+			ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
 
 			// Save airport/airline lists in the request
 			ctx.setAttribute("airline", "DVA", REQUEST);
