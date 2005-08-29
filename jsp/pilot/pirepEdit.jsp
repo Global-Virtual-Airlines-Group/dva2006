@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
-<%@ page buffer="96kb" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -10,7 +9,12 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
+<c:if test="${!empty pirep}">
 <title><content:airline /> Flight ${pirep.flightCode}</title>
+</c:if>
+<c:if test="${empty pirep}">
+<title>New <content:airline /> Flight Report</title>
+</c:if>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -18,9 +22,7 @@
 <content:js name="airportRefresh" />
 <content:sysdata var="eqTypes" name="eqtypes" />
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
-<content:sysdata var="airports" name="airports" mapValues="true" />
 <content:sysdata var="networks" name="online.networks" />
-<hash:airport var="airports" items="${airports}" sorter="${airportSorter}" />
 <script language="javascript" type="text/javascript">
 function validate(form)
 {
@@ -144,20 +146,14 @@ return cmdPost(f.action);
 </div>
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
-<c:if test="${!empty pirepYear}">
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);
-</c:if>
+
 initDateCombos(f.dateM, f.dateD, ((d == null) ? new Date() : d));
 f.airline.focus();
-
 if (f.airline.selectedIndex != 0) {
-	var aCode = f.airline.options[f.airline.selectedIndex].value;
-	setOptions(f.airportD, aCode);
-	setAirport(f.airportD, '${pirep.airportD.IATA}');
-	changeAirport(f.airportD);
-	setOptions(f.airportA, aCode);
-	setAirport(f.airportA, '${pirep.airportA.IATA}');
-	changeAirport(f.airportA);
+	var aCode = getValue(f.airline);
+	updateAirports(f.airportD, 'airline=' + aCode, false, '${pirep.airportD.IATA}');
+	updateAirports(f.airportA, 'airline=' + aCode, false, '${pirep.airportA.IATA}');
 }
 </script>
 </body>
