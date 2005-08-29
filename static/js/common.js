@@ -154,3 +154,21 @@ setDaysInMonth(mCombo);
 dCombo.selectedIndex = (d.getDate() - 1);
 return true;
 }
+
+function getXMLHttpRequest()
+{
+var req;
+try {
+	req = new XMLHttpRequest();
+} catch (e) {
+	var MSXML_XMLHTTP_PROGIDS = new Array('MSXML2.XMLHTTP.5.0','MSXML2.XMLHTTP.4.0','MSXML2.XMLHTTP.3.0','MSXML2.XMLHTTP','Microsoft.XMLHTTP');
+	var success = false;
+	for (var i = 0; i < MSXML_XMLHTTP_PROGIDS.length && (!req); i++) {
+		try {
+			req = new ActiveXObject(MSXML_XMLHTTP_PROGIDS[i]);
+		} catch (e) {}
+	}
+}
+
+return req;
+}
