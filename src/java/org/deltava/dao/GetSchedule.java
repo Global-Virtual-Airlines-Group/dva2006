@@ -166,6 +166,50 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
+	 * Returns Airports with flights departing or arriving at a particular Airport.
+	 * @param a the Airport
+	 * @param from TRUE if returning destination airports for flights originating at a, otherwise FALSE 
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection getConnectingAirports(Airport a, boolean from) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT DISTINCT A.* FROM common.AIRPORTS A, SCHEDULE S WHERE ");
+	   if (from) {
+	      sqlBuf.append("(A.IATA=S.AIRPORT_A) AND (S.AIRPORT_D=?) ORDER BY A.NAME");
+	   } else {
+	      sqlBuf.append("(A.IATA=S.AIRPORT_D) AND (S.AIRPORT_A=?) ORDER BY A.NAME");
+	   }
+	   
+	   try {
+	      prepareStatement(sqlBuf.toString());
+	      _ps.setString(1, a.getIATA());
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+	      
+	      // Iterate through the results
+	      List results = new ArrayList();
+	      while (rs.next()) {
+	         Airport ap = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
+	         ap.setTZ(rs.getString(3));
+	         ap.setLocation(rs.getDouble(5), rs.getDouble(6));
+	         
+	         // Add to results
+	         results.add(ap);
+	      }
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return results;
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
 	 * Helper method to query the database.
 	 */
 	private List execute() throws SQLException {
