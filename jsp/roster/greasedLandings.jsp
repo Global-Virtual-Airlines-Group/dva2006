@@ -20,15 +20,17 @@
 
 <!-- Main Body Frame -->
 <div id="main">
+The members of <content: airline /> are a skilled group - and they can prove it. Below is a list of the smoothest landings, and the greaser pilots who made them:<br />
+<br />
 <el:table className="view" pad="default" space="default">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="5%">#</td>
  <td width="20%">PILOT NAME</td>
  <td width="10%">DATE</td>
- <td width="15%">EQUIPMENT</td>
+ <td width="15%">FLIGHT NUMBER</td>
+ <td width="10%">EQUIPMENT</td>
  <td width="10%">TOUCHDOWN</td>
- <td width="10%">FLIGHT NUMBER</td>
  <td>AIRPORTS</td>
 </tr>
 
