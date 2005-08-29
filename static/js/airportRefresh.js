@@ -1,40 +1,50 @@
-function setOptions(combo, aCode)
+function updateAirports(combo, cmdURL, doICAO, oldCode)
 {
-var newOptions = airports[aCode];
-combo.options.length = newOptions.length;
+var xmlreq = getXMLHttpRequest();
+xmlreq.open("GET", "airports.ws?" + cmdURL, true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var ac = xmlDoc.documentElement.getElementsByTagName("airport");
+	var codeAttr = (doICAO) ? "icao" : "iata";
+	combo.options.length = ac.length;
+	for (var i = 0; i < ac.length; i++) {
+		var a = ac[i];
+		var apCode = a.getAttribute(codeAttr);
+		var apName = a.getAttribute("name") + "(" + apCode + ")";
+		combo.options[i] = new Option(apName, apCode);
+	} // for
 
-for (x = 0; x < newOptions.length; x++) {
-	newOpt = newOptions[x];
-	combo.options[x] = new Option(newOpt.text, newOpt.value);
+	setAirport(combo, oldCode);
+	changeAirport(combo);
+	combo.disabled = false;
+	return true;
 }
- 
-combo.selectedIndex = 0;
+
+combo.disabled = true;
+xmlreq.send(null);
 return true;
 }
 
-function changeAirline(combo)
+function changeAirline(aCombo)
 {
 var f = document.forms[0];
+updateAirports(f.airportD, 'airline=' + getValue(aCombo), false, getValue(f.airportD));
+updateAirports(f.airportA, 'airline=' + getValue(aCombo), false, getValue(f.airportA));
+return true;
+}
 
-// Get new airline code, and existing airport codes
-var aCode = getValue(combo);
-var oldAA = getValue(f.airportA);
-var oldAD = getValue(f.airportD);
-
-// Update the option lists
-setOptions(f.airportD, aCode);
-setAirport(f.airportD, oldAD);
-changeAirport(f.airportD);
-setOptions(f.airportA, aCode);
-setAirport(f.airportA, oldAA);
-changeAirport(f.airportA);
+function updateOrigin(combo)
+{
+var f = document.forms[0];
+updateAirports(f.airportA, 'code=' + getValue(combo), false, getValue(f.airportA));
 return true;
 }
 
 function changeAirport(combo)
 {
 var text = document.getElementById(combo.name + 'Code');
-text.value = combo.options[combo.selectedIndex].value.toUpperCase();
+if (text) text.value = combo.options[combo.selectedIndex].value.toUpperCase();
 return true;
 }
 
