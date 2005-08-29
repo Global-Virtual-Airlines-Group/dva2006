@@ -40,7 +40,7 @@ public class GetNATs extends DAO {
 			String data = br.readLine();
 			while (data != null) {
 				data = data.trim();
-				isEOF = isEOF || (isSOF && (data.startsWith("<br>")));
+				isEOF = isEOF || (isSOF && (data.startsWith("<br>") || (data.indexOf("</pre>") != -1)));
 
 				// If we're after the SOF but before the EOF, append the data
 				if (isSOF && !(isEOF)) {
