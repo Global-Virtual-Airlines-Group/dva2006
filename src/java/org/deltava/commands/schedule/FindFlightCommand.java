@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
+import java.util.Collections;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -39,6 +40,9 @@ public class FindFlightCommand extends AbstractCommand {
      * @throws CommandException if an error (typically database) occurs
      */
     public void execute(CommandContext ctx) throws CommandException {
+       
+       // Set empty list variable for JSP
+       ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
         // Get the result JSP and redirect if we're not posting
         CommandResult result = ctx.getResult();
