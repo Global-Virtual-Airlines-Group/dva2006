@@ -35,14 +35,14 @@ public class ScheduleSearchService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 	   
       // Populate the search criteria from the request
-      Airline a = SystemData.getAirline(ctx.getRequest().getParameter("airline"));
-      ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, parse(ctx.getRequest().getParameter("flightNumber")),
-              parse(ctx.getRequest().getParameter("flightLeg")));
-      criteria.setEquipmentType(ctx.getRequest().getParameter("eqType"));
-      criteria.setAirportD(SystemData.getAirport(ctx.getRequest().getParameter("airportD")));
-      criteria.setAirportA(SystemData.getAirport(ctx.getRequest().getParameter("airportA")));
-      criteria.setDistance(parse(ctx.getRequest().getParameter("distance")));
-      criteria.setMaxResults(parse(ctx.getRequest().getParameter("maxResults")));
+      Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+      ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, parse(ctx.getParameter("flightNumber")),
+              parse(ctx.getParameter("flightLeg")));
+      criteria.setEquipmentType(ctx.getParameter("eqType"));
+      criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+      criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+      criteria.setDistance(parse(ctx.getParameter("distance")));
+      criteria.setMaxResults(parse(ctx.getParameter("maxResults")));
       if ((criteria.getMaxResults() == 0) || (criteria.getMaxResults() > 50))
           criteria.setMaxResults(30);
 

@@ -33,6 +33,10 @@ public class ServiceException extends Exception {
       _httpCode = code;
    }
    
+   /**
+    * Returns the HTTP result code.
+    * @return the HTTP result code
+    */
    public int getCode() {
       return _httpCode;
    }
