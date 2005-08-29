@@ -22,7 +22,7 @@ public class CommandStatsCommand extends AbstractCommand {
    
    private static final List sortOptions = ComboUtils.fromArray(new String[] {"Command Name", "Average Time",
          "Database Time", "Maximum Time", "Frequency", "Success"}, new String[] {"NAME", "AVGT DESC", "BE DESC",
-         "MAXTOTAL DESC", "MAXTOTAL DESC", "TC DESC", "SC DESC"});
+         "MAXTOTAL DESC", "TC DESC", "SC DESC"});
 
    /**
     * Executes the command.
