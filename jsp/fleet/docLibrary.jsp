@@ -31,7 +31,14 @@
  <td width="5%">&nbsp;</td>
  <td width="10%">SIZE</td>
  <td width="5%">VERSION</td>
+<c:choose>
+<c:when test="${access.canCreate}">
  <td width="10%"><el:cmdbutton url="libedit" op="manual" label="NEW MANUAL" /></td>
+</c:when>
+<c:otherwise>
+ <td width="10%">&nbsp;</td>
+</c:otherwise>
+</c:choose>
  <td>DESCRIPTION</td>
 </tr>
 

@@ -57,7 +57,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<el:table className="button" space="default" pad="default">
+<el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button type="submit" className="BUTTON" label="${!empty eqTypes ? 'TRANSFER PILOT' : 'SELECT AIRLINE'}" /></td>
 </tr>
