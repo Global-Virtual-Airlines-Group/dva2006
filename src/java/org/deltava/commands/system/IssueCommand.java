@@ -51,7 +51,7 @@ public class IssueCommand extends AbstractFormCommand {
 					throw new CommandSecurityException("Cannot create Issue");
 
 				// Instantiate a new bean
-				i = new Issue(ctx.getRequest().getParameter("subject"));
+				i = new Issue(ctx.getParameter("subject"));
 				i.setStatus(Issue.STATUS_OPEN);
 				i.setCreatedBy(ctx.getUser().getID());
 				i.setCreatedOn(new Date());
