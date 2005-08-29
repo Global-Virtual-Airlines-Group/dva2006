@@ -41,8 +41,8 @@ public class PasswordResetCommand extends AbstractCommand {
 			throw new CommandSecurityException("Not Authorized");
 
 		// Check for first/last name
-		String fName = ctx.getRequest().getParameter("fName");
-		String lName = ctx.getRequest().getParameter("lName");
+		String fName = ctx.getParameter("fName");
+		String lName = ctx.getParameter("lName");
 		
 		// If no name found, then redirect to the page
 		if (fName == null) {
