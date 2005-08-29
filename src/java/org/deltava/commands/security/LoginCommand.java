@@ -122,7 +122,7 @@ public class LoginCommand extends AbstractCommand {
 		ctx.setAttribute("next_url", "home.do", SESSION);
 
 		// Check if we are going to save the first/last names
-		boolean saveName = Boolean.valueOf(ctx.getRequest().getParameter("saveInfo")).booleanValue();
+		boolean saveName = Boolean.valueOf(ctx.getParameter("saveInfo")).booleanValue();
 		if (saveName) {
 			int cookieAge = SystemData.getInt("users.user_cookie_age") * 86400;
 
