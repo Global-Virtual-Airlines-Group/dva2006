@@ -13,6 +13,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="allEQ" name="eqtypes" sort="true" />
@@ -35,7 +36,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form method="POST" action="findflight.do" op="search" validate="return validate(this)">
+<el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="4"><content:airline /> SCHEDULE SEARCH</td>
@@ -55,9 +56,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry=" " options="${airports}" value="${fafCriteria.airportD}" /></td>
- <td class="label">Arriving at</td> 
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry=" " options="${airports}" value="${fafCriteria.airportA}" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry=" " options="${airports}" value="${fafCriteria.airportD}" onChange="void updateOrigin(this)" /></td>
+ <td class="label">Arriving at</td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry=" " options="${emptyList}" /></td>
 </tr>
 <tr>
  <td class="label">Flight Time (+/- 1h)</td>
