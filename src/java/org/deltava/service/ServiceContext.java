@@ -127,6 +127,15 @@ public class ServiceContext implements Serializable, SecurityContext {
    }
    
    /**
+    * Returns an HTTP request parameter.
+    * @param paramName the parameter name
+    * @return the parameter value, or null if not found
+    */
+   public String getParameter(String paramName) {
+      return _req.getParameter(paramName);
+   }
+   
+   /**
     * Returns the current HTTP servlet request.
     * @return the servlet request
     * @see ServiceContext#getResponse()

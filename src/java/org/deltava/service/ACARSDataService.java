@@ -33,7 +33,7 @@ public class ACARSDataService extends WebDataService {
       // Get the ACARS Flight ID
       int id = 0;
       try {
-         id = Integer.parseInt(ctx.getRequest().getParameter("id"));
+         id = Integer.parseInt(ctx.getParameter("id"));
       } catch (NumberFormatException nfe) {
          throw new ServiceException(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID");
       }

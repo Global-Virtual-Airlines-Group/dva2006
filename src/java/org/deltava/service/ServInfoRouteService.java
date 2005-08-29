@@ -49,7 +49,7 @@ public class ServInfoRouteService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the network name
-		String networkName = ctx.getRequest().getParameter("network");
+		String networkName = ctx.getParameter("network");
 		if (networkName == null)
 			networkName = SystemData.get("online.default_network");
 
@@ -76,7 +76,7 @@ public class ServInfoRouteService extends WebService {
 		}
 
 		// Get the Pilot
-		Pilot p = info.getPilot(ctx.getRequest().getParameter("id"));
+		Pilot p = info.getPilot(ctx.getParameter("id"));
 
 		// Generate the XML document
 		Document doc = new Document();
