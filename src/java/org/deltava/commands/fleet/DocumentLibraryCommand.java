@@ -54,9 +54,12 @@ public class DocumentLibraryCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Calculate access for adding content
+		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+		ctx.setAttribute("access", access, REQUEST);
 
 		// Validate our access to the results
-		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
 		for (Iterator i = results.iterator(); i.hasNext();) {
 			FleetEntry e = (FleetEntry) i.next();
 			access.setEntry(e);
@@ -64,7 +67,7 @@ public class DocumentLibraryCommand extends AbstractCommand {
 
 			// Check that the resource exists
 			if (e.getSize() == 0) {
-				log.warn("Resource " + e.getFullName() + " not found in file system!");
+				log.warn(e.getFullName() + " not found in file system!");
 				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
 			} else if (!access.getCanView()) {
