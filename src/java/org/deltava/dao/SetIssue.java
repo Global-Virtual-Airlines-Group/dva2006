@@ -36,7 +36,7 @@ public class SetIssue extends DAO {
         _ps.setInt(2, i.getCreatedBy());
         _ps.setInt(3, i.getAssignedTo());
         _ps.setTimestamp(4, createTimestamp(i.getCreatedOn()));
-        _ps.setTimestamp(5, createTimestamp(i.getResolvedOn()));
+        _ps.setTimestamp(5, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
         _ps.setString(6, i.getSubject());
         _ps.setString(7, i.getDescription());
         _ps.setInt(8, i.getArea());
@@ -56,7 +56,7 @@ public class SetIssue extends DAO {
 
         // Populate the prepared statement
         _ps.setInt(1, i.getAssignedTo());
-        _ps.setTimestamp(2, createTimestamp(i.getResolvedOn()));
+        _ps.setTimestamp(2, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
         _ps.setString(3, i.getSubject());
         _ps.setString(4, i.getDescription());
         _ps.setInt(5, i.getArea());
