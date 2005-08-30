@@ -158,7 +158,7 @@ public class ConnectionPool implements Recycler {
 
 			// If the connection pool entry is not in use, reserve it
 			if (!cpe.inUse()) {
-				log.info("Reserving JDBC Connection " + cpe);
+				log.debug("Reserving JDBC Connection " + cpe);
 				return cpe.reserve();
 			}
 		}
@@ -251,7 +251,7 @@ public class ConnectionPool implements Recycler {
 				if (cpe.isSystemConnection()) {
 					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				} else {
-					log.info("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				}
 				return cpe.getUseTime();
 			}
