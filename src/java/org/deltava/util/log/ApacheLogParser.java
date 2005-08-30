@@ -132,7 +132,7 @@ public class ApacheLogParser implements LogParser {
       
       // Get the date of the log file
       String ext = f.getName().substring(f.getName().lastIndexOf('.') + 1);
-      HTTPStatistics results = new HTTPStatistics(new Date(Long.parseLong(ext)));
+      HTTPStatistics results = new HTTPStatistics(new Date(Long.parseLong(ext) * 1000));
       results.setExecutionTime(execTime);
       results.setBackEndTime(beTime);
       results.setBandwidth(bandwidth);
