@@ -32,7 +32,7 @@ public class NewsEditCommand extends AbstractCommand {
       
       // Check if we're creating a new entry
       if (ctx.getID() == 0) {
-         NewsAccessControl access = new NewsAccessControl(ctx, new News("", "", ""));
+         NewsAccessControl access = new NewsAccessControl(ctx, null);
          access.validate();
          if (!access.getCanCreateNews())
             throw new CommandSecurityException("Cannot create System News entry");
