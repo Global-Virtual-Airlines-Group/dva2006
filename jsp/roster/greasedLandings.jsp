@@ -20,7 +20,7 @@
 
 <!-- Main Body Frame -->
 <div id="main">
-The members of <content: airline /> are a skilled group - and they can prove it. Below is a list of the smoothest landings, and the greaser pilots who made them:<br />
+The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the smoothest landings, and the greaser pilots who made them:<br />
 <br />
 <el:table className="view" pad="default" space="default">
 <!-- Table Header Bar-->
