@@ -61,7 +61,7 @@ public class GalleryVoteCommand extends AbstractCommand {
 		}
 		
 		// Figure out the command and ID to redirect to
-		String cmdName = (isCooler) ? "thread" : "gallery";
+		String cmdName = (isCooler) ? "thread" : "image";
 		int id = (isCooler) ? StringUtils.parseHex((String) ctx.getCmdParameter(Command.OPERATION, null)) : ctx.getID();
 
 		// Redisplay the image
