@@ -129,6 +129,9 @@ public class GetPilot extends PilotReadDAO {
 			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
 			if (result == null)
 				return null;
+			
+			// Update airline code
+			result.setPilotCode(dbName.toUpperCase() + String.valueOf(result.getPilotNumber()));
 
 			// Add roles/ratings
 			addRatings(result, dbName);
