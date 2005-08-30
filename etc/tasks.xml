@@ -11,7 +11,7 @@
 		<interval>86400</interval>
 	</task>
 	
-	<task id="nat" enabled="false">
+	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<interval>86400</interval>
 	</task>
@@ -21,7 +21,7 @@
 		<interval>86400</interval>
 	</task>
 	
-	<task id="httpstats" enabled="false">
+	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
 	</task>
