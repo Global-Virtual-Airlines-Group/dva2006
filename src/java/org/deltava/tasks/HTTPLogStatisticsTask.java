@@ -49,7 +49,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
          
          try {
             String ext = name.substring(name.lastIndexOf('.') + 1);
-            Date d = new Date(Long.parseLong(ext));
+            Date d = new Date(Long.parseLong(ext) * 1000);
             return d.before(_startTime.getTime());
          } catch (Exception e) {
             return false;
@@ -93,8 +93,11 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
             log.info("Updating statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy"));
             try {
                dao.write(stats);
-               if (!f.delete())
+               if (!f.delete()) {
                   log.error("Cannot delete " + f.getName());
+               } else {
+            	   log.debug("Deleted " + f.getAbsolutePath());
+               }
             } catch (DAOException de) {
                log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy") + " - "
                      + de.getMessage(), de);
