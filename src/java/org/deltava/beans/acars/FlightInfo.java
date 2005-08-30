@@ -198,15 +198,11 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    /**
     * Updates the end date/time for this flight.
     * @param dt the date/time the flight ended
-    * @throws IllegalArgumentException if dt is before getStartTime()
     * @see FlightInfo#getEndTime()
     * @see FlightInfo#setStartTime(Date)
     */
    public void setEndTime(Date dt) {
-      if ((dt != null) && (dt.before(_startTime)))
-         throw new IllegalArgumentException("End Date cannot be before Start Date");
-      
-      _endTime = dt;
+      _endTime = ((dt != null) && (dt.before(_startTime))) ? _startTime : dt;
    }
    
    /**
