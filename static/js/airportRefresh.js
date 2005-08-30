@@ -7,12 +7,13 @@ xmlreq.onreadystatechange = function() {
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("airport");
 	var codeAttr = (doICAO) ? "icao" : "iata";
-	combo.options.length = ac.length;
+	combo.options.length = ac.length + 1;
+	combo.options[0] = new Option("-", "");
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var apCode = a.getAttribute(codeAttr);
 		var apName = a.getAttribute("name") + "(" + apCode + ")";
-		combo.options[i] = new Option(apName, apCode);
+		combo.options[i+1] = new Option(apName, apCode);
 	} // for
 
 	setAirport(combo, oldCode);
