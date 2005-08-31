@@ -27,8 +27,9 @@ public class NewsEditCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
 
-      // Get the command results
+      // Get the command result
       CommandResult result = ctx.getResult();
+      result.setURL("/jsp/news/newsEdit.jsp");
       
       // Check if we're creating a new entry
       if (ctx.getID() == 0) {
@@ -39,7 +40,6 @@ public class NewsEditCommand extends AbstractCommand {
          
          // Save access controller and redirect to JSP
          ctx.setAttribute("access", access, REQUEST);
-         result.setURL("/jsp/news/newsEdit.jsp");
          result.setSuccess(true);
          return;
       }
@@ -69,7 +69,6 @@ public class NewsEditCommand extends AbstractCommand {
       }
       
       // Forward to the JSP
-      result.setURL("/jsp/news/newsEdit.jsp");
       result.setSuccess(true);
    }
 }
