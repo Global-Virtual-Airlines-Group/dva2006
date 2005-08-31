@@ -32,7 +32,7 @@ public class SetStatusUpdate extends DAO {
 	 */
 	public void write(StatusUpdate update) throws DAOException {
 
-		// Check that the CREATED date is unique - this needs to accept past dates
+		// FIXME Remove when we go live
 		long cd = update.getCreatedOn().getTime();
 		if (cd == _lastCreatedOn) {
 			cd = ++_lastCreatedOn;
@@ -46,7 +46,8 @@ public class SetStatusUpdate extends DAO {
 					+ "TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
-			_ps.setLong(3, cd); // FIXME This is retarded - make it a timestamp and change the primary key
+			_ps.setLong(3, cd); // FIXME This is retarded - remove when we go live
+			//_ps.setTimestamp(3, createTimestamp(update.getCreatedOn()));
 			_ps.setInt(4, update.getType());
 			_ps.setString(5, update.getDescription());
 			executeUpdate(1);
@@ -57,10 +58,10 @@ public class SetStatusUpdate extends DAO {
 
 	/**
 	 * Writes a number of Status Update entries to the database.
-	 * @param updates a List of StatusUpdates
+	 * @param updates a Collection of StatusUpdates
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(List updates) throws DAOException {
+	public void write(Collection updates) throws DAOException {
 		for (Iterator i = updates.iterator(); i.hasNext();) {
 			StatusUpdate upd = (StatusUpdate) i.next();
 			write(upd);
