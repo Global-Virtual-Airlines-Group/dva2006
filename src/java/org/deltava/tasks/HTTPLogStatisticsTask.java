@@ -96,7 +96,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
                if (!f.delete()) {
                   log.error("Cannot delete " + f.getName());
                } else {
-            	   log.debug("Deleted " + f.getAbsolutePath());
+            	   log.info("Deleted " + f.getAbsolutePath());
                }
             } catch (DAOException de) {
                log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy") + " - "
