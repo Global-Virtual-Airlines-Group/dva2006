@@ -28,19 +28,19 @@ public class NOTAMEditCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
 
-      // Get the command results
+      // Get the command result
       CommandResult result = ctx.getResult();
+      result.setURL("/jsp/news/notamEdit.jsp");
       
       // Check if we're creating a new entry
       if (ctx.getID() == 0) {
-         NewsAccessControl access = new NewsAccessControl(ctx, new Notice("", "", ""));
+         NewsAccessControl access = new NewsAccessControl(ctx, null);
          access.validate();
          if (!access.getCanCreateNOTAM())
             throw new CommandSecurityException("Cannot create NOTAM entry");
          
          // Save access controller and redirect to JSP
          ctx.setAttribute("access", access, REQUEST);
-         result.setURL("/jsp/news/notamEdit.jsp");
          result.setSuccess(true);
          return;
       }
@@ -70,7 +70,6 @@ public class NOTAMEditCommand extends AbstractCommand {
       }
       
       // Forward to the JSP
-      result.setURL("/jsp/news/notamEdit.jsp");
       result.setSuccess(true);
    }
 }
