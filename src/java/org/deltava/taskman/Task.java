@@ -153,7 +153,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
     public void setStartTime(Date dt) {
        if (dt != null) {
           _startTime.setTime(dt);
-          _nextStartTime.setTimeInMillis(dt.getTime() + _interval);
+          _nextStartTime.setTimeInMillis(dt.getTime() + (_interval * 1000));
        }
     }
     
