@@ -103,6 +103,8 @@ public class GetStatusUpdate extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
+			// FIXME Switch when we go live
+			// upd.setCreatedOn(rs.getTimestamp(2));
 			upd.setCreatedOn(new java.util.Date(rs.getLong(2)));
 			upd.setAuthorID(rs.getInt(3));
 			upd.setDescription(rs.getString(5));

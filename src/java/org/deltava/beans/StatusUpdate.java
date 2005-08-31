@@ -3,8 +3,6 @@ package org.deltava.beans;
 
 import java.util.Date;
 
-import org.deltava.util.IDGenerator;
-
 /**
  * A bean to track pilot promotions and general comments.
  * @author Luke
@@ -45,7 +43,7 @@ public class StatusUpdate extends DatabaseBean implements Comparable {
 		super();
 		setID(pilotID);
 		setType(type);
-		_createdOn = new Date(IDGenerator.generateTimestamp());
+		_createdOn = new Date();
 	}
 	
 	/**
