@@ -46,7 +46,7 @@ public class SetStatusUpdate extends DAO {
 					+ "TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
-			_ps.setLong(3, cd);
+			_ps.setLong(3, cd); // FIXME This is retarded - make it a timestamp and change the primary key
 			_ps.setInt(4, update.getType());
 			_ps.setString(5, update.getDescription());
 			executeUpdate(1);
