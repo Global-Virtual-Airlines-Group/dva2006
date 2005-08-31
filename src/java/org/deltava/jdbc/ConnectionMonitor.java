@@ -15,6 +15,8 @@ import org.apache.log4j.Logger;
 class ConnectionMonitor extends Thread {
 
 	private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
+	
+	private static List _sqlStatus = Arrays.asList(new String[] {"08003", "08S01"});
 
 	private Collection _pool = Collections.EMPTY_LIST;
 	private long _sleepTime = 180000; // 3 minute default
@@ -136,7 +138,7 @@ class ConnectionMonitor extends Thread {
 					Connection c = cpe.getConnection();
 					c.setAutoCommit(c.getAutoCommit());
 				} catch (SQLException se) {
-					if ("08S01".equals(se.getSQLState())) {
+				   if (_sqlStatus.contains(se.getSQLState())) {
 						log.warn("Reconnecting Connection " + cpe);
 
 						// If we cannot reconnect, then remove from the pool
