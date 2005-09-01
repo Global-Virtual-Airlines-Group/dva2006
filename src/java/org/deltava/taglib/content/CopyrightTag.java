@@ -1,5 +1,7 @@
 package org.deltava.taglib.content;
 
+import java.lang.reflect.Field;
+
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -14,63 +16,90 @@ import org.deltava.beans.system.VersionInfo;
 
 public class CopyrightTag extends TagSupport {
 
-    private boolean _visible = true;
-    
-    /**
-     * Marks the copyright tag as visible instead of embedded in the HTML code.
-     * @param isVisible TRUE if the tag should be visible, otherwise FALSE
-     */
-    public void setVisible(boolean isVisible) {
-        _visible = isVisible;
-    }
-  
-    private void displayCopyrightComment() throws Exception {
-    	JspWriter jw = pageContext.getOut();
-        jw.print("<!-- ");
-        jw.print(pageContext.getServletContext().getServletContextName());
-        jw.print(" ");
-        jw.print(VersionInfo.APPNAME);
-        jw.print(" ");
-        jw.print(VersionInfo.TXT_COPYRIGHT);
-        jw.print(" (Build " + VersionInfo.BUILD + ") -->");
-    }
-    
-    private void displayCopyright() throws Exception {
-    	JspWriter jw = pageContext.getOut();
-        jw.println("<hr />");
-        jw.print("<span class=\"copyright\">");
-        jw.print(pageContext.getServletContext().getServletContextName());
-        jw.print(" ");
-        jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD + ")");
-        jw.print("</span>");
-    }
-    
-    /**
-     * Renders the copyright tag to the JSP output stream.
-     * @return TagSupport.EVAL_PAGE always
-     * @throws JspException if an I/O error occurs
-     */
-    public int doEndTag() throws JspException {
-        try {
-            if (_visible) {
-                displayCopyright();
-            } else {
-                displayCopyrightComment();
-            }    
-        } catch (Exception e) {
-            throw new JspException("Error writing " + getClass().getName(), e);
-        }
+   private static int _rcBuild = -1;
+   private boolean _visible = true;
 
-        // Release state and return
-        release();
-        return EVAL_PAGE;
-    }
+   /**
+    * Marks the copyright tag as visible instead of embedded in the HTML code.
+    * @param isVisible TRUE if the tag should be visible, otherwise FALSE
+    */
+   public void setVisible(boolean isVisible) {
+      _visible = isVisible;
+   }
 
-    /**
-     * Release's the tag's state variables.
-     */
-    public void release() {
-       super.release();
-        _visible = true;
-    }
+   private void displayCopyrightComment() throws Exception {
+      JspWriter jw = pageContext.getOut();
+      jw.print("<!-- ");
+      jw.print(pageContext.getServletContext().getServletContextName());
+      jw.print(" ");
+      jw.print(VersionInfo.APPNAME);
+      jw.print(" ");
+      jw.print(VersionInfo.TXT_COPYRIGHT);
+      jw.print(" (Build ");
+      jw.print(String.valueOf(VersionInfo.BUILD));
+      if (_rcBuild > 0) {
+         jw.print(" Release Candidate ");
+         jw.print(String.valueOf(_rcBuild));
+      }
+
+      jw.print(") -->");
+   }
+
+   private void displayCopyright() throws Exception {
+      JspWriter jw = pageContext.getOut();
+      jw.println("<hr />");
+      jw.print("<span class=\"copyright\">");
+      jw.print(pageContext.getServletContext().getServletContextName());
+      jw.print(" ");
+      jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD + ")");
+      jw.print("</span>");
+   }
+
+   /**
+    * Checks for optional data in VersionInfo constants.
+    * @return TagSupport.SKIP_BODY always
+    */
+   public int doStartTag() throws JspException {
+      if (_rcBuild >= 0)
+         return SKIP_BODY;
+
+      // Get the release candidate
+      try {
+         Field f = VersionInfo.class.getField("RELEASE_CANDIDATE");
+         _rcBuild = f.getInt(null);
+      } catch (Exception e) {
+         _rcBuild = 0;
+      }
+
+      return SKIP_BODY;
+   }
+
+   /**
+    * Renders the copyright tag to the JSP output stream.
+    * @return TagSupport.EVAL_PAGE always
+    * @throws JspException if an I/O error occurs
+    */
+   public int doEndTag() throws JspException {
+      try {
+         if (_visible) {
+            displayCopyright();
+         } else {
+            displayCopyrightComment();
+         }
+      } catch (Exception e) {
+         throw new JspException("Error writing " + getClass().getName(), e);
+      }
+
+      // Release state and return
+      release();
+      return EVAL_PAGE;
+   }
+
+   /**
+    * Release's the tag's state variables.
+    */
+   public void release() {
+      super.release();
+      _visible = true;
+   }
 }
