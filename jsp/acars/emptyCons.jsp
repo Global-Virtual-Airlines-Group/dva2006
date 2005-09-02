@@ -20,6 +20,30 @@ function switchType(combo)
 self.location = 'acarsempty.do?id=' + combo.options[combo.selectedIndex].value;
 return true;
 }
+
+function selectAll()
+{
+var form = document.forms[0];
+for (var x = 0; x < form.conID.length; x++)
+	isChecked = form.conID[x].checked = true;
+	
+return true;
+}
+
+function validate(form)
+{
+var isChecked = false;
+for (var x = 0; x < form.conID.length; x++)
+	isChecked = (isChecked || form.conID[x].checked);
+
+// Check if at least one connection is checked
+if (!isChecked) {
+	alert('Select at least one Connection entry to delete.');
+	return false;
+}
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -29,18 +53,18 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="acarsempty.do" method="post" validate="return false">
+<el:form action="acarsdelc.do" method="post" validate="return validate(this)">
 <view:table className="view" space="default" pad="default" cmd="acarsempty">
 <!-- View Header Bar -->
 <tr class="title">
- <td colspan="4">EMPTY ACARS CONNECTION ENTRIES</td>
+ <td colspan="4" class="left">EMPTY ACARS CONNECTION ENTRIES</td>
  <td colspan="3" class="right">VIEW EMPTY <el:combo name="viewType" idx="*" size="1" options="${displayTypes}" value="${displayType}" onChange="void switchType(this)" /></td>
 </tr>
 
 <!-- View Legend Bar -->
 <tr class="title caps">
  <td width="10%">ID</td>
- <td width="10%">&nbsp;</td>
+ <td width="5%"><el:button onClick="void selectAll()" className="BUTTON" label="ALL" /></td>
  <td width="15%">DATE/TIME</td>
  <td width="10%">PILOT CODE</td>
  <td width="20%">PILOT NAME</td>
@@ -53,8 +77,8 @@ return true;
 <c:set var="pilot" value="${pilots[entry.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[entry.pilotID]}" scope="request" />
 <view:row entry="${entry}">
- <td class="pri bld"><fmt:hex value="${entry.ID}" /></td>
- <td><el:cmdbutton url="acarsdelc" linkID="0x${entry.ID}" label="DELETE" /></td>
+ <td class="pri bld small"><fmt:hex value="${entry.ID}" /></td>
+ <td><el:box name="conID" idx="*" value="${entry.ID}" label="" /></td>
  <td><fmt:date date="${entry.startTime}" /></td>
  <td class="sec bld">${pilot.pilotCode}</td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
@@ -65,7 +89,8 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><el:button type="submit" label="DELETE CONNECTIONS" className="BUTTON" />&nbsp;
+<view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </el:form>

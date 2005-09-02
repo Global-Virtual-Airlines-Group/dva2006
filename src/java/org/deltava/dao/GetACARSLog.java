@@ -76,9 +76,11 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getUnusedConnections() throws DAOException {
       try {
-         prepareStatement("SELECT C.*, COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC FROM "
-               + "acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M "
-               + "ON (C.ID=M.CON_ID) GROUP BY C.ID HAVING (MC=0) AND (FC=0) ORDER BY C.DATE");
+         prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
+               + "COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC, COUNT(P.CON_ID) AS PC FROM acars.CONS C "
+               + "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) "
+               + "LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) GROUP BY C.ID HAVING (MC=0) AND (FC=0) AND "
+               + "(PC=0) ORDER BY C.DATE");
          return executeConnectionInfo();
       } catch (SQLException se) {
          throw new DAOException(se);
