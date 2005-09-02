@@ -108,15 +108,16 @@
 <!-- Scheduled Task Pool Data Table -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="6" class="left">SCHEDULED TASK INFORMATION</td>
+ <td colspan="7" class="left">SCHEDULED TASK INFORMATION</td>
 </tr>
 
 <c:if test="${!empty taskInfo}">
 <!-- Scheduled Task Data Title Bar -->
 <tr class="title caps">
  <td width="20%">TASK NAME</td>
- <td width="30%">CLASS NAME</td>
+ <td width="25%">CLASS NAME</td>
  <td width="10%">INTERVAL</td>
+ <td widht="5%">RUN</td>
  <td width="15%">LAST RUN</td>
  <td width="15%">NEXT RUN</td>
  <td>RUN TIME</td>
@@ -134,8 +135,14 @@
 <c:if test="${!empty task.lastStartTime}">
  <td class="small"><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
 </c:if>
+<c:if test="${task.enabled}">
+ <td class="small"><fmt:int value="${task.runCount}" /></td>
  <td class="small"><fmt:date fmt="dt" date="${task.nextStartTime}" /></td>
  <td><fmt:int value="${task.lastRunTime}" /> ms</td>
+</c:if>
+<c:if test="${!task.enabled}">
+ <td colspan="3" class="sec bld">TASK DISABLED</td>
+</c:if>
 </view:row>
 </c:forEach>
 </c:if>
