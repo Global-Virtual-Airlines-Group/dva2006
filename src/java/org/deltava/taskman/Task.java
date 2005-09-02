@@ -17,6 +17,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
     protected String _id;
     protected Properties _props;
     private boolean _enabled;
+    private int _runCount;
     
     private long _maxRunTime = Task.MAX_RUNTIME;
     private Calendar _startTime = Calendar.getInstance();
@@ -48,6 +49,14 @@ public abstract class Task extends Thread implements java.io.Serializable {
      */
     public long getLastRunTime() {
         return _lastRunTime;
+    }
+    
+    /**
+     * Returns the number of times this Task has been executed.
+     * @return the number of executions
+     */
+    public int getRunCount() {
+       return _runCount;
     }
     
     /**
@@ -163,6 +172,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
      */
     public void run() {
         setStartTime(new Date());
+        _runCount++;
         execute();
         _lastRunTime = (System.currentTimeMillis() - _startTime.getTimeInMillis());
     }
