@@ -214,7 +214,8 @@ public class GetACARSData extends DAO {
 	      info.setRoute(rs.getString(11));
 	      info.setRemarks(rs.getString(12));
 	      info.setFSVersion(rs.getInt(13));
-	      info.setPilotID(rs.getInt(14));
+	      info.setOffline(rs.getBoolean(14));
+	      info.setPilotID(rs.getInt(15));
 	      
 	      // Add to results
 	      results.add(info);
