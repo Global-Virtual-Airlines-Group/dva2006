@@ -32,6 +32,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private String _remarks;
    
    private int _fsVersion;
+   private boolean _offline;
    
    /**
     * Creates a new Flight Information record.
@@ -160,6 +161,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    }
    
    /**
+    * Returns if this flight was flown disconnected from the ACARS server.
+    * @return TRUE if the flight was flown offline, otherwise FALSE
+    * @see FlightInfo#setOffline(boolean)
+    */
+   public boolean getOffline() {
+      return _offline;
+   }
+   
+   /**
     * Updates the ACARS Connection ID used for this flight.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is zero or negative
@@ -183,6 +193,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
          throw new IllegalArgumentException("Invalid pilot ID - " + id);
       
       _pilotID = id;
+   }
+   
+   /**
+    * Updates wether this flight was flown disconnected from the ACARS server.
+    * @param offline TRUE if the flight was flown offline, otherwise FALSE
+    * @see FlightInfo#getOffline()
+    */
+   public void setOffline(boolean offline) {
+      _offline = offline;
    }
    
    /**
