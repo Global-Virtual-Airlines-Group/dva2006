@@ -22,7 +22,9 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
    private Date _lastStart;
    private Date _nextStart;
    private long _lastRunTime;
+   private int _runCount;
    private boolean _active;
+   private boolean _enabled;
 
    /**
     * 
@@ -36,7 +38,9 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
       _lastStart = t.getStartTime();
       _nextStart = t.getNextStartTime();
       _lastRunTime = t.getLastRunTime();
+      _runCount = t.getRunCount();
       _active = t.isAlive();
+      _enabled = t.getEnabled();
    }
 
    /**
@@ -105,6 +109,22 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
     */
    public boolean getAlive() {
       return _active;
+   }
+   
+   /**
+    * Returns if the Task is enabled for execution.
+    * @return TRUE if the Task is enabled, otherwise FALSE
+    */
+   public boolean getEnabled() {
+      return _enabled;
+   }
+   
+   /**
+    * Returns the number of times the Task has been executed.
+    * @return the execution count
+    */
+   public int getRunCount() {
+      return _runCount;
    }
    
    /**
