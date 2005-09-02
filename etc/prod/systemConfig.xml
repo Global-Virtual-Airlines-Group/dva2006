@@ -353,7 +353,7 @@
 	<smtp>
 		<server>golgotha.deltava.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
-		<testMode type="Boolean">true</testMode>
+		<testMode type="Boolean">false</testMode>
 	</smtp>
 	
 	<registration>
@@ -449,7 +449,6 @@
 		
 		<list name="login_msgs" attr="msg">
 			<msg>All messages are logged by user ID and IP address.</msg>
-			<msg>Filed PIREPs will not count for logbook or promotion.</msg>
 		</list>
 		
 		<ack>
