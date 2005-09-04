@@ -47,12 +47,14 @@ function saveSettings()
 var myLat = map.getCenterLatLng().y;
 var myLng = map.getCenterLatLng().x;
 var myZoom = map.getZoomLevel();
+var myType = (map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
 
 // Save the cookies
-var expiryDate = new Date(2006,11,31);
+var expiryDate = new Date(2006, 11, 31);
 document.cookie = 'acarsMapLat=' + myLat + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapLng=' + myLng + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapZoomLevel=' + myZoom + '; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapType=' + myType + '; expires=' + expiryDate.toGMTString();
 
 // Display confirmation message
 alert('Your <content:airline /> ACARS Map preferences have been saved.');
@@ -65,6 +67,7 @@ return true;
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -101,9 +104,10 @@ return true;
 
 // Create the map
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
-map.addControl(new GSmallZoomControl());
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, ${zoomLevel});
+map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 
 // Placeholder for route
 var routeData;
