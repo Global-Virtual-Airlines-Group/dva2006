@@ -121,14 +121,14 @@ public class CommandServlet extends HttpServlet {
             
             // Validate command access
             if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
-                throw new CommandSecurityException("Not Authorized to execute " + cmd.getName());
+                throw new CommandSecurityException("Not Authorized to execute", cmd.getName());
             
             // If we are not executing the redirection command, clear the redirection state data in the session
             if (!(cmd instanceof RedirectCommand))
                RequestStateHelper.clear(req);
 
             // Execute the command
-            log.info("Executing " + req.getMethod() + " " + cmd.getName());
+            log.debug("Executing " + req.getMethod() + " " + cmd.getName());
             cmd.execute(ctxt);
             ctxt.setCacheHeaders();
             CommandResult result = ctxt.getResult();
@@ -179,6 +179,12 @@ public class CommandServlet extends HttpServlet {
             } catch (Exception e) {
                 throw new CommandException("Error forwarding to " + result.getURL(), e);
             }
+        } catch (CommandSecurityException cse) {
+        	// Get the user name
+        	String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
+        	log.error("Security Error - " + usrName + " executing " + cse.getCommand() + " - " + cse.getMessage());
+        	RequestDispatcher rd = req.getRequestDispatcher("/jsp/securityViolation.jsp");
+        	rd.forward(req, rsp);
         } catch (CommandException ce) {
             log.error("Error executing command - " + ce.getMessage(), ce);
             RequestDispatcher rd = req.getRequestDispatcher("/jsp/error.jsp");
@@ -186,7 +192,7 @@ public class CommandServlet extends HttpServlet {
             req.setAttribute("servlet_exception", (ce.getCause() == null) ? ce : ce.getCause());
             rd.forward(req, rsp);
         } finally {
-            log.info("Completed in " + String.valueOf(System.currentTimeMillis() - startTime) + " ms");
+            log.debug("Completed in " + String.valueOf(System.currentTimeMillis() - startTime) + " ms");
         }
     }
 }

@@ -46,6 +46,15 @@ public abstract class AbstractCommand implements Command {
 			throw new CommandException("Command ID/Name cannot be null");
 		}
 	}
+	
+	/**
+	 * Helper method to generate a security exception.
+	 * @param msg the exception message
+	 * @return a CommandSecurityException
+	 */
+	protected CommandSecurityException securityException(String msg) {
+		return new CommandSecurityException(msg, _name);
+	}
 
 	/**
 	 * Update the servlet context.
