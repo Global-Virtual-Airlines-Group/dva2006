@@ -88,7 +88,7 @@
 		<CC300>Triple Century Club</CC300>
 		<CC400>Quadricentenary Club</CC400>
 		<CC500>Quinticentenary Club</CC500>
-		<CC600>Hexacentenary Club</CC600>
+		<CC600>Six-Pack Club</CC600>
 		<CC700>Pat Robertson&#0153; Club</CC700>
 		<CC800>Octocentenary Club</CC800>
 		<CC900>Nonocentenary Club</CC900>
@@ -229,8 +229,8 @@
 			<useCompression>true</useCompression>
 		</map>
 		
-		<pool_size type="Integer">1</pool_size>
-		<pool_max_size type="Integer">4</pool_max_size>
+		<pool_size type="Integer">2</pool_size>
+		<pool_max_size type="Integer">6</pool_max_size>
 		<auto_commit type="Boolean">true</auto_commit>
 	</jdbc>
 	
@@ -272,7 +272,6 @@
 			<network>VATSIM</network>
 			<network>ACARS</network>
 			<network>IVAO</network>
-			<network>FPI</network>
 		</list>
 		
 		<list name="highlightCodes" attr="code">
@@ -309,7 +308,8 @@
 		</hash>
 		
 		<key>
-			<googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</googleMaps>
+			<!-- <googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</googleMaps> -->
+			<googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</googleMaps>
 		</key>
 		
 		<list name="roles" attr="role" sorted="true">
@@ -381,11 +381,6 @@
 		
 		<assignto type="Integer">043</assignto>
 	</issue_track>
-	
-	<testing>
-		<max_video_size type="Integer">3072000</max_video_size>
-		<video_removal type="Integer">7</video_removal>
-	</testing>
 	
 	<cooler>
 		<img_max>
