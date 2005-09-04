@@ -12,8 +12,8 @@
 <content:pics />
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -22,6 +22,7 @@
 The mass e-mail message to all active ${eqType} pilots has been sent.<br />
 <br />
 ${msgSent} e-mail message(s) have been sent.<br />
+<br />
 <content:copyright />
 </div>
 </body>
