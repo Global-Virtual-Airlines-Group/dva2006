@@ -33,6 +33,7 @@ return true;
 <body>
 <%@ include file="/jsp/gallery/header.jsp" %> 
 <%@ include file="/jsp/gallery/sideMenu.jsp" %>
+<content:sysdata var="db" name="airline.db" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -61,7 +62,7 @@ return true;
 </c:if>
 </tr>
 <tr class="mid">
- <td colspan="2"><img width="${img.width}" height="${img.height}" src="/gallery/${img.ID}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:int value="${img.size}" /> bytes)" /></td>
+ <td colspan="2"><img width="${img.width}" height="${img.height}" src="/gallery/${db}/${img.ID}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:int value="${img.size}" /> bytes)" /></td>
 </tr>
 </el:table>
 
