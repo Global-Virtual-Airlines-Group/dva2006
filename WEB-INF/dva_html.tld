@@ -662,4 +662,27 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
+	
+	<!-- Email Address tag, for viewing e-mail addresses from the Cooler -->
+	<tag>
+		<name>email</name>
+		<tagclass>org.deltava.taglib.html.EMailDisplayTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>user</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.Person</type>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>label</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>		
 </taglib>
