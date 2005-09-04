@@ -191,3 +191,11 @@ a:hover {
 .right {
 	text-align: right;
 }
+
+.hidden {
+	visibility: hidden;
+}
+
+.visible {
+	visibility: visible;
+}
