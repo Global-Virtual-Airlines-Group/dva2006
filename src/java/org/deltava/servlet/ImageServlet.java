@@ -96,10 +96,11 @@ public class ImageServlet extends BasicAuthServlet {
         ConnectionPool jdbcPool = getConnectionPool();
 
         byte[] imgBuffer = null;
-        log.info("Getting " + IMG_TYPES[imgType] + " image ID" + String.valueOf(imgID));
+        log.debug("Getting " + IMG_TYPES[imgType] + " image ID" + String.valueOf(imgID));
         Connection c = null;
         try {
             c = jdbcPool.getConnection();
+            String dbName = null;
 
             // Get the retrieve image DAO and execute the right method
             GetImage dao = new GetImage(c);
@@ -109,11 +110,12 @@ public class ImageServlet extends BasicAuthServlet {
                 break;
 
             case IMG_GALLERY:
-                imgBuffer = dao.getGalleryImage(imgID);
+            	dbName = url.getLastPath();
+                imgBuffer = dao.getGalleryImage(imgID, dbName);
                 break;
 
             case IMG_SIG:
-            	String dbName = url.getLastPath().toLowerCase();
+            	dbName = url.getLastPath();
                 imgBuffer = dao.getSignatureImage(imgID, dbName);
                 break;
 
