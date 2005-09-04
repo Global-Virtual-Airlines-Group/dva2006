@@ -166,28 +166,9 @@ public class TestPilot extends AbstractBeanTestCase {
     		_p.setPilotCode("DVAXXX");
     		fail("IllegalArgumentException expected");
     	} catch (IllegalArgumentException iae) { }
-    	
-    	// Add a Flight so some of the setters will fail
-    	FlightReport fr = new FlightReport(new Airline("DVA"), 123, 1);
-    	_p.addFlight(fr);
-    	
-    	validateInput("legs", new Integer(1), IllegalStateException.class);
-    	validateInput("hours", new Double(1.1), IllegalStateException.class);
-    	validateInput("onlineLegs", new Integer(1), IllegalStateException.class);
-    	validateInput("onlineHours", new Double(1.1), IllegalStateException.class);
-    	validateInput("lastFlight", new Date(), IllegalStateException.class);
-    	validateInput("miles", new Long(1), IllegalStateException.class);
     }
     
     public void testFlights() {
-    	assertNotNull(_p.getFlights());
-    	
-    	_p.setFlights(null);
-    	assertNotNull(_p.getFlights());
-    	
-    	_p.setFlights(new ArrayList());
-    	assertNotNull(_p.getFlights());
-    	
     	FlightReport fr = new FlightReport(new Airline("DVA"), 123, 1);
     	fr.setDate(new Date());
     	fr.setLength(11);
@@ -199,11 +180,6 @@ public class TestPilot extends AbstractBeanTestCase {
         Airport atl = new Airport("ATL", "KATL", "Atlanta GA");
         atl.setLocation(33.6404, -84.4269);
         fr.setAirportA(atl);
-    	
-    	_p.addFlight(fr);
-    	
-    	assertEquals(1, _p.getFlights().size());
-    	assertEquals(fr, _p.getFlights().get(0));
     	
     	assertEquals(1, _p.getLegs());
     	assertEquals(fr.getDate(), _p.getLastFlight());
