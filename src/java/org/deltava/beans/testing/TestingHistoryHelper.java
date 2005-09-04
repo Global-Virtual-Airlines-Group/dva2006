@@ -17,14 +17,15 @@ public class TestingHistoryHelper {
    private Pilot _usr;
    private EquipmentType _myEQ;
 
-   private List _tests;
+   private Collection _tests;
+   private Collection _pireps;
 
    /**
     * Initializes the helper.
     * @param p the Pilot bean
     * @param tests a List of checkride/examination objects, representing this Pilot's exam history
     */
-   public TestingHistoryHelper(Pilot p, EquipmentType myEQ, List tests) {
+   public TestingHistoryHelper(Pilot p, EquipmentType myEQ, Collection tests, Collection pireps) {
       super();
       _usr = p;
       _myEQ = myEQ;
@@ -45,7 +46,7 @@ public class TestingHistoryHelper {
     * we use this class and do not wish to call the {@link org.deltava.dao.GetExam} DAO a second time.
     * @return a List of Test beans
     */
-   public List getExams() {
+   public Collection getExams() {
       return _tests;
    }
 
@@ -162,7 +163,7 @@ public class TestingHistoryHelper {
 
       // Check if we've got enough flight legs in the primary equipment type
       int cpLegs = 0;
-      for (Iterator i = _usr.getFlights().iterator(); i.hasNext();) {
+      for (Iterator i = _pireps.iterator(); i.hasNext();) {
          FlightReport fr = (FlightReport) i.next();
          if ((fr.getStatus() == FlightReport.OK) && (fr.getCaptEQType().equals(eq.getName()))) cpLegs++;
       }

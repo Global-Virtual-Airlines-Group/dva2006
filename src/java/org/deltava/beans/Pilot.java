@@ -3,8 +3,6 @@ package org.deltava.beans;
 import java.util.*;
 import java.text.DecimalFormat;
 
-import org.deltava.comparators.FlightReportComparator;
-
 import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
@@ -45,7 +43,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private Set _ratings = new TreeSet();
     private Set _roles = new TreeSet();
 
-    private SortedSet _flights;
     private long _miles;
     private Date _lastFlight;
 
@@ -71,9 +68,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      */
     public Pilot(String firstName, String lastName) {
         super(firstName, lastName);
-        FlightReportComparator frc = new FlightReportComparator(FlightReportComparator.DATE);
-        frc.setReverseSort(true);
-        _flights = new TreeSet(frc);
         _roles.add("Pilot");
     }
 
@@ -183,99 +177,50 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
 
     /**
-     * Return the Pilot's Flight Reports.
-     * @return a sorted list of FlightReport objects, or null if not loaded from the database or empty.
-     * @see Pilot#addFlight(FlightReport)
-     */
-    public List getFlights() {
-        return new ArrayList(_flights);
-    }
-
-    /**
      * Return the number of legs flown by this Pilot.
      * @return the number of legs flown, either from the List of FlightReport beans or directly from
      * setFlights()
-     * @see Pilot#getFlights()
      * @see Pilot#setLegs(int)
      */
     public int getLegs() {
-        return (_flights.size() == 0) ? _legs : _flights.size();
+        return _legs;
     }
 
     /**
      * Returns the number of miles flown by this Pilot
-     * @return the number of miles flown, either from the List of FlightReport beans or directly from
-     * setMiles()
+     * @return the number of miles flown
      * @see Pilot#setMiles(long)
-     * @see Pilot#getFlights()
      */
     public long getMiles() {
-        if (!isPopulated())
-            return _miles;
-
-        // Iterate through PIREPs
-        long miles = 0;
-        for (Iterator i = _flights.iterator(); i.hasNext();) {
-            FlightReport fr = (FlightReport) i.next();
-            miles += fr.getDistance();
-        }
-
-        return miles;
+    	return _miles;
     }
 
     /**
      * Return the number of flight hours logged by this Pilot.
-     * @return the number of hours flown, either from the List of FlightReport beans or directly from
-     * {@link Pilot#setHours(double) }
-     * @see Pilot#getFlights()
+     * @return the number of hours flown
      * @see Pilot#getOnlineHours()
      * @see Person#getLegacyHours()
      * @see Pilot#setHours(double)
      */
     public double getHours() {
-        if (!isPopulated())
-            return _hours;
-
-        // Iterate through the PIREPs
-        int hours = 0;
-        for (Iterator i = _flights.iterator(); i.hasNext();) {
-            FlightReport fr = (FlightReport) i.next();
-            if (fr.getStatus() == FlightReport.OK)
-                hours += fr.getLength();
-        }
-
-        return (hours / 10.0);
+    	return _hours;
     }
     
     /**
      * Return the number of online flight legs logged by this Pilot.
-     * @return the number of hours flown, either from the Set of FlightReport beans or directly from
-     * {@link Pilot#setOnlineLegs(int) }
+     * @return the number of hours flown
      * @see Pilot#getFlights()
      * @see Pilot#getHours()
      * @see Person#getLegacyHours()
      * @see Pilot#setOnlineLegs(int)
      */
     public int getOnlineLegs() {
-        if (!isPopulated())
-            return _onlineLegs;
-        
-        // Iterate through the PIREPs
-        int legs = 0;
-        for (Iterator i = _flights.iterator(); i.hasNext();) {
-            FlightReport fr = (FlightReport) i.next();
-            if ((fr.getStatus() == FlightReport.OK) && (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)))
-                legs++;
-        }
-        
-        return legs;
+    	return _onlineLegs;
     }
 
     /**
      * Return the number of online flight hours logged by this Pilot.
-     * @return the number of hours flown, either from the Set of FlightReport beans or directly from
-     * {@link Pilot#setOnlineHours(double) }
-     * @see Pilot#getFlights()
+     * @return the number of hours flown
      * @see Pilot#getHours()
      * @see Pilot#getLastFlight()
      * @see Person#getLegacyHours()
@@ -283,36 +228,19 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#setOnlineHours(double)
      */
     public double getOnlineHours() {
-        if (!isPopulated())
-            return _onlineHours;
-
-        // Iterate through the PIREPs
-        int hours = 0;
-        for (Iterator i = _flights.iterator(); i.hasNext();) {
-            FlightReport fr = (FlightReport) i.next();
-            if ((fr.getStatus() == FlightReport.OK) && (fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK)))
-                hours += fr.getLength();
-        }
-
-        return (hours / 10.0);
+    	return _onlineHours;
     }
     
     /**
      * Returns the date of the Pilot's last flight.
-     * @return the date of the latest Flight Report, either from the Set of FlightReport beans or directly
-     * from {@link Pilot#setLastFlight(Date) }
-     * @see Pilot#getFlights()
+     * @return the date of the latest Flight Report
      * @see Pilot#getHours()
      * @see Pilot#getOnlineHours()
      * @see Pilot#getOnlineLegs()
      * @see Pilot#setLastFlight(Date)
      */
     public Date getLastFlight() {
-        if (!isPopulated())
-    		return _lastFlight;
-    	
-    	FlightReport lastFlight = (FlightReport) _flights.last();
-    	return lastFlight.getDate();
+    	return _lastFlight;
     }
 
     /**
@@ -342,14 +270,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
         return ("*".equals(roleName) || _roles.contains(roleName) || _roles.contains("Admin"));
     }
     
-    /**
-     * Queries if the PIREP beans have already been loaded
-     * @return TRUE if the PIREPs have been loaded, otherwise FALSE
-     */
-    public boolean isPopulated() {
-        return (_flights.size() != 0);
-    }
-
     /**
      * Update this Pilot's status.
      * @param status the new Status code for the Pilot. Use PilotStatus constants if possible
@@ -429,31 +349,16 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
 
     /**
-     * Update this Pilot's flights from a collection.
-     * @param flights a Collection of FlightReports.
-     */
-    public void setFlights(Collection flights) {
-        _flights.clear();
-        if (flights != null)
-        	_flights.addAll(flights);
-    }
-
-    /**
      * Update this Pilot's logged hours. This method will typically only be called from a DAO where we are
      * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>SUM(PIREPS.HOURS)</B>.
      * @param hours the number of hours logged by this Pilot.
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @throws IllegalArgumentException if hours is negative
-     * @see Pilot#addFlight(FlightReport)
      * @see Pilot#getHours()
      */
     public void setHours(double hours) {
-        if (isPopulated()) {
-            throw new IllegalStateException("PIREP beans already loaded");
-        } else if (hours < 0) {
+        if (hours < 0)
             throw new IllegalArgumentException("Hours cannot be negative");
-        }
 
         _hours = hours;
     }
@@ -463,20 +368,14 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * are querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>COUNT(PIREPS.HOURS)</B>.
      * @param legs the number of legs logged by this Pilot
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @throws IllegalArgumentException if legs is negative
-     * @see Pilot#addFlight(FlightReport)
-     * @see Pilot#setFlights(Collection)
      * @see Pilot#setHours(double)
      * @see Pilot#setOnlineHours(double)
      * @see Pilot#getLegs()
      */
     public void setLegs(int legs) {
-        if (isPopulated()) {
-            throw new IllegalStateException("PIREP beans already loaded");
-        } else if (legs < 0) {
+        if (legs < 0)
             throw new IllegalArgumentException("Legs cannot be negative");
-        }
 
         _legs = legs;
     }
@@ -486,20 +385,14 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * are querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>COUNT(PIREPS.HOURS) WHERE ((PIREPS.ATTR & 0x0D) != 0)</B>.
      * @param legs the number of legs logged by this Pilot
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @throws IllegalArgumentException if legs is negative
-     * @see Pilot#addFlight(FlightReport)
-     * @see Pilot#setFlights(Collection)
      * @see Pilot#setHours(double)
      * @see Pilot#setOnlineHours(double)
      * @see Pilot#getLegs()
      */
     public void setOnlineLegs(int legs) {
-        if (isPopulated()) {
-            throw new IllegalStateException("PIREP beans already loaded");
-        } else if (legs < 0) {
+        if (legs < 0)
             throw new IllegalArgumentException("Legs cannot be negative");
-        }
 
         _onlineLegs = legs;
     }
@@ -509,17 +402,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * are querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>MAX(PIREPS.DATE)</B>.
      * @param dt the date of the last flight.
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @see Pilot#getLastFlight()
-     * @see Pilot#addFlight(FlightReport)
-     * @see Pilot#setFlights(Collection)
      * @see Pilot#setHours(double)
      * @see Pilot#setOnlineHours(double)
      */
     public void setLastFlight(Date dt) {
-        if (isPopulated())
-            throw new IllegalStateException("PIREP beans already loaded");
-    	
     	_lastFlight = dt;
     }
     
@@ -528,20 +415,14 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>SUM(PIREPS.HOURS) WHERE ((PIREPS.ATTRS & 0x0D) != 0)</B>. 
      * @param hours the online hours logged by this Pilot
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @throws IllegalArgumentException if hours is negative
-     * @see Pilot#addFlight(FlightReport)
-     * @see Pilot#setFlights(Collection)
      * @see Pilot#setHours(double)
      * @see Pilot#setLegs(int)
      * @see Pilot#getOnlineHours()
      */
     public void setOnlineHours(double hours) {
-        if (isPopulated()) {
-            throw new IllegalStateException("PIREP beans already loaded");
-        } else if (hours < 0) {
+        if (hours < 0)
             throw new IllegalArgumentException("Online hours cannot be negative");
-        }
         
         _onlineHours = hours;
     }
@@ -551,18 +432,12 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
      * <B>SUM(PIREPS.DISTANCE)</B>.
      * @param miles the number of miles logged by this pilot
-     * @throws IllegalStateException if at least one PIREP has already been added via Pilot.addFlight()
      * @throws IllegalArgumentException if miles is negative
-     * @see Pilot#addFlight(FlightReport)
-     * @see Pilot#setFlights(Collection)
      * @see Pilot#getMiles()
      */
     public void setMiles(long miles) {
-        if (isPopulated()) {
-            throw new IllegalStateException("PIREP beans already loaded");
-        } else if (miles < 0) {
+        if (miles < 0)
             throw new IllegalArgumentException("Miles cannot be negative");
-        }
 
         _miles = miles;
     }
@@ -634,17 +509,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     	_roles.add("Pilot");
     }
 
-    /**
-     * Add a PIREP object to this Pilot. Calling this will cause Pilot.setLegs(int) and Pilot.setHours(double)
-     * to fail.
-     * @param fr the PIREP object to add
-     * @see Pilot#setLegs(int)
-     * @see Pilot#setHours(double)
-     */
-    public void addFlight(FlightReport fr) {
-        _flights.add(fr);
-    }
-    
     /**
      * Set the pilot code for this Pilot.
      * @param code the pilot code eg. DVA043.
