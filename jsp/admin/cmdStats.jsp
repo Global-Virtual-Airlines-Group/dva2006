@@ -16,8 +16,8 @@
 <script language="JavaScript" type="text/javascript">
 function setSort(combo)
 {
-
-
+var sortOpt = combo.options[combo.selectedIndex].value;
+self.location = '/cmdstats.do?sortBy=' + sortOpt;
 return true;
 }
 </script>
@@ -39,13 +39,13 @@ return true;
 
 <!-- Table Legend Bar -->
 <tr class="title caps">
- <td width="30%">COMMAND NAME</td>
- <td width="15%">INVOKED</td>
- <td width="15%">SUCCESSFUL</td>
+ <td width="15%">COMMAND NAME</td>
+ <td width="10%">INVOKED</td>
+ <td width="10%">SUCCESSFUL</td>
  <td width="10%">PERCENT</td>
- <td width="15%">AVG. TIME</td> 
- <td width="15%">AVG. BACK END</td>
- <td width="15%">MAX TIME</td>
+ <td width="10%">AVG. TIME</td> 
+ <td width="14%">AVG. BACK END</td>
+ <td width="12%">MAX TIME</td>
  <td>MAX BACK END</td>
 </tr>
 

@@ -132,16 +132,14 @@
 <c:if test="${empty task.lastStartTime}">
  <td>N/A</td>
 </c:if>
-<c:if test="${!empty task.lastStartTime}">
- <td class="small"><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
-</c:if>
 <c:if test="${task.enabled}">
  <td class="small"><fmt:int value="${task.runCount}" /></td>
+ <td class="small"><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
  <td class="small"><fmt:date fmt="dt" date="${task.nextStartTime}" /></td>
  <td><fmt:int value="${task.lastRunTime}" /> ms</td>
 </c:if>
 <c:if test="${!task.enabled}">
- <td colspan="3" class="sec bld">TASK DISABLED</td>
+ <td colspan="4" class="sec bld">TASK DISABLED</td>
 </c:if>
 </view:row>
 </c:forEach>
