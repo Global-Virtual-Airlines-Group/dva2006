@@ -59,6 +59,7 @@
  <td colspan="7">&nbsp;</td>
 </tr>
 </el:table>
+<content:copyright />
 </div>
 </body>
 </html>
