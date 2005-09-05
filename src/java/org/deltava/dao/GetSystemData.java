@@ -43,7 +43,7 @@ public class GetSystemData extends DAO {
 			// Iterate through the results
 			List results = new ArrayList();
 			while (rs.next()) {
-				HTTPStatistics stats = new HTTPStatistics(rs.getTimestamp(1));
+				HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
 				stats.setRequests(rs.getInt(2));
 				stats.setHomePageHits(rs.getInt(3));
 				stats.setExecutionTime(rs.getInt(4));
