@@ -48,8 +48,9 @@ public class FleetInfoService extends WebDataService {
 		ctx.println(ctx.getRequest().getServerName());
 		ctx.println("path=/install");
 		ctx.println("\n[currentMirror]");
-		ctx.println("host=");
-		ctx.println("path=");
+		ctx.print("host=");
+		ctx.println(ctx.getRequest().getServerName());
+		ctx.println("path=/install");
 		
 		// Write installer version info
 		ctx.println("\n[versionInfo]");
