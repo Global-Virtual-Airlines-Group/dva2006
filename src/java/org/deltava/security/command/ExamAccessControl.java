@@ -43,7 +43,7 @@ public class ExamAccessControl extends AccessControl {
        
         // Check if we're authenticated
         if (!_ctx.isAuthenticated())
-            throw new CommandSecurityException("Cannot view Examination");
+            throw new CommandSecurityException("Cannot view Examination", "");
 
         // Set access variables
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
@@ -62,7 +62,7 @@ public class ExamAccessControl extends AccessControl {
         
         // Throw an exception if we cannot view
         if (!_canRead)
-            throw new CommandSecurityException("Cannot view Examination");
+            throw new CommandSecurityException("Cannot view Examination", "");
     }
     
  	/**

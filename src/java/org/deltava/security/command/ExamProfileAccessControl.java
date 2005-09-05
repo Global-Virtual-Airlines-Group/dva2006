@@ -37,7 +37,7 @@ public class ExamProfileAccessControl extends AccessControl {
         
         // If we cannot read the profile, shut us down
         if (!_canRead)
-            throw new CommandSecurityException("Cannot view/edit Examination Profile");
+            throw new CommandSecurityException("Cannot view/edit Examination Profile", "");
     }
     
 	/**
