@@ -17,7 +17,9 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.fName, 3, 'First Name')) return false;
 if (!validateText(form.lName, 3, 'Last Name')) return false;
+<content:filter roles="!HR">
 if (!validateText(form.eMail, 10, 'E-Mail Address')) return false;
+</content:filter>
 
 setSubmit();
 disableButton('SaveButton');
@@ -54,6 +56,7 @@ return true;
 </c:if>
 </el:table>
 
+<!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:button ID="SaveButton" className="BUTTON" label="RESET PASSWORD" type="submit" /></td>
