@@ -42,7 +42,7 @@ public final class ApplicantAccessControl extends AccessControl {
 		// Gets the person object
 		Person p = _ctx.getUser();
 		if (p == null)
-			throw new CommandSecurityException("Not Authorized");
+			throw new CommandSecurityException("Not Authorized", "");
 		
 		// Sets role variables
 		boolean isOurs = (_ap.getID() == p.getID());

@@ -41,7 +41,7 @@ public class TransferAccessControl extends AccessControl {
       boolean hrExam = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination");
       boolean hrPIREP = _ctx.isUserInRole("HR") || _ctx.isUserInRole("PIREP");
       if (!hrExam && !hrPIREP)
-         throw new CommandSecurityException("Cannot view Transfer Request");
+         throw new CommandSecurityException("Cannot view Transfer Request", "");
 
       // Set access rights
       _canApprove = (_treq.getStatus() == TransferRequest.OK) && hrPIREP;

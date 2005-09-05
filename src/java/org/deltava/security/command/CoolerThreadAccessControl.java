@@ -26,6 +26,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canLock;
     private boolean _canUnlock;
     private boolean _canResync;
+    private boolean _canUnstick;
     
 	/**
 	 * Initializes the controller.
@@ -60,6 +61,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
             throw new IllegalStateException("Mesage Thread not set");
         
         // Get the roles and role state - we assume it's OK if channel is null
+        boolean isOurs = (_ctx.getUser() != null) && (_mt.getAuthorID() == _ctx.getUser().getID());
         boolean isModerator = _ctx.isUserInRole("Moderator");
         boolean isClosed = _mt.getLocked() || _mt.getHidden();
         boolean channelAccess = (_c != null) ? RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles()) : true;
@@ -70,6 +72,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canResync = channelAccess && isModerator;
         _canLock = channelAccess && !isClosed && isModerator;
         _canUnlock = channelAccess && isClosed && isModerator;
+        _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
     }
     
     /**
@@ -106,9 +109,17 @@ public final class CoolerThreadAccessControl extends AccessControl {
     
     /**
      * Returns if the thread data can be resynchronized.
-     * @return TRUE if the data can be resynchronized, otherwise FALS
+     * @return TRUE if the data can be resynchronized, otherwise FALSE
      */
     public boolean getCanResync() {
     	return _canResync;
+    }
+    
+    /**
+     * Returns if the thread can be unstuck.
+     * @return TRUE if the thread can be unstuck, otherwise FALSE
+     */
+    public boolean getCanUnstick() {
+    	return _canUnstick;
     }
 }
