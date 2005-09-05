@@ -166,7 +166,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td colspan="2">&nbsp;
 <c:if test="${imgAccess.canVote}">
 <b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
-<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="0x${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" />
+<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" />
 </c:if>
 <c:if test="${access.canReply}">
  <el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
