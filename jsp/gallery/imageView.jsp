@@ -68,7 +68,7 @@ return true;
 
 <!-- Button Bar -->
 <el:table className="form" space="default" pad="default">
-<tr class="title">
+<tr class="title mid">
  <td>&nbsp;
 <c:if test="${access.canVote}">
 FEEDBACK <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
