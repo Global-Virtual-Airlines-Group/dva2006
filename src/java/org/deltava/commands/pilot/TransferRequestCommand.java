@@ -64,7 +64,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
          // Check if we can transfer into that program
          int ofs = activeEQ.indexOf(new EquipmentType(eqType));
          if (ofs == -1)
-            throw new CommandSecurityException("Cannot request transfer to " + eqType);
+            throw securityException("Cannot request transfer to " + eqType);
          
          // Populate the transfer request
          EquipmentType eq = (EquipmentType) activeEQ.get(ofs);

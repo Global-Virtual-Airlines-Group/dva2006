@@ -61,7 +61,7 @@ public class EventSignupCommand extends AbstractCommand {
 
 			// If we're not authorized, halt
 			if (!ourAccess)
-				throw new CommandSecurityException("Cannot sign up for Online Event " + e.getName());
+				throw securityException("Cannot sign up for Online Event " + e.getName());
 			
 			// Create the signup from the request
 			Signup s = new Signup(e.getID(), ctx.getUser().getID());

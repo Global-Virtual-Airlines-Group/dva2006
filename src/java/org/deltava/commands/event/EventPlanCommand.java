@@ -45,7 +45,7 @@ public class EventPlanCommand extends AbstractCommand {
 			EventAccessControl access = new EventAccessControl(ctx, ev);
 			access.validate();
 			if (!access.getCanAddPlan())
-				throw new CommandSecurityException("Cannot add Flight Plan");
+				throw securityException("Cannot add Flight Plan");
 			
 			// Save the event in the request
 			ctx.setAttribute("event", ev, REQUEST);

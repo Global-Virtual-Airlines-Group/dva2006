@@ -59,7 +59,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			PilotAccessControl p_access = new PilotAccessControl(ctx, p);
 			p_access.validate();
 			if (!p_access.getCanEdit())
-				throw new CommandSecurityException("Cannot edit Pilot #" + ctx.getID());
+				throw securityException("Cannot edit Pilot #" + ctx.getID());
 
 			// Check our access level to the Staff profile
 			StaffAccessControl s_access = new StaffAccessControl(ctx, s);
@@ -86,9 +86,15 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setShowSSThreads("1".equals(ctx.getParameter("showImageThreads")));
 
 			// Set Notification Options
-			List notifyOptions = Arrays.asList(ctx.getRequest().getParameterValues("notifyOption"));
-			for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-				p.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+			String[] notifyOpts = ctx.getRequest().getParameterValues("notifyOption");
+			if (notifyOpts != null) {
+				List notifyOptions = Arrays.asList(notifyOpts);
+				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
+					p.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+			} else {
+				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
+					p.setNotifyOption(NOTIFY_ALIASES[x], false);
+			}
 
 			// Determine if we are changing the pilot's status
 			String newStatus = ctx.getParameter("status");
@@ -362,7 +368,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			PilotAccessControl ac = new PilotAccessControl(ctx, p);
 			ac.validate();
 			if (!ac.getCanEdit())
-				throw new CommandSecurityException("Not Authorized");
+				throw securityException("Not Authorized");
 
 			// Save pilot status
 			ctx.setAttribute("status", Pilot.STATUS[p.getStatus()], REQUEST);
