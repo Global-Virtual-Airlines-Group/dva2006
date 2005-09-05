@@ -40,7 +40,7 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="2" class="left">ISSUE LIST</td>
- <td colspan="2">BY STATUS <el:combo name="status" size="1" options="${statuses}" firstEntry="< ALL >" value="${status}" onChange="void setFilter(this, 'status')" /></td>
+ <td colspan="2">BY STATUS <el:combo name="op" size="1" options="${statuses}" firstEntry="< ALL >" value="${status}" onChange="void setFilter(this, 'status')" /></td>
  <td colspan="2">SORT BY <el:combo name="sortType" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void setFilter(this, 'sortType')" /></td>
  <td colspan="3">
 <c:if test="${access.canCreate}">

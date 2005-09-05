@@ -42,8 +42,8 @@ public class IssueListCommand extends AbstractViewCommand {
         
         // Get issue status
         int issueStatus = -1;
-        if (ctx.getParameter("status") != null) {
-            String statusName = ctx.getParameter("status");
+        if (ctx.getCmdParameter(Command.OPERATION, null) != null) {
+            String statusName = (String) ctx.getCmdParameter(Command.OPERATION, null);
             for (int x = 0; x < Issue.STATUS.length; x++) {
                 if (Issue.STATUS[x].equals(statusName)) {
                     issueStatus = x;
