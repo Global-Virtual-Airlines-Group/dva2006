@@ -96,7 +96,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 			// If we cannot perform the operation, then stop
 			if (!isOK)
-				throw new CommandSecurityException("Cannot dispose of Flight Report #" + fr.getID());
+				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
 
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);

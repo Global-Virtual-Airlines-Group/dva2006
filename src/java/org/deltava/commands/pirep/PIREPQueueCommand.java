@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -12,7 +13,6 @@ import org.deltava.dao.DAOException;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class PIREPQueueCommand extends AbstractViewCommand {
@@ -26,7 +26,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 		
 		// Check our access level
 		if (!ctx.getRequest().isUserInRole("PIREP"))
-			throw new CommandSecurityException("Cannot access PIREP queue");
+			throw securityException("Cannot access PIREP queue");
 		
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
