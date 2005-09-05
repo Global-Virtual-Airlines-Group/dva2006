@@ -22,7 +22,7 @@ var img = getElement('FleetPic');
 var desc = getElement('FleetDesc');
 
 // Load the picture in its place, save the description
-img.src = '/gallery/{$imgDB}/0x' + combo.options[combo.selectedIndex].value + '.jpg';
+img.src = '/gallery/${imgDB}/0x' + combo.options[combo.selectedIndex].value + '.jpg';
 desc.innerHTML = dList[combo.selectedIndex - 1];
 
 // Blur the combo box
