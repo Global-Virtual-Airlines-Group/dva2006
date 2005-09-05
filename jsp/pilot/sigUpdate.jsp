@@ -8,6 +8,7 @@
 <head>
 <title><content:airline /> Password Reset</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -28,7 +29,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="sigupdate.do" method="POST" validate="return validate(this)">
+<el:form action="sigupdate.do" method="post" linkID="0x${pilot.ID}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left">WATER COOLER SIGNATURE IMAGE UPDATE - ${pilot.name}</td>

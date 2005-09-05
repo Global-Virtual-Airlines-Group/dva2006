@@ -89,7 +89,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
             wdao.write(p);
          
             // Set status variable for the result JSP
-            ctx.setAttribute("sigUpdated", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 
             // Forward to the update JSP
             result.setType(CommandResult.REQREDIRECT);
