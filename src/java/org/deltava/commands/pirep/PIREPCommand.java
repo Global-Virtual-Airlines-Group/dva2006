@@ -105,7 +105,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Validate our access
 			if (!hasAccess)
-				throw new CommandSecurityException("Not Authorized");
+				throw securityException("Not Authorized");
 
 			// Get the airports
 			Airport aa = SystemData.getAirport(ctx.getParameter("airportA"));
@@ -228,7 +228,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ac = new PIREPAccessControl(ctx, null);
 				ac.validate();
 				if (!ac.getCanCreate())
-					throw new CommandSecurityException("Cannot create new PIREP");
+					throw securityException("Cannot create new PIREP");
 
 				// Save the user object
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
@@ -241,7 +241,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				ac = new PIREPAccessControl(ctx, fr);
 				ac.validate();
 				if (!ac.getCanEdit())
-					throw new CommandSecurityException("Not Authorized");
+					throw securityException("Not Authorized");
 
 				// Save the pilot info/PIREP in the request
 				GetPilot dao2 = new GetPilot(con);
