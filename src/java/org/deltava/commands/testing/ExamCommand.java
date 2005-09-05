@@ -46,7 +46,7 @@ public class ExamCommand extends AbstractCommand {
          ExamAccessControl access = new ExamAccessControl(ctx, ex);
          access.validate();
          if (!access.getCanRead())
-            throw new CommandSecurityException("Cannot view Examination " + ctx.getID());
+            throw securityException("Cannot view Examination " + ctx.getID());
          
          // Get the Pilot
          GetPilot pdao = new GetPilot(con);

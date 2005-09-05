@@ -51,7 +51,7 @@ public class ExamScoreCommand extends AbstractCommand {
          ExamAccessControl access = new ExamAccessControl(ctx, ex);
          access.validate();
          if (!access.getCanScore())
-            throw new CommandSecurityException("Cannot score Examination");
+            throw securityException("Cannot score Examination");
          
          // Load the examination profile
          GetExamProfiles epdao = new GetExamProfiles(con);

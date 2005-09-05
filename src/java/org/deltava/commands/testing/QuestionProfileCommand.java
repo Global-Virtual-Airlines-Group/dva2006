@@ -118,7 +118,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
 		access.validate();
 		if (!access.getCanRead())
-			throw new CommandSecurityException("Cannot view Examination Question Profile");
+			throw securityException("Cannot view Examination Question Profile");
 
 		try {
 			Connection con = ctx.getConnection();
@@ -150,6 +150,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
 		access.validate();
 		if (!access.getCanEdit())
-			throw new CommandSecurityException("Cannot modify Examination Question Profile");
+			throw securityException("Cannot modify Examination Question Profile");
 	}
 }

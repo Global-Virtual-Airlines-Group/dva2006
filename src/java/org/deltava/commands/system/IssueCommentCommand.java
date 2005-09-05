@@ -38,7 +38,7 @@ public class IssueCommentCommand extends AbstractCommand {
          // Check our access level
          IssueAccessControl access = new IssueAccessControl(ctx, i);
          access.validate();
-         if (!access.getCanComment()) throw new CommandSecurityException("Cannot comment on Issue " + ctx.getID());
+         if (!access.getCanComment()) throw securityException("Cannot comment on Issue " + ctx.getID());
 
          // Create the Issue comment bean
          IssueComment ic = new IssueComment(ctx.getParameter("comment"));

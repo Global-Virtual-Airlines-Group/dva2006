@@ -48,7 +48,7 @@ public class IssueCommand extends AbstractFormCommand {
 				access = new IssueAccessControl(ctx, i);
 				access.validate();
 				if (!access.getCanCreate())
-					throw new CommandSecurityException("Cannot create Issue");
+					throw securityException("Cannot create Issue");
 
 				// Instantiate a new bean
 				i = new Issue(ctx.getParameter("subject"));
@@ -70,7 +70,7 @@ public class IssueCommand extends AbstractFormCommand {
 				access = new IssueAccessControl(ctx, i);
 				access.validate();
 				if (!access.getCanEdit())
-					throw new CommandSecurityException("Cannot save Issue " + ctx.getID());
+					throw securityException("Cannot save Issue " + ctx.getID());
 			}
 
 			// Update the issue from the request
@@ -165,7 +165,7 @@ public class IssueCommand extends AbstractFormCommand {
 				access = new IssueAccessControl(ctx, null);
 				access.validate();
 				if (!access.getCanCreate())
-					throw new CommandSecurityException("Cannot Create new Issues");
+					throw securityException("Cannot Create new Issues");
 			} else {
 				i = dao.get(ctx.getID());
 				if (i == null)
@@ -175,7 +175,7 @@ public class IssueCommand extends AbstractFormCommand {
 				access = new IssueAccessControl(ctx, i);
 				access.validate();
 				if (!access.getCanEdit())
-					throw new CommandSecurityException("Cannot Edit Issue " + ctx.getID());
+					throw securityException("Cannot Edit Issue " + ctx.getID());
 
 				// Save the issue in the request
 				ctx.setAttribute("issue", i, REQUEST);

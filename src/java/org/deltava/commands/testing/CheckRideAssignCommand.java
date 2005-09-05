@@ -48,7 +48,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
 			access.validate();
 			if (!access.getCanAssignRide())
-				throw new CommandSecurityException("Cannot assign Check Ride");
+				throw securityException("Cannot assign Check Ride");
 
 			// Get the Pilot profile
 			GetPilot dao = new GetPilot(con);
