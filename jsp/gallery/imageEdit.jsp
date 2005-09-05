@@ -42,7 +42,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="imgsave.do" method="POST" validate="return validate(this)">
+<el:form action="imgsave.do" method="POST" linkID="${empty img ? 'new' : '0x' + img.ID}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>
