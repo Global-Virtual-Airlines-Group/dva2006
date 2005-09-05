@@ -47,7 +47,7 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);
          access.validate();
          if (!access.getCanScore())
-            throw new CommandSecurityException("Cannot score Questionnaire");
+            throw securityException("Cannot score Questionnaire");
          
          // Calculate the score
          int score = 0;

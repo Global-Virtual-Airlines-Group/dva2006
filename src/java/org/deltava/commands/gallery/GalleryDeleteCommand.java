@@ -42,7 +42,7 @@ public class GalleryDeleteCommand extends AbstractCommand {
 	        GalleryAccessControl access = new GalleryAccessControl(ctx, img);
 	        access.validate();
 	        if (!access.getCanDelete())
-	        	throw new CommandSecurityException("Cannot Delete Image " + ctx.getID());
+	        	throw securityException("Cannot Delete Image " + ctx.getID());
 			
 	        // Get the write DAO and delete the image
 	        SetGalleryImage wdao = new SetGalleryImage(con);

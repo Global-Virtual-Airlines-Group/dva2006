@@ -52,7 +52,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				NewsAccessControl access = new NewsAccessControl(ctx, nws);
 				access.validate();
 				if (!access.getCanSave())
-					throw new CommandSecurityException("Cannot edit NOTAM");
+					throw securityException("Cannot edit NOTAM");
 
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
@@ -62,7 +62,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
 				if (!access.getCanCreateNOTAM())
-					throw new CommandSecurityException("Cannot create NOTAM");
+					throw securityException("Cannot create NOTAM");
 
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));

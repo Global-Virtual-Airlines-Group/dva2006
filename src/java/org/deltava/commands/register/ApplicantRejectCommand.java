@@ -46,7 +46,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
 			access.validate();
 			if (!access.getCanReject())
-				throw new CommandSecurityException("Cannot Reject Applicant");
+				throw securityException("Cannot Reject Applicant");
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

@@ -46,7 +46,7 @@ public class GalleryVoteCommand extends AbstractCommand {
 	        GalleryAccessControl access = new GalleryAccessControl(ctx, img);
 	        access.validate();
 	        if (!access.getCanVote())
-	        	throw new CommandSecurityException("Cannot Vote for Image " + ctx.getID());
+	        	throw securityException("Cannot Vote for Image " + ctx.getID());
 
 	        // Create our vote
 	        Vote v = new Vote(ctx.getUser(), Integer.parseInt(ctx.getParameter("score")), ctx.getID());

@@ -31,7 +31,7 @@ public class RouteDeleteCommand extends AbstractCommand {
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanDelete())
-			throw new CommandSecurityException("Cannot delete Oceanic Route");
+			throw securityException("Cannot delete Oceanic Route");
 		
 		try {
 			Connection con = ctx.getConnection();

@@ -40,7 +40,7 @@ public class ScheduleExportCommand extends AbstractCommand {
       ScheduleAccessControl access = new ScheduleAccessControl(ctx);
       access.validate();
       if (!access.getCanExport())
-         throw new CommandSecurityException("Cannot export Flight Schedule");
+         throw securityException("Cannot export Flight Schedule");
 
       Collection results = null;
       try {

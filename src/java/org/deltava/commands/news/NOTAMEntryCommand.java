@@ -36,7 +36,7 @@ public class NOTAMEntryCommand extends AbstractCommand {
          NewsAccessControl access = new NewsAccessControl(ctx, new Notice("", "", ""));
          access.validate();
          if (!access.getCanCreateNOTAM())
-            throw new CommandSecurityException("Cannot create NOTAM entry");
+            throw securityException("Cannot create NOTAM entry");
          
          // Save access controller and redirect to JSP
          ctx.setAttribute("access", access, REQUEST);

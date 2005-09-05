@@ -51,7 +51,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
 			if (!access.getCanActivate())
-				throw new CommandSecurityException("Cannot activate Pilot");
+				throw securityException("Cannot activate Pilot");
 
 			// Get the equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);

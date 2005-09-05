@@ -54,7 +54,7 @@ public class QuestionnaireCommand extends AbstractCommand {
             result.setSuccess(true);
             return;
          } else if (!access.getCanRead()) {
-            throw new CommandSecurityException("Cannot view Applicant Questionnaire");
+            throw securityException("Cannot view Applicant Questionnaire");
          }
          
          // Get the Applicant profile

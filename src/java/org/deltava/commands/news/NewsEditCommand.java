@@ -36,7 +36,7 @@ public class NewsEditCommand extends AbstractCommand {
          NewsAccessControl access = new NewsAccessControl(ctx, null);
          access.validate();
          if (!access.getCanCreateNews())
-            throw new CommandSecurityException("Cannot create System News entry");
+            throw securityException("Cannot create System News entry");
          
          // Save access controller and redirect to JSP
          ctx.setAttribute("access", access, REQUEST);
@@ -57,7 +57,7 @@ public class NewsEditCommand extends AbstractCommand {
          NewsAccessControl access = new NewsAccessControl(ctx, nws);
          access.validate();
          if (!access.getCanEdit())
-            throw new CommandSecurityException("Cannot edit System News entry");
+            throw securityException("Cannot edit System News entry");
          
          // Save the news entry and the access controller
          ctx.setAttribute("entry", nws, REQUEST);

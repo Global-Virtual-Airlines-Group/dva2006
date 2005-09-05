@@ -38,7 +38,7 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		boolean isAuthorized = ctx.getRequest().isUserInRole("HR") || ctx.getRequest().isUserInRole("Admin");
 		if (ctx.isAuthenticated() && !isAuthorized)
-			throw new CommandSecurityException("Not Authorized");
+			throw securityException("Not Authorized");
 
 		// Check for first/last name
 		String fName = ctx.getParameter("fName");

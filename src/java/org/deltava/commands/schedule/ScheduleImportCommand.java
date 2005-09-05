@@ -41,7 +41,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanImport())
-			throw new CommandSecurityException("Cannot import Flight Schedule data");
+			throw securityException("Cannot import Flight Schedule data");
       
       // If we are not uploading a CSV file, then redirect to the JSP
       FileUpload csvData = ctx.getFile("csvData");

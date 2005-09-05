@@ -64,7 +64,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		// Make sure we're either anonymous or the same user
 		if ((ctx.isAuthenticated()) && (ctx.getUser().getID() != p.getID()))
-				throw new CommandSecurityException("Attempting to Validate for " + p.getName());
+				throw securityException("Attempting to Validate for " + p.getName());
 
 		// Get the command result
 		CommandResult result = ctx.getResult();

@@ -39,7 +39,7 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
          QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);
          access.validate();
          if (!access.getCanSubmit())
-            throw new CommandSecurityException("Cannot submit Questionnaire");
+            throw securityException("Cannot submit Questionnaire");
 
          // Set the status of the examination, and submitted date
          ex.setStatus(Test.SUBMITTED);

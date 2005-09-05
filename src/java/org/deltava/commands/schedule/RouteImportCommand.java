@@ -54,7 +54,7 @@ public class RouteImportCommand extends AbstractCommand {
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanImport())
-			throw new CommandSecurityException("Cannot import Preferred Routes");
+			throw securityException("Cannot import Preferred Routes");
 
 		try {
 			Connection con = ctx.getConnection();

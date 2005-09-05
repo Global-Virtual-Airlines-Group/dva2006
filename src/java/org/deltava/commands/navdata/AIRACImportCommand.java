@@ -42,7 +42,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanImport())
-			throw new CommandSecurityException("Cannot import Navigation Data");
+			throw securityException("Cannot import Navigation Data");
 
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");

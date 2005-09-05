@@ -46,7 +46,7 @@ public class GalleryImageCommand extends AbstractCommand {
 			GalleryAccessControl access = new GalleryAccessControl(ctx, null);
 			access.validate();
 			if (!access.getCanCreate())
-				throw new CommandSecurityException("Cannot create Gallery Image");
+				throw securityException("Cannot create Gallery Image");
 
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);

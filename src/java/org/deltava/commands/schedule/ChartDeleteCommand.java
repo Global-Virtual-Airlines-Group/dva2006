@@ -32,7 +32,7 @@ public class ChartDeleteCommand extends AbstractCommand {
       ChartAccessControl access = new ChartAccessControl(ctx);
       access.validate();
       if (!access.getCanDelete())
-         throw new CommandSecurityException("Cannot delete Approach Chart");
+         throw securityException("Cannot delete Approach Chart");
 
       try {
          Connection con = ctx.getConnection();
