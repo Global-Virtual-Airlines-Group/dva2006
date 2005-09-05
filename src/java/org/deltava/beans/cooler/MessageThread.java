@@ -61,7 +61,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
      * @see MessageThread#getLastUpdateID()
      */
     public int getAuthorID() {
-        return _authorID;
+        return (_posts == null) ? _authorID : ((Message) _posts.iterator().next()).getAuthorID();
     }
     
     /**
