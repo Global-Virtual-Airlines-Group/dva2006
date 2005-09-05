@@ -199,7 +199,7 @@ public class Mailer extends Thread {
             Transport.send(imsg);
             
             // Log message
-            log.info("Sent message to " + addr.getName() + " <" + addr.getEmail() + ">");
+            log.info("Sent " + _ctx.getTemplate().getName() + " message to " + addr.getName() + " <" + addr.getEmail() + ">");
          } catch (Exception e) {
             log.error("Error sending email to " + addr.getName(), e);
          }
