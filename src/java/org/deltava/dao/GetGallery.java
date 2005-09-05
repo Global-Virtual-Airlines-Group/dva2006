@@ -5,6 +5,8 @@ import java.sql.*;
 
 import org.deltava.beans.gallery.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to load Image Gallery data.
  * @author Luke
@@ -22,14 +24,31 @@ public class GetGallery extends DAO {
 	}
 
 	/**
-	 * Returns the metadata associated with a particular Gallery image. <i>No vote data is returned </i>.
+	 * Returns the metadata associated with a particular Gallery image in the current database. <i>No vote data is returned </i>.
 	 * @param id the Image id
 	 * @return an Image, or null if the id was not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Image getImageData(int id) throws DAOException {
+		return getImageData(id, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Returns the metadata associated with a particular Gallery image. <i>No vote data is returned </i>.
+	 * @param id the Image id
+	 * @param dbName the database name
+	 * @return an Image, or null if the id was not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Image getImageData(int id, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".GALLERY WHERE (ID=?)");
+		
 		try {
-			prepareStatement("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM GALLERY WHERE (ID=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 
 			// Execute the query - return null if no image found

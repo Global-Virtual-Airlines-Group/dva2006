@@ -60,7 +60,7 @@ public class GetImage extends DAO {
      */
     public byte[] getSignatureImage(int id, String dbName) throws DAOException {
     	StringBuffer sqlBuf = new StringBuffer("SELECT WC_SIG FROM ");
-    	sqlBuf.append(dbName);
+    	sqlBuf.append(dbName.toLowerCase());
     	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
     }
