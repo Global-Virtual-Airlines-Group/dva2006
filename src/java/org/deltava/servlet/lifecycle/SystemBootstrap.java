@@ -120,9 +120,9 @@ public class SystemBootstrap implements ServletContextListener {
 			SystemData.add("apps", uddao.getAirlines(true));
 
 			// Load active airlines
-			log.info("Loading active Airlines");
+			log.info("Loading Airline Codes");
 			GetAirline dao1 = new GetAirline(c);
-			SystemData.add("airlines", dao1.getActive());
+			SystemData.add("airlines", dao1.getAll());
 
 			// Load airports
 			log.info("Loading Airports");
