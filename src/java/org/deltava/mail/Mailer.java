@@ -174,7 +174,6 @@ public class Mailer extends Thread {
 
             // Set the message content
             imsg.setContent(mp);
-            log.info("Set Content");
 
             // Set the sent-date and crank it out
             imsg.setSentDate(new Date());
