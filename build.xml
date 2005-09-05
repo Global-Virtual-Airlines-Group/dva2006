@@ -223,13 +223,23 @@
 		<delete file="${java.io.tmpdir}/build/web.xml" />
 	</target>
 	
+	<!-- Get log file and view it -->
+	<target name="getlogs">
+		<loadproperties srcFile="data/build_deploy.properties" />
+		<scp todir="${basedir}/local_data" verbose="yes" trust="yes" password="${webapp.ssh.pwd}"
+			file="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/jakarta-tomcat5.0/logs/catalina.out" />
+		<exec executable="c:\program files\textpad 4\textpad.exe" spawn="yes">
+			<arg value="${basedir}\local_data\catalina.out" />
+		</exec>
+	</target>
+	
 	<!-- Production Deployment via SSH -->
 	<target name="prod_deploy" depends="compile,acars,jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
-					verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
 				<modified seldirs="false" algorithm="digest">
