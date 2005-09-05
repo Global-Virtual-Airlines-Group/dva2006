@@ -42,7 +42,7 @@ public class EventCancelCommand extends AbstractCommand {
          EventAccessControl access = new EventAccessControl(ctx, e);
          access.validate();
          if (!access.getCanCancel())
-            throw new CommandSecurityException("Cannot cancel Online Event " + e.getName());
+            throw securityException("Cannot cancel Online Event " + e.getName());
 
          // Initialize counters
          int flightsDeleted = 0;
