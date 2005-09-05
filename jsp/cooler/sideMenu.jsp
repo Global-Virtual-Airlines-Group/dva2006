@@ -63,7 +63,7 @@
 <c:if test="${showIssue}">
 <tr class="MenuHeader"><td>DVA 2006</td></tr>
 <tr class="MenuItem">
- <td><el:cmd url="issues">ISSUE TRACKER</el:cmd></td>
+ <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
 </tr>
 <tr class="MenuItem">
  <td><el:link url="/javadoc/index.html">JAVA API DOCS</el:link></td>
