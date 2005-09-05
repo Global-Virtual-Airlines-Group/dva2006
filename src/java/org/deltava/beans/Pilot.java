@@ -599,6 +599,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setOnlineLegs(getOnlineLegs());
        p2.setShowSignatures(getShowSignatures());
        p2.setShowSSThreads(getShowSSThreads());
+       p2._networkIDs.putAll(getNetworkIDs());
+       for (Iterator i = getNotifyOptions().iterator(); i.hasNext(); )
+    	   p2.setNotifyOption((String) i.next(), true);
+       
        return p2;
     }
     
