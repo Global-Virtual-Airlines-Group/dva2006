@@ -117,7 +117,7 @@
  <td width="20%">TASK NAME</td>
  <td width="25%">CLASS NAME</td>
  <td width="10%">INTERVAL</td>
- <td widht="5%">RUN</td>
+ <td width="5%">RUN</td>
  <td width="15%">LAST RUN</td>
  <td width="15%">NEXT RUN</td>
  <td>RUN TIME</td>
