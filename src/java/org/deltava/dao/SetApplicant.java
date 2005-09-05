@@ -55,12 +55,9 @@ public class SetApplicant extends PilotWriteDAO {
          // Prepare an INSERT or UPDATE statement
          if (a.getID() == 0) {
             // Write the USERDATA Object
-            prepareStatement("INSERT INTO common.USERDATA (AIRLINE, DBNAME, TABLENAME, DOMAIN) VALUES "
-                  + "(?, ?, ?, ?)");
+            prepareStatement("INSERT INTO common.USERDATA (AIRLINE, TABLENAME) VALUES (?, ?)");
             _ps.setString(1, SystemData.get("airline.code"));
-            _ps.setString(2, SystemData.get("airline.db"));
-            _ps.setString(3, "APPLICANTS");
-            _ps.setString(4, SystemData.get("airline.domain"));
+            _ps.setString(2, "APPLICANTS");
             executeUpdate(1);
             
             // Get the new applicant ID
