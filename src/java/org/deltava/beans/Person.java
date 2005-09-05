@@ -77,8 +77,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
     private int _loginCount;
     private String _loginHost;
     
-    private Map _networkIDs = new HashMap();
-    private Map _notifyOptions = new HashMap();
+    protected Map _networkIDs = new HashMap();
+    protected Map _notifyOptions = new HashMap();
     private Set _statusUpdates = new TreeSet();
     
     private double _legacyHours;
@@ -285,8 +285,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @see Person#setNotifyOption(String, boolean)
      * @see Person#getNotifyOption(String)
      */
-    public List getNotifyOptions() {
-        return new ArrayList(_notifyOptions.keySet());
+    public Collection getNotifyOptions() {
+        return new HashSet(_notifyOptions.keySet());
     }
     
     /**
