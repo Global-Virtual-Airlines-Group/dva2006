@@ -21,7 +21,6 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:sysdata var="eqTypes" name="eqtypes" />
-<content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="networks" name="online.networks" />
 <script language="javascript" type="text/javascript">
 function validate(form)
