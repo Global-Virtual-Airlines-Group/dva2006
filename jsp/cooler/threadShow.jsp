@@ -17,7 +17,14 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.msgText, 3, 'text of your response')) return false;
+
+// Validate response
+var act = form.action;
+if (act.substring(0, 3) == 'img') {
+	if (!validateCombo(form.score, 'Image Rating')) return false;
+} else {
+	if (!validateText(form.msgText, 3, 'text of your response')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
@@ -36,6 +43,7 @@ return true;
 <%@include file="/jsp/cooler/header.jsp" %> 
 <%@include file="/jsp/cooler/sideMenu.jsp" %>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
+<c:set var="user" value="${pageContext.request.userPrincipal}" scope="request" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="ccLevels" name="centuryClubLevels" />
 
@@ -49,10 +57,17 @@ return true;
  <el:cmd url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
 </tr>
 
+<c:if test="${!empty thread.stickyUntil}">
+<!-- Thread Sticky Date Information -->
+<tr class="mid">
+ <td colspan="2" class="sec bld">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
+</tr>
+</c:if>
+
 <c:if test="${!empty img}">
 <!-- Attached Image -->
 <tr class="mid">
- <td colspan="2"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/0x<fmt:hex value="${thread.image}" />" /></td>
+ <td colspan="2"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty img.votes}">
@@ -70,8 +85,9 @@ return true;
  <td rowspan="2" class="postInfo small"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld">${pilot.pilotCode}</span><br /></c:if>
  <span class="caps bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
- <br />
- Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
+ <el:email user="${pilot}" className="small caps" label="E-MAIL" /><br />
+<br />
+Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:choose>
 <c:when test="${pilot.legs >= 1500}">
  <font color="#AF2020"><b>${ccLevels['CC1500']}</b></font><br />
@@ -114,7 +130,7 @@ return true;
 <span class="glow">CURRENTLY LOGGED IN</span><br />
 </content:activeUser>
 <c:if test="${!empty pilot.IMHandle}">
-<span class="mid"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" /></span>
+<span class="mid"><a href="aim:goim?screenname=${pilot.IMHandle}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" /></a></span>
 </c:if>
  </td>
  <td class="postDate">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
@@ -146,7 +162,7 @@ return true;
 </c:if>
 
 <!-- Button Bar -->
-<tr class="buttons mid">
+<tr class="buttons title mid">
  <td colspan="2">&nbsp;
 <c:if test="${imgAccess.canVote}">
 <b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
@@ -168,6 +184,9 @@ return true;
 </c:if>
 <c:if test="${access.canResync && !noResync}">
  <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE THREAD DATA" url="threadsync" linkID="0x${img.ID}" />
+</c:if>
+<c:if test="${access.canUnstick}">
+ <el:cmdbutton ID="UnstickButton" label="UNSTICK THREAD" url="unstick" linkID="0x${thread.ID}" />
 </c:if>
  </td>
 </tr>

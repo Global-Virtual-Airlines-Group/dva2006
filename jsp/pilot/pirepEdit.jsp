@@ -39,6 +39,7 @@ if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return fal
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('CalcButton');
 disableButton('SubmitButton');
 return true;
 }
@@ -48,6 +49,41 @@ function saveSubmit()
 var f = document.forms[0];
 f.doSubmit.value = '1';
 return cmdPost(f.action);
+}
+
+function hoursCalc()
+{
+var f = document.forms[0];
+var h = parseInt(f.tmpHours.value);
+var m = parseInt(f.tmpMinutes.value);
+if ((h == Number.NaN) || (m == Number.NaN)) {
+	alert('Please fill in both Hours and Minutes.');
+	f.tmpHours.focus();
+	return false;
+}
+
+// Check for negative number
+if ((h < 0) || (m < 0)) {
+	alert('Hours and minutes cannnot be negative.');
+	f.tmpHours.focus();
+	return false;
+}
+
+// Turn into a single number
+var tmpHours = (h + (m / 60));
+var hrs = Math.round(tmpHours * 10) / 10;
+
+// Update the combobox
+var combo = f.flightTime;
+for (x = 0; x < combo.options.length; x++) {
+	var opt = combo.options[x];
+	if (opt.text == hrs) {
+		opt.selected = true;
+		break;
+	}
+}
+
+return true;
 }
 </script>
 </head>
@@ -116,12 +152,16 @@ return cmdPost(f.action);
  <td class="label">Flight Simulator</td>
  <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="FS${pirep.FSVersion}" /></td>
 </tr>
+<c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 100}" scope="request" />
+<c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 100) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${pirep.length / 10}" /></td>
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${pirep.length / 10}" />&nbsp;
+<el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
+<el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
 <c:if test="${isACARS}">
-<%@include file="/jsp/pilot/pirepACARS.jsp" %> 
+<%@ include file="/jsp/pilot/pirepACARS.jsp" %> 
 </c:if>
 <tr>
  <td class="label" VALIGN="top">Remarks</td>

@@ -51,13 +51,13 @@
  <td class="label">Home Airport</td>
  <td colspan="${cspan}" class="data">${airport.name} (<fmt:airport airport="${airport}" />)</td>
 </tr>
-<c:if test="${!empty VATSIM_ID}">
+<c:if test="${!empty pilot.networkIDs['VATSIM']}">
 <tr>
  <td class="label">VATSIM ID#</td>
  <td colspan="${cspan}" class="data">${pilot.networkIDs['VATSIM']}</td>
 </tr>
 </c:if>
-<c:if test="${!empty IVAO_ID}">
+<c:if test="${!empty pilot.networkIDs['IVAO']}">
 <tr>
  <td class="label">IVAO ID#</td>
  <td colspan="${cspan}" class="data">${pilot.networkIDs['IVAO']}</td>
