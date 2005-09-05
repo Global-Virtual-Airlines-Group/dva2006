@@ -193,4 +193,20 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Unsticks a Water Cooler Message Thread.
+	 * @param id the Message Thread's database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void unstickThread(int id) throws DAOException {
+		try {
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=NULL, STICKY_CHANNEL=? WHERE (ID=?)");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, id);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
