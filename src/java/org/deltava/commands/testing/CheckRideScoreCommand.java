@@ -46,7 +46,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			ExamAccessControl access = new ExamAccessControl(ctx, cr);
 			access.validate();
 			if (!access.getCanScore())
-				throw new CommandSecurityException("Cannot score Check Ride");
+				throw securityException("Cannot score Check Ride");
 
 			// Get the Pilot read DAO
 			GetPilot prdao = new GetPilot(con);

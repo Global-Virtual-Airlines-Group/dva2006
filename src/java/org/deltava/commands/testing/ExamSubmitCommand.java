@@ -43,7 +43,7 @@ public class ExamSubmitCommand extends AbstractCommand {
          ExamAccessControl access = new ExamAccessControl(ctx, ex);
          access.validate();
          if (!access.getCanSubmit())
-            throw new CommandSecurityException("Cannot submit Examination");
+            throw securityException("Cannot submit Examination");
          
          // Save answers from the request
          for (int x = 1; x <= ex.getSize(); x++) {

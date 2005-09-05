@@ -33,7 +33,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
       QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
       access.validate();
       if (!access.getCanRead())
-         throw new CommandSecurityException("Not Authorized");
+         throw securityException("Not Authorized");
       
       // Get the view start/end/count
       ViewContext vc = initView(ctx);
