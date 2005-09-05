@@ -31,7 +31,7 @@ public class GalleryVoteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Check if we are posting from the Water Cooler
-		boolean isCooler = (ctx.getCmdParameter(Command.OPERATION, null) != null);
+		boolean isCooler = (ctx.getCmdParameter(OPERATION, null) != null);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -62,7 +62,7 @@ public class GalleryVoteCommand extends AbstractCommand {
 		
 		// Figure out the command and ID to redirect to
 		String cmdName = (isCooler) ? "thread" : "image";
-		int id = (isCooler) ? StringUtils.parseHex((String) ctx.getCmdParameter(Command.OPERATION, null)) : ctx.getID();
+		int id = (isCooler) ? StringUtils.parseHex((String) ctx.getCmdParameter(OPERATION, null)) : ctx.getID();
 
 		// Redisplay the image
 		CommandResult result = ctx.getResult();

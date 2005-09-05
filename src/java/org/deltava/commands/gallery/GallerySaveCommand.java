@@ -12,6 +12,8 @@ import org.deltava.dao.GetGallery;
 import org.deltava.dao.SetGalleryImage;
 import org.deltava.dao.DAOException;
 
+import org.deltava.security.command.GalleryAccessControl;
+
 import org.deltava.util.ImageInfo;
 
 /**
@@ -31,7 +33,7 @@ public class GallerySaveCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if we're saving a new image
-		boolean isNew = "new".equals(ctx.getCmdParameter(OPERATION, null));
+		boolean isNew = "new".equals(ctx.getCmdParameter(ID, null));
 
 		Image img = null;
 		try {
@@ -44,15 +46,27 @@ public class GallerySaveCommand extends AbstractCommand {
 				if (img == null)
 					throw new CommandException("Cannot find Gallery image " + ctx.getID());
 				
+				// Check our access
+				GalleryAccessControl access = new GalleryAccessControl(ctx, img);
+				access.validate();
+				if (!access.getCanEdit())
+					throw securityException("Cannot edit Gallery image");
+				
 				// Create setName() and setDescription()
-				img.setName(ctx.getParameter("name"));
+				img.setName(ctx.getParameter("title"));
 				img.setDescription(ctx.getParameter("desc"));
-				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Flleet"))
+				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Fleet"))
 					img.setFleet("1".equals(ctx.getParameter("isFleet")));
 			} else {
-				img = new Image(ctx.getParameter("name").trim(), ctx.getParameter("desc").trim());
+				// Check our access
+				GalleryAccessControl access = new GalleryAccessControl(ctx, null);
+				access.validate();
+				if (!access.getCanCreate())
+					throw securityException("Cannot add Gallery Image");
+				
+				img = new Image(ctx.getParameter("title"), ctx.getParameter("desc"));
 				img.setAuthorID(ctx.getUser().getID());
-				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Flleet"))
+				if (ctx.isUserInRole("Gallery") || ctx.isUserInRole("Fleet"))
 					img.setFleet("1".equals(ctx.getParameter("isFleet")));
 				
 				// Get the image itself
@@ -89,7 +103,7 @@ public class GallerySaveCommand extends AbstractCommand {
 		// Forward to the new image
 		CommandResult result = ctx.getResult();
 		result.setURL("image", null, img.getID());
-		result.setType(CommandResult.FORWARD);
+		result.setType(CommandResult.REDIRECT);
 		result.setSuccess(true);
 	}
 }
