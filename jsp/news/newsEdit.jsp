@@ -32,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="newssave.do" method="POST" linkID="${entry.ID}" validate="return validate(this)">
+<el:form action="newssave.do" method="POST" linkID="${empty entry ? '' : '0x'}${entry.ID}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> SYSTEM NEWS ENTRY</td>
