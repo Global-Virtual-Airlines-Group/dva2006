@@ -15,6 +15,7 @@ import org.deltava.dao.SetSchedule;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to modify Airport data.
@@ -35,12 +36,12 @@ public class AirportCommand extends AbstractFormCommand {
 		// Get the Airport code
 		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
 		boolean isNew = (aCode == null);
-		
+
+		Airport a = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Airport
-			Airport a = null;
 			if (!isNew) {
 				GetAirport dao = new GetAirport(con);
 				a = dao.get(aCode);
@@ -63,12 +64,14 @@ public class AirportCommand extends AbstractFormCommand {
 				int latD = Integer.parseInt(ctx.getParameter("latD"));
 				int latM = Integer.parseInt(ctx.getParameter("latM"));
 				int latS = Integer.parseInt(ctx.getParameter("latS"));
-				latD *= (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) * -1);
+				if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
+					latD *=  -1;
 				
 				int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 				int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 				int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-				lonD *= (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) * -1);
+				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
+					lonD *=  -1;
 
 				// Build the GeoPosition bean and update the airport
 				GeoPosition gp = new GeoPosition();
@@ -96,7 +99,15 @@ public class AirportCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-
+		
+		// Update the SystemData map
+		Map airports = (Map) SystemData.getObject("airports");
+		airports.put(a.getIATA(), a);
+		airports.put(a.getICAO(), a);
+		
+		// Set status update flag
+		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
