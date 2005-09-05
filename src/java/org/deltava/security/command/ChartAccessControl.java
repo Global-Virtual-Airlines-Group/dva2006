@@ -33,7 +33,7 @@ public class ChartAccessControl extends AccessControl {
       
       // Check if we're logged in
       if (!_ctx.isAuthenticated())
-         throw new CommandSecurityException("Not Authorized");
+         throw new CommandSecurityException("Not Authorized", "");
       
       // Check if we can create charts
       _canCreate = _ctx.isUserInRole("Charts");
