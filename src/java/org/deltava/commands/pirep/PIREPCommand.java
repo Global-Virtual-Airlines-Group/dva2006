@@ -217,10 +217,14 @@ public class PIREPCommand extends AbstractFormCommand {
 		
 		// Get data for comboboxes
 		Calendar cld = Calendar.getInstance();
+		
+		// Get all airlines
+		Map allAirlines = (Map) SystemData.getObject("airlines");
 
 		PIREPAccessControl ac = null;
 		try {
 			Connection con = ctx.getConnection();
+			Set airlines = new TreeSet();
 
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
@@ -232,6 +236,13 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Save the user object
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+				
+				// Get the active airlines
+				for (Iterator i = allAirlines.values().iterator(); i.hasNext(); ) {
+					Airline a = (Airline) i.next();
+					if (a.getActive())
+						airlines.add(a);
+				}
 			} else {
 				FlightReport fr = dao.get(ctx.getID());
 				if (fr == null)
@@ -250,30 +261,39 @@ public class PIREPCommand extends AbstractFormCommand {
 				
 				// Set PIREP date
 				cld.setTime(fr.getDate());
+				
+				// Get the active airlines
+				for (Iterator i = allAirlines.values().iterator(); i.hasNext(); ) {
+					Airline a = (Airline) i.next();
+					if (a.getActive() || (fr.getAirline().equals(a)))
+						airlines.add(a);
+				}
 			}
 			
-			// Save pirepdate combobox values
-			ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
-			ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
-			ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
-
-			// Save airport/airline lists in the request
-			ctx.setAttribute("airline", "DVA", REQUEST);
-			ctx.setAttribute("airportSorter", _cmp, REQUEST);
-
-			// Save Flight Simulator versions
-			ctx.setAttribute("fsVersions", fsVersions, REQUEST);
-
-			// Set basic lists for the JSP
-			ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
-			ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
-			ctx.setAttribute("months", months, REQUEST);
-			ctx.setAttribute("years", _flightYears, REQUEST);
+			ctx.setAttribute("airlines", airlines, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Save pirepdate combobox values
+		ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
+		ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
+		ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
+		
+		// Save airport/airline lists in the request
+		ctx.setAttribute("airline", "DVA", REQUEST);
+		ctx.setAttribute("airportSorter", _cmp, REQUEST);
+
+		// Save Flight Simulator versions
+		ctx.setAttribute("fsVersions", fsVersions, REQUEST);
+
+		// Set basic lists for the JSP
+		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
+		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
+		ctx.setAttribute("months", months, REQUEST);
+		ctx.setAttribute("years", _flightYears, REQUEST);
 
 		// Set the access controller and status attribute
 		ctx.setAttribute("access", ac, REQUEST);
