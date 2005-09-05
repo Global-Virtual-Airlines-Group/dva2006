@@ -61,7 +61,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 			AssignmentAccessControl access = new AssignmentAccessControl(ctx, assign);
 			access.validate();
 			if (!access.getCanReserve())
-				throw new CommandSecurityException("Cannot reserve Flight Assignment " + ctx.getID());
+				throw securityException("Cannot reserve Flight Assignment " + ctx.getID());
 			
 			// Start the transaction
 			ctx.startTX();

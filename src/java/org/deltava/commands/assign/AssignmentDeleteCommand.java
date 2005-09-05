@@ -42,7 +42,7 @@ public class AssignmentDeleteCommand extends AbstractCommand {
          AssignmentAccessControl access = new AssignmentAccessControl(ctx, assign);
          access.validate();
          if (!access.getCanDelete())
-            throw new CommandSecurityException("Cannot delete Flight Assignment " + ctx.getID());
+            throw securityException("Cannot delete Flight Assignment " + ctx.getID());
          
          // Delete the assignment
          SetAssignment wdao = new SetAssignment(con);

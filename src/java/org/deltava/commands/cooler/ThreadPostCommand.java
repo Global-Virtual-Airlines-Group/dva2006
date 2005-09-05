@@ -85,7 +85,7 @@ public class ThreadPostCommand extends AbstractCommand {
          ctx.setAttribute("channelAccess", access, REQUEST);
 
          // Check to see if we can post in this channel
-         if (!access.getCanPost()) throw new CommandSecurityException("Cannot post in channel " + cName);
+         if (!access.getCanPost()) throw securityException("Cannot post in channel " + cName);
 
          // Check if we're doing a GET; if so jump to the create JSP
          if ("GET".equals(ctx.getRequest().getMethod())) {
@@ -107,8 +107,8 @@ public class ThreadPostCommand extends AbstractCommand {
 
             // Validate the image
             boolean badSize = img.getSize() > SystemData.getInt("cooler.img_max.size");
-            boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.x"))
-                  || (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.y"));
+            boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.y"))
+                  || (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
 
             // If the image is too big, figure out what to do
             int imgOpt = Integer.parseInt(ctx.getParameter("imgOption"));
@@ -130,7 +130,7 @@ public class ThreadPostCommand extends AbstractCommand {
                // Replace the FileUpload data
                try {
                   img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
-                  ctx.setAttribute("imgResized", Boolean.valueOf(true), REQUEST);
+                  ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST);
                } catch (IOException ie) {
                   log.warn("Error scaling image - " + ie.getMessage());
                   img = null;
@@ -175,7 +175,7 @@ public class ThreadPostCommand extends AbstractCommand {
 
             // Save the image ID
             mt.setImage(gImg.getID());
-            ctx.setAttribute("hasImage", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("hasImage", Boolean.TRUE, REQUEST);
          }
 
          // Get the write DAO and write to the database
@@ -187,7 +187,7 @@ public class ThreadPostCommand extends AbstractCommand {
 
          // Save the thread in the request
          ctx.setAttribute("thread", mt, REQUEST);
-         ctx.setAttribute("isPosted", Boolean.valueOf(true), REQUEST);
+         ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
       } catch (DAOException de) {
          ctx.rollbackTX();
          throw new CommandException(de);

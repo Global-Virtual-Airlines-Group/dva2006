@@ -46,7 +46,7 @@ public class ThreadMoveCommand extends AbstractCommand {
 			access.updateContext(t, ch);
 			access.validate();
 			if (!access.getCanRead())
-				throw new CommandSecurityException("Cannot move Thread to " + newChannel);
+				throw securityException("Cannot move Thread to " + newChannel);
 			
 			// Set new channel
 			ctx.setAttribute("isMoved", Boolean.valueOf(true), REQUEST);
