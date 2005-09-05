@@ -44,7 +44,7 @@ public class ExamDeleteCommand extends AbstractCommand {
          ExamAccessControl access = new ExamAccessControl(ctx, t);
          access.validate();
          if (!access.getCanDelete())
-            throw new CommandSecurityException("Cannot delete Examination/Check Ride");
+            throw securityException("Cannot delete Examination/Check Ride");
          
          // Get the write DAO and delete the test
          SetExam wdao = new SetExam(con);

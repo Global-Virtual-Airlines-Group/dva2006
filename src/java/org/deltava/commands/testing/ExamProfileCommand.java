@@ -29,7 +29,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
       // Check our access level
       ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
       access.validate();
-      if (!access.getCanEdit()) throw new CommandSecurityException("Cannot edit Examination Profile");
+      if (!access.getCanEdit()) throw securityException("Cannot edit Examination Profile");
 
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
@@ -87,7 +87,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
       // Check our access level
       ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
       access.validate();
-      if (!access.getCanEdit()) throw new CommandSecurityException("Cannot edit Examination Profile");
+      if (!access.getCanEdit()) throw securityException("Cannot edit Examination Profile");
 
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
@@ -129,7 +129,7 @@ public class ExamProfileCommand extends AbstractFormCommand {
       ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
       access.validate();
       if (!access.getCanRead())
-         throw new CommandSecurityException("Cannot view Examination Profile");
+         throw securityException("Cannot view Examination Profile");
 
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {

@@ -30,7 +30,7 @@ public class ExamProfilesCommand extends AbstractCommand {
       ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
       access.validate();
       if (!access.getCanRead())
-         throw new CommandSecurityException("Not Authorized");
+         throw securityException("Not Authorized");
       
       try {
          Connection con = ctx.getConnection();

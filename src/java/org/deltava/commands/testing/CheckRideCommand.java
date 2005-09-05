@@ -44,7 +44,7 @@ public class CheckRideCommand extends AbstractCommand {
          ExamAccessControl access = new ExamAccessControl(ctx, cr);
          access.validate();
          if (!access.getCanRead())
-            throw new CommandSecurityException("Cannot view Check Ride");
+            throw securityException("Cannot view Check Ride");
          
          // Load the pilot data
          GetPilot pdao = new GetPilot(con);
