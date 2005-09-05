@@ -55,7 +55,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Check if the pilot is rated in the equipment type
 			if (!pilot.getRatings().contains(pirep.getEquipmentType())) {
-				ctx.setAttribute("notRated", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("notRated", Boolean.TRUE, REQUEST);
 				pirep.setAttribute(FlightReport.ATTR_NOTRATED, true);
 			}
 
@@ -65,9 +65,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 
 			// Check if this flight was flown with an equipment type in our primary ratings
-			Collection pTypes = eqdao.getPrimaryTypes(pilot.getEquipmentType());
-			if (!pTypes.isEmpty()) {
-				ctx.setAttribute("captEQ", Boolean.valueOf(true), REQUEST);
+			Collection pTypes = eqdao.getPrimaryTypes(pirep.getEquipmentType());
+			if (pTypes.contains(pilot.getEquipmentType())) {
+				ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 				pirep.setCaptEQType(pTypes);
 			}
@@ -80,14 +80,14 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			int avgHours = sdao.getFlightTime(pirep.getAirportD().getIATA(), pirep.getAirportA().getIATA());
 			if (avgHours == 0) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
-				ctx.setAttribute("unknownRoute", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
 			} else {
 				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours") * 10));
 				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours") * 10));
 
 				if ((pirep.getLength() < minHours) || (pirep.getLength() > maxHours)) {
 					pirep.setAttribute(FlightReport.ATTR_TIMEWARN, true);
-					ctx.setAttribute("timeWarning", Boolean.valueOf(true), REQUEST);
+					ctx.setAttribute("timeWarning", Boolean.TRUE, REQUEST);
 					ctx.setAttribute("avgTime", new Double(avgHours), REQUEST);
 				}
 			}
@@ -105,7 +105,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 		}
 
 		// Set status for JSP
-		ctx.setAttribute("isSubmitted", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("isSubmitted", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

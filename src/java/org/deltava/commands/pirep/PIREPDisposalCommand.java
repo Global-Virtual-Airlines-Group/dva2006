@@ -115,9 +115,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Start a JDBC transaction
 			ctx.startTX();
-
-			// Get the write DAO and perform the operation
+			
+			// Get the write DAO
 			SetFlightReport wdao = new SetFlightReport(con);
+			
+			// Dispose of the PIREP
 			wdao.dispose(ctx.getUser(), fr.getID(), opCode);
 			fr.setStatus(opCode);
 			
@@ -171,6 +173,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 		// Send a notification message
 		Mailer mailer = new Mailer(ctx.getUser());
+		mailer.setCC(ctx.getUser());
 		mailer.setContext(mctx);
 		mailer.send(p);
 
