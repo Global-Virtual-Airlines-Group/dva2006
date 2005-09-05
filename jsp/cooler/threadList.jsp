@@ -9,6 +9,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Water Cooler</title>
+<meta http-equiv="REFRESH" content="300" />
 <content:sysdata var="airlineName" name="airline.name" />
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
@@ -28,8 +29,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -79,6 +80,7 @@ return true;
 </tr>
 </view:table>
 </el:form>
+<br />
 <content:copyright />
 </div>
 </body>

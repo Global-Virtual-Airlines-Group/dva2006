@@ -62,12 +62,18 @@ maximum Water Cooler image size is <fmt:int value="${maxX}" />x<fmt:int value="$
 and some loss of image quality may occur.<br /></c:if>
 </c:if>
 </c:if>
-<c:if test="${!empty msg && !isPosted}">
+<c:if test="${isReply}">
 <!-- New Response Message -->
 <div class="updateHdr">Water Cooler Message Post Created</div>
 <br />
 Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>.
 Thank you for your participation in the <content:airline /> Water Cooler!<br />
+</c:if>
+<c:if test="${isUnstuck}">
+<!-- Thread Unstuck -->
+<div class="updateHdr">Water Cooler Message Thread Unstuck</div>
+<br />
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been unstuck.<br />
 </c:if>
 <br />
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return

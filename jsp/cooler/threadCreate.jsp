@@ -54,9 +54,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Water Cooler Channel</td>
- <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${param.id}" /></td>
+ <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${empty param.id ? 'General Discussion' : param.id}" /></td>
 </tr>
-<content:filter roles="Admin,Moderator">
+<content:filter roles="Moderator,PIREP,HR,Examination">
 <tr>
  <td class="label">Sticky Until</td>
  <td class="data"><el:text name="stickyDate" idx="*" size="10" max="11" value="${param.stickyDate}" />&nbsp;
