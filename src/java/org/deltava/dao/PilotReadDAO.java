@@ -37,35 +37,43 @@ abstract class PilotReadDAO extends DAO {
 	}
 
 	/**
-	 * Gets a pilot object based on a database ID. <i>This uses a cached query, and populates ratings and roles. </i>
+	 * Gets a pilot object based on a database ID. <i>This uses a cached query, and populates ratings and roles.</i>
 	 * @param id the database ID of the Pilot object
 	 * @return the Pilot object, or null if the ID was not found
 	 * @throws DAOException if a JDBC error occured
 	 */
 	public final Pilot get(int id) throws DAOException {
+		
+		// Check if we're in the cache
+		Pilot p = (Pilot) _cache.get(new Integer(id));
+		
 		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-					+ " SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
-			_ps.setInt(1, FlightReport.OK);
-			_ps.setInt(2, id);
+			if (p == null) {
+				prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+						+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+						+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
+				_ps.setInt(1, FlightReport.OK);
+				_ps.setInt(2, id);
 
-			// Execute the query and get the result
-			List results = execute();
-			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
-			if (result == null)
-				return null;
+				// Execute the query and get the result
+				List results = execute();
+				p = (results.size() == 0) ? null : (Pilot) results.get(0);
+				if (p == null)
+					return null;
+				
+				// Add to the cache
+				_cache.add(p);
+			}
 
 			// Add roles/ratings
-			addRatings(result, SystemData.get("airline.db"));
-			addRoles(result, SystemData.get("airline.db"));
-
-			// Add the result to the cache and return
-			_cache.add(result);
-			return result;
+			addRatings(p, SystemData.get("airline.db"));
+			addRoles(p, SystemData.get("airline.db"));
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Return result 
+		return p;
 	}
 
 	/**
