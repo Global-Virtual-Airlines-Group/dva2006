@@ -15,7 +15,7 @@
 function setChart(combo)
 {
 var id = combo.options[combo.selectedIndex].value;
-self.location = '/viewchart.do?id=' + id;
+self.location = '/chart.do?id=' + id;
 return true;
 }
 </script>
@@ -27,7 +27,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="viewchart.do" method="GET" validate="return false">
+<el:form action="chart.do" method="GET" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td width="50%" class="caps">${chart.name} AT ${chart.airport.name} (<fmt:airport airport="${chart.airport}" />)</td>
