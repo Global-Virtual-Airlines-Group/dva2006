@@ -51,7 +51,7 @@ public class EventEditCommand extends AbstractCommand {
 			EventAccessControl access = new EventAccessControl(ctx, new Event(""));
 			access.validate();
 			if (!access.getCanCreate())
-				throw new CommandSecurityException("Cannot create new Online Event");
+				throw securityException("Cannot create new Online Event");
 			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
@@ -75,7 +75,7 @@ public class EventEditCommand extends AbstractCommand {
 			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
 			if (!access.getCanEdit())
-				throw new CommandSecurityException("Cannot edit Online Event");
+				throw securityException("Cannot edit Online Event");
 			
 			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);

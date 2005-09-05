@@ -47,15 +47,15 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
 
-			// Load all PIREPs
+			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			GetFlightReports frdao = new GetFlightReports(con);
-			List results = frdao.getByPilot(p.getID(), null);
-			ctx.setAttribute("flights", results, REQUEST);
-			p.setFlights(results);
-
-			// Save the latest PIREP as a separate bean in the request
+			List results = frdao.getByPilot(p.getID(), "DATE DESC");
 			if (results.size() > 0)
-				ctx.setAttribute("lastFlight", p.getFlights().get(0), REQUEST);
+				ctx.setAttribute("lastFlight", results.get(0), REQUEST);
+			
+			// Get online hours
+			GetFlightReports prdao = new GetFlightReports(con);
+			prdao.getOnlineTotals(p);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);

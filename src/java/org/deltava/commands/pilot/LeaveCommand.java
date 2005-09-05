@@ -44,7 +44,7 @@ public class LeaveCommand extends AbstractCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
 			if (!access.getCanTakeLeave())
-				throw new CommandSecurityException("Insufficient Access to place Pilot On Leave");
+				throw securityException("Insufficient Access to place Pilot On Leave");
 			
 			// Start the transaction
 			ctx.startTX();

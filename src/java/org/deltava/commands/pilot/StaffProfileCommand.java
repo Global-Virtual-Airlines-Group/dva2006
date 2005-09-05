@@ -41,7 +41,7 @@ public class StaffProfileCommand extends AbstractCommand {
             StaffAccessControl access = new StaffAccessControl(ctx, null);
             access.validate();
             if (!access.getCanCreate())
-                throw new CommandSecurityException("Cannot create Staff Profile");
+                throw securityException("Cannot create Staff Profile");
             
             // Check if we already have a Staff Profile
             GetStaff rsdao = new GetStaff(con);

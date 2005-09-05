@@ -58,7 +58,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			PilotAccessControl access = new PilotAccessControl(ctx,p);
 			access.validate();
 			if (!access.getCanChangeStatus())
-				throw new CommandSecurityException("Insufficient access to transfer a pilot to another airline");
+				throw securityException("Insufficient access to transfer a pilot to another airline");
 			
 			// Save pilot in request
 			ctx.setAttribute("pilot", p, REQUEST);

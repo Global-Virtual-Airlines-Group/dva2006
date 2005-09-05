@@ -64,7 +64,7 @@ public class EventSaveCommand extends AbstractCommand {
 			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
 			if (!access.getCanEdit())
-				throw new CommandSecurityException("Cannot edit Online Event");
+				throw securityException("Cannot edit Online Event");
 
 			// Load previous airports
 			if (ctx.getParameter("airportDCodes") != null) {

@@ -52,7 +52,7 @@ public class EventAssignCommand extends AbstractCommand {
 			EventAccessControl access = new EventAccessControl(ctx, e);
 			access.validate();
 			if (!access.getCanAssignFlights())
-				throw new CommandSecurityException("Cannot assign flights for Online Event " + e.getName());
+				throw securityException("Cannot assign flights for Online Event " + e.getName());
 			
 			// Get the Pilots signed up for the event
 			GetUserData usrdao = new GetUserData(con);

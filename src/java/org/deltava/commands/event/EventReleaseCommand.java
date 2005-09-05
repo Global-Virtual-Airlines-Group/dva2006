@@ -56,7 +56,7 @@ public class EventReleaseCommand extends AbstractCommand {
 			// Get the access controller
 			SignupAccessControl access = new SignupAccessControl(ctx, e, s);
 			if (!access.getCanRelease())
-				throw new CommandSecurityException("Cannot release Online Event Signup");
+				throw securityException("Cannot release Online Event Signup");
 			
 			// Get the Pilot location
 			GetUserData usrdao = new GetUserData(con);
