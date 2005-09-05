@@ -56,7 +56,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
 			access.validate();
 			if (!access.getCanApprove())
-				throw new CommandSecurityException("Cannot Approve Applicant");
+				throw securityException("Cannot Approve Applicant");
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

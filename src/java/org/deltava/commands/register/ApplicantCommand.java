@@ -48,7 +48,7 @@ public class ApplicantCommand extends AbstractFormCommand {
          ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
          access.validate();
          if (!access.getCanEdit())
-            throw new CommandSecurityException("Cannot edit Applicant");
+            throw securityException("Cannot edit Applicant");
          
          // Make sure we can do the hire as well
          doHire = doHire && access.getCanApprove();
@@ -151,7 +151,7 @@ public class ApplicantCommand extends AbstractFormCommand {
          ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
          access.validate();
          if (!access.getCanEdit())
-            throw new CommandSecurityException("Cannot edit Applicant");
+            throw securityException("Cannot edit Applicant");
 
          // Check if the address has been validated
          GetAddressValidation avdao = new GetAddressValidation(con);
@@ -203,7 +203,7 @@ public class ApplicantCommand extends AbstractFormCommand {
          ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
          access.validate();
          if (!access.getCanRead())
-            throw new CommandSecurityException("Cannot view Applicant");
+            throw securityException("Cannot view Applicant");
          
          // Check if the address has been validated
          GetAddressValidation avdao = new GetAddressValidation(con);

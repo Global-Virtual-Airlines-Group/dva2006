@@ -56,7 +56,7 @@ public class LoginCommand extends AbstractCommand {
 				throw new SecurityException("Unknown User Name");
 
 			// Get the authenticator and try to authenticate
-			log.info("Authenticating " + dN);
+			log.debug("Authenticating " + dN);
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			auth.authenticate(dN, ctx.getParameter("pwd"));
 

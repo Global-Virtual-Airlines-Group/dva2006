@@ -44,7 +44,7 @@ public class LibraryEditCommand extends AbstractCommand {
          FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
          access.validate();
          if (!access.getCanCreate())
-            throw new CommandSecurityException("Cannot create Library Entry");
+            throw securityException("Cannot create Library Entry");
          
          // Save the access controller
          ctx.setAttribute("access", access, REQUEST);
@@ -75,7 +75,7 @@ public class LibraryEditCommand extends AbstractCommand {
       // Check our access level
       FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
       access.validate();
-      if (!access.getCanEdit()) throw new CommandSecurityException("Cannot edit Library Entry for " + fName);
+      if (!access.getCanEdit()) throw securityException("Cannot edit Library Entry for " + fName);
 
       // Save the entry in the request
       ctx.setAttribute("entry", entry, REQUEST);
