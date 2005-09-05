@@ -27,6 +27,8 @@ public class Mailer extends Thread {
 
    private EMailAddress _msgFrom;
    private Collection _msgTo = new HashSet();
+   private Collection _copyTo = new HashSet();
+   
    private MessageContext _ctx;
    private DataSource _attach;
 
@@ -86,6 +88,17 @@ public class Mailer extends Thread {
    public void send(EMailAddress addr) {
       _msgTo.add(addr);
       start();
+   }
+   
+   /**
+    * Adds an individual to the CC list of this message.
+    * @param addr the recipient name/address
+    */
+   public void setCC(EMailAddress addr) {
+	   try {
+		   _copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
+	   } catch (UnsupportedEncodingException uee) {
+	   }
    }
 
    /**
@@ -154,6 +167,12 @@ public class Mailer extends Thread {
                      .getName()));
             } catch (UnsupportedEncodingException uee) {
                throw new MessagingException(uee.getMessage(), uee);
+            }
+            
+            // Add the copy-to list
+            if (!_copyTo.isEmpty()) {
+            	Address[] addrs = (Address[]) _copyTo.toArray(new InternetAddress[0]);
+            	imsg.addRecipients(javax.mail.Message.RecipientType.CC, addrs);
             }
             
             // Create the message content
