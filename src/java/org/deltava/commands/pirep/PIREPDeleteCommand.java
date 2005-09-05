@@ -41,7 +41,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
           PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
           access.validate();
           if (!access.getCanDelete())
-             throw new CommandSecurityException("Cannot delete Flight Report");
+             throw securityException("Cannot delete Flight Report");
           
           // Get the DAO and delete the PIREP from the database
           SetFlightReport wdao = new SetFlightReport(con);

@@ -41,7 +41,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			PIREPAccessControl access = new PIREPAccessControl(ctx, pirep);
 			access.validate();
 			if (!access.getCanSubmit())
-				throw new CommandSecurityException("Cannot submit Flight Report #" + pirep.getID());
+				throw securityException("Cannot submit Flight Report #" + pirep.getID());
 
 			// Get the Pilot profile of the individual who flew this flight
 			Pilot pilot = (Pilot) ctx.getUser();
@@ -65,7 +65,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 
 			// Check if this flight was flown with an equipment type in our primary ratings
-			Collection pTypes = eqdao.getPrimaryTypes(pirep.getEquipmentType());
+			Collection pTypes = eqdao.getPrimaryTypes(pilot.getEquipmentType());
 			if (!pTypes.isEmpty()) {
 				ctx.setAttribute("captEQ", Boolean.valueOf(true), REQUEST);
 				ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);

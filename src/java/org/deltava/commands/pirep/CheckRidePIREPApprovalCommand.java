@@ -55,7 +55,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
 			access.validate();
 			if (!access.getCanApprove())
-				throw new CommandSecurityException("Cannot approve Flight Report");
+				throw securityException("Cannot approve Flight Report");
 
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
@@ -71,7 +71,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
 			crAccess.validate();
 			if (!crAccess.getCanScore())
-				throw new CommandSecurityException("Cannot score Check Ride");
+				throw securityException("Cannot score Check Ride");
 
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
