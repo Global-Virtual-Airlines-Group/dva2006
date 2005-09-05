@@ -61,7 +61,7 @@ public class GeoFormatTag extends TagSupport {
             }
             
             // Format the latitude/longitude
-            out.print(StringUtils.format(_gp, true, GeoLocation.ALL));
+            out.print((_gp == null) ? "UNKNOWN" : StringUtils.format(_gp, true, GeoLocation.ALL));
 			
             if (_className != null)
                 out.print("</span>");
