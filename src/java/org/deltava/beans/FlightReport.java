@@ -325,6 +325,7 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * @param eqTypes a Collection of equipment program names
     */
    public void setCaptEQType(Collection eqTypes) {
+	   _captEQType.clear();
       _captEQType.addAll(eqTypes);
    }
 
