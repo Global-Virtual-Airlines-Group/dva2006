@@ -71,6 +71,7 @@ public class ServInfoRouteService extends WebService {
 			info = idao.getInfo(networkName);
 			urlcon.disconnect();
 		} catch (Exception e) {
+			log.error("Error loading " + networkName + " data");
 			log.error(e.getMessage(), e);
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}
