@@ -19,8 +19,8 @@ import org.deltava.util.ComboUtils;
 public class RosterCommand extends AbstractViewCommand {
 
     // List of query columns we can order by
-    private static final String[] SORT_COLUMNS = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN", "P.CREATED",
-            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS", "HOURS", "P.STATUS"};
+    private static final String[] SORT_COLUMNS = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED",
+            "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS"};
     
     private List _sortComboAliases;
     
