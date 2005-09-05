@@ -50,7 +50,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
          PilotAccessControl access = new PilotAccessControl(ctx, p);
          access.validate();
          if (!access.getCanChangeSignature())
-            throw new CommandSecurityException("Cannot Update Signature Image");
+            throw securityException("Cannot Update Signature Image");
          
          // Load the signature Image, get the write DAO and update the image
          FileUpload imgData = ctx.getFile("FILE$coolerImg");

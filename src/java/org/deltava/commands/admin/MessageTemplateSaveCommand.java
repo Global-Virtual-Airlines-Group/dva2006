@@ -47,13 +47,13 @@ public class MessageTemplateSaveCommand extends AbstractCommand {
 				MessageAccessControl access = new MessageAccessControl(ctx, mt);
 				access.validate();
 				if (!access.getCanEdit())
-					throw new CommandSecurityException("Cannot edit Message Template");
+					throw securityException("Cannot edit Message Template");
 			} else {
 				// Check our access
 				MessageAccessControl access = new MessageAccessControl(ctx, mt);
 				access.validate();
 				if (!access.getCanCreate())
-					throw new CommandSecurityException("Cannot create Message Template");
+					throw securityException("Cannot create Message Template");
 				
 				mt = new MessageTemplate(ctx.getParameter("name"));
 			}

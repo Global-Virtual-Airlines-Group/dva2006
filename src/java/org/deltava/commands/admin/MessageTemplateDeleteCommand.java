@@ -42,7 +42,7 @@ public class MessageTemplateDeleteCommand extends AbstractCommand {
 			MessageAccessControl access = new MessageAccessControl(ctx, mt);
 			access.validate();
 			if (!access.getCanDelete())
-				throw new CommandSecurityException("Cannot delete Message Template");
+				throw securityException("Cannot delete Message Template");
 
 			// Get the write DAO and delete the template
 			SetMessageTemplate wdao = new SetMessageTemplate(con);

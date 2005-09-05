@@ -45,7 +45,7 @@ public class ThreadSyncCommand extends AbstractCommand {
 			access.updateContext(mt, c);
 			access.validate();
 			if (!access.getCanResync())
-				throw new CommandSecurityException("Cannot resync Message Thread data");
+				throw securityException("Cannot resync Message Thread data");
 			
 			// Resync the thread
 			SetCoolerMessage wdao = new SetCoolerMessage(con);

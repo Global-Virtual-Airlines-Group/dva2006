@@ -31,7 +31,7 @@ public class EquipmentProfilesCommand extends AbstractCommand {
 		
 		// Check our access
 		if (!ctx.isUserInRole("HR"))
-			throw new CommandSecurityException("Cannot view Equipment Type profiles");
+			throw securityException("Cannot view Equipment Type profiles");
 		
 		try {
 			Connection con = ctx.getConnection();

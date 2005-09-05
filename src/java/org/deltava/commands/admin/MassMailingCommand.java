@@ -57,7 +57,7 @@ public class MassMailingCommand extends AbstractCommand {
 			
 			// Check if we're sending to a different equipment type
 			if ((!ctx.getRequest().isUserInRole("HR")) && (!eqType.equals(ctx.getUser().getEquipmentType())))
-				throw new CommandSecurityException("Equipment Type " + eqType + " != "
+				throw securityException("Equipment Type " + eqType + " != "
 						+ ctx.getUser().getEquipmentType());
 
 			// If we're posting to the command, get the pilots to display

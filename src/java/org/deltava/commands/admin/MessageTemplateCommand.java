@@ -36,7 +36,7 @@ public class MessageTemplateCommand extends AbstractCommand {
 		access.validate();
 		boolean isOK = isNew ? access.getCanCreate() : access.getCanEdit();
 		if (!isOK)
-			throw new CommandSecurityException("Cannot create/edit Message Template");
+			throw securityException("Cannot create/edit Message Template");
 		
 		// Get the command results
 		CommandResult result = ctx.getResult();

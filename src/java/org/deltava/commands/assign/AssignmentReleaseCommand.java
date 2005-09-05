@@ -41,7 +41,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			AssignmentAccessControl access = new AssignmentAccessControl(ctx, assign);
 			access.validate();
 			if (!access.getCanRelease())
-				throw new CommandSecurityException("Cannot release Flight Assignment " + ctx.getID());
+				throw securityException("Cannot release Flight Assignment " + ctx.getID());
 
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);

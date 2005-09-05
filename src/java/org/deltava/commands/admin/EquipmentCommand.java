@@ -34,7 +34,7 @@ public class EquipmentCommand extends AbstractCommand {
 		EquipmentAccessControl access = new EquipmentAccessControl(ctx);
 		access.validate();
 		if (!access.getCanEdit())
-			throw new CommandSecurityException("Cannot modify Equipment Profile");
+			throw securityException("Cannot modify Equipment Profile");
 		
 		try {
 			Connection con = ctx.getConnection();

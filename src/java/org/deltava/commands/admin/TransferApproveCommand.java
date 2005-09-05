@@ -54,7 +54,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
 			access.validate();
 			if (!access.getCanApprove())
-				throw new CommandSecurityException("Cannot approve Transfer Request");
+				throw securityException("Cannot approve Transfer Request");
 
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);
