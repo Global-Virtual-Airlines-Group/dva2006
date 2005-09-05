@@ -24,7 +24,7 @@ import org.deltava.util.*;
 public class ImageServlet extends BasicAuthServlet {
 
     private static final Logger log = Logger.getLogger(ImageServlet.class);
-    private static final String IMG_REALM = "\"DVA Approach Charts\"";
+    private static final String IMG_REALM = "\"Approach Charts\"";
     
     private static final int IMG_CHART = 0;
     private static final int IMG_GALLERY = 1;
@@ -122,7 +122,7 @@ public class ImageServlet extends BasicAuthServlet {
             default:
             }
         } catch (DAOException de) {
-        	log.error("Error retrieving image - " + de.getMessage());
+        	log.error("Error retrieving image - " + de.getMessage(), de);
         } finally {
             jdbcPool.release(c);
         }
@@ -154,7 +154,7 @@ public class ImageServlet extends BasicAuthServlet {
             rsp.flushBuffer();
             out.close();
         } catch (IOException ie) {
-            log.error("Error writing image - " + ie.getMessage());
+            log.error("Error writing image - " + ie.getMessage(), ie);
         }
     }
 }
