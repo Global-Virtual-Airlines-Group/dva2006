@@ -218,32 +218,36 @@ public class GetApplicant extends DAO {
 	 * match against rejected Applicants.
 	 * @param p the Person
 	 * @param dbName the database to search
-	 * @return the number of matches
+	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int checkUnique(Person p, String dbName) throws DAOException {
+	public Collection checkUnique(Person p, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT COUNT(*) FROM ");
+	   StringBuffer sqlBuf = new StringBuffer("SELECT ID FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append("APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
-	         + "(EMAIL=?)) GROUP BY ID");
+	   sqlBuf.append(".APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
+	         + "(EMAIL=?))");
 	   
 		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, Applicant.REJECTED);
 			_ps.setString(2, p.getFirstName());
 			_ps.setString(3, p.getLastName());
 			_ps.setString(4, p.getEmail());
+			
+			// Build result collection
+			Set results = new HashSet();
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			int resultCount = (rs.next()) ? rs.getInt(1) : 0;
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
 
 			// Clean up and return
 			rs.close();
 			_ps.close();
-			return resultCount;
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

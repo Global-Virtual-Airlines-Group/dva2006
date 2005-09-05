@@ -4,6 +4,8 @@ package org.deltava.commands.register;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -28,9 +30,12 @@ import org.deltava.util.system.SystemData;
 
 public class RegisterCommand extends AbstractCommand {
 
+	private static final Logger log = Logger.getLogger(RegisterCommand.class);
+
 	// Package-private since ApplicantCommand uses these
 	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET };
-	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications", "Send Fleet Notifications" };
+	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
+			"Send Fleet Notifications" };
 
 	/**
 	 * Executes the command.
@@ -77,7 +82,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
 		a.setTZ(TZInfo.init(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
-		
+
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
 		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? ctx.getRequest().getRemoteAddr() : hostName);
@@ -90,12 +95,16 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Set Notification Options
-		Collection notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"), Collections.EMPTY_LIST);
+		Collection notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"),
+				Collections.EMPTY_LIST);
 		for (int x = 0; x < NOTIFY_ALIASES.length; x++)
 			a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
 
 		// Save the applicant in the request
 		ctx.setAttribute("applicant", a, REQUEST);
+
+		// Log registration
+		log.info("Commencing registration for " + a.getName());
 
 		// Initialize the message context
 		MessageContext mctxt = new MessageContext();
@@ -104,30 +113,25 @@ public class RegisterCommand extends AbstractCommand {
 		Examination ex = null;
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the databases
 			GetUserData uddao = new GetUserData(con);
 			Collection airlines = uddao.getAirlines(true).values();
-			
+
 			// Get the Pilot/Applicant Read DAOs
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			GetApplicant adao = new GetApplicant(con);
-			
+
 			// Check for unique name
-			for (Iterator i = airlines.iterator(); i.hasNext(); ) {
-			   AirlineInformation info = (AirlineInformation) i.next();
+			for (Iterator i = airlines.iterator(); i.hasNext();) {
+				AirlineInformation info = (AirlineInformation) i.next();
 
-			   // Check Pilots
-				if (pdao.checkUnique(a, info.getDB()) != 0) {
+				// Check Pilots & applicants
+				Set dupeResults = new HashSet(pdao.checkUnique(a, info.getDB()));
+				dupeResults.addAll(adao.checkUnique(a, info.getDB()));
+				if (!dupeResults.isEmpty()) {
 					ctx.release();
-					ctx.setAttribute("notUnique", Boolean.TRUE, REQUEST);
-					result.setSuccess(true);
-					return;
-				}
-
-				// Check Applicants
-				if (adao.checkUnique(a, info.getDB()) != 0) {
-					ctx.release();
+					log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
 					ctx.setAttribute("notUnique", Boolean.TRUE, REQUEST);
 					result.setSuccess(true);
 					return;
@@ -187,7 +191,7 @@ public class RegisterCommand extends AbstractCommand {
 				q.setNumber(x);
 				ex.addQuestion(q);
 			}
-			
+
 			// Save the examination size
 			ctx.setAttribute("qSize", new Integer(poolSize), REQUEST);
 

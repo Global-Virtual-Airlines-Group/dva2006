@@ -91,11 +91,13 @@ public class ApplicantCommand extends AbstractFormCommand {
 
          // Get the Pilot DAO and check if we're unique
          GetPilotDirectory pdao = new GetPilotDirectory(con);
-         if (pdao.checkUnique(a, SystemData.get("airline.db")) != 0)
+         Set dupeResults = new HashSet(pdao.checkUnique(a, SystemData.get("airline.db")));
+         if (!dupeResults.isEmpty())
             throw new CommandException("Applicant name/email not unique");
          
          // Check if we're unique
-         if (dao.checkUnique(a, SystemData.get("airline.db")) != 1)
+         dupeResults.addAll(dao.checkUnique(a, SystemData.get("airline.db")));
+         if (dupeResults.size() != 1)
             throw new CommandException("Applicant name/email not unique");
 
          // Get the DAO and write to the database
