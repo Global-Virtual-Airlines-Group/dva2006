@@ -10,6 +10,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:sysdata var="imgDB" name="airline.db" />
 <script language="JavaScript" type="text/javascript">
 function selectAircraft(combo)
 {
@@ -21,7 +22,7 @@ var img = getElement('FleetPic');
 var desc = getElement('FleetDesc');
 
 // Load the picture in its place, save the description
-img.src = '/gallery/0x' + combo.options[combo.selectedIndex].value + '.jpg';
+img.src = '/gallery/{$imgDB}/0x' + combo.options[combo.selectedIndex].value + '.jpg';
 desc.innerHTML = dList[combo.selectedIndex - 1];
 
 // Blur the combo box
@@ -37,8 +38,11 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="fleet.do" method="GET" validate="return false">
+<el:form action="fleet.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
+<tr class="title caps">
+ <td colspan="2"><content:airline /> FLEET GALLERY</td>
+</tr>
 <tr>
  <td class="label">Select Aircraft</td>
  <td><el:combo name="Aircraft" size="1" idx="1" options="${fleetGallery}" onChange="void selectAircraft(this)" /></td>
