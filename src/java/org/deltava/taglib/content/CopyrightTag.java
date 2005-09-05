@@ -51,13 +51,19 @@ public class CopyrightTag extends TagSupport {
       jw.print("<span class=\"copyright\">");
       jw.print(pageContext.getServletContext().getServletContextName());
       jw.print(" ");
-      jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD + ")");
-      jw.print("</span>");
+      jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD);
+      if (_rcBuild > 0) {
+          jw.print(" Release Candidate ");
+          jw.print(String.valueOf(_rcBuild));
+       }
+      
+      jw.print(")</span>");
    }
 
    /**
     * Checks for optional data in VersionInfo constants.
     * @return TagSupport.SKIP_BODY always
+    * @throws JspException if an error occurs
     */
    public int doStartTag() throws JspException {
       if (_rcBuild >= 0)
