@@ -77,14 +77,6 @@ our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="${infoEmail}">${infoEmail}</a>.<br />
 <br />
-<div style="text-align:center; vertical-align:middle;">
-<a href="http://www.mozilla.org/"><el:img caption="Firefox" src="logo/firefox.png" border="0" /></a>
-<a href="http://www.mysql.com/"><el:img caption="Powered by mySQL" src="logo/powered-by-mysql.png" border="0" /></a>
-<a href="http://jakarta.apache.org/tomcat/"><el:img caption="Runs with Tomcat" src="logo/tomcat.png" border="0" /></a>
-<a href="http://www.eclipse.org"><el:img caption="Built with Eclipse" src="logo/eclipse.png" border="0" /></a>
-<a href="http://www.freebsd.org"><el:img caption="Powered by FreeBSD" src="logo/bsdpower.gif" border="0" /></a>
-</div>
-<br />
 <content:copyright />
 <br />
 </div>
