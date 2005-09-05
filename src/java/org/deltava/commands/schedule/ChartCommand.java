@@ -49,7 +49,7 @@ public class ChartCommand extends AbstractFormCommand {
 				ChartAccessControl access = new ChartAccessControl(ctx);
 				access.validate();
 				if (!access.getCanEdit())
-					throw new CommandSecurityException("Cannot edit Approach Chart");
+					throw securityException("Cannot edit Approach Chart");
 
 				// Load data from the request
 				c.setName(ctx.getParameter("name"));
@@ -60,7 +60,7 @@ public class ChartCommand extends AbstractFormCommand {
 				ChartAccessControl access = new ChartAccessControl(ctx);
 				access.validate();
 				if (!access.getCanCreate())
-					throw new CommandSecurityException("Cannot create Approach Chart");
+					throw securityException("Cannot create Approach Chart");
 
 				c = new Chart(ctx.getParameter("name"), SystemData.getAirport(ctx.getParameter("airport")));
 				c.setType(ctx.getParameter("chartType"));
@@ -119,7 +119,7 @@ public class ChartCommand extends AbstractFormCommand {
 		access.validate();
 		boolean isOK = (isNew) ? access.getCanCreate() : access.getCanEdit();
 		if (!isOK)
-			throw new CommandSecurityException("Cannot create/edit Approach Chart");
+			throw securityException("Cannot create/edit Approach Chart");
 		
 		// Save chart types
 		ctx.setAttribute("chartTypes", ComboUtils.fromArray(Chart.TYPENAMES, Chart.TYPES), REQUEST);

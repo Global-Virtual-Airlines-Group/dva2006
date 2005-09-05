@@ -45,7 +45,7 @@ public class NewsDeleteCommand extends AbstractCommand {
          NewsAccessControl access = new NewsAccessControl(ctx, nws);
          access.validate();
          if (!access.getCanDelete())
-            throw new CommandSecurityException("Cannot delete System News/NOTAM");
+            throw securityException("Cannot delete System News/NOTAM");
             
          // Get the write DAO and delete the entry
          SetNews wdao = new SetNews(con);

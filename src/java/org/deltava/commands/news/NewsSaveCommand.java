@@ -52,7 +52,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				NewsAccessControl access = new NewsAccessControl(ctx, nws);
 				access.validate();
 				if (!access.getCanSave())
-					throw new CommandSecurityException("Cannot edit System News entry");
+					throw securityException("Cannot edit System News entry");
 
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
@@ -61,7 +61,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
 				if (!access.getCanCreateNews())
-					throw new CommandSecurityException("Cannot edit System News entry");
+					throw securityException("Cannot edit System News entry");
 
 				// Create the news entry
 				nws = new News(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));

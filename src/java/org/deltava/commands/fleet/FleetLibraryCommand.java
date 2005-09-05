@@ -42,7 +42,7 @@ public class FleetLibraryCommand extends AbstractCommand {
 		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
 		access.validate();
 		if (isAdmin && !access.getCanCreate())
-			throw new CommandSecurityException("Cannot update Fleet Library");
+			throw securityException("Cannot update Fleet Library");
 
 		List results = null;
 		try {

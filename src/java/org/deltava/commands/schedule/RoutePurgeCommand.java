@@ -40,7 +40,7 @@ public class RoutePurgeCommand extends AbstractCommand {
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanDelete())
-			throw new CommandSecurityException("Cannot purge Routes");
+			throw securityException("Cannot purge Routes");
 
 		// If we're purging oceanic routes, figure out a date to purge before
 		Date purgeDate = null;

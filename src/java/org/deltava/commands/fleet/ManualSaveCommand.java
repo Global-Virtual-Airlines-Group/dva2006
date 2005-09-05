@@ -61,7 +61,7 @@ public class ManualSaveCommand extends AbstractCommand {
          FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
          access.validate();
          boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
-         if (!ourAccess) throw new CommandSecurityException("Cannot create/edit Document Library entry");
+         if (!ourAccess) throw securityException("Cannot create/edit Document Library entry");
 
          // Check if we're uploading to ensure that the file does not already exist
          if (isNew && (entry != null)) {

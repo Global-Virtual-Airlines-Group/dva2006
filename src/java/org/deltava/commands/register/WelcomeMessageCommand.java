@@ -47,7 +47,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
 			access.validate();
 			if ((!access.getCanApprove()) && (!access.getCanReject()))
-				throw new CommandSecurityException("Cannot approve/reject Applicant");
+				throw securityException("Cannot approve/reject Applicant");
 			
 			// Get the Questionnaire
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
