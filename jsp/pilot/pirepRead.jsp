@@ -55,7 +55,7 @@ return true;
 <!-- Pirep Data -->
 <tr>
  <td class="label">Pilot Code / Rank</td>
- <td class="data">${pilot.pilotCode} (${pilot.rank})</td>
+ <td class="data">${pilot.pilotCode} (${pilot.rank}, ${pilot.equipmentType})</td>
 </tr>
 <tr>
  <td class="label">Status</td>
