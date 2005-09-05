@@ -45,7 +45,7 @@ public class ThreadReplyCommand extends AbstractCommand {
             
             // Check our access level
             if (!ac.getCanReply())
-                throw new CommandSecurityException("Cannot post in Message Thread " + ctx.getID());
+                throw securityException("Cannot post in Message Thread " + ctx.getID());
             
             // Create the new reply bean
             Message msg = new Message(ctx.getUser().getID());
@@ -70,7 +70,7 @@ public class ThreadReplyCommand extends AbstractCommand {
             
             // Save the thread in the request
             ctx.setAttribute("thread", thread, REQUEST);
-            ctx.setAttribute("reply", msg, REQUEST);
+            ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
         } catch (DAOException de) {
         	ctx.rollbackTX();
             throw new CommandException(de);

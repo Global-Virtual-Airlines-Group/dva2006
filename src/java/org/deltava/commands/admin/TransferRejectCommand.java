@@ -47,7 +47,7 @@ public class TransferRejectCommand extends AbstractCommand {
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
 			access.validate();
 			if (!access.getCanReject())
-				throw new CommandSecurityException("Cannot reject Transfer Request");
+				throw securityException("Cannot reject Transfer Request");
 
 			// Get the Pilot
 			GetPilot pdao = new GetPilot(con);

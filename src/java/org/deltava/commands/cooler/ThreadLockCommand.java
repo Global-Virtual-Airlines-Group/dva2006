@@ -44,7 +44,7 @@ public class ThreadLockCommand extends AbstractCommand {
             
             // Check our access level
             if (!ac.getCanLock())
-                throw new CommandSecurityException("Cannot moderate Message Thread " + ctx.getID());
+                throw securityException("Cannot moderate Message Thread " + ctx.getID());
             
             // Determine what operation we are performing
             String opName = (String) ctx.getCmdParameter(Command.OPERATION, "lock");

@@ -52,7 +52,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
 			access.validate();
 			if (!access.getCanEdit())
-				throw new CommandSecurityException("Cannot edit Water Cooler Channel");
+				throw securityException("Cannot edit Water Cooler Channel");
 
 			// Update the channel from the request
 			c.setDescription(ctx.getParameter("desc"));
@@ -120,7 +120,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
 			access.validate();
 			if (!access.getCanEdit())
-				throw new CommandSecurityException("Cannot edit Water Cooler Channel");
+				throw securityException("Cannot edit Water Cooler Channel");
 			
 			// Save channel and access controller
 			ctx.setAttribute("channel", c, REQUEST);
