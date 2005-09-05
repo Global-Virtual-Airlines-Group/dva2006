@@ -1,6 +1,7 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.util.Map;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.Airline;
@@ -10,6 +11,8 @@ import org.deltava.commands.*;
 import org.deltava.dao.GetAirline;
 import org.deltava.dao.SetSchedule;
 import org.deltava.dao.DAOException;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Airline profiles.
@@ -28,14 +31,14 @@ public class AirlineCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the airline code
-		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
 
+		Airline a = null;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// If we're editing an existing airline, load it
-			Airline a = null;
 			if (!isNew) {
 				GetAirline dao = new GetAirline(con);
 				a = dao.get(aCode);
@@ -53,10 +56,10 @@ public class AirlineCommand extends AbstractFormCommand {
 			SetSchedule wdao = new SetSchedule(con);
 			if (isNew) {
 				wdao.create(a);
-				ctx.setAttribute("airlineCreate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("airlineCreate", Boolean.TRUE, REQUEST);
 			} else {
 				wdao.update(a);
-				ctx.setAttribute("airlineUpdate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("airlineUpdate", Boolean.TRUE, REQUEST);
 			}
 			
 			// Save the airline in the request
@@ -65,6 +68,14 @@ public class AirlineCommand extends AbstractFormCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Update the airline in the SystemData map
+		Map airlines = (Map) SystemData.getObject("airlines");
+		if (a.getActive()) {
+			airlines.put(a.getCode(), a);
+		} else {
+			airlines.remove(a.getCode());
 		}
 
 		// Forward to the JSP
