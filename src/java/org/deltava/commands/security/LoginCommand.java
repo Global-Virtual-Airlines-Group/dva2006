@@ -130,14 +130,14 @@ public class LoginCommand extends AbstractCommand {
 			fnc.setVersion(1);
 			fnc.setMaxAge(cookieAge);
 			fnc.setDomain(ctx.getRequest().getServerName());
-			fnc.setPath("/login.do");
+			//fnc.setPath("/login.do");
 			ctx.getResponse().addCookie(fnc);
 
 			Cookie lnc = new Cookie("dva_lname", p.getLastName());
 			lnc.setVersion(1);
 			lnc.setMaxAge(cookieAge);
 			lnc.setDomain(ctx.getRequest().getServerName());
-			lnc.setPath("/login.do");
+			// lnc.setPath("/login.do");
 			ctx.getResponse().addCookie(lnc);
 		}
 
