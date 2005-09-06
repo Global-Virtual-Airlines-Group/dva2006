@@ -10,6 +10,8 @@ import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * Web site command to return Preferred/Oceanic routes.
  * @author Luke
@@ -30,7 +32,7 @@ public class RoutesCommand extends AbstractViewCommand {
         ViewContext vc = initView(ctx);
         
         // Determine if we are doing oceanic routes
-        boolean isOceanic = "oceanic".equals(ctx.getCmdParameter(Command.OPERATION, "domestic"));
+        boolean isOceanic = "oceanic".equals(ctx.getCmdParameter(OPERATION, "domestic"));
         
         // Check our access
         ScheduleAccessControl access = new ScheduleAccessControl(ctx);
@@ -49,10 +51,19 @@ public class RoutesCommand extends AbstractViewCommand {
             if (!isOceanic) {
                 ctx.setAttribute("airports", dao.getAirports(), REQUEST);
                 
-                // Get the airport code
-                String aCode = (String) ctx.getCmdParameter(Command.ID, "ATL");
-                ctx.setAttribute("airport", aCode, REQUEST);
-                vc.setResults(dao.getRoutes(aCode));
+                // Get the airport codes
+                String dCode = (String) ctx.getCmdParameter(ID, "ATL");
+                String aCode = StringUtils.isEmpty(ctx.getParameter("dst")) ? null : ctx.getParameter("dst");
+                
+                // Save the airport codes
+                ctx.setAttribute("airportD", dCode, REQUEST);
+                ctx.setAttribute("airportA", aCode, REQUEST);
+                
+                // Get the destination airports
+                ctx.setAttribute("dstAP", dao.getRouteDestinations(aCode), REQUEST);
+                
+                // Load the routes
+                vc.setResults(dao.getRoutes(dCode, aCode));
             } else {
                 vc.setResults(dao.getOceanic());
             }
