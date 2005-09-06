@@ -27,15 +27,20 @@
  <td><el:cmd url="newthreads">NEW THREADS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="mythreads">MY THREADS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="threadpost">START NEW THREAD</el:cmd></td>
 </tr>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="channels">CHANNELS</el:cmd></td>
 </tr>
+<content:filter roles="HR">
 <tr class="MenuItem">
  <td><el:cmd url="coolersearch" className="bld">SEARCH</el:cmd></td>
 </tr>
+</content:filter>
 <content:filter roles="Admin">
 <tr class="MenuItem">
  <td><el:cmd url="channeladmin">CHANNEL ADMIN</el:cmd></td>
