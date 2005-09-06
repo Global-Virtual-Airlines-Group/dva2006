@@ -11,6 +11,8 @@ import org.deltava.dao.GetTableStatus;
 import org.deltava.dao.DAOException;
 
 import org.deltava.beans.stats.AirlineTotals;
+
+import org.deltava.util.cache.ExpiringCache;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -22,8 +24,19 @@ import org.deltava.util.system.SystemData;
 
 public class AirlineTotalsCommand extends AbstractCommand {
 
-    private AirlineTotals _totals = new AirlineTotals(0);
+	private ExpiringCache _cache;
     private Set _tableStatus = new TreeSet();
+    
+    /**
+     * Initializes the command.
+     * @param id the command ID
+     * @param cmdName the command Name
+     * @throws CommandException if initialization fails
+     */
+    public void init(String id, String cmdName) throws CommandException {
+    	super.init(id, cmdName);
+    	_cache = new ExpiringCache(1, SystemData.getInt("cache.stats") * 60);
+    }
     
     /**
      * Execute the command.
@@ -32,11 +45,11 @@ public class AirlineTotalsCommand extends AbstractCommand {
      */
     public void execute(CommandContext ctx) throws CommandException {
         
-        int cacheExpiry = SystemData.getInt("cache.stats") * 60000;
-
         CommandResult result = ctx.getResult();
         synchronized (this) {
-            if ((_totals.getEffectiveDate() + cacheExpiry) < System.currentTimeMillis()) {
+        	AirlineTotals totals = (AirlineTotals) _cache.get(AirlineTotals.class);
+        	
+            if (totals == null) {
                _tableStatus.clear();
                
                 try {
@@ -44,7 +57,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     
                     // Get the Statistics DAO
                     GetStatistics dao = new GetStatistics(con);
-                    _totals = dao.getAirlineTotals();
+                    totals = dao.getAirlineTotals();
+                    _cache.add(totals);
                     
                     // Get the Table Status for our database and common
                     GetTableStatus dao2 = new GetTableStatus(con);
@@ -57,11 +71,11 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     ctx.release();
                 }
             }
-            
+
             // Save the results in the request
-            ctx.setAttribute("totals", _totals, REQUEST);
+            ctx.setAttribute("totals", totals, REQUEST);
             ctx.setAttribute("tableStatus", _tableStatus, REQUEST);
-            ctx.setAttribute("effectiveDate", new Date(_totals.getEffectiveDate()), REQUEST);
+            ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
         }
         
         // Forward to the JSP
