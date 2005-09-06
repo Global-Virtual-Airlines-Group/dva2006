@@ -125,11 +125,12 @@
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td>
+<el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="VIEW LOG BOOK" />
 <c:if test="${access.canEdit}">
-<el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
+&nbsp;<el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
 <c:if test="${access.canChangeStatus}">
- <el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
+&nbsp;<el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
 </c:if> 
  </td>
 </tr>
