@@ -14,152 +14,129 @@ import org.apache.log4j.Logger;
 
 class ConnectionMonitor extends Thread {
 
-	private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
-	
-	private static List _sqlStatus = Arrays.asList(new String[] {"08003", "08S01"});
+   private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
 
-	private Collection _pool = Collections.EMPTY_LIST;
-	private long _sleepTime = 180000; // 3 minute default
-	private long _poolCheckCount;
+   private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
-	/**
-	 * Creates a new Connection Monitor. The thread is set as a daemon.
-	 * @see Thread#setDaemon(boolean)
-	 */
-	ConnectionMonitor() {
-		super("JDBC Pool Monitor");
-		setDaemon(true);
-	}
+   private Set _pool = new TreeSet();
+   private long _sleepTime = 180000; // 3 minute default
+   private long _poolCheckCount;
 
-	/**
-	 * Creates a new Connection Monitor to monitor specific ConnectionPoolEntries.
-	 * @param cPool a List of ConnectionPoolEntries
-	 * @see ConnectionMonitor#setPool(List)
-	 */
-	ConnectionMonitor(Collection cPool) {
-		this();
-		setPool(cPool);
-	}
+   /**
+    * Creates a new Connection Monitor. The thread is set as a daemon.
+    * @param interval the sleep time <i>in minutes </i>
+    * @see Thread#setDaemon(boolean)
+    */
+   ConnectionMonitor(int interval) {
+      super("JDBC Pool Monitor");
+      setDaemon(true);
+      _sleepTime = interval * 60000; // Convert minutes into ms
+   }
 
-	/**
-	 * Returns the size of the connection pool being monitored.
-	 * @return the size of the pool
-	 */
-	public int size() {
-		return _pool.size();
-	}
+   /**
+    * Returns the size of the connection pool being monitored.
+    * @return the size of the pool
+    */
+   public int size() {
+      return _pool.size();
+   }
 
-	/**
-	 * Return the monitor interval.
-	 * @return the interval <i>in minutes</i>.
-	 */
-	public int getInterval() {
-		return (int) (_sleepTime / 60000);
-	}
+   /**
+    * Return the monitor interval.
+    * @return the interval <i>in minutes </i>.
+    */
+   public int getInterval() {
+      return (int) (_sleepTime / 60000);
+   }
 
-	/**
-	 * Sets the monitor interval.
-	 * @param sleepTime the interval <i>in minutes</i>
-	 * @throws IllegalArgumentException if sleepTime is zero or negative
-	 */
-	public void setInterval(int sleepTime) {
-		if (sleepTime < 1)
-			throw new IllegalArgumentException("Sleep time cannot be zero or negative");
+   /**
+    * Adds a JDBC connection to monitor.
+    * @param cpe a ConnectionPoolEntry object
+    */
+   public void addConnection(ConnectionPoolEntry cpe) {
+      synchronized (_pool) {
+         _pool.add(cpe);
+      }
+   }
 
-		_sleepTime = sleepTime * 60000; // Convert minutes into ms
-	}
+   /**
+    * Removes a JDBC connection from the monitor.
+    * @param cpe a ConnectionPoolEntry object
+    */
+   public void removeConnection(ConnectionPoolEntry cpe) {
+      synchronized (_pool) {
+         _pool.remove(cpe);
+      }
+   }
 
-	/**
-	 * Sets the JDBC connection pool to monitor.
-	 * @param cPool a Collection of ConnectionPoolEntry objects
-	 * @see ConnectionMonitor#addPool(List)
-	 * @throws IllegalThreadStateException if the thread is alive
-	 */
-	public void setPool(Collection cPool) {
-		if (isAlive())
-			throw new IllegalThreadStateException("Connection Monitor already started");
+   private boolean reconnect(ConnectionPoolEntry e) {
+      log.info("JDBC Connection " + e + " disconnected");
+      e.close();
 
-		_pool = new ArrayList(cPool);
-	}
+      // Reconnect the connection if we can
+      if (e.isRestartable()) {
+         try {
+            e.connect();
+            return true;
+         } catch (SQLException se) {
+            log.warn("Error reconnecting Connection " + e + " - " + se.getMessage());
+         }
+      }
 
-	/**
-	 * Adds another JDBC connection pool to monitor.
-	 * @param cPool2 a Collection of ConnectionPoolEntry objects
-	 * @see ConnectionMonitor#setPool(List)
-	 * @throws IllegalThreadStateException if the thread is alive
-	 */
-	public void addPool(Collection cPool2) {
-		if (isAlive())
-			throw new IllegalThreadStateException("Connection Monitor already started");
+      return false;
+   }
 
-		_pool.addAll(cPool2);
-	}
+   /**
+    * Thread execution method.
+    * @see Thread#start()
+    */
+   public void run() {
+      log.info("Starting");
 
-	private boolean reconnect(ConnectionPoolEntry e) {
-		log.info("JDBC Connection " + e + " disconnected");
-		e.close();
+      // Check loop
+      while (!isInterrupted()) {
+         log.debug("Checking Connection Pool");
 
-		// Reconnect the connection if we can
-		if (e.isRestartable()) {
-			try {
-				e.connect();
-				return true;
-			} catch (SQLException se) {
-				log.warn("Error reconnecting Connection " + e + " - " + se.getMessage());
-			}
-		}
+         synchronized (_pool) {
+            _poolCheckCount++;
 
-		return false;
-	}
+            for (Iterator i = _pool.iterator(); i.hasNext();) {
+               ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 
-	/**
-	 * Thread execution method.
-	 * @see Thread#start()
-	 */
-	public void run() {
-		log.info("Starting");
+               // Check if the entry has timed out
+               if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
+                  log.warn("Releasing stale JDBC Connection " + cpe);
+                  cpe.free();
+               }
 
-		// Check loop
-		while (!isInterrupted()) {
-			log.debug("Checking Connection Pool");
-			_poolCheckCount++;
+               // Check to ensure that the connection can still hit the back-end
+               try {
+                  Connection c = cpe.getConnection();
+                  c.setAutoCommit(c.getAutoCommit());
+               } catch (SQLException se) {
+                  if (_sqlStatus.contains(se.getSQLState())) {
+                     log.warn("Reconnecting Connection " + cpe);
 
-			for (Iterator i = _pool.iterator(); i.hasNext();) {
-				ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+                     // If we cannot reconnect, then remove from the pool
+                     if (!reconnect(cpe)) {
+                        log.warn("Cannot reconnect Connection " + cpe);
+                        i.remove();
+                     }
+                  } else {
+                     log.warn("Uknown SQL Error code - " + se.getSQLState(), se);
+                  }
+               }
+            }
+         }
 
-				// Check if the entry has timed out
-				if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
-					log.warn("Releasing stale JDBC Connection " + cpe);
-					cpe.free();
-				}
+         try {
+            Thread.sleep(_sleepTime);
+         } catch (InterruptedException ie) {
+            log.debug("Interrupted while sleeping");
+            interrupt();
+         }
+      }
 
-				// Check to ensure that the connection can still hit the back-end
-				try {
-					Connection c = cpe.getConnection();
-					c.setAutoCommit(c.getAutoCommit());
-				} catch (SQLException se) {
-				   if (_sqlStatus.contains(se.getSQLState())) {
-						log.warn("Reconnecting Connection " + cpe);
-
-						// If we cannot reconnect, then remove from the pool
-						if (!reconnect(cpe)) {
-							log.warn("Cannot reconnect Connection " + cpe);
-							i.remove();
-						}
-					} else {
-						log.warn("Uknown SQL Error code - " + se.getSQLState(), se);
-					}
-				}
-			}
-
-			try {
-				Thread.sleep(_sleepTime);
-			} catch (InterruptedException ie) {
-				log.debug("Interrupted while sleeping");
-				interrupt();
-			}
-		}
-
-		log.info("Stopping");
-	}
+      log.info("Stopping");
+   }
 }

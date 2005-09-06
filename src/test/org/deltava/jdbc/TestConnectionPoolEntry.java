@@ -2,7 +2,7 @@ package org.deltava.jdbc;
 
 import java.io.*;
 import java.sql.*;
-import java.util.Properties;
+import java.util.*;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -89,6 +89,15 @@ public class TestConnectionPoolEntry extends TestCase {
         assertFalse(_cpe.equals(c2));
         assertFalse(_cpe.equals(new Object()));
         assertFalse(_cpe.equals(null));
+    }
+    
+    public void testIndexOf() {
+       ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props.getProperty("url"), _props);
+       List l = new ArrayList();
+       l.add(_cpe);
+       l.add(cpe2);
+       assertEquals(0, l.indexOf(_cpe));
+       assertEquals(1, l.indexOf(cpe2));
     }
     
     public void testValidation() {
