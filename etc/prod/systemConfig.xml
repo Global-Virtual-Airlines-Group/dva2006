@@ -333,7 +333,7 @@
 	</security>
 	
 	<cache>
-		<stats type="Integer">30</stats>
+		<stats type="Integer">240</stats>
 		<channels type="Integer">10</channels>
 		<rss>
 			<cooler type="Integer">10</cooler>
