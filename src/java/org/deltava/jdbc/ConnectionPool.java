@@ -22,7 +22,7 @@ public class ConnectionPool implements Recycler {
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
-	static final int MAX_USE_TIME = 55000;
+	static final int MAX_USE_TIME = 58000;
 
 	private int _poolMaxSize = 1;
 	private int _lastID;
@@ -186,7 +186,7 @@ public class ConnectionPool implements Recycler {
 	 * @return the JDBC connection
 	 * @throws ConnectionPoolException if a JDBC error occurs creating a new connection
 	 */
-	public Connection getSystemConnection() throws ConnectionPoolException {
+	public synchronized Connection getSystemConnection() throws ConnectionPoolException {
 		checkConnected();
 
 		// Loop through the system connection pool, if we find one not in use
@@ -206,6 +206,10 @@ public class ConnectionPool implements Recycler {
 				return cpe.reserve();
 			}
 		}
+		
+		// If there are more than 3 system connections, throw an exception
+		if (_sysCons.size() > 3)
+			throw new ConnectionPoolException("Connection Pool full");
 
 		// If the pool is full, then create a new connection
 		try {
@@ -242,35 +246,24 @@ public class ConnectionPool implements Recycler {
 				c.rollback();
 			}
 		} catch (SQLException se) { }
+		
+		// Build a giant list of connections
+		Collection cons = new ArrayList(_cons);
+		cons.addAll(_sysCons);
 
 		// Find the connection pool entry and free it
-		for (Iterator i = _cons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-			if (cpe.equals(c)) {
-				cpe.free();
-				if (cpe.isSystemConnection()) {
-					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-				} else {
-					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-				}
-				return cpe.getUseTime();
-			}
-		}
-
-		// If we didn't find the connection, check the system connections
-		for (Iterator i = _sysCons.iterator(); i.hasNext();) {
+		for (Iterator i = cons.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 			if (cpe.equals(c)) {
 				cpe.free();
 				log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-
+				
 				// If we have multiple system connections, close this one down
-				if (_sysCons.size() > 1) {
+				if (cpe.isSystemConnection() && (_sysCons.size() > 1) && (_sysCons.indexOf(cpe) > 0)) {
 					cpe.close();
 					i.remove();
 				}
 
-				// Exit
 				return cpe.getUseTime();
 			}
 		}
@@ -360,7 +353,7 @@ public class ConnectionPool implements Recycler {
 	 */
 	public Collection getPoolInfo() {
 	   // Build a list of all connections
-	   Set allCons = new HashSet(_cons);
+	   Collection allCons = new ArrayList(_cons);
 	   allCons.addAll(_sysCons);
 	   
 	   Set results = new TreeSet();
