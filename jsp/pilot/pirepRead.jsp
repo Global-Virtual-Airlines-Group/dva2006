@@ -57,6 +57,12 @@ return true;
  <td class="label">Pilot Code / Rank</td>
  <td class="data">${pilot.pilotCode} (${pilot.rank}, ${pilot.equipmentType})</td>
 </tr>
+<content:filter roles="HR,PIREP">
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td class="data"><a href="${pilot.email}">${pilot.email}</a></td>
+</tr>
+</content:filter>
 <tr>
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
