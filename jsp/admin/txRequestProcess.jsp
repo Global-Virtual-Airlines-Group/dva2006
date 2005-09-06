@@ -17,6 +17,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.crType, 'Aircraft Type')) return false;
+if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
 if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false;
 if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
 
@@ -89,7 +90,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Transfer to</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${activeEQ}" value="${eqType}" />
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${activeEQ}" value="${eqType}" />
  as <el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" firstEntry="-" /></td>
 </tr>
 </c:if>
@@ -99,7 +100,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="crType" idx="*" size="1" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
+ <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
 </tr>
 <tr>
  <td class="label">Comments</td>
