@@ -115,8 +115,9 @@ public class CommandServlet extends HttpServlet {
     public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
         long startTime = System.currentTimeMillis();
 
+        Command cmd = null;
         try {
-            Command cmd = getCommand(req.getRequestURI());
+            cmd = getCommand(req.getRequestURI());
             CommandContext ctxt = new CommandContext(req, rsp);
             
             // Validate command access
@@ -192,7 +193,12 @@ public class CommandServlet extends HttpServlet {
             req.setAttribute("servlet_exception", (ce.getCause() == null) ? ce : ce.getCause());
             rd.forward(req, rsp);
         } finally {
-            log.debug("Completed in " + String.valueOf(System.currentTimeMillis() - startTime) + " ms");
+        	long execTime = System.currentTimeMillis() - startTime;
+        	if (execTime < 20000) {
+        		log.debug("Completed in " + String.valueOf(execTime) + " ms");
+        	} else {
+        		log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
+        	}
         }
     }
 }
