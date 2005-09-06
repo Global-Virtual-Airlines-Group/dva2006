@@ -91,7 +91,13 @@
 		<class>org.deltava.commands.security.PasswordResetCommand</class>
 		<roles>Anonymous,HR</roles>
 	</command>
-	
+
+	<command id="pwdresetdone">
+		<name>Password Reset Complete</name>
+		<class>org.deltava.commands.security.PasswordResetCompleteCommand</class>
+		<roles>Anonymous,HR</roles>
+	</command>
+
 	<command id="validate">
 		<name>E-Mail Validation</name>
 		<class>org.deltava.commands.security.ValidateEmailCommand</class>
@@ -429,19 +435,25 @@
 		<class>org.deltava.commands.cooler.ChannelListCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="channel">
 		<name>Water Cooler Channel Display</name>
 		<class>org.deltava.commands.cooler.ThreadListCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="newthreads">
 		<name>Water Cooler New Threads</name>
 		<class>org.deltava.commands.cooler.NewThreadListCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="mythreads">
+		<name>My Water Cooler Threads</name>
+		<class>org.deltava.commands.cooler.MyThreadsCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="thread">
 		<name>Show Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadCommand</class>

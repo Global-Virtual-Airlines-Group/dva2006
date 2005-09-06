@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -121,6 +122,9 @@ public class PasswordResetCommand extends AbstractCommand {
 			ctx.setMessage("Error updating password for " + dName + " - " + se.getMessage());
 			return;
 		}
+		
+		// Generate an HTTP session if one doesn't exist
+		ctx.getRequest().getSession(true);
 
 		// Send a notification message
 		Mailer mailer = new Mailer(ctx.getUser());
@@ -129,7 +133,7 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		// Forward to JSP
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/pilot/passwordResetComplete.jsp");
+		result.setURL("pwdresetdone.do");
 		result.setSuccess(true);
 	}
 }
