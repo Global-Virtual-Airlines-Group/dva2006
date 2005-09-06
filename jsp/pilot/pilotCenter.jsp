@@ -10,6 +10,7 @@
 <title><content:airline /> Pilot Center - ${pilot.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:js name="common" />
 <content:js name="pilotCenter" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
