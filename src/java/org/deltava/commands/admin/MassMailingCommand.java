@@ -32,7 +32,9 @@ public class MassMailingCommand extends AbstractCommand {
 
 		// If we're just executing the command and not in the HR role, get our equipment type and return
 		if ((eqType == null) && (!ctx.getRequest().isUserInRole("HR"))) {
-			ctx.setAttribute("eqTypes", ctx.getUser().getEquipmentType(), REQUEST);
+			Collection eqTypes = new HashSet();
+			eqTypes.add(ctx.getUser().getEquipmentType());
+			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 			result.setURL("/jsp/admin/massMail.jsp");
 			result.setSuccess(true);
 			return;
