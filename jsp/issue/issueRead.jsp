@@ -43,11 +43,17 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data">${pilots[issue.createdBy].name} (${pilots[issue.createdBy].pilotCode})</td>
+ <td class="data">${pilots[issue.createdBy].name} (${pilots[issue.createdBy].pilotCode}) on
+ <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
  <td class="data bld">${pilots[issue.assignedTo].name} (${pilots[issue.assignedTo].pilotCode})</td>
+</tr>
+<tr>
+ <td class="label">Issue Status</td>
+ <td class="data"><span class="sec bld">${issue.statusName}</span>
+<c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Issue Priority</td>
