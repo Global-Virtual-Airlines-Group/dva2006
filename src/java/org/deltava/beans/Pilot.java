@@ -209,7 +209,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     /**
      * Return the number of online flight legs logged by this Pilot.
      * @return the number of hours flown
-     * @see Pilot#getFlights()
      * @see Pilot#getHours()
      * @see Person#getLegacyHours()
      * @see Pilot#setOnlineLegs(int)
