@@ -15,18 +15,34 @@
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
-function sortBy(combo)
+function setAirportD(combo)
 {
-newAirport = combo.options[combo.selectedIndex].value;
-self.location = '/routes.do?op=domestic&id=' + newAirport;
+var ad = combo.options[combo.selectedIndex].value;
+self.location = '/routes.do?op=domestic&id=' + ad;
+return true;
+}
+
+function setAirportA(combo)
+{
+var f = document.forms[0];
+
+// Get the departure airport
+var ad = f.airportD.options[f.airportD.selectedIndex].value;
+if (combo.selectedIndex == 0) {
+	self.location = '/routes.do?op=domestic&id=' + ad;
+} else {
+	var aa = combo.options[combo.selectedIndex].value;
+	self.location = '/routes.do?op=domestic&id=' + ad + '&dst=' + aa;
+}
+
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -35,22 +51,23 @@ return true;
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="25%">DESTINATION</td>
- <td width="20%">ARTCCs</td>
- <td width="10%">ROUTE</td>
- <td class="right">AIRPORT <el:combo name="sortType" idx="1" size="1" options="${airports}" value="${airport}" onChange="void sortBy(this)" /></td>
+ <td width="20%">DESTINATION</td>
+ <td width="15%">ARTCCs</td>
+ <td width="8%">ROUTE</td>
+ <td class="right">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void set AirportA(this)" /></td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="route" items="${viewContext.results}">
 <tr>
- <td class="small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
- <td class="sec">${route.ARTCC}</td>
+ <td class="pri small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
+ <td class="sec small">${route.ARTCC}</td>
  <td colspan="2" class="left">${route.route}</td>
 </tr>
 </c:forEach>
 
-<!-- Scroll bar row -->
+<!-- Scroll bar -->
 <tr class="title">
  <td colspan="4">
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
