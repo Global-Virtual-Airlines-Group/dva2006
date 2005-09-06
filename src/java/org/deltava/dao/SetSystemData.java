@@ -31,9 +31,8 @@ public class SetSystemData extends DAO {
 	 */
 	public void openSession(HttpSession s) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO SYS_SESSIONS (ID, START_TIME) VALUES (?, ?)");
+			prepareStatement("INSERT INTO SYS_SESSIONS (ID, START_TIME) VALUES (?, NOW())");
 			_ps.setString(1, s.getId());
-			_ps.setTimestamp(2, new Timestamp(s.getCreationTime()));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -69,13 +68,27 @@ public class SetSystemData extends DAO {
 	 */
 	public void closeSession(String sessionID) throws DAOException {
 		try {
-			prepareStatement("UPDATE SYS_SESSIONS SET END_TIME=? WHERE (ID=?)");
-			_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
-			_ps.setString(2, sessionID);
+			prepareStatement("UPDATE SYS_SESSIONS SET END_TIME=NOW() WHERE (ID=?)");
+			_ps.setString(1, sessionID);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Deletes an HTTP Session log entry, for an anonymous user.
+	 * @param sessionID the Session ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteSession(String sessionID) throws DAOException {
+	   try {
+	      prepareStatement("DELETE FROM SYS_SESSIONS WHERE (ID=?)");
+	      _ps.setString(1, sessionID);
+	      executeUpdate(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
 	}
 	
 	/**
