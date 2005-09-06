@@ -172,11 +172,13 @@ Installer log entries.</td>
 <span class="small sec">(Please note that these are external sites not affiliated with Delta
  Virtual Airlines. We make no representations as to the content and/or availability of these resources.)</span></td>
 </tr>
+<content:filter roles="Developer,PIREP,HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="findflight">Find A Flight</el:cmd></td>
  <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time,
   Aircraft Type and Flight Length, and pick a flight at random!</td>
 </tr>
+</content:filter>
 <tr>
  <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
