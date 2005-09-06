@@ -10,7 +10,7 @@ import java.util.Properties;
  * @since 1.0
  */
 
-class ConnectionPoolEntry {
+class ConnectionPoolEntry implements Comparable {
 
     private Connection _c;
     private int _id;
@@ -201,23 +201,24 @@ class ConnectionPoolEntry {
     /**
      * This overrides equals behavior by comparing the underlying connection object. This allows us to get a
      * ConnectionPoolEntry from the pool when all we get back is the SQL Connection.
-     * @see ConnectionPoolEntry#hashCode()
      */
-    public boolean equals(Connection c) {
-        return (_c == c);
+    public boolean equals(Object o2) {
+       if (o2 instanceof Connection) {
+          return (_c == ((Connection) o2));
+       } else if (o2 instanceof ConnectionPoolEntry) {
+          return (compareTo(o2) == 0);
+       } else {
+          return false;
+       }
     }
     
     /**
-     * This overrides equals behavior by comparing the underlying connection object. This allows us to get a
-     * ConnectionPoolEntry from the pool when all we get back is the SQL Connection.
+     * Compares two entries by comparing their ID.
+     * @see Comparable#compareTo(Object)
      */
-    public boolean equals(Object o2) {
-        try {
-            ConnectionPoolEntry cpe2 = (ConnectionPoolEntry) o2;
-            return (_c == cpe2.getConnection());
-        } catch (Exception e) {
-            return false;
-        }
+    public int compareTo(Object o2) {
+       ConnectionPoolEntry e2 = (ConnectionPoolEntry) o2;
+       return new Integer(_id).compareTo(new Integer(e2.getID()));
     }
     
     /**
