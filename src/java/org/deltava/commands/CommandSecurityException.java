@@ -15,7 +15,7 @@ public class CommandSecurityException extends CommandException {
 	/**
 	 * Create a new security exception.
 	 * @param msg the exception message
-	 * @param cmd the name of the command being invoked
+	 * @param cmdName the name of the command being invoked
 	 */
 	public CommandSecurityException(String msg, String cmdName) {
 		super(msg);
