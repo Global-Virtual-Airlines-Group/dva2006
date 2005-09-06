@@ -1,7 +1,8 @@
 function showNAV()
 {
-var sindex = document.forms[0].navaidType.selectedIndex;
-var textbox = document.forms[0].navaidCode;
+var f = document.forms[0];
+var sindex = f.navaidType.selectedIndex;
+var textbox = f.airportCode;
 
 // Check that a code has been specified
 if (textbox.value.length < 3) {
@@ -16,16 +17,12 @@ if ((sindex != 3) && (textbox.value.length == 4))
 	
 // Calculate the proper URL
 switch (sindex) {
-	// Navigation aids
-	case 0:	var URL = 'http://www.airnav.com/cgi-bin/navaid-info?';
-				break;
-				
 	// Airfield information
-	case 1:	var URL = 'http://www.airnav.com/cgi-bin/airport-get?';
+	case 0:	var URL = 'http://www.airnav.com/cgi-bin/airport-get?';
 				break;
 				
 	// METAR information
-	case 2:	var URL = 'http://weather.noaa.gov/cgi-bin/mgetmetar.pl?cccc=';
+	case 1:	var URL = 'http://weather.noaa.gov/cgi-bin/mgetmetar.pl?cccc=';
 				break;
 }
 
