@@ -35,7 +35,7 @@ public class GetStatistics extends DAO {
 
 		try {
 			// Create prepared statement
-			prepareStatement("SELECT COUNT(DISTANCE), ROUND(SUM(FLIGHT_TIME), 1), SUM(DISTANCE) "
+			prepareStatement("SELECT COUNT(ID), ROUND(SUM(FLIGHT_TIME), 1), SUM(DISTANCE) "
 					+ "FROM PIREPS WHERE (DATE > ?)");
 			_ps.setQueryTimeout(5);
 
