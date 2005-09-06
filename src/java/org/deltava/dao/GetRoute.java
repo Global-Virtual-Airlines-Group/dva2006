@@ -3,9 +3,8 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.OceanicRoute;
-import org.deltava.beans.schedule.PreferredRoute;
+import org.deltava.beans.schedule.*;
+import org.deltava.comparators.AirportComparator;
 
 import org.deltava.util.system.SystemData;
 
@@ -29,15 +28,23 @@ public class GetRoute extends DAO {
     /**
      * Return a list of preferred routes from a particular airport.
      * @param srcAirport the source airport IATA code
+     * @param dstAirport the destination airport IATA code, or null
      * @return a List of Preferred routes
      * @throws DAOException if a JDBC error occurs
      */
-    public List getRoutes(String srcAirport) throws DAOException {
+    public List getRoutes(String srcAirport, String dstAirport) throws DAOException {
         
+       // Build the SQL statement
+       StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ROUTES WHERE (AIRPORT_D=?)");
+       if (dstAirport != null) sqlBuf.append(" AND (AIRPORT_A=?)");
+       sqlBuf.append(" ORDER BY AIRPORT_A");
+       
         try {
             // Init the prepared statement
-            prepareStatement("SELECT * FROM ROUTES WHERE (AIRPORT_D=?) ORDER BY AIRPORT_A");
+            prepareStatement(sqlBuf.toString());
             _ps.setString(1, srcAirport);
+            if (dstAirport != null)
+               _ps.setString(2, dstAirport);
             
             // Get the airports map
             Map airports = (Map) SystemData.getObject("airports");
@@ -66,6 +73,35 @@ public class GetRoute extends DAO {
         } catch (SQLException se) {
             throw new DAOException(se);
         }
+    }
+    
+    /**
+     * Returns a list of all destinations with a preferred Route from a particular Airport.
+     * @param aCode the source Airport IATA code
+     * @return a List of Airport beans
+     * @throws DAOException
+     */
+    public Collection getRouteDestinations(String aCode) throws DAOException {
+       try {
+          prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_A FROM ROUTES WHERE (AIRPORT_D=?) ORDER BY AIRPORT_A");
+          _ps.setString(1, aCode);
+          
+          // Iterate through the result set
+          Set results = new TreeSet(new AirportComparator(AirportComparator.NAME));
+          ResultSet rs = _ps.executeQuery();
+          while (rs.next()) {
+             Airport a = SystemData.getAirport(rs.getString(1));
+             if (a != null)
+                results.add(a);
+          }
+          
+          // Clean up and return
+          rs.close();
+          _ps.close();
+          return results;
+       } catch (SQLException se) {
+          throw new DAOException(se);
+       }
     }
     
     /**
