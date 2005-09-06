@@ -45,7 +45,7 @@ public class FileUploadFilter implements Filter {
 		// Convert the request type
 		HttpServletRequest hreq = (HttpServletRequest) req;
 		if (("POST".equals(hreq.getMethod())) && (hreq.getContentType().startsWith(CONTENT_TYPE))) {
-			log.info("Processing form upload request");
+			log.debug("Processing form upload request");
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(hreq);
 
 			// Parse the request
@@ -57,7 +57,7 @@ public class FileUploadFilter implements Filter {
 
 					// Save the file data in the request
 					if (fp.getFileName() != null) {
-						log.info("Found File element " + p.getName() + ", file=" + fp.getFileName());
+						log.debug("Found File element " + p.getName() + ", file=" + fp.getFileName());
 						FileUpload upload = new FileUpload(fp.getFileName());
 						upload.load(fp.getInputStream());
 						hreq.setAttribute("FILE$" + p.getName(), upload);
