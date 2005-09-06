@@ -155,7 +155,7 @@ public class GetServInfo extends DAO {
 			while (iData != null) {
 				if (iData.charAt(0) == '!') {
 					String sectionName = iData.substring(1, 8).toUpperCase();
-					log.info("Loading Section " + sectionName);
+					log.debug("Loading Section " + sectionName);
 
 					// Parse the general section
 					if ("GENERAL".equalsIgnoreCase(sectionName)) {
@@ -255,7 +255,7 @@ public class GetServInfo extends DAO {
 										// Add to results
 										info.add(p);
 									} catch (Exception e) {
-										log.warn("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getClass().getName());
+										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getClass().getName());
 									}
 							}
 
