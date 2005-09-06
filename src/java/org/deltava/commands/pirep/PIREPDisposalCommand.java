@@ -173,7 +173,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 		// Send a notification message
 		Mailer mailer = new Mailer(ctx.getUser());
-		mailer.setCC(ctx.getUser());
 		mailer.setContext(mctx);
 		mailer.send(p);
 
