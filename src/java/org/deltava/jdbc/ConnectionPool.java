@@ -41,15 +41,21 @@ public class ConnectionPool implements Recycler {
 	 */
 	public ConnectionPool(int maxSize) {
 		super();
-		DriverManager.setLoginTimeout(5);
+		DriverManager.setLoginTimeout(4);
 		_props = new Properties();
 		_poolMaxSize = maxSize;
-		_monitor = new ConnectionMonitor();
+		_monitor = new ConnectionMonitor(3);
 	}
 
 	private void checkConnected() throws IllegalStateException {
 		if (_cons == null)
 			throw new IllegalStateException("Pool not connected");
+		
+		// Check that connection monitor is still alive
+		if ((_monitor != null) && (!_monitor.isAlive())) {
+		   log.warn("Connection Monitor not running!");
+		   _monitor.start();
+		}
 	}
 
 	/**
@@ -132,6 +138,7 @@ public class ConnectionPool implements Recycler {
 		entry.setAutoCommit(_autoCommit);
 		entry.setSystemConnection(isSystem);
 		entry.connect();
+		_monitor.addConnection(entry);
 		return entry;
 	}
 
@@ -188,7 +195,7 @@ public class ConnectionPool implements Recycler {
 	 */
 	public synchronized Connection getSystemConnection() throws ConnectionPoolException {
 		checkConnected();
-
+		
 		// Loop through the system connection pool, if we find one not in use
 		// then get it
 		for (Iterator i = _sysCons.iterator(); i.hasNext();) {
@@ -252,16 +259,23 @@ public class ConnectionPool implements Recycler {
 		cons.addAll(_sysCons);
 
 		// Find the connection pool entry and free it
+		int minSysCon = Integer.MAX_VALUE;
 		for (Iterator i = cons.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+			if (cpe.isSystemConnection() && (cpe.getID() < minSysCon))
+			   minSysCon = cpe.getID();
+			
+			// If we find the connection, release it
 			if (cpe.equals(c)) {
 				cpe.free();
-				log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				
 				// If we have multiple system connections, close this one down
-				if (cpe.isSystemConnection() && (_sysCons.size() > 1) && (_sysCons.indexOf(cpe) > 0)) {
+				if (cpe.isSystemConnection() && (cpe.getID() > minSysCon)) {
+				   _monitor.removeConnection(cpe);
 					cpe.close();
 					i.remove();
+				} else {
+				   log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");   
 				}
 
 				return cpe.getUseTime();
@@ -278,7 +292,7 @@ public class ConnectionPool implements Recycler {
 	 * @throws IllegalArgumentException if initialSize is negative or greater than getMaxSize()
 	 * @throws ConnectionPoolException if a JDBC error occurs
 	 */
-	public void connect(int initialSize) throws ConnectionPoolException {
+	public synchronized void connect(int initialSize) throws ConnectionPoolException {
 		if ((initialSize < 0) || (initialSize > _poolMaxSize))
 			throw new IllegalArgumentException("Invalid pool size - " + initialSize);
 
@@ -296,8 +310,6 @@ public class ConnectionPool implements Recycler {
 		}
 
 		// Start the Connection Monitor
-		_monitor.setPool(_cons);
-		_monitor.addPool(_sysCons);
 		_monitor.start();
 	}
 
@@ -319,6 +331,8 @@ public class ConnectionPool implements Recycler {
 					cpe.getConnection().close();
 				} catch (SQLException se) {
 					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
+				} finally {
+				   _monitor.removeConnection(cpe);
 				}
 
 				log.info("Closed JDBC Connection " + cpe);
@@ -338,6 +352,8 @@ public class ConnectionPool implements Recycler {
 					cpe.getConnection().close();
 				} catch (SQLException se) {
 					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
+				} finally {
+				   _monitor.removeConnection(cpe);
 				}
 
 				log.info("Closed JDBC Connection " + cpe);
