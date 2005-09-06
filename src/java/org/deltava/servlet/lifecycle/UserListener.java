@@ -63,14 +63,15 @@ public class UserListener implements HttpSessionListener {
 		// Log session destruction
 		log.debug("Destroyed Session " + s.getId());
 
-		// Get the user object and update the last logoff date
+		// Get the user object
 		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
-		if (p == null) return;
 
 		// Log the user off
-		p.logoff();
-		UserPool.removePerson(p, s.getId());
-		log.info(p.getName() + " logged out");
+		if (p != null) {
+		   p.logoff();
+		   UserPool.removePerson(p, s.getId());
+		   log.info(p.getName() + " logged out");
+		}
 
 		// Get the JDBC connection pool and a system connection
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
@@ -78,15 +79,19 @@ public class UserListener implements HttpSessionListener {
 		try {
 			con = jdbcPool.getSystemConnection();
 			
-			// Log the session close
+			// Log the session close, or delete the session if for anonymous
 			SetSystemData swdao = new SetSystemData(con);
-			swdao.closeSession(s.getId());
-
-			// Update the user's last login date
-			SetPilotLogin pldao = new SetPilotLogin(con);
-			pldao.logout((Pilot) p);
-		} catch (DAOException de) {
-			log.error("Error logging session close - " + de.getMessage(), de);
+			if (p == null) {
+			   swdao.deleteSession(s.getId());
+			} else {
+			   swdao.closeSession(s.getId());
+			   
+				// Update the user's last login date
+				SetPilotLogin pldao = new SetPilotLogin(con);
+				pldao.logout((Pilot) p);
+			}
+		} catch (Exception ex) {
+			log.error("Error logging session close - " + ex.getMessage(), ex);
 		} finally {
 			jdbcPool.release(con);
 		}
