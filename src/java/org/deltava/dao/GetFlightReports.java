@@ -194,11 +194,6 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getOnlineTotals(Pilot p) throws DAOException {
-
-		// Do nothing if the PIREP beans are already populated
-		if (p.isPopulated())
-			return;
-
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT COUNT(PR.FLIGHT_TIME), SUM(PR.FLIGHT_TIME) FROM PIREPS PR WHERE "
@@ -257,7 +252,7 @@ public class GetFlightReports extends DAO {
 		int setSize = 0;
 		for (Iterator i = pilots.values().iterator(); i.hasNext();) {
 			Pilot p = (Pilot) i.next();
-			if ((p.getOnlineLegs() == 0) && (!p.isPopulated())) {
+			if (p.getOnlineLegs() == 0) {
 				setSize++;
 				sqlBuf.append(String.valueOf(p.getID()));
 				sqlBuf.append(',');
@@ -288,7 +283,7 @@ public class GetFlightReports extends DAO {
 			while (rs.next()) {
 				int pilotID = rs.getInt(1);
 				Pilot p = (Pilot) pilots.get(new Integer(pilotID));
-				if ((p != null) && (!p.isPopulated())) {
+				if (p != null) {
 					p.setOnlineLegs(rs.getInt(2));
 					p.setOnlineHours(rs.getDouble(3));
 				} else {
