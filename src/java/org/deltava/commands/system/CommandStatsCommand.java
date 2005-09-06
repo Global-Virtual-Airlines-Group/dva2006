@@ -32,7 +32,7 @@ public class CommandStatsCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the sort column
-      String sortBy = ctx.getParameter("sortType");
+      String sortBy = ctx.getParameter("sortBy");
       if (sortBy == null)
          sortBy = "NAME";
 
