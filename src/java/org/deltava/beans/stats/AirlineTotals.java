@@ -4,6 +4,8 @@ import java.util.*;
 
 import java.io.Serializable;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A bean to store Airline-wide statistics.
  * @author Luke
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class AirlineTotals implements Serializable, Comparable {
+public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	
 	/**
 	 * Date the airline statistics commenced.
@@ -472,5 +474,13 @@ public class AirlineTotals implements Serializable, Comparable {
 	public int compareTo(Object o2) {
 		AirlineTotals at2 = (AirlineTotals) o2;
 		return new Long(_effectiveDate).compareTo(new Long(at2.getEffectiveDate()));
+	}
+	
+	/**
+	 * Returns the cache key for this object.
+	 * @return the class object
+	 */
+	public Object cacheKey() {
+		return getClass();
 	}
 }
