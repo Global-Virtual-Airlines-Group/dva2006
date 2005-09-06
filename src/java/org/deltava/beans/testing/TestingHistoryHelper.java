@@ -30,6 +30,7 @@ public class TestingHistoryHelper {
 		_usr = p;
 		_myEQ = myEQ;
 		_tests = (tests == null) ? Collections.EMPTY_LIST : tests;
+		_pireps = pireps;
 	}
 
 	/**
