@@ -36,7 +36,8 @@ public class PilotSearchCommand extends AbstractCommand {
 
       // Check if we're doing a GET
       if (ctx.getParameter("firstName") == null) {
-         ctx.setAttribute("noResults", Boolean.valueOf(true), REQUEST);
+         ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
+         ctx.setAttribute("maxResults", new Integer(20), REQUEST);
          result.setURL("/jsp/roster/pilotSearch.jsp");
          result.setSuccess(true);
          return;
@@ -60,11 +61,17 @@ public class PilotSearchCommand extends AbstractCommand {
          // Get the DAO and set the result size
          GetPilot dao = new GetPilot(con);
          try {
-            dao.setQueryMax(Integer.parseInt(ctx.getParameter("maxResults")));
-         } catch (NumberFormatException nfe) {
+            int maxResults = Integer.parseInt(ctx.getParameter("maxResults"));
+            if ((maxResults < 1) || (maxResults > 99))
+               throw new IllegalArgumentException();
+            
+            dao.setQueryMax(maxResults);
+            ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
+         } catch (Exception e) {
             dao.setQueryMax(20);
+            ctx.setAttribute("maxResults", new Integer(20), REQUEST);
          }
-
+         
          // Get the search results
          if (pilotCode > 0) {
             results = new ArrayList();

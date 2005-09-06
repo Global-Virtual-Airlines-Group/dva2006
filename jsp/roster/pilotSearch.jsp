@@ -65,6 +65,10 @@ return false;
 </tr>
 </content:filter>
 <tr>
+ <td class="label">Maximum Results</td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="2" value="${maxResults}" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data sec small"><el:box name="exactMatch" idx="*" value="1" label="Exact Matches only" checked="${param.exactMatch == '1'}" /></td>
 </tr>
