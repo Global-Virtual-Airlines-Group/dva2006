@@ -37,7 +37,7 @@ following accomplishments:<br />
 <c:if test="${!empty promotions}">
 <!-- Pilot Promotions -->
 <tr class="title caps">
- <td colspan="3" class="left">PILOTS PROMOTED TO NEW EQUIPMNET PROGRAMS</td>
+ <td colspan="3" class="left">PILOTS PROMOTED TO NEW EQUIPMENT PROGRAMS</td>
 </tr>
 <c:forEach var="promotion" items="${promotions}">
 <tr>
