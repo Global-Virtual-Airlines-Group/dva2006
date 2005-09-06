@@ -31,6 +31,11 @@ return true;
 
 function download(fileName)
 {
+// Check if an installer is selected
+var f = document.forms[0];
+if (f.instName.selectedIndex == 0)
+	return false;
+
 self.location = '/library/' + fileName;
 return true;
 }
