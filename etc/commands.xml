@@ -595,7 +595,13 @@
 		<class>org.deltava.commands.schedule.FindFlightCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="browse">
+		<name>Browse Schedule</name>
+		<class>org.deltava.commands.schedule.ScheduleBrowseCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="buildassign">
 		<name>Build Flight Assignment</name>
 		<class>org.deltava.commands.assign.BuildAssignmentCommand</class>
