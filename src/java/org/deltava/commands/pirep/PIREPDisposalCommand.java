@@ -138,8 +138,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   swdao.write(upd);
 			}
 			
-			// Invalidate the cached pilot entry
-			GetPilot.cache().remove(new Integer(p.getID()));
+			// If we're approving and have not assigned a Pilot Number yet, assign it
+			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
+			   SetPilot pwdao = new SetPilot(con);
+			   pwdao.assignID(p);
+			} else {
+			   GetPilot.cache().remove(p.cacheKey());   
+			}
 			
 			// Commit the transaction
 			ctx.commitTX();
@@ -160,7 +165,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			      ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
 			   }
 			}
-
+			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
 			mctx.addData("pirep", fr);
