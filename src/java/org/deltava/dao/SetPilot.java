@@ -172,4 +172,22 @@ public class SetPilot extends PilotWriteDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Assigns a Pilot ID to a Pilot.
+	 * @param p the Pilot bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void assignID(Pilot p) throws DAOException {
+	   try {
+	      prepareStatement("UPDATE PILOTS SET PILOT_ID=(MAX(PILOT_ID) + 1) WHERE (ID=?) AND (PILOT_ID=0)");
+	      _ps.setInt(1, p.getID());
+	      executeUpdate(1);
+	      
+	      // Invalidate the cache entry
+	      PilotReadDAO._cache.remove(p.cacheKey());
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
 }
