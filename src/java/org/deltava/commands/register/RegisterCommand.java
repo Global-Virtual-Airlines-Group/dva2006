@@ -194,6 +194,7 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Save the examination size
 			ctx.setAttribute("qSize", new Integer(poolSize), REQUEST);
+			ctx.setAttribute("questionnaire", ex, REQUEST);
 
 			// Get the DAO and write the questionnaire to the database
 			SetQuestionnaire qwdao = new SetQuestionnaire(con);
