@@ -104,11 +104,10 @@ public class ThreadListCommand extends AbstractViewCommand {
 			GetApplicant adao = new GetApplicant(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = (String) i.next();
-				Set IDs = new HashSet(udm.getByTable(tableName));
 				if (tableName.endsWith("APPLICANTS")) {
-					authors.putAll(adao.getByID(IDs, tableName));
+					authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
 				} else {
-					authors.putAll(pdao.getByID(IDs, tableName));
+					authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 				}
 			}
 

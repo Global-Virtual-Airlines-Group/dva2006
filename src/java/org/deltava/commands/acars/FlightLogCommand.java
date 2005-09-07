@@ -84,10 +84,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
 			GetPilot pdao = new GetPilot(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String dbTableName = (String) i.next();
-				
-				// Get the IDs and pilots from this table
-				Set IDs = new HashSet(udm.getByTable(dbTableName));
-				pilots.putAll(pdao.getByID(IDs, dbTableName));
+				pilots.putAll(pdao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
 
 			// Save the pilots in the request
