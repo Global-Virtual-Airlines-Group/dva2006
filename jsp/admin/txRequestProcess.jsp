@@ -22,6 +22,7 @@ if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false
 if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
 
 setSubmit();
+disableButton('ProfileButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
 disableButton('RejectButton');
@@ -112,7 +113,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td>
+ <td><el:cmdbutton ID="ProfileButton" url="profile" linkID="0x${pilot.ID}" label="VIEW PROFILE" />
 <c:if test="${access.canAssignRide}">
 <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
 </c:if>
