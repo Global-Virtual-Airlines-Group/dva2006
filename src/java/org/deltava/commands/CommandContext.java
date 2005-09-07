@@ -92,8 +92,7 @@ public class CommandContext implements Serializable, SecurityContext {
      * @throws ConnectionPoolException if an error occurs
      * @throws IllegalStateException if a connection has already been reserved by this context
      * @see CommandContext#getConnection()
-     * @see ConnectionPool#getSystemConnection()
-     * @see ConnectionPool#getConnection()
+     * @see ConnectionPool#getConnection(boolean)
      * @see CommandContext#release()
      */
     public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
