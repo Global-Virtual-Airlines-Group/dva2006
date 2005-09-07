@@ -62,8 +62,7 @@ public class ChannelListCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = (String) i.next();
-				Set IDs = new HashSet(udm.getByTable(tableName));
-				authors.putAll(pdao.getByID(IDs, tableName));
+				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 
 			// Save the authors for the last post in each channel
