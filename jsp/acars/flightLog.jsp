@@ -15,21 +15,12 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script language="JavaScript" type="text/javascript">
-function valdiate(form)
-{
-if (!checkSubmit()) return false;
-
-setSubmit();
-disableButton('SearchButton');
-return true;
-}
-</script>
+<content:js name="acarsLog" />
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -45,7 +36,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot Code</td>
- <td class="data" colspan="3"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
+ <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
+ <td class="label">Maximum Results</td>
+ <td class="data"><el:text name="viewCount" idx="*" size="2" max="2" value="${param.viewCount}" /></td>
 </tr>
 <tr>
  <td class="label">Start Date/Time</td>
