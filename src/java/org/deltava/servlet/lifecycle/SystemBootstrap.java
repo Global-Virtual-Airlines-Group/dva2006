@@ -107,7 +107,7 @@ public class SystemBootstrap implements ServletContextListener {
 		Connection c = null;
 		try {
 			// Get JDBC system connection
-			c = _jdbcPool.getSystemConnection();
+			c = _jdbcPool.getConnection(true);
 
 			// Load time zones
 			log.info("Loading Time Zones");

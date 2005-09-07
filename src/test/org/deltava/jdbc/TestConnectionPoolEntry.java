@@ -42,11 +42,11 @@ public class TestConnectionPoolEntry extends TestCase {
         assertEquals(_c.hashCode(), _cpe.hashCode());
         assertSame(_c, _cpe.getConnection());
         
-        assertFalse(_cpe.isRestartable());
-        _cpe.setRestartable(true);
-        assertTrue(_cpe.isRestartable());
-        _cpe.setRestartable(false);
-        assertFalse(_cpe.isRestartable());
+        assertFalse(_cpe.isDynamic());
+        _cpe.setDynamic(true);
+        assertTrue(_cpe.isDynamic());
+        _cpe.setDynamic(false);
+        assertFalse(_cpe.isDynamic());
         
         Connection c2 = _cpe.reserve();
         assertSame(c2, _c);
@@ -64,9 +64,9 @@ public class TestConnectionPoolEntry extends TestCase {
         assertFalse(_cpe.isSystemConnection());
         _cpe.setSystemConnection(true);
         assertTrue(_cpe.isSystemConnection());
-        assertTrue(_cpe.isRestartable());
-        _cpe.setRestartable(false);
-        assertTrue(_cpe.isRestartable());
+        assertTrue(_cpe.isDynamic());
+        _cpe.setDynamic(false);
+        assertTrue(_cpe.isDynamic());
     }
     
     public void testReconnection() throws SQLException {

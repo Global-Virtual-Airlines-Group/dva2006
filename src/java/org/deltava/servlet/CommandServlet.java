@@ -36,6 +36,8 @@ public class CommandServlet extends HttpServlet {
 
    private ConnectionPool _jdbcPool;
    private Map _cmds;
+   
+   private static final int MAX_EXEC_TIME = 20000;
 
    /**
     * Returns the servlet description.
@@ -115,11 +117,14 @@ public class CommandServlet extends HttpServlet {
    public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
       long startTime = System.currentTimeMillis();
 
+      // Create the command context
+      CommandContext ctxt = new CommandContext(req, rsp);
+      
       Command cmd = null;
+      CommandResult result = null;
       try {
          cmd = getCommand(req.getRequestURI());
-         CommandContext ctxt = new CommandContext(req, rsp);
-
+         
          // Validate command access
          if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
             throw new CommandSecurityException("Not Authorized to execute", cmd.getName());
@@ -132,26 +137,8 @@ public class CommandServlet extends HttpServlet {
          log.debug("Executing " + req.getMethod() + " " + cmd.getName());
          cmd.execute(ctxt);
          ctxt.setCacheHeaders();
-         CommandResult result = ctxt.getResult();
+         result = ctxt.getResult();
          result.complete();
-
-         // Create the command result statistics entry
-         CommandLog cmdLog = new CommandLog(cmd.getID(), result);
-         cmdLog.setRemoteAddr(req.getRemoteAddr());
-         cmdLog.setRemoteHost(req.getRemoteHost());
-         cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
-
-         // Log the command statistics
-         Connection c = null;
-         try {
-            c = _jdbcPool.getSystemConnection();
-            SetSystemData swdao = new SetSystemData(c);
-            swdao.logCommand(cmdLog);
-         } catch (DAOException de) {
-            log.warn("Error writing command result staitistics - " + de.getMessage());
-         } finally {
-            _jdbcPool.release(c);
-         }
 
          // Redirect/forward/send status code
          try {
@@ -195,10 +182,28 @@ public class CommandServlet extends HttpServlet {
          rd.forward(req, rsp);
       } finally {
          long execTime = System.currentTimeMillis() - startTime;
-         if (execTime < 20000) {
+         if (execTime < MAX_EXEC_TIME) {
             log.debug("Completed in " + String.valueOf(execTime) + " ms");
          } else {
             log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
+         }
+         
+         // Create the command result statistics entry
+         CommandLog cmdLog = new CommandLog(cmd.getID(), result);
+         cmdLog.setRemoteAddr(req.getRemoteAddr());
+         cmdLog.setRemoteHost(req.getRemoteHost());
+         cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
+
+         // Log the command statistics
+         Connection c = null;
+         try {
+            c = _jdbcPool.getConnection(true);
+            SetSystemData swdao = new SetSystemData(c);
+            swdao.logCommand(cmdLog);
+         } catch (DAOException de) {
+            log.warn("Error writing command result staitistics - " + de.getMessage());
+         } finally {
+            _jdbcPool.release(c);
          }
       }
    }

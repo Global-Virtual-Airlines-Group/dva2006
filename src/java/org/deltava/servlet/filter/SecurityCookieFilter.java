@@ -76,7 +76,7 @@ public class SecurityCookieFilter implements Filter {
         Person p = null;
 
         try {
-            con = pool.getSystemConnection();
+            con = pool.getConnection(true);
 
             // Get the person
             GetPilotDirectory dao = new GetPilotDirectory(con);

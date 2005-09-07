@@ -43,7 +43,7 @@ public class UserListener implements HttpSessionListener {
 
 		// Log the session creation
 		try {
-			con = jdbcPool.getSystemConnection();
+			con = jdbcPool.getConnection(true);
 			SetSystemData wdao = new SetSystemData(con);
 			wdao.openSession(s);
 		} catch (DAOException de) {
@@ -77,7 +77,7 @@ public class UserListener implements HttpSessionListener {
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
 		try {
-			con = jdbcPool.getSystemConnection();
+			con = jdbcPool.getConnection(true);
 			
 			// Log the session close, or delete the session if for anonymous
 			SetSystemData swdao = new SetSystemData(con);

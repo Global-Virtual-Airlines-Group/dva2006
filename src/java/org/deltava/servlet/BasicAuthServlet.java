@@ -55,7 +55,7 @@ public abstract class BasicAuthServlet extends GenericServlet {
 		Connection con = null;
 		Pilot p = null;
 		try {
-			con = pool.getSystemConnection();
+			con = pool.getConnection(true);
 
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
