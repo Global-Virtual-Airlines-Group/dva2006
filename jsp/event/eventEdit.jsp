@@ -22,9 +22,13 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 5, 'Event Name')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateText(form.route, 5, 'Default Route')) return false;
 if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
+if (form.airportDCodes.value.length < 1) {
+	alert('Please provide at least one Departure Airport.');
+	form.airportD.focus();
+	return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
