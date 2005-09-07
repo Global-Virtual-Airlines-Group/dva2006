@@ -12,7 +12,7 @@ if (textbox.value.length < 3) {
 }
 
 // Don't strip out leading letter for METAR Info
-if ((sindex != 3) && (textbox.value.length == 4))
+if ((sindex == 0) && (textbox.value.length == 4))
 	textbox.value = textbox.value.substring(1, 4);
 	
 // Calculate the proper URL
