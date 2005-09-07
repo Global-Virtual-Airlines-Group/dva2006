@@ -41,7 +41,7 @@ public class CommandStatsCommand extends AbstractCommand {
          
          // Get the DAO and the statistics
          GetSystemData dao = new GetSystemData(con);
-         ctx.setAttribute("stats", dao.getCommandStats(sortBy).values(), REQUEST);
+         ctx.setAttribute("stats", dao.getCommandStats(sortBy), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

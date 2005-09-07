@@ -257,10 +257,10 @@ public class GetSystemData extends DAO {
 	/**
 	 * Returns Command invocation statistics.
 	 * @param orderBy the column to order results by
-	 * @return a Map of CommandStatsEntry beans, keyed by Command ID
+	 * @return a Collection of CommandStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getCommandStats(String orderBy) throws DAOException {
+	public Collection getCommandStats(String orderBy) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuffer sqlBuf = new StringBuffer("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
@@ -293,12 +293,10 @@ public class GetSystemData extends DAO {
 	      // Clean up after ourselves
 	      rs.close();
 	      _ps.close();
+	      return results;
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
-	   
-	   // Convert to a map
-	   return CollectionUtils.createMap(results, "name");
 	}
 	
 	/**
