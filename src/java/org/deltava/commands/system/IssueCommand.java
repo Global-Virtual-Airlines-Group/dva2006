@@ -5,9 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-
-import org.deltava.beans.system.Issue;
-import org.deltava.beans.system.IssueComment;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -180,12 +178,37 @@ public class IssueCommand extends AbstractFormCommand {
 				// Save the issue in the request
 				ctx.setAttribute("issue", i, REQUEST);
 			}
-
+			
+			// Get the Pilot DAO
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			
+			// Get developers
+			Set devs = new TreeSet();
+			Collection apps = ((Map) SystemData.getObject("apps")).values();
+			for (Iterator it = apps.iterator(); it.hasNext(); ) {
+			   AirlineInformation aInfo = (AirlineInformation) it.next();
+			   devs.addAll(pdao.getByRole("Developer", aInfo.getDB()));
+			}
+			
+			// Save developers in request
+			ctx.setAttribute("devs", devs, REQUEST);
+			
 			// Get the Pilots posting in this issue
-			GetPilotDirectory dao2 = new GetPilotDirectory(con);
-			ctx.setAttribute("devs", dao2.getPilotsByRole("Developer"), REQUEST);
-			if (!isNew)
-				ctx.setAttribute("pilots", dao2.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
+			if (!isNew) {
+				// Get the userData DAO
+				GetUserData uddao = new GetUserData(con);
+				UserDataMap udm = uddao.get(getPilotIDs(i));
+				ctx.setAttribute("userData", udm, REQUEST);
+
+				// Get the Pilots posting in this issue
+				Map pilots = new HashMap();
+				for (Iterator it = udm.getTableNames().iterator(); it.hasNext(); ) {
+				   String tableName = (String) it.next();
+				   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
+				}
+				
+				ctx.setAttribute("pilots", pilots, REQUEST);
+			}
 
 			// Save the objects in the request
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
@@ -223,12 +246,20 @@ public class IssueCommand extends AbstractFormCommand {
 			Issue i = dao.get(ctx.getID());
 			if (i == null)
 				throw new CommandException("Invalid Issue - " + ctx.getID());
+			
+			// Get the userData DAO
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udm = uddao.get(getPilotIDs(i));
+			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the Pilots posting in this issue
-			GetPilotDirectory dao2 = new GetPilotDirectory(con);
-			ctx.setAttribute("pilots", dao2.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
-			ctx.setAttribute("devs", dao2.getPilotsByRole("Developer"), REQUEST);
-
+			Map pilots = new HashMap();
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			for (Iterator it = udm.getTableNames().iterator(); it.hasNext(); ) {
+			   String tableName = (String) it.next();
+			   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
+			}
+			
 			// Check our access
 			IssueAccessControl access = new IssueAccessControl(ctx, i);
 			access.validate();
@@ -236,6 +267,7 @@ public class IssueCommand extends AbstractFormCommand {
 			// Save the issue and the access in the request
 			ctx.setAttribute("issue", i, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
+			ctx.setAttribute("pilots", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -251,7 +283,7 @@ public class IssueCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
-	private Collection getPilotIDs(Issue i) {
+	private Set getPilotIDs(Issue i) {
 
 		Set results = new HashSet();
 

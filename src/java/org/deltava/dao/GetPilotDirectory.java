@@ -160,14 +160,24 @@ public class GetPilotDirectory extends PilotReadDAO {
    /**
     * Returns all Pilots who have a particular security role.
     * @param roleName the role name
+    * @param dbName the database name
     * @return a List of Pilots
     * @throws DAOException if a JDBC error occurs
     */
-   public List getPilotsByRole(String roleName) throws DAOException {
+   public List getByRole(String roleName, String dbName) throws DAOException {
+      
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+            + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".PILOTS P LEFT JOIN ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append("ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+      
    	try {
-           prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-               	+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ROLES R ON (P.ID=R.ID) "
-               	+ "WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+           prepareStatement(sqlBuf.toString());
    		_ps.setString(1, roleName);
    		_ps.setInt(2, FlightReport.OK);
    		return execute();

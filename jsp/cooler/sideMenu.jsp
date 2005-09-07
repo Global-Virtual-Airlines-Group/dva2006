@@ -65,11 +65,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="staff">OUR STAFF</el:cmd></td>
 </tr>
-<c:if test="${showIssue}">
-<tr class="MenuHeader"><td>DVA 2006</td></tr>
+<tr class="MenuHeader"><td>GOLGOTHA</td></tr>
 <tr class="MenuItem">
  <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
 </tr>
+<c:if test="${showIssue}">
 <tr class="MenuItem">
  <td><el:link url="/javadoc/index.html">JAVA API DOCS</el:link></td>
 </tr>

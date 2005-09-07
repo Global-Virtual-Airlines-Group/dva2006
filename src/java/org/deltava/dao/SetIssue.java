@@ -28,8 +28,8 @@ public class SetIssue extends DAO {
      * Helper method to initialize the prepared statement for INSERTs.
      */
     private void insert(Issue i) throws SQLException {
-        prepareStatement("INSERT INTO ISSUES (ID, AUTHOR, ASSIGNEDTO, CREATED, RESOLVED, SUBJECT, " +
-    			"DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        prepareStatement("INSERT INTO common.ISSUES (ID, AUTHOR, ASSIGNEDTO, CREATED, RESOLVED, SUBJECT, "
+              + "DESCRIPTION, AREA, PRIORITY, STATUS, TYPE, MAJOR, MINOR) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         
         // Populate the prepared statement
         _ps.setInt(1, i.getID());
@@ -51,8 +51,8 @@ public class SetIssue extends DAO {
      * Helper method to initialize the prepared statement for UPDATEs.
      */
     private void update(Issue i) throws SQLException {
-        prepareStatement("UPDATE ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, " +
-    			"AREA=?, PRIORITY=?, STATUS=?, TYPE=?, MAJOR=?, MINOR=? WHERE (ID=?)");
+        prepareStatement("UPDATE common.ISSUES SET ASSIGNEDTO=?, RESOLVED=?, SUBJECT=?, DESCRIPTION=?, "
+              + "AREA=?, PRIORITY=?, STATUS=?, TYPE=?, MAJOR=?, MINOR=? WHERE (ID=?)");
 
         // Populate the prepared statement
         _ps.setInt(1, i.getAssignedTo());
@@ -110,8 +110,8 @@ public class SetIssue extends DAO {
      */
     public void writeComment(IssueComment ic) throws DAOException {
     	try {
-    		prepareStatementWithoutLimits("REPLACE INTO ISSUE_COMMENTS (ID, ISSUE_ID, AUTHOR, CREATED, COMMENTS) " +
-        			"VALUES (?, ?, ?, ?, ?)");
+    		prepareStatementWithoutLimits("REPLACE INTO common.ISSUE_COMMENTS (ID, ISSUE_ID, AUTHOR, CREATED, "
+    		      + "COMMENTS) VALUES (?, ?, ?, ?, ?)");
     		
     		_ps.setInt(1, ic.getID());
     		_ps.setInt(2, ic.getIssueID());
