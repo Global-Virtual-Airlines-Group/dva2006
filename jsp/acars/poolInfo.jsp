@@ -49,7 +49,7 @@
 </tr>
 <tr>
  <td colspan="7">Socket settings: <fmt:int value="${con.socket.sendBufferSize}" /> bytes out, 
-<fmt:int value="${con.socket.recvBufferSize}" /> bytes in. TCP_NODELAY = ${con.socket.tcpNoDelay}, 
+<fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. TCP_NODELAY = ${con.socket.tcpNoDelay}, 
 SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 </tr>
 </c:forEach>
