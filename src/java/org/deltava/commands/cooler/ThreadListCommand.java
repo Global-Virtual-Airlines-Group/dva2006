@@ -42,7 +42,7 @@ public class ThreadListCommand extends AbstractViewCommand {
         
         // Get/set start/count parameters and channel name
         ViewContext vc = initView(ctx);
-        String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
+        String cName = (String) ctx.getCmdParameter(ID, "General Discussion");
         
         try {
             Connection con = ctx.getConnection();
@@ -66,10 +66,10 @@ public class ThreadListCommand extends AbstractViewCommand {
             cAccess.validate();
             ctx.setAttribute("channelAccess", cAccess, REQUEST);
             
-            // Get the Message Threads for this channel
+            // Get the Message Threads for this channel - add by 10% for filtering
             GetCoolerThreads dao2 = new GetCoolerThreads(con);
             dao2.setQueryStart(vc.getStart());
-            dao2.setQueryMax(vc.getCount());
+            dao2.setQueryMax(Math.round(vc.getCount() * 1.15f));
             
             // Initialize the access controller and the set to store pilot IDs
             CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
@@ -115,8 +115,8 @@ public class ThreadListCommand extends AbstractViewCommand {
             // Get the pilot IDs in the returned threads
             ctx.setAttribute("pilots", authors, REQUEST);
             
-            // Save in the view context
-            vc.setResults(threads);
+            // Save in the view context - If threads is still larger than the max, then cut it off
+            vc.setResults((threads.size() > vc.getCount()) ? threads.subList(0, vc.getCount()) : threads);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
