@@ -42,7 +42,7 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
          for (Iterator i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
             Set pilots = new TreeSet(cmp);
-            pilots.addAll(dao.getPilotsByRole(roleName));
+            pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db")));
             
             // Add to results
             results.put(roleName, pilots);
