@@ -32,7 +32,7 @@ public class GetIssue extends DAO {
 	 */
 	public Issue get(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM ISSUES WHERE (ID=?)");
+			prepareStatement("SELECT * FROM common.ISSUES WHERE (ID=?)");
 			_ps.setInt(1, id);
 			
 			// Execute the query - return null if nothing found
@@ -58,10 +58,9 @@ public class GetIssue extends DAO {
 	 * @throws DAOException the a JDBC error occurs
 	 */
 	public List getAll(String sortBy) throws DAOException {
-
 		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC  FROM ISSUES I LEFT JOIN "
-			      + "ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) GROUP BY I.ID ORDER BY " + sortBy);
+			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC  FROM common.ISSUES I "
+			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) GROUP BY I.ID ORDER BY " + sortBy);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -76,12 +75,11 @@ public class GetIssue extends DAO {
 	 */
 	public List getUserIssues(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM ISSUES I LEFT JOIN "
-			      + "ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR (I.ASSIGNEDTO=?)) GROUP BY I.ID");
+			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
+			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
+			      + "(I.ASSIGNEDTO=?)) GROUP BY I.ID");
 			_ps.setInt(1, id);
 			_ps.setInt(2, id);
-			
-			// Execute the query and return
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -96,11 +94,9 @@ public class GetIssue extends DAO {
 	 */
 	public List getByStatus(int status) throws DAOException {
 		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM ISSUES I LEFT JOIN "
-			      + "ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) GROUP BY I.ID ORDER BY I.ID");
+			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
+			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) GROUP BY I.ID");
 			_ps.setInt(1, status);
-			
-			// Execute the query and return
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -111,8 +107,8 @@ public class GetIssue extends DAO {
 	 * Helper method to return all comments for a particular issue.
 	 */
 	private void getComments(Issue i) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ID, AUTHOR, CREATED, COMMENTS FROM ISSUE_COMMENTS WHERE (ISSUE_ID=?) "
-		      + "ORDER BY CREATED");
+		prepareStatementWithoutLimits("SELECT ID, AUTHOR, CREATED, COMMENTS FROM common.ISSUE_COMMENTS "
+		      + "WHERE (ISSUE_ID=?) ORDER BY CREATED");
 		_ps.setInt(1, i.getID());
 		
 		// Execute the query
