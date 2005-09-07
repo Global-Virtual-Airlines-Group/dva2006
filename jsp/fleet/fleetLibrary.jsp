@@ -48,6 +48,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
+<el:form action="fleetlibrary.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td class="caps">FLEET LIBRARY</td>
@@ -73,6 +74,8 @@ Select a Fleet Installer from the list above.</div>
  <td><el:button ID="DownloadButton" className="BUTTON" label="DOWNLOAD INSTALLER" onClick="void download(document.fileName)" /></td>
 </tr>
 </el:table>
+</el:form>
+<br />
 <content:copyright />
 </div>
 <script language="JavaScript" type="text/javascript">
