@@ -147,8 +147,9 @@ public class LibraryServlet extends GenericServlet {
 			is.close();
 			out.flush();
 		} catch (IOException ie) {
-			log("Error streaming " + f.getAbsolutePath() + " - " + ie.getMessage());
-			throw ie;
+		   // NOOP
+		} catch (Exception e) {
+		   log.error("Error downloading " + f.getName(), e);
 		}
 
 		// Close the file and log download time

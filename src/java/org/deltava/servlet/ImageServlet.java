@@ -154,7 +154,7 @@ public class ImageServlet extends BasicAuthServlet {
             rsp.flushBuffer();
             out.close();
         } catch (IOException ie) {
-            log.error("Error writing image - " + ie.getMessage(), ie);
+            // NOOP
         }
     }
 }
