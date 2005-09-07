@@ -132,7 +132,7 @@ public class ThreadPostCommand extends AbstractCommand {
                   img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
                   ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST);
                } catch (IOException ie) {
-                  log.warn("Error scaling image - " + ie.getMessage());
+                  log.warn("Error scaling image - " + ie.getMessage(), ie);
                   img = null;
                }
             }
