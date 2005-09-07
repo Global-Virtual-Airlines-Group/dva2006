@@ -41,6 +41,13 @@ public class MessageLogCommand extends ACARSLogViewCommand {
          return;
       }
       
+      // If we're doing a search by Pilot ID, validate the ID
+      if ((searchType == SEARCH_USR) && (!validatePilotCode(ctx.getParameter("pilotCode")))) {
+         ctx.setMessage("Invalid Pilot Code");
+         result.setURL("/jsp/acars/msgLog.jsp");
+         return;
+      }
+      
       try {
          Connection con = ctx.getConnection();
 
@@ -66,6 +73,8 @@ public class MessageLogCommand extends ACARSLogViewCommand {
          	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
          	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
             vc.setResults(dao.getMessages(sd, ed));
+         } else if (searchType == SEARCH_LATEST) {
+            vc.setResults(dao.getMessages());
          } else {
             vc.setResults(dao.getMessages(pilotID));
          }

@@ -15,16 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="datePicker" />
-<script language="JavaScript" type="text/javascript">
-function valdiate(form)
-{
-if (!checkSubmit()) return false;
-
-setSubmit();
-disableButton('SearchButton');
-return true;
-}
-</script>
+<content:js name="acarsLog" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -44,7 +35,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot Code</td>
- <td class="data" colspan="3"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
+ <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
+ <td class="label">Maximum Results</td>
+ <td class="data"><el:text name="viewCount" idx="*" size="2" max="2" value="${param.viewCount}" /></td>
 </tr>
 <tr>
  <td class="label">Start Date/Time</td>
@@ -56,6 +49,11 @@ return true;
 <el:text name="endTime" idx="*" size="8" max="8" value="${param.endTime}" />&nbsp;
 <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
 </tr>
+<c:if test="${!empty system_message}">
+<tr class="pri mid error">
+ <td colspan="4">${system_message}</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -103,13 +101,13 @@ return true;
 </tr>
 </view:table>
 </c:when>
-<c:otherwise>
+<c:when test="${doSearch}">
 <el:table className="view" space="default" pad="default">
 <tr>
  <td class="pri bld">No Messages matching your search criteria were found in the ACARS log database.</td>
 </tr>
 </el:table>
-</c:otherwise>
+</c:when>
 </c:choose>
 <content:copyright />
 </div>
