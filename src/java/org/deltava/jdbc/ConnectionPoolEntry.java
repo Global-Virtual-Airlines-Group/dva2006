@@ -149,7 +149,7 @@ class ConnectionPoolEntry implements Comparable {
     
     /**
      * Marks this connection as dynamic.
-     * @param restart TRUE if the connection is dynamic, otherwise FALSE
+     * @param dynamic TRUE if the connection is dynamic, otherwise FALSE
      * @see ConnectionPoolEntry#isDynamic()
      */
     void setDynamic(boolean dynamic) {
