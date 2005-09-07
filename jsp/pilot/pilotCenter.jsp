@@ -361,6 +361,11 @@ database.</td>
  <td class="data">You can view information about the application server and Java Virtual Machine.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="securityroles">Security Roles</el:cmd></td>
+ <td class="data">You can view all <content:airline /> Pilots who have one or more web application security
+roles.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="cmdstats">Command Statistics</el:cmd></td>
  <td class="data">You can view statistics about Web Site Command invocations, application server 
 and database usage times here.</td>
