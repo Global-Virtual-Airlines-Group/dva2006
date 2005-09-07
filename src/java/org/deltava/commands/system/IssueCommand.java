@@ -182,7 +182,7 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 
 			// Get the Pilots posting in this issue
-			GetPilotIssue dao2 = new GetPilotIssue(con);
+			GetPilotDirectory dao2 = new GetPilotDirectory(con);
 			ctx.setAttribute("devs", dao2.getPilotsByRole("Developer"), REQUEST);
 			if (!isNew)
 				ctx.setAttribute("pilots", dao2.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
@@ -225,7 +225,7 @@ public class IssueCommand extends AbstractFormCommand {
 				throw new CommandException("Invalid Issue - " + ctx.getID());
 
 			// Get the Pilots posting in this issue
-			GetPilotIssue dao2 = new GetPilotIssue(con);
+			GetPilotDirectory dao2 = new GetPilotDirectory(con);
 			ctx.setAttribute("pilots", dao2.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
 			ctx.setAttribute("devs", dao2.getPilotsByRole("Developer"), REQUEST);
 

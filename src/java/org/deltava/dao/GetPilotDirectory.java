@@ -156,4 +156,23 @@ public class GetPilotDirectory extends PilotReadDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+   /**
+    * Returns all Pilots who have a particular security role.
+    * @param roleName the role name
+    * @return a List of Pilots
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getPilotsByRole(String roleName) throws DAOException {
+   	try {
+           prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+               	+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ROLES R ON (P.ID=R.ID) "
+               	+ "WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+   		_ps.setString(1, roleName);
+   		_ps.setInt(2, FlightReport.OK);
+   		return execute();
+   	} catch (SQLException se) {
+           throw new DAOException(se);
+       }
+   }
 }
