@@ -103,6 +103,20 @@ public class GetACARSLog extends GetACARSData {
          throw new DAOException(se);
       }
    }
+
+   /**
+    * Returns the latest ACARS text messages.
+    * @return a List of TextMessage beans
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getMessages() throws DAOException {
+      try {
+         prepareStatement("SELECT * FROM acars.MESSAGES ORDER BY DATE DESC");
+         return executeMsg();
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
    
    /**
     * Returns all ACARS text messages sent between two dates.
@@ -126,6 +140,21 @@ public class GetACARSLog extends GetACARSData {
       } catch (SQLException se) {
          throw new DAOException(se);
       }      
+   }
+   
+   /**
+    * Returns the latest Flight Information entries.
+    * @return a List of InfoEntry beans
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getFlights() throws DAOException {
+      try {
+         prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.CONS C, acars.FLIGHTS F WHERE (C.ID=F.CON_ID) "
+               + "ORDER BY F.CREATED DESC");
+         return executeFlightInfo();
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
    }
    
    /**
