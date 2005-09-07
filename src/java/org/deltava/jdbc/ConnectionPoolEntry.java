@@ -20,7 +20,7 @@ class ConnectionPoolEntry implements Comparable {
     
     private boolean _inUse = false;
     private boolean _systemOwned = false;
-    private boolean _restartable = false;
+    private boolean _dynamic = false;
     private boolean _autoCommit = true;
     
     private long _totalTime;
@@ -59,13 +59,12 @@ class ConnectionPoolEntry implements Comparable {
     }
     
     /**
-     * Returns if this connection can be reconnected by a connection monitor. System
-     * connections are always considered restartable.
-     * @return TRUE if the connection is system-owned or marked restartable, otherwise FALSE
+     * Returns if this connection can be reconnected by a connection monitor, or freed after use.
+     * @return TRUE if the connection can be freed after use, otherwise FALSE
      * @see ConnectionPoolEntry#isSystemConnection()
      */
-    public boolean isRestartable() {
-        return (_systemOwned || _restartable);
+    public boolean isDynamic() {
+        return _dynamic;
     }
     
     /**
@@ -149,12 +148,12 @@ class ConnectionPoolEntry implements Comparable {
     }
     
     /**
-     * Marks this connection as restartable by a connection monitor. System-owned connections are always
-     * considered restartable.
-     * @param restart TRUE if the connection can be restarted, otherwise FALSE
+     * Marks this connection as dynamic.
+     * @param restart TRUE if the connection is dynamic, otherwise FALSE
+     * @see ConnectionPoolEntry#isDynamic()
      */
-    void setRestartable(boolean restart) {
-        _restartable = (_systemOwned || restart);
+    void setDynamic(boolean dynamic) {
+        _dynamic = dynamic;
     }
     
     /**

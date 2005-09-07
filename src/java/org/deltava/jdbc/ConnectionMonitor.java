@@ -74,7 +74,7 @@ class ConnectionMonitor extends Thread {
       e.close();
 
       // Reconnect the connection if we can
-      if (e.isRestartable()) {
+      if (!e.isDynamic()) {
          try {
             e.connect();
             return true;
