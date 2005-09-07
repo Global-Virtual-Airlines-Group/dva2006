@@ -45,10 +45,9 @@ public class EventCommand extends AbstractCommand {
 				List results = edao.getFutureEvents();
 
 				// If no future events, redirect to the no events page - make sure we calculate event access first
-				if (results.isEmpty())
-					results = edao.getEvents();
-
 				if (results.isEmpty()) {
+				   ctx.release();
+				   
 					EventAccessControl eAccess = new EventAccessControl(ctx, null);
 					eAccess.validate();
 					ctx.setAttribute("access", eAccess, REQUEST);
