@@ -14,7 +14,7 @@ CREATE TABLE APPLICANTS (
  LEGACY_OK          BOOL,
  HOME_AIRPORT       CHAR(3),
  EQTYPE             VARCHAR(15) DEFAULT 'CRJ-200',
- RANK               VARCHAR(18) DEFAULT 'First Officer',
+ RANK               VARCHAR(24) DEFAULT 'First Officer',
  FLEET_NOTIFY       BOOL,
  EVENT_NOTIFY       BOOL,
  NEWS_NOTIFY        BOOL,
