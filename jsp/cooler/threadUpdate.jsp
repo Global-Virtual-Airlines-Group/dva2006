@@ -80,7 +80,7 @@ The discussion thread will automatically be displayed within 3 seconds. If your 
 to the thread or you are impatient, you can <el:cmd className="sec bld" url="thread" linkID="0x${thread.ID}" op="read">click here</el:cmd>
 to display the discussion thread.<br />
 <br />
-To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">$click here</el:cmd><br />
+To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">click here</el:cmd><br />
 <br />
 <content:copyright />
 </div>
