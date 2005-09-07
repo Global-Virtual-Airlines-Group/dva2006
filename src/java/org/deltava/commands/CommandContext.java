@@ -105,7 +105,7 @@ public class CommandContext implements Serializable, SecurityContext {
         if (_con != null)
             throw new IllegalStateException("Connection already reserved");
 
-        _con = (isSystem) ? pool.getSystemConnection() : pool.getConnection();
+        _con = pool.getConnection(isSystem);
         return _con;
     }
 

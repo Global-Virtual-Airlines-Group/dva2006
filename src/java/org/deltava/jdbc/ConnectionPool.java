@@ -5,7 +5,7 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 
 /**
  * A class that implements a user-configurable JDBC Connection Pool.
@@ -23,14 +23,12 @@ public class ConnectionPool implements Recycler {
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
 	static final int MAX_USE_TIME = 58000;
-
+	static final int MAX_SYS_CONS = 3;
+	
 	private int _poolMaxSize = 1;
-	private int _lastID;
 
-	private ConnectionMonitor _monitor;
-
-	private List _cons;
-	private List _sysCons;
+	private static ConnectionMonitor _monitor;
+	private SortedSet _cons;
 
 	private Properties _props;
 	private boolean _autoCommit = true;
@@ -50,12 +48,20 @@ public class ConnectionPool implements Recycler {
 	private void checkConnected() throws IllegalStateException {
 		if (_cons == null)
 			throw new IllegalStateException("Pool not connected");
-		
+
 		// Check that connection monitor is still alive
 		if ((_monitor != null) && (!_monitor.isAlive())) {
-		   log.warn("Connection Monitor not running!");
-		   _monitor.start();
+			log.warn("Connection Monitor not running!");
+			_monitor.start();
 		}
+	}
+
+	private int getNextID() {
+		if (CollectionUtils.isEmpty(_cons))
+			return 1;
+ 
+		ConnectionPoolEntry cpe = (ConnectionPoolEntry) _cons.last();
+		return cpe.getID() + 1;
 	}
 
 	/**
@@ -132,51 +138,68 @@ public class ConnectionPool implements Recycler {
 	 * @throws SQLException if a JDBC error occurs connecting to the data source.
 	 */
 	protected ConnectionPoolEntry createConnection(boolean isSystem) throws SQLException {
-		int id = ++_lastID;
-		log.info("Connecting to " + getURL() + " as user " + _props.getProperty("user", "") + " ID #" + ((isSystem) ? "SYS" : "") + id);
+		int id = getNextID();
+		log.info("Connecting to " + getURL() + " as user " + _props.getProperty("user", "") + " ID #"
+				+ ((isSystem) ? "SYS" : "") + id);
 		ConnectionPoolEntry entry = new ConnectionPoolEntry(id, getURL(), _props);
 		entry.setAutoCommit(_autoCommit);
 		entry.setSystemConnection(isSystem);
 		entry.connect();
-		_monitor.addConnection(entry);
 		return entry;
 	}
 
 	/**
+	 * Gets a user JDBC connection.
+	 * @return a JDBC connection
+	 * @throws ConnectionPoolException if the pool is full
+	 * @see ConnectionPool#getConnection(boolean)
+	 */
+	public Connection getConnection() throws ConnectionPoolException {
+		return getConnection(false);
+	}
+	
+	/**
 	 * Gets a JDBC connection from the connection pool. The size of the connection pool will be increased if the pool is
 	 * full but maxSize has not been reached.
+	 * @param isSystem TRUE if a system connection is requested, otherwise FALSE
 	 * @return the JDBC connection
 	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
 	 * @throws ConnectionPoolException if the connection pool is entirely in use
 	 */
-	public synchronized Connection getConnection() throws ConnectionPoolException {
+	public synchronized Connection getConnection(boolean isSystem) throws ConnectionPoolException {
 		checkConnected();
 
-		// Loop through the connection pool, if we find one not in use then get
-		// it
+		// Loop through the connection pool, if we find one not in use then get it
+		int sysConSize = 0;
 		for (Iterator i = _cons.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+			if (cpe.isSystemConnection())
+				sysConSize++;
 
 			// If the connection pool entry is stale, release it
-			if (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME) {
+			if (cpe.getUseTime() > MAX_USE_TIME) {
 				log.warn("Releasing stale JDBC Connection " + cpe);
 				cpe.free();
 			}
 
 			// If the connection pool entry is not in use, reserve it
-			if (!cpe.inUse()) {
+			if (!cpe.inUse() && (cpe.isSystemConnection() == isSystem)) {
 				log.debug("Reserving JDBC Connection " + cpe);
 				return cpe.reserve();
 			}
 		}
 
 		// If we haven't found a free connection, check if we can grow the pool
-		if (_cons.size() >= _poolMaxSize)
+		if (isSystem && (sysConSize >= MAX_SYS_CONS)) {
 			throw new ConnectionPoolException("Connection Pool full");
+		} else if (!isSystem && ((_cons.size() - sysConSize) >= _poolMaxSize)) {
+			throw new ConnectionPoolException("Connection Pool full");
+		}
 
 		// Get a new connection and add it to the pool
 		try {
-			ConnectionPoolEntry cpe = createConnection(false);
+			ConnectionPoolEntry cpe = createConnection(isSystem);
+			cpe.setDynamic(true);
 			_cons.add(cpe);
 
 			// Return back the new connection
@@ -188,53 +211,9 @@ public class ConnectionPool implements Recycler {
 	}
 
 	/**
-	 * Gets a JDBC connection from the connection pool, without failing if the pool is full. This method should only
-	 * ever be called by system services that require guaranteed access to the connection pool.
-	 * @return the JDBC connection
-	 * @throws ConnectionPoolException if a JDBC error occurs creating a new connection
-	 */
-	public synchronized Connection getSystemConnection() throws ConnectionPoolException {
-		checkConnected();
-		
-		// Loop through the system connection pool, if we find one not in use
-		// then get it
-		for (Iterator i = _sysCons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-
-			// If the connection pool entry is stale, release it
-			if (cpe.getUseTime() > MAX_USE_TIME) {
-				log.warn("Releasing stale JDBC Connection " + cpe);
-				cpe.free();
-			}
-
-			// If the connection pool entry is not in use, reserve it
-			if (!cpe.inUse()) {
-				log.debug("Reserving JDBC Connection " + cpe);
-				return cpe.reserve();
-			}
-		}
-		
-		// If there are more than 3 system connections, throw an exception
-		if (_sysCons.size() > 3)
-			throw new ConnectionPoolException("Connection Pool full");
-
-		// If the pool is full, then create a new connection
-		try {
-			ConnectionPoolEntry cpe = createConnection(true);
-			_sysCons.add(cpe);
-
-			// Return back the new connection
-			log.debug("Reserving JDBC Connection " + cpe);
-			return cpe.reserve();
-		} catch (SQLException se) {
-			throw new ConnectionPoolException(se);
-		}
-	}
-
-	/**
 	 * Returns a JDBC connection to the connection pool. <i>Since the connection may have been returned back to the pool
 	 * in the middle of a failed transaction, all pending writes will be rolled back and the autoCommit property of the
-	 * JDBC connection reset.
+	 * JDBC connection reset.</i>
 	 * @param c the JDBC connection to return
 	 * @return the number of milliseconds the connection was used for
 	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
@@ -252,30 +231,24 @@ public class ConnectionPool implements Recycler {
 			} else {
 				c.rollback();
 			}
-		} catch (SQLException se) { }
-		
-		// Build a giant list of connections
-		Collection cons = new ArrayList(_cons);
-		cons.addAll(_sysCons);
+		} catch (SQLException se) {
+		}
 
 		// Find the connection pool entry and free it
-		int minSysCon = Integer.MAX_VALUE;
-		for (Iterator i = cons.iterator(); i.hasNext();) {
+		for (Iterator i = _cons.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-			if (cpe.isSystemConnection() && (cpe.getID() < minSysCon))
-			   minSysCon = cpe.getID();
-			
+
 			// If we find the connection, release it
 			if (cpe.equals(c)) {
 				cpe.free();
-				
-				// If we have multiple system connections, close this one down
-				if (cpe.isSystemConnection() && (cpe.getID() > minSysCon)) {
-				   _monitor.removeConnection(cpe);
+
+				// If this is a dynamic connection, such it down
+				if (cpe.isDynamic()) {
 					cpe.close();
 					i.remove();
+					log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				} else {
-				   log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");   
+					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 				}
 
 				return cpe.getUseTime();
@@ -297,14 +270,18 @@ public class ConnectionPool implements Recycler {
 			throw new IllegalArgumentException("Invalid pool size - " + initialSize);
 
 		// Create connections
-		_cons = new ArrayList();
+		_cons = new TreeSet();
 		try {
-			for (int x = 0; x < initialSize; x++)
-				_cons.add(createConnection(false));
+			for (int x = 0; x < initialSize; x++) {
+				 ConnectionPoolEntry cpe = createConnection(false);
+				 _monitor.addConnection(cpe);
+				_cons.add(cpe);
+			}
 
 			// Create a system connection
-			_sysCons = new ArrayList();
-			_sysCons.add(createConnection(true));
+			ConnectionPoolEntry sysc = createConnection(true);
+			_monitor.addConnection(sysc);
+			_cons.add(sysc);
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
 		}
@@ -321,63 +298,39 @@ public class ConnectionPool implements Recycler {
 		ThreadUtils.kill(_monitor, 500);
 
 		// Disconnect the regular connections
-		if (_cons != null) {
-			for (Iterator i = _cons.iterator(); i.hasNext();) {
-				ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-				if (cpe.inUse())
-					log.warn("Forcibly closing JDBC Connection " + cpe);
+		if (_cons == null)
+			return;
 
-				try {
-					cpe.getConnection().close();
-				} catch (SQLException se) {
-					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
-				} finally {
-				   _monitor.removeConnection(cpe);
-				}
+		for (Iterator i = _cons.iterator(); i.hasNext();) {
+			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+			if (cpe.inUse())
+				log.warn("Forcibly closing JDBC Connection " + cpe);
 
-				log.info("Closed JDBC Connection " + cpe);
+			try {
+				cpe.getConnection().close();
+			} catch (SQLException se) {
+				log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
+			} finally {
+				_monitor.removeConnection(cpe);
 			}
 
-			_cons = null;
+			log.info("Closed JDBC Connection " + cpe);
 		}
 
-		// Disconnect the system connections
-		if (_sysCons != null) {
-			for (Iterator i = _sysCons.iterator(); i.hasNext();) {
-				ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-				if (cpe.inUse())
-					log.warn("Forcibly closing JDBC Connection " + cpe);
-
-				try {
-					cpe.getConnection().close();
-				} catch (SQLException se) {
-					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
-				} finally {
-				   _monitor.removeConnection(cpe);
-				}
-
-				log.info("Closed JDBC Connection " + cpe);
-			}
-
-			_sysCons = null;
-		}
+		_cons = null;
 	}
-	
+
 	/**
 	 * Returns information about the connection pool.
 	 * @return a Collection of ConnectionInfo entries
 	 */
 	public Collection getPoolInfo() {
-	   // Build a list of all connections
-	   Collection allCons = new ArrayList(_cons);
-	   allCons.addAll(_sysCons);
-	   
-	   Set results = new TreeSet();
-	   for (Iterator i = allCons.iterator(); i.hasNext(); ) {
-	      ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-	      results.add(new ConnectionInfo(cpe));
-	   }
-	   
-	   return results;
+		Collection results = new ArrayList();
+		for (Iterator i = _cons.iterator(); i.hasNext();) {
+			ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+			results.add(new ConnectionInfo(cpe));
+		}
+
+		return results;
 	}
 }

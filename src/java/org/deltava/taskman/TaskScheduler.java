@@ -125,7 +125,7 @@ public class TaskScheduler extends Thread {
 					// Log Execution date/time
 					Connection c = null;
 					try {
-					   c = _pool.getSystemConnection();
+					   c = _pool.getConnection(true);
 					   
 					   // Get the DAO and log the execution time
 					   SetSystemData dao = new SetSystemData(c);
