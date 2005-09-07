@@ -75,7 +75,7 @@ return true;
  <td><fmt:date fmt="t" t="hh:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
  <td><fmt:date fmt="t" t="hh:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
  <td class="sec"><fmt:int value="${entry.distance}" /> miles</td>
- <td><fmt:dec value="${entry.length / 10}"> hours</td>
+ <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </tr>
 </c:forEach>
 
