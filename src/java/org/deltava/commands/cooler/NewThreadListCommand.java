@@ -96,8 +96,7 @@ public class NewThreadListCommand extends AbstractViewCommand {
          GetPilot pdao = new GetPilot(con);
          for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
             String tableName = (String) i.next();
-            Set IDs = new HashSet(udm.getByTable(tableName));
-            authors.putAll(pdao.getByID(IDs, tableName));
+            authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
          }
 
          // Get the pilot IDs in the returned threads
