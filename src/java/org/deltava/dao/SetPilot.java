@@ -180,7 +180,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void assignID(Pilot p) throws DAOException {
 	   try {
-	      prepareStatement("UPDATE PILOTS SET PILOT_ID=(MAX(PILOT_ID) + 1) WHERE (ID=?) AND (PILOT_ID=0)");
+	      prepareStatement("UPDATE PILOTS SET PILOT_ID=(MAX(PILOT_ID) + 1) WHERE (ID=?) AND (PILOT_ID=0) GROUP BY ID");
 	      _ps.setInt(1, p.getID());
 	      executeUpdate(1);
 	      
