@@ -44,7 +44,7 @@ public class FleetLibraryCommand extends AbstractCommand {
 		if (isAdmin && !access.getCanCreate())
 			throw securityException("Cannot update Fleet Library");
 
-		List results = null;
+		Collection results = null;
 		try {
 			Connection con = ctx.getConnection();
 

@@ -27,45 +27,47 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents
-	 * of other airlines' libraries.
+	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents of other
+	 * airlines' libraries.
 	 * @param dbName the database name
 	 * @return a List of Installer beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getFleet(String dbName) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".FLEET F LEFT JOIN ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
-	   
+	public Collection getFleet(String dbName) throws DAOException {
+
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".FLEET F LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
+
 		try {
 			prepareStatement(sqlBuf.toString());
-			return loadInstallers();
+			Collection results = loadInstallers();
+			appendDB(results, dbName.toUpperCase());
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
 	/**
-	 * Returns the contents of the Document Library. This takes a database name so we can display the contents
-	 * of other airlines' libraries.
+	 * Returns the contents of the Document Library. This takes a database name so we can display the contents of other
+	 * airlines' libraries.
 	 * @param dbName the database name
 	 * @return a List of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getManuals(String dbName) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".DOCS D LEFT JOIN ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
-	   
+	public Collection getManuals(String dbName) throws DAOException {
+
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOCS D LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			return loadManuals();
@@ -95,7 +97,7 @@ public class GetLibrary extends DAO {
 	}
 
 	/**
-	 * Returns metadata about a specifc Installer <i>in the current database</i>. 
+	 * Returns metadata about a specifc Installer <i>in the current database</i>.
 	 * @param fName the filename
 	 * @return an Installer, or null if not found
 	 * @throws DAOException if a JDBC error occurs
@@ -177,5 +179,18 @@ public class GetLibrary extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
+	}
+
+	/**
+	 * Append the database name to the end of the entry names.
+	 */
+	private void appendDB(Collection entries, String dbName) {
+		for (Iterator i = entries.iterator(); i.hasNext();) {
+			FleetEntry entry = (FleetEntry) i.next();
+			StringBuffer buf = new StringBuffer(entry.getName());
+			buf.append(" - ");
+			buf.append(dbName);
+			entry.setName(buf.toString());
+		}
 	}
 }
