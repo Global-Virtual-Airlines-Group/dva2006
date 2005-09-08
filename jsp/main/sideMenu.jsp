@@ -75,7 +75,7 @@
 <tr class="MenuItem">
  <td><el:cmd url="pilotboard">PILOT LOCATIONS</el:cmd></td>
 </tr>
-<content:filter roles="HR">
+<content:filter roles="HR,PIREP,Examination">
 <tr class="MenuItem">
  <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
 </tr>
