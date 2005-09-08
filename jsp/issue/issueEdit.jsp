@@ -43,7 +43,8 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data">${pilot.firstName} ${pilot.lastName}</td>
+ <td class="data">${pilots[issue.createdBy].name} (${pilots[issue.createdBy].pilotCode}) on
+ <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Status</td>
