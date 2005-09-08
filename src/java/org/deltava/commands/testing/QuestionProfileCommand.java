@@ -31,13 +31,12 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		// Check our access level
 		validateEditAccess(ctx);
 
-		String qID = (String) ctx.getCmdParameter(Command.ID, null);
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the existing question profile, or create a new one
 			QuestionProfile qp = null;
-			if (!"NEW".equals(qID)) {
+			if (!"NEW".equals(ctx.getCmdParameter(ID, null))) {
 				GetExamProfiles rdao = new GetExamProfiles(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
