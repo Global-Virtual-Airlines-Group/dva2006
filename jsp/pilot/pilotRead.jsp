@@ -131,7 +131,10 @@
 </c:if>
 <c:if test="${access.canChangeStatus}">
 &nbsp;<el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
-</c:if> 
+</c:if>
+<content:filter roles="Admin">
+&nbsp;<el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
+</content:filter>
  </td>
 </tr>
 </el:table>
