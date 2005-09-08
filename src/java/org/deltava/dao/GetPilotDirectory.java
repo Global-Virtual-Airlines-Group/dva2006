@@ -174,7 +174,7 @@ public class GetPilotDirectory extends PilotReadDAO {
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
       sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append("ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+      sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
       
    	try {
            prepareStatement(sqlBuf.toString());
