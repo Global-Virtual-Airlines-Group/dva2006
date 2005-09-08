@@ -41,8 +41,9 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
          Collection roles = (List) SystemData.getObject("security.roles");
          for (Iterator i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
-            Set pilots = new TreeSet(cmp);
+            List pilots = new ArrayList();
             pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db")));
+            Collections.sort(pilots, cmp);
             
             // Add to results
             results.put(roleName, pilots);
