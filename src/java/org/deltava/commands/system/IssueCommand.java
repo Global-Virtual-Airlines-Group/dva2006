@@ -183,7 +183,7 @@ public class IssueCommand extends AbstractFormCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Get developers
-			Set devs = new TreeSet();
+			Set devs = new HashSet();
 			Collection apps = ((Map) SystemData.getObject("apps")).values();
 			for (Iterator it = apps.iterator(); it.hasNext(); ) {
 			   AirlineInformation aInfo = (AirlineInformation) it.next();
