@@ -1,4 +1,4 @@
-function valdiate(form)
+function validate(form)
 {
 if (!checkSubmit()) return false;
 
