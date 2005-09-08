@@ -8,7 +8,6 @@
 <head>
 <title><content:airline /> Mass Mailing Sent</title>
 <content:css name="main" browserSpecific="true" />
-<content:js name="common" />
 <content:pics />
 <content:copyright visible="false" />
 <body>
