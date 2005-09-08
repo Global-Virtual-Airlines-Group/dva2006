@@ -55,14 +55,14 @@ public class ExamCreateCommand extends AbstractCommand {
             Test t = (Test) i.next();
             boolean isComplete = ((t.getStatus() == Test.SCORED) && t.getPassFail());
             if ((t.getName().equals(examName)) && ((t.getStatus() != Test.SCORED) || isComplete))
-               throw new CommandException("Cannot re-take " + examName + " examination");
+               throw securityException("Cannot re-take " + examName + " examination");
          }
          
          // Get the Equipment type for the User, and check if we can take the exam
          GetEquipmentType eqdao = new GetEquipmentType(con);
          EquipmentType eq = eqdao.get(usr.getEquipmentType());
          if (eq.getStage() < ep.getMinStage())
-            throw new CommandException("Cannot take " + examName + ", minStage=" + ep.getMinStage() +
+            throw securityException("Cannot take " + examName + ", minStage=" + ep.getMinStage() +
                   ", stage=" + eq.getStage());
          
          // Get the Message template
