@@ -12,8 +12,14 @@
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
 </c:when>
 <c:otherwise>
- <td class="MenuItem sec caps">WELCOME, ${pageContext.request.remoteUser}</td>
+<tr class="MenuItem">
+ <td class="sec caps">WELCOME, ${pageContext.request.remoteUser}</td>
 </tr>
+<c:if test="${!empty superUser}">
+<tr class="MenuItem">
+ <td class="ter bld">${superUser.name}</td>
+</tr>
+</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
 </c:otherwise>

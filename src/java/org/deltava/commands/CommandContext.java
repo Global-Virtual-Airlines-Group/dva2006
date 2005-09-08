@@ -30,7 +30,8 @@ public class CommandContext implements Serializable, SecurityContext {
     private static final List ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
     
     public static final String AUTH_COOKIE_NAME = "authToken";
-    public static final String USER_ATTR_NAME = "$user$";
+    public static final String USER_ATTR_NAME = "authUser";
+    public static final String SU_ATTR_NAME ="superUser";
 
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;
