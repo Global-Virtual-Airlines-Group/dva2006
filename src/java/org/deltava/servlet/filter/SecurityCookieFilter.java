@@ -2,13 +2,15 @@ package org.deltava.servlet.filter;
 
 import java.io.IOException;
 import java.sql.Connection;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.crypt.*;
+
 import org.deltava.commands.CommandContext;
 
 import org.deltava.dao.*;
@@ -82,7 +84,7 @@ public class SecurityCookieFilter implements Filter {
             GetPilotDirectory dao = new GetPilotDirectory(con);
             p = dao.getFromDirectory(dN);
         } catch (DAOException de) {
-            log.error("Error loading " + dN + " - " + de.getMessage());
+            log.error("Error loading " + dN + " - " + de.getMessage(), de);
         } finally {
             pool.release(con);
         }
@@ -116,7 +118,7 @@ public class SecurityCookieFilter implements Filter {
         try {
             cData = SecurityCookieGenerator.readCookie(authCookie);
         } catch (Exception e) {
-            log.warn("Error decrypting security cookie - " + e.getMessage());
+            log.error("Error decrypting security cookie - " + e.getMessage(), e);
             ((HttpServletResponse)rsp).addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
         }
 
@@ -129,10 +131,10 @@ public class SecurityCookieFilter implements Filter {
                 s.setAttribute(CommandContext.USER_ATTR_NAME, p);
         }
         
-        // If we have a user, check to ensure that we are in the pool
-        if (p != null)
-           UserPool.addPerson(p, s.getId());
-
+        // Check if we are a superUser impersonating someone
+        Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
+        UserPool.addPerson((su != null) ? su : p, s.getId());
+        
         // Invoke the next filter in the chain
         fc.doFilter(req, rsp);
     }
