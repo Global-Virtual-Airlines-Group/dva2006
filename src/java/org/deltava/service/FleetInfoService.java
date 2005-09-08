@@ -29,7 +29,7 @@ public class FleetInfoService extends WebDataService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List entries = null;
+		Collection entries = null;
 		try {
 			GetLibrary dao = new GetLibrary(_con);
 			entries = dao.getFleet(SystemData.get("airline.db"));
