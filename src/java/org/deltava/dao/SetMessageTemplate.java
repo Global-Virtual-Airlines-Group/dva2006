@@ -40,6 +40,9 @@ public class SetMessageTemplate extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Invalidate the cache entry
+		GetMessageTemplate._cache.remove(mt.cacheKey());
 	}
 	
 	/**
@@ -55,5 +58,8 @@ public class SetMessageTemplate extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Invalidate the cache entry
+		GetMessageTemplate._cache.remove(name);
 	}
 }

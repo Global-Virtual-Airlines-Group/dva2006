@@ -4,6 +4,9 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
+import org.apache.log4j.Logger;
+
+import org.deltava.util.cache.*;
 import org.deltava.beans.system.MessageTemplate;
 
 /**
@@ -14,6 +17,9 @@ import org.deltava.beans.system.MessageTemplate;
  */
 
 public class GetMessageTemplate extends DAO {
+   
+   private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
+   static Cache _cache = new AgingCache(4);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -30,16 +36,30 @@ public class GetMessageTemplate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public MessageTemplate get(String name) throws DAOException {
+	   
+	   // Check the cache
+	   MessageTemplate result = (MessageTemplate) _cache.get(name);
+	   if (result != null)
+	      return result;
+	   
 		try {
 			prepareStatement("SELECT * FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?)");
 			_ps.setString(1, name.toUpperCase());
+			setQueryMax(1);
 			
-			// Get the results, if empty return null
+			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List results = execute();
-			return results.isEmpty() ? null : (MessageTemplate) results.get(0);
+			if (results.isEmpty()) {
+			   log.warn("Cannot load Message Template " + name);
+			} else {
+			   result = (MessageTemplate) results.get(0);
+			   _cache.add(result);
+			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		return result;
 	}
 	
 	/**
@@ -51,21 +71,6 @@ public class GetMessageTemplate extends DAO {
 		try {
 			prepareStatement("SELECT * FROM MSG_TEMPLATES");
 			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes a Message Template from the database.
-	 * @param name the template name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(String name) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?)");
-			_ps.setString(1, name.toUpperCase());
-			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
