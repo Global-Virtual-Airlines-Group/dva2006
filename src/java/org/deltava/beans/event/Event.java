@@ -58,6 +58,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     private Set _signups;
     private List _assignments;
+    private Set _eqTypes;
     
     // TODO JavaDoc
     public Event(String name) {
@@ -68,6 +69,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         _plans = new ArrayList();
         _signups = new HashSet();
         _assignments = new ArrayList();
+        _eqTypes = new TreeSet();
     }
     
     /**
@@ -193,6 +195,10 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     	return results;
     }
     
+    public Set getEquipmentTypes() {
+       return _eqTypes;
+    }
+    
     public Collection getSignups() {
         return _signups;
     }
@@ -247,6 +253,10 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     public void addAirportD(Airport a) {
     	if (a != null)
     		_airportD.add(a);
+    }
+    
+    public void addEquipmentType(String eqType) {
+       _eqTypes.add(eqType);
     }
     
     public void setStartTime(Date dt) {
