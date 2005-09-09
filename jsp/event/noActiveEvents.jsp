@@ -4,16 +4,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
-<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Online Events</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
-<content:js name="common" />
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,8 +27,8 @@
 </el:table>
 <br />
 At the moment, no Online Events are currently available for signup. Please be sure to check 
- back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
- major event per month, and ad hoc events approximately once every seven to ten days.<br />
+back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
+major event per month, and ad hoc events approximately once every seven to ten days.<br />
 <br />
 <el:table space="2" pad="2">
 <tr>

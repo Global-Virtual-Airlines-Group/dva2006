@@ -29,30 +29,35 @@ public class EventCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get command results
+		// Get command results and event ID
 		CommandResult result = ctx.getResult();
+		int eventID = ctx.getID();
 
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the database ID
-			int eventID = ctx.getID();
-
-			// Get the DAO. If no ID specified, get the ID of the next event
+			// Get the DAO and all future events
 			GetEvent edao = new GetEvent(con);
+			List results = edao.getFutureEvents();
+			ctx.setAttribute("futureEvents", results, REQUEST);
+			
+			// If no event scheduled, then display a status page
 			if (eventID == 0) {
-				edao.setQueryMax(1);
-				List results = edao.getFutureEvents();
-
-				// If no future events, redirect to the no events page - make sure we calculate event access first
+				EventAccessControl eAccess = new EventAccessControl(ctx, null);
+				eAccess.validate();
+				ctx.setAttribute("access", eAccess, REQUEST);
+				
+				// If no future events, display the "No Events" page
 				if (results.isEmpty()) {
 				   ctx.release();
-				   
-					EventAccessControl eAccess = new EventAccessControl(ctx, null);
-					eAccess.validate();
-					ctx.setAttribute("access", eAccess, REQUEST);
 
 					result.setURL("/jsp/event/noActiveEvents.jsp");
+					result.setSuccess(true);
+					return;
+				} else if (results.size() > 1) {
+					ctx.release();
+					
+					result.setURL("/jsp/event/multipleEvents.jsp");
 					result.setSuccess(true);
 					return;
 				}
