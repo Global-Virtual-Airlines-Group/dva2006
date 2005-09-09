@@ -19,6 +19,7 @@
 <div id="main">
 <div class="updateHdr">Questionnaire Submitted</div>
 <br />
+<c:if test="${isSubmit}">
 Thank you for completing the initial membership questionnaire at <content:airline />! This is an
 important stage in the membership process here. Based on the results of your questionnaire, we'll be
 able to find the optimum aircraft program here at <content:airline />, that best matches your skills
@@ -34,6 +35,19 @@ us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br />
 <br />
 Your questionnaire will be reviewed within the next 48 to 96 hours, and we will contact you again at
 that time.<br />
+</c:if>
+<c:if test="${isScore}">
+The ${questionnaire.name} for ${applicant.name} has been scored. <fmt:int value="${questionnaire.score}" /> out 
+of <fmt:int value="${questionnaire.size}" /> questions were answered correctly.<br />
+<c:if test="${!empty addrValid}">
+<br />
+The e-mail address for ${applicant.name} has not yet been validated. Until this occurs, the application 
+should not be approved. The validation message may be resent from the Applicant profile.<br />
+</c:if>
+<br />
+To return to the Applicant questionnaire queue, <el:cmd url="questionnaires" className="sec bld">click here</el:cmd>.<br />
+To review this Applicant's profile, <el:cmd url="applicant" linkID="0x${applicant.ID}" className="sec bld">click here</el:cmd>.<br />
+</c:if>
 <br />
 <content:copyright />
 </div>

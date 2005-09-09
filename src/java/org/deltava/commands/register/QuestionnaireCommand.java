@@ -33,7 +33,7 @@ public class QuestionnaireCommand extends AbstractCommand {
       CommandResult result = ctx.getResult();
       
       // Since the ID may not be hex-encoded we need to grab it a different way
-      Object idP = ctx.getCmdParameter(Command.ID, "0");
+      Object idP = ctx.getCmdParameter(ID, "0");
       int id = (idP instanceof Integer) ? ((Integer) idP).intValue() : StringUtils.parseHex((String) idP);
 
       try {

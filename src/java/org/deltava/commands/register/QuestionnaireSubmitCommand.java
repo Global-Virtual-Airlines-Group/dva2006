@@ -63,10 +63,13 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
       } finally {
          ctx.release();
       }
+      
+      // Set status attribute
+      ctx.setAttribute("isSubmit", Boolean.TRUE, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setURL("/jsp/register/qComplete.jsp");
+      result.setURL("/jsp/register/qUpdate.jsp");
       result.setSuccess(true);
    }
 }
