@@ -148,20 +148,17 @@ public class ProfileCommand extends AbstractFormCommand {
 					newRatings.addAll(eq2.getSecondaryRatings());
 
 					// Write the status update
-					int rChange = rcmp.compare();
-					if (rChange > 0) {
+					if (rcmp.compare() > 0) {
 						int promoType = eqChange ? StatusUpdate.EXTPROMOTION : StatusUpdate.INTPROMOTION;
 						StatusUpdate upd = new StatusUpdate(p.getID(), promoType);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
-						log.info(upd.getDescription());
 					} else {
 						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
-						log.info(upd.getDescription());
 					}
 				}
 			}
