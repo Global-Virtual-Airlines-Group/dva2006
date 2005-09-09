@@ -61,7 +61,6 @@ flight schedule lists the average duration of flights between these two airports
 and turnaround time) as <fmt:dec value="${avgTime / 10}" /> hours.</span> This may cause a delay in your
 Flight Report being approved.<br />
 </c:if>
-
 <br />
 To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}">Click Here</el:cmd><br />
 </c:if>
@@ -70,8 +69,9 @@ To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}">Click H
 <div class="updateHdr">Flight Report Approved</div>
 <br />
 This Flight Report has been approved, and an e-mail message has been sent to ${pilot.name}.<br />
-<c:if test="${!empty checkRide}">
-
+<c:if test="${assignID}">
+This Pilot has been assigned a Pilot ID and seniority number at <content:airline />. The new Pilot ID 
+for ${pilot.name} is <b>${pilot.code}</b><br />
 </c:if>
 <c:if test="${!empty centuryClub}">
 <br />
