@@ -8,6 +8,7 @@ import org.deltava.beans.stats.*;
 import org.deltava.beans.system.*;
 import org.deltava.taskman.TaskLastRun;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.CollectionUtils;
 
 /**
@@ -18,6 +19,8 @@ import org.deltava.util.CollectionUtils;
  */
 
 public class GetSystemData extends DAO {
+   
+   private static final Cache _cache = new ExpiringCache(1, 7200);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -69,6 +72,12 @@ public class GetSystemData extends DAO {
 	 * @see HTTPTotals
 	 */
 	public HTTPTotals getHTTPTotals() throws DAOException {
+	   
+	   // Check the cache first
+	   HTTPTotals totals = (HTTPTotals) _cache.get(HTTPTotals.class);
+	   if (totals != null)
+	      return totals;
+	   
 		try {
 			prepareStatement("SELECT SUM(REQUESTS), SUM(HOMEHITS), SUM(BANDWIDTH) FROM SYS_HTTPLOG");
 			
@@ -77,11 +86,14 @@ public class GetSystemData extends DAO {
 			rs.next();
 			
 			// Create the result bean
-			HTTPTotals totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
+			totals = new HTTPTotals(rs.getInt(1), rs.getInt(2), rs.getLong(3));
 			
-			// Clean up and return
+			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Add to the cache and return
+			_cache.add(totals);
 			return totals;
 		} catch (SQLException se) {
 			throw new DAOException(se);
