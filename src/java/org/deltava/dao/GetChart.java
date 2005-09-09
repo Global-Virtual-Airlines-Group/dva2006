@@ -9,6 +9,7 @@ import java.sql.Connection;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.Chart;
 
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -19,6 +20,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetChart extends DAO {
+   
+   static Cache _cache = new AgingCache(48);
 
     /**
      * Creates the DAO with a JDBC connection.
@@ -116,18 +119,71 @@ public class GetChart extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public Chart get(int id) throws DAOException {
+       
+       // Check the cache
+       Chart result = (Chart) _cache.get(new Integer(id));
+       if (result != null)
+          return result;
+       
         try {
             // Prepare the statement
             prepareStatement("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID=?)");
             _ps.setInt(1, id);
+            _ps.setMaxRows(1);
             
             // Execute the query
-            _ps.setMaxRows(1);
             List results = execute();
             return (results.isEmpty()) ? null : (Chart) results.get(0);
         } catch (SQLException se) {
             throw new DAOException(se);
         }
+    }
+    
+    /**
+     * Retrieves Charts based on a group of database IDs.
+     * @param IDs a Collection of database IDs as Integers
+     * @return a Collection of Charts
+     * @throws DAOException if a JDBC error occurs
+     */
+    public Collection getByIDs(Collection IDs) throws DAOException {
+       
+       // Build the SQL statement
+       StringBuffer sqlBuf = new StringBuffer("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID IN (");
+       
+       // Check if we're in the cache
+       int querySize = 0;
+       Collection results = new TreeSet();
+       for (Iterator i = IDs.iterator(); i.hasNext(); ) {
+          Integer id = (Integer) i.next();
+          Chart c = (Chart) _cache.get(id);
+          if (c != null) {
+             results.add(c);
+             i.remove();
+          } else {
+             querySize++;
+             sqlBuf.append(String.valueOf(id));
+             sqlBuf.append(',');
+          }
+       }
+       
+       // If we are getting everything from the cache, return the results
+       if (querySize == 0)
+          return results;
+       
+       // Clear off the trailing comma
+       if (sqlBuf.charAt(sqlBuf.length() - 1) == ',') sqlBuf.setLength(sqlBuf.length() - 1);
+       sqlBuf.append("))");
+       setQueryMax(querySize);
+       
+       // Load from the database
+       try {
+          prepareStatement(sqlBuf.toString());
+          results.addAll(execute());
+       } catch (SQLException se) {
+          throw new DAOException(se);
+       }
+       
+       return results;
     }
     
     /**
@@ -144,8 +200,9 @@ public class GetChart extends DAO {
           c.setType(rs.getInt(4));
           c.setSize(rs.getInt(5));
           
-          // Add to results
+          // Add to results and cache
           results.add(c);
+          _cache.add(c);
        }
        
        // Clean up and return

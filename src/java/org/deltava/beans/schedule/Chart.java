@@ -3,6 +3,8 @@ package org.deltava.beans.schedule;
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.DatabaseBlobBean;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A class for storing approach/procedure chart data.
  * @author Luke
@@ -10,7 +12,7 @@ import org.deltava.beans.DatabaseBlobBean;
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements Comparable, ComboAlias {
+public class Chart extends DatabaseBlobBean implements Comparable, ComboAlias, Cacheable {
 
     public static final int TYPE_UNKNOWN = 0;
     public static final int TYPE_ILS = 1;
@@ -222,5 +224,13 @@ public class Chart extends DatabaseBlobBean implements Comparable, ComboAlias {
     
     public String getComboAlias() {
         return "0x" + Integer.toHexString(getID());
+    }
+    
+    /**
+     * Returns the Chart's cache key.
+     * @return the Database ID as an Integer object
+     */
+    public Object cacheKey() {
+       return new Integer(getID());
     }
 }

@@ -49,6 +49,9 @@ public class SetChart extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+      
+      // Clear the cache
+      GetChart._cache.remove(c.cacheKey());
    }
    
    /**
@@ -68,6 +71,9 @@ public class SetChart extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+      
+      // Clear the cache
+      GetChart._cache.remove(c.cacheKey());
    }
    
    /**
@@ -83,5 +89,8 @@ public class SetChart extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+      
+      // Clear the cache
+      GetChart._cache.remove(new Integer(id));
    }
 }
