@@ -57,12 +57,13 @@ public class NOTAMEditCommand extends AbstractCommand {
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, notam);
          access.validate();
-         if (!access.getCanEdit())
-            throw securityException("Cannot edit NOTAM entry");
          
          // Save the news entry and the access controller
          ctx.setAttribute("entry", notam, REQUEST);
          ctx.setAttribute("access", access, REQUEST);
+         
+         // Figure out what JSP to display
+         result.setURL(access.getCanEdit() ? "/jsp/news/notamEdit.jsp" : "/jsp/news/notamRead.jsp");
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

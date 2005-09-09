@@ -56,12 +56,13 @@ public class NewsEditCommand extends AbstractCommand {
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, nws);
          access.validate();
-         if (!access.getCanEdit())
-            throw securityException("Cannot edit System News entry");
          
          // Save the news entry and the access controller
          ctx.setAttribute("entry", nws, REQUEST);
          ctx.setAttribute("access", access, REQUEST);
+         
+         // Figure out which JSP to display
+         result.setURL(access.getCanEdit() ? "/jsp/news/newsEdit.jsp" : "/jsp/news/newsRead.jsp");
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
