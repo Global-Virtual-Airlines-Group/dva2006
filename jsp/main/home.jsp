@@ -45,6 +45,24 @@ between!) we welcome your interest.<br />
 If you are interested in a virtual airline with primarily European operations, we encourage you to visit 
 our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br />
+<c:if test="${!empty notams}">
+<!-- New NOTAMs since last login -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="3">THE FOLLOWING NOTAMS HAVE GONE INTO EFFECT SINCE YOUR LAST LOGIN</td>
+</tr>
+<c:forEach var="notam" items="${notams}">
+<view:row entry="${notam}">
+ <td class="priB"><fmt:int value="${notam.ID}" /></td>
+ <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
+ <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
+</view:row>
+<view:row entry="${notam}">
+ <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
+</view:row>
+</c:forEach>
+</c:if>
+<c:if test="${empty notams}">
 <el:table className="view" space="default" pad="default">
 <c:forEach var="entry" items="${latestNews}">
 <tr>
@@ -57,9 +75,10 @@ our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName
 </tr>
 </c:forEach>
 </el:table>
+</c:if>
 <br />
 <c:if test="${!empty latestPilots}">
-<center><div style="width:500px;">
+<center><div style="width:510px;">
 <table cellspacing="3" cellpadding="3">
 <tr>
  <td class="priB mid" colspan="2">WELCOME TO OUR NEWEST PILOTS:</td>
