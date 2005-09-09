@@ -83,33 +83,35 @@ public class TransferApproveCommand extends AbstractCommand {
 
 			// Check if we're doing a promotion or a rating change
 			RankComparator rCmp = new RankComparator((List) SystemData.getObject("ranks"));
-			rCmp.setRank1(usr.getRank(), currentEQ.getStage());
-			rCmp.setRank2(rank, newEQ.getStage());
+			rCmp.setRank2(usr.getRank(), currentEQ.getStage());
+			rCmp.setRank1(rank, newEQ.getStage());
 			
-			// Set the status update code
-			int statusCode = (rCmp.compare() < 0) ? StatusUpdate.EXTPROMOTION : StatusUpdate.RANK_CHANGE;
-
 			// Update the equipment program and rank
 			usr.setEquipmentType(newEQ.getName());
 			usr.setRank(rank);
 
-			// Save the Pilot
-			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(usr);
-
-			// Write the promotion Status Update
+			// Write the promotion status update
 			List updates = new ArrayList();
-			StatusUpdate upd1 = new StatusUpdate(usr.getID(), statusCode);
-			upd1.setAuthorID(ctx.getUser().getID());
-			upd1.setDescription("Equipment Program / Rank changed to " + usr.getRank() + ", " + newEQ.getName());
-			updates.add(upd1);
-
+			if (rCmp.compare() > 0) {
+				boolean eqChange = !usr.getEquipmentType().equals(newEQ.getName());
+				int promoType = eqChange ? StatusUpdate.EXTPROMOTION : StatusUpdate.INTPROMOTION;
+				StatusUpdate upd = new StatusUpdate(usr.getID(), promoType);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Promoted to " + usr.getRank() + ", " + usr.getEquipmentType());
+				updates.add(upd);
+			} else {
+				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RANK_CHANGE);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Rank changed to " + usr.getRank() + ", " + usr.getEquipmentType());
+				updates.add(upd);
+			}
+			
 			// Write the rating change Status Update
 			if (!newRatings.isEmpty()) {
-				StatusUpdate upd2 = new StatusUpdate(usr.getID(), StatusUpdate.RATING_ADD);
-				upd2.setAuthorID(ctx.getUser().getID());
-				upd2.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ","));
-				updates.add(upd2);
+				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_ADD);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));
+				updates.add(upd);
 			}
 
 			// Save the message context
@@ -122,6 +124,10 @@ public class TransferApproveCommand extends AbstractCommand {
 
 			// Use a SQL Transaction
 			ctx.startTX();
+			
+			// Save the Pilot
+			SetPilot pwdao = new SetPilot(con);
+			pwdao.write(usr);
 
 			// Write the Status Updates
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
