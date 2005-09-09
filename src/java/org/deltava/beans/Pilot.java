@@ -507,6 +507,20 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     	_roles.removeAll(roles);
     	_roles.add("Pilot");
     }
+    
+    /**
+     * Updates the Pilot's seniority number.
+     * @param pNumber the new seniority number
+     * @throws IllegalArgumentException if pNumber is zero or negative
+     * @see Pilot#getPilotNumber()
+     * @see Pilot#getPilotCode()
+     */
+    public void setPilotNumber(int pNumber) {
+    	if (pNumber < 1)
+    		throw new IllegalArgumentException("Invalid Pilot Number - " + pNumber);
+    	
+    	_pCodeId = pNumber;
+    }
 
     /**
      * Set the pilot code for this Pilot.
