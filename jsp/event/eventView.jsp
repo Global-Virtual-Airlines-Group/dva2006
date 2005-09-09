@@ -77,6 +77,12 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  <td class="label" valign="top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="135" height="8">${event.briefing}</el:textbox></td>
 </tr>
+<c:if test="${!empty event.equipmentTypes}">
+<tr>
+ <td class="label">Equipment Types</td>
+ <td class="data"><fmt:list value="${event.equipmentTypes}" delim=", " /></td>
+</tr>
+</c:if>
 <content:filter roles="Pilot">
 <c:if test="${!empty event.charts}">
 <!-- Chart Section -->
@@ -200,7 +206,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${user.ratings}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
 </tr>
 </c:if>
 </el:table>

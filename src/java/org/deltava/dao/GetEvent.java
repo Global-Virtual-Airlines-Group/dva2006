@@ -81,6 +81,7 @@ public class GetEvent extends DAO {
 			Event e = (Event) results.get(0);
 			loadFlightPlans(e);
 			loadSignups(e);
+			loadEQTypes(e);
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -192,5 +193,21 @@ public class GetEvent extends DAO {
 		// Clean up
 		rs.close();
 		_ps.close();
+	}
+	
+	private void loadEQTypes(Event e) throws SQLException {
+
+	   // Init the prepared statement
+	   prepareStatementWithoutLimits("SELECT RATING FROM EVENT_EQTYPES WHERE (ID=?)");
+	   _ps.setInt(1, e.getID());
+	   
+	   // Execute the query and load the equipment types
+	   ResultSet rs = _ps.executeQuery();
+	   while (rs.next())
+	      e.addEquipmentType(rs.getString(1));
+	      
+	   // Clean up
+	   rs.close();
+	   _ps.close();
 	}
 }

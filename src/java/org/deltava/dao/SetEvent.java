@@ -43,6 +43,7 @@ public class SetEvent extends DAO {
 			// Write the child rows
 			writeAirports(e);
 			writeCharts(e);
+			writeEQTypes(e);
 			
 			// Commit the transaction
 			commitTransaction();
@@ -186,6 +187,29 @@ public class SetEvent extends DAO {
 			_ps.addBatch();
 		}
 		
+		// Update the database and clearn up
+		_ps.executeBatch();
+		_ps.close();
+	}
+	
+	private void writeEQTypes(Event e) throws SQLException {
+	   
+	   // Clear equipment types
+	   prepareStatement("DELETE FROM common.EVENT_EQTYPES WHERE (ID=?)");
+		_ps.setInt(1, e.getID());
+		_ps.executeUpdate();
+		_ps.close();
+
+		// Create the prepared statement
+		prepareStatement("INSERT INTO common.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)");
+		_ps.setInt(1, e.getID());
+		
+		// Add the equipment types
+		for (Iterator i = e.getEquipmentTypes().iterator(); i.hasNext(); ) {
+			_ps.setString(2, (String) i.next());
+			_ps.addBatch();
+		}
+
 		// Update the database and clearn up
 		_ps.executeBatch();
 		_ps.close();

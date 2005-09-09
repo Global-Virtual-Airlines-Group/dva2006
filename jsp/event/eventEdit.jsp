@@ -52,8 +52,9 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/event/header.jsp" %> 
-<%@include file="/jsp/event/sideMenu.jsp" %>
+<%@ include file="/jsp/event/header.jsp" %> 
+<%@ include file="/jsp/event/sideMenu.jsp" %>
+<content:sysdata var="allEQ" name="eqtypes" />
 <content:sysdata var="defaultNetwork" name="online.default_network" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
 
@@ -121,6 +122,10 @@ return true;
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td class="data"><el:textbox name="briefing" idx="*" width="120" height="15">${event.briefing}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Equipment Types</td>
+ <td class="data"><el:check name="eqTypes" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
 <c:if test="${!empty charts}">
 <tr class="title caps">
