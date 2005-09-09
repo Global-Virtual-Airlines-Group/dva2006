@@ -142,6 +142,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
 			   SetPilot pwdao = new SetPilot(con);
 			   pwdao.assignID(p);
+			   ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
 			} else {
 			   GetPilot.cache().remove(p.cacheKey());   
 			}
