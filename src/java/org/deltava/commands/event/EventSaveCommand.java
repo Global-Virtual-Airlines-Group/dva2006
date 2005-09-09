@@ -113,13 +113,24 @@ public class EventSaveCommand extends AbstractCommand {
 				   charts.put(a, aCharts);
 			}
 			
+			// See which charts have been selected
+			String[] selectedCharts = ctx.getRequest().getParameterValues("charts");
+			if (selectedCharts != null) {
+			   Set chartIDs = new HashSet();
+			   for (int x = 0; x < selectedCharts.length; x++)
+			      chartIDs.add(new Integer(StringUtils.parseHex(selectedCharts[x])));
+			      
+			   // Load the charts
+			   e.addCharts(cdao.getByIDs(chartIDs));
+			}
+			
 			// Save the charts
 			if (!charts.isEmpty()) {
 			   ctx.setAttribute("charts", charts, REQUEST);
 			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
 			}
 
-			// Save the charts and the event in the request
+			// Save the event and the access controller in the request
 			ctx.setAttribute("access", access, REQUEST);
 			ctx.setAttribute("event", e, REQUEST);
 

@@ -20,16 +20,49 @@ ww<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.
 <div id="main">
 <el:table className="view" pad="default" space="default">
 <tr class="title caps">
- <td class="left" colspan="x">MULTIPLE <content:airline /> ONLINE EVENTS</td>
+ <td class="left" colspan="6">MULTIPLE <content:airline /> ONLINE EVENTS</td>
 </tr>
 <tr>
- <td class="pri bld left"><fmt:int value="${fn:sizeof(futureEvents)}" /> <content:airline /> 
+ <td class="pri bld left" colspan="6"><fmt:int value="${fn:sizeof(futureEvents)}" /> <content:airline /> 
 Online Events have currently been scheduled, and are listed below. Please click on one of these
 Online Event profiles to learn more about this <content:airline /> Event.<td/>
 </tr>
 
+<!-- Table Header Bar -->
+<tr class="title caps">
+ <td width="9%">DATE</td>
+ <td width="25%">EVENT NAME</td>
+ <td width="8%">NETWORK</td>
+ <td width="8%">STATUS</td>
+ <td width="25%">ARRIVING AT</td>
+ <td>DEPARTING FROM</td>
+</tr>
+
 <!-- Event View data -->
 <c:forEach var="event" items="${futureEvents}">
-
-
+<view:row entry="${event}">
+ <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
+ <td><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
+ <td class="pri bld">${event.networkName}</td>
+ <td class="sec">${event.statusName}</td>
+<c:if test="${!empty event.airportA}">
+ <td class="bld">${event.airportA.name} (<fmt:airport airport="${event.airportA}" />)</td>
+</c:if>
+<c:if test="${empty event.airportA}"> 
+ <td class="bld">-</td>
+</c:if>
+ <td><c:forEach var="airport" items="${event.airportD}">
+${airport.name} (<fmt:airport airport="${airport}" />)<br />
+</c:forEach></td>
+</view:row>
 </c:forEach>
+
+<!-- Bottom Bar -->
+<tr class="title caps">
+ <td colspan="6">&nbsp;</td>
+</tr>
+</el:table>
+<content:copyright />
+</div>
+</body>
+</html>
