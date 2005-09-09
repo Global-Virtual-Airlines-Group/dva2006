@@ -218,15 +218,16 @@ public class SetEvent extends DAO {
 	private void insert(Event e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STARTTIME, ENDTIME, SU_DEADLINE, "
-				+ "ROUTE, BRIEFING) VALUES (?, ?, ?, ?, ?, ?, ?)");
+		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
+				+ "ROUTE, BRIEFING) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
-		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
-		_ps.setTimestamp(4, createTimestamp(e.getEndTime()));
-		_ps.setTimestamp(5, createTimestamp(e.getSignupDeadline()));
-		_ps.setString(6, e.getRoute());
-		_ps.setString(7, e.getBriefing());
+		_ps.setInt(3, e.getStatus());
+		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
+		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
+		_ps.setTimestamp(6, createTimestamp(e.getSignupDeadline()));
+		_ps.setString(7, e.getRoute());
+		_ps.setString(8, e.getBriefing());
 		
 		// Execute the update and get the Event ID
 		executeUpdate(1);
@@ -237,7 +238,7 @@ public class SetEvent extends DAO {
 		
 		// Prepare the statement
 		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=? "
-				+ "ROUTE=?, BRIEFING=? WHERE (ID=?)");
+				+ "ROUTE=?, BRIEFING=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
@@ -245,7 +246,8 @@ public class SetEvent extends DAO {
 		_ps.setTimestamp(5, createTimestamp(e.getSignupDeadline()));
 		_ps.setString(6, e.getRoute());
 		_ps.setString(7, e.getBriefing());
-		_ps.setInt(8, e.getID());
+		_ps.setInt(8, e.getStatus());
+		_ps.setInt(9, e.getID());
 		
 		// Execute the Update
 		executeUpdate(1);
