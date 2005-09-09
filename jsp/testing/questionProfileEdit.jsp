@@ -32,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="qprofile.do" linkID="${empty question ? 'new' : '0x' + question.ID}" op="save" method="post" validate="return validate(this)">
+<el:form action="qprofile.do" linkID="${empty question ? 'new' : '0x'}${question.ID}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
