@@ -1,7 +1,7 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.stats;
 
-import java.io.Serializable;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A class to store HTTP aggregate statistics.
@@ -10,14 +10,17 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class HTTPTotals implements Serializable {
+public class HTTPTotals implements java.io.Serializable, Cacheable {
 	
 	private int _totalHits;
 	private int _homeHits;
 	private long _totalBytes;
 
 	/**
-	 * 
+	 * Creates a new HTTP totals bean.
+	 * @param totalHits the number of request
+	 * @param homeHits the number of home page requests
+	 * @param totalBandwidth the number of bytes served
 	 */
 	public HTTPTotals(int totalHits, int homeHits, long totalBandwidth) {
 		super();
@@ -26,15 +29,34 @@ public class HTTPTotals implements Serializable {
 		_totalBytes = totalBandwidth;
 	}
 
+	/**
+	 * Returns the total number of requests.
+	 * @return the number of requests
+	 */
 	public int getHits() {
 		return _totalHits;
 	}
 	
+	/**
+	 * Returns the total number of home page requests.
+	 * @return the number of requests
+	 */
 	public int getHomeHits() {
 		return _homeHits;
 	}
 	
+	/**
+	 * Returns the total bandwidth used.
+	 * @return the number of bytes served.
+	 */
 	public long getBytes() {
 		return _totalBytes;
+	}
+	
+	/**
+	 * Returns the cache key - the class.
+	 */
+	public Object cacheKey() {
+	   return getClass();
 	}
 }
