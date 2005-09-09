@@ -22,7 +22,7 @@ operate with these credentials until you log out, at which point you will revert
 credentials.<br />
 <br />
 <b>Please be aware that the system is incapable of distinguishing between you and the user you 
-are impersonating - <span class="sec">${user.name}</span>!<br />
+are impersonating - <span class="sec">${user.name}!</span></b><br />
 <br />
 <content:copyright />
 </div>
