@@ -19,7 +19,9 @@
 <div id="main">
 <div class="updateHdr">Welcome Message Sent</div>
 <br />
-The <content:airline /> welcome e-mail has been re-sent to ${applicant.name} at ${applicant.email}.<br />
+The <content:airline /> welcome e-mail has been re-sent to ${applicant.name} at ${applicant.email}.
+<c:if test="${empty questionnaire}">${applicant.name} has already completed the Initial Questionnaire.</c:if>
+<br />
 <br />
 To review this applicant's profile, <el:cmd url="applicant" linkID="0x${applicant.ID}">click here</el:cmd>.<br />
 To return to the Applicant queue, <el:cmd url="applicants">click here</el:cmd>.<br />

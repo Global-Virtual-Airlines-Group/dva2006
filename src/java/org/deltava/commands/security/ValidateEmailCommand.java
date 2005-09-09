@@ -10,8 +10,6 @@ import org.deltava.beans.system.UserData;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
-
 /**
  * A Web Site Command to validate e-mail addresses.
  * @author Luke
@@ -32,9 +30,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 		AddressValidation av = null;
 		try {
 			Connection con = ctx.getConnection();
-
-			// Since the ID might not be hex-encoded get it a different way
-			int id = StringUtils.parseHex((String) ctx.getCmdParameter(Command.ID, "0"));
+			int id = ctx.getID();
 
 			// Get the User Data
 			GetUserData usrdao = new GetUserData(con);
@@ -64,7 +60,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		// Make sure we're either anonymous or the same user
 		if ((ctx.isAuthenticated()) && (ctx.getUser().getID() != p.getID()))
-				throw securityException("Attempting to Validate for " + p.getName());
+				throw securityException(ctx.getUser() + " attempting to Validate for " + p.getName());
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
@@ -78,6 +74,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		// If the hashes don't match, then stop us
 		if (!av.getHash().equals(ctx.getParameter("code"))) {
+		   ctx.setAttribute("person", p, REQUEST);
 			result.setURL("/jsp/register/eMailInvalid.jsp");
 			result.setSuccess(true);
 			return;
