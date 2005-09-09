@@ -5,7 +5,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Applicant;
 import org.deltava.beans.system.AddressValidation;
-import org.deltava.beans.testing.Examination;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -57,14 +57,19 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation addrValid = avdao.get(ctx.getID());
 			
-			// Get the Message template
+			// Get the Message template - if the questionaire has been submitted or scored, then just send e-mail validation
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			mctxt.setTemplate(mtdao.get("USERREGISTER"));
+			if ((ex != null) && (ex.getStatus() == Test.NEW)) {
+			   mctxt.setTemplate(mtdao.get("USERREGISTER"));
+			   mctxt.addData("questionnaire", ex);
+			   mctxt.addData("applicant", a);
+			} else {
+			   mctxt.setTemplate(mtdao.get("ADDRVALIDATE"));
+			   mctxt.addData("person", a);
+			}
 			
 			// Add data to the message
-			mctxt.addData("applicant", a);
 			mctxt.addData("addr", addrValid);
-			mctxt.addData("questionnaire", ex);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
