@@ -109,10 +109,11 @@ public class GetCoolerThreads extends DAO {
 
       // Build the SQL statement
       StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM "
-            + "common.COOLER_THREADS T WHERE (T.LASTUPDATE > ?)");
+            + "common.COOLER_THREADS T");
       if (!showImgs)
-         sqlBuf.append(" AND (T.IMAGE_ID=0) ");
-      sqlBuf.append("ORDER BY SD DESC");
+         sqlBuf.append(" WHERE (T.IMAGE_ID=0) ");
+      
+      sqlBuf.append("HAVING (SD > ?) ORDER BY SD DESC");
 
       try {
          prepareStatement(sqlBuf.toString());
