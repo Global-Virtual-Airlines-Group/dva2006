@@ -1,6 +1,9 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.io.Serializable;
+
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A class for storing E-Mail message templates.
@@ -9,7 +12,7 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class MessageTemplate implements Serializable, Comparable {
+public class MessageTemplate implements Serializable, Comparable, Cacheable {
 
     private String _name;
     private String _subject;
@@ -116,5 +119,13 @@ public class MessageTemplate implements Serializable, Comparable {
     public int compareTo(Object o2) {
     	MessageTemplate mt2 = (MessageTemplate) o2;
     	return _name.compareTo(mt2.getName());
+    }
+    
+    /**
+     * Returns the cache key.
+     * @return the template name
+     */
+    public Object cacheKey() {
+       return _name;
     }
 }
