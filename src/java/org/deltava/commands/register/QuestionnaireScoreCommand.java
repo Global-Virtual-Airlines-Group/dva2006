@@ -78,8 +78,8 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          wdao.write(ex);
 
          // Save the questionnaire in the request
-         ctx.setAttribute("isScore", Boolean.valueOf(true), REQUEST);
-         ctx.setAttribute("exam", ex, REQUEST);
+         ctx.setAttribute("isScore", Boolean.TRUE, REQUEST);
+         ctx.setAttribute("questionnaire", ex, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
