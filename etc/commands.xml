@@ -829,7 +829,7 @@
 	<command id="questionnaire">
 		<name>Applicant Questionnaire</name>
 		<class>org.deltava.commands.register.QuestionnaireCommand</class>
-		<roles>Anonymous</roles>
+		<roles>Anonymous,HR</roles>
 	</command>
 	
 	<command id="qsubmit">
