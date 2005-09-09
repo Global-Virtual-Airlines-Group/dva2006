@@ -133,7 +133,12 @@ public class SecurityCookieFilter implements Filter {
         
         // Check if we are a superUser impersonating someone
         Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
-        UserPool.addPerson((su != null) ? su : p, s.getId());
+        if (su != null) {
+        	UserPool.addPerson(su, s.getId());
+        	req.setAttribute(CommandContext.SU_ATTR_NAME, su);
+        } else {
+        	UserPool.addPerson(p, s.getId());
+        }
         
         // Invoke the next filter in the chain
         fc.doFilter(req, rsp);
