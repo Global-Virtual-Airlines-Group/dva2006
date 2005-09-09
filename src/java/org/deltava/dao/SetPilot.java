@@ -180,8 +180,19 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void assignID(Pilot p) throws DAOException {
 	   try {
-	      prepareStatement("UPDATE PILOTS SET PILOT_ID=(MAX(PILOT_ID) + 1) WHERE (ID=?) AND (PILOT_ID=0) GROUP BY ID");
-	      _ps.setInt(1, p.getID());
+		   // Get the next available Pilot ID
+		   prepareStatement("SELECT MAX(PILOT_ID)+1 FROM PILOTS");
+		   ResultSet rs = _ps.executeQuery();
+		   p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
+		   
+		   // Clean up
+		   rs.close();
+		   _ps.close();
+		   
+		   // Write the new Pilot ID
+	      prepareStatement("UPDATE PILOTS SET PILOT_ID=? WHERE (ID=?) AND (PILOT_ID=0)");
+	      _ps.setInt(1, p.getPilotNumber());
+	      _ps.setInt(2, p.getID());
 	      executeUpdate(1);
 	      
 	      // Invalidate the cache entry
