@@ -80,7 +80,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
 <c:if test="${!empty event.equipmentTypes}">
 <tr>
  <td class="label">Equipment Types</td>
- <td class="data"><fmt:list value="${event.equipmentTypes}" delim=", " /></td>
+ <td class="data" colspan="5"><fmt:list value="${event.equipmentTypes}" delim=", " /></td>
 </tr>
 </c:if>
 <content:filter roles="Pilot">
@@ -205,7 +205,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  <td class="data" rowspan="2" colspan="3"><el:textbox name="body" idx="*" width="65" height="2"></el:textbox></td>
 </tr>
 <tr>
- <td class="label">Equipment Type</td>
+ <td class="label">Equipment Types</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
 </tr>
 </c:if>
