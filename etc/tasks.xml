@@ -4,6 +4,7 @@
 	<task id="app_purge" enabled="false">
 		<class>org.deltava.tasks.ApplicantPurgeTask</class>
 		<interval>86400</interval>
+		<hours>0,1,2</hours>
 	</task>
 
 	<task id="inactivity" enabled="false">
@@ -14,6 +15,7 @@
 	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<interval>86400</interval>
+		<hours>14</hours>
 	</task>
 	
 	<task id="assignpurge" enabled="false">
@@ -24,5 +26,6 @@
 	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
+		<hours>0</hours>
 	</task>
 </tasks>
