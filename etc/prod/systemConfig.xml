@@ -438,8 +438,9 @@
 		</pool>
 		
 		<buffer>
-			<send type="Integer">10240</send>
-			<recv type="Integer">1024</recv>
+			<send type="Integer">20480</send>
+			<recv type="Integer">3072</recv>
+			<nio type="Integer">6144</nio>
 		</buffer>
 		
 		<list name="login_msgs" attr="msg">
@@ -448,7 +449,6 @@
 		
 		<ack>
 			<ping type="Boolean">false</ping>
-			<info type="Boolean">true</info>
 			<position type="Boolean">true</position>
 			<text type="Boolean">false</text>
 		</ack>
