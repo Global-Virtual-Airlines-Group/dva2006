@@ -443,7 +443,7 @@
 		</buffer>
 		
 		<ack>
-			<info type="Boolean">true</info>
+			<ping type="Boolean">false</ping>
 			<position type="Boolean">true</position>
 			<text type="Boolean">false</text>
 		</ack>
