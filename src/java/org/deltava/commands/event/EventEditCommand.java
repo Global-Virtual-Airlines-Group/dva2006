@@ -87,11 +87,26 @@ public class EventEditCommand extends AbstractCommand {
 				   charts.put(a, aCharts);
 			}
 			
+			// Get the selected charts
+			e.addCharts(cdao.getChartsByEvent(e.getID()));
+			
 			// Save the charts
 			if (!charts.isEmpty()) {
 			   ctx.setAttribute("charts", charts, REQUEST);
 			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
 			}
+			
+			// Build the airport list to save in the field
+			StringBuffer buf = new StringBuffer();
+			for (Iterator i = e.getAirportD().iterator(); i.hasNext();) {
+				Airport a = (Airport) i.next();
+				buf.append(a.getIATA());
+				if (i.hasNext())
+					buf.append(',');
+			}
+
+			// Save the airports
+			ctx.setAttribute("adCodes", buf.toString(), REQUEST);
 			
 			// Save event and access controller
 			ctx.setAttribute("event", e, REQUEST);

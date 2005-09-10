@@ -42,7 +42,6 @@ public class EventSaveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		List pilots = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -84,6 +83,13 @@ public class EventSaveCommand extends AbstractCommand {
 			e.setStartTime(parseDateTime(ctx, "start"));
 			e.setEndTime(parseDateTime(ctx, "end"));
 			e.setSignupDeadline(parseDateTime(ctx, "close"));
+			
+			// Parse the equipment types
+			String[] eqTypes = ctx.getRequest().getParameterValues("eqTypes");
+			if (eqTypes != null) {
+				for (int x = 0; x < eqTypes.length; x++)
+					e.addEquipmentType(eqTypes[x]);
+			}
 
 			// Build the airport list to save in the field
 			StringBuffer buf = new StringBuffer();
@@ -140,6 +146,10 @@ public class EventSaveCommand extends AbstractCommand {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("EVENTCREATE"));
 				mctxt.addData("event", e);
+				
+				// Write the event
+				SetEvent wdao = new SetEvent(con);
+				wdao.write(e);
 
 				// Save the start/end/signup dates
 				mctxt.addData("airports", StringUtils.listConcat(e.getAirportD(), ","));
@@ -149,11 +159,14 @@ public class EventSaveCommand extends AbstractCommand {
 
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				pilots = pdao.getNotifications(Person.EVENT);
-
-				// Write the event
-				SetEvent wdao = new SetEvent(con);
-				wdao.write(e);
+				Collection pilots = pdao.getNotifications(Person.EVENT);
+				
+				// Send the e-mail notification
+				if (pilots != null) {
+					Mailer mailer = new Mailer(ctx.getUser());
+					mailer.setContext(mctxt);
+					mailer.send(pilots);
+				}
 			} else if (!isRefresh) {
 				SetEvent wdao = new SetEvent(con);
 				wdao.write(e);
@@ -167,13 +180,6 @@ public class EventSaveCommand extends AbstractCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
-		}
-
-		// Send the e-mail notification
-		if (pilots != null) {
-			Mailer mailer = new Mailer(ctx.getUser());
-			mailer.setContext(mctxt);
-			mailer.send(pilots);
 		}
 
 		// Forward to the JSP
