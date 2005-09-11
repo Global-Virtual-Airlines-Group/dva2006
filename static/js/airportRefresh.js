@@ -38,7 +38,9 @@ return true;
 function updateOrigin(combo)
 {
 var f = document.forms[0];
-updateAirports(f.airportA, 'code=' + getValue(combo), false, getValue(f.airportA));
+if (combo.selectedIndex != 0)
+	updateAirports(f.airportA, 'code=' + getValue(combo), false, getValue(f.airportA));
+	
 return true;
 }
 
