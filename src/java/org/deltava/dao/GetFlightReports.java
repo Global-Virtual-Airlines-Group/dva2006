@@ -219,15 +219,28 @@ public class GetFlightReports extends DAO {
 
 	/**
 	 * Returns Flight Reports with the smoothest touchdown speed.
+	 * @param days the number of days in the past to search
 	 * @return a List of ACARSFlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getGreasedLandings() throws DAOException {
+	public List getGreasedLandings(int days) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P LEFT JOIN "
+				+ "PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.STATUS=?) "
+				+ "AND (APR.LANDING_VSPEED < 0)");
+		
+		// Append number of days
+		if (days > 0)
+			sqlBuf.append(" AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+		
+		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC");
+		
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P LEFT JOIN PIREPS PR ON "
-					+ "(PR.PILOT_ID=P.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.STATUS=?) AND "
-					+ "(APR.LANDING_VSPEED < 0) ORDER BY APR.LANDING_VSPEED DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.OK);
+			if (days > 0)
+				_ps.setInt(2, days);
 
 			return execute();
 		} catch (SQLException se) {
