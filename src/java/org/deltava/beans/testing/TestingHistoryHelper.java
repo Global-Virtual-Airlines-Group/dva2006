@@ -61,7 +61,7 @@ public class TestingHistoryHelper {
 		int maxStage = 1;
 		for (Iterator i = _tests.iterator(); i.hasNext();) {
 			Test t = (Test) i.next();
-			if (t instanceof Examination)
+			if ((t instanceof Examination) && (!Examination.QUESTIONNAIRE_NAME.equals(t.getName())))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -94,6 +94,10 @@ public class TestingHistoryHelper {
 
 		// If the exam isn't active, we cannot write it
 		if (!ep.getActive())
+			return false;
+		
+		// If it's the Initial Questionnaire, uh uh
+		if (Examination.QUESTIONNAIRE_NAME.equals(ep.getName()))
 			return false;
 
 		// Check if we've passed or submitted the exam
