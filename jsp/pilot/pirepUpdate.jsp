@@ -71,7 +71,7 @@ To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}">Click H
 This Flight Report has been approved, and an e-mail message has been sent to ${pilot.name}.<br />
 <c:if test="${assignID}">
 This Pilot has been assigned a Pilot ID and seniority number at <content:airline />. The new Pilot ID 
-for ${pilot.name} is <b>${pilot.code}</b><br />
+for ${pilot.name} is <b>${pilot.pilotCode}</b><br />
 </c:if>
 <c:if test="${!empty centuryClub}">
 <br />
