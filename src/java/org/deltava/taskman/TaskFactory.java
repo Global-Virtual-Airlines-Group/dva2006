@@ -59,6 +59,7 @@ public class TaskFactory {
          Element e = (Element) i.next();
          String id = e.getAttributeValue("id");
          String className = e.getChildTextTrim("class");
+         String hours = e.getChildTextTrim("hours");
          
          // Instantiate the task and set the interval
          try {
@@ -72,6 +73,21 @@ public class TaskFactory {
                t.setInterval(Integer.parseInt(e.getChildTextTrim("interval")));
             } catch (NumberFormatException nfe) {
                t.setInterval(3600);
+            }
+            
+            // Set the hours
+            if (hours != null) {
+            	StringTokenizer tkns = new StringTokenizer(hours, ",");
+            	int hrs[] = new int[tkns.countTokens()];
+            	for (int x = 0; x < hrs.length; x++) {
+            		try {
+            			hrs[x] = Integer.parseInt(tkns.nextToken());
+            		} catch (NumberFormatException nfe) {
+            			hrs[x] = -1;
+            		}
+            	}
+            		
+            	t.setRunHours(hrs);
             }
             
             // Add to results
