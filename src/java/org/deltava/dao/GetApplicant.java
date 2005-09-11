@@ -10,7 +10,6 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.UserData;
 
 import org.deltava.util.CollectionUtils;
-import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to read Applicant data.
@@ -19,10 +18,9 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetApplicant extends DAO {
+public class GetApplicant extends PilotDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
-	static final Cache _cache = new AgingCache(4); // Package private so set DAO can update
 
 	/**
 	 * Initialize the Data Access Object.
