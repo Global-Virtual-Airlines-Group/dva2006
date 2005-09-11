@@ -52,6 +52,11 @@ public class ScheduleEntry extends Flight {
 
         // Calculate flight time in seconds, and then divide by 3600 and multiply by 10
         long lengthS = _timeA.difference(_timeD);
+        
+        // If the length is negative, then add 86400
+        if (lengthS < 0)
+        	lengthS += 86400;
+        	
         return (int) (lengthS / 360);
     }
 
