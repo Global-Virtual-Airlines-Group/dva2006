@@ -25,13 +25,6 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
-
-function toggleImgOptions(fName)
-{
-var optRow = getElement('optRow');
-optRow.className = (fName.value.length == 0) ? 'hidden' : 'visible';
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -71,13 +64,6 @@ return true;
 <c:if test="${imgBadDim}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgX}" />
  by <fmt:int value="${imgY}" /> pixels).</div></c:if>
  </td>
-</tr>
-<tr id="optRow" class="hidden">
- <td class="label" valign="top">Image Resizing</td>
- <td class="data sec"><span class="small">The largest image that can be attached to a Water Cooler post is 
-<fmt:int value="${maxX}" /> by <fmt:int value="${maxY}" /> pixels and <fmt:int value="${maxSize}" /> bytes. In 
-case your image is too large:</span><br />
-<el:combo name="imgOption" size="1" idx="*" options="${imgOpts}" value="${param.imgOptions}" /></td>
 </tr>
 
 <!-- Message Text -->

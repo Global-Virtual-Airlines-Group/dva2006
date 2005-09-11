@@ -4,11 +4,8 @@ package org.deltava.commands.cooler;
 import java.awt.Dimension;
 import java.sql.Connection;
 
-import java.io.*;
 import java.text.*;
 import java.util.Date;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -32,15 +29,15 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadPostCommand extends AbstractCommand {
 
-   private static final Logger log = Logger.getLogger(ThreadPostCommand.class);
+   /*private static final Logger log = Logger.getLogger(ThreadPostCommand.class); */
 
    private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
    private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
    private static final String[] IMG_ALIASES = { "0", "1" };
 
-   private static final int IMG_REJECT = 0;
-   //private static final int IMG_RESIZE = 1;
+   /*private static final int IMG_REJECT = 0;
+   private static final int IMG_RESIZE = 1; */
 
    /**
     * Executes the command.
@@ -111,8 +108,8 @@ public class ThreadPostCommand extends AbstractCommand {
                   || (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
 
             // If the image is too big, figure out what to do
-            int imgOpt = Integer.parseInt(ctx.getParameter("imgOption"));
-            if (badSize || (badDim && (imgOpt == IMG_REJECT))) {
+            /* int imgOpt = Integer.parseInt(ctx.getParameter("imgOption")); */
+            if (badSize || (badDim /* && (imgOpt == IMG_REJECT ) */ )) {
                ctx.setAttribute("imgBadSize", Boolean.valueOf(badSize), REQUEST);
                ctx.setAttribute("imgBadDim", Boolean.valueOf(badDim), REQUEST);
 
@@ -122,7 +119,8 @@ public class ThreadPostCommand extends AbstractCommand {
                return;
             }
 
-            // Resize the image
+            // Resize the image - DISABLED
+            /*
             if (badDim) {
                ImageScaler scaler = new ImageScaler(img.getBuffer());
                scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight()));
@@ -135,7 +133,7 @@ public class ThreadPostCommand extends AbstractCommand {
                   log.warn("Error scaling image - " + ie.getMessage(), ie);
                   img = null;
                }
-            }
+            } */
          }
 
          // Create the new thread bean
