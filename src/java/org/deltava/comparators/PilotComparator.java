@@ -20,7 +20,7 @@ public class PilotComparator extends PersonComparator {
     public static final int HOURS = 8;
     public static final int STATUS = 9;
     
-    private static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
+    public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date", "Pilot Code",
             "Equipment Type", "Rank", "Flight Legs", "Flight Hours", "Status"};
     
     private static final String[] RANKS = {"Trainee", Ranks.RANK_SO, Ranks.RANK_FO, Ranks.RANK_C, "Senior Captain",
