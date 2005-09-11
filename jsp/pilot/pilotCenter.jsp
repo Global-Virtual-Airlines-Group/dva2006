@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Pilot Center - ${pilot.name}</title>
@@ -28,8 +29,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
@@ -80,9 +81,22 @@ the <content:airline /> Pilot Board is viewed.</i></td>
  <td class="data">You are a <span class="pri bld">${pilot.rank}</span> in the <span class="sec bld">${pilot.equipmentType}</span>
  program. <span class="pri bld">(Stage ${eqType.stage})</span><br />
 <br />
-Your Chief Pilot is <A class="bld" HREF="mailto:${eqType.CPEmail}">${eqType.CPName}</A>.<br />
+Your Chief Pilot is <a class="bld" href="mailto:${eqType.CPEmail}">${eqType.CPName}</a>.<br />
+<c:if test="${!empty asstCP}">
+<c:if test="${fn:sizeof(asstCP) == 1}">
+Your Assistant Chief Pilot is 
+</c:if>
+<c:if test="${fn:sizeof(asstCP) > 1}">
+Your Assistant Chief Pilots are 
+</c:if>
+<c:forEach var="aCP" items="${asstCP}">
+<a class="bld" href="mailto:${aCP.email}">${aCP.name}</a>&nbsp;
+</c:forEach>
 <br />
-You are also qualified to fly the <fmt:list value="${pilot.ratings}" delim=", " />.</td>
+</c:if>
+<br />
+You are also qualified to file Flight Reports using the following aircraft:<br />
+<fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="pilotsearch">Pilot Search</el:cmd></td>
@@ -173,13 +187,16 @@ Installer log entries.</td>
 <span class="small sec">(Please note that these are external sites not affiliated with Delta
  Virtual Airlines. We make no representations as to the content and/or availability of these resources.)</span></td>
 </tr>
-<content:filter roles="Developer,PIREP,HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="findflight">Find A Flight</el:cmd></td>
  <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time,
   Aircraft Type and Flight Length, and pick a flight at random!</td>
 </tr>
-</content:filter>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="browse">Browse Schedule</el:cmd></td>
+ <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains 
+<fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
+</tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
