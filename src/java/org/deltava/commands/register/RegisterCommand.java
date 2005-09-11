@@ -132,7 +132,7 @@ public class RegisterCommand extends AbstractCommand {
 				if (!dupeResults.isEmpty()) {
 					ctx.release();
 					log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
-					ctx.setAttribute("notUnique", Boolean.TRUE, REQUEST);
+					result.setURL("/jsp/register/duplicateRegistration.jsp");
 					result.setSuccess(true);
 					return;
 				}
