@@ -21,8 +21,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="partnerName" name="airline.partner.name" />
 <content:sysdata var="partnerURL" name="airline.partner.url" />
@@ -52,15 +52,16 @@ our sister airline <a href="http://${partnerURL}/" class="sec bld">${partnerName
  <td colspan="3">THE FOLLOWING NOTAMS HAVE GONE INTO EFFECT SINCE YOUR LAST LOGIN</td>
 </tr>
 <c:forEach var="notam" items="${notams}">
-<view:row entry="${notam}">
+<tr>
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
- <td class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
+ <td width="10%" class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
  <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
-</view:row>
-<view:row entry="${notam}">
+</tr>
+<tr>
  <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
-</view:row>
+</tr>
 </c:forEach>
+</el:table>
 </c:if>
 <c:if test="${empty notams}">
 <el:table className="view" space="default" pad="default">
