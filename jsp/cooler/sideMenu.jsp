@@ -12,7 +12,6 @@
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
 </c:when>
 <c:otherwise>
-<tr class="MenuItem">
  <td class="sec caps">WELCOME, ${pageContext.request.remoteUser}</td>
 </tr>
 <c:if test="${!empty superUser}">
