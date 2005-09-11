@@ -35,6 +35,20 @@ if (eqOK || adOK) {
 alert('Please select at least an Aircraft type or departure Airport.');
 return false;
 }
+
+function buildValidate(form)
+{
+var isOK = false;
+for (var x = 0; x < form.addFA.length; x++)
+	isOK = isOK || form.addFA[x].checked;
+
+if (!isOK) {
+	alert('Please select at least one Flight leg to add.');
+	return false;
+}
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -64,9 +78,9 @@ return false;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry=" " options="${airports}" value="${fafCriteria.airportD}" onChange="void updateOrigin(this)" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="void updateOrigin(this)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry=" " options="${emptyList}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${emptyList}" /></td>
 </tr>
 <tr>
  <td class="label">Flight Time (+/- 1h)</td>
@@ -80,7 +94,7 @@ return false;
 </el:table>
 </el:form>
 <c:if test="${!empty fafResults}">
-<el:form method="POST" action="buildAssign.do" validate="return true">
+<el:form method="post" action="buildAssign.do" validate="return buildValidate(this)">
 <el:table className="view" space="default" pad="default">
 <!-- Search Results Data -->
 <tr class="caps title left">
@@ -164,5 +178,8 @@ return false;
 </c:if>
 <content:copyright />
 </div>
+<script language="JavaScript" type="text/javascript">
+updateOrigin(document.forms[0].airportD);
+</script>
 </body>
 </html>
