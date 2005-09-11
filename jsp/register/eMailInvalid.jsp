@@ -39,7 +39,7 @@ provided below.<br />
 <br />
 <span class="pri bld caps">VALIDATION CODE</span> <el:text name="code" idx="*" size="24" max="36" value="${param.code}" /><br />
 <br />
-<el:table class="bar" space="default" pad="default">
+<el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="VALIDATE E-MAIL ADDRESS" /></td>
 </tr>
