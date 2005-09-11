@@ -36,11 +36,14 @@
  <td><el:cmd url="eventedit">NEW ONLINE EVENT</el:cmd></td>
 </tr>
 </c:if>
+<c:if test="${!empty futureEvents}">
+<tr class="MenuHeader"><td>UPCOMING EVENTS</td></tr>
 <c:forEach var="nextEvent" items="${futureEvents}">
 <tr class="MenuItem">
  <td class="caps"><el:cmd url="event" linkID="0x${nextEvent.ID}">${nextEvent.name}</el:cmd></td>
 </tr>
 </c:forEach>
+</c:if>
 <tr class="MenuHeader"><td>ONLINE PILOTS</td></tr>
 <tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
