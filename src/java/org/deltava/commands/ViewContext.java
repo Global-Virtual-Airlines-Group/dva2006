@@ -1,10 +1,9 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.deltava.util.system.SystemData;
 
 /**
  * A bean to store scrollable view page parameters.
@@ -51,10 +50,10 @@ public class ViewContext {
      * Initializes the view context from the HTTP request.
      * @param req the HTTP request
      */
-    public ViewContext(HttpServletRequest req) {
+    public ViewContext(HttpServletRequest req, int size) {
         super();
         _start = getNumericParameter(req, START, 0);
-        _count = getNumericParameter(req, COUNT, SystemData.getInt("html.table.viewSize"));
+        _count = getNumericParameter(req, COUNT, size);
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
