@@ -22,7 +22,7 @@
 <br />
 The flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
 <br />
-To return to the event page you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd> to display the event.<br />
+To return to the event page you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd>.<br />
 <br />
 <content:copyright />
 </div>
