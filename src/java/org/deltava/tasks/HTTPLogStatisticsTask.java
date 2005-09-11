@@ -35,9 +35,10 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
       HTTPLogFilter() {
          super();
          _startTime = Calendar.getInstance();
-         _startTime.set(Calendar.HOUR, 0);
+         _startTime.set(Calendar.HOUR_OF_DAY, 0);
          _startTime.set(Calendar.MINUTE, 0);
          _startTime.set(Calendar.SECOND, 0);
+         _startTime.add(Calendar.SECOND, -1);
       }
       
       public boolean accept(File f) {
@@ -50,6 +51,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
          try {
             String ext = name.substring(name.lastIndexOf('.') + 1);
             Date d = new Date(Long.parseLong(ext) * 1000);
+            log.info("Cutoff date = " + _startTime.getTime() + " log date=" + d);
             return d.before(_startTime.getTime());
          } catch (Exception e) {
             return false;
