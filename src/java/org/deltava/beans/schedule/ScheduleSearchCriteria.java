@@ -2,6 +2,7 @@
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.Flight;
+import org.deltava.beans.FlightReport;
 
 /**
  * A bean to store search criteria for the Flight Schedule.
@@ -58,4 +59,14 @@ public class ScheduleSearchCriteria extends Flight {
 		
 		_maxResults = results;
 	}
+	
+    /**
+     * Sets the equipment type for this flight.
+     * @param eqType the aircraft type
+     * @see FlightReport#getEquipmentType()
+     */
+    public void setEquipmentType(String eqType) {
+    	if (!"-".equals(eqType))
+    		super.setEquipmentType(eqType);
+    }
 }
