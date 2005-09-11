@@ -198,7 +198,7 @@ public class GetEvent extends DAO {
 	private void loadEQTypes(Event e) throws SQLException {
 
 	   // Init the prepared statement
-	   prepareStatementWithoutLimits("SELECT RATING FROM EVENT_EQTYPES WHERE (ID=?)");
+	   prepareStatementWithoutLimits("SELECT RATING FROM common.EVENT_EQTYPES WHERE (ID=?)");
 	   _ps.setInt(1, e.getID());
 	   
 	   // Execute the query and load the equipment types
