@@ -25,7 +25,7 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
     }
     
     protected void initViewContext() {
-    	_vctx = new ViewContext(_req);
+    	_vctx = new ViewContext(_req, 25);
     	_ctx.setAttribute(ViewContext.VIEW_CONTEXT, _vctx, PageContext.REQUEST_SCOPE);
     }
     
