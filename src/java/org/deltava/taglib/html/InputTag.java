@@ -89,21 +89,19 @@ public class InputTag extends FormElementTag {
     
     /**
      * Marks this field as read-only.
-     * @param readOnly "true" if read-only, anything else if not
-     * @see Boolean#valueOf(java.lang.String)
+     * @param readOnly TRUE if read-only, otherwise FALSE
      */
-    public void setReadOnly(String readOnly) {
-        if (Boolean.valueOf(readOnly).booleanValue())
-            _attrs.put("readonly", "readonly");
+    public void setReadOnly(boolean readOnly) {
+        if (readOnly)
+        	_attrs.put("readonly", "readonly");
     }
     
     /**
      * Marks this field as disabled.
-     * @param disabled "true" if disabled, anything else if not
-     * @see Boolean#valueOf(java.lang.String)
+     * @param disabled TRUE if disabled, otherwise FALSE
      */
-    public void setDisabled(String disabled) {
-        if (Boolean.valueOf(disabled).booleanValue())
+    public void setDisabled(boolean disabled) {
+        if (disabled)
             _attrs.put("disabled", "disabled");
     }
     

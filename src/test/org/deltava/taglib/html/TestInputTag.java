@@ -43,8 +43,8 @@ public class TestInputTag extends AbstractFormTagTestCase {
     
     public void testBooleanProperties() throws Exception {
         _tag.setName("FIELD2");
-        _tag.setDisabled("true");
-        _tag.setReadOnly("true");
+        _tag.setDisabled(true);
+        _tag.setReadOnly(true);
         
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -60,8 +60,8 @@ public class TestInputTag extends AbstractFormTagTestCase {
         
         _jspOut.clearBuffer();
         _tag.setName("FIELD2");
-        _tag.setDisabled("not true");
-        _tag.setReadOnly(null);
+        _tag.setDisabled(false);
+        _tag.setReadOnly(false);
         
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
