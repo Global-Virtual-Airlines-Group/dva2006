@@ -16,7 +16,7 @@ public class PersonComparator extends AbstractComparator {
     public static final int LASTLOGIN = 2;
     public static final int CREATED = 3;
 
-    private static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date" };
+    public static final String[] TYPES = { "First Name", "Last Name", "Login Date", "Creation Date" };
 
     /**
      * @param comparisonType
