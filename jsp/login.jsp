@@ -33,6 +33,8 @@ if (f.firstName.value.length > 0) {
 	f.firstName.focus();
 }
 
+// Ensure javascript is working properly
+f.jsOK.value = 'true';
 return true;
 }
 </script>
@@ -79,6 +81,7 @@ in order to log into the site.<br />
  <td><el:button ID="SubmitButton" className="BUTTON" label="LOG IN" type="submit" /></td>
 </tr>
 </el:table>
+<el:text name="jsOK" type="hidden" value="" />
 </el:form>
 </div>
 </body>

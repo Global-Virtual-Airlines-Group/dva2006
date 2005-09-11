@@ -44,6 +44,14 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Check that JavaScript is working properly
+		boolean jsOK = Boolean.valueOf(ctx.getParameter("jsOK")).booleanValue();
+		if (!jsOK) {
+			result.setURL("/jsp/jsDisabled.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
 		Pilot p = null;
 		try {
