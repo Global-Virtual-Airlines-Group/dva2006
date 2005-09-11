@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class AddressValidationHelper {
+public final class AddressValidationHelper {
 
    // We're a singleton, alone and lonely.
    private AddressValidationHelper() {
@@ -25,7 +25,7 @@ public class AddressValidationHelper {
     * @return the hash code
     * @throws NullPointerException if addr is null
     */
-   public static final String calculateHashCode(String addr) {
+   public static String calculateHashCode(String addr) {
       
       // Build the digester and salt it
       MessageDigester md = new MessageDigester(SystemData.get("security.hash.algorithm"));
@@ -33,5 +33,23 @@ public class AddressValidationHelper {
       
       // Calculate the hash
       return Base64.encode(md.digest(addr.getBytes()));
+   }
+   
+   /**
+    * Restores a submitted hashcode even after IE has converted the plus signs to spaces.
+    * @param rawHash the raw hash code
+    * @return the restored hash code with spaces converted to plus signs
+    */
+   public static String formatHash(CharSequence rawHash) {
+	   if (rawHash == null)
+		   return null;
+	   
+	   StringBuffer buf = new StringBuffer();
+	   for (int x = 0; x < rawHash.length(); x++) {
+		   char c = rawHash.charAt(x);
+		   buf.append((c == ' ') ? '+' : c);
+	   }
+	   
+	   return buf.toString();
    }
 }
