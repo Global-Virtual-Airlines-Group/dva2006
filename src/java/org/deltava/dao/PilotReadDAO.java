@@ -10,8 +10,6 @@ import org.deltava.beans.system.UserData;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
-
-import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -23,10 +21,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-abstract class PilotReadDAO extends DAO {
+abstract class PilotReadDAO extends PilotDAO {
 
 	private static final Logger log = Logger.getLogger(PilotReadDAO.class);
-	static final Cache _cache = new ExpiringCache(128, 3600); // Package private so the set DAO can update it
 
 	/**
 	 * Creates the DAO from a JDBC connection.

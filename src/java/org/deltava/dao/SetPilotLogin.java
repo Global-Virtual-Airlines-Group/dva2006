@@ -29,6 +29,7 @@ public class SetPilotLogin extends PilotWriteDAO {
 	 */
 	public void login(Pilot p) throws DAOException {
 		
+		invalidate(p);
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGIN=?, LOGINHOSTNAME=?, LOGINS=LOGINS+1, " +
 					"STATUS=? WHERE (ID=?)");
@@ -40,9 +41,6 @@ public class SetPilotLogin extends PilotWriteDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		// Invalidate the Pilot in the cache
-		PilotReadDAO._cache.remove(p);
 	}
 	
 	/**
@@ -51,18 +49,15 @@ public class SetPilotLogin extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void logout(Pilot p) throws DAOException {
-		
+
+		invalidate(p);
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(p.getLastLogoff()));
 			_ps.setInt(2, p.getID());
-			
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		// Invalidate the Pilot in the cache
-		PilotReadDAO._cache.remove(p);
 	}
 }

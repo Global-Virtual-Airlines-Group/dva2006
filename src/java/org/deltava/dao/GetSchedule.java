@@ -36,7 +36,7 @@ public class GetSchedule extends DAO {
 	public List search(Flight criteria, boolean isRandom) throws DAOException {
 		
 		// Build the where clause
-		List conditions = new ArrayList();
+		Collection conditions = new HashSet();
 		if (criteria.getAirline() != null) conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
 		if (criteria.getEquipmentType() != null) conditions.add("EQTYPE=\'" + criteria.getEquipmentType() + "\'");
 		if (criteria.getFlightNumber() != 0) conditions.add("FLIGHT=" + criteria.getFlightNumber());
@@ -163,6 +163,55 @@ public class GetSchedule extends DAO {
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
+	}
+	
+	/**
+	 * Returns the size of the Flight Schedule.
+	 * @return the number of legs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getFlightCount() throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Airports with at least one flight departing.
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection getOriginAirports() throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT AIRPORT_D FROM SCHEDULE");
+			
+			// Execute the query
+			Set results = new HashSet();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				Airport a = SystemData.getAirport(rs.getString(1));
+				if (a != null)
+					results.add(a);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
