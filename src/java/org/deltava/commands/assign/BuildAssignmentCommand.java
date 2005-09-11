@@ -47,6 +47,11 @@ public class BuildAssignmentCommand extends AbstractCommand {
         // If we're adding flights to the in-session assignment
         if ("build".equals(opName)) {
             String[] ids = ctx.getRequest().getParameterValues("addFA");
+            if (ids == null) {
+            	result.setSuccess(true);
+            	return;
+            }
+            
             Set selected = new HashSet();
             for (int x = 0; x < ids.length; x++)
                 selected.add(new Integer(StringUtils.parseHex(ids[x])));
