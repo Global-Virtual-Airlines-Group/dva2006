@@ -102,7 +102,7 @@ public class TaskScheduler extends Thread {
 				log.debug("Checking " + t.getName());
 
 				// If the task is running, leave it alone. Only execute when it's supposed to
-				Date now = new Date();
+				Calendar now = Calendar.getInstance();
 				if (t.isAlive()) {
 					long execTime = System.currentTimeMillis() - t.getStartTime().getTime();
 
@@ -115,11 +115,11 @@ public class TaskScheduler extends Thread {
 					} else {
 						log.debug("Task executing since " + t.getStartTime());	
 					}
-				} else if (t.getNextStartTime().after(now)) {
+				} else if (t.getNextStartTime().after(now.getTime())) {
 					log.debug("Task not scheduled to execute until " + t.getNextStartTime());
 				} else if (!t.getEnabled()) {
 					log.debug("Task Disabled");
-				} else {
+				} else if (t.isRunHour(now.get(Calendar.HOUR_OF_DAY))) {
 					log.info(t.getName() + " queued for execution");
 					
 					// Log Execution date/time
@@ -139,16 +139,17 @@ public class TaskScheduler extends Thread {
 					// Pass JDBC Connection to database tasks
 					if (t instanceof DatabaseTask) {
 						DatabaseTask dt = (DatabaseTask) t;
+						dt.setRecycler(_pool);
 						try {
 							dt.setConnection(_pool.getConnection());
-							dt.setRecycler(_pool);
-							t.start();
 						} catch (ConnectionPoolException cpe) {
 							log.error("Error reserving connection - " + cpe.getMessage());
 						}
-					} else {
-						t.start();
 					}
+					
+					// Start the task
+					log.info(t.getName() + " started");
+					t.start();
 				}
 			}
 

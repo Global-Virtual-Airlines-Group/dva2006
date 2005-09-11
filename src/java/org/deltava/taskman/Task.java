@@ -15,9 +15,11 @@ public abstract class Task extends Thread implements java.io.Serializable {
     public static final long MAX_RUNTIME = 30 * 60 * 1000; // 30 minutes
     
     protected String _id;
-    protected Properties _props;
+    protected Properties _props = new Properties();
     private boolean _enabled;
     private int _runCount;
+    
+    private Set _runHours = new HashSet();
     
     private long _maxRunTime = Task.MAX_RUNTIME;
     private Calendar _startTime = Calendar.getInstance();
@@ -32,7 +34,6 @@ public abstract class Task extends Thread implements java.io.Serializable {
     public Task(String name) {
         super(name);
         setDaemon(true);
-        _props = new Properties();
     }
     
     /**
@@ -85,6 +86,16 @@ public abstract class Task extends Thread implements java.io.Serializable {
     }
     
     /**
+     * Returns wether a Task is eligible to run during a particular hour
+     * @param hour the hour of the day (0-23)
+     * @return TRUE if the Task can run this hour, otherwise FALSE
+     * @see Task#setRunHours(int[])
+     */
+    public boolean isRunHour(int hour) {
+    	return _runHours.isEmpty() || _runHours.contains(new Integer(hour));
+    }
+    
+    /**
      * Returns the interval between executions of this Task.
      * @return the interval in seconds
      */
@@ -108,6 +119,16 @@ public abstract class Task extends Thread implements java.io.Serializable {
      */
     public void setID(String id) {
        _id = id.trim();
+    }
+    
+    /**
+     * Sets the hours of the day this Task may run in.
+     * @param hours an array of hours
+     * @see Task#isRunHour(int)
+     */
+    public void setRunHours(int[] hours) {
+    	for (int x = 0; x < hours.length; x++)
+    		_runHours.add(new Integer(hours[x]));
     }
     
     /**
