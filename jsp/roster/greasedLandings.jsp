@@ -11,18 +11,40 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateNumber(form.viewCount, 1, 'Number of Landings')) return false;
+
+setSubmit();
+disableButton('SearchButton');
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the smoothest landings, and the greaser pilots who made them:<br />
+<el:form action="landings.do" method="post" validate="return validate(this)">
+The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the 
+smoothest landings, and the greaser pilots who made them:<br />
 <br />
 <el:table className="view" pad="default" space="default">
+<!-- Table top Header bar -->
+<tr class="title">
+ <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>
+ <td class="right" colspan="4"><el:text name="viewCount" idx="*" size="2" max="2" value="${viewCount}" /> 
+FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
+<el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="5%">#</td>
@@ -49,11 +71,12 @@ The members of <content:airline /> are a skilled group - and they can prove it. 
 </tr>
 </c:forEach>
 
-<!-- Scroll Bar -->
+<!-- Button Bar -->
 <tr class="title">
  <td colspan="7">&nbsp;</td>
 </tr>
 </el:table>
+</el:form>
 <br />
 <content:copyright />
 </div>
