@@ -18,7 +18,7 @@
 function setAirportD(combo)
 {
 var ad = combo.options[combo.selectedIndex].value;
-self.location = '/schdeule.do?airportD=' + ad;
+self.location = '/browse.do?airportD=' + ad;
 return true;
 }
 
@@ -29,10 +29,10 @@ var f = document.forms[0];
 // Get the departure airport
 var ad = f.airportD.options[f.airportD.selectedIndex].value;
 if (combo.selectedIndex == 0) {
-	self.location = '/schedule.do?airportD=' + ad;
+	self.location = '/browse.do?airportD=' + ad;
 } else {
 	var aa = combo.options[combo.selectedIndex].value;
-	self.location = '/schedule.do?airportD=' + ad + '&airportA=' + aa;
+	self.location = '/browse.do?airportD=' + ad + '&airportA=' + aa;
 }
 
 return true;
@@ -47,13 +47,13 @@ return true;
 <!-- Main Body Frame -->
 <div id="main">
 <el:form action="schedule.do" method="post" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="routes">
+<view:table className="view" pad="default" space="default" cmd="browse">
 
 <!-- Table Header Bars -->
-<tr class="title caps">
- <td class="left" colspan="2"><content:airline /> FLIGHT SCHEDULE</td>
+<tr class="title">
+ <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
  <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void set AirportA(this)" /></td>
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" /></td>
 </tr>
 <tr class="title caps">
  <td width="15%">FLIGHT NUMBER</td>
