@@ -135,7 +135,7 @@ public class EventAssignCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/event/eventFlghtAssign.jsp");
+		result.setURL("/jsp/event/eventFlightAssign.jsp");
 		result.setSuccess(true);
 	}
 }
