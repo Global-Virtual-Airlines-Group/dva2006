@@ -53,7 +53,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
             throw securityException("Cannot Update Signature Image");
          
          // Load the signature Image, get the write DAO and update the image
-         FileUpload imgData = ctx.getFile("FILE$coolerImg");
+         FileUpload imgData = ctx.getFile("coolerImg");
          if (imgData != null) {
             // Check the image
             ImageInfo info = new ImageInfo(imgData.getBuffer());
