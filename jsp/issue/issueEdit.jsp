@@ -41,6 +41,7 @@ return true;
 </tr>
 
 <!-- Issue Data -->
+<c:if test="${!empty issue}">
 <tr>
  <td class="label">Reported by</td>
  <td class="data">${pilots[issue.createdBy].name} (${pilots[issue.createdBy].pilotCode}) on
@@ -55,6 +56,7 @@ return true;
  <td class="data bld">${issue.statusName}</td>
 </c:if>
 </tr>
+</c:if>
 <tr>
  <td class="label">Issue Title</td>
  <td class="data"><el:text name="subject" className="pri bld" size="64" max="128" idx="2" value="${issue.subject}" /></td>
