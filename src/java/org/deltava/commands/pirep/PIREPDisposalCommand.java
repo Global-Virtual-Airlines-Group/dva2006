@@ -147,9 +147,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   GetPilot.cache().remove(p.cacheKey());   
 			}
 			
-			// Commit the transaction
-			ctx.commitTX();
-			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
 			int assignID = fr.getDatabaseID(FlightReport.DBID_ASSIGN);
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
@@ -166,6 +163,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			      ctx.setAttribute("assignComplete", Boolean.TRUE, REQUEST);
 			   }
 			}
+			
+			// Commit the transaction
+			ctx.commitTX();
 			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
