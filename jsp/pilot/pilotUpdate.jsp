@@ -13,8 +13,9 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="db" name="airline.db" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -55,14 +56,14 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <!-- Removed Staff Profile -->
 <li>The Staff Profile for ${pilot.name} has been removed from the Staff Roster.</li>
 </c:if>
-<c:if test="${sigUpdated}">
+<c:if test="${sigRemoved}">
 <!-- Updated Signature Image -->
 <li>The Water Cooler signature image for ${pilot.name} has been removed.</li>
 </c:if>
-<c:if test="${sigRemoved}">
+<c:if test="${sigUpdated}">
 <!-- Removed Signature Image -->
 <li>The Water Cooler signature image for ${pilot.name} has been updated. It is displayed below:<br />
-<img alt="${pilot.name} (${pilot.pilotCode})" src="/sig/0x<fmt:hex value="${pilot.ID}" />" /></li>
+<img alt="${pilot.name} (${pilot.pilotCode})" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
 </c:if>
 </ul>
 <br />
