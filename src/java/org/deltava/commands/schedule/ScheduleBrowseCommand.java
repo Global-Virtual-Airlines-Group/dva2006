@@ -1,9 +1,13 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
+
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -28,19 +32,36 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       // Get the view context
       ViewContext vc = initView(ctx);
       
+      // Get the departure airport
+      Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
+      if (aD == null)
+    	  aD = SystemData.getAirport(ctx.getUser().getHomeAirport());
+      
       // Build the search criteria
       ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
-      criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+      criteria.setAirportD(aD);
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+      
+      // Save the search criteria
+      ctx.setAttribute("airportD", aD, REQUEST);
+      ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
+      
+      // Create the airport comparator and sorted result sets
+      AirportComparator ac = new AirportComparator(AirportComparator.NAME);
+      Set airportsD = new TreeSet(ac);
+      Set airportsA = new TreeSet(ac);
       
       try {
          Connection con = ctx.getConnection();
          
-         // Get the DAO
+         // Get the DAO and source/destination airports
          GetSchedule dao = new GetSchedule(con);
+         airportsD.addAll(dao.getOriginAirports());
+         airportsA.addAll(dao.getConnectingAirports(criteria.getAirportD(), true));
          
-         // Get connecting airports
-         ctx.setAttribute("dstAP", dao.getConnectingAirports(criteria.getAirportD(), true), REQUEST);
+         // Save airports
+         ctx.setAttribute("airports", airportsD, REQUEST);
+         ctx.setAttribute("dstAP", airportsA, REQUEST);
          
          // Do the search
          dao.setQueryStart(vc.getStart());
