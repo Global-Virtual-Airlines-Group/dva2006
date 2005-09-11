@@ -21,6 +21,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotCenterCommand extends AbstractTestHistoryCommand {
+	
+	private static int _scheduleSize = 0;
 
 	/**
 	 * Executes the command.
@@ -56,6 +58,15 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Get online hours
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.getOnlineTotals(p);
+			
+			// Get the schedule size if uncached
+			if (_scheduleSize == 0) {
+				GetSchedule sdao = new GetSchedule(con);
+				_scheduleSize = sdao.getFlightCount();
+			}
+			
+			// Save the schedule size
+			ctx.setAttribute("scheduleSize", new Integer(_scheduleSize), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
