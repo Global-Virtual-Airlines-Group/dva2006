@@ -49,7 +49,7 @@ public class ThreadMoveCommand extends AbstractCommand {
 				throw securityException("Cannot move Thread to " + newChannel);
 			
 			// Set new channel
-			ctx.setAttribute("isMoved", Boolean.valueOf(true), REQUEST);
+			ctx.setAttribute("isMoved", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("newChannel", newChannel, REQUEST);
 			
 			// Update the thread

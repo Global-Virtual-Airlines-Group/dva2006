@@ -22,6 +22,8 @@ if (!checkSubmit()) return false;
 var act = form.action;
 if (act.substring(0, 3) == 'img') {
 	if (!validateCombo(form.score, 'Image Rating')) return false;
+} else if (act == 'threadmove.do') {
+	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
 } else {
 	if (!validateText(form.msgText, 3, 'text of your response')) return false;
 }
@@ -34,14 +36,16 @@ disableButton('UnlockButton');
 disableButton('VoteButton');
 disableButton('ImgDeleteButton');
 disableButton('ResyncButton');
+disableButton('DeleteButton');
+disableButton('MoveButton');
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <c:set var="user" value="${pageContext.request.userPrincipal}" scope="request" />
 <content:sysdata var="imgPath" name="path.img" />
@@ -49,7 +53,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="threadReply.do" linkID="0x${thread.ID}" method="POST" validate="return validate(this)">
+<el:form action="threadReply.do" linkID="0x${thread.ID}" method="post" validate="return validate(this)">
 <el:table className="thread" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
@@ -59,8 +63,8 @@ return true;
 
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
-<tr class="mid">
- <td colspan="2" class="sec bld">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
+<tr class="title caps">
+ <td colspan="2">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
 
@@ -69,16 +73,20 @@ return true;
 <tr class="mid">
  <td colspan="2"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
 </tr>
-</c:if>
-<c:if test="${!empty img.votes}">
-<tr>
- <td colspan="2" class="bld caps">Feedback: ${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></td>
+<c:if test="${(!empty img.votes) || imgAccess.canVote}">
+<tr class="title">
+ <td class="right caps">Feedback:</td>
+ <td class="left"><c:if test="${!empty img.votes}">  ${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></c:if>
+ <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
+<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
+</td>
 </tr>
+</c:if>
 </c:if>
 
 <!-- Thread Posts -->
 <c:forEach var="msg" items="${thread.posts}">
-<!-- Response bean 0x<fmt:hex value="${msg.ID}" /> -->
+<!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <tr>
@@ -162,12 +170,8 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
 
 <!-- Button Bar -->
-<tr class="buttons title mid">
+<tr class="buttons">
  <td colspan="2">&nbsp;
-<c:if test="${imgAccess.canVote}">
-<b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
-<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" />
-</c:if>
 <c:if test="${access.canReply}">
  <el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
 </c:if>
@@ -183,10 +187,17 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
 </c:if>
 <c:if test="${access.canResync && !noResync}">
- <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE THREAD DATA" url="threadsync" linkID="0x${img.ID}" />
+ <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
 </c:if>
 <c:if test="${access.canUnstick}">
  <el:cmdbutton ID="UnstickButton" label="UNSTICK THREAD" url="unstick" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canLock}">
+ MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
+ <el:cmdbutton ID="MoveButton" label="MOVE THREAD" url="threadmove" post="true" linkID="0x${thread.ID}" />
 </c:if>
  </td>
 </tr>

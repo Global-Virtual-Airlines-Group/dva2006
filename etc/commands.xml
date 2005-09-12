@@ -477,13 +477,19 @@
 		<class>org.deltava.commands.cooler.ThreadLockCommand</class>
 		<roles>Moderator</roles>
 	</command>
-	
+
 	<command id="threadunlock">
 		<name>Unlock Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadUnlockCommand</class>
 		<roles>Moderator</roles>
 	</command>
-	
+
+	<command id="threadkill">
+		<name>Delete Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="threadmove">
 		<name>Move Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadMoveCommand</class>
@@ -927,19 +933,19 @@
 	<command id="msgtemplates">
 		<name>Message Templates</name>
 		<class>org.deltava.commands.admin.MessageTemplatesCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Developer</roles>
 	</command>
 	
 	<command id="msgtemplate">
 		<name>Edit Message Template</name>
 		<class>org.deltava.commands.admin.MessageTemplateCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Developer</roles>
 	</command>
 	
 	<command id="msgtemplatesave">
 		<name>Save Message Template</name>
 		<class>org.deltava.commands.admin.MessageTemplateSaveCommand</class>
-		<roles>HR</roles>
+		<roles>HR,Developer</roles>
 	</command>
 	
 	<command id="msgtemplatedelete">
