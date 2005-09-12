@@ -46,6 +46,8 @@ public class ValidateEmailCommand extends AbstractCommand {
 			// Get the User Data
 			GetUserData usrdao = new GetUserData(con);
 			UserData usr = usrdao.get(id);
+			if (usr == null)
+				throw new CommandException("Invalid Pilot/Applicant ID - " + id);
 
 			// Get the applicant or pilot
 			if (usr.isApplicant()) {
