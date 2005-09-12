@@ -150,14 +150,17 @@
 			</classpath> 
 		</taskdef>
 		
-		<!-- Delete the old web.xml -->
+		<!-- Delete the old web.xml files -->
 		<delete file="${java.io.tmpdir}/build/web.xml" />
+		<delete file="${basedir}/WEB-INF/web.xml" />
 		
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
+		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false" xpoweredBy="true" 
 			validateXml="false" webXmlFragment="${jspc.webXMLInc}"
 	    	outputDir="${java.io.tmpdir}/src/jsp" />
+		<delete file="${basedir}/WEB-INF/web.xml" />		
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
