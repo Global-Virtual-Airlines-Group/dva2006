@@ -57,10 +57,8 @@ public class ScheduleSearchCriteria extends Flight {
 	}
 	
 	public void setDistance(int distance) {
-		if (distance < 0)
-			throw new IllegalArgumentException("Flight Distance cannot be negative");
-		
-		_distance = distance;
+		if (distance > 0)
+			_distance = distance;
 	}
 	
 	public void setMaxResults(int results) {

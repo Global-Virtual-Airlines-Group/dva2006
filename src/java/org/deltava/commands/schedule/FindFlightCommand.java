@@ -61,9 +61,8 @@ public class FindFlightCommand extends AbstractCommand {
         criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
         criteria.setDistance(parse(ctx.getParameter("distance")));
         criteria.setMaxResults(parse(ctx.getParameter("maxResults")));
-        if ((criteria.getMaxResults() == 0) || (criteria.getMaxResults() > 150))
+        if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
             criteria.setMaxResults(100);
-        //criteria.setLength((int) (Double.parseDouble(ctx.getParameter("flightTime")) * 10));
 
         // Save the search criteria in the session
         ctx.setAttribute("fafCriteria", criteria, SESSION);
