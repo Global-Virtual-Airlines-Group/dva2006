@@ -16,6 +16,8 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _distance;
 	private int _length;
 	private int _maxResults;
+	
+	private String _sortBy;
 
 	/**
 	 * Initializes the search criteria.
@@ -25,6 +27,10 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public ScheduleSearchCriteria(Airline aCode, int fNumber, int leg) {
 		super(aCode, fNumber, leg);
+	}
+	
+	public String getSortBy() {
+		return _sortBy;
 	}
 	
 	public final int getDistance() {
@@ -37,6 +43,10 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public final int getMaxResults() {
 	    return _maxResults;
+	}
+	
+	public void setSortBy(String sortBy) {
+		_sortBy = sortBy;
 	}
 
 	public void setLength(int length) {
