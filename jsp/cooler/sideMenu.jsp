@@ -55,6 +55,9 @@
 <tr class="MenuItem">
  <td><el:link url="/">HOME</el:link></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="notams">NOTAMs</el:cmd></td>
+</tr>
 <content:filter roles="Pilot">
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
