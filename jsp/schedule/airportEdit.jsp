@@ -18,6 +18,7 @@ if (!checkSubmit()) return false;
 if (!validateText(form.name, 8, 'Airport Name')) return false;
 if (!validateText(form.iata, 3, 'IATA Code')) return false;
 if (!validateText(form.icao, 4, 'ICAO Code')) return false;
+if (!validateCombo(form.tz, 'Time Zone')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -27,8 +28,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
@@ -40,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport Name</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld" size="20" max="32" value="${airport.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld" size="24" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>
@@ -66,12 +67,18 @@ return true;
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" value="${airport.TZ}" /></td>
+ <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Airlines</td>
- <td class="data"><el:check name="airline" idx="*" width="140" className="small" cols="5" options="${airlines}" separator="<div style=\"clear:both;\" />" checked="${airport.airlineCodes}" /></td>
+ <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" separator="<div style=\"clear:both;\" />" checked="${airport.airlineCodes}" /></td>
 </tr>
+<c:if test="${!empty system_message}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data error bld">${system_message}</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->

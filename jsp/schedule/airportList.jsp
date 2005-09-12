@@ -20,12 +20,26 @@ function setAirline(combo)
 self.location = '/airports.do?id=' + combo.options[combo.selectedIndex].value;
 return true;
 }
+
+function editAirport()
+{
+var f = document.forms[0];
+var apCode = f.airport.value.toUpperCase();
+if (apCode.length < 3) {
+	alert('Please select a valid ICAO or IATA airport code');
+	apCode.focus();
+	return false;
+}
+
+self.location = '/airport.do?id=' + apCode + '&op=edit';
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/schedule/header.jsp" %> 
-<%@include file="/jsp/schedule/sideMenu.jsp" %>
+<%@ include file="/jsp/schedule/header.jsp" %> 
+<%@ include file="/jsp/schedule/sideMenu.jsp" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" />
 
 <!-- Main Body Frame -->
@@ -39,8 +53,10 @@ return true;
  <td width="20%">AIRPORT NAME</td>
  <td width="7%">IATA</td>
  <td width="8%">ICAO</td>
- <td width="25%">TIME ZONE</td>
- <td>AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void setAirline(this)" /></td>
+ <td width="15%">EDIT <el:text name="airport" idx="*" size="3" max="4" value="" />
+ <el:button ID="EditButton" className="BUTTON" onClick="void editAirport()" label="GO" /></td>
+ <td width="10%">TIME ZONE</td>
+ <td class="right">AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void setAirline(this)" /></td>
 </tr>
 
 <!-- Table Airport Data -->
@@ -49,14 +65,14 @@ return true;
  <td class="pri bld" colspan="2"><el:cmd url="airport" linkID="${airport.IATA}" op="edit">${airport.name}</el:cmd></td>
  <td class="bld">${airport.IATA}</td>
  <td class="bld">${airport.ICAO}</td>
- <td class="sec small">${airport.TZ}</td>
+ <td class="sec small" colspan="2">${airport.TZ}</td>
  <td><fmt:geo pos="${airport.position}" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </el:form>
