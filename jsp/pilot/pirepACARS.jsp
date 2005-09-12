@@ -55,8 +55,8 @@
 <c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="request" />
 <tr>
  <td class="label">Flight Time</td>
- <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" />, block time
- <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" /></td>
+ <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
+ <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
 <tr>
