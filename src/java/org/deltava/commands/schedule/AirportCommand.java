@@ -32,10 +32,29 @@ public class AirportCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
+		
+		// Get the command results
+		CommandResult result = ctx.getResult();
 
-		// Get the Airport code
-		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		// Get the Airport code - if we're new, check if the airport exists
+		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
+		if (isNew) {
+			Airport ap = SystemData.getAirport(ctx.getParameter("iata").toUpperCase());
+			if (ap != null) {
+				ctx.setMessage("Airport already exists - " + ap.getName());
+				
+				// Save directions and time zones in request
+				ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
+				ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
+				ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
+
+				// Forward to the JSP
+				result.setURL("/jsp/schedule/airportEdit.jsp");
+				result.setSuccess(true);
+				return;
+			}
+		}
 
 		Airport a = null;
 		try {
@@ -109,7 +128,6 @@ public class AirportCommand extends AbstractFormCommand {
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
 		result.setSuccess(true);
@@ -121,9 +139,12 @@ public class AirportCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
+		
+		// Get the command results
+		CommandResult result = ctx.getResult();
+		
 		// Get the Airport code
-		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
 		
 		// Save directions and time zones in request
@@ -139,8 +160,15 @@ public class AirportCommand extends AbstractFormCommand {
 				// Get the DAO and the Airport
 				GetAirport dao = new GetAirport(con);
 				Airport a = dao.get(aCode);
-				if (a == null)
-					throw new CommandException("Invalid Airport Code - " + aCode);
+				if (a == null) {
+					ctx.release();
+					ctx.setMessage("Unknown Airport Code - " + aCode);
+					
+					// Forward to the JSP
+					result.setURL("/jsp/schedule/airportEdit.jsp");
+					result.setSuccess(true);
+					return;
+				}
 
 				// Save the airport in the request
 				ctx.setAttribute("airport", a, REQUEST);
@@ -163,7 +191,6 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/airportEdit.jsp");
 		result.setSuccess(true);
 	}
