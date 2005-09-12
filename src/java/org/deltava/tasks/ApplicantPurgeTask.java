@@ -61,7 +61,7 @@ public class ApplicantPurgeTask extends DatabaseTask {
 			MessageTemplate mt = mtdao.get("APPPURGE");
 
 			// Loop through the Applicants
-			List applicants = dao.getByStatus(Applicant.PENDING);
+			List applicants = dao.getByStatus(Applicant.PENDING, "CREATED");
 			for (Iterator i = applicants.iterator(); i.hasNext();) {
 				Applicant a = (Applicant) i.next();
 				log.info("Checking " + a.getName());
