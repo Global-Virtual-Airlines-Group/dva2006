@@ -75,11 +75,19 @@ Thank you for your participation in the <content:airline /> Water Cooler!<br />
 <br />
 The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been unstuck.<br />
 </c:if>
+<c:if test="${isDelete}">
+<!-- Thread Deleted -->
+<div class="updateHdr">Water Cooler Message Thread Deleted</div>
 <br />
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been deleted.<br />
+</c:if>
+<br />
+<c:if test="${!isDelete}">
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return
 to the thread or you are impatient, you can <el:cmd className="sec bld" url="thread" linkID="0x${thread.ID}" op="read">click here</el:cmd>
 to display the discussion thread.<br />
 <br />
+</c:if>
 To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">click here</el:cmd><br />
 <br />
 <content:copyright />

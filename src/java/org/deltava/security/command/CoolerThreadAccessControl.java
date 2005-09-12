@@ -27,6 +27,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canUnlock;
     private boolean _canResync;
     private boolean _canUnstick;
+    private boolean _canDelete;
     
 	/**
 	 * Initializes the controller.
@@ -73,6 +74,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canLock = channelAccess && !isClosed && isModerator;
         _canUnlock = channelAccess && isClosed && isModerator;
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
+        _canDelete = _ctx.isUserInRole("Admin");
     }
     
     /**
@@ -121,5 +123,13 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanUnstick() {
     	return _canUnstick;
+    }
+    
+    /**
+     * Returns if the thread can be deleted.
+     * @return TRUE if the thread can be deleted, otherwise FALSE
+     */
+    public boolean getCanDelete() {
+       return _canDelete;
     }
 }
