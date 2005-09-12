@@ -115,7 +115,7 @@
 		</attribute>
 		<attribute>
 			<name>date</name>
-			<required>false</required>
+			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.util.Date</type>
 		</attribute>
