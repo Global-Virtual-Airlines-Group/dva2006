@@ -9,28 +9,39 @@
 <head>
 <title><content:airline /> Online Users</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function sortBy(combo)
+{
+var sortCode = combo.options[combo.selectedIndex].value;
+self.location = '/users.do?sortOpt=' + sortCode;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
+<el:form action="users.do" method="get" validate="return false">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="7" class="left">CURRENTLY LOGGED IN USERS</td>
+ <td colspan="5" class="left caps">CURRENTLY LOGGED IN USERS</td>
+ <td colspan="2" class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${param.sortOpt}" onChange="void sortBy(this)" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->
 <tr class="title caps">
  <td width="10%">PILOT ID</td>
- <td width="17%">PILOT NAME</td>
+ <td width="20%">PILOT NAME</td>
  <td width="12%">RANK</td>
- <td width="12%">EQUIPMENT TYPE</td>
- <td width="19%">LOCATION</td>
+ <td width="13%">EQUIPMENT TYPE</td>
+ <td width="20%">LOCATION</td>
  <td>JOINED ON</td>
 </tr>
 
@@ -59,6 +70,7 @@
  <td colspan="7">&nbsp;</td>
 </tr>
 </el:table>
+</el:form>
 <content:copyright />
 </div>
 </body>
