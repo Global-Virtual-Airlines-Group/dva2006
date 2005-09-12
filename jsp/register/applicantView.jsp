@@ -13,14 +13,24 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript type="text/javascript">
+function validate(form)
+{
+<c:if test="${!access.canAppprove}">return false;</c:if>
+
+
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
+<el:form action="apphire.do" method="post" linkID="0x${applicant.ID}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICANT</td>
@@ -160,6 +170,37 @@
  <td class="label">Registered from</td>
  <td class="data">${applicant.registerHostName}</td>
 </tr>
+
+<c:if test="${access.canApprove}">
+<!-- Hire Section -->
+<tr class="title">
+ <td colspan="2">APPROVE APPLICANT</td>
+</tr>
+<tr>
+ <td class="label">Pilot Questionnaire</td>
+<c:if test="${empty questionnaire}">
+ <td class="data warn bld caps">Pilot Questionnaire Not Found</td>
+</c:if>
+<c:if test="${!empty questionnaire}">
+<c:if test="${!fn:pending(questionnaire)}">
+ <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
+correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
+<el:cmdbutton url="questionnaire" linkID="0x${applicant.ID}" label="VIEW QUESTIONNAIRE" /></td>
+</c:if>
+<c:if test="${fn:pending(questionnaire)}">
+ <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
+</c:if>
+</c:if>
+</tr>
+<tr>
+ <td class="label">Equipment Program</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${applicant.equipmentType}" /></td>
+</tr>
+<tr>
+ <td class="label">Rank</td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -167,23 +208,24 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
-<el:cmdbutton url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
+<el:cmdbutton ID="EditButton" url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
 </c:if>
 <c:if test="${access.canApprove}">
-<el:cmdbutton url="apphire" linkID="0x${applicant.ID}" label="HIRE" />
+<el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE" />
 </c:if>
 <c:if test="${access.canReject}">
-<el:cmdbutton url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
+<el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
 </c:if>
 <c:if test="${!empty questionnaire}">
-<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
+<el:cmdbutton ID="QuestionnaireButton" url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
 </c:if>
 <c:if test="${access.canApprove || access.canReject}">
-<el:cmdbutton url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
+<el:cmdbutton ID="ResendButton" url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
 </c:if>
  </td>
 </tr>
 </el:table>
+</el:form>
 <content:copyright />
 </div>
 </body>

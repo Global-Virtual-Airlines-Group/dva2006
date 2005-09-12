@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.*;
 
@@ -119,21 +120,19 @@ public class SetApplicant extends PilotWriteDAO {
 	/**
 	 * Marks an Applicant as hired, and updates the Pilot ID.
 	 * @param a the Applicant bean
+	 * @param aRatings additional ratings to give to the new Pilot
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void hire(Applicant a) throws DAOException {
+	public void hire(Applicant a, Collection aRatings) throws DAOException {
 		
 		invalidate(a);
 		try {
 			startTransaction();
 
 			// Write the USERDATA Object
-			prepareStatement("INSERT INTO common.USERDATA (AIRLINE, DBNAME, TABLENAME, DOMAIN) VALUES "
-					+ "(?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.USERDATA (AIRLINE, TABLENAME) VALUES (?, ?)");
 			_ps.setString(1, SystemData.get("airline.code"));
-			_ps.setString(2, SystemData.get("airline.db"));
-			_ps.setString(3, "PILOTS");
-			_ps.setString(4, SystemData.get("airline.domain"));
+			_ps.setString(2, "PILOTS");
 			executeUpdate(1);
 
 			// Get the new Pilot's database ID
@@ -175,18 +174,27 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(27, a.getNumberFormat());
 			_ps.setInt(28, a.getAirportCodeType());
 			_ps.setInt(29, a.getPilotID());
-
-			// update the database
 			executeUpdate(1);
+			
+			// Write the additional ratings
+			prepareStatement("INSERT INTO RATINGS (ID, RATING) VALUES (?, ?)");
+			_ps.setInt(1, a.getPilotID());
+			for (Iterator i = aRatings.iterator(); i.hasNext(); ) {
+				_ps.setString(2, (String) i.next());
+				_ps.addBatch();
+			}
+			
+			// Write the ratings
+			_ps.executeBatch();
 
 			// Update the applicant status
 			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setInt(2, a.getPilotID());
 			_ps.setInt(3, a.getID());
-
-			// Update the database and commit
 			executeUpdate(1);
+			
+			// Commit the transaction
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();

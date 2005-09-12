@@ -46,17 +46,22 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			if (a == null)
 				throw new CommandException("Invalid Applicant - " + ctx.getID());
 			
+			// Check our access level
+			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
+			access.validate();
+			if (!access.getCanApprove())
+				throw securityException("Cannot Approve Applicant");
+			
 			// Get the Equipment Type hired into
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(a.getEquipmentType());
 			if (eq == null)
 			   throw new CommandException("Invalid Equipment Program - " + a.getEquipmentType());
 			
-			// Check our access level
-			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
-			access.validate();
-			if (!access.getCanApprove())
-				throw securityException("Cannot Approve Applicant");
+			// Get the equipment ratings
+			Collection ratings = new TreeSet();
+			ratings.addAll(eq.getPrimaryRatings());
+			ratings.addAll(eq.getSecondaryRatings());
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -71,9 +76,15 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Turn off autocommits on the connection
 			ctx.startTX();
 			
+			// Check if we are overwriting the eq program and rank
+			if (ctx.getParameter("eqType") != null) {
+				a.setEquipmentType(ctx.getParameter("eqType"));
+				a.setRank(ctx.getParameter("rank"));
+			}
+			
 			// Get the write DAO and approve the applicant
 			SetApplicant wdao = new SetApplicant(con);
-			wdao.hire(a);
+			wdao.hire(a, ratings);
 			
 			// Delete the e-mail validation record
 			SetAddressValidation avdao = new SetAddressValidation(con);
