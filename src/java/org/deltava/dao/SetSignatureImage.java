@@ -12,7 +12,7 @@ import org.deltava.beans.Pilot;
  * @since 1.0
  */
 
-public class SetSignatureImage extends DAO {
+public class SetSignatureImage extends PilotWriteDAO {
 
 	/**
 	 * Initialize the Data Access Object.
@@ -29,6 +29,8 @@ public class SetSignatureImage extends DAO {
 	 * @see Pilot#getHasSignature()
 	 */
 	public void write(Pilot p) throws DAOException {
+	   
+	   invalidate(p);
 		try {
 			prepareStatementWithoutLimits("REPLACE INTO SIGNATURES (ID, WC_SIG) VALUES(?, ?)");
 			_ps.setInt(1, p.getID());
@@ -37,9 +39,6 @@ public class SetSignatureImage extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		// Invalidate the pilot cache object
-		GetPilot._cache.remove(p.cacheKey());
 	}
 
 	/**
@@ -48,6 +47,8 @@ public class SetSignatureImage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int pilotID) throws DAOException {
+	   
+	   invalidate(pilotID);
 		try {
 			prepareStatementWithoutLimits("DELETE FROM SIGNATURES WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
@@ -55,8 +56,5 @@ public class SetSignatureImage extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
-		// Invalidate the pilot cache object
-		GetPilot._cache.remove(new Integer(pilotID));
 	}
 }
