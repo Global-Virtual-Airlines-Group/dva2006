@@ -825,7 +825,13 @@
 		<class>org.deltava.commands.register.RegisterCommand</class>
 		<roles>Anonymous</roles>
 	</command>
-	
+
+	<command id="dupeinfo">
+		<name>Duplication Registration</name>
+		<class>org.deltava.commands.register.DuplicatePilotCommand</class>
+		<roles>Anonymous</roles>
+	</command>
+
 	<command id="questionnaires">
 		<name>Questionnaire Queue</name>
 		<class>org.deltava.commands.register.QuestionnaireQueueCommand</class>
