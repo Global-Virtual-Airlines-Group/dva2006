@@ -55,7 +55,7 @@ public class EventAccessControl extends AccessControl {
       _canSignup = (_ev.getStatus() == Event.OPEN) && (!_ev.isSignedUp(_ctx.getUser().getID()));
       _canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
       _canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
-      _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && isEvent;
+      _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && _ev.getSignups().isEmpty() && isEvent;
       _canCancel = _canEdit;
    }
 
