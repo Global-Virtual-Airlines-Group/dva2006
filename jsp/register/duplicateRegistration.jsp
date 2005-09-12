@@ -15,7 +15,10 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.msgtohr, 10, 'Message to Human Resources')) return false;
+if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
+if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
+if (!validateText(form.email, 7, 'E-Mail Address')) return false;
+if (!validateText(form.msgText, 10, 'Message to Human Resources')) return false;
 
 setSubmit();
 disableButton('SubmitButton');
@@ -30,13 +33,34 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="senddupeinfo.do" method="post" validate="return validate(this)">
-<div class="updateHdr">Duplicate Registration Detected</div>
-<br />
-There is another pilot registered in our database with your provided name and/or e-mail address. If you are an inactive pilot wishing to return to active status at <content:airline />, please fill in your details in the form below, which will be sent to our Human Resources department. You should hear back from them within 48-72 hours. Thank you for your interest in <content:airline />!<br />
-<br />
-<span class="pri bld caps">MESSAGE TO HUMAN RESOURCES:</span> <el:textbox name="msgtohr" idx="*" width="150" height="7" /></el:textbox><br />
-<br />
+<el:form action="dupeinfo.do" method="post" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr>
+ <td class="title caps" colspan="2">Duplicate Registration</td>
+</tr>
+<tr>
+ <td class="pri bld left">There is another Pilot or Applicants registered at <content:airline /> with 
+your provided name and/or e-mail address. If you are an inactive or retired Pilot wishing to return to active 
+status at <content:airline />, please fill in your details in the space below. These will be sent to our 
+Human Resources department. You should hear back from them within 48-72 hours. Thank you for your 
+interest in <content:airline />!</td>
+</tr>
+<tr>
+ <td class="label">First / Last Name</td>
+ <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${param.lastName}" /></td>
+</tr>
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td class="data"><el:text name="email" idx="*" size="48" max="64" value="${param.email}" /></td>
+</tr>
+<tr>
+ <td class="label">Other Information</td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="150" height="7" /></el:textbox></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT MESSAGE" /></td>
