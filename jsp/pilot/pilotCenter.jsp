@@ -286,11 +286,6 @@ for promotion to the rank of Captain in their Equipment Program.</td>
  that qualify for promotion to Captain.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="msgtemplates">E-Mail Message Templates</el:cmd></td>
- <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of
-new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
-</tr>
-<tr>
  <td class="mid"><el:cmd className="bld" url="applicants">Pilot Registration</el:cmd></td>
  <td class="data">This section tracks applicants to <content:airline /> before they are hired on as Pilots.</td>
 </tr>
@@ -368,11 +363,18 @@ database.</td>
 </tr>
 </content:filter>
 </c:if>
-<content:filter roles="Admin">
+<content:filter roles="HR,Developer">
 <!-- System Admin Section -->
 <tr class="title caps">
  <td colspan="2">SYSTEM ADMINISTRATION</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="msgtemplates">E-Mail Message Templates</el:cmd></td>
+ <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of
+new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
+</tr>
+</content:filter>
+<content:filter roles="Admin">
 <tr>
  <td class="mid"><el:cmd className="bld" url="diag">Diagnostics</el:cmd></td>
  <td class="data">You can view information about the application server and Java Virtual Machine.</td>
