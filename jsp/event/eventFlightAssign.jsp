@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Online Event Flight Assignments Created</title>
@@ -20,9 +21,9 @@
 <div id="main">
 <div class="updateHdr">Online Event Flight Assignments Created</div>
 <br />
-The flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
+<fmt:int value="${fn:sizeof(e.signups)}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
 <br />
-To return to the event page you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd>.<br />
+To return to this Online Event, <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd>.<br />
 <br />
 <content:copyright />
 </div>
