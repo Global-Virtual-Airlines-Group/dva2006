@@ -32,7 +32,7 @@ public class Mailer extends Thread {
    private MessageContext _ctx;
    private DataSource _attach;
 
-   private class EMailSender implements EMailAddress {
+   private static class EMailSender implements EMailAddress {
 
       private String _name;
       private String _addr;
@@ -65,6 +65,25 @@ public class Mailer extends Thread {
       }
    }
 
+   /**
+    * Utility method to create an e-mail address object.
+    * @param addr the recipient address
+    * @param name the recipient name
+    * @return an EMailAddress object
+    */
+   public static EMailAddress makeAddress(String addr, String name) {
+      return new EMailSender(addr, name);
+   }
+   
+   /**
+    * Utility method to create an e-mail address object.
+    * @param addr the recipient address
+    * @return an EMailAddress object, with the recipient address and name the same
+    */
+   public static EMailAddress makeAddress(String addr) {
+      return makeAddress(addr, addr);
+   }
+   
    /**
     * Attaches a file to the message.
     * @param ds a DataSource pointing to the file attachment data.
