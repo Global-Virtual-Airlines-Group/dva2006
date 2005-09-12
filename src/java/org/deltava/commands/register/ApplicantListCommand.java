@@ -7,10 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.Applicant;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetApplicant;
-import org.deltava.dao.GetEquipmentType;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
 import org.deltava.util.StringUtils;
@@ -57,13 +54,13 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			List results = null;
 			if (ctx.getParameter("status") != null) {
 				int statusCode = StringUtils.arrayIndexOf(Applicant.STATUS, ctx.getParameter("status"));
-				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode);
+				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "LASTNAME");
 			} else if (ctx.getParameter("eqType") != null) {
 				results = dao.getByEquipmentType(ctx.getParameter("eqType"));
-			} else if (ctx.getParameter("letter") != null) {
+			} else if (!StringUtils.isEmpty(ctx.getParameter("letter"))) {
 				results = dao.getByLetter(ctx.getParameter("letter"));
 			} else {
-				results = dao.getByStatus(Applicant.PENDING);
+				results = dao.getByStatus(Applicant.PENDING, "CREATED");
 			}
 
 			// Save the results

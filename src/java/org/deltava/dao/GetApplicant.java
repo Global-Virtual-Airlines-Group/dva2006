@@ -10,6 +10,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.system.UserData;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to read Applicant data.
@@ -181,12 +182,21 @@ public class GetApplicant extends PilotDAO {
 	/**
 	 * Returns all Applicants with a particular status.
 	 * @param status the Applicant status code
+	 * @param orderBy the sort column
 	 * @return a List of Applicants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStatus(int status) throws DAOException {
+	public List getByStatus(int status, String orderBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM APPLICANTS WHERE (STATUS=?)");
+		if (!StringUtils.isEmpty(orderBy)) {
+			sqlBuf.append(" ORDER BY ");
+			sqlBuf.append(orderBy);
+		}
+		
 		try {
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (STATUS=?) ORDER BY LASTNAME");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, status);
 			return execute();
 		} catch (SQLException se) {
