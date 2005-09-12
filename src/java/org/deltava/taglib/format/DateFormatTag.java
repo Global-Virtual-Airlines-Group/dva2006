@@ -2,7 +2,6 @@
 package org.deltava.taglib.format;
 
 import java.util.Date;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import java.security.Principal;
@@ -114,10 +113,8 @@ public class DateFormatTag extends TagSupport {
 	 * @throws NullPointerException if d is null
 	 */
 	public void setDate(Date d) {
-		if (d != null) {
+		if (d != null)
 			_dt = new DateTime(d);
-			_dt.convertTo(_tz);
-		}
 	}
 
 	/**
@@ -157,9 +154,22 @@ public class DateFormatTag extends TagSupport {
 		_dt = null;
 		_className = null;
 	}
+	
+	/**
+	 * Mashes the date and time together in a date/time object.
+	 * @returns TagSupport.SKIP_BODY
+	 * @throws JspException if an error occurs
+	 */
+	public int doStartTag() throws JspException {
+		if (_dt != null)
+			_dt.convertTo(_tz);
+		
+		return SKIP_BODY;
+	}
 
 	/**
 	 * Formats the date/time and writes it to the JSP output writer.
+	 * @returns TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
@@ -199,10 +209,8 @@ public class DateFormatTag extends TagSupport {
 
 			if (_className != null)
 				out.print("</span>");
-		} catch (IOException ie) {
-			JspException je = new JspException(ie.getMessage());
-			je.initCause(ie);
-			throw je;
+		} catch (Exception e) {
+			throw new JspException(e);
 		}
 
 		release();
