@@ -176,11 +176,11 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${applicant.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${applicant.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" value="${applicant.rank}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
 </tr>
 </c:if>
 </el:table>
