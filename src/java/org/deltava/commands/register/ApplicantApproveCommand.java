@@ -52,6 +52,12 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			if (!access.getCanApprove())
 				throw securityException("Cannot Approve Applicant");
 			
+			// Check if we're posting to this command from applicantView, in which case we update eqType/rank
+			if (ctx.getParameter("eqType") != null) {
+				a.setEquipmentType(ctx.getParameter("eqType"));
+				a.setRank(ctx.getParameter("rank"));
+			}
+			
 			// Get the Equipment Type hired into
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(a.getEquipmentType());
@@ -75,12 +81,6 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Turn off autocommits on the connection
 			ctx.startTX();
-			
-			// Check if we are overwriting the eq program and rank
-			if (ctx.getParameter("eqType") != null) {
-				a.setEquipmentType(ctx.getParameter("eqType"));
-				a.setRank(ctx.getParameter("rank"));
-			}
 			
 			// Get the write DAO and approve the applicant
 			SetApplicant wdao = new SetApplicant(con);
@@ -148,6 +148,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
+			ctx.setAttribute("eqType", eq, REQUEST);
 		} catch (SecurityException se) {
 		   ctx.rollbackTX();
 		   throw new CommandException(se);
