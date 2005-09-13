@@ -16,9 +16,17 @@
 <script language="JavaScript type="text/javascript">
 function validate(form)
 {
-<c:if test="${!access.canAppprove}">return false;</c:if>
+<c:if test="${!access.canApprove}">return false;</c:if>
+if (!checkSubmit()) return false;
+if (!validateCombo(form.eqType, 'Equipment Program')) return false;
+if (!validateCombo(form.rank, 'Rank')) return false;
 
-
+setSubmit();
+disableButton('EditButton');
+disableButton('HireButton');
+disableButton('RejectButton');
+disableButton('QuestionnaireButton');
+disableButton('ResendButton');
 return true;
 }
 </script>
@@ -27,6 +35,7 @@ return true;
 <body>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="ranks" name="ranks" />
 
 <!-- Main Body Frame -->
 <div id="main">

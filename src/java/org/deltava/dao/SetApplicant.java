@@ -188,10 +188,12 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.executeBatch();
 
 			// Update the applicant status
-			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=? WHERE (ID=?)");
+			prepareStatement("UPDATE APPLICANTS SET STATUS=?, PILOT_ID=?, RANK=?, EQTYPE=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setInt(2, a.getPilotID());
-			_ps.setInt(3, a.getID());
+			_ps.setString(3, a.getRank());
+			_ps.setString(4, a.getEquipmentType());
+			_ps.setInt(5, a.getID());
 			executeUpdate(1);
 			
 			// Commit the transaction
