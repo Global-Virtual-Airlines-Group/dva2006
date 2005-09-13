@@ -154,4 +154,26 @@
 			<type>java.lang.Double</type>
 		</attribute>
 	</tag>
+	
+	<!-- LegendTag to display a marker legend entry -->
+	<tag>
+		<name>legend</name>
+		<tagclass>org.deltava.taglib.googlemap.LegendTag</tagclass>
+		<bodycontent>none</bodycontent>
+		<attribute>
+			<name>color</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>legend</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
 </taglib>
