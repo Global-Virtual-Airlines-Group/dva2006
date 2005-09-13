@@ -237,7 +237,7 @@ public class SetEvent extends DAO {
 	private void update(Event e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=? "
+		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
 				+ "ROUTE=?, BRIEFING=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
