@@ -11,6 +11,7 @@
 <title><content:airline /> Water Cooler - ${thread.subject}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="cooler" />
+<content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
@@ -20,9 +21,9 @@ if (!checkSubmit()) return false;
 
 // Validate response
 var act = form.action;
-if (act.substring(0, 3) == 'img') {
+if (act.indexOf('imgvote.do') != -1) {
 	if (!validateCombo(form.score, 'Image Rating')) return false;
-} else if (act == 'threadmove.do') {
+} else if (act.indexOf('threadmove.do') != -1) {
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
 } else {
 	if (!validateText(form.msgText, 3, 'text of your response')) return false;
@@ -54,11 +55,11 @@ return true;
 <!-- Main Body Frame -->
 <div id="main">
 <el:form action="threadReply.do" linkID="0x${thread.ID}" method="post" validate="return validate(this)">
-<el:table className="thread" pad="default" space="default">
+<el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="2" class="left"><el:cmd url="channels">DVA WATER COOLER</el:cmd> | 
- <el:cmd url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
+ <td colspan="2" class="left"><el:cmd className="title" url="channels">DVA WATER COOLER</el:cmd> | 
+<el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
 </tr>
 
 <c:if test="${!empty thread.stickyUntil}">
@@ -74,9 +75,9 @@ return true;
  <td colspan="2"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
 </tr>
 <c:if test="${(!empty img.votes) || imgAccess.canVote}">
-<tr class="title">
- <td class="right caps">Feedback:</td>
- <td class="left"><c:if test="${!empty img.votes}">  ${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></c:if>
+<tr>
+ <td class="label">Image Feedback</td>
+ <td class="data"><c:if test="${!empty img.votes}"><span class="pri bld">${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></span></c:if>
  <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
 <el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
 </td>
@@ -170,7 +171,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
 
 <!-- Button Bar -->
-<tr class="buttons">
+<tr class="buttons mid title">
  <td colspan="2">&nbsp;
 <c:if test="${access.canReply}">
  <el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
