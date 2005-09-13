@@ -67,8 +67,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -79,6 +79,12 @@ return true;
  <fmt:date date="${netInfo.validDate}" /></td>
  <td width="25%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
+</tr>
+<tr>
+ <td colspan="3"><span class="pri bld">LEGEND</span> <map:legend color="blue" className="small" legend="Member Pilot - Our Airline" />
+ <map:legend color="yellow" className="small" legend="Our Airline" />
+ <map:legend color="green" className="small" legend="Member Pilot" />
+ <map:legend color="white" className="small" legend="${netInfo.name} Pilot" /></td>
 </tr>
 <tr>
  <td colspan="3"><div id="googleMap" style="width: 840px; height: 630px" /></td>
@@ -92,8 +98,8 @@ return true;
 </div>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
-map.addControl(new GSmallZoomControl());
+var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+map.addControl(new GSmallMapControl());
 map.addControl(new GMapTypeControl());
 
 // Mark each pilot's position in hashmap

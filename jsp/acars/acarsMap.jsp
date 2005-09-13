@@ -83,6 +83,11 @@ return true;
 <el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" /></span></td>
 </tr>
 <tr>
+ <td class="label">Map Legend</td>
+ <td class="data"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
+ <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
+</tr>
+<tr>
  <td class="label" valign="top">Live Map</td>
  <td class="data"><div id="googleMap" style="width: 720px; height: 520px" /></td>
 </tr>
@@ -103,7 +108,7 @@ return true;
 <map:marker var="mapC" point="${mapCenter}" />
 
 // Create the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
+var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, ${zoomLevel});
