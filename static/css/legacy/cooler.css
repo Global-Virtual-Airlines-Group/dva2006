@@ -49,14 +49,6 @@ TD.postBody {
 	vertical-align: top;
 }
 
-.glow {
-	filter:glow(color=#0000A1 strength=5);
-	color: #000000;
-	font-family: Tahoma, Verdana;
-	font-weight: bold;
-	font-size: 9pt;
-}
-
 INPUT, TEXTAREA {
 	font-family: Tahoma, Verdana;
 	font-size: 9pt;
@@ -65,7 +57,7 @@ INPUT, TEXTAREA {
 	background: #F0F4F8;
 }
 
-*.postInfo A {
+*.postInfo :link, *.postInfo :visited {
 	font-size: 9pt;
 	color: #0000A1;
 	font-weight: bold;
@@ -73,7 +65,7 @@ INPUT, TEXTAREA {
 	font-family: Verdana;
 }
 
-*.title A {
+*.title :link, *.title :visited {
 	font-size: 9pt;
 	text-transform: uppercase;
 	font-weight: bold;
