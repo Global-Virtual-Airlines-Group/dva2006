@@ -35,11 +35,11 @@ return true;
 <div id="main">
 <el:form action="dupeinfo.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
-<tr>
- <td class="title caps" colspan="2">Duplicate Registration</td>
+<tr class="title caps">
+ <td colspan="2">Duplicate Registration</td>
 </tr>
 <tr>
- <td class="pri bld left">There is another Pilot or Applicants registered at <content:airline /> with 
+ <td class="pri bld left" colspan="2">There is another Pilot or Applicants registered at <content:airline /> with 
 your provided name and/or e-mail address. If you are an inactive or retired Pilot wishing to return to active 
 status at <content:airline />, please fill in your details in the space below. These will be sent to our 
 Human Resources department. You should hear back from them within 48-72 hours. Thank you for your 
@@ -56,7 +56,7 @@ interest in <content:airline />!</td>
 </tr>
 <tr>
  <td class="label">Other Information</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="150" height="7" /></el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="150" height="7"></el:textbox></td>
 </tr>
 </el:table>
 
