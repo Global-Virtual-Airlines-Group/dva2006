@@ -36,7 +36,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Signature Image</td>
- <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" />
+ <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br /><div class="error bld">The maximum size for a signature image is 520x160 pixels, and the maximum file size is 64kb.</div>
 <c:if test="${!empty system_message}">
 <br />
 <span class="error bld">${system_message}></span>
