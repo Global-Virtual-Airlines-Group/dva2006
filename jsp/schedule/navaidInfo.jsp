@@ -45,16 +45,17 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="navsearch.do" method="POST" validate="return validate(this)">
+<el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">NAVIGATION AID</td>
 </tr>
+<c:if test="${!empty navaid}">
 <c:if test="${!fn:isIntersection(navaid)}">
 <tr>
  <td class="label">Name / Code</td>
@@ -96,11 +97,23 @@ ${navaid.frequency}</span></c:if></td>
 </tr>
 </c:if>
 <tr>
+ <td class="label">Legend</td>
+ <td class="data"><map:legend color="blue" legend="VOR" /> <map:legend color="orange" legend="NDB" />
+ <map:legend color="green" legend="Airport" /> <map:legend color="white" legend="Intersection" /></td>
+</tr>
+<tr>
  <td class="label" valign="top">Map<br />
 <br />
 <el:button onClick="void toggleNavaids()" className="BUTTON" label="SHOW ALL" /></td>
  <td class="data"><div id="googleMap" style="width: 620px; height: 580px" /></td>
 </tr>
+</c:if>
+<c:if test="${empty navaid}">
+<tr>
+ <td class="error bld mid" colspan="2">The Navigation Aid ${param.navaidCode} was not found in the 
+<content:airline /> Navigation Data database.</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Search Bar -->
@@ -124,6 +137,7 @@ ${navaid.frequency}</span></c:if></td>
 <br />
 <content:copyright />
 </div>
+<c:if test="${!empty navaid}">
 <script language="JavaScript" type="text/javascript">
 // Build the navaid and surrounding navaids
 <map:marker var="gmP" pointVar="navP" point="${navaid}" color="red" />
@@ -139,5 +153,6 @@ map.centerAndZoom(navP, getDefaultZoom(90));
 map.addOverlay(gmP);
 var showAll = false;
 </script>
+</c:if>
 </body>
 </html>
