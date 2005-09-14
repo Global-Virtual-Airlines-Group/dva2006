@@ -4,7 +4,7 @@ package org.deltava.commands.event;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.comparators.AirportComparator;
@@ -175,6 +175,12 @@ public class EventSaveCommand extends AbstractCommand {
 				Set netNames = new TreeSet((List) SystemData.getObject("online.networks"));
 				netNames.remove("ACARS");
 				ctx.setAttribute("networks", netNames, REQUEST);
+
+				// Convert dates/times to user local
+				TZInfo tz = ctx.getUser().getTZ();
+				ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
+				ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
+				ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);

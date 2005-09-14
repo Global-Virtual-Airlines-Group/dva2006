@@ -4,6 +4,9 @@ package org.deltava.commands.event;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.DateTime;
+import org.deltava.beans.TZInfo;
+
 import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.comparators.AirportComparator;
@@ -62,12 +65,13 @@ public class EventEditCommand extends AbstractCommand {
 			return;
 		}
 		
+		Event e = null;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the event
 			GetEvent dao = new GetEvent(con);
-			Event e = dao.get(ctx.getID());
+			e = dao.get(ctx.getID());
 			if (e == null)
 				throw new CommandException("Invalid Online Event - " + ctx.getID());
 			
@@ -108,14 +112,22 @@ public class EventEditCommand extends AbstractCommand {
 			// Save the airports
 			ctx.setAttribute("adCodes", buf.toString(), REQUEST);
 			
-			// Save event and access controller
-			ctx.setAttribute("event", e, REQUEST);
+			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Get the user's local time zone, and the server timezone
+		TZInfo tz = ctx.getUser().getTZ();
+		
+		// Convert the dates to local time for the input fields
+		ctx.setAttribute("event", e, REQUEST);
+		ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
+		ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
+		ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
 		
 		// Forward to the JSP
 		result.setURL("/jsp/event/eventEdit.jsp");
