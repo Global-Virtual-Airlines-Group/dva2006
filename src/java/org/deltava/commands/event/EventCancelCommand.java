@@ -88,6 +88,9 @@ public class EventCancelCommand extends AbstractCommand {
 
          // Commit the transaction
          ctx.commitTX();
+         
+         // Seve the event in the request
+         ctx.setAttribute("event", e, REQUEST);
       } catch (DAOException de) {
          ctx.rollbackTX();
          throw new CommandException(de);
@@ -96,7 +99,7 @@ public class EventCancelCommand extends AbstractCommand {
       }
 
       // Update status for the JSP
-      ctx.setAttribute("isCancel", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isCancel", Boolean.TRUE, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
