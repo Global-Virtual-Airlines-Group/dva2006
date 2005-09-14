@@ -60,7 +60,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="eventsave.do" method="POST" validate="return validate(this)">
+<el:form action="eventsave.do" method="post" linkID="${((empty event) || (event.ID == 0)) ? '' : '0x'}${event.ID}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${empty event}">
@@ -80,22 +80,22 @@ return true;
 </tr>
 <tr>
  <td class="label">Start Date/Time</td>
- <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.startTime, 'MM/dd/yyyy')}" />
-&nbsp;<el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.startTime, 'HH:mm')}" />
+ <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" />
+&nbsp;<el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">End Date/Time</td>
- <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.endTime, 'MM/dd/yyyy')}" />
-&nbsp;<el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.endTime, 'HH:mm')}" />
+ <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" />
+&nbsp;<el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
- <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(event.signupDeadline, 'MM/dd/yyyy')}" />
-&nbsp;<el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(event.signupDeadline, 'HH:mm')}" />
+ <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" />
+&nbsp;<el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
