@@ -198,7 +198,7 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.close();
 
 			// Write the new Pilot ID
-			prepareStatement("UPDATE PILOTS SET PILOT_ID=? WHERE (ID=?) AND (PILOT_ID=0)");
+			prepareStatement("UPDATE PILOTS SET PILOT_ID=? WHERE (ID=?) AND ((PILOT_ID=0) OR (PILOT_ID IS NULL))");
 			_ps.setInt(1, p.getPilotNumber());
 			_ps.setInt(2, p.getID());
 			executeUpdate(1);
