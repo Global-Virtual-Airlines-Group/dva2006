@@ -127,7 +127,7 @@
 	<command id="newsedit">
 		<name>Edit System News</name>
 		<class>org.deltava.commands.news.NewsEditCommand</class>
-		<roles>News</roles>
+		<roles>*</roles>
 	</command>
 	
 	<command id="newssave">
@@ -145,7 +145,7 @@
 	<command id="notamedit">
 		<name>Edit NOTAM</name>
 		<class>org.deltava.commands.news.NOTAMEditCommand</class>
-		<roles>NOTAM,HR</roles>
+		<roles>*</roles>
 	</command>
 	
 	<command id="notamsave">
