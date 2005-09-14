@@ -43,6 +43,18 @@ public class DateTime implements java.io.Serializable, Comparable {
 	}
 	
 	/**
+	 * Helper method to convert a date from one time zone to another.
+	 * @param dt the date/time 
+	 * @param tz the new time zone
+	 * @return the new date/time
+	 */
+	public static Date convert(Date dt, TZInfo tz) {
+		DateTime d = new DateTime(dt);
+		d.convertTo(tz);
+		return d.getDate();
+	}
+	
+	/**
 	 * Returns the date/time's local time value.
 	 * @return the local date/time
 	 */
