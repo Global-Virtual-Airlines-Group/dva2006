@@ -214,10 +214,11 @@ public class SetEvent extends DAO {
 		_ps.executeBatch();
 		_ps.close();
 	}
-	
+
+	/**
+	 * Adds a new Online Event to the database.
+	 */
 	private void insert(Event e) throws SQLException {
-		
-		// Prepare the statement
 		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
 				+ "ROUTE, BRIEFING) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
@@ -233,9 +234,11 @@ public class SetEvent extends DAO {
 		executeUpdate(1);
 		e.setID(getNewID());
 	}
-	
+
+	/**
+	 * Updates an existing Online Event in the database.
+	 */
 	private void update(Event e) throws SQLException {
-		
 		// Prepare the statement
 		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
 				+ "ROUTE=?, BRIEFING=?, STATUS=? WHERE (ID=?)");
