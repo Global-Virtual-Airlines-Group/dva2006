@@ -180,16 +180,19 @@ public abstract class DAO implements java.io.Serializable {
     * Executes an UPDATE transaction on the prepared statement, and throws a {@link SQLException}if less than the
     * expected number of rows were updated. The prepared statement is closed in either circumstance.
     * @param minUpdateCount the minimum number of rows to update
+    * @return the actual number of rows updated
     * @throws SQLException if the update fails due to a JDBC error, or if less than the expected number of rows were
     *              updated
     */
-   protected void executeUpdate(int minUpdateCount) throws SQLException {
+   protected int executeUpdate(int minUpdateCount) throws SQLException {
       int rowsUpdated = _ps.executeUpdate();
       _ps.close();
 
       // Check if we've updated the expected number of rows
       if (rowsUpdated < minUpdateCount)
             throw new SQLException("Unexpected Row Update count - " + rowsUpdated + ", expected " + minUpdateCount);
+      
+      return rowsUpdated;
    }
 
    /**
