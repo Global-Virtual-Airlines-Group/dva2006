@@ -159,7 +159,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Update Signature Image</td>
- <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /></td>
+ <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br /><div class="error bld">The maximum size for a signature image is 520x160 pixels, and the maximum file size is 64kb.</div></td>
 </tr>
 <tr>
  <td class="label">Display Options</td>
