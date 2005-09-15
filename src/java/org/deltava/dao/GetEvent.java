@@ -82,6 +82,8 @@ public class GetEvent extends DAO {
 			loadFlightPlans(e);
 			loadSignups(e);
 			loadEQTypes(e);
+			
+			// FIXME Load Charts for this event
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);

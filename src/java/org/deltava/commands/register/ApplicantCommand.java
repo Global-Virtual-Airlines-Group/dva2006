@@ -214,6 +214,10 @@ public class ApplicantCommand extends AbstractFormCommand {
          // Get the questionnaire
          GetQuestionnaire exdao = new GetQuestionnaire(con);
          ctx.setAttribute("questionnaire", exdao.getByApplicantID(a.getID()), REQUEST);
+         
+         // Get Active Equipment programs
+         GetEquipmentType eqdao = new GetEquipmentType(con);
+         ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
 
          // Get the applicant home airport
          ctx.setAttribute("homeAirport", SystemData.getAirport(a.getHomeAirport()), REQUEST);
