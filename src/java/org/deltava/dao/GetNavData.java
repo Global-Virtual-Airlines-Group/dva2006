@@ -24,7 +24,7 @@ import org.deltava.util.cache.Cache;
 public class GetNavData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetNavData.class);
-	private static Cache _cache = new AgingCache(192);
+	private static Cache _cache = new AgingCache(256);
 
 	/**
 	 * Initializes the Data Access Object.
