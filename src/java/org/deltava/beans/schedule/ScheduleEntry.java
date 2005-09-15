@@ -20,6 +20,8 @@ public class ScheduleEntry extends Flight {
     
     private DateTime _timeD;
     private DateTime _timeA;
+    
+    private int _length;
 
     private boolean _historic;
     private boolean _purge;
@@ -47,6 +49,9 @@ public class ScheduleEntry extends Flight {
      * @see DateTime#difference(DateTime)
      */
     public final int getLength() {
+    	if (_length > 0)
+    		return _length;
+    	
         if ((_timeA == null) || (_timeD == null))
             throw new IllegalStateException("Arrival and Departure Times are not set");
 
@@ -181,6 +186,19 @@ public class ScheduleEntry extends Flight {
         } catch (ParseException pe) {
             throw new IllegalArgumentException("Invalid arrival time - " + ts);
         }
+    }
+    
+    /**
+     * Sets the length of a flight leg.
+     * @param len the length of a leg, <i>in hours divided by ten</i>.
+     * @throws IllegalArgumentException if len is zero or negative
+     * @see ScheduleEntry#getLength()
+     */
+    public void setLength(int len) {
+    	if (len < 1)
+    		throw new IllegalArgumentException("Invalid Flight Length - " + len);
+    	
+    	_length = len;
     }
 
     /**

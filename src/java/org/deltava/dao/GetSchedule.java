@@ -272,6 +272,7 @@ public class GetSchedule extends DAO {
 			entry.setAirportD(SystemData.getAirport(rs.getString(5)));
 			entry.setAirportA(SystemData.getAirport(rs.getString(6)));
 			entry.setEquipmentType(rs.getString(8));
+			entry.setLength(rs.getInt(9));
 			entry.setTimeD(rs.getTimestamp(10));
 			entry.setTimeA(rs.getTimestamp(11));
 			entry.setHistoric(rs.getBoolean(12));
