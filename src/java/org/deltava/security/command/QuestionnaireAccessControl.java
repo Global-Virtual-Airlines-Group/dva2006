@@ -46,7 +46,7 @@ public class QuestionnaireAccessControl extends AccessControl {
 		// Set status values
 		_canSubmit = ((_ex.getStatus() == Test.NEW) && (isAnonymous || isHR));
 		_canScore = (_ex.getStatus() == Test.SUBMITTED) && (isExam || isHR);
-		_canRead = _canSubmit || _canScore;
+		_canRead = _canSubmit || _canScore || isHR;
 	}
 
 	/**
