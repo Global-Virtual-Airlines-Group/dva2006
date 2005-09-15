@@ -39,12 +39,12 @@ function doRefresh()
 {
 var f = document.forms[0];
 if (f.airportD.selectedIndex == 0) {
-	alert('Select another Departure Airport.');
+	alert('Please select another Departure Airport.');
 	f.airportD.focus();
 	return false;
 }
 
-f.action = f.action + '?op=refresh';
+f.isRefresh.value = '1';
 f.submit();
 return true;
 }
@@ -60,7 +60,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="eventsave.do" method="post" linkID="${((empty event) || (event.ID == 0)) ? '' : '0x'}${event.ID}" validate="return validate(this)">
+<el:form action="eventsave.do" method="post" linkID="${!empty eventID ? eventID : ''}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${empty event}">
@@ -153,6 +153,7 @@ to a specific set of equipment.</span><br />
 </tr>
 </el:table>
 <el:text name="airportDCodes" type="hidden" value="${adCodes}" />
+<el:text name="isRefresh" type="hidden" value="" />
 </el:form>
 <content:copyright />
 </div>
