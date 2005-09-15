@@ -49,6 +49,9 @@ public class DateTime implements java.io.Serializable, Comparable {
 	 * @return the new date/time
 	 */
 	public static Date convert(Date dt, TZInfo tz) {
+		if (dt == null)
+			return null;
+		
 		DateTime d = new DateTime(dt);
 		d.convertTo(tz);
 		return d.getDate();
