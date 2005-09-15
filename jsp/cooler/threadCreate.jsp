@@ -17,7 +17,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.subject, 10, 'Title of your Thread')) return false;
+if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
 if (!validateText(form.msgText, 5, 'text of your Message')) return false;
 if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
 
