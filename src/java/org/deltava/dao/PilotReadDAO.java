@@ -160,6 +160,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		int querySize = 0;
 		for (Iterator i = ids.iterator(); i.hasNext();) {
 			Object rawID = i.next();
+			assert ((rawID instanceof Integer) || (rawID instanceof DatabaseBean)) : String.valueOf(rawID) + " " + rawID.getClass().getName();
 			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
 			// Pull from the cache if at all possible; this is an evil query
@@ -187,6 +188,7 @@ abstract class PilotReadDAO extends PilotDAO {
 				_ps.setInt(1, FlightReport.OK);
 				uncached = execute();
 			} catch (SQLException se) {
+			   log.error("ID Set = " + ids);
 				throw new DAOException(se);
 			}
 
