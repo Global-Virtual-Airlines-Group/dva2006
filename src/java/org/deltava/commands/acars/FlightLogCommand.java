@@ -44,7 +44,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
       // If we're doing a search by Pilot ID, validate the ID
       if ((searchType == SEARCH_USR) && (!validatePilotCode(ctx.getParameter("pilotCode")))) {
          ctx.setMessage("Invalid Pilot Code");
-         result.setURL("/jsp/acars/msgLog.jsp");
+         result.setURL("/jsp/acars/flightLog.jsp");
          return;
       }
 
@@ -78,7 +78,7 @@ public class FlightLogCommand extends ACARSLogViewCommand {
             ctx.setAttribute("startDate", sd, REQUEST);
             ctx.setAttribute("endDate", ed, REQUEST);
          } else if (searchType == SEARCH_LATEST) {
-            vc.setResults(dao.getMessages());
+            vc.setResults(dao.getFlights());
          } else {
             vc.setResults(dao.getFlights(pilotID));
          }
