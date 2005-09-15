@@ -167,7 +167,7 @@ return cmdPost(f.action);
 <c:if test="${!fn:pending(questionnaire)}">
  <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
 correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
-<el:cmdbutton url="questionnaire" linkID="0x${applicant.ID}" label="VIEW QUESTIONNAIRE" /></td>
+<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" /></td>
 </c:if>
 <c:if test="${fn:pending(questionnaire)}">
  <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
