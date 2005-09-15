@@ -35,8 +35,10 @@ public class EventSaveCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Check if we are refreshing and if this is a new event
-		boolean isRefresh = "refresh".equals(ctx.getCmdParameter(Command.OPERATION, null));
+		boolean isRefresh = "1".equals(ctx.getParameter("isRefresh"));
 		boolean isNew = (ctx.getID() == 0);
+		if (!isNew)
+			ctx.setAttribute("eventID", StringUtils.formatHex(ctx.getID()), REQUEST);
 
 		// Initialize the messaging context
 		MessageContext mctxt = new MessageContext();

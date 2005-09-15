@@ -18,6 +18,7 @@ import org.deltava.dao.GetChart;
 import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.EventAccessControl;
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -130,6 +131,7 @@ public class EventEditCommand extends AbstractCommand {
 		ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
 		
 		// Forward to the JSP
+		ctx.setAttribute("eventID", StringUtils.formatHex(ctx.getID()), REQUEST);
 		result.setURL("/jsp/event/eventEdit.jsp");
 		result.setSuccess(true);
 	}
