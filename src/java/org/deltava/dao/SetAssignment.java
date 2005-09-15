@@ -83,14 +83,13 @@ public class SetAssignment extends DAO {
       // Build the SQL statement
       StringBuffer sqlBuf = new StringBuffer("UPDATE ");
       sqlBuf.append(db.toLowerCase());
-      sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=?, STATUS=?, PILOT_ID=? WHERE (ID=?)");
+      sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=NOW(), STATUS=?, PILOT_ID=? WHERE (ID=?)");
 
       try {
          prepareStatement(sqlBuf.toString());
-         _ps.setTimestamp(1, createTimestamp(a.getAssignDate()));
-         _ps.setInt(2, AssignmentInfo.RESERVED);
-         _ps.setInt(3, pilotID);
-         _ps.setInt(4, a.getID());
+         _ps.setInt(1, AssignmentInfo.RESERVED);
+         _ps.setInt(2, pilotID);
+         _ps.setInt(3, a.getID());
          executeUpdate(1);
       } catch (SQLException se) {
          throw new DAOException(se);
@@ -134,10 +133,9 @@ public class SetAssignment extends DAO {
     */
    public void complete(AssignmentInfo ai) throws DAOException {
       try {
-         prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=? WHERE (ID=?)");
+         prepareStatement("UPDATE ASSIGNMENTS SET STATUS=?, COMPLETED_ON=NOW() WHERE (ID=?)");
          _ps.setInt(1, AssignmentInfo.COMPLETE);
-         _ps.setTimestamp(2, createTimestamp(ai.getCompletionDate()));
-         _ps.setInt(3, ai.getID());
+         _ps.setInt(2, ai.getID());
          executeUpdate(1);
       } catch (SQLException se) {
          throw new DAOException(se);
@@ -154,7 +152,7 @@ public class SetAssignment extends DAO {
          startTransaction();
          
          // Release the assignment
-         prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=? WHERE (ID=?)");
+         prepareStatement("UPDATE ASSIGNMENTS SET PILOT_ID=0, STATUS=?, ASSIGNED_ON=NULL WHERE (ID=?)");
          _ps.setInt(1, AssignmentInfo.AVAILABLE);
          _ps.setInt(2, a.getID());
          executeUpdate(1);
