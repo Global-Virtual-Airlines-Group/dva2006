@@ -58,6 +58,10 @@ return true;
 </tr>
 </content:filter>
 <tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail notification when Responses are posted" value="1" /></td>
+</tr>
+<tr>
  <td class="label">Upload Image</td>
  <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
 <c:if test="${imgBadSize}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgSize}" /> bytes).</div></c:if>
