@@ -35,8 +35,9 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
       try {
          Connection con = ctx.getConnection();
          
-         // Get the DAO and the ACARS log entry
+         // Get the DAOs
          GetACARSLog dao = new GetACARSLog(con);
+         SetACARSLog wdao = new SetACARSLog(con);
          
          // Start the transaction
          ctx.startTX();
@@ -45,20 +46,15 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
          for (Iterator i = conIDs.iterator(); i.hasNext(); ) {
             long id = Long.parseLong((String) i.next());
             
+            // Get the Connection entry - check for a Flight Information Report
             ConnectionEntry c = dao.getConnection(id);
-            if (c == null)
-               throw new CommandException("Invalid ACARS Connection ID - " + id);
-            
-            // Check for a Flight Information Report
-            if (c.getFlightInfoCount() > 0) {
-               ctx.setAttribute("info", dao.getInfo(id), REQUEST);
-               skippedIDs.add(StringUtils.formatHex(c.getID()));
+            if (c == null) {
+               skippedIDs.add(StringUtils.formatHex(id));
+            } else if (c.getFlightInfoCount() > 0) {
+               skippedIDs.add(StringUtils.formatHex(id));
             } else {
-               SetACARSLog wdao = new SetACARSLog(con);
                wdao.deleteConnection(id);
-               
-               // Set the status attribute
-               deletedIDs.add(StringUtils.formatHex(c.getID()));
+               deletedIDs.add(StringUtils.formatHex(id));
             }
          }
          

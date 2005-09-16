@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.ACARSFlightReport;
@@ -8,6 +9,7 @@ import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
@@ -24,35 +26,53 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
     * @throws CommandException if an error occurs
     */
    public void execute(CommandContext ctx) throws CommandException {
+      
+      // Get the flight IDs
+      List flightIDs = Arrays.asList(ctx.getRequest().getParameterValues("flightID"));
+      
+      Set deletedIDs = new HashSet();
+      Set skippedIDs = new HashSet();
       try {
          Connection con = ctx.getConnection();
          
-         // Get the Flight Info record
-         GetACARSLog acdao = new GetACARSLog(con);
-         FlightInfo info = acdao.getInfo(ctx.getID());
-         if (info == null)
-            throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
-         
-         // Make sure the flight doesn't have a PIREP linked to it
+         // Get the DAOs
+         GetACARSLog dao = new GetACARSLog(con);
          GetFlightReports frdao = new GetFlightReports(con);
-         ACARSFlightReport afr = frdao.getACARS(info.getID());
-         if (afr != null) {
-            ctx.setAttribute("pirep", afr, REQUEST);
-         } else {
-            SetACARSLog wdao = new SetACARSLog(con);
-            wdao.deleteInfo(info.getID());
-            
-            // Set the status attribute
-            ctx.setAttribute("infoDelete", Boolean.TRUE, REQUEST);
+         SetACARSLog wdao = new SetACARSLog(con);
+         
+         // Start the transaction
+         ctx.startTX();
+         
+         // Delete the connection entries
+         for (Iterator i = flightIDs.iterator(); i.hasNext(); ) {
+            int id = Integer.parseInt((String) i.next());
+
+            // Get the flight information entry - make sure the flight doesn't have a PIREP linked to it
+            FlightInfo info = dao.getInfo(id);
+            ACARSFlightReport afr = frdao.getACARS(id);
+            if (info == null) {
+               skippedIDs.add(StringUtils.formatHex(id));
+            } else if (afr != null) {
+               skippedIDs.add(StringUtils.formatHex(id));
+            } else {
+               wdao.deleteInfo(info.getID());
+               deletedIDs.add(StringUtils.formatHex(id));
+            }
          }
          
-         // Save the Flight info record in the request
-         ctx.setAttribute("info", info, REQUEST);
+         // Commit the transaction
+         ctx.commitTX();
       } catch (DAOException de) {
+         ctx.rollbackTX();
          throw new CommandException(de);
       } finally {
          ctx.release();
       }
+      
+      // Set status attributes
+      ctx.setAttribute("infoDelete", Boolean.TRUE, REQUEST);
+      ctx.setAttribute("deletedIDs", deletedIDs, REQUEST);
+      ctx.setAttribute("skippedIDs", skippedIDs, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
