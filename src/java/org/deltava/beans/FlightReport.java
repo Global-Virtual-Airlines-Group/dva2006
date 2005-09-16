@@ -510,6 +510,6 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * @return the row CSS class name
     */
    public String getRowClassName() {
-      return FlightReport.ROW_CLASSES[_status];
+      return hasAttribute(ATTR_CHECKRIDE) ? "opt3" : ROW_CLASSES[_status];
    }
 }
