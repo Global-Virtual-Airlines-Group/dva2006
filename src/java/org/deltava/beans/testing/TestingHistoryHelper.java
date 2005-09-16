@@ -135,7 +135,7 @@ public class TestingHistoryHelper {
 		// Check if we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
 			return false;
-
+		
 		// Check if we have a checkride in that equipment's stage
 		return (eq.getStage() <= getMaxCheckRideStage());
 	}
@@ -150,6 +150,10 @@ public class TestingHistoryHelper {
 		// Make sure we're a captain if the stage is higher than our own
 		if ((eq.getStage() > _myEQ.getStage()) && (!_usr.getRank().equals(Ranks.RANK_C)))
 			return false;
+		
+		// Make sure the new stage isn't the same or lower than our current stage
+		if ((eq.getStage() <= _myEQ.getStage()))
+		   return false;
 
 		// Check if we've passed the FO exam for that program
 		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)))
@@ -158,7 +162,7 @@ public class TestingHistoryHelper {
 		// Make sure we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
 			return false;
-
+		
 		// Check if we don't have a checkride in that equipment's stage
 		return (eq.getStage() > getMaxCheckRideStage());
 	}
