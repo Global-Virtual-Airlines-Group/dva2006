@@ -433,7 +433,7 @@
 		
 		<pool>
 			<size type="Integer">100</size>
-			<multiple type="Boolean">false</multiple>
+			<multiple type="Boolean">true</multiple>
 		</pool>
 		
 		<buffer>
