@@ -120,7 +120,7 @@ public class TaskScheduler extends Thread {
 				} else if (!t.getEnabled()) {
 					log.debug("Task Disabled");
 				} else if (t.isRunHour(now.get(Calendar.HOUR_OF_DAY))) {
-					log.info(t.getName() + " queued for execution");
+					log.info(t.getName() + " queued for execution - next run time = " + t.getNextStartTime());
 					
 					// Log Execution date/time
 					Connection c = null;
