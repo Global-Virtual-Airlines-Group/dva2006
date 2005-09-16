@@ -1,12 +1,22 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.cooler;
 
+import java.util.*;
 import java.sql.Connection;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.Person;
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.system.UserDataMap;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
+import org.deltava.security.SecurityContext;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
 /**
@@ -17,71 +27,162 @@ import org.deltava.security.command.CoolerThreadAccessControl;
  */
 
 public class ThreadReplyCommand extends AbstractCommand {
+   
+   private static final Logger log = Logger.getLogger(ThreadReplyCommand.class);
+   
+   private class MultiUserSecurityContext implements SecurityContext {
+      
+      private Person _usr;
+      private HttpServletRequest _req;
+      
+      MultiUserSecurityContext(SecurityContext ctx) {
+         super();
+         setUser(ctx.getUser());
+         _req = ctx.getRequest();
+      }
+      
+      public Person getUser() {
+         return _usr;
+      }
+      
+      public HttpServletRequest getRequest() {
+         return _req;
+      }
+      
+      public boolean isAuthenticated() {
+         return (_usr != null);
+      }
+      
+      public Collection getRoles() {
+         return isAuthenticated() ? getUser().getRoles() : Collections.EMPTY_LIST;
+      }
+      
+      public boolean isUserInRole(String roleName) {
+         return _req.isUserInRole(roleName);
+      }
+      
+      public void setUser(Person usr) {
+         _usr = usr;
+      }
+   }
 
-    /**
-     * Executes the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occurs
-     */
-    public void execute(CommandContext ctx) throws CommandException {
-        
-        try {
-            Connection con = ctx.getConnection();
-            
-            // Get the Message Thread
-            GetCoolerThreads tdao = new GetCoolerThreads(con);
-            MessageThread thread = tdao.getThread(ctx.getID());
-            if (thread == null)
-                throw new CommandException("Unknown Message Thread - " + ctx.getID());
-            
-            // Get the channel profile
-            GetCoolerChannels cdao = new GetCoolerChannels(con);
-            Channel ch = cdao.get(thread.getChannel());
-            
-            // Check user access
-            CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
-            ac.updateContext(thread, ch);
-            ac.validate();
-            
-            // Check our access level
-            if (!ac.getCanReply())
-                throw securityException("Cannot post in Message Thread " + ctx.getID());
-            
-            // Create the new reply bean
-            Message msg = new Message(ctx.getUser().getID());
-            msg.setThreadID(thread.getID());
-            msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-            msg.setRemoteHost(ctx.getRequest().getRemoteHost());
-            msg.setBody(ctx.getParameter("msgText"));
-            
-            // Add the response to the thread
-            thread.addPost(msg);
-            
-            // Start the transaction
-            ctx.startTX();
-            
-            // Get the DAO and write the new response to the database
-            SetCoolerMessage wdao = new SetCoolerMessage(con);
-            wdao.writeMessage(msg);
-            wdao.synchThread(thread);
-            
-            // Commit the transaction
-            ctx.commitTX();
-            
-            // Save the thread in the request
-            ctx.setAttribute("thread", thread, REQUEST);
-            ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
-        } catch (DAOException de) {
-        	ctx.rollbackTX();
-            throw new CommandException(de);
-        } finally {
-            ctx.release();
-        }
+   /**
+    * Executes the command.
+    * @param ctx the Command context
+    * @throws CommandException if an unhandled error occurs
+    */
+   public void execute(CommandContext ctx) throws CommandException {
 
-        // Forward to the JSP
-        CommandResult result = ctx.getResult();
-        result.setType(CommandResult.REQREDIRECT);
-        result.setURL("/jsp/cooler/threadUpdate.jsp");
-        result.setSuccess(true);
-    }
+      // Initialze the Mailer context
+      MessageContext mctxt = new MessageContext();
+      mctxt.addData("user", ctx.getUser());
+
+      Collection notifyList = new HashSet();
+      try {
+         Connection con = ctx.getConnection();
+
+         // Get the Message Thread
+         GetCoolerThreads tdao = new GetCoolerThreads(con);
+         MessageThread thread = tdao.getThread(ctx.getID());
+         if (thread == null)
+            throw new CommandException("Unknown Message Thread - " + ctx.getID());
+
+         // Get the channel profile
+         GetCoolerChannels cdao = new GetCoolerChannels(con);
+         Channel ch = cdao.get(thread.getChannel());
+
+         // Check user access
+         CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
+         ac.updateContext(thread, ch);
+         ac.validate();
+
+         // Check our access level
+         if (!ac.getCanReply())
+            throw securityException("Cannot post in Message Thread " + ctx.getID());
+
+         // Get the notification entries, and remove our own
+         ThreadNotifications nt = tdao.getNotifications(thread.getID());
+         nt.removeUser(ctx.getUser());
+         
+         // If we are set to notify people for this thread, then load the data
+         if (!nt.getIDs().isEmpty()) {
+            GetMessageTemplate mtdao = new GetMessageTemplate(con);
+            mctxt.setTemplate(mtdao.get("THREADNOTIFY"));
+            
+            // Get the users to notify
+            GetPilot pdao = new GetPilot(con);
+            GetUserData uddao = new GetUserData(con);
+            UserDataMap udm = uddao.get(nt.getIDs());
+            for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
+               String tableName = (String) i.next();
+               Map pilotSubset = pdao.getByID(udm.getByTable(tableName), "PILOTS");
+               notifyList.addAll(pilotSubset.values());
+            }
+            
+            // Filter out users who can no longer read this thread
+            MultiUserSecurityContext sctx = new MultiUserSecurityContext(ctx);
+            for (Iterator i = notifyList.iterator(); i.hasNext(); ) {
+               Person usr = (Person) i.next();
+               sctx.setUser(usr);
+               
+               // Validate this user's access
+               ac.updateContxt(sctx);
+               ac.validate();
+               if (!ac.getCanRead()) {
+                  log.warn(usr.getName() + " can no longer read " + thread.getSubject());
+                  i.remove();
+               }
+            }
+         }
+
+         // Create the new reply bean
+         Message msg = new Message(ctx.getUser().getID());
+         msg.setThreadID(thread.getID());
+         msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+         msg.setRemoteHost(ctx.getRequest().getRemoteHost());
+         msg.setBody(ctx.getParameter("msgText"));
+
+         // Add the response to the thread
+         thread.addPost(msg);
+
+         // Start the transaction
+         ctx.startTX();
+
+         // Get the DAO and write the new response to the database
+         SetCoolerMessage wdao = new SetCoolerMessage(con);
+         wdao.writeMessage(msg);
+         wdao.synchThread(thread);
+
+         // Commit the transaction
+         ctx.commitTX();
+         
+         // Save thread data
+         mctxt.addData("thread", thread);
+
+         // Save the thread in the request
+         ctx.setAttribute("thread", thread, REQUEST);
+         ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
+      } catch (DAOException de) {
+         ctx.rollbackTX();
+         throw new CommandException(de);
+      } finally {
+         ctx.release();
+      }
+      
+      // Send the notification messages
+      if (!notifyList.isEmpty()) {
+         Mailer mailer = new Mailer(null);
+         mailer.setContext(mctxt);
+      	mailer.send(notifyList);
+      
+      	// Save notification message count
+      	ctx.setAttribute("notifyMsgs", new Integer(notifyList.size()), REQUEST);
+      }
+
+      // Forward to the JSP
+      CommandResult result = ctx.getResult();
+      result.setType(CommandResult.REQREDIRECT);
+      result.setURL("/jsp/cooler/threadUpdate.jsp");
+      result.setSuccess(true);
+   }
 }

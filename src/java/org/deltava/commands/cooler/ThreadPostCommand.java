@@ -180,6 +180,13 @@ public class ThreadPostCommand extends AbstractCommand {
          SetCoolerMessage wdao = new SetCoolerMessage(con);
          wdao.writeThread(mt);
          
+         // Create a notification entry if we requested on
+         if ("1".equals(ctx.getParameter("updateNotify"))) {
+            SetCoolerNotification nwdao = new SetCoolerNotification(con);
+            nwdao.add(mt.getID(), ctx.getUser().getID());
+            ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
+         }
+         
          // Commit the transaction
          ctx.commitTX();
 

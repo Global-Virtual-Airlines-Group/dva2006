@@ -56,6 +56,10 @@ public class ThreadDeleteCommand extends AbstractCommand {
             iwdao.delete(mt.getImage());
          }
          
+         // Delete thread notifications
+         SetCoolerNotification nwdao = new SetCoolerNotification(con);
+         nwdao.clear(mt.getID());
+         
          // Get the write DAO and delete the thread
          SetCoolerMessage twdao = new SetCoolerMessage(con);
          twdao.deleteThread(mt.getID());

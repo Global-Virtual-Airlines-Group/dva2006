@@ -38,15 +38,27 @@ public final class CoolerThreadAccessControl extends AccessControl {
     }
     
     /**
-     * Update the MessageThread to verify access to. Since this Access controller is called many times in
-     * succession, it is more efficient to update the thread and channel rather than constantly creating
-     * a new CoolerThreadAccessControl object. 
+     * Update the MessageThread to verify access to. Since this Access controller may be called many times in
+     * succession, it is more efficient to update the thread and channel rather than constantly creating a new
+     * CoolerThreadAccessControl object. 
 	 * @param t the Water Cooler message thread
 	 * @param c the Water Cooler Channel
+	 * @see CoolerThreadAccessControl#updateContxt(SecurityContext)
      */
     public void updateContext(MessageThread t, Channel c) {
         _mt = t;
         _c = c;
+    }
+    
+    /**
+     * Updates the Security Context verify access with. Since this Access controller may be called many times in
+     * succession, it is more efficient to update the security context rather than constantly creating a new
+     * CoolerThreadAccessControl object. 
+     * @param ctx the Command context
+     * @see CoolerThreadAccessControl#updateContext(MessageThread, Channel)
+     */
+    public void updateContxt(SecurityContext ctx) {
+       _ctx = ctx;
     }
 
     /**

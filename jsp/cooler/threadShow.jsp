@@ -136,7 +136,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br />
 </c:if>
 <content:activeUser user="${msg.authorID}">
-<span class="glow">CURRENTLY LOGGED IN</span><br />
+<span class="ter small bld">CURRENTLY LOGGED IN</span><br />
 </content:activeUser>
 <c:if test="${!empty pilot.IMHandle}">
 <span class="mid"><a href="aim:goim?screenname=${pilot.IMHandle}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" /></a></span>
@@ -160,13 +160,25 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </tr>
 </c:forEach>
 
+<content:filter roles="Pilot">
+<!-- Message Thread Update notification -->
+<tr class="title caps">
+ <td colspan="2">UPDATE NOTIFICATIONS</td>
+</tr>
+<tr class="pri bld mid">
+ <td colspan="2">You are <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>currently receiving e-mail 
+notifications each time a message is posted in this Discussion Thread.
+<el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /></td>
+</tr>
+</content:filter>
+
 <c:if test="${access.canReply}">
-<!-- Thread Response -->
+<!-- Message Thread Response -->
 <tr class="title caps">
  <td colspan="2">NEW RESPONSE</td>
 </tr>
 <tr class="mid">
- <td colspan="2" ><el:textbox name="msgText" width="125" height="8"></el:textbox></td>
+ <td colspan="2"><el:textbox name="msgText" width="125" height="8"></el:textbox></td>
 </tr>
 </c:if>
 

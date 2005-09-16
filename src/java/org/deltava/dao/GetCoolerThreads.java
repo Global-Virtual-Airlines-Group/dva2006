@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +7,7 @@ import java.util.*;
 import org.deltava.beans.cooler.*;
 
 /**
- * A Data Access Object to retrieve Water Cooler threads.
+ * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -71,6 +72,23 @@ public class GetCoolerThreads extends DAO {
          throw new DAOException(se);
       }
    }
+   
+   /**
+    * Get all Water Cooler threads where a particular user has signed up for notifications. 
+    * @param userID the User's database ID
+    * @return a List of MessageThread beans
+    * @throws DAOException if a JDBC error occurs
+    */
+   public List getByNotification(int userID) throws DAOException {
+      try {
+         prepareStatement("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T, "
+               + "common.COOLER_NOTIFY N WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY SD DESC");
+         _ps.setInt(1, userID);
+         return execute();
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
 
    /**
     * Get all Water Cooler threads.
@@ -128,7 +146,7 @@ public class GetCoolerThreads extends DAO {
     * Retrieves a particular discussion thread.
     * @param id the thread ID
     * @return a MessageThread
-    * @throws DAOException
+    * @throws DAOException if a JDBC error occurs
     */
    public MessageThread getThread(int id) throws DAOException {
       try {
@@ -179,6 +197,34 @@ public class GetCoolerThreads extends DAO {
          rs.close();
          _ps.close();
          return t;
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Returns thread notifications for a particular message thread.
+    * @param id the message thread database ID
+    * @return a ThreadNotifications bean
+    * @throws DAOException if a JDBC error occurs
+    */
+   public ThreadNotifications getNotifications(int id) throws DAOException {
+      
+      // Build the result bean
+      ThreadNotifications result = new ThreadNotifications(id);
+      try {
+         prepareStatementWithoutLimits("SELECT USER_ID FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)");
+         _ps.setInt(1, id);
+         
+         // Execute the query
+         ResultSet rs = _ps.executeQuery();
+         while (rs.next())
+            result.addUser(rs.getInt(1));
+         
+         // Clean up and return
+         rs.close();
+         _ps.close();
+         return result;
       } catch (SQLException se) {
          throw new DAOException(se);
       }

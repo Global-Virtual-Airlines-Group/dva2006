@@ -471,7 +471,13 @@
 		<class>org.deltava.commands.cooler.ThreadReplyCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="notifytoggle">
+		<name>Water Cooler Thread Notification</name>
+		<class>org.deltava.commands.cooler.NotificationToggleCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="threadlock">
 		<name>Lock Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadLockCommand</class>

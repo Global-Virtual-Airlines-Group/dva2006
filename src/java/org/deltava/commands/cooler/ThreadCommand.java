@@ -102,16 +102,18 @@ public class ThreadCommand extends AbstractCommand {
 				String dbName = tkns.nextToken();
 				String tableName = tkns.nextToken();
 
-				// Get the IDs from this table
-				Set IDs = new HashSet(udm.getByTable(dbTableName));
-
 				// Get the pilots from each table and apply their online totals
-				Map pilotSubset = pdao.getByID(IDs, dbTableName);
+				Map pilotSubset = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 				if ("PILOTS".equals(tableName))
 					prdao.getOnlineTotals(pilotSubset, dbName);
 
 				pilots.putAll(pilotSubset);
 			}
+			
+			// Get the thread notifications
+			ThreadNotifications nt =  tdao.getNotifications(thread.getID());
+			ctx.setAttribute("notify", nt, REQUEST);
+			ctx.setAttribute("doNotify", Boolean.valueOf(nt.contains(ctx.getUser().getID())), REQUEST);
 
 			// Mark the thread as being read
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
