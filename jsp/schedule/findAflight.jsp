@@ -83,10 +83,10 @@ return true;
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${emptyList}" /></td>
 </tr>
 <tr>
- <td class="label">Flight Time (+/- 1h)</td>
- <td class="data"><el:text name="flightTime" idx="*" size="4" max="5" /></td>
+ <td class="label">Sort Flights by</td>
+ <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${!empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
+ <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
 </tr>
 <tr class="title mid">
  <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT SCHEDULE" /></td>
