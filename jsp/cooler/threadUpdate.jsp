@@ -10,7 +10,9 @@
 <title><content:airline /> Water Cooler Thread</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
+<c:if test="${!isDelete}">
 <meta http-equiv="refresh" content="3;url=/thread.do?id=0x<fmt:hex value="${thread.ID}" />" />
+</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -53,6 +55,12 @@ this discussion thread.<br />
 <br />
 This new Water Cooler discussion thread has been posted in the <span class="sec bld">&quot;${thread.channel}&quot;</span>
 channel. All users authorized to read and create posts in this channel may participate.<br />
+<c:if test="${isNotify}">
+<br />
+You have signed up for response notifications. Each time a new response is posted in this Water Cooler 
+discussion thread, you will receive an e-mail notification. You can turn notifications off at any time 
+by returning to the discussion thread.<br />
+</c:if>
 <c:if test="${hasImage}">
 <br />
 Your attached image has been saved in the Image Gallery as a <i>Water Cooler Screen Shot</i>.
@@ -68,6 +76,11 @@ and some loss of image quality may occur.<br /></c:if>
 <br />
 Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>.
 Thank you for your participation in the <content:airline /> Water Cooler!<br />
+<c:if test="${!empty notifyMsgs}">
+<br />
+<fmt:int value="${notifyMsgs}" /> individuals have received e-mail notifications of this new Water Cooler 
+discussion thread response.<br />
+</c:if>
 </c:if>
 <c:if test="${isUnstuck}">
 <!-- Thread Unstuck -->
