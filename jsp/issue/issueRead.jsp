@@ -104,7 +104,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" /></td>
+ <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" /></td>
 </tr>
 </c:if>
 </el:table>
