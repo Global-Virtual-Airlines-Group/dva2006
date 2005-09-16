@@ -155,11 +155,11 @@ public class GetUserData extends DAO {
 
    /**
     * Returns cross-application data for a Set of User IDs.
-    * @param ids a Set of Integers with user IDs
+    * @param ids a Collection of Integers with user IDs
     * @return a UserDataMap
     * @throws DAOException if a JDBC error occurs
     */
-   public UserDataMap get(Set ids) throws DAOException {
+   public UserDataMap get(Collection ids) throws DAOException {
 
       // Build the SQL statement
       StringBuffer sqlBuf = new StringBuffer("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
