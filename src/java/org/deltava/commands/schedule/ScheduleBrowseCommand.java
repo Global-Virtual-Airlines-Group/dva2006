@@ -66,7 +66,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          // Do the search
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
-         vc.setResults(dao.search(criteria, false));
+         vc.setResults(dao.search(criteria, "AIRPORT_D, AIRPORT_A"));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

@@ -51,7 +51,7 @@ public class ScheduleSearchService extends WebDataService {
       try {
          GetSchedule dao = new GetSchedule(_con);
          dao.setQueryMax(criteria.getMaxResults());
-         results = dao.search(criteria, false);
+         results = dao.search(criteria, "FLIGHT");
       } catch (DAOException de) {
          throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
       }

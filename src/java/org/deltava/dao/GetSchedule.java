@@ -29,11 +29,11 @@ public class GetSchedule extends DAO {
 	/**
 	 * Searches the Schedule database for flights matching particular criteria.
 	 * @param criteria the search criteria. Null properties are ignored 
-	 * @param isRandom sort the results at random
+	 * @param sortBy orderBy column
 	 * @return a List of Flights
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List search(Flight criteria, boolean isRandom) throws DAOException {
+	public List search(Flight criteria, String sortBy) throws DAOException {
 		
 		// Build the where clause
 		Collection conditions = new HashSet();
@@ -66,9 +66,9 @@ public class GetSchedule extends DAO {
 				buf.append(" AND ");
 		}
 		
-		// Add randomness quotient
-		if (isRandom)
-		    buf.append(" ORDER BY RAND()");
+		// Add sort column
+		buf.append(" ORDER BY ");
+		buf.append(sortBy);
 		
 		// Prepare the satement and execute the query
 		try {
