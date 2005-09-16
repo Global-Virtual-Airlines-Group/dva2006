@@ -64,9 +64,10 @@ public class NewThreadListCommand extends AbstractViewCommand {
          CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 
          // Get the date/time to view threads since
-         Date startDate = p.getLastLogoff();
-         ctx.setAttribute("startDate", startDate, REQUEST);
-
+         Date startDate = (Date) ctx.getSession().getAttribute("newThreadDate"); 
+         if (startDate == null)
+            startDate = p.getLastLogoff();
+         
          // Get either by channel or all; now filter by role
          Set pilotIDs = new HashSet();
          List threads = dao2.getSince(startDate, true);
@@ -98,6 +99,11 @@ public class NewThreadListCommand extends AbstractViewCommand {
             String tableName = (String) i.next();
             authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
          }
+
+         // If we've been logged in more than 30 minutes, then do that
+         long now = System.currentTimeMillis();
+         if (((now - startDate.getTime()) / 1000) >  1800)
+            ctx.setAttribute("newThreadDate", new Date(now - 1800000), SESSION);
 
          // Get the pilot IDs in the returned threads
          ctx.setAttribute("pilots", authors, REQUEST);
