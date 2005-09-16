@@ -17,19 +17,44 @@
 <script language="JavaScript" type="text/javascript">
 function switchType(combo)
 {
-self.location = 'acarsempty.do?id=' + combo.options[combo.selectedIndex].value;
+var logType = combo.options[combo.selectedIndex].value;
+self.location = 'acarsempty.do?id=' + logType;
+return true;
+}
+
+function selectAll()
+{
+var form = document.forms[0];
+for (var x = 0; x < form.flightID.length; x++)
+	isChecked = form.flightID[x].checked = true;
+	
+return true;
+}
+
+function validate(form)
+{
+var isChecked = false;
+for (var x = 0; x < form.flightID.length; x++)
+	isChecked = (isChecked || form.flightID[x].checked);
+
+// Check if at least one flight is checked
+if (!isChecked) {
+	alert('Select at least one Flight entry to delete.');
+	return false;
+}
+
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="acarsempty.do" method="post" validate="return false">
+<el:form action="acarsdelf.do" method="post" validate="return validate(this)">
 <view:table className="view" space="default" pad="default" cmd="acarsempty">
 <!-- View Header Bar -->
 <tr class="title">
@@ -40,11 +65,11 @@ return true;
 <!-- View Legend Bar -->
 <tr class="title caps">
  <td width="5%">ID</td>
- <td width="8%">&nbsp;</td>
+ <td width="5%"><el:button onClick="void selectAll()" className="BUTTON" label="ALL" /></td>
  <td width="15%">START/END TIME</td>
  <td width="20%">PILOT NAME / CODE</td>
  <td width="10%">FLIGHT</td>
- <td width="17%">ORIGIN</td>
+ <td width="18%">ORIGIN</td>
  <td>DESTINATION</td>
 </tr>
 
@@ -54,7 +79,7 @@ return true;
 <c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
 <view:row entry="${info}">
  <td class="pri bld"><el:cmd url="acarsinfo" linkID="0x${flight.ID}"><fmt:int value="${flight.ID}" /></el:cmd></td>
- <td><el:cmdbutton url="acarsdelf" linkID="0x${flight.ID}" label="DELETE" /></td>
+ <td><el:box name="flightID" idx="*" value="${flight.ID}" label="" /></td>
  <td class="small"><fmt:date t="HH:mm" date="${flight.startTime}" />
 <c:if test="${!empty flight.endTime}">
 <br /><fmt:date t="HH:mm" date="${flight.endTime}" />
@@ -69,7 +94,9 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><el:button onClick="void selectAll()" className="BUTTON" label="SELECT ALL" />
+  <el:button type="submit" label="DELETE FLIGHTS" className="BUTTON" /><br />
+<view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </el:form>
