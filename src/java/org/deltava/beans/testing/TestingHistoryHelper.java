@@ -61,7 +61,7 @@ public class TestingHistoryHelper {
 		int maxStage = 1;
 		for (Iterator i = _tests.iterator(); i.hasNext();) {
 			Test t = (Test) i.next();
-			if ((t instanceof Examination) && (!Examination.QUESTIONNAIRE_NAME.equals(t.getName())))
+			if ((t instanceof Examination) && (!Examination.QUESTIONNAIRE_NAME.equals(t.getName())) && (t.getPassFail()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
