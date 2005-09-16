@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class HTTPLogStatisticsTask extends DatabaseTask {
    
-   private static final Logger log = Logger.getLogger(HTTPLogStatisticsTask.class);
+   protected static final Logger log = Logger.getLogger(HTTPLogStatisticsTask.class);
    
    private class HTTPLogFilter implements FileFilter {
       
