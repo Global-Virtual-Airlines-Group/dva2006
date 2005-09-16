@@ -37,7 +37,7 @@ public final class MessageAccessControl extends AccessControl {
 	public void validate() throws CommandSecurityException {
 		
 		// Set status flags
-		_canCreate = _ctx.isUserInRole("HR");
+		_canCreate = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Developer");
 		_canEdit = _canCreate;
 		
 		// Check if we can delete this message template
