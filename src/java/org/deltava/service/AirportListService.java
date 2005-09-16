@@ -11,6 +11,7 @@ import org.jdom.output.*;
 
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.GetSchedule;
 import org.deltava.dao.DAOException;
@@ -98,7 +99,8 @@ public class AirportListService extends WebDataService {
       
       // Generate the destination list
       Map allAirports = (Map) SystemData.getObject("airports");
-      Collection airports = new TreeSet(allAirports.values());
+      Collection airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+      airports.addAll(allAirports.values());
       for (Iterator i = airports.iterator(); i.hasNext(); ) {
          Airport a = (Airport) i.next();
          if (filter.accept(a)) {
