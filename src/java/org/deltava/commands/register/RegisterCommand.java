@@ -149,9 +149,9 @@ public class RegisterCommand extends AbstractCommand {
 				throw new CommandException("Invalid Examination - " + Examination.QUESTIONNAIRE_NAME);
 
 			// Load the question pool for the questionnaire
-			List pool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME);
-			int poolSize = (pool.size() < ep.getSize()) ? pool.size() : ep.getSize();
-			if (poolSize == 0)
+			epdao.setQueryMax(ep.getSize());
+			List qPool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME, true);
+			if (qPool.isEmpty())
 				throw new CommandException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
 
 			// Start the transaction
@@ -181,19 +181,16 @@ public class RegisterCommand extends AbstractCommand {
 			cld.add(Calendar.HOUR, -1);
 			ex.setExpiryDate(cld.getTime());
 
-			// Generate a random list of questions
-			Random rnd = new Random();
-			for (int x = 1; x <= poolSize; x++) {
-				int ofs = rnd.nextInt(pool.size());
-				QuestionProfile qp = (QuestionProfile) pool.get(ofs);
-				pool.remove(qp);
+			// Add the questions to the exam
+			int qNum = 0;
+			for (Iterator i = qPool.iterator(); i.hasNext(); ) {
+				QuestionProfile qp = (QuestionProfile) i.next();
 				Question q = new Question(qp);
-				q.setNumber(x);
+				q.setNumber(++qNum);
 				ex.addQuestion(q);
 			}
 
-			// Save the examination size
-			ctx.setAttribute("qSize", new Integer(poolSize), REQUEST);
+			// Save the examination
 			ctx.setAttribute("questionnaire", ex, REQUEST);
 
 			// Get the DAO and write the questionnaire to the database

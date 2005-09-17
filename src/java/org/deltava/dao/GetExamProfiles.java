@@ -92,8 +92,8 @@ import org.deltava.beans.testing.*;
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM QUESTIONINFO Q, " +
-					"EXAMQUESTIONS EQ WHERE (Q.ID=EQ.QUESTION_ID) AND (Q.ID=?) GROUP BY Q.ID");
+			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM QUESTIONINFO Q "
+					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) WHERE (Q.ID=?) GROUP BY Q.ID");
 			_ps.setInt(1, id);
 			
 			// Execute the Query
@@ -134,23 +134,26 @@ import org.deltava.beans.testing.*;
 	/**
 	 * Loads all Questions linked to a particular Pilot Examination.
 	 * @param examName the Examination name
+	 * @param isRandom randomly order questions
 	 * @return a List of QuestionProfiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getQuestionPool(String examName) throws DAOException {
+	public List getQuestionPool(String examName, boolean isRandom) throws DAOException {
 	   
 	   // Check if we're displaying all questions
 	   boolean showAll = "ALL".equals(examName);
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM " +
-	         "QUESTIONINFO Q, EXAMQUESTIONS EQ, QE_INFO QE WHERE (Q.ID=EQ.QUESTION_ID) AND " +
-	         "(Q.ID=QE.QUESTION_ID) ");
+	   StringBuffer sqlBuf = new StringBuffer("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
+	         + "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
+			   + "ON (Q.ID=QE.QUESTION_ID)");
 	   
 	   if (!showAll)
-	      sqlBuf.append("AND (QE.EXAM_NAME=?) ");
+	      sqlBuf.append(" WHERE (QE.EXAM_NAME=?)");
 	   
-	   sqlBuf.append("GROUP BY Q.ID ORDER BY Q.ID");
+	   sqlBuf.append(" GROUP BY Q.ID");
+	   if (isRandom)
+		   sqlBuf.append(" ORDER BY RAND()");
 	   
 		try {
 		   prepareStatement(sqlBuf.toString());
