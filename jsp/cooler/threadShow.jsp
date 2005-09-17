@@ -166,9 +166,13 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td colspan="2">UPDATE NOTIFICATIONS</td>
 </tr>
 <tr class="pri bld mid">
- <td colspan="2">You are <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>currently receiving e-mail 
-notifications each time a message is posted in this Discussion Thread.
-<el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /></td>
+ <td colspan="2">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
+notification each time a reply is posted in this Thread.
+<el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
+<c:if test="${(!empty notify.IDs) && access.canResync}">
+<el:cmdbutton url="notifyclear" linkID="0x${thread.ID}" label="RESET NOTIFICATIONS" />
+</c:if>
+ </td>
 </tr>
 </content:filter>
 
