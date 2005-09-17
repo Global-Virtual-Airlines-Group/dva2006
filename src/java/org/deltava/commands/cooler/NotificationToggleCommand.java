@@ -45,7 +45,7 @@ public class NotificationToggleCommand extends AbstractCommand {
          
          // Get the Notifications for this thread, and if we're doing an add or a remove
          ThreadNotifications nt = tdao.getNotifications(id);
-         boolean isRemove = nt.getIDs().contains(new Integer(id));
+         boolean isRemove = nt.getIDs().contains(new Integer(ctx.getUser().getID()));
          
          // Check our access - only if we're reading
          CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

@@ -113,7 +113,8 @@ public class ThreadCommand extends AbstractCommand {
 			// Get the thread notifications
 			ThreadNotifications nt =  tdao.getNotifications(thread.getID());
 			ctx.setAttribute("notify", nt, REQUEST);
-			ctx.setAttribute("doNotify", Boolean.valueOf(nt.contains(ctx.getUser().getID())), REQUEST);
+			if (ctx.isAuthenticated())
+				ctx.setAttribute("doNotify", Boolean.valueOf(nt.contains(ctx.getUser().getID())), REQUEST);
 
 			// Mark the thread as being read
 			SetCoolerMessage wdao = new SetCoolerMessage(con);

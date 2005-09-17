@@ -239,7 +239,7 @@ public class GetCoolerThreads extends DAO {
     */
    public List search(String searchStr, String channelName) throws DAOException {
       try {
-         prepareStatement("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T "
+         prepareStatement("SELECT DISTINCT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T "
                + "LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE (T.CHANNEL=?) AND (P.MSGBODY LIKE ?) "
                + "ORDER BY SD DESC");
          _ps.setString(1, channelName);
