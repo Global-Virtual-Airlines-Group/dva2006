@@ -19,6 +19,8 @@ import org.deltava.mail.*;
 import org.deltava.security.SecurityContext;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to handle Water Cooler response posting.
  * @author Luke
@@ -158,6 +160,7 @@ public class ThreadReplyCommand extends AbstractCommand {
          
          // Save thread data
          mctxt.addData("thread", thread);
+         mctxt.addData("threadID", "0x" +	StringUtils.formatHex(thread.getID()));
 
          // Save the thread in the request
          ctx.setAttribute("thread", thread, REQUEST);
