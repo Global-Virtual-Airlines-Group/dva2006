@@ -54,7 +54,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
          // Get the question list and save
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
-         vc.setResults(dao.getQuestionPool(examName));
+         vc.setResults(dao.getQuestionPool(examName, false));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
