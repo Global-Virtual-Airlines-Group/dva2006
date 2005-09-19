@@ -120,7 +120,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			SetFlightReport wdao = new SetFlightReport(con);
 			
 			// Dispose of the PIREP
-			wdao.dispose(ctx.getUser(), fr.getID(), opCode);
+			wdao.dispose(ctx.getUser(), fr, opCode);
 			fr.setStatus(opCode);
 			
 			// If we're approving and we have hit a century club milestone, log it
@@ -143,8 +143,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   SetPilot pwdao = new SetPilot(con);
 			   pwdao.assignID(p);
 			   ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
-			} else {
-			   GetPilot.cache().remove(p.cacheKey());   
 			}
 			
 			// If we're approving the PIREP and it's part of a Flight Assignment, check completion
