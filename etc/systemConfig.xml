@@ -359,6 +359,8 @@
 		<list name="reject_domain" attr="domain">
 			<domain>yahoo.com</domain>
 			<domain>hotmail.com</domain>
+			<domain>localhost</domain>
+			<domain>127.0.0.1</domain>
 		</list>
 		
 		<auto_reject type="Integer">5</auto_reject>

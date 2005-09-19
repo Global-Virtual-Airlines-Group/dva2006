@@ -360,6 +360,8 @@
 		<list name="reject_domain" attr="domain">
 			<domain>yahoo.com</domain>
 			<domain>hotmail.com</domain>
+			<domain>localhost</domain>
+			<domain>127.0.0.1</domain>
 		</list>
 		
 		<auto_reject type="Integer">5</auto_reject>
@@ -430,7 +432,7 @@
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2750</position_interval>
-		<build type="Integer">46</build>
+		<build type="Integer">48</build>
 		
 		<pool>
 			<size type="Integer">100</size>
