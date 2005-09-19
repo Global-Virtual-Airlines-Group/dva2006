@@ -19,7 +19,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class GetApplicant extends PilotDAO {
+public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
 
@@ -260,6 +260,44 @@ public class GetApplicant extends PilotDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+   /**
+    * Performs a soundex search on a Person's full name to detect possible matches. The soundex
+    * implementation is dependent on the capabilities of the underlying database engine, and is not
+    * guaranteed to be consistent (or even supported) across different database servers.
+    * @param usr the Person to check for
+    * @param dbName the database name
+    * @return a Collection of Database IDs as Integers
+    */
+   public Collection checkSoundex(Person usr, String dbName) throws DAOException {
+      
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT ID, LEFT(SOUNDEX(?), 4) AS TARGET, LEFT(SOUNDEX(CONCAT_WS(' ', "
+      		+ "FIRSTNAME, LASTNAME)), 4) AS SX FROM ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) HAVING (TARGET=SX) ORDER BY ID");
+      
+      try {
+         prepareStatement(sqlBuf.toString());
+         _ps.setString(1, usr.getName());
+         _ps.setInt(2, usr.getID());
+         
+         // Execute the query
+         ResultSet rs = _ps.executeQuery();
+         
+         // Iterate through the results
+         Collection results = new ArrayList();
+         while (rs.next())
+            results.add(new Integer(rs.getInt(1)));
+         
+         // Clean up and return
+         rs.close();
+         _ps.close();
+         return results;
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
 
 	/**
 	 * Helper method to extract data from the result set.
