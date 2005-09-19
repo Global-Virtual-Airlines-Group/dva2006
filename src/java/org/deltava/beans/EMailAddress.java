@@ -9,6 +9,8 @@ package org.deltava.beans;
  */
 
 public interface EMailAddress {
+	
+	public static final String INVALID_ADDR = "-";
 
    /**
     * Returns the message recipient's name.
