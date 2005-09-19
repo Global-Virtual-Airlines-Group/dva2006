@@ -275,12 +275,13 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
       StringBuffer sqlBuf = new StringBuffer("SELECT ID, LEFT(SOUNDEX(?), 4) AS TARGET, LEFT(SOUNDEX(CONCAT_WS(' ', "
       		+ "FIRSTNAME, LASTNAME)), 4) AS SX FROM ");
       sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) HAVING (TARGET=SX) ORDER BY ID");
+      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING (TARGET=SX) ORDER BY ID");
       
       try {
          prepareStatement(sqlBuf.toString());
          _ps.setString(1, usr.getName());
          _ps.setInt(2, usr.getID());
+         _ps.setInt(3, Applicant.REJECTED);
          
          // Execute the query
          ResultSet rs = _ps.executeQuery();
