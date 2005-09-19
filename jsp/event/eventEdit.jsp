@@ -117,7 +117,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Default Route</td>
- <td class="data"><el:text name="route" idx="*" size="64" max="128" value="${event.route}" /></td>
+ <td class="data"><el:text name="route" idx="*" size="80" max="255" value="${event.route}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
