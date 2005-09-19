@@ -90,6 +90,57 @@ if (intValue < minValue) {
 return true;
 }
 
+function validateEMail(text, title)
+{
+// Get the value
+var str = text.value;
+if (str.length < 5) {
+	alert('Please provide a ' + title + '.');
+	text.focus();
+	return false;
+}
+
+var lat = str.indexOf('@');
+var ldot = str.indexOf('.');
+if (lat ==- 1){
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+
+if ((str.indexOf('.') < 1) || (str.indexOf('.') == str.length())) {
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+
+if (str.indexOf('@', (lat+1)) != -1) {
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+
+if ((str.substring(lat-1, lat) == '.') || (str.substring(lat+1, lat+2) == '.')) {
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+
+if (str.indexOf('.', (lat+2)) == -1) {
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+		
+if (str.indexOf(" ") != -1){
+	alert('Please provide a valid ' + title + '.');
+	text.focus();
+	return false;
+}
+
+return true;
+}
+
 function validateCombo(combo, title)
 {
 if (!combo) return true;

@@ -17,7 +17,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.email, 7, 'E-Mail Address')) return false;
+if (!validateEMail(form.email, 7, 'E-Mail Address')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
