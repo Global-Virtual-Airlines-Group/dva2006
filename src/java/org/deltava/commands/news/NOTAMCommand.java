@@ -27,7 +27,7 @@ public class NOTAMCommand extends AbstractViewCommand {
 
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-        boolean doActive = "all".equals(ctx.getCmdParameter(Command.OPERATION, null));
+        boolean doActive = !"all".equals(ctx.getCmdParameter(Command.OPERATION, null));
 
         try {
             Connection con = ctx.getConnection();
