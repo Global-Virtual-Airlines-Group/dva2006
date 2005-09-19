@@ -26,8 +26,6 @@ import org.deltava.util.system.SystemData;
 
 public class HTTPLogStatisticsTask extends DatabaseTask {
    
-   protected static final Logger log = Logger.getLogger(HTTPLogStatisticsTask.class);
-   
    private class HTTPLogFilter implements FileFilter {
       
       private Calendar _startTime;
@@ -63,7 +61,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
     * Initializes the task.
     */
    public HTTPLogStatisticsTask() {
-      super("HTTP Log Statistics");
+      super("HTTP Log Statistics", HTTPLogStatisticsTask.class);
    }
 
    /**

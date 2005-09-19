@@ -3,8 +3,6 @@ package org.deltava.tasks;
 
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.Applicant;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
@@ -25,13 +23,11 @@ import org.deltava.util.system.SystemData;
 
 public class ApplicantPurgeTask extends DatabaseTask {
 
-	private static final Logger log = Logger.getLogger(ApplicantPurgeTask.class);
-
 	/**
 	 * Initializes the Schedued Task.
 	 */
 	public ApplicantPurgeTask() {
-		super("Applicant Purge");
+		super("Applicant Purge", ApplicantPurgeTask.class);
 	}
 
 	/**

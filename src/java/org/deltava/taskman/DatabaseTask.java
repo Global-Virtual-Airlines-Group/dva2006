@@ -3,8 +3,6 @@ package org.deltava.taskman;
 
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.jdbc.Recycler;
 
 /**
@@ -16,8 +14,6 @@ import org.deltava.jdbc.Recycler;
 
 public abstract class DatabaseTask extends Task {
    
-   private static final Logger log = Logger.getLogger(Task.class);
-
    protected Connection _con;
    private Recycler _recycler;
    
@@ -25,8 +21,8 @@ public abstract class DatabaseTask extends Task {
     * Creates a new Database Task.
     * @param name the task name
     */
-   public DatabaseTask(String name) {
-      super(name);
+   protected DatabaseTask(String name, Class loggerClass) {
+      super(name, loggerClass);
    }
 
    /**
@@ -48,7 +44,7 @@ public abstract class DatabaseTask extends Task {
    /**
     * Executes the Task, then returns the JDBC connection.
     */
-   public void run() {
+   public final void run() {
       super.run();
       if (_recycler != null) {
          log.debug("Releasing JDBC connection for " + getName());
