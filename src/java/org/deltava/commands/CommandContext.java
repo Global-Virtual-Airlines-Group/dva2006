@@ -32,6 +32,8 @@ public class CommandContext implements Serializable, SecurityContext {
     public static final String AUTH_COOKIE_NAME = "authToken";
     public static final String USER_ATTR_NAME = "authUser";
     public static final String SU_ATTR_NAME ="superUser";
+    public static final String SCREENX_ATTR_NAME = "screenXSize";
+    public static final String SCREENY_ATTR_NAME = "screenYSize";
 
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;
