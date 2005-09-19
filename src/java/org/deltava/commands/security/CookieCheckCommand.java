@@ -27,17 +27,17 @@ public class CookieCheckCommand extends AbstractCommand {
         // Check if our session cookie is OK
         boolean isOK = (ctx.getRequest().isRequestedSessionIdFromCookie() &&
                 ctx.getRequest().isRequestedSessionIdValid());
+        
+        // Get the next resource to go to
+        HttpSession s = ctx.getSession();
+        String nextURL = (String) s.getAttribute("next_url");
+        s.removeAttribute("next_url");
 
         // If we're not OK, redirect to the warning JSP
         if (!isOK) {
             result.setURL("/jsp/cookieCheck.jsp");
             return;
         }
-        
-        // Get the next resource to go to
-        HttpSession s = ctx.getSession();
-        String nextURL = (String) s.getAttribute("next_url");
-        s.removeAttribute("next_url");
         
         // Redirect to the next URL
         result.setURL(nextURL);
