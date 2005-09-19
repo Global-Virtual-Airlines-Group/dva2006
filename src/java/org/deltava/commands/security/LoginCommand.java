@@ -1,6 +1,7 @@
 package org.deltava.commands.security;
 
 import java.sql.Connection;
+
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
@@ -85,6 +86,19 @@ public class LoginCommand extends AbstractCommand {
 			// Log the pilot in
 			p.login(ctx.getRequest().getRemoteHost());
 			
+			// Create the user authentication cookie
+			SecurityCookieData cData = new SecurityCookieData(p.getDN());
+			cData.setPassword(ctx.getParameter("pwd"));
+			cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
+			
+			// Save screen resolution
+			try {
+			   cData.setScreenSize(Integer.parseInt(ctx.getParameter("screenX")), Integer.parseInt(ctx.getParameter("screenY")));
+			} catch (NumberFormatException nfe) {
+			   cData.setScreenSize(1024, 768);
+			}
+			
 			// Start the transaction
 			ctx.startTX();
 
@@ -99,6 +113,8 @@ public class LoginCommand extends AbstractCommand {
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
+			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
 
 			// Add the user to the User pool
 			UserPool.addPerson(p, s.getId());
@@ -119,12 +135,6 @@ public class LoginCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-
-		// Create the user authentication cookie
-		SecurityCookieData cData = new SecurityCookieData(p.getDN());
-		cData.setPassword(ctx.getParameter("pwd"));
-		cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-		ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
 
 		// Set the next URL after the CookieCheck command
 		ctx.setAttribute("next_url", "home.do", SESSION);

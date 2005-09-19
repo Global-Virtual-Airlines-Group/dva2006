@@ -126,6 +126,8 @@ public class SecurityCookieFilter implements Filter {
         HttpSession s = hreq.getSession(true);
         Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
         if (p == null) {
+           s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
+           s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
             p = loadPersonFromDatabase(cData.getUserID());
             if (p != null)
                 s.setAttribute(CommandContext.USER_ATTR_NAME, p);

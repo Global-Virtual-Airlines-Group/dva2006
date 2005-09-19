@@ -9,9 +9,10 @@ import org.deltava.util.Base64;
 
 /**
  * A class to generate/interpret cookies to store persistent authentication information.
- * Cookie data is defined as uid:<b>userID</b>@pwd:<b>password</b>@addr:<b>IP</b>@expiry:<b>date</b>.
- * There is an additional parameter <i>md5</i> which is the MD5 signature of the above string encoded in Base64.
- * The password is converted into hex bytes, and the entire thing is encrypted using a SecretKeyEncryptor.
+ * Cookie data is defined as uid:<b>userID</b>@pwd:<b>password</b>@addr:<b>IP</b>@expiry:<b>date</b>
+ * @x:<b>screenX</b>@y:<b>screenY</b>. There is an additional parameter <i>md5</i> which is the MD5
+ * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
+ * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -69,6 +70,10 @@ public final class SecurityCookieGenerator {
 		buf.append(cookieData.get("addr"));
 		buf.append("@expiry:");
 		buf.append(cookieData.get("expiry"));
+		buf.append("@x:");
+		buf.append(cookieData.get("x"));
+		buf.append("@y:");
+		buf.append(cookieData.get("y"));
 		
 		// Get the message digest for the token
 		MessageDigester md = new MessageDigester("MD5");
@@ -117,6 +122,10 @@ public final class SecurityCookieGenerator {
 		buf.append(scData.getRemoteAddr());
 		buf.append("@expiry:");
 		buf.append(Long.toHexString(scData.getExpiryDate()));
+		buf.append("@x:");
+		buf.append(Long.toHexString(scData.getScreenX()));
+		buf.append("@y:");
+		buf.append(Long.toHexString(scData.getScreenY()));
 		
 		// Get the message digest for the token
 		MessageDigester md = new MessageDigester("MD5");

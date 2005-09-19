@@ -17,6 +17,9 @@ public class SecurityCookieData {
 	private String _pwd;
 	private String _remoteAddr;
 	private long _expiryDate;
+	
+	private int _screenX = 1024;
+	private int _screenY = 768;
 
 	/**
 	 * Creates security cookie data for a given user ID.
@@ -35,6 +38,14 @@ public class SecurityCookieData {
     
     public long getExpiryDate() {
         return _expiryDate;
+    }
+    
+    public int getScreenX() {
+       return _screenX;
+    }
+    
+    public int getScreenY() {
+       return _screenY;
     }
     
  	/**
@@ -69,6 +80,10 @@ public class SecurityCookieData {
 		return (System.currentTimeMillis() > _expiryDate);
 	}
 	
+	/**
+	 * Sets the expiry date of the security cookie.
+	 * @param expiryDate the expiration date as a 32-bit UNIX timestamp
+	 */
 	public void setExpiryDate(long expiryDate) {
 	    if (expiryDate < 1)
 	        throw new IllegalArgumentException("Expiration Date cannot be zero or negative");
@@ -90,6 +105,16 @@ public class SecurityCookieData {
  	 */
  	public void setRemoteAddr(String remoteAddr) {
  		_remoteAddr = remoteAddr;
+ 	}
+ 	
+ 	/**
+ 	 * Updates the user's screen size.
+ 	 * @param width the width in pixels
+ 	 * @param height the height in pixels
+ 	 */
+ 	public void setScreenSize(int width, int height) {
+ 	   _screenX = width;
+ 	   _screenY = height;
  	}
  	
 	/**
