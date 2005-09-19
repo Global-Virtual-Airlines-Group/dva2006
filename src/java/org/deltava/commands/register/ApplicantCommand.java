@@ -5,7 +5,9 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.Airport;
+
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
@@ -158,6 +160,9 @@ public class ApplicantCommand extends AbstractFormCommand {
          // Check if the address has been validated
          GetAddressValidation avdao = new GetAddressValidation(con);
          ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
+         
+         // Do a soundex check on the user
+         soundexCheck(a, con, ctx);
 
          // Get Active Equipment programs
          GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -211,6 +216,9 @@ public class ApplicantCommand extends AbstractFormCommand {
          GetAddressValidation avdao = new GetAddressValidation(con);
          ctx.setAttribute("eMailValid", Boolean.valueOf(avdao.isValid(a.getID())), REQUEST);
          
+         // Do a soundex check on the user
+         soundexCheck(a, con, ctx);
+         
          // Get the questionnaire
          GetQuestionnaire exdao = new GetQuestionnaire(con);
          ctx.setAttribute("questionnaire", exdao.getByApplicantID(a.getID()), REQUEST);
@@ -236,5 +244,48 @@ public class ApplicantCommand extends AbstractFormCommand {
       CommandResult result = ctx.getResult();
       result.setURL("/jsp/register/applicantView.jsp");
       result.setSuccess(true);
+   }
+   
+   /**
+    * Helper method to perform the soundex check.
+    */
+   private void soundexCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+      
+      // Initialize the DAOs
+      GetApplicant dao = new GetApplicant(c);
+      GetPilotDirectory pdao = new GetPilotDirectory(c);
+      
+      // Do a soundex check on the applicant against each database
+      Collection soundexIDs = new ArrayList();
+      Collection airlines = ((Map) SystemData.getObject("apps")).values();
+      for (Iterator i = airlines.iterator(); i.hasNext(); ) {
+         AirlineInformation info = (AirlineInformation) i.next();
+         soundexIDs.addAll(dao.checkSoundex(a, info.getDB()));
+         soundexIDs.addAll(pdao.checkSoundex(a, info.getDB()));
+      }
+      
+      // If nothing found, stop
+      if (soundexIDs.isEmpty())
+         return;
+
+      // Load the locations of all these matches
+      GetUserData uddao = new GetUserData(c);
+      UserDataMap udmap = uddao.get(soundexIDs);
+      
+      // Load the users objects
+      Map persons = new HashMap();
+      for (Iterator i = udmap.getTableNames().iterator(); i.hasNext(); ) {
+         String tableName = (String) i.next();
+         Collection IDs = udmap.getByTable(tableName);
+         if (UserDataMap.isPilotTable(tableName)) {
+            persons.putAll(pdao.getByID(IDs, tableName));   
+         } else {
+            persons.putAll(dao.getByID(IDs, tableName));
+         }
+      }
+      
+      // Save the userdata map and persons in the request
+      ctx.setAttribute("userData", udmap, REQUEST);
+      ctx.setAttribute("soundexUsers", persons, REQUEST);
    }
 }
