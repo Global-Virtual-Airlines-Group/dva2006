@@ -44,30 +44,31 @@ public class FleetLibraryCommand extends AbstractCommand {
 		if (isAdmin && !access.getCanCreate())
 			throw securityException("Cannot update Fleet Library");
 
-		Collection results = null;
+		List results = new ArrayList();
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAO
-			GetLibrary dao = new GetLibrary(con);
-
 			// Get the fleet libraries from the other airlines if we're not in admin mode
+			GetLibrary dao = new GetLibrary(con);
 			if (!isAdmin) {
-				results = new ArrayList();
 				Map apps = (Map) SystemData.getObject("apps");
 				for (Iterator i = apps.values().iterator(); i.hasNext();) {
 					AirlineInformation info = (AirlineInformation) i.next();
-					results.addAll(dao.getFleet(info.getDB()));
+					if (info.getDB().equals(SystemData.get("airline.db"))) {
+						results.addAll(0, dao.getFleet(info.getDB()));
+					} else {
+						results.addAll(dao.getFleet(info.getDB()));
+					}
 				}
 			} else {
-				results = dao.getFleet(SystemData.get("airline.db"));
+				results.addAll(dao.getFleet(SystemData.get("airline.db")));
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-
+		
 		// Validate our access to the results
 		for (Iterator i = results.iterator(); i.hasNext();) {
 			FleetEntry e = (FleetEntry) i.next();
