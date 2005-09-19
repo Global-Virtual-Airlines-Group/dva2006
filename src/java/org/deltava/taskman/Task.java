@@ -3,6 +3,8 @@ package org.deltava.taskman;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * A class to support scheduled tasks.
  * @author Luke
@@ -13,6 +15,8 @@ import java.util.*;
 public abstract class Task extends Thread implements java.io.Serializable {
 
     public static final long MAX_RUNTIME = 30 * 60 * 1000; // 30 minutes
+    
+    protected final Logger log;
     
     protected String _id;
     protected Properties _props = new Properties();
@@ -31,9 +35,10 @@ public abstract class Task extends Thread implements java.io.Serializable {
      * Creates a new Scheduled Task with a given name. 
      * @param name the Task name
      */
-    public Task(String name) {
+    public Task(String name, Class loggerClass) {
         super(name);
         setDaemon(true);
+        log = Logger.getLogger(loggerClass);
     }
     
     /**
