@@ -98,14 +98,11 @@ public class ThreadCommand extends AbstractCommand {
 			GetFlightReports prdao = new GetFlightReports(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
 				String dbTableName = (String) i.next();
-				StringTokenizer tkns = new StringTokenizer(dbTableName, ".");
-				String dbName = tkns.nextToken();
-				String tableName = tkns.nextToken();
 
 				// Get the pilots from each table and apply their online totals
 				Map pilotSubset = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
-				if ("PILOTS".equals(tableName))
-					prdao.getOnlineTotals(pilotSubset, dbName);
+				if (UserDataMap.isPilotTable(dbTableName))
+					prdao.getOnlineTotals(pilotSubset, dbTableName);
 
 				pilots.putAll(pilotSubset);
 			}
