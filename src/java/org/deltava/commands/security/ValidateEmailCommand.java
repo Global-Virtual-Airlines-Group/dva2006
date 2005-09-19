@@ -29,7 +29,10 @@ public class ValidateEmailCommand extends AbstractCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
+
+		// Get the command result
+		CommandResult result = ctx.getResult();
+
 		// Since the ID might not be hex-encoded get it a different way
 		int id = 0;
 		try {
@@ -38,10 +41,30 @@ public class ValidateEmailCommand extends AbstractCommand {
 			id = 0;
 		}
 
+		// If no valid user ID provided, go direct to the JSP
+		if ((id == 0) && (ctx.getParameter("email") == null)) {
+			result.setURL("/jsp/register/eMailInvalid.jsp");
+			result.setSuccess(true);
+			return;
+		}
+
 		Person p = null;
 		AddressValidation av = null;
 		try {
 			Connection con = ctx.getConnection();
+
+			// Get the e-mail validation information
+			GetAddressValidation avdao = new GetAddressValidation(con);
+			av = (id == 0) ? av = avdao.get(id) : avdao.getAddress(ctx.getParameter("email"));
+			if (av == null) {
+				ctx.release();
+				ctx.setAttribute("invalidInfo", Boolean.TRUE, REQUEST);
+				
+				// Forward to the JSP
+				result.setURL("/jsp/register/eMailInvalid.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
 			// Get the User Data
 			GetUserData usrdao = new GetUserData(con);
@@ -61,10 +84,6 @@ public class ValidateEmailCommand extends AbstractCommand {
 			// Check that the user exists
 			if (p == null)
 				throw new CommandException("Invalid Pilot/Applicant - " + id);
-
-			// Load the Address validation data
-			GetAddressValidation avdao = new GetAddressValidation(con);
-			av = avdao.get(id);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -74,9 +93,6 @@ public class ValidateEmailCommand extends AbstractCommand {
 		// Make sure we're either anonymous or the same user
 		if ((ctx.isAuthenticated()) && (ctx.getUser().getID() != p.getID()))
 			throw securityException(ctx.getUser() + " attempting to Validate for " + p.getName());
-
-		// Get the command result
-		CommandResult result = ctx.getResult();
 
 		// If there's no validation record on file, then assume we're valid
 		if (av == null) {
@@ -88,7 +104,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 		// If the hashes don't match, then stop us
 		String code = AddressValidationHelper.formatHash(ctx.getParameter("code"));
 		if (!av.getHash().equals(code)) {
-		   ctx.setAttribute("person", p, REQUEST);
+			ctx.setAttribute("person", p, REQUEST);
 			result.setURL("/jsp/register/eMailInvalid.jsp");
 			result.setSuccess(true);
 			return;
@@ -99,7 +115,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Start the transaction
 			ctx.startTX();
 
@@ -115,7 +131,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 			// Clear the invalid e-mail entry
 			SetAddressValidation wavdao = new SetAddressValidation(con);
 			wavdao.delete(av.getID());
-			
+
 			// Commit the transaction
 			ctx.commitTX();
 		} catch (DAOException de) {
