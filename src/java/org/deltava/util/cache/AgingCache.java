@@ -57,7 +57,7 @@ public class AgingCache extends Cache {
     * method will be called to create a shallow copy of the object.
     * @param obj the entry to add to the cache 
     */
-   public void add(Cacheable obj) {
+   public synchronized void add(Cacheable obj) {
       
       // Create the cache entry
       Cacheable entry = getClone(obj);
@@ -73,7 +73,7 @@ public class AgingCache extends Cache {
     * @param key the cache key
     * @return the cache entry, or null if not present
     */
-   public Cacheable get(Object key) {
+   public synchronized Cacheable get(Object key) {
       AgingCacheEntry entry = (AgingCacheEntry) _cache.get(key);
       return (entry == null) ? null : entry.getData();
    }

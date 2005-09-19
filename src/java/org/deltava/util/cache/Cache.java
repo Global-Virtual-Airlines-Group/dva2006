@@ -44,7 +44,7 @@ public abstract class Cache implements java.io.Serializable {
     * @param key the cache key
     * @return TRUE if the cache contains the key, otherwise FALSE
     */
-   public boolean contains(Object key) {
+   public synchronized boolean contains(Object key) {
       return _cache.containsKey(key);
    }
    
@@ -52,7 +52,7 @@ public abstract class Cache implements java.io.Serializable {
     * Invalidate a cache entry.
     * @param key the entry key
     */
-   public void remove(Object key) {
+   public synchronized void remove(Object key) {
       _cache.remove(key);
    }
    
@@ -60,7 +60,7 @@ public abstract class Cache implements java.io.Serializable {
     * Returns the current size of the cache.
     * @return the number of entries in the cache
     */
-   public final int size() {
+   public synchronized final int size() {
       return _cache.size();
    }
    
