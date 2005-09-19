@@ -33,6 +33,10 @@ if (f.firstName.value.length > 0) {
 	f.firstName.focus();
 }
 
+// Save screen resolution
+f.screenX.value = screen.width;
+f.screenY.value = screen.height;
+
 // Ensure javascript is working properly
 f.jsOK.value = 'true';
 return true;
@@ -82,6 +86,8 @@ in order to log into the site.<br />
 </tr>
 </el:table>
 <el:text name="jsOK" type="hidden" value="" />
+<el:text name="screenX" type="hidden" value="1024" />
+<el:text name="screenY" type="hidden" value="768" />
 </el:form>
 </div>
 </body>
