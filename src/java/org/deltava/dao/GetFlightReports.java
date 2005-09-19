@@ -254,6 +254,10 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getOnlineTotals(Map pilots, String dbName) throws DAOException {
+	   
+	   // Trim the database name if it's in DB.TABLE format
+	   if (dbName.indexOf('.') != -1)
+	      dbName = dbName.substring(0, dbName.indexOf('.'));
 
 		// Build the SQL statement
 		StringBuffer sqlBuf = new StringBuffer("SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
