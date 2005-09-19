@@ -74,6 +74,10 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  </td>
 </tr>
 <tr>
+ <td class="label">Default Routing</td>
+ <td colspan="5" class="data">${event.route}</td>
+</tr>
+<tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="135" height="8">${event.briefing}</el:textbox></td>
 </tr>
