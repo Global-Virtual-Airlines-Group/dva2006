@@ -105,7 +105,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the PIREP write DAO and perform the operation
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ctx.getUser(), fr.getID(), FlightReport.OK);
+			wdao.dispose(ctx.getUser(), fr, FlightReport.OK);
 
 			// Get the CheckRide write DAO and update the checkride
 			SetExam ewdao = new SetExam(con);
@@ -134,9 +134,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 				SetStatusUpdate swdao = new SetStatusUpdate(con);
 				swdao.write(upd);
 			}
-
-			// Invalidate the cached pilot entry
-			GetPilot.cache().remove(new Integer(p.getID()));
 
 			// Commit the transaction
 			ctx.commitTX();
