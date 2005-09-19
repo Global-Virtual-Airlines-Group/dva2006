@@ -169,7 +169,7 @@ return true;
 
 <!-- Pilot Statistics -->
 <tr class="title">
- <td colspan="2">PILOT STATISTICS</td>
+ <td colspan="2">APPLICANT INFORMATION</td>
 </tr>
 <tr>
  <td class="label">Registered on</td>
@@ -179,6 +179,10 @@ return true;
  <td class="label">Registered from</td>
  <td class="data">${applicant.registerHostName}</td>
 </tr>
+
+<c:if test="${!empty soundexUsers}">
+<%@ include file="/jsp/register/appSoundexMatch.jsp" %> 
+</c:if>
 
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->

@@ -20,7 +20,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
 if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateText(form.email, 7, 'E-Mail Address')) return false;
+if (!validateEMail(form.email, 7, 'E-Mail Address')) return false;
 if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
 if (!validateCombo(form.location, 'Location')) return false;
 if (!validateCombo(form.tz, 'Time Zone')) return false;
@@ -48,8 +48,8 @@ return cmdPost(f.action);
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
 <content:sysdata var="ranks" name="ranks" />
@@ -152,6 +152,10 @@ return cmdPost(f.action);
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="legacyOK" idx="*" value="1" label="Legacy Hours Verified" checked="${applicant.legacyVerified}" /></td>
 </tr>
+
+<c:if test="${!empty soundexUsers}">
+<%@ include file="/jsp/register/appSoundexMatch.jsp" %> 
+</c:if>
 
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->
