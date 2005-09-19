@@ -87,6 +87,7 @@ public class GetLibrary extends DAO {
 			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM DOCS D LEFT JOIN DOWNLOADS L ON "
 					+ "(D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME ORDER BY D.NAME");
 			_ps.setString(1, fName);
+			setQueryMax(1);
 
 			// Get results - if empty return null
 			List results = loadManuals();
@@ -107,7 +108,29 @@ public class GetLibrary extends DAO {
 			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L ON "
 					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
 			_ps.setString(1, fName);
+			setQueryMax(1);
 
+			// Get results - if empty return null
+			List results = loadInstallers();
+			return results.isEmpty() ? null : (Installer) results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns metadata about a specifc Installer <i>in the current database</i>.
+	 * @param code the Installer code
+	 * @return an Installer, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Installer getInstallerByCode(String code) throws DAOException {
+		try {
+			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L ON "
+					+ "(F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY F.NAME ORDER BY F.NAME");
+			_ps.setString(1, code.toUpperCase());
+			setQueryMax(1);
+			
 			// Get results - if empty return null
 			List results = loadInstallers();
 			return results.isEmpty() ? null : (Installer) results.get(0);
