@@ -18,33 +18,55 @@
 function selectAC(combo)
 {
 var idx = combo.selectedIndex - 1;
-if (idx < 0)
+if (idx < 0) {
+	document.fName = null;
 	return false;
+}
 
-getElement('FleetPic').src = '/${imgPath}/fleet/' + fImgs[idx];
-getElement('divName').innerHTML = iName[idx];
-getElement('divDesc').innerHTML = fDesc[idx];
-getElement('divSize').innerHTML = fSize[idx];
-document.fileName = fName[idx];
+// Get the code
+var code = combo.options[combo.selectedIndex].value;
+var xmlreq = getXMLHttpRequest();
+xmlreq.open("GET", "fleetlib.ws?code=" + code, true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var infoElements = xmlDoc.documentElement.getElementsByTagName("installer");
+	var info = infoElements[0];
+	
+	// Update the page
+	document.fName = info.getAttribute('filename');
+	getElement('FleetPic').src = info.getAttribute('img');
+	getElement('divName').innerHTML = info.getAttribute('title');
+	getElement('divSize').innerHTML = info.getAttribute('size') + ' bytes';
+
+	// Load the description
+	var descE = info.firstChild;
+	getElement('divDesc').innerHTML = descE.data;
+
+	combo.disabled = false;
+	return true;
+}
+
+combo.disabled = true;
+xmlreq.send(null);
 return true;
 }
 
-function download(fileName)
+function download()
 {
 // Check if an installer is selected
-var f = document.forms[0];
-if (f.instName.selectedIndex == 0)
+if (!document.fName)
 	return false;
 
-self.location = '/library/' + fileName;
+self.location = '/library/' + document.fName;
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -78,20 +100,5 @@ Select a Fleet Installer from the list above.</div>
 <br />
 <content:copyright />
 </div>
-<script language="JavaScript" type="text/javascript">
-var iName = new Array();
-var fName = new Array();
-var fSize = new Array();
-var fDesc = new Array();
-var fImgs = new Array();
-
-<c:forEach var="entry" items="${fleet}">
-iName.push('${entry.name}');
-fName.push('${entry.fileName}');
-fSize.push('<fmt:int value="${entry.size}" /> bytes');
-fDesc.push("${fn:escape(entry.description)}");
-fImgs.push('${entry.image}');
-</c:forEach>
-</script>
 </body>
 </html>
