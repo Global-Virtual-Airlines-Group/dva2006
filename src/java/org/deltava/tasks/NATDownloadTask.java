@@ -5,8 +5,6 @@ import java.net.*;
 import java.util.Date;
 import java.io.IOException;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.schedule.OceanicRoute;
 
 import org.deltava.dao.http.GetNATs;
@@ -26,13 +24,11 @@ import org.deltava.util.system.SystemData;
 
 public class NATDownloadTask extends DatabaseTask {
 
-	private static final Logger log = Logger.getLogger(NATDownloadTask.class);
-
 	/**
 	 * Initializes the Scheduled Task.
 	 */
 	public NATDownloadTask() {
-		super("NAT Download");
+		super("NAT Download", NATDownloadTask.class);
 	}
 
 	/**

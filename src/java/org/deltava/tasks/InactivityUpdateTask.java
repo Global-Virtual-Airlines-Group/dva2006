@@ -4,8 +4,6 @@ package org.deltava.tasks;
 import java.util.*;
 import java.text.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.Pilot;
 import org.deltava.beans.StatusUpdate;
 import org.deltava.beans.system.InactivityPurge;
@@ -26,14 +24,13 @@ import org.deltava.util.system.SystemData;
 
 public class InactivityUpdateTask extends DatabaseTask {
 
-	private static final Logger log = Logger.getLogger(InactivityUpdateTask.class);
 	private static final DateFormat _df = new SimpleDateFormat("MMMM dd yyyy");
 
 	/**
 	 * Initializes the Schedued Task.
 	 */
 	public InactivityUpdateTask() {
-		super("Inactivity Status Update");
+		super("Inactivity Status Update", InactivityUpdateTask.class);
 	}
 
 	/**
