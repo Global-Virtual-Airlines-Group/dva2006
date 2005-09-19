@@ -199,15 +199,18 @@ public class GetACARSLog extends GetACARSData {
    }
    
    /**
-    * Returns all Flight Information entries without an associated Flight Report.
+    * Returns all Flight Information entries without an associated Flight Report. A cutoff interval is provided to prevent
+    * the accidental inclusion of flights still in progress.
+    * @param cutoff the cutoff interval for flight entries, in hours
     * @return a List of InfoEntry beans sorted by date
     * @throws DAOException if a JDBC error occurs
     */
-   public List getUnreportedFlights() throws DAOException {
+   public List getUnreportedFlights(int cutoff) throws DAOException {
      try {
         prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN ACARS_PIREPS APR ON "
               + "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (APR.ACARS_ID IS NULL) "
-              + "ORDER BY F.CREATED");
+              + "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
+        _ps.setInt(1, cutoff);
         return executeFlightInfo();
      } catch (SQLException se) {
         throw new DAOException(se);
