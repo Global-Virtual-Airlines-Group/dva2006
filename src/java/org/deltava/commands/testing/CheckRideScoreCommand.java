@@ -40,7 +40,8 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			// Get the Check Ride
 			GetExam rdao = new GetExam(con);
 			CheckRide cr = rdao.getCheckRide(ctx.getID());
-			mctxt.addData("checkRide", cr);
+			if (cr == null)
+				throw new CommandException("Invalid Check Ride - " + ctx.getID());
 
 			// Check our access level
 			ExamAccessControl access = new ExamAccessControl(ctx, cr);
@@ -52,6 +53,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			GetPilot prdao = new GetPilot(con);
 			sendTo = prdao.get(cr.getPilotID());
 			mctxt.addData("pilot", sendTo);
+			mctxt.addData("checkRide", cr);
 
 			// Update the check ride
 			cr.setComments(ctx.getParameter("comments"));
