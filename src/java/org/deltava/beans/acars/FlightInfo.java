@@ -291,7 +291,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @see FlightInfo#getRoute()
     */
    public void setRoute(String route) {
-      _route = route;
+      _route = route.replaceAll("[.]+", " ");
    }
    
    /**
