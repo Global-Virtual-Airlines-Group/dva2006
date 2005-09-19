@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Password Reset</title>
+<title><content:airline /> Water Cooler Signature Update</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -24,8 +24,11 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<% @include file="/jsp/main/header.jsp" %> 
+<% @include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="sigX" name="cooler.sig_max.x" />
+<content:sysdata var="sigY" name="cooler.sig_max.y" />
+<content:sysdata var="sigSize" name="cooler.sig_max.size" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -36,7 +39,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Signature Image</td>
- <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br /><div class="error bld">The maximum size for a signature image is 520x160 pixels, and the maximum file size is 64kb.</div>
+ <td class="data"><el:file name="coolerImg" className="small" idx="*" size="96" max="144" /><br />
+ <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
+pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <c:if test="${!empty system_message}">
 <br />
 <span class="error bld">${system_message}></span>
