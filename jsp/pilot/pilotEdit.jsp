@@ -45,8 +45,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="ranks" name="ranks" />
@@ -55,6 +55,9 @@ return true;
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="schemes" name="html.schemes" />
+<content:sysdata var="sigX" name="cooler.sig_max.x" />
+<content:sysdata var="sigY" name="cooler.sig_max.y" />
+<content:sysdata var="sigSize" name="cooler.sig_max.size" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -159,7 +162,9 @@ return true;
 </c:if>
 <tr>
  <td class="label">Update Signature Image</td>
- <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br /><div class="error bld">The maximum size for a signature image is 520x160 pixels, and the maximum file size is 64kb.</div></td>
+ <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
+<span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
+pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span></td>
 </tr>
 <tr>
  <td class="label">Display Options</td>
@@ -196,9 +201,9 @@ return true;
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" /></td>
 </tr>
-<%@include file="/jsp/pilot/staffEdit.jsp" %> 
-<%@include file="/jsp/pilot/pilotExams.jsp" %>
-<%@include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
+<%@ include file="/jsp/pilot/staffEdit.jsp" %> 
+<%@ include file="/jsp/pilot/pilotExams.jsp" %>
+<%@ include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
 <!-- Pilot Statistics -->
 <tr class="title">
  <td colspan="${cspan + 1}">PILOT STATISTICS</td>
