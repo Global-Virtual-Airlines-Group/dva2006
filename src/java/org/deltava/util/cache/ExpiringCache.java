@@ -75,7 +75,7 @@ public class ExpiringCache extends Cache {
 	 * @param key the cache key
 	 * @return the cache entry, or null if not present or expired
 	 */
-	public Cacheable get(Object key) {
+	public synchronized Cacheable get(Object key) {
 		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
 		if (entry == null)
 			return null;
@@ -95,7 +95,7 @@ public class ExpiringCache extends Cache {
 	 * then a clone of the entry will be added to the cache.
 	 * @param obj the entry to add to the cache
 	 */
-	public void add(Cacheable obj) {
+	public synchronized void add(Cacheable obj) {
 
 		// Create the cache entry
 	   Cacheable entry = getClone(obj);
