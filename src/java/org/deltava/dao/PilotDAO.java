@@ -18,7 +18,7 @@ abstract class PilotDAO extends DAO {
 	/**
 	 * The Pilot bean cache.
 	 */
-	protected static final Cache _cache = new ExpiringCache(128, 1800);
+	protected static final Cache _cache = new ExpiringCache(128, 2400);
 
 	/**
 	 * Initializes the Data Access Object. 
@@ -26,5 +26,26 @@ abstract class PilotDAO extends DAO {
 	 */
 	protected PilotDAO(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Removes an entry from the pilot cache.
+	 * @param id the database ID
+	 * @see PilotDAO#invalidate(Cacheable)
+	 */
+	static void invalidate(int id) {
+		Integer key = new Integer(id);
+		_cache.remove(key);
+		assert !_cache.contains(key) : "Cache not cleared";
+	}
+	
+	/**
+	 * Removes an entry from the cache.
+	 * @param obj the entry
+	 * @see PilotDAO#invalidate(int)
+	 */
+	static void invalidate(Cacheable obj) {
+		_cache.remove(obj.cacheKey());
+		assert !_cache.contains(obj.cacheKey()) : "Cache not cleared";
 	}
 }

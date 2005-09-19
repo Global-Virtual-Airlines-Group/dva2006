@@ -89,22 +89,23 @@ public class SetFlightReport extends DAO {
    /**
     * Disposes of a Flight Report, by setting its status to Approved, Rejected or Held.
     * @param usr the Person updating the Flight Report
-    * @param id the Flight Report database ID
+    * @param pirep the Flight Report
     * @param statusCode the new Flight Report status code
     * @throws DAOException if a JDBC error occurs
     */
-   public void dispose(Person usr, int id, int statusCode) throws DAOException {
+   public void dispose(Person usr, FlightReport pirep, int statusCode) throws DAOException {
       try {
-         prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=? WHERE (ID=?)");
+         prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
          _ps.setInt(1, statusCode);
          _ps.setInt(2, usr.getID());
-         _ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-         _ps.setInt(4, id);
-
+         _ps.setInt(3, pirep.getID());
          executeUpdate(1);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+      
+      // Invalidate the entry in the Pilot cache
+      PilotDAO.invalidate(pirep.getDatabaseID(FlightReport.DBID_PILOT));
    }
 
    /**

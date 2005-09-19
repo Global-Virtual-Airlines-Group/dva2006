@@ -6,8 +6,6 @@ import java.util.*;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.util.cache.Cache;
-
 /**
  * A DAO to get Pilot object(s) from the database, for use in roster operations.
  * @author Luke
@@ -23,14 +21,6 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public GetPilot(Connection c) {
 		super(c);
-	}
-
-	/**
-	 * Returns the DAO's cache, so that commands may invalidate entries.
-	 * @return the DAO cache
-	 */
-	public static final Cache cache() {
-		return _cache;
 	}
 
 	/**

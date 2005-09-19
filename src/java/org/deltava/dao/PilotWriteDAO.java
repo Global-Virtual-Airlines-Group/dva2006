@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
-import org.deltava.util.cache.Cacheable;
 
 /**
  * A Data Access Object to support writing Pilot object(s) to the database. This DAO contains helper methods that other
@@ -79,26 +78,5 @@ public abstract class PilotWriteDAO extends PilotDAO {
 		// Execute the batch update
 		_ps.executeBatch();
 		_ps.close();
-	}
-	
-	/**
-	 * Removes an entry from the cache.
-	 * @param id the database ID
-	 * @see PilotWriteDAO#invalidate(Cacheable)
-	 */
-	protected void invalidate(int id) {
-		Integer key = new Integer(id);
-		_cache.remove(key);
-		assert !_cache.contains(key) : "Cache not cleared";
-	}
-	
-	/**
-	 * Removes an entry from the cache.
-	 * @param obj the entry
-	 * @see PilotWriteDAO#invalidate(int)
-	 */
-	protected void invalidate(Cacheable obj) {
-		_cache.remove(obj.cacheKey());
-		assert !_cache.contains(obj.cacheKey()) : "Cache not cleared";
 	}
 }
