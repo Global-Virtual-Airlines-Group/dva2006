@@ -35,6 +35,9 @@
  <td><el:cmd url="mythreads">MY THREADS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="notifythreads">MY WATCHED THREADS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="threadpost">START NEW THREAD</el:cmd></td>
 </tr>
 </content:filter>
