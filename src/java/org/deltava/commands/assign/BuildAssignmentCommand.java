@@ -46,8 +46,9 @@ public class BuildAssignmentCommand extends AbstractCommand {
 
         // If we're adding flights to the in-session assignment
         if ("build".equals(opName)) {
+        	List results = (List) ctx.getSession().getAttribute("fafResults");
             String[] ids = ctx.getRequest().getParameterValues("addFA");
-            if (ids == null) {
+            if ((ids == null) || (results == null)) {
             	result.setSuccess(true);
             	return;
             }
@@ -57,7 +58,6 @@ public class BuildAssignmentCommand extends AbstractCommand {
                 selected.add(new Integer(StringUtils.parseHex(ids[x])));
 
             // Get the list of results and split into two - the selected, and those remaining
-            List results = (List) ctx.getSession().getAttribute("fafResults");
             List fList = new ArrayList();
             for (Iterator i = results.iterator(); i.hasNext();) {
                 Flight f = (Flight) i.next();
@@ -98,6 +98,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
             assign.setStatus(AssignmentInfo.RESERVED);
             assign.setRandom(true);
             assign.setPurgeable(true);
+            assign.setAssignDate(new Date());
         }
 
         // Populate the legs
