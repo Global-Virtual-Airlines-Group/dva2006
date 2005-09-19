@@ -16,6 +16,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.code, 10, 'E-Mail Validation Code')) return false;
+if (!validateText(form.email, 6, 'E-Mail Address')) return false;
 
 setSubmit();
 disableButton('SubmitButton');
@@ -31,17 +32,32 @@ return true;
 <!-- Main Body Frame -->
 <div id="main">
 <el:form action="validate.do" linkID="0x${p.ID}" method="post" validate="return validate(this)">
-<div class="updateHdr">E-Mail Address Validation Failure</div>
-<br />
-You have supplied an incorrect e-mail address validation code. Your e-mail address threfore cannot
-be validated. Please type in the validation code you received within the e-mail message, into the space 
-provided below.<br />
-<br />
-<span class="pri bld caps">VALIDATION CODE</span> <el:text name="code" idx="*" size="24" max="36" value="${param.code}" /><br />
-<br />
-<el:table className="bar" space="default" pad="default">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="2">E-Mail Address Validation Failure</td>
+</tr>
 <tr>
- <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="VALIDATE E-MAIL ADDRESS" /></td>
+ <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your 
+e-mail address threfore cannot be validated. Please type in the validation code you received within the 
+e-mail message, into the space provided below.</td>
+</tr>
+<c:if test="${empty person}">
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td class="data"><el:text name="email" idx="*" size="32" max="80" value="" /></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label">Validation Code</td>
+ <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${param.code}" /></td>
+</tr>
+<c:if test="${invalidInfo}">
+<tr>
+ <td class="error bld mid" colspan="2">The specified Pilot/Applicant ID or e-mail address does not exist.</td>
+</tr>
+</c:if>
+<tr class="title">
+ <td colspan="2"><el:button ID="SubmitButton" type="submit" className="BUTTON" label="VALIDATE E-MAIL ADDRESS" /></td>
 </tr>
 </el:table>
 </el:form>
