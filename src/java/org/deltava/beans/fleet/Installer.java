@@ -88,6 +88,6 @@ public class Installer extends FleetEntry implements ComboAlias {
     }
     
     public String getComboAlias() {
-    	return getFileName();
+    	return getCode();
     }
 }
