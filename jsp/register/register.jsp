@@ -22,7 +22,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
 if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateText(form.email, 7, 'E-Mail Address')) return false;
+if (!validateEMail(form.email, 'E-Mail Address')) return false;
 if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
 if (!validateCombo(form.location, 'Location')) return false;
 if (!validateCombo(form.tz, 'Time Zone')) return false;
