@@ -115,6 +115,18 @@ public class UserDataMap implements java.io.Serializable, Map {
 
 		return results;
 	}
+	
+	/**
+	 * Utility method to query wether a table is a Pilot or Applicant table.
+	 * @param tableName the table name, in either TABLE or DB.TABLE format
+	 * @return TRUE if the table should be queried by a Pilot DAO, otherwise FALSE
+	 */
+	public static boolean isPilotTable(String tableName) {
+	   if ((tableName != null) && (tableName.indexOf('.') != -1))
+	      tableName = tableName.substring(tableName.indexOf('.') + 1);
+	   
+	   return "PILOTS".equals(tableName);
+	}
 
 	/**
 	 * Returns the size of the collection.

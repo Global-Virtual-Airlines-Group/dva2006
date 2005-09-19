@@ -107,8 +107,7 @@ public class EventCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = (String) i.next();
-				Set pilotIDs = new HashSet(udm.getByTable(tableName));
-				pilots.putAll(pdao.getByID(pilotIDs, tableName));
+				pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 			
 			// Save the pilots
