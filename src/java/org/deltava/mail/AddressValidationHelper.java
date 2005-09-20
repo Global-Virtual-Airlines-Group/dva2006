@@ -50,6 +50,10 @@ public final class AddressValidationHelper {
 		   buf.append((c == ' ') ? '+' : c);
 	   }
 	   
+	   // If we've got data but no equals at the end, append it
+	   if ((buf.length() > 0) && (buf.lastIndexOf("=") != (buf.length() - 1)))
+		   buf.append('=');
+	   
 	   return buf.toString();
    }
 }
