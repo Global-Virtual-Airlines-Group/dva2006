@@ -195,4 +195,11 @@ public class UserDataMap implements java.io.Serializable, Map {
 	public Set keySet() {
 		throw new UnsupportedOperationException();
 	}
+	
+	/**
+	 * Dumps the IDs to a string, like a list.
+	 */
+	public String toString() {
+	   return _entries.keySet().toString();
+	}
 }
