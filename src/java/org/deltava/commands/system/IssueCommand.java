@@ -69,6 +69,9 @@ public class IssueCommand extends AbstractFormCommand {
 				access.validate();
 				if (!access.getCanEdit())
 					throw securityException("Cannot save Issue " + ctx.getID());
+				
+				// Update the subject
+				i.setSubject(ctx.getParameter("subject"));
 			}
 
 			// Update the issue from the request
