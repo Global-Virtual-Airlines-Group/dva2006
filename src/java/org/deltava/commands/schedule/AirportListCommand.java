@@ -30,8 +30,10 @@ public class AirportListCommand extends AbstractViewCommand {
 
 		// Get the start/end/count
 		ViewContext vc = initView(ctx);
-		String aCode = (String) ctx.getCmdParameter(Command.ID, null);
+		String aCode = (String) ctx.getCmdParameter(ID, null);
 		Airline a = SystemData.getAirline((aCode == null) ? SystemData.get("airline.code") : aCode);
+		if (a == null)
+		   a = SystemData.getAirline(SystemData.get("airline.code"));
 		
 		// Save the airline
 		ctx.setAttribute("airline", a, REQUEST);
