@@ -4,8 +4,6 @@ package org.deltava.tasks;
 import java.io.*;
 import java.util.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.stats.HTTPStatistics;
 
 import org.deltava.dao.SetSystemLog;
