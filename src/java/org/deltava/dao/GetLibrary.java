@@ -44,9 +44,7 @@ public class GetLibrary extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			Collection results = loadInstallers();
-			appendDB(results, dbName.toUpperCase());
-			return results;
+			return loadInstallers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -121,13 +119,22 @@ public class GetLibrary extends DAO {
 	/**
 	 * Returns metadata about a specifc Installer <i>in the current database</i>.
 	 * @param code the Installer code
+	 * @param dbName the database Name
 	 * @return an Installer, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Installer getInstallerByCode(String code) throws DAOException {
+	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".FLEET F LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY "
+	         + "F.NAME ORDER BY F.NAME"); 
+	   
 		try {
-			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L ON "
-					+ "(F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY F.NAME ORDER BY F.NAME");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, code.toUpperCase());
 			setQueryMax(1);
 			
@@ -202,18 +209,5 @@ public class GetLibrary extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
-	}
-
-	/**
-	 * Append the database name to the end of the entry names.
-	 */
-	private void appendDB(Collection entries, String dbName) {
-		for (Iterator i = entries.iterator(); i.hasNext();) {
-			FleetEntry entry = (FleetEntry) i.next();
-			StringBuffer buf = new StringBuffer(entry.getName());
-			buf.append(" - ");
-			buf.append(dbName);
-			entry.setName(buf.toString());
-		}
 	}
 }
