@@ -181,12 +181,12 @@
 	</target>
 	
 	<target name="deploy" depends="compile,acars,jspc">
-		<!-- Load the FTP server properties -->
+		<!-- Load the server properties -->
 		<property name="path.webapp" value="/dva2006" />
 		<property name="path.http" value="/dva2006" />
 		<loadproperties srcFile="data/build_deploy.properties" />
 		
-		<!-- Upload the root data to the FTP server -->
+		<!-- Upload the root data to the app server -->
 		<echo message="Uploading WEB-INF configuration data" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
@@ -196,7 +196,7 @@
 			<fileset file="${java.io.tmpdir}/build/web.xml" />
 		</ftp>
 		
-		<!-- Upload the libraries to the FTP server -->
+		<!-- Upload the libraries to the app server -->
 		<echo message="Uploading Library Jars" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
@@ -204,7 +204,7 @@
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
 		</ftp>
 		
-		<!-- Upload configuration files to the FTP server -->
+		<!-- Upload configuration files to the app server -->
 		<echo message="Uploading Configuration files" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
@@ -302,6 +302,17 @@
 				<modified seldirs="true" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="local_data/static.cache.txt" />
+				</modified>
+			</fileset>
+		</scp>
+			
+		<!-- Upload scripts to the app server -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin" verbose="yes"
+			trust="yes" password="${webapp.ssh.pwd}">
+			<fileset dir="scripts/${webapp.ssh.os}">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/static.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
