@@ -99,7 +99,8 @@ public class SetSystemData extends DAO {
 	public void logCommand(CommandLog log) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
-					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?)");
+					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?) ON "
+					+ "DUPLICATE KEY UPDATE CMDDATE=?");
 			_ps.setTimestamp(1, createTimestamp(log.getDate()));
 			_ps.setInt(2, log.getPilotID());
 			_ps.setString(3, log.getRemoteAddr());
@@ -109,7 +110,8 @@ public class SetSystemData extends DAO {
 			_ps.setInt(7, log.getTime());
 			_ps.setInt(8, log.getBackEndTime());
 			_ps.setBoolean(9, log.getSuccess());
-			executeUpdate(1);
+			_ps.setTimestamp(10, createTimestamp(log.getDate()));
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
