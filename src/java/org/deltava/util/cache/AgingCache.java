@@ -74,7 +74,13 @@ public class AgingCache extends Cache {
     * @return the cache entry, or null if not present
     */
    public synchronized Cacheable get(Object key) {
+      request();
       AgingCacheEntry entry = (AgingCacheEntry) _cache.get(key);
-      return (entry == null) ? null : entry.getData();
+      if (entry != null) {
+         hit();
+         return entry.getData();
+      } 
+         
+      return null;
    }
 }

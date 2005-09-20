@@ -76,6 +76,7 @@ public class ExpiringCache extends Cache {
 	 * @return the cache entry, or null if not present or expired
 	 */
 	public synchronized Cacheable get(Object key) {
+	   request();
 		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
 		if (entry == null)
 			return null;
@@ -86,6 +87,7 @@ public class ExpiringCache extends Cache {
 			return null;
 		}
 
+		hit();
 		return entry.getData();
 	}
 
