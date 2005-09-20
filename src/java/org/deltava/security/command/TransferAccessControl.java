@@ -46,7 +46,7 @@ public class TransferAccessControl extends AccessControl {
       // Set access rights
       _canApprove = (_treq.getStatus() == TransferRequest.OK) && hrPIREP;
       _canAssignRide = (_treq.getStatus() == TransferRequest.PENDING) && hrExam;
-      _canReject = _canApprove;
+      _canReject = (_treq.getStatus() != TransferRequest.OK) && (hrPIREP || hrExam);
    }
 
    /**
