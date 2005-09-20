@@ -15,6 +15,9 @@ public abstract class Cache implements java.io.Serializable {
    
    protected Map _cache;
    private int _maxSize;
+   
+   private int _hits;
+   private int _gets;
 
    /**
     * Initializes the cache.
@@ -107,6 +110,45 @@ public abstract class Cache implements java.io.Serializable {
       } catch (Exception e) {
          return src;
       }
+   }
+   
+   /**
+    * Log a cache hit. Implementations should call this method from their {@link Cache#get(Object)}
+    * method to keep statistics.
+    * @see Cache#request()
+    * @see Cache#getHits()
+    * @see Cache#getRequests()
+    */
+   protected void hit() {
+      _hits++;
+   }
+   
+   /**
+    * Log a cache request. Implementations should call this method from their {@link Cache#get(Object)} 
+    * method to keep statistics.
+    * @see Cache#hit()
+    * @see Cache#getRequests()
+    */
+   protected void request() {
+      _gets++;
+   }
+   
+   /**
+    * Returns the total number of cache hits.
+    * @return the number of hits
+    * @see Cache#getRequests()
+    */
+   public final int getHits() {
+      return _hits;
+   }
+   
+   /**
+    * Returns the total number of cache requests
+    * @return the number of requests
+    * @see Cache#getHits()
+    */
+   public final int getRequests() {
+      return _gets;
    }
    
    /**
