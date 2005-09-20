@@ -49,14 +49,14 @@ e-mail message, into the space provided below.</td>
 </c:if>
 <tr>
  <td class="label">Validation Code</td>
- <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${param.code}" /></td>
+ <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${!empty code ? code : param.code}" /></td>
 </tr>
 <c:if test="${invalidInfo}">
 <tr>
  <td class="error bld mid" colspan="2">The specified Pilot/Applicant ID or e-mail address does not exist.</td>
 </tr>
 </c:if>
-<tr class="title">
+<tr class="title mid">
  <td colspan="2"><el:button ID="SubmitButton" type="submit" className="BUTTON" label="VALIDATE E-MAIL ADDRESS" /></td>
 </tr>
 </el:table>
