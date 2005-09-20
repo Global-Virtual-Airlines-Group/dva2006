@@ -23,341 +23,379 @@ import org.deltava.util.system.SystemData;
 
 abstract class PilotReadDAO extends PilotDAO {
 
-	private static final Logger log = Logger.getLogger(PilotReadDAO.class);
+   private static final Logger log = Logger.getLogger(PilotReadDAO.class);
 
-	/**
-	 * Creates the DAO from a JDBC connection.
-	 * @param c the JDBC connection to use
-	 */
-	protected PilotReadDAO(Connection c) {
-		super(c);
-	}
+   /**
+    * Creates the DAO from a JDBC connection.
+    * @param c the JDBC connection to use
+    */
+   protected PilotReadDAO(Connection c) {
+      super(c);
+   }
 
-	/**
-	 * Gets a pilot object based on a database ID. <i>This uses a cached query, and populates ratings and roles.</i>
-	 * @param id the database ID of the Pilot object
-	 * @return the Pilot object, or null if the ID was not found
-	 * @throws DAOException if a JDBC error occured
-	 */
-	public final Pilot get(int id) throws DAOException {
-		
-		// Check if we're in the cache
-		Pilot p = (Pilot) _cache.get(new Integer(id));
-		
-		try {
-			if (p == null) {
-				prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-						+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-						+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
-				_ps.setInt(1, FlightReport.OK);
-				_ps.setInt(2, id);
+   /**
+    * Gets a pilot object based on a database ID. <i>This uses a cached query, and populates ratings and roles. </i>
+    * @param id the database ID of the Pilot object
+    * @return the Pilot object, or null if the ID was not found
+    * @throws DAOException if a JDBC error occured
+    */
+   public final Pilot get(int id) throws DAOException {
 
-				// Execute the query and get the result
-				List results = execute();
-				p = (results.size() == 0) ? null : (Pilot) results.get(0);
-				if (p == null)
-					return null;
-				
-				// Add to the cache
-				_cache.add(p);
-			}
+      // Check if we're in the cache
+      Pilot p = (Pilot) _cache.get(new Integer(id));
+      if (p != null)
+         return p;
 
-			// Add roles/ratings
-			addRatings(p, SystemData.get("airline.db"));
-			addRoles(p, SystemData.get("airline.db"));
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-		
-		// Return result 
-		return p;
-	}
+      try {
+         prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+               + "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+               + "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
+         _ps.setInt(1, FlightReport.OK);
+         _ps.setInt(2, id);
 
-	/**
-	 * Returns a Pilot based on a given full name. This method does not use first/last name splitting since this can be
-	 * unpredictable.
-	 * @param fullName the Full Name of the Pilot
-	 * @return the Pilot, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public final Pilot getByName(String fullName) throws DAOException {
-		try {
-			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) "
-					+ "WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) AND (F.STATUS=?) GROUP BY P.ID");
-			_ps.setString(1, fullName.toUpperCase());
-			_ps.setInt(2, FlightReport.OK);
+         // Execute the query and get the result
+         List results = execute();
+         p = (results.size() == 0) ? null : (Pilot) results.get(0);
+         if (p == null)
+            return null;
 
-			// Execute the query and get the result
-			List results = execute();
-			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
-			if (result == null)
-				return null;
+         // Add to the cache
+         _cache.add(p);
 
-			// Add roles/ratings
-			addRatings(result, SystemData.get("airline.db"));
-			addRoles(result, SystemData.get("airline.db"));
+         // Add roles/ratings
+         addRatings(p, SystemData.get("airline.db"));
+         addRoles(p, SystemData.get("airline.db"));
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
 
-			// Add the result to the cache and return
-			_cache.add(result);
-			return result;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns a Pilot object which may be in another Airline's database. 
-	 * @param ud the UserData bean containg the Pilot location
-	 * @return the Pilot bean, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Pilot get(UserData ud) throws DAOException {
-		
-		// Check for null
-		if (ud == null)
-			return null;
-		
-		// Convert the ID into a set
-		Set idSet = new HashSet();
-		idSet.add(new Integer(ud.getID()));
-		
-		// Get a map from the table, and get the first value
-		Map pilots = getByID(idSet, ud.getDB() + "." + ud.getTable());
-		Iterator i = pilots.values().iterator();
-		return i.hasNext() ? (Pilot) i.next() : null;
-	}
+      // Return result
+      return p;
+   }
 
-	/**
-	 * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel
-	 * list command.
-	 * @param ids a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of {@link DatabaseBean}
-	 * beans
-	 * @param tableName the table to read from, in <i>DATABASE.TABLE</i> format for a remote database, or
-	 * <i>TABLE</i> for a table in the current airline's database.
-	 * @return a Map of Pilots, indexed by the pilot code
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map getByID(Collection ids, String tableName) throws DAOException {
+   /**
+    * Returns a Pilot based on a given full name. This method does not use first/last name splitting since this can be
+    * unpredictable.
+    * @param fullName the Full Name of the Pilot
+    * @return the Pilot, or null if not found
+    * @throws DAOException if a JDBC error occurs
+    */
+   public final Pilot getByName(String fullName) throws DAOException {
+      try {
+         prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+               + "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) "
+               + "WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) AND (F.STATUS=?) GROUP BY P.ID");
+         _ps.setString(1, fullName.toUpperCase());
+         _ps.setInt(2, FlightReport.OK);
 
-		// Get the datbaase - if we haven't specified one, use the current database
-		String dbName = (tableName.indexOf('.') == -1) ? SystemData.get("airline.db") : tableName.substring(0, tableName.indexOf('.'));
+         // Execute the query and get the result
+         List results = execute();
+         Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
+         if (result == null)
+            return null;
 
-		List results = new ArrayList();
-		log.debug("Raw set size = " + ids.size());
+         // Add roles/ratings
+         addRatings(result, SystemData.get("airline.db"));
+         addRoles(result, SystemData.get("airline.db"));
 
-		// Init the prepared statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
-		sqlBuf.append(tableName);
-		sqlBuf.append(" P LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID IN (");
+         // Add the result to the cache and return
+         _cache.add(result);
+         return result;
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
 
-		// Add the pilot IDs to the set
-		int querySize = 0;
-		for (Iterator i = ids.iterator(); i.hasNext();) {
-			Object rawID = i.next();
-			assert ((rawID instanceof Integer) || (rawID instanceof DatabaseBean)) : String.valueOf(rawID) + " " + rawID.getClass().getName();
-			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
+   /**
+    * Returns a Pilot object which may be in another Airline's database.
+    * @param ud the UserData bean containg the Pilot location
+    * @return the Pilot bean, or null if not found
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Pilot get(UserData ud) throws DAOException {
 
-			// Pull from the cache if at all possible; this is an evil query
-			Pilot p = (Pilot) _cache.get(id);
-			if (p != null) {
-				results.add(p);
-			} else {
-				querySize++;
-				sqlBuf.append(id.toString());
-				if (i.hasNext())
-					sqlBuf.append(',');
-			}
-		}
+      // Check for null
+      if (ud == null)
+         return null;
 
-		// Only execute the prepared statement if we haven't gotten anything from the cache
-		log.debug("Uncached set size = " + querySize);
-		if (querySize > 0) {
-			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-				sqlBuf.setLength(sqlBuf.length() - 1);
+      // Convert the ID into a set
+      Set idSet = new HashSet();
+      idSet.add(new Integer(ud.getID()));
 
-			sqlBuf.append(")) GROUP BY P.ID");
-			List uncached = null;
-			try {
-				prepareStatementWithoutLimits(sqlBuf.toString());
-				_ps.setInt(1, FlightReport.OK);
-				uncached = execute();
-			} catch (SQLException se) {
-			   log.error("ID Set = " + ids);
-				throw new DAOException(se);
-			}
+      // Get a map from the table, and get the first value
+      Map pilots = getByID(idSet, ud.getDB() + "." + ud.getTable());
+      Iterator i = pilots.values().iterator();
+      return i.hasNext() ? (Pilot) i.next() : null;
+   }
 
-			// If the database does not equal the current airline code, refresh all of the Pilot IDs with
-			// the pilot number, but use the database name as the airline code.
-			if (!dbName.equals(SystemData.get("airline.db"))) {
-				Map apps = (Map) SystemData.getObject("apps");
-				for (Iterator i = apps.values().iterator(); i.hasNext(); ) {
-				   AirlineInformation info = (AirlineInformation) i.next();
-				   if (dbName.equals(info.getDB())) {
-				      for (Iterator uci = uncached.iterator(); uci.hasNext(); ) {
-				         Pilot p = (Pilot) uci.next();
-				         p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
-				      }
-				      
-				      break;
-				   }
-				}
-			}
+   /**
+    * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel
+    * list command.
+    * @param ids a Collection of pilot IDs. This can either be a Collection of Integers, a Collection of
+    *             {@link DatabaseBean}beans
+    * @param tableName the table to read from, in <i>DATABASE.TABLE </i> format for a remote database, or <i>TABLE </i>
+    *             for a table in the current airline's database.
+    * @return a Map of Pilots, indexed by the pilot code
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Map getByID(Collection ids, String tableName) throws DAOException {
 
-			// Add to results and the cache
-			results.addAll(uncached);
-			_cache.addAll(uncached);
-		}
+      // Get the datbaase - if we haven't specified one, use the current database
+      String dbName = (tableName.indexOf('.') == -1) ? SystemData.get("airline.db") : tableName.substring(0, tableName
+            .indexOf('.'));
+      dbName = dbName.toLowerCase();
 
-		// Convert to a Map for easy searching
-		return CollectionUtils.createMap(results, "ID");
-	}
+      List results = new ArrayList();
+      log.debug("Raw set size = " + ids.size());
 
-	/**
-	 * Query pilot objects from the database, assuming a pre-prepared statement.
-	 * @return a List of Pilot objects
-	 * @throws SQLException if a JDBC error occurs
-	 */
-	protected final List execute() throws SQLException {
-		List results = new ArrayList();
+      // Init the prepared statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+            + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
+      sqlBuf.append(tableName);
+      sqlBuf.append(" P LEFT JOIN ");
+      sqlBuf.append(dbName);
+      sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
+      sqlBuf.append(dbName);
+      sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID IN (");
 
-		// Get the pilot info from the list
-		ResultSet rs = _ps.executeQuery();
-		int columnCount = rs.getMetaData().getColumnCount();
-		String airlineCode = SystemData.get("airline.code");
+      // Add the pilot IDs to the set
+      int querySize = 0;
+      for (Iterator i = ids.iterator(); i.hasNext();) {
+         Object rawID = i.next();
+         assert ((rawID instanceof Integer) || (rawID instanceof DatabaseBean)) : String.valueOf(rawID) + " "
+               + rawID.getClass().getName();
+         Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
-		while (rs.next()) {
-			Pilot p = new Pilot(rs.getString(3), rs.getString(4));
-			p.setID(rs.getInt(1));
-			p.setPilotCode(airlineCode + String.valueOf(rs.getInt(2)));
-			p.setStatus(rs.getInt(5));
-			p.setDN(rs.getString(6));
-			p.setEmail(rs.getString(7));
-			p.setLocation(rs.getString(8));
-			p.setIMHandle(rs.getString(9));
-			p.setLegacyHours(rs.getDouble(10));
-			p.setHomeAirport(rs.getString(11));
-			p.setEquipmentType(rs.getString(12));
-			p.setRank(rs.getString(13));
-			p.setNetworkID("VATSIM", rs.getString(14));
-			p.setNetworkID("IVAO", rs.getString(15));
-			p.setCreatedOn(rs.getTimestamp(16));
-			p.setLoginCount(rs.getInt(17));
-			p.setLastLogin(rs.getTimestamp(18));
-			p.setLastLogoff(rs.getTimestamp(19));
-			p.setTZ(TZInfo.init(rs.getString(20)));
-			p.setNotifyOption(Person.FLEET, rs.getBoolean(21));
-			p.setNotifyOption(Person.EVENT, rs.getBoolean(22));
-			p.setNotifyOption(Person.NEWS, rs.getBoolean(23));
-			p.setEmailAccess(rs.getInt(24));
-			p.setShowSignatures(rs.getBoolean(25));
-			p.setShowSSThreads(rs.getBoolean(26));
-			p.setUIScheme(rs.getString(27));
-			p.setLoginHost(rs.getString(28));
-			p.setDateFormat(rs.getString(29));
-			p.setTimeFormat(rs.getString(30));
-			p.setNumberFormat(rs.getString(31));
-			p.setAirportCodeType(rs.getInt(32));
-			p.setMapType(rs.getInt(33));
+         // Pull from the cache if at all possible; this is an evil query
+         Pilot p = (Pilot) _cache.get(id);
+         if (p != null) {
+            results.add(p);
+         } else {
+            querySize++;
+            sqlBuf.append(id.toString());
+            if (i.hasNext())
+               sqlBuf.append(',');
+         }
+      }
 
-			// Check if this result set has a column 34-37, which is the PIREP totals
-			if (columnCount > 36) {
-				p.setLegs(rs.getInt(34));
-				p.setMiles(rs.getLong(35));
-				p.setHours(rs.getDouble(36));
-				p.setLastFlight(rs.getTimestamp(37));
-			}
+      // Only execute the prepared statement if we haven't gotten anything from the cache
+      log.debug("Uncached set size = " + querySize);
+      if (querySize > 0) {
+         if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
+            sqlBuf.setLength(sqlBuf.length() - 1);
 
-			// Check if this result set has a column 38, which is the signature ID
-			if (columnCount > 37)
-				p.setHasSignature((rs.getInt(38) != 0));
+         sqlBuf.append(")) GROUP BY P.ID");
+         List uncached = null;
+         try {
+            prepareStatementWithoutLimits(sqlBuf.toString());
+            _ps.setInt(1, FlightReport.OK);
+            uncached = execute();
 
-			// CHeck if this result set has a column 39/40, which are online legs/hours
-			if (columnCount > 39) {
-				p.setOnlineLegs(rs.getInt(39));
-				p.setOnlineHours(rs.getDouble(40));
-			}
+            // Convert to a map and load ratings/roles
+            Map ucMap = CollectionUtils.createMap(uncached, "ID");
+            loadRatings(ucMap, dbName);
+            loadRoles(ucMap, dbName);
+         } catch (SQLException se) {
+            log.error("Query = " + sqlBuf.toString());
+            throw new DAOException(se);
+         }
 
-			// Add the pilot
-			results.add(p);
-		}
+         // If the database does not equal the current airline code, refresh all of the Pilot IDs with
+         // the pilot number, but use the database name as the airline code.
+         if (!dbName.equals(SystemData.get("airline.db"))) {
+            Map apps = (Map) SystemData.getObject("apps");
+            for (Iterator i = apps.values().iterator(); i.hasNext();) {
+               AirlineInformation info = (AirlineInformation) i.next();
+               if (dbName.equals(info.getDB())) {
+                  for (Iterator uci = uncached.iterator(); uci.hasNext();) {
+                     Pilot p = (Pilot) uci.next();
+                     p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
+                  }
 
-		// Close everything down
-		rs.close();
-		_ps.close();
-		return results;
-	}
+                  break;
+               }
+            }
+         }
 
-	/**
-	 * Load the ratings for a Pilot.
-	 * @param p the Pilot bean
-	 * @param dbName the database Name
-	 * @throws SQLException if a JDBC error occurs
-	 */
-	protected final void addRatings(Pilot p, String dbName) throws SQLException {
+         // Add to results and the cache
+         results.addAll(uncached);
+         _cache.addAll(uncached);
+      }
 
-		// Init the prepared statement
-		prepareStatementWithoutLimits("SELECT RATING FROM " + dbName.toLowerCase() + ".RATINGS WHERE (ID=?)");
-		_ps.setInt(1, p.getID());
+      // Convert to a Map for easy searching
+      return CollectionUtils.createMap(results, "ID");
+   }
 
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			p.addRating(rs.getString(1));
+   /**
+    * Query pilot objects from the database, assuming a pre-prepared statement.
+    * @return a List of Pilot objects
+    * @throws SQLException if a JDBC error occurs
+    */
+   protected final List execute() throws SQLException {
+      List results = new ArrayList();
 
-		// Clean up after ourselves
-		rs.close();
-		_ps.close();
-	}
+      // Get the pilot info from the list
+      ResultSet rs = _ps.executeQuery();
+      int columnCount = rs.getMetaData().getColumnCount();
+      String airlineCode = SystemData.get("airline.code");
 
-	/**
-	 * Load the security roles for a Pilot.
-	 * @param p the Pilot bean
-	 * @param dbName the database Name
-	 * @throws SQLException if a JDBC error occurs
-	 */
-	protected final void addRoles(Pilot p, String dbName) throws SQLException {
+      while (rs.next()) {
+         Pilot p = new Pilot(rs.getString(3), rs.getString(4));
+         p.setID(rs.getInt(1));
+         p.setPilotCode(airlineCode + String.valueOf(rs.getInt(2)));
+         p.setStatus(rs.getInt(5));
+         p.setDN(rs.getString(6));
+         p.setEmail(rs.getString(7));
+         p.setLocation(rs.getString(8));
+         p.setIMHandle(rs.getString(9));
+         p.setLegacyHours(rs.getDouble(10));
+         p.setHomeAirport(rs.getString(11));
+         p.setEquipmentType(rs.getString(12));
+         p.setRank(rs.getString(13));
+         p.setNetworkID("VATSIM", rs.getString(14));
+         p.setNetworkID("IVAO", rs.getString(15));
+         p.setCreatedOn(rs.getTimestamp(16));
+         p.setLoginCount(rs.getInt(17));
+         p.setLastLogin(rs.getTimestamp(18));
+         p.setLastLogoff(rs.getTimestamp(19));
+         p.setTZ(TZInfo.init(rs.getString(20)));
+         p.setNotifyOption(Person.FLEET, rs.getBoolean(21));
+         p.setNotifyOption(Person.EVENT, rs.getBoolean(22));
+         p.setNotifyOption(Person.NEWS, rs.getBoolean(23));
+         p.setEmailAccess(rs.getInt(24));
+         p.setShowSignatures(rs.getBoolean(25));
+         p.setShowSSThreads(rs.getBoolean(26));
+         p.setUIScheme(rs.getString(27));
+         p.setLoginHost(rs.getString(28));
+         p.setDateFormat(rs.getString(29));
+         p.setTimeFormat(rs.getString(30));
+         p.setNumberFormat(rs.getString(31));
+         p.setAirportCodeType(rs.getInt(32));
+         p.setMapType(rs.getInt(33));
 
-		// Init the prepared statement
-		prepareStatementWithoutLimits("SELECT ROLE FROM " + dbName.toLowerCase() + ".ROLES WHERE (ID=?)");
-		_ps.setInt(1, p.getID());
+         // Check if this result set has a column 34-37, which is the PIREP totals
+         if (columnCount > 36) {
+            p.setLegs(rs.getInt(34));
+            p.setMiles(rs.getLong(35));
+            p.setHours(rs.getDouble(36));
+            p.setLastFlight(rs.getTimestamp(37));
+         }
 
-		ResultSet rs = _ps.executeQuery();
-		while (rs.next())
-			p.addRole(rs.getString(1));
+         // Check if this result set has a column 38, which is the signature ID
+         if (columnCount > 37)
+            p.setHasSignature((rs.getInt(38) != 0));
 
-		// Clean up after ourselves
-		rs.close();
-		_ps.close();
-	}
+         // CHeck if this result set has a column 39/40, which are online legs/hours
+         if (columnCount > 39) {
+            p.setOnlineLegs(rs.getInt(39));
+            p.setOnlineHours(rs.getDouble(40));
+         }
 
-	/**
-	 * Load the status updates for a Pilot.
-	 * @param p the Pilot bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	protected final void addUpdates(Pilot p) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("SELECT * FROM STATUS_UPDATES WHERE (ID=?)");
-			_ps.setInt(1, p.getID());
+         // Add the pilot
+         results.add(p);
+      }
 
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				StatusUpdate su = new StatusUpdate(p.getID(), rs.getInt(2));
-				su.setType(rs.getInt(3));
-				su.setCreatedOn(rs.getTimestamp(4));
-				su.setDescription(rs.getString(5));
-				p.addStatusUpdate(su);
-			}
+      // Close everything down
+      rs.close();
+      _ps.close();
+      return results;
+   }
 
-			rs.close();
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
+   /**
+    * Load the ratings for a Pilot.
+    * @param p the Pilot bean
+    * @param dbName the database Name
+    * @throws SQLException if a JDBC error occurs
+    */
+   protected final void addRatings(Pilot p, String dbName) throws SQLException {
+      Map tmpMap = new HashMap();
+      tmpMap.put(new Integer(p.getID()), p);
+      loadRatings(tmpMap, dbName);
+   }
+
+   /**
+    * Load the security roles for a Pilot.
+    * @param p the Pilot bean
+    * @param dbName the database Name
+    * @throws SQLException if a JDBC error occurs
+    */
+   protected final void addRoles(Pilot p, String dbName) throws SQLException {
+      Map tmpMap = new HashMap();
+      tmpMap.put(new Integer(p.getID()), p);
+      loadRoles(tmpMap, dbName);
+   }
+
+   /**
+    * Load the security roles for a group of Pilots.
+    * @param pilots the Map of Pilots, indexed by database ID
+    * @param dbName the database Name
+    * @throws SQLException if a JDBC error occurs
+    */
+   protected final void loadRoles(Map pilots, String dbName) throws SQLException {
+
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT ID, ROLE FROM ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".ROLES WHERE (ID IN (");
+      for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
+         Integer id = (Integer) i.next();
+         sqlBuf.append(id.toString());
+         if (i.hasNext())
+            sqlBuf.append(',');
+      }
+
+      sqlBuf.append("))");
+
+      // Prepare the statement
+      prepareStatementWithoutLimits(sqlBuf.toString());
+
+      // Exeute the query
+      ResultSet rs = _ps.executeQuery();
+      while (rs.next()) {
+         Pilot p = (Pilot) pilots.get(new Integer(rs.getInt(1)));
+         if (p != null)
+            p.addRole(rs.getString(2));
+      }
+
+      // Clean up and return
+      rs.close();
+      _ps.close();
+   }
+
+   /**
+    * Load the equipment ratings for a group of Pilots.
+    * @param pilots the Map of Pilots, indexed by database ID
+    * @param dbName the database Name
+    * @throws SQLException if a JDBC error occurs
+    */
+   protected final void loadRatings(Map pilots, String dbName) throws SQLException {
+
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT ID, RATING FROM ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".RATINGS WHERE (ID IN (");
+      for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
+         Integer id = (Integer) i.next();
+         sqlBuf.append(id.toString());
+         if (i.hasNext())
+            sqlBuf.append(',');
+      }
+
+      sqlBuf.append("))");
+
+      // Prepare the statement
+      prepareStatementWithoutLimits(sqlBuf.toString());
+
+      // Exeute the query
+      ResultSet rs = _ps.executeQuery();
+      while (rs.next()) {
+         Pilot p = (Pilot) pilots.get(new Integer(rs.getInt(1)));
+         if (p != null)
+            p.addRating(rs.getString(2));
+      }
+
+      // Clean up and return
+      rs.close();
+      _ps.close();
+   }
 }
