@@ -26,73 +26,86 @@ import org.deltava.util.system.SystemData;
 
 public class FleetLibraryCommand extends AbstractCommand {
 
-	private static final Logger log = Logger.getLogger(FleetLibraryCommand.class);
+   private static final Logger log = Logger.getLogger(FleetLibraryCommand.class);
 
-	/**
-	 * Executes the command.
-	 * @param ctx the Command context
-	 * @throws CommandException if an unhandled error occurs
-	 */
-	public void execute(CommandContext ctx) throws CommandException {
+   /**
+    * Executes the command.
+    * @param ctx the Command context
+    * @throws CommandException if an unhandled error occurs
+    */
+   public void execute(CommandContext ctx) throws CommandException {
 
-		// Check if we're viewing the library as an administrator
-		boolean isAdmin = "admin".equals(ctx.getCmdParameter(Command.OPERATION, null));
+      // Check if we're viewing the library as an administrator
+      boolean isAdmin = "admin".equals(ctx.getCmdParameter(Command.OPERATION, null));
 
-		// Check our access
-		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
-		access.validate();
-		if (isAdmin && !access.getCanCreate())
-			throw securityException("Cannot update Fleet Library");
+      // Check our access
+      FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+      access.validate();
+      if (isAdmin && !access.getCanCreate())
+         throw securityException("Cannot update Fleet Library");
 
-		List results = new ArrayList();
-		try {
-			Connection con = ctx.getConnection();
+      List results = new ArrayList();
+      try {
+         Connection con = ctx.getConnection();
 
-			// Get the fleet libraries from the other airlines if we're not in admin mode
-			GetLibrary dao = new GetLibrary(con);
-			if (!isAdmin) {
-				Map apps = (Map) SystemData.getObject("apps");
-				for (Iterator i = apps.values().iterator(); i.hasNext();) {
-					AirlineInformation info = (AirlineInformation) i.next();
-					if (info.getDB().equals(SystemData.get("airline.db"))) {
-						results.addAll(0, dao.getFleet(info.getDB()));
-					} else {
-						results.addAll(dao.getFleet(info.getDB()));
-					}
-				}
-			} else {
-				results.addAll(dao.getFleet(SystemData.get("airline.db")));
-			}
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
-		}
-		
-		// Validate our access to the results
-		for (Iterator i = results.iterator(); i.hasNext();) {
-			FleetEntry e = (FleetEntry) i.next();
-			access.setEntry(e);
-			access.validate();
+         // Get the fleet libraries from the other airlines if we're not in admin mode
+         GetLibrary dao = new GetLibrary(con);
+         if (!isAdmin) {
+            Map apps = (Map) SystemData.getObject("apps");
+            for (Iterator i = apps.values().iterator(); i.hasNext();) {
+               AirlineInformation info = (AirlineInformation) i.next();
+               if (info.getDB().equals(SystemData.get("airline.db"))) {
+                  results.addAll(0, dao.getFleet(info.getDB()));
+               } else {
+                  Collection entries = dao.getFleet(info.getDB());
+                  appendDB(entries, info.getDB());
+                  results.addAll(entries);
+               }
+            }
+         } else {
+            results.addAll(dao.getFleet(SystemData.get("airline.db")));
+         }
+      } catch (DAOException de) {
+         throw new CommandException(de);
+      } finally {
+         ctx.release();
+      }
 
-			// If we cannot view this entry, remove it from the list
-			if (!access.getCanView())
-				i.remove();
+      // Validate our access to the results
+      for (Iterator i = results.iterator(); i.hasNext();) {
+         FleetEntry e = (FleetEntry) i.next();
+         access.setEntry(e);
+         access.validate();
 
-			// If the entry is not present on the file system, remove it
-			if (e.getSize() == 0) {
-				log.warn("Resource " + e.getFullName() + " not found in file system!");
-				if (!isAdmin)
-					i.remove();
-			}
-		}
+         // If we cannot view this entry, remove it from the list
+         if (!access.getCanView())
+            i.remove();
 
-		// Save the results in the request
-		ctx.setAttribute("fleet", results, REQUEST);
+         // If the entry is not present on the file system, remove it
+         if (e.getSize() == 0) {
+            log.warn("Resource " + e.getFullName() + " not found in file system!");
+            if (!isAdmin)
+               i.remove();
+         }
+      }
 
-		// Forward to the JSP
-		CommandResult result = ctx.getResult();
-		result.setURL(isAdmin ? "/jsp/fleet/installerLibrary.jsp" : "/jsp/fleet/fleetLibrary.jsp");
-		result.setSuccess(true);
-	}
+      // Save the results in the request
+      ctx.setAttribute("fleet", results, REQUEST);
+
+      // Forward to the JSP
+      CommandResult result = ctx.getResult();
+      result.setURL(isAdmin ? "/jsp/fleet/installerLibrary.jsp" : "/jsp/fleet/fleetLibrary.jsp");
+      result.setSuccess(true);
+   }
+
+   /**
+    * Append the database name to the end of the entry names.
+    */
+   private void appendDB(Collection entries, String dbName) {
+      for (Iterator i = entries.iterator(); i.hasNext();) {
+         Installer entry = (Installer) i.next();
+         entry.setName(entry.getName() + " - " + dbName);
+         entry.setCode(dbName + "." + entry.getCode());
+      }
+   }
 }
