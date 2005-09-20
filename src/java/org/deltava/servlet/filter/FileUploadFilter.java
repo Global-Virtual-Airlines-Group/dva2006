@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.Enumeration;
@@ -16,7 +17,7 @@ import org.deltava.beans.FileUpload;
  * A servlet filter to support saving multi-part form upload data into the servlet request.
  * @author Luke
  * @version 1.0
- * @since 1.0 Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+ * @since 1.0 
  */
 
 public class FileUploadFilter implements Filter {
@@ -49,7 +50,13 @@ public class FileUploadFilter implements Filter {
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(hreq);
 
 			// Parse the request
-			MultipartParser parser = new MultipartParser(hreq, 8192000, true, true);
+			MultipartParser parser = null;
+			try {
+			   parser = new MultipartParser(hreq, 8192000, true, true);
+			} catch (IOException ie) {
+			   log.warn(ie.getMessage());
+			}
+			
 			Part p = parser.readNextPart();
 			while (p != null) {
 				if (p.isFile()) {
