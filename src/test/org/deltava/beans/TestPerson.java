@@ -143,20 +143,6 @@ public class TestPerson extends AbstractBeanTestCase {
         assertEquals(1, _p.getNotifyOptions().size());
     }
     
-    public void testStatusUpdates() {
-    	_p.setID(123);
-    	assertNotNull(_p.getStatusUpdates());
-    	assertEquals(0, _p.getStatusUpdates().size());
-    	
-    	StatusUpdate upd = new StatusUpdate(_p.getID(), StatusUpdate.INTPROMOTION);
-    	_p.addStatusUpdate(upd);
-    	assertEquals(1, _p.getStatusUpdates().size());
-    	
-    	assertEquals(upd, _p.getStatusUpdates().get(0));
-    	assertEquals(_p.getFirstName(), upd.getFirstName());
-    	assertEquals(_p.getLastName(), upd.getLastName());
-    }
-    
     public void testValidation() {
         _p.setCreatedOn(new Date());
         validateInput("lastLogin", new Date(_p.getCreatedOn().getTime() + 15000), IllegalArgumentException.class);
