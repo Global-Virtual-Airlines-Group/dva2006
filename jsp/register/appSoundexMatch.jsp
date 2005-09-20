@@ -1,3 +1,4 @@
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- Soundex Potential Match list -->
 <tr class="title caps">
  <td colspan="2"><fmt:int value="${fn:sizeof(soundexUsers)}" /> POTENTIAL MATCHING USERS</td>
