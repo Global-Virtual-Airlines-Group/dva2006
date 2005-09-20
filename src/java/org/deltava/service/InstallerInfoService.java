@@ -1,6 +1,7 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.service;
 
+import java.util.StringTokenizer;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
@@ -34,15 +35,23 @@ public class InstallerInfoService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the installer code
+	   String db = SystemData.get("airline.db");
 		String code = ctx.getParameter("code");
 		if (code == null)
 			throw new ServiceException(HttpServletResponse.SC_BAD_REQUEST, "No Installer Code");
+		
+		// Check if we're using DB.CODE notation
+		if (code.indexOf('.') != -1) {
+		   StringTokenizer tkns = new StringTokenizer(code, ".");
+		   db = tkns.nextToken();
+		   code = tkns.nextToken();
+		}
 
 		// Get the DAO and do the search
 		Installer i = null;
 		try {
 			GetLibrary dao = new GetLibrary(_con);
-			i = dao.getInstallerByCode(code);
+			i = dao.getInstallerByCode(code, db);
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
