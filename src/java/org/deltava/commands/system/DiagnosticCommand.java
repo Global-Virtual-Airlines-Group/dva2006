@@ -33,6 +33,9 @@ public class DiagnosticCommand extends AbstractCommand {
        TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
        ctx.setAttribute("taskInfo", (tSched == null) ? null : tSched.getTaskInfo(), REQUEST);
        
+       // Run the GC
+       System.gc();
+       
        // Get Virtual Machine properties
        Runtime rt = Runtime.getRuntime();
        ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
