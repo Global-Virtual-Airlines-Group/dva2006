@@ -173,11 +173,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	</taglib>
 	
 	<taglib>
-		<taglib-uri>dva_hash.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_hash.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
 		<taglib-uri>dva_html.tld</taglib-uri>
 		<taglib-location>/WEB-INF/dva_html.tld</taglib-location>
 	</taglib>
