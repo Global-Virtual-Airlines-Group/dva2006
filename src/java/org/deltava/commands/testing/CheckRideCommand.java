@@ -1,14 +1,12 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.List;
 import java.sql.Connection;
 
-import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetExam;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
@@ -22,6 +20,8 @@ import org.deltava.util.ComboUtils;
  */
 
 public class CheckRideCommand extends AbstractCommand {
+   
+   private static final List PASS_FAIL = ComboUtils.fromArray(new String[] {"PASS", "FAIL"}, new String[] {"0", "1"});
    
    /**
     * Executes the command.
@@ -49,17 +49,23 @@ public class CheckRideCommand extends AbstractCommand {
          // Load the pilot data
          GetPilot pdao = new GetPilot(con);
          ctx.setAttribute("pilot", pdao.get(cr.getPilotID()), REQUEST);
-         if (cr.getScorerID() != 0)
+         if (cr.getScorerID() != 0) {
             ctx.setAttribute("scorer", pdao.get(cr.getScorerID()), REQUEST);
+            ctx.setAttribute("score", cr.getPassFail() ? "1" : "0", REQUEST);
+         }
          
          // Save the checkride and the access controller
          ctx.setAttribute("checkRide", cr, REQUEST);
          ctx.setAttribute("access", access, REQUEST);
-         ctx.setAttribute("passFail", ComboUtils.fromArray(new String[] {"PASS", "FAIL"}, new String[] {"0", "1"}), REQUEST);
+         ctx.setAttribute("passFail", PASS_FAIL, REQUEST);
          
          // Check if we can score/edit or not
-         boolean doEdit = access.getCanScore() || access.getCanSubmit();
-         result.setURL(doEdit ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
+         if (cr.getStatus() == Test.SCORED) {
+            result.setURL("/jsp/testing/cRideRead.jsp");
+         } else {
+            boolean doEdit = access.getCanScore() || access.getCanSubmit();
+            result.setURL(doEdit ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
+         }
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

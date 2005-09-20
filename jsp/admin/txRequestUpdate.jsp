@@ -41,6 +41,14 @@ An e-mail message has been sent to ${pilot.name} informing of the equipment prog
 <br />
 This equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program 
 has been rejected. An e-mail message has been sent to ${pilot.name} informing of the rejection.<br />
+<c:if test="${checkRideDelete}">
+<br />
+${pilot.name}'s pending Check Ride has been deleted.<br />
+</c:if>
+</c:if>
+<c:if test="${isApprove || isReject}">
+<br />
+To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests">click here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
