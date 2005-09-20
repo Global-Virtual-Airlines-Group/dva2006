@@ -125,7 +125,7 @@ public class SecurityCookieFilter implements Filter {
         // If we're valid and there's no authenticated user, then load the data into the session
         HttpSession s = hreq.getSession(true);
         Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
-        if (p == null) {
+        if ((p == null) && (cData != null)) {
            s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
            s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
             p = loadPersonFromDatabase(cData.getUserID());
