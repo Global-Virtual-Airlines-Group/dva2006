@@ -35,7 +35,7 @@ public abstract class Task extends Thread implements java.io.Serializable {
      * Creates a new Scheduled Task with a given name. 
      * @param name the Task name
      */
-    public Task(String name, Class loggerClass) {
+    protected Task(String name, Class loggerClass) {
         super(name);
         setDaemon(true);
         log = Logger.getLogger(loggerClass);
