@@ -5,6 +5,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -66,6 +67,10 @@ public class TransferRejectCommand extends AbstractCommand {
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("XFERREJECT"));
+			
+			// Get the check ride (if any)
+			GetExam exdao = new GetExam(con);
+			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
 
 			// Use a SQL Transaction
 			ctx.startTX();
@@ -73,6 +78,15 @@ public class TransferRejectCommand extends AbstractCommand {
 			// Save the status update
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			swdao.write(upd);
+			
+			// If the Check Ride has not been scored, delete it
+			if ((cr != null) && (cr.getStatus() != Test.SCORED)) {
+			   SetExam exwdao = new SetExam(con);
+			   exwdao.delete(cr);
+			   
+			   // Set status attribute
+			   ctx.setAttribute("checkRideDelete", Boolean.TRUE, REQUEST);
+			}
 
 			// Delete the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);
@@ -82,7 +96,7 @@ public class TransferRejectCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Write status attributes to the request
-			ctx.setAttribute("isReject", Boolean.valueOf(true), REQUEST);
+			ctx.setAttribute("isReject", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("txreq", txreq, REQUEST);
 		} catch (DAOException de) {
