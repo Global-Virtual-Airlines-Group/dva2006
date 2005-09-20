@@ -99,7 +99,7 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 */
 	public Issue(String subj) {
 	    super();
-	    _subject = subj.trim();
+	    setSubject(subj);
 	    _comments = new TreeSet();
 	}
 
@@ -127,6 +127,7 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	/**
 	 * Returns the issue title.
 	 * @return the title
+	 * @see Issue#setSubject(String)
 	 */
 	public String getSubject() {
 		return _subject;
@@ -538,6 +539,16 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 */
 	public void setStatus(String pv) {
 		_status = getCode(pv, Issue.STATUS);
+	}
+	
+	/**
+	 * Updates this Issue's title.
+	 * @param subj the new title
+	 * @throws NullPointerException if subj is null
+	 * @see Issue#getSubject()
+	 */
+	public void setSubject(String subj) {
+	  _subject = subj.trim();
 	}
 	
 	/**
