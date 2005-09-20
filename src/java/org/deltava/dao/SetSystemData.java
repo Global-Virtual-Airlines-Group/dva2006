@@ -98,16 +98,17 @@ public class SetSystemData extends DAO {
 	 */
 	public void logCommand(CommandLog log) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO SYS_COMMANDS (PILOT_ID, REMOTE_ADDR, REMOTE_HOST, NAME, RESULT, TOTAL_TIME, "
-					+ "BE_TIME, SUCCESS) VALUES (?, INET_ATON(?), ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, log.getPilotID());
-			_ps.setString(2, log.getRemoteAddr());
-			_ps.setString(3, log.getRemoteHost());
-			_ps.setString(4, log.getName());
-			_ps.setString(5, log.getResult());
-			_ps.setInt(6, log.getTime());
-			_ps.setInt(7, log.getBackEndTime());
-			_ps.setBoolean(8, log.getSuccess());
+			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
+					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?)");
+			_ps.setTimestamp(1, createTimestamp(log.getDate()));
+			_ps.setInt(2, log.getPilotID());
+			_ps.setString(3, log.getRemoteAddr());
+			_ps.setString(4, log.getRemoteHost());
+			_ps.setString(5, log.getName());
+			_ps.setString(6, log.getResult());
+			_ps.setInt(7, log.getTime());
+			_ps.setInt(8, log.getBackEndTime());
+			_ps.setBoolean(9, log.getSuccess());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
