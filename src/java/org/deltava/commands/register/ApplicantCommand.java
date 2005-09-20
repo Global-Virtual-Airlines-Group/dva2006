@@ -278,14 +278,24 @@ public class ApplicantCommand extends AbstractFormCommand {
          String tableName = (String) i.next();
          Collection IDs = udmap.getByTable(tableName);
          if (UserDataMap.isPilotTable(tableName)) {
-            persons.putAll(pdao.getByID(IDs, tableName));   
+            persons.putAll(pdao.getByID(IDs, tableName));
          } else {
             persons.putAll(dao.getByID(IDs, tableName));
          }
       }
       
+      // Filter out applicants where the pilot already matches
+      for (Iterator i = persons.values().iterator(); i.hasNext(); ) {
+    	  Person p = (Person) i.next();
+    	  if (p instanceof Applicant) {
+    		  Applicant ap = (Applicant) p;
+    		  if (persons.keySet().contains(new Integer(ap.getPilotID())))
+    			  i.remove();
+    	  }
+      }
+      
       // Save the userdata map and persons in the request
       ctx.setAttribute("userData", udmap, REQUEST);
-      ctx.setAttribute("soundexUsers", persons, REQUEST);
+      ctx.setAttribute("soundexUsers", persons.values(), REQUEST);
    }
 }

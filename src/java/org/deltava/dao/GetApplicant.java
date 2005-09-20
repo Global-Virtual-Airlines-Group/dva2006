@@ -272,10 +272,11 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
    public Collection checkSoundex(Person usr, String dbName) throws DAOException {
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT ID, LEFT(SOUNDEX(?), 4) AS TARGET, LEFT(SOUNDEX(CONCAT_WS(' ', "
-      		+ "FIRSTNAME, LASTNAME)), 4) AS SX FROM ");
+      StringBuffer sqlBuf = new StringBuffer("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
+      		+ "AS SX FROM ");
       sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING (TARGET=SX) ORDER BY ID");
+      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
+    		  + "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
       
       try {
          prepareStatement(sqlBuf.toString());
