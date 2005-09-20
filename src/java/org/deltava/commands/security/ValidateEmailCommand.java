@@ -59,6 +59,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 			if (av == null) {
 				ctx.release();
 				ctx.setAttribute("invalidInfo", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("code", AddressValidationHelper.formatHash(ctx.getParameter("code")), REQUEST);
 				
 				// Forward to the JSP
 				result.setURL("/jsp/register/eMailInvalid.jsp");
