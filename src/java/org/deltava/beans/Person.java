@@ -79,7 +79,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
     
     protected Map _networkIDs = new HashMap();
     protected Map _notifyOptions = new HashMap();
-    private Set _statusUpdates = new TreeSet();
     
     private double _legacyHours;
     
@@ -397,15 +396,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
     }
     
     /**
-     * Returns the Status Update entries for this Person.
-     * @return a List of StatusUpdates
-     * @see Person#addStatusUpdate(StatusUpdate)
-     */
-    public List getStatusUpdates() {
-    	return new ArrayList(_statusUpdates);
-    }
-    
-    /**
      * Update the Person's directory name. Setting a non-null value implies the Person is in the directory.
      * @param dn the full directory name
      * @see Person#getDN()
@@ -459,19 +449,6 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
             throw new NullPointerException("Notify Option cannot be null");
         
         _notifyOptions.put(option, Boolean.valueOf(notify));
-    }
-    
-    /**
-     * Add a Status Update to this Person. This will update the ID, firstName and lastName properties
-     * of the StatusUpdate bean.
-     * @param upd the Status Update bean
-     * @see Person#getStatusUpdates()
-     */
-    public void addStatusUpdate(StatusUpdate upd) {
-    	upd.setID(getID());
-    	upd.setFirstName(getFirstName());
-    	upd.setLastName(getLastName());
-    	_statusUpdates.add(upd);
     }
     
     /**
