@@ -60,6 +60,20 @@ document.cookie = 'acarsMapType=' + myType + '; expires=' + expiryDate.toGMTStri
 alert('Your <content:airline /> ACARS Map preferences have been saved.');
 return true;
 }
+
+function clearSettings()
+{
+// Clear cookies
+var expiryDate = new Date();
+document.cookie = 'acarsMapLat=; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapLng=; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapZoomLevel=; expires=' + expiryDate.toGMTString();
+document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
+
+// Display confirmation message
+alert('Your <content:airline /> ACARS Map preferences have been cleared.');
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -97,7 +111,8 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr class="title">
  <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
-<el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" /></td>
+<el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
+<el:button ID="ClearButton" className="BUTTON" onClick="void clearSettings()" label="CLEAR SETTINGS" /></td>
 </tr>
 </el:table>
 </el:form>
