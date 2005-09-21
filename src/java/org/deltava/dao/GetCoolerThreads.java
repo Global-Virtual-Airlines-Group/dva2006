@@ -242,6 +242,7 @@ public class GetCoolerThreads extends DAO {
          prepareStatement("SELECT DISTINCT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T "
                + "LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE (T.CHANNEL=?) AND (P.MSGBODY LIKE ?) "
                + "ORDER BY SD DESC");
+         _ps.setQueryTimeout(25);
          _ps.setString(1, channelName);
          _ps.setString(2, "%" + searchStr + "%");
          return execute();

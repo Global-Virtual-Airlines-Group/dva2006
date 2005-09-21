@@ -15,7 +15,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to search the Water Cooler
+ * A Web Site Command to search the Water Cooler.
  * @author Luke
  * @version 1.0
  * @since 1.0
