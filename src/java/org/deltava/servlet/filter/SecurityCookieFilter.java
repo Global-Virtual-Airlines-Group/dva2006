@@ -129,8 +129,16 @@ public class SecurityCookieFilter implements Filter {
            s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
            s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
             p = loadPersonFromDatabase(cData.getUserID());
-            if (p != null)
-                s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+            
+            // Make sure that the pilot is still active
+            if (p != null) {
+            	if (p.getStatus() == Pilot.ACTIVE)
+            		s.setAttribute(CommandContext.USER_ATTR_NAME, p);
+            	else {
+            		log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
+            		((HttpServletResponse)rsp).addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
+            	}
+            }
         }
         
         // Check if we are a superUser impersonating someone

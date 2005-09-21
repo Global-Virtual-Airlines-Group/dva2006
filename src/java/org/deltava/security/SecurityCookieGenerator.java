@@ -9,8 +9,8 @@ import org.deltava.util.Base64;
 
 /**
  * A class to generate/interpret cookies to store persistent authentication information.
- * Cookie data is defined as uid:<b>userID</b>@pwd:<b>password</b>@addr:<b>IP</b>@expiry:<b>date</b>
- * @x:<b>screenX</b>@y:<b>screenY</b>. There is an additional parameter <i>md5</i> which is the MD5
+ * Cookie data is defined as uid:<b>userID</b>@pwd:<b>password</b>@addr:<b>IP</b>@expiry:<b>date
+ * </b>@x:<b>screenX</b>@y:<b>screenY</b>. There is an additional parameter <i>md5</i> which is the MD5
  * signature of the above string encoded in Base64. The password is converted into hex bytes, and the entire
  * string is encrypted using a SecretKeyEncryptor.
  * @author Luke
