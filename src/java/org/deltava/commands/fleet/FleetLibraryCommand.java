@@ -104,8 +104,8 @@ public class FleetLibraryCommand extends AbstractCommand {
    private void appendDB(Collection entries, String dbName) {
       for (Iterator i = entries.iterator(); i.hasNext();) {
          Installer entry = (Installer) i.next();
-         entry.setName(entry.getName() + " - " + dbName);
-         entry.setCode(dbName + "." + entry.getCode());
+         entry.setName(entry.getName() + " - " + dbName.toUpperCase());
+         entry.setCode(dbName.toUpperCase() + "." + entry.getCode());
       }
    }
 }
