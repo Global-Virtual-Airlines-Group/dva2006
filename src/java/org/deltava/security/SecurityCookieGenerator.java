@@ -81,7 +81,7 @@ public final class SecurityCookieGenerator {
 		
 		// Validate the token signature against what we calculated
 		if (!digest.equals(cookieData.get("md5")))
-			throw new SecurityException("Security Cookie decryption failure");
+			throw new SecurityException("Security Cookie decryption failure - " + buf.toString());
 		
 		// Initalize the cookie data
 		SecurityCookieData scData = new SecurityCookieData(cookieData);
