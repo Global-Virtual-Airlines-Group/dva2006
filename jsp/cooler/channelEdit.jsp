@@ -33,7 +33,7 @@ return true;
 <%@include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="airline" name="airline.code" />
-<content:sysdata var="airlines" name="airlineDatabases" mapValues="true" />
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
 <div id="main">
