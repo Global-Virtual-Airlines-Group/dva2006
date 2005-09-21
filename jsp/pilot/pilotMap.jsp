@@ -18,8 +18,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="imgPath" name="path.img" />
 
 <!-- Main Body Frame -->
@@ -29,7 +29,7 @@
  <td><content:airline /> PILOT MAP</td>
 </tr>
 <tr>
- <td class="data"><div id="googleMap" style="width:700px; height:660px" /></td>
+ <td class="data"><map:div ID="googleMap" x="700" y="650" /></td>
 </tr>
 </el:table>
 
