@@ -103,7 +103,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Live Map</td>
- <td class="data"><div id="googleMap" style="width: 720px; height: 520px" /></td>
+ <td class="data"><map:div ID="googleMap" x="650" y="550" /></div>
 </tr>
 </el:table>
 
