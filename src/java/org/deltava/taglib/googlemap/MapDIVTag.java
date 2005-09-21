@@ -76,8 +76,8 @@ public class MapDIVTag extends ElementTag {
       
       // Load the screen size
       HttpSession s = ((HttpServletRequest) pageContext.getRequest()).getSession(false);
-      Integer sX = (Integer) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
-      Integer sY = (Integer) s.getAttribute(CommandContext.SCREENY_ATTR_NAME);
+      Integer sX = (s == null) ? null : (Integer) s.getAttribute(CommandContext.SCREENX_ATTR_NAME);
+      Integer sY = (s == null) ? null : (Integer) s.getAttribute(CommandContext.SCREENY_ATTR_NAME);
       if ((!_fixedSize) && (sX != null) && (sY != null)) {
          int screenX = sX.intValue();
          int screenY = sY.intValue();
