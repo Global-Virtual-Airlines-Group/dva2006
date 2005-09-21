@@ -65,7 +65,7 @@ return true;
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
 <tr class="title caps">
- <td colspan="2">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
+ <td colspan="2" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
 
