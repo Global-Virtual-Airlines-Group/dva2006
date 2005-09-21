@@ -119,10 +119,11 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged 
  online.<br />
 <c:if test="${!empty lastFlight}">
- <br />
+<br />
  Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
- <span class="pri bld">${lastFlight}</span> - ${lastFlight.airportD.name} (<fmt:airport airport="${lastFlight.airportD}" />)
- to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />) in a ${lastFlight.equipmentType}.
+ <el:cmd url="pirep" linkID="0x${lastFlight.ID}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
+ (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
+ in a ${lastFlight.equipmentType}.
 </c:if></td>
 </tr>
 
