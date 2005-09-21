@@ -88,7 +88,7 @@ public class MapDIVTag extends ElementTag {
       }
       
       // Save the screen size as a style
-      _attrs.put("style", "height:" + _mapX + "px; width:" + _mapY + "px");
+      _attrs.put("style", "height:" + _mapY + "px; width:" + _mapX + "px");
       
       // Skip Body
       return SKIP_BODY;
