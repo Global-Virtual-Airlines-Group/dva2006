@@ -83,8 +83,8 @@ public class MapDIVTag extends ElementTag {
          int screenY = sY.intValue();
          
          // Adjust the map size proportionally between the screen size and 1024/768
-         _mapX *= (screenX / 1024);
-         _mapY *= (screenY / 768);
+         _mapX *= (screenX / 1024.0);
+         _mapY *= (screenY / 768.0);
       }
       
       // Save the screen size as a style
@@ -101,7 +101,7 @@ public class MapDIVTag extends ElementTag {
     */
    public int doEndTag() throws JspException {
       try {
-         openHTML(false);
+         _out.print(openHTML(false));
          _out.print(" />");
       } catch (Exception e) {
          throw new JspException(e);

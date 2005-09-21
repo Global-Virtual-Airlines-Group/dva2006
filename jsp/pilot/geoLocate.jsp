@@ -63,7 +63,7 @@ location. Please click on the map below to set your location. You can drag the m
 mouse and zoom in and out.</span><br />
 <span class="small sec bld"><u>NOTE</u>: To protect your privacy, the system will automatically 
 randomize your location within a 3 mile circle each time the Pilot Location Board is displayed.</span><br /></c:if>
-<div id="googleMap" style="width:640px; height:600px" /></td>
+<map:div ID="googleMap" x="640" y="570" /></td>
 </tr>
 <tr>
  <td class="label">Latitude</td>

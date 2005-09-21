@@ -37,8 +37,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -132,7 +132,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${fn:isACARS(pirep)}">
-<%@include file="/jsp/pilot/pirepACARS.jsp" %> 
+<%@ include file="/jsp/pilot/pirepACARS.jsp" %> 
 </c:if>
 <tr>
 <c:if test="${googleMap}">
@@ -144,7 +144,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><div id="googleMap" style="width:640px; height:580px" /></td>
+ <td class="data"><map:div ID="googleMap" x="640" y="570" /></td>
 </c:if>
 <c:if test="${!googleMap}">
  <td class="label" valign="top">Route Map</td>

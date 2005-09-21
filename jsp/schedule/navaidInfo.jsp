@@ -98,14 +98,14 @@ ${navaid.frequency}</span></c:if></td>
 </c:if>
 <tr>
  <td class="label">Legend</td>
- <td class="data"><map:legend color="blue" legend="VOR" /> <map:legend color="orange" legend="NDB" />
- <map:legend color="green" legend="Airport" /> <map:legend color="white" legend="Intersection" /></td>
+ <td class="data"><map:legend color="red" legend="Selected Navigation Aid" />
+ <map:legend color="blue" legend="VOR" /> <map:legend color="orange" legend="NDB" />
+ <map:legend color="green" legend="Airport" /> <map:legend color="white" legend="Intersection" />
+ <el:button onClick="void toggleNavaids()" className="BUTTON" label="SHOW ALL" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Map<br />
-<br />
-<el:button onClick="void toggleNavaids()" className="BUTTON" label="SHOW ALL" /></td>
- <td class="data"><div id="googleMap" style="width: 620px; height: 580px" /></td>
+ <td class="label" valign="top">Map</td>
+ <td class="data"><map:div ID="googleMap" x="620" y="550" /></td>
 </tr>
 </c:if>
 <c:if test="${empty navaid}">

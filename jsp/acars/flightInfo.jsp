@@ -105,7 +105,7 @@
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><div id="googleMap" style="width:640px; height:580px" /></td>
+ <td class="data"><map:div ID="googleMap" x="620" y="530" /></div>
 </tr>
 </el:table>
 </el:form>

@@ -72,7 +72,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="flightboard.do" method="POST" validate="return false">
+<el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td width="40%" class="left">ONLINE PILOTS - ${netInfo.name} - VALID AS OF 
@@ -87,7 +87,7 @@ return true;
  <map:legend color="white" className="small" legend="${netInfo.name} Pilot" /></td>
 </tr>
 <tr>
- <td colspan="3"><div id="googleMap" style="width: 840px; height: 630px" /></td>
+ <td colspan="3"><map:div ID="googleMap" x="840" y="630" /></td>
 </tr>
 <tr class="title mid caps">
  <td colspan="3">&nbsp;<c:if test="${netInfo.cached}">USING CACHED DATA</c:if></td>
