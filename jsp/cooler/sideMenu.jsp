@@ -44,11 +44,9 @@
 <tr class="MenuItem">
  <td><el:cmd url="channels">CHANNELS</el:cmd></td>
 </tr>
-<content:filter roles="HR">
 <tr class="MenuItem">
- <td><el:cmd url="coolersearch" className="bld">SEARCH</el:cmd></td>
+ <td><el:cmd url="coolersearch">SEARCH</el:cmd></td>
 </tr>
-</content:filter>
 <content:filter roles="Admin">
 <tr class="MenuItem">
  <td><el:cmd url="channeladmin">CHANNEL ADMIN</el:cmd></td>
