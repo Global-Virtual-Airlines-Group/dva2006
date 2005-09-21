@@ -173,11 +173,9 @@ public final class StringUtils {
     * @return the offset of the value in the array, or -1 if not found
     */
    public static int arrayIndexOf(String[] values, String value) {
-      if (values == null) return -1;
-
-      for (int x = 0; x < values.length; x++) {
-         if (values[x].equals(value)) return x;
-      }
+      if ((values == null) || (value == null)) return -1;
+      for (int x = 0; x < values.length; x++)
+         if (value.equals(values[x])) return x;
 
       return -1;
    }
