@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.http.HttpServletRequest;
@@ -6,6 +7,7 @@ import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.Person;
+import org.deltava.beans.EMailAddress;
 
 /**
  * A JSP Tag to display a Pilot's e-mail address.
@@ -21,14 +23,26 @@ public class EMailDisplayTag extends TagSupport {
 	private String _className;
 	private String _label;
 	
+	/**
+	 * Updates the Person to display.
+	 * @param p the Person
+	 */
 	public void setUser(Person p) {
 		_usr = p;
 	}
 	
+	/**
+	 * Updates the CSS class to format the label with.
+	 * @param cName the CSS class name
+	 */
 	public void setClassName(String cName) {
 		_className = cName;
 	}
 	
+	/**
+	 * Sets a label to display instead of the e-mail address.
+	 * @param label the label
+	 */
 	public void setLabel(String label) {
 		_label = label;
 	}
@@ -42,6 +56,11 @@ public class EMailDisplayTag extends TagSupport {
 		_label = null;
 	}
 	
+	/**
+	 * Renders a link to the user's e-mail address to the JSP output stream
+	 * @return TagSupport.EVAL_PAGE
+	 * @throws JspException if an error occurs
+	 */
 	public int doEndTag() throws JspException {
 		
 		// Get the HTTP servlet request
@@ -65,7 +84,7 @@ public class EMailDisplayTag extends TagSupport {
 		}
 		
 		// If we can't display the address, abort
-		if (!canDisplay)
+		if ((!canDisplay) || (EMailAddress.INVALID_ADDR.equals(_usr.getEmail())))
 			return EVAL_PAGE;
 		
 		JspWriter out = pageContext.getOut();
