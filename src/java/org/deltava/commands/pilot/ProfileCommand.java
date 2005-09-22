@@ -195,7 +195,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
-			Set newRoles = new HashSet(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRoles"), p.getRoles()));
+			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
+			Collection newRoles = p_access.getCanChangeRoles()  ? CollectionUtils.loadList(roles, Collections.EMPTY_SET) : p.getRoles(); 
 
 			// Update the Pilot's Security Roles
 			if ((p_access.getCanChangeRoles()) && CollectionUtils.hasDelta(newRoles, p.getRoles())) {
@@ -213,7 +214,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Figure out what roles have been removed
-				Collection removedRoles = CollectionUtils.getDelta(p.getRatings(), newRatings);
+				Collection removedRoles = CollectionUtils.getDelta(p.getRoles(), newRoles);
 				if (!removedRoles.isEmpty()) {
 					ctx.setAttribute("removedRoles", removedRoles, REQUEST);
 					p.removeRoles(removedRoles);
