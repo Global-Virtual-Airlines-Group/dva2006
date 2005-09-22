@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.mail;
 
+import org.deltava.beans.system.AddressValidation;
 import org.deltava.crypt.*;
 
 import org.deltava.util.Base64;
@@ -33,6 +34,15 @@ public final class AddressValidationHelper {
       
       // Calculate the hash
       return Base64.encode(md.digest(addr.getBytes()));
+   }
+   
+   /**
+    * Calculates the hash code for an Address Validation bean with a populated e-mail address.
+    * @param av the AddressValidation bean
+    * @throws NullPointerException if av is null
+    */
+   public static void calculateHashCode(AddressValidation av) {
+      av.setHash(calculateHashCode(av.getAddress()));
    }
    
    /**
