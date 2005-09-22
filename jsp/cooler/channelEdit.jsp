@@ -29,10 +29,9 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="roles" name="security.roles" />
-<content:sysdata var="airline" name="airline.code" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
@@ -52,7 +51,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airline" width="65" firstEntry="${airline}" options="${airlines}" checked="${channel.airlines}" /></td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" checked="${channel.airlines}" /></td>
 </tr>
 <tr>
  <td class="label">Authorized Roles</td>
