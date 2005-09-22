@@ -235,11 +235,35 @@
 			<arg value="${basedir}\local_data\catalina.out" />
 		</exec>
 	</target>
+		
+	<!-- Upload scripts to the app server -->
+	<target name="put_scripts">
+		<loadproperties srcFile="data/build_deploy.properties" />
+
+		<!-- Create the upload directory -->
+		<sshexec host="${webapp.ssh.server}" username="${webapp.ssh.user}" trust="yes"
+						password="${webapp.ssh.pwd}" failonerror="false" timeout="5000"
+						command="mkdir /tmp/scripts" />
+			
+		<!-- Upload the scripts -->
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/tmp/scripts" verbose="yes"
+			trust="yes" password="${webapp.ssh.pwd}">
+			<fileset dir="scripts/${webapp.ssh.os}">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/static.cache.txt" />
+				</modified>
+			</fileset>
+		</scp>
+			
+		<!-- Copy the scripts to the proper directory -->
+<!--		<sshexec host="${webapp.ssh.server}" username="${webapp.ssh.user}" trust="yes"
+			password="${webapp.ssh.pwd}" failonerror="true" timeout="10000"
+			command="sudo /usr/local/sbin/update_scripts.sh" /> -->
+	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="compile,acars,jspc">
-		<loadproperties srcFile="data/build_deploy.properties" />
-		
+	<target name="prod_deploy" depends="compile,acars,jspc,put_scripts">
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
 				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
@@ -302,17 +326,6 @@
 				<modified seldirs="true" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
 						<param name="cache.cachefile" value="local_data/static.cache.txt" />
-				</modified>
-			</fileset>
-		</scp>
-			
-		<!-- Upload scripts to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/sbin" verbose="yes"
-			trust="yes" password="${webapp.ssh.pwd}">
-			<fileset dir="scripts/${webapp.ssh.os}">
-				<modified seldirs="false" algorithm="digest">
-					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/static.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
