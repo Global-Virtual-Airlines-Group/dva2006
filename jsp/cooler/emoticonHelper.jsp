@@ -28,7 +28,7 @@ var msgText = f.msgText;
 if (!msgText) return false;
 
 // Append the emoticon
-msgText.value = msgText.value + ' :' + name + ': ';
+msgText.value = msgText.value + ' :' + name + ':';
 self.close();
 return true;
 }
@@ -39,19 +39,19 @@ return true;
 <el:table className="form" space="default" pad="default">
 <!-- Table Header Bars -->
 <tr class="title caps">
- <td>EMOTICON</td>
- <td>CODE</td>
- <td>SYMBOL</td>
+ <td class="mid">EMOTICON</td>
+ <td class="mid">CODE</td>
+ <td class="mid">SYMBOL</td>
 </tr>
-<tr class="pri bld">
- <td colspan="3" class="mid">Click on an emoticon to add it to the end of your post.</td>
+<tr class="small mid">
+ <td colspan="3">Click on an emoticon to add it to the end of your post.</td>
 </tr>
 
 <!-- Table Emoticons -->
 <c:forEach var="iconName" items="${iconNames}">
 <c:set var="iconCode" value="${iconCodes[iconName]}" scope="request" />
 <tr class="mid">
- <td><a href="javascript:void addEmoticon('${iconName}')"><el:img border="0" src="cooler/emoticons/${iconName}.gif" /></a></td>
+ <td><a href="javascript:addEmoticon('${iconName}')"><el:img border="0" src="cooler/emoticons/${iconName}.gif" /></a></td>
  <td class="bld">:${iconName}:</td>
  <td class="sec bld">${empty iconCode ? '&nbsp;' : iconCode}</td>
 </tr>
