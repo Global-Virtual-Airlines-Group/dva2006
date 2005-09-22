@@ -101,12 +101,15 @@ public class Mailer extends Thread {
    }
 
    /**
-    * Adds an individual address to the recipient list, and sends the message <i>in a new thread </i>.
+    * Adds an individual address to the recipient list, and sends the message <i>in a new thread</i>. This
+    * method will check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
     * @param addr the recipient name/address
     */
    public void send(EMailAddress addr) {
-      _msgTo.add(addr);
-      start();
+      if (!EMailAddress.INVALID_ADDR.equals(addr.getEmail())) {
+         _msgTo.add(addr);
+         start();
+      }
    }
    
    /**
@@ -115,23 +118,27 @@ public class Mailer extends Thread {
     */
    public void setCC(EMailAddress addr) {
 	   try {
-		   _copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
+	      if (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))
+	         _copyTo.add(new InternetAddress(addr.getEmail(), addr.getName()));
 	   } catch (UnsupportedEncodingException uee) {
 	   }
    }
 
    /**
-    * Adds a group of addresses to the recipient list, and sends the message <i>in a new thread </i>.
+    * Adds a group of addresses to the recipient list, and sends the message <i>in a new thread</i>. This
+    * method will check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
     * @param addrs a Collection of recipient names/addresses
     */
    public void send(Collection addrs) {
-      for (Iterator i = addrs.iterator(); i.hasNext();) {
+      for (Iterator i = addrs.iterator(); i.hasNext(); ) {
          EMailAddress addr = (EMailAddress) i.next();
-         _msgTo.add(addr);
+         if (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))
+            _msgTo.add(addr);
       }
-
+         
       // Spawn a new thread
-      start();
+      if (!_msgTo.isEmpty())
+         start();
    }
 
    /**
@@ -167,10 +174,11 @@ public class Mailer extends Thread {
       // Loop through the recipients
       for (Iterator i = _msgTo.iterator(); i.hasNext();) {
          EMailAddress addr = (EMailAddress) i.next();
+         
+         // Add the recipient to the messaging context
+         _ctx.addData("recipient", addr);
 
          try {
-            // Add the recipient to the messaging context
-            _ctx.addData("recipient", addr);
 
             // Create the e-mail message
             Message msg = new Message(_ctx);
@@ -218,7 +226,7 @@ public class Mailer extends Thread {
             Transport.send(imsg);
             
             // Log message
-            log.info("Sent " + _ctx.getTemplate().getName() + " message to " + addr.getName() + " <" + addr.getEmail() + ">");
+            log.info("Sent " + _ctx.getTemplate().getName() + " to " + addr.getName() + " <" + addr.getEmail() + ">");
          } catch (Exception e) {
             log.error("Error sending email to " + addr.getName(), e);
          }
