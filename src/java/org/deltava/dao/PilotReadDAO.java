@@ -58,18 +58,16 @@ abstract class PilotReadDAO extends PilotDAO {
          p = (results.size() == 0) ? null : (Pilot) results.get(0);
          if (p == null)
             return null;
-
-         // Add to the cache
-         _cache.add(p);
-
+         
          // Add roles/ratings
          addRatings(p, SystemData.get("airline.db"));
          addRoles(p, SystemData.get("airline.db"));
       } catch (SQLException se) {
          throw new DAOException(se);
       }
-
-      // Return result
+      
+      // Add to the cache and return
+      _cache.add(p);
       return p;
    }
 
