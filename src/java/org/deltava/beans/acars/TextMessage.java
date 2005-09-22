@@ -162,7 +162,7 @@ public class TextMessage implements java.io.Serializable, Comparable, ACARSLogEn
     */
    public void setRecipientID(int id) {
       if (id > 0)
-         DatabaseBean.validateID(_authorID, id);
+         DatabaseBean.validateID(_recipientID, id);
       
       _recipientID = id;
    }
