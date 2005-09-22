@@ -22,15 +22,23 @@ if (!validateText(form.msgText, 5, 'text of your Message')) return false;
 if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
 
 setSubmit();
+disableButton('EmoticonButton');
 disableButton('SaveButton');
+return true;
+}
+
+function openEmoticons()
+{
+var flags = 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes';
+var w = window.open('emoticons.do', 'emoticonHelp', flags);
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="maxX" name="cooler.img_max.x" />
 <content:sysdata var="maxY" name="cooler.img_max.y" />
 <content:sysdata var="maxSize" name="cooler.img_max.size" />
@@ -59,7 +67,8 @@ return true;
 </content:filter>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail notification when Responses are posted" value="1" /></td>
+ <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="1" />&nbsp;
+<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 <tr>
  <td class="label">Upload Image</td>

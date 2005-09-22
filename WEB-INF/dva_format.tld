@@ -88,6 +88,18 @@
 		</attribute>
 	</tag>
 
+	<!-- MessageFormat tag, for formatting Water Cooler messages -->
+	<tag>
+		<name>msg</name>
+		<tagclass>org.deltava.taglib.format.MessageFormatTag</tagclass>
+		<bodycontent>empty</bodycontent>
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
 	<!-- DateFormat tag, for formatting date/time values -->	
 	<tag>
 		<name>date</name>

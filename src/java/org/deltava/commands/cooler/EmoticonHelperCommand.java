@@ -3,9 +3,9 @@ package org.deltava.commands.cooler;
 
 import java.util.*;
 
+import org.deltava.beans.cooler.Emoticons;
 import org.deltava.commands.*;
 
-import org.deltava.util.CoolerFormat;
 
 /**
  * A Web Site Command to display Water Cooler emoticons.
@@ -24,13 +24,13 @@ public class EmoticonHelperCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Save Cooler image names in the request
-      ctx.setAttribute("iconNames", Arrays.asList(CoolerFormat.ICON_NAMES), REQUEST);
+      ctx.setAttribute("iconNames", Arrays.asList(Emoticons.ICON_NAMES), REQUEST);
 
       // Convert smiley codes into a map
       Map codes = new HashMap();
-      for (int x = 0; x < CoolerFormat.ICON_NAMES.length; x++) {
-         if (CoolerFormat.ICON_CODES[x] != null)
-            codes.put(CoolerFormat.ICON_NAMES[x], CoolerFormat.ICON_CODES[x]);
+      for (int x = 0; x < Emoticons.ICON_NAMES.length; x++) {
+         if (Emoticons.ICON_CODES[x] != null)
+            codes.put(Emoticons.ICON_NAMES[x], Emoticons.ICON_CODES[x]);
       }
       
       // Save the smiley codes
