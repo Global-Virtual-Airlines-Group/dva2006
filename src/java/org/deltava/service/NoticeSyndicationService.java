@@ -85,7 +85,7 @@ public class NoticeSyndicationService extends WebDataService {
 		}
 		
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 		   ctx.getResponse().setContentType("text/xml");
 			ctx.println(xmlOut.outputString(doc));

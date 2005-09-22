@@ -78,9 +78,10 @@ public class InstallerInfoService extends WebDataService {
 		le.addContent(new CDATA(i.getDescription()));
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
+			System.out.println(xmlOut.outputString(doc));
 			ctx.println(xmlOut.outputString(doc));
 			ctx.commit();
 		} catch (IOException ie) {

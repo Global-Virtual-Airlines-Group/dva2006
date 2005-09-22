@@ -85,7 +85,7 @@ public class NewsSyndicationService extends WebDataService {
 		}
 		
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat());
+		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		String xml = xmlOut.outputString(doc);
 		ctx.getResponse().setContentType("text/xml");
 		ctx.getResponse().setContentLength(xml.length());
