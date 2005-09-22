@@ -41,6 +41,13 @@ disableButton('DeleteButton');
 disableButton('MoveButton');
 return true;
 }
+
+function openEmoticons()
+{
+var flags = 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes';
+var w = window.open('emoticons.do', 'emoticonHelp', flags);
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -149,7 +156,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </td>
 </tr>
 <tr>
- <td class="postBody"><fmt:text value="${msg.body}" />
+ <td class="postBody"><fmt:msg value="${msg.body}" />
 <c:if test="${pilot.hasSignature}">
 <br />
 <!-- Signature Image for ${pilot.name} -->
