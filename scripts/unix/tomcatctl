@@ -1,0 +1,36 @@
+#!/bin/sh
+# -*- mode: Fundamental; tab-width: 4; -*-
+# ex:ts=4
+#
+# Jakarta Tomcat startup script.
+#
+# $FreeBSD: ports/www/jakarta-tomcat4/files/startup.sh,v 1.4 2002/05/08 21:54:06 znerd Exp $
+#
+
+
+# Set some variables
+MYSELF=`basename $0`
+
+case "$1" in
+	start)
+		echo -n ' '
+		truncate -s 0 /var/run/tomcat50.pid
+		chown www:www /var/run/tomcat50.pid
+		chmod 600 /var/run/tomcat50.pid
+# su -f -m www -c "exec /usr/local/bin/tomcat50ctl start" > /dev/null && echo -n 'tomcat50'
+		su -f -m www -c "exec /usr/local/jakarta-tomcat5.0/bin/startup.sh" >/dev/null && echo -n 'tomcat50'
+		;;
+	stop)
+		echo -n ' '
+		chown www:www /var/run/tomcat50.pid
+		chmod 600 /var/run/tomcat50.pid
+		#su -f -m www -c "exec /usr/local/bin/tomcat50ctl stop" >/dev/null 2>&1 ; echo -n 'tomcat50'
+		su -f -m www -c "exec /usr/local/jakarta-tomcat5.0/bin/shutdown.sh" >/dev/null && echo -n 'tomcat50'
+		;;
+	*)
+		echo ""
+		echo "Usage: ${MYSELF} { start | stop }"
+		echo ""
+		exit 64
+		;;
+esac
