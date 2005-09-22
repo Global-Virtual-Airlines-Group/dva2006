@@ -93,18 +93,22 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors and online totals for the last post in each channel
-			Map pilots = new HashMap();
+			Map users = new HashMap();
 			GetPilot pdao = new GetPilot(con);
+			GetApplicant adao = new GetApplicant(con);
 			GetFlightReports prdao = new GetFlightReports(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
 				String dbTableName = (String) i.next();
 
-				// Get the pilots from each table and apply their online totals
-				Map pilotSubset = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
-				if (UserDataMap.isPilotTable(dbTableName))
-					prdao.getOnlineTotals(pilotSubset, dbTableName);
-
-				pilots.putAll(pilotSubset);
+				// Get the pilots/applicants from each table and apply their online totals
+				if (UserDataMap.isPilotTable(dbTableName)) {
+					Map pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
+					prdao.getOnlineTotals(pilots, dbTableName);
+					users.putAll(pilots);
+				} else {
+					Map applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
+					users.putAll(applicants);
+				}
 			}
 			
 			// Get the thread notifications
@@ -126,7 +130,7 @@ public class ThreadCommand extends AbstractCommand {
 			// Save the thread, pilots and access controller in the request
 			ctx.setAttribute("thread", thread, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
-			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("pilots", users, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
