@@ -93,16 +93,14 @@ public class ExpiringCache extends Cache {
 
 	/**
 	 * Adds an entry to the cache. If this operation would cause the cache to exceed its maximum size, then the entry
-	 * with the earliest expiration date will be removed. If the entry implements the {@link Cloneable} interface,
-	 * then a clone of the entry will be added to the cache.
+	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
 	public synchronized void add(Cacheable obj) {
 
 		// Create the cache entry
-	   Cacheable entry = getClone(obj);
-		ExpiringCacheEntry e = new ExpiringCacheEntry(entry);
-		_cache.put(entry.cacheKey(), e);
+		ExpiringCacheEntry e = new ExpiringCacheEntry(obj);
+		_cache.put(obj.cacheKey(), e);
 
 		// Check for overflow
 		checkOverflow();
