@@ -103,6 +103,18 @@
 		<class>org.deltava.commands.security.ValidateEmailCommand</class>
 		<roles>*</roles>
 	</command>
+	
+	<command id="invalidate">
+		<name>E-Mail Invalidation</name>
+		<class>org.deltava.commands.security.InvalidateEmailCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="emailupd">
+		<name>E-Mail Update</name>
+		<class>org.deltava.commands.security.UpdateEmailCommand</class>
+		<roles>Pilot</roles>
+	</command>
 
 	<command id="geolocate">
 		<name>Pilot Geolocation</name>

@@ -17,13 +17,15 @@ public class AddressValidation extends DatabaseBean {
 
    /**
     * Creates a new Address validation entry.
-    * @param id the Database ID of the Pilot <i>or Applicant</i>
+    * @param id the Database ID of the Pilot <i>or Applicant</i>.
     * @param addr the new e-mail address
+    * @throws NullPointerException if addr is null
+    * @throws IllegalArgumentException if id is zero or negative
     */
    public AddressValidation(int id, String addr) {
       super();
       setID(id);
-      _addr = addr.trim();
+      setAddress(addr);
    }
 
    /**
@@ -50,5 +52,15 @@ public class AddressValidation extends DatabaseBean {
     */
    public void setHash(String hash) {
       _hash = hash;
+   }
+   
+   /**
+    * Updates the user's e-mail address.
+    * @param addr the new e-mail address
+    * @throws NullPointerException if addr is null
+    * @see AddressValidation#getAddress()
+    */
+   public void setAddress(String addr) {
+      _addr = addr.trim();
    }
 }
