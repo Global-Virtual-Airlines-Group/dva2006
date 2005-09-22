@@ -160,7 +160,7 @@ public class ThreadReplyCommand extends AbstractCommand {
          
          // Save thread data
          mctxt.addData("thread", thread);
-         mctxt.addData("threadID", "0x" +	StringUtils.formatHex(thread.getID()));
+         mctxt.addData("threadID", StringUtils.formatHex(thread.getID()));
 
          // Save the thread in the request
          ctx.setAttribute("thread", thread, REQUEST);
