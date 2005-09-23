@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
-<%@ page buffer="80kb" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -32,6 +31,45 @@ setSubmit();
 disableButton('CRButton');
 return true;
 }
+<c:if test="${fn:isACARS(pirep)}">
+<content:sysdata var="imgPath" name="path.img" />
+function getACARSData()
+{
+// Disable forms
+var f = document.forms[0];
+f.showFDR.disabled = true;
+f.showRoute.disabled = true;
+
+// Build the XML Requester
+var xmlreq = GXmlHttp.create();
+xmlreq.open("GET", "acars_map.ws?id=${pirep.ID}", true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
+	for (var i = 0; i < ac.length; i++) {
+		var a = ac[i];
+		var label = a.firstChild;
+		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
+		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		routePoints.push(p);
+		routeMarkers.push(mrk);
+	} // for
+	
+	// Create line
+	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
+	
+	// Enable checkboxes
+	var f = document.forms[0];
+	f.showFDR.disabled = true;
+	f.showRoute.disabled = true;
+	return true;
+} // function
+
+xmlreq.send(null);
+return true;
+}
+</c:if>
 </script>
 </c:if>
 </head>
@@ -137,8 +175,8 @@ return true;
 <tr>
 <c:if test="${googleMap}">
  <td class="label">Route Map Data</td>
- <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="true" />
-<c:if test="${fn:isACARS(pirep)}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="true" /> </c:if>
+ <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="${!fn:isACARS(pirep)}" />
+<c:if test="${fn:isACARS(pirep)}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute')" label="Flight Plan" checked="true" /> </c:if>
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers')" label="Navaid Markers" checked="true" /></span></td>
 </tr>
@@ -186,23 +224,33 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
+<c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
-<map:markers var="routeMarkers" items="${mapRoute}" />
+<!-- <xmap:markers var="routeMarkers" items="${mapRoute}" /> -->
 <map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
+</c:if>
+<c:if test="${empty mapRoute && fn:isACARS(pirep)}">
+var gRoute;
+var routePoints = new Array();
+var routeMarkers = new Array();
+getACARSData();
+</c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
 </c:if>
 // Build the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
+var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
 
+<c:if test="${!empty mapRoute}">
 // Add the route and markers
 addMarkers(map, 'gRoute');
-addMarkers(map, 'routeMarkers');
+// addMarkers(map, 'routeMarkers');
+</c:if>
 <c:if test="${!empty filedRoute}">
 addMarkers(map, 'gfRoute');
 addMarkers(map, 'filedMarkers');

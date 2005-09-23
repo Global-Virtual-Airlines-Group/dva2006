@@ -344,18 +344,14 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
-			List positions = null;
 			if (fr instanceof ACARSFlightReport) {
 				mapType = Pilot.MAP_GOOGLE;
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
 				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
 
-				// Get the route/position data
-				GetACARSData ardao = new GetACARSData(con);
-				positions = ardao.getRouteEntries(afr.getDatabaseID(FlightReport.DBID_ACARS), false);
-				FlightInfo info = ardao.getInfo(flightID);
-
 				// Get the route data from the DAFIF database
+				GetACARSData ardao = new GetACARSData(con);
+				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					List routeEntries = StringUtils.split(info.getRoute(), " ");
 					List routeInfo = new ArrayList(routeEntries.size());
@@ -378,10 +374,6 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (flightID != 0) 
 					cr = crdao.getACARSCheckRide(flightID);
 				
-				// If there's no checkride for this ACARS flight, check if one is pending
-				if (cr == null)
-					cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType());
-
 				// If we have a check ride, then save it and calculate the access level
 				if (cr != null) {
 					ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
@@ -398,15 +390,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			// If we're set to use Google Maps, calculate the route
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
-				if ((positions == null) || (positions.isEmpty()))
-					positions = GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(),
-							100);
+				if (!(fr instanceof ACARSFlightReport))
+				   ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(),
+							100), REQUEST);   
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
-						REQUEST);
-				ctx.setAttribute("mapRoute", positions, REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request
