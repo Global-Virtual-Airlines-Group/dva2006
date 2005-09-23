@@ -17,8 +17,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -56,7 +56,7 @@
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /><br />
-<view:legend width="95" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
+<view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected,Check Ride" classes="opt2,opt1,warn, ,err,opt3" /></td>
 </tr>
 </view:table>
 <br />
