@@ -2,9 +2,6 @@
 package org.deltava.taskman;
 
 import java.util.Date;
-import java.io.Serializable;
-
-import org.deltava.beans.ViewEntry;
 
 /**
  * A bean to store information about a scheduled task. 
@@ -13,7 +10,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class TaskInfo implements Serializable, Comparable, ViewEntry {
+public class TaskInfo implements java.io.Serializable, Comparable {
    
    private String _id;
    private String _name;
@@ -23,7 +20,6 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
    private Date _nextStart;
    private long _lastRunTime;
    private int _runCount;
-   private boolean _active;
    private boolean _enabled;
 
    /**
@@ -39,7 +35,6 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
       _nextStart = t.getNextStartTime();
       _lastRunTime = t.getLastRunTime();
       _runCount = t.getRunCount();
-      _active = t.isAlive();
       _enabled = t.getEnabled();
    }
 
@@ -104,14 +99,6 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
    }
    
    /**
-    * Returns if the Task is currently executing.
-    * @return TRUE if the Task is excuting, otherwise FALSE
-    */
-   public boolean getAlive() {
-      return _active;
-   }
-   
-   /**
     * Returns if the Task is enabled for execution.
     * @return TRUE if the Task is enabled, otherwise FALSE
     */
@@ -134,13 +121,5 @@ public class TaskInfo implements Serializable, Comparable, ViewEntry {
    public int compareTo(Object o2) {
       TaskInfo ti2 = (TaskInfo) o2;
       return _nextStart.compareTo(ti2.getNextStartTime());
-   }
-   
-   /**
-    * Returns the CSS row class name if displayed in a view table.
-    * @return the CSS class name
-    */
-   public String getRowClassName() {
-      return _active ? "opt2" : null; 
    }
 }

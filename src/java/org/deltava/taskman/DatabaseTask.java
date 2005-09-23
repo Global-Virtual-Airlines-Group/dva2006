@@ -3,8 +3,6 @@ package org.deltava.taskman;
 
 import java.sql.Connection;
 
-import org.deltava.jdbc.Recycler;
-
 /**
  * A class to support scheduled Tasks that access the database.
  * @author Luke
@@ -15,7 +13,6 @@ import org.deltava.jdbc.Recycler;
 public abstract class DatabaseTask extends Task {
    
    protected Connection _con;
-   private Recycler _recycler;
    
    /**
     * Creates a new Database Task.
@@ -31,24 +28,5 @@ public abstract class DatabaseTask extends Task {
     */
    public void setConnection(Connection c) {
       _con = c;
-   }
-   
-   /**
-    * Sets the recycler to return the JDBC Connection to.
-    * @param r the Connection Recycler
-    */
-   public void setRecycler(Recycler r) {
-      _recycler = r;
-   }
-   
-   /**
-    * Executes the Task, then returns the JDBC connection.
-    */
-   public final void run() {
-      super.run();
-      if (_recycler != null) {
-         log.debug("Releasing JDBC connection for " + getName());
-         _recycler.release(_con);
-      }
    }
 }
