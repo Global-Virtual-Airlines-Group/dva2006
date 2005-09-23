@@ -36,6 +36,17 @@ public class MiscFunctions {
 	public static Object get(List l, int idx) {
 		return l.get(idx);
 	}
+	
+	/**
+	 * A JSP-friendly function to check if an object exists within a Collection. 
+	 * @param c the Collection
+	 * @param obj the Object
+	 * @return TRUE if c is not null and c.contains(obj), otherwise FALSE
+	 * @see Collection#contains(Object)
+	 */
+	public static boolean contains(Collection c, Object obj) {
+	   return (c == null) ? false : c.contains(obj);
+	}
 
 	/**
 	 * &quot;Escape&quot; a string by stripping out all inline HTML.
