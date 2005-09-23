@@ -25,7 +25,7 @@ for all <content:airline />-related correspondence in the future.<br />
 Thank you for verifying your e-mail address. This is an important step in the registration 
 process here at <content:airline />.<br />
 </c:if>
-<c:if test"${!empty pilot}">
+<c:if test="${!empty pilot}">
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">click here</el:cmd>.<br />
 </c:if>
 <br />
