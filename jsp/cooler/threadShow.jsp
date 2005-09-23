@@ -39,6 +39,7 @@ disableButton('ImgDeleteButton');
 disableButton('ResyncButton');
 disableButton('DeleteButton');
 disableButton('MoveButton');
+disableButton('EmoticonButton');
 return true;
 }
 
@@ -98,10 +99,17 @@ return true;
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <tr>
- <td rowspan="2" class="postInfo small"><el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
+ <td rowspan="2" class="postInfo small">
+<c:if test="${fn:contains(pilot.roles, 'Pilot')}">
+ <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld">${pilot.pilotCode}</span><br /></c:if>
  <span class="caps bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
  <el:email user="${pilot}" className="small caps" label="E-MAIL" /><br />
+</c:if>
+<c:if test="${fn:contains(pilot.roles, 'Applicant')}">
+<span class="pri bld">${pilot.name}</span><br />
+<span class="caps">APPLICANT</span><br />
+</c:if>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:choose>
@@ -222,6 +230,9 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canLock}">
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
  <el:cmdbutton ID="MoveButton" label="MOVE THREAD" url="threadmove" post="true" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canReply}">
+ <el:cmdbutton ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" />
 </c:if>
  </td>
 </tr>
