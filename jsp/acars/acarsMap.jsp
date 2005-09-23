@@ -32,7 +32,6 @@ xmlreq.send(null);
 
 // Disable the buttons
 disableButton('RefreshButton');
-disableButton('SettingsButton');
 
 // Set timer to reload the data
 if (doRefresh && isAuto)
