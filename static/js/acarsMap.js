@@ -5,6 +5,9 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "acars_map.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
+	enableButton('RefreshButton');
+	
+	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
 	map.clearOverlays();
@@ -23,9 +26,6 @@ xmlreq.onreadystatechange = function() {
 		map.addOverlay(mrk);
 	} // for
 	
-	// Enable the buttons
-	enableButton('RefreshButton');
-	enableButton('SettingsButton');
 	return true;
 } // function
 
