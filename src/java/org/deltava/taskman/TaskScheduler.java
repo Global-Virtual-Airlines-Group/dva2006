@@ -35,6 +35,7 @@ public class TaskScheduler extends Thread {
 
 	/**
 	 * Initializes the Task Scheduler.
+	 * @see TaskScheduler#TaskScheduler(Collection)
 	 */
 	public TaskScheduler() {
 		super("Task Scheduler");
@@ -103,19 +104,7 @@ public class TaskScheduler extends Thread {
 
 				// If the task is running, leave it alone. Only execute when it's supposed to
 				Calendar now = Calendar.getInstance();
-				if (t.isAlive()) {
-					long execTime = System.currentTimeMillis() - t.getStartTime().getTime();
-
-					// Kill zombie tasks
-					if (execTime > t.getMaxRunTime()) {
-						log.warn("Killing Zombie Task - executing for " + execTime + "ms, max=" + t.getMaxRunTime() + "ms");
-						try {
-							t.join(500);
-						} catch (Exception e) { }
-					} else {
-						log.debug("Task executing since " + t.getStartTime());	
-					}
-				} else if (t.getNextStartTime().after(now.getTime())) {
+				if (t.getNextStartTime().after(now.getTime())) {
 					log.debug("Task not scheduled to execute until " + t.getNextStartTime());
 				} else if (!t.getEnabled()) {
 					log.debug("Task Disabled");
@@ -139,17 +128,21 @@ public class TaskScheduler extends Thread {
 					// Pass JDBC Connection to database tasks
 					if (t instanceof DatabaseTask) {
 						DatabaseTask dt = (DatabaseTask) t;
-						dt.setRecycler(_pool);
 						try {
-							dt.setConnection(_pool.getConnection());
+						   c = _pool.getConnection();
+							dt.setConnection(c);
+							t.start();
 						} catch (ConnectionPoolException cpe) {
 							log.error("Error reserving connection - " + cpe.getMessage());
+						} finally {
+						   _pool.release(c);
 						}
+					} else {
+					   t.start();
 					}
 					
-					// Start the task
-					log.info(t.getName() + " started");
-					t.start();
+					// Log completion
+					log.info(t.getName() + " completed - " + t.getLastRunTime() + " ms");
 				}
 			}
 
