@@ -959,7 +959,13 @@
 		<class>org.deltava.commands.system.IssueListCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="isearch">
+		<name>Issue Search</name>
+		<class>org.deltava.commands.system.IssueSearchCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="issue">
 		<name>Issue</name>
 		<class>org.deltava.commands.system.IssueCommand</class>

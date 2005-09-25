@@ -14,6 +14,7 @@ import org.deltava.dao.DAOException;
 import org.deltava.security.command.IssueAccessControl;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A web site command to display issues and comments.
@@ -41,16 +42,7 @@ public class IssueListCommand extends AbstractViewCommand {
         vc.setDefaultSortType("ID");
         
         // Get issue status
-        int issueStatus = -1;
-        if (ctx.getCmdParameter(Command.OPERATION, null) != null) {
-            String statusName = (String) ctx.getCmdParameter(Command.OPERATION, null);
-            for (int x = 0; x < Issue.STATUS.length; x++) {
-                if (Issue.STATUS[x].equals(statusName)) {
-                    issueStatus = x;
-                    break;
-                }
-            }
-        }
+        int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
         
         try {
             Connection c = ctx.getConnection();
