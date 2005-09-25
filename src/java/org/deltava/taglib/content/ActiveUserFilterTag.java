@@ -34,6 +34,16 @@ public class ActiveUserFilterTag extends TagSupport {
 	 * @see UserPool#contains(int)
 	 */
 	public int doStartTag() throws JspException {
-		return UserPool.contains(_userID) ? EVAL_BODY_INCLUDE : SKIP_BODY;
+		int tmpResult = UserPool.contains(_userID) ? EVAL_BODY_INCLUDE : SKIP_BODY;
+		release();
+		return tmpResult;
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_userID = 0;
 	}
 }
