@@ -29,7 +29,7 @@ public class SetAddressValidation extends DAO {
     */
    public void write(AddressValidation addr) throws DAOException {
       try {
-         prepareStatement("INSERT INTO EMAIL_VALIDATION (ID, EMAIL, HASH) VALUES (?, ?, ?)");
+         prepareStatement("REPLACE INTO EMAIL_VALIDATION (ID, EMAIL, HASH) VALUES (?, ?, ?)");
          _ps.setInt(1, addr.getID());
          _ps.setString(2, addr.getAddress());
          _ps.setString(3, addr.getHash());

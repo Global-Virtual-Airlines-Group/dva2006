@@ -72,7 +72,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setURL("/jsp/register/emailInvalidate.jsp");
+      result.setURL("/jsp/register/eMailInvalidate.jsp");
       result.setSuccess(true);
    }
 }
