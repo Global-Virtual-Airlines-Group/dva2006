@@ -26,9 +26,7 @@ public class DateTime implements java.io.Serializable, Comparable {
 	 * @see System#currentTimeMillis()
 	 */
 	public DateTime(Date dt) {
-		super();
-		_dt = Calendar.getInstance(_tz.getTimeZone());
-		_dt.setTime(dt);
+		this(dt, TZInfo.local());
 	}
 
 	/**
@@ -37,9 +35,11 @@ public class DateTime implements java.io.Serializable, Comparable {
 	 * @param tz the Time Zone
 	 */
 	public DateTime(Date dt, TZInfo tz) {
-		this(dt);
+		super();
 		_tz = tz;
-		_dt.setTimeZone(tz.getTimeZone());
+		_dt = Calendar.getInstance(_tz.getTimeZone());
+		_dt.setTime(dt);
+		_dt.setTimeZone(_tz.getTimeZone());
 	}
 	
 	/**

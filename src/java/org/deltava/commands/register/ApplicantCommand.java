@@ -71,7 +71,7 @@ public class ApplicantCommand extends AbstractFormCommand {
          a.setTimeFormat(ctx.getParameter("tf"));
          a.setNumberFormat(ctx.getParameter("nf"));
          a.setAirportCodeType(ctx.getParameter("airportCodeType"));
-         a.setTZ(TZInfo.init(ctx.getParameter("tz")));
+         a.setTZ(TZInfo.get(ctx.getParameter("tz")));
          a.setUIScheme(ctx.getParameter("uiScheme"));
          
          // Save hire fields

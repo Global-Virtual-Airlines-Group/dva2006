@@ -39,8 +39,8 @@ public class GetTimeZone extends DAO {
             
             // Iterate through the results; the class will cache its instances
             while (rs.next()) {
-                log.debug("Initialized " + rs.getString(1));
-                TZInfo.init(rs.getString(1), rs.getString(2), rs.getString(3));
+            	String id = rs.getString(1);
+                TZInfo.init(id, rs.getString(2), rs.getString(3));
             }
             
             // Clean up after ourselves
@@ -49,5 +49,8 @@ public class GetTimeZone extends DAO {
         } catch (SQLException se) {
             throw new DAOException(se);
         }
+        
+        // Log map size
+        log.info("Loaded " + TZInfo.getAll().size() + " time zones");
     }
 }

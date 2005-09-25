@@ -22,7 +22,7 @@ public class TestTZInfo extends TestCase {
 
 	public void testTZGetter() {
 		TimeZone est = TimeZone.getTimeZone("US/Eastern");
-		_wrapper = TZInfo.init(est);
+		_wrapper = TZInfo.init(est.getID(), null, null);
 		assertNotNull(_wrapper.getName());
 		assertEquals(est, _wrapper.getTimeZone());
 		assertEquals(_wrapper.getName(), est.getDisplayName(false, TimeZone.LONG));
@@ -35,8 +35,7 @@ public class TestTZInfo extends TestCase {
 	}
 
 	public void testGMT() {
-		TimeZone gmt = TimeZone.getTimeZone("GMT");
-		_wrapper = TZInfo.init(gmt);
+		_wrapper = TZInfo.init(TZInfo.GMT, null, null);
 		assertNotNull(_wrapper.getName());
 		assertEquals("Greenwich Mean Time [GMT+0:00]", _wrapper.toString());
 		assertEquals(123456, _wrapper.getUTC(123456));
@@ -50,13 +49,13 @@ public class TestTZInfo extends TestCase {
 	}
 
 	public void testZoneGeneration() {
-		_wrapper = TZInfo.init("US/Eastern");
+		_wrapper = TZInfo.init("US/Eastern", null, null);
 		assertNotNull(_wrapper.getName());
 		assertEquals("US/Eastern", _wrapper.getID());
 	}
 
 	public void testAbbr() {
-		_wrapper = TZInfo.init("US/Pacific");
+		_wrapper = TZInfo.init("US/Pacific", null, null);
 		assertNull(_wrapper.getAbbr());
 		assertEquals("Pacific Standard Time [GMT-8:00/DST]", _wrapper.toString());
 		_wrapper = TZInfo.init("US/Mountain", null, "MST");
@@ -72,26 +71,29 @@ public class TestTZInfo extends TestCase {
 	}
 
 	public void testLocal() {
+		TZInfo.init(TimeZone.getDefault().getID(), null, null);
+		TZInfo.init(TZInfo.GMT, null, null);
 		TZInfo local = TZInfo.local();
 		assertEquals(TimeZone.getDefault().getID(), local.getID());
-		TZInfo gmt = TZInfo.gmt();
-		assertEquals("GMT", gmt.getID());
+		TZInfo gmt = TZInfo.get(TZInfo.GMT);
+		assertEquals(TZInfo.GMT, gmt.getID());
 	}
 
 	public void testComparable() {
 		_wrapper = TZInfo.init("US/Eastern", "Eastern Time", "EST");
 		TZInfo w2 = TZInfo.init("US/Central", "Central Time", "CT");
 		TZInfo w3 = TZInfo.init("US/Eastern", "Eastern Time", "EST");
+		TZInfo w4 = TZInfo.init("Canada/Atlantic", "Atlantic Time", "AST");
 
+		assertNull(w3);
 		assertEquals(1, _wrapper.compareTo(w2));
 		assertEquals(-1, w2.compareTo(_wrapper));
 		assertEquals(1, _wrapper.compareTo(null));
-		assertEquals(0, _wrapper.compareTo(w3));
+		assertEquals(1, w4.compareTo(_wrapper));
 
 		assertFalse(_wrapper.equals(w2));
 		assertFalse(_wrapper.equals(new Object()));
 		assertFalse(_wrapper.equals(null));
-		assertTrue(_wrapper.equals(w3));
 
 		try {
 			assertEquals(1, _wrapper.compareTo(new Object()));

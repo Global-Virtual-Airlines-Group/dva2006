@@ -88,7 +88,7 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	 * @param tzID A valid JVM time zone ID
 	 */
 	public void setTZ(String tzID) {
-		_tz = TZInfo.init(tzID);
+		_tz = TZInfo.get(tzID);
 	}
 
 	/**
