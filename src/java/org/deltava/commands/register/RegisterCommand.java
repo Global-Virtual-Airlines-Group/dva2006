@@ -18,6 +18,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
+import org.deltava.security.AddressValidationHelper;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
