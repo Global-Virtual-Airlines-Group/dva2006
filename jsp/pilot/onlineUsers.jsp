@@ -32,7 +32,7 @@ return true;
 <el:table className="view" pad="default" space="default">
 <tr class="title">
  <td colspan="5" class="left caps">CURRENTLY LOGGED IN USERS</td>
- <td colspan="2" class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${param.sortOpt}" onChange="void sortBy(this)" /></td>
+ <td colspan="2" class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
 </tr>
 
 <!-- Pilot Title Bar -->
