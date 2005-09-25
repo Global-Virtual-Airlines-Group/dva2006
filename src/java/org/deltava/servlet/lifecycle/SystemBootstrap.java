@@ -178,6 +178,18 @@ public class SystemBootstrap implements ServletContextListener {
 		if (_jdbcPool != null)
 			_jdbcPool.close();
 		
+		// Deregister JDBC divers
+		for (Enumeration en = DriverManager.getDrivers(); en.hasMoreElements(); ) { 
+			Driver driver = (Driver) en.nextElement(); 
+			if (driver.getClass().getClassLoader() == getClass().getClassLoader()) {
+				try {
+					DriverManager.deregisterDriver(driver);
+				} catch (Exception ex) {
+					log.error("Error dregistering " + driver.getClass(), ex);
+				}
+			}
+		} 
+		
 		// Close the Log4J manager
 		LogManager.shutdown();
 	}
