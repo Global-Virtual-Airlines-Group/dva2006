@@ -157,8 +157,8 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false" xpoweredBy="true" 
-			validateXml="false" webXmlFragment="${jspc.webXMLInc}"
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="true" 
+			validateXml="truee" webXmlFragment="${jspc.webXMLInc}"
 	    	outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
@@ -172,7 +172,7 @@
 		
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true"
-		 destfile="${java.io.tmpdir}/build/dva2006_jsp.jar" />
+		 	destfile="${java.io.tmpdir}/build/dva2006_jsp.jar" />
 		 		 
 		<!-- Merge the precompile definitions into web.xml -->
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
@@ -189,7 +189,7 @@
 		<!-- Upload the root data to the app server -->
 		<echo message="Uploading WEB-INF configuration data" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
+		 	remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
 			</fileset>
@@ -207,14 +207,14 @@
 		<!-- Upload configuration files to the app server -->
 		<echo message="Uploading Configuration files" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
+		 	remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
 			<fileset dir="etc" includes="*.*" />
 		</ftp>
 		
 		<!-- Upload static content to the HTTP server -->
 		<echo message="Uploading static content to HTTP server" />
 		<ftp server="${http.ftp.server}" userid="${http.ftp.user}" password="${http.ftp.pwd}"
-		 remotedir="${path.http}" action="send" depends="yes" verbose="yes">
+		 	remotedir="${path.http}" action="send" depends="yes" verbose="yes">
 			<fileset dir="static" includes="**/*" />
 		</ftp>
 	</target>
