@@ -97,19 +97,15 @@ return true;
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
+<c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <tr>
  <td rowspan="2" class="postInfo small">
-<c:if test="${fn:contains(pilot.roles, 'Pilot')}">
+<c:if test="${isPilot}">
  <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld">${pilot.pilotCode}</span><br /></c:if>
  <span class="caps bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
  <el:email user="${pilot}" className="small caps" label="E-MAIL" /><br />
-</c:if>
-<c:if test="${fn:contains(pilot.roles, 'Applicant')}">
-<span class="pri bld">${pilot.name}</span><br />
-<span class="caps">APPLICANT</span><br />
-</c:if>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:choose>
@@ -153,6 +149,11 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <content:activeUser user="${msg.authorID}">
 <span class="ter small bld">CURRENTLY LOGGED IN</span><br />
 </content:activeUser>
+</c:if>
+<c:if test="${!isPilot}">
+<span class="pri bld">${pilot.name}</span><br />
+<span class="caps">APPLICANT</span><br />
+</c:if>
 <c:if test="${!empty pilot.IMHandle}">
 <span class="mid"><a href="aim:goim?screenname=${pilot.IMHandle}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" /></a></span>
 </c:if>
@@ -165,7 +166,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </tr>
 <tr>
  <td class="postBody"><fmt:msg value="${msg.body}" />
-<c:if test="${pilot.hasSignature}">
+<c:if test="${isPilot && pilot.hasSignature}">
 <br />
 <!-- Signature Image for ${pilot.name} -->
 <br />
@@ -232,7 +233,7 @@ notification each time a reply is posted in this Thread.
  <el:cmdbutton ID="MoveButton" label="MOVE THREAD" url="threadmove" post="true" linkID="0x${thread.ID}" />
 </c:if>
 <c:if test="${access.canReply}">
- <el:cmdbutton ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" />
+ <el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" />
 </c:if>
  </td>
 </tr>
