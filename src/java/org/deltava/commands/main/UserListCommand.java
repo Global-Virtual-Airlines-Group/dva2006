@@ -38,6 +38,7 @@ public class UserListCommand extends AbstractCommand {
         ctx.setAttribute("pilots", users, REQUEST);
         
         // Save combobox options
+        ctx.setAttribute("sortOpt", sortOpt, REQUEST);
         ctx.setAttribute("sortOptions", ComboUtils.fromArray(PilotComparator.TYPES), REQUEST);
 
         // Forward to the JSP
