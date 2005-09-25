@@ -89,8 +89,8 @@ return true;
 <tr>
  <td class="label">Security Roles</td>
  <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
-</c:if>
 </tr>
+</c:if>
 <tr>
  <td class="label">Rank / Equipment</td>
 <c:if test="${access.canPromote}">
@@ -164,7 +164,7 @@ return true;
  <td class="label">Update Signature Image</td>
  <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
 <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
-pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span></td>
+pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span></td>
 </tr>
 <tr>
  <td class="label">Display Options</td>
