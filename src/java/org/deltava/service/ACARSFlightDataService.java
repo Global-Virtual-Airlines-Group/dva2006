@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
 
 import org.deltava.dao.*;
@@ -53,14 +54,18 @@ public class ACARSFlightDataService extends WebDataService {
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
 		
-		// Write the positions
+		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
 		for (Iterator i = routePoints.iterator(); i.hasNext(); ) {
-			MapEntry entry = (MapEntry) i.next();
+			GeoLocation entry = (GeoLocation) i.next();
 			Element e = new Element("pos");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			e.setAttribute("color", entry.getIconColor());
-			e.addContent(new CDATA(entry.getInfoBox()));
+			if (entry instanceof MapEntry) {
+				MapEntry me = (MapEntry) entry;
+				e.setAttribute("color", me.getIconColor());
+				e.addContent(new CDATA(me.getInfoBox()));
+			}
+			
 			re.addContent(e);
 		}
 		

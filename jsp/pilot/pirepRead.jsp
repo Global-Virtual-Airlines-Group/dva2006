@@ -20,8 +20,8 @@
 <map:api version="1" />
 <map:vml-ie />
 </c:if>
-<c:if test="${scoreCR}">
 <script language="JavaScript" type="text/javascript">
+<c:if test="${scoreCR}">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -31,18 +31,19 @@ setSubmit();
 disableButton('CRButton');
 return true;
 }
+</c:if>
 <c:if test="${fn:isACARS(pirep)}">
 <content:sysdata var="imgPath" name="path.img" />
 function getACARSData()
 {
-// Disable forms
+// Disable checkboxes
 var f = document.forms[0];
 f.showFDR.disabled = true;
 f.showRoute.disabled = true;
 
 // Build the XML Requester
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "acars_map.ws?id=${pirep.ID}", true);
+xmlreq.open("GET", "acars_pirep.ws?id=${fn:ACARS_ID(pirep)}", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -51,18 +52,20 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
-		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, label.data);
+		if (a.getAttribute("color")) {
+			var mrk = googleMarker('${imgPath}', a.getAttribute("color"), p, label.data);
+			routeMarkers.push(mrk);
+		}
+		
 		routePoints.push(p);
-		routeMarkers.push(mrk);
 	} // for
 	
 	// Create line
 	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
 	
 	// Enable checkboxes
-	var f = document.forms[0];
-	f.showFDR.disabled = true;
-	f.showRoute.disabled = true;
+	f.showFDR.disabled = false;
+	f.showRoute.disabled = false;
 	return true;
 } // function
 
@@ -71,7 +74,6 @@ return true;
 }
 </c:if>
 </script>
-</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -82,6 +84,9 @@ return true;
 <div id="main">
 <c:if test="${scoreCR}">
 <form method="post" action="pirepscore.do?id=${fn:hex(pirep.ID)}" onsubmit="return validate(this)">
+</c:if>
+<c:if test="${fn:isACARS(pirep)}">
+<form method="get" action="pirep.do?id=${fn:hex(pirep.ID)}" onsubmit="return false">
 </c:if>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
@@ -217,7 +222,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR}"></form></c:if>
+<c:if test="${scoreCR || fn:isACARS(pirep)}"></form></c:if>
 <content:copyright />
 </div>
 <c:if test="${googleMap}">
