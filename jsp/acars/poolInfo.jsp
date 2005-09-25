@@ -14,8 +14,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -38,11 +38,12 @@
  <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
 <c:if test="${con.flightID == 0}">
  <td class="bld">N/A</td>
+ <td>N/A</td>
 </c:if>
 <c:if test="${con.flightID > 0}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
+ <td><el:cmd url="acarsinfo" linkID="0x${con.flightID}"><fmt:int value="${con.flightID}" /></el:cmd></td>
 </c:if>
- <td>${con.flightID}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
  <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
