@@ -94,6 +94,13 @@ The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>
 <br />
 The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been deleted.<br />
 </c:if>
+<c:if test="${isMoved}">
+<!-- Thread Moved -->
+<div class="updateHdr">Water Cooler Message Thread Moved</div>
+<br />
+The discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has been moved to the 
+channel <span class="sec bld">${newChannel}</span>.<br />
+</c:if>
 <br />
 <c:if test="${!isDelete}">
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return

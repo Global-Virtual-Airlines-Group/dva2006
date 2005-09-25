@@ -64,7 +64,7 @@ public class ThreadMoveCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/cooler/moderateThread.jsp");
+		result.setURL("/jsp/cooler/threadUpdate.jsp");
 		result.setSuccess(true);
 	}
 }
