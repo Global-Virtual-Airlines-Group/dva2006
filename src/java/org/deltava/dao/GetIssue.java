@@ -102,6 +102,36 @@ public class GetIssue extends DAO {
 			throw new DAOException(se);
 		}
 	}
+
+	/**
+	 * Searches all Issues for a particular phrase.
+	 * @param searchStr the search phrase
+	 * @param includeComments TRUE if Issue Comments should be searched
+	 * @return a List of Issues
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List search(String searchStr, boolean includeComments) throws DAOException {
+	
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
+				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
+				+ "WHERE (I.DESCRIPTION LIKE ?)");
+		if (includeComments)
+			sqlBuf.append(" OR (IC.COMMENTS LIKE ?)");
+			
+		sqlBuf.append("GROUP BY I.ID");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, "%" + searchStr + "%");
+			if (includeComments)
+				_ps.setString(2, "%" + searchStr + "%");
+			
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 	
 	/**
 	 * Helper method to return all comments for a particular issue.
