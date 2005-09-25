@@ -341,7 +341,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setTimeFormat(rs.getString(28));
 			a.setNumberFormat(rs.getString(29));
 			a.setAirportCodeType(rs.getInt(30));
-			a.setTZ(TZInfo.init(rs.getString(31)));
+			a.setTZ(TZInfo.get(rs.getString(31)));
 			a.setUIScheme(rs.getString(32));
 
 			// Add to results and cache

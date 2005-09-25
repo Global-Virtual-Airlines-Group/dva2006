@@ -147,7 +147,7 @@ public abstract class AbstractCommand implements Command {
 		}
 		
 		// Convert from user's time zone, or default zone to the JVM's local zone
-		TZInfo tz =  (ctx.getUser() == null) ? TZInfo.init(SystemData.get("time.timezone")) : ctx.getUser().getTZ();
+		TZInfo tz =  (ctx.getUser() == null) ? TZInfo.get(SystemData.get("time.timezone")) : ctx.getUser().getTZ();
 		DateTime dtf = new DateTime(dt, tz);
 		dtf.convertTo(TZInfo.local());
 		return dtf.getDate();

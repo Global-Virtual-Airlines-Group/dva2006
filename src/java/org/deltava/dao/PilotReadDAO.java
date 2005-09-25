@@ -256,7 +256,7 @@ abstract class PilotReadDAO extends PilotDAO {
          p.setLoginCount(rs.getInt(17));
          p.setLastLogin(rs.getTimestamp(18));
          p.setLastLogoff(rs.getTimestamp(19));
-         p.setTZ(TZInfo.init(rs.getString(20)));
+         p.setTZ(TZInfo.get(rs.getString(20)));
          p.setNotifyOption(Person.FLEET, rs.getBoolean(21));
          p.setNotifyOption(Person.EVENT, rs.getBoolean(22));
          p.setNotifyOption(Person.NEWS, rs.getBoolean(23));
