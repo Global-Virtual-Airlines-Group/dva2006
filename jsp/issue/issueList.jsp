@@ -42,11 +42,9 @@ return true;
  <td colspan="2" class="left">ISSUE LIST</td>
  <td colspan="2">BY STATUS <el:combo name="op" size="1" options="${statuses}" firstEntry="< ALL >" value="${status}" onChange="void setFilter(this, 'op')" /></td>
  <td colspan="2">SORT BY <el:combo name="sortType" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void setFilter(this, 'sortType')" /></td>
- <td colspan="3">
-<c:if test="${access.canCreate}">
- <el:cmdbutton url="issue" op="edit" label="NEW ISSUE" />
-</c:if>
-<content:filter roles="Developer"><el:cmdbutton url="issues" linkID="0x${pageContext.request.userPrincipal.ID}" label="MY ISSUES" /></content:filter>
+ <td colspan="3"><el:cmd url="isearch">SEARCH</el:cmd>
+<c:if test="${access.canCreate}"> <el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if>
+<content:filter roles="Developer"> <el:cmd url="issues" linkID="0x${pageContext.request.userPrincipal.ID}">MY ISSUES</el:cmd></content:filter></td>
 </tr>
 
 <!-- Table Header Bar-->
