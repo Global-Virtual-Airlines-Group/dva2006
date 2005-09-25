@@ -8,6 +8,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.cooler.Emoticons;
 
+import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -41,6 +43,20 @@ public class MessageFormatTag extends TagSupport {
 		imgbuf.append(".gif\" border=\"0\" />");
 		return imgbuf.toString();
 	}
+	
+	/**
+	 * Checks for the inclusion of common.js in the request.
+	 * @return TagSupport.SKIP_BODY
+	 * @throws JspException if common.js is not included
+	 */
+	public int doStartTag() throws JspException {
+
+		// Ensure that the common JS file has been included
+    	if (!ContentHelper.containsContent(pageContext, "JS", "common"))
+    		throw new IllegalStateException("common.js not included in request");
+    	
+    	return SKIP_BODY;
+	}
 
 	/**
 	 * Renders the formatted message text to the JSP output stream.
@@ -56,7 +72,7 @@ public class MessageFormatTag extends TagSupport {
 			while (tkns.hasMoreTokens()) {
 				String token = tkns.nextToken();
 				if (token.startsWith("http://") || token.startsWith("https://")) {
-					out.print("<a href=\"");
+					out.print("<a rel=\"external\" href=\"");
 					out.print(token);
 					out.print("\">");
 					out.print(StringUtils.stripInlineHTML(token));
