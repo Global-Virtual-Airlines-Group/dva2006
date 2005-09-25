@@ -80,7 +80,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setTimeFormat(ctx.getParameter("tf"));
 		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
-		a.setTZ(TZInfo.init(ctx.getParameter("tz")));
+		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
 
 		// Save the registration host name

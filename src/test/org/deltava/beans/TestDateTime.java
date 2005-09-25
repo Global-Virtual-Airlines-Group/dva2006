@@ -1,7 +1,6 @@
 package org.deltava.beans;
 
 import java.util.Date;
-import java.util.TimeZone;
 import java.text.SimpleDateFormat;
 
 import org.hansel.CoverageDecorator;
@@ -20,7 +19,8 @@ public class TestDateTime extends TestCase {
 	
 	protected void setUp() throws Exception {
 		super.setUp();
-		_tz = TZInfo.init(TimeZone.getTimeZone("US/Eastern"));
+		TZInfo.reset();
+		_tz = TZInfo.init("US/Eastern", null, null);
 		assertNotNull(_tz);		
 	}
 	
@@ -35,6 +35,8 @@ public class TestDateTime extends TestCase {
 		_dt = new DateTime(d, _tz);
 		assertEquals(_dt.getDate().getTime(), d.getTime());
 		assertEquals(_dt.getTimeZone(), _tz);
+		DateTime dt2 = new DateTime(d);
+		assertEquals(_dt.getDate().getTime(), dt2.getDate().getTime());
 	}
 	
 	public void testComparators() {
@@ -71,7 +73,7 @@ public class TestDateTime extends TestCase {
 
 	public void testDifferentZones() {
 		long t1 = System.currentTimeMillis();
-		TZInfo cst = TZInfo.init(TimeZone.getTimeZone("US/Central"));
+		TZInfo cst = TZInfo.init("US/Central", null, null);
 		
 		_dt = new DateTime(new Date(t1), _tz);
 		DateTime dt2 = new DateTime(new Date(t1), cst);
@@ -85,7 +87,7 @@ public class TestDateTime extends TestCase {
 	
 	public void testZoneConversion() {
 		long t1 = System.currentTimeMillis();
-		TZInfo cst = TZInfo.init(TimeZone.getTimeZone("US/Central"));
+		TZInfo cst = TZInfo.init("US/Central", null, null);
 			
 		_dt = new DateTime(new Date(t1), _tz);
 		DateTime dt2 = new DateTime(new Date(t1), cst);
@@ -100,6 +102,10 @@ public class TestDateTime extends TestCase {
 		dt3.convertTo(_tz);
 		assertTrue(dt3.equals(_dt));
 		assertEquals(dt3.getDate().getTime(), _dt.getDate().getTime());
+		
+		assertNull(DateTime.convert(null, _tz));
+		Date d2 = DateTime.convert(dt2.getDate(), _tz);
+		assertEquals(d2.getTime(), t1);
 	}
 	
 	public void testToString() throws Exception {

@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 
 public class DateFormatTag extends TagSupport {
    
-   private static final TZInfo _defaultTZ = TZInfo.init(SystemData.get("time.timezone"));
+   private static final TZInfo _defaultTZ = TZInfo.get(SystemData.get("time.timezone"));
 
 	private static final int DATE_TIME = 0;
 	private static final int DATE_ONLY = 1;
@@ -130,7 +130,7 @@ public class DateFormatTag extends TagSupport {
 	 * @param tzName the time zone name
 	 */
 	public void setTzName(String tzName) {
-		_tz = TZInfo.init(tzName);
+		_tz = TZInfo.get(tzName);
 	}
 
 	/**

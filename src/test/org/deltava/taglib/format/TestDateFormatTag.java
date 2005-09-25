@@ -33,7 +33,7 @@ public class TestDateFormatTag extends AbstractTagTestCase {
         Pilot p = new Pilot("John", "Smith");
         p.setDateFormat("yy MM dd");
         p.setTimeFormat("hh:mm");
-        p.setTZ(TZInfo.init("US/Eastern"));
+        p.setTZ(TZInfo.init("US/Eastern", null, null));
         HttpServletRequest hreq = _req;
         HttpSession s = hreq.getSession(true);
         s.setAttribute(CommandContext.USER_ATTR_NAME, p);

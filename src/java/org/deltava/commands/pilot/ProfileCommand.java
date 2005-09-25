@@ -73,7 +73,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setIMHandle(ctx.getParameter("imHandle"));
 			p.setEmail(ctx.getParameter("email"));
 			p.setEmailAccess(Integer.parseInt(ctx.getParameter("privacyOption")));
-			p.setTZ(TZInfo.init(ctx.getParameter("tz")));
+			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setDateFormat(ctx.getParameter("df"));
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));

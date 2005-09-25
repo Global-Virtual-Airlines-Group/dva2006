@@ -48,7 +48,7 @@ public class TestAirport extends TestCase {
 	}
 	
 	public void testTZUpdate() {
-	    TZInfo cst = TZInfo.init("US/Central");
+	    TZInfo cst = TZInfo.init("US/Central", null, null);
 	    _a.setTZ("US/Central");
 	    assertTrue(cst.equals(_a.getTZ()));
 	    _a.setTZ(cst);

@@ -174,7 +174,7 @@ public class GetServInfo extends DAO {
 									}
 
 									// We get the update time in UTC, so convert to local
-									DateTime dt = new DateTime(info.getValidDate(), TZInfo.gmt());
+									DateTime dt = new DateTime(info.getValidDate(), TZInfo.get(TZInfo.GMT));
 									dt.convertTo(TZInfo.local());
 									info.setValidDate(dt.getDate());
 									log.debug("Valid as of " + dt.toString());
