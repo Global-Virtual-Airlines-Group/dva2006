@@ -1,7 +1,10 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.mail;
+package org.deltava.security;
+
+import javax.servlet.http.HttpSession;
 
 import org.deltava.beans.system.AddressValidation;
+import org.deltava.commands.CommandContext;
 import org.deltava.crypt.*;
 
 import org.deltava.util.Base64;
@@ -65,5 +68,17 @@ public final class AddressValidationHelper {
 		   buf.append('=');
 	   
 	   return buf.toString();
+   }
+   
+   /**
+    * Removes the <i>address invalid</i> flag from an HTTP session.
+    * @param s the HTTP session
+    * @see CommandContext#ADDRINVALID_ATTR_NAME
+    */
+   public static void clearSessionFlag(HttpSession s) {
+	   if (s == null)
+		   return;
+	   
+	   s.removeAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
    }
 }
