@@ -7,6 +7,7 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -99,6 +100,10 @@ public class LoginCommand extends AbstractCommand {
 			   cData.setScreenSize(1024, 768);
 			}
 			
+			// Check if we have an address validation entry outstanding
+			GetAddressValidation avdao = new GetAddressValidation(con);
+			AddressValidation av = avdao.get(p.getID());
+			
 			// Start the transaction
 			ctx.startTX();
 
@@ -115,6 +120,13 @@ public class LoginCommand extends AbstractCommand {
 			s.setAttribute(CommandContext.USER_ATTR_NAME, p);
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
+			if (av != null) {
+				log.info("Invalidated e-mail address for " + p.getName());
+				s.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE);
+				ctx.setAttribute("next_url", "pilotcenter.do", SESSION);
+			} else {
+				ctx.setAttribute("next_url", "home.do", SESSION);			
+			}
 
 			// Add the user to the User pool
 			UserPool.addPerson(p, s.getId());
@@ -136,9 +148,6 @@ public class LoginCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Set the next URL after the CookieCheck command
-		ctx.setAttribute("next_url", "home.do", SESSION);
-
 		// Check if we are going to save the first/last names
 		boolean saveName = Boolean.valueOf(ctx.getParameter("saveInfo")).booleanValue();
 		if (saveName) {
@@ -151,9 +160,17 @@ public class LoginCommand extends AbstractCommand {
 			ctx.getResponse().addCookie(fnc);
 
 			Cookie lnc = new Cookie("dva_lname", p.getLastName());
-			lnc.setMaxAge(86400);
 			lnc.setDomain(ctx.getRequest().getServerName());
+			fnc.setMaxAge(cookieAge);
 			lnc.setPath("/login.do");
+			ctx.getResponse().addCookie(lnc);
+		} else {
+			Cookie fnc = new Cookie("dva_fname", "");
+			fnc.setMaxAge(0);
+			ctx.getResponse().addCookie(fnc);
+			
+			Cookie lnc = new Cookie("dva_lname", "");
+			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
 		}
 

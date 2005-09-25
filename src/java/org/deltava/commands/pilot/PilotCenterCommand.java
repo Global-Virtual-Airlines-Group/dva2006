@@ -3,6 +3,8 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.sql.Connection;
 
+import javax.servlet.http.HttpSession;
+
 import org.deltava.beans.*;
 import org.deltava.beans.system.TransferRequest;
 
@@ -30,6 +32,20 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 	 * @throws CommandException if an error (typically database) occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the command results
+		CommandResult result = ctx.getResult();
+		
+		// Check if we have a invalid address session attribute
+		HttpSession s = ctx.getSession();
+		Boolean attrValue = (Boolean) s.getAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
+		boolean invalidAddr = (attrValue == null) ? false : attrValue.booleanValue();
+		if (invalidAddr) {
+			result.setType(CommandResult.REDIRECT);
+			result.setURL("emailupd.do");
+			result.setSuccess(true);
+			return;
+		}
 
 		Pilot p = null;
 		try {
@@ -39,7 +55,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.getSession().setAttribute(CommandContext.USER_ATTR_NAME, p);
+			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
 			
 			// Save the pilot location
 			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);
@@ -107,8 +123,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		if (acImgs != null)
 		   ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
 
-		// Redirect to the home page
-		CommandResult result = ctx.getResult();
+		// Forward to the JSP
 		result.setURL("/jsp/pilot/pilotCenter.jsp");
 		result.setSuccess(true);
 	}
