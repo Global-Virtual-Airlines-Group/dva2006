@@ -1,6 +1,7 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.format;
 
+import java.net.URL;
 import java.util.StringTokenizer;
 
 import javax.servlet.jsp.*;
@@ -72,8 +73,12 @@ public class MessageFormatTag extends TagSupport {
 			while (tkns.hasMoreTokens()) {
 				String token = tkns.nextToken();
 				if (token.startsWith("http://") || token.startsWith("https://")) {
-					out.print("<a rel=\"external\" href=\"");
+					URL url = new URL(token); 
+					out.print("<a href=\"");
 					out.print(token);
+					if (!SystemData.get("airline.url").equals(url.getHost()))
+						out.print("\" rel=\"external");
+					
 					out.print("\">");
 					out.print(StringUtils.stripInlineHTML(token));
 					out.print("</a>");
