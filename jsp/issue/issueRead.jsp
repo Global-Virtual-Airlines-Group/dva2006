@@ -26,9 +26,9 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<body onload="void initLinks()">
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="versions" name="issue_track.versions" />
 
 <!-- Main Body Frame -->
@@ -91,7 +91,7 @@ return true;
 <tr>
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /></td>
- <td class="data" valign="top"><fmt:text value="${comment.comments}" /></td>
+ <td class="data" valign="top"><fmt:msg value="${comment.comments}" /></td>
 </tr>
 </c:forEach>
 </c:if>
