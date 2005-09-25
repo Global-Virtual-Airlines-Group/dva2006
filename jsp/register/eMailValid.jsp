@@ -18,7 +18,7 @@
 <div id="main">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
-Your e-mail address (${person.email}) has been successfuly verified. This address will be used 
+Your e-mail address (${pilot.email}) has been successfuly verified. This address will be used 
 for all <content:airline />-related correspondence in the future.<br />
 <c:if test="${isApplicant}">
 <br />
@@ -26,6 +26,7 @@ Thank you for verifying your e-mail address. This is an important step in the re
 process here at <content:airline />.<br />
 </c:if>
 <c:if test="${!empty pilot}">
+<br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">click here</el:cmd>.<br />
 </c:if>
 <br />

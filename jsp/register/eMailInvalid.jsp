@@ -41,12 +41,10 @@ return true;
 e-mail address threfore cannot be validated. Please type in the validation code you received within the 
 e-mail message, into the space provided below.</td>
 </tr>
-<c:if test="${empty person}">
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="32" max="80" value="" /></td>
+ <td class="data"><el:text name="email" idx="*" size="32" max="80" value="${!empty addr ? addr : param.email}" /></td>
 </tr>
-</c:if>
 <tr>
  <td class="label">Validation Code</td>
  <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${!empty code ? code : param.code}" /></td>
