@@ -10,9 +10,7 @@ import org.deltava.beans.system.UserData;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.mail.AddressValidationHelper;
-
-import org.deltava.util.StringUtils;
+import org.deltava.security.AddressValidationHelper;
 
 /**
  * A Web Site Command to validate e-mail addresses.
@@ -33,16 +31,9 @@ public class ValidateEmailCommand extends AbstractCommand {
 		// Get the command result
 		CommandResult result = ctx.getResult();
 
-		// Since the ID might not be hex-encoded get it a different way
-		int id = 0;
-		try {
-			id = StringUtils.parseHex((String) ctx.getCmdParameter(ID, "0"));
-		} catch (Exception e) {
-			id = 0;
-		}
-
-		// If no valid user ID provided, go direct to the JSP
-		if ((id == 0) && (ctx.getParameter("email") == null)) {
+		// If no e-mail address provided, go direct to the JSP
+		String addr = ctx.getParameter("email");
+		if (addr == null) {
 			result.setURL("/jsp/register/eMailInvalid.jsp");
 			result.setSuccess(true);
 			return;
@@ -55,10 +46,11 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 			// Get the e-mail validation information
 			GetAddressValidation avdao = new GetAddressValidation(con);
-			av = (id == 0) ? av = avdao.get(id) : avdao.getAddress(ctx.getParameter("email"));
+			av = avdao.getAddress(addr);
 			if (av == null) {
 				ctx.release();
 				ctx.setAttribute("invalidInfo", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("addr", addr, REQUEST);
 				ctx.setAttribute("code", AddressValidationHelper.formatHash(ctx.getParameter("code")), REQUEST);
 				
 				// Forward to the JSP
@@ -69,22 +61,22 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 			// Get the User Data
 			GetUserData usrdao = new GetUserData(con);
-			UserData usr = usrdao.get(id);
+			UserData usr = usrdao.get(av.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot/Applicant ID - " + id);
+				throw new CommandException("Invalid Pilot/Applicant ID - " + av.getID());
 
 			// Get the applicant or pilot
 			if (usr.isApplicant()) {
 				GetApplicant dao = new GetApplicant(con);
-				p = dao.get(id);
+				p = dao.get(av.getID());
 			} else {
 				GetPilot dao = new GetPilot(con);
-				p = dao.get(id);
+				p = dao.get(av.getID());
 			}
 
 			// Check that the user exists
 			if (p == null)
-				throw new CommandException("Invalid Pilot/Applicant - " + id);
+				throw new CommandException("Invalid Pilot/Applicant - " + av.getID());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -94,9 +86,10 @@ public class ValidateEmailCommand extends AbstractCommand {
 		// Make sure we're either anonymous or the same user
 		if ((ctx.isAuthenticated()) && (ctx.getUser().getID() != p.getID()))
 			throw securityException(ctx.getUser() + " attempting to Validate for " + p.getName());
-
+		
 		// If there's no validation record on file, then assume we're valid
 		if (av == null) {
+			AddressValidationHelper.clearSessionFlag(ctx.getSession());
 			result.setURL("/jsp/register/eMailValid.jsp");
 			result.setSuccess(true);
 			return;
@@ -113,6 +106,9 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		// Update the e-mail address
 		p.setEmail(av.getAddress());
+		
+		// Remove the session attribute
+		AddressValidationHelper.clearSessionFlag(ctx.getSession());
 
 		try {
 			Connection con = ctx.getConnection();
@@ -145,7 +141,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 		// Save the person in the request
 		ctx.setAttribute("person", p, REQUEST);
 		ctx.setAttribute("isApplicant", Boolean.valueOf(p instanceof Applicant), REQUEST);
-
+		
 		// Forward to the JSP
 		result.setURL("/jsp/register/eMailValid.jsp");
 		result.setSuccess(true);

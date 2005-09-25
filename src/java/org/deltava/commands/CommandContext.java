@@ -1,8 +1,7 @@
 package org.deltava.commands;
 
-import java.io.Serializable;
-import java.sql.Connection;
 import java.util.*;
+import java.sql.Connection;
 
 import javax.servlet.http.*;
 
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @see Command
  */
 
-public class CommandContext implements Serializable, SecurityContext {
+public class CommandContext implements java.io.Serializable, SecurityContext {
 
     // List of roles for anonymous users
     private static final List ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
@@ -34,6 +33,7 @@ public class CommandContext implements Serializable, SecurityContext {
     public static final String SU_ATTR_NAME ="superUser";
     public static final String SCREENX_ATTR_NAME = "screenXSize";
     public static final String SCREENY_ATTR_NAME = "screenYSize";
+    public static final String ADDRINVALID_ATTR_NAME = "emailInvalid";
 
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;

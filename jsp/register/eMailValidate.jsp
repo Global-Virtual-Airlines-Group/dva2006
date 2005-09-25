@@ -37,23 +37,31 @@ return true;
  <td colspan="2">INVALID E-MAIL ADDRESS</td>
 </tr>
 <tr>
+<c:if test="${empty addr}">
  <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
 membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address 
 in the space provided below.</td>
+</c:if>
+<c:if test="${!empty addr}">
+ <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
+membership here at <content:airline /> is providing a valid e-mail address. You should have received an e-mail 
+message in your mailbox at ${addr.address} with a validation code. Please provide the validation code in the 
+space below.</td>
+</c:if>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="32" max="80" value="${addr.address}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="40" max="80" value="${addr.address}" /></td>
 </tr>
 <c:if test="${!empty addr}">
 <tr>
  <td class="label">Validation Code</td>
- <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${param.code}" /></td>
+ <td class="data"><el:text name="code" idx="*" size="26" max="32" value="${param.code}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty system_message}">
 <tr>
- <td colspan="2" class="error mid">${system_message}</td>
+ <td colspan="2" class="error mid bld">${system_message}</td>
 </tr>
 </c:if>
 

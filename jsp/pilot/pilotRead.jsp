@@ -127,13 +127,16 @@
  <td>
 <el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="VIEW LOG BOOK" />
 <c:if test="${access.canEdit}">
-&nbsp;<el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
+ <el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
 <c:if test="${access.canChangeStatus}">
-&nbsp;<el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
+ <el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
 </c:if>
+<content:filter roles="HR">
+ <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
+</content:filter>
 <content:filter roles="Admin">
-&nbsp;<el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
+ <el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
 </content:filter>
  </td>
 </tr>
