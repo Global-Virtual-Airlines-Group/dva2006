@@ -125,23 +125,34 @@ public class GetAssignment extends DAO {
 	}
 
 	/**
-	 * Return all Flight Assignment for a particular aircraft type.
+	 * Return all Flight Assignment for a particular aircraft type and status.
 	 * @param eqType the Equipment type
+	 * @param status the status code, or -1 if none
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByEquipmentType(String eqType) throws DAOException {
+	public List getByEquipmentType(String eqType, int status) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?)");
+		if (status != -1)
+			sqlBuf.append(" AND (STATUS=?)");
+		
+		sqlBuf.append(" ORDER BY STATUS, ASSIGNED_ON DESC");
+		
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?) ORDER BY STATUS, ASSIGNED_ON DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, eqType);
+			if (status != -1)
+				_ps.setInt(2, status);
+			
 			List results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EQTYPE=?)");
 			_ps.setString(1, eqType);
 			loadLegs(results);
-
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -37,8 +37,11 @@ public class AssignmentListCommand extends AbstractViewCommand {
       ViewContext vc = initView(ctx);
       
       // Get status and equipment type
-      String eqType = ctx.getParameter("eqType");
       String status = ctx.getParameter("status");
+      int statusCode = StringUtils.arrayIndexOf(AssignmentInfo.STATUS, status);
+      String eqType = ctx.getParameter("eqType");
+      if ("-".equals(eqType))
+    	  eqType = null;
 
       try {
          Connection con = ctx.getConnection();
@@ -52,14 +55,10 @@ public class AssignmentListCommand extends AbstractViewCommand {
          dao.setQueryStart(vc.getStart());
          
          // Figure out what call to make
-         if (status != null) {
-            int statusCode = StringUtils.arrayIndexOf(AssignmentInfo.STATUS, status);
-            if (statusCode == -1)
-               throw new CommandException("Invalid Assignment Status - " + status);
-            
+         if ((status != null) && (eqType == null)) {
             vc.setResults(dao.getByStatus(statusCode));
          } else if (eqType != null) {
-            vc.setResults(dao.getByEquipmentType(eqType));
+            vc.setResults(dao.getByEquipmentType(eqType, statusCode));
          } else {
             vc.setResults(dao.getByStatus(AssignmentInfo.AVAILABLE));
          }
