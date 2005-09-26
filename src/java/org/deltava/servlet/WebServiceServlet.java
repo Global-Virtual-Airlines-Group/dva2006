@@ -51,7 +51,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	 */
 	public void init() throws ServletException {
 		log.info("Initializing");
-		
+
 		// Load the services
 		try {
 			_svcs = ServiceFactory.load(SystemData.get("config.services"));
@@ -103,13 +103,13 @@ public class WebServiceServlet extends BasicAuthServlet {
 		Pilot usr = (Pilot) req.getUserPrincipal();
 		if (usr == null)
 			usr = authenticate(req);
-		
-		//	Check if we need to be authenticated
+
+		// Check if we need to be authenticated
 		if (svc.isSecure() && (usr == null)) {
 			challenge(rsp, WS_REALM);
 			return;
 		}
-		
+
 		// Get the JDBC Connection Pool
 		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 
@@ -120,24 +120,26 @@ public class WebServiceServlet extends BasicAuthServlet {
 				c = pool.getConnection();
 				((WebDataService) svc).setConnection(c);
 			}
-			
+
 			// Generate the service context
 			ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
 			ctx.setUser(usr);
-			
+
 			// Execute the Web Service
 			if (svc.isLogged())
 				log.info("Executing Web Service " + svc.getClass().getName());
-			
+
 			rsp.setStatus(svc.execute(ctx));
 		} catch (DAOException de) {
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} catch (ServiceException se) {
 			rsp.sendError(se.getCode(), se.getMessage());
 		} finally {
-		   pool.release(c);
-			svc.release();	
+			pool.release(c);
 		}
+		
+		// Disable the cache
+		rsp.setHeader("Cache-Control", "no-cache");
 	}
 
 	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {

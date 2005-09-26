@@ -35,11 +35,4 @@ public abstract class WebService {
    public boolean isLogged() {
 	   return true;
    }
-   
-   /**
-    * Releases any state variables or resources used by the web service.
-    */
-   public void release() {
-      // NOOP
-   }
 }
