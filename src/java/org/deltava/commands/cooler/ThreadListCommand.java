@@ -69,7 +69,7 @@ public class ThreadListCommand extends AbstractViewCommand {
             // Get the Message Threads for this channel - add by 10% for filtering
             GetCoolerThreads dao2 = new GetCoolerThreads(con);
             dao2.setQueryStart(vc.getStart());
-            dao2.setQueryMax(Math.round(vc.getCount() * 1.15f));
+            dao2.setQueryMax(Math.round(vc.getCount() * 1.25f));
             
             // Initialize the access controller and the set to store pilot IDs
             CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
