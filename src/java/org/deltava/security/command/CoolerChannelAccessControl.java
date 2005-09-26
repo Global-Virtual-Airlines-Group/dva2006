@@ -7,6 +7,7 @@ import org.deltava.commands.CommandSecurityException;
 import org.deltava.beans.cooler.Channel;
 
 import org.deltava.util.RoleUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * An Access Controller for Water Cooler channels.
@@ -40,6 +41,10 @@ public class CoolerChannelAccessControl extends AccessControl {
      */
     public void validate() throws CommandSecurityException {
        validateContext();
+       
+       // Validate airlines
+       if ((_c != null) && (!_c.getAirlines().contains(SystemData.get("airline.code"))))
+    	   return;
 
         // Set state objects
         _canAccess = (_c == null) ? true : RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles());
