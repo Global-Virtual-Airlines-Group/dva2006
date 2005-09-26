@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Mass Mailing Sent</title>
+<title><content:airline /> User Switched</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 <content:copyright visible="false" />
