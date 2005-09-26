@@ -50,16 +50,16 @@ public class PointTag extends GoogleMapEntryTag {
 			out.print(',');
 			out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
 			out.print(");");
+			
+			// Mark the JavaScript marker variable as included
+			if (_jsVarName != null)
+				ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+		   release();
 		}
 
-		// Mark the JavaScript marker variable as included
-		if (_jsVarName != null)
-			ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
-
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 }

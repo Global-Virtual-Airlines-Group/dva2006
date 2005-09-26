@@ -71,6 +71,7 @@ public class PageUpTag extends ScrollTag {
             return EVAL_PAGE;
 
         super.doEndTag();
+        release();
         return EVAL_PAGE;
     }
 }

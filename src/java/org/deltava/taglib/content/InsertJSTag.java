@@ -23,8 +23,10 @@ public class InsertJSTag extends InsertContentTag {
 	public int doEndTag() throws JspException {
 
 		// Check if the content has already been added
-		if (ContentHelper.containsContent(pageContext, "JS", _resourceName) && (!_forceInclude))
-			return EVAL_PAGE;
+		if (ContentHelper.containsContent(pageContext, "JS", _resourceName) && (!_forceInclude)) {
+		   release();
+		   return EVAL_PAGE;
+		}
 
 		JspWriter out = pageContext.getOut();
 		try {
@@ -42,6 +44,7 @@ public class InsertJSTag extends InsertContentTag {
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "JS", _resourceName);
+		release();
 		return EVAL_PAGE;
 	}
 }

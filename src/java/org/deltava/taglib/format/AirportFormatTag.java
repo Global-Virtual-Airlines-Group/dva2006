@@ -110,6 +110,7 @@ public class AirportFormatTag extends TagSupport {
          throw new JspException(e);
       }
 
+      release();
       return EVAL_PAGE;
    }
 }

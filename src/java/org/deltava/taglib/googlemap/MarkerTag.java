@@ -108,20 +108,19 @@ public class MarkerTag extends GoogleMapEntryTag {
             out.print(");");
          }
          
+         // Mark the JavaScript point variable as included
+         if (_jsPointVarName != null)
+            ContentHelper.addContent(pageContext, API_JS_NAME, _jsPointVarName);
+         
+         // Mark the JavaScript marker variable as included
+         if (_jsVarName != null)
+            ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
       } catch (Exception e) {
          throw new JspException(e);
+      } finally {
+         release();
       }
       
-      // Mark the JavaScript point variable as included
-      if (_jsPointVarName != null)
-         ContentHelper.addContent(pageContext, API_JS_NAME, _jsPointVarName);
-      
-      // Mark the JavaScript marker variable as included
-      if (_jsVarName != null)
-         ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
-      
-      // Release state and return
-      release();
       return EVAL_PAGE;
    }
 }

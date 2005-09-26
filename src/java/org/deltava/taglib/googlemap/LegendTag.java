@@ -84,10 +84,10 @@ public class LegendTag extends TagSupport {
 				jw.print("</span>");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+		   release();
 		}
 
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 }
