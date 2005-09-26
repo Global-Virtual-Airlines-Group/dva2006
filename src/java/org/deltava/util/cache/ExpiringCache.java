@@ -1,6 +1,8 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.util.cache;
 
+import java.util.Iterator;
+
 /**
  * An object cache that supports expiration dates.
  * @author Luke
@@ -102,7 +104,19 @@ public class ExpiringCache extends Cache {
 		ExpiringCacheEntry e = new ExpiringCacheEntry(obj);
 		_cache.put(obj.cacheKey(), e);
 
-		// Check for overflow
+		// Check for overflow and purge
+		purge();
 		checkOverflow();
+	}
+	
+	/**
+	 * Purges expired entries from the cache.
+	 */
+	private void purge() {
+	   for (Iterator i = _cache.values().iterator(); i.hasNext(); ) {
+	      ExpiringCacheEntry entry = (ExpiringCacheEntry) i.next();
+	      if (entry.isExpired())
+	         i.remove();
+	   }
 	}
 }
