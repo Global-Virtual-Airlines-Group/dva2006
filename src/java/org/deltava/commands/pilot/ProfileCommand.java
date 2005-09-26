@@ -7,12 +7,15 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.system.AddressValidation;
+
 import org.deltava.comparators.RankComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
+import org.deltava.security.*;
 import org.deltava.security.command.*;
 
 import org.deltava.util.*;
@@ -64,14 +67,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check our access level to the Staff profile
 			StaffAccessControl s_access = new StaffAccessControl(ctx, s);
 			s_access.validate();
-
+			
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
 			p.setNetworkID("VATSIM", ctx.getParameter("VATSIM_ID"));
 			p.setNetworkID("IVAO", ctx.getParameter("IVAO_ID"));
 			p.setLocation(ctx.getParameter("location"));
 			p.setIMHandle(ctx.getParameter("imHandle"));
-			p.setEmail(ctx.getParameter("email"));
 			p.setEmailAccess(Integer.parseInt(ctx.getParameter("privacyOption")));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setDateFormat(ctx.getParameter("df"));
@@ -292,6 +294,36 @@ public class ProfileCommand extends AbstractFormCommand {
 					ctx.setAttribute("staff", s, REQUEST);
 					log.info("Staff Profile Updated");
 				}
+			}
+			
+			// Check if we're updating the e-mail address
+			String newEMail = ctx.getParameter("email");
+			if (!p.getEmail().equals(newEMail)) {
+				AddressValidation av = new AddressValidation(p.getID(), newEMail);
+				AddressValidationHelper.calculateHashCode(av);
+				ctx.setAttribute("addrValid", av, REQUEST);
+				
+				// Initialize the message context
+				MessageContext mctxt = new MessageContext();
+				mctxt.addData("addrValid", av);
+				mctxt.addData("user", p);
+				
+				// Send the validation code via e-mail
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctxt.setTemplate(mtdao.get("EMAILUPDATE"));
+				
+				// Send the message
+				Mailer mailer = new Mailer(null);
+				mailer.setContext(mctxt);
+				mailer.send(Mailer.makeAddress(av.getAddress(), p.getName()));
+				
+				// Set the session flag
+				if (p.getID() == ctx.getUser().getID())
+					ctx.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE, SESSION);
+				
+				// Save the address validation entry
+				SetAddressValidation avwdao = new SetAddressValidation(con);
+				avwdao.write(av);
 			}
 
 			// Write the Pilot profile
