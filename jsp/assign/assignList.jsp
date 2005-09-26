@@ -18,23 +18,26 @@
 <script language="JavaScript" type="text/javascript">
 function setEQType(combo)
 {
-if (combo.selectedIndex == 0) return false;
-self.location = '/assignments.do?eqType=' + combo.options[combo.selectedIndex].text;
+var f = document.forms[0];
+var st = f.status.options[f.status.selectedIndex].text;
+self.location = '/assignments.do?eqType=' + combo.options[combo.selectedIndex].text + '&status=' + st;
 return true;
 }
 
 function setStatus(combo)
 {
-if (combo.selectedIndex == 0) return false;
-self.location = '/assignments.do?status=' + combo.options[combo.selectedIndex].text;
+var f = document.forms[0];
+var eqCombo = f.eqType;
+var eq = (eqCombo.selectedIndex < 1) ? null : eqCombo.options[eqCombo.selectedIndex].text;
+self.location = '/assignments.do?status=' + combo.options[combo.selectedIndex].text + (eq == null ? '' : '&eqType=' + eq);
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
