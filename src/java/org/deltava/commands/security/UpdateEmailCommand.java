@@ -89,6 +89,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 				av.setAddress(addr);
 				AddressValidationHelper.calculateHashCode(av);
 				mctxt.addData("addrValid", av);
+				mctxt.addData("user", ctx.getUser());
 				ctx.setAttribute("addr", av, REQUEST);
 
 				// Save the validation hash code
@@ -112,6 +113,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 						av.setAddress(addr);
 						AddressValidationHelper.calculateHashCode(av);
 						mctxt.addData("addrValid", av);
+						mctxt.addData("user", ctx.getUser());
 
 						// Save the new validation hash code
 						avwdao.write(av);

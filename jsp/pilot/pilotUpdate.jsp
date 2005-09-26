@@ -30,7 +30,7 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <fmt:list value="${pilot.ratings}" delim="," /></span>.</li>
 </c:if>
 <c:if test="${pwdUpdated}">
-<li>The web site/ACARS password for ${pilot.name} has been updated.</li>
+<li>The Web Site/ACARS password for ${pilot.name} has been updated.</li>
 </c:if>
 <c:if test="${statusUpdated}">
 <!-- Updated Pilot Status -->
@@ -66,6 +66,13 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <img alt="${pilot.name} (${pilot.pilotCode})" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
 </c:if>
 </ul>
+<c:if test="${!empty addrValid}">
+<!-- E-Mail Address updated -->
+<br />
+The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
+will not take effect until the address has been validated.</span> To validate the new e-mail 
+address, <el:cmd url="emailupd" className="sec bld">click here</el:cmd>.<br />
+</c:if>
 <br />
 To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">click here</el:cmd>.<br />
 To return to the Pilot Roster, <el:cmd url="roster">click here</el:cmd><br />
