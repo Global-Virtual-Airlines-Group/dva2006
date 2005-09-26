@@ -51,7 +51,7 @@ e-mail message, into the space provided below.</td>
 </tr>
 <c:if test="${invalidInfo}">
 <tr>
- <td class="error bld mid" colspan="2">The specified Pilot/Applicant ID or e-mail address does not exist.</td>
+ <td class="error bld mid" colspan="2">The specified e-mail address does not exist.</td>
 </tr>
 </c:if>
 <tr class="title mid">
