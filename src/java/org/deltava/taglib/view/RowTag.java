@@ -1,6 +1,5 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.view;
-
-import java.io.IOException;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -12,7 +11,6 @@ import org.deltava.beans.ViewEntry;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class RowTag extends TagSupport {
@@ -67,8 +65,8 @@ public class RowTag extends TagSupport {
 				out.print(" class=\"" + _className + "\"");
 			
 			out.print('>');
-		} catch (IOException ie) {
-			throw new JspException(ie);
+		} catch (Exception e) {
+			throw new JspException(e);
 		}
 		
 		return EVAL_BODY_INCLUDE;
@@ -82,11 +80,11 @@ public class RowTag extends TagSupport {
 	public int doEndTag() throws JspException {
 		try {
 			pageContext.getOut().write("</tr>");
-			release();
-		} catch (IOException ie) {
-			throw new JspException(ie);
+		} catch (Exception e) {
+			throw new JspException(e);
 		}
 		
+		release();
 		return EVAL_PAGE;
 	}
 }

@@ -109,10 +109,10 @@ public class LineTag extends GoogleMapEntryTag {
          out.print(");");
       } catch (Exception e) {
          throw new JspException(e);
+      } finally {
+         release();
       }
       
-      // Release state and return
-      release();
       return EVAL_PAGE;
    }
 }
