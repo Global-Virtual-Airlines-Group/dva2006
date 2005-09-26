@@ -176,7 +176,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Note the changed ratings
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ","));
+					upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ", "));
 					updates.add(upd);
 					log.info(upd.getDescription());
 				}
@@ -190,7 +190,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Note the changed ratings
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ","));
+					upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
 					updates.add(upd);
 					log.info(upd.getDescription());
 				}
@@ -211,7 +211,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Note the changed roles
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.SECURITY_ADD);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Roles added: " + StringUtils.listConcat(addedRoles, ","));
+					upd.setDescription("Roles added: " + StringUtils.listConcat(addedRoles, ", "));
 					updates.add(upd);
 				}
 
@@ -224,7 +224,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Note the changed roles
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.SECURITY_REMOVE);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Roles removed: " + StringUtils.listConcat(removedRoles, ","));
+					upd.setDescription("Roles removed: " + StringUtils.listConcat(removedRoles, ", "));
 					updates.add(upd);
 				}
 			}
