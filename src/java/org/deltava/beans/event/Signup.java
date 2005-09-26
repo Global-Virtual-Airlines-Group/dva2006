@@ -22,6 +22,7 @@ public class Signup implements Serializable {
     private Airport _airportD;
     private Airport _airportA;
     
+    // TODO JavaDoc
     public Signup(int eventID, int pilotID) {
        super();
        setEventID(eventID);

@@ -46,11 +46,17 @@ public class FlightPlan extends DatabaseBlobBean {
      * @see FlightPlan#PLAN_TYPE
      * @see FlightPlan#setType(int)
      * @see FlightPlan#setType(String)
+     * @see FlightPlan#getTypeName()
      */
     public int getType() {
         return _type;
     }
     
+    /**
+     * Returns the flight plan type name.
+     * @return the type name
+     * @see FlightPlan#getType()
+     */
     public String getTypeName() {
     	return PLAN_TYPE[getType()];
     }
@@ -96,6 +102,8 @@ public class FlightPlan extends DatabaseBlobBean {
     /**
      * Updates the Arrival airport.
      * @param a the new arrival Airport object
+     * @see FlightPlan#getAirportA()
+     * @see FlightPlan#setAirportD(Airport)
      */
     public void setAirportA(Airport a) {
         _airportA = a;
@@ -104,6 +112,8 @@ public class FlightPlan extends DatabaseBlobBean {
     /**
      * Updates the Departure airport.
      * @param a the new departure Airport object
+     * @see FlightPlan#getAirportD()
+     * @see FlightPlan#setAirportA(Airport)
      */
     public void setAirportD(Airport a) {
         _airportD = a;
