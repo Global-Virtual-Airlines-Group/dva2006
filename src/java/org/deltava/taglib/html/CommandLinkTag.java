@@ -82,4 +82,10 @@ public class CommandLinkTag extends LinkTag {
 
         return super.doStartTag();
     }
+    
+    public int doEndTag() throws JspException {
+       super.doEndTag();
+       release();
+       return EVAL_PAGE;
+    }
 }

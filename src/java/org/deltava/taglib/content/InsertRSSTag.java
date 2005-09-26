@@ -36,8 +36,10 @@ public class InsertRSSTag extends InsertContentTag {
    public int doEndTag() throws JspException {
       
     	// Check if the content has already been added
-      if (ContentHelper.containsContent(pageContext, "RSS", _resourceName) && (!_forceInclude)) 
+      if (ContentHelper.containsContent(pageContext, "RSS", _resourceName) && (!_forceInclude)) {
+         release();
          return EVAL_PAGE;
+      }
     	
     	JspWriter out = pageContext.getOut();
     	try {
@@ -52,6 +54,7 @@ public class InsertRSSTag extends InsertContentTag {
     	
     	// Mark the content as added and return
     	ContentHelper.addContent(pageContext, "RSS", _url.toString());
+    	release();
       return EVAL_PAGE;
    }
 }

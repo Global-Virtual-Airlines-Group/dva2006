@@ -89,6 +89,7 @@ public class SetCookieTag extends TagSupport {
         HttpServletResponse rsp = (HttpServletResponse) pageContext.getResponse();
         rsp.addCookie(c);
         
+        release();
         return EVAL_PAGE;
     }
 }

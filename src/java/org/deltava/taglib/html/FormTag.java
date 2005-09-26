@@ -85,6 +85,7 @@ public class FormTag extends ElementTag {
             throw wrap(e);
         }
         
+        release();
         return EVAL_PAGE;
     }
     

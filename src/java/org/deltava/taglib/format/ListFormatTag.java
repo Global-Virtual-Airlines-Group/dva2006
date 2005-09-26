@@ -68,6 +68,7 @@ public class ListFormatTag extends TagSupport {
             throw je;
         }
         
+        release();
         return EVAL_PAGE;
     }
 }

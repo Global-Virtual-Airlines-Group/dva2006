@@ -77,15 +77,15 @@ public class MarkerArrayTag extends GoogleMapEntryTag {
 					out.println(");");
 				}
 			}
+			
+			// Mark the JavaScript variable as included
+			ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+		   release();
 		}
 
-		// Mark the JavaScript variable as included
-		ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
-
-		// Release state and return
-		release();
 		return EVAL_PAGE;
 	}
 }

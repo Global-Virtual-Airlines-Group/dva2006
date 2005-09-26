@@ -85,6 +85,7 @@ public class GetCookieTag extends TagSupport {
         if (cValue != null)
             pageContext.getRequest().setAttribute(_var, cValue);
         
+        release();
         return EVAL_PAGE;
     }
 }

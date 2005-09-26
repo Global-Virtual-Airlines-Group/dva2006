@@ -55,12 +55,14 @@ public class PointArrayTag extends GoogleMapEntryTag {
 				out.print(StringUtils.format(entry.getLatitude(), "##0.00000"));
 				out.println("));");
 			}
+			
+			// Mark the JavaScript variable as included
+			ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+		   release();
 		}
-
-		// Mark the JavaScript variable as included
-		ContentHelper.addContent(pageContext, API_JS_NAME, _jsVarName);
 
 		return EVAL_PAGE;
 	}

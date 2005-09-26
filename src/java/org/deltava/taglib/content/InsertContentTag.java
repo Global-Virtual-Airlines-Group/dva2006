@@ -51,4 +51,12 @@ public abstract class InsertContentTag extends TagSupport {
     protected boolean isFirefox() {
         return (pageContext.getRequest().getAttribute("browser$mozilla") != null);
     }
+
+    /**
+     * Releases the tag's state variables.
+     */
+    public void release() {
+       super.release();
+       _forceInclude = false;
+    }
 }
