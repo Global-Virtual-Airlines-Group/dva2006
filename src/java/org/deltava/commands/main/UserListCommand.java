@@ -7,10 +7,12 @@ import org.deltava.commands.*;
 
 import org.deltava.comparators.PilotComparator;
 import org.deltava.security.UserPool;
+
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
- * A web site command to list logged in users.
+ * A Web Site Command to list logged in users.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -27,7 +29,7 @@ public class UserListCommand extends AbstractCommand {
     	
     	// Get the sort type
     	String sortOpt = ctx.getParameter("sortOpt");
-    	if (sortOpt == null)
+    	if (StringUtils.isEmpty(sortOpt))
     		sortOpt = PilotComparator.TYPES[PilotComparator.PILOTCODE];
     	
     	// Initialize the comparator
