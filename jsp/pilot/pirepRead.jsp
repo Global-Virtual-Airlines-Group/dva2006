@@ -204,17 +204,17 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canSubmit}">
  <el:cmdbutton url="submit" linkID="0x${pirep.ID}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
-<c:if test="${access.canEdit}">
- <el:cmdbutton url="pirep" linkID="0x${pirep.ID}" op="edit" label="EDIT REPORT" />
+<c:if test="${access.canApprove && (empty checkRide)}">
+ <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" label="HOLD" />
 </c:if>
-<c:if test="${access.canApprove && (empty checkRide)}">
- <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
-</c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" label="REJECT FLIGHT" />
+</c:if>
+<c:if test="${access.canEdit}">
+ <el:cmdbutton url="pirep" linkID="0x${pirep.ID}" op="edit" label="EDIT REPORT" />
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton url="pirepdelete" linkID="0x${pirep.ID}" label="DELETE REPORT" />
