@@ -14,8 +14,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -40,6 +40,12 @@ This Pilot Examination has been succsfully updated in the database.<br />
 <br />
 To view this Examination Profile, <el:cmd url="eprofile" linkID="${exam.name}">Click Here</el:cmd>.<br />
 To view all Examination Profiles, <el:cmd url="eprofiles">Click Here</el:cmd>.<br />
+</c:if>
+<c:if test="${!empty script}">
+<div class="updateHdr">Check Ride Script Updated</div>
+<br />
+The script for the ${script.equipmentType} Check ride in the <span class="sec bld">${script.program}</span> 
+equipment program has been saved in the database.<br />
 </c:if>
 <br />
 <content:copyright />
