@@ -35,7 +35,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void window.focus()">
 <el:table className="form" space="default" pad="default">
 <!-- Table Header Bars -->
 <tr class="title caps">
