@@ -1,5 +1,7 @@
 package org.deltava.commands;
 
+import org.deltava.dao.DAOException;
+
 /**
  * An exception thrown by a web site command.
  * @author Luke
@@ -7,6 +9,7 @@ package org.deltava.commands;
  * @since 1.0
  * @see Command
  */
+
 public class CommandException extends Exception {
 
     /**
@@ -34,5 +37,14 @@ public class CommandException extends Exception {
      */
     public CommandException(Throwable t) {
         this(t.getMessage(), t);
+    }
+    
+    /**
+     * Create a new CommandException that wraps a DAO exception. The intermediate DAO exception
+     * will be stripped out.
+     * @param de the root DAO Exception
+     */
+    public CommandException(DAOException de) {
+       this(de.getCause());
     }
 }
