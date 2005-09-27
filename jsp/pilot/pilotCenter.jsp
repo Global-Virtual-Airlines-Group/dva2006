@@ -35,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="navsearch.do" method="POST" validate="return validate(this)">
+<el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
 <!-- Pilot Information -->
@@ -307,6 +307,11 @@ for promotion to the rank of Captain in their Equipment Program.</td>
  <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd></td>
  <td class="data">You can add new examination questionss or modify existing examination 
  questions.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="crscripts">Check Ride Scripts</el:cmd></td>
+ <td class="data">Check Ride scripts allow you to save pre-defined check ride descriptions for different 
+aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
