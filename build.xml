@@ -157,7 +157,7 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="true" xpoweredBy="true" 
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false" xpoweredBy="true" 
 			validateXml="truee" webXmlFragment="${jspc.webXMLInc}"
 	    	outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
@@ -259,6 +259,8 @@
 	
 	<!-- Production Deployment via SSH -->
 	<target name="prod_deploy" depends="compile,acars,jspc">
+		<loadproperties srcFile="data/build_deploy.properties" />
+
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
 				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
