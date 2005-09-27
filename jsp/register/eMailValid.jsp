@@ -16,6 +16,7 @@
 
 <!-- Main Body Frame -->
 <div id="main">
+<c:if test="${!isCancel}">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
 Your e-mail address (${pilot.email}) has been successfuly verified. This address will be used 
@@ -24,6 +25,19 @@ for all <content:airline />-related correspondence in the future.<br />
 <br />
 Thank you for verifying your e-mail address. This is an important step in the registration 
 process here at <content:airline />.<br />
+</c:if>
+</c:if>
+<c:if test="${isCancel}">
+<div class="updateHdr">E-Mail Address Validation Canceled</div>
+<br />
+<c:if test="${forceAccept}">
+E-Mail Address validation for ${pilot.name} has been overriden, and the new e-mail address of ${addr.address} 
+will be used for all <content:airline />-related correspondence in the future.<br />
+</c:if>
+<c:if test="${!forceAccept}">
+E-Mail Address validation for ${pilot.name} has been canceled. The original e-mail address of ${pilot.email} 
+will continue to be used for all <content:airline />-related correspondence in the future.<br />
+</c:if>
 </c:if>
 <c:if test="${!empty pilot}">
 <br />

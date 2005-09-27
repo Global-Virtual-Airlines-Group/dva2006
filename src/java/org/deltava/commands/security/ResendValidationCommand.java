@@ -53,6 +53,9 @@ public class ResendValidationCommand extends AbstractCommand {
 				Mailer mailer = new Mailer(null);
 				mailer.setContext(mctxt);
 				mailer.send(Mailer.makeAddress(av.getAddress(), ctx.getUser().getName()));
+				
+				// Set status attribute
+				ctx.setAttribute("resendEMail", Boolean.TRUE, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
