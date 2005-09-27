@@ -112,9 +112,18 @@ public class TestingHistoryHelper {
 		// Check if we've reached the proper minimum stage
 		if (ep.getMinStage() > getMaxExamStage())
 			return false;
+		
+		// Check if we have at least 5 approved flights
+		int flightCount = 0;
+		if (_pireps != null) {
+			for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
+				FlightReport fr = (FlightReport) i.next();
+				if (fr.getStatus() == FlightReport.OK)
+					flightCount++;
+			}
+		}
 
-		// If we got this far, we can take the exam
-		return true;
+		return (flightCount >= 5);
 	}
 
 	/**
