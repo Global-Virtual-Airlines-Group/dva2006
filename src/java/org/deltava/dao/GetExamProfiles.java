@@ -23,6 +23,12 @@ import org.deltava.beans.testing.*;
 		super(c);
 	}
 	
+	/**
+	 * Loads an Examination profile.
+	 * @param examName the examination name
+	 * @return an ExamProfile bean, or null if the exam was not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public ExamProfile getExamProfile(String examName) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EXAMINFO WHERE (NAME=?)");
@@ -30,8 +36,11 @@ import org.deltava.beans.testing.*;
 			
 			// Execute the query - return null if not found
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next())
-				return null;
+			if (!rs.next()) {
+			   rs.close();
+			   _ps.close();
+			   return null;
+			}
 			
 			// Populate the examination profile
 			ExamProfile ep = new ExamProfile(rs.getString(1));
@@ -53,6 +62,11 @@ import org.deltava.beans.testing.*;
 		}
 	}
 	
+	/**
+	 * Returns all Examination profiles.
+	 * @return a List of ExamProfile beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public List getExamProfiles() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EXAMINFO ORDER BY STAGE, NAME");
@@ -98,8 +112,11 @@ import org.deltava.beans.testing.*;
 			
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next())
-				return null;
+			if (!rs.next()) {
+			   rs.close();
+			   _ps.close();
+			   return null;
+			}
 			
 			// Populate the Question Profile
 			QuestionProfile qp = new QuestionProfile(rs.getString(2));
@@ -182,5 +199,67 @@ import org.deltava.beans.testing.*;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Loads a Check Ride script.
+	 * @param eqType the equipment type
+	 * @return a CheckRideScript bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public CheckRideScript getScript(String eqType) throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM CR_DESCS WHERE (EQTYPE=?)");
+	      setQueryMax(1);
+	      _ps.setString(1, eqType);
+	      
+	      // Execute the Query - return null if nothing found
+	      ResultSet rs = _ps.executeQuery();
+	      if (!rs.next()) {
+	         rs.close();
+	         _ps.close();
+	         return null;
+	      }
+	      
+	      // Create the bean
+	      CheckRideScript result = new CheckRideScript(rs.getString(1));
+	      result.setProgram(rs.getString(2));
+	      result.setDescription(rs.getString(3));
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return result;
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Returns all Check Ride scripts.
+	 * @return a List of CheckRideScript beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List getScripts() throws DAOException {
+	   try {
+	      prepareStatement("SELECT * FROM CR_DESCS");
+	      
+	      // Execute the query
+	      List results = new ArrayList();
+	      ResultSet rs = _ps.executeQuery();
+	      while (rs.next()) {
+	         CheckRideScript sc = new CheckRideScript(rs.getString(1));
+	         sc.setProgram(rs.getString(2));
+	         sc.setDescription(rs.getString(3));
+	         results.add(sc);
+	      }
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return results;
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
 	}
 }

@@ -61,7 +61,17 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
 			if (eq == null)
 				throw new CommandException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
-
+			
+			// Check if we are using the script
+			String comments = ctx.getParameter("comments");
+			boolean useScript = Boolean.valueOf(ctx.getParameter("useScript")).booleanValue();
+			if (useScript) {
+			   GetExamProfiles epdao = new GetExamProfiles(con);
+			   CheckRideScript sc = epdao.getScript(ctx.getParameter("crType"));
+			   if (sc != null)
+			      comments = comments + "\n\n" + sc.getDescription();
+			}
+			
 			// Generate the checkride
 			CheckRide cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
 			cr.setDate(new java.util.Date());
@@ -69,7 +79,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(Test.NEW);
 			cr.setStage(eq.getStage());
-			cr.setComments(ctx.getParameter("comments"));
+			cr.setComments(comments);
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

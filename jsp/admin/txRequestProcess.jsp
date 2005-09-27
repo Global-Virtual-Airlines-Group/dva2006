@@ -32,8 +32,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
 
 <!-- Main Body Frame -->
@@ -106,6 +106,10 @@ return true;
 <tr>
  <td class="label">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="useScript" idx="*" value="true" label="Append Check Ride script to comments" /></td>
 </tr>
 </c:if>
 </el:table>

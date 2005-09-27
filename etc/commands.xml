@@ -853,8 +853,20 @@
 		<class>org.deltava.commands.testing.QuestionProfileCommand</class>
 		<roles>HR,Examination</roles>
 	</command>
-	
-	
+
+	<command id="crscripts">
+		<name>Check Ride Scripts</name>
+		<class>org.deltava.commands.testing.CheckRideScriptsCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+
+	<command id="crscript">
+		<name>Check Ride Script</name>
+		<class>org.deltava.commands.testing.CheckRideScriptCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+
+
 	<!-- Pilot Registration Commands -->
 	<command id="register">
 		<name>Applicant Registration</name>
