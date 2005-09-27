@@ -42,7 +42,7 @@ public class AirportListService extends WebDataService {
       }
       
       public boolean accept(Airport a) {
-         return a.getAirlineCodes().contains(_a.getCode());
+         return (a == null) ? false : a.getAirlineCodes().contains(_a.getCode());
       }
    }
 
@@ -60,7 +60,7 @@ public class AirportListService extends WebDataService {
       }
       
       public boolean accept(Airport a) {
-         return _airportCodes.contains(a.getIATA());
+         return (a == null) ? false : _airportCodes.contains(a.getIATA());
       }
    }
    
