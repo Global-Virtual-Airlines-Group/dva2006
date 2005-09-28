@@ -44,6 +44,10 @@
  <td class="data">${servletContextName}</td>
 </tr>
 <tr>
+ <td class="label">Application Started on</td>
+ <td class="data"><fmt:date date="${startedOn}" /></td>
+</tr>
+<tr>
  <td class="label">Servlet API</td>
  <td class="data">Version ${majorServletAPI}.${minorServletAPI}</td>
 </tr>
@@ -63,6 +67,20 @@
  <td class="label">Local Time Zone</td>
  <td class="data">${timeZone.ID} - ${tzName}</td>
 </tr>
+</el:table>
+
+<!-- JDBC Driver Data Table -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td class="left">REGISTERED JDBC DRIVERS</td>
+</tr>
+
+<!-- JDBC Driver Data -->
+<c:forEach var="driver" items="${jdbcDrivers}">
+<view:row entry="${driver}">
+ <td class="left">${driver.class.name} v${driver.majorVersion}.${driver.minorVersion}.</td>
+</view:row>
+</c:forEach>
 </el:table>
 
 <!-- JDBC Connection Pool Data Table -->
