@@ -21,7 +21,7 @@
 
 <!-- Main Body Frame -->
 <div id="main">
-<view:table className="view" pad="default" space="default" cmd="eqTypes">
+<view:table className="view" pad="default" space="default" cmd="txrequests">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="30%">PILOT NAME</td>
