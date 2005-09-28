@@ -57,7 +57,9 @@ public class AgingCache extends Cache {
     * @param obj the entry to add to the cache 
     */
    public synchronized void add(Cacheable obj) {
-      
+      if (obj == null)
+    	  return;
+	   
       // Create the cache entry
       AgingCacheEntry e = new AgingCacheEntry(obj);
       _cache.put(obj.cacheKey(), e);

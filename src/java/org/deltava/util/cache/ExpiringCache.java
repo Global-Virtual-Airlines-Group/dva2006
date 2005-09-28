@@ -99,6 +99,8 @@ public class ExpiringCache extends Cache {
 	 * @param obj the entry to add to the cache
 	 */
 	public synchronized void add(Cacheable obj) {
+		if (obj == null)
+			return;
 
 		// Create the cache entry
 		ExpiringCacheEntry e = new ExpiringCacheEntry(obj);
