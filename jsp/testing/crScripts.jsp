@@ -41,13 +41,13 @@
  <td class="pri bld">${sc.equipmentType}</td>
 </c:if>
  <td class="sec bld">${sc.program}</td>
- <td class="small left">${sc.description}</td>
+ <td class="small left" colspan="2">${sc.description}</td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title">
- <td colspan="3">&nbsp;</td>
+ <td colspan="4">&nbsp;</td>
 </tr>
 </view:table>
 <br />
