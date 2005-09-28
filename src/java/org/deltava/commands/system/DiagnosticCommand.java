@@ -1,6 +1,7 @@
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.sql.DriverManager;
 
 import org.deltava.commands.*;
 
@@ -31,7 +32,10 @@ public class DiagnosticCommand extends AbstractCommand {
 
        // Get the Task Scheduler data
        TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
-       ctx.setAttribute("taskInfo", (tSched == null) ? null : tSched.getTaskInfo(), REQUEST);
+       if (tSched != null) {
+    	   ctx.setAttribute("taskRunning", Boolean.valueOf(tSched.isAlive()), REQUEST);
+    	   ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
+       }
        
        // Run the GC
        System.gc();
@@ -42,6 +46,9 @@ public class DiagnosticCommand extends AbstractCommand {
        ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
        ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
        
+       // Get JDBC drivers
+       ctx.setAttribute("jdbcDrivers", DriverManager.getDrivers(), REQUEST);
+       
        // Get time zone info
        TimeZone tz = TimeZone.getDefault();
        ctx.setAttribute("timeZone", tz, REQUEST);
@@ -49,6 +56,7 @@ public class DiagnosticCommand extends AbstractCommand {
        
        // Get Servlet context properties
        ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
+       ctx.setAttribute("serverStart", _ctx.getAttribute("startedOn"), REQUEST);
        ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
        ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
        ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
