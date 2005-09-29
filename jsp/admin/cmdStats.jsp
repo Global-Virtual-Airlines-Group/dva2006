@@ -20,16 +20,26 @@ var sortOpt = combo.options[combo.selectedIndex].value;
 self.location = '/cmdstats.do?sortBy=' + sortOpt;
 return true;
 }
+
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!validateNumber(form.purgeDays, 2, 'Days of Log Entries to keep')) return false;
+
+setSubmit();
+disableButton('PurgeButton');
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="cmdstats.do" method="get" validate="return false">
+<el:form action="cmdstatpurge.do" method="post" validate="return validate(this)">
 <el:table className="view" space="default" pad="default">
 <!-- Table Header Bar -->
 <tr class="title">
@@ -65,7 +75,8 @@ return true;
 
 <!-- Bottom Row -->
 <tr class="title caps">
- <td colspan="8">&nbsp;</td>
+ <td colspan="8">PURGE ENTRIES MORE THAN <el:text name="purgeDays" idx="*" size="1" max="3" value="" />
+ DAYS OLD <el:button ID="PurgeButton" type="submit" className="BUTTON" label="PURGE COMMAND LOG" /></td>
 </tr>
 </el:table>
 </el:form>
