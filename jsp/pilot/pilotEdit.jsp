@@ -22,7 +22,7 @@ if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
 if (!validateFile(form.coolerImg, 'jpg,png,gif', 'Water Cooler Signature Image')) return false;
-if (!validateText(form.staffTitle, 10, 'Staff Title')) return false;
+if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
 if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
 
