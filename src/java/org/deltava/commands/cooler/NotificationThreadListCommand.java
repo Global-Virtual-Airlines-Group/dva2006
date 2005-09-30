@@ -104,6 +104,9 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set channel name attribute
+		ctx.setAttribute("channelName", "Watched Discussion Threads", REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

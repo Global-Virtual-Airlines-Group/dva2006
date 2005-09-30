@@ -103,6 +103,9 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set channel name attribute
+		ctx.setAttribute("channelName", "Search Results", REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/cooler/threadList.jsp");

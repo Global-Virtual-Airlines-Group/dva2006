@@ -115,6 +115,9 @@ public class NewThreadListCommand extends AbstractViewCommand {
       } finally {
          ctx.release();
       }
+      
+		// Set channel name attribute
+		ctx.setAttribute("channelName", "New/Updated Discussion Threads", REQUEST);
 
       // Forward to JSP
       CommandResult result = ctx.getResult();
