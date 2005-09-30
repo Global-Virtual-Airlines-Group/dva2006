@@ -33,7 +33,7 @@ public class CommandStatsPurgeCommand extends AbstractCommand {
          
          // Get the DAO and purge the log
          SetSystemData wdao = new SetSystemData(con);
-         int rowsPurged = 0; // wdao.purge()XX
+         int rowsPurged = wdao.purge("COMMANDS", "CMDDATE", days);
          
          // Log message
          ctx.setMessage(String.valueOf(rowsPurged) + " command entries purged");
