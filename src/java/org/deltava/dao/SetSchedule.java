@@ -161,7 +161,7 @@ public class SetSchedule extends DAO {
 	 */
 	public void create(ScheduleEntry entry) throws DAOException {
 	   try {
-	      prepareStatement("REPLACE INTO common.SCHEDULE (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, "
+	      prepareStatement("REPLACE INTO SCHEDULE (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, "
 	            + "EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setInt(1, entry.getID());
 	      _ps.setString(2, entry.getAirline().getCode());
@@ -194,7 +194,7 @@ public class SetSchedule extends DAO {
 	public void purge(boolean force) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("DELETE FROM common.SCHEDULE");
+	   StringBuffer sqlBuf = new StringBuffer("DELETE FROM SCHEDULE");
 	   if (!force)
 	      sqlBuf.append(" WHERE (CAN_PURGE=?)");
 	   
