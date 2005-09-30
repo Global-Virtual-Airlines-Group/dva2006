@@ -7,10 +7,8 @@ import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
 import org.deltava.commands.*;
 
-import org.deltava.util.StringUtils;
-
 /**
- * A Web Site command to build a Flight Assignment.
+ * A Web Site Command to build a Flight Assignment.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -46,22 +44,21 @@ public class BuildAssignmentCommand extends AbstractCommand {
 
         // If we're adding flights to the in-session assignment
         if ("build".equals(opName)) {
-        	List results = (List) ctx.getSession().getAttribute("fafResults");
+        		List results = (List) ctx.getSession().getAttribute("fafResults");
             String[] ids = ctx.getRequest().getParameterValues("addFA");
             if ((ids == null) || (results == null)) {
             	result.setSuccess(true);
             	return;
             }
             
-            Set selected = new HashSet();
-            for (int x = 0; x < ids.length; x++)
-                selected.add(new Integer(StringUtils.parseHex(ids[x])));
+            // Get the flight codes to add
+            List selected = Arrays.asList(ids);
 
             // Get the list of results and split into two - the selected, and those remaining
             List fList = new ArrayList();
             for (Iterator i = results.iterator(); i.hasNext();) {
                 Flight f = (Flight) i.next();
-                if (selected.contains(new Integer(f.getID()))) {
+                if (selected.contains(f.getFlightCode())) {
                     fList.add(f);
                     i.remove();
                 }

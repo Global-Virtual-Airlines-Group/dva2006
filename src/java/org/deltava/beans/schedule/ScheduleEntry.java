@@ -108,6 +108,14 @@ public class ScheduleEntry extends Flight {
     public Date getTimeA() {
         return _timeA.getDate();
     }
+    
+    /**
+     * Returns the database ID of the schedule entry. <i>NOT IMPLEMENTED</i>
+     * @throws UnsupportedOperationException always
+     */
+    public final int getID() {
+       throw new UnsupportedOperationException();
+    }
 
     /**
      * Returns the "historic flight" flag value for this flight.
@@ -125,6 +133,14 @@ public class ScheduleEntry extends Flight {
      */
     public boolean canPurge() {
         return _purge;
+    }
+    
+    /**
+     * Sets the database ID of this schedule entry. <i>NOT IMPLEMENTED</i>
+     * @throws UnsupportedOperationException always
+     */
+    public final void setID(int id) {
+       throw new UnsupportedOperationException();
     }
 
     /**
