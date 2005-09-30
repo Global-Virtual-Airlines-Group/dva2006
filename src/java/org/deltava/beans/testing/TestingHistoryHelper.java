@@ -84,6 +84,26 @@ public class TestingHistoryHelper {
 
 		return maxStage;
 	}
+	
+	/**
+	 * Returns the number of flight legs counted towards promotion in a particular Equipment Program. If no
+	 * Equipment Program is specified, this returns the total number of approved flight legs.
+	 * @param eq the Equipment Program
+	 * @return the number of legs
+	 */
+	public int getFlightLegs(EquipmentType eq) {
+	   int result = 0;
+	   for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
+	      FlightReport fr = (FlightReport) i.next();
+	      if (fr.getStatus() == FlightReport.OK) {
+	         if ((eq == null) || (fr.getCaptEQType().equals(eq.getName())))
+	            result++;
+	      }
+	   }
+	   
+	   // Return results
+	   return result;
+	}
 
 	/**
 	 * Returns if the user is eligible to take a particular Examination.
@@ -114,16 +134,7 @@ public class TestingHistoryHelper {
 			return false;
 		
 		// Check if we have at least 5 approved flights
-		int flightCount = 0;
-		if (_pireps != null) {
-			for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
-				FlightReport fr = (FlightReport) i.next();
-				if (fr.getStatus() == FlightReport.OK)
-					flightCount++;
-			}
-		}
-
-		return (flightCount >= 5);
+		return (getFlightLegs(null) >= 5);
 	}
 
 	/**
@@ -193,17 +204,7 @@ public class TestingHistoryHelper {
 			return false;
 
 		// Check if we've got enough flight legs in the primary equipment type
-		int cpLegs = 0;
-		if (_pireps != null) {
-			for (Iterator i = _pireps.iterator(); i.hasNext();) {
-				FlightReport fr = (FlightReport) i.next();
-				if ((fr.getStatus() == FlightReport.OK) && (fr.getCaptEQType().equals(eq.getName())))
-					cpLegs++;
-			}
-		}
-
-		// Check if we've got the legs
-		return (cpLegs >= eq.getPromotionLegs(Ranks.RANK_C));
+		return (getFlightLegs(eq) >= eq.getPromotionLegs(Ranks.RANK_C));
 	}
 
 	/**
