@@ -116,6 +116,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="resendvalidate">
+		<name>Resend E-Mail Validation</name>
+		<class>org.deltava.commands.security.ResendValidationCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="geolocate">
 		<name>Pilot Geolocation</name>
 		<class>org.deltava.commands.pilot.PilotLocationCommand</class>

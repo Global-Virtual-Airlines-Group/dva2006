@@ -20,6 +20,7 @@ if (!validateEMail(form.email, 'E-Mail Address')) return false;
 
 setSubmit();
 disableButton('SubmitButton');
+disableButton('ResendButton');
 return true;
 }
 </script>
@@ -64,10 +65,16 @@ space below.</td>
  <td colspan="2" class="error mid bld">${system_message}</td>
 </tr>
 </c:if>
+<c:if test="${resendEMail}">
+<tr>
+ <td colspan="2" class="ter mid bld">The validation code has been re-sent to ${emailAddr}</td>
+</tr>
+</c:if>
 
 <!-- Button Bar -->
 <tr class="title mid">
- <td colspan="2"><el:button type="submit" ID="SubmitButton" className="BUTTON" label="VALIDATE ADDRESS" /></td>
+ <td colspan="2"><el:button type="submit" ID="SubmitButton" className="BUTTON" label="VALIDATE ADDRESS" /> 
+<el:cmdbutton ID="ResendButton" url="resendvalidate" label="RESEND VALIDATION E-MAIL" /></td>
 </tr>
 </el:table>
 </el:form>
