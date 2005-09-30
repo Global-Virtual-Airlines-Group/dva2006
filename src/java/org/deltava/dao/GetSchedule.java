@@ -267,15 +267,14 @@ public class GetSchedule extends DAO {
 		List results = new ArrayList();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			ScheduleEntry entry = new ScheduleEntry(SystemData.getAirline(rs.getString(2)), rs.getInt(3), rs.getInt(4));
-			entry.setID(rs.getInt(1));
-			entry.setAirportD(SystemData.getAirport(rs.getString(5)));
-			entry.setAirportA(SystemData.getAirport(rs.getString(6)));
-			entry.setEquipmentType(rs.getString(8));
-			entry.setLength(rs.getInt(9));
-			entry.setTimeD(rs.getTimestamp(10));
-			entry.setTimeA(rs.getTimestamp(11));
-			entry.setHistoric(rs.getBoolean(12));
+			ScheduleEntry entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));
+			entry.setAirportD(SystemData.getAirport(rs.getString(4)));
+			entry.setAirportA(SystemData.getAirport(rs.getString(5)));
+			entry.setEquipmentType(rs.getString(7));
+			entry.setLength(rs.getInt(8));
+			entry.setTimeD(rs.getTimestamp(9));
+			entry.setTimeA(rs.getTimestamp(10));
+			entry.setHistoric(rs.getBoolean(11));
 
 			// Add to results
 			results.add(entry);

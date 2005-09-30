@@ -17,7 +17,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable {
  	 * Return the database row ID of this bean. <i>This typically will only be called by a DAO</i>
  	 * @return The primary key of the entry in the table in the database that corresponds to this object.
  	 */
-    public final int getID() {
+    public int getID() {
         return _id;
     }
     
@@ -28,7 +28,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable {
  	 * @throws IllegalStateException if we are attempting to change the database ID
  	 * @see DatabaseBean#validateID(int, int)
  	 */
-    public final void setID(int id) {
+    public void setID(int id) {
         validateID(_id, id);
         _id = id;
     }
