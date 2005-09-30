@@ -161,26 +161,23 @@ public class SetSchedule extends DAO {
 	 */
 	public void create(ScheduleEntry entry) throws DAOException {
 	   try {
-	      prepareStatement("REPLACE INTO SCHEDULE (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, "
-	            + "EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	      _ps.setInt(1, entry.getID());
-	      _ps.setString(2, entry.getAirline().getCode());
-	      _ps.setInt(3, entry.getFlightNumber());
-	      _ps.setInt(4, entry.getLeg());
-	      _ps.setString(5, entry.getAirportD().getIATA());
-	      _ps.setString(6, entry.getAirportA().getIATA());
-	      _ps.setInt(7, entry.getDistance());
-	      _ps.setString(8, entry.getEquipmentType());
-	      _ps.setDouble(9, entry.getLength() / 10.0);
-	      _ps.setTimestamp(10, createTimestamp(entry.getTimeD()));
-	      _ps.setTimestamp(11, createTimestamp(entry.getTimeA()));
-	      _ps.setBoolean(12, entry.isHistoric());
-	      _ps.setBoolean(13, entry.canPurge());
+	      prepareStatement("REPLACE INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, "
+	            + "EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	      _ps.setString(1, entry.getAirline().getCode());
+	      _ps.setInt(2, entry.getFlightNumber());
+	      _ps.setInt(3, entry.getLeg());
+	      _ps.setString(4, entry.getAirportD().getIATA());
+	      _ps.setString(5, entry.getAirportA().getIATA());
+	      _ps.setInt(6, entry.getDistance());
+	      _ps.setString(7, entry.getEquipmentType());
+	      _ps.setDouble(8, entry.getLength() / 10.0);
+	      _ps.setTimestamp(9, createTimestamp(entry.getTimeD()));
+	      _ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
+	      _ps.setBoolean(11, entry.isHistoric());
+	      _ps.setBoolean(12, entry.canPurge());
 	            
 	      // Update the database
 	      executeUpdate(1);
-	      if (entry.getID() == 0)
-	         entry.setID(getNewID());
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }

@@ -43,7 +43,7 @@ for (var x = 0; x < form.addFA.length; x++)
 	isOK = isOK || form.addFA[x].checked;
 
 if (!isOK) {
-	alert('Please select at least one Flight leg to add.');
+	alert('Please select at least one Flight Leg to add.');
 	return false;
 }
 
@@ -52,7 +52,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void updateOrigin(document.forms[0].airportD)">
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
@@ -115,7 +115,7 @@ return true;
 <!-- Search Results -->
 <c:forEach var="flight" items="${fafResults}">
 <tr>
- <td><input type="checkbox" class="check" name="addFA" value="0x<fmt:hex value="${flight.ID}" />" /></td>
+ <td><input type="checkbox" class="check" name="addFA" value="${flight.flightCode}" />" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
@@ -178,8 +178,5 @@ return true;
 </c:if>
 <content:copyright />
 </div>
-<script language="JavaScript" type="text/javascript">
-updateOrigin(document.forms[0].airportD);
-</script>
 </body>
 </html>
