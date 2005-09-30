@@ -50,6 +50,10 @@ public class Mailer extends Thread {
       public String getName() {
          return _name;
       }
+      
+      public String toString() {
+    	  return _name + " (" + _addr + ")";
+      }
    }
 
    /**

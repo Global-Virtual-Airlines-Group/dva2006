@@ -3,6 +3,7 @@ package org.deltava.commands.security;
 
 import java.sql.Connection;
 
+import org.deltava.beans.EMailAddress;
 import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
@@ -49,13 +50,18 @@ public class ResendValidationCommand extends AbstractCommand {
 				mctxt.addData("addrValid", av);
 				result.setURL("/jsp/register/eMailValidate.jsp");
 				
+				// Create the address
+				EMailAddress addr = Mailer.makeAddress(av.getAddress(), ctx.getUser().getName()); 
+				
 				// Send the message
 				Mailer mailer = new Mailer(null);
 				mailer.setContext(mctxt);
-				mailer.send(Mailer.makeAddress(av.getAddress(), ctx.getUser().getName()));
+				mailer.send(addr);
 				
-				// Set status attribute
+				// Set status attribute and log message
 				ctx.setAttribute("resendEMail", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("emailAddr", addr, REQUEST);
+				ctx.setAttribute("addr", av, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
