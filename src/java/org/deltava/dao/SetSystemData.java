@@ -131,4 +131,32 @@ public class SetSystemData extends DAO {
 	      throw new DAOException(se);
 	   }
 	}
+	
+	/**
+	 * Purges entries out of a System log table.
+	 * @param tableName the table name
+	 * @param colName the date column name
+	 * @param days the number of days back to set the cutoff date
+	 * @return the number of entries deleted
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purge(String tableName, String colName, int days) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("DELETE FROM SYS_");
+		sqlBuf.append(tableName.toUpperCase());
+		sqlBuf.append(" WHERE (");
+		sqlBuf.append(colName.toUpperCase());
+		sqlBuf.append(" < DATE_SUB(NOW(), INTERVAL ? DAY))");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, days);
+			int rowsDeleted = _ps.executeUpdate();
+			_ps.close();
+			return rowsDeleted;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
