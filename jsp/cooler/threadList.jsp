@@ -31,6 +31,7 @@ return true;
 <body>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
+<c:set var="channelName" value="${empty channelName ? channel.name : channelName}" scope="request" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -39,11 +40,11 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
 <c:if test="${channelAccess.canPost}">
- <td class="left caps">DISCUSSION THREADS - ${channel.name}</td>
+ <td class="left caps">DISCUSSION THREADS - ${channelName}</td>
  <td><el:cmdbutton url="threadpost" linkID="${channel.name}" label="NEW THREAD" /></td>
 </c:if>
 <c:if test="${!channelAccess.canPost}">
- <td colspan="2" class="left caps">DISCUSSION THREADS - ${channel.name}</td>
+ <td colspan="2" class="left caps">DISCUSSION THREADS - ${channelName}</td>
 </c:if>
  <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" firstEntry="ALL" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
 </tr>
