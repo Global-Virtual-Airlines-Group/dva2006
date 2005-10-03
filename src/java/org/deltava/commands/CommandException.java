@@ -45,6 +45,6 @@ public class CommandException extends Exception {
      * @param de the root DAO Exception
      */
     public CommandException(DAOException de) {
-       this(de.getCause());
+       this((de.getCause() == null) ? de : de.getCause());
     }
 }
