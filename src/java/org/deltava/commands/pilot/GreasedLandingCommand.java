@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetFlightReports;
+import org.deltava.dao.GetFlightReportRecognition;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.ComboUtils;
@@ -19,47 +19,51 @@ import org.deltava.util.ComboUtils;
  */
 
 public class GreasedLandingCommand extends AbstractViewCommand {
-	
-	private static final List DATE_FILTER = ComboUtils.fromArray(new String[] {"All Landings", "30 Days", "60 Days", "90 Days" }, 
-			new String[] {"0", "30", "60", "90"});
 
-	 /**
-     * Executes the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occurs
-     */
-    public void execute(CommandContext ctx) throws CommandException {
-    	
-    	// Load the view context
-    	ViewContext vc = initView(ctx, 25);
-    	
-    	// Check how many days back to search
-    	int daysBack = 30;
-    	try {
-    		daysBack = Integer.parseInt(ctx.getParameter("days"));
-    	} catch (Exception e) {
-    		daysBack = 0;
-    	}
+   private static final List DATE_FILTER = ComboUtils.fromArray(new String[] { "All Landings", "30 Days", "60 Days",
+         "90 Days" }, new String[] { "0", "30", "60", "90" });
 
-        try {
-            Connection con = ctx.getConnection();
-            
-            // Get the DAO and the results
-            GetFlightReports dao = new GetFlightReports(con);
-            dao.setQueryMax(vc.getCount());
-            ctx.setAttribute("pireps", dao.getGreasedLandings(daysBack), REQUEST);
-        } catch (DAOException de) {
-            throw new CommandException(de);
-        } finally {
-            ctx.release();
-        }
-        
-        // Save combobox choices
-        ctx.setAttribute("dateFilter", DATE_FILTER, REQUEST);
-        
-        // Forward to the JSP
-        CommandResult result = ctx.getResult();
-        result.setURL("/jsp/roster/greasedLandings.jsp");
-        result.setSuccess(true);
-    }
+   /**
+    * Executes the command.
+    * @param ctx the Command context
+    * @throws CommandException if an unhandled error occurs
+    */
+   public void execute(CommandContext ctx) throws CommandException {
+
+      // Load the view context
+      ViewContext vc = initView(ctx, 25);
+
+      // Check how many days back to search
+      int daysBack = 30;
+      try {
+         daysBack = Integer.parseInt(ctx.getParameter("days"));
+      } catch (Exception e) {
+         daysBack = 0;
+      }
+
+      // Check staff member filter
+      boolean isStaff = Boolean.valueOf(ctx.getParameter("doStaff")).booleanValue();
+      try {
+         Connection con = ctx.getConnection();
+
+         // Get the DAO and the results
+         GetFlightReportRecognition dao = new GetFlightReportRecognition(con);
+         dao.setQueryMax(vc.getCount());
+         List results = isStaff ? dao.getStaffReports(daysBack) : dao.getGreasedLandings(daysBack);
+         ctx.setAttribute("pireps", results, REQUEST);
+      } catch (DAOException de) {
+         throw new CommandException(de);
+      } finally {
+         ctx.release();
+      }
+
+      // Save combobox choices
+      ctx.setAttribute("isStaff", Boolean.valueOf(isStaff), REQUEST);
+      ctx.setAttribute("dateFilter", DATE_FILTER, REQUEST);
+
+      // Forward to the JSP
+      CommandResult result = ctx.getResult();
+      result.setURL("/jsp/roster/greasedLandings.jsp");
+      result.setSuccess(true);
+   }
 }

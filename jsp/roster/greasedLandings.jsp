@@ -40,9 +40,10 @@ smoothest landings, and the greaser pilots who made them:<br />
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>
- <td class="right" colspan="4"><el:text name="viewCount" idx="*" size="2" max="2" value="${viewCount}" /> 
+ <td colspan="2"><el:box name="doStaff" idx="*" value="true" label="Staff Members Only" checked="${isStaff}" /></td>
+ <td class="right" colspan="2"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
 FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
-<el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+<el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -50,7 +51,7 @@ FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFi
  <td width="5%">#</td>
  <td width="20%">PILOT NAME</td>
  <td width="10%">DATE</td>
- <td width="15%">FLIGHT NUMBER</td>
+ <td width="10%">FLIGHT #</td>
  <td width="10%">EQUIPMENT</td>
  <td width="10%">TOUCHDOWN</td>
  <td>AIRPORTS</td>
@@ -64,7 +65,7 @@ FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFi
  <td class="sec bld">${entryNumber}</td>
  <td>${pirep.firstName} ${pirep.lastName}</td>
  <td class="pri bld"><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><el:cmd className="bld" url="pirep" linkID="0x${pirep.ID}">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="small bld" url="pirep" linkID="0x${pirep.ID}">${pirep.flightCode}</el:cmd></td>
  <td class="sec">${pirep.equipmentType}</td>
  <td class="bld"><fmt:int value="${pirep.landingVSpeed}" /> ft/min</td>
  <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>
