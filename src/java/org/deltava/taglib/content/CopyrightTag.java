@@ -48,7 +48,7 @@ public class CopyrightTag extends TagSupport {
    private void displayCopyright() throws Exception {
       JspWriter jw = pageContext.getOut();
       jw.println("<hr />");
-      jw.print("<span class=\"copyright\">");
+      jw.print("<div class=\"copyright\">");
       jw.print(pageContext.getServletContext().getServletContextName());
       jw.print(" ");
       jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD);
@@ -57,7 +57,8 @@ public class CopyrightTag extends TagSupport {
           jw.print(String.valueOf(_rcBuild));
        }
       
-      jw.print(")</span>");
+      jw.println(")</div>");
+      jw.print("<span class=\"copyright small\">All trademarks are the property of their respective owners.</span>");
    }
 
    /**
