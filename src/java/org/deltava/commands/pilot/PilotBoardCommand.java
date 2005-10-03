@@ -45,6 +45,10 @@ public class PilotBoardCommand extends AbstractCommand {
          return _gPos.getLongitude();
       }
       
+      public int getHemisphere() {
+         return _gPos.getHemisphere();
+      }
+      
       public String getIconColor() {
          return MapEntry.RED;
       }
