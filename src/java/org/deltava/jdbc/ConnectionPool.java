@@ -22,7 +22,7 @@ public class ConnectionPool implements Recycler {
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
-	static final int MAX_USE_TIME = 58000;
+	static final int MAX_USE_TIME = 140 * 1000;
 	static final int MAX_SYS_CONS = 3;
 	
 	private int _poolMaxSize = 1;
@@ -191,9 +191,9 @@ public class ConnectionPool implements Recycler {
 
 		// If we haven't found a free connection, check if we can grow the pool
 		if (isSystem && (sysConSize >= MAX_SYS_CONS)) {
-			throw new ConnectionPoolException("Connection Pool full");
+			throw new ConnectionPoolFullException();
 		} else if (!isSystem && ((_cons.size() - sysConSize) >= _poolMaxSize)) {
-			throw new ConnectionPoolException("Connection Pool full");
+			throw new ConnectionPoolFullException();
 		}
 
 		// Get a new connection and add it to the pool
