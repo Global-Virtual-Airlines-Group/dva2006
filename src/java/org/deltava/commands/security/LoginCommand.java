@@ -50,7 +50,7 @@ public class LoginCommand extends AbstractCommand {
 		// Check that JavaScript is working properly
 		boolean jsOK = Boolean.valueOf(ctx.getParameter("jsOK")).booleanValue();
 		if (!jsOK) {
-			result.setURL("/jsp/jsDisabled.jsp");
+			result.setURL("/jsp/error/jsDisabled.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -66,7 +66,6 @@ public class LoginCommand extends AbstractCommand {
 				throw new SecurityException("Unknown User Name");
 
 			// Get the authenticator and try to authenticate
-			log.debug("Authenticating " + dN);
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			auth.authenticate(dN, ctx.getParameter("pwd"));
 
