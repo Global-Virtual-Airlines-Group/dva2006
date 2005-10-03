@@ -32,8 +32,13 @@ public class AirportListCommand extends AbstractViewCommand {
 		ViewContext vc = initView(ctx);
 		String aCode = (String) ctx.getCmdParameter(ID, null);
 		Airline a = SystemData.getAirline((aCode == null) ? SystemData.get("airline.code") : aCode);
-		if (a == null)
+		if (a == null) {
 		   a = SystemData.getAirline(SystemData.get("airline.code"));
+		   
+		   // THIS IS A HACK FOR AFV SINCE AIRLINE.CODE DOESN'T MATCH THE SCHEDULE DB
+		   if (a == null)
+		      a = SystemData.getAirline("AF");
+		}
 		
 		// Save the airline
 		ctx.setAttribute("airline", a, REQUEST);
