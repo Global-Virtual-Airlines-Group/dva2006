@@ -348,19 +348,29 @@ public class PIREPCommand extends AbstractFormCommand {
 				mapType = Pilot.MAP_GOOGLE;
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
 				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
+				
+				// Figure out the hemispheres for the start/end airports
+				Set hemis = new HashSet();
+				hemis.add(new Integer(fr.getAirportD().getHemisphere()));
+				hemis.add(new Integer(fr.getAirportA().getHemisphere()));
 
 				// Get the route data from the DAFIF database
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					List routeEntries = StringUtils.split(info.getRoute(), " ");
-					List routeInfo = new ArrayList(routeEntries.size());
 					GetNavData navdao = new GetNavData(con);
+					Map navaids = navdao.getByID(routeEntries);
+					
+					// Filter out navaids and put them in the correct order
+					List routeInfo = new ArrayList(routeEntries.size());
 					for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 						String navCode = (String) i.next();
-						NavigationDataBean wPoint = navdao.get(navCode);
-						if (wPoint != null)
-							routeInfo.add(wPoint);
+						NavigationDataBean wPoint = (NavigationDataBean) navaids.get(navCode);
+						if (wPoint != null) {
+						   if (hemis.contains(new Integer(wPoint.getHemisphere())))
+						      routeInfo.add(wPoint);
+						}
 					}
 
 					// Save ACARS info
