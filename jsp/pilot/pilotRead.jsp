@@ -105,11 +105,11 @@
 </c:if>
 <tr>
  <td class="label">Flights</td>
- <td colspan="${cspan}" class="data">${pilot.legs} legs, ${pilot.hours} hours</td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
 </tr>
 <tr>
  <td class="label">Online Flights</td>
- <td colspan="${cspan}" class="data pri">${pilot.onlineLegs} legs, ${pilot.onlineHours} hours</td>
+ <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
 </tr>
 <c:if test="${pilot.legacyHours > 0}">
 <tr>
