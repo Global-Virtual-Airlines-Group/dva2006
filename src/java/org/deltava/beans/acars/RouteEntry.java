@@ -114,12 +114,16 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 	   return _mach;
 	}
 
-	public double getLatitude() {
+	public final double getLatitude() {
 		return _gpos.getLatitude();
 	}
 
-	public double getLongitude() {
+	public final double getLongitude() {
 		return _gpos.getLongitude();
+	}
+	
+	public final int getHemisphere() {
+	   return _gpos.getHemisphere();
 	}
 
 	/**

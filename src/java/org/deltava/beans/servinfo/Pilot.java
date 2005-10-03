@@ -125,7 +125,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 * @see Pilot#setPosition(double, double)
 	 * @see Pilot#setPosition(String, String)
 	 */
-	public double getLatitude() {
+	public final double getLatitude() {
 		return _position.getLatitude();
 	}
 	
@@ -137,8 +137,17 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 * @see Pilot#setPosition(double, double)
 	 * @see Pilot#setPosition(String, String)
 	 */
-	public double getLongitude() {
+	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns the hemispheres containing this Pilot.
+	 * @return bit-wise hemisphere constants
+	 * @see GeoPosition#getHemisphere()
+	 */
+	public final int getHemisphere() {
+	   return _position.getHemisphere();
 	}
 
 	/**

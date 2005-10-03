@@ -147,6 +147,20 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 		double lng = (Math.abs(deg) + (min / 60.0) + (sec / 3600.0)) * ((deg < 0) ? -1 : 1);
 		setLongitude(lng);
 	}
+	
+	/**
+	 * Returns the Hemispheres that contain this location.
+	 * @return bit-wise hemisphere constants
+	 * @see GeoLocation#NORTH
+	 * @see GeoLocation#SOUTH
+	 * @see GeoLocation#EAST
+	 * @see GeoLocation#WEST
+	 */
+	public int getHemisphere() {
+	   int results = (_lat >= 0) ? NORTH : SOUTH;
+	   results += (_lon >= 0) ? EAST : WEST;
+	   return results;
+	}
 
 	/**
 	 * Calculates the distance between two GeoPositions.

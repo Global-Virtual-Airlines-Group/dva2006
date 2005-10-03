@@ -8,7 +8,6 @@ import org.deltava.beans.MapEntry;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store common properties for Navigation Database objects.
@@ -17,7 +16,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Comparable, Serializable, GeoLocation, Cacheable, MapEntry {
+public abstract class NavigationDataBean implements Comparable, Serializable, GeoLocation, MapEntry {
 
    /**
     * Object type names.
@@ -96,6 +95,15 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
     */
    public GeoPosition getPosition() {
       return _gp;
+   }
+   
+   /**
+    * Returns the hemispheres containing this Navagation Aid. 
+    * @return bit-wise hemisphere constants
+    * @see GeoPosition#getHemisphere()
+    */
+   public final int getHemisphere() {
+      return _gp.getHemisphere();
    }
 
    /**

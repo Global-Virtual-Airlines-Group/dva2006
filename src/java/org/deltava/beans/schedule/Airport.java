@@ -155,7 +155,7 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	 * @return This airport's latitude in degrees (and some fraction thereof)
 	 * @see GeoPosition#getLatitude()
 	 */
-	public double getLatitude() {
+	public final double getLatitude() {
 		return _position.getLatitude();
 	}
 
@@ -164,8 +164,17 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	 * @return This airport's longitude in degrees (and some fraction thereof)
 	 * @see GeoPosition#getLongitude()
 	 */
-	public double getLongitude() {
+	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns the hemispheres containing this Airport.
+	 * @return bit-wise hemisphere constants
+	 * @see GeoPosition#getHemisphere()
+	 */
+	public final int getHemisphere() {
+	   return _position.getHemisphere();
 	}
 
 	/**
