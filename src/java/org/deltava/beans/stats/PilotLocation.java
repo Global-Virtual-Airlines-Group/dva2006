@@ -35,7 +35,7 @@ public class PilotLocation implements MapEntry {
 	 * @return the latitude in degrees
 	 * @see PilotLocation#getLongitude()
 	 */
-	public double getLatitude() {
+	public final double getLatitude() {
 		return _position.getLatitude();
 	}
 	
@@ -44,8 +44,17 @@ public class PilotLocation implements MapEntry {
 	 * @return the longitude in degrees
 	 * @see PilotLocation#getLatitude()
 	 */
-	public double getLongitude() {
+	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns the hemispheres containing this Pilot.
+	 * @return bit-wise hemisphere constants
+	 * @see GeoLocation#getHemisphere()
+	 */
+	public final int getHemisphere() {
+	   return _position.getHemisphere();
 	}
 	
 	/**
