@@ -115,7 +115,7 @@ return true;
 <!-- Search Results -->
 <c:forEach var="flight" items="${fafResults}">
 <tr>
- <td><input type="checkbox" class="check" name="addFA" value="${flight.flightCode}" />" /></td>
+ <td><input type="checkbox" class="check" name="addFA" value="${flight.flightCode}" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
