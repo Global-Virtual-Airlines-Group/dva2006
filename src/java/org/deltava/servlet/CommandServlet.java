@@ -172,11 +172,12 @@ public class CommandServlet extends HttpServlet {
          // Get the user name
          String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
          log.error("Security Error - " + usrName + " executing " + cse.getCommand() + " - " + cse.getMessage());
-         RequestDispatcher rd = req.getRequestDispatcher("/jsp/securityViolation.jsp");
+         RequestDispatcher rd = req.getRequestDispatcher("/jsp/error/securityViolation.jsp");
          rd.forward(req, rsp);
       } catch (CommandException ce) {
+         String errPage = (ce.getCause() instanceof ConnectionPoolFullException) ? "/jsp/error/poolFull.jsp" : "/jsp/error/error.jsp";
          log.error("Error executing command - " + ce.getMessage(), ce);
-         RequestDispatcher rd = req.getRequestDispatcher("/jsp/error.jsp");
+         RequestDispatcher rd = req.getRequestDispatcher(errPage);
          req.setAttribute("servlet_error", ce.getMessage());
          req.setAttribute("servlet_exception", (ce.getCause() == null) ? ce : ce.getCause());
          rd.forward(req, rsp);
