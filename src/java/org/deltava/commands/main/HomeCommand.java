@@ -33,7 +33,7 @@ public class HomeCommand extends AbstractCommand {
       // Check that the hostname is correct
       if (!ctx.getRequest().getServerName().equals(SystemData.get("airline.url"))) {
          result.setType(CommandResult.REDIRECT);
-         result.setURL(ctx.getRequest().getProtocol() + "://" + SystemData.get("airline.url") + "/");
+         result.setURL("http://" + SystemData.get("airline.url") + "/");
          result.setSuccess(true);
          return;
       }
