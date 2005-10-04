@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.CheckRide;
 
 import org.deltava.beans.schedule.*;
@@ -359,17 +359,22 @@ public class PIREPCommand extends AbstractFormCommand {
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					List routeEntries = StringUtils.split(info.getRoute(), " ");
+					GeoLocation lastWaypoint = fr.getAirportD();
+					
+					// Get navigation aids
 					GetNavData navdao = new GetNavData(con);
-					Map navaids = navdao.getByID(routeEntries);
+					NavigationDataMap navaids = navdao.getByID(routeEntries);
 					
 					// Filter out navaids and put them in the correct order
-					List routeInfo = new ArrayList(routeEntries.size());
+					List routeInfo = new ArrayList();
 					for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 						String navCode = (String) i.next();
-						NavigationDataBean wPoint = (NavigationDataBean) navaids.get(navCode);
+						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
 						if (wPoint != null) {
-						   if (hemis.contains(new Integer(wPoint.getHemisphere())))
+						   if (hemis.contains(new Integer(wPoint.getHemisphere()))) {
 						      routeInfo.add(wPoint);
+						      lastWaypoint = wPoint;
+						   }
 						}
 					}
 
