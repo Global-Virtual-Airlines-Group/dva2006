@@ -215,6 +215,7 @@
 		<equipment>MD-11</equipment>
 		<equipment>MD-88</equipment>
 		<equipment>MD-90</equipment>
+		<equipment>S340</equipment>
 	</list>
 	
 	<!-- JDBC data source configuration -->
