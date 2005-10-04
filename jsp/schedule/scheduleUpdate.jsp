@@ -13,8 +13,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -59,6 +59,10 @@ ${error}<br />
 </c:if>
 </c:when>
 </c:choose>
+<c:if test="${isAirport}">
+<br />
+To return to the list of airports, <el:cmd url="airports" className="sec bld">click here</el:cmd>.<br />
+</c:if>
 <br />
 <content:copyright />
 </div>
