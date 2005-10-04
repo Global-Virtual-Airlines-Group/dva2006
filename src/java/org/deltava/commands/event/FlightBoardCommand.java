@@ -105,8 +105,8 @@ public class FlightBoardCommand extends AbstractCommand {
 
 				// Get the airports
 				GetNavData navdao = new GetNavData(con);
-				Map allAirports = navdao.getByID(airportIDs);
-				for (Iterator i = allAirports.values().iterator(); i.hasNext();) {
+				NavigationDataMap allAirports = navdao.getByID(airportIDs);
+				for (Iterator i = allAirports.getAll().iterator(); i.hasNext();) {
 					NavigationDataBean navdata = (NavigationDataBean) i.next();
 					if (navdata.getType() != NavigationDataBean.AIRPORT)
 						i.remove();
@@ -117,14 +117,14 @@ public class FlightBoardCommand extends AbstractCommand {
 					Pilot usr = (Pilot) i.next();
 
 					// Update the departure airport
-					if (allAirports.containsKey(usr.getAirportD().getICAO())) {
+					if (allAirports.contains(usr.getAirportD().getICAO())) {
 						AirportLocation al = (AirportLocation) allAirports.get(usr.getAirportD().getICAO());
 						usr.getAirportD().setName(al.getName());
 						usr.getAirportD().setLocation(al.getLatitude(), al.getLongitude());
 					}
 
 					// Update the arrival airport
-					if (allAirports.containsKey(usr.getAirportA().getICAO())) {
+					if (allAirports.contains(usr.getAirportA().getICAO())) {
 						AirportLocation al = (AirportLocation) allAirports.get(usr.getAirportA().getICAO());
 						usr.getAirportA().setName(al.getName());
 						usr.getAirportA().setLocation(al.getLatitude(), al.getLongitude());

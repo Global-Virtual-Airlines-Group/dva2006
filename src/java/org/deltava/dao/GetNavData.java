@@ -73,14 +73,15 @@ public class GetNavData extends DAO {
    /**
     * Returns a group of Navigation objects.
     * @param ids a Collection of navigation object codes
-    * @return a Map of NavigationDataBeans, with the code as the key
+    * @return a NavigationDataMap bean
     * @throws DAOException if a JDBC error occurs
     */
-   public Map getByID(Collection ids) throws DAOException {
+   public NavigationDataMap getByID(Collection ids) throws DAOException {
 
       // Check for empty id set
+      NavigationDataMap results = new NavigationDataMap();;
       if (ids.isEmpty())
-         return Collections.EMPTY_MAP;
+         return results;
 
       // Build the SQL Statement
       StringBuffer sqlBuf = new StringBuffer("SELECT * FROM common.NAVDATA WHERE CODE IN (");
@@ -96,16 +97,15 @@ public class GetNavData extends DAO {
          sqlBuf.setLength(sqlBuf.length() - 1);
 
       sqlBuf.append(')');
-      List results = null;
       try {
          prepareStatementWithoutLimits(sqlBuf.toString());
-         results = execute();
+         results.addAll(execute());
+         
       } catch (SQLException se) {
          throw new DAOException(se);
       }
 
-      // Convert to a Map for easy lookup
-      return CollectionUtils.createMap(results, "code");
+      return results;
    }
 
    /**
