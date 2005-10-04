@@ -77,6 +77,9 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	   try {
 	      prepareStatement(sqlBuf.toString());
 	      _ps.setInt(1, FlightReport.OK);
+	      if (days > 0)
+				_ps.setInt(2, days);
+	      
 	      return execute();
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
