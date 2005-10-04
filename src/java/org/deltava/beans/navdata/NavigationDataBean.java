@@ -161,12 +161,21 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
    }
    
    /**
-    * Compares two objects by comparing their codes.
+    * Compares two objects by comparing their codes. If the codes are equal, then their distances from point 0,0
+    * are compared.
     * @see Comparable#compareTo(Object)
     */
    public int compareTo(Object o2) {
       NavigationDataBean nb2 = (NavigationDataBean) o2;
-      return _code.compareTo(nb2.getCode());
+      int tmpResult = _code.compareTo(nb2.getCode());
+      if (tmpResult == 0) {
+         GeoPosition gp = new GeoPosition(0, 0);
+         int d1 = gp.distanceTo(this);
+         int d2 = gp.distanceTo(nb2);
+         tmpResult = new Integer(d1).compareTo(new Integer(d2));
+      }
+      
+      return tmpResult;
    }
    
    /**
