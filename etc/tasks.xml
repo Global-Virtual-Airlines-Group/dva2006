@@ -23,7 +23,7 @@
 		<interval>86400</interval>
 	</task>
 	
-	<task id="httpstats" enabled="false">
+	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
 		<hours>0</hours>
