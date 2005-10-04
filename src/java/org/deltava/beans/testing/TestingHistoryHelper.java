@@ -5,6 +5,8 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A helper class to extract information from a user's examination/check ride history.
  * @author Luke
@@ -125,9 +127,10 @@ public class TestingHistoryHelper {
 			return false;
 
 		// Check if we are in the proper equipment program
-		if (ep.getEquipmentType() != null)
+		if (!StringUtils.isEmpty(ep.getEquipmentType())) {
 			if (!ep.getEquipmentType().equals(_usr.getEquipmentType()))
 				return false;
+		}
 
 		// Check if we've reached the proper minimum stage
 		if (ep.getMinStage() > getMaxExamStage())
