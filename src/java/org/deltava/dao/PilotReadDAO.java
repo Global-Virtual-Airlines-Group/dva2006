@@ -276,7 +276,7 @@ abstract class PilotReadDAO extends PilotDAO {
             p.setLegs(rs.getInt(34));
             p.setMiles(rs.getLong(35));
             p.setHours(rs.getDouble(36));
-            p.setLastFlight(rs.getTimestamp(37));
+            p.setLastFlight(expandDate(rs.getDate(37)));
          }
 
          // Check if this result set has a column 38, which is the signature ID
