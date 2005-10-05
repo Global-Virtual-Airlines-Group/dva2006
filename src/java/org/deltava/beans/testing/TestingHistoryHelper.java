@@ -137,7 +137,7 @@ public class TestingHistoryHelper {
 			return false;
 		
 		// Check if we have at least 5 approved flights
-		return (getFlightLegs(null) >= 5);
+		return (getFlightLegs(_myEQ) >= 5);
 	}
 
 	/**
