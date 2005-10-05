@@ -5,6 +5,8 @@ import java.sql.*;
 
 import org.deltava.beans.navdata.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
@@ -13,6 +15,8 @@ import org.deltava.beans.navdata.*;
  */
 
 public class SetNavData extends DAO {
+   
+   private static final String[] TABLES = {"NAVDATA", "SID_STAR", "AIRWWAYS"};
 
 	/**
 	 * Initializes the Data Access Object.
@@ -75,30 +79,59 @@ public class SetNavData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Deletes an entry from the Navigation Data table.
-	 * @param code the object code
+	 * Writes an Airway entry to the database.
+	 * @param a an Airway bean
 	 * @throws DAOException if a JDBC error occurs
+	 * @see SetNavData#write(TerminalRoute)
 	 */
-	public void delete(String code) throws DAOException {
-		try {
-			prepareStatement("DELETE FROM common.NAVDATA WHERE (CODE=?)");
-			_ps.setString(1, code);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
+	public void write(Airway a) throws DAOException {
+	   try {
+	      prepareStatement("REPLACE INTO common.AIRWAYS (NAME, ROUTE) VALUES (?, ?)");
+	      _ps.setString(1, a.getCode());
+	      _ps.setString(2, a.getRoute());
+	      executeUpdate(1);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Writes an SID/STAR entry to the database.
+	 * @param tr an TerminalRoute bean
+	 * @throws DAOException if a JDBC error occurs
+	 * @see SetNavData#write(Airway)
+	 */
+	public void write(TerminalRoute tr) throws DAOException {
+	   try {
+	      prepareStatement("REPLACE INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, ROUTE) "
+	            + "VALUES (?, ?, ?, ?, ?, ?)");
+	      _ps.setString(1, tr.getICAO());
+	      _ps.setInt(2, tr.getType());
+	      _ps.setString(3, tr.getName());
+	      _ps.setString(4, tr.getTransition());
+	      _ps.setString(5, tr.getRunway());
+	      _ps.setString(6, tr.getRoute());
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
 	}
 
 	/**
-	 * Purges all entries from the Navigation Data table.
+	 * Purges all entries from a Navigation Data table.
+	 * @return the number of rows deleted
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void purge() throws DAOException {
+	public int purge(String tableName) throws DAOException {
+	   
+	   // Validate the table name
+	   if (StringUtils.arrayIndexOf(TABLES, tableName) == -1)
+	      throw new DAOException("Invalid Table - " + tableName);	
+	   
 		try {
-			prepareStatementWithoutLimits("DELETE FROM common.NAVDATA");
-			executeUpdate(0);
+			prepareStatementWithoutLimits("DELETE FROM common." + tableName);
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

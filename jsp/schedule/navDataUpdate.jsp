@@ -13,8 +13,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -39,7 +39,8 @@ ${error}<br />
 <c:if test="${isPurge}">
 <div class="updateHdr">Navigation Data Purged</div>
 <br />
-The <content:airline /> Navigation Database has been purged. You may now import a new AIRAC cycle's data.<br />
+The <content:airline /> Navigation Database has been purged. <fmt:int value="${rowsDeleted}" /> entries have 
+been deleted from the database. You may now import a new AIRAC cycle's data.<br />
 </c:if>
 <br />
 To return to the AIRAC Navigation Data import page, <el:cmd url="navimport">click here</el:cmd>.<br />
