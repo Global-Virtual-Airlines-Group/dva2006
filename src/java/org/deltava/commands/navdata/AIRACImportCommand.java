@@ -26,7 +26,8 @@ import org.deltava.util.StringUtils;
 
 public class AIRACImportCommand extends AbstractCommand {
 
-	private static final String[] UPLOAD_NAMES = { "pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat" };
+	private static final String[] UPLOAD_NAMES = {"pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat"};
+	private static final String[] AIRWAY_NAMES = {"pssawy.dat", "psssid.dat", "pssstar.dat"};
 
 	/**
 	 * Executes the command.
@@ -50,6 +51,13 @@ public class AIRACImportCommand extends AbstractCommand {
 			result.setURL("/jsp/schedule/navDataImport.jsp");
 			result.setSuccess(true);
 			return;
+		}
+		
+		// If we're uploading airways, go to a different command
+		if (StringUtils.arrayIndexOf(AIRWAY_NAMES, navData.getName()) > -1) {
+		   result.setURL("navimporta.do");
+		   result.setSuccess(true);
+		   return;
 		}
 
 		// Get the navaid type

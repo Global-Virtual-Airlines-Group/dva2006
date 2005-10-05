@@ -178,9 +178,112 @@ public class GetNavData extends DAO {
       distanceFilter(results, loc, distance);
       return CollectionUtils.createMap(results, "code");
    }
+   
+   /**
+    * Loads a SID/STAR from the navigation database.
+    * @param name the name of the Terminal Route, as NAME.TRANSITION
+    * @return a TerminalRoute bean, or null if not found
+    * @throws DAOException if a JDBC error occurs
+    */
+   public TerminalRoute getRoute(String name) throws DAOException {
+      
+      // Split the name
+      StringTokenizer tkns = new StringTokenizer(name, ".");
+      if (tkns.countTokens() != 2)
+         return null;
+      
+      try {
+         prepareStatement("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
+         _ps.setString(1, tkns.nextToken().toUpperCase());
+         _ps.setString(2, tkns.nextToken().toUpperCase());
+         setQueryMax(1);
+         
+         // Execute the query
+         List results = executeSIDSTAR();
+         return results.isEmpty() ? null : (TerminalRoute) results.get(0);
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Loads all SIDs/STARs for a particular Airport.
+    * @param code the Airport ICAO code
+    * @param type a bit mask to filter SID/STR routes
+    * @return a List of TerminalRoutes
+    * @throws DAOException
+    * @see TerminalRoute#SID
+    * @see TerminalRoute#STAR
+    */
+   public List getRoutes(String code, int type) throws DAOException {
+      try {
+         prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND ((TYPE & ?) != 0) ORDER BY "
+               + "NAME, TRANSITION");
+         _ps.setString(1, code.toUpperCase());
+         _ps.setInt(2, type);
+         return executeSIDSTAR();
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Loads an Airway definition from the database.
+    * @param name the airway code
+    * @return an Airway bean, or null if not found
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Airway getAirway(String name) throws DAOException {
+      try {
+         prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
+         _ps.setString(1, name.toUpperCase());
+         setQueryMax(1);
+         
+         // Execute the query
+         Airway result = null;
+         ResultSet rs = _ps.executeQuery();
+         
+         // Populate the airway bean
+         if (rs.next())
+            result = new Airway(rs.getString(1), rs.getString(2));
+         
+         // Clean up and return
+         rs.close();
+         _ps.close();
+         return result;
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
+    * Helper method to iterate through a SID_STAR result set.
+    */
+   private List executeSIDSTAR() throws SQLException {
+
+      // Execute the Query
+      ResultSet rs = _ps.executeQuery();
+
+      // Iterate through the results
+      List results = new ArrayList();
+      while (rs.next()) {
+         TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(4), rs.getInt(2));
+         tr.setName(rs.getString(3));
+         tr.setRunway(rs.getString(5));
+         tr.setRoute(rs.getString(6));
+         
+         // Add to results
+         results.add(tr);
+      }
+      
+      // Clean up and return
+      rs.close();
+      _ps.close();
+      return results;
+   }
 
    /**
-    * Helper method to iterate through the result set.
+    * Helper method to iterate through a NAVDATA result set.
     */
    private List execute() throws SQLException {
 
