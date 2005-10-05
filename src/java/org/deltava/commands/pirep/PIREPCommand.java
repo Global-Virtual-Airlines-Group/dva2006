@@ -214,10 +214,10 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Check if we're creating a new PIREP
 		boolean isNew = (ctx.getID() == 0);
-		
+
 		// Get data for comboboxes
 		Calendar cld = Calendar.getInstance();
-		
+
 		// Get all airlines
 		Map allAirlines = (Map) SystemData.getObject("airlines");
 
@@ -236,9 +236,9 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Save the user object
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-				
+
 				// Get the active airlines
-				for (Iterator i = allAirlines.values().iterator(); i.hasNext(); ) {
+				for (Iterator i = allAirlines.values().iterator(); i.hasNext();) {
 					Airline a = (Airline) i.next();
 					if (a.getActive())
 						airlines.add(a);
@@ -258,30 +258,30 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetPilot dao2 = new GetPilot(con);
 				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
-				
+
 				// Set PIREP date
 				cld.setTime(fr.getDate());
-				
+
 				// Get the active airlines
-				for (Iterator i = allAirlines.values().iterator(); i.hasNext(); ) {
+				for (Iterator i = allAirlines.values().iterator(); i.hasNext();) {
 					Airline a = (Airline) i.next();
 					if (a.getActive() || (fr.getAirline().equals(a)))
 						airlines.add(a);
 				}
 			}
-			
+
 			ctx.setAttribute("airlines", airlines, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save pirepdate combobox values
 		ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
 		ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
 		ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
-		
+
 		// Save airport/airline lists in the request
 		ctx.setAttribute("airline", "DVA", REQUEST);
 		ctx.setAttribute("airportSorter", _cmp, REQUEST);
@@ -348,33 +348,29 @@ public class PIREPCommand extends AbstractFormCommand {
 				mapType = Pilot.MAP_GOOGLE;
 				ACARSFlightReport afr = (ACARSFlightReport) fr;
 				int flightID = afr.getDatabaseID(FlightReport.DBID_ACARS);
-				
-				// Figure out the hemispheres for the start/end airports
-				Set hemis = new HashSet();
-				hemis.add(new Integer(fr.getAirportD().getHemisphere()));
-				hemis.add(new Integer(fr.getAirportA().getHemisphere()));
 
 				// Get the route data from the DAFIF database
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
 					List routeEntries = StringUtils.split(info.getRoute(), " ");
-					GeoLocation lastWaypoint = fr.getAirportD();
-					
+					GeoPosition lastWaypoint = new GeoPosition(fr.getAirportD());
+
 					// Get navigation aids
 					GetNavData navdao = new GetNavData(con);
 					NavigationDataMap navaids = navdao.getByID(routeEntries);
-					
+
 					// Filter out navaids and put them in the correct order
 					List routeInfo = new ArrayList();
 					for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 						String navCode = (String) i.next();
 						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
 						if (wPoint != null) {
-						   if (hemis.contains(new Integer(wPoint.getHemisphere()))) {
-						      routeInfo.add(wPoint);
-						      lastWaypoint = wPoint;
-						   }
+							if (lastWaypoint.distanceTo(wPoint) < fr.getDistance()) {
+								routeInfo.add(wPoint);
+								lastWaypoint.setLatitude(wPoint.getLatitude());
+								lastWaypoint.setLongitude(wPoint.getLongitude());
+							}
 						}
 					}
 
@@ -386,14 +382,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				// Get the check ride
 				CheckRide cr = null;
 				GetExam crdao = new GetExam(con);
-				if (flightID != 0) 
+				if (flightID != 0)
 					cr = crdao.getACARSCheckRide(flightID);
-				
+
 				// If we have a check ride, then save it and calculate the access level
 				if (cr != null) {
 					ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
 					crAccess.validate();
-					
+
 					// Save the checkride and its access controller
 					ctx.setAttribute("checkRide", cr, REQUEST);
 					ctx.setAttribute("crAccess", crAccess, REQUEST);
@@ -406,12 +402,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if (!(fr instanceof ACARSFlightReport))
-				   ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA().getPosition(),
-							100), REQUEST);   
+					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA()
+							.getPosition(), 100), REQUEST);
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
+						REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request

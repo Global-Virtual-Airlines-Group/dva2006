@@ -24,6 +24,8 @@ public class NavigationDataMap implements java.io.Serializable {
     * @throws NullPointerException if nd is null
     */
    public void add(NavigationDataBean nd) {
+	   if (nd == null)
+		   return;
       
       // Check if we have the bean - if not, create a set to hold them
       if (!contains(nd.getCode()))
@@ -70,7 +72,7 @@ public class NavigationDataMap implements java.io.Serializable {
     */
    public NavigationDataBean get(String code) {
       Set codes = getEntries(code);
-      return (NavigationDataBean) codes.iterator().next();
+      return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
    }
 
    /**
@@ -84,7 +86,7 @@ public class NavigationDataMap implements java.io.Serializable {
    public NavigationDataBean get(String code, GeoLocation loc) {
       Set codes = new TreeSet(new GeoComparator(loc));
       codes.addAll(getEntries(code));
-      return (NavigationDataBean) codes.iterator().next();
+      return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
    }
    
    /**
