@@ -305,6 +305,20 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
+     * Returns the length of the fllight <i>in hours multiplied by ten</i>. This is done to avoid rounding errors when
+     * using a floating point number. ACARS Flight Reports will use the time at 1x, 2x, and 4x acceleration to calculate
+     * the flight length if the length field is not already populated
+     * @return the length of the flight <i>in hours multiplied by ten</i>
+     * @see FlightReport#getLength()
+     * @see ACARSFlightReport#setTime1X(int)
+     * @see ACARSFlightReport#setTime2X(int)
+     * @see ACARSFlightReport#setTime4X(int)
+     */
+    public final int getLength() {
+    	return (super.getLength() != 0) ? super.getLength() : (_time1X + (_time2X * 2) + (_time4X * 4)) * 360;
+    }
+    
+    /**
      * Updates the start time of the flight.
      * @param dt the date/time the flight started
      * @see ACARSFlightReport#getEndTime()
