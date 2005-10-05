@@ -330,6 +330,12 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="navimporta">
+		<name>Import AIRAC Airway data</name>
+		<class>org.deltava.commands.navdata.AIRACImportAirwayCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="navsearch">
 		<name>Navigation Data Search</name>
 		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>

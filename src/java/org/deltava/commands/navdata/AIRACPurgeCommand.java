@@ -28,7 +28,12 @@ public class AIRACPurgeCommand extends AbstractCommand {
 			
 			// Get the DAO and purge the database
 			SetNavData dao = new SetNavData(con);
-			dao.purge();
+			int rowsDeleted = dao.purge("NAVDATA");
+			rowsDeleted += dao.purge("SID_STAR");
+			rowsDeleted += dao.purge("AIRWAYS");
+			
+			// Save the rows deleted
+			ctx.setAttribute("rowsDeleted", new Integer(rowsDeleted), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -41,7 +46,7 @@ public class AIRACPurgeCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/schedule/navDataPurge.jsp");
+		result.setURL("/jsp/schedule/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}
 }
