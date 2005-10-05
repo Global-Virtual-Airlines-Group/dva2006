@@ -6,8 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
@@ -61,13 +60,25 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Get the route data from the DAFIF database
 			List routeEntries = StringUtils.split(info.getRoute(), " ");
-			List routeInfo = new ArrayList(routeEntries.size());
+			GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
+			int distance = info.getAirportD().getPosition().distanceTo(info.getAirportA());
+			
+			// Get navigation aids
 			GetNavData navdao = new GetNavData(con);
+			NavigationDataMap navaids = navdao.getByID(routeEntries);
+			
+			// Filter out navaids and put them in the correct order
+			List routeInfo = new ArrayList();
 			for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 				String navCode = (String) i.next();
-				NavigationDataBean wPoint = navdao.get(navCode);
-				if (wPoint != null)
-					routeInfo.add(wPoint);
+				NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
+				if (wPoint != null) {
+					if (lastWaypoint.distanceTo(wPoint) < distance) {
+						routeInfo.add(wPoint);
+						lastWaypoint.setLatitude(wPoint.getLatitude());
+						lastWaypoint.setLongitude(wPoint.getLongitude());
+					}
+				}
 			}
 
 			// Load the route data
