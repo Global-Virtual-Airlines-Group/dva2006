@@ -432,7 +432,7 @@
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2750</position_interval>
-		<build type="Integer">51</build>
+		<build type="Integer">52</build>
 		
 		<pool>
 			<size type="Integer">100</size>
