@@ -47,13 +47,17 @@ public class UpdateEmailCommand extends AbstractCommand {
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(ctx.getUser().getID());
 			if (av == null) {
+			   ctx.release();
+			   
 				AddressValidationHelper.clearSessionFlag(ctx.getSession());
 				result.setURL("/jsp/register/eMailValid.jsp");
-			} else {
-				if (!EMailAddress.INVALID_ADDR.equals(av.getAddress()))
-					ctx.setAttribute("addr", av, REQUEST);
+				result.setSuccess(true);
+				return;
 			}
 
+			if (!EMailAddress.INVALID_ADDR.equals(av.getAddress()))
+				ctx.setAttribute("addr", av, REQUEST);
+			
 			// Determine if we are updating the address
 			boolean isSave = "save".equals(ctx.getCmdParameter(OPERATION, null));
 			boolean isValidate = "validate".equals(ctx.getCmdParameter(OPERATION, null));
