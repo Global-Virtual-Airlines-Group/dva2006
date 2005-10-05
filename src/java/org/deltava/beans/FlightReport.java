@@ -160,12 +160,13 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
    }
 
    /**
-    * Returns the length of the fllight <i>in hours multiplied by ten </i>. This is done to avoid rounding errors when
+    * Returns the length of the fllight <i>in hours multiplied by ten</i>. This is done to avoid rounding errors when
     * using a floating point number.
-    * @return the length of the flight <i>in hours multiplied by ten </i>
+    * @return the length of the flight <i>in hours multiplied by ten</i>
     * @see FlightReport#setLength(int)
+    * @see ACARSFlightReport#getLength()
     */
-   public final int getLength() {
+   public int getLength() {
       return _length;
    }
 
