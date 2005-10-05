@@ -206,7 +206,7 @@ public class ScheduleEntry extends Flight {
     
     /**
      * Sets the length of a flight leg.
-     * @param len the length of a leg, <i>in hours divided by ten</i>.
+     * @param len the length of a leg, <i>in hours mulitiplied by ten</i>.
      * @throws IllegalArgumentException if len is zero or negative
      * @see ScheduleEntry#getLength()
      */
