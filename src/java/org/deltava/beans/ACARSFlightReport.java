@@ -315,7 +315,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setTime4X(int)
      */
     public final int getLength() {
-    	return (super.getLength() != 0) ? super.getLength() : (_time1X + (_time2X * 2) + (_time4X * 4)) * 360;
+    	return (super.getLength() != 0) ? super.getLength() : (_time1X + (_time2X * 2) + (_time4X * 4)) / 360;
     }
     
     /**
