@@ -42,7 +42,9 @@ public class TaskExecuteCommand extends AbstractCommand {
 			t.start();
 		} catch (RuntimeException rte) {
 			Throwable tc = rte.getCause();
-			log.error("Scheduled Task threw " + tc.getClass().getName() + " - " + tc.getMessage());
+			if (tc != null)
+			   log.error("Scheduled Task threw " + tc.getClass().getName() + " - " + tc.getMessage());
+			
 			ctx.setAttribute("ex", tc, REQUEST);
 		} catch (Exception e) {
 			log.error("Scheduled Task threw " + e.getClass().getName() + " - " + e.getMessage());
