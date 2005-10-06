@@ -57,7 +57,7 @@ public class NewsDeleteCommand extends AbstractCommand {
       }
       
       // Set status attribute for the JSP
-      ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();

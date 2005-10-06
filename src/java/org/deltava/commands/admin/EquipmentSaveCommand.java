@@ -63,7 +63,7 @@ public class EquipmentSaveCommand extends AbstractCommand {
 			SetEquipmentType wdao = new SetEquipmentType(con);
 			if (isNew) {
 				wdao.create(eq);
-				ctx.setAttribute("isCreated", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isCreated", Boolean.TRUE, REQUEST);
 			} else {
 				wdao.update(eq);
 			}

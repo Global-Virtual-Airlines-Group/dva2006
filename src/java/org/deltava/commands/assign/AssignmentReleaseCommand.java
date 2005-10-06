@@ -76,10 +76,10 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			SetAssignment wdao = new SetAssignment(con);
 			if (assign.isRepeating()) {
 				wdao.reset(assign);
-				ctx.setAttribute("isRelease", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isRelease", Boolean.TRUE, REQUEST);
 			} else {
 				wdao.delete(assign);
-				ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 			}
 
 			// Commit the transaction

@@ -91,10 +91,10 @@ public class ManualSaveCommand extends AbstractCommand {
          SetLibrary wdao = new SetLibrary(con);
          if (isNew) {
             wdao.createManual(entry);
-            ctx.setAttribute("manualAdded", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("manualAdded", Boolean.TRUE, REQUEST);
          } else {
             wdao.updateManual(entry);
-            ctx.setAttribute("manualUpdated", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("manualUpdated", Boolean.TRUE, REQUEST);
          }
 
          // Dump the uploaded file to the filesystem

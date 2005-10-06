@@ -84,7 +84,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
       }
       
       // Set status for JSP
-      ctx.setAttribute("isNew", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
 
       // Forward to the JSP
       result.setURL("/jsp/admin/txRequestUpdate.jsp");

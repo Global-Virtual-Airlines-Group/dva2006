@@ -56,7 +56,7 @@ public class ExamDeleteCommand extends AbstractCommand {
       }
       
       // Set status for the JSP
-      ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
       ctx.setAttribute("isCheckRide", Boolean.valueOf(isCheckRide), REQUEST);
       
       // Forward to the JSP

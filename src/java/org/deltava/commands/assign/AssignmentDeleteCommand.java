@@ -54,7 +54,7 @@ public class AssignmentDeleteCommand extends AbstractCommand {
       }
       
       // Update status for JSP
-      ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();

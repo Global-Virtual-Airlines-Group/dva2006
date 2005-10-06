@@ -97,7 +97,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 
 		// Set status attributes
 		ctx.setAttribute("isCreate", Boolean.valueOf(isNew), REQUEST);
-		ctx.setAttribute("isNOTAM", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("isNOTAM", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

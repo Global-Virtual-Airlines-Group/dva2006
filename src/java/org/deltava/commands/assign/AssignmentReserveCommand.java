@@ -93,7 +93,7 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 			// Save the assignment in the request
 			ctx.setAttribute("assign", assign, REQUEST);
-			ctx.setAttribute("isReserve", Boolean.valueOf(true), REQUEST);
+			ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();

@@ -95,7 +95,7 @@ public class NewsSaveCommand extends AbstractCommand {
 
 		// Set status attributes
 		ctx.setAttribute("isCreate", Boolean.valueOf(isNew), REQUEST);
-		ctx.setAttribute("isNews", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("isNews", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

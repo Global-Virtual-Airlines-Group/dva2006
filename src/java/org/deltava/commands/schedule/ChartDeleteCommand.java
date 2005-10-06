@@ -56,7 +56,7 @@ public class ChartDeleteCommand extends AbstractCommand {
       }
       
       // Set status variable for the JSP
-      ctx.setAttribute("isDelete", Boolean.valueOf(true), REQUEST);
+      ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
