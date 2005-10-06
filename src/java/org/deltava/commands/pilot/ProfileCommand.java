@@ -298,7 +298,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			
 			// Check if we're updating the e-mail address
 			String newEMail = ctx.getParameter("email");
-			if (!p.getEmail().equals(newEMail)) {
+			boolean isEMailUpdate = !p.getEmail().equals(newEMail);
+			if (isEMailUpdate && ctx.isUserInRole("HR")) {
+			   p.setEmail(newEMail);
+			} else if (isEMailUpdate) {
 				AddressValidation av = new AddressValidation(p.getID(), newEMail);
 				AddressValidationHelper.calculateHashCode(av);
 				ctx.setAttribute("addrValid", av, REQUEST);
