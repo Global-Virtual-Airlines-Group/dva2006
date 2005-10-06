@@ -27,7 +27,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
     public void testProperties() throws Exception {
         _tag.setName("COMBO");
         _tag.setIdx("2");
-        _tag.setMultiple("true");
+        _tag.setMultiple(true);
         _tag.setOnChange("return true;");
         
         List options = new ArrayList();
@@ -53,7 +53,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
 
         _jspOut.clearBuffer();
         _tag.setName("COMBO");
-        _tag.setMultiple("true");
+        _tag.setMultiple(true);
         _tag.setOptions(options);
         _tag.setValue(options);
 
@@ -64,7 +64,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
         
         _jspOut.clearBuffer();
         _tag.setName("COMBO");
-        _tag.setMultiple("true");
+        _tag.setMultiple(true);
         _tag.setOptions(options);
         _tag.setDelimValues("OPT2,OPT1");
 
@@ -77,7 +77,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
     public void testBooleanProperties() throws Exception {
         _tag.setName("COMBO");
         _tag.setSize("1");
-        _tag.setMultiple("true");
+        _tag.setMultiple(true);
         
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -85,7 +85,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
         
         _jspOut.clearBuffer();
         _tag.setName("COMBO");
-        _tag.setMultiple("not true");
+        _tag.setMultiple(false);
         
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -93,7 +93,6 @@ public class TestComboTag extends AbstractFormTagTestCase {
         
         _jspOut.clearBuffer();
         _tag.setName("COMBO2");
-        _tag.setMultiple(null);
 
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
