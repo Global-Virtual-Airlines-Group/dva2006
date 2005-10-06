@@ -142,12 +142,11 @@ public class ComboTag extends FormElementTag {
 
 	/**
 	 * Marks this as a listbox (allowing multiple entries).
-	 * @param allowMulti "true" if disabled, anything else if not
-	 * @see Boolean#valueOf(java.lang.String)
+	 * @param allowMulti TRUE if enabled, otherwise FALSE
 	 */
-	public void setMultiple(String allowMulti) {
-		if (Boolean.valueOf(allowMulti).booleanValue())
-			_attrs.put("multiple", NO_VALUE);
+	public void setMultiple(boolean allowMulti) {
+		if (allowMulti)
+			_attrs.put("multiple", "multiple");
 	}
 
 	/**
