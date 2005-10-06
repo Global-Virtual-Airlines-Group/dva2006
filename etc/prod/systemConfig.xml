@@ -425,22 +425,22 @@
 		<livemap>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
-			<reload type="Integer">15000</reload>
+			<reload type="Integer">20000</reload>
 		</livemap>
 		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2750</position_interval>
-		<build type="Integer">52</build>
+		<build type="Integer">53</build>
 		
 		<pool>
 			<size type="Integer">100</size>
-			<multiple type="Boolean">true</multiple>
+			<multiple type="Boolean">false</multiple>
 		</pool>
 		
 		<buffer>
-			<send type="Integer">20480</send>
+			<send type="Integer">16384</send>
 			<recv type="Integer">3072</recv>
 			<nio type="Integer">6144</nio>
 		</buffer>
