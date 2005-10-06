@@ -14,6 +14,8 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <script language="JavaScript" type="text/javascript">
+var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -33,6 +35,17 @@ if ((form.pwd1) && (form.pwd2)) {
 		form.pwd1.value = '';
 		form.pwd2.value = '';
 		form.pwd1.focus();
+		return false;
+	}
+}
+
+// Validate e-mail domain
+var eMail = form.email.value;
+var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
+for (var x = 0; x < invalidDomains.length; x++) {
+	if (usrDomain == invalidDomains[x]) {
+		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
+		form.email.focus();
 		return false;
 	}
 }
