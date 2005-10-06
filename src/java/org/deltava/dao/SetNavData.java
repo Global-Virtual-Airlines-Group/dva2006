@@ -84,7 +84,7 @@ public class SetNavData extends DAO {
 	 * Writes an Airway entry to the database.
 	 * @param a an Airway bean
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetNavData#write(TerminalRoute)
+	 * @see SetNavData#writeRoute(TerminalRoute)
 	 */
 	public void write(Airway a) throws DAOException {
 	   try {
@@ -103,7 +103,7 @@ public class SetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see SetNavData#write(Airway)
 	 */
-	public void write(TerminalRoute tr) throws DAOException {
+	public void writeRoute(TerminalRoute tr) throws DAOException {
 	   try {
 	      prepareStatement("REPLACE INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, ROUTE) "
 	            + "VALUES (?, ?, ?, ?, ?, ?)");
@@ -113,6 +113,7 @@ public class SetNavData extends DAO {
 	      _ps.setString(4, tr.getTransition());
 	      _ps.setString(5, tr.getRunway());
 	      _ps.setString(6, tr.getRoute());
+	      executeUpdate(1);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }

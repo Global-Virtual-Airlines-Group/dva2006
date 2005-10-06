@@ -27,7 +27,11 @@ import org.deltava.util.StringUtils;
 public class AIRACImportCommand extends AbstractCommand {
 
 	private static final String[] UPLOAD_NAMES = {"pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat"};
-	private static final String[] AIRWAY_NAMES = {"pssawy.dat", "psssid.dat", "pssstar.dat"};
+	
+	/**
+	 * Airway data file names
+	 */
+	static final String[] AIRWAY_NAMES = {"pssawy.dat", "psssid.dat", "pssstar.dat"};
 
 	/**
 	 * Executes the command.
@@ -159,6 +163,9 @@ public class AIRACImportCommand extends AbstractCommand {
 					}
 				}
 			}
+			
+			// Close down the stream
+			is.close();
 		} catch (IOException ie) {
 			throw new CommandException(ie);
 		} catch (DAOException de) {

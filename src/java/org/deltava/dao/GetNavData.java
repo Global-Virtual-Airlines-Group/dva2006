@@ -267,8 +267,8 @@ public class GetNavData extends DAO {
       // Iterate through the results
       List results = new ArrayList();
       while (rs.next()) {
-         TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(4), rs.getInt(2));
-         tr.setName(rs.getString(3));
+         TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
+         tr.setTransition(rs.getString(4));
          tr.setRunway(rs.getString(5));
          tr.setRoute(rs.getString(6));
          

@@ -22,7 +22,7 @@ public class Airway implements java.io.Serializable, Comparable {
     */
    public Airway(String code) {
       super();
-      _code = code.trim().toUpperCase();
+      setCode(code);
       _waypoints = new ArrayList();
    }
    
@@ -65,7 +65,29 @@ public class Airway implements java.io.Serializable, Comparable {
       return new ArrayList(_waypoints);
    }
    
+   /**
+    * Returns a subset of waypoints for this Airway between two waypoints.
+    * @param start the starting waypoint code
+    * @param end the ending waypoint code
+    * @return a List of waypoint codes
+    * @throws NullPointerException if start or end are null
+    */
+   public Collection getWaypoints(String start, String end) {
+	   int st = _waypoints.indexOf(start.toUpperCase());
+	   int ed = _waypoints.indexOf(end.toUpperCase());
+	   if (st == -1) {
+		   return Collections.EMPTY_LIST;
+	   } else if (ed == -1) {
+		   ed = _waypoints.size();
+	   }
+	   
+	   return _waypoints.subList(st, ed);
+   }
    
+   /**
+    * Returns the Airway route.
+    * @return a space-delimited list of waypoint codes
+    */
    public String getRoute() {
       StringBuffer buf = new StringBuffer();
       for (Iterator i = _waypoints.iterator(); i.hasNext(); ) {
@@ -89,6 +111,15 @@ public class Airway implements java.io.Serializable, Comparable {
       code = code.trim().toUpperCase();
       if (!_waypoints.contains(code))
          _waypoints.add(code);
+   }
+   
+   /**
+    * Updates the Airway code.
+    * @param code the code
+    * @throws NullPointerException if code is null
+    */
+   public void setCode(String code) {
+	   _code = code.trim().toUpperCase();
    }
    
    /**

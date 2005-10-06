@@ -25,16 +25,16 @@ public class TerminalRoute extends Airway {
    /**
     * Creates a new Terminal Route.
     * @param icao the Airport ICAO code
-    * @param transition the transition waypoint code
+    * @param name the route name
     * @param type the SID/STAR type
-    * @throws NullPointerException if icao or transition are null
+    * @throws NullPointerException if icao, name or transition are null
     * @throws IllegalArgumentException if type is invalid
     * @see TerminalRoute#setType(int)
     */
-   public TerminalRoute(String icao, String transition, int type) {
-      super(icao + "." + transition);
+   public TerminalRoute(String icao, String name, int type) {
+      super(name);
       _airport = icao.trim().toUpperCase();
-      _transition = transition.toUpperCase();
+      setName(name);
       setType(type);
    }
    
@@ -100,7 +100,17 @@ public class TerminalRoute extends Airway {
     * @param runway the runway name
     */
    public void setRunway(String runway) {
-      _runway = (runway == null) ? "ALL" : runway;
+      _runway = (runway == null) ? "ALL" : runway.trim().toUpperCase();
+   }
+   
+   /**
+    * Updates the transition waypoint for this Terminal Route.
+    * @param waypoint the waypoint code
+    * @throws NullPointerException if waypoint is null
+    */
+   public void setTransition(String waypoint) {
+	   _transition = waypoint.trim().toUpperCase();
+	   setCode(_name + "." + _transition);
    }
    
    /**
@@ -109,10 +119,10 @@ public class TerminalRoute extends Airway {
     * @throws IllegalArgumentException if type is negative or invalid
     */
    public void setType(int type) {
-      if ((type < 0) || (type >= TYPES.length))
+      if ((type < 0) || (type > TYPES.length))
          throw new IllegalArgumentException("Invalid Terminal Route type - " + type);
       
-      _type = type;
+      _type = --type;
    }
    
    /**
