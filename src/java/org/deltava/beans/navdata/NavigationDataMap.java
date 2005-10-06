@@ -100,4 +100,37 @@ public class NavigationDataMap implements java.io.Serializable {
       
       return results;
    }
+   
+   /**
+    * Filters out navigation aids based on their type.
+    * @param types a Collection of Integers with navigation aid type codes
+    * @see NavigationDataBean#getType()
+    * @see NavigationDataMap#filter(int)
+    */
+   public void filter(Collection types) {
+	   for (Iterator i = _entries.values().iterator(); i.hasNext(); ) {
+		   Set subEntries = (Set) i.next();
+		   for (Iterator i2 = subEntries.iterator(); i2.hasNext(); ) {
+			   NavigationDataBean nd = (NavigationDataBean) i2.next();
+			   if (!types.contains(new Integer(nd.getType())))
+				   i2.remove();
+		   }
+		   
+		   // Eliminate empty buckets
+		   if (subEntries.isEmpty())
+			   i.remove();
+	   }
+   }
+   
+   /**
+    * Filters out all navigation aids not of a particular type.
+    * @param navaidType the navigation aid type code to retain
+    * @see NavigationDataMap#filter(Collection)
+    * @see NavigationDataBean#getType()
+    */
+   public void filter(int navaidType) {
+	   Set filterSet = new HashSet();
+	   filterSet.add(new Integer(navaidType));
+	   filter(filterSet);
+   }
 }

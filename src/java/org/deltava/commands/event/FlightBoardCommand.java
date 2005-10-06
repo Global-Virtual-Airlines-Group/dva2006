@@ -84,7 +84,6 @@ public class FlightBoardCommand extends AbstractCommand {
 			
 			// Get Online Members and load DAFIF data only if we are uncached
 			if (!info.getCached()) {
-				
 				// Get airports to load from DAFIF data and highlight our airline's code
 				List codes = (List) SystemData.getObject("online.highlightCodes");
 				Set airportIDs = new HashSet();
@@ -103,29 +102,25 @@ public class FlightBoardCommand extends AbstractCommand {
 						airportIDs.add(usr.getAirportA().getICAO());
 				}
 
-				// Get the airports
+				// Get the airports only
 				GetNavData navdao = new GetNavData(con);
-				NavigationDataMap allAirports = navdao.getByID(airportIDs);
-				for (Iterator i = allAirports.getAll().iterator(); i.hasNext();) {
-					NavigationDataBean navdata = (NavigationDataBean) i.next();
-					if (navdata.getType() != NavigationDataBean.AIRPORT)
-						i.remove();
-				}
+				NavigationDataMap navaids = navdao.getByID(airportIDs);
+				navaids.filter(NavigationDataBean.AIRPORT);
 
 				// Update the pilots with the proper airport data
 				for (Iterator i = info.getPilots().iterator(); i.hasNext();) {
 					Pilot usr = (Pilot) i.next();
 
 					// Update the departure airport
-					if (allAirports.contains(usr.getAirportD().getICAO())) {
-						AirportLocation al = (AirportLocation) allAirports.get(usr.getAirportD().getICAO());
+					if (navaids.contains(usr.getAirportD().getICAO())) {
+						AirportLocation al = (AirportLocation) navaids.get(usr.getAirportD().getICAO());
 						usr.getAirportD().setName(al.getName());
 						usr.getAirportD().setLocation(al.getLatitude(), al.getLongitude());
 					}
 
 					// Update the arrival airport
-					if (allAirports.contains(usr.getAirportA().getICAO())) {
-						AirportLocation al = (AirportLocation) allAirports.get(usr.getAirportA().getICAO());
+					if (navaids.contains(usr.getAirportA().getICAO())) {
+						AirportLocation al = (AirportLocation) navaids.get(usr.getAirportA().getICAO());
 						usr.getAirportA().setName(al.getName());
 						usr.getAirportA().setLocation(al.getLatitude(), al.getLongitude());
 					}
