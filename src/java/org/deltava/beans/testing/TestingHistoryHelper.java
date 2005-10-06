@@ -15,6 +15,9 @@ import org.deltava.util.StringUtils;
  */
 
 public class TestingHistoryHelper {
+   
+   // Arbitrary max exam stage used for Chief Pilots and Assistants
+   private static final int CP_STAGE = 4; 
 
 	private Pilot _usr;
 	private EquipmentType _myEQ;
@@ -54,11 +57,15 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the highest stage Examination this user has passed.
+	 * Returns the highest stage Examination this user has passed. This will return 4
 	 * @return the stage number of the highest examination, or 1 if none passed
 	 * @see Test#getStage()
 	 */
 	public int getMaxExamStage() {
+	   
+	   // Check for staff member
+	   if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_C.equals(_usr.getRank()))
+	      return CP_STAGE;
 
 		int maxStage = 1;
 		for (Iterator i = _tests.iterator(); i.hasNext();) {
@@ -98,7 +105,7 @@ public class TestingHistoryHelper {
 	   for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
 	      FlightReport fr = (FlightReport) i.next();
 	      if (fr.getStatus() == FlightReport.OK) {
-	         if ((eq == null) || (fr.getCaptEQType().equals(eq.getName())))
+	         if ((eq == null) || (eq.getPrimaryRatings().contains(fr.getEquipmentType())))
 	            result++;
 	      }
 	   }
