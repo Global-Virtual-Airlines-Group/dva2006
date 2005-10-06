@@ -188,7 +188,7 @@ public class SetAssignment extends DAO {
          // Prepare statement to delete legs
          prepareStatement("DELETE FROM ASSIGNLEGS WHERE (ID=?)");
          _ps.setInt(1, a.getID());
-         executeUpdate(1);
+         executeUpdate(0);
 
          // Prepare statement to delete assignment
          prepareStatement("DELETE FROM ASSIGNMENTS WHERE (ID=?)");
