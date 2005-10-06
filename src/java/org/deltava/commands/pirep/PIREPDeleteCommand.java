@@ -48,7 +48,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
           wdao.delete(ctx.getID());
 
           // Update the status for the JSP
-          ctx.setAttribute("isDeleted", Boolean.valueOf(true), REQUEST);
+          ctx.setAttribute("isDeleted", Boolean.TRUE, REQUEST);
       } catch (DAOException de) {
           throw new CommandException(de);
       } finally {

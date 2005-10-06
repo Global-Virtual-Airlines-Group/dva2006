@@ -141,7 +141,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Write status attributes to the request
-			ctx.setAttribute("isApprove", Boolean.valueOf(true), REQUEST);
+			ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("eqType", newEQ, REQUEST);
 			ctx.setAttribute("newRatings", newRatings, REQUEST);

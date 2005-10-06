@@ -102,7 +102,7 @@ public class RouteImportCommand extends AbstractCommand {
 			}
 
 			// Save the route count
-			ctx.setAttribute("isImport", Boolean.valueOf(true), REQUEST);
+			ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("routeCount", new Integer(routesSaved), REQUEST);
 			ctx.setAttribute("warnings", warns, REQUEST);
 		} catch (IOException ie) {

@@ -57,7 +57,7 @@ public class ThreadSyncCommand extends AbstractCommand {
 		}
 		
 		// Hide the resync button
-		ctx.setAttribute("noResync", Boolean.valueOf(true), REQUEST);
+		ctx.setAttribute("noResync", Boolean.TRUE, REQUEST);
 
 		// Forward back to the thread
 		CommandResult result = ctx.getResult();

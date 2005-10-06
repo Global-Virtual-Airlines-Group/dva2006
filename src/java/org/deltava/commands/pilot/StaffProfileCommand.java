@@ -86,7 +86,7 @@ public class StaffProfileCommand extends AbstractCommand {
         }
 
         // Forward to the JSP
-        ctx.setAttribute("spUpdated", Boolean.valueOf(true), REQUEST);
+        ctx.setAttribute("spUpdated", Boolean.TRUE, REQUEST);
         result.setType(CommandResult.REQREDIRECT);
         result.setURL("/jsp/pilot/pilotUpdate.jsp");
         result.setSuccess(true);
