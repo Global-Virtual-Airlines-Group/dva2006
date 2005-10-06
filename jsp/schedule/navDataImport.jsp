@@ -31,6 +31,7 @@ if (!isOK) {
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('PurgeButton');
 return true;
 }
 </script>
@@ -58,7 +59,7 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC NAVIGATION DATA" />&nbsp;
- <el:cmdbutton url="navpurge" label="PURGE NAVIGATION DATA" /></td>
+ <el:cmdbutton ID="PurgeButton" url="navpurge" label="PURGE NAVIGATION DATA" /></td>
 </tr>
 </el:table>
 </el:form>
