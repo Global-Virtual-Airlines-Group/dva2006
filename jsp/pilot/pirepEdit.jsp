@@ -35,6 +35,13 @@ if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
 if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
 if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return false;
 
+// Validate flight leg
+if (parseInt(form.flightLeg.value) > 5) {
+	alert('The Flight Leg must be less than 5.');
+	form.flightLeg.focus();
+	return false;
+}
+
 setSubmit();
 disableButton('SaveButton');
 disableButton('CalcButton');
