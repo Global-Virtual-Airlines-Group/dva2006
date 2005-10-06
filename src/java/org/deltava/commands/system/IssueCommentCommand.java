@@ -52,7 +52,7 @@ public class IssueCommentCommand extends AbstractCommand {
          // Check if we're sending this comment via e-mail
          boolean sendComment = Boolean.valueOf(ctx.getParameter("emailComment")).booleanValue();
          if (sendComment) {
-            ctx.setAttribute("sendComment", Boolean.valueOf(true), REQUEST);
+            ctx.setAttribute("sendComment", Boolean.TRUE, REQUEST);
 
             // Create and populate the message context
             MessageContext mctx = new MessageContext();

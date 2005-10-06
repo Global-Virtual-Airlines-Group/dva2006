@@ -66,10 +66,10 @@ public class ChannelCommand extends AbstractFormCommand {
 			SetCoolerChannel wdao = new SetCoolerChannel(con);
 			if (isNew) {
 				wdao.create(c);
-				ctx.setAttribute("isCreate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
 			} else {
 				wdao.update(c, ctx.getParameter("newName"));
-				ctx.setAttribute("isUpdate", Boolean.valueOf(true), REQUEST);
+				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
 			
 			// Save the chanel in the request
