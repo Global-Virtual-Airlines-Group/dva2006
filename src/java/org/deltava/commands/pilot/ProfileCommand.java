@@ -198,7 +198,8 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Load the roles from the request and convert to a set to maintain uniqueness
 			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
-			Collection newRoles = p_access.getCanChangeRoles()  ? CollectionUtils.loadList(roles, Collections.EMPTY_SET) : p.getRoles(); 
+			Collection newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles, Collections.EMPTY_SET) : p.getRoles();
+			newRoles.add("Pilot");
 
 			// Update the Pilot's Security Roles
 			if ((p_access.getCanChangeRoles()) && CollectionUtils.hasDelta(newRoles, p.getRoles())) {
