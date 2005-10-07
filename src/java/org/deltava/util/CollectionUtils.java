@@ -75,7 +75,7 @@ public class CollectionUtils {
 	 * @see Arrays#asList(Object[])
 	 */
 	public static Collection loadList(String[] strValues, Collection defltValues) {
-		return (strValues != null) ? Arrays.asList(strValues) : defltValues;
+		return new LinkedHashSet((strValues != null) ? Arrays.asList(strValues) : defltValues);
 	}
 
 	/**
