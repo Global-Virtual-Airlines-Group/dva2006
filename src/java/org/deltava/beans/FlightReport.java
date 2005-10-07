@@ -324,10 +324,20 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
    /**
     * Sets if this Flight counts towards promotion in a particular equipment program.
     * @param eqTypes a Collection of equipment program names
+    * @see FlightReport#setCaptEQType(String)
     */
    public void setCaptEQType(Collection eqTypes) {
 	   _captEQType.clear();
       _captEQType.addAll(eqTypes);
+   }
+   
+   /**
+    * Sets if this Flight counts towards promotion in a particular equipment program.
+    * @param eqType an equipment program names
+    * @see FlightReport#setCaptEQType(Collection)
+    */
+   public void setCaptEQType(String eqType) {
+	   _captEQType.add(eqType);
    }
 
    /**
@@ -336,7 +346,8 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * @throws IllegalArgumentException if leg is zero or negative
     */
    public final void setLeg(int leg) {
-      if (leg == 0) throw new IllegalArgumentException("Flight Leg cannot be zero or negative");
+      if (leg == 0)
+    	  throw new IllegalArgumentException("Flight Leg cannot be zero or negative");
 
       super.setLeg(leg);
    }
