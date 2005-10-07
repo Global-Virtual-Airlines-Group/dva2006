@@ -28,7 +28,9 @@ public class TestingHistoryHelper {
 	/**
 	 * Initializes the helper.
 	 * @param p the Pilot bean
-	 * @param tests a List of checkride/examination objects, representing this Pilot's exam history
+	 * @param myEQ the Pilot's Equipment program
+	 * @param tests a Collection of checkride/examination objects, representing this Pilot's exam history
+	 * @param pireps a Collection of FlightReport beans <i>with the CaptEQType property populated</i>
 	 */
 	public TestingHistoryHelper(Pilot p, EquipmentType myEQ, Collection tests, Collection pireps) {
 		super();
@@ -105,7 +107,7 @@ public class TestingHistoryHelper {
 	   for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
 	      FlightReport fr = (FlightReport) i.next();
 	      if (fr.getStatus() == FlightReport.OK) {
-	         if ((eq == null) || (eq.getPrimaryRatings().contains(fr.getEquipmentType())))
+	         if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
 	            result++;
 	      }
 	   }
