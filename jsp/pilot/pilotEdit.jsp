@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:sysdata var="badDomains" name="registration.reject_domain" />
 <script language="JavaScript" type="text/javascript">
 var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 
@@ -57,7 +58,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void changeAirport(document.forms[0].homeAirport)">
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
@@ -237,16 +238,18 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </c:if>
 <tr>
  <td class="label">Flights</td>
- <td colspan="${cspan}" class="data">${pilot.legs} legs, ${pilot.hours} hours</td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.legs}" /> legs, 
+<fmt:dec value="${pilot.hours}" /> hours</td>
 </tr>
 <tr>
  <td class="label">Online Flights</td>
- <td colspan="${cspan}" class="data pri">${pilot.onlineLegs} legs, ${pilot.onlineHours} hours</td>
+ <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, 
+<fmt:dec value="${pilot.onlineHours}" /> hours</td>
 </tr>
 <c:if test="${pilot.legacyHours > 0}">
 <tr>
  <td class="label">Legacy Hours</td>
- <td colspan="${cspan}" class="data">${pilot.legacyHours} hours</td>
+ <td colspan="${cspan}" class="data"><fmt:dec value="${pilot.legacyHours}" /> hours</td>
 </tr>
 </c:if>
 </el:table>
@@ -262,8 +265,5 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </el:form>
 <content:copyright />
 </div>
-<script language="JavaScript" type="text/javascript">
-changeAirport(document.forms[0].airport);
-</script>
 </body>
 </html>
