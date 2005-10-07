@@ -76,7 +76,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @return a sorted List of role Names for this Pilot
      */
     public Collection getRoles() {
-        return new HashSet(_roles);
+        return new TreeSet(_roles);
     }
     
     /**
