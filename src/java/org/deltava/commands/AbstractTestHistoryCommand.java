@@ -1,14 +1,15 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands;
 
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.EquipmentType;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.dao.*;
+
+import org.deltava.util.CollectionUtils;
 
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
@@ -32,7 +33,8 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
-		List pireps = frdao.getByPilot(p.getID(), null);
+		Map pireps = CollectionUtils.createMap(frdao.getByPilot(p.getID(), null), "ID");
+		frdao.getCaptEQType(pireps);
 
 		// Get the Pilot's equipment program
 		GetEquipmentType eqdao = new GetEquipmentType(c);
@@ -40,6 +42,6 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
-		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
+		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps.values());
 	}
 }

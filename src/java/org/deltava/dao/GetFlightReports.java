@@ -434,7 +434,48 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Helper method to load data for flights counting towards promotion
+	 * Populates the Equipment Types a collection of PIREPs counts towards promotion in.
+	 * @param pireps a Map of FlightReport beans, indexed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void getCaptEQType(Map pireps) throws DAOException {
+		
+		// Do nothing if empty
+		if (pireps.isEmpty())
+			return;
+		
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
+		for (Iterator i = pireps.values().iterator(); i.hasNext(); ) {
+			FlightReport fr = (FlightReport) i.next();
+			sqlBuf.append(String.valueOf(fr.getID()));
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append("))");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				FlightReport fr = (FlightReport) pireps.get(new Integer(rs.getInt(1)));
+				if (fr != null)
+					fr.setCaptEQType(rs.getString(2));
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Helper method to load data for flights counting towards promotion.
 	 */
 	private Collection getCaptEQType(int id) throws SQLException {
 
