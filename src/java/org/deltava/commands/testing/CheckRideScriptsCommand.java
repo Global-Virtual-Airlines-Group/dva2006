@@ -29,7 +29,6 @@ public class CheckRideScriptsCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
       
-      
       List results = null;
       try {
          Connection con = ctx.getConnection();
@@ -61,7 +60,7 @@ public class CheckRideScriptsCommand extends AbstractCommand {
       
       // Save in request
       ctx.setAttribute("results", results, REQUEST);
-      ctx.setAttribute("access", accessMap, REQUEST);
+      ctx.setAttribute("accessMap", accessMap, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
