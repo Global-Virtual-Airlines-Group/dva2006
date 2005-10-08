@@ -53,14 +53,14 @@ public class RoutesCommand extends AbstractViewCommand {
                 
                 // Get the airport codes
                 String dCode = (String) ctx.getCmdParameter(ID, "ATL");
-                String aCode = StringUtils.isEmpty(ctx.getParameter("dst")) ? null : ctx.getParameter("dst");
+                String aCode = StringUtils.isEmpty(ctx.getParameter("airportA")) ? null : ctx.getParameter("airportA");
                 
                 // Save the airport codes
                 ctx.setAttribute("airportD", dCode, REQUEST);
                 ctx.setAttribute("airportA", aCode, REQUEST);
                 
                 // Get the destination airports
-                ctx.setAttribute("dstAP", dao.getRouteDestinations(aCode), REQUEST);
+                ctx.setAttribute("dstAP", dao.getRouteDestinations(dCode), REQUEST);
                 
                 // Load the routes
                 vc.setResults(dao.getRoutes(dCode, aCode));
