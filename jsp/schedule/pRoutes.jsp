@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Preferred Routes for ${airport}</title>
+<title><content:airline /> Preferred Routes for ${airportD}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -32,7 +32,7 @@ if (combo.selectedIndex == 0) {
 	self.location = '/routes.do?op=domestic&id=' + ad;
 } else {
 	var aa = combo.options[combo.selectedIndex].value;
-	self.location = '/routes.do?op=domestic&id=' + ad + '&dst=' + aa;
+	self.location = '/routes.do?op=domestic&id=' + ad + '&airportA=' + aa;
 }
 
 return true;
@@ -46,16 +46,16 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="routes.do" method="GET" validate="return false">
+<el:form action="routes.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="routes">
 
 <!-- Table Header Bar -->
 <tr class="title">
  <td width="20%">DESTINATION</td>
  <td width="15%">ARTCCs</td>
- <td width="8%">ROUTE</td>
+ <td width="8%" class="left">ROUTE</td>
  <td class="right">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void set AirportA(this)" /></td>
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" /></td>
 </tr>
 
 <!-- Table Data Section -->
