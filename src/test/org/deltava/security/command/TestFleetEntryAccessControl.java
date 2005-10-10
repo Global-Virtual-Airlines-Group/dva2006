@@ -29,7 +29,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    }
 
    public void testAccess() throws Exception {
-      assertEquals(FleetEntry.PUBLIC, _m.getSecurity());
+      assertEquals(LibraryEntry.PUBLIC, _m.getSecurity());
       _ac.validate();
       
       assertTrue(_ac.getCanView());
@@ -37,7 +37,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(FleetEntry.AUTH_ONLY);
+      _m.setSecurity(LibraryEntry.AUTH_ONLY);
       _ac.validate();
 
       assertTrue(_ac.getCanView());
@@ -45,7 +45,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(FleetEntry.STAFF_ONLY);
+      _m.setSecurity(LibraryEntry.STAFF_ONLY);
       _ac.validate();
 
       assertFalse(_ac.getCanView());
@@ -56,7 +56,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      assertEquals(FleetEntry.PUBLIC, _m.getSecurity());
+      assertEquals(LibraryEntry.PUBLIC, _m.getSecurity());
       _ac.validate();
       
       assertTrue(_ac.getCanView());
@@ -64,7 +64,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
       
-      _m.setSecurity(FleetEntry.AUTH_ONLY);
+      _m.setSecurity(LibraryEntry.AUTH_ONLY);
       _ac.validate();
       
       assertFalse(_ac.getCanView());
@@ -72,7 +72,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanCreate());
       assertFalse(_ac.getCanDelete());
 
-      _m.setSecurity(FleetEntry.STAFF_ONLY);
+      _m.setSecurity(LibraryEntry.STAFF_ONLY);
       _ac.validate();
 
       assertFalse(_ac.getCanView());
@@ -82,7 +82,7 @@ public class TestFleetEntryAccessControl extends AccessControlTestCase {
    }
    
    public void testStaffAccess() throws Exception {
-      _m.setSecurity(FleetEntry.STAFF_ONLY);
+      _m.setSecurity(LibraryEntry.STAFF_ONLY);
       _ac.validate();
       
       assertFalse(_ac.getCanView());

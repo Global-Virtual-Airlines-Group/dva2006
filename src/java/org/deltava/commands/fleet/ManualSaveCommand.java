@@ -75,7 +75,7 @@ public class ManualSaveCommand extends AbstractCommand {
          entry.setDescription(ctx.getParameter("desc"));
          entry.setName(ctx.getParameter("title"));
          entry.setVersion(Integer.parseInt(ctx.getParameter("version")), 0, 0);
-         entry.setSecurity(StringUtils.arrayIndexOf(FleetEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+         entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
          if (mFile != null) entry.setSize(mFile.getBuffer().length);
          
          // Get the message template
