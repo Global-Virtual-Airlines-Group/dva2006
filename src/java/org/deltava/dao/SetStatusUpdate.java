@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.StatusUpdate;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to write status updates for a Pilot to the database.
  * @author Luke
@@ -22,18 +24,32 @@ public class SetStatusUpdate extends DAO {
 	public SetStatusUpdate(Connection c) {
 		super(c);
 	}
-
+	
 	/**
-	 * Writes the Status Update log entry to the database.
+	 * Writes the Status Update log entry to <i>the current database</i>.
 	 * @param update the Status Update entry
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(StatusUpdate update) throws DAOException {
+	   write(SystemData.get("airline.db"), update);
+	}
 
+	/**
+	 * Writes the Status Update log entry to a database.
+	 * @param dbName the database name
+	 * @param update the Status Update entry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(String dbName, StatusUpdate update) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
+	   
 		try {
 			// Prepare the statement and write
-			prepareStatementWithoutLimits("INSERT INTO STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, "
-					+ "TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, update.getID());
 			_ps.setInt(2, update.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(update.getCreatedOn()));
@@ -53,7 +69,7 @@ public class SetStatusUpdate extends DAO {
 	public void write(Collection updates) throws DAOException {
 		for (Iterator i = updates.iterator(); i.hasNext();) {
 			StatusUpdate upd = (StatusUpdate) i.next();
-			write(upd);
+			write(SystemData.get("airline.db"), upd);
 		}
 	}
 }
