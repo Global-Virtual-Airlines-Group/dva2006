@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.CheckRideScript;
@@ -9,6 +10,8 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.CheckrideScriptAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Check Ride scripts.
@@ -87,6 +90,11 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
          	if (!access.getCanEdit())
          	   throw securityException("Cannot edit Check Ride script");
          	
+         	// Create single-entry equipment type list
+         	Set eqtypes = new HashSet();
+         	eqtypes.add(sc.getEquipmentType());
+         	ctx.setAttribute("actypes", eqtypes, REQUEST);
+         	
             // Save in the request
             ctx.setAttribute("script", sc, REQUEST);
             ctx.setAttribute("access", access, REQUEST);
@@ -99,6 +107,9 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
          	
          	// Save in request
          	ctx.setAttribute("access", access, REQUEST);
+         	
+         	// Save all equipment types
+         	ctx.setAttribute("actypes", SystemData.getObject("eqtypes"), REQUEST);
          }
          
          // Load equipment types
@@ -109,7 +120,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
       } finally {
          ctx.release();
       }
-
+      
       // Forward to the JSP
       CommandResult result = ctx.getResult();
       result.setURL("/jsp/testing/crScript.jsp");
