@@ -6,10 +6,13 @@ import java.sql.Connection;
 
 import org.deltava.beans.ACARSFlightReport;
 import org.deltava.beans.acars.FlightInfo;
+import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to delete ACARS Flight Info entries.
@@ -45,6 +48,7 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 			GetACARSLog dao = new GetACARSLog(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			SetACARSLog wdao = new SetACARSLog(con);
+			GetUserData uddao = new GetUserData(con);
 
 			// Start the transaction
 			ctx.startTX();
@@ -55,14 +59,18 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 
 				// Get the flight information entry - make sure the flight doesn't have a PIREP linked to it
 				FlightInfo info = dao.getInfo(id);
-				ACARSFlightReport afr = frdao.getACARS(id);
 				if (info == null) {
 					skippedIDs.add(StringUtils.formatHex(id));
-				} else if (afr != null) {
-					skippedIDs.add(StringUtils.formatHex(id));
 				} else {
-					wdao.deleteInfo(info.getID());
-					deletedIDs.add(StringUtils.formatHex(id));
+				   UserData uloc = uddao.get(info.getPilotID());
+				   String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
+				   ACARSFlightReport afr = frdao.getACARS(dbName, id);
+				   if (afr == null) {
+						wdao.deleteInfo(info.getID());
+						deletedIDs.add(StringUtils.formatHex(id));
+				   } else {
+				      skippedIDs.add(StringUtils.formatHex(id));   
+				   }
 				}
 			}
 
