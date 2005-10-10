@@ -7,6 +7,8 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.beans.system.VersionInfo;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A JSP Tag to insert a copyright notice. This tag is a useful test to ensure that the tag libraries are being loaded.
  * @author Luke
@@ -57,8 +59,15 @@ public class CopyrightTag extends TagSupport {
           jw.print(String.valueOf(_rcBuild));
        }
       
-      jw.println(")</div>");
-      jw.print("<span class=\"copyright small\">All trademarks are the property of their respective owners.</span>");
+      jw.print(")</div>");
+      
+      // Display disclaimer
+      String disclaimer = SystemData.get("airline.copyright");
+      if (disclaimer != null) {
+    	  jw.print("\n<span class=\"copyright small\">");
+    	  jw.print(disclaimer);
+    	  jw.print("</span>");
+      }
    }
 
    /**
