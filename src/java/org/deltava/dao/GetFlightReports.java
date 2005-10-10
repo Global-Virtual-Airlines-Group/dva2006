@@ -58,14 +58,24 @@ public class GetFlightReports extends DAO {
 	
 	/**
 	 * Returns an ACARS-logged PIREP with a particular ACARS Flight ID.
+	 * @param dbName  the database Name
 	 * @param acarsID the ACARS flight ID
 	 * @return the ACARSFlightReport, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public ACARSFlightReport getACARS(int acarsID) throws DAOException {
+	public ACARSFlightReport getACARS(String dbName, int acarsID) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".PILOTS P, ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".PIREPS PR, ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".ACARS_PIREPS APR WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (APR.ACARS_ID=?)");
+	   
 	   try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR, "
-					+ "ACARS_PIREPS APR WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (APR.ACARS_ID=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, acarsID);
 			setQueryMax(1);
 			
