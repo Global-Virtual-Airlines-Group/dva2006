@@ -65,7 +65,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 
 			// Check if this flight was flown with an equipment type in our primary ratings
-			Collection pTypes = eqdao.getPrimaryTypes(pirep.getEquipmentType());
+			Collection pTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
 			if (pTypes.contains(pilot.getEquipmentType())) {
 				ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
