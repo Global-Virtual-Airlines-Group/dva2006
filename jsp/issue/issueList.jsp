@@ -77,7 +77,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:pgUp />&nbsp;<view:pgDn />&nbsp;<view:legend width="90" labels="Open,Fixed,Workaround,Won't Fix,Deferred" classes="opt1, ,opt2,warn,err" /></td>
+ <td colspan="9"><view:pgUp />&nbsp;<view:pgDn />&nbsp;<view:legend width="90" labels="Open,Fixed,Workaround,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
 </tr>
 </view:table>
 </el:form>
