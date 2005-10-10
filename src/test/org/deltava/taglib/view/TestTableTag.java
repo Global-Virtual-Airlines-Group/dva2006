@@ -24,7 +24,7 @@ public class TestTableTag extends AbstractTagTestCase {
         _tag.setSpace("2");
         _tag.setPad("5");
         _tag.setCmd("commandName");
-        _tag.setSize("60");
+        _tag.setSize(60);
         
         assertEquals("commandname", _tag.getCmd());
         assertEquals(60, _tag.size());
@@ -52,7 +52,6 @@ public class TestTableTag extends AbstractTagTestCase {
     
     public void testValidation() throws Exception {
         _tag.setID("idTable");
-        _tag.setSize("XXXX");
         _tag.setSpace("-1");
         _tag.setPad("XXXX");
         
