@@ -130,10 +130,6 @@ public class LoginCommand extends AbstractCommand {
 			// Add the user to the User pool
 			UserPool.addPerson(p, s.getId());
 
-			// Update the session data
-			SetSystemData swdao = new SetSystemData(con);
-			swdao.updateSession(s.getId(), p, ctx.getRequest().getRemoteAddr(), ctx.getRequest().getRemoteHost());
-			
 			// Commit the transaction
 			ctx.commitTX();
 		} catch (SecurityException se) {
