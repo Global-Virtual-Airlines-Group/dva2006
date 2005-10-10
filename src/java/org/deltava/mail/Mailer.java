@@ -110,7 +110,7 @@ public class Mailer extends Thread {
     * @param addr the recipient name/address
     */
    public void send(EMailAddress addr) {
-      if (!EMailAddress.INVALID_ADDR.equals(addr.getEmail())) {
+      if ((addr != null) && (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))) {
          _msgTo.add(addr);
          start();
       }
