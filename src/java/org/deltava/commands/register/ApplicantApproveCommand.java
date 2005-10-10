@@ -6,6 +6,8 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.UserData;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -82,9 +84,22 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			// Turn off autocommits on the connection
 			ctx.startTX();
 			
+			// Write the USERDATA record
+			SetUserData uddao = new SetUserData(con);
+			UserData uloc = new UserData(SystemData.get("airline.db"), "PILOTS", SystemData.get("airline.domain"));
+			uddao.write(uloc);
+			
+			// Save the new database ID and status
+			a.setPilotID(uloc.getID());
+			a.setStatus(Applicant.APPROVED);
+			
+			// Write the new Pilot object
+			SetPilotTransfer pwdao = new SetPilotTransfer(con);
+			pwdao.transfer(a, uloc.getDB(), ratings);
+			
 			// Get the write DAO and approve the applicant
 			SetApplicant wdao = new SetApplicant(con);
-			wdao.hire(a, ratings);
+			wdao.hire(a);
 			
 			// Delete the e-mail validation record
 			SetAddressValidation avdao = new SetAddressValidation(con);
