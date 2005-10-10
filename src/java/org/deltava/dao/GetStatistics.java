@@ -170,6 +170,32 @@ public class GetStatistics extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Retrieves Water Cooler statistics.
+	 * @param days the number of days in the past to count
+	 * @return the number of posts in the specified interval
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getCoolerStatistics(int days) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(POST_ID) FROM common.COOLER_POSTS WHERE "
+					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
+			setQueryMax(1);
+			_ps.setInt(1, days);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS </i> table.
