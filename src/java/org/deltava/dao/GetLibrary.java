@@ -145,6 +145,81 @@ public class GetLibrary extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns metadata about a specifc file <i>in the current database</i>.
+	 * @param fName the filename
+	 * @return a FileEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FileEntry getFile(String fName) throws DAOException {
+	   try {
+	      prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
+					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
+			_ps.setString(1, fName);
+			setQueryMax(1);
+			
+			// Get results - if empty return null
+			List results = loadFiles();
+			return results.isEmpty() ? null : (FileEntry) results.get(0);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Returns the contents of the File Library. This takes a database name so we can display the contents of other
+	 * airlines' libraries.
+	 * @param dbName the database name
+	 * @return a List of FileEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection getFiles(String dbName) throws DAOException {
+	   
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".FILES F LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			return loadFiles();
+		} catch (SQLException se) {
+		   throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Helper method to load from the File Library table.
+	 */
+	private List loadFiles() throws SQLException {
+	   
+	   // Execute the query
+	   ResultSet rs = _ps.executeQuery();
+	   boolean hasTotals = (rs.getMetaData().getColumnCount() > 5);
+	   
+	   // Iterate through the result set
+	   List results = new ArrayList();
+	   while (rs.next()) {
+	      File f = new File(SystemData.get("path.files"), rs.getString(1));
+	      FileEntry entry = new FileEntry(f.getPath());
+	      entry.setName(rs.getString(2));
+	      entry.setSecurity(rs.getInt(4));
+	      entry.setDescription(rs.getString(5));
+	      if (hasTotals)
+	         entry.setDownloadCount(rs.getInt(6));
+	      
+	      // Add to results
+	      results.add(entry);
+	   }
+	   
+	   // Clean up and return
+	   rs.close();
+	   _ps.close();
+	   return results;
+	}
 
 	/**
 	 * Helper method to load from the Document Library table.
