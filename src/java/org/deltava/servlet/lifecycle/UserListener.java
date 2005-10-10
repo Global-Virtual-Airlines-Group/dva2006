@@ -10,8 +10,6 @@ import org.deltava.beans.Person;
 import org.deltava.security.UserPool;
 
 import org.deltava.dao.SetPilotLogin;
-import org.deltava.dao.SetSystemData;
-import org.deltava.dao.DAOException;
 
 import org.deltava.commands.CommandContext;
 import org.deltava.jdbc.ConnectionPool;
@@ -34,23 +32,10 @@ public class UserListener implements HttpSessionListener {
 	 * @param e the lifecycle event
 	 */
 	public void sessionCreated(HttpSessionEvent e) {
-		HttpSession s = e.getSession();
-		log.debug("Created Session " + s.getId());
-
-		// Get the JDBC connection pool and a system connection
-		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-		Connection con = null;
-
-		// Log the session creation
-		try {
-			con = jdbcPool.getConnection(true);
-			SetSystemData wdao = new SetSystemData(con);
-			wdao.openSession(s);
-		} catch (DAOException de) {
-			log.error("Error logging session create - " + de.getMessage(), de);
-		} finally {
-			jdbcPool.release(con);
-		}
+	   if (log.isDebugEnabled()) {
+	      HttpSession s = e.getSession();
+	      log.debug("Created Session " + s.getId());
+	   }
 	}
 
 	/**
@@ -77,16 +62,9 @@ public class UserListener implements HttpSessionListener {
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
 		try {
-			con = jdbcPool.getConnection(true);
-			
-			// Log the session close, or delete the session if for anonymous
-			SetSystemData swdao = new SetSystemData(con);
-			if (p == null) {
-			   swdao.deleteSession(s.getId());
-			} else {
-			   swdao.closeSession(s.getId());
-			   
-				// Update the user's last login date
+			// Update the user's last login date
+			if (p != null) {
+			   con = jdbcPool.getConnection(true);
 				SetPilotLogin pldao = new SetPilotLogin(con);
 				pldao.logout((Pilot) p);
 			}
