@@ -18,9 +18,11 @@ public class TestingHistoryHelper {
    
    // Arbitrary max exam stage used for Chief Pilots and Assistants
    private static final int CP_STAGE = 4; 
+   private static final String[] CAPT_RANKS = {Ranks.RANK_C, Ranks.RANK_SC};
 
 	private Pilot _usr;
 	private EquipmentType _myEQ;
+	private boolean _isCaptain;
 
 	private Collection _tests;
 	private Collection _pireps;
@@ -38,6 +40,9 @@ public class TestingHistoryHelper {
 		_myEQ = myEQ;
 		_tests = (tests == null) ? Collections.EMPTY_LIST : tests;
 		_pireps = pireps;
+		
+		// Check if we're a captain
+		_isCaptain = (StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1);
 	}
 
 	/**
@@ -66,7 +71,7 @@ public class TestingHistoryHelper {
 	public int getMaxExamStage() {
 	   
 	   // Check for staff member
-	   if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_C.equals(_usr.getRank()))
+	   if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_CP.equals(_usr.getRank()))
 	      return CP_STAGE;
 
 		int maxStage = 1;
@@ -157,7 +162,7 @@ public class TestingHistoryHelper {
 	public boolean canSwitchTo(EquipmentType eq) {
 
 		// Make sure we're a captain if the stage is higher than our own
-		if ((eq.getStage() > _myEQ.getStage()) && (!_usr.getRank().equals(Ranks.RANK_C)))
+		if ((eq.getStage() > _myEQ.getStage()) && (!_isCaptain))
 			return false;
 
 		// Check if we've passed the FO exam for that program

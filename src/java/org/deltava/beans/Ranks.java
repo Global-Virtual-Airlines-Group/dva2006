@@ -35,6 +35,11 @@ public interface Ranks {
     public static final String RANK_FO = "First Officer";
     
     /**
+     * Name of Senior Captain rank.
+     */
+    public static final String RANK_SC = "Senior Captain";
+    
+    /**
      * Name of Second Officer rank. <i>Used by Aviation Français Virtuel</i>
      */
     public static final String RANK_SO = "Second Officer";
