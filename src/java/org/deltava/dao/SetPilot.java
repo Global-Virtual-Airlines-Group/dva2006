@@ -135,8 +135,8 @@ public class SetPilot extends PilotWriteDAO {
 			executeUpdate(1);
 
 			// Update the roles/ratings
-			writeRoles(p, db);
-			writeRatings(p, db);
+			writeRoles(p.getID(), p.getRoles(), db);
+			writeRatings(p.getID(), p.getRatings(), db);
 
 			// Commit the changes and update the cache
 			commitTransaction();

@@ -4,8 +4,6 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.Pilot;
-
 /**
  * A Data Access Object to support writing Pilot object(s) to the database. This DAO contains helper methods that other
  * DAOs which write to the PILOTS table may access.
@@ -26,25 +24,25 @@ public abstract class PilotWriteDAO extends PilotDAO {
 
 	/**
 	 * Writes a Pilot's security roles to the database.
-	 * @param p the Pilot bean
+	 * @param id the Pilot's database ID
+	 * @param roles a Collection of security role names
 	 * @param db the database to write to
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeRoles(Pilot p, String db) throws SQLException {
+	protected void writeRoles(int id, Collection roles, String db) throws SQLException {
 	   
+	   // Clear existing roles
 		prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".ROLES WHERE (ID=?)");
-		_ps.setInt(1, p.getID());
+		_ps.setInt(1, id);
 		_ps.executeUpdate();
 		_ps.close();
 
-		// Write the roles to the database
+		// Write the roles to the database - don't add the "pilot" role
 		prepareStatementWithoutLimits("INSERT INTO " + db.toLowerCase() + ".ROLES (ID, ROLE) VALUES (?, ?)");
-		for (Iterator i = p.getRoles().iterator(); i.hasNext();) {
+		_ps.setInt(1, id);
+		for (Iterator i = roles.iterator(); i.hasNext();) {
 			String role = (String) i.next();
-
-			// Don't add the "pilot" role
 			if (!"Pilot".equals(role)) {
-				_ps.setInt(1, p.getID());
 				_ps.setString(2, role);
 				_ps.addBatch();
 			}
@@ -57,20 +55,23 @@ public abstract class PilotWriteDAO extends PilotDAO {
 
 	/**
 	 * Writes a Pilot's equipment type ratings to the database.
-	 * @param p the Pilot bean
+	 * @param id the Pilot's database ID
+	 * @param ratings a Collection of aircraft types
 	 * @param db the database to write to
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeRatings(Pilot p, String db) throws SQLException {
+	protected void writeRatings(int id, Collection ratings, String db) throws SQLException {
+	   
+	   // Clear existing ratings
 		prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".RATINGS WHERE (ID=?)");
-		_ps.setInt(1, p.getID());
+		_ps.setInt(1, id);
 		_ps.executeUpdate();
 		_ps.close();
 
 		// Write the ratings to the database
 		prepareStatementWithoutLimits("INSERT INTO " + db.toLowerCase() + ".RATINGS (ID, RATING) VALUES (?, ?)");
-		for (Iterator i = p.getRatings().iterator(); i.hasNext();) {
-			_ps.setInt(1, p.getID());
+		_ps.setInt(1, id);
+		for (Iterator i = ratings.iterator(); i.hasNext();) {
 			_ps.setString(2, (String) i.next());
 			_ps.addBatch();
 		}

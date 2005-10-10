@@ -98,12 +98,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("TXAIRLINE"));
 			
+		   // Add equipment ratings
+		   p.addRatings(eqdao.getPrimaryTypes(aInfo.getDB(), ctx.getParameter("eqType")));
+			
 			// Start Transaction
 			ctx.startTX();
 			
-			// Get the Pilot write DAO
-			SetPilot wdao = new SetPilot(con);
+			// Get the Pilot/Status Update write DAOs
+			SetPilotTransfer wdao = new SetPilotTransfer(con);
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			
+		   // Create the status update
+		   StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.AIRLINE_TX);
+		   su.setAuthorID(ctx.getUser().getID());
+		   su.setDescription("Transferred to " + aInfo.getName());
+		   sudao.write(su);
+		   
 			// Check if the user already exists in the database
 			newUser = rdao.getByName(p.getName());
 			if (newUser != null) {
@@ -124,10 +134,16 @@ public class TransferAirlineCommand extends AbstractCommand {
 				// Write the user data record
 				SetUserData udao = new SetUserData(con);
 				udao.write(ud);
-
+				
 				// Get the ID property from the UserData object and stuff it into the existing Pilot object
 				newUser.setID(ud.getID());
 			}
+			
+		   // Create the second status update
+		   StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
+		   su2.setAuthorID(ctx.getUser().getID());
+		   su2.setDescription("Transferred from " + SystemData.get("airline.name"));
+		   sudao.write(aInfo.getDB(), su2);
 			
 			// Change status at old airline to Transferred
 			p.setStatus(Pilot.TRANSFERRED);
@@ -135,7 +151,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			
 			// Save the new user
 			newUser.setStatus(Pilot.ACTIVE);
-			wdao.write(newUser, aInfo.getDB());
+			wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 			
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
@@ -163,6 +179,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctxt);
 		mailer.send(newUser);
+		mailer.setCC(ctx.getUser());
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
