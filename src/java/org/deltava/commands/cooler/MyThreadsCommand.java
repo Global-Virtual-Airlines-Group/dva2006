@@ -106,7 +106,8 @@ public class MyThreadsCommand extends AbstractViewCommand {
          ctx.release();
       }
       
-		// Set channel name attribute
+		// Set channel/command name attributes
+      ctx.setAttribute("viewCmd", getID(), REQUEST);
 		ctx.setAttribute("channelName", "My Discussion Threads", REQUEST);
 
       // Forward to the JSP

@@ -32,11 +32,12 @@ return true;
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <c:set var="channelName" value="${empty channelName ? channel.name : channelName}" scope="request" />
+<c:set var="viewCmdName" value="${empty viewCmd ? 'channel' : viewCmd}" scope="request" />
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="channel.do" method="GET" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="channel">
+<el:form action="${viewCmdName}.do" method="get" validate="return false">
+<view:table className="view" pad="default" space="default" cmd="${viewCmdName}">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
 <c:if test="${channelAccess.canPost}">
