@@ -46,9 +46,6 @@ public class TestInstaller extends AbstractBeanTestCase {
         assertEquals(_i.getName(), _i.cacheKey());
         assertEquals(_i.getName().hashCode(), _i.hashCode());
         
-        _i.setSecurity(FleetEntry.SECURITY_LEVELS[FleetEntry.STAFF_ONLY]);
-        assertEquals(FleetEntry.STAFF_ONLY, _i.getSecurity());
-        
         _i.setVersion(1, 2, 3);
         assertEquals(1, _i.getMajorVersion());
         assertEquals(2, _i.getMinorVersion());

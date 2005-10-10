@@ -31,7 +31,7 @@ public class LibraryEditCommand extends AbstractCommand {
 
       // Get the file name, or if we're creating a new file
       String fName = (String) ctx.getCmdParameter(ID, "NEW");
-      ctx.setAttribute("securityOptions", ComboUtils.fromArray(FleetEntry.SECURITY_LEVELS), REQUEST);
+      ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
 
       // Figure out what type of entry we are attempting to create
       boolean isManual = "manual".equals(ctx.getCmdParameter(Command.OPERATION, "fleet"));
