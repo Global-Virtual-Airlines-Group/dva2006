@@ -337,6 +337,7 @@
 	<cache>
 		<stats type="Integer">240</stats>
 		<channels type="Integer">10</channels>
+		<cmdlog type="Integer">12</cmdlog>
 		<rss>
 			<cooler type="Integer">10</cooler>
 			<news type="Integer">240</news>
