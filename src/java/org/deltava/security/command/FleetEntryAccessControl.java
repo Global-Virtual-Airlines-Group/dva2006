@@ -4,10 +4,10 @@ package org.deltava.security.command;
 import org.deltava.security.SecurityContext;
 import org.deltava.commands.CommandSecurityException;
 
-import org.deltava.beans.fleet.FleetEntry;
+import org.deltava.beans.fleet.LibraryEntry;
 
 /**
- * An Access Controller to support Fleet Library entry operations.
+ * An Access Controller to support Fleet/File Library entry operations.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -15,7 +15,7 @@ import org.deltava.beans.fleet.FleetEntry;
 
 public final class FleetEntryAccessControl extends AccessControl {
 
-   private FleetEntry _entry;
+   private LibraryEntry _entry;
 
    private boolean _canEdit;
    private boolean _canDelete;
@@ -26,7 +26,7 @@ public final class FleetEntryAccessControl extends AccessControl {
     * Initializes the access controller.
     * @param ctx the Command context
     */
-   public FleetEntryAccessControl(SecurityContext ctx, FleetEntry e) {
+   public FleetEntryAccessControl(SecurityContext ctx, LibraryEntry e) {
       super(ctx);
       _entry = e;
    }
@@ -35,7 +35,7 @@ public final class FleetEntryAccessControl extends AccessControl {
     * Updates the Fleet Entry to validate access to.
     * @param e the entry
     */
-   public void setEntry(FleetEntry e) {
+   public void setEntry(LibraryEntry e) {
       _entry = e;
    }
 
@@ -54,16 +54,16 @@ public final class FleetEntryAccessControl extends AccessControl {
       _canEdit = _ctx.isUserInRole("Fleet");
       _canDelete = _ctx.isUserInRole("Admin");
       switch (_entry.getSecurity()) {
-         case FleetEntry.PUBLIC:
+         case LibraryEntry.PUBLIC:
             _canView = true;
             break;
 
-         case FleetEntry.AUTH_ONLY:
+         case LibraryEntry.AUTH_ONLY:
             _canView = _ctx.isAuthenticated();
             break;
 
          default:
-         case FleetEntry.STAFF_ONLY:
+         case LibraryEntry.STAFF_ONLY:
             _canView = (_ctx.getRoles().size() > 1);
             break;
       }

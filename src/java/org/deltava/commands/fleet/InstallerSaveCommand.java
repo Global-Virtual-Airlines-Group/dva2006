@@ -70,7 +70,7 @@ public class InstallerSaveCommand extends AbstractCommand {
          entry.setName(ctx.getParameter("title"));
          entry.setCode(ctx.getParameter("code"));
          entry.setImage(ctx.getParameter("img"));
-         entry.setSecurity(StringUtils.arrayIndexOf(FleetEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+         entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
          entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx.getParameter("minorVersion")),
                Integer.parseInt(ctx.getParameter("subVersion")));
          
