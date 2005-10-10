@@ -2,13 +2,12 @@
 package org.deltava.dao;
 
 import java.sql.*;
-import javax.servlet.http.*;
+import java.util.*;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.system.CommandLog;
 
 /**
- * A Data Access Object to write system logging (user sessions, statistics) entries.
+ * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -25,93 +24,35 @@ public class SetSystemData extends DAO {
 	}
 
 	/**
-	 * Logs the creation of an HTTP Session.
-	 * @param s the HTTP session
+	 * Logs Web Site Command invocation.
+	 * @param entries the Command log entries
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void openSession(HttpSession s) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO SYS_SESSIONS (ID, START_TIME) VALUES (?, NOW())");
-			_ps.setString(1, s.getId());
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Associates a user with a particular HTTP session.
-	 * @param sessionID the Session ID
-	 * @param usr the Pilot bean
-	 * @param remoteAddr the Pilot's remote IP address
-	 * @param remoteHost the Pilot's remote host name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void updateSession(String sessionID, Pilot usr, String remoteAddr, String remoteHost) throws DAOException {
-		try {
-			prepareStatement("UPDATE SYS_SESSIONS SET PILOT_ID=?, REMOTE_ADDR=INET_ATON(?), "
-					+ "REMOTE_HOST=? WHERE (ID=?)");
-			_ps.setInt(1, usr.getID());
-			_ps.setString(2, remoteAddr);
-			_ps.setString(3, remoteHost);
-			_ps.setString(4, sessionID);
-			executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Logs the closing of an HTTP Session.
-	 * @param sessionID the Session ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void closeSession(String sessionID) throws DAOException {
-		try {
-			prepareStatement("UPDATE SYS_SESSIONS SET END_TIME=NOW() WHERE (ID=?)");
-			_ps.setString(1, sessionID);
-			executeUpdate(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Deletes an HTTP Session log entry, for an anonymous user.
-	 * @param sessionID the Session ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void deleteSession(String sessionID) throws DAOException {
-	   try {
-	      prepareStatement("DELETE FROM SYS_SESSIONS WHERE (ID=?)");
-	      _ps.setString(1, sessionID);
-	      executeUpdate(0);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
-	}
-	
-	/**
-	 * Logs a Web Site Command invocation.
-	 * @param log the Command log entry
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void logCommand(CommandLog log) throws DAOException {
+	public void logCommands(Collection entries) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO SYS_COMMANDS (CMDDATE, PILOT_ID, REMOTE_ADDR, REMOTE_HOST, "
 					+ "NAME, RESULT, TOTAL_TIME, BE_TIME, SUCCESS) VALUES (?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?) ON "
 					+ "DUPLICATE KEY UPDATE CMDDATE=?");
-			_ps.setTimestamp(1, createTimestamp(log.getDate()));
-			_ps.setInt(2, log.getPilotID());
-			_ps.setString(3, log.getRemoteAddr());
-			_ps.setString(4, log.getRemoteHost());
-			_ps.setString(5, log.getName());
-			_ps.setString(6, log.getResult());
-			_ps.setInt(7, log.getTime());
-			_ps.setInt(8, log.getBackEndTime());
-			_ps.setBoolean(9, log.getSuccess());
-			_ps.setTimestamp(10, createTimestamp(log.getDate()));
-			executeUpdate(0);
+			
+			// Write the log entries
+			for (Iterator i = entries.iterator(); i.hasNext(); ) {
+			   CommandLog log = (CommandLog) i.next();
+				_ps.setTimestamp(1, createTimestamp(log.getDate()));
+				_ps.setInt(2, log.getPilotID());
+				_ps.setString(3, log.getRemoteAddr());
+				_ps.setString(4, log.getRemoteHost());
+				_ps.setString(5, log.getName());
+				_ps.setString(6, log.getResult());
+				_ps.setInt(7, log.getTime());
+				_ps.setInt(8, log.getBackEndTime());
+				_ps.setBoolean(9, log.getSuccess());
+				_ps.setTimestamp(10, createTimestamp(log.getDate()));
+				_ps.addBatch();
+			}
+			
+			// Do the batch update and close
+			_ps.executeBatch();
+			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
