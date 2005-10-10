@@ -15,7 +15,7 @@ public abstract class AbstractScrollTagTestCase extends AbstractTagTestCase {
         _tableTag = new TableTag();
         _tableTag.setPageContext(_ctx);
         _tableTag.setCmd("table");
-        _tableTag.setSize("60");
+        _tableTag.setSize(60);
     }
     
     protected void tearDown() throws Exception {
