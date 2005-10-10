@@ -49,15 +49,6 @@ public class TestIssue extends AbstractBeanTestCase {
 		assertEquals(Issue.STATUS[_i.getStatus()], _i.getStatusName());
 		assertEquals(Issue.TYPE[_i.getType()], _i.getTypeName());
 		assertEquals(Issue.AREA[_i.getArea()], _i.getAreaName());
-		
-		_i.setArea(Issue.AREA[0]);
-		assertEquals(0, _i.getArea());
-		_i.setPriority(Issue.PRIORITY[0]);
-		assertEquals(0, _i.getPriority());
-		_i.setStatus(Issue.STATUS[0]);
-		assertEquals(0, _i.getStatus());
-		_i.setType(Issue.TYPE[0]);
-		assertEquals(0, _i.getType());
 	}
 	
 	public void testValidation() {

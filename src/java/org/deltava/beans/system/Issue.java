@@ -40,11 +40,12 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	public static final int STATUS_WORKAROUND = 2;
 	public static final int STATUS_WONTFIX = 3;
 	public static final int STATUS_DEFERRED = 4;
+	public static final int STATUS_DUPE = 5;
 	
 	/**
 	 * Status Names
 	 */
-	public static final String[] STATUS = {"Open", "Fixed", "Worked Around", "Won't Fix", "Deferred"};
+	public static final String[] STATUS = {"Open", "Fixed", "Worked Around", "Won't Fix", "Deferred", "Duplicate"};
 	
 	public static final int TYPE_BUG = 0;
 	public static final int TYPE_ENHANCEMENT = 1;
@@ -104,19 +105,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	}
 
 	/**
-	 * Helper method to convert a property name into a code.
-	 */
-	private int getCode(String name, String[] names) {
-		for (int x = 0; x < names.length; x++) {
-			if (names[x].equals(name))
-				return x;
-		}
-		
-		// Throw an exception - the stack trace will tell us what property we were trying to set
-		throw new IllegalArgumentException("Invalid property value " + name);
-	}
-	
-	/**
 	 * Helper method to validate a property code.
 	 */
 	private void validateCode(int code, String[] names) {
@@ -165,7 +153,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the priority code
 	 * @see Issue#getPriorityName()
 	 * @see Issue#setPriority(int)
-	 * @see Issue#setPriority(String)
 	 */
 	public int getPriority() {
 		return _priority;
@@ -176,7 +163,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the priority name
 	 * @see Issue#getPriority()
 	 * @see Issue#setPriority(int)
-	 * @see Issue#setPriority(String)
 	 */
 	public String getPriorityName() {
 		return Issue.PRIORITY[getPriority()];
@@ -187,7 +173,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the status code
 	 * @see Issue#getStatusName()
 	 * @see Issue#setStatus(int)
-	 * @see Issue#setStatus(String)
 	 */
 	public int getStatus() {
 		return _status;
@@ -198,7 +183,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the status name
 	 * @see Issue#getStatus()
 	 * @see Issue#setStatus(int)
-	 * @see Issue#setStatus(String)
 	 */
 	public String getStatusName() {
 		return Issue.STATUS[getStatus()];
@@ -209,7 +193,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the type code
 	 * @see Issue#getTypeName()
 	 * @see Issue#setType(int)
-	 * @see Issue#setType(String)
 	 */
 	public int getType() {
 		return _issueType;
@@ -220,7 +203,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the type name
 	 * @see Issue#getType()
 	 * @see Issue#setType(int)
-	 * @see Issue#setType(String)
 	 */
 	public String getTypeName() {
 		return Issue.TYPE[getType()];
@@ -231,7 +213,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the area code
 	 * @see Issue#getAreaName()
 	 * @see Issue#setArea(int)
-	 * @see Issue#setArea(String)
 	 */
 	public int getArea() {
 		return _area;
@@ -242,7 +223,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return the area name
 	 * @see Issue#getArea()
 	 * @see Issue#setArea(int)
-	 * @see Issue#setArea(String)
 	 */
 	public String getAreaName() {
 		return Issue.AREA[getArea()];
@@ -445,7 +425,6 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * Updates this Issue's type.
 	 * @param pv the type code
 	 * @throws IllegalArgumentException if pv is negative or invalid
-	 * @see Issue#setType(String)
 	 * @see Issue#getType()
 	 * @see Issue#getTypeName()
 	 */
@@ -455,22 +434,9 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	}
 	
 	/**
-	 * Updates this Issue's type.
-	 * @param pv the type name
-	 * @throws IllegalArgumentException if pv is invalid
-	 * @see Issue#setType(int)
-	 * @see Issue#getTypeName()
-	 * @see Issue#getType()
-	 */
-	public void setType(String pv) {
-		_issueType = getCode(pv, Issue.TYPE);
-	}
-	
-	/**
 	 * Updates this Issue's area.
 	 * @param pv the area code
 	 * @throws IllegalArgumentException if pv is negative or invalid
-	 * @see Issue#setArea(String)
 	 * @see Issue#getArea()
 	 * @see Issue#getAreaName()
 	 */
@@ -480,22 +446,9 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	}
 	
 	/**
-	 * Updates this Issue's area.
-	 * @param pv the area name
-	 * @throws IllegalArgumentException if pv is invalid
-	 * @see Issue#setArea(int)
-	 * @see Issue#getAreaName()
-	 * @see Issue#getArea()
-	 */
-	public void setArea(String pv) {
-		_area = getCode(pv, Issue.AREA);
-	}
-	
-	/**
 	 * Updates this Issue's priority.
 	 * @param pv the priority code
 	 * @throws IllegalArgumentException if pv is negative or invalid
-	 * @see Issue#setPriority(String)
 	 * @see Issue#getPriority()
 	 * @see Issue#getPriorityName()
 	 */
@@ -505,40 +458,15 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	}
 	
 	/**
-	 * Updates this Issue's priority.
-	 * @param pv the priority name
-	 * @throws IllegalArgumentException if pv is invalid
-	 * @see Issue#setPriority(int)
-	 * @see Issue#getPriorityName()
-	 * @see Issue#getPriority()
-	 */
-	public void setPriority(String pv) {
-		_priority = getCode(pv, Issue.PRIORITY);
-	}
-	
-	/**
 	 * Updates this Issue's status.
 	 * @param pv the status code
 	 * @throws IllegalArgumentException if pv is negative or invalid
-	 * @see Issue#setStatus(String)
 	 * @see Issue#getStatus()
 	 * @see Issue#getStatusName()
 	 */
 	public void setStatus(int pv) {
 		validateCode(pv, Issue.STATUS);
 		_status = pv;
-	}
-	
-	/**
-	 * Updates this Issue's status.
-	 * @param pv the status name
-	 * @throws IllegalArgumentException if pv is invalid
-	 * @see Issue#setStatus(int)
-	 * @see Issue#getStatusName()
-	 * @see Issue#getStatus()
-	 */
-	public void setStatus(String pv) {
-		_status = getCode(pv, Issue.STATUS);
 	}
 	
 	/**
@@ -561,7 +489,7 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	}
 	
 	public String getRowClassName() {
-		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err"};
+		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err", "opt3"};
 		return ROW_CLASSES[_status];
 	}
 }

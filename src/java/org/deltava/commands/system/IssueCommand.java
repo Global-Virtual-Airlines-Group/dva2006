@@ -13,7 +13,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.IssueAccessControl;
 
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -75,9 +75,9 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 
 			// Update the issue from the request
-			i.setArea(ctx.getParameter("area"));
-			i.setPriority(ctx.getParameter("priority"));
-			i.setType(ctx.getParameter("issueType"));
+			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area")));
+			i.setPriority(StringUtils.arrayIndexOf(Issue.PRIORITY, ctx.getParameter("priority")));
+			i.setType(StringUtils.arrayIndexOf(Issue.TYPE,ctx.getParameter("issueType")));
 			i.setDescription(ctx.getParameter("desc"));
 
 			// Set the version
@@ -87,7 +87,7 @@ public class IssueCommand extends AbstractFormCommand {
 
 			// If we can resolve the issue, update the status
 			if ((access.getCanResolve()) && (ctx.getParameter("status") != null)) {
-				i.setStatus(ctx.getParameter("status"));
+				i.setStatus(StringUtils.arrayIndexOf(Issue.STATUS, ctx.getParameter("status")));
 				if ((i.getStatus() != Issue.STATUS_OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(new Date());
 			}
