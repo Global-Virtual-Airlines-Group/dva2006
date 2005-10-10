@@ -8,10 +8,13 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to view all collected ACARS information about a flight.
@@ -38,12 +41,17 @@ public class FlightInfoCommand extends AbstractCommand {
 			if (info == null)
 				throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
 
-			// Get the Connection data (this might be null for an offline flight)
+			// Get the Connection data
 			ConnectionEntry conInfo = dao.getConnection(info.getConnectionID());
+			
+			// Get the user location and database
+			GetUserData uddao = new GetUserData(con);
+			UserData uloc = (conInfo == null) ? null : uddao.get(conInfo.getPilotID());
+			String dbName = (uloc == null) ? SystemData.get("airline.db") : uloc.getDB();
 
 			// Get the PIREP itself (this too might be null, but one or the other won't be)
 			GetFlightReports prdao = new GetFlightReports(con);
-			ACARSFlightReport afr = prdao.getACARS(info.getID());
+			ACARSFlightReport afr = prdao.getACARS(dbName, info.getID());
 
 			// Load the Pilot based on the connection/PIREP data
 			int pilotID = (conInfo == null) ? afr.getDatabaseID(FlightReport.DBID_PILOT) : conInfo.getPilotID();
