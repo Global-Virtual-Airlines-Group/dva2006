@@ -33,11 +33,11 @@ import org.deltava.util.system.SystemData;
 public class CommandServlet extends HttpServlet {
 
    private static final Logger log = Logger.getLogger(CommandServlet.class);
+   private static final int MAX_EXEC_TIME = 20000;
 
    private ConnectionPool _jdbcPool;
    private Map _cmds;
-   
-   private static final int MAX_EXEC_TIME = 20000;
+   private List _cmdLogPool = new ArrayList();
 
    /**
     * Returns the servlet description.
@@ -194,17 +194,27 @@ public class CommandServlet extends HttpServlet {
          cmdLog.setRemoteAddr(req.getRemoteAddr());
          cmdLog.setRemoteHost(req.getRemoteHost());
          cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
-
-         // Log the command statistics
-         Connection c = null;
-         try {
-            c = _jdbcPool.getConnection(true);
-            SetSystemData swdao = new SetSystemData(c);
-            swdao.logCommand(cmdLog);
-         } catch (DAOException de) {
-            log.warn("Error writing command result staitistics - " + de.getMessage());
-         } finally {
-            _jdbcPool.release(c);
+         
+         // Add to the log pool
+         synchronized (_cmdLogPool) {
+            _cmdLogPool.add(cmdLog);
+            
+            // If the pool is full, batch the entries
+            if (_cmdLogPool.size() >= SystemData.getInt("cache.cmdlog")) {
+               Connection c = null;
+               try {
+                  c = _jdbcPool.getConnection(true);
+                  SetSystemData swdao = new SetSystemData(c);
+                  swdao.logCommands(_cmdLogPool);
+               } catch (DAOException de) {
+                  log.warn("Error writing command result staitistics - " + de.getMessage());
+               } finally {
+                  _jdbcPool.release(c);
+                  _cmdLogPool.clear();
+               }
+               
+               log.debug("Batched command logs");
+            }
          }
       }
    }
