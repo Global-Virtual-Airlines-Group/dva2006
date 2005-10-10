@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.testing.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to write Pilot Examinations to the database.
  * @author Luke
@@ -131,16 +133,28 @@ public class SetExam extends DAO {
    }
    
    /**
-    * Writes a Check Ride to the database. This can handle inserts and updates.
+    * Writes a Check Ride to <i>the current database</i>. This can handle inserts and updates.
     * @param cr the Check Ride object
     * @throws DAOException if a JDBC error occurs
+    * @see SetExam#write(String, CheckRide)
     */
    public void write(CheckRide cr) throws DAOException {
+      write(SystemData.get("airline.db"), cr);
+   }
+   
+   /**
+    * Writes a Check Ride to a database. This can handle inserts and updates.
+    * @param dbName the database name
+    * @param cr the Check Ride object
+    * @throws DAOException if a JDBC error occurs
+    * @see SetExam#write(CheckRide)
+    */
+   public void write(String dbName, CheckRide cr) throws DAOException {
       try {
          // Prepare the statement, either an INSERT or an UPDATE
          if (cr.getID() == 0) {
-            prepareStatement("INSERT INTO CHECKRIDES (NAME, PILOT_ID, STATUS, STAGE, GRADED_BY, CREATED, " 
-                  + "COMMENTS, PASS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+            prepareStatement("INSERT INTO " + dbName.toLowerCase() + ".CHECKRIDES (NAME, PILOT_ID, STATUS, STAGE, "
+                  + "GRADED_BY, CREATED, COMMENTS, PASS) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
             _ps.setString(1, cr.getName());
             _ps.setInt(2, cr.getPilotID());
             _ps.setInt(3, cr.getStatus());
@@ -150,8 +164,8 @@ public class SetExam extends DAO {
             _ps.setString(7, cr.getComments());
             _ps.setBoolean(8, cr.getPassFail());
          } else {
-            prepareStatement("UPDATE CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, ACARS_ID=?, GRADED_BY=?, "
-                  + "PASS=?, COMMENTS=? WHERE (ID=?)");
+            prepareStatement("UPDATE " + dbName.toLowerCase() + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
+                  + "ACARS_ID=?, GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
             _ps.setInt(1, cr.getStatus());
             _ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
             _ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));

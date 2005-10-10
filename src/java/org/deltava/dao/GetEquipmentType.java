@@ -124,13 +124,20 @@ public class GetEquipmentType extends DAO {
     
     /**
      * Returns the Equipment Programs for whom a flight in a given aircraft counts for promotion.
+     * @param dbName the Database name
      * @param eqType the Aircraft type
      * @return a Collection of equipment program names
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getPrimaryTypes(String eqType) throws DAOException {
+    public Collection getPrimaryTypes(String dbName, String eqType) throws DAOException {
+       
+       // Build the SQL statement
+       StringBuffer sqlBuf = new StringBuffer("SELECT EQTYPE FROM ");
+       sqlBuf.append(dbName.toLowerCase());
+       sqlBuf.append(".EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?)");
+       
     	try {
-    		prepareStatementWithoutLimits("SELECT EQTYPE FROM EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?)");
+    		prepareStatementWithoutLimits(sqlBuf.toString());
     		_ps.setInt(1, EquipmentType.PRIMARY_RATING);
     		_ps.setString(2, eqType);
     		

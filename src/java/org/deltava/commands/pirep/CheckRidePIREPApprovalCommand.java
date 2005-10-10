@@ -59,7 +59,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
-			CheckRide cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType());
+			CheckRide cr = crdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType());
 
 			// Get the Transfer Request
 			GetTransferRequest txdao = new GetTransferRequest(con);

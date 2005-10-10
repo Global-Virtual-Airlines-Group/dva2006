@@ -10,6 +10,8 @@ import org.deltava.commands.*;
 import org.deltava.dao.GetFlightReports;
 import org.deltava.dao.DAOException;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to view Flight Reports from a Check Ride.
  * @author Luke
@@ -32,7 +34,7 @@ public class CheckRidePIREPCommand extends AbstractCommand {
          
          // Get the DAO and the ACARS Flight Report
          GetFlightReports dao = new GetFlightReports(con);
-         ACARSFlightReport afr = dao.getACARS(ctx.getID());
+         ACARSFlightReport afr = dao.getACARS(SystemData.get("airline.db"), ctx.getID());
          if (afr == null)
             throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
          
