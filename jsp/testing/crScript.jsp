@@ -30,7 +30,6 @@ return true;
 <body>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="actypes" name="eqtypes" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -57,7 +56,7 @@ return true;
 <!-- Button bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="crscript" op="save" label="SAVE CHECK RIDE SCRIPT" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHECK RIDE SCRIPT" /></td>
 </tr>
 </el:table>
 </el:form>
