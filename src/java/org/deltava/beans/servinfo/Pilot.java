@@ -30,7 +30,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	private Airport _airportA;
 	private String _comments;
 	private boolean _isHighlighted;
-	private List _wayPoints;
+	private String _wayPoints;
 	
 	private String _rawData;
 	private List _route;
@@ -168,7 +168,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 * @see Pilot#setWayPoints(String)
 	 */
 	public Collection getWayPoints() {
-	   return _wayPoints;
+	   return StringUtils.split(_wayPoints, " ");
 	}
 	
 	/**
@@ -304,7 +304,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 * @see Pilot#getWayPoints()
 	 */
 	public void setWayPoints(String route) {
-	   _wayPoints = StringUtils.split(route, " ");
+	   _wayPoints = route;
 	}
 
 	/**
@@ -389,9 +389,9 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
-		buf.append(")<span class=\"small\"><br /><br />Route: ");
+		buf.append(")<span class=\"small\"><br /><br />Flying from ");
 		buf.append(_airportD.getICAO());
-		buf.append(" - ");
+		buf.append(" to ");
 		buf.append(_airportA.getICAO());
 		buf.append("<br />Position: ");
 		buf.append(StringUtils.format(_position, true, GeoLocation.ALL));
@@ -399,7 +399,10 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 		buf.append(StringUtils.format(_altitude, "#,##0"));
 		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots</span>");
+		buf.append(" knots<br />");
+		buf.append("Route: ");
+		buf.append(_wayPoints);
+		buf.append("</span>");
 		return buf.toString();
 	}
 }
