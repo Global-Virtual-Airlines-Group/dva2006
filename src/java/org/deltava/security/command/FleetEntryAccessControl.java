@@ -4,7 +4,7 @@ package org.deltava.security.command;
 import org.deltava.security.SecurityContext;
 import org.deltava.commands.CommandSecurityException;
 
-import org.deltava.beans.fleet.LibraryEntry;
+import org.deltava.beans.fleet.*;
 
 /**
  * An Access Controller to support Fleet/File Library entry operations.
@@ -51,7 +51,7 @@ public final class FleetEntryAccessControl extends AccessControl {
       if (_entry == null) return;
 
       // Set access variables
-      _canEdit = _ctx.isUserInRole("Fleet");
+      _canEdit = _ctx.isUserInRole("Fleet") || ((_entry instanceof FileEntry) && _ctx.isUserInRole("HR"));
       _canDelete = _ctx.isUserInRole("Admin");
       switch (_entry.getSecurity()) {
          case LibraryEntry.PUBLIC:

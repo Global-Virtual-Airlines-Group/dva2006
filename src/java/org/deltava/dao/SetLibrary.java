@@ -43,35 +43,20 @@ public class SetLibrary extends DAO {
 	}
 
 	/**
-	 * Writes a new Manaul to the Document Library.
-	 * @param m the Manual metadata
-	 * @throws DAOException
-	 */
-	public void createManual(Manual m) throws DAOException {
-		try {
-			prepareStatement("INSERT INTO DOCS (FILENAME, NAME, FILESIZE, VERSION, SECURITY, BODY) VALUES " + "(?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, m.getFileName());
-			_ps.setString(2, m.getName());
-			_ps.setLong(3, m.getSize());
-			_ps.setInt(4, m.getMajorVersion());
-			_ps.setInt(5, m.getSecurity());
-			_ps.setString(6, m.getDescription());
-
-			// Update the database
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Updates an existing Manual in the Document Library.
+	 * Writes a Manual to the Document Library. This handles INSERT and UPDATE operations.
 	 * @param m the Manual metadata
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void updateManual(Manual m) throws DAOException {
+	public void write(Manual m) throws DAOException {
 		try {
-			prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=? WHERE (FILENAME=?)");
+		   if (m.getDownloadCount() == 0) {
+		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES " + 
+		            "(?, ?, ?, ?, ?, ?)");
+		   } else {
+		      prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=? WHERE (FILENAME=?)");		      
+		   }
+			
+		   // Update the prepared statement
 			_ps.setString(1, m.getName());
 			_ps.setLong(2, m.getSize());
 			_ps.setInt(3, m.getMajorVersion());
@@ -87,41 +72,21 @@ public class SetLibrary extends DAO {
 	}
 
 	/**
-	 * Writes a new Installer to the Fleet Library.
+	 * Writes an Installer to the Fleet Library. This handles INSERT and UPDATE operations.
 	 * @param i the Installer metadata
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void createInstaller(Installer i) throws DAOException {
+	public void write(Installer i) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO FLEET (FILENAME, NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, "
-					+ "SECURITY, CODE, BODY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setString(1, i.getFileName());
-			_ps.setString(2, i.getName());
-			_ps.setString(3, i.getImage());
-			_ps.setLong(4, i.getSize());
-			_ps.setInt(5, i.getMajorVersion());
-			_ps.setInt(6, i.getMinorVersion());
-			_ps.setInt(7, i.getSubVersion());
-			_ps.setInt(8, i.getSecurity());
-			_ps.setString(9, i.getCode());
-			_ps.setString(10, i.getDescription());
-
-			// Update the database
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Updates an existing Installer in the Fleet Library.
-	 * @param i the Installer metadata
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void updateInstaller(Installer i) throws DAOException {
-		try {
-			prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
+		   if (i.getDownloadCount() == 0) {
+		      prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, "
+						+ "SECURITY, CODE, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		   } else {
+		      prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
 					+ "SECURITY=?, CODE=?, BODY=? WHERE (FILENAME=?)");
+		   }
+		   
+		   // Update the prepared statement
 			_ps.setString(1, i.getName());
 			_ps.setString(2, i.getImage());
 			_ps.setLong(3, i.getSize());
@@ -138,6 +103,36 @@ public class SetLibrary extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Writes a File Library entry to the database. This handles INSERT and UPDATE operations.
+	 * @param e the Library entry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(FileEntry e) throws DAOException {
+	   try {
+	      if (e.getDownloadCount() == 0) {
+	         prepareStatement("REPLACE INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES "
+	               + "(?, ?, ?, ?, ?, ?)");
+	      } else {
+	         prepareStatement("UPDATE FILES SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, BODY=? WHERE "
+	               + "(FILENAME=?)");
+	      }
+	      
+	      // Update the prepared statement
+	      _ps.setString(1, e.getName());
+	      _ps.setLong(2, e.getSize());
+	      _ps.setInt(3, e.getSecurity());
+	      _ps.setInt(4, e.getAuthorID());
+	      _ps.setString(5, e.getDescription());
+	      _ps.setString(6, e.getFileName());
+	      
+	      // Update the database
+	      executeUpdate(1);
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
 	}
 
 	/**
