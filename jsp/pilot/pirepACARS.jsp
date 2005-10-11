@@ -61,19 +61,19 @@
 <c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
 <tr>
  <td class="label">Flight Time (1X)</td>
- <td class="data"><fmt:int value="${pirep.time1X}" /> minutes</td>
+ <td class="data"><fmt:int value="${pirep.time1X / 60}" /> minutes</td>
 </tr>
 </c:if>
 <c:if test="${pirep.time2X > 0}">
 <tr>
  <td class="label">Flight Time (2X)</td>
- <td class="data bld"><fmt:int value="${pirep.time2X}" /> minutes</td>
+ <td class="data bld"><fmt:int value="${pirep.time2X / 60}" /> minutes</td>
 </tr>
 </c:if>
 <c:if test="${pirep.time4X > 0}">
 <tr>
  <td class="label">Flight Time (4X)</td>
- <td class="data bld"><fmt:int value="${pirep.time4X}" /> minutes</td>
+ <td class="data bld"><fmt:int value="${pirep.time4X / 60}" /> minutes</td>
 </tr>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
