@@ -6,6 +6,8 @@ import java.util.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.comparators.GeoComparator;
 
+import org.deltava.util.cache.Cacheable;
+
 /**
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
@@ -14,10 +16,27 @@ import org.deltava.comparators.GeoComparator;
  * @since 1.0
  */
 
-public class NavigationDataMap implements java.io.Serializable {
+public class NavigationDataMap implements java.io.Serializable, Cacheable {
    
    private Map _entries = new HashMap();
+   private Object _key;
 
+   /**
+    * Creates an empty NavigationDataMap bean.
+    */
+   public NavigationDataMap() {
+	   super();
+   }
+   
+   /**
+    * Creates a pre-populaed NavigationDataMap bean.
+    * @param entries the navigation aid beans to add
+    */
+   public NavigationDataMap(Collection entries) {
+	   this();
+	   addAll(entries);
+   }
+   
    /**
     * Adds a navigation aid to the map.
     * @param nd the navigation aid bean
@@ -102,6 +121,14 @@ public class NavigationDataMap implements java.io.Serializable {
    }
    
    /**
+    * Returns wether the map is empty.
+    * @return TRUE if the object is empty, otherwise FALSE
+    */
+   public boolean isEmpty() {
+	   return _entries.isEmpty();
+   }
+   
+   /**
     * Filters out navigation aids based on their type.
     * @param types a Collection of Integers with navigation aid type codes
     * @see NavigationDataBean#getType()
@@ -132,5 +159,20 @@ public class NavigationDataMap implements java.io.Serializable {
 	   Set filterSet = new HashSet();
 	   filterSet.add(new Integer(navaidType));
 	   filter(filterSet);
+   }
+   
+   /**
+    * Sets this bean's cache key. This is typically the query object used to generate this map.
+    * @param key the cache key
+    */
+   public void setCacheKey(Object key) {
+	   _key = key;
+   }
+   
+   /**
+    * Returns this bean's cache key.
+    */
+   public Object cacheKey() {
+	   return _key;
    }
 }

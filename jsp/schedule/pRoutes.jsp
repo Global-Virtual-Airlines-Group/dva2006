@@ -6,7 +6,8 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Preferred Routes for ${airportD}</title>
 <content:css name="main" browserSpecific="true" />
@@ -14,7 +15,15 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="googleMaps" />
+<map:api version="1" />
+<map:vml-ie />
+<content:sysdata var="imgPath" name="path.img" />
+<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
+var map;
+
 function setAirportD(combo)
 {
 var ad = combo.options[combo.selectedIndex].value;
@@ -37,6 +46,64 @@ if (combo.selectedIndex == 0) {
 
 return true;
 }
+
+function showMap(route)
+{
+// Get the map DIV
+var mapdiv = getElement('mapTable');
+if (mapdiv.className == 'hidden') {
+	mapdiv.className = 'visible';
+
+	// Create the map
+	map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+	map.addControl(new GLargeMapControl());
+	map.addControl(new GMapTypeControl());
+	map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+	map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
+}
+
+// Generate an XMLHTTP request
+var isLoading = getElement("isLoading");
+if (isLoading)
+	isLoading.innerHTML = " - LOADING...";
+
+var xmlreq = GXmlHttp.create();
+xmlreq.open("GET", "route.ws?route=" + escape(route), true);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	map.clearOverlays();
+	
+	// Draw the markers
+	var positions = new Array();
+	var xmlDoc = xmlreq.responseXML;
+	var waypoints = xmlDoc.documentElement.getElementsByTagName("pos");
+	for (var i = 0; i < waypoints.length; i++) {
+		var wp = waypoints[i];
+		var label = wp.firstChild;
+		var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+		positions.push(p);
+		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
+	} // for
+	
+	// Draw the route
+	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
+	
+	// Get the midpoint and center the map
+	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
+	var mpp = mps[0];
+	var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
+	map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+	
+	// Focus on the map
+	if (isLoading)
+		isLoading.innerHTML = "";
+		
+	return true;
+}
+
+xmlreq.send(null);
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -53,7 +120,8 @@ return true;
 <tr class="title">
  <td width="20%">DESTINATION</td>
  <td width="15%">ARTCCs</td>
- <td width="8%" class="left">ROUTE</td>
+ <td width="5%">&nbsp;</td>
+ <td width="6%" class="left">ROUTE</td>
  <td class="right">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" /></td>
 </tr>
@@ -63,13 +131,14 @@ return true;
 <tr>
  <td class="pri small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
  <td class="sec small">${route.ARTCC}</td>
+ <td><el:button className="BUTTON" onClick="void showMap('${route.route}')" label="VIEW" /></td>
  <td colspan="2" class="left">${route.route}</td>
 </tr>
 </c:forEach>
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="4">
+ <td colspan="5">
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
 <el:cmdbutton url="routepurge" op="domestic" label="PURGE DOMESTIC ROUTES" />
 </c:if>
@@ -80,6 +149,22 @@ return true;
  </td>
 </tr>
 </view:table>
+<div id="mapTable" class="hidden">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="2">PREFERRED ROUTE MAP<span id="isLoading" /></td>
+</tr>
+<tr>
+ <td class="label">Legend</td>
+ <td class="data"><map:legend color="blue" legend="VOR" /> <map:legend color="orange" legend="NDB" />
+ <map:legend color="green" legend="Airport" /> <map:legend color="white" legend="Intersection" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Route Map</td>
+ <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
+</tr>
+</el:table>
+</div>
 </el:form>
 <br />
 <content:copyright />

@@ -140,7 +140,8 @@ ${navaid.frequency}</span></c:if></td>
 <c:if test="${!empty navaid}">
 <script language="JavaScript" type="text/javascript">
 // Build the navaid and surrounding navaids
-<map:marker var="gmP" pointVar="navP" point="${navaid}" color="red" />
+<map:point var="navP" point="${navaid}" />
+<map:markers var="nav" items="${results}" color="red" />
 <map:markers var="navaids" items="${navaids}" />
 
 // Build the map
@@ -149,8 +150,10 @@ map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
 map.centerAndZoom(navP, getDefaultZoom(90));
 
-// Add the navaid marker
-map.addOverlay(gmP);
+// Add the navaid markers
+for (var x = 0; x < navaids.length; x++)
+	map.addOverlay(nav[x]);
+	
 var showAll = false;
 </script>
 </c:if>
