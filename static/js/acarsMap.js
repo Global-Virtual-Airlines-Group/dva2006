@@ -5,7 +5,6 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "acars_map.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	enableButton('RefreshButton');
 	
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
@@ -16,7 +15,7 @@ xmlreq.onreadystatechange = function() {
 		var label = a.firstChild;
 		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
 		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, null);
-		GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(routeData); });
+		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; map.removeOverlay(routeData); map.removeOverlay(routeWaypoints); });
 		mrk.flight_id = a.getAttribute("flight_id");
 		mrk.infoLabel = label.data;
 		mrk.infoShow = clickIcon;
@@ -25,6 +24,11 @@ xmlreq.onreadystatechange = function() {
 		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
 		map.addOverlay(mrk);
 	} // for
+	
+	// Focus on the map
+	var isLoading = getElement('isLoading');
+	if (isLoading)
+		isLoading.innerHTML = '';
 	
 	return true;
 } // function
@@ -37,19 +41,22 @@ function clickIcon()
 // Check what info we display
 var f = document.forms[0];
 var isProgress = f.showProgress.checked;
+var isRoute = f.showRoute.checked;
 var isInfo = f.showInfo.checked;
 
 // Display the info
 if (isInfo) this.openInfoWindowHtml(this.infoLabel);
-if (isProgress) {
+if (isProgress || isRoute) {
 	map.removeOverlay(routeData);
-	showFlightProgress(this);
+	map.removeOverlay(routeWaypoints);
+	showFlightProgress(this, isProgress, isRoute);
 }
 
+document.pauseRefresh = true;
 return true;
 }
 
-function showFlightProgress(marker)
+function showFlightProgress(marker, doProgress, doRoute)
 {
 // Build the XML Requester
 var xreq = GXmlHttp.create();
@@ -58,16 +65,35 @@ xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
 	var xdoc = xreq.responseXML;
-	var pos = xdoc.documentElement.getElementsByTagName("pos");
-	var positions = new Array();
-	for (var i = 0; i < pos.length; i++) {
-		var pe = pos[i];
-		var p = new GPoint(parseFloat(pe.getAttribute("lng")), parseFloat(pe.getAttribute("lat")));
-		positions.push(p);
-	} // for
+	if (doRoute) {
+		var wps = xdoc.documentElement.getElementsByTagName("route");
+		var waypoints = new Array();
+		for (var i = 0; i < wps.length; i++) {
+			var wp = wps[i];
+			var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+			waypoints.push(p);
+		} // for
 	
-	routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
-	map.addOverlay(routeData);
+		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
+		map.addOverlay(routeWaypoints);
+		alert('Showed Route');
+	}
+	
+	if (doProgress) {
+		var pos = xdoc.documentElement.getElementsByTagName("pos");
+		var positions = new Array();
+		for (var i = 0; i < pos.length; i++) {
+			var pe = pos[i];
+			var p = new GPoint(parseFloat(pe.getAttribute("lng")), parseFloat(pe.getAttribute("lat")));
+			positions.push(p);
+		} // for
+		
+		// Draw the line
+		routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
+		map.addOverlay(routeData);
+		alert('Showed Progress');
+	}
+	
 	return true;
 } // function
 

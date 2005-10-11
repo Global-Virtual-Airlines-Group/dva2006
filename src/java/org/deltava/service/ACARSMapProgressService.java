@@ -10,9 +10,11 @@ import org.jdom.*;
 import org.jdom.output.*;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.MapEntry;
+import org.deltava.beans.acars.FlightInfo;
 
-import org.deltava.dao.GetACARSData;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -42,9 +44,19 @@ public class ACARSMapProgressService extends WebDataService {
 		
 		// Get the DAO and the route data
 		Collection routePoints = null;
+		Collection routeWaypoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(_con);
 			routePoints = dao.getRouteEntries(id, false);
+			
+			// Load the route and the route waypoints
+			FlightInfo info = dao.getInfo(id);
+			if (info != null) {
+				GetNavRoute navdao = new GetNavRoute(_con);
+				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
+			} else {
+				routeWaypoints = Collections.EMPTY_SET;
+			}
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
@@ -60,6 +72,17 @@ public class ACARSMapProgressService extends WebDataService {
 			Element e = new Element("pos");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			re.addContent(e);
+		}
+		
+		// Write the route
+		for (Iterator i = routeWaypoints.iterator(); i.hasNext(); ) {
+			MapEntry entry = (MapEntry) i.next();
+			Element e = new Element("route");
+			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			e.setAttribute("color", entry.getIconColor());
+			e.addContent(new CDATA(entry.getInfoBox()));
 			re.addContent(e);
 		}
 		
