@@ -29,11 +29,6 @@ public class AIRACImportCommand extends AbstractCommand {
 	private static final String[] UPLOAD_NAMES = {"pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat"};
 	
 	/**
-	 * Airway data file names
-	 */
-	static final String[] AIRWAY_NAMES = {"pssawy.dat", "psssid.dat", "pssstar.dat"};
-
-	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
@@ -57,13 +52,6 @@ public class AIRACImportCommand extends AbstractCommand {
 			return;
 		}
 		
-		// If we're uploading airways, go to a different command
-		if (StringUtils.arrayIndexOf(AIRWAY_NAMES, navData.getName()) > -1) {
-		   result.setURL("navimporta.do");
-		   result.setSuccess(true);
-		   return;
-		}
-
 		// Get the navaid type
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName());
 		if (navaidType == -1)
