@@ -34,25 +34,29 @@ public class NavaidSearchCommand extends AbstractCommand {
          
          // Get the DAO and find the navaid
          GetNavData dao = new GetNavData(con);
-         NavigationDataBean nv = dao.get(code);
-         ctx.setAttribute("navaid", nv, REQUEST);
-         dao.setQueryMax(0);
+         NavigationDataMap ndMap = dao.get(code);
+         ctx.setAttribute("navaid", ndMap.get(code), REQUEST);
+         ctx.setAttribute("results", ndMap.getAll(), REQUEST);
 
          // Don't do search if the navaid was not found
-         if (nv != null) {
-         	Map navaids = new HashMap();
-         	
-         	// Get major items within 70 miles
-         	navaids.putAll(dao.getObjects(nv, 140));
-         	
-         	// Get minor items
-         	Map intMap = dao.getIntersections(nv, 60);
-         	navaids.putAll(intMap);
-         	
+         Set navaids = new HashSet();
+         for (Iterator i = ndMap.getAll().iterator(); i.hasNext(); ) {
+        	 NavigationDataBean nv = (NavigationDataBean) i.next();
+        	 Map nMap = new HashMap();
+        	 
+          	// Get major items within 70 miles, and all minor items
+          	nMap.putAll(dao.getObjects(nv, 140));
+          	nMap.putAll(dao.getIntersections(nv, 60));
+
          	// Remove the primary result
-         	navaids.keySet().remove(nv.getCode());
-         	ctx.setAttribute("navaids", navaids.values(), REQUEST);
+         	nMap.remove(nv.getCode());
+         	
+         	// Add to results
+         	navaids.addAll(nMap.values());
          }
+         
+         // Save in the request
+         ctx.setAttribute("navaids", navaids, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
