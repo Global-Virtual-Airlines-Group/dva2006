@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class InstallerSaveCommand extends AbstractCommand {
-	
+
    /**
     * Executes the command.
     * @param ctx the Command context
@@ -38,7 +38,7 @@ public class InstallerSaveCommand extends AbstractCommand {
       boolean isNew = (fName == null);
       if (isNew)
          fName = ctx.getParameter("fileName");
-      
+
       // Create the Message Context
       MessageContext mctxt = new MessageContext();
       mctxt.addData("user", ctx.getUser());
@@ -55,7 +55,8 @@ public class InstallerSaveCommand extends AbstractCommand {
          FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
          access.validate();
          boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
-         if (!ourAccess) throw securityException("Cannot create/edit Fleet Library entry");
+         if (!ourAccess)
+            throw securityException("Cannot create/edit Fleet Library entry");
 
          // Check if we're uploading to ensure that the file does not already exist
          if (isNew && (entry != null)) {
@@ -71,33 +72,30 @@ public class InstallerSaveCommand extends AbstractCommand {
          entry.setCode(ctx.getParameter("code"));
          entry.setImage(ctx.getParameter("img"));
          entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
-         entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx.getParameter("minorVersion")),
-               Integer.parseInt(ctx.getParameter("subVersion")));
-         
+         entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx
+               .getParameter("minorVersion")), Integer.parseInt(ctx.getParameter("subVersion")));
+
          // Get the message template
          GetMessageTemplate mtdao = new GetMessageTemplate(con);
          mctxt.setTemplate(mtdao.get("FLEETUPDATE"));
          mctxt.addData("installer", entry);
-         
+
          // Get the pilots to notify
          GetPilotNotify pdao = new GetPilotNotify(con);
          pilots = pdao.getNotifications(Person.FLEET);
 
          // Get the write DAO and update the database
          SetLibrary wdao = new SetLibrary(con);
-         if (isNew) {
-            wdao.createInstaller(entry);
-            ctx.setAttribute("installerAdded", Boolean.TRUE, REQUEST);
-         } else {
-            wdao.updateInstaller(entry);
-            ctx.setAttribute("installerUpdated", Boolean.TRUE, REQUEST);
-         }
+         wdao.write(entry);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
          ctx.release();
       }
-      
+
+      // Set status attribute
+      ctx.setAttribute(isNew ? "installerAdded" : "installerUpdated", Boolean.TRUE, REQUEST);
+
       // Send the email message
       Mailer mailer = new Mailer(ctx.getUser());
       mailer.setContext(mctxt);

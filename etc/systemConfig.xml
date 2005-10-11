@@ -350,6 +350,7 @@
 		<js>js</js>
 		<img>img</img>
 		<library>d:\library</library>
+		<userfiles>d:\library\userfiles</userfiles>
 		<httplog>d:\log</httplog>
 	</path>
 	

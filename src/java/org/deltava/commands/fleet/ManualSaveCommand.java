@@ -4,8 +4,7 @@ package org.deltava.commands.fleet;
 import java.util.List;
 import java.sql.Connection;
 
-import org.deltava.beans.FileUpload;
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
 
 import org.deltava.commands.*;
@@ -16,7 +15,6 @@ import org.deltava.mail.*;
 import org.deltava.security.command.FleetEntryAccessControl;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Document Library entries.
@@ -89,17 +87,11 @@ public class ManualSaveCommand extends AbstractCommand {
 
          // Get the write DAO and update the database
          SetLibrary wdao = new SetLibrary(con);
-         if (isNew) {
-            wdao.createManual(entry);
-            ctx.setAttribute("manualAdded", Boolean.TRUE, REQUEST);
-         } else {
-            wdao.updateManual(entry);
-            ctx.setAttribute("manualUpdated", Boolean.TRUE, REQUEST);
-         }
+         wdao.write(entry);
 
          // Dump the uploaded file to the filesystem
          if (mFile != null) {
-            WriteBuffer fsdao = new WriteBuffer(SystemData.get("path.library"), fName);
+            WriteBuffer fsdao = new WriteBuffer(entry.file());
             fsdao.write(mFile.getBuffer());
          }
       } catch (DAOException de) {
@@ -107,6 +99,9 @@ public class ManualSaveCommand extends AbstractCommand {
       } finally {
          ctx.release();
       }
+      
+      // Set status attribute
+      ctx.setAttribute(isNew ? "manualAdded" : "manualUpdated", Boolean.TRUE, REQUEST);
       
       // Send the email message
       Mailer mailer = new Mailer(ctx.getUser());
