@@ -25,8 +25,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -38,7 +38,8 @@ return true;
  <td width="6%">CORRECT</td>
  <td width="6%">ASKED</td>
  <td width="6%">&nbsp;</td>
- <td width="40%">QUESTION TEXT</td>
+ <td width="20%" class="left">QUESTION TEXT</td>
+ <td width="20%"><c:if test="${access.canEdit}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" /> </td></c:if>
  <td class="right">SELECT EXAMINATION <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
 </tr>
 
@@ -49,13 +50,13 @@ return true;
  <td><fmt:int value="${q.correctAnswers}" /></td>
  <td><fmt:int value="${q.totalAnswers}" /></td>
  <td><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</td>
- <td class="left small" colspan="2">${q.question}</td>
+ <td class="left small" colspan="3">${q.question}</td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title caps">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </el:form>

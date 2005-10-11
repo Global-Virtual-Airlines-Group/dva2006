@@ -38,7 +38,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 			// Get the DAO and load the existing question profile, or create a new one
 			QuestionProfile qp = null;
-			if (!"NEW".equals(ctx.getCmdParameter(ID, null))) {
+			if (ctx.getID() != 0) {
 				GetExamProfiles rdao = new GetExamProfiles(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
@@ -52,7 +52,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 			// Load the fields from the request
 			qp.setCorrectAnswer(ctx.getParameter("correct"));
-			qp.setActive("1".equals(ctx.getParameter("active")));
+			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			String examNames[] = ctx.getRequest().getParameterValues("examNames");
 			if (examNames != null)
 			   qp.setExams(Arrays.asList(examNames));

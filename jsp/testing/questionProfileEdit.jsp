@@ -32,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="qprofile.do" linkID="${empty question ? 'new' : '0x'}${question.ID}" op="save" method="post" validate="return validate(this)">
+<el:form action="qprofile.do" linkID="${empty question ? '' : '0x'}${question.ID}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
@@ -50,6 +50,7 @@ return true;
  <td class="label" valign="top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="120" separator="<div style=\"clear:both;\" />" className="small" checked="${question.examNames}" options="${examNames}" /></td>
 </tr>
+<c:if test="${!empty question}">
 <tr>
  <td class="label">Statistics</td>
 <c:if test="${question.totalAnswers > 0}">
@@ -61,9 +62,10 @@ return true;
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
 </tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" className="sec" value="1" checked="${question.active}" label="Question is Available" /></td>
+ <td class="data"><el:box name="active" className="sec" value="true" checked="${question.active}" label="Question is Available" /></td>
 </tr>
 </el:table>
 
