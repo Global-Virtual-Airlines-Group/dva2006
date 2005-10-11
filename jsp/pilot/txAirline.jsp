@@ -3,6 +3,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Airline Transfer for ${pilot.name}</title>
@@ -47,7 +48,10 @@ return true;
 <c:if test="${!empty eqTypes}">
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="< SELECT >" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" options="${eqTypes}" firstEntry="< SELECT >" /><br />
+<c:forEach var="eqType" items="${eqTypes}">
+${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
+</c:forEach></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
