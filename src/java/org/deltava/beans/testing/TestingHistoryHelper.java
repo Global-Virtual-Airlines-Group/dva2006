@@ -165,12 +165,16 @@ public class TestingHistoryHelper {
 		if ((eq.getStage() > _myEQ.getStage()) && (!_isCaptain))
 			return false;
 
-		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)))
-			return false;
-
 		// Check if we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName()))
+			return false;
+
+		// If it's stage one, then assume yes
+		if (eq.getStage() == 1)
+			return true;
+		
+		// Check if we've passed the FO exam for that program
+		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)))
 			return false;
 		
 		// Check if we have a checkride in that equipment's stage
