@@ -25,13 +25,15 @@ function reloadData(isAuto)
 // Get auto refresh
 var f = document.forms[0];
 var doRefresh = f.autoRefresh.checked;
+sif ((isAuto) && (!doRefresh) && (document.pauseRefresh)) return false;
 
-if ((isAuto) && (!doRefresh)) return false;
+// Generate XMLHTTPRequest
+var isLoading = getElement('isLoading');
+if (isLoading)
+	isLoading.innerHTML = ' - REFRESHING...';
+
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
-
-// Disable the buttons
-disableButton('RefreshButton');
 
 // Set timer to reload the data
 if (doRefresh && isAuto)
@@ -77,8 +79,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
@@ -87,13 +89,14 @@ return true;
 <el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> LIVE ACARS MAP</td>
+ <td colspan="2"><content:airline /> LIVE ACARS MAP<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label">Map Options</td>
  <td class="data"><span class="bld"><el:box name="showProgress" idx="*" value="1" label="Show Flight Progress" checked="true" />&nbsp;
 <el:box name="autoRefresh" idx="*" value="1" label="Automatically Refresh Map" checked="true" />&nbsp;
-<el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" /></span></td>
+<el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" />&nbsp;
+<el:box name="showRoute" idx="*" value="1" label="Show Flight Plan" checked="false" /></span></td>
 </tr>
 <tr>
  <td class="label">Map Legend</td>
@@ -102,7 +105,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Live Map</td>
- <td class="data"><map:div ID="googleMap" x="650" y="550" /></div>
+ <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
 </tr>
 </el:table>
 
@@ -130,10 +133,11 @@ map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 
 // Placeholder for route
 var routeData;
+var routeWaypoints;
 
 // Reload ACARS data
 document.doRefresh = true;
-reloadData(true);
+reloadData(false);
 </script>
 </body>
 </html>
