@@ -27,7 +27,7 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
    /**
     * The resource this FleetEntry points to on the filesystem.
     */
-   protected File _file;
+   private File _file;
    private long _fileSize;
 
    private String _name;
@@ -181,6 +181,14 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
    }
    
    /**
+    * Returns the underlying filesystem entry.
+    * @return the filesystem entry
+    */
+   public File file() {
+      return _file;
+   }
+   
+   /**
     * Compares two Library entries by comparing their names.
     * @see Comparable#compareTo(Object)
     */
@@ -204,8 +212,9 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
       return _file.exists() ? null : "warn";
    }
 
-   /* (non-Javadoc)
-    * @see org.deltava.util.cache.Cacheable#cacheKey()
+   /**
+    * Returns the object's cache key.
+    * @return the entry name
     */
    public final Object cacheKey() {
       return getName();

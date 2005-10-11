@@ -51,7 +51,15 @@ To return to the Document Library, <el:cmd url="doclibrary">Click Here</el:cmd>.
 <br />
 This <content:airline /> Document Library entry has been successfully updated.<br />
 <br />
-To return to the Document Library, <el:cmd url="doclibrary">Click Here</el:cmd>.
+To return to the Document Library, <el:cmd url="doclibrary">click Here</el:cmd>.
+</c:if>
+<c:if test="${isFile}">
+<!-- File Library entry Created/Uupdated -->
+<div class="updateHdr">Document Library Manual ${fileAdded? 'Added' : 'Updated'}</div>
+<br />
+This <content:airline /> File Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
+<br />
+To return to the File Library, <el:cmd url="filelibrary">click Here</el:cmd>.
 </c:if>
 <br />
 <content:copyright />

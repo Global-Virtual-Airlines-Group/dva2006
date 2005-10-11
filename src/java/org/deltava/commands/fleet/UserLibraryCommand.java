@@ -1,0 +1,111 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.fleet;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.fleet.*;
+import org.deltava.beans.system.UserDataMap;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.FleetEntryAccessControl;
+
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to display user-sharable files.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class UserLibraryCommand extends AbstractViewCommand {
+   
+   private static final Logger log = Logger.getLogger(UserLibraryCommand.class); 
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+   public void execute(CommandContext ctx) throws CommandException {
+      
+      // Get the view start/end
+      ViewContext vc = initView(ctx);
+
+      Collection results = new ArrayList();
+      try {
+         Connection con = ctx.getConnection();
+         
+         // Get the DAO and the library
+         GetLibrary dao = new GetLibrary(con);
+         dao.setQueryStart(vc.getStart());
+         dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
+         results = dao.getFiles(SystemData.get("airline.db"));
+         
+         // Get the authors
+         Set authors = new HashSet();
+         for (Iterator i = results.iterator(); i.hasNext(); ) {
+            FileEntry e = (FileEntry) i.next();
+            authors.add(new Integer(e.getAuthorID()));
+         }
+         
+         // Get the author data
+         GetUserData uddao = new GetUserData(con);
+         UserDataMap udmap = uddao.get(authors);
+         ctx.setAttribute("userData", udmap, REQUEST);
+         
+			// Get the author profiles
+			Map pilots = new HashMap();
+			GetPilot pdao = new GetPilot(con);
+			for (Iterator it = udmap.getTableNames().iterator(); it.hasNext(); ) {
+			   String tableName = (String) it.next();
+			   if (UserDataMap.isPilotTable(tableName))
+			      pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
+			}
+			
+			ctx.setAttribute("authors", pilots, REQUEST);
+      } catch (DAOException de) {
+         throw new CommandException(de);
+      } finally {
+         ctx.release();
+      }
+      
+		// Calculate access for adding content
+		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+		ctx.setAttribute("access", access, REQUEST);
+		
+		// Create access map
+		Map accessMap = new HashMap();
+
+		// Validate our access to the results
+		for (Iterator i = results.iterator(); i.hasNext();) {
+			LibraryEntry e = (LibraryEntry) i.next();
+			access = new FleetEntryAccessControl(ctx, e);
+			access.validate();
+			accessMap.put(e.getFileName(), access);
+
+			// Check that the resource exists
+			if (e.getSize() == 0) {
+				log.warn(e.getFullName() + " not found in file system!");
+				if (!access.getCanEdit())
+					i.remove();
+			} else if (!access.getCanView()) {
+				i.remove();
+			}
+		}
+		
+		// Save the results in the request
+		ctx.setAttribute("files", results, REQUEST);
+		ctx.setAttribute("accessMap", accessMap, REQUEST);
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/fleet/userLibrary.jsp");
+		result.setSuccess(true);
+   }
+}
