@@ -90,8 +90,8 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			uddao.write(uloc);
 			
 			// Save the new database ID and status
-			a.setPilotID(uloc.getID());
 			a.setStatus(Applicant.APPROVED);
+			a.setPilotID(uloc.getID());
 			
 			// Write the new Pilot object
 			SetPilotTransfer pwdao = new SetPilotTransfer(con);
