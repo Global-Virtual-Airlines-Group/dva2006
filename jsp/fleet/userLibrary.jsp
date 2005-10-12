@@ -60,7 +60,7 @@
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 <content:copyright />
