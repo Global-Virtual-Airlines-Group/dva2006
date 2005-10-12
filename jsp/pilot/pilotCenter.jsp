@@ -143,6 +143,13 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <td class="data">Our Fleet Library contains the official <content:airline /> Fleet - a collection 
  of aircraft, panels manuals and sound schemes.</td>
 </tr>
+<content:filter roles="Fleet,HR">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="filelibrary">File Library</el:cmd></td>
+ <td class="data">The <content:airline /> File Library contains a number of approved downloadable 
+contributions from our community that will enhance your flight simulation experience.</td>
+</tr>
+</content:filter>
 <content:filter roles="Fleet">
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>

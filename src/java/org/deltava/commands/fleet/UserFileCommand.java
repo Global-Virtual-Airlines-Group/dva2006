@@ -10,7 +10,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.WriteBuffer;
 
-import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.security.command.FileEntryAccessControl;
 
 import org.deltava.util.StringUtils;
 
@@ -48,7 +48,7 @@ public class UserFileCommand extends AbstractFormCommand {
          FileEntry entry = dao.getFile(fName);
          
          // Check our access
-         FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
+         FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);
          access.validate();
          boolean isOK = (entry == null) ? access.getCanCreate() : access.getCanEdit();
          if (!isOK)
@@ -111,7 +111,7 @@ public class UserFileCommand extends AbstractFormCommand {
             throw new CommandException("Invalid Filename - " + ctx.getCmdParameter(ID, ""));
          
          // Check our access
-         FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
+         FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);
          access.validate();
          if (!access.getCanEdit())
             throw securityException("Cannot edit File Library entry for " + entry.getFileName());
