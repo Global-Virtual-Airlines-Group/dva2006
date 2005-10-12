@@ -10,6 +10,9 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
+import org.deltava.util.ComboUtils;
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to send group e-mail messages.
  * @author Luke
@@ -44,14 +47,18 @@ public class MassMailingCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 		mctxt.addData("body", ctx.getParameter("body"));
-
-		List pilots = null;
+		
+		// Check if we're sending to a role
+		boolean isRole = (eqType != null) && (eqType.startsWith("$role_"));
+		
+		List pilots = Collections.EMPTY_LIST;
+		Collection eqTypes = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get a list of equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
+			eqTypes = eqdao.getActive();
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -59,13 +66,17 @@ public class MassMailingCommand extends AbstractCommand {
 			
 			// Check if we're sending to a different equipment type
 			if ((!ctx.getRequest().isUserInRole("HR")) && (!eqType.equals(ctx.getUser().getEquipmentType())))
-				throw securityException("Equipment Type " + eqType + " != "
-						+ ctx.getUser().getEquipmentType());
+				throw securityException("Equipment Type " + eqType + " != " + ctx.getUser().getEquipmentType());
 
 			// If we're posting to the command, get the pilots to display
-			if (eqType != null) {
-				GetPilot dao = new GetPilot(con);
-				pilots = dao.getPilotsByEQ(ctx.getParameter("eqType"));
+			if (isRole) {
+			   GetPilotDirectory dao = new GetPilotDirectory(con);
+			   pilots = dao.getByRole(eqType.substring(6), SystemData.get("airline.db"));
+			   ctx.setAttribute("eqType", eqType.substring(6), REQUEST);
+			   ctx.setAttribute("isRole", Boolean.TRUE, REQUEST);
+			} else if (eqType != null) {
+			   GetPilot dao = new GetPilot(con);
+				pilots = dao.getPilotsByEQ(eqType);
 				ctx.setAttribute("eqType", eqType, REQUEST);
 			}
 		} catch (DAOException de) {
@@ -73,6 +84,16 @@ public class MassMailingCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Add the roles to the request with a special marker
+		Collection roles = (Collection) SystemData.getObject("security.roles");
+		for (Iterator i = roles.iterator(); i.hasNext(); ) {
+		   String role = (String) i.next();
+		   eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
+		}
+		
+		// Save the choices
+		ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 
 		// If we're not sending to anyone, just redirect to the JSP
 		if (eqType == null) {
