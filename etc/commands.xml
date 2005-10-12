@@ -262,7 +262,7 @@
 
 	<command id="userfile">
 		<name>User Library Entry</name>
-		<class>org.deltava.commands.fleetUserFileCommand</class>
+		<class>org.deltava.commands.fleet.UserFileCommand</class>
 		<roles>Fleet,HR</roles>
 	</command>
 
@@ -791,19 +791,25 @@
 		<class>org.deltava.commands.pirep.CheckRidePIREPApprovalCommand</class>
 		<roles>Examination,HR</roles>
 	</command>
-	
+
 	<command id="crview">
 		<name>View Check Ride PIREP</name>
 		<class>org.deltava.commands.pirep.CheckRidePIREPCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
 	<command id="crassign">
 		<name>Check Ride Assign</name>
 		<class>org.deltava.commands.testing.CheckRideAssignCommand</class>
 		<roles>Examination,HR</roles>
 	</command>
-	
+
+	<command id="nakedassign">
+		<name>Naked Check Ride Assign</name>
+		<class>org.deltava.commands.testing.NakedCheckRideCommand</class>
+		<roles>Examination,HR</roles>
+	</command>
+
 	<command id="exam">
 		<name>Examination</name>
 		<class>org.deltava.commands.testing.ExamCommand</class>

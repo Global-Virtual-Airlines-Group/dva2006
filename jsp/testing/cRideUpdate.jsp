@@ -29,13 +29,18 @@ of this Check Ride.<br />
 To view the Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}">Click here</el:cmd>.<br />
 To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.<br />
 </c:when>
-
 <c:when test="${isAssign}">
 <!-- Check Ride Assigned -->
 <div class="updateHdr">Check Ride Assigned</div>
 <br />
 This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
 and an e-mail message has been sent to the Pilot.<br />
+</c:when>
+<c:when test="${isRideAlreadyAssigned}">
+<div class="updateHdr">Check Ride Pending</div>
+<br />
+A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can 
+be assigned while one is currently pending.<br />
 </c:when>
 </c:choose>
 <br />
