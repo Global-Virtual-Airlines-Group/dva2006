@@ -353,7 +353,7 @@
 		<js>js</js>
 		<img>img</img>
 		<library>/usr/local/www/library</library>
-		<files>/usr/local/www/userfiles/</library>
+		<files>/usr/local/www/userfiles</files>
 		<httplog>/var/log/www</httplog>
 	</path>
 	
