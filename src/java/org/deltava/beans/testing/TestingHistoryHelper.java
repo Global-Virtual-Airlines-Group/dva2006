@@ -189,7 +189,7 @@ public class TestingHistoryHelper {
 	public boolean canRequestCheckRide(EquipmentType eq) {
 
 		// Make sure we're a captain if the stage is higher than our own
-		if ((eq.getStage() > _myEQ.getStage()) && (!_usr.getRank().equals(Ranks.RANK_C)))
+		if ((eq.getStage() > _myEQ.getStage()) && (!_isCaptain))
 			return false;
 		
 		// Make sure the new stage isn't the same or lower than our current stage
@@ -209,8 +209,7 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if we can promote a user to Captain within the equipment program. <i>The Pilot bean must have its Flight
-	 * Reports populated before calling this method. </i>
+	 * Returns if we can promote a user to Captain within the equipment program.
 	 * @param eq the EquipmentType bean
 	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE.
 	 */
