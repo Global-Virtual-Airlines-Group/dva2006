@@ -190,7 +190,7 @@ public class CommandServlet extends HttpServlet {
          }
          
          // Create the command result statistics entry
-         CommandLog cmdLog = new CommandLog(cmd.getID(), result);
+         CommandLog cmdLog = new CommandLog((cmd == null) ? "null" : cmd.getID(), result);
          cmdLog.setRemoteAddr(req.getRemoteAddr());
          cmdLog.setRemoteHost(req.getRemoteHost());
          cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
