@@ -25,13 +25,11 @@ function reloadData(isAuto)
 // Get auto refresh
 var f = document.forms[0];
 var doRefresh = f.autoRefresh.checked;
-sif ((isAuto) && (!doRefresh) && (document.pauseRefresh)) return false;
+if (document.pauseRefresh) return false;
 
 // Generate XMLHTTPRequest
 var isLoading = getElement('isLoading');
-if (isLoading)
-	isLoading.innerHTML = ' - REFRESHING...';
-
+isLoading.innerHTML = ' - LOADING...';
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 
