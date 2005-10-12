@@ -148,9 +148,9 @@ public class TransferAirlineCommand extends AbstractCommand {
 			wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 			
 		   // Create the second status update
-		   StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
+		   StatusUpdate su2 = new StatusUpdate(ctx.getUser().getID(), StatusUpdate.AIRLINE_TX);
 		   su2.setAuthorID(ctx.getUser().getID());
-		   su2.setDescription("Transferred from " + SystemData.get("airline.name"));
+		   su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
 		   sudao.write(aInfo.getDB(), su2);
 			
 			// Add the new DN to the authenticator with the new password, and remove the old DN
