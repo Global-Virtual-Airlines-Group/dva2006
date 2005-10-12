@@ -4,7 +4,7 @@ package org.deltava.security.command;
 import org.deltava.security.SecurityContext;
 import org.deltava.commands.CommandSecurityException;
 
-import org.deltava.beans.fleet.*;
+import org.deltava.beans.fleet.LibraryEntry;
 
 /**
  * An Access Controller to support Fleet/File Library entry operations.
@@ -13,7 +13,7 @@ import org.deltava.beans.fleet.*;
  * @since 1.0
  */
 
-public final class FleetEntryAccessControl extends AccessControl {
+public class FleetEntryAccessControl extends AccessControl {
 
    private LibraryEntry _entry;
 
@@ -51,7 +51,7 @@ public final class FleetEntryAccessControl extends AccessControl {
       if (_entry == null) return;
 
       // Set access variables
-      _canEdit = _ctx.isUserInRole("Fleet") || ((_entry instanceof FileEntry) && _ctx.isUserInRole("HR"));
+      _canEdit = _ctx.isUserInRole("Fleet");
       _canDelete = _ctx.isUserInRole("Admin");
       switch (_entry.getSecurity()) {
          case LibraryEntry.PUBLIC:

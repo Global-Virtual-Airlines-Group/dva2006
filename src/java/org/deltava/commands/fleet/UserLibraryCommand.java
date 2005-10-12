@@ -12,7 +12,7 @@ import org.deltava.beans.system.UserDataMap;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.security.command.FileEntryAccessControl;
 
 import org.deltava.util.system.SystemData;
 
@@ -76,7 +76,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
       }
       
 		// Calculate access for adding content
-		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+		FileEntryAccessControl access = new FileEntryAccessControl(ctx, null);
 		ctx.setAttribute("access", access, REQUEST);
 		
 		// Create access map
@@ -84,8 +84,8 @@ public class UserLibraryCommand extends AbstractViewCommand {
 
 		// Validate our access to the results
 		for (Iterator i = results.iterator(); i.hasNext();) {
-			LibraryEntry e = (LibraryEntry) i.next();
-			access = new FleetEntryAccessControl(ctx, e);
+			FileEntry e = (FileEntry) i.next();
+			access = new FileEntryAccessControl(ctx, e);
 			access.validate();
 			accessMap.put(e.getFileName(), access);
 
