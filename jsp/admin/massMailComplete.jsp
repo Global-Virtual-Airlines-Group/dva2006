@@ -3,7 +3,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
-<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Mass Mailing Sent</title>
@@ -20,7 +20,7 @@
 <br />
 The mass e-mail message to all active ${eqType} pilots has been sent.<br />
 <br />
-${msgSent} e-mail message(s) have been sent.<br />
+<fmt:int value="${msgSent}" /> e-mail message(s) have been sent.<br />
 <br />
 <content:copyright />
 </div>

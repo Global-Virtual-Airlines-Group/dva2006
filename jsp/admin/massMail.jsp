@@ -27,12 +27,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="massmail.do" method="POST" allowUpload="true" validate="return validate(this)">
+<el:form action="massmail.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">PILOT MASS E-MAIL MESSAGE</td>
@@ -46,8 +46,8 @@ return true;
  <td class="data"><el:file name="fAttach" idx="*" size="96" max="144" /></td>
 </tr>
 <tr>
- <td class="label">Recipient Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" /></td>
+ <td class="label">Recipient Program / Security Role</td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${eqTypes}" value="${param.eqType}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Message Text</td>
