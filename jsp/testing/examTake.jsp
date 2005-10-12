@@ -15,6 +15,8 @@
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
+var secondsLeft = ${empty timeRemaining ? 40000 : timeRemaining};
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -29,20 +31,51 @@ while (isOK && (a != null)) {
 	a = getElement('A' + qNum);
 }
 
+if ((!isOK) && (!document.isExpired)) {
+	if (!confirm("You have not answered all Questions. Hit OK to submit.")) return false;
+}
+
 setSubmit();
 disableButton('SubmitButton');
+return true;
+}
+
+function showRemaining(interval)
+{
+var tr = getElement('timeRemaining');
+
+// Update the text color
+if (secondsLeft < 600) {
+	tr.className = 'warn bld';
+} else if (secondsLeft < 300) {
+	tr.className = 'error bld';
+}
+
+// Display the text and decrement the counter
+tr.innerHTML = Math.round(secondsLeft / 60) + ' minutes';
+secondsLeft -= interval;
+
+// If we're out of time, set a flag and submit
+if (secondsLeft <= 0) {
+	document.isExpired = true;
+	document.forms[0].submit();
+	return true;
+}
+
+// Fire this off again
+window.setTimeout('void showRemaining(' + interval + ')', interval * 1000);
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form method="POST" action="examsubmit.do" linkID="0x${exam.ID}" validate="return validate(this)">
+<el:form method="post" action="examsubmit.do" linkID="0x${exam.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Exam Title Bar -->
 <tr class="title caps">
@@ -52,14 +85,10 @@ return true;
  <td class="label">Taken on</td>
  <td class="data"><fmt:date date="${exam.date}" /></td>
 </tr>
-<c:if test="${!empty exam.submittedOn}">
 <tr>
- <td class="label">Submitted on</td>
- <td class="data"><fmt:date date="${exam.submittedOn}" />
-<c:if test="${exam.submittedOn > exam.expiryDate}"><span class="error">${(exam.submittedOn.time - exam.expiryDate.time) / 60000}
- minutes late</span></c:if>
+ <td class="label">Time Remaining</td>
+ <td class="data"><span id="timeRemaining" class="ter bld">XX minutes</span></td>
 </tr>
-</c:if>
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
@@ -88,6 +117,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </div>
 </body>
