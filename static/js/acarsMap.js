@@ -1,10 +1,13 @@
 function generateXMLRequest(imgPath)
 {
 // Build the XML Requester
+var d = new Date();
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "acars_map.ws", true);
+xmlreq.open("GET", "acars_map.ws?time=" + d.getTime(), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
+	var isLoading = getElement('isLoading');
+	isLoading.innerHTML = ' - REDRAWING...';
 	
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
@@ -26,10 +29,7 @@ xmlreq.onreadystatechange = function() {
 	} // for
 	
 	// Focus on the map
-	var isLoading = getElement('isLoading');
-	if (isLoading)
-		isLoading.innerHTML = '';
-	
+	isLoading.innerHTML = '';
 	return true;
 } // function
 
@@ -59,8 +59,9 @@ return true;
 function showFlightProgress(marker, doProgress, doRoute)
 {
 // Build the XML Requester
+var d = new Date();
 var xreq = GXmlHttp.create();
-xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id, true);
+xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id + "&time=" + d.getTime(), true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
@@ -76,7 +77,6 @@ xreq.onreadystatechange = function() {
 	
 		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
 		map.addOverlay(routeWaypoints);
-		alert('Showed Route');
 	}
 	
 	if (doProgress) {
@@ -91,7 +91,6 @@ xreq.onreadystatechange = function() {
 		// Draw the line
 		routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
 		map.addOverlay(routeData);
-		alert('Showed Progress');
 	}
 	
 	return true;
