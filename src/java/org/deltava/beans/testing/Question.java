@@ -79,6 +79,14 @@ public class Question extends DatabaseBean implements Comparable {
     }
     
     /**
+     * Returns if the user has provided the exact correct answer. This may indicate a copy/paste.
+     * @return TRUE if the answer exactly matches the correct answer
+     */
+    public boolean getExactMatch() {
+    	return (_correctAnswer == null) ? false : _correctAnswer.equalsIgnoreCase(_userAnswer);
+    }
+    
+    /**
      * Returns if the question was answered correctly.
      * @return TRUE if the answer is correct, otherwise FALSE
      * @see Question#setCorrect(boolean)
