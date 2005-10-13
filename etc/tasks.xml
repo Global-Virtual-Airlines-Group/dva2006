@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tasks name="default">
-
-	<task id="app_purge" enabled="false">
-		<class>org.deltava.tasks.ApplicantPurgeTask</class>
-		<interval>86400</interval>
-		<hours>0,1,2</hours>
-	</task>
-
 	<task id="inactivity" enabled="false">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
 		<interval>86400</interval>
