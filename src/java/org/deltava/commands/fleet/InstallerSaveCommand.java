@@ -26,85 +26,92 @@ import org.deltava.util.system.SystemData;
 
 public class InstallerSaveCommand extends AbstractCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      // Get the file name and if we are saving a new document
-      String fName = (String) ctx.getCmdParameter(ID, null);
-      boolean isNew = (fName == null);
-      if (isNew)
-         fName = ctx.getParameter("fileName");
+		// Get the file name and if we are saving a new document
+		String fName = (String) ctx.getCmdParameter(ID, null);
+		boolean isNew = (fName == null);
+		if (isNew)
+			fName = ctx.getParameter("fileName");
 
-      // Create the Message Context
-      MessageContext mctxt = new MessageContext();
-      mctxt.addData("user", ctx.getUser());
+		// Create the Message Context
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
 
-      List pilots = null;
-      try {
-         Connection con = ctx.getConnection();
+		// Check if we notify people
+		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
 
-         // Get the DAO and the Library entry
-         GetLibrary dao = new GetLibrary(con);
-         Installer entry = dao.getInstaller(fName);
+		List pilots = null;
+		try {
+			Connection con = ctx.getConnection();
 
-         // Check our access level
-         FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
-         access.validate();
-         boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
-         if (!ourAccess)
-            throw securityException("Cannot create/edit Fleet Library entry");
+			// Get the DAO and the Library entry
+			GetLibrary dao = new GetLibrary(con);
+			Installer entry = dao.getInstaller(fName);
 
-         // Check if we're uploading to ensure that the file does not already exist
-         if (isNew && (entry != null)) {
-            throw new CommandException("Installer " + fName + " already exists");
-         } else if (isNew) {
-            File f = new File(SystemData.get("path.library"), fName);
-            entry = new Installer(f.getAbsolutePath());
-         }
+			// Check our access level
+			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
+			access.validate();
+			boolean ourAccess = (isNew) ? access.getCanCreate() : access.getCanEdit();
+			if (!ourAccess)
+				throw securityException("Cannot create/edit Fleet Library entry");
 
-         // Populate fields from the request
-         entry.setDescription(ctx.getParameter("desc"));
-         entry.setName(ctx.getParameter("title"));
-         entry.setCode(ctx.getParameter("code"));
-         entry.setImage(ctx.getParameter("img"));
-         entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
-         entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx
-               .getParameter("minorVersion")), Integer.parseInt(ctx.getParameter("subVersion")));
+			// Check if we're uploading to ensure that the file does not already exist
+			if (isNew && (entry != null)) {
+				throw new CommandException("Installer " + fName + " already exists");
+			} else if (isNew) {
+				File f = new File(SystemData.get("path.library"), fName);
+				entry = new Installer(f.getAbsolutePath());
+			}
 
-         // Get the message template
-         GetMessageTemplate mtdao = new GetMessageTemplate(con);
-         mctxt.setTemplate(mtdao.get("FLEETUPDATE"));
-         mctxt.addData("installer", entry);
+			// Populate fields from the request
+			entry.setDescription(ctx.getParameter("desc"));
+			entry.setName(ctx.getParameter("title"));
+			entry.setCode(ctx.getParameter("code"));
+			entry.setImage(ctx.getParameter("img"));
+			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx
+					.getParameter("minorVersion")), Integer.parseInt(ctx.getParameter("subVersion")));
 
-         // Get the pilots to notify
-         GetPilotNotify pdao = new GetPilotNotify(con);
-         pilots = pdao.getNotifications(Person.FLEET);
+			// Get the message template
+			if (!noNotify) {
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctxt.setTemplate(mtdao.get("FLEETUPDATE"));
+				mctxt.addData("installer", entry);
+			}
 
-         // Get the write DAO and update the database
-         SetLibrary wdao = new SetLibrary(con);
-         wdao.write(entry);
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+			// Get the pilots to notify
+			GetPilotNotify pdao = new GetPilotNotify(con);
+			pilots = pdao.getNotifications(Person.FLEET);
 
-      // Set status attribute
-      ctx.setAttribute(isNew ? "installerAdded" : "installerUpdated", Boolean.TRUE, REQUEST);
+			// Get the write DAO and update the database
+			SetLibrary wdao = new SetLibrary(con);
+			wdao.write(entry);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
 
-      // Send the email message
-      Mailer mailer = new Mailer(ctx.getUser());
-      mailer.setContext(mctxt);
-      mailer.send(pilots);
+		// Set status attribute
+		ctx.setAttribute(isNew ? "installerAdded" : "installerUpdated", Boolean.TRUE, REQUEST);
 
-      // Forward to the JSP
-      CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REQREDIRECT);
-      result.setURL("/jsp/fleet/libraryUpdate.jsp");
-      result.setSuccess(true);
-   }
+		// Send the email message
+		if (!noNotify) {
+			Mailer mailer = new Mailer(ctx.getUser());
+			mailer.setContext(mctxt);
+			mailer.send(pilots);
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/fleet/libraryUpdate.jsp");
+		result.setSuccess(true);
+	}
 }

@@ -103,6 +103,10 @@ return true;
  <td class="data">Downloaded <b><fmt:int value="${entry.downloadCount}" /></b> times</td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
