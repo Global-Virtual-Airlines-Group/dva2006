@@ -161,7 +161,7 @@ return true;
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 100) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${pirep.length / 10}" />&nbsp;
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
 <el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>

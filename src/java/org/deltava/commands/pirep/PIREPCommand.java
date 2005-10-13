@@ -215,8 +215,9 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Check if we're creating a new PIREP
 		boolean isNew = (ctx.getID() == 0);
 
-		// Get data for comboboxes
+		// Get the current date/time in the user's local zone
 		Calendar cld = Calendar.getInstance();
+		cld.setTime(DateTime.convert(cld.getTime(), ctx.getUser().getTZ()));
 
 		// Get all airlines
 		Map allAirlines = (Map) SystemData.getObject("airlines");
@@ -259,8 +260,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 				ctx.setAttribute("pirep", fr, REQUEST);
 
-				// Set PIREP date
-				cld.setTime(fr.getDate());
+				// Set PIREP date and length
+				cld.setTime(DateTime.convert(fr.getDate(), ctx.getUser().getTZ()));
+				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
 				for (Iterator i = allAirlines.values().iterator(); i.hasNext();) {
