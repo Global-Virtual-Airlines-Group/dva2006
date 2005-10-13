@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.fleet;
 
+import java.io.File;
 import java.util.List;
 import java.sql.Connection;
 
@@ -15,6 +16,7 @@ import org.deltava.mail.*;
 import org.deltava.security.command.FleetEntryAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to update Document Library entries.
@@ -70,7 +72,8 @@ public class ManualSaveCommand extends AbstractCommand {
 			if (isNew && (entry != null)) {
 				throw new CommandException("Document " + fName + " already exists");
 			} else if (isNew) {
-				entry = new Manual(fName);
+			   File f = new File (SystemData.get("path.library"), fName);
+				entry = new Manual(f.getPath());
 			}
 
 			// Populate fields from the request
