@@ -22,12 +22,12 @@ public class ConnectionPool implements Recycler {
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
-	static final int MAX_USE_TIME = 140 * 1000;
+	static final int MAX_USE_TIME = 150 * 1000;
 	static final int MAX_SYS_CONS = 3;
 	
 	private int _poolMaxSize = 1;
 
-	private static ConnectionMonitor _monitor;
+	private ConnectionMonitor _monitor;
 	private SortedSet _cons;
 
 	private Properties _props;

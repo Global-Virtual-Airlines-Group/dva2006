@@ -1,7 +1,11 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
 import java.sql.*;
+
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.log4j.Logger;
 
@@ -17,6 +21,8 @@ class ConnectionMonitor extends Thread {
    private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
 
    private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
+   
+   private boolean _hasPing;
 
    private Set _pool = new TreeSet();
    private long _sleepTime = 180000; // 3 minute default
@@ -56,6 +62,16 @@ class ConnectionMonitor extends Thread {
    public void addConnection(ConnectionPoolEntry cpe) {
       synchronized (_pool) {
          _pool.add(cpe);
+      }
+      
+      // Check if we have a ping method
+      try {
+         Class c = cpe.getConnection().getClass();
+         Method m = c.getMethod("ping", null);
+         if (m != null)
+            _hasPing = true;
+      } catch (NoSuchMethodException nsme) {
+         _hasPing = false;
       }
    }
 
@@ -112,7 +128,19 @@ class ConnectionMonitor extends Thread {
                // Check to ensure that the connection can still hit the back-end
                try {
                   Connection c = cpe.getConnection();
-                  c.setAutoCommit(c.getAutoCommit());
+                  if (_hasPing) {
+                     try {
+                        Method m = c.getClass().getMethod("ping", null);
+                        m.invoke(c, null);
+                     } catch (InvocationTargetException ite) {
+                        throw (ite.getCause() == null) ? ite : ite.getCause();
+                     }
+                  } else {
+                     Statement s = c.createStatement();
+                     ResultSet rs = s.executeQuery("SELECT 1");
+                     rs.close();
+                     s.close();
+                  }
                } catch (SQLException se) {
                   if (_sqlStatus.contains(se.getSQLState())) {
                      log.warn("Reconnecting Connection " + cpe);
@@ -125,6 +153,8 @@ class ConnectionMonitor extends Thread {
                   } else {
                      log.warn("Uknown SQL Error code - " + se.getSQLState(), se);
                   }
+               } catch (Throwable t) {
+                  log.error("Erroring checking connection", t);
                }
             }
          }
