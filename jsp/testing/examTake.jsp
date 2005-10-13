@@ -5,8 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<%@ page import="org.deltava.beans.testing.Test" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>${exam.name} - ${pilot.name}</title>
@@ -15,7 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
-var secondsLeft = ${empty timeRemaining ? 40000 : timeRemaining};
+var secondsLeft = ${empty timeRemaining ? 2400 : timeRemaining};
 
 function validate(form)
 {
@@ -45,10 +43,10 @@ function showRemaining(interval)
 var tr = getElement('timeRemaining');
 
 // Update the text color
-if (secondsLeft < 600) {
-	tr.className = 'warn bld';
-} else if (secondsLeft < 300) {
+if (secondsLeft < 300) {
 	tr.className = 'error bld';
+} else if (secondsLeft < 600) {
+	tr.className = 'warn bld';
 }
 
 // Display the text and decrement the counter
@@ -69,7 +67,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void showRemaining(30)">
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
