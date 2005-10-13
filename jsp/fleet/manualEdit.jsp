@@ -89,6 +89,10 @@ return true;
  <td class="label">Update File</td>
  <td class="data"><el:file name="file" className="small" size="96" max="192" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
