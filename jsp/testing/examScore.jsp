@@ -55,7 +55,7 @@
  <td class="data">${q.question}</td>
 </tr>
 <tr>
- <td class="data sec">${q.correctAnswer}</td>
+ <td class="data ${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</td>
 </tr>
 <tr>
 
