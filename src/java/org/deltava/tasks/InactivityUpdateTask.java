@@ -113,7 +113,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					log.info("Notifying " + p.getName());
 					
 					// Create the StatusUpdate bean
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
 					upd.setAuthorID(taskBy.getID());
 					upd.setCreatedOn(new Date());
 					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
