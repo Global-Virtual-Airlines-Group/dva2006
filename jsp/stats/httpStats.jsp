@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Flight Statistics</title>
+<title><content:airline /> Server Statistics</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:css name="form" />
@@ -24,12 +24,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="httpstats.do" method="GET" validate="return false">
+<el:form action="httpstats.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="httpstats">
 <tr class="title">
  <td colspan="5" class="left">HTTP SERVER STATISTICS</td>
@@ -39,12 +39,11 @@ return true;
 
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="5%">#</td>
+ <td width="10%">#</td>
  <td width="15%">DATE</td>
  <td width="15%">REQUESTS</td>
  <td width="15%">HOME PAGE HITS</td>
  <td width="15%">SERVER TIME</td>
- <td width="15%">DATABASE TIME</td>
  <td>TOTAL BANDWIDTH</td>
 </tr>
 
@@ -58,14 +57,13 @@ return true;
  <td class="bld"><fmt:int value="${stat.requests}" /></td>
  <td class="pri bld"><fmt:int value="${stat.homePageHits}" /></td>
  <td class="bld"><fmt:int value="${stat.executionTime / 1000}" /> s</td>
- <td class="sec bld"><fmt:int value="${stat.backEndTime / 1000}" /> ms</td>
  <td class="bld"><fmt:int value="${stat.bandwidth}" /> bytes</td>
 </tr>
 </c:forEach>
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp /> <view:pgDn /></td>
+ <td colspan="6"><view:pgUp /> <view:pgDn /></td>
 </tr>
 </view:table>
 </el:form>
