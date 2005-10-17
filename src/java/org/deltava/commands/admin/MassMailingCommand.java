@@ -21,6 +21,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class MassMailingCommand extends AbstractCommand {
+   
+   private static final String ALL_ACTIVE = "$ALL$";
 
 	/**
 	 * Executes the command.
@@ -74,6 +76,10 @@ public class MassMailingCommand extends AbstractCommand {
 			   pilots = dao.getByRole(eqType.substring(6), SystemData.get("airline.db"));
 			   ctx.setAttribute("eqType", eqType.substring(6), REQUEST);
 			   ctx.setAttribute("isRole", Boolean.TRUE, REQUEST);
+			} else if (ALL_ACTIVE.equals(eqType)) {
+			   GetPilot dao = new GetPilot(con);
+			   pilots = dao.getActivePilots(null);
+			   ctx.setAttribute("eqType", eqType, REQUEST);
 			} else if (eqType != null) {
 			   GetPilot dao = new GetPilot(con);
 				pilots = dao.getPilotsByEQ(eqType);
@@ -91,6 +97,9 @@ public class MassMailingCommand extends AbstractCommand {
 		   String role = (String) i.next();
 		   eqTypes.add(ComboUtils.fromString(role, "$role_" + role));
 		}
+		
+		// Add all users
+		eqTypes.add(ComboUtils.fromString("All Users", ALL_ACTIVE));
 		
 		// Save the choices
 		ctx.setAttribute("eqTypes", eqTypes, REQUEST);
