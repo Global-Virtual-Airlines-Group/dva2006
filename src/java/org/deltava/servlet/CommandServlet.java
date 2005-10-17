@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -175,8 +176,15 @@ public class CommandServlet extends HttpServlet {
          RequestDispatcher rd = req.getRequestDispatcher("/jsp/error/securityViolation.jsp");
          rd.forward(req, rsp);
       } catch (CommandException ce) {
-         String errPage = (ce.getCause() instanceof ConnectionPoolFullException) ? "/jsp/error/poolFull.jsp" : "/jsp/error/error.jsp";
-         log.error("Error executing command - " + ce.getMessage(), ce);
+         String errPage = "/jsp/error/error.jsp";
+         if (ce.getCause() instanceof ConnectionPoolFullException) {
+            errPage = "/jsp/error/poolFull.jsp";
+            log.warn("Error executing " + cmd.getName() + " - Connection Pool Full");
+         } else {
+            log.error("Error executing command - " + ce.getMessage(), ce);            
+         }
+         
+         // Redirect to the error page
          RequestDispatcher rd = req.getRequestDispatcher(errPage);
          req.setAttribute("servlet_error", ce.getMessage());
          req.setAttribute("servlet_exception", (ce.getCause() == null) ? ce : ce.getCause());
