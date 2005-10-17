@@ -20,7 +20,7 @@
 
 <!-- Main Body Frame -->
 <div id="main">
-<view:table className="view" pad="default" space="default" cmd="staff">
+<view:table className="view" pad="default" space="default" cmd="channeladmin">
 <tr class="title caps">
  <td class="left" colspan="5">WATER COOLER CHANNELS</td>
 </tr>
@@ -30,26 +30,27 @@
  <td width="30%">CHANNEL NAME / DESCRIPTION</td>
  <td width="10%">THREADS</td>
  <td width="10%">POSTS</td>
- <td width="15%">AIRLINES</td>
+ <td width="10%">AIRLINES</td>
+ <td width="10%"><el:cmdbutton url="chprofile" op="edit" label="ADD CHANNEL" /></td>
  <td>ROLES</td>
 </tr>
 
 <!-- Table Channel Data -->
 <c:forEach var="channel" items="${channels}">
-<tr>
+<view:row entry="${channel}">
  <td class="left">
  <el:cmd url="chprofile" linkID="${channel.name}" op="edit" className="bld">${channel.name}</el:cmd><br />
  <span class="small">${channel.description}</span></td>
  <td><fmt:int value="${channel.threadCount}" /></td>
  <td><fmt:int value="${channel.postCount}" /></td>
  <td class="sec bld"><fmt:list value="${channel.airlines}" delim=", " /></td>
- <td class="bld right"><fmt:list value="${channel.roles}" delim=", " /></td>
-</tr>
+ <td class="bld right" colspan="2"><fmt:list value="${channel.roles}" delim=", " /></td>
+</view:row>
 </c:forEach>
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
