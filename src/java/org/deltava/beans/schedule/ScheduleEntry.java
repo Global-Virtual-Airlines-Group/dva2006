@@ -207,11 +207,11 @@ public class ScheduleEntry extends Flight {
     /**
      * Sets the length of a flight leg.
      * @param len the length of a leg, <i>in hours mulitiplied by ten</i>.
-     * @throws IllegalArgumentException if len is zero or negative
+     * @throws IllegalArgumentException if len is negative
      * @see ScheduleEntry#getLength()
      */
     public void setLength(int len) {
-    	if (len < 1)
+    	if (len < 0)
     		throw new IllegalArgumentException("Invalid Flight Length - " + len);
     	
     	_length = len;
