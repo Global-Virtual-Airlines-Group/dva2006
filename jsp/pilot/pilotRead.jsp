@@ -94,7 +94,7 @@
 <c:if test="${!empty pilot.lastLogin}">
 <tr>
  <td class="label">Logins</td>
- <td colspan="${cspan}" class="data">${pilot.loginCount}, last on <fmt:date date="${pilot.lastLogin}" /></td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty pilot.lastLogoff}">
