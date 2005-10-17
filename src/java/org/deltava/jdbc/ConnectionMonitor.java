@@ -4,13 +4,10 @@ package org.deltava.jdbc;
 import java.util.*;
 import java.sql.*;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.log4j.Logger;
 
 /**
- * A Thread to monitor JDBC connections.
+ * A daemon Thread to monitor JDBC connections.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -21,8 +18,6 @@ class ConnectionMonitor extends Thread {
    private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
 
    private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
-   
-   private boolean _hasPing;
 
    private Set _pool = new TreeSet();
    private long _sleepTime = 180000; // 3 minute default
@@ -59,47 +54,54 @@ class ConnectionMonitor extends Thread {
     * Adds a JDBC connection to monitor.
     * @param cpe a ConnectionPoolEntry object
     */
-   public void addConnection(ConnectionPoolEntry cpe) {
-      synchronized (_pool) {
+   public synchronized void addConnection(ConnectionPoolEntry cpe) {
          _pool.add(cpe);
-      }
-      
-      // Check if we have a ping method
-      try {
-         Class c = cpe.getConnection().getClass();
-         Method m = c.getMethod("ping", null);
-         if (m != null)
-            _hasPing = true;
-      } catch (NoSuchMethodException nsme) {
-         _hasPing = false;
-      }
    }
 
    /**
     * Removes a JDBC connection from the monitor.
     * @param cpe a ConnectionPoolEntry object
     */
-   public void removeConnection(ConnectionPoolEntry cpe) {
-      synchronized (_pool) {
+   public synchronized void removeConnection(ConnectionPoolEntry cpe) {
          _pool.remove(cpe);
-      }
    }
 
-   private boolean reconnect(ConnectionPoolEntry e) {
-      log.info("JDBC Connection " + e + " disconnected");
-      e.close();
+   /**
+    * Manually check the connection pool.
+    */
+   protected synchronized void checkPool() {
+      _poolCheckCount++;
+      log.debug("Checking Connection Pool");
+      
+      // Loop through the entries
+      for (Iterator i = _pool.iterator(); i.hasNext();) {
+         ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
 
-      // Reconnect the connection if we can
-      if (!e.isDynamic()) {
-         try {
-            e.connect();
-            return true;
-         } catch (SQLException se) {
-            log.warn("Error reconnecting Connection " + e + " - " + se.getMessage());
+         // Check if the entry has timed out
+         if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
+            log.warn("Releasing stale Connection " + cpe);
+            cpe.free();
+         } else if (cpe.isDynamic() && !cpe.inUse()) {
+            log.warn("Releasing stale dyanmic Connection " + cpe);
+            cpe.free();
+            i.remove();
+         } else if (!cpe.checkConnection()) {
+            log.warn("Reconnecting Connection " + cpe);
+            cpe.close();
+            
+            try {
+               cpe.connect();
+            } catch (SQLException se) {
+               if (_sqlStatus.contains(se.getSQLState())) {
+                  log.warn("Transient SQL Error - " + se.getSQLState());
+               } else {
+                  log.warn("Uknown SQL Error code - " + se.getSQLState());
+               }
+            } catch (Exception e) {
+               log.error("Error reconnecting " + cpe, e); 
+            }
          }
       }
-
-      return false;
    }
 
    /**
@@ -111,53 +113,7 @@ class ConnectionMonitor extends Thread {
 
       // Check loop
       while (!isInterrupted()) {
-         log.debug("Checking Connection Pool");
-
-         synchronized (_pool) {
-            _poolCheckCount++;
-
-            for (Iterator i = _pool.iterator(); i.hasNext();) {
-               ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
-
-               // Check if the entry has timed out
-               if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
-                  log.warn("Releasing stale JDBC Connection " + cpe);
-                  cpe.free();
-               }
-
-               // Check to ensure that the connection can still hit the back-end
-               try {
-                  Connection c = cpe.getConnection();
-                  if (_hasPing) {
-                     try {
-                        Method m = c.getClass().getMethod("ping", null);
-                        m.invoke(c, null);
-                     } catch (InvocationTargetException ite) {
-                        throw (ite.getCause() == null) ? ite : ite.getCause();
-                     }
-                  } else {
-                     Statement s = c.createStatement();
-                     ResultSet rs = s.executeQuery("SELECT 1");
-                     rs.close();
-                     s.close();
-                  }
-               } catch (SQLException se) {
-                  if (_sqlStatus.contains(se.getSQLState())) {
-                     log.warn("Reconnecting Connection " + cpe);
-
-                     // If we cannot reconnect, then remove from the pool
-                     if (!reconnect(cpe)) {
-                        log.warn("Cannot reconnect Connection " + cpe);
-                        i.remove();
-                     }
-                  } else {
-                     log.warn("Uknown SQL Error code - " + se.getSQLState(), se);
-                  }
-               } catch (Throwable t) {
-                  log.error("Erroring checking connection", t);
-               }
-            }
-         }
+         checkPool();
 
          try {
             Thread.sleep(_sleepTime);
