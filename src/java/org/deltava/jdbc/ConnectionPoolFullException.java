@@ -11,6 +11,6 @@ package org.deltava.jdbc;
 public class ConnectionPoolFullException extends ConnectionPoolException {
 
    public ConnectionPoolFullException() {
-      super("Pool Full");
+      super("Connection Pool Full");
    }
 }

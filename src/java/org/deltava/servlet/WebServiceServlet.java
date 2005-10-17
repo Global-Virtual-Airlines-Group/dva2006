@@ -90,6 +90,12 @@ public class WebServiceServlet extends BasicAuthServlet {
 		}
 	}
 
+	/**
+    * Processes HTTP GET requests for web services.
+    * @param req the HTTP request
+    * @param rsp the HTTP response
+    * @throws IOException if a network I/O error occurs
+    */
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 
 		// Get the web service
@@ -130,7 +136,11 @@ public class WebServiceServlet extends BasicAuthServlet {
 				log.info("Executing Web Service " + svc.getClass().getName());
 
 			rsp.setStatus(svc.execute(ctx));
+		} catch (ConnectionPoolFullException cpfe) {
+		   log.warn("Error executing Web Service - Connection Pool Full");
+		   rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Connection Pool Full");
 		} catch (DAOException de) {
+		   log.error("Error executing Web Service - " + de.getMessage(), de);
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} catch (ServiceException se) {
 			rsp.sendError(se.getCode(), se.getMessage());
@@ -142,6 +152,13 @@ public class WebServiceServlet extends BasicAuthServlet {
 		rsp.setHeader("Cache-Control", "no-cache");
 	}
 
+	/**
+    * Processes HTTP POST requests for web services. This redirects to the GET handler.
+    * @param req the HTTP request
+    * @param rsp the HTTP response
+    * @throws IOException if a network I/O error occurs
+    * @see WebServiceServlet#doGet(HttpServletRequest, HttpServletResponse)
+    */
 	public void doPost(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
 		doGet(req, rsp);
 	}

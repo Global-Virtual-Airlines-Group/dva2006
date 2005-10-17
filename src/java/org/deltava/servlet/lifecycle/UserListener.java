@@ -12,7 +12,8 @@ import org.deltava.security.UserPool;
 import org.deltava.dao.SetPilotLogin;
 
 import org.deltava.commands.CommandContext;
-import org.deltava.jdbc.ConnectionPool;
+
+import org.deltava.jdbc.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -68,6 +69,8 @@ public class UserListener implements HttpSessionListener {
 				SetPilotLogin pldao = new SetPilotLogin(con);
 				pldao.logout((Pilot) p);
 			}
+		} catch (ConnectionPoolFullException cpfe) {
+		   log.warn("Connection Pool Full");
 		} catch (Exception ex) {
 			log.error("Error logging session close - " + ex.getMessage(), ex);
 		} finally {
