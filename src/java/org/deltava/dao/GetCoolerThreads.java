@@ -33,8 +33,8 @@ public class GetCoolerThreads extends DAO {
    public List getByChannel(String channelName, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM "
-            + "common.COOLER_THREADS T WHERE (T.CHANNEL=?)");
+      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+            + "T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.CHANNEL=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
       sqlBuf.append(" ORDER BY SD DESC");
@@ -58,8 +58,8 @@ public class GetCoolerThreads extends DAO {
    public List getByAuthor(int userID, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM "
-            + "common.COOLER_THREADS T WHERE (T.AUTHOR=?)");
+      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+            + "T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.AUTHOR=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
       sqlBuf.append(" ORDER BY SD DESC");
@@ -81,8 +81,9 @@ public class GetCoolerThreads extends DAO {
     */
    public List getByNotification(int userID) throws DAOException {
       try {
-         prepareStatement("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T, "
-               + "common.COOLER_NOTIFY N WHERE (N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY SD DESC");
+         prepareStatement("SELECT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) "
+               + "AS SD FROM common.COOLER_THREADS T, common.COOLER_NOTIFY N WHERE (N.USER_ID=?) AND "
+               + "(T.ID=N.THREAD_ID) ORDER BY SD DESC");
          _ps.setInt(1, userID);
          return execute();
       } catch (SQLException se) {
@@ -99,8 +100,8 @@ public class GetCoolerThreads extends DAO {
    public List getAll(boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM "
-            + "common.COOLER_THREADS T ");
+      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+            + "T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
       if (!showImgs)
          sqlBuf.append(" WHERE (T.IMAGE_ID=0)");
       
@@ -126,8 +127,8 @@ public class GetCoolerThreads extends DAO {
          return getAll(showImgs);
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM "
-            + "common.COOLER_THREADS T ");
+      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), "
+            + "T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
       if (!showImgs)
          sqlBuf.append("WHERE (T.IMAGE_ID=0) ");
       
@@ -239,9 +240,9 @@ public class GetCoolerThreads extends DAO {
     */
    public List search(String searchStr, String channelName) throws DAOException {
       try {
-         prepareStatement("SELECT DISTINCT T.*, IFNULL(T.STICKY, T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T "
-               + "LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE (T.CHANNEL=?) AND (P.MSGBODY LIKE ?) "
-               + "ORDER BY SD DESC");
+         prepareStatement("SELECT DISTINCT T.*, IF(T.STICKY, IF(T.STICKY < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) "
+               + "AS SD FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE "
+               + "(T.CHANNEL=?) AND (P.MSGBODY LIKE ?) ORDER BY SD DESC");
          _ps.setQueryTimeout(25);
          _ps.setString(1, channelName);
          _ps.setString(2, "%" + searchStr + "%");
