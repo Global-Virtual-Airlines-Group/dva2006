@@ -48,9 +48,10 @@ public class ThreadMoveCommand extends AbstractCommand {
 			if (!access.getCanRead())
 				throw securityException("Cannot move Thread to " + newChannel);
 			
-			// Set new channel
+			// Save thread and set new channel
 			ctx.setAttribute("isMoved", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("newChannel", newChannel, REQUEST);
+			ctx.setAttribute("thread", t, REQUEST);
 			
 			// Update the thread
 			SetCoolerMessage twdao = new SetCoolerMessage(con);
