@@ -228,7 +228,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Site Logins</td>
- <td colspan="${cspan}" class="data">${pilot.loginCount}, last on <fmt:date date="${pilot.lastLogin}" /></td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" /></td>
 </tr>
 <c:if test="${!empty pilot.lastLogoff}">
 <tr>
