@@ -255,9 +255,12 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      */
     public void setRatings(String[] pr, String[] sr) {
     	_primaryRatings.clear();
-    	_primaryRatings.addAll(Arrays.asList(pr));
+    	if (pr != null)
+    	   _primaryRatings.addAll(Arrays.asList(pr));
+    	
     	_secondaryRatings.clear();
-    	_secondaryRatings.addAll(Arrays.asList(sr));
+    	if (sr != null)
+    	   _secondaryRatings.addAll(Arrays.asList(sr));
     }
     
     /**
