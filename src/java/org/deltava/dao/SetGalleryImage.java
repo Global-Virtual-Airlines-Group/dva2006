@@ -33,8 +33,8 @@ public class SetGalleryImage extends DAO {
 	      throw new IllegalArgumentException("Empty Image Buffer");
 	   
 		try {
-			prepareStatement("INSERT INTO GALLERY (PILOT_ID, NAME, DESCRIPTION, DATE, TYPE, X, Y, SIZE, IMG) VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO GALLERY (PILOT_ID, NAME, DESCRIPTION, DATE, TYPE, X, Y, SIZE, IMG, FLEET) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, img.getAuthorID());
 			_ps.setString(2, img.getName());
 			_ps.setString(3, img.getDescription());
@@ -44,6 +44,7 @@ public class SetGalleryImage extends DAO {
 			_ps.setInt(7, img.getHeight());
 			_ps.setInt(8, img.getSize());
 			_ps.setBinaryStream(9, img.getInputStream(), img.getSize());
+			_ps.setBoolean(10, img.getFleet());
 
 			// Update the database
 			executeUpdate(1);
@@ -62,10 +63,11 @@ public class SetGalleryImage extends DAO {
 	 */
 	public void update(Image img) throws DAOException {
 		try {
-			prepareStatement("UPDATE GALLERY SET NAME=?, DESCRIPTION=? WHERE (ID=?)");
+			prepareStatement("UPDATE GALLERY SET NAME=?, DESCRIPTION=?, FLEET=? WHERE (ID=?)");
 			_ps.setString(1, img.getName());
 			_ps.setString(2, img.getDescription());
-			_ps.setInt(3, img.getID());
+			_ps.setBoolean(3, img.getFleet());
+			_ps.setInt(4, img.getID());
 			
 			// Update the database
 			executeUpdate(1);
