@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Iterator;
 
 import org.deltava.beans.testing.*;
 
@@ -80,6 +81,8 @@ public class SetExamProfile extends DAO {
     */
    public void write(QuestionProfile qp) throws DAOException {
       try {
+         startTransaction();
+         
          // Prepare different statements for INSERT and UPDATE operations
          if (qp.getID() == 0) {
             prepareStatement("INSERT INTO QUESTIONINFO (QUESTION, CORRECT, ACTIVE) VALUES (?, ?, ?)");
@@ -88,18 +91,38 @@ public class SetExamProfile extends DAO {
             _ps.setInt(4, qp.getID());
          }
          
-         // Set prepared statement
+         // Set prepared statement and write the question
          _ps.setString(1, qp.getQuestion());
          _ps.setString(2, qp.getCorrectAnswer());
          _ps.setBoolean(3, qp.getActive());
-         
-         // Execute the INSERT/UPDATE
          executeUpdate(1);
          
-         // If this is a new question profile, get the assigned ID back from the database
-         if (qp.getID() == 0)
+         // If this is a new question profile, get the ID back from the database, otherwise clear the exam names
+         if (qp.getID() == 0) {
             qp.setID(getNewID());
+         } else {
+            prepareStatementWithoutLimits("DELETE FROM QE_INFO WHERE (QUESTION_ID=?)");
+            _ps.setInt(1, qp.getID());
+            executeUpdate(0);
+         }
+         
+         // Write the exam names
+         prepareStatementWithoutLimits("INSERT INTO QE_INFO (QUESTION_ID, EXAM_NAME) VALUES (?, ?)");
+         _ps.setInt(1, qp.getID());
+         for (Iterator i = qp.getExamNames().iterator(); i.hasNext(); ) {
+            String examName = (String) i.next();
+            _ps.setString(2, examName);
+            _ps.addBatch();
+         }
+         
+         // Execute the batch statement and clean up
+         _ps.executeBatch();
+         _ps.close();
+         
+         // Commit the transaction
+         commitTransaction();
       } catch (SQLException se) {
+         rollbackTransaction();
          throw new DAOException(se);
       }
    }
