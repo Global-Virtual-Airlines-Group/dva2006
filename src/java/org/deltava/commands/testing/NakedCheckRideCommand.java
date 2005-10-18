@@ -71,6 +71,9 @@ public class NakedCheckRideCommand extends AbstractCommand {
 		   GetEquipmentType eqdao = new GetEquipmentType(con);
 		   ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
 		   
+		   // Save the pilot in the request
+		   ctx.setAttribute("pilot", p, REQUEST);
+		   
 		   // If we are not doing a POST, then redirect
 		   if (ctx.getParameter("eqType") == null) {
 		      ctx.release();
@@ -129,7 +132,6 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			exwdao.write(cr);
 
 			// Save the checkride in the request
-			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("checkRide", cr, REQUEST);
 		} catch (DAOException de) {
 		   throw new CommandException(de);
