@@ -48,6 +48,12 @@ public class ChannelCommand extends AbstractFormCommand {
 				c = new Channel(ctx.getParameter("newName"));
 			}
 			
+			// Load roles and airlines
+			c.setAirlines(Arrays.asList(ctx.getRequest().getParameterValues("airline")));
+			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
+			if (roles != null)
+				c.setRoles(Arrays.asList(roles));
+			
 			// Check our access
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
 			access.validate();
@@ -56,11 +62,7 @@ public class ChannelCommand extends AbstractFormCommand {
 
 			// Update the channel from the request
 			c.setDescription(ctx.getParameter("desc"));
-			c.setActive("1".equals(ctx.getParameter("active")));
-			
-			// Load the roles and airlines
-			c.setRoles(Arrays.asList(ctx.getRequest().getParameterValues("securityRoles")));
-			c.setAirlines(Arrays.asList(ctx.getRequest().getParameterValues("airline")));
+			c.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			
 			// Get the DAO and write the channel
 			SetCoolerChannel wdao = new SetCoolerChannel(con);
