@@ -601,7 +601,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setUIScheme(getUIScheme());
        p2.addRoles(getRoles());
        p2.addRatings(getRatings());
-       p2.setPilotCode(getPilotCode());
        p2.setHasSignature(getHasSignature());
        p2.setHours(getHours());
        p2.setLastFlight(getLastFlight());
@@ -613,6 +612,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setShowSignatures(getShowSignatures());
        p2.setShowSSThreads(getShowSSThreads());
        p2._networkIDs.putAll(getNetworkIDs());
+       
+       if (!StringUtils.isEmpty(getPilotCode()))
+    	   p2.setPilotCode(getPilotCode());
+       
        for (Iterator i = getNotifyOptions().iterator(); i.hasNext(); )
     	   p2.setNotifyOption((String) i.next(), true);
        

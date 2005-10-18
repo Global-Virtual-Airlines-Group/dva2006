@@ -74,7 +74,7 @@ public class SetPilotTransfer extends SetPilot {
 			executeUpdate(1);
 			
 			// Write the ratings - don't bother writing roles
-			writeRatings(id, ratings, dbName);
+			writeRatings(id, ratings, dbName, false);
 			
 			// Commit the transaction
 			commitTransaction();
