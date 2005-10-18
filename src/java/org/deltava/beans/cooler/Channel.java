@@ -1,9 +1,11 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.cooler;
 
-import java.io.Serializable;
 import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.ViewEntry;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -12,7 +14,8 @@ import org.deltava.util.cache.Cacheable;
  * @version 1.0
  * @since 1.0
  */
-public class Channel implements Serializable, Cacheable {
+
+public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
 
     public static final String ALL = "ALL";
     
@@ -318,5 +321,13 @@ public class Channel implements Serializable, Cacheable {
      */
     public int hashCode() {
         return _name.hashCode();
+    }
+    
+    /**
+     * Returns the CSS row class name.
+     * @return the CSS class name
+     */
+    public String getRowClassName() {
+    	return _active ? null : "warn"; 
     }
 }

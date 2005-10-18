@@ -59,7 +59,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" className="sec" value="1" label="Channel is Active" checked="${channel.active}" /></td>
+ <td class="data"><el:box name="active" idx="*" className="sec" value="true" label="Channel is Active" checked="${channel.active}" /></td>
 </tr>
 </el:table>
 
