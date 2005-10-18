@@ -22,7 +22,7 @@
 <tr class="title caps"><td>PILOT AIRLINE TRANSFER COMPLETE</td></tr>
 </el:table>
 <br />
-${pilot.name} has been successfully transferred to ${airline}.<br />
+${pilot.name} has been successfully transferred to ${airline.name}.<br />
 <br />
 <content:copyright />
 </div>
