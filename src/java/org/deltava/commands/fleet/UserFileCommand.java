@@ -36,7 +36,8 @@ public class UserFileCommand extends AbstractFormCommand {
 		// Check if we're uploading a file, that the name is unique
 		FileUpload fu = ctx.getFile("file");
 		if (fu != null) {
-			FileEntry entry = new FileEntry(fu.getName());
+		   File f = new File(SystemData.get("path.userfiles"), fu.getName());
+			FileEntry entry = new FileEntry(f.getPath());
 			if (entry.getSize() != 0)
 				throw securityException(fu.getName() + " already exists");
 		}
@@ -59,7 +60,7 @@ public class UserFileCommand extends AbstractFormCommand {
 
 			// Create a new bean if we need to
 			if (entry == null) {
-			   File f = new File(SystemData.get("path.files"), fName); 
+			   File f = new File(SystemData.get("path.userfiles"), fName); 
 				entry = new FileEntry(f.getPath());
 				entry.setSize(fu.getSize());
 				entry.setAuthorID(ctx.getUser().getID());
@@ -92,6 +93,8 @@ public class UserFileCommand extends AbstractFormCommand {
 
 		// Set status attribute
 		ctx.setAttribute("isFile", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("library", "User File", REQUEST);
+      ctx.setAttribute("librarycmd", "filelibrary", REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

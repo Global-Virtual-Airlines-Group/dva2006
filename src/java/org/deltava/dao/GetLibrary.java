@@ -203,7 +203,7 @@ public class GetLibrary extends DAO {
 	   // Iterate through the result set
 	   List results = new ArrayList();
 	   while (rs.next()) {
-	      File f = new File(SystemData.get("path.files"), rs.getString(1));
+	      File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
 	      FileEntry entry = new FileEntry(f.getPath());
 	      entry.setName(rs.getString(2));
 	      entry.setSecurity(rs.getInt(4));
