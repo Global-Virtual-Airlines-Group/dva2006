@@ -11,18 +11,19 @@
 <title><content:airline /> Water Cooler Channel Administration</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
 <view:table className="view" pad="default" space="default" cmd="channeladmin">
 <tr class="title caps">
- <td class="left" colspan="5">WATER COOLER CHANNELS</td>
+ <td class="left" colspan="6">WATER COOLER CHANNELS</td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -50,7 +51,7 @@
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="6"><view:legend width="90" labels="Active,Inactive" classes=" ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />
