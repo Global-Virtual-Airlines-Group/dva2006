@@ -67,6 +67,7 @@ public class InstallerSaveCommand extends AbstractCommand {
 			} else if (isNew) {
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Installer(f.getAbsolutePath());
+				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}
 
 			// Populate fields from the request
@@ -98,8 +99,9 @@ public class InstallerSaveCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Set status attribute
-		ctx.setAttribute(isNew ? "installerAdded" : "installerUpdated", Boolean.TRUE, REQUEST);
+		// Set status attributes
+      ctx.setAttribute("library", "Fleet", REQUEST);
+      ctx.setAttribute("librarycmd", "fleetlibrary", REQUEST);
 
 		// Send the email message
 		if (!noNotify) {

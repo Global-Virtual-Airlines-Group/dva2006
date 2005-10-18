@@ -134,6 +134,49 @@ public class SetLibrary extends DAO {
 	      throw new DAOException(se);
 	   }
 	}
+	
+	/**
+	 * Deletes a Library Entry from the database.
+	 * @param entry the Library entry
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws IllegalArgumentException if an unknown LibraryEntry subclass is passed
+	 */
+	public void delete(LibraryEntry entry) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("DELETE FROM ");
+	   if (entry instanceof Installer) {
+	      sqlBuf.append("FLEET");
+	   } else if (entry instanceof Manual) {
+	      sqlBuf.append("DOCS");
+	   } else if (entry instanceof FileEntry) {
+	      sqlBuf.append("FILES");
+	   } else {
+	      throw new IllegalArgumentException("Unknown library entry type - " + entry.getClass().getName());
+	   }
+	   
+	   sqlBuf.append(" WHERE (FILENAME=?)");
+	   
+	   try {
+	      startTransaction();
+	      
+	      // Delete the Library entry
+	      prepareStatement(sqlBuf.toString());
+	      _ps.setString(1, entry.getFileName());
+	      executeUpdate(1);
+	      
+	      // Delete the downloads
+	      prepareStatementWithoutLimits("DELETE FROM DOWNLOADS WHERE (FILENAME=?)");
+	      _ps.setString(1, entry.getFileName());
+	      executeUpdate(0);
+	      
+	      // Commit the transaction
+	      commitTransaction();
+	   } catch (SQLException se) {
+	      rollbackTransaction();
+	      throw new DAOException(se);
+	   }
+	}
 
 	/**
 	 * Writes Fleet Installer local System Information to the database.
