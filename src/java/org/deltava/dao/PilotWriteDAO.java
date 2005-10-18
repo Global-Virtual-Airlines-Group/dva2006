@@ -30,8 +30,8 @@ public abstract class PilotWriteDAO extends PilotDAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected void writeRoles(int id, Collection roles, String db) throws SQLException {
-	   
-	   // Clear existing roles
+
+		// Clear existing roles
 		prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".ROLES WHERE (ID=?)");
 		_ps.setInt(1, id);
 		_ps.executeUpdate();
@@ -58,15 +58,18 @@ public abstract class PilotWriteDAO extends PilotDAO {
 	 * @param id the Pilot's database ID
 	 * @param ratings a Collection of aircraft types
 	 * @param db the database to write to
+	 * @param doClear TRUE if existing ratings should be cleared, otherwise FALSE
 	 * @throws SQLException if a JDBC error occurs
 	 */
-	protected void writeRatings(int id, Collection ratings, String db) throws SQLException {
-	   
-	   // Clear existing ratings
-		prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".RATINGS WHERE (ID=?)");
-		_ps.setInt(1, id);
-		_ps.executeUpdate();
-		_ps.close();
+	protected void writeRatings(int id, Collection ratings, String db, boolean doClear) throws SQLException {
+
+		// Clear existing ratings
+		if (doClear) {
+			prepareStatementWithoutLimits("DELETE FROM " + db.toLowerCase() + ".RATINGS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			_ps.executeUpdate();
+			_ps.close();
+		}
 
 		// Write the ratings to the database
 		prepareStatementWithoutLimits("INSERT INTO " + db.toLowerCase() + ".RATINGS (ID, RATING) VALUES (?, ?)");

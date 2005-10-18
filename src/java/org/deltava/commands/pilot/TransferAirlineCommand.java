@@ -27,160 +27,161 @@ import org.deltava.util.system.SystemData;
  */
 
 public class TransferAirlineCommand extends AbstractCommand {
-	
-   public static final Logger log = Logger.getLogger(TransferAirlineCommand.class);
-   
-   /**
-     * Execute the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occrurs.
-     */
-	public void execute(CommandContext ctx) throws CommandException {
-	   
-	   // Get the command result
-	   CommandResult result = ctx.getResult();
-	   
-	   // Initialize the Message context
-	   MessageContext mctxt = new MessageContext();
-	   mctxt.addData("user", ctx.getUser());
 
-	   Pilot newUser = null;
+	public static final Logger log = Logger.getLogger(TransferAirlineCommand.class);
+
+	/**
+	 * Execute the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occrurs.
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+
+		// Get the command result
+		CommandResult result = ctx.getResult();
+
+		// Initialize the Message context
+		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
+
+		Pilot newUser = null;
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get whichever pilot we're transferring
 			GetPilot rdao = new GetPilot(con);
 			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
 				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
-			
+
 			// Check access level
-			PilotAccessControl access = new PilotAccessControl(ctx,p);
+			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
 			if (!access.getCanChangeStatus())
 				throw securityException("Insufficient access to transfer a pilot to another airline");
-			
+
 			// Save pilot in request
 			ctx.setAttribute("pilot", p, REQUEST);
-			
+
 			// Get the databases
 			GetUserData uddao = new GetUserData(con);
 			Map airlines = uddao.getAirlines(false);
 			ctx.setAttribute("airlines", airlines.values(), REQUEST);
-			
-		   // Check if we are transferring or just displaying the JSP
-		   if (ctx.getParameter("dbName") == null) {
-		      ctx.release();
-		      result.setURL("/jsp/pilot/txAirline.jsp");
-		      result.setSuccess(true);
-		      return;
-		   }
-			
+
+			// Check if we are transferring or just displaying the JSP
+			if (ctx.getParameter("dbName") == null) {
+				ctx.release();
+				result.setURL("/jsp/pilot/txAirline.jsp");
+				result.setSuccess(true);
+				return;
+			}
+
 			// Get the airline to change to
-		   AirlineInformation aInfo = (AirlineInformation) airlines.get(ctx.getParameter("dbName"));
-		   if (aInfo == null)
-		      throw new CommandException("Invalid Airline - " + ctx.getParameter("dbName"));
-			
+			AirlineInformation aInfo = (AirlineInformation) airlines.get(ctx.getParameter("dbName"));
+			if (aInfo == null)
+				throw new CommandException("Invalid Airline - " + ctx.getParameter("dbName"));
+
 			// Get the equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection eqTypes = eqdao.getActive(aInfo.getDB());
-			
+
 			// Check if we've selected an equipmentType/Rank
 			if (ctx.getParameter("eqType") == null) {
-			   ctx.release();
-			   ctx.setAttribute("eqTypes", eqTypes, REQUEST);			   
-		      result.setURL("/jsp/pilot/txAirline.jsp");
-		      result.setSuccess(true);
-		      return;
+				ctx.release();
+				ctx.setAttribute("eqTypes", eqTypes, REQUEST);
+				result.setURL("/jsp/pilot/txAirline.jsp");
+				result.setSuccess(true);
+				return;
 			}
-			
+
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("TXAIRLINE"));
-			
-		   // Add equipment ratings
-		   p.addRatings(eqdao.getPrimaryTypes(aInfo.getDB(), ctx.getParameter("eqType")));
-			
+
+			// Add equipment ratings
+			p.addRatings(eqdao.getPrimaryTypes(aInfo.getDB(), ctx.getParameter("eqType")));
+
 			// Start Transaction
 			ctx.startTX();
-			
+
 			// Get the Pilot/Status Update write DAOs
 			SetPilotTransfer wdao = new SetPilotTransfer(con);
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			
-		   // Create the status update
-		   StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.AIRLINE_TX);
-		   su.setAuthorID(ctx.getUser().getID());
-		   su.setDescription("Transferred to " + aInfo.getName());
-		   sudao.write(su);
-		   
+
+			// Create the status update
+			StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.AIRLINE_TX);
+			su.setAuthorID(ctx.getUser().getID());
+			su.setDescription("Transferred to " + aInfo.getName());
+			sudao.write(su);
+
 			// Check if the user already exists in the database
 			newUser = rdao.getByName(p.getName());
 			if (newUser != null) {
-			   log.info("Reactivating " + newUser.getDN());
+				log.info("Reactivating " + newUser.getDN());
 			} else {
-			   log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
-			   
-			   // Clone the Pilot and update the ID
-			   newUser = p.cloneExceptID();
-			   p.setPilotCode(aInfo.getCode() + "0");
-			   
+				log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
+
+				// Clone the Pilot and update the ID
+				newUser = p.cloneExceptID();
+				p.setPilotCode(aInfo.getCode() + "0");
+
 				// Change LDAP DN and assign a new password
 				newUser.setDN("cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce");
 
 				// Create a new UserData record
 				UserData ud = new UserData(aInfo.getDB(), "PILOTS", aInfo.getDomain());
-				
+
 				// Write the user data record
 				SetUserData udao = new SetUserData(con);
 				udao.write(ud);
-				
+
 				// Get the ID property from the UserData object and stuff it into the existing Pilot object
 				newUser.setID(ud.getID());
 			}
-			
+
 			// Change status at old airline to Transferred
 			p.setStatus(Pilot.TRANSFERRED);
 			wdao.setTransferred(p.getID());
-			
+
 			// Save the new user
 			newUser.setStatus(Pilot.ACTIVE);
 			wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
-			
-		   // Create the second status update
-		   StatusUpdate su2 = new StatusUpdate(ctx.getUser().getID(), StatusUpdate.AIRLINE_TX);
-		   su2.setAuthorID(ctx.getUser().getID());
-		   su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
-		   sudao.write(aInfo.getDB(), su2);
-			
+
+			// Create the second status update
+			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
+			su2.setAuthorID(newUser.getID());
+			su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
+			sudao.write(aInfo.getDB(), su2);
+
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			newUser.setPassword(PasswordGenerator.generate(8));
 			auth.addUser(newUser.getDN(), newUser.getPassword());
-			
+
 			// Commit transaction
 			ctx.commitTX();
-			
+
 			// Update the message context
 			mctxt.addData("oldUser", p);
 			mctxt.addData("newUser", newUser);
-			
+
 			// Save Pilot beans in the request
 			ctx.setAttribute("oldUser", p, REQUEST);
 			ctx.setAttribute("newUser", newUser, REQUEST);
+			ctx.setAttribute("airline", aInfo, REQUEST);
 		} catch (DAOException de) {
-		   ctx.rollbackTX();
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Send status e-mail
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctxt);
 		mailer.send(newUser);
 		mailer.setCC(ctx.getUser());
-		
+
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/pilot/pilotTransferred.jsp");
