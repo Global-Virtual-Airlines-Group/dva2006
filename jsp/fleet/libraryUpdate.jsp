@@ -7,60 +7,32 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Fleet/Document Library Updated</title>
+<title><content:airline /> ${library} Library Updated</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
 <br />
-<c:if test="${installerAdded}">
-<!-- Fleet Library entry created -->
-<div class="updateHdr">Fleet Library Installler Added</div>
+<c:if test="${!isDelete}">
+<!-- ${library} Library entry Created/Updated -->
+<div class="updateHdr">${library} Library Entry ${fileAdded? 'Added' : 'Updated'}</div>
 <br />
-This Installer has been succesfully added to the <content:airline /> Fleet Library.<br />
-<br />
-To perform further maintenance on the Fleet Library, <el:cmd url="fleetlibrary" op="admin">Click Here</el:cmd>.<br />
-To view the Fleet Library, <el:cmd url="fleetlibrary">Click Here</el:cmd>.<br />
+This <content:airline /> ${library} Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
 </c:if>
-<c:if test="${installerUpdated}">
-<!-- Fleet Library entry updated -->
-<div class="updateHdr">Fleet Library Installler Updated</div>
+<c:if test="${isDelete}">
+<!-- ${library} Library entry Deleted -->
+<div class="updateHdr">${library} Entry Deleted</div>
 <br />
-This <content:airline /> Fleet Library Installer has been successfully updated.<br />
-<br />
-To perform further maintenance on the Fleet Library, <el:cmd url="fleetlibrary" op="admin">Click Here</el:cmd>.<br />
-To view the Fleet Library, <el:cmd url="fleetlibrary">Click Here</el:cmd>.<br />
+The <content:airline /> ${library} Library entry "${entry.name}" has been deleted from the database.<br />
 </c:if>
-<c:if test="${manualCreated}">
-<!-- Document Library entry created -->
-<div class="updateHdr">Document Library Manual Added</div>
 <br />
-This Manual has been succesfully added to the <content:airline /> Document Library.<br />
-<br />
-To return to the Document Library, <el:cmd url="doclibrary">Click Here</el:cmd>.
-</c:if>
-<c:if test="${manualUpdated}">
-<!-- Document Library entry updated -->
-<div class="updateHdr">Document Library Manual Updated</div>
-<br />
-This <content:airline /> Document Library entry has been successfully updated.<br />
-<br />
-To return to the Document Library, <el:cmd url="doclibrary">click Here</el:cmd>.
-</c:if>
-<c:if test="${isFile}">
-<!-- File Library entry Created/Uupdated -->
-<div class="updateHdr">Document Library Manual ${fileAdded? 'Added' : 'Updated'}</div>
-<br />
-This <content:airline /> File Library entry has been successfully ${fileAdded? 'added' : 'updated'}.<br />
-<br />
-To return to the File Library, <el:cmd url="filelibrary">click Here</el:cmd>.
-</c:if>
+To return to the ${library} Library, <el:cmd url="${librarycmd}">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </div>

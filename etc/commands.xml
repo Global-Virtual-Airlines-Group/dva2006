@@ -266,6 +266,12 @@
 		<roles>Fleet,HR</roles>
 	</command>
 
+	<command id="userfiledelete">
+		<name>User Library Delete</name>
+		<class>org.deltava.commands.fleet.UserFileDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 
 	<!-- Statistics commands -->
 	<command id="airlinestats">

@@ -74,6 +74,7 @@ public class ManualSaveCommand extends AbstractCommand {
 			} else if (isNew) {
 			   File f = new File (SystemData.get("path.library"), fName);
 				entry = new Manual(f.getPath());
+				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}
 
 			// Populate fields from the request
@@ -110,8 +111,9 @@ public class ManualSaveCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Set status attribute
-		ctx.setAttribute(isNew ? "manualAdded" : "manualUpdated", Boolean.TRUE, REQUEST);
+		// Set status attributes
+      ctx.setAttribute("library", "Document", REQUEST);
+      ctx.setAttribute("librarycmd", "doclibrary", REQUEST);
 
 		// Send notification
 		if (!noNotify) {
