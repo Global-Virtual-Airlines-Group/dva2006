@@ -153,7 +153,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
 <c:set var="sa" value="${fn:get(sAccess, idx)}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
- <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="0x${pilot.ID}" label="RELEASE" /></td>
+ <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="0x${fn:hex(pilot.ID)}" label="RELEASE" /></td>
 </c:if>
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
