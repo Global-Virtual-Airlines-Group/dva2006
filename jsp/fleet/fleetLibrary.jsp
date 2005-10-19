@@ -58,7 +58,7 @@ function download()
 if (!document.fName)
 	return false;
 
-self.location = '/library/' + document.fName;
+self.location = '/fleet/' + document.fName;
 return true;
 }
 </script>
