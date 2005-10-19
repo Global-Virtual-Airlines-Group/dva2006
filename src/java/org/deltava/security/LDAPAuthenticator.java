@@ -127,6 +127,17 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(String dName, String pwd) throws SecurityException {
+	   addUser(dName, pwd, null);
+	}
+	
+	/**
+	 * Adds a User to the Directory.
+	 * @param dName the User's fully-qualified Directory name
+	 * @param pwd the User's password
+	 * @param userID an alias for the user, or null if none
+	 * @throws SecurityException if an error occurs
+	 */
+	public void addUser(String dName, String pwd, String userID) throws SecurityException {
 		log.debug("Adding user " + dName + " to Directory");
 
 		// Bind to the directory
@@ -137,6 +148,8 @@ public class LDAPAuthenticator implements Authenticator {
 			Attributes attrs = new BasicAttributes("userPassword", pwd);
 			attrs.put("objectClass", "person");
 			attrs.put("sn", dName.substring(dName.indexOf(' ') + 1, dName.indexOf(',')));
+			if (userID != null)
+			   attrs.put("uid", userID);
 
 			// Add the user to the directory
 			ctxt.bind(dName, null, attrs);
@@ -185,17 +198,39 @@ public class LDAPAuthenticator implements Authenticator {
 	 */
 	public void removeUser(String dName) throws SecurityException {
 		log.debug("Removing user " + dName + " from Directory");
-		
 		if (!contains(dName))
 			throw new SecurityException(dName + " not found");
 
-		// Bind to the Directory
+		// Bind to the Directory and remove
 		try {
 			DirContext ctxt = new InitialDirContext(_env);
 			ctxt.unbind(dName);
 			ctxt.close();
 		} catch (NamingException ne) {
 			SecurityException se = new SecurityException("Error removing User " + dName);
+			se.initCause(ne);
+			throw se;
+		}
+	}
+	
+   /**
+    * Renames a user in the Directory.
+    * @param oldName the old fully-qualified directory name
+    * @param newName the new fully-qualified directory 
+    * @throws SecurityException if an error occurs
+    */
+	public void rename(String oldName, String newName) throws SecurityException {
+	   log.debug("Renaming user " + oldName + " to " + newName);
+		if (!contains(oldName))
+			throw new SecurityException(oldName + " not found");
+
+		// Bind to the Directory and rename
+		try {
+		   DirContext ctxt = new InitialDirContext(_env);
+		   ctxt.rename(oldName, newName);
+		   ctxt.close();
+		} catch (NamingException ne) {
+			SecurityException se = new SecurityException("Error renaming User " + oldName);
 			se.initCause(ne);
 			throw se;
 		}

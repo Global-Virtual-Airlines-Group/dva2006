@@ -24,20 +24,26 @@ public class FileAuthenticator implements Authenticator {
 	private class UserInfo {
 
 		private String _dn;
+		private String _uid;
 		private String _pwd;
 
 		UserInfo(String rawInput) {
 			StringTokenizer tokens = new StringTokenizer(rawInput, ",");
 			_dn = tokens.nextToken();
 			_pwd = tokens.nextToken();
+			_uid = tokens.nextToken();
 		}
 		
-		UserInfo(String dn, String pwd) {
-		   this(dn + "," + pwd);
+		UserInfo(String dn, String pwd, String uid) {
+		   this(dn + "," + pwd + "," + ((uid == null) ? "" : uid));
 		}
 
 		public String getDN() {
 		   return _dn;
+		}
+		
+		public String getUID() {
+		   return _uid;
 		}
 
 		public String getPassword() {
@@ -155,7 +161,7 @@ public class FileAuthenticator implements Authenticator {
 	      throw new SecurityException(ie.getMessage());
 	   }
 	}
-
+	
 	/**
 	 * Adds a user to the Directory.
 	 * @param directoryName the user's fully-qualified Directory name
@@ -163,13 +169,24 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(String directoryName, String pwd) throws SecurityException {
+	   addUser(directoryName, pwd, null);
+	}
+
+	/**
+	 * Adds a user to the Directory.
+	 * @param directoryName the user's fully-qualified Directory name
+	 * @param pwd the user's password
+	 * @param userID the user's alias, or null if none
+	 * @throws SecurityException if an error occurs
+	 */
+	public void addUser(String directoryName, String pwd, String userID) throws SecurityException {
 	   
 	   // Check if the user exists
 	   if (contains(directoryName))
 	      throw new SecurityException("User " + directoryName + " already exists");
 
 	   // Create the user object
-	   UserInfo usr = new UserInfo(directoryName, pwd);
+	   UserInfo usr = new UserInfo(directoryName, pwd, userID);
 	   _users.put(directoryName, usr);
 	   
 	   // Save the user list
@@ -197,5 +214,15 @@ public class FileAuthenticator implements Authenticator {
 	   } catch (IOException ie) {
 	      throw new SecurityException(ie.getMessage());
 	   }
+	}
+	
+	/**
+	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
+	 * @param oldName the old fullly-qualified Directory name
+	 * @param newName the new fullly-qualified Directory name
+	 * @throws UnsupportedOperationException always
+	 */
+	public void rename(String oldName, String newName) throws SecurityException {
+	   throw new UnsupportedOperationException();
 	}
 }
