@@ -75,14 +75,25 @@ abstract class PilotReadDAO extends PilotDAO {
     * Returns a Pilot based on a given full name. This method does not use first/last name splitting since this can be
     * unpredictable.
     * @param fullName the Full Name of the Pilot
+    * @param dbName the database name to search
     * @return the Pilot, or null if not found
     * @throws DAOException if a JDBC error occurs
     */
-   public final Pilot getByName(String fullName) throws DAOException {
+   public final Pilot getByName(String fullName, String dbName) throws DAOException {
+      
+      // Build the SQL statement
+      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+            + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".PILOTS P LEFT JOIN ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
+      sqlBuf.append(dbName.toLowerCase());
+      sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) "
+            + "AND (F.STATUS=?) GROUP BY P.ID");
+      
       try {
-         prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-               + "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN SIGNATURES S ON (P.ID=S.ID) "
-               + "WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) AND (F.STATUS=?) GROUP BY P.ID");
+         prepareStatement(sqlBuf.toString());
          _ps.setString(1, fullName.toUpperCase());
          _ps.setInt(2, FlightReport.OK);
 
@@ -93,8 +104,8 @@ abstract class PilotReadDAO extends PilotDAO {
             return null;
 
          // Add roles/ratings
-         addRatings(result, SystemData.get("airline.db"));
-         addRoles(result, SystemData.get("airline.db"));
+         addRatings(result, dbName);
+         addRoles(result, dbName);
 
          // Add the result to the cache and return
          _cache.add(result);

@@ -59,7 +59,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 
 			// Figure out who we're operating as
 			GetInactivity dao = new GetInactivity(_con);
-			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"));
+			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
 			
 			// Initialize the mailer
 			Mailer mailer = new Mailer(isTest ? null : taskBy);
