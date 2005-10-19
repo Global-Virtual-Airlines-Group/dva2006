@@ -29,7 +29,16 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <li>Equipment Ratings have been updated. ${pilot.firstName} is now rated to fly the <span class="small">
 <fmt:list value="${pilot.ratings}" delim="," /></span>.</li>
 </c:if>
+<c:if test="${!empty newName}">
+<!-- Pilot Renamed -->
+<li>This Pilot's named has been changed to ${newName}.</li>
+</c:if>
+<c:if test="${renameNotUnique}">
+<!-- Rename Failed; Not Unique -->
+<li><span class="warn">This Pilot could NOT be renamed, since the new name is not unique.</span></li>
+</c:if>
 <c:if test="${pwdUpdated}">
+<!-- Password Updated -->
 <li>The Web Site/ACARS password for ${pilot.name} has been updated.</li>
 </c:if>
 <c:if test="${statusUpdated}">
@@ -63,7 +72,7 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <c:if test="${sigUpdated}">
 <!-- Removed Signature Image -->
 <li>The Water Cooler signature image for ${pilot.name} has been updated. It is displayed below:<br />
-<img alt="${pilot.name} (${pilot.pilotCode})" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
+<img alt="${pilot.name}" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
 </c:if>
 </ul>
 <c:if test="${!empty addrValid}">
@@ -71,11 +80,11 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <br />
 The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
 will not take effect until the address has been validated.</span> To validate the new e-mail 
-address, <el:cmd url="emailupd" className="sec bld">click here</el:cmd>.<br />
+address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
-To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">click here</el:cmd>.<br />
-To return to the Pilot Roster, <el:cmd url="roster">click here</el:cmd><br />
+To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">Click Here</el:cmd>.<br />
+To return to the Pilot Roster, <el:cmd url="roster">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </div>
