@@ -51,8 +51,8 @@
 <c:if test="${!access.canEdit}">
  <td class="pri bld"><el:link url="/usrlibrary/${entry.fileName}">${entry.name}</el:link></td>
 </c:if>
- <td><el:link url="/usrlibrary/${entry.fileName}">DOWNLOAD</el:link></td>
- <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="small bld"><el:link url="/usrlibrary/${entry.fileName}">DOWNLOAD</el:link></td>
+ <td><el:profile location="${authorLoc}">${author.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${entry.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${entry.description}" /></td>
 </view:row>
