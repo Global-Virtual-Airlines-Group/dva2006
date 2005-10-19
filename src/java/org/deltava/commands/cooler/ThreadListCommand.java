@@ -58,6 +58,7 @@ public class ThreadListCommand extends AbstractViewCommand {
          // Get the channel DAO and the list of channels
          GetCoolerChannels dao = new GetCoolerChannels(con);
          Channel ch = dao.get(cName);
+         dao.setQueryMax(0);
          ctx.setAttribute("channel", ch, REQUEST);
          ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
 
