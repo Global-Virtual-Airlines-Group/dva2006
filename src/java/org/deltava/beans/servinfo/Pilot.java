@@ -399,10 +399,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 		buf.append(StringUtils.format(_altitude, "#,##0"));
 		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots<br />");
-		buf.append("Route: ");
-		buf.append(_wayPoints);
-		buf.append("</span>");
+		buf.append(" knots</span>");
 		return buf.toString();
 	}
 }
