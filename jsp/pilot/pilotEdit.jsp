@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Edit Profile - ${pilot.name} (${pilot.pilotCode})</title>
+<title>Edit Profile - ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -83,6 +83,13 @@ return true;
 </tr>
 
 <!-- Pilot Data -->
+<c:if test="${access.canChangeRoles}">
+<tr>
+ <td class="label">First / Last Name</td>
+ <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
