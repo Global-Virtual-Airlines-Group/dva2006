@@ -36,18 +36,20 @@ public class SetAssignment extends DAO {
       // Build the SQL statement
       StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
       sqlBuf.append(db.toLowerCase());
-      sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, EQTYPE, REPEATS, RANDOM, PURGEABLE) VALUES "
-            + "(?, ?, ?, ?, ?, ?)");
+      sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, PILOT_ID, ASSIGNED_ON, EQTYPE, REPEATS, RANDOM, "
+    		  + "PURGEABLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
       try {
          startTransaction();
          prepareStatement(sqlBuf.toString());
          _ps.setInt(1, a.getStatus());
          _ps.setInt(2, a.getEventID());
-         _ps.setString(3, a.getEquipmentType());
-         _ps.setBoolean(4, a.isRepeating());
-         _ps.setBoolean(5, a.isRandom());
-         _ps.setBoolean(6, a.isPurgeable());
+         _ps.setInt(3, a.getPilotID());
+         _ps.setTimestamp(4, createTimestamp(a.getAssignDate()));
+         _ps.setString(5, a.getEquipmentType());
+         _ps.setBoolean(6, a.isRepeating());
+         _ps.setBoolean(7, a.isRandom());
+         _ps.setBoolean(8, a.isPurgeable());
 
          // Write the assignment info
          executeUpdate(1);

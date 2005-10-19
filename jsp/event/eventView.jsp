@@ -9,7 +9,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Online Flights</title>
+<title><content:airline /> Online Event - ${event.name}</title>
 <content:sysdata var="airlineName" name="airline.name" />
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
@@ -153,7 +153,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
 <c:set var="sa" value="${fn:get(sAccess, idx)}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
- <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="0x${fn:hex(pilot.ID)}" label="RELEASE" /></td>
+ <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="${fn:hex(pilot.ID)}" label="RELEASE" /></td>
 </c:if>
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
