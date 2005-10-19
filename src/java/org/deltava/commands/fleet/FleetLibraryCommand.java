@@ -54,7 +54,7 @@ public class FleetLibraryCommand extends AbstractCommand {
             Map apps = (Map) SystemData.getObject("apps");
             for (Iterator i = apps.values().iterator(); i.hasNext();) {
                AirlineInformation info = (AirlineInformation) i.next();
-               if (info.getDB().equals(SystemData.get("airline.db"))) {
+               if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
                   results.addAll(0, dao.getFleet(info.getDB()));
                } else {
                   Collection entries = dao.getFleet(info.getDB());
