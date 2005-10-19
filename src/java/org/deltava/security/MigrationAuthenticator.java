@@ -106,7 +106,7 @@ public class MigrationAuthenticator implements Authenticator {
 			_dst.addUser(directoryName, pwd);
 		}
 	}
-
+	
 	/**
 	 * Adds a User to the Destination Directory.
 	 * @param directoryName the User's fully-qualified Directory name
@@ -114,7 +114,18 @@ public class MigrationAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(String directoryName, String pwd) throws SecurityException {
-		_dst.addUser(directoryName, pwd);
+		addUser(directoryName, pwd, null);
+	}
+
+	/**
+	 * Adds a User to the Destination Directory.
+	 * @param directoryName the User's fully-qualified Directory name
+	 * @param pwd the User's password
+	 * @param userID an alias for the user, or null if none
+	 * @throws SecurityException if an error occurs
+	 */
+	public void addUser(String directoryName, String pwd, String userID) throws SecurityException {
+		_dst.addUser(directoryName, pwd, userID);
 	}
 
 	/**
@@ -131,6 +142,16 @@ public class MigrationAuthenticator implements Authenticator {
 		} else {
 			throw new SecurityException("Unknown User - " + directoryName);
 		}
+	}
+	
+   /**
+    * Renames a user in the <i>Destination</i> Directory.
+    * @param oldName the old fully-qualified directory name
+    * @param newName the new fully-qualified directory 
+    * @throws SecurityException if an error occurs
+    */
+	public void rename(String oldName, String newName) throws SecurityException {
+		_dst.rename(oldName, newName);
 	}
 
 	/**
