@@ -114,8 +114,8 @@ public class TransferAirlineCommand extends AbstractCommand {
 			su.setDescription("Transferred to " + aInfo.getName());
 			sudao.write(su);
 
-			// Check if the user already exists in the database
-			newUser = rdao.getByName(p.getName());
+			// Check if the user already exists in the new airline database
+			newUser = rdao.getByName(p.getName(), aInfo.getDB());
 			if (newUser != null) {
 				log.info("Reactivating " + newUser.getDN());
 			} else {
