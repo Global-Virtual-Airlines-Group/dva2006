@@ -68,7 +68,9 @@ public class LibraryServlet extends GenericServlet {
          }
          
          // Check if the file exists
-         if (!entry.file().exists())
+         if (entry == null)
+        	 throw new CommandSecurityException("Cannot find " + url.getFileName(), "imageservlet");
+         else if (!entry.file().exists())
             throw new CommandSecurityException("Cannot find " + entry.file().getAbsolutePath(), "imageservlet");
 
          // Validate access to the file
