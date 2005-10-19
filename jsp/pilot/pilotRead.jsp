@@ -132,9 +132,9 @@
 <c:if test="${access.canChangeStatus}">
  <el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
 </c:if>
-<content:filter roles="Examination">
+<c:if test="${access.canAssignRide}">
  <el:cmdbutton url="nakedassign" linkID="0x${pilot.ID}" label="ASSIGN CHECK RIDE" />
-</content:filter>
+</c:if>
 <content:filter roles="HR">
  <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
 </content:filter>
