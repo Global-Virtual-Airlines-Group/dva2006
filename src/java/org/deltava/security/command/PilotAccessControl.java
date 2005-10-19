@@ -23,6 +23,7 @@ public final class PilotAccessControl extends AccessControl {
 	private boolean _canTakeLeave;
 	private boolean _canEdit;
 	private boolean _canChangeStatus;
+	private boolean _canAssignRide;
 	private boolean _canPromote;
 	private boolean _canChangeRoles;
 	private boolean _canChangeSignature;
@@ -63,6 +64,7 @@ public final class PilotAccessControl extends AccessControl {
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewEmail = (_p.getEmailAccess() == Person.HIDE_EMAIL) ? (_canEdit) : true;
 		_canPromote = (isPIREP || isHR);
+		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
 		_canChangeStatus = isHR;
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
@@ -112,6 +114,14 @@ public final class PilotAccessControl extends AccessControl {
 	 */
 	public boolean getCanChangeStatus() {
 		return _canChangeStatus;
+	}
+	
+	/**
+	 * Returns if a check ride can be assigned to this Pilot.
+	 * @return TRUE if a check ride can be assigned, otherwise FALSE
+	 */
+	public boolean getCanAssignRide() {
+		return _canAssignRide;
 	}
 
 	/**

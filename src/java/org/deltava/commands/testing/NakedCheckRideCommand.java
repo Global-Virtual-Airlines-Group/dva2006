@@ -11,6 +11,8 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
+import org.deltava.security.command.PilotAccessControl;
+
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
  * @author Luke
@@ -66,6 +68,12 @@ public class NakedCheckRideCommand extends AbstractCommand {
 		      result.setSuccess(true);
 		      return;
 		   }
+		   
+		   // Check if we can assign the ride
+		   PilotAccessControl access = new PilotAccessControl(ctx, p);
+		   access.validate();
+		   if (!access.getCanAssignRide())
+			   throw securityException("Cannot assign Check Ride");
 		   
 		   // Get all equipment types
 		   GetEquipmentType eqdao = new GetEquipmentType(con);
