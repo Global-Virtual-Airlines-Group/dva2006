@@ -55,6 +55,7 @@ public class EventReleaseCommand extends AbstractCommand {
 			
 			// Get the access controller
 			SignupAccessControl access = new SignupAccessControl(ctx, e, s);
+			access.validate();
 			if (!access.getCanRelease())
 				throw securityException("Cannot release Online Event Signup");
 			

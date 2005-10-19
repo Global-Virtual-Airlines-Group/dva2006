@@ -67,6 +67,9 @@ public class EventAssignCommand extends AbstractCommand {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			SetAssignment awdao = new SetAssignment(con);
 			
+			// Start the transaction
+			ctx.startTX();
+			
 			// Get the signups for this event
 			for (Iterator i = e.getSignups().iterator(); i.hasNext(); ) {
 				Signup s = (Signup) i.next();
@@ -113,16 +116,16 @@ public class EventAssignCommand extends AbstractCommand {
 				// Write the Flight Report to the proper database
 				fwdao.write(fr, usrData.getDB());
 				mctxt.addData("pirep", fr);
-				
-				// Add the Assignment to the proper database
-				ai.addFlight(fr);
-				e.addAssignment(ai);
 			}
+			
+			// Commit the transaction
+			ctx.commitTX();
 			
 			// Save the event in the request
 			ctx.setAttribute("event", e, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
