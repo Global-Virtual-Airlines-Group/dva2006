@@ -86,7 +86,7 @@ return true;
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
+ <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
 <el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
 </tr>
 </c:if>
