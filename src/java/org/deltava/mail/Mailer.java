@@ -150,6 +150,7 @@ public class Mailer extends Thread {
     * &quot;recipient&quot;.
     */
    public void run() {
+      log.info("Starting");
 
       // If we're in test mode, send back to the sender only
       boolean isTest = SystemData.getBoolean("smtp.testMode");
@@ -235,5 +236,7 @@ public class Mailer extends Thread {
             log.error("Error sending email to " + addr.getName(), e);
          }
       }
+      
+      log.info("Completed");
    }
 }
