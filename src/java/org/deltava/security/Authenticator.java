@@ -45,14 +45,33 @@ public interface Authenticator extends java.io.Serializable {
      * @throws SecurityException if an error occurs
      */
     public void updatePassword(String directoryName, String pwd) throws SecurityException;
-    
+
     /**
      * Adds a user to the Directory.
      * @param directoryName the fully-qualified directory name
      * @param pwd the user's password
      * @throws SecurityException if an error occurs
+     * @see Authenticator#addUser(String, String, String)
      */
     public void addUser(String directoryName, String pwd) throws SecurityException;
+    
+    /**
+     * Adds a user to the Directory.
+     * @param directoryName the fully-qualified directory name
+     * @param pwd the user's password
+     * @param userID an alias for the user
+     * @throws SecurityException if an error occurs
+     * @see Authenticator#addUser(String, String)
+     */
+    public void addUser(String directoryName, String pwd, String userID) throws SecurityException;
+    
+    /**
+     * Renames a user in the Directory.
+     * @param oldName the old fully-qualified directory name
+     * @param newName the new fully-qualified directory 
+     * @throws SecurityException if an error occurs
+     */
+    public void rename(String oldName, String newName) throws SecurityException;
     
     /**
      * Removes a user from the Directory.

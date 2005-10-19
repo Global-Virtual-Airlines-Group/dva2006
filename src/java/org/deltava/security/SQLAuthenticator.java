@@ -129,26 +129,39 @@ public class SQLAuthenticator implements Authenticator {
 	}
 
 	/**
+	 * Adds a user to the Directory. 
+	 * @param dN the User's fully-qualified directory Name
+	 * @param pwd the User's password
+	 * @throws SecurityException if a JDBC error occurs
+	 * @see SQLAuthenticator#addUser(String, String, String)
+	 */
+	public void addUser(String dN, String pwd) throws SecurityException {
+	   addUser(dN, pwd, null);
+	}
+	
+	/**
 	 * Adds a user to the Directory. If a database cryptographic function is set, it is applied to the password within
 	 * the statement. <i>This may result in credential data being passed over the connection to the JDBC data source,
 	 * depending on the driver implementation. </i>
 	 * @param dN the User's fully-qualified directory Name
 	 * @param pwd the User's password
+	 * @param userID an alias for the User, or null if none
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void addUser(String dN, String pwd) throws SecurityException {
+	public void addUser(String dN, String pwd, String userID) throws SecurityException {
 		log.debug("Adding user " + dN + " to Directory");
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("INSERT INTO AUTH (USER, PWD) VALUES (?, ");
+		StringBuffer sqlBuf = new StringBuffer("INSERT INTO AUTH (USER, PWD, ALIAS) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
-		sqlBuf.append("(?))");
+		sqlBuf.append("(?), ?)");
 
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, pwd);
 			ps.setString(2, dN);
+			ps.setString(3, userID);
 
 			// Update the directory
 			ps.executeUpdate();
@@ -217,6 +230,37 @@ public class SQLAuthenticator implements Authenticator {
 		} catch (SQLException se) {
 			log.warn(dN + " user removal FAILURE - " + se.getMessage());
 			SecurityException e = new SecurityException("User removal failure for " + dN);
+			e.initCause(se);
+			throw e;
+		}
+	}
+	
+	/**
+    * Renames a user in the Directory.
+    * @param oldName the old fully-qualified directory name
+    * @param newName the new fully-qualified directory 
+    * @throws SecurityException if an error occurs
+    */
+	public void rename(String oldName, String newName) throws SecurityException {
+	   log.debug("Renaming user " + oldName + " to " + newName);
+		if (!contains(oldName))
+			throw new SecurityException(oldName + " not found");
+		
+		try {
+		   Connection c = getConnection();
+		   PreparedStatement ps = c.prepareStatement("UPDATE AUTH SET USER=? WHERE (USER=?)");
+		   ps.setString(1, newName);
+		   ps.setString(2, oldName);
+		   
+			// Execute the update
+			ps.executeUpdate();
+
+			// Clean up
+			ps.close();
+			c.close();
+		} catch (SQLException se) {
+		   log.warn(oldName + " user removal FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("User rename failure for " + oldName);
 			e.initCause(se);
 			throw e;
 		}
