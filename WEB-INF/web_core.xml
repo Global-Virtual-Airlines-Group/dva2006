@@ -160,6 +160,11 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
         <servlet-name>fleetLibrary</servlet-name>
         <url-pattern>/library/*</url-pattern>
     </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>fleetLibrary</servlet-name>
+        <url-pattern>/usrlibrary/*</url-pattern>
+    </servlet-mapping>
 
 	<servlet-mapping>
 		<servlet-name>flightPlan</servlet-name>
