@@ -212,10 +212,10 @@ public class GetACARSLog extends GetACARSData {
     */
    public List getUnreportedFlights(int cutoff) throws DAOException {
      try {
-        prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN ACARS_PIREPS APR ON "
-              + "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (APR.ACARS_ID IS NULL) "
-              + "AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
-        _ps.setInt(1, cutoff);
+        prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
+              + "WHERE (F.PIREP=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
+        _ps.setBoolean(1, false);
+        _ps.setInt(2, cutoff);
         return executeFlightInfo();
      } catch (SQLException se) {
         throw new DAOException(se);
