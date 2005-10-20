@@ -64,6 +64,22 @@ if (secondsLeft <= 0) {
 window.setTimeout('void showRemaining(' + interval + ')', interval * 1000);
 return true;
 }
+
+function saveAnswer(qNum, id)
+{
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+// Get the exam answer
+var txtbox = getElement('A' + qNum);
+if (txtbox) {
+	xmlreq.send('answer=' + txtbox.value);
+	window.status = 'Saved answer to Question #' + qNum;
+}
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -99,7 +115,7 @@ return true;
 <!-- Answer# ${q.number} -->
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
- <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.Number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
 </tr>
 </c:forEach>
 </el:table>
