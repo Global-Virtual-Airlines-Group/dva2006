@@ -360,7 +360,7 @@
 		<attribute>
 			<name>onBlur</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	
@@ -415,6 +415,11 @@
 			<name>wrap</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>onBlur</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
 	
