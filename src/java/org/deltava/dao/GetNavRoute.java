@@ -5,8 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.GeoLocation;
+
 import org.deltava.beans.navdata.*;
 
+import org.deltava.util.GeoUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -241,7 +243,7 @@ public class GetNavRoute extends GetNavData {
 						String awp = (String) i.next();
 						NavigationDataBean nd = ndMap.get(awp, lastPosition);
 						if (nd != null) {
-							routePoints.add(nd);
+						   routePoints.add(nd);
 							lastPosition = nd;
 						}
 					}
@@ -256,8 +258,20 @@ public class GetNavRoute extends GetNavData {
 			}
 		}
 		
+		// Get the points, and the start/distance
+		LinkedList points = new LinkedList(routePoints);
+		GeoLocation lastP = (GeoLocation) points.getFirst();
+		int distance = GeoUtils.distance(lastP, (GeoLocation) points.getLast());
+
+		// Add a check to ensure that this point isn't crazily out of the way
+		for (Iterator i = points.iterator(); i.hasNext(); ) {
+		   GeoLocation gl = (GeoLocation) i.next();
+		   if (GeoUtils.distance(lastP, gl) > distance)
+		      i.remove();
+		}
+		
 		// Add to the cache and return the waypoints
-		CacheableRoute cr = new CacheableRoute(route, new LinkedList(routePoints));
+		CacheableRoute cr = new CacheableRoute(route, points);
 		_cache.add(cr);
 		return cr.getWaypoints();
 	}

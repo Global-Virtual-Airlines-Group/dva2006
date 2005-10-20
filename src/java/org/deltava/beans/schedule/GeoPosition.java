@@ -165,10 +165,13 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	/**
 	 * Calculates the distance between two GeoPositions.
 	 * @param gp2 the other position
-	 * @return The distance in natuical miles between the two positions
-	 * @throws NullPointerException if gp2 is null
+	 * @return The distance in natuical miles between the two positions, or -1 if gp2 is null
 	 */
 	public int distanceTo(GeoLocation gp2) {
+	   
+	   // Do null check
+	   if (gp2 == null)
+	      return -1;
 
 		// Convert the latitude to radians
 		double lat1 = Math.toRadians(getLatitude());

@@ -3,6 +3,7 @@ package org.deltava.util;
 
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
@@ -45,5 +46,17 @@ public class GeoUtils {
 		// Start looping
 		recurseMidPoint(start, end, results, granularity);
 		return results;
+	}
+	
+	/**
+	 * Calculates the distance between two points.
+	 * @param start the start position
+	 * @param end the end position
+	 * @return the distance between the two points, in miles
+	 * @see GeoPosition#distanceTo(GeoLocation)
+	 */
+	public static int distance(GeoLocation start, GeoLocation end) {
+	   GeoPosition gp = new GeoPosition(start);
+	   return gp.distanceTo(end);
 	}
 }
