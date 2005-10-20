@@ -410,7 +410,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @throws NullPointerException if name is null
      */
     public void setFirstName(String name) {
-       _firstName = StringUtils.properCase(name.trim());
+       _firstName = name.trim();
     }
     
     /**
@@ -419,7 +419,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @throws NullPointerException if name is null
      */
     public void setLastName(String name) {
-       _lastName = StringUtils.properCase(name.trim());
+       _lastName = name.trim();
     }
     
     /**
