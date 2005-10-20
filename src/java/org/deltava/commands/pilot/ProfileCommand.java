@@ -345,24 +345,28 @@ public class ProfileCommand extends AbstractFormCommand {
             GetUserData uddao = new GetUserData(con);
             Collection airlines = uddao.getAirlines(true).values();
 
-            // Get the Applicant Read DAO
+            // Get the Applicant Read DAO and search for our applicant record
             GetApplicant adao = new GetApplicant(con);
+            Applicant a = adao.getByPilotID(p.getID());
 
             // Check for unique name
             boolean isUnique = true;
-            
             for (Iterator i = airlines.iterator(); isUnique && i.hasNext();) {
                AirlineInformation info = (AirlineInformation) i.next();
 
                // Check Pilots & applicants
                Set dupeResults = new HashSet(rdao.checkUnique(p2, info.getDB()));
                dupeResults.addAll(adao.checkUnique(p2, info.getDB()));
+               
+               // Remove our entry, or that of our applicant entry
+               dupeResults.remove(new Integer(p.getID()));
+               dupeResults.remove(new Integer(a.getID()));
                isUnique = dupeResults.isEmpty();
             }
 
             // If we're unique, continue the update
             if (isUnique) {
-               String newDN = "cn=" + p.getName() + "," + SystemData.get("security.baseDN");
+               String newDN = "cn=" + p2.getName() + "," + SystemData.get("security.baseDN");
 
                // Create the status update
                StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
@@ -370,7 +374,7 @@ public class ProfileCommand extends AbstractFormCommand {
                upd.setDescription("Renamed to " + p.getName());
                updates.add(upd);
 
-               // Rename the user in the Directory
+               // Rename the user in the Directory if it's not just a case-sensitivity issue
                Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
                auth.rename(p.getDN(), newDN);
                p.setDN(newDN);
