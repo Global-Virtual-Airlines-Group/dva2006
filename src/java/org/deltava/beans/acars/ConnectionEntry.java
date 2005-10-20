@@ -23,6 +23,8 @@ public class ConnectionEntry implements ACARSLogEntry {
    private String _remoteHost;
    private String _remoteAddr;
    
+   private int _clientBuild;
+   
    private int _msgCount;
    private int _infoCount;
    private int _posCount;
@@ -98,6 +100,15 @@ public class ConnectionEntry implements ACARSLogEntry {
    }
    
    /**
+    * Returns the ACARS client build number.
+    * @return the client build number
+    * @see ConnectionEntry#setClientBuild(int)
+    */
+   public int getClientBuild() {
+      return _clientBuild;
+   }
+   
+   /**
     * Returns the number of text messages sent by this connection. 
     * @return the number of messages
     * @see ConnectionEntry#setMessageCount(int)
@@ -170,6 +181,15 @@ public class ConnectionEntry implements ACARSLogEntry {
     */
    public void setRemoteHost(String host) {
       _remoteHost = host;
+   }
+   
+   /**
+    * Updates the ACARS client build number.
+    * @param ver the build number
+    * @see ConnectionEntry#getClientBuild()
+    */
+   public void setClientBuild(int ver) {
+      _clientBuild = ver;
    }
    
    /**

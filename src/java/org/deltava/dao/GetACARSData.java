@@ -178,9 +178,9 @@ public class GetACARSData extends DAO {
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 	   try {
 	      prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-               + "COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C LEFT JOIN "
-         		+ "acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) LEFT JOIN "
-         		+ "acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
+               + "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C "
+               + "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) "
+               + "LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
 	      _ps.setLong(1, conID);
 	      setQueryMax(1);
 	      
@@ -235,7 +235,7 @@ public class GetACARSData extends DAO {
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
 	   ResultSetMetaData md = rs.getMetaData();
-	   boolean hasMessageCounts = (md.getColumnCount() > 5);
+	   boolean hasMessageCounts = (md.getColumnCount() > 6);
 	   
 	   // Iterate through the results
 	   List results = new ArrayList();
@@ -245,10 +245,11 @@ public class GetACARSData extends DAO {
 	      entry.setStartTime(rs.getTimestamp(3));
 	      entry.setRemoteAddr(rs.getString(4));
 	      entry.setRemoteHost(rs.getString(5));
+	      entry.setClientBuild(rs.getInt(6));
 	      if (hasMessageCounts) {
-	         entry.setFlightInfoCount(rs.getInt(6));
-	         entry.setMessageCount(rs.getInt(7));
-	         entry.setPositionCount(rs.getInt(8));
+	         entry.setFlightInfoCount(rs.getInt(7));
+	         entry.setMessageCount(rs.getInt(8));
+	         entry.setPositionCount(rs.getInt(9));
 	      }
 	      
 	      // Add to results
