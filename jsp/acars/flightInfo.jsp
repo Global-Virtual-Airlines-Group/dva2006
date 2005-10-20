@@ -21,8 +21,8 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -32,7 +32,9 @@
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data" colspan="3">${pilot.rank} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
+ <td class="data">${pilot.rank} <span class="pri bld">${pilot.name}</span> <span class="sec">(${pilot.pilotCode})</span></td>
+ <td class="label">ACARS Client Build</td>
+ <td class="data">Build <fmt:int value="${conInfo.clientBuild}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
