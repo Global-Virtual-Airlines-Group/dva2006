@@ -28,8 +28,8 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -76,8 +76,9 @@ return true;
  <td width="15%">DATE/TIME</td>
  <td width="10%">PILOT CODE</td>
  <td width="20%">PILOT NAME</td>
- <td width="6%">TEXT</td>
- <td width="6%">INFO</td>
+ <td width="5%">BUILD</td>
+ <td width="5%">TEXT</td>
+ <td width="5%">INFO</td>
  <td width="8%">POS</td>
  <td>HOST NAME</td>
 </tr>
@@ -91,6 +92,7 @@ return true;
  <td><fmt:date date="${entry.startTime}" /></td>
  <td class="sec bld">${pilot.pilotCode}</td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td class="sec small bld"><fmt:int value="${entry.clientBuild}" /></td>
  <td><fmt:int value="${entry.messageCount}" /></td>
  <td><fmt:int value="${entry.flightInfoCount}" /></td>
  <td><fmt:int value="${entry.positionCount}" /></td>
@@ -100,7 +102,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="9"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
 </c:when>
