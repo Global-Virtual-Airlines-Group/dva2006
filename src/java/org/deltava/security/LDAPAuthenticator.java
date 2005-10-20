@@ -223,6 +223,10 @@ public class LDAPAuthenticator implements Authenticator {
 	   log.debug("Renaming user " + oldName + " to " + newName);
 		if (!contains(oldName))
 			throw new SecurityException(oldName + " not found");
+		
+		// Do nothing if we are not doing a case-sensitive change
+		if (oldName.equalsIgnoreCase(newName))
+		   return;
 
 		// Bind to the Directory and rename
 		try {
