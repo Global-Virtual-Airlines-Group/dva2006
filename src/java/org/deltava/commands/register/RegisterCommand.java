@@ -67,7 +67,8 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Load the data from the request
-		Applicant a = new Applicant(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
+		Applicant a = new Applicant(StringUtils.properCase(ctx.getParameter("firstName")),
+		      StringUtils.properCase(ctx.getParameter("lastName")));
 		a.setStatus(Applicant.PENDING);
 		a.setEmail(ctx.getParameter("email"));
 		a.setLocation(ctx.getParameter("location"));
