@@ -92,6 +92,14 @@ public class TextboxTag extends FormElementTag {
     }
     
     /**
+     * Sets code to execute on this textbox's JavaScript onBlur() event.
+     * @param jsCode the JavaScript code
+     */
+    public void setOnBlur(String jsCode) {
+       _attrs.put("onblur", jsCode);
+    }
+    
+    /**
      * Updates the value for this textarea. This is unsupported since the value of textareas is contained within
      * their body.
      * @throws UnsupportedOperationException always

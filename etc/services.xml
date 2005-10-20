@@ -4,20 +4,22 @@
 	<service id="acars_map" class="org.deltava.service.ACARSMapService" />
 	<service id="acars_progress" class="org.deltava.service.ACARSMapProgressService" />
 	<service id="acars_pirep" class="org.deltava.service.ACARSFlightDataService" />
-	
+
 	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
 	<service id="notams_rss" class="org.deltava.service.NoticeSyndicationService" />
 	<service id="news_rss" class="org.deltava.service.NewsSyndicationService" />
-	
+
 	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />
 	<service id="fleet_sysinf" class="org.deltava.service.SystemInfoService" />
 	<service id="fleetlib" class="org.deltava.service.InstallerInfoService" />
-	
+
 	<service id="airports" class="org.deltava.service.AirportListService" />
 	<service id="schedule" class="org.deltava.service.ScheduleSearchService" />
-	
+
 	<service id="servinfo" class="org.deltava.service.ServInfoDataService" />
 	<service id="si_route" class="org.deltava.service.ServInfoRouteService" />
 	<service id="route" class="org.deltava.service.RouteMapService" />
+
+	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 </services>

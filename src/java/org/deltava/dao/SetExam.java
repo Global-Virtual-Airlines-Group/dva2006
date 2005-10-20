@@ -188,6 +188,24 @@ public class SetExam extends DAO {
    }
    
    /**
+    * Saves a single answer to an examination. <i>This is used by a web service</i>
+    * @param examID the Examination database ID
+    * @param q the Question bean
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void answer(int examID, Question q) throws DAOException {
+      try {
+         prepareStatement("UPDATE EXAMQUESTIONS SET ANSWER=? WHERE (EXAM_ID=?) AND (QUESTION_NO=?)");
+         _ps.setString(1, q.getAnswer());
+         _ps.setInt(2, examID);
+         _ps.setInt(3, q.getNumber());
+         executeUpdate(0);
+      } catch (SQLException se) {
+         throw new DAOException(se);
+      }
+   }
+   
+   /**
     * Deletes a Pilot Examination or Check Ride from the database.
     * @param t the Examination/Checkride
     * @throws DAOException if a JDBC error occurs
