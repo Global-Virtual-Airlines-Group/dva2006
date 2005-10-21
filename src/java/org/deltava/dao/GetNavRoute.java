@@ -19,22 +19,22 @@ import org.deltava.util.cache.Cacheable;
  */
 
 public class GetNavRoute extends GetNavData {
-	
+
 	private class CacheableRoute implements Cacheable {
-		
+
 		private String _route;
 		private LinkedList _waypoints;
-		
+
 		CacheableRoute(String route, LinkedList waypoints) {
 			super();
 			_route = route;
 			_waypoints = waypoints;
 		}
-		
+
 		public LinkedList getWaypoints() {
 			return _waypoints;
 		}
-		
+
 		public Object cacheKey() {
 			return _route;
 		}
@@ -55,7 +55,7 @@ public class GetNavRoute extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public TerminalRoute getRoute(String name) throws DAOException {
-		
+
 		// Chceck the cache
 		TerminalRoute result = (TerminalRoute) _cache.get(name);
 		if (result != null)
@@ -78,7 +78,7 @@ public class GetNavRoute extends GetNavData {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
 		// Add to the cache
 		_cache.add(result);
 		return result;
@@ -94,7 +94,7 @@ public class GetNavRoute extends GetNavData {
 	 * @see TerminalRoute#STAR
 	 */
 	public List getRoutes(String code, int type) throws DAOException {
-		
+
 		List results = null;
 		try {
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND ((TYPE & ?) != 0) ORDER BY "
@@ -105,12 +105,12 @@ public class GetNavRoute extends GetNavData {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
 		// Add to the cache and return
 		_cache.addAll(results);
 		return results;
 	}
-	
+
 	/**
 	 * Loads an Airway definition from the database.
 	 * @param name the airway code
@@ -118,7 +118,7 @@ public class GetNavRoute extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Airway getAirway(String name) throws DAOException {
-		
+
 		// Check the cache
 		Cacheable result = _cache.get(name);
 		if (result instanceof Airway) {
@@ -126,7 +126,7 @@ public class GetNavRoute extends GetNavData {
 		} else if (result != null) {
 			result = null;
 		}
-		
+
 		try {
 			prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
 			_ps.setString(1, name.toUpperCase());
@@ -145,12 +145,12 @@ public class GetNavRoute extends GetNavData {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
 		// Add to cache and return
 		_cache.add(result);
 		return (Airway) result;
 	}
-	
+
 	/**
 	 * Loads multiple Airway definitions from the database.
 	 * @param names a Collection of airway names
@@ -158,49 +158,49 @@ public class GetNavRoute extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map getAirways(Collection names) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuffer buf = new StringBuffer("SELECT * FROM common.AIRWAYS WHERE (NAME IN (");
-		for (Iterator i = names.iterator(); i.hasNext(); ) {
+		for (Iterator i = names.iterator(); i.hasNext();) {
 			String code = (String) i.next();
 			buf.append(code.toUpperCase());
 			if (i.hasNext())
 				buf.append(',');
 		}
-		
+
 		// Close the SQL statement
 		buf.append("))");
-		
+
 		Map results = new HashMap();
 		try {
 			prepareStatement(buf.toString());
-			
+
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				Airway a = new Airway(rs.getString(1), rs.getString(2));
 				results.put(a.getCode(), a);
 			}
-			
+
 			// Clean up
 			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
 		// Return results
 		return results;
 	}
-	
+
 	/**
-	 * Returns all waypoints for a route, expanding SIDs/STARs and Airways. 
+	 * Returns all waypoints for a route, expanding SIDs/STARs and Airways.
 	 * @param route the space-delimited route
 	 * @return an ordered List of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public LinkedList getRouteWaypoints(String route) throws DAOException {
-		
+
 		// Check the cache
 		Cacheable obj = _cache.get(route);
 		if (obj instanceof CacheableRoute) {
@@ -209,7 +209,7 @@ public class GetNavRoute extends GetNavData {
 		} else if (obj != null) {
 			obj = null;
 		}
-		
+
 		// Get the route text
 		List tkns = Collections.list(new StringTokenizer(route, " "));
 		GeoLocation lastPosition = null;
@@ -243,7 +243,7 @@ public class GetNavRoute extends GetNavData {
 						String awp = (String) i.next();
 						NavigationDataBean nd = ndMap.get(awp, lastPosition);
 						if (nd != null) {
-						   routePoints.add(nd);
+							routePoints.add(nd);
 							lastPosition = nd;
 						}
 					}
@@ -257,25 +257,27 @@ public class GetNavRoute extends GetNavData {
 				}
 			}
 		}
-		
+
 		// Get the points, and the start/distance
 		LinkedList points = new LinkedList(routePoints);
-		GeoLocation lastP = (GeoLocation) points.getFirst();
-		int distance = GeoUtils.distance(lastP, (GeoLocation) points.getLast());
+		if (points.size() > 2) {
+			GeoLocation lastP = (GeoLocation) points.getFirst();
+			int distance = GeoUtils.distance(lastP, (GeoLocation) points.getLast());
 
-		// Add a check to ensure that this point isn't crazily out of the way
-		for (Iterator i = points.iterator(); i.hasNext(); ) {
-		   GeoLocation gl = (GeoLocation) i.next();
-		   if (GeoUtils.distance(lastP, gl) > distance)
-		      i.remove();
+			// Add a check to ensure that this point isn't crazily out of the way
+			for (Iterator i = points.iterator(); i.hasNext();) {
+				GeoLocation gl = (GeoLocation) i.next();
+				if (GeoUtils.distance(lastP, gl) > distance)
+					i.remove();
+			}
 		}
-		
+
 		// Add to the cache and return the waypoints
 		CacheableRoute cr = new CacheableRoute(route, points);
 		_cache.add(cr);
 		return cr.getWaypoints();
 	}
-	
+
 	/**
 	 * Helper method to iterate through a SID_STAR result set.
 	 */
