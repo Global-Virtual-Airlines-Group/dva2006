@@ -4,6 +4,8 @@ package org.deltava.beans.acars;
 import java.util.Date;
 
 import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.ViewEntry;
+
 import org.deltava.beans.schedule.Airport;
 
 /**
@@ -13,7 +15,7 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntry {
+public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntry, ViewEntry {
 
    private long _conID;
    private int _pilotID;
@@ -33,6 +35,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    
    private int _fsVersion;
    private boolean _offline;
+   private boolean _hasPIREP;
    
    /**
     * Creates a new Flight Information record.
@@ -170,6 +173,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    }
    
    /**
+    * Returns if this flight has an associated Flight Report.
+    * @return TRUE if a Flight Report was filed, otherwise FALSE
+    * @see FlightInfo#setHasPIREP(boolean)
+    */
+   public boolean getHasPIREP() {
+	   return _hasPIREP;
+   }
+   
+   /**
     * Updates the ACARS Connection ID used for this flight.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is zero or negative
@@ -202,6 +214,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public void setOffline(boolean offline) {
       _offline = offline;
+   }
+   
+   /**
+    * Updates wether this flight has an associated Flight Report.
+    * @param hasPIREP TRUE if a Flight Report was filed, otherwise FALSE
+    * @see FlightInfo#getHasPIREP()
+    */
+   public void setHasPIREP(boolean hasPIREP) {
+	   _hasPIREP = hasPIREP;
    }
    
    /**
@@ -310,5 +331,13 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    public int compareTo(Object o2) {
       FlightInfo i2 = (FlightInfo) o2;
       return _startTime.compareTo(i2.getStartTime());
+   }
+   
+   /**
+    * Displays the CSS class name for this table row.
+    * @return the CSS class name
+    */
+   public String getRowClassName() {
+	   return ((_endTime != null) && !_hasPIREP) ? "warn" : null;
    }
 }
