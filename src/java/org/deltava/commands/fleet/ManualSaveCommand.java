@@ -59,7 +59,7 @@ public class ManualSaveCommand extends AbstractCommand {
 
 			// Get the DAO and the Library entry
 			GetLibrary dao = new GetLibrary(con);
-			Manual entry = dao.getManual(fName);
+			Manual entry = dao.getManual(fName, SystemData.get("airline.db"));
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);

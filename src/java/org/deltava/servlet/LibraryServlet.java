@@ -1,6 +1,8 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
+import java.util.*;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
@@ -8,9 +10,9 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.fleet.*;
-import org.deltava.beans.system.VersionInfo;
+import org.deltava.beans.system.*;
 
-import org.deltava.commands.CommandSecurityException; 
+import org.deltava.commands.CommandSecurityException;
 
 import org.deltava.jdbc.*;
 import org.deltava.dao.*;
@@ -19,6 +21,7 @@ import org.deltava.security.SecurityContext;
 import org.deltava.security.command.FleetEntryAccessControl;
 
 import org.deltava.util.URLParser;
+import org.deltava.util.system.SystemData;
 
 /**
  * A servlet to serve Fleet/Document/File Library files.
@@ -57,19 +60,27 @@ public class LibraryServlet extends GenericServlet {
       try {
          c = jdbcPool.getConnection();
 
+         // Get the airline data
+         Map airlines = (Map) SystemData.getObject("apps");
+
          // Get the Library DAO
          GetLibrary rdao = new GetLibrary(c);
-         if ("fleet".equals(url.getLastPath())) {
-            entry = rdao.getInstaller(url.getFileName());
-         } else if ("library".equals(url.getLastPath())) {
-            entry = rdao.getManual(url.getFileName());
-         } else if ("usrlibrary".equals(url.getLastPath())) {
+         if (!"usrlibrary".equals(url.getLastPath())) {
+            for (Iterator i = airlines.values().iterator(); (entry == null) && i.hasNext();) {
+               AirlineInformation aInfo = (AirlineInformation) i.next();
+               if ("fleet".equals(url.getLastPath())) {
+                  entry = rdao.getInstaller(url.getFileName(), aInfo.getDB());
+               } else if ("library".equals(url.getLastPath())) {
+                  entry = rdao.getManual(url.getFileName(), aInfo.getDB());
+               }
+            }
+         } else {
             entry = rdao.getFile(url.getFileName());
          }
-         
+
          // Check if the file exists
          if (entry == null)
-        	 throw new CommandSecurityException("Cannot find " + url.getFileName(), "imageservlet");
+            throw new CommandSecurityException("Cannot find " + url.getFileName(), "imageservlet");
          else if (!entry.file().exists())
             throw new CommandSecurityException("Cannot find " + entry.file().getAbsolutePath(), "imageservlet");
 
@@ -94,7 +105,7 @@ public class LibraryServlet extends GenericServlet {
       } finally {
          jdbcPool.release(c);
       }
-      
+
       // Abort if we got an error
       if (entry == null)
          return;
