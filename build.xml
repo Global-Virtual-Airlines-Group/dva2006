@@ -206,8 +206,14 @@
 		<echo message="Uploading Library Jars" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
-			<fileset dir="lib/deploy" includes="*.jar" />
+			<fileset dir="lib/deploy" includes="mysql*.jar" />
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
+		</ftp>
+		
+		<echo message="Uploading common Library Jars" />
+		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
+		 remotedir="${webapp.ftp.path.common}" action="send" depends="yes" verbose="yes">
+			<fileset dir="lib/deploy" excludes="mysql*.jar" />
 		</ftp>
 		
 		<!-- Upload configuration files to the app server -->
@@ -288,7 +294,7 @@
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
-			<fileset dir="lib/deploy" includes="*.jar">
+			<fileset dir="lib/deploy" includes="*.jar" excludes="mysql*.jar">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
@@ -300,6 +306,12 @@
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="lib/deploy" includes="mysql*.jar">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
