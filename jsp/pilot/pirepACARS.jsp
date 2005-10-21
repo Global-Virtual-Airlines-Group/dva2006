@@ -10,6 +10,12 @@
  <td class="data">${fn:ACARS_ID(pirep)} <a href="acarsData.ws?id=${fn:ACARS_ID(pirep)}">ACARS Data (CSV)</a></td>
 </tr>
 </c:if>
+<c:if test="${!empty conInfo && (conInfo.clientBuild > 0)}">
+<tr>
+ <td class="label">ACARS Client</td>
+ <td class="data">Build <fmt:int value="${conInfo.clientBuild}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Start Time</td>
  <td class="data"><fmt:date className="bld" date="${pirep.startTime}" /></td>
