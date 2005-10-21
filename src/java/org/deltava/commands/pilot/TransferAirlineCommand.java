@@ -145,6 +145,8 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Save the new user
 			newUser.setStatus(Pilot.ACTIVE);
+			newUser.setEquipmentType(ctx.getParameter("eqType"));
+			newUser.setRank(ctx.getParameter("rank"));
 			wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 
 			// Create the second status update
