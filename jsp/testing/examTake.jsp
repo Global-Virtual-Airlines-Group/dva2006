@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>${exam.name} - ${pilot.name}</title>
@@ -73,7 +74,7 @@ xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
 // Get the exam answer
 var txtbox = getElement('A' + qNum);
-if (txtbox) {
+if ((txtbox) && (txtbox.value.length > 1)) {
 	xmlreq.send('answer=' + txtbox.value);
 	window.status = 'Saved answer to Question #' + qNum;
 }
@@ -115,7 +116,7 @@ return true;
 <!-- Answer# ${q.number} -->
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
- <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.Number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
 </tr>
 </c:forEach>
 </el:table>
