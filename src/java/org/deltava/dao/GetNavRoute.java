@@ -223,14 +223,7 @@ public class GetNavRoute extends GetNavData {
 				TerminalRoute tr = getRoute(wp); // Load the SID/STAR
 				if (tr != null) {
 					NavigationDataMap ndMap = getByID(tr.getWaypoints());
-					for (Iterator i = tr.getWaypoints().iterator(); i.hasNext();) {
-						String trwp = (String) i.next();
-						NavigationDataBean nd = ndMap.get(trwp, lastPosition);
-						if (nd != null) {
-							routePoints.add(nd);
-							lastPosition = nd;
-						}
-					}
+					routePoints.addAll(tr.getWaypoints(ndMap));
 				}
 			} else {
 				Airway aw = getAirway(wp); // Check if we're referencing an airway

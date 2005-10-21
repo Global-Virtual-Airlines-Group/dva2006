@@ -207,6 +207,11 @@ Installer log entries.</td>
 <fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="routeplot">Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, 
+including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
  'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you

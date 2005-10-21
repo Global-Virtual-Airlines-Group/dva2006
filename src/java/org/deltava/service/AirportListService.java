@@ -32,6 +32,13 @@ public class AirportListService extends WebDataService {
       public boolean accept(Airport a);
    }
    
+   private class NonFilter implements AirportFilter {
+      
+      public boolean accept(Airport a) {
+         return true;
+      }
+   }
+   
    private class AirlineFilter implements AirportFilter {
       
       private Airline _a;
@@ -75,7 +82,11 @@ public class AirportListService extends WebDataService {
       // Figure out what kind of search we are doing
       AirportFilter filter = null;
       if (ctx.getParameter("airline") != null) {
-         filter = new AirlineFilter(SystemData.getAirline(ctx.getParameter("airline").toUpperCase()));
+         if ("all".equals(ctx.getParameter("airline"))) {
+            filter = new NonFilter();
+         } else {
+            filter = new AirlineFilter(SystemData.getAirline(ctx.getParameter("airline").toUpperCase()));
+         }
       } else if (ctx.getParameter("code") != null) {
          // Check if we are searching origin/departure
          boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();

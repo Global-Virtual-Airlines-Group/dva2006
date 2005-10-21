@@ -3,6 +3,8 @@ package org.deltava.beans.navdata;
 
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -57,8 +59,8 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	}
 
 	/**
-	 * Returns the waypoints for this Airway. <i>The returned collection is mutable.</i>
-	 * @return a List of waypoint codes
+	 * Returns the waypoint <i>codes</i> for this Airway. <i>The returned collection is mutable.</i>
+	 * @return an ordered Collection of waypoint codes
 	 * @see Airway#getRoute()
 	 * @see Airway#addWaypoint(String)
 	 * @see Airway#setRoute(String)
@@ -66,9 +68,31 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	public Collection getWaypoints() {
 		return new LinkedHashSet(_waypoints);
 	}
+	
+	/**
+	 * Returns the waypoint <i>beans</i> for this Airway. <i>The returned collection is mutable.</i>
+	 * @param ndmap the NavigationDataMap containing the beans
+	 * @return an ordered Collection of beans
+	 */
+	public Collection getWaypoints(NavigationDataMap ndmap) {
+	   GeoLocation lastPosition = null;
+	   
+	   // Iterate through the waypoint codes
+	   Collection results = new LinkedHashSet();
+		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
+			String trwp = (String) i.next();
+			NavigationDataBean nd = ndmap.get(trwp, lastPosition);
+			if (nd != null) {
+				results.add(nd);
+				lastPosition = nd;
+			}
+		}
+		
+		return results;
+	}
 
 	/**
-	 * Returns a subset of waypoints for this Airway between two waypoints.
+	 * Returns a subset of waypoint <i>codes</i> for this Airway between two waypoints.
 	 * @param start the starting waypoint code
 	 * @param end the ending waypoint code
 	 * @return a List of waypoint codes
