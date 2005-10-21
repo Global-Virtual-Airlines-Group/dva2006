@@ -40,8 +40,9 @@
  <td class="label">Submitted on</td>
  <td class="data"><fmt:date date="${exam.submittedOn}" />
 <c:if test="${exam.submittedOn > exam.expiryDate}"><span class="error caps">
-<c:if test="${lateH > 0}">${lateH} hours, </c:if><c:if test="${lateM > 0}">${lateM} minutes, </c:if>
-<c:if test="${lateS > 0}">${lateS} seconds</c:if> late</span>
+<c:if test="${lateH > 0}"><fmt:int value="${lateH}" /> hours, </c:if>
+<c:if test="${lateM > 0}"><fmt:int value="${lateM}" /> minutes, </c:if>
+<c:if test="${lateS > 0}"><fmt:int value="${lateS}" /> seconds</c:if> late</span>
 </c:if>
  </td>
 </tr>
