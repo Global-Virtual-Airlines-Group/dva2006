@@ -220,13 +220,14 @@ public class LDAPAuthenticator implements Authenticator {
     * @throws SecurityException if an error occurs
     */
 	public void rename(String oldName, String newName) throws SecurityException {
-	   log.debug("Renaming user " + oldName + " to " + newName);
-		if (!contains(oldName))
-			throw new SecurityException(oldName + " not found");
-		
+
 		// Do nothing if we are not doing a case-sensitive change
 		if (oldName.equalsIgnoreCase(newName))
 		   return;
+		
+	   log.debug("Renaming user " + oldName + " to " + newName);
+		if (!contains(oldName))
+			throw new SecurityException(oldName + " not found");
 
 		// Bind to the Directory and rename
 		try {
