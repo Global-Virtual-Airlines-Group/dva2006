@@ -14,27 +14,26 @@
 <content:css name="form" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
-function sortBy(combo)
+function updateSort()
 {
-var sortType = combo.options[combo.selectedIndex].value;
-self.location = '/flightstats.do?sortType=' + sortType;
+document.forms[0].submit();
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="flightstats.do" method="GET" validate="return false">
+<el:form action="flightstats.do" method="post" validate="return true">
 <view:table className="view" pad="default" space="default" cmd="flightstats">
 <tr class="title">
- <td colspan="5" class="left">FLIGHT STATISTICS</td>
- <td colspan="2" class="right">SORT BY 
-<el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sortBy(this)" /></td>
+ <td colspan="2" class="left">FLIGHT STATISTICS</td>
+ <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" /></td>
+ SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -51,7 +50,7 @@ return true;
 <!-- Table Statistics Data -->
 <c:set var="entryNumber" value="${viewStart}" scope="request" />
 <c:forEach var="stat" items="${viewContext.results}">
-<tr>
+<view:row entry="${stat}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
@@ -60,7 +59,7 @@ return true;
  <td class="bld"><fmt:int value="${stat.miles}" /></td>
  <td class="sec bld"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /></td>
  <td class="bld"><fmt:int value="${stat.avgMiles}" /></td>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Table Footer Bar -->
