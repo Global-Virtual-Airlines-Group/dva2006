@@ -42,34 +42,9 @@ public class RouteMapService extends WebDataService {
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
-		
-		// Calculate the distance and midpoint by taking the first/last waypoints
-		NavigationDataBean ndf = (NavigationDataBean) routePoints.getFirst();
-		GeoLocation mp = ndf.getPosition().midPoint((GeoLocation) routePoints.getLast());
-		int distance = ndf.getPosition().distanceTo((GeoLocation) routePoints.getLast());
 
-		// Generate the XML document
-		Document doc = new Document();
-		Element re = new Element("wsdata");
-		doc.setRootElement(re);
-		
-		// Save the midpoint
-		Element mpe = new Element("midpoint");
-		mpe.setAttribute("lat", StringUtils.format(mp.getLatitude(), "##0.00000"));
-		mpe.setAttribute("lng", StringUtils.format(mp.getLongitude(), "##0.00000"));
-		mpe.setAttribute("distance", StringUtils.format(distance, "###0"));
-		re.addContent(mpe);
-
-		// Write the entries
-		for (Iterator i = routePoints.iterator(); i.hasNext();) {
-			MapEntry entry = (MapEntry) i.next();
-			Element e = new Element("pos");
-			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
-			e.setAttribute("color", entry.getIconColor());
-			e.addContent(new CDATA(entry.getInfoBox()));
-			re.addContent(e);
-		}
+		// Convert to an XML document
+		Document doc = formatPoints(routePoints);
 		
 		// Dump the XML to the output stream
 		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
@@ -83,5 +58,52 @@ public class RouteMapService extends WebDataService {
 
 		// Return success code
 		return HttpServletResponse.SC_OK;
+	}
+	
+	/**
+	 * Helper method to convert route points into an XML document.
+	 * @param points a List of MapEntry beans
+	 * @return a JDOM XML document
+	 */
+	protected Document formatPoints(List points) {
+	   
+		// Calculate the distance and midpoint by taking the first/last waypoints
+		NavigationDataBean ndf = (NavigationDataBean) points.get(0);
+		GeoLocation mp = ndf.getPosition().midPoint((GeoLocation) points.get(points.size() - 1));
+		int distance = ndf.getPosition().distanceTo((GeoLocation) points.get(points.size() - 1));
+
+		// Generate the XML document
+		Document doc = new Document();
+		Element re = new Element("wsdata");
+		doc.setRootElement(re);
+
+		// Save the midpoint
+		Element mpe = new Element("midpoint");
+		mpe.setAttribute("lat", StringUtils.format(mp.getLatitude(), "##0.00000"));
+		mpe.setAttribute("lng", StringUtils.format(mp.getLongitude(), "##0.00000"));
+		mpe.setAttribute("distance", StringUtils.format(distance, "###0"));
+		re.addContent(mpe);
+
+		// Write the entries
+		for (Iterator i = points.iterator(); i.hasNext();) {
+			MapEntry entry = (MapEntry) i.next();
+			Element e = new Element("pos");
+			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			e.setAttribute("color", entry.getIconColor());
+			e.addContent(new CDATA(entry.getInfoBox()));
+			re.addContent(e);
+		}
+
+		// Return the document
+		return doc;
+	}
+	
+	/**
+	 * Returns if the Web Service invocation is logged.
+	 * @return FALSE
+	 */
+	public boolean isLogged() {
+	   return false;
 	}
 }

@@ -335,13 +335,19 @@
 		<class>org.deltava.commands.schedule.RoutePurgeCommand</class>
 		<roles>Schedule</roles>
 	</command>
-	
+
 	<command id="routeimport">
 		<name>Import Preferred Routes</name>
 		<class>org.deltava.commands.schedule.RouteImportCommand</class>
 		<roles>Schedule</roles>
 	</command>
-	
+
+	<command id="routeplot">
+		<name>Flight Route Plotter</name>
+		<class>org.deltava.commands.schedule.RoutePlotCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="navimport">
 		<name>Import AIRAC data</name>
 		<class>org.deltava.commands.navdata.AIRACImportCommand</class>

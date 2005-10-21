@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Route Plotter</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:pics />
+<content:js name="common" />
+<content:js name="googleMaps" />
+<map:api version="1" />
+<map:vml-ie />
+<content:sysdata var="imgPath" name="path.img" />
+<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
+<script language="JavaScript" type="text/javascript">
+function plotMap()
+{
+// Set map as loading
+var isLoading = getElement("isLoading");
+if (isLoading)
+	isLoading.innerHTML = " - LOADING...";
+	
+// Build the POST data
+var f = document.forms[0];
+var params = new Array();
+if (f.airportD.selectedIndex > 0)
+	params.push('airportD=' + f.airportD.options[f.airportD.selectedIndex].value);
+	
+if (f.airportA.selectedIndex > 0)
+	params.push('airportA=' + f.airportD.options[f.airportA.selectedIndex].value);
+	
+if (f.sid.selectedIndex > 0)
+	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
+	
+if (f.star.selectedIndex > 0)
+	params.push('star=' + f.star.options[f.sid.selectedIndex].value);
+	
+if (f.route.value.length > 0)
+	params.push('route=' + f.route.value);
+
+// Generate an XMLHTTP request
+var xmlreq = GXmlHttp.create();
+xmlreq.open("POST", "routeplot.ws", true);
+
+// Build the update handler	
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	map.clearOverlays();
+	
+	// Draw the markers
+	var positions = new Array();
+	var xmlDoc = xmlreq.responseXML;
+	var waypoints = xmlDoc.documentElement.getElementsByTagName("pos");
+	for (var i = 0; i < waypoints.length; i++) {
+		var wp = waypoints[i];
+		var label = wp.firstChild;
+		var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+		positions.push(p);
+		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
+	} // for
+	
+	// Draw the route
+	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
+
+	// Get the midpoint and center the map
+	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
+	var mpp = mps[0];
+	var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
+	map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+
+	// Load the SID/STAR list
+	var sids = xmlDoc.documentElement.getElementsByTagName("sid");
+	var stars = xmlDoc.documentElement.getElementsByTagName("star");
+	updateRoutes(document.forms[0].sid, sids);
+	updateRoutes(document.forms[0].star, stars);
+		
+	// Focus on the map
+	if (isLoading)
+		isLoading.innerHTML = "";
+
+	return true;
+}
+
+xmlreq.send(params.split('&'));
+return true;
+}
+
+function updateRoutes(combo, elements)
+{
+combo.options.length = elements.length + 1;
+combo.options[0] = new Option("-", "");
+for (var i = 0; i < elements.length; i++) {
+	var e = elements[i];
+	var name = a.getAttribute("name") + " " + a.getAttribute("transition");
+	var rCode = a.getAttribute("code");
+	combo.options[i+1] = new Option(name, rCode);
+} // for
+
+return true;
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<div id="main">
+<el:form action="routeplot.do" method="get" validate="return false">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="4"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
+</tr>
+<tr>
+ <td class="label">Departing from</td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="label">Arriving at</td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" /></td>
+</tr>
+<tr>
+ <td class="label">Standard Departure (SID)</td>
+ <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="label">Terminal Arrival (STAR)</td>
+ <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data" colspan="3"><el:text name="route" size="80" max="192" idx="*" value="" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Route Map</td>
+ <td class="data colspan="3"><map:div ID="googleMap" x="650" y="550" /></td>
+</tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:button ID="UpdateButton" className="BUTTON" onClick="void plotMap()" label="UPDATE ROUTE MAP" /></td>
+</tr>
+</el:table>
+</el:form>
+<br />
+<content:copyright />
+</div>
+<script language="JavaScript" type="text/javascript">
+// Create the map
+var mapdiv = getElement('googleMap');
+map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+map.addControl(new GLargeMapControl());
+map.addControl(new GMapTypeControl());
+map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
+</script>
+</body>
+</html>

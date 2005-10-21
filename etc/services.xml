@@ -20,6 +20,7 @@
 	<service id="servinfo" class="org.deltava.service.ServInfoDataService" />
 	<service id="si_route" class="org.deltava.service.ServInfoRouteService" />
 	<service id="route" class="org.deltava.service.RouteMapService" />
+	<service id="routeplot" class="org.deltava.service.RoutePlotMapService" />
 
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 </services>
