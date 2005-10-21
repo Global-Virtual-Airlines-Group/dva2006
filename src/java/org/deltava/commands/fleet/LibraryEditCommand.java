@@ -12,6 +12,7 @@ import org.deltava.dao.DAOException;
 import org.deltava.security.command.FleetEntryAccessControl;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support editing Fleet/Document Library entries.
@@ -62,9 +63,9 @@ public class LibraryEditCommand extends AbstractCommand {
          // Get the DAO and the library entry
          GetLibrary dao = new GetLibrary(con);
          if (isManual) {
-            entry = dao.getManual(fName);
+            entry = dao.getManual(fName, SystemData.get("airline.db"));
          } else {
-            entry = dao.getInstaller(fName);
+            entry = dao.getInstaller(fName, SystemData.get("airline.db"));
          }
       } catch (DAOException de) {
          throw new CommandException(de);

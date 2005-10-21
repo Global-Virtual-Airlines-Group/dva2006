@@ -52,7 +52,7 @@ public class InstallerSaveCommand extends AbstractCommand {
 
 			// Get the DAO and the Library entry
 			GetLibrary dao = new GetLibrary(con);
-			Installer entry = dao.getInstaller(fName);
+			Installer entry = dao.getInstaller(fName, SystemData.get("airline.db"));
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);

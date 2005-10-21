@@ -80,10 +80,17 @@ public class GetLibrary extends DAO {
 	 * @return a Manual, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Manual getManual(String fName) throws DAOException {
+	public Manual getManual(String fName, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOCS D LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
+	   
 		try {
-			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM DOCS D LEFT JOIN DOWNLOADS L ON "
-					+ "(D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME ORDER BY D.NAME");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
 			setQueryMax(1);
 
@@ -101,10 +108,17 @@ public class GetLibrary extends DAO {
 	 * @return an Installer, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Installer getInstaller(String fName) throws DAOException {
+	public Installer getInstaller(String fName, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".FLEET F LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
+	   
 		try {
-			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FLEET F LEFT JOIN DOWNLOADS L ON "
-					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
 			setQueryMax(1);
 
