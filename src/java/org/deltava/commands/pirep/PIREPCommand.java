@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.FlightInfo;
+import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.CheckRide;
 
@@ -375,10 +375,14 @@ public class PIREPCommand extends AbstractFormCommand {
 							}
 						}
 					}
+					
+					// Get the connectoin data
+					ConnectionEntry ac = ardao.getConnection(info.getConnectionID());
 
 					// Save ACARS info
 					ctx.setAttribute("filedRoute", routeInfo, REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
+					ctx.setAttribute("conInfo", ac, REQUEST);
 				}
 
 				// Get the check ride
