@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class DocumentLibraryCommand extends AbstractCommand {
+public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 	private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
 
@@ -47,14 +47,20 @@ public class DocumentLibraryCommand extends AbstractCommand {
 			Map apps = (Map) SystemData.getObject("apps");
 			for (Iterator i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
-				results.addAll(dao.getManuals(info.getDB()));
+				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
+					results.addAll(0, dao.getManuals(info.getDB()));
+				} else {
+					Collection entries = dao.getManuals(info.getDB());
+					appendDB(entries, info.getDB());
+					results.addAll(entries);
+				}
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Calculate access for adding content
 		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
 		ctx.setAttribute("access", access, REQUEST);
