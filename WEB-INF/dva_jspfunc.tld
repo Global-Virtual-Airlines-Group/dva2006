@@ -107,7 +107,21 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean isOnline(org.deltava.beans.FlightReport)</function-signature>
 	</function>
-	
+
+	<!-- Check if Flight counts towards promotion -->
+	<function>
+		<name>isPromoLeg</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean promoLeg(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
+	<!-- Return what equipment types a Flight counts towards promotion in -->
+	<function>
+		<name>promoEQTypes</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>java.lang.Stirng promoTypes(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Get Online Flight Report network name-->
 	<function>
 		<name>network</name>

@@ -1,8 +1,9 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.functions;
 
-import org.deltava.beans.ACARSFlightReport;
-import org.deltava.beans.FlightReport;
+import java.util.Iterator;
+
+import org.deltava.beans.*;
 
 /**
  * A JSP Function Library to define Flight Report-related functions.
@@ -115,7 +116,26 @@ public class FlightReportFunctions {
      * @return TRUE if the Leg counts towards promotion, otherwise FALSE
      */
     public static boolean promoLeg(FlightReport fr) {
-        return (fr != null) && (fr.getCaptEQType() != null);
+        return (fr != null) && (!fr.getCaptEQType().isEmpty());
+    }
+    
+    /**
+     * Returns the Equipment Programs this Flight counts towards promotion to Captain in. 
+     * @param fr the Flight Report
+     * @return a comma-delimited string of Equipment Program names
+     */
+    public static String promoTypes(FlightReport fr) {
+    	StringBuffer buf = new StringBuffer();
+    	if (fr != null) {
+    		for (Iterator i = fr.getCaptEQType().iterator(); i.hasNext(); ) {
+    			String eqType = (String) i.next();
+    			buf.append(eqType);
+    			if (i.hasNext())
+    				buf.append(',');
+    		}
+    	}
+    	
+    	return buf.toString();
     }
     
     /**

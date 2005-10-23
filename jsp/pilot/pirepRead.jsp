@@ -152,7 +152,7 @@ return true;
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warning bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
-<c:if test="${!empty pirep.captEQType}">
+<c:if test="${fn:isPromoLeg(pirep)}">
 <div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div>
 </c:if>
 <c:if test="${!empty event}">
