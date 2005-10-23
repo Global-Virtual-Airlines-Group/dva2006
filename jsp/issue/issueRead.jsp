@@ -23,6 +23,13 @@ disableButton('EditButton');
 disableButton('CommentButton');
 return true;
 }
+
+function toggleCheckbox()
+{
+var f = document.forms[0];
+f.emailAll.disabled = (!f.emailComment.checked);
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -104,7 +111,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" /></td>
+ <td class="small sec"><el:box name="emailComment" value="true" idx="*" label="Send Comments via E-Mail" checked="true" onChange="void toggleCheckbox()" />
+ <el:box name="emailAll" value="true" idx="*" label="Send Comments to all Participants" checked="false" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -123,6 +131,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </div>
 </body>
