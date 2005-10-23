@@ -9,8 +9,6 @@ import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.CollectionUtils;
-
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
@@ -33,7 +31,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
-		Map pireps = CollectionUtils.createMap(frdao.getByPilot(p.getID(), null), "ID");
+		Collection pireps = frdao.getByPilot(p.getID(), null);
 		frdao.getCaptEQType(pireps);
 
 		// Get the Pilot's equipment program
@@ -42,6 +40,6 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
-		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps.values());
+		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
 	}
 }

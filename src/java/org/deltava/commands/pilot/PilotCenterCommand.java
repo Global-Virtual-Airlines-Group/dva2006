@@ -72,7 +72,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("lastFlight", results.get(0), REQUEST);
 			
 			// Get online hours
-			GetFlightReports prdao = new GetFlightReports(con);
+			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			prdao.getOnlineTotals(p);
 			
 			// Get the schedule size if uncached
@@ -93,6 +93,13 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Save the pilot's equipment program and check if we can get promoted to Captain
 			ctx.setAttribute("eqType", _testHistory.getEquipmentType(), REQUEST);
 			ctx.setAttribute("captPromote", Boolean.valueOf(_testHistory.canPromote(_testHistory.getEquipmentType())), REQUEST);
+			
+			// Count how many legs completed towards Promtion
+			if (Ranks.RANK_FO.equals(p.getRank())) {
+				int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
+				ctx.setAttribute("isFO", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
+			}
 
 			// Check if we are trying to switch equipment types
 			GetTransferRequest txdao = new GetTransferRequest(con);
