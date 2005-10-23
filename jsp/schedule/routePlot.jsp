@@ -12,6 +12,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
 <content:js name="googleMaps" />
 <map:api version="1" />
 <map:vml-ie />
@@ -29,17 +30,21 @@ if (isLoading)
 // Build the POST data
 var f = document.forms[0];
 var params = new Array();
-if (f.airportD.selectedIndex > 0)
+if (f.airportD.selectedIndex > 0) {
 	params.push('airportD=' + f.airportD.options[f.airportD.selectedIndex].value);
+	f.airportDCode.value = f.airportD.options[f.airportD.selectedIndex].value;
+}
 	
-if (f.airportA.selectedIndex > 0)
+if (f.airportA.selectedIndex > 0) {
 	params.push('airportA=' + f.airportD.options[f.airportA.selectedIndex].value);
+	f.airportACode.value = f.airportA.options[f.airportA.selectedIndex].value;
+}
 	
 if (f.sid.selectedIndex > 0)
 	params.push('sid=' + f.sid.options[f.sid.selectedIndex].value);
 	
 if (f.star.selectedIndex > 0)
-	params.push('star=' + f.star.options[f.sid.selectedIndex].value);
+	params.push('star=' + f.star.options[f.star.selectedIndex].value);
 	
 if (f.route.value.length > 0)
 	params.push('route=' + f.route.value);
@@ -47,6 +52,7 @@ if (f.route.value.length > 0)
 // Generate an XMLHTTP request
 var xmlreq = GXmlHttp.create();
 xmlreq.open("POST", "routeplot.ws", true);
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
 // Build the update handler	
 xmlreq.onreadystatechange = function() {
@@ -71,8 +77,10 @@ xmlreq.onreadystatechange = function() {
 	// Get the midpoint and center the map
 	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
 	var mpp = mps[0];
-	var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
-	map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+	if (mpp) {
+		var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
+		map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+	}
 
 	// Load the SID/STAR list
 	var sids = xmlDoc.documentElement.getElementsByTagName("sid");
@@ -87,19 +95,25 @@ xmlreq.onreadystatechange = function() {
 	return true;
 }
 
-xmlreq.send(params.split('&'));
+xmlreq.send(params.join('&'));
 return true;
 }
 
 function updateRoutes(combo, elements)
 {
+// Save the old value
+var oldCode = combo.options[combo.selectedIndex].value;
+
+// Update the combobox choices
 combo.options.length = elements.length + 1;
 combo.options[0] = new Option("-", "");
 for (var i = 0; i < elements.length; i++) {
 	var e = elements[i];
-	var name = a.getAttribute("name") + " " + a.getAttribute("transition");
-	var rCode = a.getAttribute("code");
+	var name = e.getAttribute("name") + "." + e.getAttribute("transition");
+	var rCode = e.getAttribute("code");
 	combo.options[i+1] = new Option(name, rCode);
+	if (oldCode == rCode)
+		combo.selectedIndex = (i+1);
 } // for
 
 return true;
@@ -116,27 +130,33 @@ return true;
 <el:form action="routeplot.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> FLIGHT ROUTE PLOTTER<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" /></td>
+</tr>
+<tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" /></td>
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" />
+ <el:text name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Standard Departure (SID)</td>
  <td class="data"><el:combo name="sid" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
+</tr>
+<tr>
  <td class="label">Terminal Arrival (STAR)</td>
  <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="3"><el:text name="route" size="80" max="192" idx="*" value="" /></td>
+ <td class="data"><el:text name="route" size="80" max="192" idx="*" value="" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data colspan="3"><map:div ID="googleMap" x="650" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
 </tr>
 </el:table>
 

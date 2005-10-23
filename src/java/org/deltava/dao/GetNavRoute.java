@@ -87,7 +87,7 @@ public class GetNavRoute extends GetNavData {
 	/**
 	 * Loads all SIDs/STARs for a particular Airport.
 	 * @param code the Airport ICAO code
-	 * @param type a bit mask to filter SID/STR routes
+	 * @param type the SID/STAR type
 	 * @return a List of TerminalRoutes
 	 * @throws DAOException
 	 * @see TerminalRoute#SID
@@ -97,8 +97,7 @@ public class GetNavRoute extends GetNavData {
 
 		List results = null;
 		try {
-			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND ((TYPE & ?) != 0) ORDER BY "
-					+ "NAME, TRANSITION");
+			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION");
 			_ps.setString(1, code.toUpperCase());
 			_ps.setInt(2, type);
 			results = executeSIDSTAR();
@@ -266,9 +265,12 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		// Add to the cache and return the waypoints
-		CacheableRoute cr = new CacheableRoute(route, points);
-		_cache.add(cr);
-		return cr.getWaypoints();
+		if (tkns.size() > 1) {
+			CacheableRoute cr = new CacheableRoute(route, points);
+			_cache.add(cr);
+		}
+		
+		return points;
 	}
 
 	/**

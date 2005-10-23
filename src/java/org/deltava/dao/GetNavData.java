@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 
 public class GetNavData extends DAO {
 	
-	protected static final Cache _cache = new AgingCache(192);
+	protected static final Cache _cache = new AgingCache(256);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -37,6 +37,8 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public NavigationDataMap get(String code) throws DAOException {
+		if (code == null)
+			return new NavigationDataMap();
 		
 		// Check the cache
 		NavigationDataMap result = (NavigationDataMap) _cache.get(code);
@@ -55,6 +57,25 @@ public class GetNavData extends DAO {
 		result.setCacheKey(code);
 		_cache.add(result);
 		return result;
+	}
+	
+	/**
+	 * Returns an Airport location from the database.
+	 * @param code the airport ICAO code
+	 * @return an AirportLocation bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public AirportLocation getAirport(String code) throws DAOException {
+		
+		// Get all entries with the code
+		NavigationDataMap results = get(code);
+		for (Iterator i = results.getAll().iterator(); i.hasNext(); ) {
+			NavigationDataBean nd = (NavigationDataBean) i.next();
+			if (nd instanceof AirportLocation)
+				return (AirportLocation) nd;
+		}
+		
+		return null;
 	}
 
 	/**
