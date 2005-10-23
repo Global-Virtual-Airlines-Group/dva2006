@@ -265,7 +265,7 @@ public class GetCoolerThreads extends DAO {
          t.setID(rs.getInt(1));
          t.setChannel(rs.getString(3));
          t.setImage(rs.getInt(4));
-         t.setStickyUntil(rs.getTimestamp(5));
+         t.setStickyUntil(expandDate(rs.getDate(5)));
          t.setHidden(rs.getBoolean(6));
          t.setLocked(rs.getBoolean(7));
          t.setStickyInChannelOnly(rs.getBoolean(8));
