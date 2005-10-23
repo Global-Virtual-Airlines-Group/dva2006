@@ -166,6 +166,9 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Update the message context
 			mctxt.addData("oldUser", p);
 			mctxt.addData("newUser", newUser);
+			mctxt.addData("rank", newUser);
+			mctxt.addData("equipmentType", newUser);
+			
 
 			// Save Pilot beans in the request
 			ctx.setAttribute("oldUser", p, REQUEST);
