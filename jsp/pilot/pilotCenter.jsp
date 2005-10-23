@@ -222,12 +222,24 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
 <tr class="title caps">
  <td colspan="2">PILOT TESTING AND PROMOTION</td>
 </tr>
-<c:if test="${captPromote}">
+<c:if test="${isFO}">
 <tr>
  <td class="pri mid bld">Promotion to Captain</td>
+<c:choose>
+<c:when test="${captPromote}"> 
  <td class="data">You are eligible for a promotion to Captain in the <span class="pri bld">${eqType.name}</span>
 program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be
-promoted within the next 24 to 72 hours.</td>
+promoted within the next 24 to 72 hours.</td></c:when>
+<c:when test="${promoteLegs < fn:promoLegs(eqType, 'Captain')}">
+ <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" />
+ Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the
+ rank of Captain in the ${eqType.name} program.</td></c:when>
+<c:when test="${promoteLegs >= fn:promoLegs(eqType, 'Captain')}">
+ <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flights in the
+ <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the rank of Captain
+ in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span>
+ examination in order to be eligible for promotion to Captain</i>.</td></c:when>
+</c:choose>
 </tr>
 </c:if>
 <c:if test="${!empty eqSwitch}">
