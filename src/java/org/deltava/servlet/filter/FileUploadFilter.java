@@ -57,7 +57,7 @@ public class FileUploadFilter implements Filter {
 			   log.warn(ie.getMessage());
 			}
 			
-			Part p = parser.readNextPart();
+			Part p = (parser != null) ? parser.readNextPart() : null;
 			while (p != null) {
 				if (p.isFile()) {
 					FilePart fp = (FilePart) p;
