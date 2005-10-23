@@ -1,6 +1,7 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
@@ -39,8 +40,10 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			
-			// Get the results
-			vc.setResults(dao.getDisposalQueue());
+			// Get the PIREPs and load the promotion type
+			Collection pireps = dao.getDisposalQueue();
+			dao.getCaptEQType(pireps);
+			vc.setResults(pireps);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

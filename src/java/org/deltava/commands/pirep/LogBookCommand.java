@@ -1,5 +1,7 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.pirep;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
@@ -8,10 +10,10 @@ import org.deltava.dao.DAOException;
 import org.deltava.dao.GetPilot;
 import org.deltava.dao.GetFlightReports;
 
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 
 /**
- * Web site command to display a Pilot's flight reports.
+ * A Web Site Command to display a Pilot's flight reports.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -22,6 +24,7 @@ public class LogBookCommand extends AbstractViewCommand {
     // List of query columns we can order by
     private static final String[] SORT_COLUMNS = {"DATE DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
     private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Flight Time"};
+    private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_COLUMNS);
 
     /**
      * Executes the command.
@@ -39,7 +42,7 @@ public class LogBookCommand extends AbstractViewCommand {
         ctx.setAttribute("comments", Boolean.valueOf(showComments), REQUEST);
         
         // Set sort options
-        ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_NAMES, SORT_COLUMNS), REQUEST);
+        ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         
         try {
             Connection con = ctx.getConnection();
@@ -53,8 +56,10 @@ public class LogBookCommand extends AbstractViewCommand {
             dao2.setQueryStart(vc.getStart());
             dao2.setQueryMax(vc.getCount());
             
-            // Get the results
-            vc.setResults(dao2.getByPilot(ctx.getID(), vc.getSortType()));
+            // Get the PIREP beans and load the promotion eligibility
+            Collection pireps = dao2.getByPilot(ctx.getID(), vc.getSortType());
+            dao2.getCaptEQType(pireps);
+            vc.setResults(pireps);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
