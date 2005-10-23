@@ -194,7 +194,7 @@ public class GetPilot extends PilotReadDAO {
 		List pilots = getPilotsByRank(rank);
 		for (Iterator i = pilots.iterator(); i.hasNext();) {
 			Pilot p = (Pilot) i.next();
-			if (!p.getEquipmentType().equals(eqType))
+			if (!eqType.equals(p.getEquipmentType()))
 				i.remove();
 		}
 
