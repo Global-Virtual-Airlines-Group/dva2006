@@ -1,13 +1,15 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.apache.log4j.Logger;
-import org.deltava.beans.*;
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
 
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
+
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -445,10 +447,10 @@ public class GetFlightReports extends DAO {
 
 	/**
 	 * Populates the Equipment Types a collection of PIREPs counts towards promotion in.
-	 * @param pireps a Map of FlightReport beans, indexed by database ID
+	 * @param pireps a Collection of FlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void getCaptEQType(Map pireps) throws DAOException {
+	public void getCaptEQType(Collection pireps) throws DAOException {
 		
 		// Do nothing if empty
 		if (pireps.isEmpty())
@@ -456,7 +458,7 @@ public class GetFlightReports extends DAO {
 		
 		// Build the SQL statement
 		StringBuffer sqlBuf = new StringBuffer("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
-		for (Iterator i = pireps.values().iterator(); i.hasNext(); ) {
+		for (Iterator i = pireps.iterator(); i.hasNext(); ) {
 			FlightReport fr = (FlightReport) i.next();
 			sqlBuf.append(String.valueOf(fr.getID()));
 			if (i.hasNext())
@@ -465,13 +467,15 @@ public class GetFlightReports extends DAO {
 		
 		sqlBuf.append("))");
 		
+		// Convert PIREPs to a Map for lookup
+		Map pMap = CollectionUtils.createMap(pireps, "ID");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				FlightReport fr = (FlightReport) pireps.get(new Integer(rs.getInt(1)));
+				FlightReport fr = (FlightReport) pMap.get(new Integer(rs.getInt(1)));
 				if (fr != null)
 					fr.setCaptEQType(rs.getString(2));
 			}
