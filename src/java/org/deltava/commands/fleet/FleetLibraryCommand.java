@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class FleetLibraryCommand extends AbstractCommand {
+public class FleetLibraryCommand extends AbstractLibraryCommand {
 
    private static final Logger log = Logger.getLogger(FleetLibraryCommand.class);
 
@@ -96,16 +96,5 @@ public class FleetLibraryCommand extends AbstractCommand {
       CommandResult result = ctx.getResult();
       result.setURL(isAdmin ? "/jsp/fleet/installerLibrary.jsp" : "/jsp/fleet/fleetLibrary.jsp");
       result.setSuccess(true);
-   }
-
-   /**
-    * Append the database name to the end of the entry names.
-    */
-   private void appendDB(Collection entries, String dbName) {
-      for (Iterator i = entries.iterator(); i.hasNext();) {
-         Installer entry = (Installer) i.next();
-         entry.setName(entry.getName() + " - " + dbName.toUpperCase());
-         entry.setCode(dbName.toUpperCase() + "." + entry.getCode());
-      }
    }
 }
