@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -11,12 +12,13 @@ import org.deltava.beans.ComboAlias;
  * @since 1.0
  * @see ComboAlias
  */
+
 public class ComboUtils {
 
     private ComboUtils() { // private constructor since we are all static
     }
 
-    private static class ComboAliasImpl implements ComboAlias {
+    private static class ComboAliasImpl implements ComboAlias, Comparable {
         
         private String _name;
         private String _alias;
@@ -37,6 +39,19 @@ public class ComboUtils {
         
         public String getComboName() {
             return _name;
+        }
+        
+        public int compareTo(Object o2) {
+        	ComboAlias c2 = (ComboAlias) o2;
+        	int tmpResult = _name.compareTo(c2.getComboName());
+        	if (tmpResult == 0)
+        		tmpResult = _alias.compareTo(c2.getComboAlias());
+        	
+        	return tmpResult;
+        }
+        
+        public boolean equals(Object o2) {
+        	return (o2 instanceof ComboAlias) ? (compareTo(o2) == 0) : false;
         }
     }
 
