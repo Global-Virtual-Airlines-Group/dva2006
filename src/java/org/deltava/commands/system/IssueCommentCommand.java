@@ -38,7 +38,8 @@ public class IssueCommentCommand extends AbstractCommand {
          // Check our access level
          IssueAccessControl access = new IssueAccessControl(ctx, i);
          access.validate();
-         if (!access.getCanComment()) throw securityException("Cannot comment on Issue " + ctx.getID());
+         if (!access.getCanComment())
+        	 throw securityException("Cannot comment on Issue " + ctx.getID());
 
          // Create the Issue comment bean
          IssueComment ic = new IssueComment(ctx.getParameter("comment"));
@@ -53,15 +54,24 @@ public class IssueCommentCommand extends AbstractCommand {
          boolean sendComment = Boolean.valueOf(ctx.getParameter("emailComment")).booleanValue();
          if (sendComment) {
             ctx.setAttribute("sendComment", Boolean.TRUE, REQUEST);
-
+            Set pilotIDs = new HashSet();
+            
             // Create and populate the message context
             MessageContext mctx = new MessageContext();
             mctx.addData("issue", i);
             mctx.addData("comment", ic);
             mctx.addData("user", ctx.getUser());
+            
+            // Check if we're sending to all commenters
+            boolean sendAll = Boolean.valueOf(ctx.getParameter("emailAll")).booleanValue();
+            if (sendAll) {
+            	for (Iterator ci = i.getComments().iterator(); ci.hasNext(); ) {
+            		IssueComment c = (IssueComment) ci.next();
+            		pilotIDs.add(new Integer(c.getCreatedBy()));
+            	}
+            }
 
             // Get the Issue creator and assignee, and remove the current user
-            Set pilotIDs = new HashSet();
             pilotIDs.add(new Integer(i.getCreatedBy()));
             pilotIDs.add(new Integer(i.getAssignedTo()));
             pilotIDs.remove(new Integer(ctx.getUser().getID()));
