@@ -248,29 +248,32 @@ public class SetFlightReport extends DAO {
    }
 
    /**
-    * Writes an ACARS-enabled Flight Report into the database. Since the ACARS data can never be updated, it is OK for
-    * this method to online support INSERT operations, and not UPDATEs. Should behavior change in the future, this will
-    * need to be rewritten to support UPDATEs.
+    * Writes an ACARS-enabled Flight Report into the database. This can handle INSERT and UPDATE operations.
     * @param afr the Flight Report
+    * @param dbName the database name
     * @throws DAOException if a JDBC error occurs
     */
-   public void writeACARS(ACARSFlightReport afr, String db) throws DAOException {
+   public void writeACARS(ACARSFlightReport afr, String dbName) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("REPLACE INTO ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
+			   + "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "
+			   + "TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
+			   + "LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
+			   + "TIME_1X, TIME_2X, TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
       try {
          // Since we are writing to multiple tables, this is designd as a transaction
          startTransaction();
 
          // Write the regular fields
-         writeCore(afr, db);
-         writePromoEQ(afr.getID(), db, afr.getCaptEQType());
+         writeCore(afr, dbName);
+         writePromoEQ(afr.getID(), dbName, afr.getCaptEQType());
 
          // Write the ACARS fields
-         prepareStatementWithoutLimits("INSERT INTO ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, "
-               + "TAXI_WEIGHT, TAXI_FUEL, TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, "
-               + "TAKEOFF_WEIGHT, TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
-               + "LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, TIME_1X, TIME_2X, "
-               + "TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+         prepareStatementWithoutLimits(sqlBuf.toString());
          _ps.setInt(1, afr.getID());
          _ps.setInt(2, afr.getDatabaseID(FlightReport.DBID_ACARS));
          _ps.setTimestamp(3, createTimestamp(afr.getStartTime()));
