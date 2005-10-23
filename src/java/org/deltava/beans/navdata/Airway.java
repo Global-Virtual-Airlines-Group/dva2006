@@ -72,11 +72,10 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	/**
 	 * Returns the waypoint <i>beans</i> for this Airway. <i>The returned collection is mutable.</i>
 	 * @param ndmap the NavigationDataMap containing the beans
+	 * @param lastPosition the end of the Airway for dupe filtering
 	 * @return an ordered Collection of beans
 	 */
-	public Collection getWaypoints(NavigationDataMap ndmap) {
-	   GeoLocation lastPosition = null;
-	   
+	public Collection getWaypoints(NavigationDataMap ndmap, GeoLocation lastPosition) {
 	   // Iterate through the waypoint codes
 	   Collection results = new LinkedHashSet();
 		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
@@ -89,6 +88,15 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 		}
 		
 		return results;
+	}
+	
+	/**
+	 * Returns the waypoint <i>beans</i> for this Airway. <i>The returned collection is mutable.</i>
+	 * @param ndmap the NavigationDataMap containing the beans
+	 * @return an ordered Collection of beans
+	 */
+	public Collection getWaypoints(NavigationDataMap ndmap) {
+		return getWaypoints(ndmap, null);
 	}
 
 	/**
