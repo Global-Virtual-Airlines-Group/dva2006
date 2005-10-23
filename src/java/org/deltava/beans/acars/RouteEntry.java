@@ -385,12 +385,16 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 
 		// Add Autothrottle flags if set
 		if (isFlagSet(ACARSFlags.FLAG_AT_IAS)) {
-			buf.append("Autothrottle: IAS");
+			buf.append("Autothrottle: IAS<br />");
 		} else if (isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
-			buf.append("Autothrottle: MACH");
+			buf.append("Autothrottle: MACH<br />");
 		}
+		
+		// Add Pause/slew flags
+		if (isFlagSet(ACARSFlags.FLAG_PAUSED))
+			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
 
-		buf.append("<br /></span>");
+		buf.append("</span>");
 
 		return buf.toString();
 	}
