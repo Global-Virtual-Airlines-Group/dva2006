@@ -10,8 +10,8 @@ package org.deltava.beans.navdata;
 
 public class TerminalRoute extends Airway {
    
-   public static final int SID = 1;
-   public static final int STAR = 2;
+   public static final int SID = 0;
+   public static final int STAR = 1;
    
    public static final String[] TYPES = {"SID", "STAR"};
    
