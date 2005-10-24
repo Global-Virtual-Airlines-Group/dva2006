@@ -36,6 +36,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private int _fsVersion;
    private boolean _offline;
    private boolean _hasPIREP;
+   private boolean _archived;
    
    /**
     * Creates a new Flight Information record.
@@ -182,6 +183,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    }
    
    /**
+    * Returns if this flight's position data is stored in the archive.
+    * @return TRUE if the Position data is in the archive, otherwise FALSE
+    * @see FlightInfo#setArchived(boolean)
+    */
+   public boolean getArchived() {
+      return _archived;
+   }
+   
+   /**
     * Updates the ACARS Connection ID used for this flight.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is zero or negative
@@ -223,6 +233,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public void setHasPIREP(boolean hasPIREP) {
 	   _hasPIREP = hasPIREP;
+   }
+   
+   /**
+    * Marks this Flight's position data as archived.
+    * @param archived TRUE if the position data is in the archive, otherwise FALSE
+    * @see FlightInfo#getArchived()
+    */
+   public void setArchived(boolean archived) {
+      _archived = archived;
    }
    
    /**

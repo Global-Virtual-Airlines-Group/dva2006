@@ -29,13 +29,19 @@ public class GetACARSData extends DAO {
 	/**
 	 * Loads route position data for a particular ACARS flight ID.
 	 * @param flightID the ACARS flight ID
+	 * @param isArchived TRUE if the positions should be read from the archive
 	 * @return a List of GeoPosition beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getRoutePositions(int flightID) throws DAOException {
+	public List getRoutePositions(int flightID, boolean isArchived) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT DISTINCT LAT, LNG FROM acars.");
+	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
+	   sqlBuf.append("WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+	   
 		try {
-			prepareStatement("SELECT DISTINCT LAT, LNG FROM acars.POSITIONS WHERE (FLIGHT_ID=?) "
-			      + "ORDER BY REPORT_TIME");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -59,13 +65,20 @@ public class GetACARSData extends DAO {
 	 * Loads complete route data for a particular ACARS flight ID.
 	 * @param flightID the ACARS flight ID
 	 * @param includeOnGround TRUE if entries on the ground are RouteEntry beans, otherwise FALSE
+	 * @param isArchived TRUE if the positions should be read from the archive
 	 * @return a List of RouteEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getRouteEntries(int flightID, boolean includeOnGround) throws DAOException {
+	public List getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, ASPEED, GSPEED, "
+	         + "VSPEED, N1, N2, FLAPS, FLAGS FROM acars.");
+	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
+	   sqlBuf.append("WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+	   
 		try {
-			prepareStatement("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, ASPEED, GSPEED, VSPEED, N1, "
-					+ "N2, FLAPS, FLAGS FROM acars.POSITIONS WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, flightID);
 
 			// Execute the query
@@ -110,9 +123,9 @@ public class GetACARSData extends DAO {
 	 */
 	public String getRoute(int flightID) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?)");
 			_ps.setInt(1, flightID);
-			setQueryMax(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -135,10 +148,10 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
 	            + "AND (F.ID=?)");
 	      _ps.setInt(1, flightID);
-	      setQueryMax(1);
 	      
 	      // Get the first entry, or null
 	      List results = executeFlightInfo();
@@ -156,10 +169,10 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(long conID) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
 	            + "AND (C.ID=?) ORDER BY F.CREATED DESC");
 	      _ps.setLong(1, conID);
-	      setQueryMax(1);
 	      
 	      // Get the first entry, or null
 	      List results = executeFlightInfo();
@@ -177,12 +190,12 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
                + "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C "
                + "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) "
                + "LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
 	      _ps.setLong(1, conID);
-	      setQueryMax(1);
 	      
 	      // Get the first entry, or null
 	      List results = executeConnectionInfo();
@@ -216,7 +229,8 @@ public class GetACARSData extends DAO {
 	      info.setFSVersion(rs.getInt(13));
 	      info.setOffline(rs.getBoolean(14));
 	      info.setHasPIREP(rs.getBoolean(15));
-	      info.setPilotID(rs.getInt(16));
+	      info.setArchived(rs.getBoolean(16));
+	      info.setPilotID(rs.getInt(17));
 	      
 	      // Add to results
 	      results.add(info);

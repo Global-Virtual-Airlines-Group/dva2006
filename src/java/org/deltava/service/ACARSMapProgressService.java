@@ -47,7 +47,7 @@ public class ACARSMapProgressService extends WebDataService {
 		Collection routeWaypoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(_con);
-			routePoints = dao.getRouteEntries(id, false);
+			routePoints = dao.getRouteEntries(id, false, false);
 			
 			// Load the route and the route waypoints
 			FlightInfo info = dao.getInfo(id);

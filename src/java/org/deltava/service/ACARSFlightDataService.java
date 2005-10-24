@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
+import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.dao.*;
 import org.deltava.util.StringUtils;
@@ -44,7 +45,8 @@ public class ACARSFlightDataService extends WebDataService {
 		Collection routePoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(_con);
-			routePoints = dao.getRouteEntries(id, false);
+			FlightInfo info = dao.getInfo(id);
+			routePoints = (info == null) ? Collections.EMPTY_LIST : dao.getRouteEntries(id, false, info.getArchived());
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
