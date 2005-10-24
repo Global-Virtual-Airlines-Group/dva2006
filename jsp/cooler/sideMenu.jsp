@@ -67,6 +67,18 @@
 <tr class="MenuItem">
  <td><el:cmd url="event">ONLINE EVENTS</el:cmd></td>
 </tr>
+<tr class="MenuHeader"><td>STATISTICS</td></tr>
+<tr class="MenuItem">
+ <td><el:cmd url="airlinestats">AIRLINE TOTALS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
+ <td><el:cmd url="httpstats">SERVER STATISTICS</el:cmd></td>
+</tr>
+<content:filter roles="Moderator">
+<tr class="MenuItem">
+ <td><el:cmd url="coolerstats">COOLER STATISTICS</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuHeader"><td>CONTACT US</td></tr>
 <tr class="MenuItem">
  <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
