@@ -30,10 +30,10 @@ public class GetNews extends DAO {
      */
     public News getNews(int id) throws DAOException {
         try {
+           setQueryMax(1);
             prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P " +
                     "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID)");
             _ps.setInt(1, id);
-            setQueryMax(1);
             
             // Execute the query - if we get nothing back, then return null
             List results = execute();
@@ -66,10 +66,10 @@ public class GetNews extends DAO {
      */
     public Notice getNOTAM(int id) throws DAOException {
        try {
+          setQueryMax(1);
           prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P " +
           			"WHERE (N.ID=?) AND (N.PILOT_ID=P.ID)");
           _ps.setInt(1, id);
-          setQueryMax(1);
           
           // Execute the query - if we get nothing back, then return null
           List results = execute();

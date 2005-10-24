@@ -179,9 +179,9 @@ public class GetStatistics extends DAO {
 	 */
 	public int getCoolerStatistics(int days) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT COUNT(POST_ID) FROM common.COOLER_POSTS WHERE "
 					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
-			setQueryMax(1);
 			_ps.setInt(1, days);
 			
 			// Execute the query

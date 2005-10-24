@@ -64,9 +64,9 @@ public class GetCoolerChannels extends DAO {
             return c;
 
         try {
+           setQueryMax(1);
             prepareStatement("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?)");
             _ps.setString(1, channelName);
-            setQueryMax(1);
 
             // Execute the query - if nothing is returned, return null
             ResultSet rs = _ps.executeQuery();

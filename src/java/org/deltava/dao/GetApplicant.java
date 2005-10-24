@@ -45,9 +45,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			return a;
 
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			setQueryMax(1);
 
 			// Get results, return first or null
 			List results = execute();
@@ -65,9 +65,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM APPLICANTS WHERE (PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
-			setQueryMax(1);
 
 			// Get results, return first or null
 			List results = execute();
@@ -144,9 +144,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM APPLICANTS WHERE (LDAP_DN=?)");
 			_ps.setString(1, directoryName);
-			setQueryMax(1);
 
 			// Get results, return first or null
 			List results = execute();
