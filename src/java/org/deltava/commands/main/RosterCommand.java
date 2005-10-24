@@ -8,6 +8,7 @@ import org.deltava.dao.*;
 
 import org.deltava.comparators.PilotComparator;
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * Command to display the Pilot Roster.
@@ -19,23 +20,9 @@ import org.deltava.util.ComboUtils;
 public class RosterCommand extends AbstractViewCommand {
 
     // List of query columns we can order by
-    private static final String[] SORT_COLUMNS = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED",
+    private static final String[] SORT_CODE = {"P.FIRSTNAME", "P.LASTNAME", "P.LAST_LOGIN DESC", "P.CREATED",
             "P.PILOT_ID", "P.EQTYPE", "P.RANK", "LEGS DESC", "HOURS DESC", "P.STATUS"};
-    
-    private List _sortComboAliases;
-    
-    /**
-     * Initializes the command. This will create the ComboAlias lists for sorting the roster.
-     * @param id the Command ID
-     * @param cmdName the Command Name
-     * @throws CommandException if an unhandled error occurs
-     * @see AbstractCommand#init(String, String)
-     */
-    public void init(String id, String cmdName) throws CommandException {
-        super.init(id, cmdName);
-        PilotComparator cmp = new PilotComparator(0);
-        _sortComboAliases = ComboUtils.fromArray(cmp.getTypeNames(), SORT_COLUMNS);
-    }
+    private static final List SORT_OPTIONS = ComboUtils.fromArray(PilotComparator.TYPES, SORT_CODE);
     
     /**
      * Executes the command.
@@ -46,7 +33,8 @@ public class RosterCommand extends AbstractViewCommand {
         
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-        vc.setDefaultSortType("P.PILOT_ID");
+        if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+           vc.setSortType(SORT_CODE[0]);
      
         try {
             Connection con = ctx.getConnection();
@@ -65,7 +53,7 @@ public class RosterCommand extends AbstractViewCommand {
         }
         
         // Save the sorter types in the request
-        ctx.setAttribute("sortTypes", _sortComboAliases, REQUEST);
+        ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         
         // Set the result page and return
         CommandResult result = ctx.getResult();

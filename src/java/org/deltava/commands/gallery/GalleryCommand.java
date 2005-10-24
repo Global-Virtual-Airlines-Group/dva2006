@@ -5,15 +5,14 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.gallery.Image;
-import org.deltava.commands.*;
 
-import org.deltava.dao.GetGallery;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.GalleryAccessControl;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to view the Image Gallery.
@@ -24,8 +23,9 @@ import org.deltava.util.ComboUtils;
 
 public class GalleryCommand extends AbstractViewCommand {
 	
+   private static final String[] SORT_CODE = {"I.DATE DESC", "VC DESC", "SC DESC, VC DESC"};
 	private static final List _sortOptions = ComboUtils.fromArray(new String[] {"Image Date", "Feedback Count", "Average Score"},
-			new String[] {"I.DATE DESC", "VC DESC", "SC DESC, VC DESC"});
+			SORT_CODE);
 
     /**
      * Executes the command.
@@ -36,7 +36,8 @@ public class GalleryCommand extends AbstractViewCommand {
 
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-        vc.setDefaultSortType("I.DATE DESC");
+        if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+           vc.setSortType(SORT_CODE[0]);
         
         // Save sort options
         ctx.setAttribute("sortOptions", _sortOptions, REQUEST);

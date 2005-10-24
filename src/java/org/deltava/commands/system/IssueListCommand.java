@@ -26,9 +26,10 @@ import org.deltava.util.StringUtils;
 public class IssueListCommand extends AbstractViewCommand {
    
    // Sort options
-   private static final List sortOptions = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Creation Date",
-         "Resolution Date", "Last Comment"}, new String[] {"I.ID", "I.PRIORITY DESC", "I.AREA", "I.STATUS DESC", "I.CREATED",
-         "I.RESOLVED", "LC DESC"});
+   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA", "I.STATUS DESC", "I.CREATED",
+         "I.RESOLVED DESC", "LC DESC"};
+   private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Creation Date",
+         "Resolution Date", "Last Comment"}, SORT_CODE);
     
     /**
      * Executes the command.
@@ -39,7 +40,8 @@ public class IssueListCommand extends AbstractViewCommand {
 
         // Get/set start/count parameters and sort type
         ViewContext vc = initView(ctx);
-        vc.setDefaultSortType("ID");
+        if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+           vc.setSortType(SORT_CODE[0]);
         
         // Get issue status
         int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
@@ -57,8 +59,9 @@ public class IssueListCommand extends AbstractViewCommand {
                 vc.setResults(dao.getUserIssues(ctx.getID()));
                 
                 // Get the user Profile
-                GetPilot dao2 = new GetPilot(c);
-                ctx.setAttribute("user", dao2.get(ctx.getID()), REQUEST);
+                GetPilot pdao = new GetPilot(c);
+                pdao.setQueryMax(1);
+                ctx.setAttribute("user", pdao.get(ctx.getID()), REQUEST);
             } else if (issueStatus != -1) {
                 vc.setResults(dao.getByStatus(issueStatus));
                 ctx.setAttribute("status", Issue.STATUS[issueStatus], REQUEST);
@@ -78,7 +81,7 @@ public class IssueListCommand extends AbstractViewCommand {
         
         // Set sort combo lists
         ctx.setAttribute("statuses", ComboUtils.fromArray(Issue.STATUS), REQUEST);
-        ctx.setAttribute("sortTypes", sortOptions, REQUEST);
+        ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         
         // Set the result page and return
         CommandResult result = ctx.getResult();
