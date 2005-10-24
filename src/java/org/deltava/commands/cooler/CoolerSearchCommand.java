@@ -52,10 +52,13 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 
 			// Get the DAO and search
-			GetCoolerThreads dao = new GetCoolerThreads(con);
-			dao.setQueryStart(vc.getStart());
-			dao.setQueryMax(vc.getCount());
-			List threads = dao.search(ctx.getParameter("searchStr"), ctx.getParameter("channel"));
+			List threads = null;
+			synchronized (CoolerSearchCommand.class) {
+				GetCoolerThreads dao = new GetCoolerThreads(con);
+				dao.setQueryStart(vc.getStart());
+				dao.setQueryMax(vc.getCount());
+				threads = dao.search(ctx.getParameter("searchStr"), ctx.getParameter("channel"));
+			}
 
 			// Filter out the threads based on our access
 			Set pilotIDs = new HashSet();
