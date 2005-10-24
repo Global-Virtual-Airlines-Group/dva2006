@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -15,7 +16,6 @@ import org.deltava.security.command.EquipmentAccessControl;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class EquipmentSaveCommand extends AbstractCommand {
@@ -29,7 +29,7 @@ public class EquipmentSaveCommand extends AbstractCommand {
 
 		// Get the equipment type
 		String eqType = (String) ctx.getCmdParameter(Command.ID, null);
-		boolean isNew = "NEW".equals(eqType);
+		boolean isNew = (eqType == null);
 
 		// Check our access
 		EquipmentAccessControl access = new EquipmentAccessControl(ctx);
