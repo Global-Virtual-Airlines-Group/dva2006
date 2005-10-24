@@ -124,7 +124,7 @@ public class ViewContext {
     /**
      * Gets the sort parameter for this view slice.
      * @return the sort parameter
-     * @see ViewContext#setDefaultSortType(String)
+     * @see ViewContext#setSortType(String)
      */
     public String getSortType() {
         return _sortType;
@@ -162,8 +162,7 @@ public class ViewContext {
      * @param sortType the sort parameter
      * @see ViewContext#getSortType()
      */
-    public void setDefaultSortType(String sortType) {
-        if (_sortType == null)
-            _sortType = sortType;
+    public void setSortType(String sortType) {
+       _sortType = sortType;
     }
 }

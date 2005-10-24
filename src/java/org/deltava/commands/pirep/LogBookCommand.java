@@ -22,9 +22,9 @@ import org.deltava.util.*;
 public class LogBookCommand extends AbstractViewCommand {
 	
     // List of query columns we can order by
-    private static final String[] SORT_COLUMNS = {"DATE DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
+    private static final String[] SORT_CODE = {"DATE DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
     private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Flight Time"};
-    private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_COLUMNS);
+    private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
 
     /**
      * Executes the command.
@@ -35,7 +35,8 @@ public class LogBookCommand extends AbstractViewCommand {
        
         // Get/set start/count parameters and pilot ID
         ViewContext vc = initView(ctx);
-        vc.setDefaultSortType("DATE DESC");
+        if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+  		   	vc.setSortType(SORT_CODE[0]);
         
         // Determine if we display comments or not
         boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));

@@ -10,6 +10,7 @@ import org.deltava.dao.GetStatistics;
 import org.deltava.dao.DAOException;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display sorted Flight Report statistics.
@@ -41,11 +42,12 @@ public class FlightStatsCommand extends AbstractViewCommand {
 
 		// Get the view context
 		ViewContext vc = initView(ctx);
-		vc.setDefaultSortType("LEGS");
+		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+		   vc.setSortType(SORT_CODE[0]);
 
 		// Get grouping type
 		String labelType = ctx.getParameter("groupType");
-		if (labelType == null)
+		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
 			labelType = GROUP_CODE[0];
 		
 		try {
