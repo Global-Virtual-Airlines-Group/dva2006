@@ -94,11 +94,11 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	 */
 	public int getPromotionCount(int pilotID, String eqType) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) AND "
 					+ "(PR.PILOT_ID=?) AND (PE.EQTYPE=?)");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
-			setQueryMax(1);
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();

@@ -28,13 +28,12 @@ public class GetHelpEntry extends DAO {
     * @param name the entry name
     * @return a HelpEntry bean, or null if not found
     * @throws DAOException if a JDBC error occurs
-    * @throws NullPointerException if name is null
     */
    public HelpEntry get(String name) throws DAOException {
       try {
-         prepareStatement("SELECT * FROM HELP WHERE (ID=?)");
-         _ps.setString(1, name.trim());
          setQueryMax(1);
+         prepareStatement("SELECT * FROM HELP WHERE (ID=?)");
+         _ps.setString(1, name);
          
          // Execute the query, return null if empty
          List results = execute();

@@ -209,8 +209,8 @@ import org.deltava.beans.testing.*;
 	 */
 	public CheckRideScript getScript(String eqType) throws DAOException {
 	   try {
-	      prepareStatement("SELECT * FROM CR_DESCS WHERE (EQTYPE=?)");
 	      setQueryMax(1);
+	      prepareStatement("SELECT * FROM CR_DESCS WHERE (EQTYPE=?)");
 	      _ps.setString(1, eqType);
 	      
 	      // Execute the Query - return null if nothing found
