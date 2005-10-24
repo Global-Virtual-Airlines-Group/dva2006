@@ -3,12 +3,9 @@ package org.deltava.commands.pirep;
 
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetFlightReports;
-import org.deltava.dao.SetFlightReport;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
@@ -43,17 +40,30 @@ public class PIREPDeleteCommand extends AbstractCommand {
           if (!access.getCanDelete())
              throw securityException("Cannot delete Flight Report");
           
+          // Start a JDBC transaction
+          ctx.startTX();
+          
           // Get the DAO and delete the PIREP from the database
           SetFlightReport wdao = new SetFlightReport(con);
           wdao.delete(ctx.getID());
-
-          // Update the status for the JSP
-          ctx.setAttribute("isDeleted", Boolean.TRUE, REQUEST);
+          
+          // If this is an ACARS PIREP, delete the data
+          if (fr instanceof ACARSFlightReport) {
+             SetACARSLog awdao = new SetACARSLog(con);
+             awdao.deleteInfo(fr.getDatabaseID(FlightReport.DBID_ACARS));
+          }
+          
+          // Commit the transaction
+          ctx.commitTX();
       } catch (DAOException de) {
+         ctx.rollbackTX();
           throw new CommandException(de);
       } finally {
           ctx.release();
       }
+      
+      // Update the status for the JSP
+      ctx.setAttribute("isDeleted", Boolean.TRUE, REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();

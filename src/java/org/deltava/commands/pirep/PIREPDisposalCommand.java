@@ -162,6 +162,13 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			   }
 			}
 			
+			// If we're approving an ACARS PIREP, archive the position data
+			if ((opCode == FlightReport.OK) && (fr instanceof ACARSFlightReport)) {
+			   SetACARSLog acdao = new SetACARSLog(con);
+			   acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			   ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
+			}
+			
 			// Commit the transaction
 			ctx.commitTX();
 			

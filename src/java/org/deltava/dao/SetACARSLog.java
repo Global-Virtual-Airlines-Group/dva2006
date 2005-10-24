@@ -29,7 +29,7 @@ public class SetACARSLog extends DAO {
       try {
          prepareStatement("DELETE FROM acars.CONS WHERE (ID=?)");
          _ps.setLong(1, id);
-         executeUpdate(1);
+         executeUpdate(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -44,9 +44,43 @@ public class SetACARSLog extends DAO {
       try {
          prepareStatement("DELETE FROM acars.FLIGHTS WHERE (ID=?)");
          _ps.setInt(1, flightID);
-         executeUpdate(1);
+         executeUpdate(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+   }
+   
+   /**
+    * Moves ACARS position data from the live table to the archive.
+    * @param flightID the ACARS Flight ID
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void archivePositions(int flightID) throws DAOException {
+     try {
+        startTransaction();
+        
+        // Copy the data to the archive
+        prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE ARC SELECT P.* FROM acars.POSITIONS P "
+              + "WHERE (P.FLIGHT_ID=?)");
+        _ps.setInt(1, flightID);
+        executeUpdate(0);
+        
+        // Delete the existing flight data
+        prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+        _ps.setInt(1, flightID);
+        executeUpdate(0);
+        
+        // Mark the flight as archived
+        prepareStatement("UPDATE acars.FLIGHTS SET ARCHIVED=? WHERE (ID=?)");
+        _ps.setBoolean(1, true);
+        _ps.setInt(2, flightID);
+        executeUpdate(0);
+        
+        // Commit the transaction
+        commitTransaction();
+     } catch (SQLException se) {
+        rollbackTransaction();
+        throw new DAOException(se);
+     }
    }
 }

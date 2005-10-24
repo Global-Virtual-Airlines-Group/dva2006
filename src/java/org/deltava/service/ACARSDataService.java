@@ -41,8 +41,9 @@ public class ACARSDataService extends WebDataService {
       // Get the ACARS data
       List routeData = null;
       try {
-         GetACARSData addao = new GetACARSData(_con);
-         routeData = addao.getRouteEntries(id, true);
+         GetACARSData dao = new GetACARSData(_con);
+         FlightInfo info = dao.getInfo(id);
+         routeData = (info == null) ? Collections.EMPTY_LIST : dao.getRouteEntries(id, true, info.getArchived());
       } catch (DAOException de) {
          throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
       }

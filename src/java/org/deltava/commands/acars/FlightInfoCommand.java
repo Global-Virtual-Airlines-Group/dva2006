@@ -91,7 +91,7 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Load the route data
 			dao.setQueryMax(0);
-			List positions = dao.getRouteEntries(info.getID(), false);
+			List positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
 
 			// Calculate and save the map center for the Google Map
 			if (!positions.isEmpty()) {
