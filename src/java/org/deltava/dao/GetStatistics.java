@@ -147,7 +147,7 @@ public class GetStatistics extends DAO {
 	 */
 	public List getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
 
-		// Generate sql statement
+		// Generate SQL statement
 		StringBuffer sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
 		sqlBuf.append(orderBy);
 		if (descSort) sqlBuf.append(" DESC");
@@ -172,7 +172,48 @@ public class GetStatistics extends DAO {
 	}
 	
 	/**
-	 * Retrieves Water Cooler statistics.
+	 * Returns Water Cooler posting statistics.
+	 * @param orderBy the order by column within SQL
+	 * @param groupBy the label SQL function
+	 * @param distinctBy the column to bring in to count distinct entries
+	 * @return a List of CoolerStatsEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
+	   
+	   // Generate SQL statement
+	   StringBuffer sqlBuf = new StringBuffer("SELECT ");
+	   sqlBuf.append(groupBy);
+	   sqlBuf.append("AS LBL, COUNT(DISTINCT CP.POST_ID) AS PC, COUNT(DISTINCT ");
+	   sqlBuf.append(distinctBy);
+	   sqlBuf.append(") AS DSTNCT FROM PILOTS P, common.COOLER_POSTS CP WHERE (P.ID=CP.AUTHOR_ID)");
+	   sqlBuf.append(" GROUP BY LBL ORDER BY ");
+	   sqlBuf.append(orderBy);
+	   
+	   try {
+	      prepareStatement(sqlBuf.toString());
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+	      
+	      // Iterate through the results
+	      List results = new ArrayList();
+	      while (rs.next()) {
+	         CoolerStatsEntry entry = new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3));
+	         results.add(entry);
+	      }
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return results;
+	   } catch (SQLException se) {
+	      throw new DAOException(se);
+	   }
+	}
+	
+	/**
+	 * Retrieves Water Cooler post counts.
 	 * @param days the number of days in the past to count
 	 * @return the number of posts in the specified interval
 	 * @throws DAOException if a JDBC error occurs

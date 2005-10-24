@@ -99,9 +99,16 @@
 <tr class="MenuItem">
  <td><el:cmd url="flightstats">FLIGHT TOTALS</el:cmd></td>
 </tr>
+<content:filter roles="Fleet,HR">
 <tr class="MenuItem">
  <td><el:cmd url="fleetstats">FLEET TOTALS</el:cmd></td>
 </tr>
+</content:filter>
+<content:filter roles="Moderator,HR">
+<tr class="MenuItem">
+ <td><el:cmd url="coolerstats">COOLER STATISTICS</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="httpstats">SERVER STATISTICS</el:cmd></td>
 </tr>
