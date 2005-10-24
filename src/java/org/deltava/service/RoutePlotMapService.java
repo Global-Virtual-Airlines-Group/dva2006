@@ -51,7 +51,7 @@ public class RoutePlotMapService extends RouteMapService {
 			// Check if we have a SID
 			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
 				TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
-				if (sid != null) {
+				if ((sid != null) && (aD != null) && (sid.getICAO().equals(aD.getCode()))) {
 					NavigationDataMap sidMap = dao.getByID(sid.getWaypoints());
 					routePoints.addAll(sid.getWaypoints(sidMap, aD));
 				}
@@ -64,7 +64,7 @@ public class RoutePlotMapService extends RouteMapService {
 			// Check if we have a STAR
 			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {
 				TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
-				if (star != null) {
+				if ((star != null) && (aA != null) && (star.getICAO().equals(aA.getCode()))) {
 					NavigationDataMap starMap = dao.getByID(star.getWaypoints());
 					routePoints.addAll(star.getWaypoints(starMap, aA));
 				}
