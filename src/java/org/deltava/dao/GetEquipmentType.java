@@ -33,11 +33,11 @@ public class GetEquipmentType extends DAO {
      */
     public EquipmentType get(String eqType) throws DAOException {
         try {
+           setQueryMax(1);
             prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, " +
                     "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND " +
                     "(EQ.EQTYPE=R.EQTYPE) AND (EQ.EQTYPE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
             _ps.setString(1, eqType);
-            setQueryMax(1);
             
             // Execute the query - if we get nothing back, then return null
             List results = execute();

@@ -31,9 +31,9 @@ public class GetTransferRequest extends DAO {
     */
    public TransferRequest get(int pilotID) throws DAOException {
       try {
+         setQueryMax(1);
          prepareStatement("SELECT * FROM TXREQUESTS WHERE (ID=?)");
          _ps.setInt(1, pilotID);
-         setQueryMax(1);
          
          // Execute the query, if empty return null
          List results = execute();
@@ -51,9 +51,9 @@ public class GetTransferRequest extends DAO {
     */
    public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
       try {
+         setQueryMax(1);
          prepareStatement("SELECT * FROM TXREQUESTS WHERE (CHECKRIDE_ID=?)");
          _ps.setInt(1, checkRideID);
-         setQueryMax(1);
 
          // Execute the query, if empty return null
          List results = execute();

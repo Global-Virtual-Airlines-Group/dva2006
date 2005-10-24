@@ -39,10 +39,10 @@ public class GetFlightReports extends DAO {
 	 */
 	public FlightReport get(int id) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
 					+ "LEFT JOIN ACARS_PIREPS APR USING (ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
 			_ps.setInt(1, id);
-			setQueryMax(1);
 
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
@@ -77,9 +77,9 @@ public class GetFlightReports extends DAO {
 	   sqlBuf.append(".ACARS_PIREPS APR WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (APR.ACARS_ID=?)");
 	   
 	   try {
+	      setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, acarsID);
-			setQueryMax(1);
 			
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
@@ -229,8 +229,6 @@ public class GetFlightReports extends DAO {
 		}
 	}
 
-
-
 	/**
 	 * Returns online legs/hours for a group of Pilots .
 	 * @param pilots a Map of Pilot objects to populate with results
@@ -345,10 +343,10 @@ public class GetFlightReports extends DAO {
 	 */
 	public int getCount(int pilotID) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
 	      _ps.setInt(1, pilotID);
 	      _ps.setInt(2, FlightReport.OK);
-	      setQueryMax(1);
 	      
 	      // Execute the query
 	      ResultSet rs = _ps.executeQuery();

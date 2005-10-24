@@ -90,9 +90,9 @@ public class GetLibrary extends DAO {
 	   sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 	   
 		try {
+		   setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			setQueryMax(1);
 
 			// Get results - if empty return null
 			List results = loadManuals();
@@ -118,9 +118,9 @@ public class GetLibrary extends DAO {
 	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
 	   
 		try {
+		   setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			setQueryMax(1);
 
 			// Get results - if empty return null
 			List results = loadInstallers();
@@ -148,9 +148,9 @@ public class GetLibrary extends DAO {
 	         + "F.NAME ORDER BY F.NAME"); 
 	   
 		try {
+		   setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, code.toUpperCase());
-			setQueryMax(1);
 			
 			// Get results - if empty return null
 			List results = loadInstallers();
@@ -168,10 +168,10 @@ public class GetLibrary extends DAO {
 	 */
 	public FileEntry getFile(String fName) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
 					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
 			_ps.setString(1, fName);
-			setQueryMax(1);
 			
 			// Get results - if empty return null
 			List results = loadFiles();

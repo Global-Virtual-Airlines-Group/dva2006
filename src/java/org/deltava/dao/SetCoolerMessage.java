@@ -172,13 +172,13 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void synchThread(MessageThread mt) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
 					+ "WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED ASC LIMIT 1) AS AID, (SELECT P.AUTHOR_ID FROM "
 					+ "common.COOLER_POSTS P WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED DESC LIMIT 1) AS LUID, "
 					+ "MAX(P.CREATED) FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (P.THREAD_ID=T.ID) "
 					+ "WHERE (T.ID=?) GROUP BY T.ID");
 			_ps.setInt(1, mt.getID());
-			setQueryMax(1);
 			
 			// Get the thread Author ID
 			ResultSet rs = _ps.executeQuery();

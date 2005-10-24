@@ -67,10 +67,10 @@ public class GetNavRoute extends GetNavData {
 			return null;
 
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
-			setQueryMax(1);
 
 			// Execute the query
 			List results = executeSIDSTAR();
@@ -127,9 +127,9 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
 			_ps.setString(1, name.toUpperCase());
-			setQueryMax(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();

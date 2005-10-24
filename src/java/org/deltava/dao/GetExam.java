@@ -32,11 +32,11 @@ public class GetExam extends DAO {
 	 */
 	public Examination getExam(int id) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE FROM EXAMS E, "
 					+ "EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.ID=?) AND (E.NAME=EP.NAME) AND (E.ID=Q.EXAM_ID) "
 					+ "GROUP BY E.ID");
 			_ps.setInt(1, id);
-			setQueryMax(1);
 			
 			// Execute the query, return null if nothing
 			List results = execute();
@@ -80,9 +80,9 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ID=?)");
 			_ps.setInt(1, id);
-			setQueryMax(1);
 			
 			// Execute the query
 			List results = executeCheckride();
@@ -100,9 +100,9 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
+		   setQueryMax(1);
 			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ACARS_ID=?)");
 			_ps.setInt(1, acarsID);
-			setQueryMax(1);
 
 			// Execute the query
 			List results = executeCheckride();
@@ -128,11 +128,11 @@ public class GetExam extends DAO {
 	   sqlBuf.append(".CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?) AND (STATUS=?)");
 	   
 	   try {
+	      setQueryMax(1);
 	      prepareStatement(sqlBuf.toString());
 	      _ps.setInt(1, pilotID);
 	      _ps.setString(2, eqType + " Check Ride");
 	      _ps.setInt(3, Test.NEW);
-	      setQueryMax(1);
 	      
 			// Execute the query
 			List results = executeCheckride();
@@ -218,11 +218,11 @@ public class GetExam extends DAO {
 	 */
 	public int getActiveExam(int id) throws DAOException {
 	   try {
+	      setQueryMax(1);
 	      prepareStatement("SELECT ID FROM EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))");
 	      _ps.setInt(1, id);
 	      _ps.setInt(2, Test.NEW);
 	      _ps.setInt(3, Test.SUBMITTED);
-	      setQueryMax(1);
 	      
 	      // Execute the query
 	      ResultSet rs = _ps.executeQuery();
