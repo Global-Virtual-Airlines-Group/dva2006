@@ -20,15 +20,15 @@ if (!validateText(form.subject, 10, 'Title of your Thread')) return false;
 if (!validateText(form.msgText, 5, 'text of your Message')) return false;
 
 setSubmit();
-disableButton('SaveButton');
+disableButton('SearchButton');
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/cooler/header.jsp" %> 
-<%@include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jsp" %> 
+<%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <!-- Main Body Frame -->
 <div id="main">
 <el:form action="coolersearch.do" method="post" validate="return validate(this)">
