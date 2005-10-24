@@ -165,6 +165,7 @@ public abstract class DAO implements java.io.Serializable {
    protected void prepareStatementWithoutLimits(String sql) throws SQLException {
       _ps = _c.prepareStatement(sql);
       _ps.setQueryTimeout(_queryTimeout);
+      _ps.setFetchSize(100);
    }
 
    /**
