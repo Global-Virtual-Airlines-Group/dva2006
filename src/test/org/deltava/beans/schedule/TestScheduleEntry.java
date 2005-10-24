@@ -3,8 +3,7 @@ package org.deltava.beans.schedule;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.beans.AbstractBeanTestCase;
-import org.deltava.beans.Flight;
+import org.deltava.beans.*;
 
 public class TestScheduleEntry extends AbstractBeanTestCase {
     
@@ -21,6 +20,9 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
+        
+        TZInfo.init("US/Eastern", null, null);
+        
         _atl = new Airport("ATL", "KATL", "Atlanta GA");
         _atl.setLocation(34.6404, -84.4269);
         _atl.setTZ("US/Eastern");
@@ -53,7 +55,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
     
     public void testValidation() {
         validateInput("leg", new Integer(-1), IllegalArgumentException.class);
-        validateInput("leg", new Integer(6), IllegalArgumentException.class);
+        validateInput("leg", new Integer(7), IllegalArgumentException.class);
         validateInput("flightNumber", new Integer(-1), IllegalArgumentException.class);
         
         validateInput("timeD", "12:35", NullPointerException.class);
@@ -127,4 +129,3 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
         assertTrue(_e.compareTo(e5) < 0);
     }
 }
-
