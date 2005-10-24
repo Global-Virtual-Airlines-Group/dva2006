@@ -25,12 +25,13 @@ public class SystemData implements Serializable {
 	public static final String JDBC_POOL = "jdbc.pool";
 	public static final String TASK_POOL = "tasks.pool";
 	public static final String ACARS_POOL = "acars.pool";
+	public static final String SMTP_DAEMON = "smtp.daemonthread";
 
 	static final String CFG_NAME = "$CONFIGNAME$";
 	static final String LOADER_NAME = "$LOADERCLASS$";
 
 	private static SystemDataLoader _loader;
-	private static Map _properties = new HashMap();;
+	private static Map _properties = new HashMap();
 
 	// This is a singleton
 	private SystemData() {

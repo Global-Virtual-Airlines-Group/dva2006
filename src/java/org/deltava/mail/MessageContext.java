@@ -54,12 +54,55 @@ public class MessageContext implements Serializable {
     }
     
     /**
+     * Returns the message subject.
+     * @return the subject prepended by the Airline Name
+     */
+    public String getSubject() {
+       StringBuffer buf = new StringBuffer(SystemData.get("airline.name"));
+       buf.append(' ');
+       buf.append((_mt == null) ? "" : _mt.getSubject());
+       return buf.toString();
+    }
+    
+    /**
+     * Formats the message by replacing arguments in the message template with values from the context.
+     * @return the formatted message body text
+     * @throws IllegalStateException if no template exists
+     */
+    public String getBody() {
+       // Check that the template has been set
+       if (_mt == null)
+          throw new IllegalStateException("Message Template not loaded");
+
+       // Load the Message template
+       StringBuffer buf = new StringBuffer(_mt.getBody());
+
+       // Parse the message template with data from the MessageContext
+       int spos = buf.indexOf("${");
+       while (spos != -1) {
+          int epos = buf.indexOf("}", spos);
+
+          // Only format if the end token can be found
+          if (epos > spos) {
+             String token = buf.substring(spos + 2, epos);
+             buf.replace(spos, epos + 1, execute(token));
+             spos = buf.indexOf("${");
+          } else {
+             spos = buf.indexOf("${", spos);
+          }
+       }
+
+       // Return the message body
+       return buf.toString();
+    }
+    
+    /**
      * Checks if a particular named object exists within this context.
      * @param name the name of the object
      * @return TRUE if the object exists within this context, otherwise false
      * @throws NullPointerException if name is null
      */
-    public boolean hasData(String name) {
+    boolean hasData(String name) {
         return _data.containsKey(name.trim());
     }
     

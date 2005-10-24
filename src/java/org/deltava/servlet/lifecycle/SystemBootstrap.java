@@ -9,6 +9,9 @@ import org.apache.log4j.*;
 
 import org.deltava.dao.*;
 import org.deltava.jdbc.*;
+
+import org.deltava.mail.MailerDaemon;
+
 import org.deltava.security.*;
 import org.deltava.taskman.*;
 
@@ -159,6 +162,11 @@ public class SystemBootstrap implements ServletContextListener {
 			_acarsThread.setDaemon(true);
 			_acarsThread.start();
 		}
+		
+		// Start the mailer daemon
+		MailerDaemon daemon = new MailerDaemon();
+		SystemData.add(SystemData.SMTP_DAEMON, daemon);
+		daemon.start();
 	}
 
 	/**
