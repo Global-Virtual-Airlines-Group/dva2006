@@ -77,7 +77,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 		   
 		   // Get all equipment types
 		   GetEquipmentType eqdao = new GetEquipmentType(con);
-		   ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
+		   ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
 		   
 		   // Save the pilot in the request
 		   ctx.setAttribute("pilot", p, REQUEST);
