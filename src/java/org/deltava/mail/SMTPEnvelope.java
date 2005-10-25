@@ -154,4 +154,20 @@ class SMTPEnvelope implements java.io.Serializable {
       }
    }
    
+   /**
+    * Returns a string representation of the envelope.
+    * @return the recipient name/address
+    */
+   public String toString() {
+      if (_msgTo.isEmpty())
+         return "UNKNOWN";
+      
+      // Get the first recipient
+      EMailAddress addr = (EMailAddress) _msgTo.iterator().next();
+      StringBuffer buf = new StringBuffer(addr.getName());
+      buf.append(" <");
+      buf.append(addr.getEmail());
+      buf.append('>');
+      return buf.toString();
+   }
 }
