@@ -38,7 +38,7 @@ public class GetACARSData extends DAO {
 	   // Build the SQL statement
 	   StringBuffer sqlBuf = new StringBuffer("SELECT DISTINCT LAT, LNG FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-	   sqlBuf.append("WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 	   
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -75,7 +75,7 @@ public class GetACARSData extends DAO {
 	   StringBuffer sqlBuf = new StringBuffer("SELECT REPORT_TIME, LAT, LNG, B_ALT, HEADING, ASPEED, GSPEED, "
 	         + "VSPEED, N1, N2, FLAPS, FLAGS FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-	   sqlBuf.append("WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 	   
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
