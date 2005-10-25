@@ -34,7 +34,7 @@ public class RosterCommand extends AbstractViewCommand {
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
-           vc.setSortType(SORT_CODE[0]);
+           vc.setSortType(SORT_CODE[4]);
      
         try {
             Connection con = ctx.getConnection();
