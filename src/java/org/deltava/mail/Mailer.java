@@ -134,7 +134,8 @@ public class Mailer {
       // If we're in test mode, send back to the sender only
       if (SystemData.getBoolean("smtp.testMode")) {
          log.warn("STMP Test Mode enabled - sending to " + _env.getFrom().getEmail());
-         _env.setRecipient(_env.getFrom());
+         _msgTo.clear();
+         _msgTo.add(_env.getFrom());
       }
 
       // Warn if we have no template

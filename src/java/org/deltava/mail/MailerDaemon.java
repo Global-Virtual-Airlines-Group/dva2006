@@ -24,7 +24,7 @@ public class MailerDaemon extends Thread {
 
    private static final Logger log = Logger.getLogger(MailerDaemon.class);
 
-   private static Set _queue = new LinkedHashSet();
+   private Set _queue = new LinkedHashSet();
 
    /**
     * Creates a new Mailer daemon thread.
