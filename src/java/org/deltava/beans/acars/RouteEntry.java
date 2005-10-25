@@ -22,6 +22,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 	private GeoPosition _gpos;
 
 	private int _alt;
+	private int _radarAlt;
 	private int _hdg;
 	private int _aSpeed;
 	private int _gSpeed;
@@ -50,12 +51,22 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 	}
 
 	/**
-	 * Returns the aircraft's atltiude.
+	 * Returns the aircraft's atltiude above <i>sea level</i>.
 	 * @return the altitude in feet MSL
 	 * @see RouteEntry#setAltitude(int)
+	 * @see RouteEntry#getRadarAltitude()
 	 */
 	public int getAltitude() {
 		return _alt;
+	}
+	
+	/**
+	 * Returns the aircraft altitude above <i>ground level</i>.
+	 * @return the altitude in feet AGL
+	 * @see RouteEntry#setRadarAltitude(int)
+	 */
+	public int getRadarAltitude() {
+	   return _radarAlt;
 	}
 
 	/**
@@ -184,16 +195,27 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 	}
 
 	/**
-	 * Updates the aircraft's altitude.
-	 * @param alt the altitude in feet
+	 * Updates the aircraft's altitude above <i>sea level</i>.
+	 * @param alt the altitude in feet MSL
 	 * @throws IllegalArgumentException if alt < -300 or alt > 100000
 	 * @see RouteEntry#getAltitude()
+	 * @see RouteEntry#setRadarAltitude(int)
 	 */
 	public void setAltitude(int alt) {
 		if ((alt < -300) || (alt > 100000))
 			throw new IllegalArgumentException("Altitude cannot be < -300 or > 100000");
 
 		_alt = alt;
+	}
+	
+	/**
+	 * Updates the aircraft's altitude above <i>ground level</i>.
+	 * @param alt the altitude in feet AGL
+	 * @see RouteEntry#getRadarAltitude()
+	 * @see RouteEntry#setAltitude(int)
+	 */
+	public void setRadarAltitude(int alt) {
+	   _alt = (alt < 0) ? 0 : alt;
 	}
 
 	/**
@@ -349,7 +371,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 		buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
 		buf.append("</b><br /> Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
-		buf.append(" feet<br />Speed: ");
+		buf.append("feet");
+		if (_radarAlt < 2500) {
+		   buf.append(" (");
+		   buf.append(StringUtils.format(_radarAlt, "#,000"));
+		   buf.append(" feet AGL)");
+		}
+		
+		buf.append(" <br />Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "##0"));
 		buf.append(" kts (GS: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
