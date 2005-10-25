@@ -206,14 +206,20 @@
 		<echo message="Uploading Library Jars" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
-			<fileset dir="lib/deploy" includes="mysql*.jar" />
+			<fileset dir="lib/deploy">
+				<include name="mysql*.jar" />
+				<include name="log4j*.jar" />
+			</fileset>
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
 		</ftp>
 		
 		<echo message="Uploading common Library Jars" />
 		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
 		 remotedir="${webapp.ftp.path.common}" action="send" depends="yes" verbose="yes">
-			<fileset dir="lib/deploy" excludes="mysql*.jar" />
+			<fileset dir="lib/deploy">
+				<exclude name="mysql*.jar" />
+				<exclude name="log4j*.jar" />
+			</fileset>
 		</ftp>
 		
 		<!-- Upload configuration files to the app server -->
@@ -294,7 +300,9 @@
 		<!-- Upload the common JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
-			<fileset dir="lib/deploy" includes="*.jar" excludes="mysql*.jar">
+			<fileset dir="lib/deploy" includes="*.jar">
+				<exclude name="mysql*.jar" />
+				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
@@ -311,7 +319,9 @@
 					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
 				</modified>
 			</fileset>
-			<fileset dir="lib/deploy" includes="mysql*.jar">
+			<fileset dir="lib/deploy">
+				<include name="mysql*.jar" />
+				<include name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
