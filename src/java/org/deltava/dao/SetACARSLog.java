@@ -60,7 +60,7 @@ public class SetACARSLog extends DAO {
         startTransaction();
         
         // Copy the data to the archive
-        prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE ARC SELECT P.* FROM acars.POSITIONS P "
+        prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE SELECT P.* FROM acars.POSITIONS P "
               + "WHERE (P.FLIGHT_ID=?)");
         _ps.setInt(1, flightID);
         executeUpdate(0);
