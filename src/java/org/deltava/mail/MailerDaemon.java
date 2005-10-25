@@ -42,6 +42,8 @@ public class MailerDaemon extends Thread {
       synchronized (_queue) {
          _queue.add(env);
       }
+      
+      log.info("Queued message for " + env.getRecipients()[0]);
    }
 
    private void send(Session s, SMTPEnvelope env) {
@@ -99,6 +101,9 @@ public class MailerDaemon extends Thread {
    public void run() {
       log.info("Starting");
       ThreadUtils.sleep(5000);
+      int sleepInterval = SystemData.getInt("smtp.daemon.sleep") * 1000;
+      if (sleepInterval == 0)
+         sleepInterval = 60000;
 
       while (!isInterrupted()) {
          log.debug("Checking Queue");
@@ -106,6 +111,8 @@ public class MailerDaemon extends Thread {
          // Check if the queue has any information
          synchronized (_queue) {
             if (!_queue.isEmpty()) {
+               log.info("Processing Queue - " + _queue.size() + " entries");
+               
                // Generate a session to the STMP server
                try {
                   Properties props = System.getProperties();
@@ -127,7 +134,7 @@ public class MailerDaemon extends Thread {
 
          // Sleep for a while
          try {
-            Thread.sleep(30000);
+            Thread.sleep(sleepInterval);
          } catch (InterruptedException ie) {
             log.debug("Interrupted while sleeping");
             interrupt();
