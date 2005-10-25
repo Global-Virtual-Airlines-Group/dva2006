@@ -54,6 +54,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private boolean _showSigs;
     private boolean _showSSThreads;
     private boolean _hasSignature;
+    private boolean _showDefaultSignature;
     
     private int _mapType;
 
@@ -255,9 +256,22 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * Queries if the Pilot has a signature image.
      * @return TRUE if the pilot has an image, otherwise FALSE
      * @see Pilot#setHasSignature(boolean)
+     * @see Pilot#getHasDefaultSignature()
+     * @see Pilot#setHasDefaultSignature(boolean)
      */
     public boolean getHasSignature() {
     	return _hasSignature;
+    }
+    
+    /**
+     * Queries if the default signature image should be shown.
+     * @return TRUE if the default image should be shown, otherwise FALSE
+     * @see Pilot#setHasDefaultSignature(boolean)
+     * @see Pilot#getHasSignature()
+     * @see Pilot#setHasSignature(boolean)
+     */
+    public boolean getHasDefaultSignature() {
+       return _showDefaultSignature;
     }
 
     /**
@@ -301,12 +315,29 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
-     * Sets if this Pilot has a signature image available.
+     * Sets if this Pilot has a signature image available. <i>This method will clear the default signature flag</i>.
      * @param hasSig TRUE if a signature image is available, otherwise FALSE
      * @see Pilot#getHasSignature()
+     * @see Pilot#getHasDefaultSignature()
+     * @see Pilot#setHasDefaultSignature(boolean)
      */
     public void setHasSignature(boolean hasSig) {
     	_hasSignature = hasSig;
+    	if (hasSig)
+    	   _showDefaultSignature = false;
+    }
+    
+    /**
+     * Sets if this Pilot's signature should be the default siganture. <i>This method has no effect if the Pilot
+     * has a signature image.</i> 
+     * @param hasSig TRUE if the default signature should be used, otherwise FALSE
+     * @see Pilot#getHasDefaultSignature()
+     * @see Pilot#getHasSignature()
+     * @see Pilot#setHasSignature(boolean)
+     */
+    public void setHasDefaultSignature(boolean hasSig) {
+       if (!_hasSignature)
+          _showDefaultSignature = hasSig;
     }
     
     /**

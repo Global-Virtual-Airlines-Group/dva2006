@@ -274,6 +274,8 @@ abstract class PilotReadDAO extends PilotDAO {
          p.setEmailAccess(rs.getInt(24));
          p.setShowSignatures(rs.getBoolean(25));
          p.setShowSSThreads(rs.getBoolean(26));
+         // FIXME Uncomment this and renumber
+         // p.setHasDefaultSignature(rs.getBoolean(27));
          p.setUIScheme(rs.getString(27));
          p.setLoginHost(rs.getString(28));
          p.setDateFormat(rs.getString(29));
