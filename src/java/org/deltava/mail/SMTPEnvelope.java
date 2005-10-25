@@ -163,11 +163,7 @@ class SMTPEnvelope implements java.io.Serializable {
          return "UNKNOWN";
       
       // Get the first recipient
-      EMailAddress addr = (EMailAddress) _msgTo.iterator().next();
-      StringBuffer buf = new StringBuffer(addr.getName());
-      buf.append(" <");
-      buf.append(addr.getEmail());
-      buf.append('>');
-      return buf.toString();
+      Address addr = (Address) _msgTo.iterator().next();
+      return addr.toString();
    }
 }
