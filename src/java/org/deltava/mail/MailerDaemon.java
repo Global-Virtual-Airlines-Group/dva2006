@@ -47,7 +47,7 @@ public class MailerDaemon extends Thread {
    }
 
    private void send(Session s, SMTPEnvelope env) {
-
+      
       // Create the message
       MimeMessage imsg = new MimeMessage(s);
       try {
@@ -88,11 +88,10 @@ public class MailerDaemon extends Thread {
       // Send the message
       try {
          Transport.send(imsg);
-         log.info("Sent message to " + env.getFrom().getName() + " <" + env.getFrom().getEmail() + ">");
+         log.info("Sent message to " + env);
       } catch (Exception e) {
-         log.error("Error sending email to " + env.getFrom().getName(), e);
+         log.error("Error sending email to " + env, e);
       }
-
    }
 
    /**
