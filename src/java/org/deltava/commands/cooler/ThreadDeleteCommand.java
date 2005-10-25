@@ -77,7 +77,7 @@ public class ThreadDeleteCommand extends AbstractCommand {
       }
       
       // Set status attribute
-      ctx.setAttribute("isDeleted", Boolean.TRUE, REQUEST);
+      ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
