@@ -164,9 +164,9 @@ public class SystemBootstrap implements ServletContextListener {
 		}
 		
 		// Start the mailer daemon
-		MailerDaemon daemon = new MailerDaemon();
-		SystemData.add(SystemData.SMTP_DAEMON, daemon);
-		daemon.start();
+		Thread mailerDaemon = new MailerDaemon();
+		SystemData.add(SystemData.SMTP_DAEMON, mailerDaemon);
+		mailerDaemon.start();
 	}
 
 	/**
@@ -175,11 +175,10 @@ public class SystemBootstrap implements ServletContextListener {
 	 */
 	public void contextDestroyed(ServletContextEvent e) {
 
-		// Shut down the ACARS server
-		ThreadUtils.kill(_acarsThread, 500);
-		
-		// Shut down the task scheduler
+		// Shut down the extra threads
 		ThreadUtils.kill(_taskSched, 500);
+		ThreadUtils.kill((Thread) SystemData.getObject(SystemData.SMTP_DAEMON), 500);
+		ThreadUtils.kill(_acarsThread, 500);
 
 		// Shut down and remove the JDBC connection pool
 		e.getServletContext().removeAttribute("jdbcConnectionPool");
