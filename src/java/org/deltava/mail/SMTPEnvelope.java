@@ -17,7 +17,7 @@ import org.deltava.beans.EMailAddress;
  * @since 1.0
  */
 
-class SMTPEnvelope implements java.io.Serializable {
+class SMTPEnvelope implements java.io.Serializable, Cloneable {
    
    private EMailAddress _msgFrom;
    private Collection _msgTo = new LinkedHashSet();
@@ -152,6 +152,21 @@ class SMTPEnvelope implements java.io.Serializable {
          } catch (UnsupportedEncodingException uee) {
          }
       }
+   }
+   
+   /**
+    * Clones this SMTP envelope.
+    * @return a copy of the envelope
+    * @see Cloneable
+    */
+   public Object clone() {
+	   SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
+	   result._msgTo.addAll(_msgTo);
+	   result._copyTo.addAll(_copyTo);
+	   result.setAttachment(_attach);
+	   result.setSubject(_subject);
+	   result.setBody(_body);
+	   return result;
    }
    
    /**
