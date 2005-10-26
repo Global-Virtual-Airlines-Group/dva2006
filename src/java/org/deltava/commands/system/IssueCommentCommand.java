@@ -3,8 +3,7 @@ package org.deltava.commands.system;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.system.Issue;
-import org.deltava.beans.system.IssueComment;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -79,15 +78,26 @@ public class IssueCommentCommand extends AbstractCommand {
             // Get the message template
             GetMessageTemplate mtdao = new GetMessageTemplate(con);
             mctx.setTemplate(mtdao.get("ISSUECOMMENT"));
+            
+            // Get the user data
+            GetUserData uddao = new GetUserData(con);
+            UserDataMap udm = uddao.get(pilotIDs);
 
             // Get the pilot profiles
+            Set pilots = new HashSet();
             GetPilot pdao = new GetPilot(con);
-            Map pilots = pdao.getByID(pilotIDs, "PILOTS");
+            for (Iterator pi = udm.getTableNames().iterator(); pi.hasNext(); ) {
+            	String dbTableName = (String) pi.next();
+            	if (UserDataMap.isPilotTable(dbTableName)) {
+            		Map pMap = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
+            		pilots.addAll(pMap.values());
+            	}
+            }
 
             // Create the e-mail message
             Mailer mailer = new Mailer(ctx.getUser());
             mailer.setContext(mctx);
-            mailer.send(pilots.values());
+            mailer.send(pilots);
          }
       } catch (DAOException de) {
          throw new CommandException(de);
