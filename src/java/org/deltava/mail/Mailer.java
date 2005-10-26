@@ -164,7 +164,7 @@ public class Mailer {
          }
          
          // Queue the message up
-         daemon.push(_env);
+         daemon.push((SMTPEnvelope) _env.clone());
       }
    }
 }
