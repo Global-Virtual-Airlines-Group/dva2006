@@ -43,9 +43,13 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
 				throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+			
+			// Check for an existing check ride
+			GetExam exdao = new GetExam(con);
+			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
 
 			// Check our access level
-			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
+			TransferAccessControl access = new TransferAccessControl(ctx, txreq, cr);
 			access.validate();
 			if (!access.getCanAssignRide())
 				throw securityException("Cannot assign Check Ride");
@@ -73,7 +77,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			}
 			
 			// Generate the checkride
-			CheckRide cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
+			cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
 			cr.setDate(new java.util.Date());
 			cr.setPilotID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());

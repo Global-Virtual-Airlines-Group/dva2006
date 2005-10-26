@@ -1,9 +1,11 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
+import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -33,10 +35,16 @@ public class TransferProcessCommand extends AbstractCommand {
          // Get the DAO and the transfer request
          GetTransferRequest txdao = new GetTransferRequest(con);
          TransferRequest txreq = txdao.get(ctx.getID());
-         if (txreq == null) throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+         if (txreq == null)
+        	 throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+         
+         // See if there's a checkride
+         GetExam exdao = new GetExam(con);
+         CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
+         ctx.setAttribute("checkRide", cr, REQUEST);
 
          // Check our access
-         TransferAccessControl access = new TransferAccessControl(ctx, txreq);
+         TransferAccessControl access = new TransferAccessControl(ctx, txreq, cr);
          access.validate();
 
          // Get the pilot
@@ -46,15 +54,28 @@ public class TransferProcessCommand extends AbstractCommand {
          
          // Get the requested equipment type
          GetEquipmentType eqdao = new GetEquipmentType(con);
+         EquipmentType newEQ = eqdao.get(txreq.getEquipmentType());
          ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
-         ctx.setAttribute("eqType", eqdao.get(txreq.getEquipmentType()), REQUEST);
+         ctx.setAttribute("eqType", newEQ, REQUEST);
          ctx.setAttribute("currentEQ", eqdao.get(usr.getEquipmentType()), REQUEST);
-
-         // See if there's a checkride
-         if (txreq.getCheckRideID() != 0) {
-            GetExam exdao = new GetExam(con);
-            ctx.setAttribute("checkRide", exdao.getCheckRide(txreq.getCheckRideID()), REQUEST);
+         
+         // Check if the user has passed the Captain's examination
+         boolean hasCaptExam = false;
+         Collection exams = exdao.getExams(txreq.getID());
+         for (Iterator i = exams.iterator(); i.hasNext() && (!hasCaptExam); ) {
+        	 Test t = (Test) i.next();
+        	 hasCaptExam = (t.getPassFail() && t.getName().equals(newEQ.getExamName(Ranks.RANK_C)));
          }
+         
+         // Check how many legs the user has completed
+         GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
+         int promoLegs = prdao.getPromotionCount(txreq.getID(), txreq.getEquipmentType());
+         boolean hasLegs = (promoLegs >= newEQ.getPromotionLegs(Ranks.RANK_C));
+         
+         // Check if the user is eligible for promotion
+         ctx.setAttribute("captExam", Boolean.valueOf(hasCaptExam), REQUEST);
+         ctx.setAttribute("promoLegs", new Integer(promoLegs), REQUEST);
+         ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
          
          // Save the transfer request and access controller
          ctx.setAttribute("txReq", txreq, REQUEST);

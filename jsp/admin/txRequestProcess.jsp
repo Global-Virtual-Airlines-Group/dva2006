@@ -75,8 +75,8 @@ return true;
  <td class="data">${checkRide.equipmentType}</td>
 </tr>
 <tr>
- <td class="label">Comments</td>
- <td class="data">${checkRide.comments}</td>
+ <td class="label" valign="top">Comments</td>
+ <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 <c:if test="${checkRide.flightID != 0}">
 <tr>
@@ -94,6 +94,12 @@ return true;
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${activeEQ}" value="${eqType}" />
  as <el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" firstEntry="-" /></td>
 </tr>
+<tr>
+ <td class="label">Promotion to Captain</td>
+ <td class="data">Examination Status <b>${captExam ? 'PASSED' : 'NOT PASSED'}</b>, Flight Legs completed
+ = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps">ELIGIBLE FOR PROMOTION
+ TO CAPTAIN</span></c:if></td>
+</tr>
 </c:if>
 <c:if test="${access.canAssignRide}">
 <tr class="title caps">
@@ -104,7 +110,7 @@ return true;
  <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
 </tr>
 <tr>
- <td class="label">Comments</td>
+ <td class="label" valign="top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
 </tr>
 <tr>

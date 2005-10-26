@@ -1,6 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
+import org.deltava.beans.testing.CheckRide;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.CommandSecurityException;
@@ -16,6 +17,7 @@ import org.deltava.security.SecurityContext;
 public class TransferAccessControl extends AccessControl {
 
    private TransferRequest _treq;
+   private CheckRide _checkRide;
    
    private boolean _canAssignRide;
    private boolean _canApprove;
@@ -23,11 +25,23 @@ public class TransferAccessControl extends AccessControl {
    
    /**
     * Initialize the Access Controller.
-    * @param ctx
+    * @param ctx the security context
+    * @param treq the Transfer Request
+    * @param cr the Check Ride
     */
-   public TransferAccessControl(SecurityContext ctx, TransferRequest treq) {
+   public TransferAccessControl(SecurityContext ctx, TransferRequest treq, CheckRide cr) {
       super(ctx);
       _treq = treq;
+      _checkRide = cr;
+   }
+   
+   /**
+    * Initialize the Access Controller.
+    * @param ctx the security context
+    * @param treq the Transfer Request
+    */
+   public TransferAccessControl(SecurityContext ctx, TransferRequest treq) {
+	   this(ctx, treq, null);
    }
 
    /**
@@ -45,7 +59,7 @@ public class TransferAccessControl extends AccessControl {
 
       // Set access rights
       _canApprove = (_treq.getStatus() == TransferRequest.OK) && hrPIREP;
-      _canAssignRide = (_treq.getStatus() == TransferRequest.PENDING) && hrExam;
+      _canAssignRide = (_treq.getStatus() == TransferRequest.PENDING) && hrExam && (_checkRide == null);
       _canReject = hrPIREP || hrExam;
    }
 
