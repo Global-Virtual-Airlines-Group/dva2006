@@ -371,7 +371,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation,
 		buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
 		buf.append("</b><br /> Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
-		buf.append("feet");
+		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
 		   buf.append(" (");
 		   buf.append(StringUtils.format(_radarAlt, "#,000"));
