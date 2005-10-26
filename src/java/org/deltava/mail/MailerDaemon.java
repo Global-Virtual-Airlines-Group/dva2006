@@ -42,12 +42,33 @@ public class MailerDaemon extends Thread {
       synchronized (_queue) {
          _queue.add(env);
       }
-      
+
       log.info("Queued message for " + env.getRecipients()[0]);
    }
 
+   /**
+    * Returns if the Mailer Daemon queue is empty.
+    * @return TRUE if the queue is empty, otherwise FALSE
+    */
+   private boolean hasMessages() {
+      synchronized (_queue) {
+         return (_queue.size() > 0);
+      }
+   }
+
+   private SMTPEnvelope getNext() {
+      Iterator i = _queue.iterator();
+      SMTPEnvelope env = (SMTPEnvelope) i.next();
+      if (env != null)
+         i.remove();
+
+      return env;
+   }
+
    private void send(Session s, SMTPEnvelope env) {
-      
+      if (env == null)
+         return;
+
       // Create the message
       MimeMessage imsg = new MimeMessage(s);
       try {
@@ -99,35 +120,30 @@ public class MailerDaemon extends Thread {
     */
    public void run() {
       log.info("Starting");
-      ThreadUtils.sleep(5000);
       int sleepInterval = SystemData.getInt("smtp.daemon.sleep") * 1000;
       if (sleepInterval == 0)
          sleepInterval = 60000;
 
+      ThreadUtils.sleep(5000);
       while (!isInterrupted()) {
          log.debug("Checking Queue");
 
          // Check if the queue has any information
-         synchronized (_queue) {
-            if (!_queue.isEmpty()) {
-               log.info("Processing Queue - " + _queue.size() + " entries");
-               
-               // Generate a session to the STMP server
-               try {
-                  Properties props = System.getProperties();
-                  props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
-                  Session s = Session.getInstance(props);
-                  s.setDebug(SystemData.getBoolean("smtp.testMode"));
-                  
-                  // Send the messages
-                  for (Iterator i = _queue.iterator(); i.hasNext();) {
-                     SMTPEnvelope env = (SMTPEnvelope) i.next();
-                     send(s, env);
-                     i.remove();
-                  }
-               } catch (Exception e) {
-                  log.error("Error connecting to STMP server " + e.getMessage());
-               }
+         if (hasMessages()) {
+            log.info("Processing Queue - " + _queue.size() + " entries");
+
+            // Generate a session to the STMP server
+            try {
+               Properties props = System.getProperties();
+               props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
+               Session s = Session.getInstance(props);
+               s.setDebug(SystemData.getBoolean("smtp.testMode"));
+
+               // Loop through the messages
+               while (hasMessages())
+                  send(s, getNext());
+            } catch (Exception e) {
+               log.error("Error connecting to STMP server " + e.getMessage());
             }
          }
 
