@@ -1,0 +1,27 @@
+#!/bin/sh
+touch /var/run/siteDown.flag
+
+echo "Shutting down Tomcat"
+cd /usr/local/jakarta-tomcat5.5/bin
+./shutdown.sh
+sleep 9
+
+if [ -f "/var/run/tomcat55.pid" ]
+then
+ if [ -d "/proc/`cat /var/run/tomcat55.pid`" ]
+ then
+  echo "Killing process `cat /var/run/tomcat55.pid`"
+  kill -9 `cat /var/run/tomcat55.pid`
+ fi
+fi
+
+echo "Cleaning out logs/PID file"
+cd /usr/local/jakarta-tomcat5.5/logs
+rm *.out
+rm /var/run/tomcat55.pid
+
+echo "Restarting Tomcat"
+cd /usr/local/jakarta-tomcat5.5/bin
+./startup.sh
+
+rm /var/run/siteDown.flag

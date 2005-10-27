@@ -1,0 +1,18 @@
+#! /bin/csh
+# Script to mark the web site as down.
+# (c) 2005 Delta Virtual Airlines.
+#
+
+if [ ! -e "/var/run/siteDown.flag" ]
+then
+ echo 'Setting Site Down flag'
+ touch /var/run/siteDown.flag
+fi
+
+echo 'Setting Delta Virtual Airlines Site Down page'
+cd /usr/local/www/deltava.org/www
+cp error500.html index.html
+
+echo 'Setting Aviation Francais Virtuel Site Down page'
+cd /usr/local/www/afva.net/www
+cp error500.html index.html

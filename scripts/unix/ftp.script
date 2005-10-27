@@ -1,0 +1,19 @@
+bin
+lcd /tmp/db_backup
+put acars.sql.gz
+put afv.sql.gz
+put afv_sched.sql.gz
+put afv_sys.sql.gz
+put afv_test.sql.gz
+put common.sql.gz
+put cooler.sql.gz
+put dva.sql.gz
+put dva_sched.sql.gz
+put dva_sys.sql.gz
+put dva_test.sql.gz
+put events.sql.gz
+put ldif.txt.gz
+
+lcd /tmp/svn_backup
+put svn_top.gz
+bye
