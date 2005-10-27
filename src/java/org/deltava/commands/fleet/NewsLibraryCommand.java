@@ -1,0 +1,76 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+package org.deltava.commands.fleet;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.fleet.FleetEntry;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to view Newsletters. Note that this command will display library entries from other
+ * Airlines, with the proviso that <i>all files are in the same library path</i>.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class NewsLibraryCommand extends AbstractViewCommand {
+   
+   private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
+
+   /**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+   public void execute(CommandContext ctx) throws CommandException {
+
+      Collection results = null;
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the DAO and newsletters
+			GetLibrary dao = new GetLibrary(con);
+			results = dao.getNewsletters(SystemData.get("airline.db"));
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Calculate access for adding content
+		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+		ctx.setAttribute("access", access, REQUEST);
+
+		// Validate our access to the results
+		for (Iterator i = results.iterator(); i.hasNext();) {
+			FleetEntry e = (FleetEntry) i.next();
+			access.setEntry(e);
+			access.validate();
+
+			// Check that the resource exists
+			if (e.getSize() == 0) {
+				log.warn(e.getFullName() + " not found in file system!");
+				if (!ctx.isUserInRole("Fleet"))
+					i.remove();
+			} else if (!access.getCanView()) {
+				i.remove();
+			}
+		}
+
+		// Save the results in the request
+		ctx.setAttribute("docs", results, REQUEST);
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/fleet/newsLibrary.jsp");
+		result.setSuccess(true);
+   }
+}

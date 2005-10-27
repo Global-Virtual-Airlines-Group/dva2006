@@ -37,8 +37,9 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -91,7 +92,9 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
+ <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" />
+<c:if test="${newsletterEnabled}">
+<br /><el:box name="isNewsletter" idx="*" value="true" label="This is an airline Newsletter" /></c:if></td>
 </tr>
 </el:table>
 

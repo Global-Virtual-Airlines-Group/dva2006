@@ -7,12 +7,18 @@
 		<domain>deltava.org</domain>
 		<url>www.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
+		<files type="Boolean">true</files>
 		<code>DVA</code>
 		<db>DVA</db>
-		
 		<voice>
 			<url>rw.deltava.org/DAL</url>
 		</voice>
+		
+		<!-- Do we have newsletters? -->
+		<newsletters>
+			<enabled type="Boolean">true</enabled>
+			<name>Delta FLY!</name>
+		</newsletters>
 		
 		<!-- Copyright disclaimer -->
 		<copyright>In no way are we affiliated with Delta Air Lines or its affiliates. All images, logos and trademarks remain property of their respective owners.</copyright>
@@ -335,7 +341,7 @@
 			<role>Signature</role>
 		</list>
 		
-		<auth>org.deltava.security.MigrationAuthenticator</auth>
+		<auth>org.deltava.security.LDAPAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
 	</security>
 	

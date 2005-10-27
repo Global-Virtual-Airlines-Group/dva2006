@@ -54,7 +54,7 @@ public class GetLibrary extends DAO {
 	 * Returns the contents of the Document Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
 	 * @param dbName the database name
-	 * @return a List of Manual beans
+	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection getManuals(String dbName) throws DAOException {
@@ -64,7 +64,31 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".DOCS D LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.NEWSLETTER=0) GROUP BY D.NAME");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			return loadManuals();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all newsletters from the Document Library. This takes a database name so we can display the contents of other
+	 * airlines' libraries.
+	 * @param dbName the database name
+	 * @return a Collection of Manual beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection getNewsletters(String dbName) throws DAOException {
+	   
+		// Build the SQL statement
+		StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOCS D LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.NEWSLETTER=1) GROUP BY D.NAME");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -243,7 +267,7 @@ public class GetLibrary extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 6);
+		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the result set
 		List results = new ArrayList();
@@ -254,8 +278,9 @@ public class GetLibrary extends DAO {
 			doc.setVersion(rs.getInt(4));
 			doc.setSecurity(rs.getInt(5));
 			doc.setDescription(rs.getString(6));
+			doc.setIsNewsletter(rs.getBoolean(7));
 			if (hasTotals)
-				doc.setDownloadCount(rs.getInt(7));
+				doc.setDownloadCount(rs.getInt(8));
 
 			// Add to results
 			results.add(doc);

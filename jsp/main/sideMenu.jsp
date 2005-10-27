@@ -3,6 +3,8 @@
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="showIssue" name="issue_track.show" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
+<content:sysdata var="newsletter" name="airline.newsletters.name" />
 <!-- Sidebar Navigation Frame -->
 <div id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -40,6 +42,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="imagegallery">IMAGE GALLERY</el:cmd></td>
 </tr>
+<c:if test="${newsletterEnabled}">
+<tr class="MenuItem">
+ <td><el:cmd url="newsletters">${newsletter}</el:cmd></td>
+</tr>
+</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
 </tr>
