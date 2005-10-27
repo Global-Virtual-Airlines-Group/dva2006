@@ -45,7 +45,7 @@ public class ManualSaveCommand extends AbstractCommand {
 		} else if (mFile != null) {
 			fName = mFile.getName();
 		}
-
+		
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
 
@@ -54,12 +54,13 @@ public class ManualSaveCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 
 		List pilots = null;
+		Manual entry = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Library entry
 			GetLibrary dao = new GetLibrary(con);
-			Manual entry = dao.getManual(fName, SystemData.get("airline.db"));
+			entry = dao.getManual(fName, SystemData.get("airline.db"));
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
@@ -82,6 +83,7 @@ public class ManualSaveCommand extends AbstractCommand {
 			entry.setName(ctx.getParameter("title"));
 			entry.setVersion(Integer.parseInt(ctx.getParameter("version")), 0, 0);
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
+			entry.setIsNewsletter(Boolean.valueOf(ctx.getParameter("isNewsletter")).booleanValue());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
 
@@ -112,8 +114,8 @@ public class ManualSaveCommand extends AbstractCommand {
 		}
 
 		// Set status attributes
-      ctx.setAttribute("library", "Document", REQUEST);
-      ctx.setAttribute("librarycmd", "doclibrary", REQUEST);
+      ctx.setAttribute("library", entry.getIsNewsletter() ? "Newsletter" : "Document", REQUEST);
+      ctx.setAttribute("librarycmd", entry.getIsNewsletter() ? "newsletters" : "doclibrary", REQUEST);
 
 		// Send notification
 		if (!noNotify) {
