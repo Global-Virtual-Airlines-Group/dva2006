@@ -50,10 +50,11 @@ public class SetLibrary extends DAO {
 	public void write(Manual m) throws DAOException {
 		try {
 		   if (m.getDownloadCount() == 0) {
-		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES " + 
-		            "(?, ?, ?, ?, ?, ?)");
+		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME, NEWSLETTER) "
+		            + "VALUES (?, ?, ?, ?, ?, ?)");
 		   } else {
-		      prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=? WHERE (FILENAME=?)");		      
+		      prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, NEWSLETTER=? "
+		            + "WHERE (FILENAME=?)");		      
 		   }
 			
 		   // Update the prepared statement
@@ -62,7 +63,8 @@ public class SetLibrary extends DAO {
 			_ps.setInt(3, m.getMajorVersion());
 			_ps.setInt(4, m.getSecurity());
 			_ps.setString(5, m.getDescription());
-			_ps.setString(6, m.getFileName());
+			_ps.setBoolean(6, m.getIsNewsletter());
+			_ps.setString(7, m.getFileName());
 
 			// Update the database
 			executeUpdate(1);

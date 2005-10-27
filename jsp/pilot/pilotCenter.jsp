@@ -32,6 +32,9 @@ return true;
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="fileLibEnabled" name="airline.files" />
+<content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
+<content:sysdata var="newsletter" name="airline.newsletters.name" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -92,7 +95,7 @@ Your Assistant Chief Pilots are
 </c:if>
 <c:forEach var="aCP" items="${asstCP}">
 <a class="bld" href="mailto:${aCP.email}">${aCP.name}</a>&nbsp;
-</c:forEach>
+</c:forEach>.
 <br />
 </c:if>
 <br />
@@ -143,6 +146,7 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <td class="data">Our Fleet Library contains the official <content:airline /> Fleet - a collection 
  of aircraft, panels manuals and sound schemes.</td>
 </tr>
+<c:if test="${fileLibEnabled}">
 <content:filter roles="Fleet,HR">
 <tr>
  <td class="mid"><el:cmd className="bld" url="filelibrary">File Library</el:cmd></td>
@@ -150,6 +154,14 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 contributions from our community that will enhance your flight simulation experience.</td>
 </tr>
 </content:filter>
+</c:if>
+<c:if test="${newsletterEnabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="newsletters">${newsletter}</el:cmd></td>
+ <td class="data">${newsletter} is the official <content:airline /> newsletter, and is published regularly.
+ You can view back issues of ${newsletter} here.</td>
+</tr>
+</c:if>
 <content:filter roles="Fleet">
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>

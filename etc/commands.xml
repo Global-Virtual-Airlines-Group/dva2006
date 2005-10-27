@@ -230,6 +230,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="newsletters">
+		<name>Newsletters</name>
+		<class>org.deltava.commands.fleet.NewsLibraryCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="filelibrary">
 		<name>File Library</name>
 		<class>org.deltava.commands.fleet.UserLibraryCommand</class>
