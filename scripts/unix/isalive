@@ -1,0 +1,102 @@
+#!/bin/sh
+if [ -f "/var/run/siteDown.flag" ]
+then
+ echo "/var/run/siteDown.flag set - aborting"
+ exit
+fi
+
+if [ -f "/var/run/tomcat55.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/tomcat55.pid`" ]
+  then
+   echo "Tomcat (Application Server) is alive"
+  else
+   echo "Tomcat (Application Server) is DOWN"
+   tomcatctl start
+  fi
+else
+  echo "Tomcat (Application Server) is DOWN - no pid"
+  tomcatctl start
+fi
+
+if [ -f "/var/run/httpd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/httpd.pid`" ]
+  then
+   echo "Apache (Web Server) is alive"
+  else
+   echo "Apache (Web Server) is DOWN"
+   apachectl start
+  fi
+else
+  echo "Apache (Web Server) is DOWN - no pid"
+  apachectl start
+fi
+
+if [ -f "/var/run/openldap/slapd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/openldap/slapd.pid`" ]
+  then
+   echo "OpenLDAP (Authentication Server) is alive"
+  else
+   echo "OpenLDAP (Authentication Server) is DOWN"
+   ldapctl start
+  fi
+else
+  echo "OpenLDAP (Authentication Server) is DOWN - no pid"
+  ldapctl start
+fi
+
+if [ -f "/var/run/proftpd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/proftpd.pid`" ]
+  then
+   echo "ProFTPD (FTP Server) is alive"
+  else
+   echo "ProFTPD (FTP Server) is DOWN"
+   ftpctl start
+  fi
+else
+ echo "ProFTPD (FTP Server) is DOWN - no pid"
+ ftpctl start
+fi
+
+if [ -f "/var/spool/postfix/pid/master.pid" ]
+then
+  if [ -d "/proc/`cat /var/spool/postfix/pid/master.pid`" ]
+  then
+   echo "PostFix (SMTP Server) is alive"
+  else
+   echo "PostFix (SMTP Server) is DOWN"
+  fi
+else
+ echo "PostFix (SMTP Server) is DOWN - no pid"
+fi
+
+if [ -f "/var/run/cyrus-master.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/cyrus-master.pid`" ]
+  then
+   echo "Cyrus (IMAP Server) is alive"
+  else
+   echo "Cyrus (IMAP Server) is DOWN"
+   imapctl start
+  fi
+else
+ echo "Cyrus (IMAP Server) is DOWN - no pid"
+ imapctl start
+fi
+
+if [ -f "/var/run/named.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/named.pid`" ]
+  then
+   echo "BIND (DNS Server) is alive"
+  else
+   echo "BIND (DNS Server) is DOWN"
+   ndc start
+  fi
+else
+ echo "BIND (DNS Server) is DOWN - no pid"
+ ndc start
+fi

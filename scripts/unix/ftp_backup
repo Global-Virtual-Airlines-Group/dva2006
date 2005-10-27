@@ -1,0 +1,5 @@
+#!/bin/sh
+# Delta Virtual Airlines backup
+
+ftp s87336331.onlinehome.us < /usr/local/sbin/www/ftp.script
+
