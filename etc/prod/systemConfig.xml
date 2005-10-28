@@ -453,18 +453,19 @@
 		<pool>
 			<size type="Integer">100</size>
 			<multiple type="Boolean">false</multiple>
+			<threads type="Integer">2</threads>
 		</pool>
-		
+
 		<buffer>
 			<send type="Integer">16384</send>
 			<recv type="Integer">3072</recv>
 			<nio type="Integer">6144</nio>
 		</buffer>
-		
+
 		<list name="login_msgs" attr="msg">
 			<msg>All messages are logged by user ID and IP address.</msg>
 		</list>
-		
+
 		<ack>
 			<ping type="Boolean">false</ping>
 			<position type="Boolean">true</position>
