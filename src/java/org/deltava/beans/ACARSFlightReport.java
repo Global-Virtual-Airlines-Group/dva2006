@@ -106,7 +106,7 @@ public class ACARSFlightReport extends FlightReport {
      * @return the distance from the origin airport, in miles
      * @see ACARSFlightReport#setTakeoffDistance(int)
      * @see ACARSFlightReport#getLandingDistance()
-     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.schedule.GeoPosition)
+     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.GeoLocation)
      */
     public int getTakeoffDistance() {
         return _takeoffDistance;
@@ -163,7 +163,7 @@ public class ACARSFlightReport extends FlightReport {
      * @return the distance from the destination airport, in miles
      * @see ACARSFlightReport#setLandingDistance(int)
      * @see ACARSFlightReport#getTakeoffDistance()
-     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.schedule.GeoPosition)
+     * @see org.deltava.beans.schedule.GeoPosition#distanceTo(org.deltava.beans.GeoLocation)
      */
     public int getLandingDistance() {
         return _landingDistance;

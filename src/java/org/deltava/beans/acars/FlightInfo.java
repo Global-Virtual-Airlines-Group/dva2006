@@ -53,7 +53,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    /**
     * Returns the flight's ACARS connection ID.
     * @return the connection ID
-    * @see FlightInfo#setConnectionID(int)
+    * @see FlightInfo#setConnectionID(long)
     * @see FlightInfo#getPilotID()
     */
    public long getConnectionID() {

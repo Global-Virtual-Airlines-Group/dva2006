@@ -157,7 +157,7 @@ public class DateFormatTag extends TagSupport {
 	
 	/**
 	 * Mashes the date and time together in a date/time object.
-	 * @returns TagSupport.SKIP_BODY
+	 * @return TagSupport.SKIP_BODY
 	 * @throws JspException if an error occurs
 	 */
 	public int doStartTag() throws JspException {
@@ -169,7 +169,7 @@ public class DateFormatTag extends TagSupport {
 
 	/**
 	 * Formats the date/time and writes it to the JSP output writer.
-	 * @returns TagSupport.EVAL_PAGE
+	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
