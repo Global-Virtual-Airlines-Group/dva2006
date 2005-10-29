@@ -95,7 +95,7 @@ public abstract class Flight extends DatabaseBean implements Comparable {
      * Returns the distance of this flight, between the two airports's positions.
      * @return the distance in nautical miles between the two airports
      * @throws IllegalStateException if either airport is not set
-     * @see GeoPosition#distanceTo(GeoPosition)
+     * @see GeoPosition#distanceTo(GeoLocation)
      */
     public int getDistance() {
         if ((_airportA == null) || (_airportD == null))
