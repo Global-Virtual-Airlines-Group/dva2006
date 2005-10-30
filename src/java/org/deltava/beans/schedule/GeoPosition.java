@@ -1,6 +1,8 @@
+// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.GeoLocation;
+import org.deltava.beans.GeospaceLocation;
 
 /**
  * A class for working with latitude/longitude pairs.
@@ -9,10 +11,11 @@ import org.deltava.beans.GeoLocation;
  * @since 1.0
  */
 
-public class GeoPosition implements GeoLocation, java.io.Serializable {
+public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 
 	private double _lat;
 	private double _lon;
+	private int _alt;
 
 	/**
 	 * Creates a new GeoPosition object
@@ -42,6 +45,8 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 	 */
 	public GeoPosition(GeoLocation gl) {
 		this(gl.getLatitude(), gl.getLongitude());
+		if (gl instanceof GeospaceLocation)
+			_alt = ((GeospaceLocation) gl).getAltitude();
 	}
 
 	/**
@@ -81,7 +86,7 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 
 	/**
 	 * Get the latitude of this position.
-	 * @return The latitude in degrees (and some fraction thereof) (values < 0 are South of the Equator)
+	 * @return the latitude in degrees (and some fraction thereof) (values < 0 are South of the Equator)
 	 */
 	public double getLatitude() {
 		return _lat;
@@ -89,10 +94,18 @@ public class GeoPosition implements GeoLocation, java.io.Serializable {
 
 	/**
 	 * Get the longitude of this position.
-	 * @return The longitude in degrees (and some fraction thereof) (values < 0 are West of the Greenwich Meridian)
+	 * @return the longitude in degrees (and some fraction thereof) (values < 0 are West of the Greenwich Meridian)
 	 */
 	public double getLongitude() {
 		return _lon;
+	}
+	
+	/**
+	 * Returns the altitude of this position.
+	 * @return the altitude in feet above mean sea level, or 0 if undefined
+	 */
+	public int getAltitude() {
+		return _alt;
 	}
 
 	/**
