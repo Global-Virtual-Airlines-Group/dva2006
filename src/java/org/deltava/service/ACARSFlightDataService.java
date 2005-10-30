@@ -6,15 +6,15 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.jdom.*;
+
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.dao.*;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
-import org.jdom.*;
-import org.jdom.output.*;
 
 /**
  * A Web Service to display ACARS Flight Report data.
@@ -59,23 +59,24 @@ public class ACARSFlightDataService extends WebDataService {
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
 		for (Iterator i = routePoints.iterator(); i.hasNext(); ) {
 			GeoLocation entry = (GeoLocation) i.next();
-			Element e = new Element("pos");
-			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			Element e = null;
 			if (entry instanceof MapEntry) {
 				MapEntry me = (MapEntry) entry;
+				e = XMLUtils.createElement("pos", me.getInfoBox(), true);
 				e.setAttribute("color", me.getIconColor());
-				e.addContent(new CDATA(me.getInfoBox()));
+			} else {
+				e = new Element("pos");
 			}
 			
+			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
+			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			re.addContent(e);
 		}
 		
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");

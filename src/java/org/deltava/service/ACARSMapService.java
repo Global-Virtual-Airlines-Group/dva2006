@@ -7,13 +7,12 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.acars.ACARSAdminInfo;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -44,22 +43,20 @@ public class ACARSMapService extends WebService {
 		// Add the items
 		for (Iterator i = acarsPool.getMapEntries().iterator(); i.hasNext();) {
 			MapEntry entry = (MapEntry) i.next();
-			Element e = new Element("aircraft");
+			Element e = XMLUtils.createElement("aircraft", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
 			if (entry instanceof DatabaseBean)
 				e.setAttribute("flight_id", String.valueOf(((DatabaseBean) entry).getID()));
 			
-			e.addContent(new CDATA(entry.getInfoBox()));
 			re.addContent(e);
 		}
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");

@@ -7,15 +7,13 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
 import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.dao.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
@@ -78,19 +76,17 @@ public class ACARSMapProgressService extends WebDataService {
 		// Write the route
 		for (Iterator i = routeWaypoints.iterator(); i.hasNext(); ) {
 			MapEntry entry = (MapEntry) i.next();
-			Element e = new Element("route");
+			Element e = XMLUtils.createElement("route", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
-			e.addContent(new CDATA(entry.getInfoBox()));
 			re.addContent(e);
 		}
 		
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
