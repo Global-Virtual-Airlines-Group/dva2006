@@ -4,6 +4,8 @@ package org.deltava.tasks;
 import java.io.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.stats.HTTPStatistics;
 
 import org.deltava.dao.SetSystemLog;
@@ -47,7 +49,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
          try {
             String ext = name.substring(name.lastIndexOf('.') + 1);
             Date d = new Date(Long.parseLong(ext) * 1000);
-            log.info("Cutoff date = " + _startTime.getTime() + " log date=" + d);
+            getLog().info("Cutoff date = " + _startTime.getTime() + " log date=" + d);
             return d.before(_startTime.getTime());
          } catch (Exception e) {
             return false;
@@ -60,6 +62,14 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
     */
    public HTTPLogStatisticsTask() {
       super("HTTP Log Statistics", HTTPLogStatisticsTask.class);
+   }
+   
+   /**
+    * Accessor method so that subclasses may log to log4j.
+    * @return the log4j logger instance
+    */
+   protected Logger getLog() {
+	   return log;
    }
 
    /**
