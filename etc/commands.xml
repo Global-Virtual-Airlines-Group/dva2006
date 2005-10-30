@@ -452,6 +452,12 @@
 		<roles>Event</roles>
 	</command>
 
+	<command id="eventroutes">
+		<name>Event Flight Routes</name>
+		<class>org.deltava.commands.event.EventRoutesCommand</class>
+		<roles>Event</roles>
+	</command>
+
 	<command id="eventcancel">
 		<name>Event Cancel</name>
 		<class>org.deltava.commands.event.EventCancelCommand</class>
