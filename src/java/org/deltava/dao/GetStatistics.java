@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -7,6 +8,8 @@ import org.deltava.beans.Pilot;
 import org.deltava.beans.FlightReport;
 import org.deltava.beans.stats.*;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to retrieve airline statistics.
  * @author Luke
@@ -15,7 +18,29 @@ import org.deltava.beans.stats.*;
  */
 
 public class GetStatistics extends DAO {
+	
+	private static final Cache _cache = new ExpiringCache(2, 1800); 
 
+	private class CacheableInteger implements Cacheable {
+		
+		private Object _key;
+		private int _value;
+		
+		public CacheableInteger(Object cacheKey, int value) {
+			super();
+			_key = cacheKey;
+			_value = value;
+		}
+		
+		public Object cacheKey() {
+			return _key;
+		}
+		
+		public int getValue() {
+			return _value;
+		}
+	}
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c a JDBC connection
@@ -32,7 +57,6 @@ public class GetStatistics extends DAO {
 	public AirlineTotals getAirlineTotals() throws DAOException {
 
 		AirlineTotals result = new AirlineTotals(System.currentTimeMillis());
-
 		try {
 			// Create prepared statement
 			prepareStatement("SELECT COUNT(ID), ROUND(SUM(FLIGHT_TIME), 1), SUM(DISTANCE) "
@@ -219,6 +243,12 @@ public class GetStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getCoolerStatistics(int days) throws DAOException {
+		
+		// Check the cache
+		CacheableInteger result = (CacheableInteger) _cache.get(new Integer(days));
+		if (result != null)
+			return result.getValue();
+		
 		try {
 		   setQueryMax(1);
 			prepareStatement("SELECT COUNT(POST_ID) FROM common.COOLER_POSTS WHERE "
@@ -227,15 +257,18 @@ public class GetStatistics extends DAO {
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-			int result = rs.next() ? rs.getInt(1) : 0;
+			result = new CacheableInteger(new Integer(days), rs.next() ? rs.getInt(1) : 0);
 			
-			// Clean up and return
+			// Clean up
 			rs.close();
 			_ps.close();
-			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Return the result
+		_cache.add(result);
+		return result.getValue();
 	}
 
 	/**
