@@ -10,14 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.http.GetServInfo;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -94,10 +93,9 @@ public class ServInfoRouteService extends WebService {
 		}
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");

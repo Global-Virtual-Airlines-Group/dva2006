@@ -7,7 +7,6 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
@@ -16,7 +15,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.dao.GetNavRoute;
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to display flight routes with SID/STAR/Airway data.
@@ -47,10 +46,9 @@ public class RouteMapService extends WebDataService {
 		Document doc = formatPoints(routePoints);
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
@@ -95,11 +93,10 @@ public class RouteMapService extends WebDataService {
 		// Write the entries
 		for (Iterator i = points.iterator(); i.hasNext();) {
 			MapEntry entry = (MapEntry) i.next();
-			Element e = new Element("pos");
+			Element e = XMLUtils.createElement("pos", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
-			e.addContent(new CDATA(entry.getInfoBox()));
 			re.addContent(e);
 		}
 

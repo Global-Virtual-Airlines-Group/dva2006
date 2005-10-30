@@ -3,8 +3,6 @@ package org.deltava.service;
 
 import java.sql.Connection;
 
-import org.jdom.Element;
-
 /**
  * A class to support Web Services that require access to a JDBC data source.
  * @author Luke
@@ -22,18 +20,6 @@ public abstract class WebDataService extends WebService {
 	 */
 	public final void setConnection(Connection c) {
 		_con = c;
-	}
-	
-	/**
-	 * Helper method to create an XML element with a text value.
-	 * @param eName
-	 * @param eText
-	 * @return a JDOM element
-	 */
-	protected Element createElement(String eName, String eText) {
-		Element e = new Element(eName);
-		e.setText(eText);
-		return e;
 	}
 	
 	/**

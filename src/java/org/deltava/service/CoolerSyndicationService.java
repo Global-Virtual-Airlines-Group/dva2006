@@ -10,19 +10,16 @@ import java.io.IOException;
 import javax.servlet.http.*;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.VersionInfo;
 
-import org.deltava.dao.GetCoolerChannels;
-import org.deltava.dao.GetCoolerThreads;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerChannelAccessControl;
 import org.deltava.security.command.CoolerThreadAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -97,14 +94,14 @@ public class CoolerSyndicationService extends WebDataService {
 
 		// Create the RSS channel
 		Element ch = new Element("channel");
-		ch.addContent(createElement("title", SystemData.get("airline.name") + " Water Cooler"));
-		ch.addContent(createElement("description", SystemData.get("airline.name") + " Water Cooler Message Threads"));
-		ch.addContent(createElement("link", "http://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL"));
-		ch.addContent(createElement("language", "en"));
-		ch.addContent(createElement("copyright", VersionInfo.TXT_COPYRIGHT));
-		ch.addContent(createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(createElement("generator", VersionInfo.APPNAME));
-		ch.addContent(createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.cooler"))));
+		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Water Cooler"));
+		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " Water Cooler Message Threads"));
+		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
+		ch.addContent(XMLUtils.createElement("language", "en"));
+		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
+		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
+		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
+		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.cooler"))));
 		
 		// Add the channel to the document
 		re.addContent(ch);
@@ -117,9 +114,9 @@ public class CoolerSyndicationService extends WebDataService {
 			
 				// Create the RSS item element
 				Element item = new Element("item");
-				item.addContent(createElement("title", mt.getSubject()));
-				item.addContent(createElement("link", url.toString()));
-				item.addContent(createElement("guid", url.toString()));
+				item.addContent(XMLUtils.createElement("title", mt.getSubject()));
+				item.addContent(XMLUtils.createElement("link", url.toString(), true));
+				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
 			
 				// Add the item element
 				ch.addContent(item);
@@ -127,10 +124,9 @@ public class CoolerSyndicationService extends WebDataService {
 		}
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");

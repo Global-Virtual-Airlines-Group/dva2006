@@ -8,7 +8,6 @@ import java.util.*;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
-import org.jdom.output.*;	
 
 import org.deltava.beans.event.Event;
 import org.deltava.beans.system.VersionInfo;
@@ -16,7 +15,7 @@ import org.deltava.beans.system.VersionInfo;
 import org.deltava.dao.GetEvent;
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -53,14 +52,14 @@ public class EventSyndicationService extends WebDataService {
 		
 		// Create the RSS channel
 		Element ch = new Element("channel");
-		ch.addContent(createElement("title", SystemData.get("airline.name") + " Online Events"));
-		ch.addContent(createElement("link", "http://" + ctx.getRequest().getServerName() + "/event.do"));
-		ch.addContent(createElement("description", "Online Events at " + SystemData.get("airline.name")));
-		ch.addContent(createElement("language", "en"));
-		ch.addContent(createElement("copyright", VersionInfo.TXT_COPYRIGHT));
-		ch.addContent(createElement("webMaster", SystemData.get("airline.mail.webmaster")));
-		ch.addContent(createElement("generator", VersionInfo.APPNAME));
-		ch.addContent(createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.events"))));
+		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Online Events"));
+		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/event.do", true));
+		ch.addContent(XMLUtils.createElement("description", "Online Events at " + SystemData.get("airline.name")));
+		ch.addContent(XMLUtils.createElement("language", "en"));
+		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));
+		ch.addContent(XMLUtils.createElement("webMaster", SystemData.get("airline.mail.webmaster")));
+		ch.addContent(XMLUtils.createElement("generator", VersionInfo.APPNAME));
+		ch.addContent(XMLUtils.createElement("ttl", String.valueOf(SystemData.getInt("cache.rss.events"))));
 
 		// Add the channel
 		re.addContent(ch);
@@ -73,9 +72,9 @@ public class EventSyndicationService extends WebDataService {
 				
 				// Create the RSS item element
 				Element item = new Element("item");
-				item.addContent(createElement("title", e.getName()));
-				item.addContent(createElement("link", url.toString()));
-				item.addContent(createElement("guid", url.toString()));
+				item.addContent(XMLUtils.createElement("title", e.getName()));
+				item.addContent(XMLUtils.createElement("link", url.toString(), true));
+				item.addContent(XMLUtils.createElement("guid", url.toString(), true));
 
 				// Add the item element
 				ch.addContent(item);
@@ -83,13 +82,10 @@ public class EventSyndicationService extends WebDataService {
 		}
 		
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
-		String xml = xmlOut.outputString(doc);
-		ctx.getResponse().setContentType("text/xml");
-		ctx.getResponse().setContentLength(xml.length());
-
 		try {
-			ctx.getResponse().getWriter().println(xml);
+			ctx.getResponse().setContentType("text/xml");
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
 		}
