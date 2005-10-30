@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tasks name="default">
-	<task id="inactivity" enabled="false">
+	<task id="inactivity" enabled="true">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
 		<interval>86400</interval>
 	</task>
@@ -11,12 +11,12 @@
 		<hours>14</hours>
 	</task>
 	
-	<task id="assignpurge" enabled="false">
+	<task id="assignpurge" enabled="true">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
 		<interval>86400</interval>
 	</task>
 	
-	<task id="httpstats" enabled="false">
+	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
 		<hours>0</hours>
