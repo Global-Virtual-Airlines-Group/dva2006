@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -7,6 +8,8 @@ import org.deltava.commands.*;
 
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.taskman.TaskScheduler;
+
+import org.deltava.taglib.googlemap.InsertGoogleAPITag;
 
 import org.deltava.util.system.SystemData;
 
@@ -61,6 +64,9 @@ public class DiagnosticCommand extends AbstractCommand {
        ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
        ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
        ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
+       
+       // Get the Google Maps API usage count
+       ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
        
        // Get System properties
        ctx.setAttribute("sys", System.getProperties(), REQUEST);
