@@ -108,8 +108,8 @@ public class PilotBoardCommand extends AbstractCommand {
 		}
 		
 		// Add the home base
-		ctx.setAttribute("mapCenter", new SpecialLocation(SystemData.getDouble("airline.location.lat"), 
-		      SystemData.getDouble("airline.location.lng")), REQUEST);
+		ctx.setAttribute("mapCenter", new SpecialLocation(SystemData.getDouble("airline.location.lat", 40), 
+		      SystemData.getDouble("airline.location.lng", -85)), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
