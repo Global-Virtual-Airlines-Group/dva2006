@@ -221,19 +221,19 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
-<el:cmdbutton ID="EditButton" url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
+ <el:cmdbutton ID="EditButton" url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
 </c:if>
 <c:if test="${access.canApprove}">
-<el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE" />
+ <el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE" />
 </c:if>
 <c:if test="${access.canReject}">
-<el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
+ <el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
 </c:if>
 <c:if test="${!empty questionnaire}">
-<el:cmdbutton ID="QuestionnaireButton" url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
+ <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
 </c:if>
-<c:if test="${access.canApprove || access.canReject}">
-<el:cmdbutton ID="ResendButton" url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
+<c:if test="${access.canNotify}">
+ <el:cmdbutton ID="ResendButton" url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
 </c:if>
  </td>
 </tr>

@@ -3,7 +3,7 @@ package org.deltava.commands.register;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Applicant;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AddressValidation;
 import org.deltava.beans.testing.*;
 
@@ -11,7 +11,10 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.ApplicantAccessControl;
+import org.deltava.security.Authenticator;
+
+import org.deltava.util.PasswordGenerator;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to resent the applicant welcome message.
@@ -43,12 +46,6 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			if (a == null)
 				throw new CommandException("Invalid Applicant - " + ctx.getID());
 			
-			// Check our access
-			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
-			access.validate();
-			if ((!access.getCanApprove()) && (!access.getCanReject()))
-				throw securityException("Cannot approve/reject Applicant");
-			
 			// Get the Questionnaire
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
 			Examination ex = qdao.getByApplicantID(ctx.getID());
@@ -63,9 +60,36 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			   mctxt.setTemplate(mtdao.get("USERREGISTER"));
 			   mctxt.addData("questionnaire", ex);
 			   mctxt.addData("applicant", a);
-			} else {
+			} else if (a.getStatus() == Applicant.PENDING) {
 			   mctxt.setTemplate(mtdao.get("ADDRVALIDATE"));
 			   mctxt.addData("person", a);
+			} else if (a.getStatus() == Applicant.APPROVED) {
+				mctxt.addData("applicant", a);
+				mctxt.setTemplate(mtdao.get("APPAPPROVE"));
+				
+				// Get Pilot profile
+				GetPilot pdao = new GetPilot(con);
+				Pilot usr = pdao.get(a.getPilotID());
+				if (usr == null)
+					throw new CommandException("Cannot load Pilot Profile");
+				
+				// Load the equipment profile
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				EquipmentType eqType = eqdao.get(a.getEquipmentType());
+				if (eqType == null)
+					throw new CommandException("Cannot load Equipment Profle");
+				
+				// Add the equipment profile
+				mctxt.addData("eqType", eqType);
+				ctx.setAttribute("passwordUpdated", Boolean.TRUE, REQUEST);
+				
+				// Update the password
+				a.setPassword(PasswordGenerator.generate(8));
+				usr.setPassword(a.getPassword());
+				
+				// Update the user
+				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+				auth.updatePassword(usr.getDN(), usr.getPassword());
 			}
 			
 			// Add data to the message

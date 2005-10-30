@@ -21,6 +21,7 @@ public final class ApplicantAccessControl extends AccessControl {
 	private boolean _canEdit;
 	private boolean _canApprove;
 	private boolean _canReject;
+	private boolean _canNotify;
 	
 	/**
 	 * Initializes the controller.
@@ -53,6 +54,7 @@ public final class ApplicantAccessControl extends AccessControl {
 		_canEdit = (isHR && (_ap.getStatus() == Applicant.PENDING));
 		_canApprove = _canEdit;
 		_canReject = _canEdit;
+		_canNotify = isHR && (_ap.getStatus() != Applicant.REJECTED);
 	}
 
    /**
@@ -85,5 +87,13 @@ public final class ApplicantAccessControl extends AccessControl {
     */
 	public boolean getCanReject() {
 		return _canReject;
+	}
+	
+	/**
+	 * Returns if the user can send a notification message to the Applicant.
+	 * @return TRUE if the Applicant can be notified, otherwise FALSE
+	 */
+	public boolean getCanNotify() {
+		return _canNotify;
 	}
 }
