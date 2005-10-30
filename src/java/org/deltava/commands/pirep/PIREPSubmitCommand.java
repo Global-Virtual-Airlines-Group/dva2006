@@ -82,8 +82,8 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
 			} else {
-				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours") * 10));
-				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours") * 10));
+				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
+				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 
 				if ((pirep.getLength() < minHours) || (pirep.getLength() > maxHours)) {
 					pirep.setAttribute(FlightReport.ATTR_TIMEWARN, true);

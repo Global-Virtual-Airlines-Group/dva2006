@@ -33,7 +33,8 @@ public class ACARSMapCommand extends AbstractCommand {
       try {
          gp = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lng));
       } catch (Exception e) {
-         gp = new GeoPosition(SystemData.getDouble("acars.livemap.lat"), SystemData.getDouble("acars.livemap.lng"));
+         gp = new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), 
+        		 SystemData.getDouble("acars.livemap.lng", -85));
       }
       
       // Save the map center

@@ -106,31 +106,43 @@ public class SystemData implements Serializable {
 	/**
 	 * Returns an integer property value.
 	 * @param propertyName the property name
-	 * @return the property value, or zero if not an integer
+	 * @param defValue the default value
+	 * @return the property value, or the default if not an integer
+	 */
+	public static int getInt(String propertyName, int defValue) {
+		Object obj = getObject(propertyName);
+		return (obj instanceof Number) ? ((Number) obj).intValue() : defValue;
+	}
+
+	/**
+	 * Returns an integer property value.
+	 * @param propertyName the property name
+	 * @return the property value, or 0 if not an integer
 	 */
 	public static int getInt(String propertyName) {
-		Object obj = getObject(propertyName);
-		return (obj instanceof Number) ? ((Number) obj).intValue() : 0;
+		return getInt(propertyName, 0);
 	}
 
 	/**
 	 * Returns a long integer property value.
 	 * @param propertyName the property name
-	 * @return the property value, or zero if not a long
+	 * @param defValue the default value
+	 * @return the property value, or defValue if not a long
 	 */
-	public static long getLong(String propertyName) {
+	public static long getLong(String propertyName, long defValue) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Long) ? ((Long) obj).longValue() : 0;
+		return (obj instanceof Long) ? ((Long) obj).longValue() : defValue;
 	}
 
 	/**
 	 * Returns a floating point property value.
 	 * @param propertyName the property name
-	 * @return the property value, or zero if not a double
+	 * @param defValue the default value
+	 * @return the property value, or defValue if not a double
 	 */
-	public static double getDouble(String propertyName) {
+	public static double getDouble(String propertyName, double defValue) {
 		Object obj = getObject(propertyName);
-		return (obj instanceof Double) ? ((Double) obj).doubleValue() : 0;
+		return (obj instanceof Double) ? ((Double) obj).doubleValue() : defValue;
 	}
 
 	/**

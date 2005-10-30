@@ -35,7 +35,7 @@ public class TestSystemData extends TestCase {
         assertEquals("STRING", SystemData.get("stringVar"));
         assertTrue(SystemData.getBoolean("boolVar"));
         assertEquals(43, SystemData.getInt("intVar"));
-        assertEquals(23, SystemData.getLong("longVar"));
-        assertEquals(3.1415926, SystemData.getDouble("doubleVar"), 0.0001);
+        assertEquals(23, SystemData.getLong("longVar", 0));
+        assertEquals(3.1415926, SystemData.getDouble("doubleVar", 0), 0.0001);
     }
 }
