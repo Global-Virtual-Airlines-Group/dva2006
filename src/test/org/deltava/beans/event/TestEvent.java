@@ -31,8 +31,6 @@ public class TestEvent extends AbstractBeanTestCase {
 
     public void testProperties() {
         assertEquals("NAME", _e.getName());
-        assertNull(_e.getAirportA());
-        _e.setRoute(null);
         checkProperty("briefing", "REMARKS");
         checkProperty("route", "KATL SPA KCLT");
         long now = System.currentTimeMillis() - 100;
@@ -60,12 +58,10 @@ public class TestEvent extends AbstractBeanTestCase {
     }
     
     public void testEmptyLists() {
-        assertNotNull(_e.getAirportD());
         assertNotNull(_e.getCharts());
         assertNotNull(_e.getPlans());
         assertNotNull(_e.getSignups());
         assertNotNull(_e.getAssignments());
-        assertEquals(0, _e.getAirportD().size());
         assertEquals(0, _e.getCharts().size());
         assertEquals(0, _e.getPlans().size());
         assertEquals(0, _e.getSignups().size());

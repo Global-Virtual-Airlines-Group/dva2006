@@ -21,31 +21,13 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 5, 'Event Name')) return false;
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateCombo(form.airportA, 'Destination Airport')) return false;
 if (!validateText(form.route, 5, 'Default Route')) return false;
 if (!validateText(form.briefing, 15, 'Flight Briefing')) return false;
-if (form.airportDCodes.value.length < 1) {
-	alert('Please provide at least one Departure Airport.');
-	form.airportD.focus();
-	return false;
-}
 
 setSubmit();
 disableButton('SaveButton');
-return true;
-}
-
-function doRefresh()
-{
-var f = document.forms[0];
-if (f.airportD.selectedIndex == 0) {
-	alert('Please select another Departure Airport.');
-	f.airportD.focus();
-	return false;
-}
-
-f.isRefresh.value = '1';
-f.submit();
 return true;
 }
 </script>
@@ -100,26 +82,6 @@ return true;
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
- <td class="label">Destination Airport</td>
- <td class="data"><el:combo name="airportA" size="1" firstEntry="" options="${airports}" value="${event.airportA}" />
-&nbsp;<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
-</tr>
-<tr>
- <td class="label" valign="top">${fn:sizeof(event.airportD)} Departure Airport(s)</td>
- <td class="data"><c:if test="${!empty event.airportD}">
-<c:forEach var="airport" items="${event.airportD}">
-<b>${airport.name} (<fmt:airport airport="${airport}" />)</b><br />
-</c:forEach>
-</c:if>
-<el:combo name="airportD" size="1" options="${airports}" firstEntry="" />
-&nbsp;<el:text name="adCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
-&nbsp;<el:button onClick="void doRefresh()" className="BUTTON" label="ADD AIRPORT" /></td>
-</tr>
-<tr>
- <td class="label">Default Route</td>
- <td class="data"><el:text name="route" idx="*" size="80" max="255" value="${event.route}" /></td>
-</tr>
-<tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td class="data"><el:textbox name="briefing" idx="*" width="120" height="15">${event.briefing}</el:textbox></td>
 </tr>
@@ -129,6 +91,40 @@ return true;
 to a specific set of equipment.</span><br />
 <el:check name="eqTypes" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
+<tr class="title caps">
+ <td colspan="2">AVAILABLE FLIGHT ROUTES</td>
+</tr>
+<c:if test="${empty event}">
+<!-- Initial Flight Route -->
+<tr>
+ <td class="label">Departure Airport</td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" />&nbsp;
+<el:text name="adCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
+</tr>
+<tr>
+ <td class="label">Destination Airport</td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="" />&nbsp;
+<el:text name="aaCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Routing</td>
+ <td class="data"><el:text name="route" idx="*" size="110" max="255" value="" /></td>
+</tr>
+</c:if>
+<c:if test="${!empty event}">
+<c:set var="entryNumber" value="${0}" scope="request" />
+<c:forEach var="route" items="${event.routes}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
+<tr>
+ <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
+ <td class="data">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
+ (<fmt:airport airport="${route.airportA}" />)</td>
+</tr>
+<tr>
+ <td class="data">${route.route}</td>
+</tr>
+</c:forEach>
+</c:if>
 <c:if test="${!empty charts}">
 <tr class="title caps">
  <td colspan="2">APPROACH CHARTS</td>
@@ -152,8 +148,6 @@ to a specific set of equipment.</span><br />
 </c:if>
 </tr>
 </el:table>
-<el:text name="airportDCodes" type="hidden" value="${adCodes}" />
-<el:text name="isRefresh" type="hidden" value="" />
 </el:form>
 <content:copyright />
 </div>

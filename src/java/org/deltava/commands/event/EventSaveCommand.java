@@ -5,10 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.event.Event;
-import org.deltava.beans.schedule.Airport;
-import org.deltava.comparators.AirportComparator;
-
+import org.deltava.beans.event.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -34,8 +31,7 @@ public class EventSaveCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Check if we are refreshing and if this is a new event
-		boolean isRefresh = "1".equals(ctx.getParameter("isRefresh"));
+		// Check if this is a new event
 		boolean isNew = (ctx.getID() == 0);
 		if (!isNew)
 			ctx.setAttribute("eventID", StringUtils.formatHex(ctx.getID()), REQUEST);
@@ -67,25 +63,26 @@ public class EventSaveCommand extends AbstractCommand {
 			if (!access.getCanEdit())
 				throw securityException("Cannot edit Online Event");
 
-			// Load previous airports
-			if (ctx.getParameter("airportDCodes") != null) {
-				StringTokenizer tokens = new StringTokenizer(ctx.getParameter("airportDCodes"), ",");
-				while (tokens.hasMoreTokens())
-					e.addAirportD(SystemData.getAirport(tokens.nextToken()));
+			// Load initial flight route
+			if (ctx.getParameter("route") != null) {
+				Route r = new Route(0, ctx.getParameter("route"));
+				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				e.addRoute(r);
+				
+				// Add to the message context
+				mctxt.addData("route", r);
 			}
 
 			// Populate fields from the request
 			e.setNetwork(ctx.getParameter("network"));
-			e.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-			e.addAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-			e.setRoute(ctx.getParameter("route"));
 			e.setBriefing(ctx.getParameter("briefing"));
 
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start"));
 			e.setEndTime(parseDateTime(ctx, "end"));
 			e.setSignupDeadline(parseDateTime(ctx, "close"));
-			
+
 			// Parse the equipment types
 			String[] eqTypes = ctx.getRequest().getParameterValues("eqTypes");
 			if (eqTypes != null) {
@@ -93,68 +90,33 @@ public class EventSaveCommand extends AbstractCommand {
 					e.addEquipmentType(eqTypes[x]);
 			}
 
-			// Build the airport list to save in the field
-			StringBuffer buf = new StringBuffer();
-			for (Iterator i = e.getAirportD().iterator(); i.hasNext();) {
-				Airport a = (Airport) i.next();
-				buf.append(a.getIATA());
-				if (i.hasNext())
-					buf.append(',');
-			}
-
-			// Save the airports
-			ctx.setAttribute("adCodes", buf.toString(), REQUEST);
-
-			// Get the remaining airports and save in the request
-			Set airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
-			airports.addAll(((Map) SystemData.getObject("airports")).values());
-			airports.removeAll(e.getAirportD());
-			ctx.setAttribute("airports", airports, REQUEST);
-
-			// Get all of the charts for this event
-			GetChart cdao = new GetChart(con);
-			Map charts = new TreeMap();
-			for (Iterator i = e.getAirports().iterator(); i.hasNext(); ) {
-				Airport a = (Airport) i.next();
-				List aCharts = cdao.getCharts(a);
-				if (!aCharts.isEmpty())
-				   charts.put(a, aCharts);
-			}
-			
 			// See which charts have been selected
 			String[] selectedCharts = ctx.getRequest().getParameterValues("charts");
 			if (selectedCharts != null) {
-			   Set chartIDs = new HashSet();
-			   for (int x = 0; x < selectedCharts.length; x++)
-			      chartIDs.add(new Integer(StringUtils.parseHex(selectedCharts[x])));
-			      
-			   // Load the charts
-			   e.addCharts(cdao.getByIDs(chartIDs));
-			}
-			
-			// Save the charts
-			if (!charts.isEmpty()) {
-			   ctx.setAttribute("charts", charts, REQUEST);
-			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
+				Set chartIDs = new HashSet();
+				for (int x = 0; x < selectedCharts.length; x++)
+					chartIDs.add(new Integer(StringUtils.parseHex(selectedCharts[x])));
+
+				// Load the charts
+				GetChart cdao = new GetChart(con);
+				e.addCharts(cdao.getByIDs(chartIDs));
 			}
 
-			// Save the event and the access controller in the request
-			ctx.setAttribute("access", access, REQUEST);
+			// Save the event in the request
 			ctx.setAttribute("event", e, REQUEST);
+			
+			// Write the event
+			SetEvent wdao = new SetEvent(con);
+			wdao.write(e);
 
 			// Get the DAO and save the event if we're not refreshing
-			if ((!isRefresh) && (isNew)) {
+			if (isNew) {
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("EVENTCREATE"));
 				mctxt.addData("event", e);
-				
-				// Write the event
-				SetEvent wdao = new SetEvent(con);
-				wdao.write(e);
 
 				// Save the start/end/signup dates
-				mctxt.addData("airports", StringUtils.listConcat(e.getAirportD(), ","));
 				mctxt.addData("startDateTime", StringUtils.format(e.getStartTime(), "MM/dd/yyyy HH:mm"));
 				mctxt.addData("endDateTime", StringUtils.format(e.getEndTime(), "MM/dd/yyyy HH:mm"));
 				mctxt.addData("signupDeadline", StringUtils.format(e.getSignupDeadline(), "MM/dd/yyyy HH:mm"));
@@ -162,27 +124,13 @@ public class EventSaveCommand extends AbstractCommand {
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				Collection pilots = pdao.getNotifications(Person.EVENT);
-				
+
 				// Send the e-mail notification
 				if (pilots != null) {
 					Mailer mailer = new Mailer(ctx.getUser());
 					mailer.setContext(mctxt);
 					mailer.send(pilots);
 				}
-			} else if (!isRefresh) {
-				SetEvent wdao = new SetEvent(con);
-				wdao.write(e);
-			} else {
-				// Strip out ACARS as a network name
-				Set netNames = new TreeSet((List) SystemData.getObject("online.networks"));
-				netNames.remove("ACARS");
-				ctx.setAttribute("networks", netNames, REQUEST);
-
-				// Convert dates/times to user local
-				TZInfo tz = ctx.getUser().getTZ();
-				ctx.setAttribute("startTime", DateTime.convert(e.getStartTime(), tz), REQUEST);
-				ctx.setAttribute("endTime", DateTime.convert(e.getEndTime(), tz), REQUEST);
-				ctx.setAttribute("signupDeadline", DateTime.convert(e.getSignupDeadline(), tz), REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -192,12 +140,8 @@ public class EventSaveCommand extends AbstractCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/event/eventUpdate.jsp");
 		result.setSuccess(true);
-		if (isRefresh) {
-			result.setURL("/jsp/event/eventEdit.jsp");
-		} else {
-			result.setType(CommandResult.REQREDIRECT);
-			result.setURL("/jsp/event/eventUpdate.jsp");
-		}
 	}
 }

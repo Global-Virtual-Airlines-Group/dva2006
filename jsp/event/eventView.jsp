@@ -23,11 +23,12 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateCombo(form.eqType, 'Equipment Type')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+if (!validateCombo(form.route, 'Flight Route')) return false;
 
 setSubmit();
 disableButton('SaveButton');
 disableButton('EditButton');
+disableButton('RouteButton');
 disableButton('PlanButton');
 disableButton('CancelButton');
 disableButton('AssignButton');
@@ -60,23 +61,22 @@ return true;
 <tr>
  <td class="label">Signups Close on</td>
  <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="5" class="left">AVAILABLE FLIGHT ROUTES</td>
+</tr>
+<c:set var="entryNumber" value="${0}" scope="request" />
+<c:forEach var="route" items="${event.routes}">
+<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
 <tr>
- <td class="label">Destination</td>
- <td colspan="5" class="data bld">${event.airportA.name} (<fmt:airport airport="${event.airportA}" />)</td>
+ <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
+ <td class="data" colspan="4">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
+ (<fmt:airport airport="${route.airportA}" />)</td>
 </tr>
 <tr>
- <td class="label" valign="top">Departing from</td>
- <td colspan="5" class="data">
-<c:forEach var="airport" items="${event.airportD}">
-${airport.name} (<fmt:airport airport="${airport}" />)
-<c:if test="${fn:sizeof(event.airportD) > 1}"><br /></c:if>
+ <td class="data" colspan="4">${route.route}</td>
+</tr>
 </c:forEach>
- </td>
-</tr>
-<tr>
- <td class="label">Default Routing</td>
- <td colspan="5" class="data">${event.route}</td>
-</tr>
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="135" height="8">${event.briefing}</el:textbox></td>
@@ -203,13 +203,13 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
  <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
 </tr>
 <tr>
- <td class="label">Departure Airport</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${event.airportD}" firstEntry="-" /></td>
+ <td class="label">Flight Route</td>
+ <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" /></td>
  <td class="label" valign="top" rowspan="2">Remarks</td> 
- <td class="data" rowspan="2" colspan="3"><el:textbox name="body" idx="*" width="65" height="2"></el:textbox></td>
+ <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="55" height="2"></el:textbox></td>
 </tr>
 <tr>
- <td class="label">Equipment Types</td>
+ <td class="label">Equipment Type</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
 </tr>
 </c:if>
@@ -224,6 +224,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)
 </c:if>
 <c:if test="${access.canAddPlan}">
  <el:cmdbutton ID="PlanButton" url="eventplan" linkID="0x${event.ID}" label="ADD FLIGHT PLAN" />
+ <el:cmdbutton ID="RouteButton" url="eventroutes" linkID="0x${event.ID}" label="UPDATE ROUTES" />
 </c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" url="eventedit" linkID="0x${event.ID}" label="EDIT EVENT" />

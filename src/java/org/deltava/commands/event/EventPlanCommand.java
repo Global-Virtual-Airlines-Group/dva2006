@@ -14,7 +14,6 @@ import org.deltava.security.command.EventAccessControl;
 
 import org.deltava.util.ComboUtils;
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
 
 public class EventPlanCommand extends AbstractCommand {
 
@@ -50,13 +49,8 @@ public class EventPlanCommand extends AbstractCommand {
 			// Save the event in the request
 			ctx.setAttribute("event", ev, REQUEST);
 			
-			// Mash the destination airport into a Collection so it'll fit in a combobox
-			Set airportA = new HashSet();
-			airportA.add(ev.getAirportA());
-			ctx.setAttribute("airportA", airportA, REQUEST);
-			
 			// If we're not uploading, then forward to the JSP
-			if (ctx.getParameter("airportA") == null) {
+			if (ctx.getParameter("route") == null) {
 				ctx.release();
 				result.setURL("/jsp/event/addPlan.jsp");
 				result.setSuccess(true);
@@ -74,11 +68,16 @@ public class EventPlanCommand extends AbstractCommand {
 			if (planType == - 1)
 				throw new CommandException("Unknown Flight Plan type - " + fExt);
 			
+			// Validate the route
+			Route r = ev.getRoute(ctx.getParameter("route"));
+			if (r == null)
+				throw new CommandException("Invalid Event Route - " + ctx.getParameter("route"));
+			
 			// Build the flight plan bean
 			FlightPlan fp = new FlightPlan(planType);
 			fp.setID(ev.getID());
-			fp.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-			fp.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+			fp.setAirportA(r.getAirportA());
+			fp.setAirportD(r.getAirportD());
 			fp.load(plan.getBuffer());
 			
 			// Save the Flight Plan in the request
