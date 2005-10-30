@@ -1,6 +1,9 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.event;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.DatabaseBean;
+
 import org.deltava.beans.schedule.Airport;
 
 /**
@@ -10,7 +13,7 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class Route extends DatabaseBean {
+public class Route extends DatabaseBean implements Comparable, ComboAlias {
 	
 	private Airport _airportD;
 	private Airport _airportA;
@@ -23,8 +26,9 @@ public class Route extends DatabaseBean {
 	 */
 	public Route(int eventID, String route) {
 		super();
-		setID(eventID);
 		setRoute(route);
+		if (eventID != 0)
+			setID(eventID);
 	}
 	
     /**
@@ -84,5 +88,48 @@ public class Route extends DatabaseBean {
     public void setRoute(String route) {
     	if (route != null)
     		_route = route.replaceAll("[.]+", " ");
+    }
+    
+    public String getComboName() {
+    	return toString();
+    }
+    
+    public String getComboAlias() {
+    	return _airportD.getIATA() + "-" + _airportA.getIATA();
+    }
+    
+    /**
+     * Compare two routes by comparing the names of the departure/arrival airports.
+     * @see Comparable#compareTo(Object)
+     */
+    public int compareTo(Object o) {
+    	Route r2 = (Route) o;
+    	int tmpResult = _airportD.getName().compareTo(r2._airportD.getName());
+    	if (tmpResult == 0)
+    		tmpResult = _airportA.getName().compareTo(r2._airportA.getName());
+    	
+    	return tmpResult;
+    }
+    
+    /**
+     * Compares a route by comparing the departure and arrival airports.
+     */
+    public boolean equals(Object o) {
+    	return (o instanceof Route) ? (compareTo(o) == 0) : false;
+    }
+    
+    /**
+     * Renders this object to a String by appending the airports and codes.
+     */
+    public String toString() {
+    	StringBuffer buf = new StringBuffer(_airportD.getName());
+    	buf.append(" (");
+    	buf.append(_airportD.getIATA());
+    	buf.append(") - ");
+    	buf.append(_airportA.getName());
+    	buf.append(" (");
+    	buf.append(_airportA.getIATA());
+    	buf.append(')');
+    	return buf.toString();
     }
 }

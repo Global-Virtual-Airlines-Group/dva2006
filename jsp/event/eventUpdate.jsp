@@ -18,11 +18,14 @@
 
 <!-- Main Body Frame -->
 <div id="main">
-<div class="updateHdr">Online Event Updated</div>
+<div class="updateHdr">Online Event ${isNew ? 'Created' : 'Updated'}</div>
 <br />
-The <span class="pri bld">${event.name}</span> Online Event has been successfully updated.<br />
+The <span class="pri bld">${event.name}</span> Online Event has been successfully ${isNew ? 'created' : 'updated'}.<br />
 <br />
-To view the event just created, you can <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd> to display the event.<br />
+To view this Online Event, <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">Click Here</el:cmd>.<br />
+<c:if test="${isNew}">
+To add additional routes to this Online Event, <el:cmd className="sec bld" url="eventroutes" linkID="0x${event.ID}">Click Here</el:cmd>.<br />
+</c:if>
 <br />
 <content:copyright />
 </div>

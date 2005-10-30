@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -5,7 +6,6 @@ import java.util.*;
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.DatabaseBean;
 
-import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.schedule.Chart;
 import org.deltava.beans.assign.AssignmentInfo;
 
@@ -41,8 +41,6 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     private String _name;
     private String _briefing;
-    private String _route; 
-    
     private Date _startTime;
     private Date _endTime;
     private Date _signupDeadline;
@@ -53,10 +51,8 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     private Set _charts;
     private List _plans;
     
-    private Set _airportD;
-    private Airport _airportA;
-    
     private Set _signups;
+    private Set _routes;
     private List _assignments;
     private Set _eqTypes;
     
@@ -64,12 +60,12 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     public Event(String name) {
         super();
         _name = name.trim();
-        _airportD = new TreeSet();
         _charts = new TreeSet();
         _plans = new ArrayList();
         _signups = new HashSet();
         _assignments = new ArrayList();
         _eqTypes = new TreeSet();
+        _routes = new TreeSet();
     }
     
     /**
@@ -94,14 +90,6 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
      */
     public String getBriefing() {
         return _briefing;
-    }
-    
-    /**
-     * Returns the Flight Route.
-     * @return the route
-     */
-    public String getRoute() {
-        return _route;
     }
     
     /**
@@ -171,10 +159,6 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         return _signupDeadline;
     }
 
-    public Airport getAirportA() {
-        return _airportA;
-    }
-    
     public Collection getCharts() {
         return _charts;
     }
@@ -183,24 +167,37 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         return _plans;
     }
     
-    public List getAirportD() {
-        return new ArrayList(_airportD);
-    }
-    
-    public Set getAirports() {
-    	Set results = new TreeSet(_airportD);
-    	if (_airportA != null)
-    	   results.add(_airportA);
-    	
-    	return results;
-    }
-    
     public Set getEquipmentTypes() {
        return _eqTypes;
     }
     
     public Collection getSignups() {
         return _signups;
+    }
+    
+    public Collection getRoutes() {
+    	return _routes;
+    }
+    
+    public Collection getAirports() {
+    	Set results = new HashSet();
+    	for (Iterator i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = (Route) i.next();
+    		results.add(r.getAirportD());
+    		results.add(r.getAirportA());
+    	}
+    	
+    	return results;
+    }
+    
+    public Route getRoute(String routePair) {
+    	for (Iterator i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = (Route) i.next();
+    		if (routePair.equals(r.getComboAlias()))
+    			return r;
+    	}
+    	
+    	return null;
     }
     
     public Signup getSignup(int pilotID) {
@@ -237,22 +234,8 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
        return false;
     }
     
-    public void setRoute(String route) {
-    	if (route != null)
-    		_route = route.trim().toUpperCase();
-    }
-    
     public void setBriefing(String briefing) {
         _briefing = briefing;
-    }
-    
-    public void setAirportA(Airport a) {
-        _airportA = a;
-    }
-    
-    public void addAirportD(Airport a) {
-    	if (a != null)
-    		_airportD.add(a);
     }
     
     public void addEquipmentType(String eqType) {
@@ -300,6 +283,10 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     public void addSignup(Signup s) {
         _signups.add(s);
+    }
+    
+    public void addRoute(Route r) {
+    	_routes.add(r);
     }
     
     public void addAssignment(AssignmentInfo ai) {

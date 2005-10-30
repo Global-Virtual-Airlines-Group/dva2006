@@ -13,8 +13,6 @@ import org.deltava.dao.DAOException;
 import org.deltava.security.command.EventAccessControl;
 import org.deltava.security.command.SignupAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to sign up Pilots for an Online Event.
  * @author Luke
@@ -63,11 +61,16 @@ public class EventSignupCommand extends AbstractCommand {
 			if (!ourAccess)
 				throw securityException("Cannot sign up for Online Event " + e.getName());
 			
+			// Find the route
+			Route r = e.getRoute(ctx.getParameter("route"));
+			if (r == null)
+				throw new CommandException("Invalid Event Route - " + ctx.getParameter("route"));
+			
 			// Create the signup from the request
 			Signup s = new Signup(e.getID(), ctx.getUser().getID());
 			s.setEquipmentType(ctx.getParameter("eqType"));
-			s.setAirportA(e.getAirportA());
-			s.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+			s.setAirportA(r.getAirportA());
+			s.setAirportD(r.getAirportD());
 			
 			// Get the DAO and sign up
 			SetEvent wdao = new SetEvent(con);

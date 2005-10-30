@@ -46,7 +46,7 @@ public class EventEditCommand extends AbstractCommand {
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Strip out ACARS as a network name
-		Set netNames = new TreeSet((List) SystemData.getObject("online.networks"));
+		Set netNames = new TreeSet((Collection) SystemData.getObject("online.networks"));
 		netNames.remove("ACARS");
 		ctx.setAttribute("networks", netNames, REQUEST);
 		
@@ -100,18 +100,6 @@ public class EventEditCommand extends AbstractCommand {
 			   ctx.setAttribute("charts", charts, REQUEST);
 			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
 			}
-			
-			// Build the airport list to save in the field
-			StringBuffer buf = new StringBuffer();
-			for (Iterator i = e.getAirportD().iterator(); i.hasNext();) {
-				Airport a = (Airport) i.next();
-				buf.append(a.getIATA());
-				if (i.hasNext())
-					buf.append(',');
-			}
-
-			// Save the airports
-			ctx.setAttribute("adCodes", buf.toString(), REQUEST);
 			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
