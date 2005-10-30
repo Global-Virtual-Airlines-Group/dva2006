@@ -14,4 +14,5 @@ public interface ACARSAdminInfo {
 
    public Collection getPoolInfo();
    public Collection getMapEntries();
+   public boolean isEmpty();
 }
