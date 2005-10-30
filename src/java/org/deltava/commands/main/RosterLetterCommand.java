@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.Arrays;
@@ -15,8 +16,8 @@ import org.deltava.dao.DAOException;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
+
 public class RosterLetterCommand extends AbstractViewCommand {
 
     // List of letters to display
