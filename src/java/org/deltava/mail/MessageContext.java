@@ -175,7 +175,6 @@ public class MessageContext implements Serializable {
         	log.warn("Cannot evaluate " + objName);
         	return "";
         }
-            
         
         // Get the object value - if we have more tokens then we get the next token and assume it's a method
         // name to be called upon the object
@@ -216,6 +215,6 @@ public class MessageContext implements Serializable {
         }
 
         // Get the last object value, convert to a String and return
-        return objValue.toString();
+        return String.valueOf(objValue);
     }
 }
