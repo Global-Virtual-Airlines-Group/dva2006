@@ -66,6 +66,10 @@
  <td class="label">Local Time Zone</td>
  <td class="data">${timeZone.ID} - ${tzName}</td>
 </tr>
+<tr>
+ <td class="label">Google Maps API Usage</td>
+ <td class="data"><fmt:int value="${mapsAPIUsage}" /> times since application start</td>
+</tr>
 </el:table>
 
 <!-- JDBC Driver Data Table -->
