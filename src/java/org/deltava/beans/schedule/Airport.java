@@ -1,12 +1,10 @@
+// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.io.Serializable;
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
-import org.deltava.beans.TZInfo;
+import org.deltava.beans.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -16,7 +14,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Airport implements Serializable, Comparable, ComboAlias, GeoLocation, MapEntry {
+public class Airport implements java.io.Serializable, Comparable, ComboAlias, GeospaceLocation, MapEntry {
 
 	public static final int IATA = 0;
 	public static final int ICAO = 1;
@@ -166,6 +164,14 @@ public class Airport implements Serializable, Comparable, ComboAlias, GeoLocatio
 	 */
 	public final double getLongitude() {
 		return _position.getLongitude();
+	}
+	
+	/**
+	 * Returns the airport altitude for Google Earth formatting. <i>NOT IMPLEMENTED</i>
+	 * @return 0
+	 */
+	public final int getAltitude() {
+		return 0;
 	}
 	
 	/**

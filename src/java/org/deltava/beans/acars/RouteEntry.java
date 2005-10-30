@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class RouteEntry extends DatabaseBean implements Comparable, GeoLocation, Serializable, MapEntry, ACARSFlags {
+public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLocation, Serializable, MapEntry, ACARSFlags {
 
 	private Date _date;
 	private GeoPosition _gpos;
