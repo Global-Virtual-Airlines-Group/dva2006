@@ -264,15 +264,19 @@
 			<name>APP</name>
 			<name>TASKS</name>
 		</list>
-		
-		<purge type="Integer">10</purge>
-		
+
+		<purge>
+			<messages type="Integer">96</messages>
+			<flights type="Integer">48</flights>
+			<cons type="Integer">60</cons>
+		</purge>
+
 		<http>
 			<format>httpd-access.dva.log</format>
 			<parser>org.deltava.util.log.ApacheLogParser</parser>
 		</http>
 	</log>
-	
+
 	<config>
 		<commands>/etc/commands.xml</commands>
 		<services>/etc/services.xml</services>
