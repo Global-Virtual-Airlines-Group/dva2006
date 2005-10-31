@@ -47,7 +47,7 @@ public class EquipmentSaveCommand extends AbstractCommand {
 			// Update the equipment type profile from the request
 			eq.setCPID(Integer.parseInt(ctx.getParameter("cp")));
 			eq.setStage(Integer.parseInt(ctx.getParameter("stage")));
-			eq.setActive("1".equals(ctx.getParameter("active")));
+			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			eq.setRanks(ctx.getRequest().getParameterValues("ranks"));
 			
 			// Update primary/secondary ratings
