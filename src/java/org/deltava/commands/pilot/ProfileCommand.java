@@ -63,7 +63,7 @@ public class ProfileCommand extends AbstractFormCommand {
          PilotAccessControl p_access = new PilotAccessControl(ctx, p);
          p_access.validate();
          if (!p_access.getCanEdit())
-            throw securityException("Cannot edit Pilot #" + ctx.getID());
+            throw securityException("Cannot edit Pilot " + p.getName());
 
          // Check our access level to the Staff profile
          StaffAccessControl s_access = new StaffAccessControl(ctx, s);
@@ -85,8 +85,9 @@ public class ProfileCommand extends AbstractFormCommand {
          p.setUIScheme(ctx.getParameter("uiScheme"));
 
          // Get Water Cooler option checkboxes
-         p.setShowSignatures("1".equals(ctx.getParameter("showSigs")));
-         p.setShowSSThreads("1".equals(ctx.getParameter("showImageThreads")));
+         p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
+         p.setShowSSThreads(Boolean.valueOf(ctx.getParameter("showImageThreads")).booleanValue());
+         p.setHasDefaultSignature(Boolean.valueOf(ctx.getParameter("useDefaultSig")).booleanValue());
 
          // Set Notification Options
          String[] notifyOpts = ctx.getRequest().getParameterValues("notifyOption");
@@ -268,7 +269,7 @@ public class ProfileCommand extends AbstractFormCommand {
                ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
                log.info("Signature Updated");
             }
-         } else if ("1".equals(ctx.getParameter("removeCoolerImg"))) {
+         } else if (Boolean.valueOf(ctx.getParameter("removeCoolerImg")).booleanValue()) {
             sigdao.delete(p.getID());
             ctx.setAttribute("sigRemoved", Boolean.TRUE, REQUEST);
             log.info("Signature Removed");
