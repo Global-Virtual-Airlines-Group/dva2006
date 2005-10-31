@@ -8,21 +8,28 @@
 	<shortname>fn</shortname>
 	<uri>http://dva2006.deltava.org/dva2006/dva_jspfunc</uri>
 	<info>A JSP Function Library used to define JSP functions</info>
-	
+
 	<!-- Get size of a collection -->
 	<function>
 		<name>sizeof</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>int sizeof(java.util.Collection)</function-signature>
 	</function>
-	
+
 	<!-- Get a list entry -->
 	<function>
 		<name>get</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>java.lang.Object get(java.util.List, int)</function-signature>
 	</function>
-	
+
+	<!-- Get the first entry in a collection -->
+	<function>
+		<name>first</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.lang.Object first(java.util.Collection)</function-signature>
+	</function>
+
 	<!-- Check wether a collection contains an object -->
 	<function>
 		<name>contains</name>
