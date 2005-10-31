@@ -95,7 +95,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data small"><el:box name="active" idx="*" value="1" className="sec" checked="${eqType.active}" label="Equipment Program is Active" /></td>
+ <td class="data small"><el:box name="active" idx="*" value="true" className="sec" checked="${eqType.active}" label="Equipment Program is Active" /></td>
 </tr>
 </el:table>
 
