@@ -4,7 +4,7 @@ package org.deltava.commands.testing;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -60,6 +60,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setScoredOn(new java.util.Date());
 			cr.setPassFail("1".equals(ctx.getParameter("passFail")));
+			cr.setStatus(Test.SCORED);
 
 			// Get the message tempate
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
