@@ -16,6 +16,7 @@
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <script language="JavaScript" type="text/javascript">
 var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+var hasSignature = ${pilot.hasSignature};
 
 function validate(form)
 {
@@ -51,14 +52,26 @@ for (var x = 0; x < invalidDomains.length; x++) {
 	}
 }
 
+// Set disabled checkboxes
+form.useDefaultSig.checked = (form.useDefaultSig.checked && !(form.useDefaultSig.disabled));
 setSubmit();
 disableButton('SaveButton');
+return true;
+}
+
+function disableSigBoxes()
+{
+var f = document.forms[0];
+f.coolerImg.disabled = (f.useDefaultSig.checked);
+if (hasSignature)
+	f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
+
 return true;
 }
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void changeAirport(document.forms[0].homeAirport)">
+<body onload="changeAirport(document.forms[0].homeAirport); disableSigBoxes()">
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
@@ -108,7 +121,7 @@ return true;
 </c:if>
 <c:if test="${access.canChangeRoles}">
 <tr>
- <td class="label">Security Roles</td>
+ <td class="label" valign="top">Security Roles</td>
  <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
 </c:if>
@@ -174,23 +187,24 @@ return true;
 <tr class="title">
  <td colspan="${cspan + 1}">WATER COOLER</td>
 </tr>
-<c:if test="${pilot.hasSignature}">
 <tr>
  <td class="label" valign="top">Signature Image</td>
- <td colspan="${cspan}" class="data"><img alt="Water Cooler Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
- <span class="small"><input type="checkbox" name="removeCoolerImg" value="1" />Remove Water Cooler Signature Image</span></td>
+ <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
+<img alt="Water Cooler Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
+<el:box name="removeCoolerImg" value="true" label="Remove Water Cooler Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
+<el:box name="useDefaultSig" value="true" label="Use default Signature Image" onChange="void disableSigBoxes()" /></td>
 </tr>
-</c:if>
 <tr>
- <td class="label">Update Signature Image</td>
+ <td class="label" valign="top">Update Signature Image</td>
  <td colspan="${cspan}" class="data"><el:file name="coolerImg" className="small" idx="*" size="80" max="144" /><br />
 <span class="small sec">The maximum size for a signature image is <fmt:int value="${sigX}" />x<fmt:int value="${sigY}" /> 
 pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span></td>
 </tr>
 <tr>
- <td class="label">Display Options</td>
- <td colspan="${cspan}" class="data"><el:box name="showSigs" value="1" checked="${pilot.showSignatures}" label="Show Water Cooler Signature Images" /><br />
- <el:box name="showImageThreads" value="1" checked="${pilot.showSSThreads}" label="Show Water Cooler screen shot Message Threads" /></td>
+ <td class="label" valign="top">Display Options</td>
+ <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show Water Cooler Signature Images" /><br />
+ <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show Water Cooler screen shot Message Threads" />
+ </td>
 </tr>
 
 <!-- Pilot Preferences -->
@@ -272,5 +286,9 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </el:form>
 <content:copyright />
 </div>
+<script langage="JavaScript" type="text/javascript">
+var f = document.forms[0];
+f.useDefaultSig.disabled = hasSignature;
+</script>
 </body>
 </html>
