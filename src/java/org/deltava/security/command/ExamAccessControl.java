@@ -51,13 +51,14 @@ public class ExamAccessControl extends AccessControl {
         boolean isHR = _ctx.isUserInRole("HR");
         
         // With checkrides, NEW == SUBMITTED
-        boolean isSubmitted = (_t.getStatus() == ((_t instanceof CheckRide) ? Test.NEW : Test.SUBMITTED)); 
+        boolean isCR = (_t instanceof CheckRide);
+        boolean isSubmitted = (_t.getStatus() == (isCR ? Test.NEW : Test.SUBMITTED)); 
         
         // Set access
         _canRead = isOurs || isExam || isHR;
         _canSubmit = isOurs && (_t.getStatus() == Test.NEW);
         _canEdit = (_t.getStatus() == Test.SCORED) && isHR && !isOurs;
-        _canScore = _canEdit || (isSubmitted && (isExam || isHR));
+        _canScore = isCR ? (_t.getStatus() != Test.SCORED) : (_canEdit || (isSubmitted && (isExam || isHR)));
         _canDelete = _ctx.isUserInRole("Admin");
         
         // Throw an exception if we cannot view
