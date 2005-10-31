@@ -64,8 +64,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Get the Transfer Request
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
-			if (txreq == null)
-				throw new CommandException("Transfer Request not found");
 
 			// Check our access level
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
@@ -112,7 +110,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			ewdao.write(cr);
 
 			// If we are approving the checkride, then approve the transfer request
-			if (cr.getPassFail()) {
+			if ((txreq != null) && cr.getPassFail()) {
 				txreq.setStatus(TransferRequest.OK);
 
 				// Write the transfer request
