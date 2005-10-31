@@ -28,23 +28,19 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/event/header.jsp" %> 
-<%@include file="/jsp/event/sideMenu.jsp" %>
+<%@ include file="/jsp/event/header.jsp" %> 
+<%@ include file="/jsp/event/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="eventplan.do" linkID="0x${event.ID}" method="POST" allowUpload="true" validate="return validate(this)">
+<el:form action="eventplan.do" linkID="0x${event.ID}" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">FLIGHT PLAN - ${event.name}</td>
 </tr>
 <tr>
- <td class="label">Departure Airport</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${event.airportD}" firstEntry="" /></td>
-</tr>
-<tr>
- <td class="label">Destination Airport</td>
- <td class="data"><el:combo name="airportA" size="1" options="${airportA}" /></td>
+ <td class="label">Flight Route</td>
+ <td class="data"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Flight Plan File</td>

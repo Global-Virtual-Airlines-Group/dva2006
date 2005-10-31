@@ -210,7 +210,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
+ <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
 </tr>
 </c:if>
 </el:table>
