@@ -21,7 +21,7 @@ import org.deltava.util.ComboUtils;
 
 public class CheckRideCommand extends AbstractCommand {
    
-   private static final List PASS_FAIL = ComboUtils.fromArray(new String[] {"PASS", "FAIL"}, new String[] {"0", "1"});
+   private static final List PASS_FAIL = ComboUtils.fromArray(new String[] {"PASS", "FAIL"}, new String[] {"1", "0"});
    
    /**
     * Executes the command.
