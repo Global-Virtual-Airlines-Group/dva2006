@@ -1,3 +1,4 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -5,6 +6,7 @@ import java.sql.*;
 
 import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.navdata.NavigationDataBean;
 
 /**
  * A Data Access Object to load Airport data.
@@ -12,6 +14,7 @@ import org.deltava.beans.schedule.Airport;
  * @version 1.0
  * @since 1.0
  */
+
 public class GetAirport extends DAO {
 
     /**
@@ -33,9 +36,11 @@ public class GetAirport extends DAO {
         
         // Init the prepared statement in such a way that we can search for ICAO or IATA
         try {
-            prepareStatement("SELECT * FROM common.AIRPORTS WHERE (ICAO=?) OR (IATA=?)");
-            _ps.setString(1, code.toUpperCase());
+            prepareStatement("SELECT A.*, NV.ALTITUDE FROM common.AIRPORTS A, common.NAVDATA NV "
+                  + "WHERE (A.ICAO=NV.CODE) AND (NV.ITEMTYPE=?) AND ((A.ICAO=?) OR (A.IATA=?))");
+            _ps.setInt(1, NavigationDataBean.AIRPORT);
             _ps.setString(2, code.toUpperCase());
+            _ps.setString(3, code.toUpperCase());
             
             ResultSet rs = _ps.executeQuery();
             if (!rs.next())
@@ -45,6 +50,7 @@ public class GetAirport extends DAO {
             Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
             a.setTZ(rs.getString(3));
             a.setLocation(rs.getDouble(5), rs.getDouble(6));
+            a.setAltitude(rs.getInt(7));
             
             // Close JDBC resources
             rs.close();
@@ -75,9 +81,11 @@ public class GetAirport extends DAO {
      */
     public List getByAirline(Airline al) throws DAOException {
         try {
-            prepareStatement("SELECT A.* FROM common.AIRPORTS A, common.AIRPORT_AIRLINE AA WHERE "
-            		+ "(A.IATA=AA.IATA) AND (AA.CODE=?) ORDER BY A.IATA");
-            _ps.setString(1, al.getCode());
+            prepareStatement("SELECT A.*, NV.ALTITUDE FROM common.AIRPORTS A, common.AIRPORT_AIRLINE AA, "
+                  + "common.NAVDATA NV WHERE (A.IATA=AA.IATA) AND (A.ICAO=NV.CODE) AND (NV.ITEMTYPE=?) "
+                  + " AND (AA.CODE=?) ORDER BY A.IATA");
+            _ps.setInt(1, NavigationDataBean.AIRPORT);
+            _ps.setString(2, al.getCode());
             
             // Execute the query
             List results = new ArrayList();
@@ -88,6 +96,7 @@ public class GetAirport extends DAO {
                 Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
                 a.setTZ(rs.getString(3));
                 a.setLocation(rs.getDouble(5), rs.getDouble(6));
+                a.setAltitude(rs.getInt(7));
                 
                 // Add to the results
                 results.add(a);
@@ -110,7 +119,9 @@ public class GetAirport extends DAO {
     public Map getAll() throws DAOException {
         Map results = new HashMap();
         try {
-            prepareStatementWithoutLimits("SELECT * FROM common.AIRPORTS A");
+            prepareStatementWithoutLimits("SELECT A.*, NV.ALTITUDE FROM common.AIRPORTS A, common.NAVDATA NV "
+                  + " WHERE (A.ICAO=NV.CODE) AND (NV.ITEMTYPE=?)");
+            _ps.setInt(1, NavigationDataBean.AIRPORT);
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
@@ -120,6 +131,7 @@ public class GetAirport extends DAO {
                 Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
                 a.setTZ(rs.getString(3));
                 a.setLocation(rs.getDouble(5), rs.getDouble(6));
+                a.setAltitude(rs.getInt(7));
                 
                 // Save in the map
                 results.put(a.getIATA(), a);

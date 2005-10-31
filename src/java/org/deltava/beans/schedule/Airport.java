@@ -36,6 +36,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	private String _iata;
 	private String _icao;
 	private String _name;
+	private int _alt;
 	private GeoPosition _position;
 	private TZInfo _tz = TZInfo.local();
 	private Set _aCodes = new TreeSet();
@@ -109,6 +110,15 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	}
 
 	/**
+	 * Sets this Airport's altitude.
+	 * @param alt the altitude in feet MSL
+	 * @see Airport#getAltitude()
+	 */
+	public void setAltitude(int alt) {
+	   _alt = alt;
+	}
+	
+	/**
 	 * Return this airprort's IATA Code.
 	 * @return The IATA code
 	 */
@@ -132,6 +142,14 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 		return _name;
 	}
 
+	/**
+	 * Return this airport's altitude.
+	 * @return the altitude in feet MSL
+	 */
+	public int getAltitude() {
+	   return _alt;
+	}
+	
 	/**
 	 * Return this airport's time zone.
 	 * @return The Airport's time zone
@@ -164,14 +182,6 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 */
 	public final double getLongitude() {
 		return _position.getLongitude();
-	}
-	
-	/**
-	 * Returns the airport altitude for Google Earth formatting. <i>NOT IMPLEMENTED</i>
-	 * @return 0
-	 */
-	public final int getAltitude() {
-		return 0;
 	}
 	
 	/**
