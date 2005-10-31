@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <services name="default">
-	<service id="acarsData" class="org.deltava.service.ACARSDataService" />
+	<service id="acars_data" class="org.deltava.service.ACARSDataService" />
 	<service id="acars_map" class="org.deltava.service.ACARSMapService" />
 	<service id="acars_progress" class="org.deltava.service.ACARSMapProgressService" />
 	<service id="acars_pirep" class="org.deltava.service.ACARSFlightDataService" />
+	<service id="acars_earth" class="org.deltava.service.ACARSEarthService" />
 
 	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
 	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
