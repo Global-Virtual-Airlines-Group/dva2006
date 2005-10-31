@@ -247,10 +247,11 @@
 	<!-- Get log file and view it -->
 	<target name="getlogs">
 		<loadproperties srcFile="data/build_deploy.properties" />
-		<scp todir="${basedir}/local_data" verbose="yes" trust="yes" password="${webapp.ssh.pwd}"
-			file="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/jakarta-tomcat5.5/logs/catalina.out" />
+		<scp todir="${basedir}/../.local_data" verbose="yes" trust="yes"
+			file="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/jakarta-tomcat5.5/logs/catalina.out"
+			password="${webapp.ssh.pwd}" />
 		<exec executable="c:\program files\textpad 4\textpad.exe" spawn="yes">
-			<arg value="${basedir}\local_data\catalina.out" />
+			<arg value="${basedir}\..\.local_data\catalina.out" />
 		</exec>
 	</target>
 		
@@ -264,7 +265,7 @@
 			<fileset dir="scripts/${webapp.ssh.os}">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/static.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -280,14 +281,14 @@
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
 				<modified seldirs="false" algorithm="digest">
-						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -300,7 +301,7 @@
 				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -311,7 +312,7 @@
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
@@ -319,7 +320,7 @@
 				<include name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="local_data/jar.cache.txt" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -330,16 +331,15 @@
 			<fileset dir="etc">
 				<include name="commands.xml" />
 				<include name="services.xml" />
-				<include name="tasks.xml" />
 				<modified seldirs="false" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+						<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
 			</fileset>
 			<fileset dir="etc/prod">
 				<modified seldirs="false" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="local_data/cfg.cache.txt" />
+						<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -350,7 +350,7 @@
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="local_data/static.cache.txt" />
+						<param name="cache.cachefile" value="../.local_data/static.cache.txt" />
 				</modified>
 			</fileset>
 		</scp>
