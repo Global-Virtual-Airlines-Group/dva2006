@@ -24,6 +24,8 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private int _alt;
 	private int _radarAlt;
 	private int _hdg;
+	private double _pitch;
+	private double _bank;
 	private int _aSpeed;
 	private int _gSpeed;
 	private int _vSpeed;
@@ -76,6 +78,24 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public int getHeading() {
 		return _hdg;
+	}
+	
+	/**
+	 * Returns the aircraft's pitch angle.
+	 * @return the pitch in degrees
+	 * @see RouteEntry#setPitch(double)
+	 */
+	public double getPitch() {
+		return _pitch;
+	}
+	
+	/**
+	 * Returns the aircraft's bank angle.
+	 * @return the bank in degrees
+	 * @see RouteEntry#setBank(double)
+	 */
+	public double getBank() {
+		return _bank;
 	}
 
 	/**
@@ -215,7 +235,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#setAltitude(int)
 	 */
 	public void setRadarAltitude(int alt) {
-	   _alt = (alt < 0) ? 0 : alt;
+	   _radarAlt = (alt < 0) ? 0 : alt;
 	}
 
 	/**
@@ -229,6 +249,32 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			throw new IllegalArgumentException("Heading cannot be < 0 or > 360 degrees");
 
 		_hdg = hdg;
+	}
+	
+	/**
+	 * Updates the aircraft's pitch angle.
+	 * @param p the pitch in degrees
+	 * @throws IllegalArgumentException if p is < -90 or > 90
+	 * @see RouteEntry#getPitch()
+	 */
+	public void setPitch(double p) {
+		if ((p < -90) || (p > 90))
+			throw new IllegalArgumentException("Pitch angle cannot be < -90 or > 90 degrees");
+		
+		_pitch = p;
+	}
+	
+	/**
+	 * Updates the aircraft's bank angle.
+	 * @param b the bank in degrees
+	 * @throws IllegalArgumentException if b < -90 or > 90
+	 * @see RouteEntry#getBank()
+	 */
+	public void setBank(double b) {
+		if ((b < -90) || (b > 90))
+			throw new IllegalArgumentException("Bank angle cannot be < -90 or > 90 degrees");
+		
+		_bank = b;
 	}
 
 	/**
@@ -344,6 +390,20 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setFlags(int flags) {
 		_flags = flags;
 	}
+	
+	/**
+	 * Marks this route entry as having a notable flight parameter.
+	 * @return TRUE if the entry should be noted, otherwise FALSE
+	 */
+	public boolean isWarning() {
+		if ((_alt < 10000) && (_aSpeed > 250))
+			return true;
+		
+		if ((Math.abs(_bank) > 40) || (Math.abs(_pitch) > 40))
+			return true;
+		
+		return false;
+	}
 
 	/**
 	 * Compares two route entries by comparing their date/times.
@@ -359,7 +419,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @return MapEntry#White
 	 */
 	public String getIconColor() {
-		return YELLOW;
+		return isWarning() ? RED : YELLOW;
 	}
 
 	/**
@@ -378,7 +438,24 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		   buf.append(" feet AGL)");
 		}
 		
-		buf.append(" <br />Speed: ");
+		buf.append("<br />");
+		if ((_pitch < -1) || (_pitch > 5)) {
+			buf.append("Pitch: ");
+			buf.append(StringUtils.format(_pitch, "#0.0"));
+			buf.append("<sup>o</sup>");
+			if (Math.abs(_bank) > 3)
+				buf.append(' ');
+			else
+				buf.append("<br />");
+		}
+		
+		if (Math.abs(_bank) > 3) {
+			buf.append("Bank: ");
+			buf.append(StringUtils.format(_bank, "#0.0"));
+			buf.append("<sup>o</sup><br />");
+		}
+		
+		buf.append("Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "##0"));
 		buf.append(" kts (GS: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));

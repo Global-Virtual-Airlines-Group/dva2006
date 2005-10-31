@@ -72,8 +72,8 @@ public class GetACARSData extends DAO {
 	public List getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, ASPEED, GSPEED, "
-	         + "VSPEED, N1, N2, FLAPS, FLAGS FROM acars.");
+	   StringBuffer sqlBuf = new StringBuffer("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
+			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, FLAGS FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 	   
@@ -91,13 +91,15 @@ public class GetACARSData extends DAO {
 				entry.setAltitude(rs.getInt(4));
 				entry.setRadarAltitude(rs.getInt(5));
 				entry.setHeading(rs.getInt(6));
-				entry.setAirSpeed(rs.getInt(7));
-				entry.setGroundSpeed(rs.getInt(8));
-				entry.setVerticalSpeed(rs.getInt(9));
-				entry.setN1(rs.getDouble(10));
-				entry.setN2(rs.getDouble(11));
-				entry.setFlaps(rs.getInt(12));
-				entry.setFlags(rs.getInt(13));
+				entry.setPitch(rs.getDouble(7));
+				entry.setBank(rs.getDouble(8));
+				entry.setAirSpeed(rs.getInt(9));
+				entry.setGroundSpeed(rs.getInt(10));
+				entry.setVerticalSpeed(rs.getInt(11));
+				entry.setN1(rs.getDouble(12));
+				entry.setN2(rs.getDouble(13));
+				entry.setFlaps(rs.getInt(14));
+				entry.setFlags(rs.getInt(15));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && (!includeOnGround)) {
