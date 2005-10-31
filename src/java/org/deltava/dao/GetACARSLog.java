@@ -82,8 +82,8 @@ public class GetACARSLog extends GetACARSData {
          prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
                + "C.CLIENT_BUILD, COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC, COUNT(P.CON_ID) AS PC "
                + "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON "
-               + "(C.ID=M.CON_ID) LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) GROUP BY C.ID WHERE "
-               + "(C.DATE < DATE_SUB(NOW(), INTERVAL ? HOUR)) HAVING (MC=0) AND (FC=0) AND (PC=0) "
+               + "(C.ID=M.CON_ID) LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID)  WHERE (C.DATE < "
+               + "DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID HAVING (MC=0) AND (FC=0) AND (PC=0) "
                + "ORDER BY C.DATE");
          _ps.setInt(1, cutoff);
          return executeConnectionInfo();
