@@ -4,6 +4,8 @@ package org.deltava.commands.register;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.UserData;
@@ -15,7 +17,7 @@ import org.deltava.mail.*;
 import org.deltava.security.Authenticator;
 import org.deltava.security.command.ApplicantAccessControl;
 
-import org.deltava.util.PasswordGenerator;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,6 +28,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ApplicantApproveCommand extends AbstractCommand {
+   
+   private static final Logger log = Logger.getLogger(ApplicantApproveCommand.class);
 	
 	/**
 	 * Executes the command.
@@ -66,10 +70,16 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			if (eq == null)
 			   throw new CommandException("Invalid Equipment Program - " + a.getEquipmentType());
 			
+			// Log equipment type
+			log.info("Hiring " + a.getName() + " into " + eq.getName() + " program (Stage " + eq.getStage() + ")");
+			
 			// Get the equipment ratings
 			Collection ratings = new TreeSet();
 			ratings.addAll(eq.getPrimaryRatings());
 			ratings.addAll(eq.getSecondaryRatings());
+			
+			// Log ratings
+			log.info(a.getName() + " rated in " + StringUtils.listConcat(ratings, ", "));
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
