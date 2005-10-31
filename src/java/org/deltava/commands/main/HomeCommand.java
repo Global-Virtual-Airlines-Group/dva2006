@@ -1,10 +1,11 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.Notice;
+import org.deltava.beans.*;
+import org.deltava.beans.acars.ACARSAdminInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -20,61 +21,112 @@ import org.deltava.util.system.SystemData;
 
 public class HomeCommand extends AbstractCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an error (typically database) occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	private static final Random RND = new Random();
 
-      // Get Command result
-      CommandResult result = ctx.getResult();
-      
-      // Check that the hostname is correct
-      if (!ctx.getRequest().getServerName().equals(SystemData.get("airline.url"))) {
-         result.setType(CommandResult.REDIRECT);
-         result.setURL("http://" + SystemData.get("airline.url") + "/");
-         result.setSuccess(true);
-         return;
-      }
+	// Dynamic content codes
+	private static final int NEXT_EVENT = 0;
+	private static final int NEW_HIRES = 1;
+	private static final int CENTURY_CLUB = 2;
+	private static final int PROMOTIONS = 3;
+	private static final int ACARS_USERS = 4;
 
-      try {
-         Connection con = ctx.getConnection();
+	// Dynamic content choices
+	private static final int[] DYN_CHOICES = { NEXT_EVENT, NEW_HIRES, CENTURY_CLUB, PROMOTIONS, ACARS_USERS };
 
-         // Get the system news and save in the request
-         GetNews nwdao = new GetNews(con);
-         nwdao.setQueryMax(5);
-         ctx.setAttribute("latestNews", nwdao.getNews(), REQUEST);
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-         // Get the newest pilots and save in the request
-         GetPilot daoP = new GetPilot(con);
-         daoP.setQueryMax(10);
-         ctx.setAttribute("latestPilots", daoP.getNewestPilots(), REQUEST);
+		// Get Command result
+		CommandResult result = ctx.getResult();
 
-         // Get the HTTP statistics and save in the request
-         GetSystemData sysdao = new GetSystemData(con);
-         ctx.setAttribute("httpStats", sysdao.getHTTPTotals(), REQUEST);
+		// Check that the hostname is correct
+		if (!ctx.getRequest().getServerName().equals(SystemData.get("airline.url"))) {
+			result.setType(CommandResult.REDIRECT);
+			result.setURL("http://" + SystemData.get("airline.url") + "/");
+			result.setSuccess(true);
+			return;
+		}
 
-         // Get new/active NOTAMs since last login
-         if (ctx.isAuthenticated()) {
-            Person usr = ctx.getUser();
-            Collection notams = nwdao.getActiveNOTAMs();
-            for (Iterator i = notams.iterator(); i.hasNext();) {
-               Notice ntm = (Notice) i.next();
-               if (ntm.getDate().before(usr.getLastLogin()))
-                  i.remove();
-            }
+		// Check if ACARS has anyone connected
+		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
+		int maxOpt = ((acarsPool == null) || acarsPool.isEmpty()) ? (DYN_CHOICES.length - 1) : DYN_CHOICES.length;
 
-            ctx.setAttribute("notams", notams, REQUEST);
-         }
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+		try {
+			Connection con = ctx.getConnection();
 
-      // Redirect to the home page
-      result.setURL("/jsp/main/home.jsp");
-      result.setSuccess(true);
-   }
+			// Get the system news and save in the request
+			GetNews nwdao = new GetNews(con);
+			nwdao.setQueryMax(3);
+			ctx.setAttribute("latestNews", nwdao.getNews(), REQUEST);
+
+			// Get the HTTP statistics and save in the request
+			GetSystemData sysdao = new GetSystemData(con);
+			ctx.setAttribute("httpStats", sysdao.getHTTPTotals(), REQUEST);
+
+			// Get latest water cooler data
+			GetStatistics stdao = new GetStatistics(con);
+			ctx.setAttribute("coolerStats", new Integer(stdao.getCoolerStatistics(1)), REQUEST);
+
+			// Get new/active NOTAMs since last login
+			if (ctx.isAuthenticated()) {
+				Person usr = ctx.getUser();
+				Collection notams = nwdao.getActiveNOTAMs();
+				for (Iterator i = notams.iterator(); i.hasNext();) {
+					Notice ntm = (Notice) i.next();
+					if (ntm.getDate().before(usr.getLastLogin()))
+						i.remove();
+				}
+
+				ctx.setAttribute("notams", notams, REQUEST);
+			}
+
+			// Figure out dynamic content
+			int contentType = RND.nextInt(maxOpt);
+			switch (contentType) {
+				// Next Event
+				case NEXT_EVENT:
+					GetEvent evdao = new GetEvent(con);
+					evdao.setQueryMax(5);
+					ctx.setAttribute("futureEvents", evdao.getFutureEvents(), REQUEST);
+					break;
+
+				// Online ACARS Users
+				case ACARS_USERS:
+					ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+					break;
+
+				// Latest Hires
+				case NEW_HIRES:
+					GetPilot daoP = new GetPilot(con);
+					daoP.setQueryMax(10);
+					ctx.setAttribute("latestPilots", daoP.getNewestPilots(), REQUEST);
+					break;
+
+				// Newest Century Club members
+				case CENTURY_CLUB:
+				case PROMOTIONS:
+					GetStatusUpdate sudao = new GetStatusUpdate(con);
+					sudao.setQueryMax(5);
+					if (contentType == CENTURY_CLUB) {
+						ctx.setAttribute("centuryClub", sudao.getByType(StatusUpdate.RECOGNITION), REQUEST);
+					} else {
+						ctx.setAttribute("promotions", sudao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
+					}
+
+					break;
+			}
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Redirect to the home page
+		result.setURL("/jsp/main/home.jsp");
+		result.setSuccess(true);
+	}
 }
