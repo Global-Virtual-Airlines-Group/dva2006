@@ -51,6 +51,41 @@ public class SetACARSLog extends DAO {
    }
    
    /**
+    * Deletes ACARS text messages older than a specified number of hours.
+    * @param hours the number of hours
+    * @return the number of messages purged
+    * @throws DAOException if a JDBC error occurs
+    */
+   public int purgeMessages(int hours) throws DAOException {
+	   try {
+		   prepareStatement("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+		   _ps.setInt(1, hours);
+		   return executeUpdate(0);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+   
+   /**
+    * Deletes unfiled ACARS flight information older than a specified number of hours.
+    * @param hours the number of hours
+    * @return the number of flights purged
+    * @throws DAOException if a JDBC error occurs
+    */
+   public int purgeFlights(int hours) throws DAOException {
+	   try {
+		   prepareStatement("DELETE acars.FLIGHTS.* FROM acars.FLIGHTS, acars.CONS WHERE "
+				   + "(acars.CONS.ID=acars.FLIGHTS.CON_ID) AND (acars.FLIGHTS.PIREP=?) AND (acars.FLIGHTS.CREATED "
+				   + "< DATE_SUB(NOW(), INTERVAL ? HOUR))");
+		   _ps.setBoolean(1, false);
+		   _ps.setInt(2, hours);
+		   return executeUpdate(0);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+   
+   /**
     * Moves ACARS position data from the live table to the archive.
     * @param flightID the ACARS Flight ID
     * @throws DAOException if a JDBC error occurs
