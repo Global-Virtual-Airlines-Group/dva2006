@@ -38,6 +38,15 @@ public class MiscFunctions {
 	}
 	
 	/**
+	 * Returns the first object in a Collection.
+	 * @param c the Collection
+	 * @return the first Object returned by the Collection's iterator.
+	 */
+	public static Object first(Collection c) {
+		return c.iterator().next();
+	}
+	
+	/**
 	 * A JSP-friendly function to check if an object exists within a Collection. 
 	 * @param c the Collection
 	 * @param obj the Object
