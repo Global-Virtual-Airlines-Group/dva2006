@@ -275,31 +275,31 @@ abstract class PilotReadDAO extends PilotDAO {
          p.setShowSignatures(rs.getBoolean(25));
          p.setShowSSThreads(rs.getBoolean(26));
          // FIXME Uncomment this and renumber
-         // p.setHasDefaultSignature(rs.getBoolean(27));
-         p.setUIScheme(rs.getString(27));
-         p.setLoginHost(rs.getString(28));
-         p.setDateFormat(rs.getString(29));
-         p.setTimeFormat(rs.getString(30));
-         p.setNumberFormat(rs.getString(31));
-         p.setAirportCodeType(rs.getInt(32));
-         p.setMapType(rs.getInt(33));
+         p.setHasDefaultSignature(rs.getBoolean(27));
+         p.setUIScheme(rs.getString(28));
+         p.setLoginHost(rs.getString(29));
+         p.setDateFormat(rs.getString(30));
+         p.setTimeFormat(rs.getString(31));
+         p.setNumberFormat(rs.getString(32));
+         p.setAirportCodeType(rs.getInt(33));
+         p.setMapType(rs.getInt(34));
 
          // Check if this result set has a column 34-37, which is the PIREP totals
-         if (columnCount > 36) {
-            p.setLegs(rs.getInt(34));
-            p.setMiles(rs.getLong(35));
-            p.setHours(rs.getDouble(36));
-            p.setLastFlight(expandDate(rs.getDate(37)));
+         if (columnCount > 37) {
+            p.setLegs(rs.getInt(35));
+            p.setMiles(rs.getLong(36));
+            p.setHours(rs.getDouble(37));
+            p.setLastFlight(expandDate(rs.getDate(38)));
          }
 
          // Check if this result set has a column 38, which is the signature ID
-         if (columnCount > 37)
-            p.setHasSignature((rs.getInt(38) != 0));
+         if (columnCount > 38)
+            p.setHasSignature((rs.getInt(39) != 0));
 
          // CHeck if this result set has a column 39/40, which are online legs/hours
-         if (columnCount > 39) {
-            p.setOnlineLegs(rs.getInt(39));
-            p.setOnlineHours(rs.getDouble(40));
+         if (columnCount > 40) {
+            p.setOnlineLegs(rs.getInt(40));
+            p.setOnlineHours(rs.getDouble(41));
          }
 
          // Add the pilot
