@@ -74,14 +74,29 @@ public class GeoUtils {
 	}
 
 	/**
-	 * Formats a geospatial location as &quot;longitude,latitude,altitude&quot;.
+	 * Formats a geospatial location as &quot;longitude,latitude,altitude&quot;. <i>The altitude will
+	 * be converted from feet to meters for Google Earth</i>. 
+	 * @param loc the location
+	 * @param altitude the altitude in feet
+	 * @return the formatted location string
+	 */
+	public static String format3D(GeoLocation loc, int altitude) {
+		StringBuffer buf = new StringBuffer(format2D(loc));
+		buf.append(',');
+		buf.append(StringUtils.format(0.3048d * altitude, "#####0"));
+		return buf.toString();
+	}
+	
+	/**
+	 * Formats a geospatial location as &quot;longitude,latitude,altitude&quot;. <i>The altitude will
+	 * be converted from feet to meters for Google Earth</i>. 
 	 * @param loc the location
 	 * @return the formatted location string
 	 */
 	public static String format3D(GeospaceLocation loc) {
 		StringBuffer buf = new StringBuffer(format2D(loc));
 		buf.append(',');
-		buf.append(StringUtils.format(loc.getAltitude(), "#####0"));
+		buf.append(StringUtils.format(loc.getAltitude() * 0.3048, "#####0"));
 		return buf.toString();
 	}
 }
