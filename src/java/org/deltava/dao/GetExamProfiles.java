@@ -163,10 +163,10 @@ import org.deltava.beans.testing.*;
 	   // Build the SQL statement
 	   StringBuffer sqlBuf = new StringBuffer("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
 	         + "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
-			   + "ON (Q.ID=QE.QUESTION_ID)");
+			   + "ON (Q.ID=QE.QUESTION_ID) WHERE (Q.ACTIVE=?)");
 	   
 	   if (!showAll)
-	      sqlBuf.append(" WHERE (QE.EXAM_NAME=?)");
+	      sqlBuf.append(" AND (QE.EXAM_NAME=?)");
 	   
 	   sqlBuf.append(" GROUP BY Q.ID");
 	   if (isRandom)
@@ -174,8 +174,9 @@ import org.deltava.beans.testing.*;
 	   
 		try {
 		   prepareStatement(sqlBuf.toString());
+		   _ps.setBoolean(1, true);
 		   if (!showAll)
-		      _ps.setString(1, examName);
+		      _ps.setString(2, examName);
 			
 			// Execute the Query
 			List results = new ArrayList();
