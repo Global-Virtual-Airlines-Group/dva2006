@@ -28,6 +28,7 @@
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="partnerName" name="airline.partner.name" />
 <content:sysdata var="partnerURL" name="airline.partner.url" />
+<content:sysdata var="partnerLoc" name="airline.partner.location" />
 
 <!-- Main Body Frame -->
 <div id="main">
@@ -46,7 +47,7 @@ you may submit flight reports and contribute to our image library. If you are in
 virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
 between!) we welcome your interest.<br />
 <br />
-If you are interested in a virtual airline with primarily European operations, we encourage you to visit 
+If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br />
 <c:if test="${!empty notams}">
