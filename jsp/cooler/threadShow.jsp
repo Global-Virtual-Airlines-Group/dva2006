@@ -169,14 +169,20 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:if test="${isPilot && pilot.hasSignature || pilot.hasDefaultSignature}">
 <br />
 <!-- Signature Image for ${pilot.name} -->
-<c:if test="${pilot.hasSignature}">
+<c:choose>
+<c:when test="${pilot.hasSignature}">
 <br />
-<img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />" alt="${pilot.name} (${pilot.pilotCode})" /><br /></c:if>
+<img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />" alt="${pilot.name} (${pilot.pilotCode})" /><br />
+</c:when>
 <!-- Default Signature Image --!>
-<c:if test="${pilot.hasDefaultSignature}">
-<img src="/sig/default/${pilot.equipmentType}.jpg" />" alt="${pilot.name} (${pilot.pilotCode})" /><br /></c:if>
-</c:if> 
-
+<c:when test="${pilot.hasDefaultSignature}">
+<el:table className="defaultSig" pad="0"><tr>
+ <td valign="bottom" style="background-image: url(${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+  <div class="defaultSigText"><h2>${pilot.name}</h2><span class="pri bld defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
+ </td>
+</tr></el:table>
+</c:when> 
+</c:choose>
  </td>
 </tr>
 </c:forEach>
