@@ -59,6 +59,7 @@
 		<partner>
 			<name>Aviation Français Virtuel</name>
 			<url>www.afva.net</url>
+			<location>European</location>
 		</partner>
 		
 		<location>
@@ -451,8 +452,8 @@
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
-		<position_interval type="Integer">2750</position_interval>
-		<build type="Integer">54</build>
+		<position_interval type="Integer">2500</position_interval>
+		<build type="Integer">58</build>
 		
 		<pool>
 			<size type="Integer">100</size>
