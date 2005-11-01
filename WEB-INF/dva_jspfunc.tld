@@ -30,13 +30,27 @@
 		<function-signature>java.lang.Object first(java.util.Collection)</function-signature>
 	</function>
 
+	<!-- Convert a string to lowercase -->
+	<function>
+		<name>lower</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.lang.String toLower(java.lang.String)</function-signature>
+	</function>
+
+	<!-- Convert a string to uppercase -->
+	<function>
+		<name>upper</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.lang.String toUpper(java.lang.String)</function-signature>
+	</function>
+
 	<!-- Check wether a collection contains an object -->
 	<function>
 		<name>contains</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>boolean contains(java.util.Collection, java.lang.Object)</function-signature>
 	</function>
-	
+
 	<!-- Escape out characters in String -->
 	<function>
 		<name>escape</name>

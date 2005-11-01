@@ -78,6 +78,24 @@ public class MiscFunctions {
 	}
 	
 	/**
+	 * Converts a string to lower case.
+	 * @param s the string to convert
+	 * @return the lower case string, or null
+	 */
+	public static String toLower(String s) {
+	   return (s == null) ? null : s.toLowerCase();
+	}
+	
+	/**
+	 * Converts a string to upper case.
+	 * @param s the string to convert
+	 * @return the upper case string, or null
+	 */
+	public static String toUpper(String s) {
+	   return (s == null) ? null : s.toUpperCase();
+	}
+	
+	/**
 	 * Formats a Date into a String for use in a JSP Tag parameter.
 	 * @param dt the date/time value
 	 * @param fmt the format pattern
