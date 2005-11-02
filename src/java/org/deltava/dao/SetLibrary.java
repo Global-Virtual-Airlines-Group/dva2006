@@ -51,7 +51,7 @@ public class SetLibrary extends DAO {
 		try {
 		   if (m.getDownloadCount() == 0) {
 		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME, NEWSLETTER) "
-		            + "VALUES (?, ?, ?, ?, ?, ?)");
+		            + "VALUES (?, ?, ?, ?, ?, ?, ?)");
 		   } else {
 		      prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, NEWSLETTER=? "
 		            + "WHERE (FILENAME=?)");		      
