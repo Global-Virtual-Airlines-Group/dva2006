@@ -98,9 +98,9 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(db.toLowerCase());
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
-				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, UISCHEME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, "
-				+ "AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, STATUS=?, FIRSTNAME=?, "
-				+ "LASTNAME=? WHERE (ID=?)");
+				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
+				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, "
+				+ "STATUS=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -122,19 +122,20 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(11, p.getEmailAccess());
 			_ps.setBoolean(12, p.getShowSignatures());
 			_ps.setBoolean(13, p.getShowSSThreads());
-			_ps.setString(14, p.getUIScheme());
-			_ps.setString(15, p.getDateFormat());
-			_ps.setString(16, p.getTimeFormat());
-			_ps.setString(17, p.getNumberFormat());
-			_ps.setInt(18, p.getAirportCodeType());
-			_ps.setInt(19, p.getMapType());
-			_ps.setString(20, p.getIMHandle());
-			_ps.setString(21, p.getRank());
-			_ps.setString(22, p.getEquipmentType());
-			_ps.setInt(23, p.getStatus());
-			_ps.setString(24, p.getFirstName());
-			_ps.setString(25, p.getLastName());
-			_ps.setInt(26, p.getID());
+			_ps.setBoolean(14, p.getHasDefaultSignature());
+			_ps.setString(15, p.getUIScheme());
+			_ps.setString(16, p.getDateFormat());
+			_ps.setString(17, p.getTimeFormat());
+			_ps.setString(18, p.getNumberFormat());
+			_ps.setInt(19, p.getAirportCodeType());
+			_ps.setInt(20, p.getMapType());
+			_ps.setString(21, p.getIMHandle());
+			_ps.setString(22, p.getRank());
+			_ps.setString(23, p.getEquipmentType());
+			_ps.setInt(24, p.getStatus());
+			_ps.setString(25, p.getFirstName());
+			_ps.setString(26, p.getLastName());
+			_ps.setInt(27, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
