@@ -168,14 +168,14 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td class="postBody"><fmt:msg value="${msg.body}" />
 <c:if test="${isPilot && pilot.hasSignature || pilot.hasDefaultSignature}">
 <br />
-<!-- Signature Image for ${pilot.name} -->
 <c:choose>
 <c:when test="${pilot.hasSignature}">
+<!-- Signature Image for ${pilot.name} -->
 <br />
 <img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />" alt="${pilot.name} (${pilot.pilotCode})" /><br />
 </c:when>
-<!-- Default Signature Image --!>
 <c:when test="${pilot.hasDefaultSignature}">
+<!-- Default Signature Image --!>
 <el:table className="defaultSig" pad="0"><tr>
  <td valign="bottom" style="background-image: url(${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
   <div class="defaultSigText"><h2>${pilot.name}</h2><span class="pri bld defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
@@ -183,6 +183,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </tr></el:table>
 </c:when> 
 </c:choose>
+</c:if>
  </td>
 </tr>
 </c:forEach>
