@@ -18,8 +18,8 @@ import org.deltava.util.system.SystemData;
 public class InsertGoogleAPITag extends TagSupport {
 
 	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
+	private static int USAGE_COUNT = 0;
 	
-	private int _usageCount;
 	private int _apiVersion = 1;
 
 	/**
@@ -36,8 +36,8 @@ public class InsertGoogleAPITag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doStartTag() throws JspException {
-		_usageCount++;
-		pageContext.setAttribute(USAGE_ATTR_NAME, new Integer(_usageCount), PageContext.APPLICATION_SCOPE);
+		USAGE_COUNT++;
+		pageContext.setAttribute(USAGE_ATTR_NAME, new Integer(USAGE_COUNT), PageContext.APPLICATION_SCOPE);
 		return super.doStartTag();
 	}
 	
