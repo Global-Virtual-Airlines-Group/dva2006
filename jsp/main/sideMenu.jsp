@@ -43,7 +43,7 @@
  <td><el:cmd url="imagegallery">IMAGE GALLERY</el:cmd></td>
 </tr>
 <c:if test="${newsletterEnabled}">
-<tr class="MenuItem">
+<tr class="MenuItem caps">
  <td><el:cmd url="newsletters">${newsletter}</el:cmd></td>
 </tr>
 </c:if>
