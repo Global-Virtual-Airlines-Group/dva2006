@@ -56,7 +56,7 @@ public class GetEvent extends DAO {
 	 */
 	public List getEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.EVENTS ORDER BY E.STARTTIME DESC");
+			prepareStatement("SELECT * FROM common.EVENTS ORDER BY STARTTIME DESC");
 			List results = execute();
 			
 			// Load the airports
