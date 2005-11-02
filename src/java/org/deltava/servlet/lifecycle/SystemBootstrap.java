@@ -141,7 +141,7 @@ public class SystemBootstrap implements ServletContextListener {
 			   _taskSched.setLastRunTime(tlr);
 			}
 		} catch (Exception ex) {
-			log.error("Error retrieving data - " + ex.getMessage());
+			log.error("Error retrieving data - " + ex.getMessage(), ex);
 		} finally {
 			_jdbcPool.release(c);
 		}
