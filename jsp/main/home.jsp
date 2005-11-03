@@ -50,6 +50,9 @@ between!) we welcome your interest.<br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br />
+<!-- Dynamic Content Type #${dynContentType} -->
+<c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
+<c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
 <c:if test="${!empty notams}">
 <!-- New NOTAMs since last login -->
 <el:table className="view" space="default" pad="default">

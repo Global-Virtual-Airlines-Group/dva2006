@@ -48,6 +48,29 @@ public class GetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns wether there are any active Online Events schedule.
+	 * @return TRUE if at least one Event is scheduled, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean hasFutureEvents() throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(*) FROM common.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?)");
+			_ps.setInt(1, Event.CANCELED);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			boolean hasEvents = rs.next() ? (rs.getInt(1) > 0) : false;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return hasEvents;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all Online Events.

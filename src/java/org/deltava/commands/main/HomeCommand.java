@@ -50,22 +50,37 @@ public class HomeCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Build a list of choices
+		List cList = new ArrayList();
+		for (int x = 0; x < DYN_CHOICES.length; x++)
+			cList.add(new Integer(DYN_CHOICES[x]));
 
 		// Check if ACARS has anyone connected
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
-		int maxOpt = ((acarsPool == null) || acarsPool.isEmpty()) ? (DYN_CHOICES.length - 1) : DYN_CHOICES.length;
+		if ((acarsPool == null) || acarsPool.isEmpty()) {
+			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
+			cList.remove(new Integer(ACARS_USERS));
+		}
 
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the system news and save in the request
 			GetNews nwdao = new GetNews(con);
-			nwdao.setQueryMax(3);
+			nwdao.setQueryMax(5);
 			ctx.setAttribute("latestNews", nwdao.getNews(), REQUEST);
 
 			// Get the HTTP statistics and save in the request
 			GetSystemData sysdao = new GetSystemData(con);
 			ctx.setAttribute("httpStats", sysdao.getHTTPTotals(), REQUEST);
+			
+			// Check if we have future events
+			GetEvent evdao = new GetEvent(con);
+			if (!evdao.hasFutureEvents()) {
+				ctx.setAttribute("noUpcomingEvents", Boolean.TRUE, REQUEST);
+				cList.remove(new Integer(NEXT_EVENT));
+			}
 
 			// Get latest water cooler data
 			GetStatistics stdao = new GetStatistics(con);
@@ -83,14 +98,16 @@ public class HomeCommand extends AbstractCommand {
 
 				ctx.setAttribute("notams", notams, REQUEST);
 			}
-
+			
+			// Calculate the contnt type
+			int ofs = RND.nextInt(cList.size());
+			Integer contentType = (Integer) cList.get(ofs);
+			
 			// Figure out dynamic content
-			int contentType = RND.nextInt(maxOpt);
-			switch (contentType) {
+			switch (contentType.intValue()) {
 				// Next Event
 				case NEXT_EVENT:
-					GetEvent evdao = new GetEvent(con);
-					evdao.setQueryMax(5);
+					evdao.setQueryMax(5);					
 					ctx.setAttribute("futureEvents", evdao.getFutureEvents(), REQUEST);
 					break;
 
@@ -111,7 +128,7 @@ public class HomeCommand extends AbstractCommand {
 				case PROMOTIONS:
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
 					sudao.setQueryMax(5);
-					if (contentType == CENTURY_CLUB) {
+					if (contentType.intValue() == CENTURY_CLUB) {
 						ctx.setAttribute("centuryClub", sudao.getByType(StatusUpdate.RECOGNITION), REQUEST);
 					} else {
 						ctx.setAttribute("promotions", sudao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
@@ -119,6 +136,9 @@ public class HomeCommand extends AbstractCommand {
 
 					break;
 			}
+			
+			// Save the content type
+			ctx.setAttribute("dynContentType", contentType, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
