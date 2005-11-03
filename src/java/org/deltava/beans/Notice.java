@@ -11,6 +11,7 @@ package org.deltava.beans;
 public class Notice extends News implements ViewEntry {
    
    private boolean _active;
+   private boolean _isHTML;
 
    /**
     * Creates a new NOTAM. The NOTAM will automatically be marked active.
@@ -34,12 +35,30 @@ public class Notice extends News implements ViewEntry {
    }
    
    /**
+    * Returns if this NOTAM is raw HTML.
+    * @return TRUE if the Notiice is raw HTML, otherwise FALSE
+    * @see Notice#getIsHTML()
+    */
+   public boolean getIsHTML() {
+	   return _isHTML;
+   }
+   
+   /**
     * Updates if this NOTAM is in effect.
     * @param active TRUE if in effect, otherwise FALSE
     * @see Notice#getActive()
     */
    public void setActive(boolean active) {
       _active = active;
+   }
+   
+   /**
+    * Updates if this Notice is raw HTML.
+    * @param html TRUE if raw HTML text, otherwise FALSE
+    * @see Notice#getIsHTML()
+    */
+   public void setIsHTML(boolean html) {
+	   _isHTML = html;
    }
    
    /**
