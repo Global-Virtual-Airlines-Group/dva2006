@@ -204,7 +204,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <c:if test="${access.canSubmit}">
  <el:cmdbutton url="submit" linkID="0x${pirep.ID}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
-<c:if test="${access.canApprove && (empty checkRide)}">
+<c:if test="${access.canApprove && (!scoreCR)}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canHold}">
