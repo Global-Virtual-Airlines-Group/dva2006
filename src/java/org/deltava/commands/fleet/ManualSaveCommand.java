@@ -45,7 +45,7 @@ public class ManualSaveCommand extends AbstractCommand {
 		} else if (mFile != null) {
 			fName = mFile.getName();
 		}
-		
+
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
 
@@ -73,7 +73,7 @@ public class ManualSaveCommand extends AbstractCommand {
 			if (isNew && (entry != null)) {
 				throw new CommandException("Document " + fName + " already exists");
 			} else if (isNew) {
-			   File f = new File (SystemData.get("path.library"), fName);
+				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Manual(f.getPath());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			}
@@ -98,6 +98,9 @@ public class ManualSaveCommand extends AbstractCommand {
 			GetPilotNotify pdao = new GetPilotNotify(con);
 			pilots = pdao.getNotifications(Person.FLEET);
 
+			// Start the transaction
+			ctx.startTX();
+
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);
 			wdao.write(entry);
@@ -107,15 +110,19 @@ public class ManualSaveCommand extends AbstractCommand {
 				WriteBuffer fsdao = new WriteBuffer(entry.file());
 				fsdao.write(mFile.getBuffer());
 			}
+
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 
 		// Set status attributes
-      ctx.setAttribute("library", entry.getIsNewsletter() ? "Newsletter" : "Document", REQUEST);
-      ctx.setAttribute("librarycmd", entry.getIsNewsletter() ? "newsletters" : "doclibrary", REQUEST);
+		ctx.setAttribute("library", entry.getIsNewsletter() ? "Newsletter" : "Document", REQUEST);
+		ctx.setAttribute("librarycmd", entry.getIsNewsletter() ? "newsletters" : "doclibrary", REQUEST);
 
 		// Send notification
 		if (!noNotify) {
