@@ -67,7 +67,8 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
-				nws.setActive("1".equals(ctx.getParameter("active")));
+				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

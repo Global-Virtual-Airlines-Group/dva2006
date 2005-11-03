@@ -36,7 +36,12 @@
  <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </view:row>
 <view:row entry="${notam}">
+<c:if test="${notam.isHTML}">
+ <td colspan="3" class="left">${notam.body}</td>
+</c:if>
+<c:if test="${!notam.isHTML}">
  <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
+</c:if>
 </view:row>
 </c:forEach>
 

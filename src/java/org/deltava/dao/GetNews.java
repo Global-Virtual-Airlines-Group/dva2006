@@ -128,6 +128,7 @@ public class GetNews extends DAO {
           if (isNOTAM) {
              Notice notam = new Notice(rs.getString(6), authorName, rs.getString(7));
              notam.setActive(rs.getBoolean(8));
+             notam.setIsHTML(rs.getBoolean(9));
              n = notam;
           } else {
              n = new News(rs.getString(6), authorName, rs.getString(7));

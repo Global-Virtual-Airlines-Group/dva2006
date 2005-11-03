@@ -64,10 +64,12 @@ public class SetNews extends DAO {
       try {
          // prepare the INSERT or UPDATE statement
          if (n.getID() == 0) {
-            prepareStatement("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE) VALUES (?, ?, ?, ?, ?)");   
+            prepareStatement("INSERT INTO NOTAMS (PILOT_ID, EFFDATE, SUBJECT, BODY, ACTIVE, ISHTML) "
+            		+ "VALUES (?, ?, ?, ?, ?, ?)");   
          } else {
-            prepareStatement("UPDATE NOTAMS SET PILOT_ID=?, EFFDATE=?, SUBJECT=?, BODY=?, ACTIVE=? WHERE (ID=?)");
-            _ps.setInt(6, n.getID());
+            prepareStatement("UPDATE NOTAMS SET PILOT_ID=?, EFFDATE=?, SUBJECT=?, BODY=?, ACTIVE=?, "
+            		+ "ISHTML=? WHERE (ID=?)");
+            _ps.setInt(7, n.getID());
          }
          
          // Set field values
@@ -76,6 +78,7 @@ public class SetNews extends DAO {
          _ps.setString(3, n.getSubject());
          _ps.setString(4, n.getBody());
          _ps.setBoolean(5, n.getActive());
+         _ps.setBoolean(6, n.getIsHTML());
          
          // Write to the database
          executeUpdate(1);

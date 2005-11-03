@@ -49,7 +49,8 @@ return true;
 </c:if>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="1" label="Notice is In Effect" checked="${entry.active}" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" label="Notice is In Effect" checked="${entry.active}" /><br />
+<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Entry Text</td>
