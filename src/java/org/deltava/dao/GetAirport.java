@@ -53,7 +53,6 @@ public class GetAirport extends DAO {
 			Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 			a.setTZ(rs.getString(3));
 			a.setLocation(rs.getDouble(5), rs.getDouble(6));
-			a.setAltitude(rs.getInt(7));
 
 			// Close JDBC resources
 			rs.close();
