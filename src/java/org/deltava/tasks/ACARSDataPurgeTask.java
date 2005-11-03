@@ -57,6 +57,7 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 				try {
 					wdao.deleteConnection(ce.getID());
 					purgeCount++;
+					log.info("Purged Connection " + StringUtils.formatHex(ce.getID()));
 				} catch (DAOException de) {
 					log.warn("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - " + de.getMessage());
 				}
