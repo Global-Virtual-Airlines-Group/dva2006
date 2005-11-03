@@ -50,6 +50,7 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 		ctx.setAttribute("access", access, REQUEST);
 
 		// Validate our access to the results
+		access = new FleetEntryAccessControl(ctx, null);
 		for (Iterator i = results.iterator(); i.hasNext();) {
 			FleetEntry e = (FleetEntry) i.next();
 			access.setEntry(e);

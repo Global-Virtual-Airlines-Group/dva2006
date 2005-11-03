@@ -50,7 +50,7 @@ public class SetLibrary extends DAO {
 	public void write(Manual m) throws DAOException {
 		try {
 		   if (m.getDownloadCount() == 0) {
-		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME, NEWSLETTER) "
+		      prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, NEWSLETTER, FILENAME) "
 		            + "VALUES (?, ?, ?, ?, ?, ?, ?)");
 		   } else {
 		      prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, NEWSLETTER=? "
