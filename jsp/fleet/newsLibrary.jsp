@@ -41,7 +41,7 @@
 
 <!-- Table Data Section -->
 <c:forEach var="doc" items="${docs}">
-<view:row entry="${doc}">
+<tr>
 <c:if test="${isFleetMgr}">
  <td class="pri bld"><el:cmd url="libedit" linkID="${doc.fileName}" op="manual">${doc.name}</el:cmd></td>
 </c:if>
@@ -51,7 +51,7 @@
  <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
  <td class="sec bld"><fmt:int value="${doc.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
-</view:row>
+</tr>
 </c:forEach>
 
 <!-- Download Acrobat -->
