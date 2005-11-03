@@ -41,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${empty script ? actypes : script.equipmentType}" firstEntry="-" value="${script.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${actypes}" firstEntry="-" value="${script.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
