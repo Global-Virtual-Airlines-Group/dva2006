@@ -317,19 +317,21 @@
 		
 		<default_network>VATSIM</default_network>
 	</online>
-	
+
 	<security>
 		<desKey>super-secret extra-special 3DeS key</desKey>
 		<hash>
 			<salt>hash!!salt</salt>
 			<algorithm>SHA-1</algorithm>
 		</hash>
-		
+
 		<key>
-			<!-- <googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</googleMaps> -->
-			<googleMaps>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</googleMaps>
+			<map name="googleMaps">
+				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>
+				<www.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</www.deltava.org>
+			</map>
 		</key>
-		
+
 		<list name="roles" attr="role" sorted="true">
 			<role>Admin</role>
 			<role>Developer</role>
