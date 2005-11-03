@@ -1,6 +1,8 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
+import java.util.Map;
+
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
@@ -19,7 +21,7 @@ public class InsertGoogleAPITag extends TagSupport {
 
 	public static final String USAGE_ATTR_NAME = "$googleMapUsage$";
 	private static int USAGE_COUNT = 0;
-	
+
 	private int _apiVersion = 1;
 
 	/**
@@ -40,7 +42,7 @@ public class InsertGoogleAPITag extends TagSupport {
 		pageContext.setAttribute(USAGE_ATTR_NAME, new Integer(USAGE_COUNT), PageContext.APPLICATION_SCOPE);
 		return super.doStartTag();
 	}
-	
+
 	/**
 	 * Renders the JSP tag.
 	 * @return TagSupport.EVAL_PAGE
@@ -48,10 +50,16 @@ public class InsertGoogleAPITag extends TagSupport {
 	 */
 	public int doEndTag() throws JspException {
 
-		// Get the API key
-		String apiKey = SystemData.get("security.key.googleMaps");
+		// Get the API keymap
+		Map apiKeys = (Map) SystemData.getObject("security.key.googleMaps");
+		if (apiKeys == null)
+			throw new JspException("Google Maps API keys not defined");
+
+		// Get the API key for this hostname
+		String hostName = pageContext.getRequest().getServerName().toLowerCase();
+		String apiKey = (String) apiKeys.get(hostName);
 		if (apiKey == null)
-			throw new JspException("Google Maps API key not defined");
+			throw new JspException("Cannot find Google Maps API key for " + hostName);
 
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
@@ -59,12 +67,11 @@ public class InsertGoogleAPITag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			out
-					.print("<script language=\"JavaScript\" type=\"text/javascript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
+			out.print("<script language=\"JavaScript\" src=\"http://maps.google.com/maps?file=api&amp;v=");
 			out.print(String.valueOf(_apiVersion));
 			out.print("&amp;key=");
 			out.print(apiKey);
-			out.print("\"></script>");
+			out.print("\" type=\"text/javascript\"></script>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
