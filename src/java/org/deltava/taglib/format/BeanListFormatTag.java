@@ -103,8 +103,8 @@ public class BeanListFormatTag extends TagSupport {
 		
 		// Get the method and invoke it on the object
 		try {
-			Method m = obj.getClass().getMethod(_propertyName, null);
-			return m.invoke(obj, null);
+			Method m = obj.getClass().getMethod(_propertyName, (Class []) null);
+			return m.invoke(obj, (Object []) null);
 		} catch (NoSuchMethodException nsme) {
 			if (!_ignoreErrors)
 				throw new JspException(obj.getClass() + " has no method " + _propertyName + "()");

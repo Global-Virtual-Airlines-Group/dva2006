@@ -104,8 +104,8 @@ public abstract class Cache implements java.io.Serializable {
     */
    protected Cacheable getClone(Cacheable src) {
       try {
-         Method m = src.getClass().getDeclaredMethod("clone", null);
-         Object clone = m.invoke(src, null);
+         Method m = src.getClass().getDeclaredMethod("clone", (Class []) null);
+         Object clone = m.invoke(src, (Object []) null);
          return (clone instanceof Cacheable) ? (Cacheable) clone : src;
       } catch (Exception e) {
          return src;

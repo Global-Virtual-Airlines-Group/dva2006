@@ -90,8 +90,8 @@ public class CollectionUtils {
 		for (Iterator i = values.iterator(); i.hasNext(); ) {
 			Object obj = i.next();
 			try {
-				Method m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), null);
-				results.put(m.invoke(obj, null), obj);
+				Method m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
+				results.put(m.invoke(obj, (Object []) null), obj);
 			} catch (Exception e) { }
 		}
 		

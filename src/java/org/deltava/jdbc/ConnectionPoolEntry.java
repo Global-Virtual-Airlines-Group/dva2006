@@ -88,7 +88,7 @@ class ConnectionPoolEntry implements Comparable {
 
       // Check if we have a ping method
       try {
-         _ping = _c.getClass().getMethod("ping", null);
+         _ping = _c.getClass().getMethod("ping", (Class []) null);
       } catch (NoSuchMethodException nsme) {
          _ping = null;
       }
@@ -130,7 +130,7 @@ class ConnectionPoolEntry implements Comparable {
    boolean checkConnection() {
       try {
          if (_ping != null) {
-            _ping.invoke(_c, null);
+            _ping.invoke(_c, (Object []) null);
          } else {
             Statement s = _c.createStatement();
             ResultSet rs = s.executeQuery("SELECT 1");

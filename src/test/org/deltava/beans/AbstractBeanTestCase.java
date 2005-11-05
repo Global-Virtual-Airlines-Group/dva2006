@@ -58,7 +58,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
         Method getProperty = null;
         try {
             setProperty = getSetter(pName, testValue);
-            getProperty = _bean.getClass().getMethod(getMethod(pName, false), null);
+            getProperty = _bean.getClass().getMethod(getMethod(pName, false), (Class []) null);
         } catch (NoSuchMethodException nsme) {
             fail("Cannot find get/set methods for " + pName + " - " + nsme.getMessage());
         }
@@ -75,7 +75,7 @@ public abstract class AbstractBeanTestCase extends TestCase {
         
         // Get the property and compare the results
         try {
-            Object retValue = getProperty.invoke(_bean, null);
+            Object retValue = getProperty.invoke(_bean, (Object []) null);
             assertEquals(testValue, retValue);
         } catch (Exception e) {
             fail("Cannot get property " + pName + " - " + e.getClass().getName());
