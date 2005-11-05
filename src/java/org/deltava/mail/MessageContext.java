@@ -141,7 +141,7 @@ public class MessageContext implements Serializable {
      */
     private boolean hasMethod(Object obj, String methodName) {
         try {
-            obj.getClass().getMethod(methodName, null);
+            obj.getClass().getMethod(methodName, (Class []) null);
             return true;
         } catch (Exception e) {
             return false;
@@ -183,16 +183,16 @@ public class MessageContext implements Serializable {
             String methodName = tkns.nextToken();
             if (hasProperty(objValue, methodName)) {
                 try {
-                    Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), null);
-                    objValue = m.invoke(objValue, null);
+                    Method m = objValue.getClass().getMethod(StringUtils.getPropertyMethod(methodName), (Class []) null);
+                    objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
                     log.warn("Error reading " + objName + "." + methodName + " - " + e.getClass().getName());
                     return "";
                 }
             } else if (hasMethod(objValue, methodName)) {
                 try {
-                    Method m = objValue.getClass().getMethod(methodName, null);
-                    objValue = m.invoke(objValue, null);
+                    Method m = objValue.getClass().getMethod(methodName, (Class []) null);
+                    objValue = m.invoke(objValue, (Object []) null);
                 } catch (Exception e) {
                     log.warn("Error invoking " + objName + "." + methodName + "() - " + e.getClass().getName());
                     return "";
