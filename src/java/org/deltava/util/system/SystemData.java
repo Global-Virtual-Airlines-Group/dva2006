@@ -65,9 +65,9 @@ public class SystemData implements Serializable {
 		} catch (IOException ie) {
 			Throwable ce = ie.getCause();
 			if (ce == null) {
-				log.warn("Error loading System Data - " + ie.getMessage());
+				log.error("Error loading System Data - " + ie.getMessage());
 			} else {
-				log.warn("Error loading System Data - " + ce.getMessage());
+				log.error("Error loading System Data - " + ce.getMessage());
 			}
 
 			_properties = new HashMap();
