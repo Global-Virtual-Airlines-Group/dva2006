@@ -5,7 +5,7 @@
 	<airline>
 		<name>Delta Virtual Airlines</name>
 		<domain>deltava.org</domain>
-		<url>www.deltava.org</url>
+		<url>endor.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
 		<files type="Boolean">true</files>
 		<code>DVA</code>
@@ -328,6 +328,7 @@
 		<key>
 			<map name="googleMaps">
 				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>
+				<endor.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRNY_m38FVZVfoLu9rA_lA1h6sggRRLScZXCXCNSnRTOjxLMQTGGrjG2Q</endor.deltava.org>
 				<www.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRQs34dwJzNMJEKBtecbaszCuM2KJhQfgxuxzo6F3mVptlQ6PYPapCaeaA</www.deltava.org>
 			</map>
 		</key>
