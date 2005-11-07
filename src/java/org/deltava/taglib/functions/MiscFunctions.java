@@ -68,6 +68,16 @@ public class MiscFunctions {
 	}
 	
 	/**
+	 * Concatenates a series of list elements into a String.
+	 * @param c a Collection of objects
+	 * @param delim the delimiter
+	 * @return a delimited String
+	 */
+	public static String splice(Collection c, String delim) {
+		return StringUtils.listConcat(c, delim);
+	}
+	
+	/**
 	 * Converts a number to hexadecimal.
 	 * @param val the number to convert
 	 * @return the converted number, with &quot;0x&quot; prepended to it
