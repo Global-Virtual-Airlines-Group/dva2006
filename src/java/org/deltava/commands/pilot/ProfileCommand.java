@@ -53,8 +53,9 @@ public class ProfileCommand extends AbstractFormCommand {
 
          // Get the Pilot Profile and e-mail configuration to update
          GetPilotDirectory rdao = new GetPilotDirectory(con);
+         GetPilotEMail edao = new GetPilotEMail(con);
          Pilot p = rdao.get(ctx.getID());
-         EMailConfiguration emailCfg = rdao.getEMailInfo(ctx.getID());
+         EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
 
          // Get the Staff Profile if it exists
          GetStaff rsdao = new GetStaff(con);
@@ -66,10 +67,12 @@ public class ProfileCommand extends AbstractFormCommand {
          if (!p_access.getCanEdit())
             throw securityException("Cannot edit Pilot " + p.getName());
 
-         // Check our access level to the Staff profile
+         // Check our access level to the Staff/Email profiles
          StaffAccessControl s_access = new StaffAccessControl(ctx, s);
          s_access.validate();
-
+         MailboxAccessControl m_access = new MailboxAccessControl(ctx, emailCfg);
+         m_access.validate();
+         
          // Update the profile with data from the request
          p.setHomeAirport(ctx.getParameter("homeAirport"));
          p.setNetworkID("VATSIM", ctx.getParameter("VATSIM_ID"));
@@ -235,11 +238,6 @@ public class ProfileCommand extends AbstractFormCommand {
             }
          }
          
-         // TODO Update the e-mail configuration if necessary
-         if ((emailCfg != null) && p_access.getCanChangeRoles()) {
-        	 
-         }
-
          // Turn off auto-commit
          ctx.startTX();
 
@@ -279,6 +277,29 @@ public class ProfileCommand extends AbstractFormCommand {
             sigdao.delete(p.getID());
             ctx.setAttribute("sigRemoved", Boolean.TRUE, REQUEST);
             log.info("Signature Removed");
+         }
+         
+         // TODO Update the e-mail configuration if necessary
+         boolean isDelete = Boolean.valueOf(ctx.getParameter("IMAPDelete")).booleanValue();
+         if (isDelete && m_access.getCanDelete()) {
+            SetPilotEMail ewdao = new SetPilotEMail(con);
+            ewdao.delete(p.getID());
+            ctx.setAttribute("imapDelete", Boolean.TRUE, REQUEST);
+         } else if (m_access.getCanChangePassword()) {
+             emailCfg.setPassword(ctx.getParameter("IMAPPassword"));
+             
+             // Update the configuration
+             if (m_access.getCanEdit()) {
+                emailCfg.setAddress(ctx.getParameter("IMAPAddr"));
+                emailCfg.setMailDirectory(ctx.getParameter("IMAPPath"));
+                emailCfg.setQuota(Integer.parseInt(ctx.getParameter("IMAPQuota")));
+                emailCfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
+                emailCfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), ","));
+             }
+             
+             // Save the profile
+             SetPilotEMail ewdao = new SetPilotEMail(con);
+             ewdao.write(emailCfg, p.getName());
          }
 
          // If we have access to the Staff profile, update it
@@ -455,8 +476,9 @@ public class ProfileCommand extends AbstractFormCommand {
 
          // Get the DAO and load the pilot/email profile
          GetPilotDirectory dao = new GetPilotDirectory(con);
+         GetPilotEMail edao = new GetPilotEMail(con);
          Pilot p = dao.get(ctx.getID());
-         EMailConfiguration emailCfg = dao.getEMailInfo(ctx.getID());
+         EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
          if (emailCfg != null)
         	 ctx.setAttribute("emailCfg", emailCfg, REQUEST);
 
@@ -471,6 +493,10 @@ public class ProfileCommand extends AbstractFormCommand {
          ac.validate();
          if (!ac.getCanEdit())
             throw securityException("Not Authorized");
+         
+         // Calculate mailbox access
+         MailboxAccessControl m_access = new MailboxAccessControl(ctx, emailCfg);
+         m_access.validate();
 
          // Save pilot status
          ctx.setAttribute("status", Pilot.STATUS[p.getStatus()], REQUEST);
@@ -482,6 +508,7 @@ public class ProfileCommand extends AbstractFormCommand {
          // Save the pilot profile in the request
          ctx.setAttribute("pilot", p, REQUEST);
          ctx.setAttribute("access", ac, REQUEST);
+         ctx.setAttribute("m_access", m_access, REQUEST);
 
          // Get all equipment type profiles
          GetEquipmentType dao4 = new GetEquipmentType(con);

@@ -31,21 +31,10 @@ public class SetPilotEMail extends DAO {
 	 */
 	public void delete(int id) throws DAOException {
 		try {
-			startTransaction();
-			
-			// Delete the aliases
-			prepareStatement("DELETE a.* FROM postfix.alias a, postfix.mailbox m WHERE (a.goto=m.username) AND (m.ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(0);
-			
-			// Delete the mailbox entry
 			prepareStatement("DELETE FROM postfix.mailbox WHERE (ID=?)");
 			_ps.setInt(1, id);
-			executeUpdate(0);
-			
-			commitTransaction();
+			executeUpdate(1);
 		} catch (SQLException se) {
-			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -59,6 +48,11 @@ public class SetPilotEMail extends DAO {
 	public void write(EMailConfiguration cfg, String name) throws DAOException {
 		try {
 			startTransaction();
+            
+            // Clean out the aliases
+            prepareStatementWithoutLimits("DELETE FROM postfix.alias WHERE (goto=?)");
+            _ps.setString(1, cfg.getAddress());
+            executeUpdate(0);
 			
 			// Write the mailbox record
 			prepareStatement("REPLACE INTO postfix.mailbox (username, password, name, maildir, quota, active, ID) VALUES "
@@ -71,11 +65,6 @@ public class SetPilotEMail extends DAO {
 			_ps.setBoolean(6, cfg.getActive());
 			_ps.setInt(7, cfg.getID());
 			executeUpdate(1);
-			
-			// Clean out the aliases
-			prepareStatementWithoutLimits("DELETE FROM postfix.alias WHERE (goto=?)");
-			_ps.setString(1, cfg.getAddress());
-			executeUpdate(0);
 			
 			// Write the aliases
 			prepareStatement("INSERT INTO postfix.alias (address, goto, active) VALUES (?, ?, ?)");
