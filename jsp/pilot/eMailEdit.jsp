@@ -12,7 +12,7 @@
 <tr>
  <td class="label">E-Mail Address</td>
 <c:if test="${m_access.canEdit}">
- <td colspan="${cspan}" class="data"><el:text name="IMAPAddr" idx="*" className="bld" size="16" max="24" value="${emailCfg.address}" /></td> 
+ <td colspan="${cspan}" class="data"><el:text name="IMAPAddr" idx="*" className="bld" size="22" max="32" value="${emailCfg.address}" /></td> 
 </c:if>
 <c:if test="${!m_access.canEdit}">
  <td colspan="${cspan}" class="data"><a href="mailto:${emailCfg.address}">${emailCfg.address}</a></td> 
@@ -35,7 +35,7 @@
 </tr>
 <tr>
  <td class="label">Mailbox Aliases</td>
- <td colspan="${cspan}" class="data"><el:text name="IMAPAliases" idx="*" size="80" max="144" value="${fn:splice(emailCfg.aliases, ', '}" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="IMAPAliases" idx="*" size="80" max="144" value="${fn:splice(emailCfg.aliases, ', ')}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
