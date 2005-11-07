@@ -11,6 +11,9 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to create a new IMAP mailbox profile.
  * @author Luke
@@ -32,19 +35,42 @@ public class IMAPMalboxCommand extends AbstractCommand {
 			
 			// Get the DAO and the Pilot
 			GetPilotDirectory dao = new GetPilotDirectory(con);
+            GetPilotEMail edao = new GetPilotEMail(con);
 			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
 				throw new CommandException("Invalid Pilot - " + ctx.getID());
 			
 			// Get the Mailbox profile
-			EMailConfiguration emailCfg = dao.getEMailInfo(ctx.getID());
+			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
 			if (emailCfg != null)
 				throw new CommandException(usr.getName() + " already has an IMAP mailbox");
-			
-			// Pre-populate the mailbox
-			
+            
+            // Check our access
+            PilotAccessControl access = new PilotAccessControl(ctx, usr);
+            access.validate();
+            if (!access.getCanChangeMailProfile())
+               throw securityException("Cannot create IMAP mailbox");
+            
+			// Pre-populate the mailbox address
+            String mbAddr = usr.getFirstName().toLowerCase();
+            if (!edao.isAvailable(mbAddr))
+               mbAddr = mbAddr + usr.getLastName().substring(0, 1).toLowerCase();
+
+            // Create the mailbox profile
+            emailCfg = new EMailConfiguration(usr.getID(), mbAddr);
+            emailCfg.setMailDirectory(StringUtils.formatHex(usr.getID()));
+            emailCfg.setPassword("12345");
+            emailCfg.setQuota(SystemData.getInt("smtp.imap.quota"));
+            emailCfg.setActive(true);
+            
+            // Write the mailbox profile
+            SetPilotEMail wdao = new SetPilotEMail(con);
+            wdao.write(emailCfg, usr.getName());
+            
+            // Save context attributes
+            ctx.setAttribute("pilot", usr, REQUEST);
+            ctx.setAttribute("imap", emailCfg, REQUEST);
 		} catch (DAOException de) {
-			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -53,5 +79,7 @@ public class IMAPMalboxCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
+        result.setURL("/jsp/admin/imapCreated.jsp");
+        result.setSuccess(true);
 	}
 }

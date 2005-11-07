@@ -635,7 +635,13 @@
 		<class>org.deltava.commands.pilot.StaffProfileCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
+	<command id="newmailbox">
+		<name>Create IMAP Mailbox</name>
+		<class>org.deltava.commands.pilot.IMAPMailboxCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="logbook">
 		<name>Pilot LogBook</name>
 		<class>org.deltava.commands.pirep.LogBookCommand</class>

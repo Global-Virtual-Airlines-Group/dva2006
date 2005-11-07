@@ -5,7 +5,6 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.EMailConfiguration;
 
 import org.deltava.util.system.SystemData;
 
@@ -236,54 +235,5 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
       } catch (SQLException se) {
          throw new DAOException(se);
       }
-   }
-   
-   /**
-    * Retrieves IMAP e-mail data about a particular user.
-    * @param id the Pilot's database ID
-    * @return the EMailConfiguration bean, or null if not found
-    * @throws DAOException if a JDBC error occurs
-    */
-   public EMailConfiguration getEMailInfo(int id) throws DAOException {
-	   try {
-		   setQueryMax(1);
-		   prepareStatement("SELECT ID, username, password, maildir, quota, active FROM postfix.mailbox WHERE (ID=?)");
-		   _ps.setInt(1, id);
-		   
-		   // Execute the Query
-		   ResultSet rs = _ps.executeQuery();
-		   if (!rs.next()) {
-			   rs.close();
-			   _ps.close();
-			   return null;
-		   }
-		   
-		   // Populate the bean
-		   EMailConfiguration result = new EMailConfiguration(rs.getInt(1), rs.getString(2));
-		   result.setPassword(rs.getString(3));
-		   result.setMailDirectory(rs.getString(4));
-		   result.setQuota(rs.getInt(5));
-		   result.setActive(rs.getBoolean(6));
-		   
-		   // Clean up result set
-		   rs.close();
-		   _ps.close();
-		   
-		   // Fetch aliases
-		   prepareStatementWithoutLimits("SELECT address FROM postfix.alias WHERE (goto=?)");
-		   _ps.setString(1, result.getAddress());
-		   
-		   // Execute the Query
-		   rs = _ps.executeQuery();
-		   while (rs.next())
-			   result.addAlias(rs.getString(1));
-		   
-		   // Clean up and return
-		   rs.close();
-		   _ps.close();
-		   return result;
-	   } catch (SQLException se) {
-		   throw new DAOException(se);
-	   }
    }
 }
