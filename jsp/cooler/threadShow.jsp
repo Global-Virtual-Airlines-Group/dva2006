@@ -166,7 +166,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </tr>
 <tr>
  <td class="postBody"><fmt:msg value="${msg.body}" />
-<c:if test="${isPilot && pilot.hasSignature || pilot.hasDefaultSignature}">
+<c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
 <br />
 <c:choose>
 <c:when test="${pilot.hasSignature}">
