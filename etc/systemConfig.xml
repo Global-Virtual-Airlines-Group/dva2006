@@ -369,6 +369,10 @@
 		<server>sirius.sce.net</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
+		<imap>
+			<enabled type="Boolean">true</enabled>
+			<server>endor.sce.net</server>
+		</imap>
 	</smtp>
 	
 	<registration>
