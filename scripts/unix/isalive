@@ -5,6 +5,34 @@ then
  exit
 fi
 
+if [ -f "/var/run/named.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/named.pid`" ]
+  then
+   echo "BIND (DNS Server) is alive"
+  else
+   echo "BIND (DNS Server) is DOWN"
+   namedctl start
+  fi
+else
+ echo "BIND (DNS Server) is DOWN - no pid"
+ namedctl start
+fi
+
+if [ -f "/var/run/mysql.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/mysql.pid`" ]
+  then
+   echo "mySQL (Database Server) is alive"
+  else
+   echo "mySQL (Database Server) is DOWN"
+   mysqlctl start
+  fi
+else
+ echo "mySQL (Database Server) is DOWN - no pid"
+ mysqlctl start
+fi
+
 if [ -f "/var/run/tomcat55.pid" ]
 then
   if [ -d "/proc/`cat /var/run/tomcat55.pid`" ]
@@ -33,9 +61,9 @@ else
   apachectl start
 fi
 
-if [ -f "/var/run/openldap/slapd.pid" ]
+if [ -f "/var/run/slapd.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/openldap/slapd.pid`" ]
+  if [ -d "/proc/`cat /var/run/slapd.pid`" ]
   then
    echo "OpenLDAP (Authentication Server) is alive"
   else
@@ -47,56 +75,44 @@ else
   ldapctl start
 fi
 
-if [ -f "/var/run/proftpd.pid" ]
+if [ -f "/var/run/postfix-master.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/proftpd.pid`" ]
-  then
-   echo "ProFTPD (FTP Server) is alive"
-  else
-   echo "ProFTPD (FTP Server) is DOWN"
-   ftpctl start
-  fi
-else
- echo "ProFTPD (FTP Server) is DOWN - no pid"
- ftpctl start
-fi
-
-if [ -f "/var/spool/postfix/pid/master.pid" ]
-then
-  if [ -d "/proc/`cat /var/spool/postfix/pid/master.pid`" ]
+  if [ -d "/proc/`pidof postfix/master`" ]
   then
    echo "PostFix (SMTP Server) is alive"
   else
    echo "PostFix (SMTP Server) is DOWN"
+   postfix start
   fi
 else
  echo "PostFix (SMTP Server) is DOWN - no pid"
+ postfix start
 fi
 
-if [ -f "/var/run/cyrus-master.pid" ]
+if [ -f "/var/run/authdaemon.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/cyrus-master.pid`" ]
+  if [ -d "/proc/`cat /var/run/authdaemon.pid`" ]
   then
-   echo "Cyrus (IMAP Server) is alive"
+   echo "IMAP Authentication Server is alive"
   else
-   echo "Cyrus (IMAP Server) is DOWN"
+   echo "IMAP Authentication Server is DOWN"
+   authdaemond start
+  fi
+else
+ echo "IMAP Authentication Server is DOWN - no pid"
+ authdaemond start
+fi
+
+if [ -f "/var/run/imapd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/imapd.pid`" ]
+  then
+   echo "Courier (IMAP Server) is alive"
+  else
+   echo "Courier (IMAP Server) is DOWN"
    imapctl start
   fi
 else
- echo "Cyrus (IMAP Server) is DOWN - no pid"
+ echo "Courier (IMAP Server) is DOWN - no pid"
  imapctl start
-fi
-
-if [ -f "/var/run/named.pid" ]
-then
-  if [ -d "/proc/`cat /var/run/named.pid`" ]
-  then
-   echo "BIND (DNS Server) is alive"
-  else
-   echo "BIND (DNS Server) is DOWN"
-   ndc start
-  fi
-else
- echo "BIND (DNS Server) is DOWN - no pid"
- ndc start
 fi

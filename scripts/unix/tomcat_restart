@@ -2,7 +2,7 @@
 touch /var/run/siteDown.flag
 
 echo "Shutting down Tomcat"
-cd /usr/local/jakarta-tomcat5.5/bin
+cd /usr/local/tomcat/bin
 ./shutdown.sh
 sleep 9
 
@@ -16,12 +16,12 @@ then
 fi
 
 echo "Cleaning out logs/PID file"
-cd /usr/local/jakarta-tomcat5.5/logs
+cd /var/log/tomcat
 rm *.out
 rm /var/run/tomcat55.pid
 
 echo "Restarting Tomcat"
-cd /usr/local/jakarta-tomcat5.5/bin
+cd /usr/local/tomcat/bin
 ./startup.sh
 
 rm /var/run/siteDown.flag
