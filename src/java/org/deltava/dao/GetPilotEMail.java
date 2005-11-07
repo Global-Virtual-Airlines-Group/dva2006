@@ -114,7 +114,7 @@ public class GetPilotEMail extends DAO {
          String addr = (String) i.next();
          sqlBuf.append("\'");
          sqlBuf.append(addr);
-         sqlBuf.append(i.hasNext() ? "\'," : "\"))");
+         sqlBuf.append(i.hasNext() ? "\'," : "\'))");
       }
       
       // Fetch aliases
