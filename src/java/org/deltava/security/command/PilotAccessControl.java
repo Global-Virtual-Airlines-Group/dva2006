@@ -28,6 +28,7 @@ public final class PilotAccessControl extends AccessControl {
 	private boolean _canChangeRoles;
 	private boolean _canChangeSignature;
 	private boolean _canChangeStaffProfile;
+	private boolean _canChangeMailProfile;
 	private boolean _canActivate;
 
 	/**
@@ -74,6 +75,10 @@ public final class PilotAccessControl extends AccessControl {
 		Object sProfile = _ctx.getRequest().getAttribute("staff");
 		if (sProfile != null)
 			_canChangeStaffProfile = (_isOurs || isHR);
+		
+		// Check if there's an IMAP mailbox profile in the reuqest
+		Object mProfile = _ctx.getRequest().getAttribute("emailCfg");
+		_canChangeMailProfile = (mProfile != null && isHR); 
 	}
 
 	/**
@@ -146,6 +151,14 @@ public final class PilotAccessControl extends AccessControl {
 	 */
 	public boolean getCanChangeStaffProfile() {
 		return _canChangeStaffProfile;
+	}
+	
+	/**
+	 * Returns if the pilot's IMAP mailbox profile can be edited.
+	 * @return TRUE if the mailbox profile can be edited, otherwise FALSE
+	 */
+	public boolean getCanChangeMailProfile() {
+		return _canChangeMailProfile;
 	}
 
 	/**

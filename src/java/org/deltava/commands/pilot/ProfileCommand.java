@@ -23,7 +23,7 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A web site command to handle editing/saving Pilot Profiles.
+ * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -51,9 +51,10 @@ public class ProfileCommand extends AbstractFormCommand {
          Connection con = ctx.getConnection();
          List updates = new ArrayList();
 
-         // Get the Pilot Profile to update
+         // Get the Pilot Profile and e-mail configuration to update
          GetPilotDirectory rdao = new GetPilotDirectory(con);
          Pilot p = rdao.get(ctx.getID());
+         EMailConfiguration emailCfg = rdao.getEMailInfo(ctx.getID());
 
          // Get the Staff Profile if it exists
          GetStaff rsdao = new GetStaff(con);
@@ -232,6 +233,11 @@ public class ProfileCommand extends AbstractFormCommand {
                upd.setDescription("Roles removed: " + StringUtils.listConcat(removedRoles, ", "));
                updates.add(upd);
             }
+         }
+         
+         // TODO Update the e-mail configuration if necessary
+         if ((emailCfg != null) && p_access.getCanChangeRoles()) {
+        	 
          }
 
          // Turn off auto-commit
@@ -447,9 +453,12 @@ public class ProfileCommand extends AbstractFormCommand {
       try {
          Connection con = ctx.getConnection();
 
-         // Get the DAO and load the pilot profile
-         GetPilot dao = new GetPilot(con);
+         // Get the DAO and load the pilot/email profile
+         GetPilotDirectory dao = new GetPilotDirectory(con);
          Pilot p = dao.get(ctx.getID());
+         EMailConfiguration emailCfg = dao.getEMailInfo(ctx.getID());
+         if (emailCfg != null)
+        	 ctx.setAttribute("emailCfg", emailCfg, REQUEST);
 
          // Get the staff profile (if any)
          GetStaff dao2 = new GetStaff(con);

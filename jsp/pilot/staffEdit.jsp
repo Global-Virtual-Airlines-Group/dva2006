@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <c:if test="${access.canChangeStaffProfile && (!empty staff)}">
 <!-- Edit Staff Profile -->
-<tr class="title">
+<tr class="title caps">
  <td colspan="${cspan + 1}">STAFF PROFILE</td>
 </tr>
 <tr>
@@ -11,7 +11,7 @@
  <td colspan="${cspan}" class="data"><el:text className="bld" name="staffTitle" value="${staff.title}" size="48" max="64" /></td>
  </c:if>
  <c:if test="${!access.canChangeRoles}">
- <td class="data bld">${staff.title}</td>
+ <td colspan="${cspan}" class="data bld">${staff.title}</td>
  </c:if>
 </tr>
 <tr>
@@ -26,7 +26,6 @@
 </tr>
 </c:if>
 </c:if>
-
 <c:if test="${access.canChangeRoles && (empty staff)}">
 <!-- Create Staff Profile -->
 <tr class="title">
