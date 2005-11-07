@@ -371,6 +371,7 @@
 		<testMode type="Boolean">true</testMode>
 		<imap>
 			<enabled type="Boolean">true</enabled>
+			<quota type="Integer">10240000</quota>
 			<server>endor.sce.net</server>
 		</imap>
 	</smtp>

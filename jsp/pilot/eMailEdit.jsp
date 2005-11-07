@@ -11,18 +11,20 @@
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
-<c:if test="${access.canChangeMailProfile}">
+<c:if test="${m_access.canEdit}">
  <td colspan="${cspan}" class="data"><el:text name="IMAPAddr" idx="*" className="bld" size="16" max="24" value="${emailCfg.address}" /></td> 
 </c:if>
-<c:if test="${!access.canChangeMailProfile}">
+<c:if test="${!m_access.canEdit}">
  <td colspan="${cspan}" class="data"><a href="mailto:${emailCfg.address}">${emailCfg.address}</a></td> 
 </c:if>
 </tr>
+<c:if test="${m_access.canChangePassword}">
 <tr>
  <td class="label">IMAP Server Password</td>
  <td colspan="${cspan}" class="data"><el:text name="IMAPPassword" idx="*" type="password" size="12" max="32" value="${emailCfg.password}" /></td>
 </tr>
-<c:if test="${access.canChangeMailProfile}">
+</c:if>
+<c:if test="${m_access.canEdit}">
 <tr>
  <td class="label">Mailbox Quota</td>
  <td colspan="${cspan}" class="data"><el:text name="IMAPQuota" idx="*" size="8" max="10" value="${emailCfg.quota}" /> bytes</td>
@@ -37,8 +39,9 @@
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td colspan="${cspan}" class="data"><el:box name="IMAPActive" idx="*" value="true" checked="${emailCfg.active}" label="Mailbox is Active" /><br />
-<el:box name="IMAPDelete" idx="*" value="true" label="Deactivate IMAP mailbox" /></td>
+ <td colspan="${cspan}" class="data"><el:box name="IMAPActive" idx="*" value="true" checked="${emailCfg.active}" label="Mailbox is Active" />
+<c:if test="${m_access.canDelete}"><br />
+<el:box name="IMAPDelete" idx="*" value="true" label="Deactivate IMAP mailbox" /></c:if></td>
 </tr>
 </c:if>
 </c:if>

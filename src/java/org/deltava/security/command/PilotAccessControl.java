@@ -78,7 +78,7 @@ public final class PilotAccessControl extends AccessControl {
 		
 		// Check if there's an IMAP mailbox profile in the reuqest
 		Object mProfile = _ctx.getRequest().getAttribute("emailCfg");
-		_canChangeMailProfile = (mProfile != null && isHR); 
+		_canChangeMailProfile = ((mProfile != null) && isHR) || ((mProfile == null) && _ctx.isUserInRole("Admin")); 
 	}
 
 	/**
