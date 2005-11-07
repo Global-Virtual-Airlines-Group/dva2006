@@ -124,7 +124,7 @@
 	<target name="acars" depends="compile">
 		<mkdir dir="${java.io.tmpdir}/build/acars" />
 		<javac srcdir="../DVA ACARS/src/java" optimize="on" destdir="${java.io.tmpdir}/build/acars"
-		 debug="true" debuglevel="lines,vars,source" source="1.4" target="1.4"
+		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
 		 compiler="modern">
 	    	<classpath>
 				<pathelement path="${classpath}" />
@@ -165,7 +165,7 @@
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
-			debuglevel="source" optimize="on" target="1.4">
+			debuglevel="source" optimize="on" target="1.4" source="1.4">
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
@@ -272,7 +272,7 @@
 	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="compile,acars,jspc,put_scripts">
+	<target name="prod_deploy" depends="compile,acars,jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
 
 		<!-- Upload the web configuration -->
@@ -308,7 +308,7 @@
 
 		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
-			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
+			verbose="yees" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
