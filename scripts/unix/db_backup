@@ -29,7 +29,7 @@ rm *.tar
 
 # Dump e-mail data
 echo 'Writing e-mail configuration'
-mysqldump -C -h mysql.deltava.org -u backup postfix | gzip -9 > postfix.sql.gz
+mysqldump -C -K -h mysql.deltava.org -u backup postfix | gzip -9 > postfix.sql.gz
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
