@@ -1,14 +1,9 @@
 #!/bin/sh
-# Subversion backup script
+# GVA Subversion Repository backup script
+# Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 
-# Create backup directory
-if [ ! -e "/tmp/svn_backup" ] ;then
- mkdir /tmp/svn_backup
- chown 0 /tmp/svn_backup
- chmod 644 /tmp/svn_backup
-fi
-
-cd /tmp/svn_backup
+# Goto backup directory
+cd /home/backup/svn
 
 # Get the current revision
 svnlook youngest /usr/local/svn > /tmp/svn.revision
@@ -16,7 +11,7 @@ svnlook youngest /usr/local/svn > /tmp/svn.revision
 # Check if we have anything to back up
 if [ "$1" != "force" ] ;then
  if [ -e "/tmp/svn_backup/svn.revision_base" ] ;then
-  if [ ! "`cat /tmp/svn.revision`" -gt "`cat /tmp/svn_backup/svn.revision_base`" ] ;then
+  if [ ! "`cat /tmp/svn.revision`" -gt "`cat /home/backup/svn/svn.revision_base`" ] ;then
    echo "Subversion repository unchanged Revision=`cat /tmp/svn.revision`"
    rm /tmp/svn.revision
    exit 1
@@ -25,7 +20,7 @@ if [ "$1" != "force" ] ;then
 fi
 
 # Back up the first 1000 revisions
-if [ ! -f "/tmp/svn_backup/svn_1xxx.gz" ] ;then
+if [ ! -f "/home/backup/svn/svn_1xxx.gz" ] ;then
  echo 'Backing up revisions 0-999'
  svnadmin dump /usr/local/svn --revision 0:999 | gzip -9 > svn_1xxx.gz
  echo 1000 > /tmp/svn.revision_base
@@ -35,7 +30,7 @@ fi
 
 # If we have more than 1500 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "1500" ] ;then
- if [ ! -f "/tmp/svn_backup/svn_15xx.gz" ] ;then
+ if [ ! -f "/home/backup/svn/svn_15xx.gz" ] ;then
   echo 'Backing up revisions 1000-1499'
   svnadmin dump /usr/local/svn --incremental --revision 1000:1499 | gzip -9 > svn_15xx.gz
  fi
@@ -48,5 +43,9 @@ echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
 svnadmin dump /usr/local/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | gzip -9 > svn_top.gz
 
 # Clean up
-mv /tmp/svn.revision /tmp/svn_backup/svn.revision_base
+mv /tmp/svn.revision /home/backup/svn/svn.revision_base
 rm /tmp/svn.revision_base
+
+# Change file permissions
+chown -R root:gva *
+chmod 640 *
