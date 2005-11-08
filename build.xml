@@ -20,15 +20,19 @@
         <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.4" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
-        	<fileset dir="src/java" />
+        	<fileset dir=".">
+        		<include name="src/java/**/*.java" />
+        		<include name="../DVA ACARS/src/java/**/*.java" />
+        	</fileset>
             <link href="http://java.sun.com/j2se/1.4.2/docs/api" />
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
         	<link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/docs/api" />
         	<link href="http://www.servlets.com/cos/javadoc" />
         	
-           	<doctitle><![CDATA[<h2>DVA2006 API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2005 Luke J. Kolin. All Rights Reserved.</i>]]></bottom>
+           	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
+			<bottom><![CDATA[<i>Copyright &#169; 2005 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
    		<!-- Load the FTP server properties -->
@@ -40,18 +44,15 @@
    		</loadproperties>    	
     	
     	<!-- Clean out the JavaDoc -->
-		<ftp password="${javadoc.ftp.pwd}" server="${javadoc.ftp.server}" userid="${javadoc.ftp.user}"
-    	 remotedir="${path.javadoc}" action="del">
-    		<fileset>
-    			<include name="**/**.*" />
-    		</fileset>
-    	</ftp>    	
+    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
+    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
+    		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
     	
     	<!-- Upload the JavaDoc -->
-    	<ftp password="${javadoc.ftp.pwd}" server="${javadoc.ftp.server}" userid="${javadoc.ftp.user}"
-    	 remotedir="${path.javadoc}" action="send" verbose="yes">
+    	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:${javadoc.ssh.path.javadoc}" trust="yes"
+    		verbose="yes" password="${javadoc.ssh.pwd}">
     		<fileset dir="${java.io.tmpdir}/javadoc" />
-    	</ftp>
+    	</scp>
     	
     	<!-- Clean out the temp folder -->
     	<delete dir="${java.io.tmpdir}/javadoc" />
@@ -272,7 +273,7 @@
 	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="compile,acars,jspc">
+	<target name="prod_deploy" depends="compile,acars,jspc,put_scripts">
 		<loadproperties srcFile="data/build_deploy.properties" />
 
 		<!-- Upload the web configuration -->
@@ -297,7 +298,7 @@
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
-				<exclude name="mysql*.jar" />
+<!--				<exclude name="mysql*.jar" /> -->
 				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -316,7 +317,7 @@
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-				<include name="mysql*.jar" />
+<!--				<include name="mysql*.jar" /> -->
 				<include name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
