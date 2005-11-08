@@ -1,5 +1,32 @@
 #!/bin/sh
-# Delta Virtual Airlines backup
+# Delta Virtual Airlines FTP backup script
+# Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 
-ftp s87336331.onlinehome.us < /usr/local/sbin/www/ftp.script
+# Overwrite the .netrc file and use root's
+if [ -e "~/.netrc" ]
+then
+  echo 'Saving .netrc'
+  mv ~/.netrc ~/.netrc.tmp
+fi
 
+# Copy root's .netrc
+cp /root/.netrc ~
+
+if [ "$1" = "full" ]
+then
+  echo 'Performing full FTP backup'
+  ftp backup.deltava.org < /usr/local/sbin/www/ftp.full.script
+else
+  echo 'Performing incremental FTP backup'
+  ftp backup.deltava.org < /usr/local/sbin/www/ftp.script
+fi
+
+# Remove root's .netrc
+rm ~/.netrc
+
+# Restore old .netrc
+if [ -e "~/.netrc.tmp" ]
+then
+  echo 'Restoring .netrc'
+  mv ~/.netrc.tmp ~/.netrc
+fi

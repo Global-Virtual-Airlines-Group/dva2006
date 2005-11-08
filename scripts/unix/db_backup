@@ -1,80 +1,84 @@
 #!/bin/sh
-# Delta Virtual Airlines backup script
-# (c) 2005 Luke J. Kolin. All Rights Reserved.
+# Database backup script
+# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
 
-# Create backup directory
-if [ ! -d "/tmp/db_backup" ]
-then
-  echo 'Creating backup directory'
-  cd /tmp
-  mkdir db_backup
-fi
-  
-cd /tmp/db_backup
+# Goto backup directory
+cd /home/backup/db
 
 # Dump LDIF data
+ldapctl stop
 slapcat -l ldif.txt -f /usr/local/etc/openldap/slapd.conf
+ldapctl start
 gzip -9 -f ldif.txt
+
+# Dump core table
+echo 'Writing mySQL configuration'
+cp /home/mysql/my.cnf .
+mysqldump -C -h mysql.deltava.org mysql | gzip -9 > mysql.sql.gz
 
 # Dump table definitions
 echo 'Writing table definitions'
-mysqldump -C -K -d -h mysql.deltava.org -u backup common > common.sql
-mysqldump -C -K -d -h mysql.deltava.org -u backup acars > acars.sql
-mysqldump -C -K -d -h mysql.deltava.org -u backup dva > dva.sql
-mysqldump -C -K -d -h mysql.deltava.org -u backup afv > afv.sql
+mysqldump -C -K -d -h mysql.deltava.org common > common.sql
+mysqldump -C -K -d -h mysql.deltava.org acars > acars.sql
+mysqldump -C -K -d -h mysql.deltava.org dva > dva.sql
+mysqldump -C -K -d -h mysql.deltava.org afv > afv.sql
 tar -cf create_databases.tar *.sql
 gzip -9 -f create_databases.tar
 rm *.sql
-rm *.tar
 
 # Dump e-mail data
 echo 'Writing e-mail configuration'
-mysqldump -C -K -h mysql.deltava.org -u backup postfix | gzip -9 > postfix.sql.gz
+mysqldump -C -K -h mysql.deltava.org postfix | gzip -9 > postfix.sql.gz
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup common AIRLINEINFO TZ AIRLINES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org common AIRLINEINFO TZ AIRLINES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
 
 # Dump Water Cooler
 echo 'Writing Water Cooler'
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_POSTS COOLER_NOTIFY | gzip -9 > cooler.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_POSTS COOLER_NOTIFY | gzip -9 > cooler.sql.gz
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
 then
   echo 'Writing Navigation Data'
-  mysqldump -C -n -t -K -h mysql.deltava.org -u backup common NAVDATA SID_STAR AIRWAYS CHARTS | gzip -9 > navdata.sql.gz
+  mysqldump -C -n -t -K -h mysql.deltava.org common NAVDATA SID_STAR AIRWAYS CHARTS | gzip -9 > navdata.sql.gz
 fi
 
 # Dump ACARS data
 echo 'Writing ACARS data'
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup acars CONS FLIGHTS POSITIONS MESSAGES POSITION_ARCHIVE | gzip -9 > acars.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org acars CONS FLIGHTS POSITIONS MESSAGES POSITION_ARCHIVE | gzip -9 > acars.sql.gz
 
 # Dump DVA database
 echo 'Writing DVA database'
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup dva PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > dva.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > dva_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > dva_sys.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup dva SCHEDULE ROUTES | gzip -9 > dva_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > dva.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > dva_test.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > dva_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva SCHEDULE ROUTES | gzip -9 > dva_sched.sql.gz
 
 # Dump AFV database
 echo 'Writing AFV database'
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup afv PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > afv_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > afv_sys.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u backup afv SCHEDULE ROUTES | gzip -9 > afv_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > afv_test.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > afv_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv SCHEDULE ROUTES | gzip -9 > afv_sched.sql.gz
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
 then
   echo 'Writing DVA Image Gallery'
-  mysqldump -C -n -t -K -h mysql.deltava.org -u backup dva GALLERY GALLERYSCORE | gzip -9 > dva_gallery.sql.gz
+  mysqldump -C -n -t -K -h mysql.deltava.org dva GALLERY GALLERYSCORE | gzip -9 > dva_gallery.sql.gz
   echo 'Writing AFV Image Gallery'
-  mysqldump -C -n -t -K -h mysql.deltava.org -u backup afv GALLERY GALLERYSCORE | gzip -9 > afv_gallery.sql.gz
+  mysqldump -C -n -t -K -h mysql.deltava.org afv GALLERY GALLERYSCORE | gzip -9 > afv_gallery.sql.gz
 fi
 
+# Change file permissions
+chown -R root:gva *
+chmod 640 *
+
 # Check if we need to ftp the files somewhere
+shift
 #if [ "$2" = "ftp" ]
 #then
   # FTP the file away

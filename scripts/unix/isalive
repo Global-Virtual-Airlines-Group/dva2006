@@ -1,4 +1,7 @@
 #!/bin/sh
+# System daemon checking script
+# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+
 if [ -f "/var/run/siteDown.flag" ]
 then
  echo "/var/run/siteDown.flag set - aborting"
@@ -12,11 +15,11 @@ then
    echo "BIND (DNS Server) is alive"
   else
    echo "BIND (DNS Server) is DOWN"
-   namedctl start
+   /usr/local/sbin/namedctl start
   fi
 else
  echo "BIND (DNS Server) is DOWN - no pid"
- namedctl start
+ /usr/local/sbin/namedctl start
 fi
 
 if [ -f "/var/run/mysql.pid" ]
@@ -26,11 +29,11 @@ then
    echo "mySQL (Database Server) is alive"
   else
    echo "mySQL (Database Server) is DOWN"
-   mysqlctl start
+   /usr/local/sbin/mysqlctl start
   fi
 else
  echo "mySQL (Database Server) is DOWN - no pid"
- mysqlctl start
+ /usr/local/sbin/mysqlctl start
 fi
 
 if [ -f "/var/run/tomcat55.pid" ]
@@ -40,11 +43,11 @@ then
    echo "Tomcat (Application Server) is alive"
   else
    echo "Tomcat (Application Server) is DOWN"
-   tomcatctl start
+   /usr/local/sbin/tomcatctl start
   fi
 else
   echo "Tomcat (Application Server) is DOWN - no pid"
-  tomcatctl start
+  /usr/local/sbin/tomcatctl start
 fi
 
 if [ -f "/var/run/httpd.pid" ]
@@ -54,11 +57,11 @@ then
    echo "Apache (Web Server) is alive"
   else
    echo "Apache (Web Server) is DOWN"
-   apachectl start
+   /usr/local/sbin/apachectl start
   fi
 else
   echo "Apache (Web Server) is DOWN - no pid"
-  apachectl start
+  /usr/local/sbin/apachectl start
 fi
 
 if [ -f "/var/run/slapd.pid" ]
@@ -68,11 +71,11 @@ then
    echo "OpenLDAP (Authentication Server) is alive"
   else
    echo "OpenLDAP (Authentication Server) is DOWN"
-   ldapctl start
+   /usr/local/sbin/ldapctl start
   fi
 else
   echo "OpenLDAP (Authentication Server) is DOWN - no pid"
-  ldapctl start
+  /usr/local/sbin/ldapctl start
 fi
 
 if [ -f "/var/run/postfix-master.pid" ]
@@ -110,9 +113,9 @@ then
    echo "Courier (IMAP Server) is alive"
   else
    echo "Courier (IMAP Server) is DOWN"
-   imapctl start
+   /usr/local/sbin/imapctl start
   fi
 else
  echo "Courier (IMAP Server) is DOWN - no pid"
- imapctl start
+ /usr/local/sbin/imapctl start
 fi
