@@ -1,10 +1,14 @@
 #!/bin/sh
+# Tomcat restart script
+# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+
+# Mark side as down
 touch /var/run/siteDown.flag
 
+# Stop Tomcat
 echo "Shutting down Tomcat"
-cd /usr/local/tomcat/bin
-./shutdown.sh
-sleep 9
+/usr/local/tomcat/bin/shutdown.sh
+sleep 7
 
 if [ -f "/var/run/tomcat55.pid" ]
 then
@@ -15,13 +19,16 @@ then
  fi
 fi
 
+# Clean up
 echo "Cleaning out logs/PID file"
-cd /var/log/tomcat
-rm *.out
 rm /var/run/tomcat55.pid
+rm /var/log/tomcat/*
+touch /var/log/tomcat/catalina.out
+chown www /var/log/tomcat/catalina.out
 
+# Start Tomcat
 echo "Restarting Tomcat"
-cd /usr/local/tomcat/bin
-./startup.sh
+/usr/local/tomcat/bin/startup.sh
 
+# Mark site as up
 rm /var/run/siteDown.flag
