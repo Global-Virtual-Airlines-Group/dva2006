@@ -258,7 +258,7 @@ class ConnectionPoolEntry implements Comparable {
 
    /**
     * This overrides hashcode behavior by returning the hashcode of the underlying JDBC connection.
-    * @see ConnectionPoolEntry#equals(Connection)
+    * @see ConnectionPoolEntry#equals(Object)
     */
    public int hashCode() {
       return _c.hashCode();
