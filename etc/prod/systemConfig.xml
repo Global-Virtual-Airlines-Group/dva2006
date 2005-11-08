@@ -239,8 +239,11 @@
 		
 		<map name="connectProperties">
 			<useNewIO>false</useNewIO>
-			<autoReconnect>true</autoReconnect>
 			<useCompression>true</useCompression>
+			<cachePrepStmts>true</cachePrepStmts>
+			<cacheResultSetMetadata>true</cacheResultSetMetadata>
+			<continueBatchOnError>true</continueBatchOnError>
+			<useServerPrepStmts>true</useServerPrepStmts>
 		</map>
 		
 		<pool_size type="Integer">3</pool_size>
@@ -374,12 +377,17 @@
 	</path>
 	
 	<smtp>
-		<server>golgotha.deltava.org</server>
+		<server>endor.deltava.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<daemon>
 			<sleep type="Integer">60</sleep>
 		</daemon>
+		<imap>
+			<enabled type="Boolean">true</enabled>
+			<quota type="Integer">10240000</quota>
+			<server>mail.deltava.org</server>
+		</imap>
 	</smtp>
 	
 	<registration>
