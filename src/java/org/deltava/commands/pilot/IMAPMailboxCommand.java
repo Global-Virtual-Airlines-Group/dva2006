@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class IMAPMalboxCommand extends AbstractCommand {
+public class IMAPMailboxCommand extends AbstractCommand {
 
 	/**
 	 * Executes the command.
