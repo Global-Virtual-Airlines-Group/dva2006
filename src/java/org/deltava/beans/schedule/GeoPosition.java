@@ -233,7 +233,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 
 	/**
 	 * Calculates equality by determining if the two positions are within 1 mile of each other.
-	 * @see GeoPosition#distanceTo(GeoPosition)
+	 * @see GeoPosition#distanceTo(GeoLocation)
 	 */
 	public boolean equals(Object o2) {
 		return (o2 instanceof GeoPosition) ? (distanceTo((GeoPosition) o2) < 1) : false;
