@@ -36,7 +36,7 @@
  <td class="secB">${news.authorName}</td>
 </tr>
 <tr>
- <td colspan="3" class="left">${news.body}</td>
+ <td colspan="3" class="left"><fmt:text value="${news.body}" /></td>
 </tr>
 </c:forEach>
 

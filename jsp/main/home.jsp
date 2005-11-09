@@ -82,7 +82,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td class="secB" width="20%">${entry.authorName}</td>
 </tr>
 <tr>
- <td class="left" colspan="3">${entry.body}</td>
+ <td class="left" colspan="3"><fmt:text value="${entry.body}" /></td>
 </tr>
 </c:forEach>
 </el:table>
