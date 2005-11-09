@@ -170,10 +170,13 @@ public class CommandServlet extends HttpServlet {
             throw new CommandException("Error forwarding to " + result.getURL(), e);
          }
       } catch (CommandSecurityException cse) {
-         // Get the user name
+
+        // Get the user name
          String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
          log.error("Security Error - " + usrName + " executing " + cse.getCommand() + " - " + cse.getMessage());
          RequestDispatcher rd = req.getRequestDispatcher("/jsp/error/securityViolation.jsp");
+         req.setAttribute("servlet_error", cse.getMessage());
+         req.setAttribute("servlet_exception", cse);
          rd.forward(req, rsp);
       } catch (CommandException ce) {
          String errPage = "/jsp/error/error.jsp";
