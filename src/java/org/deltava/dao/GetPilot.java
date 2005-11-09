@@ -305,6 +305,12 @@ public class GetPilot extends PilotReadDAO {
 			searchTerms.add("(P.LASTNAME LIKE ?)");
 		if (eMail != null)
 			searchTerms.add("(P.EMAIL LIKE ?)");
+        
+        // If no search terms specified, return an empty list
+        if (searchTerms.isEmpty())
+           return new ArrayList();
+        
+        // Aggregate the search terms
 		for (Iterator i = searchTerms.iterator(); i.hasNext();) {
 			String srchTerm = (String) i.next();
 			sqlBuf.append(srchTerm);
