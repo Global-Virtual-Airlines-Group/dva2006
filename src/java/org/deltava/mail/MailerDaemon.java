@@ -43,7 +43,10 @@ public class MailerDaemon extends Thread {
 			_queue.notifyAll();
 		}
 
-		log.info("Queued message for " + env.getRecipients()[0]);
+		// Log receipients
+		Address[] addr = env.getRecipients();
+		if ((addr != null) && (addr.length > 0))
+			log.info("Queued message for " + addr[0]);
 	}
 
 	/**
