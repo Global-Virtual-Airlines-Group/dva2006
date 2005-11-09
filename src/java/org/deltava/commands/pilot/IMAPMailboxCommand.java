@@ -11,7 +11,6 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -58,7 +57,7 @@ public class IMAPMailboxCommand extends AbstractCommand {
 
             // Create the mailbox profile
             emailCfg = new EMailConfiguration(usr.getID(), mbAddr);
-            emailCfg.setMailDirectory(StringUtils.formatHex(usr.getID()));
+            emailCfg.setMailDirectory(String.valueOf(usr.getID()));
             emailCfg.setPassword("12345");
             emailCfg.setQuota(SystemData.getInt("smtp.imap.quota"));
             emailCfg.setActive(true);
