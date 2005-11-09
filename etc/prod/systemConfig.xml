@@ -5,7 +5,7 @@
 	<airline>
 		<name>Delta Virtual Airlines</name>
 		<domain>deltava.org</domain>
-		<url>endor.deltava.org</url>
+		<url>www.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
 		<files type="Boolean">true</files>
 		<code>DVA</code>
@@ -244,6 +244,7 @@
 			<cacheResultSetMetadata>true</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
 			<useServerPrepStmts>true</useServerPrepStmts>
+			<dontTrackOpenResources>true</dontTrackOpenResources>
 		</map>
 		
 		<pool_size type="Integer">3</pool_size>
