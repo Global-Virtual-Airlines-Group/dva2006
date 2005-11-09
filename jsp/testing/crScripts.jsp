@@ -41,7 +41,7 @@
  <td class="pri bld">${sc.equipmentType}</td>
 </c:if>
  <td class="sec bld">${sc.program}</td>
- <td class="small left" colspan="2">${sc.description}</td>
+ <td class="small left" colspan="2"><fmt:text value="${sc.description}" /></td>
 </view:row>
 </c:forEach>
 
