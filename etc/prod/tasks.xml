@@ -28,6 +28,12 @@
 		<hours>2,14</hours>
 	</task>
 
+	<task id="cmdlogpurge" enabled="false">
+		<class>org.deltava.tasks.CommandLogPurgeTask</class>
+		<interval>86400</interval>
+		<hours>6</hours>
+	</task>
+
 	<task id="gc" enabled="true">
 		<class>org.deltava.tasks.GarbageCollectorTask</class>
 		<interval>1800</interval>
