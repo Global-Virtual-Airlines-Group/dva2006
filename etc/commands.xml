@@ -37,25 +37,37 @@
 		<class>org.deltava.commands.main.PilotRecognitionCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="staff">
 		<name>Staff Roster</name>
 		<class>org.deltava.commands.main.StaffRosterCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="pilotsearch">
 		<name>Pilot Search</name>
 		<class>org.deltava.commands.pilot.PilotSearchCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="dupesearch">
+		<name>Duplicate Pilot Search</name>
+		<class>org.deltava.commands.admin.DuplicatePilotSearchCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="dupemerge">
+		<name>Pilot Merge</name>
+		<class>org.deltava.commands.admin.DuplicatePilotMergeCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="cookiecheck">
 		<name>Cookie Acceptance Test</name>
 		<class>org.deltava.commands.security.CookieCheckCommand</class>
 		<roles>*</roles>
 	</command>
-		
+
 	<command id="login">
 		<name>User Login</name>
 		<class>org.deltava.commands.security.LoginCommand</class>
