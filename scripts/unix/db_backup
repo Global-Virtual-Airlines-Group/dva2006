@@ -53,15 +53,15 @@ mysqldump -C -n -t -K -h mysql.deltava.org acars CONS FLIGHTS POSITIONS MESSAGES
 # Dump DVA database
 echo 'Writing DVA database'
 mysqldump -C -n -t -K -h mysql.deltava.org dva PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > dva.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > dva_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > dva_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > dva_test.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS | gzip -9 > dva_sys.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org dva SCHEDULE ROUTES | gzip -9 > dva_sched.sql.gz
 
 # Dump AFV database
 echo 'Writing AFV database'
 mysqldump -C -n -t -K -h mysql.deltava.org afv PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > afv_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_SESSIONS SYS_TASKS | gzip -9 > afv_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > afv_test.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS | gzip -9 > afv_sys.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org afv SCHEDULE ROUTES | gzip -9 > afv_sched.sql.gz
 
 # Dump Galleries if we're doing a full backup
