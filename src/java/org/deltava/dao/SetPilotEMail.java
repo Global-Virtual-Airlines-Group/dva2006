@@ -68,11 +68,11 @@ public class SetPilotEMail extends DAO {
 			
 			// Write the aliases
 			prepareStatement("INSERT INTO postfix.alias (address, goto, active) VALUES (?, ?, ?)");
-			_ps.setString(1, cfg.getAddress());
+			_ps.setString(2, cfg.getAddress());
 			_ps.setBoolean(3, true);
 			for (Iterator i = cfg.getAliases().iterator(); i.hasNext(); ) {
 				String alias = (String) i.next();
-				_ps.setString(2, alias);
+				_ps.setString(1, alias);
 				_ps.addBatch();
 			}
 			
