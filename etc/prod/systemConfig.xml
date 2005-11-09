@@ -273,6 +273,7 @@
 			<messages type="Integer">96</messages>
 			<flights type="Integer">48</flights>
 			<cons type="Integer">60</cons>
+			<cmds type="Integer">10</cmds>
 		</purge>
 
 		<http>
