@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Duplicate Pilots Merged</title>
+<content:css name="main" browserSpecific="true" />
+<content:pics />
+</head>
+<content:copyright visible="false" />
+<body>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<div id="main">
+<div class="updateHdr">Duplicate Pilots Merged</div>
+<br />
+The following Pilots' Examinations, Check Rides and Flight Reports have been merged under ${pilot.name}:<br />
+<br />
+<c:forEach var="usr" items="${oldPilots}">
+<el:cmd url="profile" linkID="0x${usr.ID}" className="bld">${user.name}</el:cmd> <c:if test=${!empty usr.pilotCode}">
+<span class="sec bld">${usr.pilotCode}</span> </c:if>(${usr.rank}, ${usr.EquipmentType})<br />
+</c:forEach>
+<br />
+To view ${pilot.name}'s Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
+<br />
+<content:copyright />
+</div>
+</body>
+</html>

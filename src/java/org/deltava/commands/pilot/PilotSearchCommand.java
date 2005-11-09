@@ -13,6 +13,7 @@ import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -23,6 +24,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotSearchCommand extends AbstractCommand {
+   
+   private static final int DEFAULT_RESULTS = 20;
 
    /**
     * Executes the command.
@@ -37,14 +40,14 @@ public class PilotSearchCommand extends AbstractCommand {
       // Check if we're doing a GET
       if (ctx.getParameter("firstName") == null) {
          ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
-         ctx.setAttribute("maxResults", new Integer(20), REQUEST);
+         ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
          result.setURL("/jsp/roster/pilotSearch.jsp");
          result.setSuccess(true);
          return;
       }
 
       // Check if we're doing an exact match
-      boolean exactMatch = "1".equals(ctx.getParameter("exactMatch"));
+      boolean exactMatch = Boolean.valueOf(ctx.getParameter("exactMatch")).booleanValue();
 
       // Build the parameters
       String fName = buildParameter(ctx.getParameter("firstName"), exactMatch);
@@ -68,8 +71,8 @@ public class PilotSearchCommand extends AbstractCommand {
             dao.setQueryMax(maxResults);
             ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
          } catch (Exception e) {
-            dao.setQueryMax(20);
-            ctx.setAttribute("maxResults", new Integer(20), REQUEST);
+            dao.setQueryMax(DEFAULT_RESULTS);
+            ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
          }
          
          // Get the search results
@@ -113,8 +116,7 @@ public class PilotSearchCommand extends AbstractCommand {
     * Helper method to take a parameter and add LIKE wildcards.
     */
    private String buildParameter(String pValue, boolean exMatch) {
-      if ((pValue == null) || ("".equals(pValue))) return null;
-
+      if (StringUtils.isEmpty(pValue)) return null;
       return exMatch ? pValue : "%" + pValue + "%";
    }
 
