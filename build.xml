@@ -249,7 +249,7 @@
 	<target name="getlogs">
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<scp todir="${basedir}/../.local_data" verbose="yes" trust="yes"
-			file="${webapp.ssh.user}@${webapp.ssh.server}:/usr/local/jakarta-tomcat5.5/logs/catalina.out"
+			file="${webapp.ssh.user}@${webapp.ssh.server}:/var/log/tomcat/catalina.out"
 			password="${webapp.ssh.pwd}" />
 		<exec executable="c:\program files\textpad 4\textpad.exe" spawn="yes">
 			<arg value="${basedir}\..\.local_data\catalina.out" />
