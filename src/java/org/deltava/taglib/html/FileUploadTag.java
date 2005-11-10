@@ -64,7 +64,7 @@ public class FileUploadTag extends FormElementTag {
             _out.print(openHTML(false));
             _out.print(" />");
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         // Reset state and return

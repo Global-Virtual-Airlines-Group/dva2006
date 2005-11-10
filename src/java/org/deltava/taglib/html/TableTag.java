@@ -62,7 +62,7 @@ public class TableTag extends ElementTag {
         try {
             _out.print(openHTML(true));
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         return EVAL_BODY_INCLUDE;
@@ -76,7 +76,7 @@ public class TableTag extends ElementTag {
         try {
             _out.print(closeHTML());
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         // Clear state and return

@@ -31,7 +31,7 @@ public class ImageTag extends ElementTag {
             _out.print(openHTML(false));
             _out.print(" />");
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         // Reset the parameters for next time

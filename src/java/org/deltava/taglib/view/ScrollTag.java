@@ -97,7 +97,7 @@ public abstract class ScrollTag extends LinkTag {
         try {
             pageContext.getOut().print(_tagLabel);
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
     }
 }
