@@ -93,7 +93,7 @@ public class GetNavRoute extends GetNavData {
 	 * @see TerminalRoute#SID
 	 * @see TerminalRoute#STAR
 	 */
-	public List getRoutes(String code, int type) throws DAOException {
+	public Collection getRoutes(String code, int type) throws DAOException {
 
 		List results = null;
 		try {
@@ -107,7 +107,7 @@ public class GetNavRoute extends GetNavData {
 
 		// Add to the cache and return
 		_cache.addAll(results);
-		return results;
+		return new LinkedHashSet(results);
 	}
 
 	/**
