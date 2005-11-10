@@ -32,13 +32,6 @@ public class TestStringUtils extends TestCase {
         assertEquals(null, StringUtils.stripInlineHTML(null));
     }
     
-    public void testTrim() {
-        assertEquals("", StringUtils.trim(""));
-        assertEquals("Doggie", StringUtils.trim("Doggie "));
-        assertEquals("Doggie", StringUtils.trim("Doggie"));
-        assertEquals("", StringUtils.trim(null));
-    }
-    
     public void testListConcat() {
     	ArrayList l = new ArrayList();
     	l.add("A");
@@ -82,6 +75,7 @@ public class TestStringUtils extends TestCase {
        assertEquals(0, StringUtils.arrayIndexOf(testArray, "1"));
        assertEquals(1, StringUtils.arrayIndexOf(testArray, "B"));
        assertEquals(-1, StringUtils.arrayIndexOf(testArray, "X"));
+       assertEquals(-1, StringUtils.arrayIndexOf(testArray, null));
        assertEquals(-1, StringUtils.arrayIndexOf(null, "1"));
     }
     
@@ -93,5 +87,11 @@ public class TestStringUtils extends TestCase {
     
     public void testFormat() {
        assertEquals("01234", StringUtils.format(1234, "00000"));
+    }
+    
+    public void testStripComma() {
+       assertEquals("Normal String", StringUtils.stripComma("Normal String"));
+       assertEquals("Normal String", StringUtils.stripComma(",Normal,,, String,,"));
+       assertNull(StringUtils.stripComma(null));
     }
 }
