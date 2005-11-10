@@ -99,7 +99,7 @@ public class SingleCheckTag extends FormElementTag {
 			if (_labelClassName != null)
 				_out.print("</span>");
 		} catch (IOException ie) {
-			throw wrap(ie);
+			throw new JspException(ie);
 		}
 
 		release();

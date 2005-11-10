@@ -31,7 +31,7 @@ public class ButtonTag extends ElementTag {
             _out.print(openHTML(false));
             _out.print(" />");
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         // Release state and return

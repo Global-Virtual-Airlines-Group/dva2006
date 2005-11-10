@@ -68,7 +68,7 @@ public class FormTag extends ElementTag {
         try {
             _out.println(openHTML(true));
         } catch(Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
 
         return EVAL_BODY_INCLUDE;
@@ -82,7 +82,7 @@ public class FormTag extends ElementTag {
         try {
             _out.println(closeHTML());
         } catch(Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         release();

@@ -175,7 +175,7 @@ public class CheckTag extends FormElementTag {
 				}
 			}
 		} catch (Exception e) {
-			throw wrap(e);
+			throw new JspException(e);
 		}
 
 		// Release state and return
