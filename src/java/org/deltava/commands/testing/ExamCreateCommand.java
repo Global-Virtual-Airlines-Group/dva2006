@@ -5,7 +5,6 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.EquipmentType;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -19,7 +18,7 @@ import org.deltava.mail.*;
  * @since 1.0
  */
 
-public class ExamCreateCommand extends AbstractCommand {
+public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
 	/**
 	 * Executes the command.
@@ -57,13 +56,13 @@ public class ExamCreateCommand extends AbstractCommand {
 				if ((t.getName().equals(examName)) && ((t.getStatus() != Test.SCORED) || isComplete))
 					throw securityException("Cannot re-take " + examName + " examination");
 			}
+            
+            // Initialize the testing history helper
+            initTestHistory(usr, con);
 
-			// Get the Equipment type for the User, and check if we can take the exam
-			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(usr.getEquipmentType());
-			if (eq.getStage() < ep.getMinStage())
-				throw securityException("Cannot take " + examName + ", minStage=" + ep.getMinStage() + ", stage="
-						+ eq.getStage());
+			// Check if we can take the exam
+            if (!_testHistory.canWrite(ep))
+				throw securityException("Cannot take " + examName);
 
 			// Get the Message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
