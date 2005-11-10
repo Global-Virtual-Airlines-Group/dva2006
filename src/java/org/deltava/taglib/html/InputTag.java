@@ -44,7 +44,7 @@ public class InputTag extends FormElementTag {
             // Close the tag
             _out.print(" />");
         } catch (Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
         
         // Reset state and return

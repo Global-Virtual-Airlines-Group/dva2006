@@ -54,7 +54,7 @@ public class UserProfileTag extends ElementTag {
         	if (_usrData != null)
         		_out.print(openHTML(true));
         } catch(Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
 
         return EVAL_BODY_INCLUDE;
@@ -69,7 +69,7 @@ public class UserProfileTag extends ElementTag {
         	if (_usrData != null)
         		_out.print(closeHTML());
         } catch(Exception e) {
-            throw wrap(e);
+            throw new JspException(e);
         }
   
         release();

@@ -1,6 +1,9 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
+import java.io.IOException;
+
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.ComboAlias;
@@ -15,8 +18,15 @@ import org.deltava.util.StringUtils;
 
 public class ComboTag extends FormElementTag {
 
-	private Collection _options;
-	private Object _firstEntry;
+	/**
+	 * The combo/listbox choices.
+	 */
+	protected Collection _options;
+	
+	/**
+	 * A first entry for the combo/listbox.
+	 */
+	protected Object _firstEntry;
 
 	/**
 	 * Create a new combo/listbox tag.
@@ -42,9 +52,11 @@ public class ComboTag extends FormElementTag {
 	}
 
 	/**
-	 * Helper method to determine if a particular option is selected.
+	 * Helper method render an option to the JSP output stream.
+	 * @param optValue Object the combobox value
+	 * @throws IOException if a network I/O error occurs
 	 */
-	private void renderOption(Object optValue) throws Exception {
+	protected void renderOption(Object optValue) throws IOException {
 
 		// Determine if the option is selected
 		boolean isSelected = false;
@@ -100,7 +112,7 @@ public class ComboTag extends FormElementTag {
 
 			_out.println(closeHTML());
 		} catch (Exception e) {
-			throw wrap(e);
+			throw new JspException(e);
 		}
 
 		// Release state and return

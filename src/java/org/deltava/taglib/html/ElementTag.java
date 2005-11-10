@@ -140,17 +140,4 @@ public abstract class ElementTag extends TagSupport {
                 _attrs.put(attrName, String.valueOf(tmpValue));
         } catch (NumberFormatException nfe) { }
     }
-
-    /**
-     * Wraps an exception within a Tag into a JspException. This method sets the cause and copies 
-     * the stack trace.
-     * @param t the exception to wrap
-     * @return a JspException containing the original exception
-     */
-    protected JspException wrap(Throwable t) {
-        JspException je = new JspException("Error writing " + getClass().getName());
-        je.initCause(t);
-        je.setStackTrace(t.getStackTrace());
-        return je;
-    }
 }
