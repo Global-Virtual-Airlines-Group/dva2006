@@ -87,11 +87,11 @@ public class ScheduleExportCommand extends AbstractCommand {
             buf.append(',');
             buf.append(doICAO ? entry.getAirportD().getICAO() : entry.getAirportD().getIATA());
             buf.append(',');
-            buf.append(StringUtils.format(entry.getTimeD(), "HH:mm"));
+            buf.append(StringUtils.format(entry.getTimeD(), "hh:mm aa"));
             buf.append(',');
             buf.append(doICAO ? entry.getAirportA().getICAO() : entry.getAirportA().getIATA());
             buf.append(',');
-            buf.append(StringUtils.format(entry.getTimeA(), "HH:mm"));
+            buf.append(StringUtils.format(entry.getTimeA(), "hh:mm aa"));
             buf.append(',');
             buf.append(String.valueOf(entry.getDistance()));
             buf.append(',');

@@ -3,8 +3,8 @@ package org.deltava.commands.schedule;
 
 import java.io.*;
 import java.util.*;
+import java.text.*;
 import java.sql.Connection;
-import java.text.ParseException;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.schedule.*;
@@ -52,8 +52,9 @@ public class ScheduleImportCommand extends AbstractCommand {
       }
       
       // Check if we are purging the schedule
-      boolean doPurge = "1".equals(ctx.getParameter("doPurge"));
+      boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 
+      DateFormat df = new SimpleDateFormat("hh:mm aa");
       Collection errors = new ArrayList();
       int entryCount = 0;
       try {
@@ -92,9 +93,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 				      
 				      // Get the airports and times
 				      entry.setAirportD(SystemData.getAirport(tkns.nextToken()));
-				      entry.setTimeD(tkns.nextToken());
+				      entry.setTimeD(df.parse(tkns.nextToken()));
 				      entry.setAirportA(SystemData.getAirport(tkns.nextToken()));
-				      entry.setTimeA(tkns.nextToken());
+				      entry.setTimeA(df.parse(tkns.nextToken()));
 				      if ((entry.getAirportD() == null) || (entry.getAirportA() == null))
 				         throw new ParseException("Invalid Airpot Code", 0);
 				      
