@@ -48,7 +48,7 @@ public class DiagnosticCommand extends AbstractCommand {
        ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
        ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
        ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
-       ctx.setAttribute("pctMemory", new Long(Math.round(rt.totalMemory() * 100.0 / rt.maxMemory())), REQUEST);
+       ctx.setAttribute("pctMemory", new Double(Math.round(rt.totalMemory() * 100.0 / rt.maxMemory())), REQUEST);
        
        // Get JDBC drivers
        ctx.setAttribute("jdbcDrivers", DriverManager.getDrivers(), REQUEST);
