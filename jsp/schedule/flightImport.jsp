@@ -41,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" value="1" label="Purge Existing Schedule" checked="true" /></td>
+ <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge Existing Schedule" checked="true" /></td>
 </tr>
 </el:table>
 
