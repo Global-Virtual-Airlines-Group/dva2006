@@ -12,7 +12,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var apCode = a.getAttribute(codeAttr);
-		var apName = a.getAttribute("name") + "(" + apCode + ")";
+		var apName = a.getAttribute("name") + " (" + apCode + ")";
 		combo.options[i+1] = new Option(apName, apCode);
 	} // for
 
