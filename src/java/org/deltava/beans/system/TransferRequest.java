@@ -7,7 +7,8 @@ import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.ViewEntry;
 
 /**
- * A class to store Equipment Program transfer requests.
+ * A class to store Equipment Program transfer requests. Since a checkride may be required for switches to
+ * additional equipment programs, this bean may also be used to track check ride workflows.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -25,6 +26,7 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	private int _status;
 	private String _eqType;
 	private Date _date;
+	private boolean _ratingOnly;
 
 	/**
 	 * Create a new Transfer Request.
@@ -84,6 +86,15 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	public String getStatusName() {
 		return STATUS[getStatus()];
 	}
+	
+	/**
+	 * Returns if this Transfer Request is for an additional rating only.
+	 * @return TRUE if the rating is requested, not a program switch, otherwise FALSE
+	 * @see TransferRequest#setRatingOnly(boolean)
+	 */
+	public boolean getRatingOnly() {
+		return _ratingOnly;
+	}
 
 	/**
 	 * Updates the creation date of this Transfer Request.
@@ -118,6 +129,15 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 			throw new IllegalArgumentException("Invalid Transfer Request status - " + status);
 
 		_status = status;
+	}
+	
+	/**
+	 * Updates if this Transfer Request is for an additional rating, instead of a program switch.
+	 * @param ratingOnly TRUE if an additional rating only, otherwise FALSE
+	 * @see TransferRequest#getRatingOnly()
+	 */
+	public void setRatingOnly(boolean ratingOnly) {
+		_ratingOnly = ratingOnly;
 	}
 
 	/**

@@ -39,6 +39,10 @@ return true;
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" firstEntry="-" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="ratingOnly" idx="*" value="true" label="Request equipment type ratings only" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
