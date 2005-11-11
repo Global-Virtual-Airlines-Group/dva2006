@@ -24,6 +24,7 @@ Oops. You attempted to access something that you're not allowed to.<br />
 <br />
 <c:if test="${!empty servlet_error}">
 <span class="error bld">${server_error}</span><br />
+</c:if>
 <br />
 <content:copyright />
 </div>
