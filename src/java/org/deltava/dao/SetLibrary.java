@@ -82,7 +82,7 @@ public class SetLibrary extends DAO {
 		try {
 		   if (i.getDownloadCount() == 0) {
 		      prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, "
-						+ "SECURITY, CODE, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "CODE, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 		   } else {
 		      prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
 					+ "SECURITY=?, CODE=?, BODY=? WHERE (FILENAME=?)");
