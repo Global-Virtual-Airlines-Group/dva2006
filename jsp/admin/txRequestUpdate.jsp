@@ -25,17 +25,22 @@ Your request to be transferred to the <span class="pri bld">${txReq.equipmentTyp
 submitted. A Check Ride may be required in order to complete the transfer. If this is the case, you will 
 be notified via e-mail within the next 24 to 72 hours regarding the requirements for your your Check Ride.<br />
 </c:if>
-
 <c:if test="${isApprove}">
 <div class="updateHdr">Equipment Program Transfer Approved</div>
 <br />
 <span class="sec bld">${pilot.name}</span> has been successfully transferred to the <span class="pri bld">${eqType.name}</span> 
-equipment program.<c:if test="${!empty newRatings}">The following additional ratings have been granted: 
-<fmt:list value="${newRatings}" delim=", " />.</c:if><br />
+equipment program.<br />
+<c:if test="${!empty addedRatings}">
+<br />
+The following equipment type ratings have been granted: <fmt:list value="${addedRatings}" delim=", " />.<br />
+</c:if>
+<c:if test="${!empty removedRatings}">
+<br />
+The following equipment type ratings have been removed: <fmt:list value="${removedRatings}" delim=", " />.<br />
+</c:if>
 <br />
 An e-mail message has been sent to ${pilot.name} informing of the equipment program transfer.<br />
 </c:if>
-
 <c:if test="${isReject}">
 <div class="updateHdr">Equipment Program Transfer Rejected</div>
 <br />

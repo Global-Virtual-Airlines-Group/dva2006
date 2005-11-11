@@ -34,11 +34,12 @@ return true;
 <body>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="allEQ" name="eqtypes" sort="true" />
 <c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
 
 <!-- Main Body Frame -->
 <div id="main">
-<el:form action="${cmdName}.do" method="POST" linkID="0x${txReq.ID}" validate="return validate(this)">
+<el:form action="${cmdName}.do" method="post" linkID="0x${txReq.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">EQUIPMENT TRANSFER REQUEST - ${pilot.name}</td>
@@ -55,6 +56,12 @@ return true;
  <td class="label">Transfer Status</td>
  <td class="data"><span class="sec bld">${txReq.statusName}</span> (Created on <fmt:date fmt="d" date="${txReq.date}" />)</td>
 </tr>
+<c:if test="${txReq.ratingOnly}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data ter bld">PILOT IS REQUESTING ADDITIONAL RATINGS ONLY</td>
+</tr>
+</c:if>
 <c:if test="${!empty checkRide}">
 <tr>
  <td class="label">Check Ride Status</td>
@@ -99,6 +106,10 @@ return true;
  <td class="data">Examination Status <b>${captExam ? 'PASSED' : 'NOT PASSED'}</b>, Flight Legs completed
  = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps">ELIGIBLE FOR PROMOTION
  TO CAPTAIN</span></c:if></td>
+</tr>
+<tr>
+ <td class="label">Equipment Ratings</td>
+ <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${newRatings}" options="${allEQ}" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canAssignRide}">

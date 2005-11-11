@@ -69,6 +69,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
          // Populate the transfer request
          EquipmentType eq = (EquipmentType) activeEQ.get(ofs);
          TransferRequest txreq = new TransferRequest(p.getID(), eqType);
+         txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
          txreq.setStatus(_testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
          
          // Save the transfer request

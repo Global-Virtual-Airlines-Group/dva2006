@@ -75,12 +75,9 @@ public class TransferApproveCommand extends AbstractCommand {
 			if (!newEQ.getRanks().contains(rank))
 				throw new CommandException("Invalid Rank - " + rank);
 			
-			// Add new ratings, and figure out what ratings we added
-			List oldRatings = usr.getRatings();
-			usr.addRatings(newEQ.getPrimaryRatings());
-			usr.addRatings(newEQ.getSecondaryRatings());
-			Collection newRatings = CollectionUtils.getDelta(usr.getRatings(), oldRatings);
-
+			// Get the new ratings
+			Set newRatings = new TreeSet(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"), usr.getRatings()));
+			
 			// Check if we're doing a promotion or a rating change
 			RankComparator rCmp = new RankComparator((List) SystemData.getObject("ranks"));
 			rCmp.setRank2(usr.getRank(), currentEQ.getStage());
@@ -106,13 +103,31 @@ public class TransferApproveCommand extends AbstractCommand {
 				updates.add(upd);
 			}
 			
-			// Write the rating change Status Update
-			if (!newRatings.isEmpty()) {
+			// Figure out what ratings have been added
+			Collection addedRatings = CollectionUtils.getDelta(newRatings, usr.getRatings());
+			if (!addedRatings.isEmpty()) {
+				ctx.setAttribute("addedRatings", addedRatings, REQUEST);
 				StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_ADD);
 				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Ratings added: " + StringUtils.listConcat(newRatings, ", "));
+				upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ", "));
 				updates.add(upd);
 			}
+			
+            // Figure out what ratings have been removed
+            Collection removedRatings = CollectionUtils.getDelta(usr.getRatings(), newRatings);
+            if (!removedRatings.isEmpty()) {
+               ctx.setAttribute("removedRatings", removedRatings, REQUEST);
+               usr.removeRatings(removedRatings);
+
+               // Note the changed ratings
+               StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.RATING_REMOVE);
+               upd.setAuthorID(ctx.getUser().getID());
+               upd.setDescription("Ratings removed: " + StringUtils.listConcat(removedRatings, ", "));
+               updates.add(upd);
+            }
+            
+            // Update the ratings
+            usr.addRatings(newRatings);
 
 			// Save the message context
 			mctxt.addData("pilot", usr);
@@ -144,7 +159,6 @@ public class TransferApproveCommand extends AbstractCommand {
 			ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("eqType", newEQ, REQUEST);
-			ctx.setAttribute("newRatings", newRatings, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

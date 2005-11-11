@@ -30,10 +30,12 @@ public class SetTransferRequest extends DAO {
    public void write(TransferRequest txreq) throws DAOException {
       try {
          if (txreq.getDate() == null) {
-            prepareStatement("INSERT INTO TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, CREATED, ID) VALUES (?, ?, ?, ?, ?)");
+            prepareStatement("INSERT INTO TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, CREATED, RATING_ONLY, ID) "
+            		+ "VALUES (?, ?, ?, ?, ?)");
             txreq.setDate(new java.util.Date());
          } else {
-            prepareStatement("UPDATE TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, CREATED=? WHERE (ID=?)");
+            prepareStatement("UPDATE TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, CREATED=?, " +
+            		"RATING_ONLY=? WHERE (ID=?)");
          }
          
          // Update the prepared statement
@@ -41,7 +43,8 @@ public class SetTransferRequest extends DAO {
          _ps.setInt(2, txreq.getCheckRideID());
          _ps.setString(3, txreq.getEquipmentType());
          _ps.setTimestamp(4, createTimestamp(txreq.getDate()));
-         _ps.setInt(5, txreq.getID());
+         _ps.setBoolean(5, txreq.getRatingOnly());
+         _ps.setInt(6, txreq.getID());
          
          // Execute the update
          executeUpdate(1);
