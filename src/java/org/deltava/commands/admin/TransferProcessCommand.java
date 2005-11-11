@@ -55,9 +55,17 @@ public class TransferProcessCommand extends AbstractCommand {
          // Get the requested equipment type
          GetEquipmentType eqdao = new GetEquipmentType(con);
          EquipmentType newEQ = eqdao.get(txreq.getEquipmentType());
-         ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
-         ctx.setAttribute("eqType", newEQ, REQUEST);
-         ctx.setAttribute("currentEQ", eqdao.get(usr.getEquipmentType()), REQUEST);
+         EquipmentType currEQ = eqdao.get(usr.getEquipmentType());
+         ctx.setAttribute("currentEQ", currEQ, REQUEST);
+         if (txreq.getRatingOnly()) {
+        	 Set eqTypes = new HashSet();
+        	 eqTypes.add(currEQ);
+        	 ctx.setAttribute("activeEQ", eqTypes, REQUEST);
+        	 ctx.setAttribute("eqType", currEQ, REQUEST);
+         } else {
+        	 ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
+        	 ctx.setAttribute("eqType", (txreq.getRatingOnly() ? currEQ : newEQ), REQUEST);;	 
+         }
          
          // Check if the user has passed the Captain's examination
          boolean hasCaptExam = false;
@@ -76,6 +84,12 @@ public class TransferProcessCommand extends AbstractCommand {
          ctx.setAttribute("captExam", Boolean.valueOf(hasCaptExam), REQUEST);
          ctx.setAttribute("promoLegs", new Integer(promoLegs), REQUEST);
          ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
+         
+         // Determine new equipment ratings if approved
+         Set newRatings = new TreeSet(usr.getRatings());
+         newRatings.addAll(newEQ.getPrimaryRatings());
+         newRatings.addAll(newEQ.getSecondaryRatings());
+         ctx.setAttribute("newRatings", newRatings, REQUEST);
          
          // Save the transfer request and access controller
          ctx.setAttribute("txReq", txreq, REQUEST);

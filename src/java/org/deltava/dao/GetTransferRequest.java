@@ -92,6 +92,7 @@ public class GetTransferRequest extends DAO {
          txreq.setStatus(rs.getInt(2));
          txreq.setCheckRideID(rs.getInt(3));
          txreq.setDate(rs.getTimestamp(5));
+         txreq.setRatingOnly(rs.getBoolean(6));
          
          // Add to results
          results.add(txreq);
