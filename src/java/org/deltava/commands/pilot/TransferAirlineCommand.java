@@ -116,7 +116,9 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Check if the user already exists in the new airline database
 			newUser = rdao.getByName(p.getName(), aInfo.getDB());
+			boolean isExisting = false;
 			if (newUser != null) {
+				isExisting = true;
 				log.info("Reactivating " + newUser.getDN());
 			} else {
 				log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
@@ -147,7 +149,11 @@ public class TransferAirlineCommand extends AbstractCommand {
 			newUser.setStatus(Pilot.ACTIVE);
 			newUser.setEquipmentType(ctx.getParameter("eqType"));
 			newUser.setRank(ctx.getParameter("rank"));
-			wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
+			if (isExisting) {
+				wdao.write(newUser);
+			} else {
+				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
+			}
 
 			// Create the second status update
 			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
