@@ -92,6 +92,20 @@ else
  postfix start
 fi
 
+if [ -f "/var/run/spamd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/spamd.pid`" ]
+  then
+   echo "SpamAssassin (Spam Filtering Server) is alive"
+  else
+   echo "SpamAssassin (Spam Filtering Server) is DOWN"
+   spamdctl start
+  fi
+else
+ echo "SpamAssassin (Spam Filtering Server) is DOWN - no pid"
+ spamdctl start
+fi
+
 if [ -f "/var/run/authdaemon.pid" ]
 then
   if [ -d "/proc/`cat /var/run/authdaemon.pid`" ]
