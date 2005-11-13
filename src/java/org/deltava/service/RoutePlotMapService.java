@@ -45,7 +45,8 @@ public class RoutePlotMapService extends RouteMapService {
 			// Add the departure airport
 			if (aD != null) {
 				routePoints.add(aD);
-				tRoutes.addAll(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
+				Set sids = new TreeSet(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
+				tRoutes.addAll(sids);
 			}
 
 			// Check if we have a SID
@@ -73,7 +74,8 @@ public class RoutePlotMapService extends RouteMapService {
 			// Add the arrival airport
 			if (aA != null) {
 				routePoints.add(aA);
-				tRoutes.addAll(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
+				Set stars = new TreeSet(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
+				tRoutes.addAll(stars);
 			}
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
