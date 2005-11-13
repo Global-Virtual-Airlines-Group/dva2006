@@ -451,7 +451,10 @@
 		<sleep type="Integer">1000</sleep>
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2500</position_interval>
-		<build type="Integer">46</build>
+		<build>
+			<minimum type="Integer">58</minimum>
+			<latest type="Integer">59</latest>
+		</build>
 		
 		<pool>
 			<size type="Integer">100</size>
