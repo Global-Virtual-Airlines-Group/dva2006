@@ -2,6 +2,10 @@
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
+TD#header {
+	background-color: #ffffff;
+}
+
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, Tahoma, sans-serif;
@@ -23,10 +27,13 @@ img.header {
 TD#sidebar {
 	width: 160px;
 	vertical-align: top;
+	background-color: #ffffff;
 }
 
 TD#main {
 	vertical-align: top;
+	background-color: #ffffff;
+	color: #0000a1;
 }
 
 /* Formatting for the side menu table */
@@ -90,6 +97,11 @@ TR.MenuItem {
 TABLE {
 	table-layout: auto;
 	border-collapse: separate;
+	border-spacing: 3px 3px;
+	font-family: Tahoma, Verdana;
+	color: #000000;
+	border-width: 4px 4px 4px 4px;
+	padding: 6px 6px 6px 6px;
 }
 
 BODY {
