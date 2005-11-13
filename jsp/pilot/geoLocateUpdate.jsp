@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${!isDelete}">
 <div class="updateHdr">Pilot Location Updated</div>
 <br />
@@ -35,6 +36,7 @@ appear on the Pilot Location Board.<br />
 To view the Pilot Location Board, please <el:cmd url="pilotboard">Click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

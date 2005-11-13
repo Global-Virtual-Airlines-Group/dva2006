@@ -12,16 +12,18 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Duplicate Registration Information Sent</div>
 <br />
 Thank you! Your information has been submitted to the <content:airline /> Human Resources Department. You should hear from them within 48-72 hours. Thank you for your interest!
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

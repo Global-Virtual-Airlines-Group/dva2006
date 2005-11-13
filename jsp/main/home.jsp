@@ -23,6 +23,7 @@
 </head>
 <content:copyright visible="false" />
 <body onload="void initLinks()">
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
@@ -31,7 +32,7 @@
 <content:sysdata var="partnerLoc" name="airline.partner.location" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 Welcome to <content:airline />' web site. We are a group of flight simulation enthusiasts who fly Delta Air
 Lines and its alliance partners' routes using Microsoft's Flight Simulator 98, 2000, 2002 or Flight 
 Simulator 2004: A Century of Flight. We are in no way affiliated with Delta Air Lines.<br />
@@ -180,6 +181,7 @@ If you have questions or comments, please direct them to our Corporate Offices a
 <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

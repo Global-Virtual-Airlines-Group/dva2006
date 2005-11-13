@@ -15,11 +15,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <content:airline /> is committed to recognizing the accomplishments of our talented pilots. Every day,
 they rack up countless flight hours and legs in a variety of aircraft types. Every day, Pilots take
 written examinations and check rides and gain promotions in rank, and transfers into new equipment
@@ -95,6 +96,7 @@ following accomplishments:<br />
 </el:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

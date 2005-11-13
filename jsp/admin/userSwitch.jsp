@@ -10,11 +10,12 @@
 <content:pics />
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Switched to ${user.name}</div>
 <br />
 You have switched user credentials to ${user.name}, ${user.pilotCode}. You will continue to 
@@ -25,6 +26,7 @@ credentials.<br />
 are impersonating - <span class="sec">${user.name}!</span></b><br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

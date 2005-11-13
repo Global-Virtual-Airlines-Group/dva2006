@@ -16,11 +16,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="eprofiles">
 
 <!-- Table Header Bar -->
@@ -53,6 +54,7 @@
 </tr>
 </view:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

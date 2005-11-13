@@ -29,6 +29,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
@@ -37,7 +38,7 @@ return true;
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table ID="pilotCenter" className="form" pad="default" space="default">
 
@@ -446,7 +447,9 @@ well as pruning empty entries from the logs.</td>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

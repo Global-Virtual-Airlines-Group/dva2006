@@ -13,12 +13,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="ex" value="${empty servlet_exception ? exception : servlet_exception}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> SYSTEM ERROR</div>
 <br />
 Oops. Something bad happened. Really, really bad.<br />
@@ -45,6 +46,7 @@ This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
 </c:when>
 </c:choose>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

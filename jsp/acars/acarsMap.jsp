@@ -77,13 +77,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="acarsMap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -118,7 +119,8 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <script language="JavaScript" type="text/javascript">
 <map:marker var="mapC" point="${mapCenter}" />
 

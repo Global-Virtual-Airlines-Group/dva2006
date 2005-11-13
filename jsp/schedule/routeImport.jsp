@@ -25,12 +25,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="routeimport.do" method="POST" allowUpload="true" validate="return validate(this)">
+<content:region id="main">
+<el:form action="routeimport.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">FAA PREFERRED ROUTE DATA UPLOAD</td>
@@ -54,6 +55,7 @@ This is a total of 14 tokens, and we are only importing #1, #2, #3, #13 and #14.
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

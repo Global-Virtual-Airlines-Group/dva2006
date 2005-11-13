@@ -5,7 +5,7 @@
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <!-- Sidebar Navigation Frame -->
-<div id="sidebar">
+<content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>OUR AIRLINE</td></tr>
 <tr class="MenuItem">
@@ -141,4 +141,4 @@
  <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
 </el:table>
-</div>
+</content:region>

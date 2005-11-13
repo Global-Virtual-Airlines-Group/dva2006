@@ -12,11 +12,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${!addrUpdate}">
 <div class="updateHdr">E-Mail Address Invalidated</div>
 <br />
@@ -39,6 +40,7 @@ to provide the validation code.<br />
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

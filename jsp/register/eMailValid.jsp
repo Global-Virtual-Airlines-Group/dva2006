@@ -11,11 +11,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${!isCancel}">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
@@ -45,6 +46,7 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

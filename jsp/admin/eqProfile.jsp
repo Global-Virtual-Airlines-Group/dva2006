@@ -37,14 +37,15 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="ranks" name="ranks" />
 <content:sysdata var="allEQ" name="eqtypes" />
 
 <!-- Main Body Frame -->
-<div ID="main">
-<el:form method="POST" action="eqsave.do" linkID="${eqType.name}" validate="return validate(this)">
+<content:region id="main">
+<el:form method="post" action="eqsave.do" linkID="${eqType.name}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Equipment Profile Title Bar -->
 <tr class="title caps">
@@ -111,6 +112,7 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

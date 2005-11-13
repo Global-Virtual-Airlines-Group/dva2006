@@ -32,13 +32,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="allEQ" name="eqtypes" sort="true" />
 <c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="${cmdName}.do" method="post" linkID="0x${txReq.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -96,6 +97,7 @@ return true;
 <tr class="title caps">
  <td colspan="2">APPROVE TRANSFER REQUEST</td>
 </tr>
+<c:if test="${!txReq.ratingOnly}">
 <tr>
  <td class="label">Transfer to</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${activeEQ}" value="${eqType}" />
@@ -107,6 +109,7 @@ return true;
  = <fmt:int value="${promoLegs}" />.<c:if test="${captOK}"><span class="ter bld caps">ELIGIBLE FOR PROMOTION
  TO CAPTAIN</span></c:if></td>
 </tr>
+</c:if>
 <tr>
  <td class="label">Equipment Ratings</td>
  <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${newRatings}" options="${allEQ}" /></td>
@@ -153,6 +156,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

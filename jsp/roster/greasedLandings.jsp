@@ -27,11 +27,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="landings.do" method="post" validate="return validate(this)">
 The members of <content:airline /> are a skilled group - and they can prove it. Below is a list of the 
 smoothest landings, and the greaser pilots who made them:<br />
@@ -80,6 +81,7 @@ FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFi
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

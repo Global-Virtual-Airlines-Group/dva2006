@@ -36,11 +36,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="assignments.do" method="GET" validate="return false">
 <view:table className="view" space="default" pad="default" cmd="assignments">
 <!-- Table Select Bar -->
@@ -109,6 +110,7 @@ ${leg.airportA.name} (<fmt:airport airport="${leg.airportA}" />)</td>
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

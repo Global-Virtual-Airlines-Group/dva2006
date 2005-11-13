@@ -16,12 +16,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:filter roles="Fleet"><c:set var="isFleetMgr" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="newslibrary">
 <!-- Table Header Bar -->
 <tr class="title caps">
@@ -69,6 +70,7 @@ This is a free download.</td>
 </tr>
 </view:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -13,12 +13,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="db" name="airline.db" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Profile Updated</div>
 <br />
 The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.<br />
@@ -87,6 +88,7 @@ To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="rea
 To return to the Pilot Roster, <el:cmd url="roster">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

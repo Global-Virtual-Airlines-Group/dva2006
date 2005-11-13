@@ -1,6 +1,7 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import javax.servlet.jsp.tagext.TagSupport;
+import org.deltava.taglib.BrowserDetectingTag;
 
 /**
  * An abstract class for content insertion JSP tags.
@@ -9,7 +10,7 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @since 1.0
  */
 
-public abstract class InsertContentTag extends TagSupport {
+public abstract class InsertContentTag extends BrowserDetectingTag {
 	
     protected boolean _forceInclude;
     
@@ -34,24 +35,6 @@ public abstract class InsertContentTag extends TagSupport {
         _forceInclude = doForce;
     }
     
-    /**
-     * Detects if the browser is Microsoft Internet Explorer.
-     * @return TRUE if the browser is Internet Explorer, otherwise FALSE
-     * @see org.deltava.servlet.filter.BrowserTypeFilter
-     */
-    protected boolean isIE() {
-        return (pageContext.getRequest().getAttribute("browser$ie") != null);
-    }
-    
-    /**
-     * Detects if the browser is Mozilla Firefox.
-     * @return TRUE if the browser is Firefox, otherwise FALSE
-     * @see org.deltava.servlet.filter.BrowserTypeFilter
-     */
-    protected boolean isFirefox() {
-        return (pageContext.getRequest().getAttribute("browser$mozilla") != null);
-    }
-
     /**
      * Releases the tag's state variables.
      */

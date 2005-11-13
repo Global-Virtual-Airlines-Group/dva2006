@@ -16,6 +16,7 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/cooler/header.jsp" %> 
 <%@include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="maxX" name="cooler.img_max.x" />
@@ -23,7 +24,7 @@
 <content:sysdata var="maxSize" name="cooler.img_max.size" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isLocked || isHidden}">
 <!-- Thread Locked/Hidden Message -->
 <div class="updateHdr">Water Cooler Message Thread Locked/Hidden</div>
@@ -111,6 +112,7 @@ to display the discussion thread.<br />
 To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">click here</el:cmd><br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -11,12 +11,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="infoEmail" name="airline.mail.hr" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Questionnaire Submitted</div>
 <br />
 <c:if test="${isSubmit}">
@@ -50,6 +51,7 @@ To review this Applicant's profile, <el:cmd url="applicant" linkID="0x${applican
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

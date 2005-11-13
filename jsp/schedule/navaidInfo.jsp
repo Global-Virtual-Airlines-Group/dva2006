@@ -45,11 +45,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="navsearch.do" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -136,7 +137,8 @@ ${navaid.frequency}</span></c:if></td>
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <c:if test="${!empty navaid}">
 <script language="JavaScript" type="text/javascript">
 // Build the navaid and surrounding navaids

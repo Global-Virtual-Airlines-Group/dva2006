@@ -15,11 +15,12 @@
 <content:copyright visible="false" />
 <content:pics />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Flight Assignment Already Reserved</div>
 <br />
 You cannot reserve a new <content:airline /> Flight Assigment, since you already have an reserved Flight 
@@ -27,6 +28,7 @@ Assignment. If you have completed all the legs in this Flight Assignment, it may
 to record this.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

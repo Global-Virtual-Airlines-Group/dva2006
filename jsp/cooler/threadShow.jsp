@@ -53,6 +53,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void initLinks()">
+<content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
@@ -61,7 +62,7 @@ return true;
 <content:sysdata var="ccLevels" name="centuryClubLevels" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="threadReply.do" linkID="0x${thread.ID}" method="post" validate="return validate(this)">
 <el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
@@ -253,6 +254,7 @@ notification each time a reply is posted in this Thread.
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

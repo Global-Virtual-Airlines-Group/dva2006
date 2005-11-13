@@ -12,11 +12,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:choose>
 <c:when test="${isScore}">
 <!-- Check Ride Scored -->
@@ -45,6 +46,7 @@ be assigned while one is currently pending.<br />
 </c:choose>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

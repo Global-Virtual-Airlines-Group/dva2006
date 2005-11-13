@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:choose>
 <c:when test="${isCreate}">
 <div class="updateHdr">Flight Assignment Created</div>
@@ -69,6 +70,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter">Click Here.</el:cmd><br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>
