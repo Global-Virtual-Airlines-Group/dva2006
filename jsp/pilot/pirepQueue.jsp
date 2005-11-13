@@ -17,11 +17,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="pirepqueue">
 <!-- Table Header Bar-->
 <tr class="title">
@@ -62,6 +63,7 @@
 </view:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

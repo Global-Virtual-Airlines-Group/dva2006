@@ -94,12 +94,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form method="POST" action="pirep.do" linkID="${empty pirep ? '' : '0x'}${pirep.ID}" op="save" validate="return validate(this)">
+<content:region id="main">
+<el:form method="post" action="pirep.do" linkID="${empty pirep ? '' : '0x'}${pirep.ID}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
@@ -188,7 +189,8 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
 var d = new Date(${pirepYear},${pirepMonth},${pirepDay},0,0,0);

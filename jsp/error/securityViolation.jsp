@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> SECURITY VIOLATION</div>
 <br />
 Oops. You attempted to access something that you're not allowed to.<br />
@@ -27,6 +28,7 @@ Oops. You attempted to access something that you're not allowed to.<br />
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

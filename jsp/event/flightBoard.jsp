@@ -25,11 +25,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="flightboard.do" method="POST" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="flightboard">
 <tr class="title">
@@ -82,6 +83,7 @@ return true;
 </view:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

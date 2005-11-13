@@ -12,12 +12,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="infoEmail" name="airline.mail.hr" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Questionnaire Already Submitted</div>
 <br />
 This <content:airline /> Pilot Questionnaire has already been submitted, and cannot be reviewed or
@@ -25,6 +26,7 @@ modified at this time. If you have any questions about the registration process,
 contact us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

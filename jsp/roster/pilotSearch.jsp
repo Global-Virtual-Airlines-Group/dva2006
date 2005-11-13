@@ -37,12 +37,13 @@ return false;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="pilotsearch.do" method="POST" validate="return validate(this)">
+<content:region id="main">
+<el:form action="pilotsearch.do" method="post" validate="return validate(this)">
 <!-- Search Criteria -->
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -147,6 +148,7 @@ return false;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -12,11 +12,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Pilot Application Rejected</div>
 <br />
 The <content:airline /> Pilot application from ${applicant.name} has been rejected. An e-mail message 
@@ -27,6 +28,7 @@ To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" 
 To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

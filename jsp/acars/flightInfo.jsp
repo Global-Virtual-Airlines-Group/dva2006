@@ -21,11 +21,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT INFORMATION - FLIGHT #<fmt:int value="${info.ID}" /></td>
@@ -123,7 +124,8 @@
 </c:if></content:filter>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center

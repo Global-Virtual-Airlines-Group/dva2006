@@ -15,11 +15,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${infoDelete}">
 <div class="updateHdr">ACARS Flight Log Entry Removed</div>
 <br />
@@ -57,6 +58,7 @@ To view this flight's ACARS log entry, <el:cmd url="acarsinfo" linkID="0x${info.
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

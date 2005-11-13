@@ -38,12 +38,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/event/header.jsp" %> 
-<%@include file="/jsp/event/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/event/header.jsp" %> 
+<%@ include file="/jsp/event/sideMenu.jsp" %>
 <content:sysdata var="airports" name="airports" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${access.canSignup}">
 <c:set var="formAction" value="eventsignup.do" scope="request" />
 <c:set var="formValidate" value="return validate(this)" scope="request" />
@@ -240,6 +241,7 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

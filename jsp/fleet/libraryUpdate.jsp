@@ -13,12 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<br />
+<content:region id="main">
 <c:if test="${!isDelete}">
 <!-- ${library} Library entry Created/Updated -->
 <div class="updateHdr">${library} Library Entry ${fileAdded? 'Added' : 'Updated'}</div>
@@ -35,6 +35,7 @@ The <content:airline /> ${library} Library entry "${entry.name}" has been delete
 To return to the ${library} Library, <el:cmd url="${librarycmd}">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

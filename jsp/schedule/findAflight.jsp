@@ -53,11 +53,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void updateOrigin(document.forms[0].airportD)">
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -177,6 +178,7 @@ return true;
 </el:table>
 </c:if>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

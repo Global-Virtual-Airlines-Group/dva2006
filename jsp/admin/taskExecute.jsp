@@ -12,11 +12,12 @@
 <content:js name="common" />
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Scheduled Task Executed</div>
 <br />
 <c:if test="${empty ex}">
@@ -41,6 +42,7 @@ This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
 To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag" className="sec bld">Click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

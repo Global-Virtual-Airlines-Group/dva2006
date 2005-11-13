@@ -36,11 +36,12 @@ return false;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="pilotsearch.do" method="post" validate="return validate(this)">
 <!-- Search Criteria -->
 <el:table className="form" space="default" pad="default">
@@ -130,6 +131,7 @@ return false;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -28,12 +28,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="airport.do" method="post" linkID="${airport.IATA}" op="save" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -91,6 +92,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> CONNECTION POOL FULL</div>
 <br />
 The database Connection Pool is full. This means that our database server is currently overloaded and 
@@ -26,6 +27,7 @@ needs a few minutes to get settled down. Please wait a few minutes and try again
 Attempting to refresh this page right away will most likely make the problem worse.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

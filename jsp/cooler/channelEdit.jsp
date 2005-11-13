@@ -29,13 +29,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="chprofile.do" method="post" linkID="${channel.name}" op="save" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -72,6 +73,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

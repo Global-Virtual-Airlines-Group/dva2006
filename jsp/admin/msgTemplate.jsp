@@ -36,12 +36,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div ID="main">
-<el:form method="POST" action="msgtemplatesave.do" linkID="${empty template ? null : template.name}" validate="return validate(this)">
+<content:region id="main">
+<el:form method="post" action="msgtemplatesave.do" linkID="${empty template ? null : template.name}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Template Title Bar -->
 <tr class="title caps">
@@ -86,6 +87,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

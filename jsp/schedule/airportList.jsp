@@ -38,13 +38,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/schedule/header.jsp" %> 
 <%@ include file="/jsp/schedule/sideMenu.jsp" %>
 <content:sysdata var="airlines" name="airlines" mapValues="true" />
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="airports.do" method="GET" validate="return false">
+<content:region id="main">
+<el:form action="airports.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="airports">
 
 <!-- Table Header Bar -->
@@ -78,6 +79,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

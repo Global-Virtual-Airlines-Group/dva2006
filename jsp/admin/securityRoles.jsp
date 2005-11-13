@@ -16,12 +16,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="roles" name="security.roles" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="view" space="default" pad="default">
 <!-- View Header Bar -->
 <tr class="title caps">
@@ -67,6 +68,7 @@
 </tr>
 </el:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -15,12 +15,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="ccLevels" name="centuryClubLevels" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 The <content:airline /> &quot;Century Club&quot; recognizes those pilots who over
 the course of their career with our airline have demonstrated a superior level of commitment
 and dedication, demonstrated by over one hundred logged flight legs. Over the years, the
@@ -72,6 +73,7 @@ flights.<br />
 </tr>
 </view:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

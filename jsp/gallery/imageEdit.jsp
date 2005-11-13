@@ -37,11 +37,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/gallery/header.jsp" %> 
 <%@include file="/jsp/gallery/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="imgsave.do" method="POST" linkID="${empty img ? 'new' : '0x' + img.ID}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -90,6 +91,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -19,23 +19,25 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">${entryType} ${opName}</div>
 <br />
 <c:if test="${!isDelete}">
 This ${entryType} has been successfully ${opName} in the database.<br />
 <br />
-To view it, please <el:cmd url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd><br />
+To view it, please <el:cmd url="${isNews ? 'news' : 'notams'}">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isDelete}">
 This ${entryType} has been successfully removed from the database.<br />
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

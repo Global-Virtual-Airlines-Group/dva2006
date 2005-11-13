@@ -34,13 +34,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void initLinks()">
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="versions" name="issue_track.versions" />
 
 <!-- Main Body Frame -->
-<div ID="main">
-<el:form method="POST" action="issuecomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
+<content:region id="main">
+<el:form method="post" action="issuecomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
@@ -133,6 +134,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

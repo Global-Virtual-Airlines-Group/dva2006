@@ -85,11 +85,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void showRemaining(30)">
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form method="post" action="examsubmit.do" linkID="0x${exam.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Exam Title Bar -->
@@ -134,6 +135,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

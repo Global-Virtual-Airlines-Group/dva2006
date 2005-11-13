@@ -28,11 +28,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div ID="main">
+<content:region id="main">
 <el:form method="post" action="isearch.do" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -102,6 +103,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

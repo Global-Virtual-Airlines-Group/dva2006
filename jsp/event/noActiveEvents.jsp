@@ -13,18 +13,15 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/event/header.jsp" %> 
 <%@include file="/jsp/event/sideMenu.jsp" %>
 <content:sysdata var="ivaoImg" name="online.ivao.banner" />
 <content:sysdata var="vatsimImg" name="online.vatsim.banner" />
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:table className="form" pad="default" space="default">
-<tr class="title caps">
- <td>NO AVAILABLE SCHEDULED ONLINE EVENTS</td>
-</tr>
-</el:table>
+<content:region id="main">
+<div class="updateHdr">NO AVAILABLE SCHEDULED ONLINE EVENTS</div>
 <br />
 At the moment, no Online Events are currently available for signup. Please be sure to check 
 back often - Events are often scheduled on short notice. <content:airline /> typically holds one 
@@ -38,6 +35,7 @@ major event per month, and ad hoc events approximately once every seven to ten d
 </el:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

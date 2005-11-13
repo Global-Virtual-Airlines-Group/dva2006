@@ -67,11 +67,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="flightboard.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
@@ -95,7 +96,8 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);

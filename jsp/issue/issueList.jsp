@@ -30,12 +30,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div ID="main">
-<el:form action="issues.do" method="POST" validate="return false">
+<content:region id="main">
+<el:form action="issues.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="issues">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
@@ -82,6 +83,7 @@ return true;
 </view:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

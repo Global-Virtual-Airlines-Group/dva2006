@@ -37,7 +37,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- Insert RSS tag, for inserting RSS feed links -->
 	<tag>
 		<name>rss</name>
@@ -78,7 +78,7 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- Insert PICS tag, for inserting PICS 1.1 rating links -->
 	<tag>
 		<name>pics</name>
@@ -97,7 +97,7 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>		
-	
+
 	<!-- Role Filter tag, for stripping out JSP content based on security role -->
 	<tag>
 		<name>filter</name>
@@ -109,7 +109,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- Active User Filter tag, for stripping out JSP content if a user is not logged in -->
 	<tag>
 		<name>activeUser</name>
@@ -122,7 +122,7 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- System Data access tag -->
 	<tag>
 		<name>sysdata</name>
@@ -151,14 +151,14 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- Airline name tag -->
 	<tag>
 		<name>airline</name>
 		<tagclass>org.deltava.taglib.content.AirlineNameTag</tagclass>
 		<bodycontent>empty</bodycontent>
 	</tag>
-	
+
 	<!-- Copyright notice tag -->
 	<tag>
 		<name>copyright</name>
@@ -171,7 +171,7 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- GetCookie tag, for reading cookie data -->
 	<tag>
 		<name>getCookie</name>
@@ -193,7 +193,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- SetCookie tag, for writing cookie data -->
 	<tag>
 		<name>setCookie</name>
@@ -226,7 +226,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- ClearCookie tag, for clearing cookies -->
 	<tag>
 		<name>clearCookie</name>
@@ -236,6 +236,48 @@
 			<name>name</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
+
+	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
+	<tag>
+		<name>page</name>
+		<tagclass>org.deltava.taglib.layout.PageTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+	</tag>
+
+	<!-- Region Layout Tag, for displaying elements as DIVs or TDs -->
+	<tag>
+		<name>region</name>
+		<tagclass>org.deltava.taglib.layout.RegionTag</tagclass>
+		<bodycontent>JSP</bodycontent>
+		<attribute>
+			<name>id</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>rows</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>cols</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>closeRow</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 </taglib>

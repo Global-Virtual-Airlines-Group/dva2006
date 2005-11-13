@@ -11,11 +11,12 @@
 <content:pics />
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Mass Mailing Sent</div>
 <br />
 The mass e-mail message to all active ${eqType} pilots has been sent.<br />
@@ -23,6 +24,7 @@ The mass e-mail message to all active ${eqType} pilots has been sent.<br />
 <fmt:int value="${msgSent}" /> e-mail message(s) have been sent.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

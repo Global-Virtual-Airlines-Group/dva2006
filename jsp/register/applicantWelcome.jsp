@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Welcome to <content:airline /></div>
 <br />
 ${applicant.firstName}, on behalf of <content:airline /> welcome to our virtual aviation community! 
@@ -41,6 +42,7 @@ be able to place you in the right program for you.<br />
 </el:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

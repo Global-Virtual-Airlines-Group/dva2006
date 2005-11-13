@@ -34,6 +34,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/event/header.jsp" %> 
 <%@ include file="/jsp/event/sideMenu.jsp" %>
 <content:sysdata var="allEQ" name="eqtypes" />
@@ -41,7 +42,7 @@ return true;
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="eventsave.do" method="post" linkID="${!empty eventID ? eventID : ''}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -150,6 +151,7 @@ to a specific set of equipment.</span><br />
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

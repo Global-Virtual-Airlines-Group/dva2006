@@ -37,6 +37,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <content:sysdata var="maxX" name="cooler.img_max.x" />
@@ -44,7 +45,7 @@ return true;
 <content:sysdata var="maxSize" name="cooler.img_max.size" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="threadpost.do" method="POST" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
@@ -98,6 +99,7 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

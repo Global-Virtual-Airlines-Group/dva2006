@@ -24,12 +24,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="charts.do" method="GET" validate="return false">
+<content:region id="main">
+<el:form action="charts.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="charts">
 
 <!-- Table Header Bar-->
@@ -54,7 +55,9 @@ return true;
 </tr>
 </view:table>
 </el:form>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <!-- Sidebar Navigation Frame -->
-<div id="sidebar">
+<content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>FLIGHT SCHEDULE</td></tr>
 <tr class="MenuItem">
@@ -61,4 +61,4 @@
  <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
 </el:table>
-</div>
+</content:region>

@@ -72,6 +72,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="changeAirport(document.forms[0].homeAirport); disableSigBoxes()">
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
@@ -87,8 +88,8 @@ return true;
 <content:sysdata var="sigSize" name="cooler.sig_max.size" />
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="profile.do" linkID="0x${pilot.ID}" op="save" method="POST" allowUpload="true" validate="return validate(this)">
+<content:region id="main">
+<el:form action="profile.do" linkID="0x${pilot.ID}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
@@ -285,8 +286,10 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <script langage="JavaScript" type="text/javascript">
 var f = document.forms[0];
 f.useDefaultSig.disabled = hasSignature;

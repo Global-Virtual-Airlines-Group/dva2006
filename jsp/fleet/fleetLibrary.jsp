@@ -65,11 +65,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="fleetlibrary.do" method="get" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
@@ -99,6 +100,7 @@ Select a Fleet Installer from the list above.</div>
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -17,11 +17,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/event/header.jsp" %> 
-<%@include file="/jsp/event/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/event/header.jsp" %> 
+<%@ include file="/jsp/event/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" space="default" pad="default" cmd="events">
 <!-- Table Header Bar -->
 <tr class="title caps">
@@ -51,6 +52,7 @@ ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)${route.airp
 </tr>
 </view:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

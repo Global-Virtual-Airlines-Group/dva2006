@@ -18,12 +18,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="imgPath" name="path.img" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td><content:airline /> PILOT MAP</td>
@@ -41,7 +42,8 @@
 </el:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <script language="JavaScript" type="text/javascript">
 // Add the markers
 <map:markers var="pilotMarkers" items="${locations}" />

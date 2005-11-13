@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> Issue Updated</div>
 <br />
 <c:choose>
@@ -45,6 +46,7 @@ to display the Issue.<br />
 To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -35,11 +35,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/gallery/header.jsp" %> 
 <%@include file="/jsp/gallery/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="imagegallery.do" method="GET" validate="return false">
 <view:table className="view" space="default" pad="default" cmd="imagegallery">
 <!-- Table Sort Bar -->
@@ -83,6 +84,7 @@ return true;
 </view:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

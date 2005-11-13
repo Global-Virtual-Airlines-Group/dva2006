@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isSaved}">
 <div class="updateHdr">Flight Report Saved</div>
 <br />
@@ -121,7 +122,9 @@ To return to the submitted Flight Report queue, <el:cmd url="pirepqueue">Click H
 <c:if test="${!isDeleted}">
 To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}">Click Here</el:cmd>.<br />
 </c:if>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

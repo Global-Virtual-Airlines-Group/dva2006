@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/event/header.jsp" %> 
 <%@ include file="/jsp/event/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Online Event Flight Assignments Created</div>
 <br />
 <fmt:int value="${fn:sizeof(event.signups)}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
@@ -26,6 +27,7 @@
 To return to this Online Event, <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

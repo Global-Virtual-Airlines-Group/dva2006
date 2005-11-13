@@ -14,17 +14,19 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> Image Gallery Entry Deleted</div>
 <br />
 This Image Gallery entry has been successfully deleted from the database. If this Image was linked to
 a Water Cooler message thread, the link has also been removed.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

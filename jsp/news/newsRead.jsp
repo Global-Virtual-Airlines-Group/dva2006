@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> SYSTEM NEWS ENTRY</td>
@@ -48,6 +49,7 @@
 </tr>
 </el:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

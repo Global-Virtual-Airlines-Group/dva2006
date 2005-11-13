@@ -29,13 +29,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 <c:set var="channelName" value="${empty channelName ? channel.name : channelName}" scope="request" />
 <c:set var="viewCmdName" value="${empty viewCmd ? 'channel' : viewCmd}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="${viewCmdName}.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="${viewCmdName}">
 <!-- Table Sort Combo Bar -->
@@ -84,6 +85,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

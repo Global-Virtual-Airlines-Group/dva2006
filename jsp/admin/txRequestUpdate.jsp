@@ -13,11 +13,12 @@
 <content:copyright visible="false" />
 </head>
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isNew}">
 <div class="updateHdr">Transfer Request Submitted</div>
 <br />
@@ -57,6 +58,7 @@ To return to the list of pending equipment program transfer requests, <el:cmd ur
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

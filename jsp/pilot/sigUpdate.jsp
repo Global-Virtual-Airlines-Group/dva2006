@@ -24,6 +24,7 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="sigX" name="cooler.sig_max.x" />
@@ -31,7 +32,7 @@ return true;
 <content:sysdata var="sigSize" name="cooler.sig_max.size" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="sigupdate.do" method="post" linkID="0x${pilot.ID}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -59,6 +60,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <content:sysdata var="airlineName" name="airline.name" />
 <content:sysdata var="airlineBanner" name="airline.banner" />
 <!-- Header Frame -->
-<div id="header">
+<content:region id="header" cols="2" closeRow="true">
 <el:img className="header" src="${airlineBanner}" caption="${airlineName}" />
 <h1 class="header caps"><content:airline /></h1>
-</div>
+</content:region>

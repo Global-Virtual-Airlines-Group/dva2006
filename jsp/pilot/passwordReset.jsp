@@ -29,12 +29,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form method="POST" action="pwdreset.do" validate="return validate(this)">
+<content:region id="main">
+<el:form method="post" action="pwdreset.do" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
  <td colspan="2" class="left">PASSWORD RESET</td>
@@ -64,6 +65,7 @@ return true;
 </el:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

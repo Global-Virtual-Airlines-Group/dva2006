@@ -16,12 +16,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="form" pad="default" space="default">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
@@ -146,6 +147,7 @@
 </el:table>
 </c:if>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

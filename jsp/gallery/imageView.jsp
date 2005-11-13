@@ -31,12 +31,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/gallery/header.jsp" %> 
 <%@ include file="/jsp/gallery/sideMenu.jsp" %>
 <content:sysdata var="db" name="airline.db" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="imgvote.do" linkID="0x${img.ID}" method="POST" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
@@ -86,6 +87,7 @@ FEEDBACK <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry=
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

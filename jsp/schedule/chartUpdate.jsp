@@ -12,11 +12,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isDelete}">
 <!-- Approach Chart Deleted -->
 <div class="updateHdr">Approach Chart Deleted</div>
@@ -48,6 +49,7 @@ To view all Approach Charts for ${chart.airport.name}, <el:cmd url="charts" link
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

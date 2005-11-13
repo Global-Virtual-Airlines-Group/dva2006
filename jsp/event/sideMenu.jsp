@@ -3,7 +3,7 @@
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <!-- Sidebar Navigation Frame -->
-<div id="sidebar">
+<content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>ONLINE EVENTS</td></tr>
 <tr class="MenuItem">
@@ -82,4 +82,4 @@
  <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
 </el:table>
-</div>
+</content:region>

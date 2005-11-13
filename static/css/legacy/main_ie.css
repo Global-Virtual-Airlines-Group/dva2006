@@ -1,18 +1,7 @@
-/* Main Cascading Style Sheet (C) 2005 Luke J. Kolin. */
+/* Main Cascading Style Sheet (C) 2005 Global Virtual Airline Group. */
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
-div#header {
-	position: absolute;
-	width: 100%;
-	top: 0px;
-	bottom: 86px;
-	left: 0px;
-	right: 0px;
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
 /* Formatting for header title caption */
 h1.header {
 	font-family: Trebuchet MS, Tahoma, sans-serif;
@@ -31,11 +20,13 @@ img.header {
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the side menu section        */
-div#sidebar {
-	position: absolute;
-	width: 13%;
-	top: 88px;
-	left: 0px;
+TD#sidebar {
+	width: 160px;
+	vertical-align: top;
+}
+
+TD#main {
+	vertical-align: top;
 }
 
 /* Formatting for the side menu table */
@@ -83,15 +74,6 @@ TR.MenuItem {
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main display section     */
-div#main {
-	overflow: auto;
-	position: absolute;
-	width: 85%;
-	top: 94px;
-	left: 13%;
-	margin-left: 1px;
-	margin-right: 1px;
-}
 
 /* Result page Header */
 .updateHdr {
@@ -108,11 +90,6 @@ div#main {
 TABLE {
 	table-layout: auto;
 	border-collapse: separate;
-	border-spacing: 3px 3px;
-	font-family: Tahoma, Verdana;
-	color: #000000;
-	border-width: 4px 4px 4px 4px;
-	padding: 6px 6px 6px 6px;
 }
 
 BODY {

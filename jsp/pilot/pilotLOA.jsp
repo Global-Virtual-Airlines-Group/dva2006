@@ -15,17 +15,19 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="interval" name="users.inactive_leave_days" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Leave of Absence</div>
 <br />
 You have been placed on a Leave of Absence for up to <fmt:dec value="${interval}" /> days. To 
 return to Active status, you just need to log into the web site again.<br />
 <br />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

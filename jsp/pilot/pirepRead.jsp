@@ -77,11 +77,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${scoreCR}">
 <form method="post" action="pirepscore.do?id=${fn:hex(pirep.ID)}" onsubmit="return validate(this)">
 </c:if>
@@ -223,9 +224,10 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR || fn:isACARS(pirep)}"></form></c:if>
+<c:if test="${scoreCR || fn:isACARS(pirep)}"></form><br /></c:if>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 <c:if test="${googleMap}">
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center

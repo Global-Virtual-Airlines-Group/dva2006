@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/event/header.jsp" %> 
 <%@ include file="/jsp/event/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Online Event ${isNew ? 'Created' : 'Updated'}</div>
 <br />
 The <span class="pri bld">${event.name}</span> Online Event has been successfully ${isNew ? 'created' : 'updated'}.<br />
@@ -28,6 +29,7 @@ To add additional routes to this Online Event, <el:cmd className="sec bld" url="
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

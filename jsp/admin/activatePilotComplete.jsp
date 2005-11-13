@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Pilot Reactivated</div>
 <br />
 ${pilot.name} has been restored to the <content:airline /> Pilot Roster as an Active ${pilot.rank} in
@@ -28,6 +29,7 @@ An e-mail message has been sent to ${pilot.name} containing the new password, in
 of this change in status, and welcoming him or her back to <content:airline />.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>
