@@ -150,7 +150,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			newUser.setEquipmentType(ctx.getParameter("eqType"));
 			newUser.setRank(ctx.getParameter("rank"));
 			if (isExisting) {
-				wdao.write(newUser);
+				wdao.write(newUser, aInfo.getDB());
 			} else {
 				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
 			}
@@ -164,7 +164,11 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			newUser.setPassword(PasswordGenerator.generate(8));
-			auth.addUser(newUser.getDN(), newUser.getPassword());
+			if (auth.contains(newUser.getDN())) {
+				auth.updatePassword(newUser.getDN(), newUser.getPassword());
+			} else {
+				auth.addUser(newUser.getDN(), newUser.getPassword());
+			}
 
 			// Commit transaction
 			ctx.commitTX();
