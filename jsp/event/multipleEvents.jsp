@@ -16,10 +16,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/event/header.jsp" %> 
 <%@ include file="/jsp/event/sideMenu.jsp" %>
+
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="view" pad="default" space="default">
 <tr class="title caps">
  <td class="left" colspan="6">MULTIPLE <content:airline /> ONLINE EVENTS</td>
@@ -65,6 +67,7 @@ ${airport.name} (<fmt:airport airport="${airport}" />)<br />
 </tr>
 </el:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

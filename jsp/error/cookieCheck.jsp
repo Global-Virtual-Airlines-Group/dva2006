@@ -12,12 +12,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="domain" name="airline.domain" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <b>Oops. It looks like your browser cannot accept cookies from our site.</b> Please
 go into your browser's preferences, and ensure that you can accept cookies from
 <span class="sec bld">${domain}</span>.<br />
@@ -25,6 +26,7 @@ go into your browser's preferences, and ensure that you can accept cookies from
 <el:cmd url="login">Click Here</el:cmd> to return to the login page.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

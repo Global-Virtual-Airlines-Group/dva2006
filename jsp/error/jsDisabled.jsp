@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr"><content:airline /> JAVASCRIPT DISABLED</div>
 <br />
 You appear to have disabled JavaScript execution in your web browser. You must have JavaScript enabled in 
@@ -27,6 +28,7 @@ your experience here, which require JavaScript to operate correctly.<br />
 Please <el:cmd url="login" className="sec bld">click here</el:cmd> to return to the login page.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

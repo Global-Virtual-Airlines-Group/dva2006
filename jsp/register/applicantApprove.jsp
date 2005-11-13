@@ -12,12 +12,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<div class="updateHdr">Pilot Hired</div>
+<content:region id="main">
+<div class="updateHdr"><content:airline /> Pilot Hired</div>
 <br />
 ${applicant.name} has been hired as a <content:airline /> pilot, as a ${applicant.rank} in the
 ${eqType.name} (Stage ${eqType.stage}) program. An e-mail message has been sent to ${applicant.email}.<br />
@@ -28,6 +29,7 @@ To review this Pilot's profile, <el:cmd url="profile" className="sec bld" linkID
 To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

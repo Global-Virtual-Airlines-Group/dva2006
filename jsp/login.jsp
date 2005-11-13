@@ -45,13 +45,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body onload="void setFocus()">
+<content:page>
 <%@include file="/jsp/main/header.jsp" %> 
 <%@include file="/jsp/main/sideMenu.jsp" %>
 <content:getCookie name="dva_fname" default="${param.firstName}" var="fname" />
 <content:getCookie name="dva_lname" default="${param.lastName}" var="lname" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 Welcome to <content:airline />! In order to access the secure areas of our site, please enter 
 your first and last name or your User ID and password. Your browser must be able to accept cookies 
 in order to log into the site.<br />
@@ -89,6 +90,7 @@ in order to log into the site.<br />
 <el:text name="screenX" type="hidden" value="1024" />
 <el:text name="screenY" type="hidden" value="768" />
 </el:form>
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

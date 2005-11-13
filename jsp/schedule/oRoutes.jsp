@@ -29,12 +29,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="routes.do" method="POST" validate="return validate(this)">
+<content:region id="main">
+<el:form action="routes.do" method="post" validate="return validate(this)">
 <view:table className="view" pad="default" space="default" cmd="routes">
 
 <!-- Table Header Bar -->
@@ -74,6 +75,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

@@ -13,18 +13,18 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:table className="form" space="default" pad="default">
-<tr class="title caps"><td>PILOT AIRLINE TRANSFER COMPLETE</td></tr>
-</el:table>
+<content:region id="main">
+<div class="updateHdr">PILOT AIRLINE TRANSFER COMPLETE</div>
 <br />
 ${pilot.name} has been successfully transferred to ${airline.name}.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

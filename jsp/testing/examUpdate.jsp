@@ -9,15 +9,15 @@
 <title><content:airline /> Pilot Examination</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
-
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:choose>
 <c:when test="${isSubmit}">
 <!-- Examination Submitted -->
@@ -50,6 +50,7 @@ from the database.<br />
 </c:choose>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

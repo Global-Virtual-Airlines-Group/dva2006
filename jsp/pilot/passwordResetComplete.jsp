@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps"><td>PASSWORD RESET COMPLETE</td></tr>
 </el:table>
@@ -26,6 +27,7 @@ The password for ${user.name} has been successfully reset. An e-mail message has
 at the e-mail address we have on file, notifying this Pilot of the new password.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

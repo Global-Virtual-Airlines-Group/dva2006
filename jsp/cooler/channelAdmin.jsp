@@ -16,11 +16,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="channeladmin">
 <tr class="title caps">
  <td class="left" colspan="6">WATER COOLER CHANNELS</td>
@@ -55,6 +56,7 @@
 </tr>
 </view:table>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

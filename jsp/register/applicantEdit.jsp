@@ -48,6 +48,7 @@ return cmdPost(f.action);
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="locations" name="locations" />
@@ -55,8 +56,8 @@ return cmdPost(f.action);
 <content:sysdata var="ranks" name="ranks" />
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="applicant.do" linkID="0x${applicant.ID}" op="save" method="POST" validate="return validate(this)">
+<content:region id="main">
+<el:form action="applicant.do" linkID="0x${applicant.ID}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICATION</td>
@@ -210,6 +211,7 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

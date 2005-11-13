@@ -15,12 +15,13 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="access" value="${accessMap['NEW']}" scope="request" />
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="crscripts">
 <!-- Table Header Bar -->
 <tr class="title">
@@ -52,6 +53,7 @@
 </view:table>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

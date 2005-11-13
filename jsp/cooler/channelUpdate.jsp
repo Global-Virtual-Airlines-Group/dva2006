@@ -14,11 +14,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/cooler/header.jsp" %> 
 <%@include file="/jsp/cooler/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isCreate}">
 <!-- Water Cooler Channel created -->
 <div class="updateHdr">Water Cooler Channel Created</div>
@@ -39,6 +40,7 @@ This Water Cooler Channel has been renamed to <span class="pri bld">${newName}</
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

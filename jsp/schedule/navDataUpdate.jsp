@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:if test="${isImport}">
 <div class="updateHdr">Navigation Data Imported</div>
 <br />
@@ -46,6 +47,7 @@ been deleted from the database. You may now import a new AIRAC cycle's data.<br 
 To return to the AIRAC Navigation Data import page, <el:cmd url="navimport">click here</el:cmd>.<br />
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

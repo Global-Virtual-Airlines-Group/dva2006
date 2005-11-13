@@ -29,13 +29,14 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="chart.do" method="POST" linkID="0x${chart.ID}" op="save" validate="return validate(this)">
+<content:region id="main">
+<el:form action="chart.do" method="post" linkID="0x${chart.ID}" op="save" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${!empty chart}">
@@ -80,6 +81,7 @@ return true;
 </el:form>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

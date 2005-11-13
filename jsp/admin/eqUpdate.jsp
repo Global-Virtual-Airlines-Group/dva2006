@@ -12,11 +12,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <div class="updateHdr">Equipment Program Updated</div>
 <br />
 The Equipment Profile for the <span class="pri bld">${eqType.name}</span> program has been successfully
@@ -28,6 +29,7 @@ program, and all Pilots in this program have been updated.<br />
 <br />
 </c:if>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

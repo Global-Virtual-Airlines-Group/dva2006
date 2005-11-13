@@ -27,12 +27,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="newstaff.do" linkID="0x${pilot.ID}" method="POST" validate="return validate(this)">
+<content:region id="main">
+<el:form action="newstaff.do" linkID="0x${pilot.ID}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Staff Profile Title Bar -->
 <tr class="title caps">
@@ -59,7 +60,9 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

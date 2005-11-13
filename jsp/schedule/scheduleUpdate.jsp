@@ -13,11 +13,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <c:choose>
 <c:when test="${isAirport && isCreate}">
 <div class="updateHdr">Airport Added</div>
@@ -65,6 +66,7 @@ To return to the list of airports, <el:cmd url="airports" className="sec bld">cl
 </c:if>
 <br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

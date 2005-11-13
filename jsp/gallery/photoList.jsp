@@ -17,11 +17,12 @@
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
 <%@include file="/jsp/gallery/header.jsp" %> 
 <%@include file="/jsp/gallery/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
+<content:region id="main">
 <el:form action="imagegallery.cmd" method="POST" validate="return true">
 <view:table className="view" space="default" pad="default" cmd="imagegallery">
 <!-- Table Header Bar -->
@@ -59,6 +60,7 @@
 </view:table>
 </el:form>
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>

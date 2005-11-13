@@ -49,6 +49,7 @@ TABLE.form TD.coolerPost {
 
 /* Default row with data */
 TABLE.form TD.data {
+	color: #000000;
 	text-align: left;
 	font-size: 9pt;
 }

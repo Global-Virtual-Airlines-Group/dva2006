@@ -31,12 +31,13 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 
 <!-- Main Body Frame -->
-<div id="main">
-<el:form action="eprofile.do" linkID="${eProfile.name}" op="save" method="POST" validate="return validate(this)">
+<content:region id="main">
+<el:form action="eprofile.do" linkID="${eProfile.name}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Exam Title Bar -->
 <tr class="title caps">
@@ -88,7 +89,9 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
-</div>
+</content:region>
+</content:page>
 </body>
 </html>
