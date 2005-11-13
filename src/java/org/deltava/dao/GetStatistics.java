@@ -251,7 +251,7 @@ public class GetStatistics extends DAO {
 		
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT COUNT(POST_ID) FROM common.COOLER_POSTS WHERE "
+			prepareStatement("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE "
 					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
 			
