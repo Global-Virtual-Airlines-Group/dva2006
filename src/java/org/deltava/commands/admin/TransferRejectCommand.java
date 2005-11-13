@@ -63,6 +63,7 @@ public class TransferRejectCommand extends AbstractCommand {
 			
 			// Save the pilot for the message context
 			mctxt.addData("pilot", usr);
+			mctxt.addData("txReq", txreq);
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
