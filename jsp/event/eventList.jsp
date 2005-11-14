@@ -26,10 +26,10 @@
 <view:table className="view" space="default" pad="default" cmd="events">
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="9%">DATE</td>
- <td width="25%">EVENT NAME</td>
+ <td width="10%">DATE</td>
+ <td width="30%">EVENT NAME</td>
  <td width="8%">NETWORK</td>
- <td width="8%">STATUS</td>
+ <td width="9%">STATUS</td>
  <td>AVAILABLE ROUTES</td>
 </tr>
 
@@ -40,8 +40,8 @@
  <td><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.networkName}</td>
  <td class="sec">${event.statusName}</td>
- <td class="bld"><c:forEach var="route" items="${event.routes}">
-${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
+ <td class="small"><c:forEach var="route" items="${event.routes}">
+${route.airportD.name} - (<fmt:airport airport="${route.airportD}" />)${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
 </view:row>
 </c:forEach>
