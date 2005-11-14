@@ -170,7 +170,7 @@ public class SetSchedule extends DAO {
 	      _ps.setString(5, entry.getAirportA().getIATA());
 	      _ps.setInt(6, entry.getDistance());
 	      _ps.setString(7, entry.getEquipmentType());
-	      _ps.setDouble(8, entry.getLength() / 10.0);
+	      _ps.setInt(8, entry.getLength());
 	      _ps.setTimestamp(9, createTimestamp(entry.getTimeD()));
 	      _ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
 	      _ps.setBoolean(11, entry.isHistoric());
@@ -191,7 +191,7 @@ public class SetSchedule extends DAO {
 	public void purge(boolean force) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("DELETE FROM SCHEDULE");
+	   StringBuilder sqlBuf = new StringBuilder("DELETE FROM SCHEDULE");
 	   if (!force)
 	      sqlBuf.append(" WHERE (CAN_PURGE=?)");
 	   
@@ -200,7 +200,7 @@ public class SetSchedule extends DAO {
 	      if (!force)
 	         _ps.setBoolean(1, true);
 	      
-	      executeUpdate(1);
+	      executeUpdate(0);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }

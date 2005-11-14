@@ -36,7 +36,7 @@ public class GetLibrary extends DAO {
 	public Collection getFleet(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".FLEET F LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
@@ -60,7 +60,7 @@ public class GetLibrary extends DAO {
 	public Collection getManuals(String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".DOCS D LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
@@ -84,7 +84,7 @@ public class GetLibrary extends DAO {
 	public Collection getNewsletters(String dbName) throws DAOException {
 	   
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".DOCS D LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
@@ -107,7 +107,7 @@ public class GetLibrary extends DAO {
 	public Manual getManual(String fName, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT D.*, COUNT(L.FILENAME) FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".DOCS D LEFT JOIN ");
 	   sqlBuf.append(dbName.toLowerCase());
@@ -135,7 +135,7 @@ public class GetLibrary extends DAO {
 	public Installer getInstaller(String fName, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".FLEET F LEFT JOIN ");
 	   sqlBuf.append(dbName.toLowerCase());
@@ -164,7 +164,7 @@ public class GetLibrary extends DAO {
 	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".FLEET F LEFT JOIN ");
 	   sqlBuf.append(dbName.toLowerCase());
@@ -215,7 +215,7 @@ public class GetLibrary extends DAO {
 	public Collection getFiles(String dbName) throws DAOException {
 	   
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".FILES F LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());

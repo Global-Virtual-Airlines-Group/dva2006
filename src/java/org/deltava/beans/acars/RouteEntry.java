@@ -427,7 +427,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @return an HTML String
 	 */
 	public String getInfoBox() {
-		StringBuffer buf = new StringBuffer("<span class=\"small\">Position: <b>");
+		StringBuilder buf = new StringBuilder("<span class=\"small\">Position: <b>");
 		buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
 		buf.append("</b><br /> Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));

@@ -133,7 +133,7 @@ public class GetEvent extends DAO {
 			return;
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM common.EVENT_AIRPORTS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.EVENT_AIRPORTS WHERE (ID IN (");
 		for (Iterator i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = (Integer) i.next();
 			sqlBuf.append(id.toString());

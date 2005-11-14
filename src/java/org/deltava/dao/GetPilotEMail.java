@@ -109,7 +109,7 @@ public class GetPilotEMail extends DAO {
          return Collections.EMPTY_LIST;
 
       // Build SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
+      StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
       for (Iterator i = results.keySet().iterator(); i.hasNext(); ) {
          String addr = (String) i.next();
          sqlBuf.append("\'");

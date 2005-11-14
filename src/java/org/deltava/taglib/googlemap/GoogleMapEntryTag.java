@@ -80,7 +80,7 @@ public abstract class GoogleMapEntryTag extends TagSupport {
    protected String generateMarker(GeoLocation loc, String color, String label) {
       
       // Build the buffer
-      StringBuffer buf = new StringBuffer("googleMarker(\'");
+      StringBuilder buf = new StringBuilder("googleMarker(\'");
       buf.append(SystemData.get("path.img"));
       buf.append("\',\'");
       buf.append(color);

@@ -148,7 +148,7 @@ public class GetChart extends DAO {
     public Collection getByIDs(Collection IDs) throws DAOException {
        
        // Build the SQL statement
-       StringBuffer sqlBuf = new StringBuffer("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID IN (");
+       StringBuilder sqlBuf = new StringBuilder("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID IN (");
        
        // Check if we're in the cache
        int querySize = 0;

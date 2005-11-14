@@ -125,7 +125,7 @@ public class FlightReportFunctions {
      * @return a comma-delimited string of Equipment Program names
      */
     public static String promoTypes(FlightReport fr) {
-    	StringBuffer buf = new StringBuffer();
+    	StringBuilder buf = new StringBuilder();
     	if (fr != null) {
     		for (Iterator i = fr.getCaptEQType().iterator(); i.hasNext(); ) {
     			String eqType = (String) i.next();

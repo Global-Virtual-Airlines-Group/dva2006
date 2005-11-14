@@ -58,7 +58,7 @@ public class MessageContext implements Serializable {
      * @return the subject prepended by the Airline Name
      */
     public String getSubject() {
-       StringBuffer buf = new StringBuffer(SystemData.get("airline.name"));
+       StringBuilder buf = new StringBuilder(SystemData.get("airline.name"));
        buf.append(' ');
        buf.append((_mt == null) ? "" : _mt.getSubject());
        return buf.toString();
@@ -75,7 +75,7 @@ public class MessageContext implements Serializable {
           throw new IllegalStateException("Message Template not loaded");
 
        // Load the Message template
-       StringBuffer buf = new StringBuffer(_mt.getBody());
+       StringBuilder buf = new StringBuilder(_mt.getBody());
 
        // Parse the message template with data from the MessageContext
        int spos = buf.indexOf("${");

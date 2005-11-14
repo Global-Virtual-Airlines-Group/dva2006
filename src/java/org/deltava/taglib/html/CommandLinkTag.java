@@ -60,7 +60,7 @@ public class CommandLinkTag extends LinkTag {
     }
 
     public final int doStartTag() throws JspException {
-        StringBuffer url = new StringBuffer(_cmdName);
+        StringBuilder url = new StringBuilder(_cmdName);
 
         try {
             if (_cmdParam != null) {

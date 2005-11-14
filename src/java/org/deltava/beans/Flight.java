@@ -57,7 +57,7 @@ public abstract class Flight extends DatabaseBean implements Comparable {
      * @see Flight#toString()
      */
     public String getFlightCode() {
-        StringBuffer buf = new StringBuffer(_airline.getCode());
+        StringBuilder buf = new StringBuilder(_airline.getCode());
         buf.append(df.format(_flightNumber));
         buf.append(" Leg ");
         buf.append(String.valueOf(_leg));

@@ -91,7 +91,7 @@ public class FlightPlan extends DatabaseBlobBean {
      * @see FlightPlan#PLAN_EXT
      */
     public String getFileName() {
-        StringBuffer buf = new StringBuffer(_airportD.getIATA());
+        StringBuilder buf = new StringBuilder(_airportD.getIATA());
         buf.append('-');
         buf.append(_airportA.getIATA());
         buf.append('.');

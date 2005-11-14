@@ -57,7 +57,7 @@ public final class AddressValidationHelper {
 	   if (rawHash == null)
 		   return null;
 	   
-	   StringBuffer buf = new StringBuffer();
+	   StringBuilder buf = new StringBuilder();
 	   for (int x = 0; x < rawHash.length(); x++) {
 		   char c = rawHash.charAt(x);
 		   buf.append((c == ' ') ? '+' : c);

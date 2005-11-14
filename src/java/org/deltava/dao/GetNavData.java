@@ -119,7 +119,7 @@ public class GetNavData extends DAO {
 			return results;
 
 		// Build the SQL Statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM common.NAVDATA WHERE CODE IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.NAVDATA WHERE CODE IN (");
 		for (Iterator i = ids.iterator(); i.hasNext();) {
 			String code = ((String) i.next()).toUpperCase();
 			sqlBuf.append('\'');

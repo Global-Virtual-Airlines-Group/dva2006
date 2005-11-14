@@ -35,7 +35,7 @@ public class GetRoute extends DAO {
     public List getRoutes(String srcAirport, String dstAirport) throws DAOException {
         
        // Build the SQL statement
-       StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ROUTES WHERE (AIRPORT_D=?)");
+       StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ROUTES WHERE (AIRPORT_D=?)");
        if (dstAirport != null) sqlBuf.append(" AND (AIRPORT_A=?)");
        sqlBuf.append(" ORDER BY AIRPORT_A");
        

@@ -66,7 +66,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	public String getDirectoryName(String pilotCode) throws DAOException {
 
 		// Parse the pilot code
-		StringBuffer code = new StringBuffer();
+		StringBuilder code = new StringBuilder();
 		for (int x = 0; x < pilotCode.length(); x++) {
 			char c = pilotCode.charAt(x);
 			if (Character.isDigit(c))
@@ -130,7 +130,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	public Collection checkUnique(Person p, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
 
@@ -167,7 +167,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
    public List getByRole(String roleName, String dbName) throws DAOException {
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
             + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".PILOTS P LEFT JOIN ");
@@ -197,7 +197,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
    public Collection checkSoundex(Person usr, String dbName) throws DAOException {
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
+      StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
       		+ "AS SX FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".PILOTS P WHERE (ID<>?)");

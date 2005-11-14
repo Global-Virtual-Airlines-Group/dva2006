@@ -31,11 +31,11 @@ public class ServiceContext implements Serializable, SecurityContext {
    
    private class OutputBuffer {
       
-      private StringBuffer _buffer;
+      private StringBuilder _buffer;
       
       private OutputBuffer() {
          super();
-         _buffer = new StringBuffer(64);
+         _buffer = new StringBuilder(64);
       }
       
       public void print(CharSequence value) {

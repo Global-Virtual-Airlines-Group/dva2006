@@ -57,7 +57,7 @@ public class GetSchedule extends DAO {
 		}
 			
 		// Build the query string
-		StringBuffer buf = new StringBuffer("SELECT * FROM SCHEDULE WHERE ");
+		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
 		for (Iterator i = conditions.iterator(); i.hasNext(); ) {
 			buf.append('(');
 			buf.append((String) i.next());
@@ -218,7 +218,7 @@ public class GetSchedule extends DAO {
 	public Collection getConnectingAirports(Airport a, boolean from) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT DISTINCT A.* FROM common.AIRPORTS A, SCHEDULE S WHERE ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.* FROM common.AIRPORTS A, SCHEDULE S WHERE ");
 	   if (from) {
 	      sqlBuf.append("(A.IATA=S.AIRPORT_A) AND (S.AIRPORT_D=?) ORDER BY A.NAME");
 	   } else {
