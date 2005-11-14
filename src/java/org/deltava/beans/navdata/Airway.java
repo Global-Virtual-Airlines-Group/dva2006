@@ -126,7 +126,7 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 * @return a space-delimited list of waypoint codes
 	 */
 	public String getRoute() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
 			buf.append((String) i.next());
 			if (i.hasNext())

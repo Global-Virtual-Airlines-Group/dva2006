@@ -37,7 +37,7 @@ public class MessageFormatTag extends TagSupport {
 	 * Helper method to generate an emotion IMG tag.
 	 */
 	private String emoticonURL(String name) {
-		StringBuffer imgbuf = new StringBuffer("<img src=\"");
+		StringBuilder imgbuf = new StringBuilder("<img src=\"");
 		imgbuf.append(SystemData.get("path.img"));
 		imgbuf.append("/cooler/emoticons/");
 		imgbuf.append(name);

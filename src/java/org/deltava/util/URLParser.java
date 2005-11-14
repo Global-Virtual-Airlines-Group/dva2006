@@ -44,7 +44,7 @@ public class URLParser {
      * @return the filename + extension
      */
     public String getFileName() {
-        StringBuffer buf = new StringBuffer(getName());
+        StringBuilder buf = new StringBuilder(getName());
         buf.append('.');
         buf.append(_ext);
         return buf.toString();

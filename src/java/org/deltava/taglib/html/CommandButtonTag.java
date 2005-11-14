@@ -115,7 +115,7 @@ public class CommandButtonTag extends ButtonTag {
          throw new IllegalStateException("common.js not included in request");
 
       // Render the entire command string
-      StringBuffer url = new StringBuffer(_cmdName);
+      StringBuilder url = new StringBuilder(_cmdName);
       if (_id != null) {
          url.append("?id=");
          url.append(_id);

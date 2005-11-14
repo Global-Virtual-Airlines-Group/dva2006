@@ -56,7 +56,7 @@ public class AirportLocation extends NavigationDataBean {
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuffer buf = new StringBuffer(getHTMLTitle());
+      StringBuilder buf = new StringBuilder(getHTMLTitle());
       buf.append(getHTMLPosition());
       buf.append("Altitude: ");
       buf.append(StringUtils.format(_altitude, "#,##0"));

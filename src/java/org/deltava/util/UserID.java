@@ -23,8 +23,8 @@ public class UserID {
         if (code == null)
             return;
 
-        StringBuffer pBuf = new StringBuffer();
-        StringBuffer cBuf = new StringBuffer();
+        StringBuilder pBuf = new StringBuilder();
+        StringBuilder cBuf = new StringBuilder();
         for (int x = 0; x < code.length(); x++) {
             char c = Character.toUpperCase(code.charAt(x));
             if ("0123456789".indexOf(c) != -1) {

@@ -385,7 +385,7 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 	 * @return HTML text
 	 */
 	public String getInfoBox() {
-		StringBuffer buf = new StringBuffer("<b>");
+		StringBuilder buf = new StringBuilder("<b>");
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));

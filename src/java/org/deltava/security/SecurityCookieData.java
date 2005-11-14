@@ -122,7 +122,7 @@ public class SecurityCookieData {
 	 * @return password converted to hex bytes
 	 */
 	String getPasswordBytes() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int x = 0; x < _pwd.length(); x++)
 			buf.append(Integer.toHexString(_pwd.charAt(x)));
 		

@@ -113,7 +113,7 @@ public class GetIssue extends DAO {
 	public List search(String searchStr, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
 				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
 				+ "WHERE (I.DESCRIPTION LIKE ?)");
 		if (includeComments)

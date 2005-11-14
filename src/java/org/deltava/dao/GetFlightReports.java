@@ -68,7 +68,7 @@ public class GetFlightReports extends DAO {
 	public ACARSFlightReport getACARS(String dbName, int acarsID) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".PILOTS P, ");
 	   sqlBuf.append(dbName.toLowerCase());
@@ -182,7 +182,7 @@ public class GetFlightReports extends DAO {
 	public List getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
-		StringBuffer buf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
+		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
 				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?)");
 		if (orderBy != null) {
 			buf.append(" ORDER BY PR.");
@@ -241,7 +241,7 @@ public class GetFlightReports extends DAO {
 	      dbName = dbName.substring(0, dbName.indexOf('.'));
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append('.');
 		sqlBuf.append("PIREPS F WHERE ((F.ATTR & ?) != 0) AND (F.STATUS=?) AND F.PILOT_ID IN (");
@@ -309,7 +309,7 @@ public class GetFlightReports extends DAO {
 	public List getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
 
 		// Build the prepared statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName.toLowerCase());
@@ -455,7 +455,7 @@ public class GetFlightReports extends DAO {
 			return;
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
 		for (Iterator i = pireps.iterator(); i.hasNext(); ) {
 			FlightReport fr = (FlightReport) i.next();
 			sqlBuf.append(String.valueOf(fr.getID()));

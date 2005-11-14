@@ -42,7 +42,7 @@ public class FormTag extends ElementTag {
         pageContext.setAttribute("thisForm", this);
         
         // Set the ACTION URL
-        StringBuffer url = new StringBuffer(_action);
+        StringBuilder url = new StringBuilder(_action);
         try {
             if (_id != null) {
                 url.append("?id=");

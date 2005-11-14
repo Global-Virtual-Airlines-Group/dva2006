@@ -39,7 +39,7 @@ public class FleetGalleryCommand extends AbstractCommand {
         }
         
         // Build the description array
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator i = results.iterator(); i.hasNext(); ) {
             Image img = (Image) i.next();
             buf.append(StringUtils.stripInlineHTML(img.getDescription()));

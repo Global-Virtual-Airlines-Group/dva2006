@@ -92,7 +92,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		log.debug("Raw set size = " + ids.size());
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(tableName);
 		sqlBuf.append(" A WHERE (A.ID IN (");
 		int querySize = 0;
@@ -189,7 +189,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public List getByStatus(int status, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM APPLICANTS WHERE (STATUS=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM APPLICANTS WHERE (STATUS=?)");
 		if (!StringUtils.isEmpty(orderBy)) {
 			sqlBuf.append(" ORDER BY ");
 			sqlBuf.append(orderBy);
@@ -232,7 +232,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Collection checkUnique(Person p, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT ID FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
 	         + "(EMAIL=?))");
@@ -272,7 +272,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
    public Collection checkSoundex(Person usr, String dbName) throws DAOException {
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
+      StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
       		+ "AS SX FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "

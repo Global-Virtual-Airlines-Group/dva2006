@@ -34,7 +34,7 @@ public class SetAssignment extends DAO {
    public void write(AssignmentInfo a, String db) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+      StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
       sqlBuf.append(db.toLowerCase());
       sqlBuf.append(".ASSIGNMENTS (STATUS, EVENT_ID, PILOT_ID, ASSIGNED_ON, EQTYPE, REPEATS, RANDOM, "
     		  + "PURGEABLE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
@@ -83,7 +83,7 @@ public class SetAssignment extends DAO {
    public void assign(AssignmentInfo a, int pilotID, String db) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("UPDATE ");
+      StringBuilder sqlBuf = new StringBuilder("UPDATE ");
       sqlBuf.append(db.toLowerCase());
       sqlBuf.append(".ASSIGNMENTS SET ASSIGNED_ON=NOW(), STATUS=?, PILOT_ID=? WHERE (ID=?)");
 
@@ -104,7 +104,7 @@ public class SetAssignment extends DAO {
    private void writeLegs(int assignID, Collection legs, String db) throws SQLException {
 
       // Prepare the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+      StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
       sqlBuf.append(db.toLowerCase());
       sqlBuf.append(".ASSIGNLEGS (ID, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A) VALUES (?, ?, ?, ?, ?, ?)");
       prepareStatement(sqlBuf.toString());

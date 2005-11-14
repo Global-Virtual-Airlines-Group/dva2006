@@ -77,7 +77,7 @@ public abstract class ElementTag extends TagSupport {
      * @return the element's opening tag 
      */
     protected String openHTML(boolean closeTag) {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         
         // Start with the element name
         buf.append('<');
@@ -120,7 +120,7 @@ public abstract class ElementTag extends TagSupport {
      * @return the element's closing tag
      */
     protected String closeHTML() {
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         buf.append("</");
         buf.append(_name);
         buf.append('>');

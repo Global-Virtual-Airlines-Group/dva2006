@@ -43,7 +43,7 @@ public class ApacheLogParser implements LogParser {
             return nextToken();
          
          _pos++;
-         StringBuffer buf = new StringBuffer();
+         StringBuilder buf = new StringBuilder();
          while ((_pos < _entry.length()) && (_entry.charAt(_pos) != ']')) {
             buf.append(_entry.charAt(_pos));
             _pos++;
@@ -62,7 +62,7 @@ public class ApacheLogParser implements LogParser {
          if (isQuote)
             _pos++;
          
-         StringBuffer buf = new StringBuffer();
+         StringBuilder buf = new StringBuilder();
          while ((_pos < _entry.length()) && (_entry.charAt(_pos) != ((isQuote) ? '\"' : ' '))) {
             buf.append(_entry.charAt(_pos));
             _pos++;

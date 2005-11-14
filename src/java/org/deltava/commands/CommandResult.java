@@ -178,7 +178,7 @@ public class CommandResult implements java.io.Serializable {
 	 * @param id the optional ID
 	 */
 	public void setURL(String cmdName, String opName, String id) {
-		StringBuffer buf = new StringBuffer("/");
+		StringBuilder buf = new StringBuilder("/");
 		buf.append(cmdName.toLowerCase());
 		buf.append(".do");
 		

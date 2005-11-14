@@ -134,7 +134,7 @@ public class GetAssignment extends DAO {
 	public List getByEquipmentType(String eqType, int status) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?)");
 		if (status != -1)
 			sqlBuf.append(" AND (STATUS=?)");
 		

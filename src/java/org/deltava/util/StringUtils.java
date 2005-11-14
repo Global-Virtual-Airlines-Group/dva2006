@@ -38,7 +38,7 @@ public final class StringUtils {
     * @throws NullPointerException if the string is null
     */
    public static String properCase(String s) {
-      StringBuffer buf = new StringBuffer(s.length());
+      StringBuilder buf = new StringBuilder(s.length());
       buf.append(Character.toUpperCase(s.charAt(0))); // Convert first character to
       // uppercase always
       for (int x = 1; x < s.length(); x++) {
@@ -61,7 +61,7 @@ public final class StringUtils {
    public static String stripInlineHTML(String s) {
       if (s == null) return null;
 
-      StringBuffer buf = new StringBuffer(s.length());
+      StringBuilder buf = new StringBuilder(s.length());
       for (int x = 0; x < s.length(); x++) {
          char c = s.charAt(x);
          if (c == '<') {
@@ -94,7 +94,7 @@ public final class StringUtils {
     * @throws NullPointerException if rawString is null
     */
    public static String escapeSlashes(String rawString) {
-      StringBuffer buf = new StringBuffer(rawString);
+      StringBuilder buf = new StringBuilder(rawString);
       for (int x = 0; x < buf.length(); x++) {
          if (buf.charAt(x) == '/') {
             buf.insert(x, '\\');
@@ -115,7 +115,7 @@ public final class StringUtils {
     * @return the delimited value stirng
     */
    public static String listConcat(Collection values, String delim) {
-      StringBuffer buf = new StringBuffer(48);
+      StringBuilder buf = new StringBuilder(48);
       for (Iterator i = values.iterator(); i.hasNext();) {
          buf.append(String.valueOf(i.next()));
          if (i.hasNext()) buf.append(delim);
@@ -209,7 +209,7 @@ public final class StringUtils {
     * @see GeoLocation#LONGITUDE
     */
    public static String format(GeoLocation loc, boolean asHTML, int formatMask) {
-      StringBuffer buf = new StringBuffer(24);
+      StringBuilder buf = new StringBuilder(24);
 
       // Format the latitude
       if ((formatMask & GeoLocation.LATITUDE) != 0) {
@@ -283,7 +283,7 @@ public final class StringUtils {
       if (s == null)
          return null;
       
-      StringBuffer buf = new StringBuffer(s.length());
+      StringBuilder buf = new StringBuilder(s.length());
       for (int x = 0; x < s.length(); x++) {
          char c = s.charAt(x);
          if (c != ',')

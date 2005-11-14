@@ -100,7 +100,7 @@ public class SetNews extends DAO {
    public void delete(int id, boolean isNOTAM) throws DAOException {
       
       // Build SQL statement
-      StringBuffer sqlBuf = new StringBuffer("DELETE FROM ");
+      StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
       sqlBuf.append(isNOTAM ? "NOTAMS" : "NEWS");
       sqlBuf.append(" WHERE (ID=?)");
       

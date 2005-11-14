@@ -567,8 +567,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
         if (code == null)
             return;
 
-        StringBuffer pBuf = new StringBuffer();
-        StringBuffer cBuf = new StringBuffer();
+        StringBuilder pBuf = new StringBuilder();
+        StringBuilder cBuf = new StringBuilder();
         for (int x = 0; x < code.length(); x++) {
             char c = Character.toUpperCase(code.charAt(x));
             if (Character.isDigit(c)) {

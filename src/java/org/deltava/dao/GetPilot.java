@@ -100,7 +100,7 @@ public class GetPilot extends PilotReadDAO {
 	public Pilot getPilotByCode(int pilotCode, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
@@ -143,7 +143,7 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public List getActivePilots(String orderBy) throws DAOException {
 
-		StringBuffer sql = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON "
 				+ "((F.STATUS=?) AND (P.ID=F.PILOT_ID)) WHERE (P.STATUS=?) AND (P.PILOT_ID > 0) "
 				+ "GROUP BY P.ID ORDER BY ");
@@ -294,7 +294,7 @@ public class GetPilot extends PilotReadDAO {
 	public List search(String fName, String lName, String eMail) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) WHERE ");
 
 		// Add parameters if they are non-null

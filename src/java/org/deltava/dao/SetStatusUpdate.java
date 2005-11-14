@@ -43,7 +43,7 @@ public class SetStatusUpdate extends DAO {
 	public void write(String dbName, StatusUpdate update) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+	   StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
 	   

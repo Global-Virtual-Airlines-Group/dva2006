@@ -67,7 +67,7 @@ public class GeoUtils {
 	 * @return the formatted location string
 	 */
 	public static String format2D(GeoLocation loc) {
-		StringBuffer buf = new StringBuffer(StringUtils.format(loc.getLongitude(), "##0.00000"));
+		StringBuilder buf = new StringBuilder(StringUtils.format(loc.getLongitude(), "##0.00000"));
 		buf.append(',');
 		buf.append(StringUtils.format(loc.getLatitude(), "#0.00000"));
 		return buf.toString();
@@ -81,7 +81,7 @@ public class GeoUtils {
 	 * @return the formatted location string
 	 */
 	public static String format3D(GeoLocation loc, int altitude) {
-		StringBuffer buf = new StringBuffer(format2D(loc));
+		StringBuilder buf = new StringBuilder(format2D(loc));
 		buf.append(',');
 		buf.append(StringUtils.format(0.3048d * altitude, "#####0"));
 		return buf.toString();
@@ -94,7 +94,7 @@ public class GeoUtils {
 	 * @return the formatted location string
 	 */
 	public static String format3D(GeospaceLocation loc) {
-		StringBuffer buf = new StringBuffer(format2D(loc));
+		StringBuilder buf = new StringBuilder(format2D(loc));
 		buf.append(',');
 		buf.append(StringUtils.format(loc.getAltitude() * 0.3048, "#####0"));
 		return buf.toString();

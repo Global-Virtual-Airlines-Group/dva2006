@@ -184,7 +184,7 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
     * @see MapEntry#getInfoBox()
     */
    protected String getHTMLTitle() {
-      StringBuffer buf = new StringBuffer("<b>");
+      StringBuilder buf = new StringBuilder("<b>");
       buf.append(getCode());
       buf.append("</b> (");
       buf.append(getTypeName());
@@ -198,7 +198,7 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
     * @see MapEntry#getInfoBox()
     */
    protected String getHTMLPosition() {
-      StringBuffer buf = new StringBuffer("Latitude: ");
+      StringBuilder buf = new StringBuilder("Latitude: ");
       buf.append(StringUtils.format(_gp, true, GeoLocation.LATITUDE));
       buf.append("<br />Longitude: ");
       buf.append(StringUtils.format(_gp, true, GeoLocation.LONGITUDE));

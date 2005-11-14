@@ -54,7 +54,7 @@ public class PilotBoardCommand extends AbstractCommand {
       }
       
       public String getInfoBox() {
-         StringBuffer buf = new StringBuffer("<span class=\"small bld\">");
+         StringBuilder buf = new StringBuilder("<span class=\"small bld\">");
          buf.append(SystemData.get("airline.name"));
          buf.append("</span><span class=\"small\"><br /><br />Position: ");
          buf.append(StringUtils.format(_gPos, true, GeoLocation.ALL));

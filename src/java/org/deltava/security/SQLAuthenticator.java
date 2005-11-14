@@ -98,7 +98,7 @@ public class SQLAuthenticator implements Authenticator {
 		log.debug("Updating password for " + dN + " in Directory");
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("REPLACE INTO AUTH (USER, PWD) VALUES (?, ");
+		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO AUTH (USER, PWD) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
 		sqlBuf.append("(?))");
 		
@@ -152,7 +152,7 @@ public class SQLAuthenticator implements Authenticator {
 		log.debug("Adding user " + dN + " to Directory");
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("INSERT INTO AUTH (USER, PWD, ALIAS) VALUES (?, ");
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO AUTH (USER, PWD, ALIAS) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
 		sqlBuf.append("(?), ?)");
 

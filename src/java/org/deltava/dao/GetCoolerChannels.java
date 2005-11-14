@@ -105,7 +105,7 @@ public class GetCoolerChannels extends DAO {
     public Collection getChannels(AirlineInformation al, boolean showHidden) throws DAOException {
         
        // Build the SQL statement optionally showing locked threads
-       StringBuffer sqlBuf = new StringBuffer("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
+       StringBuilder sqlBuf = new StringBuilder("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
        if (!showHidden) sqlBuf.append("(T.HIDDEN=?) AND ");
        sqlBuf.append("(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), "
              + "COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T "
@@ -299,7 +299,7 @@ public class GetCoolerChannels extends DAO {
             return Collections.EMPTY_MAP;
         
         // Init the prepared statement
-        StringBuffer sqlBuf = new StringBuffer("SELECT T.* FROM common.COOLER_THREADS T WHERE (T.ID IN (");
+        StringBuilder sqlBuf = new StringBuilder("SELECT T.* FROM common.COOLER_THREADS T WHERE (T.ID IN (");
         for (Iterator i = idSet.iterator(); i.hasNext(); ) {
             Integer id = (Integer) i.next();
             sqlBuf.append(id.toString());

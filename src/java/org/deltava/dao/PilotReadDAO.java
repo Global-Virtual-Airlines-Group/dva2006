@@ -82,7 +82,7 @@ abstract class PilotReadDAO extends PilotDAO {
    public final Pilot getByName(String fullName, String dbName) throws DAOException {
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
             + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".PILOTS P LEFT JOIN ");
@@ -158,7 +158,7 @@ abstract class PilotReadDAO extends PilotDAO {
       log.debug("Raw set size = " + ids.size());
 
       // Init the prepared statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
             + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
       sqlBuf.append(tableName);
       sqlBuf.append(" P LEFT JOIN ");
@@ -343,7 +343,7 @@ abstract class PilotReadDAO extends PilotDAO {
    protected final void loadRoles(Map pilots, String dbName) throws SQLException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT ID, ROLE FROM ");
+      StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".ROLES WHERE (ID IN (");
       for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
@@ -380,7 +380,7 @@ abstract class PilotReadDAO extends PilotDAO {
    protected final void loadRatings(Map pilots, String dbName) throws SQLException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT ID, RATING FROM ");
+      StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".RATINGS WHERE (ID IN (");
       for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {

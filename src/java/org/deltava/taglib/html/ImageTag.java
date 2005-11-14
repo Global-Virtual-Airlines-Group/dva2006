@@ -75,7 +75,7 @@ public class ImageTag extends ElementTag {
      * @param url the location of the image
      */
     public void setSrc(String url) {
-        StringBuffer buf = new StringBuffer(SystemData.get("path.img"));
+        StringBuilder buf = new StringBuilder(SystemData.get("path.img"));
         buf.append('/');
         buf.append(url);
         _attrs.put("src", buf.toString());

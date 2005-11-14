@@ -159,7 +159,7 @@ public class GetNavRoute extends GetNavData {
 	public Map getAirways(Collection names) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer buf = new StringBuffer("SELECT * FROM common.AIRWAYS WHERE (NAME IN (");
+		StringBuilder buf = new StringBuilder("SELECT * FROM common.AIRWAYS WHERE (NAME IN (");
 		for (Iterator i = names.iterator(); i.hasNext();) {
 			String code = (String) i.next();
 			buf.append(code.toUpperCase());

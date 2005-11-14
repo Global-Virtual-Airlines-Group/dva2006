@@ -62,7 +62,7 @@ public class GetSystemLog extends DAO {
 	public List getAll() throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(_logName);
 		sqlBuf.append(" WHERE (PRIORITY >= (? * 10000))");
 		if (_startDate != null)
@@ -94,7 +94,7 @@ public class GetSystemLog extends DAO {
 	public List getByType(String className) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(_logName);
 		sqlBuf.append(" WHERE (LOGGER LIKE ?) AND (PRIORITY >= ?)");
 		if (_startDate != null)

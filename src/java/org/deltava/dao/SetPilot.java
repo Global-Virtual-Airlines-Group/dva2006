@@ -94,7 +94,7 @@ public class SetPilot extends PilotWriteDAO {
 	public void write(Pilot p, String db) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("UPDATE ");
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(db.toLowerCase());
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "

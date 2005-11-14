@@ -80,7 +80,7 @@ public class Airline implements Serializable, ComboAlias, Comparable, Cacheable 
 	}
 
 	public String getComboName() {
-		StringBuffer buf = new StringBuffer(getCode());
+		StringBuilder buf = new StringBuilder(getCode());
 		buf.append(" - ");
 		buf.append(getName());
 		return buf.toString();

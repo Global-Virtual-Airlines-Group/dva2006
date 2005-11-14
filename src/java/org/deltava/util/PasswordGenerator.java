@@ -22,7 +22,7 @@ public final class PasswordGenerator {
 	 * @return the password
 	 */
 	public static String generate(int pwdLength) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		
 		// Seed the random number generator
 		Random rnd = null;

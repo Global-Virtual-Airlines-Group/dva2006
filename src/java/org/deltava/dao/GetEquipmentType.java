@@ -76,7 +76,7 @@ public class GetEquipmentType extends DAO {
     public Collection getActive(String dbName) throws DAOException {
        
        // Build the SQL statement
-       StringBuffer sqlBuf = new StringBuffer("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+       StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
              + "P.EMAIL, R.RATING_TYPE, R.RATED_EQ FROM ");
        sqlBuf.append(dbName.toLowerCase());
        sqlBuf.append(".EQTYPES EQ, ");
@@ -131,7 +131,7 @@ public class GetEquipmentType extends DAO {
     public Collection getPrimaryTypes(String dbName, String eqType) throws DAOException {
        
        // Build the SQL statement
-       StringBuffer sqlBuf = new StringBuffer("SELECT EQTYPE FROM ");
+       StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
        sqlBuf.append(dbName.toLowerCase());
        sqlBuf.append(".EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?)");
        

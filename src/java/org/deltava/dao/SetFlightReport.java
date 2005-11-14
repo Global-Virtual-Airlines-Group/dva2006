@@ -114,7 +114,7 @@ public class SetFlightReport extends DAO {
    private void insert(FlightReport fr, String db) throws SQLException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("INSERT INTO ");
+      StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
       sqlBuf.append(db.toLowerCase());
       sqlBuf.append(".PIREPS (PILOT_ID, RANK, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, "
             + "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, REMARKS, SUBMITTED, EVENT_ID, ASSIGN_ID) VALUES "
@@ -148,7 +148,7 @@ public class SetFlightReport extends DAO {
    private void update(FlightReport fr, String db) throws SQLException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("UPDATE ");
+      StringBuilder sqlBuf = new StringBuilder("UPDATE ");
       sqlBuf.append(db.toLowerCase());
       sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
             + "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, REMARKS=?, DISPOSAL_ID=?, "
@@ -256,7 +256,7 @@ public class SetFlightReport extends DAO {
    public void writeACARS(ACARSFlightReport afr, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("REPLACE INTO ");
+	   StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 			   + "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "

@@ -124,7 +124,7 @@ public class DateTime implements java.io.Serializable, Comparable {
 	 * @see TZInfo#getAbbr()
 	 */
 	public String toString() {
-		StringBuffer buf = new StringBuffer(_df.format(_dt.getTime()));
+		StringBuilder buf = new StringBuilder(_df.format(_dt.getTime()));
 		if ((_showZone) && (_tz.getAbbr() != null)) {
 			buf.append(' ');
 			buf.append(_tz.getAbbr());

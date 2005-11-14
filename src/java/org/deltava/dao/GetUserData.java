@@ -162,7 +162,7 @@ public class GetUserData extends DAO {
    public UserDataMap get(Collection ids) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
+      StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
             + "common.AIRLINEINFO AI WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
 
       // Strip out entries already in the cache

@@ -35,7 +35,7 @@ public class UserProfileTag extends ElementTag {
 		
 		// Determine the URL
 		boolean isApplicant = "APPLICANTS".equals(ud.getTable());
-		StringBuffer urlBuf = new StringBuffer("http://www.");
+		StringBuilder urlBuf = new StringBuilder("http://www.");
 		urlBuf.append(ud.getDomain());
 		urlBuf.append('/');
 		urlBuf.append(isApplicant ? "applicant.do?id=" : "profile.do?id=");

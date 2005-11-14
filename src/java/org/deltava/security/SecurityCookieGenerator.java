@@ -62,7 +62,7 @@ public final class SecurityCookieGenerator {
 		}
 		
 		// Rebuild the message token
-		StringBuffer buf = new StringBuffer("uid:");
+		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(cookieData.get("uid"));
 		buf.append("@pwd:");
 		buf.append(cookieData.get("pwd"));
@@ -91,7 +91,7 @@ public final class SecurityCookieGenerator {
 			
 			// Convert the hex password into a String
 			String rawPwd = (String) cookieData.get("pwd");
-			StringBuffer pwdBuf = new StringBuffer();
+			StringBuilder pwdBuf = new StringBuilder();
 			for (int x = 0; x < rawPwd.length(); x += 2) {
 				int hexByte = Integer.parseInt(rawPwd.substring(x, x+ 2), 16);
 				pwdBuf.append((char) hexByte);
@@ -114,7 +114,7 @@ public final class SecurityCookieGenerator {
 	public static Cookie getCookie(String cookieName, SecurityCookieData scData) {
 		
 		// Build the cookie token
-		StringBuffer buf = new StringBuffer("uid:");
+		StringBuilder buf = new StringBuilder("uid:");
 		buf.append(scData.getUserID());
 		buf.append("@pwd:"); // Convert password bytes to HEX to allow commas and colons
 		buf.append(scData.getPasswordBytes());
