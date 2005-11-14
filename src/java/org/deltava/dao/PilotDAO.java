@@ -36,7 +36,6 @@ abstract class PilotDAO extends DAO {
 	static void invalidate(int id) {
 		Integer key = new Integer(id);
 		_cache.remove(key);
-		assert !_cache.contains(key) : "Cache not cleared";
 	}
 	
 	/**
@@ -46,6 +45,5 @@ abstract class PilotDAO extends DAO {
 	 */
 	static void invalidate(Cacheable obj) {
 		_cache.remove(obj.cacheKey());
-		assert !_cache.contains(obj.cacheKey()) : "Cache not cleared";
 	}
 }
