@@ -127,25 +127,19 @@ public class GetSchedule extends DAO {
 	   
 	   // Init the prepared statement
 	   try {
-	      prepareStatement("SELECT FLIGHT_TIME FROM SCHEDULE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?)");
+	      prepareStatement("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM SCHEDULE WHERE (AIRPORT_D=?) "
+	    		  + "AND (AIRPORT_A=?)");
 	      _ps.setString(1, airportD.toUpperCase());
 	      _ps.setString(2, airportA.toUpperCase());
 	      
-	      // Set counters
-	      int flights = 0;
-	      int totalTime = 0;
-	      
 	      // Execute the Query
 	      ResultSet rs = _ps.executeQuery();
-	      while (rs.next()) {
-	         flights++;
-	         totalTime += rs.getInt(1);
-	      }
+	      int result = rs.next() ? rs.getInt(1) : 0;
 	      
 	      // Clean up and return
 	      rs.close();
 	      _ps.close();
-	      return (flights == 0) ? 0 : (totalTime / flights);
+	      return result;
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
