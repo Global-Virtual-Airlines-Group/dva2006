@@ -269,7 +269,7 @@ class ConnectionPoolEntry implements Comparable {
     * @return the connection ID
     */
    public final String toString() {
-      StringBuffer buf = new StringBuffer("#");
+      StringBuilder buf = new StringBuilder("#");
       if (isSystemConnection())
          buf.append("SYS");
 

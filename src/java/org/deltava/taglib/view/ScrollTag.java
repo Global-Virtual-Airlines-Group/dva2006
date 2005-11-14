@@ -54,7 +54,7 @@ public abstract class ScrollTag extends LinkTag {
      * @return the Query String
      */
     protected String buildParameters(Map params) {
-        StringBuffer url = new StringBuffer();
+        StringBuilder url = new StringBuilder();
         
         // Loop through the parameters
         for (Iterator i = params.keySet().iterator(); i.hasNext(); ) {

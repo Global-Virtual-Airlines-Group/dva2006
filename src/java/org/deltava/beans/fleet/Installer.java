@@ -45,7 +45,7 @@ public class Installer extends FleetEntry implements ComboAlias {
      * @return a version string
      */
     public String getVersion() {
-        StringBuffer buf = new StringBuffer(String.valueOf(getMajorVersion()));
+        StringBuilder buf = new StringBuilder(String.valueOf(getMajorVersion()));
         buf.append('.');
         buf.append(String.valueOf(getMinorVersion()));
         buf.append('.');
@@ -58,7 +58,7 @@ public class Installer extends FleetEntry implements ComboAlias {
      * @return a version code
      */
     public String getVersionCode() {
-        StringBuffer buf = new StringBuffer(String.valueOf(getMajorVersion()));
+        StringBuilder buf = new StringBuilder(String.valueOf(getMajorVersion()));
         buf.append(String.valueOf(getMinorVersion()));
         buf.append(String.valueOf(getSubVersion()));
         return buf.toString();

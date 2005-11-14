@@ -50,7 +50,7 @@ public class VOR extends NavigationDataBean {
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuffer buf = new StringBuffer(getHTMLTitle());
+      StringBuilder buf = new StringBuilder(getHTMLTitle());
       buf.append("Frequency: ");
       buf.append(_freq);
       buf.append("<br />");

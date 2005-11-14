@@ -98,7 +98,7 @@ public class Runway extends NavigationDataBean {
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuffer buf = new StringBuffer(getHTMLTitle());
+      StringBuilder buf = new StringBuilder(getHTMLTitle());
       buf.append("Heading: ");
       buf.append(StringUtils.format(_heading, "000"));
       buf.append("<br />Length:");

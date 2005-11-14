@@ -32,7 +32,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List getGreasedLandings(int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P LEFT JOIN "
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P LEFT JOIN "
 				+ "PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.STATUS=?) "
 				+ "AND (APR.LANDING_VSPEED < 0)");
 		
@@ -63,7 +63,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	public List getStaffReports(int days) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, "
+	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, "
 	         + "STAFF S LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
 	         + "WHERE (P.ID=S.ID) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 	   

@@ -43,7 +43,7 @@ public class GetGallery extends DAO {
 	public Image getImageData(int id, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM ");
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".GALLERY WHERE (ID=?)");
 		
@@ -109,7 +109,7 @@ public class GetGallery extends DAO {
 	public List getPictureGallery(String orderBy, String month) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, " +
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, " +
 						"I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
 						"(I.ID=V.IMG_ID) ");
 

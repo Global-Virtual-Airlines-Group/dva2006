@@ -129,7 +129,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 		int ofs = _tz.getRawOffset() / 60000;
 
 		// Start with the name and add the abbreviation if any
-		StringBuffer msg = new StringBuffer(getName());
+		StringBuilder msg = new StringBuilder(getName());
 		if (_abbr != null) {
 			msg.append(" (");
 			msg.append(_abbr);

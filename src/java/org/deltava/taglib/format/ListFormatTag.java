@@ -47,7 +47,7 @@ public class ListFormatTag extends TagSupport {
     public int doEndTag() throws JspException {
         
         // Generate the output string
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         for (Iterator i = _values.iterator(); i.hasNext(); ) {
             Object obj = i.next();
             if (obj instanceof ComboAlias) {

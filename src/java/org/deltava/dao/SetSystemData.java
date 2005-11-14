@@ -84,7 +84,7 @@ public class SetSystemData extends DAO {
 	public int purge(String tableName, String colName, int days) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("DELETE FROM SYS_");
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM SYS_");
 		sqlBuf.append(tableName.toUpperCase());
 		sqlBuf.append(" WHERE (");
 		sqlBuf.append(colName.toUpperCase());

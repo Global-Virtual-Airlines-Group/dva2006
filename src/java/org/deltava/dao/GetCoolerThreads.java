@@ -33,7 +33,7 @@ public class GetCoolerThreads extends DAO {
    public List getByChannel(String channelName, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
     		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.CHANNEL=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
@@ -58,7 +58,7 @@ public class GetCoolerThreads extends DAO {
    public List getByAuthor(int userID, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
     		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.AUTHOR=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
@@ -100,7 +100,7 @@ public class GetCoolerThreads extends DAO {
    public List getAll(boolean showImgs) throws DAOException {
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
     		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
       if (!showImgs)
          sqlBuf.append(" WHERE (T.IMAGE_ID=0)");
@@ -127,7 +127,7 @@ public class GetCoolerThreads extends DAO {
          return getAll(showImgs);
 
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+      StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
     		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
       if (!showImgs)
          sqlBuf.append("WHERE (T.IMAGE_ID=0) ");

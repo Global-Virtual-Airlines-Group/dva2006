@@ -89,7 +89,7 @@ public class ACARSEarthService extends WebDataService {
 		lse.addContent(XMLUtils.createElement("tessellate", "1"));
 		
 		// Format all of the coordinates
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator i = routeData.iterator(); i.hasNext(); ) {
 			RouteEntry entry = (RouteEntry) i.next();
 			buf.append(GeoUtils.format3D(entry, entry.getRadarAltitude()));

@@ -45,7 +45,7 @@ public class PageUpTag extends ScrollTag {
             params.put(ViewContext.SORTBY, new String[] { vc.getSortType() } );        
         
         // Get the view command name
-        StringBuffer url = new StringBuffer(_viewTag.getCmd());
+        StringBuilder url = new StringBuilder(_viewTag.getCmd());
         url.append(".do?");
         
         // Append the query parameters

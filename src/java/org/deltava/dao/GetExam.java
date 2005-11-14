@@ -123,7 +123,7 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(String dbName, int pilotID, String eqType) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT * FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?) AND (STATUS=?)");
 	   

@@ -125,7 +125,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @return the Person's first and last names.
      */
     public String getName() {
-        StringBuffer buf = new StringBuffer(_firstName);
+        StringBuilder buf = new StringBuilder(_firstName);
         buf.append(' ');
         buf.append(_lastName);
         return buf.toString();

@@ -125,7 +125,7 @@ public class PilotSearchCommand extends AbstractCommand {
     */
    private int getPilotCode(CharSequence pcValue) {
 
-      StringBuffer buf = new StringBuffer();
+      StringBuilder buf = new StringBuilder();
       for (int x = 0; x < pcValue.length(); x++) {
          char c = pcValue.charAt(x);
          if (Character.isDigit(c)) buf.append(c);

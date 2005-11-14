@@ -172,7 +172,7 @@ public class GetStatistics extends DAO {
 	public List getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
 
 		// Generate SQL statement
-		StringBuffer sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
+		StringBuilder sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
 		sqlBuf.append(orderBy);
 		if (descSort) sqlBuf.append(" DESC");
 
@@ -206,7 +206,7 @@ public class GetStatistics extends DAO {
 	public List getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
 	   
 	   // Generate SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT ");
 	   sqlBuf.append(groupBy);
 	   sqlBuf.append("AS LBL, COUNT(DISTINCT CP.POST_ID) AS PC, COUNT(DISTINCT ");
 	   sqlBuf.append(distinctBy);
@@ -274,8 +274,8 @@ public class GetStatistics extends DAO {
 	/**
 	 * Private helper method to return SQL statement that doesn't involve joins on the <i>PILOTS </i> table.
 	 */
-	private StringBuffer getSQL(String groupBy) {
-		StringBuffer buf = new StringBuffer("SELECT ");
+	private StringBuilder getSQL(String groupBy) {
+		StringBuilder buf = new StringBuilder("SELECT ");
 		buf.append(groupBy);
 		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) ");
 		buf.append("AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES FROM PIREPS F WHERE ");
@@ -286,8 +286,8 @@ public class GetStatistics extends DAO {
 	/**
 	 * Private helper method to return SQL statement that involves a join on the <i>PILOTS </i> table.
 	 */
-	private StringBuffer getPilotJoinSQL(String groupBy) {
-		StringBuffer buf = new StringBuffer("SELECT ");
+	private StringBuilder getPilotJoinSQL(String groupBy) {
+		StringBuilder buf = new StringBuilder("SELECT ");
 		buf.append(groupBy);
 		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ");
 		buf.append("ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) ");

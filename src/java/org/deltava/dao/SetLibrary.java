@@ -146,7 +146,7 @@ public class SetLibrary extends DAO {
 	public void delete(LibraryEntry entry) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("DELETE FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
 	   if (entry instanceof Installer) {
 	      sqlBuf.append("FLEET");
 	   } else if (entry instanceof Manual) {

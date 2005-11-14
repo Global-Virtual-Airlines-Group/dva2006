@@ -77,7 +77,7 @@ public class ScheduleExportCommand extends AbstractCommand {
             ScheduleEntry entry = (ScheduleEntry) i.next();
 
             // Convert the entry to a string
-            StringBuffer buf = new StringBuffer(entry.getAirline().getCode());
+            StringBuilder buf = new StringBuilder(entry.getAirline().getCode());
             buf.append(',');
             buf.append(StringUtils.format(entry.getFlightNumber(), "#000"));
             buf.append(',');

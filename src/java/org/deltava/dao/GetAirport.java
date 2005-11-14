@@ -188,7 +188,7 @@ public class GetAirport extends DAO {
 		Set apSet = new HashSet(airports.values());
 		
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT CODE, ALTITUDE FROM common.NAVDATA WHERE (ITEMTYPE=?) "
+		StringBuilder sqlBuf = new StringBuilder("SELECT CODE, ALTITUDE FROM common.NAVDATA WHERE (ITEMTYPE=?) "
 				+ "AND CODE IN (");
 		for (Iterator i = apSet.iterator(); i.hasNext(); ) {
 			Airport a = (Airport) i.next();

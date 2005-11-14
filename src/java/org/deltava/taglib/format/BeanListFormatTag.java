@@ -75,7 +75,7 @@ public class BeanListFormatTag extends TagSupport {
 	public int doEndTag() throws JspException {
 
 		// Get the values and append them to the list
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (Iterator i = _values.iterator(); i.hasNext(); ) {
 			Object value = getPropertyValue(i.next());
 			if (value != null) {

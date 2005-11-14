@@ -59,7 +59,7 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getSignatureImage(int id, String dbName) throws DAOException {
-    	StringBuffer sqlBuf = new StringBuffer("SELECT WC_SIG FROM ");
+    	StringBuilder sqlBuf = new StringBuilder("SELECT WC_SIG FROM ");
     	sqlBuf.append(dbName.toLowerCase());
     	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
@@ -85,7 +85,7 @@ public class GetImage extends DAO {
     public byte[] getGalleryImage(int id, String dbName) throws DAOException {
     	
     	// Build the SQL statement
-    	StringBuffer sqlBuf = new StringBuffer("SELECT IMG FROM ");
+    	StringBuilder sqlBuf = new StringBuilder("SELECT IMG FROM ");
     	sqlBuf.append(dbName.toLowerCase());
     	sqlBuf.append(".GALLERY WHERE (ID=?)");
         return execute(id, sqlBuf.toString());

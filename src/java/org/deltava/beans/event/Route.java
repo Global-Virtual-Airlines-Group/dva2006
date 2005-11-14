@@ -122,7 +122,7 @@ public class Route extends DatabaseBean implements Comparable, ComboAlias {
      * Renders this object to a String by appending the airports and codes.
      */
     public String toString() {
-    	StringBuffer buf = new StringBuffer(_airportD.getName());
+    	StringBuilder buf = new StringBuilder(_airportD.getName());
     	buf.append(" (");
     	buf.append(_airportD.getIATA());
     	buf.append(") - ");

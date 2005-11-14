@@ -207,7 +207,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	}
 
 	public String getComboName() {
-		StringBuffer buf = new StringBuffer(getName());
+		StringBuilder buf = new StringBuilder(getName());
 		buf.append(" (");
 		buf.append(getIATA());
 		buf.append(')');
@@ -277,7 +277,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuffer buf = new StringBuffer("<b>");
+      StringBuilder buf = new StringBuilder("<b>");
       buf.append(_name);
       buf.append("</b><br /><span class=\"small\"><br />IATA Code: ");
       buf.append(_iata);
@@ -315,7 +315,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * Displays the airport name and IATA code.
 	 */
 	public String toString() {
-		StringBuffer buf = new StringBuffer(_name);
+		StringBuilder buf = new StringBuilder(_name);
 		buf.append(" (");
 		buf.append(_iata);
 		buf.append(")");

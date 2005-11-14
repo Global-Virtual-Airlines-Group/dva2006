@@ -65,7 +65,7 @@ public class GetPilotNotify extends PilotReadDAO {
       }
       
       // Build the SQL statement
-      StringBuffer sqlBuf = new StringBuffer("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE "
+      StringBuilder sqlBuf = new StringBuilder("SELECT FIRSTNAME, LASTNAME, EMAIL FROM PILOTS WHERE "
             + "(STATUS=?) AND (" + fieldName + "=?) ORDER BY LASTNAME, FIRSTNAME");
       
       try {

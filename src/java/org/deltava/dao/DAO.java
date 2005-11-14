@@ -132,7 +132,7 @@ public abstract class DAO implements java.io.Serializable {
 
       // Build the SQL statement with the limits if we are doing a select
       if (sql.startsWith("SELECT")) {
-         StringBuffer buf = new StringBuffer(sql);
+         StringBuilder buf = new StringBuilder(sql);
          if (_queryMax > 0) {
             buf.append(" LIMIT ");
             buf.append(String.valueOf(_queryMax));

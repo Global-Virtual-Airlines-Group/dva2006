@@ -136,7 +136,7 @@ public class GetInstallerSystemInfo extends DAO {
 	public List getStatistics(String groupBy, boolean sortLabel) throws DAOException {
 
 		// Build the SQL statement
-		StringBuffer sqlBuf = new StringBuffer("SELECT ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(groupBy);
 		sqlBuf.append(" AS LABEL, COUNT(ID) AS TTL FROM common.SYSINFODATA GROUP BY ");
 		sqlBuf.append(groupBy);

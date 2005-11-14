@@ -161,7 +161,7 @@ import org.deltava.beans.testing.*;
 	   boolean showAll = "ALL".equals(examName);
 	   
 	   // Build the SQL statement
-	   StringBuffer sqlBuf = new StringBuffer("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
+	   StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
 	         + "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
 			   + "ON (Q.ID=QE.QUESTION_ID) WHERE (Q.ACTIVE=?)");
 	   
