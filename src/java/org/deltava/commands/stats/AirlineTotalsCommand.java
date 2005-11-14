@@ -64,6 +64,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     GetTableStatus dao2 = new GetTableStatus(con);
                     _tableStatus.addAll(dao2.execute("common"));
                     _tableStatus.addAll(dao2.execute("acars"));
+                    _tableStatus.addAll(dao2.execute("postfix"));
                     _tableStatus.addAll(dao2.execute(SystemData.get("airline.db").toLowerCase()));
                 } catch (DAOException de) {
                     throw new CommandException(de);
