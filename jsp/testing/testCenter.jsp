@@ -25,7 +25,8 @@ if (form.examName.selectedIndex == 0) {
 }
 
 // Check if we're sure
-return true;
+var testName = form.examName.options[form.examName.selectedIndex].text;
+return confirm('Are you sure you wish to take the ' + testName + ' Examination?');
 }
 </script>
 </head>
