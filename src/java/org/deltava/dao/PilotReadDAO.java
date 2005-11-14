@@ -171,8 +171,6 @@ abstract class PilotReadDAO extends PilotDAO {
       int querySize = 0;
       for (Iterator i = ids.iterator(); i.hasNext();) {
          Object rawID = i.next();
-         assert ((rawID instanceof Integer) || (rawID instanceof DatabaseBean)) : String.valueOf(rawID) + " "
-               + rawID.getClass().getName();
          Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 
          // Pull from the cache if at all possible; this is an evil query
