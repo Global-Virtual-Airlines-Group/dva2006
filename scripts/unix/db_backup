@@ -13,7 +13,6 @@ gzip -9 -f ldif.txt
 
 # Dump core table
 echo 'Writing mySQL configuration'
-cp /home/mysql/my.cnf .
 mysqldump -C -h mysql.deltava.org mysql | gzip -9 > mysql.sql.gz
 
 # Dump table definitions
@@ -22,8 +21,7 @@ mysqldump -C -K -d -h mysql.deltava.org common > common.sql
 mysqldump -C -K -d -h mysql.deltava.org acars > acars.sql
 mysqldump -C -K -d -h mysql.deltava.org dva > dva.sql
 mysqldump -C -K -d -h mysql.deltava.org afv > afv.sql
-tar -cf create_databases.tar *.sql
-gzip -9 -f create_databases.tar
+tar cfvz create_databases.tar.gz *.sql
 rm *.sql
 
 # Dump e-mail data
