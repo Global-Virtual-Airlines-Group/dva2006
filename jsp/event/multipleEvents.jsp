@@ -34,12 +34,11 @@ Online Event profiles to learn more about this <content:airline /> Event.</td>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="9%">DATE</td>
+ <td width="10%">DATE</td>
  <td width="25%">EVENT NAME</td>
  <td width="8%">NETWORK</td>
  <td width="8%">STATUS</td>
- <td width="25%">ARRIVING AT</td>
- <td>DEPARTING FROM</td>
+ <td>AVAILABLE ROUTES</td>
 </tr>
 
 <!-- Event View data -->
@@ -49,21 +48,15 @@ Online Event profiles to learn more about this <content:airline /> Event.</td>
  <td><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.networkName}</td>
  <td class="sec">${event.statusName}</td>
-<c:if test="${!empty event.airportA}">
- <td class="bld">${event.airportA.name} (<fmt:airport airport="${event.airportA}" />)</td>
-</c:if>
-<c:if test="${empty event.airportA}"> 
- <td class="bld">-</td>
-</c:if>
- <td><c:forEach var="airport" items="${event.airportD}">
-${airport.name} (<fmt:airport airport="${airport}" />)<br />
+ <td class="small"><c:forEach var="route" items="${event.routes}">
+${route.airportD.name} - (<fmt:airport airport="${route.airportD}" />)${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
 </view:row>
 </c:forEach>
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="6">&nbsp;</td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </el:table>
 <content:copyright />
