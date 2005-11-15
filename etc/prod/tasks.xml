@@ -3,32 +3,34 @@
 	<task id="inactivity" enabled="true">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
 		<interval>86400</interval>
+		<hours>3</hours>
 	</task>
-	
+
 	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<interval>86400</interval>
-		<hours>14</hours>
+		<hours>18</hours>
 	</task>
-	
+
 	<task id="assignpurge" enabled="true">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
 		<interval>86400</interval>
+		<hours>3</hours>
 	</task>
-	
+
 	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
 		<hours>0</hours>
 	</task>
-	
+
 	<task id="acarspurge" enabled="false">
 		<class>org.deltava.tasks.ACARSDataPurgeTask</class>
 		<interval>43200</interval>
 		<hours>2,14</hours>
 	</task>
 
-	<task id="cmdlogpurge" enabled="false">
+	<task id="cmdlogpurge" enabled="true">
 		<class>org.deltava.tasks.CommandLogPurgeTask</class>
 		<interval>86400</interval>
 		<hours>6</hours>
