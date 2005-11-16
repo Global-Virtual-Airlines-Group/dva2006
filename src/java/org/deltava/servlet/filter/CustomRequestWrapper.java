@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.security.Principal;

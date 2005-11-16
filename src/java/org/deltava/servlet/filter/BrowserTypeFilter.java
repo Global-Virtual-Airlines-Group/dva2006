@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -11,7 +12,7 @@ import org.apache.log4j.Logger;
  * A servlet filter to detect the browser type.
  * @author Luke
  * @version 1.0
- * @since 1.0 Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+ * @since 1.0
  */
 
 public class BrowserTypeFilter implements Filter {
