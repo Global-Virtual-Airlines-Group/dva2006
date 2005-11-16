@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -12,6 +13,7 @@ import org.apache.log4j.Logger;
  * @version 1.0
  * @since 1.0
  */
+
 public class RequestWrapperFilter implements Filter {
     
     private static final Logger log = Logger.getLogger(RequestWrapperFilter.class);
