@@ -29,6 +29,10 @@ adOK = (form.airportD.selectedIndex > 0);
 if (eqOK || adOK) {
 	setSubmit();
 	disableButton('SearchButton');
+	disableButton('BuildButton');
+	disableButton('BuildResetButton');
+	disableButton('SaveButton');
+	disableButton('ClearButton');
 	return true;
 }
 
@@ -38,7 +42,10 @@ return false;
 
 function buildValidate(form)
 {
+if (!checkSubmit()) return false;
+
 var isOK = false;
+alert(form.addFA.length);
 for (var x = 0; x < form.addFA.length; x++)
 	isOK = isOK || form.addFA[x].checked;
 
@@ -47,6 +54,12 @@ if (!isOK) {
 	return false;
 }
 
+setSubmit();
+disableButton('SearchButton');
+disableButton('BuildButton');
+disableButton('BuildResetButton');
+disableButton('SaveButton');
+disableButton('ClearButton');
 return true;
 }
 </script>
@@ -128,8 +141,8 @@ return true;
 </c:forEach>
 
 <tr class="title">
- <td colspan="7"><el:button type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
-<el:cmdbutton url="buildassign" op="reset" label="RESET RESULTS" /></td>
+ <td colspan="7"><el:button ID="BuildButton" type="submit" className="BUTTON" label="BUILD FLIGHT ASSIGNMENT" />&nbsp;
+<el:cmdbutton ID="BuildResetButton" url="buildassign" op="reset" label="RESET RESULTS" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -163,8 +176,8 @@ return true;
 </tr>
 </c:forEach>
 <tr class="title">
- <td colspan="5"><el:cmdbutton url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
-<el:cmdbutton url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
+ <td colspan="5"><el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
+<el:cmdbutton ID="ClearButton" url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
 </c:if>
