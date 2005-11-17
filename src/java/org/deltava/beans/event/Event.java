@@ -59,7 +59,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     // TODO JavaDoc
     public Event(String name) {
         super();
-        _name = name.trim();
+        setName(name);
         _charts = new TreeSet();
         _plans = new ArrayList();
         _signups = new HashSet();
@@ -146,11 +146,20 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
      * Returns the starting time for this Event.
      * @return the date/time the Event starts
      * @see Event#setStartTime(Date)
+     * @see Event#getEndTime()
+     * @see Event#getSignupDeadline()
      */
     public Date getStartTime() {
         return _startTime;
     }
     
+    /**
+     * Returns the ending time for this Event.
+     * @return the date/time the Event ends
+     * @see Event#setEndTime(Date)
+     * @see Event#getStartTime()
+     * @see Event#getSignupDeadline()
+     */
     public Date getEndTime() {
         return _endTime;
     }
@@ -236,6 +245,16 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     
     public void setBriefing(String briefing) {
         _briefing = briefing;
+    }
+    
+    /**
+     * Updates the Online Event name.
+     * @param name the name
+     * @throws NullPointerException if name is null
+     * @see Event#getName()
+     */
+    public void setName(String name) {
+    	_name = name.trim();
     }
     
     public void addEquipmentType(String eqType) {
