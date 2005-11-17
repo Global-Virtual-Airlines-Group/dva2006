@@ -19,6 +19,8 @@ import org.deltava.taglib.BrowserDetectingTag;
 public class RegionTag extends BrowserDetectingTag {
 
 	private Map _attrs = new HashMap();
+	
+	private PageTag _parent;
 	private boolean _closeRow;
 
 	/**
@@ -78,6 +80,7 @@ public class RegionTag extends BrowserDetectingTag {
 	 */
 	public void release() {
 		_attrs.clear();
+		_parent = null;
 		_closeRow = false;
 		super.release();
 	}
@@ -90,13 +93,18 @@ public class RegionTag extends BrowserDetectingTag {
 	public int doStartTag() throws JspException {
 		
 		// Make sure the parent page tag has been set
-		Tag pageTag = TagSupport.findAncestorWithClass(this, PageTag.class);
-		if (pageTag == null)
+		_parent = (PageTag) TagSupport.findAncestorWithClass(this, PageTag.class);
+		if (_parent == null)
 			throw new JspException("Must be contained within a PAGE ELEMENT tag");
 
 		JspWriter out = pageContext.getOut();
 		try {
 			if (isIE()) {
+				if (!_parent.isRowOpen()) {
+					out.print("<tr>");
+					_parent.setRowOpen(true);
+				}
+				
 				out.print("<td ");
 			} else {
 				out.print("<div ");
@@ -132,8 +140,10 @@ public class RegionTag extends BrowserDetectingTag {
 		try {
 			if (isIE()) {
 				out.print("</td>");
-				if (_closeRow)
+				if (_closeRow) {
 					out.print("</tr>");
+					_parent.setRowOpen(false);
+				}
 			} else {
 				out.print("</div>");
 			}

@@ -1,7 +1,7 @@
 // Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
-import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.*;
 
 import org.deltava.taglib.BrowserDetectingTag;
 
@@ -14,7 +14,35 @@ import org.deltava.taglib.BrowserDetectingTag;
  */
 
 public class PageTag extends BrowserDetectingTag {
+	
+	private boolean _rowOpen;
 
+	/**
+	 * Checks if the table row (for Internet Explorer) is currently open. This method is package-private to allow the
+	 * {@link org.deltava.taglib.layout.RegionTag} to access it.
+	 * @return TRUE if the row is open, otherwise FALSE
+	 */
+	boolean isRowOpen() {
+		return _rowOpen;
+	}
+	
+	/**
+	 * Marks the table row (for Internet Explorer) as open or closed. This method is package-private to allow the
+	 * {@link org.deltava.taglib.layout.RegionTag} to access it.
+	 * @param isOpen TRUE if the row is open, otherwise FALSE
+	 */
+	void setRowOpen(boolean isOpen) {
+		_rowOpen = isOpen;
+	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		_rowOpen = false;
+		super.release();
+	}
+	
 	/**
 	 * Writes the layout element's opening tag to the JSP output stream.
 	 * @return TagSuppport.EVAL_BODY_INCLUDE always
@@ -33,6 +61,7 @@ public class PageTag extends BrowserDetectingTag {
 		}
 
 		// Include the body
+		_rowOpen = false;
 		return EVAL_BODY_INCLUDE;
 	}
 
@@ -43,8 +72,12 @@ public class PageTag extends BrowserDetectingTag {
 	 */
 	public int doEndTag() throws JspException {
 		if (isIE()) {
+			JspWriter out = pageContext.getOut();
 			try {
-				pageContext.getOut().print("</tr></table>");
+				if (_rowOpen)
+					out.print("</tr>");
+				
+				out.print("</table>");
 			} catch (Exception e) {
 				throw new JspException(e);
 			}
