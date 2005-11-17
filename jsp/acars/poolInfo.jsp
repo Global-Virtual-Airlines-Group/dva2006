@@ -5,9 +5,10 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> ACARS Connection Pool</title>
+<title><content:airline /> ACARS Server Data</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:pics />
@@ -21,6 +22,10 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
@@ -55,11 +60,47 @@
 SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 </tr>
 </c:forEach>
-
-<!-- Bottom Bar -->
+</el:table>
+<br />
+<!-- Worker threads -->
+<el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="7">&nbsp;</td>
+ <td class="left caps" colspan="7">ACARS WORKER THREAD INFORMATION</td>
 </tr>
+
+<!-- Table Header Bar-->
+<tr class="title">
+ <td width="30%">THREAD NAME</td>
+ <td width="15%">THREAD STATUS</td>
+ <td wdith="10%">EXECUTION COUNT</td>
+ <td>CURRENTLY EXECUTING</td>
+</tr>
+
+<!-- Table Thread Data -->
+<c:forEach var="worker" items="${workers}">
+<tr>
+ <td class="pri bld">${worker.name}</td>
+ <td class="sec">${worker.statusName}</td>
+ <td><fmt:int value="${worker.executionCount}" /></td>
+ <td class="left">${worker.message}</td>
+</tr>
+</c:forEach>
+</el:table>
+<br />
+<!-- Server statistics -->
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="7">ACARS SERVER STATISTICS</td>
+</tr>
+
+<!-- Table Statistics Data -->
+<c:set var="statIdx" value="${0}" scope="request" />
+<c:forEach var="stat" items="${acarsStatNames}">
+<c:set var="statIdx" value="${statIdx + 1}" scope="request" />
+<tr>
+ <td class="left"><span class="pri bld">${stat}</span> <fmt:int value="${acarsStats[statIdx]}" /></td>
+</tr>
+</c:forEach>
 </el:table>
 <br />
 <content:copyright />

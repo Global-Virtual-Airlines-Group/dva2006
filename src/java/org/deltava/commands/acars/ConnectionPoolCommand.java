@@ -1,8 +1,9 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.acars;
 
-import org.deltava.beans.acars.ACARSAdminInfo;
+import java.util.Arrays;
 
+import org.deltava.beans.acars.*;
 import org.deltava.commands.*;
 
 import org.deltava.util.system.SystemData;
@@ -26,6 +27,14 @@ public class ConnectionPoolCommand extends AbstractCommand {
       // Get the ACARS Connection pool data and save in the request
       ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
       ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+      
+      // Get the acars worker info data and save in the request
+      ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SystemData.getObject(SystemData.ACARS_DAEMON);
+      ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
+      
+      // Save the ACARS statistics in the request
+      ctx.setAttribute("acarsStats", ServerStats.getAll(), REQUEST);
+      ctx.setAttribute("acarsStatNames", Arrays.asList(ServerStats.STAT_NAMES), REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
