@@ -156,6 +156,9 @@ public class SystemBootstrap implements ServletContextListener {
 			} catch (Exception ex) {
 				log.error("Error Starting ACARS Daemon", ex);
 			}
+			
+			// Save the server
+			SystemData.add(SystemData.ACARS_DAEMON, _acarsServer);
 
 			// Start the server
 			_acarsThread = new Thread(_acarsServer, "ACARS Daemon");

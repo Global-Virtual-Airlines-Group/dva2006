@@ -25,6 +25,7 @@ public class SystemData implements Serializable {
 	public static final String JDBC_POOL = "jdbc.pool";
 	public static final String TASK_POOL = "tasks.pool";
 	public static final String ACARS_POOL = "acars.pool";
+	public static final String ACARS_DAEMON = "acars.daemon";
 	public static final String SMTP_DAEMON = "smtp.daemonthread";
 
 	static final String CFG_NAME = "$CONFIGNAME$";
