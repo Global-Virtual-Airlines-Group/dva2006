@@ -51,6 +51,7 @@ public class EventSaveCommand extends AbstractCommand {
 				if (e == null)
 					throw new CommandException("Invalid Online Event - " + ctx.getID());
 
+				e.setName(ctx.getParameter("name"));
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			} else {
 				e = new Event(ctx.getParameter("name"));
