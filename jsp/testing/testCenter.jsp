@@ -17,6 +17,8 @@
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
+if (!checkSubmit()) return false;
+
 if (!form.examName) return false;
 if (form.examName.selectedIndex == 0) {
 	alert('Please select the Examination you wish to take.');
@@ -26,7 +28,11 @@ if (form.examName.selectedIndex == 0) {
 
 // Check if we're sure
 var testName = form.examName.options[form.examName.selectedIndex].text;
-return confirm('Are you sure you wish to take the ' + testName + ' Examination?');
+if (!confirm('Are you sure you wish to take the ' + testName + ' Examination?')) return false;
+
+setSubmit();
+disableButton('ExamButton');
+return true;
 }
 </script>
 </head>
@@ -106,18 +112,21 @@ return confirm('Are you sure you wish to take the ' + testName + ' Examination?'
  <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
 </c:if>
 <c:if test="${examActive == 0}">
- <td class="left" colspan="7">Please select a written examination to take from the list below.
- There are no restrictions on the type of tests you can take, or how often you can take each
- test, but please keep this in mind: There are only a limited number of questions for each
- test, and they are selected at random. Within two or three re-tests, you may exhaust the
- question pool. <content:airline /> staff take this into consideration when determining
- Promotions and Additional Ratings - if you take the same test on multiple occassions in a
- short period of time, the earliest test will usually be given more weight than later
- results. <span class="pri bld">Make sure that you are prepared before you take a test!</span></td>
+ <td class="left" colspan="7">Please select a written examination from the list below. Make sure that
+ you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
+<br />
+Our exams are timed. You will see time remaining at the top of the examianation page. After starting
+ you have 40 minutes to complete and submit the examianation. <i>After 40 minutes the examianation will
+ be automatically submitted, regardless of number of questions answered</i>.<br />
+<br />
+The specific program Chief Pilot or Assistant Chief Pilots score examianations within 72 hours of
+ submission, and the results of your examination will be sent to you by email. Until it is scored,
+ you will not be able to take any exam again.<span class="pri bld">Make sure that you are prepared 
+ before you begin an examination!</span></td>
 </tr>
 <tr class="title">
  <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="< SELECT EXAM >" />
- <el:button type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
+ <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
 </c:if>
 </tr>
 </el:table>
