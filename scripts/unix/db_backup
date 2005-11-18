@@ -21,7 +21,7 @@ mysqldump -C -K -d -h mysql.deltava.org common > common.sql
 mysqldump -C -K -d -h mysql.deltava.org acars > acars.sql
 mysqldump -C -K -d -h mysql.deltava.org dva > dva.sql
 mysqldump -C -K -d -h mysql.deltava.org afv > afv.sql
-tar cfvz create_databases.tar.gz *.sql
+tar cfvz create_tables.tar.gz *.sql
 rm *.sql
 
 # Dump e-mail data
