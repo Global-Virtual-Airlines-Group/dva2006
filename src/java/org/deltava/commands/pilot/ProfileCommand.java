@@ -119,6 +119,10 @@ public class ProfileCommand extends AbstractFormCommand {
                log.info(upd.getDescription());
             }
          }
+         
+         // Update legacy hours
+         if (p_access.getCanChangeStatus() && (ctx.getParameter("legacyHours") != null))
+        	 p.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
 
          // Load the ratings from the request and convert to a set to maintain uniqueness
          Set newRatings = new HashSet(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"), p
@@ -560,6 +564,12 @@ public class ProfileCommand extends AbstractFormCommand {
          if (access.getCanPromote() || access.getIsOurs()) {
             GetExam exdao = new GetExam(con);
             ctx.setAttribute("exams", exdao.getExams(p.getID()), REQUEST);
+         }
+         
+         // Check for an applicant profile
+         if (ctx.isUserInRole("HR")) {
+        	 GetApplicant adao = new GetApplicant(con);
+        	 ctx.setAttribute("applicant", adao.getByPilotID(p.getID()), REQUEST);
          }
 
          // Get status updates
