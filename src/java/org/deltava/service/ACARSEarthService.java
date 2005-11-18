@@ -80,7 +80,7 @@ public class ACARSEarthService extends WebDataService {
 		le.addContent(XMLUtils.createElement("description", String.valueOf(routeData.size()) + " Position Records"));
 		le.addContent(XMLUtils.createElement("visibility", "1"));
 		Element ls = new Element("Style");
-		ls.addContent(XMLUtils.createElement("LineStyle", "color", "98a10000"));
+		ls.addContent(XMLUtils.createElement("LineStyle", "color", "b8d10000"));
 		ls.addContent(XMLUtils.createElement("PolyStyle", "color", "2fa10000"));
 		le.addContent(ls);
 		Element lse = new Element("LineString");
