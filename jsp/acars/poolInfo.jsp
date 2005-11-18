@@ -21,6 +21,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<c:if test="${!empty acarsPool}">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
  <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
@@ -62,10 +63,11 @@ SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 </c:forEach>
 </el:table>
 <br />
+</c:if>
 <!-- Worker threads -->
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td class="left caps" colspan="7">ACARS WORKER THREAD INFORMATION</td>
+ <td class="left caps" colspan="4">ACARS WORKER THREAD INFORMATION</td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -79,7 +81,7 @@ SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 <!-- Table Thread Data -->
 <c:forEach var="worker" items="${workers}">
 <tr>
- <td class="pri bld">${worker.name}</td>
+ <td class="pri bld">${worker}</td>
  <td class="sec">${worker.statusName}</td>
  <td><fmt:int value="${worker.executionCount}" /></td>
  <td class="left">${worker.message}</td>
