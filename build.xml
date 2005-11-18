@@ -106,7 +106,7 @@
 	<target name="compile">
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
-		 debug="true" debuglevel="lines,vars,source" source="1.4" target="1.4"
+		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
 		 compiler="modern">
 	    	<classpath>
 				<pathelement path="${classpath}" />
