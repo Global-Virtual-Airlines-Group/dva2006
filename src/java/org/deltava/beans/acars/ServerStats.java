@@ -47,10 +47,10 @@ public final class ServerStats implements java.io.Serializable {
 		return ((statType >= 0) && (statType < stats.length)) ? stats[statType] : 0;
 	}
 	
-	public static synchronized Map<Integer, Long> getAll() {
-		Map<Integer, Long> results = new TreeMap<Integer, Long>();
+	public static synchronized Map<Long, Long> getAll() {
+		Map<Long, Long> results = new HashMap<Long, Long>();
 		for (int x = 0; x < stats.length; x++)
-			results.put(new Integer(x), new Long(stats[x]));
+			results.put(new Long(x), new Long(stats[x]));
 		
 		return results;
 	}
