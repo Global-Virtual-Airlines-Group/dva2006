@@ -118,6 +118,13 @@
  <td colspan="${cspan}" class="data">${pilot.legacyHours} hours</td>
 </tr>
 </c:if>
+<c:if test="${!empty applicant}">
+<tr>
+ <td class="label">Applicant Profile</td>
+ <td class="data"><el:cmd url="applicant" linkID="0x${applicant.ID}">Click here</el:cmd to view the 
+Applicant profile for ${pilot.name}.</td>
+</tr>
+</c:if>
 <%@include file="/jsp/pilot/pilotExams.jsp" %>
 <%@include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
 </el:table>
