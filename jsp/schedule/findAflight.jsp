@@ -45,9 +45,12 @@ function buildValidate(form)
 if (!checkSubmit()) return false;
 
 var isOK = false;
-alert(form.addFA.length);
-for (var x = 0; x < form.addFA.length; x++)
-	isOK = isOK || form.addFA[x].checked;
+if (form.addFA.length) {
+	for (var x = 0; x < form.addFA.length; x++)
+		isOK = isOK || form.addFA[x].checked;
+} else {
+	isOK = form.addFA.checked;
+}
 
 if (!isOK) {
 	alert('Please select at least one Flight Leg to add.');
