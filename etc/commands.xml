@@ -710,6 +710,18 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="selcals">
+		<name>SELCAL Code List</name>
+		<class>org.deltava.commands.schedule.SELCALCodeCommand</class>
+		<roles>Pilot</roles>
+	</command>	
+
+	<command id="selcal">
+		<name>SELCAL Reserve/Free</name>
+		<class>org.deltava.commands.schedule.SELCALCodeCommand</class>
+		<roles>Pilot</roles>
+	</command>	
+
 	<command id="buildassign">
 		<name>Build Flight Assignment</name>
 		<class>org.deltava.commands.assign.BuildAssignmentCommand</class>
