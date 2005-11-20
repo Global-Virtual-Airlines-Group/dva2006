@@ -121,12 +121,12 @@
 <c:if test="${!empty applicant}">
 <tr>
  <td class="label">Applicant Profile</td>
- <td class="data"><el:cmd url="applicant" linkID="0x${applicant.ID}">Click here</el:cmd to view the 
+ <td colspan="${cspan}" class="data"><el:cmd url="applicant" linkID="0x${applicant.ID}">Click here</el:cmd> to view the 
 Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
-<%@include file="/jsp/pilot/pilotExams.jsp" %>
-<%@include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
+<%@ include file="/jsp/pilot/pilotExams.jsp" %>
+<%@ include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
 </el:table>
 <c:if test="${access.canEdit || access.canChangeStatus}">
 <!-- Button Bar -->
@@ -137,7 +137,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canEdit}">
  <el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
-<c:if test="${access.canChangeStatus}">
+<c:if test="${access.canTransfer}">
  <el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
 </c:if>
 <c:if test="${access.canAssignRide}">
