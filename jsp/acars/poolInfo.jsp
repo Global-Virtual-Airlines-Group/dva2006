@@ -92,15 +92,37 @@ SO_KEEPALIVE = ${con.socket.keepAlive}</td>
 <!-- Server statistics -->
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td class="left caps" colspan="7">ACARS SERVER STATISTICS</td>
+ <td class="left caps" colspan="6">ACARS SERVER STATISTICS</td>
 </tr>
+
+<!-- Command Statistics Header -->
+<tr class="title">
+ <td width="30%">COMMAND NAME</td>
+ <td width="10%">INVOCATIONS</td>
+ <td width="15%">AVERAGE TIME</td>
+ <td width="15%">TOTAL TIME</td>
+ <td width="15%">MAXIMUM TIME</td>
+ <td>MINIMUM TIME</td>
+</tr>
+
+<!-- Command Statistics Data -->
+<c:forEach var="cmdStat" items="${acarsCmdStats}">
+<tr>
+ <td class="pri bld">${cmdStat.name}</td>
+ <td><fmt:int value="${cmdStat.count}" /></td>
+ <td class="bld"><fmt:int value="${cmdStat.totalTime / cmdStat.count}" /> ms</td>
+ <td><fmt:int value="${cmdStat.totalTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.maxTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.minTime}" /> ms</td>
+</tr>
+</c:forEach>
 
 <!-- Table Statistics Data -->
 <c:set var="statIdx" value="${0}" scope="request" />
 <c:forEach var="stat" items="${acarsStatNames}">
 <c:set var="statIdx" value="${statIdx + 1}" scope="request" />
 <tr>
- <td class="left"><span class="pri bld">${stat}</span> <fmt:int value="${acarsStats[statIdx]}" /></td>
+ <td colspan="6" class="left"><span class="pri bld">${stat}</span> <fmt:int value="${acarsStats[statIdx]}" /></td>
 </tr>
 </c:forEach>
 </el:table>
