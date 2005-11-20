@@ -57,14 +57,13 @@ public class TransferProcessCommand extends AbstractCommand {
          EquipmentType newEQ = eqdao.get(txreq.getEquipmentType());
          EquipmentType currEQ = eqdao.get(usr.getEquipmentType());
          ctx.setAttribute("currentEQ", currEQ, REQUEST);
+         ctx.setAttribute("eqType", newEQ, REQUEST);
          if (txreq.getRatingOnly()) {
         	 Set eqTypes = new HashSet();
         	 eqTypes.add(currEQ);
         	 ctx.setAttribute("activeEQ", eqTypes, REQUEST);
-        	 ctx.setAttribute("eqType", currEQ, REQUEST);
          } else {
         	 ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
-        	 ctx.setAttribute("eqType", (txreq.getRatingOnly() ? currEQ : newEQ), REQUEST);;	 
          }
          
          // Check if the user has passed the Captain's examination
