@@ -23,8 +23,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotCenterCommand extends AbstractTestHistoryCommand {
-	
-	private static int _scheduleSize = 0;
 
 	/**
 	 * Executes the command.
@@ -32,10 +30,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 	 * @throws CommandException if an error (typically database) occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
+
 		// Get the command results
 		CommandResult result = ctx.getResult();
-		
+
 		// Check if we have a invalid address session attribute
 		HttpSession s = ctx.getSession();
 		Boolean attrValue = (Boolean) s.getAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
@@ -50,16 +48,16 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the pilot profile from the database and stuff it in the request and the session
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
-			
+
 			// Save the pilot location
 			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);
-			
+
 			// Check our access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
@@ -70,19 +68,18 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			List results = frdao.getByPilot(p.getID(), "DATE DESC");
 			if (results.size() > 0)
 				ctx.setAttribute("lastFlight", results.get(0), REQUEST);
-			
+
 			// Get online hours
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
 			prdao.getOnlineTotals(p);
+
+			// Get the schedule size
+			GetSchedule sdao = new GetSchedule(con);
+			ctx.setAttribute("scheduleSize", new Integer(sdao.getFlightCount()), REQUEST);
 			
-			// Get the schedule size if uncached
-			if (_scheduleSize == 0) {
-				GetSchedule sdao = new GetSchedule(con);
-				_scheduleSize = sdao.getFlightCount();
-			}
-			
-			// Save the schedule size
-			ctx.setAttribute("scheduleSize", new Integer(_scheduleSize), REQUEST);
+			// Get the PIREP disposal queue size
+			if (ctx.isUserInRole("PIREP"))
+				ctx.setAttribute("pirepQueueSize", new Integer(prdao.getDisposalQueueSize()), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
@@ -92,8 +89,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
 			ctx.setAttribute("eqType", _testHistory.getEquipmentType(), REQUEST);
-			ctx.setAttribute("captPromote", Boolean.valueOf(_testHistory.canPromote(_testHistory.getEquipmentType())), REQUEST);
-			
+			ctx.setAttribute("captPromote", Boolean.valueOf(_testHistory.canPromote(_testHistory.getEquipmentType())),
+					REQUEST);
+
 			// Count how many legs completed towards Promtion
 			if (Ranks.RANK_FO.equals(p.getRank())) {
 				int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
@@ -113,7 +111,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
 						i.remove();
 				}
-				
+
 				// Save the equipment types we can get promoted to
 				ctx.setAttribute("eqSwitch", activeEQ, REQUEST);
 			} else {
@@ -124,11 +122,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Figure out the image to display
 		Map acImgs = (Map) SystemData.getObject("pcImages");
 		if (acImgs != null)
-		   ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
+			ctx.setAttribute("acImage", acImgs.get(p.getEquipmentType().toLowerCase()), REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/pilot/pilotCenter.jsp");
