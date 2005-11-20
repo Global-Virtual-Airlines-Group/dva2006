@@ -37,7 +37,8 @@ public class UserID {
         // Save the prefix and the code
         _airline = pBuf.toString();
         try {
-            _id = Integer.parseInt(cBuf.toString());
+        	if (cBuf.length() > 0)
+        		_id = Integer.parseInt(cBuf.toString());
         } catch (NumberFormatException nfe) {
             throw new IllegalArgumentException("Invalid Pilot Code - " + code);
         }
