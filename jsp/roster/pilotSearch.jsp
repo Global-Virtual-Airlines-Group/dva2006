@@ -139,7 +139,7 @@ return false;
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="7"><view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" /></td>
+ <td colspan="7"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Transferred" classes=" ,opt2,opt3,warn,opt1" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
