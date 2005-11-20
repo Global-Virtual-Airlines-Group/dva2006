@@ -4,12 +4,11 @@ package org.deltava.commands.acars;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.acars.LogSearchCriteria;
 import org.deltava.beans.system.UserDataMap;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.util.*;
 
 /**
  * A Web Site Command to view the ACARS Text Message log.
@@ -29,55 +28,28 @@ public class MessageLogCommand extends ACARSLogViewCommand {
 
       // Get the view context and the search type
       ViewContext vc = initView(ctx);
-      int searchType = getSearchType(ctx);
 
       // Get the command result
       CommandResult result = ctx.getResult();
       
       // If we're not displaying anything, redirect to the result page
-      if (ctx.getParameter("searchType") == null) {
+      if (ctx.getParameter("pilotCode") == null) {
          result.setURL("/jsp/acars/msgLog.jsp");
          result.setSuccess(true);
          return;
       }
       
-      // If we're doing a search by Pilot ID, validate the ID
-      if ((searchType == SEARCH_USR) && (!validatePilotCode(ctx.getParameter("pilotCode")))) {
-         ctx.setMessage("Invalid Pilot Code");
-         result.setURL("/jsp/acars/msgLog.jsp");
-         return;
-      }
-      
       try {
          Connection con = ctx.getConnection();
-
-         // If we're doing a search by Pilot ID, then translate to user ID
-         int pilotID = 0;
-         if (searchType == SEARCH_USR) {
-            UserID id = new UserID(ctx.getParameter("pilotCode"));
-            
-            GetPilot pdao = new GetPilot(con);
-            Pilot usr = pdao.getPilotByCode(id.getUserID(), id.getAirlineCode());
-            pilotID = (usr == null) ? 0 : usr.getID();
-         } else if (searchType == SEARCH_ID) {
-        	 pilotID = Integer.parseInt(ctx.getParameter("pilotCode"));
-         }
+         LogSearchCriteria criteria = getSearchCriteria(ctx, con);
 
          // Get the DAO and set start/count parameters
          GetACARSLog dao = new GetACARSLog(con);
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
          
-         // Depending on the search type, call the DAO query
-         if (searchType == SEARCH_DATE) {
-         	Date sd = parseDateTime(ctx, "start", "MM/dd/yyyy", "HH:mm");
-         	Date ed = parseDateTime(ctx, "end", "MM/dd/yyyy", "HH:mm");
-            vc.setResults(dao.getMessages(sd, ed));
-         } else if (searchType == SEARCH_LATEST) {
-            vc.setResults(dao.getMessages());
-         } else {
-            vc.setResults(dao.getMessages(pilotID));
-         }
+         // Do the search
+         vc.setResults(dao.getMessages(criteria));
          
          // Load the Pilot data
          GetUserData usrdao = new GetUserData(con);

@@ -32,10 +32,6 @@
  - <fmt:date date="${endDate}" /></c:if></td>
 </tr>
 <tr>
- <td class="label">Search Type</td>
- <td class="data" colspan="3"><el:check name="searchType" type="radio" idx="*" options="${searchTypes}" value="${searchType}" /></td>
-</tr>
-<tr>
  <td class="label">Pilot Code</td>
  <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
  <td class="label">Maximum Results</td>
