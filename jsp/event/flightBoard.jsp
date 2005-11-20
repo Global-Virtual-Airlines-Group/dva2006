@@ -74,7 +74,8 @@ return true;
   <td>${ctr.ID}</td>
   <td class="bld">${ctr.name}</td>
   <td class="sec">${ctr.facilityType}</td>
-  <td colspan="3">${ctr.ratingName}</td>
+  <td class="bld">${ctr.frequency}</td>
+  <td colspan="2">${ctr.ratingName}</td>
 </view:row>
 </c:forEach>
 <tr class="title left caps">
