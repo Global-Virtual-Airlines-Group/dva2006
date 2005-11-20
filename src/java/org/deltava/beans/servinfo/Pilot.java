@@ -2,7 +2,6 @@
 package org.deltava.beans.servinfo;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.MapEntry;
@@ -20,9 +19,8 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Serializable {
+public class Pilot extends NetworkUser implements MapEntry {
 
-	private GeoPosition _position;
 	private int _altitude;
 	private int _gSpeed;
 	private String _eqCode;
@@ -117,50 +115,6 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 		return NetworkUser.PILOT;
 	}
 
-	/**
-	 * Returns the Pilot's current latitude.
-	 * @return the latitude in degrees
-	 * @see Pilot#getLongitude()
-	 * @see Pilot#getPosition()
-	 * @see Pilot#setPosition(double, double)
-	 * @see Pilot#setPosition(String, String)
-	 */
-	public final double getLatitude() {
-		return _position.getLatitude();
-	}
-	
-	/**
-	 * Returns the Pilot's current longitude.
-	 * @return the longitude in degrees
-	 * @see Pilot#getLatitude() 
-	 * @see Pilot#getPosition()
-	 * @see Pilot#setPosition(double, double)
-	 * @see Pilot#setPosition(String, String)
-	 */
-	public final double getLongitude() {
-		return _position.getLongitude();
-	}
-	
-	/**
-	 * Returns the hemispheres containing this Pilot.
-	 * @return bit-wise hemisphere constants
-	 * @see GeoPosition#getHemisphere()
-	 */
-	public final int getHemisphere() {
-	   return _position.getHemisphere();
-	}
-
-	/**
-	 * Returns the User's current position.
-	 * @return a GeoPosition bean containing latitude and longitude
-	 * @see Pilot#getLatitude()
-	 * @see Pilot#getLongitude()
-	 * @see Pilot#setPosition(double, double)
-	 * @see Pilot#setPosition(String, String)
-	 */
-	public GeoPosition getPosition() {
-		return _position;
-	}
 	
 	/**
 	 * Returns the Pilot's filed waypoints.
@@ -269,32 +223,6 @@ public class Pilot extends NetworkUser implements GeoLocation, MapEntry, Seriali
 			setGroundSpeed(Integer.parseInt(gSpeed));
 		} catch (NumberFormatException nfe) {
 			setGroundSpeed(0);
-		}
-	}
-
-	/**
-	 * Updates the Pilot's position.
-	 * @param lat the latitude in degrees
-	 * @param lon the longitude in degrees
-	 * @see Pilot#setPosition(String, String)
-	 * @see Pilot#getPosition()
-	 */
-	public void setPosition(double lat, double lon) {
-		_position = new GeoPosition(lat, lon);
-	}
-
-	/**
-	 * Updates the Pilot's position.
-	 * @param lat a String containing the latitude
-	 * @param lon a String containing the longitude
-	 * @see Pilot#setPosition(double, double)
-	 * @see Pilot#getPosition()
-	 */
-	public void setPosition(String lat, String lon) {
-		try {
-			_position = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lon));
-		} catch (NumberFormatException nfe) {
-			_position = new GeoPosition(0, 0);
 		}
 	}
 	
