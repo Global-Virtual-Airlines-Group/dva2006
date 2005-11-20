@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -5,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -95,12 +97,24 @@ public class SetFlightReport extends DAO {
     */
    public void dispose(Person usr, FlightReport pirep, int statusCode) throws DAOException {
       try {
+    	  startTransaction();
+    	  
+    	  // Write the PIREP
          prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
          _ps.setInt(1, statusCode);
          _ps.setInt(2, usr.getID());
          _ps.setInt(3, pirep.getID());
          executeUpdate(1);
+         
+         // Write the disposition comments
+         prepareStatement("REPLACE INTO PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+         _ps.setInt(1, pirep.getID());
+         _ps.setString(2, pirep.getComments());
+         executeUpdate(1);
+         
+         commitTransaction();
       } catch (SQLException se) {
+    	  rollbackTransaction();
          throw new DAOException(se);
       }
       
@@ -214,6 +228,18 @@ public class SetFlightReport extends DAO {
       executeUpdate(1);
       if (fr.getID() == 0)
          fr.setID(getNewID());
+      
+      // Write the comments into the database
+      if (!StringUtils.isEmpty(fr.getComments())) {
+    	  prepareStatement("REPLACE INTO " + db.toLowerCase() + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+    	  _ps.setInt(1, fr.getID());
+    	  _ps.setString(2, fr.getComments());
+    	  executeUpdate(1);
+      } else {
+    	  prepareStatement("DELETE FROM " + db.toLowerCase() + ".PIREP_COMMENT WHERE (ID=?)");
+    	  _ps.setInt(1, fr.getID());
+    	  executeUpdate(0);
+      }
    }
 
    /**

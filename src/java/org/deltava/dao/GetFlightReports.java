@@ -40,8 +40,9 @@ public class GetFlightReports extends DAO {
 	public FlightReport get(int id) throws DAOException {
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN ACARS_PIREPS APR USING (ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
+					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
 			_ps.setInt(1, id);
 
 			// Execute the query, if nothing returned then give back null
@@ -68,13 +69,16 @@ public class GetFlightReports extends DAO {
 	public ACARSFlightReport getACARS(String dbName, int acarsID) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM ");
+	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".PILOTS P, ");
 	   sqlBuf.append(dbName.toLowerCase());
 	   sqlBuf.append(".PIREPS PR, ");
 	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".ACARS_PIREPS APR WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) AND (APR.ACARS_ID=?)");
+	   sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
+			   + "AND (APR.ACARS_ID=?)");
 	   
 	   try {
 	      setQueryMax(1);
@@ -96,16 +100,17 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Returns all Flight Reports with a particular status.
-	 * @param status the Flight Report status
-	 * @return a List of FlightReports
+	 * Returns all Flight Reports awaiting disposition.
+	 * @return a List of FlightReports in SUBMITTED or HOLD status
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStatus(int status) throws DAOException {
+	public List getDisposalQueue() throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND " + "(PR.STATUS=?) ORDER BY DATE");
-			_ps.setInt(1, status);
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, PIREPS PR "
+					+ "LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
+					+ "WHERE (PR.PILOT_ID=P.ID) AND ((PR.STATUS = ?) OR (PR.STATUS = ?)) ORDER BY DATE");
+			_ps.setInt(1, FlightReport.SUBMITTED);
+			_ps.setInt(2, FlightReport.HOLD);
 
 			// Return the results
 			return execute();
@@ -113,22 +118,26 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Returns all Flight Reports awaiting disposition.
-	 * @return a List of FlightReports in SUBMITTED or HOLD status
+	 * Returns the number of Flight Reports awaiting disposition.
+	 * @return the number Flight Reports in SUBMITTED or HOLD status
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getDisposalQueue() throws DAOException {
+	public int getDisposalQueueSize() throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND "
-					+ "((PR.STATUS = ?) OR (PR.STATUS = ?)) ORDER BY DATE");
+			prepareStatement("SELECT COUNT(*) FROM PIREPS WHERE (STATUS=?) OR (STATUS=?)");
 			_ps.setInt(1, FlightReport.SUBMITTED);
 			_ps.setInt(2, FlightReport.HOLD);
 
-			// Return the results
-			return execute();
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int results = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -142,8 +151,9 @@ public class GetFlightReports extends DAO {
 	 */
 	public List getByAssignment(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ASSIGN_ID=?)");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
+					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ASSIGN_ID=?)");
 			_ps.setInt(1, id);
 
 			// Return the results
@@ -161,8 +171,9 @@ public class GetFlightReports extends DAO {
 	 */
 	public List getByEvent(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
+					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
 			_ps.setInt(1, id);
 
 			// Return the results
@@ -182,8 +193,9 @@ public class GetFlightReports extends DAO {
 	public List getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
-		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, APR.* FROM PILOTS P, PIREPS PR "
-				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?)");
+		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
+				+ "PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
+				+ "ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?)");
 		if (orderBy != null) {
 			buf.append(" ORDER BY PR.");
 			buf.append(orderBy);
@@ -370,11 +382,12 @@ public class GetFlightReports extends DAO {
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasACARS = (md.getColumnCount() >= 24);
+		boolean hasACARS = (md.getColumnCount() >= 25);
+		boolean hasComments = (md.getColumnCount() >= 24);
 
 		// Iterate throught the results
 		while (rs.next()) {
-			boolean isACARS = (hasACARS) && (rs.getInt(24) != 0);
+			boolean isACARS = (hasACARS) && (rs.getInt(25) != 0);
 
 			// Build the PIREP as a standard one, or an ACARS pirep
 			Airline a = SystemData.getAirline(rs.getString(8));
@@ -402,35 +415,37 @@ public class GetFlightReports extends DAO {
 			p.setDisposedOn(rs.getTimestamp(21));
 			p.setDatabaseID(FlightReport.DBID_EVENT, rs.getInt(22));
 			p.setDatabaseID(FlightReport.DBID_ASSIGN, rs.getInt(23));
+			if (hasComments)
+				p.setComments(rs.getString(24));
 
 			// Load ACARS pirep data
 			if (isACARS) {
 				ACARSFlightReport ap = (ACARSFlightReport) p;
 				ap.setAttribute(FlightReport.ATTR_ACARS, true);
-				ap.setDatabaseID(FlightReport.DBID_ACARS, rs.getInt(25));
-				ap.setStartTime(rs.getTimestamp(26));
-				ap.setTaxiTime(rs.getTimestamp(27));
-				ap.setTaxiWeight(rs.getInt(28));
-				ap.setTaxiFuel(rs.getInt(29));
-				ap.setTakeoffTime(rs.getTimestamp(30));
-				ap.setTakeoffDistance(rs.getInt(31));
-				ap.setTakeoffSpeed(rs.getInt(32));
-				ap.setTakeoffN1(rs.getDouble(33));
-				ap.setTakeoffWeight(rs.getInt(34));
-				ap.setTakeoffFuel(rs.getInt(35));
-				ap.setLandingTime(rs.getTimestamp(36));
-				ap.setLandingDistance(rs.getInt(37));
-				ap.setLandingSpeed(rs.getInt(38));
-				ap.setLandingVSpeed(rs.getInt(39));
-				ap.setLandingN1(rs.getDouble(40));
-				ap.setLandingWeight(rs.getInt(41));
-				ap.setLandingFuel(rs.getInt(42));
-				ap.setEndTime(rs.getTimestamp(43));
-				ap.setGateWeight(rs.getInt(44));
-				ap.setGateFuel(rs.getInt(45));
-				ap.setTime1X(rs.getInt(46));
-				ap.setTime2X(rs.getInt(47));
-				ap.setTime4X(rs.getInt(48));
+				ap.setDatabaseID(FlightReport.DBID_ACARS, rs.getInt(26));
+				ap.setStartTime(rs.getTimestamp(27));
+				ap.setTaxiTime(rs.getTimestamp(28));
+				ap.setTaxiWeight(rs.getInt(29));
+				ap.setTaxiFuel(rs.getInt(30));
+				ap.setTakeoffTime(rs.getTimestamp(31));
+				ap.setTakeoffDistance(rs.getInt(32));
+				ap.setTakeoffSpeed(rs.getInt(33));
+				ap.setTakeoffN1(rs.getDouble(34));
+				ap.setTakeoffWeight(rs.getInt(35));
+				ap.setTakeoffFuel(rs.getInt(36));
+				ap.setLandingTime(rs.getTimestamp(37));
+				ap.setLandingDistance(rs.getInt(38));
+				ap.setLandingSpeed(rs.getInt(39));
+				ap.setLandingVSpeed(rs.getInt(40));
+				ap.setLandingN1(rs.getDouble(41));
+				ap.setLandingWeight(rs.getInt(42));
+				ap.setLandingFuel(rs.getInt(43));
+				ap.setEndTime(rs.getTimestamp(44));
+				ap.setGateWeight(rs.getInt(45));
+				ap.setGateFuel(rs.getInt(46));
+				ap.setTime1X(rs.getInt(47));
+				ap.setTime2X(rs.getInt(48));
+				ap.setTime4X(rs.getInt(49));
 			}
 
 			// Add the flight report to the results
@@ -448,7 +463,7 @@ public class GetFlightReports extends DAO {
 	 * @param pireps a Collection of FlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void getCaptEQType(Collection pireps) throws DAOException {
+	public void getCaptEQType(Collection<FlightReport> pireps) throws DAOException {
 		
 		// Do nothing if empty
 		if (pireps.isEmpty())
@@ -456,8 +471,8 @@ public class GetFlightReports extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
-		for (Iterator i = pireps.iterator(); i.hasNext(); ) {
-			FlightReport fr = (FlightReport) i.next();
+		for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
+			FlightReport fr = i.next();
 			sqlBuf.append(String.valueOf(fr.getID()));
 			if (i.hasNext())
 				sqlBuf.append(',');
@@ -489,7 +504,7 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Helper method to load data for flights counting towards promotion.
 	 */
-	private Collection getCaptEQType(int id) throws SQLException {
+	private Collection<String> getCaptEQType(int id) throws SQLException {
 
 		// Build the prepared statement and execute the query
 		prepareStatementWithoutLimits("SELECT EQTYPE FROM PROMO_EQ WHERE (ID=?) ORDER BY EQTYPE");
@@ -497,7 +512,7 @@ public class GetFlightReports extends DAO {
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		Set results = new HashSet();
+		Set<String> results = new LinkedHashSet<String>();
 		while (rs.next())
 			results.add(rs.getString(1));
 

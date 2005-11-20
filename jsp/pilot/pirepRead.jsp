@@ -83,12 +83,17 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<c:if test="${scoreCR}">
+<c:choose>
+<c:when test="${scoreCR}">
 <form method="post" action="pirepscore.do?id=${fn:hex(pirep.ID)}" onsubmit="return validate(this)">
-</c:if>
-<c:if test="${fn:isACARS(pirep)}">
+</c:when>
+<c:when test="${access.canDispose}">
+<form method="post" action="pirep.do?id=${fn:hex(pirep.ID)}">
+</c:when>
+<c:when test="${fn:isACARS(pirep)}">
 <form method="get" action="pirep.do?id=${fn:hex(pirep.ID)}" onsubmit="return false">
-</c:if>
+</c:when>
+</c:choose>
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title">
@@ -196,6 +201,15 @@ return true;
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </c:if>
 </tr>
+<tr>
+ <td class="label" valign="top">Reviewer Comments</td>
+<c:if test="${access.canDispose}">
+ <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
+</c:if>
+<c:if test="${!access.canDispose}">
+ <td class="data"><fmt:text value="${pirep.remarks}" /></td>
+</c:if>
+</tr>
 </el:table>
 
 <!-- PIREP Button Bar -->
@@ -206,13 +220,13 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="submit" linkID="0x${pirep.ID}" label="SUBMIT FLIGHT REPORT" />
 </c:if>
 <c:if test="${access.canApprove && (!scoreCR)}">
- <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" label="APPROVE FLIGHT" />
+ <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" post="true" label="APPROVE FLIGHT" />
 </c:if>
 <c:if test="${access.canHold}">
- <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" label="HOLD" />
+ <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" post="true" label="HOLD" />
 </c:if>
 <c:if test="${access.canReject}">
- <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" label="REJECT FLIGHT" />
+ <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" post="true" label="REJECT FLIGHT" />
 </c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton url="pirep" linkID="0x${pirep.ID}" op="edit" label="EDIT REPORT" />
@@ -224,7 +238,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  </td>
 </tr>
 </el:table>
-<c:if test="${scoreCR || fn:isACARS(pirep)}"></form><br /></c:if>
+<c:if test="${scoreCR || fn:isACARS(pirep) || access.canDispose}"></form><br /></c:if>
 <content:copyright />
 </content:region>
 </content:page>
@@ -234,7 +248,6 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <map:point var="mapC" point="${mapCenter}" />
 <c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
-<!-- <xmap:markers var="routeMarkers" items="${mapRoute}" /> -->
 <map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
 </c:if>
 <c:if test="${empty mapRoute && fn:isACARS(pirep)}">
