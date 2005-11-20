@@ -3,7 +3,10 @@ package org.deltava.beans.servinfo;
 
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.util.cache.Cacheable;
+
+import org.deltava.util.GeoUtils;
 
 /**
  * A bean to store aggregated network information.
@@ -19,8 +22,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     private Date _validDate;
     private boolean _isCached;
     
-    private Map _pilots;
-    private Map _controllers;
+    private Map<String, Pilot> _pilots;
+    private Map<String, Controller> _controllers;
     
     /**
      * Initializes this bean for a particular network name.
@@ -31,8 +34,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     public NetworkInfo(String name) {
         super();
         _name = name.toUpperCase();
-        _pilots = new TreeMap();
-        _controllers = new TreeMap();
+        _pilots = new TreeMap<String, Pilot>();
+        _controllers = new TreeMap<String, Controller>();
     }
     
     /**
@@ -72,10 +75,29 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     /**
      * Returns the active Controllers on this network.
      * @return a Collection of Controller beans
+     * @see NetworkInfo#getControllers(GeoLocation, int)
      * @see NetworkInfo#getPilots()
      */
-    public Collection getControllers() {
-        return new ArrayList(_controllers.values());
+    public Collection<Controller> getControllers() {
+        return new ArrayList<Controller>(_controllers.values());
+    }
+    
+    /**
+     * Returns all Controllers within a specific distance of a particular point. 
+     * @param gl the location
+     * @param distance the distance in miles
+     * @return a Collection of Controller beans
+     * @see NetworkInfo#getControllers()
+     */
+    public Collection<Controller> getControllers(GeoLocation gl, int distance) {
+    	List<Controller> results = new ArrayList<Controller>();
+    	for (Iterator<Controller> i = _controllers.values().iterator(); i.hasNext(); ) {
+    		Controller c = i.next();
+    		if (GeoUtils.distance(gl, c.getPosition()) <= distance)
+    			results.add(c);
+    	}
+    	
+    	return results;
     }
     
     /**
@@ -83,8 +105,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @return a Collection of Pilot beans
      * @see NetworkInfo#getControllers()
      */
-    public Collection getPilots() {
-        return new ArrayList(_pilots.values());
+    public Collection<Pilot> getPilots() {
+        return new ArrayList<Pilot>(_pilots.values());
     }
     
     /**
@@ -162,7 +184,7 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @see NetworkInfo#getController(String)
      */
     public Pilot getPilot(String callsign) {
-       return (Pilot) _pilots.get(callsign); 
+       return _pilots.get(callsign); 
     }
     
     /**
@@ -174,7 +196,7 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * @see NetworkInfo#getPilot(String)
      */
     public Controller getController(String callsign) {
-       return (Controller) _controllers.get(callsign);
+       return _controllers.get(callsign);
     }
     
     /**

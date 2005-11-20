@@ -3,7 +3,8 @@ package org.deltava.beans.servinfo;
 
 import java.io.Serializable;
 
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
 
@@ -14,7 +15,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public abstract class NetworkUser implements Comparable, Serializable, ViewEntry {
+public abstract class NetworkUser implements Comparable, Serializable, ViewEntry, MapEntry {
 
     public static final int PILOT = 0;
     public static final int ATC = 1;
@@ -25,6 +26,7 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
     private String _name;
     
     private int _databaseID;
+	protected GeoPosition _position;
     
     /**
      * Initializes the bean with a given network ID.
@@ -75,6 +77,77 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
         return _name;
     }
     
+	/**
+	 * Returns the hemispheres containing this User.
+	 * @return bit-wise hemisphere constants
+	 * @see GeoPosition#getHemisphere()
+	 */
+	public final int getHemisphere() {
+	   return _position.getHemisphere();
+	}
+	
+	/**
+	 * Returns the User's current latitude.
+	 * @return the latitude in degrees
+	 * @see NetworkUser#getLongitude()
+	 * @see NetworkUser#getPosition()
+	 * @see NetworkUser#setPosition(double, double)
+	 * @see NetworkUser#setPosition(String, String)
+	 */
+	public final double getLatitude() {
+		return _position.getLatitude();
+	}
+	
+	/**
+	 * Returns the User's current longitude.
+	 * @return the longitude in degrees
+	 * @see NetworkUser#getLatitude() 
+	 * @see NetworkUser#getPosition()
+	 * @see NetworkUser#setPosition(double, double)
+	 * @see NetworkUser#setPosition(String, String)
+	 */
+	public final double getLongitude() {
+		return _position.getLongitude();
+	}
+
+	/**
+	 * Returns the User's current position.
+	 * @return a GeoPosition bean containing latitude and longitude
+	 * @see NetworkUser#getLatitude()
+	 * @see NetworkUser#getLongitude()
+	 * @see NetworkUser#setPosition(double, double)
+	 * @see NetworkUser#setPosition(String, String)
+	 */
+	public GeoLocation getPosition() {
+		return _position;
+	}
+
+	/**
+	 * Updates the User's position.
+	 * @param lat the latitude in degrees
+	 * @param lon the longitude in degrees
+	 * @see NetworkUser#setPosition(String, String)
+	 * @see NetworkUser#getPosition()
+	 */
+	public void setPosition(double lat, double lon) {
+		_position = new GeoPosition(lat, lon);
+	}
+
+	/**
+	 * Updates the User's position.
+	 * @param lat a String containing the latitude
+	 * @param lon a String containing the longitude
+	 * @see NetworkUser#setPosition(double, double)
+	 * @see NetworkUser#getPosition()
+	 */
+	public void setPosition(String lat, String lon) {
+		try {
+			_position = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lon));
+		} catch (NumberFormatException nfe) {
+			_position = new GeoPosition(0, 0);
+		}
+	}
+	
     /**
      * Updates the user's callsign.
      * @param cs the callsign
