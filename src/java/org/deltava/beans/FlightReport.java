@@ -95,15 +95,16 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
    private int _fsVersion;
    private int _attr;
    private String _remarks;
+   private String _comments; // made on disposition
 
    private String _firstName;
    private String _lastName;
    private String _rank;
 
-   private Set _captEQType = new TreeSet();
+   private Set<String> _captEQType = new TreeSet<String>();
 
    // Stores Integers pointing to other database IDs, see PIREPConstants
-   private Map _dbIds = new HashMap();
+   private Map<String, Integer> _dbIds = new HashMap<String, Integer>();
 
    /**
     * Creates a new Flight Report object with a given flight.
@@ -174,16 +175,27 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * Returns the remarks for this Flight Report.
     * @return the remarks
     * @see FlightReport#setRemarks(String)
+    * @see FlightReport#getComments()
     */
    public String getRemarks() {
       return _remarks;
+   }
+   
+   /**
+    * Returns the disposition comments for this Flight Report.
+    * @return the disposition comments
+    * @see FlightReport#setComments(String)
+    * @see FlightReport#getRemarks()
+    */
+   public String getComments() {
+	   return _comments;
    }
 
    /**
     * Returns if this flight counts towards promotion in a particular equipment type program.
     * @return the equipment type program name(s), or an empty Collection if this flight does not count
     */
-   public Collection getCaptEQType() {
+   public Collection<String> getCaptEQType() {
       return _captEQType;
    }
 
@@ -232,7 +244,7 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * @see FlightReport#setDatabaseID(String, int)
     */
    public int getDatabaseID(String idType) {
-      Integer dbID = (Integer) _dbIds.get(idType);
+      Integer dbID = _dbIds.get(idType);
       return (dbID == null) ? 0 : dbID.intValue();
    }
 
@@ -259,6 +271,7 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
    /**
     * Returns the status of this Flight Report.
     * @return the status of this PIREP
+    * @see FlightReport#getStatusName()
     * @see FlightReport#setStatus(int)
     * @see FlightReport#setStatus(String)
     */
@@ -266,6 +279,11 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
       return _status;
    }
 
+   /**
+    * Status description of this Flight Report, for JSPs.
+    * @return the status name
+    * @see FlightReport#getStatus()
+    */
    public String getStatusName() {
       return STATUS[getStatus()];
    }
@@ -316,9 +334,20 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * Sets the remarks for this Flight Report.
     * @param remarks the remarks
     * @see FlightReport#getRemarks()
+    * @see FlightReport#setComments(String)
     */
    public void setRemarks(String remarks) {
       _remarks = remarks;
+   }
+   
+   /**
+    * Sets the disposition comments for this Flight Report.
+    * @param comments the disposition comments
+    * @see FlightReport#getComments()
+    * @see FlightReport#setRemarks(String)
+    */
+   public void setComments(String comments) {
+	   _comments = comments;
    }
 
    /**
@@ -326,7 +355,7 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
     * @param eqTypes a Collection of equipment program names
     * @see FlightReport#setCaptEQType(String)
     */
-   public void setCaptEQType(Collection eqTypes) {
+   public void setCaptEQType(Collection<String> eqTypes) {
 	   _captEQType.clear();
       _captEQType.addAll(eqTypes);
    }
