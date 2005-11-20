@@ -4,6 +4,8 @@ package org.deltava.commands.stats;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.system.TableInfo;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetStatistics;
@@ -72,6 +74,20 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     ctx.release();
                 }
             }
+            
+            // Calculate database size
+            long dbSize = 0;
+            long dbRows = 0;
+            for (Iterator i = _tableStatus.iterator(); i.hasNext(); ) {
+            	TableInfo info = (TableInfo) i.next();
+            	dbSize += info.getSize();
+            	dbSize += info.getIndexSize();
+            	dbRows += info.getRows();
+            }
+            
+            // Save database size
+            totals.setDBRows(dbRows);
+            totals.setDBSize(dbSize);
 
             // Save the results in the request
             ctx.setAttribute("totals", totals, REQUEST);

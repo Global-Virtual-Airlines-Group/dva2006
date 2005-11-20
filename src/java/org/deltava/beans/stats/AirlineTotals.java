@@ -46,7 +46,7 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	private double _ytdHours;
 	
 	private long _dbSize;
-	private int _dbRows;
+	private long _dbRows;
 	
 	/**
 	 * Initializes the bean with an effective date.
@@ -254,9 +254,9 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	/**
 	 * Returns the total number of rows in all database tables.
 	 * @return the total number of rows in all tables
-	 * @see AirlineTotals#setDBRows(int)
+	 * @see AirlineTotals#setDBRows(long)
 	 */
-	public int getDBRows() {
+	public long getDBRows() {
 		return _dbRows;
 	}
 	
@@ -462,7 +462,7 @@ public class AirlineTotals implements Serializable, Comparable, Cacheable {
 	 * @param rows the number of rows in all tables
 	 * @see AirlineTotals#getDBRows()
 	 */
-	public void setDBRows(int rows) {
+	public void setDBRows(long rows) {
 		validateInput(rows, "Database Rows");
 		_dbRows = rows;
 	}
