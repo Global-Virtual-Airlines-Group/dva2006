@@ -276,9 +276,9 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <c:when test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:text name="legacyHours" idx="*" size="2" max="6" value="${pilot.legacyHours}" /></td>
 </c:when>
-<c:else>
+<c:otherwise>
  <td colspan="${cspan}" class="data"><fmt:dec value="${pilot.legacyHours}" /> hours</td>
-</c:else>
+</c:otherwise>
 </c:choose>
 </tr>
 </c:if>
