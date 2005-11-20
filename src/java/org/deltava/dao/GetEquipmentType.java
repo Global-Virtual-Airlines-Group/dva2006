@@ -128,7 +128,7 @@ public class GetEquipmentType extends DAO {
      * @return a Collection of equipment program names
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getPrimaryTypes(String dbName, String eqType) throws DAOException {
+    public Collection<String> getPrimaryTypes(String dbName, String eqType) throws DAOException {
        
        // Build the SQL statement
        StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
@@ -144,7 +144,7 @@ public class GetEquipmentType extends DAO {
     		ResultSet rs = _ps.executeQuery();
     		
     		// Iterate through the results
-    		Set results = new HashSet();
+    		Set<String> results = new HashSet<String>();
     		while (rs.next())
     			results.add(rs.getString(1));
 
