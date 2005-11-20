@@ -35,6 +35,7 @@ public class ConnectionPoolCommand extends AbstractCommand {
       // Save the ACARS statistics in the request
       ctx.setAttribute("acarsStats", ServerStats.getAll(), REQUEST);
       ctx.setAttribute("acarsStatNames", Arrays.asList(ServerStats.STAT_NAMES), REQUEST);
+      ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
