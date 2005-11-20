@@ -107,7 +107,7 @@ public class IssueCommentCommand extends AbstractCommand {
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setType(CommandResult.REQREDIRECT);
+      result.setType(CommandResult.REDIRECT);
       result.setURL("issue", "read", ctx.getID());
       result.setSuccess(true);
    }
