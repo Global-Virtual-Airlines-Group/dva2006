@@ -134,25 +134,6 @@ public class GetStatistics extends DAO {
 			result.setActivePilots(rs.getInt(1));
 			rs.close();
 			_ps.close();
-
-			// Get database Totals
-			long totalSize = 0;
-			int totalRows = 0;
-			prepareStatement("SHOW TABLE STATUS");
-			rs = _ps.executeQuery();
-			while (rs.next()) {
-				totalSize += rs.getLong(7);
-				totalSize += rs.getLong(9);
-				totalRows += rs.getInt(5);
-			}
-
-			// Update result bean
-			rs.close();
-			result.setDBRows(totalRows);
-			result.setDBSize(totalSize);
-
-			// Clean up
-			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
