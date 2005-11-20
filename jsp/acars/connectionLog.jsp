@@ -40,10 +40,6 @@ return true;
  <td colspan="4">ACARS CONNECTION LOG</td>
 </tr>
 <tr>
- <td class="label">Search Type</td>
- <td class="data" colspan="3"><el:check name="searchType" type="radio" idx="*" options="${searchTypes}" value="${searchType}" /></td>
-</tr>
-<tr>
  <td class="label">Pilot Code</td>
  <td class="data" colspan="3"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
 </tr>
