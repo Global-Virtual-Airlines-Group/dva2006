@@ -46,9 +46,9 @@
 <c:when test="${access.canRelease}">
  <td><el:cmdbutton url="selcal" op="free" linkID="${sc.code}" label="RELEASE" /></td>
 </c:when>
-<c:else>
+<c:otherwise>
  <td>&nbsp;</td>
-</c:else>
+</c:otherwise>
 </c:choose>
  <td>${sc.aircraftCode}</td>
  <td class="sec bld">${sc.equipmentType}</td>
