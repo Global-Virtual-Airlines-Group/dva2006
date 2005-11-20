@@ -211,7 +211,7 @@ public class GetServInfo extends DAO {
 										c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
 										info.add(c);
 									} catch (Exception e) {
-										log.warn("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getClass().getName());
+										log.warn("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}
 									break;
 
