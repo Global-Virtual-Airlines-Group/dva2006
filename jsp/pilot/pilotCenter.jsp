@@ -289,7 +289,9 @@ be eligible to take written examinations once you have completed 5 flights.</spa
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submited pilot Flight Reports here.</td>
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. 
+<c:if test="${pirepQueueSize > 15}"><span class="sec bld"></c:if>There are currently
+ <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.<c:if test="${pirepQueueSize > 15}"></span></c:if></td>
 </tr>
 </content:filter>
 
