@@ -170,7 +170,7 @@ return true;
 <%@ include file="/jsp/pilot/pirepACARS.jsp" %> 
 </c:if>
 <tr>
- <td class="label" VALIGN="top">Remarks</td>
+ <td class="label" valign="top">Remarks</td>
  <td class="data"><el:textbox idx="*" name="remarks" width="100" height="5">${pirep.remarks}</el:textbox></td>
 </tr>
 </el:table>
