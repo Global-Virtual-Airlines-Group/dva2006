@@ -87,15 +87,15 @@ abstract class PilotReadDAO extends PilotDAO {
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".PILOTS P LEFT JOIN ");
       sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
+      sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
       sqlBuf.append(dbName.toLowerCase());
       sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) "
-            + "AND (F.STATUS=?) GROUP BY P.ID");
+            + "GROUP BY P.ID");
       
       try {
          prepareStatement(sqlBuf.toString());
-         _ps.setString(1, fullName.toUpperCase());
-         _ps.setInt(2, FlightReport.OK);
+         _ps.setInt(1, FlightReport.OK);
+         _ps.setString(2, fullName.toUpperCase());
 
          // Execute the query and get the result
          List results = execute();
@@ -272,7 +272,6 @@ abstract class PilotReadDAO extends PilotDAO {
          p.setEmailAccess(rs.getInt(24));
          p.setShowSignatures(rs.getBoolean(25));
          p.setShowSSThreads(rs.getBoolean(26));
-         // FIXME Uncomment this and renumber
          p.setHasDefaultSignature(rs.getBoolean(27));
          p.setUIScheme(rs.getString(28));
          p.setLoginHost(rs.getString(29));
