@@ -1,6 +1,8 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A bean to store online Controller information.
  * @author Luke
@@ -16,8 +18,11 @@ public class Controller extends NetworkUser {
    private static final String[] FACILITIES = {"Observer", "Flight Service Station", "Clearance Delivery", "Ground", "Tower",
          "Approach/Departure", "Center"};
    
+   private static final String[] COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
+   
    private int _rating;
    private int _facility;
+   private String _freq;
 
     /**
      * Initializes the bean with a particular user ID.
@@ -43,6 +48,15 @@ public class Controller extends NetworkUser {
      */
     public int getRating() {
        return _rating;
+    }
+    
+    /**
+     * Returns the Controller's communication frequency.
+     * @return the frequency
+     * @see Controller#setFrequency(String)
+     */
+    public String getFrequency() {
+    	return _freq;
     }
     
     /**
@@ -108,5 +122,43 @@ public class Controller extends NetworkUser {
           throw new IllegalArgumentException("Invalid Controller facility - " + type);
        
        _facility = type;
+    }
+    
+    /**
+     * Updates the Controller's communication frequency.
+     * @param freq the frequency
+     * @see Controller#getFrequency()
+     */
+    public void setFrequency(String freq) {
+    	_freq = freq;
+    }
+    
+    /**
+     * Returns the Google Maps icon color.
+     * @return the color as defined by COLORS and faclity type
+     * @see Controller#getFacility()
+     * @see Controller#getFacilityType()
+     */
+    public String getIconColor() {
+    	return COLORS[_facility];
+    }
+    
+    /**
+	 * Returns the Google Map Infobox text.
+	 * @return HTML text
+	 */
+    public String getInfoBox() {
+		StringBuilder buf = new StringBuilder("<b>");
+		buf.append(getCallsign());
+		buf.append("</b> (");
+		buf.append(StringUtils.stripInlineHTML(getName()));
+		buf.append(")<span class=\"small\"><br /><br />Network ID: ");
+		buf.append(String.valueOf(getID()));
+		buf.append("<br />Controller rating: ");
+		buf.append(getRatingName());
+		buf.append("<br /><br />Facility Type: ");
+		buf.append(getFacilityType());
+		buf.append("</span>");
+		return buf.toString();
     }
 }

@@ -205,6 +205,8 @@ public class GetServInfo extends DAO {
 										Controller c = new Controller(id);
 										c.setCallsign(si.get(SITokens.CALLSIGN));
 										c.setName(si.get(SITokens.NAME));
+										c.setFrequency(si.get(SITokens.FREQ));
+										c.setPosition(si.get(SITokens.LAT), si.get(SITokens.LON));
 										c.setRating(Integer.parseInt(si.get(SITokens.RATING)));
 										c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
 										info.add(c);
