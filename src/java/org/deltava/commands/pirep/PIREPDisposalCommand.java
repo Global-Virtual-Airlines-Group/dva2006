@@ -97,6 +97,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// If we cannot perform the operation, then stop
 			if (!isOK)
 				throw securityException("Cannot dispose of Flight Report #" + fr.getID());
+			
+			// Load the comments
+			if (ctx.getParameter("dComments") != null)
+				fr.setComments(ctx.getParameter("dComments"));
 
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);

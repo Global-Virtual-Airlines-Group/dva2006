@@ -142,4 +142,15 @@ public final class PIREPAccessControl extends AccessControl {
 	public boolean getOurFlight() {
 		return _ourPIREP;
 	}
+	
+	/**
+	 * Returns if the PIREP can be disposed of in any way (approved/rejected/held) by the current user.
+	 * @return TRUE if the PIREP can be approved, rejected or held, otherwise FALSE
+	 * @see PIREPAccessControl#getCanApprove()
+	 * @see PIREPAccessControl#getCanHold()
+	 * @see PIREPAccessControl#getCanReject()
+	 */
+	public boolean getCanDispose() {
+		return _canApprove || _canReject || _canHold;
+	}
 }
