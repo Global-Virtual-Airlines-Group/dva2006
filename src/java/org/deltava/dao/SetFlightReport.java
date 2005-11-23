@@ -106,11 +106,17 @@ public class SetFlightReport extends DAO {
          _ps.setInt(3, pirep.getID());
          executeUpdate(1);
          
-         // Write the disposition comments
-         prepareStatement("REPLACE INTO PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
-         _ps.setInt(1, pirep.getID());
-         _ps.setString(2, pirep.getComments());
-         executeUpdate(1);
+         // Write the comments into the database
+         if (!StringUtils.isEmpty(pirep.getComments())) {
+       	  prepareStatement("REPLACE INTO PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+       	  _ps.setInt(1, pirep.getID());
+       	  _ps.setString(2, pirep.getComments());
+       	  executeUpdate(1);
+         } else {
+       	  prepareStatement("DELETE FROM PIREP_COMMENT WHERE (ID=?)");
+       	  _ps.setInt(1, pirep.getID());
+       	  executeUpdate(0);
+         }
          
          commitTransaction();
       } catch (SQLException se) {
