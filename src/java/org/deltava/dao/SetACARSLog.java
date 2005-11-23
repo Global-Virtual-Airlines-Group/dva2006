@@ -106,9 +106,10 @@ public class SetACARSLog extends DAO {
         executeUpdate(0);
         
         // Mark the flight as archived
-        prepareStatement("UPDATE acars.FLIGHTS SET ARCHIVED=? WHERE (ID=?)");
+        prepareStatement("UPDATE acars.FLIGHTS SET ARCHIVED=?, PIREP=? WHERE (ID=?)");
         _ps.setBoolean(1, true);
-        _ps.setInt(2, flightID);
+        _ps.setBoolean(2, true);
+        _ps.setInt(3, flightID);
         executeUpdate(0);
         
         // Commit the transaction
