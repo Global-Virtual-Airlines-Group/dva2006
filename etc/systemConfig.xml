@@ -231,7 +231,7 @@
 	<!-- JDBC data source configuration -->
 	<jdbc>
 		<driver>com.mysql.jdbc.Driver</driver>
-		<url>jdbc:mysql://polaris.sce.net/dva</url>
+		<url>jdbc:mysql://localhost/dva</url>
 		<user>dva</user>
 		<pwd>***REMOVED***</pwd>
 		
