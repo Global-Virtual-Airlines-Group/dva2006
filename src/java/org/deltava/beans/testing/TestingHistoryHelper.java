@@ -24,8 +24,8 @@ public class TestingHistoryHelper {
 	private EquipmentType _myEQ;
 	private boolean _isCaptain;
 
-	private Collection _tests;
-	private Collection _pireps;
+	private Collection<Test> _tests;
+	private Collection<FlightReport> _pireps;
 
 	/**
 	 * Initializes the helper.
@@ -34,17 +34,25 @@ public class TestingHistoryHelper {
 	 * @param tests a Collection of checkride/examination objects, representing this Pilot's exam history
 	 * @param pireps a Collection of FlightReport beans <i>with the CaptEQType property populated</i>
 	 */
-	public TestingHistoryHelper(Pilot p, EquipmentType myEQ, Collection tests, Collection pireps) {
+	public TestingHistoryHelper(Pilot p, EquipmentType myEQ, Collection<Test> tests, Collection<FlightReport> pireps) {
 		super();
 		_usr = p;
 		_myEQ = myEQ;
-		_tests = (tests == null) ? Collections.EMPTY_LIST : tests;
+		_tests = (tests == null) ? new HashSet<Test>() : tests;
 		_pireps = pireps;
 		
 		// Check if we're a captain
 		_isCaptain = (StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1);
 	}
 
+	/**
+	 * Adds an Examination to the Pilot's test history. 
+	 * @param ex the Examiantion
+	 */
+	public void addExam(Examination ex) {
+		_tests.add(ex);
+	}
+	
 	/**
 	 * Returns the Pilot's equipment program. This method is useful when we use this class and do not wish to call the
 	 * {@link org.deltava.dao.GetEquipmentType} DAO a second time.
@@ -59,7 +67,7 @@ public class TestingHistoryHelper {
 	 * class and do not wish to call the {@link org.deltava.dao.GetExam} DAO a second time.
 	 * @return a List of Test beans
 	 */
-	public Collection getExams() {
+	public Collection<Test> getExams() {
 		return _tests;
 	}
 
@@ -92,8 +100,8 @@ public class TestingHistoryHelper {
 	public int getMaxCheckRideStage() {
 
 		int maxStage = 1;
-		for (Iterator i = _tests.iterator(); i.hasNext();) {
-			Test t = (Test) i.next();
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
 			if ((t instanceof CheckRide) && t.getPassFail())
 				maxStage = Math.max(maxStage, t.getStage());
 		}
@@ -109,8 +117,8 @@ public class TestingHistoryHelper {
 	 */
 	public int getFlightLegs(EquipmentType eq) {
 	   int result = 0;
-	   for (Iterator i = _pireps.iterator(); i.hasNext(); ) {
-	      FlightReport fr = (FlightReport) i.next();
+	   for (Iterator<FlightReport> i = _pireps.iterator(); i.hasNext(); ) {
+	      FlightReport fr = i.next();
 	      if (fr.getStatus() == FlightReport.OK) {
 	         if ((eq == null) || (fr.getCaptEQType().contains(eq.getName())))
 	            result++;
@@ -233,8 +241,8 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user has passed this Examination, otherwise FALSE
 	 */
 	public boolean hasPassed(String examName) {
-		for (Iterator i = _tests.iterator(); i.hasNext();) {
-			Test t = (Test) i.next();
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
 			if (t.getPassFail() && (t.getName().equals(examName)))
 				return true;
 		}
@@ -249,8 +257,8 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user has submitted this Examination, otherwise FALSE
 	 */
 	public boolean hasSubmitted(String examName) {
-		for (Iterator i = _tests.iterator(); i.hasNext();) {
-			Test t = (Test) i.next();
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
 			if ((t.getStatus() == Test.SUBMITTED) && (t.getName().equals(examName)))
 				return true;
 		}
