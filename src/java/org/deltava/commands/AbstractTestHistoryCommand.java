@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.testing.TestingHistoryHelper;
+import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 
@@ -37,9 +37,27 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		// Get the Pilot's equipment program
 		GetEquipmentType eqdao = new GetEquipmentType(c);
 		EquipmentType eq = eqdao.get(p.getEquipmentType());
-
+		
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
 		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
+		
+		// Get the Pilot's applicant profile to get eq program hired into
+		GetApplicant adao = new GetApplicant(c);
+		Applicant a = adao.getByPilotID(p.getID());
+		
+		// Create a dummy FO exam for the hired in program
+		if (a != null) {
+			EquipmentType ieq = eqdao.get(a.getEquipmentType());
+			if ((ieq != null) && (ieq.getExamName(Ranks.RANK_FO) != null)) {
+				Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
+				ex.setSize(1);
+				ex.setScore(1);
+				ex.setPassFail(true); 
+				ex.setDate(p.getCreatedOn());
+				ex.setScoredOn(p.getCreatedOn());
+				_testHistory.addExam(ex);
+			}
+		}
 	}
 }
