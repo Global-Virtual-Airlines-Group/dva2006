@@ -100,8 +100,12 @@
 <c:if test="${scoreCR}">
 <c:set var="isForm" value="true" scope="request" />
 <tr>
- <td class="label">Check Ride Comments</td>
- <td class="data"><textarea name="comments" cols="100" rows="5">${checkRide.comments}</textarea></td>
+ <td class="label">Check Ride Instructions</td>
+ <td class="data"><fmt:text value="${checkRide.comments}" /></td>
+</tr>
+<tr>
+ <td class="label">Reviewer Comments</td>
+ <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </tr>
 <tr>
  <td class="label">Check Ride Status</td>
@@ -113,7 +117,7 @@
 </c:if>
 <c:if test="${!scoreCR}">
 <tr>
- <td class="label">Comments</td>
+ <td class="label">Check Ride Instructions</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 </c:if>
