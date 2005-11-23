@@ -201,15 +201,17 @@ return true;
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </c:if>
 </tr>
+<c:if test="${!scoreCR}">
 <tr>
  <td class="label" valign="top">Reviewer Comments</td>
 <c:if test="${access.canDispose}">
  <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </c:if>
 <c:if test="${!access.canDispose}">
- <td class="data"><fmt:text value="${pirep.remarks}" /></td>
+ <td class="data"><fmt:text value="${pirep.comments}" /></td>
 </c:if>
 </tr>
+</c:if>
 </el:table>
 
 <!-- PIREP Button Bar -->
