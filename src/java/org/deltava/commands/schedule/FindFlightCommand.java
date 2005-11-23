@@ -5,6 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetSchedule;
@@ -50,6 +52,12 @@ public class FindFlightCommand extends AbstractCommand {
 		// Set combo variables for JSP
 		ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_NAMES, SORT_OPTIONS), REQUEST);
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
+		
+		// Get the airports
+		Map allAirports = (Map) SystemData.getObject("airports");
+		Set airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		airports.addAll(allAirports.values());
+		ctx.setAttribute("airports", airports, REQUEST);
 
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
