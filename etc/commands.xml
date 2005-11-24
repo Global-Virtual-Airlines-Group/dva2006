@@ -119,7 +119,7 @@
 	<command id="invalidate">
 		<name>E-Mail Invalidation</name>
 		<class>org.deltava.commands.security.InvalidateEmailCommand</class>
-		<roles>HR</roles>
+		<roles>HR,PIREP,Examination</roles>
 	</command>
 
 	<command id="emailupd">
