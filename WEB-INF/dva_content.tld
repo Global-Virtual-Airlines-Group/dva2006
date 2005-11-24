@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
-
-<taglib>
-	<tlibversion>1.0</tlibversion>
-	<jspversion>1.1</jspversion>
-	<shortname>content</shortname>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>content</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dvacontent</uri>
-	<info>A JSP Tag Library used to insert links to other web resources (JS/CSS)</info>
 
 	<!-- Insert CSS tag, for inserting CSS file links -->
 	<tag>
 		<name>css</name>
-		<tagclass>org.deltava.taglib.content.InsertCSSTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.InsertCSSTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>name</name>
 			<required>true</required>
@@ -41,8 +38,8 @@
 	<!-- Insert RSS tag, for inserting RSS feed links -->
 	<tag>
 		<name>rss</name>
-		<tagclass>org.deltava.taglib.content.InsertRSSTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.InsertRSSTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>title</name>
 			<required>true</required>
@@ -64,8 +61,8 @@
 	<!-- Insert JS tag, for inserting JavaScript file links -->
 	<tag>
 		<name>js</name>
-		<tagclass>org.deltava.taglib.content.InsertJSTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.InsertJSTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>name</name>
 			<required>true</required>
@@ -82,8 +79,8 @@
 	<!-- Insert PICS tag, for inserting PICS 1.1 rating links -->
 	<tag>
 		<name>pics</name>
-		<tagclass>org.deltava.taglib.content.InsertPICSTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.InsertPICSTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>icra</name>
 			<required>false</required>
@@ -101,20 +98,33 @@
 	<!-- Role Filter tag, for stripping out JSP content based on security role -->
 	<tag>
 		<name>filter</name>
-		<tagclass>org.deltava.taglib.content.RoleFilterTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.content.RoleFilterTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>roles</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
+	
+	<!-- Browser Filter Tag, for filtering content based on IE/Mozilla -->
+	<tag>
+		<name>browserFilter</name>
+		<tag-class>org.deltava.taglib.content.BrowserFilterTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>ie</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
 
 	<!-- Active User Filter tag, for stripping out JSP content if a user is not logged in -->
 	<tag>
 		<name>activeUser</name>
-		<tagclass>org.deltava.taglib.content.ActiveUserFilterTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.content.ActiveUserFilterTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>user</name>
 			<required>true</required>
@@ -126,8 +136,8 @@
 	<!-- System Data access tag -->
 	<tag>
 		<name>sysdata</name>
-		<tagclass>org.deltava.taglib.content.GetSystemDataTag</tagclass>
-		<bodycontent>none</bodycontent>
+		<tag-class>org.deltava.taglib.content.GetSystemDataTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>var</name>
 			<required>true</required>
@@ -155,15 +165,15 @@
 	<!-- Airline name tag -->
 	<tag>
 		<name>airline</name>
-		<tagclass>org.deltava.taglib.content.AirlineNameTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.AirlineNameTag</tag-class>
+		<body-content>empty</body-content>
 	</tag>
 
 	<!-- Copyright notice tag -->
 	<tag>
 		<name>copyright</name>
-		<tagclass>org.deltava.taglib.content.CopyrightTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.CopyrightTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>visible</name>
 			<required>false</required>
@@ -175,8 +185,8 @@
 	<!-- GetCookie tag, for reading cookie data -->
 	<tag>
 		<name>getCookie</name>
-		<tagclass>org.deltava.taglib.content.GetCookieTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.GetCookieTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>name</name>
 			<required>true</required>
@@ -197,8 +207,8 @@
 	<!-- SetCookie tag, for writing cookie data -->
 	<tag>
 		<name>setCookie</name>
-		<tagclass>org.deltava.taglib.content.SetCookieTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.SetCookieTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>name</name>
 			<required>true</required>
@@ -222,16 +232,16 @@
 		<attribute>
 			<name>age</name>
 			<required>false</required>
-			<type>java.lang.Integer</type>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
 
 	<!-- ClearCookie tag, for clearing cookies -->
 	<tag>
 		<name>clearCookie</name>
-		<tagclass>org.deltava.taglib.content.ClearCookieTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.content.ClearCookieTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>name</name>
 			<required>true</required>
@@ -242,15 +252,15 @@
 	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
 	<tag>
 		<name>page</name>
-		<tagclass>org.deltava.taglib.layout.PageTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.layout.PageTag</tag-class>
+		<body-content>JSP</body-content>
 	</tag>
 
 	<!-- Region Layout Tag, for displaying elements as DIVs or TDs -->
 	<tag>
 		<name>region</name>
-		<tagclass>org.deltava.taglib.layout.RegionTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.layout.RegionTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>id</name>
 			<required>true</required>

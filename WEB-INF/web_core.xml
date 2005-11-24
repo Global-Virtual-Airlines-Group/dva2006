@@ -38,41 +38,36 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<!-- Web Services servlet -->
 	<servlet>
 		<servlet-name>webService</servlet-name>
-		<display-name>Web Services Servlet</display-name>
-		<load-on-startup>2</load-on-startup>
 		<servlet-class>org.deltava.servlet.WebServiceServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
 	<!-- Command Controller servlet -->
 	<servlet>
 		<servlet-name>cmdController</servlet-name>
-		<display-name>Command Controller Servlet</display-name>
-		<load-on-startup>1</load-on-startup>
 		<servlet-class>org.deltava.servlet.CommandServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
 	</servlet>
 	
 	<!-- Image Serving servlet -->
 	<servlet>
 		<servlet-name>dbImage</servlet-name>
-		<display-name>Database Image Serving Servlet</display-name>
-		<load-on-startup>2</load-on-startup>
 		<servlet-class>org.deltava.servlet.ImageServlet</servlet-class>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
 	
 	<!-- Flight Plan servlet -->
 	<servlet>
 		<servlet-name>flightPlan</servlet-name>
-		<display-name>Event Flight Plan Serving Servlet</display-name>
-		<load-on-startup>0</load-on-startup>
 		<servlet-class>org.deltava.servlet.FlightPlanServlet</servlet-class>
+		<load-on-startup>0</load-on-startup>
 	</servlet>
 	
 	<!-- Library Donwload servlet -->
 	<servlet>
 		<servlet-name>fleetLibrary</servlet-name>
-		<display-name>Fleet Library Content Serving Servlet</display-name>
-		<load-on-startup>3</load-on-startup>
 		<servlet-class>org.deltava.servlet.LibraryServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
 	</servlet>
 	
 	<!-- Filter mappings to Command Controller -->
@@ -170,37 +165,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<servlet-name>flightPlan</servlet-name>
 		<url-pattern>/fplan/*</url-pattern>
 	</servlet-mapping>
-
-	<!-- JSP tag libraries -->
-	<taglib>
-		<taglib-uri>dva_content.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_content.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>dva_html.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_html.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>dva_format.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_format.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>dva_view.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_view.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>dva_googlemaps.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_googlemaps.tld</taglib-location>
-	</taglib>
-	
-	<taglib>
-		<taglib-uri>dva_jspfunc.tld</taglib-uri>
-		<taglib-location>/WEB-INF/dva_jspfunc.tld</taglib-location>
-	</taglib>
 
 	<!-- [INSERT FRAGMENT HERE] -->
 
