@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
-
-<taglib>
-	<tlibversion>1.0</tlibversion>
-	<jspversion>1.1</jspversion>
-	<shortname>element</shortname>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>element</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dva_html</uri>
-	<info>A JSP Tag Library used to insert HTML elements</info>
 
 	<!-- Image Tag, for generating image tags -->
 	<tag>
 		<name>img</name>
-		<tagclass>org.deltava.taglib.html.ImageTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.ImageTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -54,8 +51,8 @@
 	<!-- Link Tag, for generating links to other URLs -->
 	<tag>
 		<name>link</name>
-		<tagclass>org.deltava.taglib.html.LinkTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.LinkTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -91,8 +88,8 @@
 	<!-- Command Link Tag, for generating links to other commands -->
 	<tag>
 		<name>cmd</name>
-		<tagclass>org.deltava.taglib.html.CommandLinkTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.CommandLinkTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -138,8 +135,8 @@
 	<!-- Table tag, for defining HTML tables -->
 	<tag>
 		<name>table</name>
-		<tagclass>org.deltava.taglib.html.TableTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.TableTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -170,8 +167,8 @@
 	<!-- Form tag, for defining HTML forms and tracking tab Indexes -->
 	<tag>
 		<name>form</name>
-		<tagclass>org.deltava.taglib.html.FormTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.FormTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -218,8 +215,8 @@
 	<!-- Button tag, for defining HTML buttons -->
 	<tag>
 		<name>button</name>
-		<tagclass>org.deltava.taglib.html.ButtonTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.ButtonTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -255,8 +252,8 @@
 	<!-- Command Button tag, for defining HTML buttons that execute commands -->
 	<tag>
 		<name>cmdbutton</name>
-		<tagclass>org.deltava.taglib.html.CommandButtonTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.CommandButtonTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>label</name>
 			<required>false</required>
@@ -298,8 +295,8 @@
 	<!-- Field tag, for defining HTML text fields -->
 	<tag>
 		<name>text</name>
-		<tagclass>org.deltava.taglib.html.InputTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.InputTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -367,8 +364,8 @@
 	<!-- Textbox tag, for defining HTML textarea fields -->
 	<tag>
 		<name>textbox</name>
-		<tagclass>org.deltava.taglib.html.TextboxTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.TextboxTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -426,8 +423,8 @@
 	<!-- FileUpload tag, for defining RFC1867 file upload fields -->
 	<tag>
 		<name>file</name>
-		<tagclass>org.deltava.taglib.html.FileUploadTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.FileUploadTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -468,8 +465,8 @@
 	<!-- Combo tag, for defining HTML combobox and listbox fields -->
 	<tag>
 		<name>combo</name>
-		<tagclass>org.deltava.taglib.html.ComboTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.ComboTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -533,8 +530,8 @@
 	<!-- Airport Combo tag, for defining HTML combobox and listbox fields -->
 	<tag>
 		<name>airport</name>
-		<tagclass>org.deltava.taglib.html.AirportComboTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.AirportComboTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -599,8 +596,8 @@
 	<!-- Single Checkbox tag, for defining single-option HTML checkboxes -->
 	<tag>
 		<name>box</name>
-		<tagclass>org.deltava.taglib.html.SingleCheckTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.SingleCheckTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -647,8 +644,8 @@
 	<!-- Check tag, for defining HTML radio button and checkbox fields -->
 	<tag>
 		<name>check</name>
-		<tagclass>org.deltava.taglib.html.CheckTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.html.CheckTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -723,8 +720,8 @@
 	<!-- User Profle tag, for viewing AFV and Applicant profiles from the Cooler/Events -->
 	<tag>
 		<name>profile</name>
-		<tagclass>org.deltava.taglib.html.UserProfileTag</tagclass>
-		<bodycontent>JSP</bodycontent>
+		<tag-class>org.deltava.taglib.html.UserProfileTag</tag-class>
+		<body-content>JSP</body-content>
 		<attribute>
 			<name>location</name>
 			<required>true</required>
@@ -741,8 +738,8 @@
 	<!-- Email Address tag, for viewing e-mail addresses from the Cooler -->
 	<tag>
 		<name>email</name>
-		<tagclass>org.deltava.taglib.html.EMailDisplayTag</tagclass>
-		<bodycontent>none</bodycontent>
+		<tag-class>org.deltava.taglib.html.EMailDisplayTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>user</name>
 			<required>true</required>

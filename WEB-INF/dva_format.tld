@@ -1,19 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.1//EN"
-"http://java.sun.com/j2ee/dtds/web-jsptaglibrary_1_1.dtd">
-
-<taglib>
-	<tlibversion>1.0</tlibversion>
-	<jspversion>1.1</jspversion>
-	<shortname>fmt</shortname>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>fmt</short-name>
 	<uri>http://dva2006.deltava.org/dva2006/dva_format</uri>
-	<info>A JSP Tag Library used to format date/time and numeric values</info>
 
 	<!-- IntegerFormat tag, for formatting integer values -->
 	<tag>
 		<name>int</name>
-		<tagclass>org.deltava.taglib.format.IntegerFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.IntegerFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>fmt</name>
 			<required>false</required>
@@ -34,8 +31,8 @@
 	<!-- DecimalFormat tag, for formatting decimal values -->
 	<tag>
 		<name>dec</name>
-		<tagclass>org.deltava.taglib.format.DecimalFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.DecimalFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>fmt</name>
 			<required>false</required>
@@ -56,8 +53,8 @@
 	<!-- HexFormat tag, for formatting hexadecimal numbers -->
 	<tag>
 		<name>hex</name>
-		<tagclass>org.deltava.taglib.format.HexFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.HexFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -74,8 +71,8 @@
 	<!-- TextFormat tag, for rendering formatted text in HTML -->
 	<tag>
 		<name>text</name>
-		<tagclass>org.deltava.taglib.format.TextFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.TextFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -91,8 +88,8 @@
 	<!-- MessageFormat tag, for formatting Water Cooler messages -->
 	<tag>
 		<name>msg</name>
-		<tagclass>org.deltava.taglib.format.MessageFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.MessageFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>value</name>
 			<required>true</required>
@@ -103,8 +100,8 @@
 	<!-- DateFormat tag, for formatting date/time values -->	
 	<tag>
 		<name>date</name>
-		<tagclass>org.deltava.taglib.format.DateFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.DateFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>d</name>
 			<required>false</required>
@@ -158,8 +155,8 @@
 	<!-- List tag, used to format lists into delimited strings -->
 	<tag>
 		<name>list</name>
-		<tagclass>org.deltava.taglib.format.ListFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.ListFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>value</name>
 			<required>true</required>
@@ -176,8 +173,8 @@
 	<!-- BeanList tag, used to format a property from lists of beans into delimited strings -->
 	<tag>
 		<name>beans</name>
-		<tagclass>org.deltava.taglib.format.BeanListFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.BeanListFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>property</name>
 			<required>true</required>
@@ -205,8 +202,8 @@
 	<!-- Airport tag, used to display ICAO/IATA codes depending on user preferences -->
 	<tag>
 		<name>airport</name>
-		<tagclass>org.deltava.taglib.format.AirportFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.AirportFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>airport</name>
 			<required>false</required>
@@ -228,8 +225,8 @@
 	<!-- GeoPosition tag, used to format geographic coordinates -->
 	<tag>
 		<name>geo</name>
-		<tagclass>org.deltava.taglib.format.GeoFormatTag</tagclass>
-		<bodycontent>empty</bodycontent>
+		<tag-class>org.deltava.taglib.format.GeoFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>className</name>
 			<required>false</required>
@@ -246,8 +243,8 @@
 	<!-- StackDump tag, used to format exception stack traces -->
 	<tag>
 		<name>stack</name>
-		<tagclass>org.deltava.taglib.format.StackDumpFormatTag</tagclass>
-		<bodycontent>none</bodycontent>
+		<tag-class>org.deltava.taglib.format.StackDumpFormatTag</tag-class>
+		<body-content>empty</body-content>
 		<attribute>
 			<name>exception</name>
 			<required>true</required>
