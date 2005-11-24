@@ -96,4 +96,5 @@
  <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
 </el:table>
+<content:browserFilter ie="true"><el:img y="1" x="158" border="0" src="blank.png" /></content:browserFilter>
 </content:region>
