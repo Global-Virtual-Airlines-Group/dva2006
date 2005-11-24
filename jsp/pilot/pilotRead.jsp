@@ -143,7 +143,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canAssignRide}">
  <el:cmdbutton url="nakedassign" linkID="0x${pilot.ID}" label="ASSIGN CHECK RIDE" />
 </c:if>
-<content:filter roles="HR">
+<content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
 </content:filter>
 <content:filter roles="Admin">
