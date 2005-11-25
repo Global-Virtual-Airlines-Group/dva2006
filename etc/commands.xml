@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<commands name="default">
+<commands>
 
 	<!-- Main Commmands -->
 	<command id="home">
@@ -31,7 +31,13 @@
 		<class>org.deltava.commands.pilot.GreasedLandingCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="acarsprsearch">
+		<name>ACARS Flight Search</name>
+		<class>org.deltava.commands.pirep.ACARSFlightSearchCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="recognition">
 		<name>Pilot Recognition</name>
 		<class>org.deltava.commands.main.PilotRecognitionCommand</class>
@@ -718,7 +724,7 @@
 
 	<command id="selcal">
 		<name>SELCAL Reserve/Free</name>
-		<class>org.deltava.commands.schedule.SELCALCodeCommand</class>
+		<class>org.deltava.commands.schedule.SELCALReserveCommand</class>
 		<roles>Pilot</roles>
 	</command>	
 

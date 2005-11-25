@@ -98,6 +98,9 @@
 <tr class="MenuItem">
  <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="acarsprsearch">ACARS FLIGHTS</el:cmd></td>
+</tr>
 <tr class="MenuHeader"><td>STATISTICS</td></tr>
 <tr class="MenuItem">
  <td><el:cmd url="airlinestats">AIRLINE TOTALS</el:cmd></td>
