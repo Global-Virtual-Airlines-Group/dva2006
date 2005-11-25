@@ -20,7 +20,7 @@ import org.deltava.security.SecurityContext;
 public class ServiceContext implements Serializable, SecurityContext {
    
    // List of roles for anonymous users
-   private static final List ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
+   private static final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
 
    private Person _usr;
    
@@ -94,7 +94,7 @@ public class ServiceContext implements Serializable, SecurityContext {
     * Returns the security roles associated with this user.
     * @return a Collection of role names
     */
-   public Collection getRoles() {
+   public Collection<String> getRoles() {
       return isAuthenticated() ? _usr.getRoles() : ANONYMOUS_ROLES;
    }
    
