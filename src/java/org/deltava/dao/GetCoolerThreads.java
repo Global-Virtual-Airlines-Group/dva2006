@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.cooler.*;
 
+import org.deltava.util.*;
+
 /**
  * A Data Access Object to retrieve Water Cooler threads and thread notifications.
  * @author Luke
@@ -233,20 +235,38 @@ public class GetCoolerThreads extends DAO {
 
    /**
     * Returns all Message Threads matching particular search criteria.
-    * @param searchStr the search term
-    * @param channelName an optional Channel name
+    * @param criteria the search criteria
     * @return a List of MessageThreads
     * @throws DAOException if a JDBC error occurs
     */
-   public List search(String searchStr, String channelName) throws DAOException {
+   public List search(SearchCriteria criteria) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
+			   + "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM "
+			   + "common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE "
+			   + "(P.MSGBODY LIKE ?) ");
+	   if (!Channel.ALL.equals(criteria.getChannel()))
+		   sqlBuf.append("AND (T.CHANNEL=?) ");
+	   if (criteria.getSearchSubject())
+		   sqlBuf.append("AND (T.SUBJECT LIKE ?) ");
+	   if (!CollectionUtils.isEmpty(criteria.getIDs())) {
+		   sqlBuf.append("AND (T.AUTHOR IN (");
+		   sqlBuf.append(StringUtils.listConcat(criteria.getIDs(), ","));
+		   sqlBuf.append(")) ");
+	   }
+	   
+	   sqlBuf.append(" ORDER BY SD DESC");
+	   
       try {
-         prepareStatement("SELECT DISTINCT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-        		 + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T LEFT JOIN "
-        		 + "common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE (T.CHANNEL=?) AND (P.MSGBODY LIKE ?) "
-        		 + "ORDER BY SD DESC");
+         prepareStatement(sqlBuf.toString());
+         int psOfs = 0;
          _ps.setQueryTimeout(25);
-         _ps.setString(1, channelName);
-         _ps.setString(2, "%" + searchStr + "%");
+         _ps.setString(++psOfs, "%" + criteria.getSearchTerm() + "%");
+         if (!Channel.ALL.equals(criteria.getChannel()))
+        	 _ps.setString(++psOfs, criteria.getChannel());
+         if (criteria.getSearchSubject())
+        	 _ps.setString(++psOfs, "%" + criteria.getSearchTerm() + "%");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se);
