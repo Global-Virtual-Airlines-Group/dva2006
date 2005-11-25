@@ -18,7 +18,7 @@ import org.deltava.taglib.BrowserDetectingTag;
 
 public class RegionTag extends BrowserDetectingTag {
 
-	private Map _attrs = new HashMap();
+	private Map<String, String> _attrs = new HashMap<String, String>();
 	
 	private PageTag _parent;
 	private boolean _closeRow;
@@ -111,9 +111,9 @@ public class RegionTag extends BrowserDetectingTag {
 			}
 
 			// Write the attributes
-			for (Iterator i = _attrs.keySet().iterator(); i.hasNext();) {
-				String attrName = (String) i.next();
-				String attrValue = (String) _attrs.get(attrName);
+			for (Iterator<String> i = _attrs.keySet().iterator(); i.hasNext();) {
+				String attrName = i.next();
+				String attrValue = _attrs.get(attrName);
 				out.print(attrName);
 				out.print("=\"");
 				out.print(attrValue);

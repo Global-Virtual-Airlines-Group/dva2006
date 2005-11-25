@@ -18,7 +18,7 @@ public abstract class ElementTag extends TagSupport {
     protected static final Object NO_VALUE = new Object();
     private String _name;
     
-    protected Map _attrs;
+    protected Map<String, String> _attrs;
     protected JspWriter _out;
     
     /**
@@ -28,7 +28,7 @@ public abstract class ElementTag extends TagSupport {
     protected ElementTag(String elementName) {
         super();
         _name = elementName;
-        _attrs = new LinkedHashMap(); // This is a linked hash map to make testing easier; it returns elements in predictable order
+        _attrs = new LinkedHashMap<String, String>(); 
     }
     
     /**

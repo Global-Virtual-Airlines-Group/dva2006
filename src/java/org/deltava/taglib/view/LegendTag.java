@@ -20,8 +20,8 @@ public class LegendTag extends TagSupport {
 	private String _textClass;
 	private String _boxWidth;
 	
-	private List _labels = new ArrayList();
-	private List _classNames = new ArrayList();
+	private List<String> _labels = new ArrayList<String>();
+	private List<String> _classNames = new ArrayList<String>();
 	
 	/**
 	 * Sets the CSS class name for the legend text.
@@ -89,7 +89,7 @@ public class LegendTag extends TagSupport {
 			
 			// Write the legend cells
 			for (int x = 0; x < _labels.size(); x++) {
-				String cName = (String) _classNames.get(x);
+				String cName = _classNames.get(x);
 				
 				out.print(" <td class=\"");
 				out.print(cName);
@@ -101,7 +101,7 @@ public class LegendTag extends TagSupport {
 					out.print(" width=\"" + _boxWidth + "\"");
 				
 				out.print('>');
-				out.print((String) _labels.get(x));
+				out.print(_labels.get(x));
 				out.println("</td>");
 			}
 			

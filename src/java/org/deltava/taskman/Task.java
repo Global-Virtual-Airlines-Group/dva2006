@@ -22,7 +22,7 @@ public abstract class Task implements java.io.Serializable {
     private boolean _enabled;
     private int _runCount;
     
-    private Set _runHours = new HashSet();
+    private Set<Integer> _runHours = new HashSet<Integer>();
     
     private Calendar _startTime = Calendar.getInstance();
     private Calendar _nextStartTime = Calendar.getInstance();

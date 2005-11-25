@@ -25,12 +25,12 @@ public class TaskFactory {
    private TaskFactory() {
    }
 
-   public static Collection load(String configXML) throws IOException {
+   public static Collection<Task> load(String configXML) throws IOException {
       
       // Gracefully fail if no commands found
       if (configXML == null) {
           log.warn("No ScheduledTasks loaded");
-          return Collections.EMPTY_SET;
+          return new HashSet<Task>();
       }
       
       // Get the file
@@ -54,7 +54,7 @@ public class TaskFactory {
           throw new IOException("Empty XML Document");
 
       // Parse through the tasks
-      Set results = new HashSet();
+      Set<Task> results = new HashSet<Task>();
       for (Iterator i = root.getChildren("task").iterator(); i.hasNext(); ) {
          Element e = (Element) i.next();
          String id = e.getAttributeValue("id");
