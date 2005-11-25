@@ -77,8 +77,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
     private int _loginCount;
     private String _loginHost;
     
-    protected Map _networkIDs = new HashMap();
-    protected Map _notifyOptions = new HashMap();
+    protected Map<String, String> _networkIDs = new HashMap<String, String>();
+    protected Map<String, Boolean> _notifyOptions = new HashMap<String, Boolean>();
     
     private double _legacyHours;
     
@@ -111,7 +111,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * Returns a list of security roles this Person belongs to.
      * @return a Collection of role names
      */
-    public abstract Collection getRoles();
+    public abstract Collection<String> getRoles();
     
     /**
      * Queries if a Person is a member of a particular role.
@@ -262,8 +262,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @return the network user IDs
      * @see Person#setNetworkID(String, String)
      */
-    public Map getNetworkIDs() {
-        return new HashMap(_networkIDs);
+    public Map<String, String> getNetworkIDs() {
+        return new HashMap<String, String>(_networkIDs);
     }
     
     /**
@@ -274,7 +274,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @see Person#getNotifyOptions()
      */
     public boolean getNotifyOption(String notifyType) {
-        Boolean notify = (Boolean) _notifyOptions.get(notifyType);
+        Boolean notify = _notifyOptions.get(notifyType);
         return (notify == null) ? false : notify.booleanValue();
     }
     
@@ -284,8 +284,16 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
      * @see Person#setNotifyOption(String, boolean)
      * @see Person#getNotifyOption(String)
      */
-    public Collection getNotifyOptions() {
-        return new HashSet(_notifyOptions.keySet());
+    public Collection<String> getNotifyOptions() {
+    	Collection<String> results = new HashSet<String>();
+    	for (Iterator<String> i = _notifyOptions.keySet().iterator(); i.hasNext(); ) {
+    		String optName = i.next();
+    		Boolean isSet = _notifyOptions.get(optName);
+    		if (isSet.booleanValue())
+    			results.add(optName);
+    	}
+    	
+        return results;
     }
     
     /**

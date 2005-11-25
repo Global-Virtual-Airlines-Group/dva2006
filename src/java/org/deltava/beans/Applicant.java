@@ -168,8 +168,8 @@ public class Applicant extends Person {
      * @return a Collection with a single string - Applicant.ROLE.
      * @see Applicant#isInRole(String) 
      */
-    public Collection getRoles() {
-        Set results = new HashSet();
+    public Collection<String> getRoles() {
+        Set<String> results = new HashSet<String>();
         results.add(Applicant.ROLE);
         return results;
     }

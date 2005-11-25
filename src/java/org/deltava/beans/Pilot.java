@@ -40,8 +40,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private String _pCodePrefix;
     private int _pCodeId;
 
-    private Set _ratings = new TreeSet();
-    private Set _roles = new TreeSet();
+    private Set<String> _ratings = new TreeSet<String>();
+    private Set<String> _roles = new TreeSet<String>();
 
     private long _miles;
     private Date _lastFlight;
@@ -76,8 +76,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * Returns the list of security roles this Pilot belongs to.
      * @return a sorted List of role Names for this Pilot
      */
-    public Collection getRoles() {
-        return new TreeSet(_roles);
+    public Collection<String> getRoles() {
+        return _roles;
     }
     
     /**
@@ -173,8 +173,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#addRatings(Collection)
      * @see Pilot#removeRatings(Collection)
      */
-    public List getRatings() {
-        return new ArrayList(_ratings);
+    public Collection<String> getRatings() {
+        return _ratings;
     }
 
     /**
@@ -492,7 +492,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#removeRatings(Collection)
      * @see Pilot#getRatings()
      */
-    public void addRatings(Collection ratings) {
+    public void addRatings(Collection<String> ratings) {
        _ratings.addAll(ratings);
     }
     
@@ -523,7 +523,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#getRoles()
      * @see Pilot#removeRoles(Collection)
      */
-    public void addRoles(Collection roles) {
+    public void addRoles(Collection<String> roles) {
     	_roles.addAll(roles);
     }
     

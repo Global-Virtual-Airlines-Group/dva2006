@@ -19,7 +19,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	public static final String GMT = "Etc/Greenwich";
 	private static final TZInfo _local = new TZInfo(TimeZone.getDefault().getID(), null, null);
 
-	private static final Map _timeZones = new HashMap();
+	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
 	private static final DecimalFormat _df = new DecimalFormat("00");
 
 	private TimeZone _tz;
@@ -60,7 +60,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	 * @see TimeZone#getTimeZone(String)
 	 */
 	public static TZInfo get(String tzName) {
-		return (TZInfo) _timeZones.get(tzName);
+		return _timeZones.get(tzName);
 	}
 
 	/**
@@ -83,8 +83,8 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	 * Returns all initialized Time Zones.
 	 * @return a sorted Set of TZInfo objects
 	 */
-	public static Collection getAll() {
-		return new TreeSet(_timeZones.values());
+	public static Collection<TZInfo> getAll() {
+		return new TreeSet<TZInfo>(_timeZones.values());
 	}
 	
 	/**

@@ -14,7 +14,7 @@ import org.deltava.beans.schedule.Airline;
  */
 public class ACARSFlightReport extends FlightReport {
 
-    private Map _stateChangeTimes;
+    private Map<String, Date> _stateChangeTimes;
     
     private int _taxiWeight;
     private int _taxiFuel;
@@ -53,7 +53,7 @@ public class ACARSFlightReport extends FlightReport {
      */
     public ACARSFlightReport(Airline a, int flightNumber, int leg) {
         super(a, flightNumber, leg);
-        _stateChangeTimes = new HashMap();
+        _stateChangeTimes = new HashMap<String, Date>();
     }
     
     /**
@@ -62,7 +62,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setStartTime(Date)
      */
     public Date getStartTime() {
-        return (Date) _stateChangeTimes.get("START_TIME");
+        return _stateChangeTimes.get("START_TIME");
     }
     
     /**
@@ -71,7 +71,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setTaxiTime(Date)
      */
     public Date getTaxiTime() {
-        return (Date) _stateChangeTimes.get("TAXI_TIME");
+        return _stateChangeTimes.get("TAXI_TIME");
     }
     
     /**
@@ -98,7 +98,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setTakeoffTime(Date)
      */
     public Date getTakeoffTime() {
-        return (Date) _stateChangeTimes.get("TAKEOFF_TIME");
+        return _stateChangeTimes.get("TAKEOFF_TIME");
     }
     
     /**
@@ -155,7 +155,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#setLandingTime(Date)
      */
     public Date getLandingTime() {
-        return (Date) _stateChangeTimes.get("LAND_TIME");
+        return _stateChangeTimes.get("LAND_TIME");
     }
     
     /**
@@ -220,7 +220,7 @@ public class ACARSFlightReport extends FlightReport {
      * @return the date/time the flight ended at the gate
      */
     public Date getEndTime() {
-        return (Date) _stateChangeTimes.get("END_TIME");
+        return _stateChangeTimes.get("END_TIME");
     }
 
     /**
