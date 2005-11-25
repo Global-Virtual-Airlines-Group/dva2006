@@ -79,9 +79,10 @@ public class SystemBootstrap implements ServletContextListener {
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
-		_jdbcPool.setProperties((Map) SystemData.getObject("jdbc.connectProperties"));
+		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
+		_jdbcPool.setMaxRequests(SystemData.getInt("jdbc.max_reqs", 0));
 
 		// Attempt to load the driver and connect
 		try {

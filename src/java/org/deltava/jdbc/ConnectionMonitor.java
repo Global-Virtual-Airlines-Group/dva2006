@@ -19,7 +19,7 @@ class ConnectionMonitor extends Thread {
 
    private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
-   private Set _pool = new TreeSet();
+   private Set<ConnectionPoolEntry> _pool = new TreeSet<ConnectionPoolEntry>();
    private long _sleepTime = 180000; // 3 minute default
    private long _poolCheckCount;
 
