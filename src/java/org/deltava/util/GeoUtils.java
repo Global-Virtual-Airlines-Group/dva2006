@@ -20,7 +20,7 @@ public class GeoUtils {
 	private GeoUtils() {
 	}
 	
-	private static void recurseMidPoint(GeoPosition start, GeoPosition end, List results, int distance) {
+	private static void recurseMidPoint(GeoPosition start, GeoPosition end, List<GeoLocation> results, int distance) {
 		GeoPosition mPoint = start.midPoint(end);
 		results.add(results.indexOf(start) + 1, mPoint);
 		if (mPoint.distanceTo(start)  > distance)
@@ -37,10 +37,10 @@ public class GeoUtils {
 	 * @param granularity the maxmimum distance between points
 	 * @return a List of GeoPositions describing the Great Circle route
 	 */
-	public static List greatCircle(GeoPosition start, GeoPosition end, int granularity) {
+	public static List<GeoLocation> greatCircle(GeoPosition start, GeoPosition end, int granularity) {
 		
 		// Add the start/end points
-		List results = new ArrayList();
+		List<GeoLocation> results = new ArrayList<GeoLocation>();
 		results.add(start);
 		results.add(end);
 		

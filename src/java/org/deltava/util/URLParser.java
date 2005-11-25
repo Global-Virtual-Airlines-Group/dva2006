@@ -10,7 +10,7 @@ import java.util.*;
  */
 public class URLParser {
 
-    private LinkedList _elements = new LinkedList();
+    private LinkedList<String> _elements = new LinkedList<String>();
     private String _ext;
     
     /**
@@ -55,7 +55,7 @@ public class URLParser {
      * @return the file name
      */
     public String getName() {
-        return (String) _elements.getLast();
+        return _elements.getLast();
     }
     
     /**

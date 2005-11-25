@@ -57,11 +57,11 @@ public class ComboUtils {
 
     /**
      * Create a list of ComboAlias objects from an array of Strings. The name/alias will be the same.
-     * @param names the array of Strings
+     * @param names a variable number of Strings
      * @return a List of ComboAlias objects
      * @see ComboUtils#fromList(Collection)
      */
-    public static List fromArray(String[] names) {
+    public static List fromArray(String... names) {
         return fromList(Arrays.asList(names));
     }
 
@@ -89,10 +89,10 @@ public class ComboUtils {
      * @param names a List of names
      * @return a List of ComboAlias objects
      */
-    public static List fromList(Collection names) {
-        List results = new ArrayList(names.size());
-        for (Iterator i = names.iterator(); i.hasNext(); )
-            results.add(new ComboAliasImpl((String) i.next()));
+    public static List<ComboAlias> fromList(Collection<String> names) {
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
+        for (Iterator<String> i = names.iterator(); i.hasNext(); )
+            results.add(new ComboAliasImpl(i.next()));
         
         return results;
     }
@@ -105,10 +105,10 @@ public class ComboUtils {
      * @see ComboUtils#fromArray(String[], Object[])
      * @see Object#toString()
      */
-    public static List fromMap(Map names) {
-        List results = new ArrayList(names.size());
-        for (Iterator i = names.keySet().iterator(); i.hasNext(); ) {
-            String name = (String) i.next();
+    public static List<ComboAlias> fromMap(Map<String, Object> names) {
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.size());
+        for (Iterator<String> i = names.keySet().iterator(); i.hasNext(); ) {
+            String name = i.next();
             results.add(new ComboAliasImpl(name, names.get(name).toString()));
         }
         
@@ -123,11 +123,11 @@ public class ComboUtils {
      * @return a List of ComboAlias objects
      * @throws ArrayIndexOutOfBoundsException if names.length != values.length
      */
-    public static List fromArray(String[] names, Object[] values) {
+    public static List<ComboAlias> fromArray(String[] names, Object[] values) {
         if (names.length != values.length)
             throw new ArrayIndexOutOfBoundsException("Name/Alias array lengths must be the same");
         
-        List results = new ArrayList(names.length);
+        List<ComboAlias> results = new ArrayList<ComboAlias>(names.length);
         for (int x = 0; x < names.length; x++)
             results.add(new ComboAliasImpl(names[x], values[x].toString()));
 
