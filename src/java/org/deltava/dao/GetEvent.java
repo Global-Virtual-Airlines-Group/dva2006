@@ -31,7 +31,7 @@ public class GetEvent extends DAO {
 	 * @return a List of Event beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getFutureEvents() throws DAOException {
+	public List<Event> getFutureEvents() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?) "
 					+ "ORDER BY STARTTIME");
@@ -77,7 +77,7 @@ public class GetEvent extends DAO {
 	 * @return a List of Event beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getEvents() throws DAOException {
+	public List<Event> getEvents() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.EVENTS ORDER BY STARTTIME DESC");
 			List results = execute();
@@ -88,6 +88,22 @@ public class GetEvent extends DAO {
 			
 			// Return the results
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Online Events with ACARS-logged flights.
+	 * @return a Collection of Event beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Event> getWithACARS() throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT E.* FROM common.EVENTS E, PIREPS PR, ACARS_PIREPS APR "
+					+ "WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY "
+					+ "E.STARTTIME DESC");
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -128,7 +144,7 @@ public class GetEvent extends DAO {
 	/**
 	 * Helper method to load event airports/routes.
 	 */
-	private void loadRoutes(Map events) throws SQLException {
+	private void loadRoutes(Map<Integer, Event> events) throws SQLException {
 		if (events.isEmpty())
 			return;
 
@@ -149,7 +165,7 @@ public class GetEvent extends DAO {
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Event e = (Event) events.get(new Integer(rs.getInt(1)));
+			Event e = events.get(new Integer(rs.getInt(1)));
 			if (e != null) {
 				Route r = new Route(e.getID(), rs.getString(4));
 				r.setAirportD(SystemData.getAirport(rs.getString(2)));
@@ -166,8 +182,8 @@ public class GetEvent extends DAO {
 	/**
 	 * Helper method to load events.
 	 */
-	private List execute() throws SQLException {
-		List results = new ArrayList();
+	private List<Event> execute() throws SQLException {
+		List<Event> results = new ArrayList<Event>();
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
