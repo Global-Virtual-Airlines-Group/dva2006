@@ -38,7 +38,8 @@ public class ChannelListCommand extends AbstractCommand {
 			
 			// Get the channels for the user's role
 			GetCoolerChannels dao = new GetCoolerChannels(con);
-			Collection channels = dao.getChannels(airline, ctx.getRoles());
+			List channels = dao.getChannels(airline, ctx.getRoles());
+			channels.remove(0);
 			ctx.setAttribute("channels", channels, REQUEST);
 			
 			// Get the last posts in each of the returned channels
@@ -46,7 +47,7 @@ public class ChannelListCommand extends AbstractCommand {
 			ctx.setAttribute("posts", posts, REQUEST);
 			
 			// Build a set of pilot IDs from the last posts
-			Set pilotIDs = new HashSet();
+			Set<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator i = posts.values().iterator(); i.hasNext(); ) {
 			    Message msg = (Message) i.next();
 			    pilotIDs.add(new Integer(msg.getAuthorID()));
@@ -60,8 +61,8 @@ public class ChannelListCommand extends AbstractCommand {
 			// Get the authors for the last post in each channel
 			Map authors = new HashMap();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator i = udm.getTableNames().iterator(); i.hasNext(); ) {
-				String tableName = (String) i.next();
+			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
+				String tableName = i.next();
 				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 

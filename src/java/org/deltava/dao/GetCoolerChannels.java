@@ -83,7 +83,7 @@ public class GetCoolerChannels extends DAO {
             _ps.close();
 
             // Load the roles and airlines
-            Map results = new HashMap();
+            Map<String, Channel> results = new HashMap<String, Channel>();
             results.put(c.getName(), c);
             loadInfo(results);
         } catch (SQLException se) {
@@ -102,7 +102,7 @@ public class GetCoolerChannels extends DAO {
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getChannels(AirlineInformation al, boolean showHidden) throws DAOException {
+    public List<Channel> getChannels(AirlineInformation al, boolean showHidden) throws DAOException {
         
        // Build the SQL statement optionally showing locked threads
        StringBuilder sqlBuf = new StringBuilder("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE ");
@@ -149,15 +149,18 @@ public class GetCoolerChannels extends DAO {
         }
         
         // Parse through the results and strip out from the airline - since it's cheaper to do it here than in the query
-        List channels = new ArrayList(results.values());
-        for (Iterator i = channels.iterator(); i.hasNext(); ) {
-            Channel c = (Channel) i.next();
+        List<Channel> channels = new ArrayList<Channel>(results.values());
+        for (Iterator<Channel> i = channels.iterator(); i.hasNext(); ) {
+            Channel c = i.next();
             if (!c.hasAirline(al.getCode()))
                 i.remove();
         }
         
         // Add to cache and return
         _cache.addAll(channels);
+        
+        // Add the "ALL" channel
+        channels.add(0, Channel.ALL);
         return channels;
     }
 
@@ -169,16 +172,16 @@ public class GetCoolerChannels extends DAO {
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getChannels(AirlineInformation al, Collection roles) throws DAOException {
+    public List<Channel> getChannels(AirlineInformation al, Collection roles) throws DAOException {
 
         // Check if we are querying for the admin role; in this case return everything
         if (roles.contains("Admin"))
             return getChannels(al, true);
 
         // Check if we can display locked threads
-        Collection channels = getChannels(al, roles.contains("Moderator"));
-        for (Iterator i = channels.iterator(); i.hasNext();) {
-            Channel c = (Channel) i.next();
+        List<Channel> channels = getChannels(al, roles.contains("Moderator"));
+        for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
+            Channel c = i.next();
             if (!RoleUtils.hasAccess(roles, c.getRoles()))
                 i.remove();
         }
@@ -194,7 +197,7 @@ public class GetCoolerChannels extends DAO {
      * @return a Collection of Channels
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getAll(AirlineInformation al) throws DAOException {
+    public List<Channel> getAll(AirlineInformation al) throws DAOException {
     	
         Map results = new TreeMap();
     	try {
@@ -231,9 +234,9 @@ public class GetCoolerChannels extends DAO {
     	}
     	
         // Parse through the results and strip out from the airline - since it's cheaper to do it here than in the query
-        List channels = new ArrayList(results.values());
-        for (Iterator i = channels.iterator(); i.hasNext(); ) {
-            Channel c = (Channel) i.next();
+        List<Channel> channels = new ArrayList<Channel>(results.values());
+        for (Iterator<Channel> i = channels.iterator(); i.hasNext(); ) {
+            Channel c = i.next();
             if (!c.hasAirline(al.getCode()))
                 i.remove();
         }
@@ -245,12 +248,12 @@ public class GetCoolerChannels extends DAO {
     /**
      * Helper method to load Channel roles and airlines.
      */
-    private void loadInfo(Map channels) throws SQLException {
+    private void loadInfo(Map<String, Channel> channels) throws SQLException {
 
     	// prepare SQL statement
     	if (channels.size() == 1) {
     		prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO WHERE (CHANNEL=?)");
-    		Channel c = (Channel) channels.values().iterator().next();
+    		Channel c = channels.values().iterator().next();
     		_ps.setString(1, c.getName());
     	} else {
     		prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO");
@@ -259,7 +262,7 @@ public class GetCoolerChannels extends DAO {
         // Execute the query
         ResultSet rs = _ps.executeQuery();
         while (rs.next()) {
-            Channel c = (Channel) channels.get(rs.getString(1));
+            Channel c = channels.get(rs.getString(1));
             if (c != null) {
                 switch (rs.getInt(2)) {
                     case Channel.INFOTYPE_ROLE:
@@ -284,12 +287,12 @@ public class GetCoolerChannels extends DAO {
      * @return a Map of Messages, keyed by database ID
      * @throws DAOException if a JDBC error occurs
      */
-    public Map getLastPosts(Collection channels) throws DAOException {
+    public Map getLastPosts(Collection<Channel> channels) throws DAOException {
         
         // Build a set of post IDs
-        Set idSet = new HashSet();
-        for (Iterator i = channels.iterator(); i.hasNext(); ) {
-            Channel ch = (Channel) i.next();
+        Set<Integer> idSet = new HashSet<Integer>();
+        for (Iterator<Channel> i = channels.iterator(); i.hasNext(); ) {
+            Channel ch = i.next();
             if (ch.getLastThreadID() != 0)
                 idSet.add(new Integer(ch.getLastThreadID()));
         }
@@ -300,8 +303,8 @@ public class GetCoolerChannels extends DAO {
         
         // Init the prepared statement
         StringBuilder sqlBuf = new StringBuilder("SELECT T.* FROM common.COOLER_THREADS T WHERE (T.ID IN (");
-        for (Iterator i = idSet.iterator(); i.hasNext(); ) {
-            Integer id = (Integer) i.next();
+        for (Iterator<Integer> i = idSet.iterator(); i.hasNext(); ) {
+            Integer id = i.next();
             sqlBuf.append(id.toString());
             if (i.hasNext())
                 sqlBuf.append(',');
@@ -312,7 +315,7 @@ public class GetCoolerChannels extends DAO {
             sqlBuf.setLength(sqlBuf.length() - 1);
         
         // Close and prepare the statement
-        List results = new ArrayList();
+        List<Message> results = new ArrayList<Message>();
         sqlBuf.append("))");
         try {
             prepareStatementWithoutLimits(sqlBuf.toString());

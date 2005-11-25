@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -50,21 +51,35 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Build the search criteria
+			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
+			criteria.setChannel(ctx.getParameter("channel"));
+			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
+			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
 
+			// If we're doing a Pilot name search, start that first
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			if (!StringUtils.isEmpty(ctx.getParameter("pilotName"))) {
+				pdao.setQueryMax(50);
+				criteria.addIDs(pdao.search(ctx.getParameter("pilotName"), SystemData.get("airline.db"), 
+						criteria.getSearchNameFragment()));
+			}
+			
 			// Get the DAO and search
 			List threads = null;
 			synchronized (CoolerSearchCommand.class) {
 				GetCoolerThreads dao = new GetCoolerThreads(con);
 				dao.setQueryStart(vc.getStart());
 				dao.setQueryMax(vc.getCount());
-				threads = dao.search(ctx.getParameter("searchStr"), ctx.getParameter("channel"));
+				threads = dao.search(criteria);
 			}
 
 			// Filter out the threads based on our access
-			Set pilotIDs = new HashSet();
+			Set<Integer> pilotIDs = new HashSet<Integer>();
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
-			for (Iterator i = threads.iterator(); i.hasNext();) {
-				MessageThread mt = (MessageThread) i.next();
+			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+				MessageThread mt = i.next();
 				Channel c = cdao.get(mt.getChannel());
 				access.updateContext(mt, c);
 				access.validate();
@@ -85,7 +100,6 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 
 			// Get the authors for the last post in each channel
 			Map authors = new HashMap();
-			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
 			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
 				String tableName = (String) i.next();

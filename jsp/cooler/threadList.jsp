@@ -48,7 +48,7 @@ return true;
 <c:if test="${!channelAccess.canPost}">
  <td colspan="2" class="left caps">DISCUSSION THREADS - ${channelName}</td>
 </c:if>
- <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" firstEntry="ALL" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
+ <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
