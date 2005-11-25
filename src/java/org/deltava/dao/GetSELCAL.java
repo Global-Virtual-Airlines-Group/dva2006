@@ -46,12 +46,14 @@ public class GetSELCAL extends DAO {
 
 	/**
 	 * Returns all aircraft SELCAL codes.
+	 * @param orderBy the column to sort results with
 	 * @return a Collection of SelectCall beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getCodes() throws DAOException {
+	public Collection<SelectCall> getCodes(String orderBy) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM SELCAL ORDER BY CODE");
+			prepareStatement("SELECT SC.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME) AS PNAME FROM "
+					+ "SELCAL SC LEFT JOIN PILOTS P ON (P.ID=SC.PILOT_ID) ORDER BY " + orderBy);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -64,7 +66,7 @@ public class GetSELCAL extends DAO {
 	 * @return a Collection of SelectCall beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getReserved(int pilotID) throws DAOException {
+	public Collection<SelectCall> getReserved(int pilotID) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM SELCAL WHERE (PILOT_ID=?) ORDER BY CODE");
 			_ps.setInt(1, pilotID);
@@ -80,7 +82,7 @@ public class GetSELCAL extends DAO {
 	 * @return a Collection of SelectCall beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getByEquipmentType(String eqType) throws DAOException {
+	public Collection<SelectCall> getByEquipmentType(String eqType) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM SELCAL WHERE (EQTYPE=?) ORDER BY CODE");
 			_ps.setString(1, eqType);
@@ -93,10 +95,10 @@ public class GetSELCAL extends DAO {
 	/**
 	 * Helper method to parse result sets.
 	 */
-	private List execute() throws SQLException {
+	private List<SelectCall> execute() throws SQLException {
 		
 		// Execute the query
-		List results = new ArrayList();
+		List<SelectCall> results = new ArrayList<SelectCall>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			SelectCall sc = new SelectCall(rs.getString(1), rs.getString(2));
