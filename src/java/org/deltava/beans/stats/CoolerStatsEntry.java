@@ -52,6 +52,7 @@ public class CoolerStatsEntry implements Serializable, Comparable {
     * Compares two statistics entries by comparing their labels.
     * @see Comparable#compareTo(Object)
     */
+   @SuppressWarnings("unchecked")
    public int compareTo(Object o2) {
       CoolerStatsEntry e2 = (CoolerStatsEntry) o2;
       return _label.compareTo(e2._label);

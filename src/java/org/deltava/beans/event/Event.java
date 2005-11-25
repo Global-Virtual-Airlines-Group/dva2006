@@ -6,7 +6,7 @@ import java.util.*;
 import org.deltava.beans.ComboAlias;
 import org.deltava.beans.DatabaseBean;
 
-import org.deltava.beans.schedule.Chart;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.assign.AssignmentInfo;
 
 import org.deltava.util.StringUtils;
@@ -48,24 +48,24 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     private int _status;
     private int _network;
     
-    private Set _charts;
-    private List _plans;
+    private Set<Chart> _charts;
+    private List<FlightPlan> _plans;
     
-    private Set _signups;
-    private Set _routes;
-    private List _assignments;
-    private Set _eqTypes;
+    private Set<Signup> _signups;
+    private Set<Route> _routes;
+    private List<AssignmentInfo> _assignments;
+    private Set<String> _eqTypes;
     
     // TODO JavaDoc
     public Event(String name) {
         super();
         setName(name);
-        _charts = new TreeSet();
-        _plans = new ArrayList();
-        _signups = new HashSet();
-        _assignments = new ArrayList();
-        _eqTypes = new TreeSet();
-        _routes = new TreeSet();
+        _charts = new TreeSet<Chart>();
+        _plans = new ArrayList<FlightPlan>();
+        _signups = new HashSet<Signup>();
+        _assignments = new ArrayList<AssignmentInfo>();
+        _eqTypes = new TreeSet<String>();
+        _routes = new TreeSet<Route>();
     }
     
     /**
@@ -168,30 +168,30 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         return _signupDeadline;
     }
 
-    public Collection getCharts() {
+    public Collection<Chart> getCharts() {
         return _charts;
     }
     
-    public Collection getPlans() {
+    public Collection<FlightPlan> getPlans() {
         return _plans;
     }
     
-    public Set getEquipmentTypes() {
+    public Set<String> getEquipmentTypes() {
        return _eqTypes;
     }
     
-    public Collection getSignups() {
+    public Collection<Signup> getSignups() {
         return _signups;
     }
     
-    public Collection getRoutes() {
+    public Collection<Route> getRoutes() {
     	return _routes;
     }
     
-    public Collection getAirports() {
-    	Set results = new HashSet();
-    	for (Iterator i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = (Route) i.next();
+    public Collection<Airport> getAirports() {
+    	Set<Airport> results = new HashSet<Airport>();
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
     		results.add(r.getAirportD());
     		results.add(r.getAirportA());
     	}
@@ -219,7 +219,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     	return null;
     }
     
-    public List getAssignments() {
+    public List<AssignmentInfo> getAssignments() {
         return _assignments;
     }
     
@@ -316,7 +316,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         _charts.add(c);
     }
     
-    public void addCharts(Collection charts) {
+    public void addCharts(Collection<Chart> charts) {
     	_charts.addAll(charts);
     }
 

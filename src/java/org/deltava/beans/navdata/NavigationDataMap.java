@@ -18,7 +18,7 @@ import org.deltava.util.cache.Cacheable;
 
 public class NavigationDataMap implements java.io.Serializable, Cacheable {
    
-   private Map _entries = new HashMap();
+   private Map<String, Set<NavigationDataBean>> _entries = new HashMap<String, Set<NavigationDataBean>>();
    private Object _key;
 
    /**
@@ -48,10 +48,10 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
       
       // Check if we have the bean - if not, create a set to hold them
       if (!contains(nd.getCode()))
-         _entries.put(nd.getCode(), new TreeSet());
+         _entries.put(nd.getCode(), new TreeSet<NavigationDataBean>());
       
       // Get the set and add the bean
-      Set beans = (Set) _entries.get(nd.getCode());
+      Set<NavigationDataBean> beans = _entries.get(nd.getCode());
       beans.add(nd);
    }
    
@@ -78,8 +78,8 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @param code the navigation aid code
     * @return a Set of entries, which may be empty
     */
-   public Set getEntries(String code) {
-      return contains(code) ? (Set) _entries.get(code.toUpperCase()) : Collections.EMPTY_SET;
+   public Set<NavigationDataBean> getEntries(String code) {
+      return contains(code) ? _entries.get(code.toUpperCase()) : new HashSet<NavigationDataBean>();
    }
    
    /**
@@ -90,7 +90,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataMap#get(String, GeoLocation) 
     */
    public NavigationDataBean get(String code) {
-      Set codes = getEntries(code);
+      Set<NavigationDataBean> codes = getEntries(code);
       return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
    }
 
@@ -102,8 +102,9 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @return a NavigationDataBean, or null if not found
     * @see NavigationDataMap#get(String)
     */
+   @SuppressWarnings("unchecked")
    public NavigationDataBean get(String code, GeoLocation loc) {
-      Set codes = new TreeSet(new GeoComparator(loc));
+      Set<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
       codes.addAll(getEntries(code));
       return codes.isEmpty() ? null : (NavigationDataBean) codes.iterator().next();
    }
@@ -112,10 +113,10 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * Returns all navigation aid beans contained within this object.
     * @return a Collection of NavigationDataBeans
     */
-   public Collection getAll() {
-      List results = new ArrayList();
-      for (Iterator i = _entries.values().iterator(); i.hasNext(); )
-         results.addAll((Set) i.next());
+   public Collection<NavigationDataBean> getAll() {
+      List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
+      for (Iterator<Set <NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); )
+         results.addAll(i.next());
       
       return results;
    }
@@ -134,11 +135,11 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataBean#getType()
     * @see NavigationDataMap#filter(int)
     */
-   public void filter(Collection types) {
-	   for (Iterator i = _entries.values().iterator(); i.hasNext(); ) {
-		   Set subEntries = (Set) i.next();
-		   for (Iterator i2 = subEntries.iterator(); i2.hasNext(); ) {
-			   NavigationDataBean nd = (NavigationDataBean) i2.next();
+   public void filter(Collection<Integer> types) {
+	   for (Iterator<Set <NavigationDataBean>> i = _entries.values().iterator(); i.hasNext(); ) {
+		   Set<NavigationDataBean> subEntries = i.next();
+		   for (Iterator<NavigationDataBean> i2 = subEntries.iterator(); i2.hasNext(); ) {
+			   NavigationDataBean nd = i2.next();
 			   if (!types.contains(new Integer(nd.getType())))
 				   i2.remove();
 		   }
@@ -156,7 +157,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @see NavigationDataBean#getType()
     */
    public void filter(int navaidType) {
-	   Set filterSet = new HashSet();
+	   Set<Integer> filterSet = new HashSet<Integer>();
 	   filterSet.add(new Integer(navaidType));
 	   filter(filterSet);
    }

@@ -34,8 +34,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     private boolean _repeating;
     private boolean _purge;
     
-    private Set _assignments;
-    private Set _flights;
+    private Set<AssignmentLeg> _assignments;
+    private Set<FlightReport> _flights;
     
     /**
      * Creates a new Flight Assignment for a particular Equipment Type.
@@ -45,8 +45,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
     public AssignmentInfo(String eqType) {
         super();
         _eqType = eqType.trim();
-        _assignments = new HashSet();
-        _flights = new HashSet();
+        _assignments = new HashSet<AssignmentLeg>();
+        _flights = new HashSet<FlightReport>();
     }
     
     /**
@@ -54,7 +54,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return a List of AssignmentInfo beans
      * @see AssignmentInfo#addAssignment(AssignmentLeg)
      */
-    public Collection getAssignments() {
+    public Collection<AssignmentLeg> getAssignments() {
         return _assignments;
     }
     
@@ -63,7 +63,7 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return a List of FlightReport beans
      * @see AssignmentInfo#addFlight(FlightReport)
      */
-    public Collection getFlights() {
+    public Collection<FlightReport> getFlights() {
         return _flights;
     }
     
@@ -127,8 +127,8 @@ public class AssignmentInfo extends DatabaseBean implements ViewEntry {
      * @return TRUE if all assignment flights are complete, otherwise FALS
      */
     public boolean isComplete() {
-        for (Iterator i = _flights.iterator(); i.hasNext(); ) {
-            FlightReport fr = (FlightReport) i.next();
+        for (Iterator<FlightReport> i = _flights.iterator(); i.hasNext(); ) {
+            FlightReport fr = i.next();
             if ((fr.getStatus() != FlightReport.OK) && (fr.getStatus() != FlightReport.REJECTED))
                 return false;
         }

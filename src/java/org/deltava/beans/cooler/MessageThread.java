@@ -31,7 +31,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
     private int _views;
     private int _postCount;
     
-    private Set _posts;
+    private Set<Message> _posts;
     
     /**
      * Create a new thread with a particular subject.
@@ -61,7 +61,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
      * @see MessageThread#getLastUpdateID()
      */
     public int getAuthorID() {
-        return (_posts == null) ? _authorID : ((Message) _posts.iterator().next()).getAuthorID();
+        return (_posts == null) ? _authorID : (_posts.iterator().next()).getAuthorID();
     }
     
     /**
@@ -284,7 +284,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
      */
     public void addPost(Message msg) {
         if (_posts == null) {
-            _posts = new TreeSet();
+            _posts = new TreeSet<Message>();
             _lastUpdatedOn = new Date(1);
         }
         
@@ -303,8 +303,8 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
      * @see MessageThread#getPostCount()
      * @see MessageThread#addPost(Message)
      */
-    public List getPosts() {
-        return (_posts == null) ? Collections.EMPTY_LIST : new ArrayList(_posts);
+    public List<Message> getPosts() {
+        return (_posts == null) ? new ArrayList<Message>() : new ArrayList<Message>(_posts);
     }
     
     /**

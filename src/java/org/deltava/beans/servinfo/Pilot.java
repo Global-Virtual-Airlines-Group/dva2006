@@ -31,7 +31,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	private String _wayPoints;
 	
 	private String _rawData;
-	private List _route;
+	private List<GeoLocation> _route;
 
 	/**
 	 * Initializes the bean with a given user ID.
@@ -262,15 +262,14 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @return a List of GeoLocations
 	 * @see GeoUtils#greatCircle(GeoPosition, GeoPosition, int)
 	 */
-	public Collection getRoute() {
+	public Collection<GeoLocation> getRoute() {
 		// If we have already generated the route, return it
 		if (_route != null)
 			return _route;
 		
 		// Only generate a route if both airports have positions
+		_route = new ArrayList<GeoLocation>();
 		if ((_airportD.hasPosition()) && (_airportA.hasPosition())) {
-			_route = new ArrayList();
-			
 			// Check for special situations requiring direct routings
 			if (_position.distanceTo(_airportD) < 200) {
 				_route.add(_airportD);
@@ -283,8 +282,6 @@ public class Pilot extends NetworkUser implements MapEntry {
 				_route.remove(_position); // Remove since greatCircle adds the start/end point 
 				_route.addAll(GeoUtils.greatCircle(_position, _airportA.getPosition(), 200));
 			}
-		} else {
-			_route = Collections.EMPTY_LIST;
 		}
 	
 		// return course
