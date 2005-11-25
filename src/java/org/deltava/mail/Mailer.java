@@ -23,7 +23,7 @@ public class Mailer {
    private static final Logger log = Logger.getLogger(Mailer.class);
    
    private SMTPEnvelope _env;
-   private Set _msgTo = new HashSet();
+   private Set<EMailAddress> _msgTo = new HashSet<EMailAddress>();
    private MessageContext _ctx;
 
    private static class EMailSender implements EMailAddress {
@@ -121,7 +121,7 @@ public class Mailer {
     * method will check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
     * @param addrs a Collection of recipient names/addresses
     */
-   public void send(Collection addrs) {
+   public void send(Collection<EMailAddress> addrs) {
       _msgTo.addAll(addrs);
       send();
    }
@@ -145,8 +145,8 @@ public class Mailer {
       }
 
       // Loop through the recipients
-      for (Iterator i = _msgTo.iterator(); i.hasNext();) {
-         EMailAddress addr = (EMailAddress) i.next();
+      for (Iterator<EMailAddress> i = _msgTo.iterator(); i.hasNext();) {
+         EMailAddress addr = i.next();
          
          // Add the recipient to the messaging context and calculate the body
          _env.setRecipient(addr);

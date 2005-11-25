@@ -24,14 +24,14 @@ public class MessageContext implements Serializable {
     private static final Logger log = Logger.getLogger(MessageContext.class);
 
     private MessageTemplate _mt;
-    private Map _data;
+    private Map<String, Object> _data;
   
     /**
      * Initializes the Message Context, and sets any pre-defined context elements.
      */
     public MessageContext() {
     	super();
-    	_data = new HashMap();
+    	_data = new HashMap<String, Object>();
     	
     	// Initialize predefined variables
     	_data.put("airline", SystemData.get("airline.name"));
