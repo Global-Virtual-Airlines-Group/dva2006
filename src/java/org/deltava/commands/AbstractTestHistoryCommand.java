@@ -31,7 +31,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
-		Collection pireps = frdao.getByPilot(p.getID(), null);
+		Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
 		frdao.getCaptEQType(pireps);
 
 		// Get the Pilot's equipment program
