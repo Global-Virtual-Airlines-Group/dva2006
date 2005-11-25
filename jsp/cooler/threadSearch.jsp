@@ -16,8 +16,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.subject, 10, 'Title of your Thread')) return false;
-if (!validateText(form.msgText, 5, 'text of your Message')) return false;
+if (!validateText(form.searchStr, 4, 'Search Term')) return false;
 
 setSubmit();
 disableButton('SearchButton');
@@ -40,12 +39,23 @@ return true;
 </tr>
 <tr>
  <td class="label">Search String</td>
- <td class="data"><el:text name="searchStr" idx="*" size="16" max="32" /></td>
+ <td class="data"><el:text name="searchStr" idx="*" size="16" max="32" value="${param.searchStr}" /></td>
 </tr>
 <tr>
  <td class="label">Cooler Channel</td>
  <td class="data"><el:combo name="channel" idx="*" size="*" options="${channels}" /></td>
 </tr>
+<tr>
+ <td class="label">Pilot Name</td>
+ <td class="data"><el:text name="pilotName" idx="*" size="16" max="32" value="${param.pilotName}" /></td>
+</tr>
+<content:filter roles="Moderator,HR">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="checkSubject" idx="*" value="true" label="Check Subjects as well as Message Body" checked="${param.checkSubject}" /><br />
+<el:box name="nameMatch" idx="*" value="true" label="Partial Pilot Name match" checked="${param.nameMatch}" /></td>
+</tr>
+</content:filter>
 </el:table>
 
 <!-- Button Bar -->
