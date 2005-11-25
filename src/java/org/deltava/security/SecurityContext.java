@@ -31,7 +31,7 @@ public interface SecurityContext {
     * Returns all the roles for the currently authenticated user.
     * @return a Collection of role names, or an empty collection
     */
-   public Collection getRoles();
+   public Collection<String> getRoles();
    
    /**
     * Returns if the user is a member of a particular security role.

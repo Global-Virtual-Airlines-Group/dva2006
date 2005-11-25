@@ -18,7 +18,7 @@ public class FileAuthenticator implements Authenticator {
 
 	private static final Logger log = Logger.getLogger(FileAuthenticator.class);
 
-	private Map _users = new HashMap();
+	private Map<String, UserInfo> _users = new HashMap<String, UserInfo>();
 	private Properties _props;
 
 	private class UserInfo {
@@ -97,7 +97,7 @@ public class FileAuthenticator implements Authenticator {
 	 * @see org.deltava.security.Authenticator#authenticate(java.lang.String, java.lang.String)
 	 */
 	public void authenticate(String dn, String pwd) throws SecurityException {
-		UserInfo ui = (UserInfo) _users.get(dn);
+		UserInfo ui = _users.get(dn);
 		if (ui == null)
 			throw new SecurityException(dn + " not found");
 
@@ -149,7 +149,7 @@ public class FileAuthenticator implements Authenticator {
 	public void updatePassword(String directoryName, String pwd) throws SecurityException {
 	   
 	   // Get the User
-	   UserInfo usr = (UserInfo) _users.get(directoryName);
+	   UserInfo usr = _users.get(directoryName);
 	   if (usr == null)
 	      throw new SecurityException("User " + directoryName + " not found");
 	   
