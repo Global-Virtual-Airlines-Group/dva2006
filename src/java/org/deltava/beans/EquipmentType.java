@@ -24,12 +24,12 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
     private String _cpEmail;
     private int _cpID;
 
-    private Set _ranks = new HashSet();
-    private Set _primaryRatings = new TreeSet();
-    private Set _secondaryRatings = new TreeSet();
+    private Collection<String> _ranks = new ArrayList<String>();
+    private Collection<String> _primaryRatings = new TreeSet<String>();
+    private Collection<String> _secondaryRatings = new TreeSet<String>();
     
-    private Map _promotionCriteria = new HashMap();
-    private Map _examNames = new HashMap();
+    private Map<String, Integer> _promotionCriteria = new HashMap<String, Integer>();
+    private Map<String, String> _examNames = new HashMap<String, String>();
     
     /**
      * Create a new EquipmentType object for a given aircraft type
@@ -93,8 +93,8 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#addRank(String)
      * @see EquipmentType#addRanks(String, String)
      */
-    public List getRanks() {
-        return new ArrayList(_ranks);
+    public Collection<String> getRanks() {
+        return _ranks;
     }
     
     /**
@@ -103,8 +103,8 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#addPrimaryRating(String)
      * @see EquipmentType#getSecondaryRatings()
      */
-    public Collection getPrimaryRatings() {
-        return new HashSet(_primaryRatings);
+    public Collection<String> getPrimaryRatings() {
+        return _primaryRatings;
     }
 
     /**
@@ -113,8 +113,8 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#addSecondaryRating(String)
      * @see EquipmentType#getPrimaryRatings()
      */
-    public Collection getSecondaryRatings() {
-        return new HashSet(_secondaryRatings);
+    public Collection<String> getSecondaryRatings() {
+        return _secondaryRatings;
     }
     
     /**
@@ -125,7 +125,7 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#setExamName(String, String)
      */
     public String getExamName(String rank) {
-        return (String) _examNames.get(rank);
+        return _examNames.get(rank);
     }
     
     /**
@@ -138,7 +138,7 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#getPromotionLegs(String)
      */
     public int getPromotionHours(String rank) {
-        Integer hours = (Integer) _promotionCriteria.get(rank + "_HOURS");
+        Integer hours = _promotionCriteria.get(rank + "_HOURS");
         return (hours == null) ? 0 : hours.intValue();
     }
 
@@ -152,7 +152,7 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
      * @see EquipmentType#getPromotionHours(String)
      */
     public int getPromotionLegs(String rank) {
-        Integer legs = (Integer) _promotionCriteria.get(rank + "_LEGS");
+        Integer legs = _promotionCriteria.get(rank + "_LEGS");
         return (legs == null) ? 0 : legs.intValue();
     }
     
