@@ -177,9 +177,9 @@ public final class StringUtils {
     * @return a List of String
     * @see StringTokenizer#StringTokenizer(String, String)
     */
-   public static List split(String s, String delim) {
+   public static List<String> split(String s, String delim) {
 
-      List results = new ArrayList();
+      List<String> results = new ArrayList<String>();
       StringTokenizer tk = new StringTokenizer(s, delim, true);
       String lastEntry = "";
 

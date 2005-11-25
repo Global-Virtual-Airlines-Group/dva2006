@@ -15,7 +15,7 @@ package org.deltava.util;
  */
 
 import java.io.*;
-import java.util.Vector;
+import java.util.*;
 
 /**
  * Get file format, image resolution, number of bits per pixel and optionally 
@@ -232,7 +232,7 @@ public class ImageInfo {
 	private InputStream in;
 	private DataInput din;
 	private boolean collectComments = true;
-	private Vector comments;
+	private List<String> comments;
 	private boolean determineNumberOfImages;
 	private int numberOfImages;
 	private int physicalHeightDpi;
@@ -241,10 +241,10 @@ public class ImageInfo {
 	private int bitPos;
 
 	private void addComment(String s) {
-		if (comments == null) {
-			comments = new Vector();
-		}
-		comments.addElement(s);
+		if (comments == null)
+			comments = new ArrayList<String>();
+		
+		comments.add(s);
 	}
 
 	/**
@@ -779,10 +779,10 @@ public class ImageInfo {
 	 * @see #getNumberOfComments
 	 */
 	public String getComment(int index) {
-		if (comments == null || index < 0 || index >= comments.size()) {
+		if (comments == null || index < 0 || index >= comments.size())
 			throw new IllegalArgumentException("Not a valid comment index: " + index);
-		}
-		return (String)comments.elementAt(index);
+		
+		return comments.get(index);
 	}
 
 	/**
