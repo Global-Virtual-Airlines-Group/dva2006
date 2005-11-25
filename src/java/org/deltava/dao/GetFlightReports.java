@@ -169,14 +169,30 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByEvent(int id) throws DAOException {
+	public List<FlightReport> getByEvent(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
 					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
 					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
 			_ps.setInt(1, id);
-
-			// Return the results
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Flight Reports flown on a certain date.
+	 * @param dt the date
+	 * @return a List of FlightReports
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
+		try {
+			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
+				+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+				+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
+			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -190,7 +206,7 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByPilot(int id, String orderBy) throws DAOException {
+	public List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
 		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
@@ -204,8 +220,6 @@ public class GetFlightReports extends DAO {
 		try {
 			prepareStatement(buf.toString());
 			_ps.setInt(1, id);
-
-			// Return the results
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -246,7 +260,7 @@ public class GetFlightReports extends DAO {
 	 * @param pilots a Map of Pilot objects to populate with results
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void getOnlineTotals(Map pilots, String dbName) throws DAOException {
+	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
 	   
 	   // Trim the database name if it's in DB.TABLE format
 	   if (dbName.indexOf('.') != -1)
@@ -260,8 +274,8 @@ public class GetFlightReports extends DAO {
 
 		// Append the Pilot IDs
 		int setSize = 0;
-		for (Iterator i = pilots.values().iterator(); i.hasNext();) {
-			Pilot p = (Pilot) i.next();
+		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
+			Pilot p = i.next();
 			if (p.getOnlineLegs() == 0) {
 				setSize++;
 				sqlBuf.append(String.valueOf(p.getID()));
@@ -292,7 +306,7 @@ public class GetFlightReports extends DAO {
 			// Iterate through the results
 			while (rs.next()) {
 				int pilotID = rs.getInt(1);
-				Pilot p = (Pilot) pilots.get(new Integer(pilotID));
+				Pilot p = pilots.get(new Integer(pilotID));
 				if (p != null) {
 					p.setOnlineLegs(rs.getInt(2));
 					p.setOnlineHours(rs.getDouble(3));
@@ -376,8 +390,8 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Helper method to load PIREP data.
 	 */
-	protected List execute() throws SQLException {
-		List results = new ArrayList();
+	protected List<FlightReport> execute() throws SQLException {
+		List<FlightReport> results = new ArrayList<FlightReport>();
 
 		// Do the query and get metadata
 		ResultSet rs = _ps.executeQuery();
