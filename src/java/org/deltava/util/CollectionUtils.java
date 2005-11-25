@@ -33,10 +33,10 @@ public class CollectionUtils {
 	 * @return a List of entries contained within c1, but not c2
 	 * @throws NullPointerException if c1 or c2 are null
 	 */
-	public static Collection getDelta(Collection c1, Collection c2) {
+	public static Collection getDelta(Collection<? extends Object> c1, Collection<? extends Object> c2) {
 
 		// Convert the first collection to a List to preserve data
-		List l1 = new ArrayList(c1);
+		List<Object> l1 = new ArrayList<Object>(c1);
 
 		// Remove the entries from the second collection and return
 		l1.removeAll(c2);
@@ -50,8 +50,8 @@ public class CollectionUtils {
 	 * @param c2 the first Collection of entries
 	 * @throws NullPointerException if c1 or c2 are null
 	 */
-	public static void setDelta(Collection c1, Collection c2) {
-		List tmpC1 = new ArrayList(c1); // we copy c1 since we modify it before c2.removeAll()
+	public static void setDelta(Collection<Object> c1, Collection<Object> c2) {
+		List<Object> tmpC1 = new ArrayList<Object>(c1); // we copy c1 since we modify it before c2.removeAll()
 		c1.removeAll(c2);
 		c2.removeAll(tmpC1);
 	}
@@ -63,7 +63,7 @@ public class CollectionUtils {
 	 * @param c2 the second Collection of entries
 	 * @return TRUE if c1.size() != c2.size() or !c1.containsAll(c2), otherwise FALSE
 	 */
-	public static boolean hasDelta(Collection c1, Collection c2) {
+	public static boolean hasDelta(Collection<? extends Object> c1, Collection<? extends Object> c2) {
 		return ((c1.size() != c2.size()) || (!c1.containsAll(c2)));
 	}
 
@@ -74,8 +74,8 @@ public class CollectionUtils {
 	 * @return strValues converted to a List, or defltValues if strValues is null
 	 * @see Arrays#asList(Object[])
 	 */
-	public static Collection loadList(String[] strValues, Collection defltValues) {
-		return new LinkedHashSet((strValues != null) ? Arrays.asList(strValues) : defltValues);
+	public static Collection<String> loadList(String[] strValues, Collection<String> defltValues) {
+		return new LinkedHashSet<String>((strValues != null) ? Arrays.asList(strValues) : defltValues);
 	}
 
 	/**
@@ -84,9 +84,9 @@ public class CollectionUtils {
 	 * @param keyProperty the property to call on each value to get the key value
 	 * @return a Map of the values, indexed by their key
 	 */
-	public static Map createMap(Collection values, String keyProperty) {
+	public static Map<Object, Object> createMap(Collection<? extends Object> values, String keyProperty) {
 
-		Map results = new HashMap();
+		Map<Object, Object> results = new HashMap<Object, Object>();
 		for (Iterator i = values.iterator(); i.hasNext(); ) {
 			Object obj = i.next();
 			try {

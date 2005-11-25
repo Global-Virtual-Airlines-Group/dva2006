@@ -22,14 +22,14 @@ public class RoleUtils {
      * @param rsrcRoles a Collection of the resource's restricted roles
      * @return TRUE if any member of userRoles is contained within rsrcRoles, otherwise FALSE
      */
-    public static boolean hasAccess(Collection userRoles, Collection rsrcRoles) {
+    public static boolean hasAccess(Collection<String> userRoles, Collection<String> rsrcRoles) {
 
         // If we have the admin role or the resource is unprotected, allow access
         if (userRoles.contains("Admin") || rsrcRoles.contains("*"))
             return true;
 
         // Check if we have any of the resource roles
-        List tmpRoles = new ArrayList(userRoles);
+        List<String> tmpRoles = new ArrayList<String>(userRoles);
         tmpRoles.retainAll(rsrcRoles);
         return (tmpRoles.size() > 0);
     }
