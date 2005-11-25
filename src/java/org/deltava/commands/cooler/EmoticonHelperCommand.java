@@ -27,7 +27,7 @@ public class EmoticonHelperCommand extends AbstractCommand {
       ctx.setAttribute("iconNames", Arrays.asList(Emoticons.ICON_NAMES), REQUEST);
 
       // Convert smiley codes into a map
-      Map codes = new HashMap();
+      Map<String, String> codes = new HashMap<String, String>();
       for (int x = 0; x < Emoticons.ICON_NAMES.length; x++) {
          if (Emoticons.ICON_CODES[x] != null)
             codes.put(Emoticons.ICON_NAMES[x], Emoticons.ICON_CODES[x]);
