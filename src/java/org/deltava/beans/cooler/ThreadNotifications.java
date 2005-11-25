@@ -2,7 +2,6 @@
 package org.deltava.beans.cooler;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.DatabaseBean;
@@ -16,9 +15,9 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class ThreadNotifications extends DatabaseBean implements Serializable, Cacheable {
+public class ThreadNotifications extends DatabaseBean implements Cacheable {
 
-   private Set _notifications;
+   private Set<Integer> _notifications;
    
    /**
     * Creates a new Thread Notifcation bean.
@@ -27,7 +26,7 @@ public class ThreadNotifications extends DatabaseBean implements Serializable, C
    public ThreadNotifications(int id) {
       super();
       setID(id);
-      _notifications = new HashSet();
+      _notifications = new HashSet<Integer>();
    }
    
    /**

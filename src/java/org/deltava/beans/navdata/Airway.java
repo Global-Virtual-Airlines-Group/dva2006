@@ -17,7 +17,7 @@ import org.deltava.util.cache.Cacheable;
 public class Airway implements java.io.Serializable, Comparable, Cacheable {
 
 	private String _code;
-	private List _waypoints;
+	private List<String> _waypoints;
 
 	/**
 	 * Creates a new Airway bean.
@@ -27,7 +27,7 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	public Airway(String code) {
 		super();
 		setCode(code);
-		_waypoints = new ArrayList();
+		_waypoints = new ArrayList<String>();
 	}
 
 	/**
@@ -65,8 +65,8 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 * @see Airway#addWaypoint(String)
 	 * @see Airway#setRoute(String)
 	 */
-	public Collection getWaypoints() {
-		return new LinkedHashSet(_waypoints);
+	public Collection<String> getWaypoints() {
+		return new LinkedHashSet<String>(_waypoints);
 	}
 	
 	/**
@@ -75,9 +75,9 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 * @param lastPosition the end of the Airway for dupe filtering
 	 * @return an ordered Collection of beans
 	 */
-	public Collection getWaypoints(NavigationDataMap ndmap, GeoLocation lastPosition) {
+	public Collection<NavigationDataBean> getWaypoints(NavigationDataMap ndmap, GeoLocation lastPosition) {
 	   // Iterate through the waypoint codes
-	   Collection results = new LinkedHashSet();
+	   Collection<NavigationDataBean> results = new LinkedHashSet<NavigationDataBean>();
 		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
 			String trwp = (String) i.next();
 			NavigationDataBean nd = ndmap.get(trwp, lastPosition);
@@ -95,7 +95,7 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 * @param ndmap the NavigationDataMap containing the beans
 	 * @return an ordered Collection of beans
 	 */
-	public Collection getWaypoints(NavigationDataMap ndmap) {
+	public Collection<NavigationDataBean> getWaypoints(NavigationDataMap ndmap) {
 		return getWaypoints(ndmap, null);
 	}
 
@@ -106,14 +106,14 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 * @return a List of waypoint codes
 	 * @throws NullPointerException if start or end are null
 	 */
-	public Collection getWaypoints(String start, String end) {
+	public Collection<String> getWaypoints(String start, String end) {
 		int st = _waypoints.indexOf(start.toUpperCase());
 		int ed = _waypoints.indexOf(end.toUpperCase());
 		if ((st == -1) || (ed == -1)) {
-			return Collections.EMPTY_LIST;
+			return new ArrayList<String>();
 		} else if (ed < st) {
 			// If ed is before sd then reverse the waypoints
-			List wp2 = new ArrayList(_waypoints.subList(ed, st));
+			List<String> wp2 = new ArrayList<String>(_waypoints.subList(ed, st));
 			Collections.reverse(wp2);
 			return wp2;
 		}
@@ -127,8 +127,8 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 */
 	public String getRoute() {
 		StringBuilder buf = new StringBuilder();
-		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
-			buf.append((String) i.next());
+		for (Iterator<String> i = _waypoints.iterator(); i.hasNext();) {
+			buf.append(i.next());
 			if (i.hasNext())
 				buf.append(' ');
 		}

@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
 public class NetworkStatus implements java.io.Serializable, Cacheable {
 
 	private String _networkName;
-	private Set _dataURLs;
+	private Set<String> _dataURLs;
 	private String _msg;
 	private boolean _isCached;
 
@@ -28,7 +28,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	public NetworkStatus(String networkName) {
 		super();
 		_networkName = networkName.trim();
-		_dataURLs = new HashSet();
+		_dataURLs = new HashSet<String>();
 	}
 
 	/**
@@ -66,7 +66,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	public String getDataURL() {
 		Random r = new Random();
 		int idx = r.nextInt(_dataURLs.size());
-		return (String) getURLs().get(idx);
+		return getURLs().get(idx);
 	}
 
 	/**
@@ -75,8 +75,8 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	 * @see NetworkStatus#getDataURL()
 	 * @see NetworkStatus#addURL(String)
 	 */
-	public List getURLs() {
-		return new ArrayList(_dataURLs);
+	public List<String> getURLs() {
+		return new ArrayList<String>(_dataURLs);
 	}
 
 	/**

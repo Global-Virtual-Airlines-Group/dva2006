@@ -39,7 +39,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	private int _alt;
 	private GeoPosition _position;
 	private TZInfo _tz = TZInfo.local();
-	private Set _aCodes = new TreeSet();
+	private Set<String> _aCodes = new TreeSet<String>();
 
 	/**
 	 * Create a new Airport object.
@@ -242,8 +242,8 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * @return The unsorted list of airline codes
 	 * @see Airline#getCode()
 	 */
-	public Collection getAirlineCodes() {
-		return new HashSet(_aCodes);
+	public Collection<String> getAirlineCodes() {
+		return _aCodes;
 	}
 
 	/**

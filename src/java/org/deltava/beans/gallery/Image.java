@@ -30,7 +30,7 @@ public class Image extends DatabaseBlobBean implements ComboAlias {
     private int _imgY;
     private int _imgType;
     
-    private Map _votes;
+    private Map<Integer, Vote> _votes;
     
     private double _score = -1;
     private int _voteCount;
@@ -312,7 +312,7 @@ public class Image extends DatabaseBlobBean implements ComboAlias {
      */
     public void addVote(Vote v) {
     	if (_votes == null)
-    		_votes = new HashMap();
+    		_votes = new HashMap<Integer, Vote>();
     	
         _votes.put(new Integer(v.getUserID()), v);
     }
@@ -373,18 +373,18 @@ public class Image extends DatabaseBlobBean implements ComboAlias {
      * @see Person
      */
     public int myScore(Person p) {
-        Vote v = isPopulated() ? (Vote) _votes.get(new Integer(p.getID())) : null;
+        Vote v = isPopulated() ? _votes.get(new Integer(p.getID())) : null;
         return (v == null) ? -1 : v.getScore();
     }
     
     /**
      * Returns all votes for this image. 
-     * @return a List of votes for this image
+     * @return a Collection of votes for this image
      * @see Vote
      * @see Image#addVote(Vote)
      */
-    public List getVotes() {
-        return isPopulated() ? new ArrayList(_votes.values()) : Collections.EMPTY_LIST;
+    public Collection<Vote> getVotes() {
+        return isPopulated() ? new ArrayList<Vote>(_votes.values()) : new ArrayList<Vote>();
     }
     
     /**
@@ -396,8 +396,8 @@ public class Image extends DatabaseBlobBean implements ComboAlias {
         if (!isPopulated()) return _score;
         
         int tmpResult = 0;
-        for (Iterator i = _votes.values().iterator(); i.hasNext(); ) {
-            Vote v = (Vote) i.next();
+        for (Iterator<Vote> i = _votes.values().iterator(); i.hasNext(); ) {
+            Vote v = i.next();
             tmpResult += v.getScore();
         }
         

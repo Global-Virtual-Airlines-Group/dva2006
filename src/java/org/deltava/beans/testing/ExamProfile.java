@@ -1,8 +1,5 @@
 package org.deltava.beans.testing;
 
-import java.util.*;
-import java.io.Serializable;
-
 import org.deltava.beans.ViewEntry;
 import org.deltava.util.cache.Cacheable;
 
@@ -13,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class ExamProfile implements Serializable, Comparable, Cacheable, ViewEntry {
+public class ExamProfile implements java.io.Serializable, Comparable, Cacheable, ViewEntry {
 
     private String _name;
     private int _stage;
@@ -25,7 +22,6 @@ public class ExamProfile implements Serializable, Comparable, Cacheable, ViewEnt
     private int _minStage;
     private boolean _active;
     
-    private Set _ratings;
     private boolean _requiresCheckride;
     
     /**
@@ -36,7 +32,6 @@ public class ExamProfile implements Serializable, Comparable, Cacheable, ViewEnt
     public ExamProfile(String name) {
         super();
         _name = name.trim();
-        _ratings = new TreeSet();
     }
     
     /**
@@ -78,19 +73,6 @@ public class ExamProfile implements Serializable, Comparable, Cacheable, ViewEnt
     
     public boolean getNeedsCheckRide() {
         return _requiresCheckride;
-    }
-    
-    public Collection getRatings() {
-        return new HashSet(_ratings);
-    }
-    
-    /**
-     * Add a new additional rating for this examination.
-     * @param rating the rating to add
-     * @throws NullPointerException if rating is null
-     */
-    public void addRating(String rating) {
-        _ratings.add(rating.trim());
     }
     
     public void setStage(int stage) {

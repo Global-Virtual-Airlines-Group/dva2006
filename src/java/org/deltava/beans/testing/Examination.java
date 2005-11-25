@@ -17,7 +17,7 @@ public class Examination extends Test {
    public static final String QUESTIONNAIRE_NAME = "Initial Questionnaire";
 
    private Date _expiryDate;
-   private Map _questions;
+   private Map<Integer, Question> _questions;
    private int _size;
 
    /**
@@ -26,7 +26,7 @@ public class Examination extends Test {
     */
    public Examination(String name) {
       super(name);
-      _questions = new TreeMap();
+      _questions = new TreeMap<Integer, Question>();
    }
 
    /**
@@ -53,7 +53,7 @@ public class Examination extends Test {
     * @see Question
     * @see Examination#addQuestion(Question)
     */
-   public Collection getQuestions() {
+   public Collection<Question> getQuestions() {
       return _questions.values();
    }
 
@@ -63,7 +63,7 @@ public class Examination extends Test {
     * @return the Question with the specified number, or null if not present
     */
    public Question getQuestion(int idx) {
-      return (Question) _questions.get(new Integer(idx));
+      return _questions.get(new Integer(idx));
    }
 
    /**

@@ -88,6 +88,7 @@ public class FlightStatsEntry implements Serializable, Comparable {
 	 * Compares the entries by using the natural sort order of the labels.
 	 * @see Comparable#compareTo(Object)
 	 */
+	@SuppressWarnings("unchecked")
 	public int compareTo(Object o2) {
 		FlightStatsEntry e2 = (FlightStatsEntry) o2;
 		return (_label.compareTo(e2._label));

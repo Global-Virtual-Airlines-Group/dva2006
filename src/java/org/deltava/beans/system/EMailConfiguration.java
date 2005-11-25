@@ -21,7 +21,7 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
 	private int _quota;
 	private boolean _active;
 	
-	private Set _aliases = new TreeSet();
+	private Set<String> _aliases = new TreeSet<String>();
 
 	/**
 	 * Creates a new e-mail configuration bean.
@@ -87,7 +87,7 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
      * @see EMailConfiguration#setAliases(Collection)
      * @see EMailConfiguration#addAlias(String)
      */
-	public Collection getAliases() {
+	public Collection<String> getAliases() {
 		return _aliases;
 	}
 	
