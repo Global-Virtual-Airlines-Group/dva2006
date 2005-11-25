@@ -10,6 +10,6 @@ import java.io.IOException;
  */
 public interface SystemDataLoader {
 
-    public Map load() throws IOException;
-    public void save(Map properties) throws IOException;
+    public Map<String, Object> load() throws IOException;
+    public void save(Map<String, Object> properties) throws IOException;
 }

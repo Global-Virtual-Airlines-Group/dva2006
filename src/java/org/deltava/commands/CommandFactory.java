@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -13,11 +14,12 @@ import org.jdom.input.SAXBuilder;
 import org.deltava.util.ConfigLoader;
 
 /**
- * A factory class to initalize a web command map.
+ * A factory class to initalize the web command map.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class CommandFactory {
 
     private static final Logger log = Logger.getLogger(CommandFactory.class);
@@ -28,21 +30,21 @@ public class CommandFactory {
     /**
      * Helper method to parse comma-delimited list of roles.
      */
-    private static List getRoles(String roleNames) {
+    private static Collection<String> getRoles(String roleNames) {
         if (roleNames == null) {
-            List results = new ArrayList();
+            Collection<String> results = new HashSet<String>();
             results.add("*");
             return results;
         }
         
         // Loop through the roles
-        Set results = new TreeSet();
+        Set<String> results = new TreeSet<String>();
         StringTokenizer tkns = new StringTokenizer(roleNames, ",");
         while (tkns.hasMoreTokens())
             results.add(tkns.nextToken().trim());
         
         // Return the roles
-        return new ArrayList(results);
+        return results;
     }
     
     /**
@@ -51,11 +53,11 @@ public class CommandFactory {
      * @throws IOException if an I/O error occurs
      * @see Command#init(String, String)
      */
-    public static Map load(String configXML, ServletContext sc) throws IOException {
+    public static Map<String, Command> load(String configXML, ServletContext sc) throws IOException {
         // Gracefully fail if no commands found
         if (configXML == null) {
             log.warn("No Commands loaded");
-            return Collections.EMPTY_MAP;
+            return new HashMap<String, Command>();
         }
         
         // Get the file
@@ -79,11 +81,11 @@ public class CommandFactory {
             throw new IOException("Empty XML Document");
         
         // Parse through the commands
-        Map results = new HashMap();
+        Map<String, Command> results = new HashMap<String, Command>();
         List cmds = root.getChildren("command");
         for (Iterator i = cmds.iterator(); i.hasNext(); ) {
             Element e = (Element) i.next();
-            String cmdID = e.getAttributeValue("id");
+            String cmdID = e.getAttributeValue("id").trim();
             String cmdClassName = e.getChildTextTrim("class");
             
             Command cmd = null;

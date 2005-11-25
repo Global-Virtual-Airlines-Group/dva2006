@@ -58,14 +58,14 @@ public interface Command extends java.io.Serializable {
 
     /**
      * Return the roles authorized to execute this command.
-     * @return a List of role names
+     * @return a Collection of role names
      */
-    public Collection getRoles();
+    public Collection<String> getRoles();
     
     /**
      * Updates the roles authorized to execute this command. 
      * @param roleNames a List of role names
      * @throws IllegalStateException if the role names have already been set
      */
-    void setRoles(Collection roleNames) throws IllegalStateException;
+    void setRoles(Collection<String> roleNames) throws IllegalStateException;
 }

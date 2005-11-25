@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 public class CommandContext implements java.io.Serializable, SecurityContext {
 
     // List of roles for anonymous users
-    private static final List ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
+    private static final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
     
     public static final String AUTH_COOKIE_NAME = "authToken";
     public static final String USER_ATTR_NAME = "authUser";
@@ -225,7 +225,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      * @see CommandContext#isAuthenticated()
      * @see CommandContext#getUser()
      */
-    public Collection getRoles() {
+    public Collection<String> getRoles() {
         return isAuthenticated() ? getUser().getRoles() : CommandContext.ANONYMOUS_ROLES;
     }
     
