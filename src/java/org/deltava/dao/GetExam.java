@@ -164,7 +164,8 @@ public class GetExam extends DAO {
 	 * @return a List of Tests
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getExams(int id) throws DAOException {
+	@SuppressWarnings("unchecked")
+	public List<Test> getExams(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE " +
 			      "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.PILOT_ID=?) AND (EP.NAME=E.NAME) " +
@@ -172,7 +173,8 @@ public class GetExam extends DAO {
 			_ps.setInt(1, id);
 			
 			// Execute the query
-			List results = execute();
+			List<Test> results = new ArrayList<Test>();
+			results.addAll(execute());
 			
 			// Load videos
 			prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?)");
@@ -240,14 +242,14 @@ public class GetExam extends DAO {
 	/**
 	 * Helper method to parse the examination result set.
 	 */
-	private List execute() throws SQLException {
+	private List<Examination> execute() throws SQLException {
 	   
 	   // Execute the Query
 	   ResultSet rs = _ps.executeQuery();
 	   boolean hasName = (rs.getMetaData().getColumnCount() > 13);
 	   
 	   // Iterate through the results
-	   List results = new ArrayList();
+	   List<Examination> results = new ArrayList<Examination>();
 	   while (rs.next()) {
 			Examination e = new Examination(rs.getString(2));
 			e.setID(rs.getInt(1));
@@ -282,13 +284,13 @@ public class GetExam extends DAO {
 	/**
 	 * Helper method to parse the check ride result set.
 	 */
-	private List executeCheckride() throws SQLException {
+	private List<CheckRide> executeCheckride() throws SQLException {
 
 	   // Execute the Query
 	   ResultSet rs = _ps.executeQuery();
 	   
 	   // Iterate through the results
-	   List results = new ArrayList();
+	   List<CheckRide> results = new ArrayList<CheckRide>();
 	   while (rs.next()) {
 			CheckRide cr = new CheckRide(rs.getString(2));
 			cr.setID(rs.getInt(1));

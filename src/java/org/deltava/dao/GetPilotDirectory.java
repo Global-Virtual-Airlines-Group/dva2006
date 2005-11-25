@@ -127,7 +127,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection checkUnique(Person p, String dbName) throws DAOException {
+	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
@@ -141,7 +141,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			_ps.setString(3, p.getEmail());
 
 			// Build the result collection
-			Set results = new HashSet();
+			Set<Integer> results = new HashSet<Integer>();
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -164,7 +164,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
     * @return a List of Pilots
     * @throws DAOException if a JDBC error occurs
     */
-   public List getByRole(String roleName, String dbName) throws DAOException {
+   public List<Pilot> getByRole(String roleName, String dbName) throws DAOException {
       
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
@@ -194,7 +194,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
     * @param dbName the database name
     * @return a Collection of Database IDs as Integers
     */
-   public Collection checkSoundex(Person usr, String dbName) throws DAOException {
+   public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
       
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
@@ -224,7 +224,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
          ResultSet rs = _ps.executeQuery();
          
          // Iterate through the results
-         Collection results = new ArrayList();
+         Collection<Integer> results = new ArrayList<Integer>();
          while (rs.next())
             results.add(new Integer(rs.getInt(1)));
          
@@ -235,5 +235,40 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+   }
+   
+   /**
+    * Searches for a Pilot name (or fragment thereof) and returns the database IDs of Pilots matching the name.
+    * @param fullName the full name or fragment 
+    * @param dbName the database name
+    * @param doFragment TRUE if a partial match will be accepted, otherwise FALSE
+    * @return a Collection of database IDs as Integers
+    * @throws DAOException if a JDBC error occurs
+    */
+   public Collection<Integer> search(String fullName, String dbName, boolean doFragment) throws DAOException {
+	   
+	   // Build the SQL statement
+	   StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
+	   sqlBuf.append(dbName.toLowerCase());
+	   sqlBuf.append(".PILOTS P WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))");
+	   sqlBuf.append(doFragment ? " LIKE ?)" : "=?)");
+	   
+	   try {
+		   prepareStatement(sqlBuf.toString());
+		   _ps.setString(1, doFragment ? "%" + fullName.toUpperCase() + "%" : fullName.toUpperCase());
+		   
+		   // Execute the query
+		   Collection<Integer> results = new ArrayList<Integer>();
+		   ResultSet rs = _ps.executeQuery();
+		   while (rs.next())
+			   results.add(new Integer(rs.getInt(1)));
+		   
+		   // Clean up and return
+		   rs.close();
+		   _ps.close();
+		   return results;
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
    }
 }
