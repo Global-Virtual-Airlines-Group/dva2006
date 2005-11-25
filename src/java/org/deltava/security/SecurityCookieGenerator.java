@@ -53,7 +53,7 @@ public final class SecurityCookieGenerator {
 			throw new SecurityException("Security Cookie decryption failure");
 		
 		// Parse the token
-		Map cookieData = new HashMap();
+		Map<String, String> cookieData = new HashMap<String, String>();
 		StringTokenizer tkns = new StringTokenizer(rawToken, "@"); 
 		while (tkns.hasMoreTokens()) {
 			StringTokenizer tkn2 = new StringTokenizer(tkns.nextToken(), ":");
@@ -87,10 +87,10 @@ public final class SecurityCookieGenerator {
 		SecurityCookieData scData = new SecurityCookieData(cookieData);
 			
 		try {
-		    scData.setExpiryDate(Long.parseLong((String) cookieData.get("expiry"), 16));
+		    scData.setExpiryDate(Long.parseLong(cookieData.get("expiry"), 16));
 			
 			// Convert the hex password into a String
-			String rawPwd = (String) cookieData.get("pwd");
+			String rawPwd = cookieData.get("pwd");
 			StringBuilder pwdBuf = new StringBuilder();
 			for (int x = 0; x < rawPwd.length(); x += 2) {
 				int hexByte = Integer.parseInt(rawPwd.substring(x, x+ 2), 16);
