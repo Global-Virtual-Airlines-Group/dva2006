@@ -39,7 +39,7 @@ public class ViewContext {
      */
     private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
 
-    private Map _params;
+    private Map<String, String> _params;
     private Collection _results;
     
     private int _start;
@@ -50,6 +50,7 @@ public class ViewContext {
      * Initializes the view context from the HTTP request.
      * @param req the HTTP request
      */
+    @SuppressWarnings("unchecked")
     public ViewContext(HttpServletRequest req, int size) {
         super();
         _start = getNumericParameter(req, START, 0);
@@ -57,7 +58,7 @@ public class ViewContext {
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
-        _params = new HashMap(req.getParameterMap());
+        _params = new HashMap<String, String>(req.getParameterMap());
         for (int x = 0; x < ViewContext.RESERVED_PARAMS.length; x++) {
             String rParam = ViewContext.RESERVED_PARAMS[x];
             if (_params.containsKey(rParam))

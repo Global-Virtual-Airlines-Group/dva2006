@@ -183,7 +183,7 @@ public class CommandResult implements java.io.Serializable {
 		buf.append(".do");
 		
 		// Add in the operation and ID
-		Map params = new HashMap();
+		Map<String, String> params = new HashMap<String, String>();
 		if (id != null) params.put("id", id);
 		if (opName != null) params.put("op", opName);
 		
@@ -194,7 +194,7 @@ public class CommandResult implements java.io.Serializable {
 		      String pName = (String) i.next();
 		      buf.append(pName);
 		      buf.append('=');
-		      buf.append((String) params.get(pName));
+		      buf.append(params.get(pName));
 		      if (i.hasNext())
 		         buf.append('&');
 		   }

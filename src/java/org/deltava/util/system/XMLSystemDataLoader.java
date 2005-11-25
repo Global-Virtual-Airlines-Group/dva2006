@@ -21,7 +21,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
     private static final Logger log = Logger.getLogger(XMLSystemDataLoader.class);
     private static final String XML_FILENAME = "/etc/systemConfig.xml";
 
-    private Map _data;
+    private Map<String, Object> _data;
 
     XMLSystemDataLoader() {
         super();
@@ -32,7 +32,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @throws FileNotFoundException if the file cannot be found
      * @throws IOException if an error occurs reading the file
      */
-    public Map load() throws IOException {
+    public Map<String, Object> load() throws IOException {
 
         // Get the input stream to parse
         InputStream is = ConfigLoader.getStream(XML_FILENAME);
@@ -55,7 +55,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             throw new IOException("Empty XML Document");
 
         // Log the configuration
-        _data = new HashMap();
+        _data = new HashMap<String, Object>();
         _data.put(SystemData.CFG_NAME, root.getAttributeValue("env"));
         log.info("Loading configuration environemnt - " + root.getAttributeValue("env"));
 
@@ -113,7 +113,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @return a List of child values
      * @see XMLSystemDataLoader#getElementWithType(Element)
      */
-    protected List processList(Element root) {
+    @SuppressWarnings("unchecked")
+    protected List<? extends Object> processList(Element root) {
         boolean isSorted = Boolean.valueOf(root.getAttributeValue("sorted", "false")).booleanValue();
         boolean isUnique = Boolean.valueOf(root.getAttributeValue("unique", "false")).booleanValue();
         
@@ -126,9 +127,9 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         }
         
         // If we're a sorted set, return a TreeSet instead of a HashSet
-        Collection results = null;
+        Collection<Object> results = null;
         try {
-            results = (Collection) Class.forName(className).newInstance();
+            results = (Collection<Object>) Class.forName(className).newInstance();
         } catch (Exception e) {
         }
 
@@ -138,7 +139,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
             results.add(getElementWithType(e));
         }
 
-        return new ArrayList(results);
+        return new ArrayList<Object>(results);
     }
 
     /**
@@ -150,8 +151,8 @@ public class XMLSystemDataLoader implements SystemDataLoader {
      * @return a Map of child values
      * @see XMLSystemDataLoader#getElementWithType(Element)
      */
-    protected Map processMap(Element root) {
-        Map results = new HashMap();
+    protected Map<String, Object> processMap(Element root) {
+        Map<String, Object> results = new HashMap<String, Object>();
 
         // Iterate through the child elements
         for (Iterator i = root.getChildren().iterator(); i.hasNext();) {

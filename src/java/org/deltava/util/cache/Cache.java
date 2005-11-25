@@ -13,7 +13,7 @@ import java.lang.reflect.Method;
 
 public abstract class Cache implements java.io.Serializable {
    
-   protected Map _cache;
+   protected Map<Object, Comparable> _cache;
    private int _maxSize;
    
    private int _hits;
@@ -27,7 +27,7 @@ public abstract class Cache implements java.io.Serializable {
    protected Cache(int maxSize) {
       super();
       setMaxSize(maxSize);
-      _cache = new HashMap(_maxSize + 2, 1); // Set so that rehashes never occur
+      _cache = new HashMap<Object, Comparable>(_maxSize + 2, 1); // Set so that rehashes never occur
    }
    
    /**
@@ -92,7 +92,7 @@ public abstract class Cache implements java.io.Serializable {
     */
    protected void checkOverflow() {
       if (_cache.size() > _maxSize) {
-         TreeSet entries = new TreeSet(_cache.values());
+         TreeSet<Comparable> entries = new TreeSet<Comparable>(_cache.values());
          _cache.values().remove(entries.first());
       }
    }

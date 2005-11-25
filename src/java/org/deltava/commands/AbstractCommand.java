@@ -22,7 +22,7 @@ public abstract class AbstractCommand implements Command {
 
 	private String _id;
 	private String _name;
-	private Set _roles;
+	private Collection<String> _roles;
 
 	/**
 	 * Reference to the current servlet context.
@@ -86,8 +86,12 @@ public abstract class AbstractCommand implements Command {
 	 * @return a Collection of role names
 	 * @see AbstractCommand#setRoles(Collection)
 	 */
-	public final Collection getRoles() {
-		return (_roles == null) ? Collections.EMPTY_SET : new HashSet(_roles);
+	public final Collection<String> getRoles() {
+		Collection<String> results = new HashSet<String>();
+		if (_roles != null)
+			results.addAll(_roles);
+		
+		return results;
 	}
 
 	/**
@@ -97,11 +101,11 @@ public abstract class AbstractCommand implements Command {
 	 * @throws IllegalStateException if setRoles() has already been called
 	 * @see AbstractCommand#getRoles()
 	 */
-	public final void setRoles(Collection roles) {
+	public final void setRoles(Collection<String> roles) {
 		if (_roles != null)
 			throw new IllegalStateException("Roles for " + getName() + " already set");
 
-		_roles = new HashSet(roles);
+		_roles = new HashSet<String>(roles);
 	}
 
 	/**

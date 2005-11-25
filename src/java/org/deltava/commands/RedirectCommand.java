@@ -3,6 +3,8 @@ package org.deltava.commands;
 
 import org.deltava.util.redirect.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * An internal Web Site Command to preserve request state across HTTP redirects.
  * @author Luke
@@ -11,6 +13,8 @@ import org.deltava.util.redirect.*;
  */
 
 public class RedirectCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(RedirectCommand.class);
 
    /**
     * Executes the command.
@@ -18,18 +22,21 @@ public class RedirectCommand extends AbstractCommand {
     * @throws CommandException if an unhandled error occurs
     */
    public void execute(CommandContext ctx) throws CommandException {
+	   
+	   // Get the command results
+	   CommandResult result = ctx.getResult();
 
       // Restore the current session state
-      String url;
       try {
-         url = RequestStateHelper.restore(ctx.getRequest());
+         result.setURL(RequestStateHelper.restore(ctx.getRequest()));
       } catch (IllegalStateException ise) {
-         throw new CommandException(ise.getMessage());
+    	  String referer = ctx.getRequest().getHeader("Referer");
+    	  log.warn("No HTTP Session redirecting from " + referer);
+    	  ctx.setAttribute("referer", referer, REQUEST);
+    	  result.setURL("/jsp/error/redirectError.jsp");
       }
       
       // Forward to the JSP
-      CommandResult result = ctx.getResult();
-      result.setURL(url);
       result.setSuccess(true);
    }
 }

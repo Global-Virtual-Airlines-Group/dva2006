@@ -32,7 +32,7 @@ public class SystemData implements Serializable {
 	static final String LOADER_NAME = "$LOADERCLASS$";
 
 	private static SystemDataLoader _loader;
-	private static Map _properties = new HashMap();
+	private static Map<String, Object> _properties = new HashMap<String, Object>();
 
 	// This is a singleton
 	private SystemData() {
@@ -71,7 +71,7 @@ public class SystemData implements Serializable {
 				log.error("Error loading System Data - " + ce.getMessage());
 			}
 
-			_properties = new HashMap();
+			_properties = new HashMap<String, Object>();
 		}
 
 		// Save the loader name and return
