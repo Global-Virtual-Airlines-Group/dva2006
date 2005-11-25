@@ -10,10 +10,11 @@ import org.deltava.beans.Ranks;
  * @since 1.0
  * @see PersonComparator
  */
-
+@SuppressWarnings("hiding")
 public class PilotComparator extends PersonComparator {
 
-    public static final int PILOTCODE = 4;
+	
+	public static final int PILOTCODE = 4;
     public static final int EQTYPE = 5;
     public static final int RANK = 6;
     public static final int LEGS = 7;

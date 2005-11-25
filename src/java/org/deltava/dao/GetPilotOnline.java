@@ -30,7 +30,7 @@ public class GetPilotOnline extends PilotReadDAO {
 	 * @return a Map of network ID/database ID pairs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getIDs(String network) throws DAOException {
+	public Map<String, Integer> getIDs(String network) throws DAOException {
 		
 		try {
 			// Prepare the statement
@@ -41,7 +41,7 @@ public class GetPilotOnline extends PilotReadDAO {
 			_ps.setInt(2, Pilot.ON_LEAVE);
 			
 			// Execute the Query
-			Map results = new HashMap();
+			Map<String, Integer> results = new HashMap<String, Integer>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.put(rs.getString(2), new Integer(rs.getInt(1)));
