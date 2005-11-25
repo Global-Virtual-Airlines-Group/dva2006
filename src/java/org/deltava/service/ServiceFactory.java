@@ -26,12 +26,13 @@ public class ServiceFactory {
    private ServiceFactory() {
    }
 
-   public static Map load(String configXML) throws IOException {
+   public static Map<String, String> load(String configXML) throws IOException {
       
       // Gracefully fail if no commands found
+	   Map<String, String> results = new HashMap<String, String>();
       if (configXML == null) {
           log.warn("No Web Services loaded");
-          return Collections.EMPTY_MAP;
+          return results;
       }
 
       // Get the file
@@ -55,7 +56,6 @@ public class ServiceFactory {
           throw new IOException("Empty XML Document");
       
       // Parse through the services
-      Map results = new HashMap();
       for (Iterator i = root.getChildren("service").iterator(); i.hasNext(); ) {
           Element e = (Element) i.next();
           String svcID = e.getAttributeValue("id");

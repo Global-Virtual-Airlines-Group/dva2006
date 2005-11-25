@@ -34,7 +34,7 @@ public class RouteMapService extends WebDataService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		LinkedList routePoints = null;
+		LinkedList<NavigationDataBean> routePoints = null;
 		try {
 			GetNavRoute dao = new GetNavRoute(_con);
 			routePoints = dao.getRouteWaypoints(ctx.getParameter("route"));
@@ -63,7 +63,7 @@ public class RouteMapService extends WebDataService {
 	 * @param points a List of MapEntry beans
 	 * @return a JDOM XML document
 	 */
-	protected Document formatPoints(List points) {
+	protected Document formatPoints(List<NavigationDataBean> points) {
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -74,11 +74,11 @@ public class RouteMapService extends WebDataService {
 		GeoLocation mp = null;
 		int distance = 500;
 		if (points.size() > 1) {
-			NavigationDataBean ndf = (NavigationDataBean) points.get(0);
-			mp = ndf.getPosition().midPoint((GeoLocation) points.get(points.size() - 1));
-			distance = ndf.getPosition().distanceTo((GeoLocation) points.get(points.size() - 1));
+			NavigationDataBean ndf = points.get(0);
+			mp = ndf.getPosition().midPoint(points.get(points.size() - 1));
+			distance = ndf.getPosition().distanceTo(points.get(points.size() - 1));
 		} else if (points.size() == 1) {
-			mp = (GeoLocation) points.get(0);
+			mp = points.get(0);
 		}
 
 		// Save the midpoint

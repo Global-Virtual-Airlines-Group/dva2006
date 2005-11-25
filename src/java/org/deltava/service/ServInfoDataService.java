@@ -47,7 +47,7 @@ public class ServInfoDataService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Pilots and their network IDs
-		Map pilots = new HashMap();
+		Map<String, Integer> pilots = new HashMap<String, Integer>();
 		try {
 			GetPilotOnline dao = new GetPilotOnline(_con);
 			for (int x = 0; x < NETWORKS.length; x++)
@@ -57,7 +57,7 @@ public class ServInfoDataService extends WebDataService {
 		}
 
 		// Load network data (this will use the cached copy if still valid)
-		Collection users = new ArrayList();
+		Collection<Pilot> users = new ArrayList<Pilot>();
 		try {
 			for (int x = 0; x < NETWORKS.length; x++) {
 				// Get network status
@@ -136,9 +136,9 @@ public class ServInfoDataService extends WebDataService {
 	/**
 	 * Helper method to extract airline members from ServInfo data.
 	 */
-	private Collection combineUsers(NetworkInfo info, Map pilots) {
+	private Collection<Pilot> combineUsers(NetworkInfo info, Map pilots) {
 
-		List results = new ArrayList();
+		List<Pilot> results = new ArrayList<Pilot>();
 		for (int x = 0; x < NETWORKS.length; x++) {
 			for (Iterator i = info.getPilots().iterator(); i.hasNext();) {
 				Pilot p = (Pilot) i.next();
