@@ -25,7 +25,7 @@ public class LDAPAuthenticator implements Authenticator {
 	/**
 	 * JNDI environment.
 	 */
-	protected Hashtable _env = new Hashtable();
+	protected Hashtable<String, String> _env = new Hashtable<String, String>();
 
 	/**
 	 * Initializes the authenticator.
@@ -66,9 +66,10 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @throws SecurityException if authentication fails for any reason, contained within the cause of the exception.
 	 * @see org.deltava.security.Authenticator#authenticate(java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	public void authenticate(String dn, String pwd) throws SecurityException {
 		// Create a new environment to connect to the LDAP server
-		Hashtable userEnv = (Hashtable) _env.clone();
+		Hashtable<String, String> userEnv = (Hashtable<String, String>) _env.clone();
 		userEnv.put(Context.SECURITY_PRINCIPAL, dn);
 		userEnv.put(Context.SECURITY_CREDENTIALS, pwd);
 

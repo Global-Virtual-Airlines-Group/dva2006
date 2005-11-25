@@ -14,7 +14,7 @@ import org.deltava.beans.*;
 
 public class UserPool implements Serializable {
 
-	private static Map _users = new TreeMap();
+	private static Map<Object, UserSessionWrapper> _users = new TreeMap<Object, UserSessionWrapper>();
 
 	// We're a singleton, alone and lonely
 	private UserPool() {
@@ -66,7 +66,7 @@ public class UserPool implements Serializable {
 	public synchronized static void removePerson(Person p, String sessionID) {
 
 		// Check if the session ID matches the person we wish to remove
-		UserSessionWrapper uw = (UserSessionWrapper) _users.get(p.cacheKey());
+		UserSessionWrapper uw = _users.get(p.cacheKey());
 		if ((uw != null) && (sessionID.equals(uw.getSessionID())))
 			_users.remove(p.cacheKey());
 	}
@@ -87,12 +87,12 @@ public class UserPool implements Serializable {
 	 * @see UserPool#getUsers()
 	 * @see UserPool#getUserNames()
 	 */
-	public static Collection getPilots() {
-		Set results = new HashSet();
-		for (Iterator i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = (UserSessionWrapper) i.next();
+	public static Collection<Pilot> getPilots() {
+		Set<Pilot> results = new HashSet<Pilot>();
+		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
+			UserSessionWrapper uw = i.next();
 			if (uw.getPerson() instanceof Pilot)
-				results.add(uw.getPerson());
+				results.add((Pilot) uw.getPerson());
 		}
 
 		return results;
@@ -104,10 +104,10 @@ public class UserPool implements Serializable {
 	 * @see UserPool#getPilots()
 	 * @see UserPool#getUserNames()
 	 */
-	public static Collection getUsers() {
-		Set results = new HashSet();
-		for (Iterator i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = (UserSessionWrapper) i.next();
+	public static Collection<Person> getUsers() {
+		Set<Person> results = new HashSet<Person>();
+		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
+			UserSessionWrapper uw = i.next();
 			results.add(uw.getPerson());
 		}
 
@@ -120,8 +120,8 @@ public class UserPool implements Serializable {
 	 * @see UserPool#getPilots()
 	 * @see UserPool#getUsers()
 	 */
-	public static Collection getUserNames() {
-		Set result = new TreeSet();
+	public static Collection<String> getUserNames() {
+		Set<String> result = new TreeSet<String>();
 		for (Iterator i = _users.values().iterator(); i.hasNext();) {
 			UserSessionWrapper uw = (UserSessionWrapper) i.next();
 			result.add(uw.getPerson().getName());
