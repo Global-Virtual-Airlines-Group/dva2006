@@ -74,7 +74,7 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	private int _majorVersion;
 	private int _minorVersion;
 	
-	private Set _comments;
+	private Set<IssueComment> _comments;
 	private int _commentCount;
 	
 	/**
@@ -102,7 +102,7 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	public Issue(String subj) {
 	    super();
 	    setSubject(subj);
-	    _comments = new TreeSet();
+	    _comments = new TreeSet<IssueComment>();
 	}
 
 	/**
@@ -145,8 +145,8 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * @return a Collection of IssueComments
 	 * @see Issue#addComment(IssueComment)
 	 */
-	public Collection getComments() {
-		return new ArrayList(_comments);
+	public Collection<IssueComment> getComments() {
+		return _comments;
 	}
 	
 	/**

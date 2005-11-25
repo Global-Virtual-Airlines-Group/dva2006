@@ -3,9 +3,7 @@ package org.deltava.beans.cooler;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
-
+import org.deltava.beans.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -17,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
 
 public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
 
-    public static final String ALL = "ALL";
+    public static final Channel ALL = new AllChannel();
     
     public static final int INFOTYPE_AIRLINE = 0;
     public static final int INFOTYPE_ROLE = 1;
@@ -25,8 +23,8 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     private String _name;
     private String _desc;
     private boolean _active;
-    private Set _roles;
-    private Set _airlines;
+    private Set<String> _roles;
+    private Set<String> _airlines;
     
     private int _threadCount;
     private int _postCount;
@@ -34,6 +32,21 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     
     private String _lastSubject;
     private int _lastThreadID;
+    
+    static class AllChannel extends Channel implements ComboAlias {
+    
+    	AllChannel() {
+    		super("ALL");
+    	}
+    	
+    	public String getComboName() {
+    		return "All Discussions";
+    	}
+    	
+    	public String getComboAlias() {
+    		return getName();
+    	}
+    }
     
     /**
      * Creates a new Channel object with a given Channel name.
@@ -44,8 +57,8 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     public Channel(String name) {
         super();
         _name = name.trim();
-        _airlines = new TreeSet();
-        _roles = new TreeSet();
+        _airlines = new TreeSet<String>();
+        _roles = new TreeSet<String>();
     }
     
     /**
@@ -70,8 +83,8 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
      * @return a sorted Set of roles authorized to view this Channel
      * @see Channel#addRole(String)
      */
-    public Collection getRoles() {
-        return new TreeSet(_roles);
+    public Collection<String> getRoles() {
+        return _roles;
     }
     
     /**
@@ -106,8 +119,8 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
      * @return a sorted Set of Airline codes for this Channel
      * @see Channel#addAirline(String)
      */
-    public Collection getAirlines() {
-        return new TreeSet(_airlines);
+    public Collection<String> getAirlines() {
+        return _airlines;
     }
     
     /**

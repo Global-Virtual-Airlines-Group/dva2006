@@ -16,7 +16,7 @@ public class QuestionProfile extends Question implements ViewEntry {
    private int _totalAnswers;
    private int _correctAnswers;
    private boolean _active;
-   private Set _exams;
+   private Set<String> _exams;
 
    /**
     * Creates a new Question Profile.
@@ -24,7 +24,7 @@ public class QuestionProfile extends Question implements ViewEntry {
     */
    public QuestionProfile(String text) {
       super(text);
-      _exams = new TreeSet();
+      _exams = new TreeSet<String>();
    }
 
    /**
@@ -33,8 +33,8 @@ public class QuestionProfile extends Question implements ViewEntry {
     * @see QuestionProfile#addExam(String)
     * @see QuestionProfile#setExams(Collection)
     */
-   public Collection getExamNames() {
-      return new HashSet(_exams);
+   public Collection<String> getExamNames() {
+      return _exams;
    }
 
    /**
@@ -99,10 +99,10 @@ public class QuestionProfile extends Question implements ViewEntry {
     * @see QuestionProfile#addExam(String)
     * @see QuestionProfile#getExamNames()
     */
-   public void setExams(Collection exams) {
+   public void setExams(Collection<String> exams) {
       _exams.clear();
-      for (Iterator i = exams.iterator(); i.hasNext();)
-         addExam((String) i.next());
+      for (Iterator<String> i = exams.iterator(); i.hasNext();)
+         addExam(i.next());
    }
 
    /**

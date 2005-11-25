@@ -113,19 +113,19 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
      * Assigns Pilot IDs to online Pilots and Controllers that have user accounts.
      * @param idMap a Map of Integers, keyed by network ID with the database ID as the value.
      */
-    public void setPilotIDs(Map idMap) {
+    public void setPilotIDs(Map<String, Integer> idMap) {
     	
     	// Mash pilots + controllers together
-    	Set users = new HashSet(_pilots.values());
+    	Set<NetworkUser> users = new HashSet<NetworkUser>(_pilots.values());
     	users.addAll(_controllers.values());
     	
     	// Assign database IDs to active Pilots
-    	for (Iterator i = users.iterator(); i.hasNext(); ) {
-    		NetworkUser usr = (NetworkUser) i.next();
+    	for (Iterator<NetworkUser> i = users.iterator(); i.hasNext(); ) {
+    		NetworkUser usr = i.next();
     		String netID = String.valueOf(usr.getID());
     		
     		if (idMap.containsKey(netID)) {
-    			Integer id = (Integer) idMap.get(netID);
+    			Integer id = idMap.get(netID);
     			usr.setPilotID(id.intValue());
     		}
     	}
