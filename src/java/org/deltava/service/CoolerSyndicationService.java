@@ -57,7 +57,7 @@ public class CoolerSyndicationService extends WebDataService {
 				if (!c_access.getCanAccess())
 					throw new ServiceException(HttpServletResponse.SC_FORBIDDEN, "Cannot access channel");
 			} else {
-				channel = Channel.ALL;
+				channel = Channel.ALL.getName();
 			}
 
 			// Get the cooler threads
