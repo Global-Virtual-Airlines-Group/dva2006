@@ -38,7 +38,7 @@ public class PageUpTag extends ScrollTag {
         
         // Add Reserved parameters to the map
         // And yes, converting to a String array is stupid
-        Map params = vc.getParameters();
+        Map<String, Object> params = vc.getParameters();
         params.put(ViewContext.START, new String[] { String.valueOf(vc.getPreviousStart()) } );
         params.put(ViewContext.COUNT, new String[] { String.valueOf(vc.getCount()) } );
         if (vc.getSortType() != null)

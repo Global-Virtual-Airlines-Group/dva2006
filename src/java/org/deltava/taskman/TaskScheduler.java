@@ -27,7 +27,7 @@ public class TaskScheduler extends Thread {
 
 	private static final Logger log = Logger.getLogger(TaskScheduler.class);
 
-	private Map _tasks = new HashMap();
+	private Map<String, Task> _tasks = new HashMap<String, Task>();
 	private int _interval = 60;
 	private long _taskCheckCount;
 	
@@ -78,7 +78,7 @@ public class TaskScheduler extends Thread {
 	 * @return the Task, or null if not found
 	 */
 	public Task getTask(String id) {
-		return (Task) _tasks.get(id);
+		return _tasks.get(id);
 	}
 
 	/**
@@ -163,7 +163,7 @@ public class TaskScheduler extends Thread {
 	 * @param lr the TaskLastRun bean
 	 */
 	public void setLastRunTime(TaskLastRun lr) {
-	   Task t = (Task) _tasks.get(lr.getName());
+	   Task t = _tasks.get(lr.getName());
 	   if (t != null)
 	      t.setStartTime(lr.getLastRun());
 	}
@@ -172,9 +172,9 @@ public class TaskScheduler extends Thread {
 	 * Returns the current state of the Task Schedulder.
 	 * @return a Collection of TaskInfo beans
 	 */
-	public Collection getTaskInfo() {
+	public Collection<TaskInfo> getTaskInfo() {
 
-		List results = new ArrayList();
+		Collection<TaskInfo> results = new ArrayList<TaskInfo>();
 		for (Iterator i = _tasks.values().iterator(); i.hasNext();) {
 			Task t = (Task) i.next();
 			results.add(new TaskInfo(t));

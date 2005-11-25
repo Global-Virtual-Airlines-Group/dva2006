@@ -78,7 +78,7 @@ public abstract class FormElementTag extends ElementTag {
      */
     public void setDelimValues(String values) {
         StringTokenizer tkns = new StringTokenizer(values, ",");
-        List l = new ArrayList();
+        List<String> l = new ArrayList<String>();
         while (tkns.hasMoreTokens())
             l.add(tkns.nextToken());
         
