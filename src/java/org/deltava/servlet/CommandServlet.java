@@ -37,8 +37,8 @@ public class CommandServlet extends HttpServlet {
    private static final int MAX_EXEC_TIME = 20000;
 
    private ConnectionPool _jdbcPool;
-   private Map _cmds;
-   private List _cmdLogPool = new ArrayList();
+   private Map<String, Command> _cmds;
+   private List<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
 
    /**
     * Returns the servlet description.
@@ -91,7 +91,7 @@ public class CommandServlet extends HttpServlet {
       String cmdName = parser.getName().toLowerCase();
 
       // Fetch the command from the map
-      Command cmd = (Command) _cmds.get(cmdName);
+      Command cmd = _cmds.get(cmdName);
       if (cmd == null)
          throw new CommandException("Command " + cmdName + " not found");
 
