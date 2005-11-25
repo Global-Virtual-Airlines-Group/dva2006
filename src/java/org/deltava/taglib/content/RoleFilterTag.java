@@ -14,7 +14,7 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 public class RoleFilterTag extends TagSupport {
     
-    private Set _roles = new HashSet();
+    private Set<String> _roles = new HashSet<String>();
 
     /**
      * Filters the body content by checking for the user attribute in the request, then retrieves the

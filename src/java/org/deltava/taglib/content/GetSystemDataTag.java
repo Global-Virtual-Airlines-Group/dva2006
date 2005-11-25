@@ -75,6 +75,7 @@ public class GetSystemDataTag extends TagSupport {
 	 * @return TagSupport.EVAL_PAGE
 	 * @throws JspException if an error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public int doEndTag() throws JspException {
 		
 		// Get the system data object and stuff it into the request
