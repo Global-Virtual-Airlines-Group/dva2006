@@ -23,7 +23,7 @@ public class MailerDaemon extends Thread {
 
 	private static final Logger log = Logger.getLogger(MailerDaemon.class);
 
-	private static Set _queue = new LinkedHashSet();
+	private static Set<SMTPEnvelope> _queue = new LinkedHashSet<SMTPEnvelope>();
 
 	/**
 	 * Creates a new Mailer daemon thread.
@@ -60,8 +60,8 @@ public class MailerDaemon extends Thread {
 	}
 
 	private SMTPEnvelope getNext() {
-		Iterator i = _queue.iterator();
-		SMTPEnvelope env = (SMTPEnvelope) i.next();
+		Iterator<SMTPEnvelope> i = _queue.iterator();
+		SMTPEnvelope env = i.next();
 		if (env != null)
 			i.remove();
 
