@@ -1,7 +1,5 @@
 package org.deltava.beans.testing;
 
-import java.util.*;
-
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
@@ -57,21 +55,6 @@ public class TestExamProfile extends AbstractBeanTestCase {
         validateInput("time", new Integer(0), IllegalArgumentException.class);
         validateInput("passScore", new Integer(-1), IllegalArgumentException.class);
         validateInput("passScore", new Integer(101), IllegalArgumentException.class);
-    }
-    
-    public void testRatings() {
-        assertNotNull(_exam.getRatings());
-        assertEquals(0, _exam.getRatings().size());
-        _exam.addRating("B737-800");
-        _exam.addRating("B737-200");
-        _exam.addRating("B737-300");
-        
-        // Check sorting
-        assertEquals(3, _exam.getRatings().size());
-        List ratings = new ArrayList(_exam.getRatings());
-        assertTrue(ratings.contains("B737-200"));
-        assertTrue(ratings.contains("B737-300"));
-        assertTrue(ratings.contains("B737-800"));
     }
     
     public void testComparator() {
