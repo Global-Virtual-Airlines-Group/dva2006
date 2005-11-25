@@ -20,8 +20,8 @@ import org.deltava.beans.EMailAddress;
 class SMTPEnvelope implements java.io.Serializable, Cloneable {
    
    private EMailAddress _msgFrom;
-   private Collection _msgTo = new LinkedHashSet();
-   private Collection _copyTo = new LinkedHashSet();
+   private Collection<Address> _msgTo = new LinkedHashSet<Address>();
+   private Collection<Address> _copyTo = new LinkedHashSet<Address>();
    
    private String _subject;
    private String _body;
@@ -82,7 +82,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
     * @return an array of Address beans 
     */
    public Address[] getRecipients() {
-      return (Address[]) _msgTo.toArray(new InternetAddress[0]);
+      return _msgTo.toArray(new InternetAddress[0]);
    }
    
    /**
@@ -178,7 +178,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
          return "UNKNOWN";
       
       // Get the first recipient
-      Address addr = (Address) _msgTo.iterator().next();
+      Address addr = _msgTo.iterator().next();
       return addr.toString();
    }
 }
