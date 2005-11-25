@@ -242,6 +242,7 @@
 		
 		<pool_size type="Integer">1</pool_size>
 		<pool_max_size type="Integer">4</pool_max_size>
+		<max_reqs type="Integer">50</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 	</jdbc>
 	
