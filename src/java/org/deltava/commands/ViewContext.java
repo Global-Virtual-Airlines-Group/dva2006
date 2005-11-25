@@ -39,7 +39,7 @@ public class ViewContext {
      */
     private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
 
-    private Map<String, String> _params;
+    private Map<String, Object> _params;
     private Collection _results;
     
     private int _start;
@@ -58,7 +58,7 @@ public class ViewContext {
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
-        _params = new HashMap<String, String>(req.getParameterMap());
+        _params = new HashMap<String, Object>(req.getParameterMap());
         for (int x = 0; x < ViewContext.RESERVED_PARAMS.length; x++) {
             String rParam = ViewContext.RESERVED_PARAMS[x];
             if (_params.containsKey(rParam))
@@ -109,7 +109,7 @@ public class ViewContext {
      * Returns all the request parameters for this view slice, minus any reserved parameters
      * @return the parameters to the request
      */
-    public Map getParameters() {
+    public Map<String, Object> getParameters() {
         return _params;
     }
     
