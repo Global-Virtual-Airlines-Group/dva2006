@@ -22,7 +22,7 @@ public abstract class GenericServlet extends HttpServlet {
 	
 	protected class ServletSecurityContext implements SecurityContext {
 		
-		private final List ANONYMOUS_ROLES = Arrays.asList(new String[] {"Anonymous"});
+		private final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] {"Anonymous"});
 		
 		private HttpServletRequest _req;
 		
@@ -39,7 +39,7 @@ public abstract class GenericServlet extends HttpServlet {
 			return (getUser() != null);
 		}
 		
-		public Collection getRoles() {
+		public Collection<String> getRoles() {
 			return isAuthenticated() ? getUser().getRoles() : ANONYMOUS_ROLES;
 		}
 		

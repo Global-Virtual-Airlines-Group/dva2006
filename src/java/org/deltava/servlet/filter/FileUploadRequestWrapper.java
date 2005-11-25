@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.*;
@@ -12,14 +13,13 @@ import org.apache.log4j.Logger;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
    
    private static final Logger log = Logger.getLogger(FileUploadRequestWrapper.class);
 
-    private Map _params;
+    private Map<String, Object> _params;
     
     /**
      * Create a new request wrapper from an existing servlet request.
@@ -27,7 +27,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
      */
     public FileUploadRequestWrapper(HttpServletRequest req) {
         super(req);
-        _params = new HashMap();
+        _params = new HashMap<String, Object>();
     }
 
     /**
@@ -38,7 +38,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
     void addParameter(String pName, String pValue) {
         if (_params.containsKey(pName)) {
            log.debug("Adding to parameter " + pName);
-            List values = new ArrayList(Arrays.asList(getParameterValues(pName)));
+            List<String> values = new ArrayList<String>(Arrays.asList(getParameterValues(pName)));
             values.add(pValue);
             _params.put(pName, values.toArray(new String[0]));
         } else {
@@ -50,7 +50,7 @@ public class FileUploadRequestWrapper extends HttpServletRequestWrapper {
     void addParameter(String pName, String[] pValues) {
     	if (_params.containsKey(pName)) {
             log.debug("Adding to parameter " + pName);
-             List values = new ArrayList(Arrays.asList(getParameterValues(pName)));
+             List<String> values = new ArrayList<String>(Arrays.asList(getParameterValues(pName)));
              values.addAll(Arrays.asList(pValues));
              _params.put(pName, values.toArray(new String[0]));
     	} else {
