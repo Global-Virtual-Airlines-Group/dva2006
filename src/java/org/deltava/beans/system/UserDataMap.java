@@ -15,14 +15,14 @@ import org.deltava.util.CollectionUtils;
 
 public class UserDataMap implements java.io.Serializable, Map {
 
-	private Map _entries;
+	private Map<Integer, UserData> _entries;
 
 	/**
 	 * Creates a new, empty UserDataCollection.
 	 */
 	public UserDataMap() {
 		super();
-		_entries = new HashMap();
+		_entries = new HashMap<Integer, UserData>();
 	}
 
 	/**
@@ -30,7 +30,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @param data a Collection of UserData objects
 	 * @see UserDataMap#putAll(Map)
 	 */
-	public UserDataMap(Collection data) {
+	public UserDataMap(Collection<UserData> data) {
 		this();
 		putAll(CollectionUtils.createMap(data, "ID"));
 	}
@@ -42,13 +42,14 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return the entry
 	 */
 	public Object put(Object obj, Object usr) {
-		return _entries.put(new Integer(((UserData) usr).getID()), usr);
+		return _entries.put(new Integer(((UserData) usr).getID()), (UserData) usr);
 	}
 
 	/**
 	 * Adds a collection of UserData objects to the container.
 	 * @param data a Collection of UserData objects
 	 */
+	@SuppressWarnings("unchecked")
 	public void putAll(Map data) {
 		_entries.putAll(data);
 	}
@@ -88,9 +89,9 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return a Collection of UserData objects
 	 * @throws NullPointerException if tableName is null
 	 */
-	public Collection getByTable(String tableName) {
+	public Collection<UserData> getByTable(String tableName) {
 
-		Set results = new HashSet();
+		Set<UserData> results = new HashSet<UserData>();
 		for (Iterator i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = (UserData) i.next();
 			String usrTable = usr.getDB() + "." + usr.getTable();
@@ -105,9 +106,9 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * Returns all tables containing Users within this container.
 	 * @return a Collection of table names in DB.TABLE format
 	 */
-	public Collection getTableNames() {
+	public Collection<String> getTableNames() {
 
-		Set results = new HashSet();
+		Set<String> results = new HashSet<String>();
 		for (Iterator i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = (UserData) i.next();
 			results.add(usr.getDB() + "." + usr.getTable());
@@ -152,8 +153,8 @@ public class UserDataMap implements java.io.Serializable, Map {
 		return _entries.isEmpty();
 	}
 
-	public Collection values() {
-		return new HashSet(_entries.values());
+	public Collection<UserData> values() {
+		return new HashSet<UserData>(_entries.values());
 	}
 	
 	/**
