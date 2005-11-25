@@ -45,11 +45,12 @@ public class SELCALReserveCommand extends AbstractCommand {
 			SetSELCAL wdao = new SetSELCAL(con);
 			if (isReserve) {
 				int maxCodes = SystemData.getInt("users.selcal.max", 2);
-				Collection rSC = dao.getReserved(ctx.getUser().getID());
+				Collection<SelectCall> rSC = dao.getReserved(ctx.getUser().getID());
 				if (rSC.size() > maxCodes)
 					throw new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");
 				
 				// Reserve the code
+				sc.setReservedOn(new Date());
 				wdao.reserve(code, ctx.getUser().getID());
 				
 				// Save and calculate the release date
@@ -62,8 +63,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 					throw new CommandException(sc.getAircraftCode() + " not reserved by " + ctx.getUser().getName());
 				
 				// Free the reservation
-				sc.free();
-				wdao.write(sc);
+				wdao.free(sc.getCode());
 				ctx.setAttribute("isFree", Boolean.TRUE, REQUEST);
 			}
 			
@@ -78,7 +78,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/scheduel/selcalUpdate.jsp");
+		result.setURL("/jsp/schedule/selcalUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

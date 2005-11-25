@@ -36,6 +36,8 @@ return true;
 <content:sysdata var="fileLibEnabled" name="airline.files" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
+<content:sysdata var="selcalMax" name="users.selcal.max" />
+<content:sysdata var="selcalReserve" name="users.selcal.reserve" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -198,6 +200,12 @@ Installer log entries.</td>
  <td class="mid bld">Navigation Aids</td>
  <td class="data">You can search for a particular Airport, VOR, NDB or Intersection.
 <el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
+ <td class="data">You can view SELCAL codes used by <content:airline /> and its partner airlines' aircraft,
+ and temporarily reserve up to <fmt:int value="${selcalMax}" /> SELCAL codes for your own use, for up to
+ <fmt:int value="${selcalReserve}" /> days.</td>
 </tr>
 <tr>
  <td class="mid bld">Airport Information</td>

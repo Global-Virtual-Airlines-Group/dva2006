@@ -29,7 +29,7 @@ public class SetSELCAL extends DAO {
 	 */
 	public void write(SelectCall sc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO SELCAL (CODE, AIRCAFT, EQTYPE, PILOT_ID, RESERVE_DATE) VALUES "
+			prepareStatement("REPLACE INTO SELCAL (CODE, AIRCRAFT, EQTYPE, PILOT_ID, RESERVE_DATE) VALUES "
 					+ "(?, ?, ?, ?, ?)");
 			_ps.setString(1, sc.getCode());
 			_ps.setString(2, sc.getAircraftCode());
@@ -53,6 +53,21 @@ public class SetSELCAL extends DAO {
 			prepareStatement("UPDATE SELCAL SET PILOT_ID=?, RESERVE_DATE=NOW() WHERE (CODE=?)");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, code);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Releases an aircraft SELCAL code reservation.
+	 * @param code the SELCAL code
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void free(String code) throws DAOException {
+		try {
+			prepareStatement("UPDATE SELCAL SET PILOT_ID=0, RESERVE_DATE=NULL WHERE (CODE=?)");
+			_ps.setString(1, code);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

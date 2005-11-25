@@ -10,9 +10,17 @@
 <head>
 <title><content:airline /> SELCAL Codes</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function sortBy(combo)
+{
+self.location = 'selcals.do?sortType=' + combo.options[combo.selectedIndex].value;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,14 +30,21 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="selcals.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="selcals">
+<tr class="title">
+ <td class="left caps" colspan="5"><content:airline /> SELCAL CODES</td>
+ <td class="right" colspan="2">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${param.sortType}" onChange="void sortBy(this)" /></td>
+</tr>
+
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="10%">SELCAL</td>
+ <td width="8%">SELCAL</td>
  <td width="10%">&nbsp;</td>
  <td width="10%">AIRCRAFT</td>
- <td width="15%">EQUIPMENT</td>
+ <td width="10%">EQUIPMENT</td>
  <td width="10%">RESERVED ON</td>
+ <td width="10%">RELEASING ON</td>
  <td>RESERVED BY</td>
 </tr>
 
@@ -37,6 +52,7 @@
 <c:forEach var="sc" items="${viewContext.results}">
 <c:set var="access" value="${accessMap[sc.code]}" scope="request" />
 <c:set var="pilot" value="${pilots[sc.reservedBy]}" scope="request" />
+<c:set var="releaseDate" value="${releaseDates[sc.code]}" scope="request" />
 <view:row entry="${se}">
  <td class="pri bld">${sc.code}</td>
 <c:choose>
@@ -53,20 +69,22 @@
  <td>${sc.aircraftCode}</td>
  <td class="sec bld">${sc.equipmentType}</td>
 <c:if test="${!empty sc.reservedOn}">
- <td><fmt:date date="${sc.reservedOn}" /></td>
+ <td><fmt:date fmt="d" date="${sc.reservedOn}" /></td>
+ <td><fmt:date fmt="d" date="${releaseDate}" /></td>
  <td>${pilot.rank} <el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
 </c:if>
 <c:if test="${empty sc.reservedOn}">
- <td colspan="2" class="left sec bld caps">SELCAL CODE IS CURRENTLY AVAILABLE</td>
+ <td colspan="3" class="left ter bld caps">SELCAL CODE IS CURRENTLY AVAILABLE</td>
 </c:if>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
 </tr>
 </view:table>
+</el:form>
 <br />
 <content:copyright />
 </content:region>
