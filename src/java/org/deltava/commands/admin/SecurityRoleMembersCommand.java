@@ -4,6 +4,8 @@ package org.deltava.commands.admin;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
+
 import org.deltava.comparators.PilotComparator;
 
 import org.deltava.commands.*;
@@ -37,11 +39,11 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
          GetPilotDirectory dao = new GetPilotDirectory(con);
 
          // Load all members for each role
-         Map results = new TreeMap();
+         Map<String, Collection<Pilot>> results = new TreeMap<String, Collection<Pilot>>();
          Collection roles = (List) SystemData.getObject("security.roles");
          for (Iterator i = roles.iterator(); i.hasNext(); ) {
             String roleName = (String) i.next();
-            List pilots = new ArrayList();
+            List<Pilot> pilots = new ArrayList<Pilot>();
             pilots.addAll(dao.getByRole(roleName, SystemData.get("airline.db")));
             Collections.sort(pilots, cmp);
             
