@@ -67,7 +67,7 @@ public class GetMessageTemplate extends DAO {
 	 * @return a List of MessageTemplate beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getAll() throws DAOException {
+	public List<MessageTemplate> getAll() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM MSG_TEMPLATES");
 			return execute();
@@ -79,13 +79,13 @@ public class GetMessageTemplate extends DAO {
 	/**
 	 * Helper method to parse the result set.
 	 */
-	private List execute() throws SQLException {
+	private List<MessageTemplate> execute() throws SQLException {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		
 		// Iterate through the results
-		List results = new ArrayList();
+		List<MessageTemplate> results = new ArrayList<MessageTemplate>();
 		while (rs.next()) {
 			MessageTemplate mt = new MessageTemplate(rs.getString(1));
 			mt.setSubject(rs.getString(2));

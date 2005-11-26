@@ -59,7 +59,7 @@ public class GetSystemLog extends DAO {
 	 * @return a List of LogEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getAll() throws DAOException {
+	public List<LogEntry> getAll() throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
@@ -91,7 +91,7 @@ public class GetSystemLog extends DAO {
 	 * @return a List of LogEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByType(String className) throws DAOException {
+	public List<LogEntry> getByType(String className) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
@@ -120,13 +120,13 @@ public class GetSystemLog extends DAO {
 	/**
 	 * Helper method to iterate through the result set.
 	 */
-	private List execute() throws SQLException {
+	private List<LogEntry> execute() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<LogEntry> results = new ArrayList<LogEntry>();
 		while (rs.next()) {
 			LogEntry entry = new LogEntry(rs.getTimestamp(2));
 			entry.setID(rs.getInt(1));

@@ -36,7 +36,7 @@ public class GetChart extends DAO {
      * @return a List of Airports
      * @throws DAOException if a JDBC error occurs
      */
-    public List getAirports() throws DAOException {
+    public List<Airport> getAirports() throws DAOException {
         try {
             prepareStatementWithoutLimits("SELECT DISTINCT (IATA) FROM common.CHARTS");
             
@@ -45,7 +45,7 @@ public class GetChart extends DAO {
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
-            List results = new ArrayList();
+            List<Airport> results = new ArrayList<Airport>();
             
             // Iterate through the results
             while (rs.next()) {
@@ -69,7 +69,7 @@ public class GetChart extends DAO {
      * @throws DAOException if a JDBC error occurs
      * @see GetChart#getCharts(Airport)
      */
-    public List getCharts(String iataCode) throws DAOException {
+    public List<Chart> getCharts(String iataCode) throws DAOException {
         try {
             // Prepare the statement
             prepareStatement("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (IATA=?) ORDER BY NAME");
@@ -89,7 +89,7 @@ public class GetChart extends DAO {
      * @throws DAOException if a JDBC error occurs
      * @see GetChart#getCharts(String)
      */
-    public List getCharts(Airport a) throws DAOException {
+    public List<Chart> getCharts(Airport a) throws DAOException {
         return getCharts(a.getIATA());
     }
     
@@ -99,7 +99,7 @@ public class GetChart extends DAO {
      * @return a List of Chart objects
      * @throws DAOException if a JDBC error occurs
      */
-    public List getChartsByEvent(int eventID) throws DAOException {
+    public List<Chart> getChartsByEvent(int eventID) throws DAOException {
        try {
           prepareStatement("SELECT C.ID, C.NAME, C.IATA, C.TYPE, C.SIZE FROM common.CHARTS C, "
           		+ "common.EVENT_CHARTS EC WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
@@ -132,8 +132,8 @@ public class GetChart extends DAO {
             _ps.setMaxRows(1);
             
             // Execute the query
-            List results = execute();
-            return (results.isEmpty()) ? null : (Chart) results.get(0);
+            List<Chart> results = execute();
+            return (results.isEmpty()) ? null : results.get(0);
         } catch (SQLException se) {
             throw new DAOException(se);
         }
@@ -145,16 +145,16 @@ public class GetChart extends DAO {
      * @return a Collection of Charts
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getByIDs(Collection IDs) throws DAOException {
+    public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
        
        // Build the SQL statement
        StringBuilder sqlBuf = new StringBuilder("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID IN (");
        
        // Check if we're in the cache
        int querySize = 0;
-       Collection results = new TreeSet();
-       for (Iterator i = IDs.iterator(); i.hasNext(); ) {
-          Integer id = (Integer) i.next();
+       Collection<Chart> results = new TreeSet<Chart>();
+       for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+          Integer id = i.next();
           Chart c = (Chart) _cache.get(id);
           if (c != null) {
              results.add(c);
@@ -189,8 +189,8 @@ public class GetChart extends DAO {
     /**
      * Helper method to load chart metadata.
      */
-    private List execute() throws SQLException {
-       List results = new ArrayList();
+    private List<Chart> execute() throws SQLException {
+       List<Chart> results = new ArrayList<Chart>();
        
        // Execute the query
        ResultSet rs = _ps.executeQuery();

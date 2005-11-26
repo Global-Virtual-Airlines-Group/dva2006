@@ -38,7 +38,7 @@ public class GetAssignment extends DAO {
 			// Load the assignment info
 			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			List results = loadInfo();
+			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT * FROM ASSIGNLEGS WHERE (ID=?)");
@@ -46,7 +46,7 @@ public class GetAssignment extends DAO {
 			loadLegs(results);
 
 			// Return results, or null if none found
-			return results.isEmpty() ? null : (AssignmentInfo) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -58,12 +58,12 @@ public class GetAssignment extends DAO {
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByPilot(int pilotID) throws DAOException {
+	public List<AssignmentInfo> getByPilot(int pilotID) throws DAOException {
 		try {
 			// Load the assignment info
 			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (PILOT_ID=?) ORDER BY ASSIGNED_ON DESC");
 			_ps.setInt(1, pilotID);
-			List results = loadInfo();
+			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.PILOT_ID=?)");
@@ -82,12 +82,12 @@ public class GetAssignment extends DAO {
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStatus(int status) throws DAOException {
+	public List<AssignmentInfo> getByStatus(int status) throws DAOException {
 		try {
 			// Load the assignment info
 			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (STATUS=?) ORDER BY ASSIGNED_ON DESC");
 			_ps.setInt(1, status);
-			List results = loadInfo();
+			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND " + "(A.STATUS=?)");
@@ -106,12 +106,12 @@ public class GetAssignment extends DAO {
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByEvent(int eventID) throws DAOException {
+	public List<AssignmentInfo> getByEvent(int eventID) throws DAOException {
 		try {
 			// Load the assignment info
 			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (EVENT_ID=?)");
 			_ps.setInt(1, eventID);
-			List results = loadInfo();
+			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
@@ -131,7 +131,7 @@ public class GetAssignment extends DAO {
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByEquipmentType(String eqType, int status) throws DAOException {
+	public List<AssignmentInfo> getByEquipmentType(String eqType, int status) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ASSIGNMENTS WHERE (EQTYPE=?)");
@@ -147,7 +147,7 @@ public class GetAssignment extends DAO {
 			if (status != -1)
 				_ps.setInt(2, status);
 			
-			List results = loadInfo();
+			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
 			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EQTYPE=?)");
@@ -164,12 +164,12 @@ public class GetAssignment extends DAO {
 	 * @return a List of Equipment type codes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getEquipmentTypes() throws DAOException {
+	public Collection<String> getEquipmentTypes() throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT EQTYPE FROM ASSIGNMENTS ORDER BY EQTYPE");
 			
 			// Execute the statement
-			List results = new ArrayList();
+			List<String> results = new ArrayList<String>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.add(rs.getString(1));
@@ -186,8 +186,8 @@ public class GetAssignment extends DAO {
 	/**
 	 * Helper method to process the assignment info result set.
 	 */
-	private List loadInfo() throws SQLException {
-		List results = new ArrayList();
+	private List<AssignmentInfo> loadInfo() throws SQLException {
+		List<AssignmentInfo> results = new ArrayList<AssignmentInfo>();
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
@@ -216,7 +216,7 @@ public class GetAssignment extends DAO {
 	/**
 	 * Helper method to process the assignment legs result set.
 	 */
-	private void loadLegs(List assignments) throws SQLException {
+	private void loadLegs(List<AssignmentInfo> assignments) throws SQLException {
 
 		// Check for empty list
 		if (assignments.isEmpty())

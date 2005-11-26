@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.system.SystemData;
@@ -33,7 +34,7 @@ public class GetACARSData extends DAO {
 	 * @return a List of GeoPosition beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getRoutePositions(int flightID, boolean isArchived) throws DAOException {
+	public List<GeoPosition> getRoutePositions(int flightID, boolean isArchived) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT LAT, LNG FROM acars.");
@@ -45,7 +46,7 @@ public class GetACARSData extends DAO {
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			List results = new ArrayList();
+			List<GeoPosition> results = new ArrayList<GeoPosition>();
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the result set
@@ -157,8 +158,8 @@ public class GetACARSData extends DAO {
 	      _ps.setInt(1, flightID);
 	      
 	      // Get the first entry, or null
-	      List results = executeFlightInfo();
-	      return results.isEmpty() ? null : (FlightInfo) results.get(0);
+	      List<FlightInfo> results = executeFlightInfo();
+	      return results.isEmpty() ? null : results.get(0);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -178,8 +179,8 @@ public class GetACARSData extends DAO {
 	      _ps.setLong(1, conID);
 	      
 	      // Get the first entry, or null
-	      List results = executeFlightInfo();
-	      return results.isEmpty() ? null : (FlightInfo) results.get(0);
+	      List<FlightInfo> results = executeFlightInfo();
+	      return results.isEmpty() ? null : results.get(0);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -201,8 +202,8 @@ public class GetACARSData extends DAO {
 	      _ps.setLong(1, conID);
 	      
 	      // Get the first entry, or null
-	      List results = executeConnectionInfo();
-	      return results.isEmpty() ? null : (ConnectionEntry) results.get(0);
+	      List<ConnectionEntry> results = executeConnectionInfo();
+	      return results.isEmpty() ? null : results.get(0);
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -211,13 +212,13 @@ public class GetACARSData extends DAO {
 	/**
 	 * Helper method to parse Flight Info result sets.
 	 */
-	protected List executeFlightInfo() throws SQLException {
+	protected List<FlightInfo> executeFlightInfo() throws SQLException {
 	   
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
 	   
 	   // Iterate through the results
-	   List results = new ArrayList();
+	   List<FlightInfo> results = new ArrayList<FlightInfo>();
 	   while (rs.next()) {
 	      FlightInfo info = new FlightInfo(rs.getInt(1), rs.getLong(2));
 	      info.setStartTime(rs.getTimestamp(3));
@@ -248,7 +249,7 @@ public class GetACARSData extends DAO {
 	/**
 	 * Helper method to parse Connection result sets.
 	 */
-	protected List executeConnectionInfo() throws SQLException {
+	protected List<ConnectionEntry> executeConnectionInfo() throws SQLException {
 
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
@@ -256,7 +257,7 @@ public class GetACARSData extends DAO {
 	   boolean hasMessageCounts = (md.getColumnCount() > 6);
 	   
 	   // Iterate through the results
-	   List results = new ArrayList();
+	   List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
 	   while (rs.next()) {
 	      ConnectionEntry entry = new ConnectionEntry(rs.getLong(1));
 	      entry.setPilotID(rs.getInt(2));

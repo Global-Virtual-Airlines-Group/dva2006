@@ -32,7 +32,7 @@ public class GetRoute extends DAO {
      * @return a List of Preferred routes
      * @throws DAOException if a JDBC error occurs
      */
-    public List getRoutes(String srcAirport, String dstAirport) throws DAOException {
+    public List<PreferredRoute> getRoutes(String srcAirport, String dstAirport) throws DAOException {
         
        // Build the SQL statement
        StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ROUTES WHERE (AIRPORT_D=?)");
@@ -51,7 +51,7 @@ public class GetRoute extends DAO {
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
-            List results = new ArrayList();
+            List<PreferredRoute> results = new ArrayList<PreferredRoute>();
             
             // Iterate through the results
             while (rs.next()) {
@@ -81,13 +81,14 @@ public class GetRoute extends DAO {
      * @return a List of Airport beans
      * @throws DAOException
      */
-    public Collection getRouteDestinations(String aCode) throws DAOException {
+    public Collection<Airport> getRouteDestinations(String aCode) throws DAOException {
        try {
           prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_A FROM ROUTES WHERE (AIRPORT_D=?) ORDER BY AIRPORT_A");
           _ps.setString(1, aCode);
           
           // Iterate through the result set
-          Set results = new TreeSet(new AirportComparator(AirportComparator.NAME));
+          @SuppressWarnings("unchecked")
+          Set<Airport> results = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
           ResultSet rs = _ps.executeQuery();
           while (rs.next()) {
              Airport a = SystemData.getAirport(rs.getString(1));
@@ -109,7 +110,7 @@ public class GetRoute extends DAO {
      * @return a List of OceanicRoutes
      * @throws DAOException if a JDBC error occurs
      */
-    public List getOceanic() throws DAOException {
+    public List<OceanicRoute> getOceanic() throws DAOException {
         try {
             prepareStatement("SELECT * FROM common.OCEANIC ORDER BY VALID_DATE DESC");
             return execute();
@@ -141,10 +142,10 @@ public class GetRoute extends DAO {
     /**
      * Helper method to load Oceanic Route data.
      */
-    private List execute() throws SQLException {
+    private List<OceanicRoute> execute() throws SQLException {
         // Execute the query
         ResultSet rs = _ps.executeQuery();
-        List results = new ArrayList();
+        List<OceanicRoute> results = new ArrayList<OceanicRoute>();
         
         // Iterate through the results
         while (rs.next()) {
@@ -165,11 +166,11 @@ public class GetRoute extends DAO {
     }
     
     /**
-     * Returns all Airports with a Preferred Route entry
+     * Returns all Airports with a Preferred Route entry.
      * @return a List of Airports
      * @throws DAOException if a JDBC error occurs
      */
-    public List getAirports() throws DAOException {
+    public List<Airport> getAirports() throws DAOException {
         try {
             prepareStatementWithoutLimits("SELECT DISTINCT(AIRPORT_D) FROM ROUTES ORDER BY AIRPORT_D");
 
@@ -178,7 +179,7 @@ public class GetRoute extends DAO {
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
-            List results = new ArrayList();
+            List<Airport> results = new ArrayList<Airport>();
             
             // Iterate through the results
             while (rs.next()) {

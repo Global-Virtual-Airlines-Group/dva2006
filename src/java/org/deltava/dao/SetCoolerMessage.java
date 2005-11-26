@@ -53,7 +53,7 @@ public class SetCoolerMessage extends DAO {
 	public void writeThread(MessageThread t) throws DAOException {
 		
 		// Get the first post in the thread
-		Message msg = (Message) t.getPosts().get(0);
+		Message msg = t.getPosts().get(0);
 		if (msg == null)
 			throw new IllegalStateException("Empty Message Thread");
 	    

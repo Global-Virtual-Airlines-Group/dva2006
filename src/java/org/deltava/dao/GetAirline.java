@@ -22,10 +22,10 @@ public class GetAirline extends DAO {
     }
     
     // Executes a query returning multiple airline objects
-    private Map execute(String sql) throws DAOException {
+    private Map<String, Airline> execute(String sql) throws DAOException {
         try {
             prepareStatementWithoutLimits(sql);
-            Map results = new HashMap();
+            Map<String, Airline> results = new HashMap<String, Airline>();
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
@@ -49,7 +49,7 @@ public class GetAirline extends DAO {
      * @return a Map of Airline objects, with the code as the key
      * @throws DAOException if a JDBC error occurs
      */
-    public Map getAll() throws DAOException {
+    public Map<String, Airline> getAll() throws DAOException {
         return execute("SELECT * FROM common.AIRLINES ORDER BY CODE");
     }
     
@@ -58,7 +58,7 @@ public class GetAirline extends DAO {
      * @return a Map of Airline objects where isActive() == TRUE with the code as the key
      * @throws DAOException if a JDBC error occurs
      */
-    public Map getActive() throws DAOException {
+    public Map<String, Airline> getActive() throws DAOException {
         return execute("SELECT * FROM common.AIRLINES WHERE (ACTIVE=TRUE) ORDER BY CODE");
     }
    

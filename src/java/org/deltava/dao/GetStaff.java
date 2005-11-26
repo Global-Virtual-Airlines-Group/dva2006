@@ -59,14 +59,14 @@ public class GetStaff extends DAO {
      * @return a List of Staff Profiles
      * @throws DAOException if a JDBC error occurs
      */
-    public List getStaff() throws DAOException {
+    public Collection<Staff> getStaff() throws DAOException {
         try {
-            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.*  FROM STAFF S, " +
-            "PILOTS P WHERE (S.ID = P.ID)");
+            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.*  FROM STAFF S, PILOTS P "
+            	+ "WHERE (S.ID = P.ID) ORDER BY S.SORT_ORDER DESC, P.LASTNAME");
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
-            List results = new ArrayList();
+            Collection<Staff> results = new ArrayList<Staff>();
             
             // Iterate through the result set
             while (rs.next()) {

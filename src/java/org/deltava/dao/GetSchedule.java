@@ -33,10 +33,10 @@ public class GetSchedule extends DAO {
 	 * @return a List of Flights
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List search(Flight criteria, String sortBy) throws DAOException {
+	public List<ScheduleEntry> search(Flight criteria, String sortBy) throws DAOException {
 		
 		// Build the where clause
-		Collection conditions = new HashSet();
+		Collection<String> conditions = new HashSet<String>();
 		if (criteria.getAirline() != null) conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
 		if (criteria.getEquipmentType() != null) conditions.add("EQTYPE=\'" + criteria.getEquipmentType() + "\'");
 		if (criteria.getFlightNumber() != 0) conditions.add("FLIGHT=" + criteria.getFlightNumber());
@@ -58,9 +58,9 @@ public class GetSchedule extends DAO {
 			
 		// Build the query string
 		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
-		for (Iterator i = conditions.iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = conditions.iterator(); i.hasNext(); ) {
 			buf.append('(');
-			buf.append((String) i.next());
+			buf.append(i.next());
 			buf.append(')');
 			if (i.hasNext())
 				buf.append(" AND ");
@@ -96,8 +96,8 @@ public class GetSchedule extends DAO {
 			_ps.setInt(3, f.getLeg());
 			
 			// Execute the query, return null if not found
-			List results = execute();
-			return (results.size() == 0) ? null : (ScheduleEntry) results.get(0);
+			List<ScheduleEntry> results = execute();
+			return (results.size() == 0) ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -150,7 +150,7 @@ public class GetSchedule extends DAO {
 	 * @return a Collection of ScheduleEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection export() throws DAOException {
+	public Collection<ScheduleEntry> export() throws DAOException {
 	   try {
 	      prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
 	      return execute();
@@ -186,12 +186,12 @@ public class GetSchedule extends DAO {
 	 * @return a Collection of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getOriginAirports() throws DAOException {
+	public Collection<Airport> getOriginAirports() throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT AIRPORT_D FROM SCHEDULE");
 			
 			// Execute the query
-			Set results = new HashSet();
+			Set<Airport> results = new HashSet<Airport>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				Airport a = SystemData.getAirport(rs.getString(1));
@@ -215,7 +215,7 @@ public class GetSchedule extends DAO {
 	 * @return a Collection of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getConnectingAirports(Airport a, boolean from) throws DAOException {
+	public Collection<Airport> getConnectingAirports(Airport a, boolean from) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.* FROM common.AIRPORTS A, SCHEDULE S WHERE ");
@@ -233,7 +233,7 @@ public class GetSchedule extends DAO {
 	      ResultSet rs = _ps.executeQuery();
 	      
 	      // Iterate through the results
-	      List results = new ArrayList();
+	      Collection<Airport> results = new LinkedHashSet<Airport>();
 	      while (rs.next()) {
 	         Airport ap = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
 	         ap.setTZ(rs.getString(3));
@@ -255,10 +255,10 @@ public class GetSchedule extends DAO {
 	/**
 	 * Helper method to query the database.
 	 */
-	private List execute() throws SQLException {
+	private List<ScheduleEntry> execute() throws SQLException {
 		
 		// Execute the query
-		List results = new ArrayList();
+		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			ScheduleEntry entry = new ScheduleEntry(SystemData.getAirline(rs.getString(1)), rs.getInt(2), rs.getInt(3));

@@ -33,7 +33,7 @@ public class GetLibrary extends DAO {
 	 * @return a List of Installer beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getFleet(String dbName) throws DAOException {
+	public Collection<Installer> getFleet(String dbName) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
@@ -57,7 +57,7 @@ public class GetLibrary extends DAO {
 	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getManuals(String dbName) throws DAOException {
+	public Collection<Manual> getManuals(String dbName) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
@@ -81,7 +81,7 @@ public class GetLibrary extends DAO {
 	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getNewsletters(String dbName) throws DAOException {
+	public Collection<Manual> getNewsletters(String dbName) throws DAOException {
 	   
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
@@ -212,7 +212,7 @@ public class GetLibrary extends DAO {
 	 * @return a List of FileEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getFiles(String dbName) throws DAOException {
+	public Collection<FileEntry> getFiles(String dbName) throws DAOException {
 	   
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
@@ -232,14 +232,14 @@ public class GetLibrary extends DAO {
 	/**
 	 * Helper method to load from the File Library table.
 	 */
-	private List loadFiles() throws SQLException {
+	private List<FileEntry> loadFiles() throws SQLException {
 	   
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
 	   boolean hasTotals = (rs.getMetaData().getColumnCount() > 6);
 	   
 	   // Iterate through the result set
-	   List results = new ArrayList();
+	   List<FileEntry> results = new ArrayList<FileEntry>();
 	   while (rs.next()) {
 	      File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
 	      FileEntry entry = new FileEntry(f.getPath());
@@ -263,14 +263,14 @@ public class GetLibrary extends DAO {
 	/**
 	 * Helper method to load from the Document Library table.
 	 */
-	private List loadManuals() throws SQLException {
+	private List<Manual> loadManuals() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the result set
-		List results = new ArrayList();
+		List<Manual> results = new ArrayList<Manual>();
 		while (rs.next()) {
 			File f = new File(SystemData.get("path.library"), rs.getString(1));
 			Manual doc = new Manual(f.getPath());
@@ -295,14 +295,14 @@ public class GetLibrary extends DAO {
 	/**
 	 * Helper method to load from the Fleet Library table.
 	 */
-	private List loadInstallers() throws SQLException {
+	private List<Installer> loadInstallers() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		boolean hasTotals = (rs.getMetaData().getColumnCount() > 11);
 
 		// Iterate through the result set
-		List results = new ArrayList();
+		List<Installer> results = new ArrayList<Installer>();
 		while (rs.next()) {
 			File f = new File(SystemData.get("path.library"), rs.getString(1));
 

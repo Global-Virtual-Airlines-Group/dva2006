@@ -29,7 +29,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @return a List of Operating System names
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getOperatingSystems() throws DAOException {
+	public List<String> getOperatingSystems() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT OS FROM common.SYSINFODATA ORDER BY OS DESC");
 
@@ -37,7 +37,7 @@ public class GetInstallerSystemInfo extends DAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			List results = new ArrayList();
+			List<String> results = new ArrayList<String>();
 			while (rs.next())
 				results.add(rs.getString(1));
 
@@ -55,7 +55,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @return a List of Installer codes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getInstallerCodes() throws DAOException {
+	public List<String> getInstallerCodes() throws DAOException {
 		try {
 			prepareStatementWithoutLimits("SELECT DISTINCT INSTALLER FROM common.SYSINFODATA ORDER BY INSTALLER DESC");
 
@@ -63,7 +63,7 @@ public class GetInstallerSystemInfo extends DAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			List results = new ArrayList();
+			List<String> results = new ArrayList<String>();
 			while (rs.next())
 				results.add(rs.getString(1));
 
@@ -82,7 +82,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @return a List of SystemInformation beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByUserCode(String userCode) throws DAOException {
+	public List<SystemInformation> getByUserCode(String userCode) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.SYSINFODATA WHERE (ID=?)");
 			_ps.setString(1, userCode);
@@ -99,7 +99,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetInstallerSystemInfo#getInstallerCodes()
 	 */
-	public List getByInstallerCode(String installerCode) throws DAOException {
+	public List<SystemInformation> getByInstallerCode(String installerCode) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.SYSINFODATA WHERE (INSTALLER=?)");
 			_ps.setString(1, installerCode);
@@ -116,7 +116,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetInstallerSystemInfo#getOperatingSystems()
 	 */
-	public List getByOperatingSystem(String osName) throws DAOException {
+	public List<SystemInformation> getByOperatingSystem(String osName) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.SYSINFODATA WHERE (OS=?)");
 			_ps.setString(1, osName);
@@ -133,7 +133,7 @@ public class GetInstallerSystemInfo extends DAO {
 	 * @return a List of InstallerStatistics beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getStatistics(String groupBy, boolean sortLabel) throws DAOException {
+	public List<InstallerStatistics> getStatistics(String groupBy, boolean sortLabel) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -151,7 +151,7 @@ public class GetInstallerSystemInfo extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			
 			// Iterate through the results
-			List results = new ArrayList();
+			List<InstallerStatistics> results = new ArrayList<InstallerStatistics>();
 			while (rs.next())
 				results.add(new InstallerStatistics(rs.getString(1), rs.getInt(2)));
 
@@ -167,13 +167,13 @@ public class GetInstallerSystemInfo extends DAO {
 	/**
 	 * Helper method to iterate through the result set.
 	 */
-	private List execute() throws SQLException {
+	private List<SystemInformation> execute() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<SystemInformation> results = new ArrayList<SystemInformation>();
 		while (rs.next()) {
 			SystemInformation sysinfo = new SystemInformation(rs.getString(1));
 			sysinfo.setOS(rs.getString(2));

@@ -36,7 +36,7 @@ public class GetEvent extends DAO {
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?) "
 					+ "ORDER BY STARTTIME");
 			_ps.setInt(1, Event.CANCELED);
-			List results = execute();
+			List<Event> results = execute();
 			
 			// Load the airports
 			Map eMap = CollectionUtils.createMap(results, "ID");
@@ -80,7 +80,7 @@ public class GetEvent extends DAO {
 	public List<Event> getEvents() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.EVENTS ORDER BY STARTTIME DESC");
-			List results = execute();
+			List<Event> results = execute();
 			
 			// Load the airports
 			Map eMap = CollectionUtils.createMap(results, "ID");
@@ -132,7 +132,7 @@ public class GetEvent extends DAO {
 			loadEQTypes(e);
 			
 			// Create a map and load the airports
-			Map eMap = new HashMap();
+			Map<Integer, Event> eMap = new HashMap<Integer, Event>();
 			eMap.put(new Integer(e.getID()), e);
 			loadRoutes(eMap);
 			return e;

@@ -29,7 +29,7 @@ public class GetACARSLog extends GetACARSData {
 	 * @return a List of ConnectionEntry beans sorted by date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getConnections(LogSearchCriteria criteria) throws DAOException {
+	public List<ConnectionEntry> getConnections(LogSearchCriteria criteria) throws DAOException {
 
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
@@ -84,7 +84,7 @@ public class GetACARSLog extends GetACARSData {
 	 * @return a List of ConnectionEntry beans sorted by date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getUnusedConnections(int cutoff) throws DAOException {
+	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
 		try {
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
 					+ "C.CLIENT_BUILD, COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC, COUNT(P.CON_ID) AS PC "
@@ -105,7 +105,7 @@ public class GetACARSLog extends GetACARSData {
 	 * @return a List of TextMessage beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getMessages(LogSearchCriteria criteria) throws DAOException {
+	public List<TextMessage> getMessages(LogSearchCriteria criteria) throws DAOException {
 
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
@@ -155,7 +155,7 @@ public class GetACARSLog extends GetACARSData {
 	 * @return a List of InfoEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getFlights(LogSearchCriteria criteria) throws DAOException {
+	public List<FlightInfo> getFlights(LogSearchCriteria criteria) throws DAOException {
 
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
@@ -205,7 +205,7 @@ public class GetACARSLog extends GetACARSData {
 	 * @return a List of InfoEntry beans sorted by date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getUnreportedFlights(int cutoff) throws DAOException {
+	public List<FlightInfo> getUnreportedFlights(int cutoff) throws DAOException {
 		try {
 			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) "
 					+ "WHERE (F.PIREP=?) AND (F.CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR)) ORDER BY F.CREATED");
@@ -220,13 +220,13 @@ public class GetACARSLog extends GetACARSData {
 	/**
 	 * Helper method to parse Message result sets.
 	 */
-	private List executeMsg() throws SQLException {
+	private List<TextMessage> executeMsg() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the requests
-		List results = new ArrayList();
+		List<TextMessage> results = new ArrayList<TextMessage>();
 		while (rs.next()) {
 			TextMessage msg = new TextMessage(rs.getLong(1), rs.getString(6));
 			msg.setConnectionID(rs.getLong(2));

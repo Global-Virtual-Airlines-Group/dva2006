@@ -128,7 +128,7 @@ abstract class PilotReadDAO extends PilotDAO {
          return null;
 
       // Convert the ID into a set
-      Set idSet = new HashSet();
+      Set<Integer> idSet = new HashSet<Integer>();
       idSet.add(new Integer(ud.getID()));
 
       // Get a map from the table, and get the first value
@@ -154,7 +154,7 @@ abstract class PilotReadDAO extends PilotDAO {
             .indexOf('.'));
       dbName = dbName.toLowerCase();
 
-      List results = new ArrayList();
+      List<Pilot> results = new ArrayList<Pilot>();
       log.debug("Raw set size = " + ids.size());
 
       // Init the prepared statement
@@ -192,7 +192,7 @@ abstract class PilotReadDAO extends PilotDAO {
             sqlBuf.setLength(sqlBuf.length() - 1);
 
          sqlBuf.append(")) GROUP BY P.ID");
-         List uncached = null;
+         List<Pilot> uncached = null;
          try {
             prepareStatementWithoutLimits(sqlBuf.toString());
             _ps.setInt(1, FlightReport.OK);
@@ -238,8 +238,8 @@ abstract class PilotReadDAO extends PilotDAO {
     * @return a List of Pilot objects
     * @throws SQLException if a JDBC error occurs
     */
-   protected final List execute() throws SQLException {
-      List results = new ArrayList();
+   protected final List<Pilot> execute() throws SQLException {
+      List<Pilot> results = new ArrayList<Pilot>();
 
       // Get the pilot info from the list
       ResultSet rs = _ps.executeQuery();
@@ -316,7 +316,7 @@ abstract class PilotReadDAO extends PilotDAO {
     * @throws SQLException if a JDBC error occurs
     */
    protected final void addRatings(Pilot p, String dbName) throws SQLException {
-      Map tmpMap = new HashMap();
+      Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
       tmpMap.put(new Integer(p.getID()), p);
       loadRatings(tmpMap, dbName);
    }
@@ -328,7 +328,7 @@ abstract class PilotReadDAO extends PilotDAO {
     * @throws SQLException if a JDBC error occurs
     */
    protected final void addRoles(Pilot p, String dbName) throws SQLException {
-      Map tmpMap = new HashMap();
+      Map<Integer, Pilot> tmpMap = new HashMap<Integer, Pilot>();
       tmpMap.put(new Integer(p.getID()), p);
       loadRoles(tmpMap, dbName);
    }
@@ -339,7 +339,7 @@ abstract class PilotReadDAO extends PilotDAO {
     * @param dbName the database Name
     * @throws SQLException if a JDBC error occurs
     */
-   protected final void loadRoles(Map pilots, String dbName) throws SQLException {
+   protected final void loadRoles(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
@@ -360,7 +360,7 @@ abstract class PilotReadDAO extends PilotDAO {
       // Exeute the query
       ResultSet rs = _ps.executeQuery();
       while (rs.next()) {
-         Pilot p = (Pilot) pilots.get(new Integer(rs.getInt(1)));
+         Pilot p = pilots.get(new Integer(rs.getInt(1)));
          if (p != null)
             p.addRole(rs.getString(2));
       }
@@ -376,7 +376,7 @@ abstract class PilotReadDAO extends PilotDAO {
     * @param dbName the database Name
     * @throws SQLException if a JDBC error occurs
     */
-   protected final void loadRatings(Map pilots, String dbName) throws SQLException {
+   protected final void loadRatings(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
@@ -397,7 +397,7 @@ abstract class PilotReadDAO extends PilotDAO {
       // Exeute the query
       ResultSet rs = _ps.executeQuery();
       while (rs.next()) {
-         Pilot p = (Pilot) pilots.get(new Integer(rs.getInt(1)));
+         Pilot p = pilots.get(new Integer(rs.getInt(1)));
          if (p != null)
             p.addRating(rs.getString(2));
       }

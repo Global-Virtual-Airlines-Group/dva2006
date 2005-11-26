@@ -38,8 +38,8 @@ public class GetInactivity extends PilotReadDAO {
 			_ps.setInt(1, pilotID);
 			
 			// Execute query, return null if empty 
-			List results = executeInactivity();
-			return results.isEmpty() ? null : (InactivityPurge) results.get(0);
+			List<InactivityPurge> results = executeInactivity();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -51,7 +51,7 @@ public class GetInactivity extends PilotReadDAO {
 	 * @return a Collection of InactivityPurge beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getPurgeable(boolean isNotified) throws DAOException {
+	public Collection<InactivityPurge> getPurgeable(boolean isNotified) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM INACTIVITY WHERE (NOTIFY=?) AND (PURGE_DATE < CURDATE())");
 			_ps.setBoolean(1, isNotified);
@@ -67,7 +67,7 @@ public class GetInactivity extends PilotReadDAO {
 	 * @return a Collection of InactivityPurge beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getPurgeableSoon(int days) throws DAOException {
+	public Collection<InactivityPurge> getPurgeableSoon(int days) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM INACTIVITY WHERE (PURGE_DATE < DATE_ADD(CURDATE(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
@@ -83,7 +83,7 @@ public class GetInactivity extends PilotReadDAO {
 	 * @return a Collection of Pilot beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getInactivePilots(int days) throws DAOException {
+	public Collection<Pilot> getInactivePilots(int days) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
@@ -100,8 +100,8 @@ public class GetInactivity extends PilotReadDAO {
 	/**
 	 * Helper method to parse Inactivity result sets.
 	 */
-	private List executeInactivity() throws SQLException {
-		List results = new ArrayList();
+	private List<InactivityPurge> executeInactivity() throws SQLException {
+		List<InactivityPurge> results = new ArrayList<InactivityPurge>();
 		
 		// Iterate through the result set
 		ResultSet rs = _ps.executeQuery();

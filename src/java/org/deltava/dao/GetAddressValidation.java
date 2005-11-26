@@ -99,7 +99,7 @@ public class GetAddressValidation extends DAO {
 	 * @return a List of AddressValidation beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilots() throws DAOException {
+	public List<AddressValidation> getPilots() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID < ?)");
 			_ps.setInt(1, Applicant.BASE_DB_ID);
@@ -114,7 +114,7 @@ public class GetAddressValidation extends DAO {
 	 * @return a List of AddressValidation beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getApplicants() throws DAOException {
+	public List<AddressValidation> getApplicants() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID >= ?)");
 			_ps.setInt(1, Applicant.BASE_DB_ID);
@@ -127,18 +127,16 @@ public class GetAddressValidation extends DAO {
 	/**
 	 * Helper method to parse the result set.
 	 */
-	private List execute() throws SQLException {
+	private List<AddressValidation> execute() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<AddressValidation> results = new ArrayList<AddressValidation>();
 		while (rs.next()) {
 			AddressValidation addr = new AddressValidation(rs.getInt(1), rs.getString(2));
 			addr.setHash(rs.getString(3));
-
-			// Add to results
 			results.add(addr);
 		}
 

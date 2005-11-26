@@ -23,15 +23,15 @@ public class GetNavRoute extends GetNavData {
 	private class CacheableRoute implements Cacheable {
 
 		private String _route;
-		private LinkedList _waypoints;
+		private LinkedList<NavigationDataBean> _waypoints;
 
-		CacheableRoute(String route, LinkedList waypoints) {
+		CacheableRoute(String route, LinkedList<NavigationDataBean> waypoints) {
 			super();
 			_route = route;
 			_waypoints = waypoints;
 		}
 
-		public LinkedList getWaypoints() {
+		public LinkedList<NavigationDataBean> getWaypoints() {
 			return _waypoints;
 		}
 
@@ -93,9 +93,9 @@ public class GetNavRoute extends GetNavData {
 	 * @see TerminalRoute#SID
 	 * @see TerminalRoute#STAR
 	 */
-	public Collection getRoutes(String code, int type) throws DAOException {
+	public Collection<TerminalRoute> getRoutes(String code, int type) throws DAOException {
 
-		List results = null;
+		List<TerminalRoute> results = null;
 		try {
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION");
 			_ps.setString(1, code.toUpperCase());
@@ -107,7 +107,7 @@ public class GetNavRoute extends GetNavData {
 
 		// Add to the cache and return
 		_cache.addAll(results);
-		return new LinkedHashSet(results);
+		return new LinkedHashSet<TerminalRoute>(results);
 	}
 
 	/**
@@ -156,7 +156,7 @@ public class GetNavRoute extends GetNavData {
 	 * @return a Map of Airways, indexed by name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getAirways(Collection names) throws DAOException {
+	public Map<String, Airway> getAirways(Collection<String> names) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT * FROM common.AIRWAYS WHERE (NAME IN (");
@@ -170,7 +170,7 @@ public class GetNavRoute extends GetNavData {
 		// Close the SQL statement
 		buf.append("))");
 
-		Map results = new HashMap();
+		Map<String, Airway> results = new HashMap<String, Airway>();
 		try {
 			prepareStatement(buf.toString());
 
@@ -198,7 +198,7 @@ public class GetNavRoute extends GetNavData {
 	 * @return an ordered List of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public LinkedList getRouteWaypoints(String route) throws DAOException {
+	public LinkedList<NavigationDataBean> getRouteWaypoints(String route) throws DAOException {
 
 		// Check the cache
 		Cacheable obj = _cache.get(route);
@@ -212,7 +212,7 @@ public class GetNavRoute extends GetNavData {
 		// Get the route text
 		List tkns = Collections.list(new StringTokenizer(route, " "));
 		GeoLocation lastPosition = null;
-		Set routePoints = new LinkedHashSet();
+		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = (String) tkns.get(x);
 			setQueryMax(0);
@@ -229,7 +229,7 @@ public class GetNavRoute extends GetNavData {
 				setQueryMax(0);
 				if (aw != null) {
 					String endPoint = (x < (tkns.size() - 1)) ? (String) tkns.get(x + 1) : "";
-					Collection awPoints = aw.getWaypoints((x == 0) ? wp : (String) tkns.get(x - 1), endPoint);
+					Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : (String) tkns.get(x - 1), endPoint);
 					NavigationDataMap ndMap = getByID(awPoints);
 					for (Iterator i = awPoints.iterator(); i.hasNext();) {
 						String awp = (String) i.next();
@@ -251,10 +251,10 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		// Get the points, and the start/distance
-		LinkedList points = new LinkedList(routePoints);
+		LinkedList<NavigationDataBean> points = new LinkedList<NavigationDataBean>(routePoints);
 		if (points.size() > 2) {
-			GeoLocation lastP = (GeoLocation) points.getFirst();
-			int distance = GeoUtils.distance(lastP, (GeoLocation) points.getLast());
+			GeoLocation lastP = points.getFirst();
+			int distance = GeoUtils.distance(lastP, points.getLast());
 
 			// Add a check to ensure that this point isn't crazily out of the way
 			for (Iterator i = points.iterator(); i.hasNext();) {
@@ -276,13 +276,13 @@ public class GetNavRoute extends GetNavData {
 	/**
 	 * Helper method to iterate through a SID_STAR result set.
 	 */
-	private List executeSIDSTAR() throws SQLException {
+	private List<TerminalRoute> executeSIDSTAR() throws SQLException {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
 		while (rs.next()) {
 			TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2) + 1);
 			tr.setTransition(rs.getString(4));

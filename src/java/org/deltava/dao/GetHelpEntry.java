@@ -36,8 +36,8 @@ public class GetHelpEntry extends DAO {
          _ps.setString(1, name);
          
          // Execute the query, return null if empty
-         List results = execute();
-         return results.isEmpty() ? null : (HelpEntry) results.get(0);
+         List<HelpEntry> results = execute();
+         return results.isEmpty() ? null : results.get(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -48,7 +48,7 @@ public class GetHelpEntry extends DAO {
     * @return a List of HelpEntry beans
     * @throws DAOException if a JDBC error occurs
     */
-   public List getAll() throws DAOException {
+   public List<HelpEntry> getAll() throws DAOException {
       try {
          prepareStatement("SELECT * FROM HELP ORDER BY ID");
          return execute();
@@ -60,13 +60,13 @@ public class GetHelpEntry extends DAO {
    /**
     * Helper method to parse the result set.
     */
-   private List execute() throws SQLException {
+   private List<HelpEntry> execute() throws SQLException {
 
       // Execute the query
       ResultSet rs = _ps.executeQuery();
 
       // Iterate through the results
-      List results = new ArrayList();
+      List<HelpEntry> results = new ArrayList<HelpEntry>();
       while (rs.next()) {
          HelpEntry e = new HelpEntry(rs.getString(1), rs.getString(2));
          results.add(e);

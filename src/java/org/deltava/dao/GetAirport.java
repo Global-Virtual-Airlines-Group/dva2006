@@ -97,14 +97,14 @@ public class GetAirport extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if al is null
 	 */
-	public Collection getByAirline(Airline al) throws DAOException {
+	public Collection<Airport> getByAirline(Airline al) throws DAOException {
 		try {
 			prepareStatement("SELECT A.* FROM common.AIRPORTS A, common.AIRPORT_AIRLINE AA WHERE "
 					+ "(A.IATA=AA.IATA) AND (AA.CODE=?) ORDER BY A.IATA");
 			_ps.setString(1, al.getCode());
 
 			// Execute the query
-			List results = new ArrayList();
+			List<Airport> results = new ArrayList<Airport>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
@@ -126,11 +126,11 @@ public class GetAirport extends DAO {
 
 	/**
 	 * Returns all airports.
-	 * @return a List of Airports
+	 * @return a Map of Airports, keyed by IATA/ICAO codes
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getAll() throws DAOException {
-		Map results = new HashMap();
+	public Map<String, Airport> getAll() throws DAOException {
+		Map<String, Airport> results = new HashMap<String, Airport>();
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.AIRPORTS");
 			ResultSet rs = _ps.executeQuery();
@@ -160,7 +160,7 @@ public class GetAirport extends DAO {
 			// Iterate through the results
 			while (rs.next()) {
 				String code = rs.getString(2);
-				Airport a = (Airport) results.get(code);
+				Airport a = results.get(code);
 				if (a != null) {
 					a.addAirlineCode(rs.getString(1));
 				} else {
@@ -180,12 +180,12 @@ public class GetAirport extends DAO {
 	/**
 	 * Helper method to load airport altitudes.
 	 */
-	private void loadAltitude(Map airports) throws SQLException {
+	private void loadAltitude(Map<String, Airport> airports) throws SQLException {
 		if (airports.isEmpty())
 			return;
 		
 		// Convert the airports into a set
-		Set apSet = new HashSet(airports.values());
+		Set<Airport> apSet = new HashSet<Airport>(airports.values());
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CODE, ALTITUDE FROM common.NAVDATA WHERE (ITEMTYPE=?) "
@@ -204,7 +204,7 @@ public class GetAirport extends DAO {
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Airport a = (Airport) airports.get(rs.getString(1));
+			Airport a = airports.get(rs.getString(1));
 			if (a != null)
 				a.setAltitude(rs.getInt(2));
 		}

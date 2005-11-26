@@ -111,7 +111,7 @@ public class GetCoolerChannels extends DAO {
              + "COUNT(DISTINCT T.ID), SUM(T.VIEWS) FROM common.COOLER_CHANNELS C LEFT JOIN common.COOLER_THREADS T "
              + "ON (T.CHANNEL=C.CHANNEL) WHERE (C.ACTIVE=?) GROUP BY C.CHANNEL");
        
-        Map results = new TreeMap();
+        Map<String, Channel> results = new TreeMap<String, Channel>();
         try {
             prepareStatement(sqlBuf.toString());
             if (showHidden) {
@@ -172,7 +172,7 @@ public class GetCoolerChannels extends DAO {
      * @return a List of channels
      * @throws DAOException if a JDBC error occurs
      */
-    public List<Channel> getChannels(AirlineInformation al, Collection roles) throws DAOException {
+    public List<Channel> getChannels(AirlineInformation al, Collection<String> roles) throws DAOException {
 
         // Check if we are querying for the admin role; in this case return everything
         if (roles.contains("Admin"))
@@ -199,7 +199,7 @@ public class GetCoolerChannels extends DAO {
      */
     public List<Channel> getAll(AirlineInformation al) throws DAOException {
     	
-        Map results = new TreeMap();
+        Map<String, Channel> results = new TreeMap<String, Channel>();
     	try {
     		prepareStatementWithoutLimits("SELECT C.*, (SELECT T.ID FROM common.COOLER_THREADS T WHERE "
     				+ "(T.CHANNEL=C.CHANNEL) ORDER BY T.LASTUPDATE DESC LIMIT 1) AS LT, SUM(T.POSTS), "

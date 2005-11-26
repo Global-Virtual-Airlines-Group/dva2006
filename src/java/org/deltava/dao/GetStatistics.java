@@ -150,7 +150,7 @@ public class GetStatistics extends DAO {
 	 * @return a List of StatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public List<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
 
 		// Generate SQL statement
 		StringBuilder sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
@@ -162,7 +162,7 @@ public class GetStatistics extends DAO {
 			_ps.setInt(1, FlightReport.OK);
 
 			// Execute the query
-			List results = new ArrayList();
+			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.add(new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3)));
@@ -184,7 +184,7 @@ public class GetStatistics extends DAO {
 	 * @return a List of CoolerStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
+	public List<CoolerStatsEntry> getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
 	   
 	   // Generate SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT ");
@@ -202,7 +202,7 @@ public class GetStatistics extends DAO {
 	      ResultSet rs = _ps.executeQuery();
 	      
 	      // Iterate through the results
-	      List results = new ArrayList();
+	      List<CoolerStatsEntry> results = new ArrayList<CoolerStatsEntry>();
 	      while (rs.next()) {
 	         CoolerStatsEntry entry = new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3));
 	         results.add(entry);
