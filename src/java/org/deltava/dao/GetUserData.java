@@ -72,9 +72,9 @@ public class GetUserData extends DAO {
     * @return a Map of AirlineInformation beans, indexed by code
     * @throws DAOException if a JDBC error occurs
     */
-   public Map getAirlines(boolean includeSelf) throws DAOException {
+   public Map<String, AirlineInformation> getAirlines(boolean includeSelf) throws DAOException {
       
-      Collection results = null;
+      Collection<AirlineInformation> results = null;
       try {
          prepareStatement("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
          results = executeAirlineInfo();
@@ -86,8 +86,8 @@ public class GetUserData extends DAO {
       
       // Strip out our airline if we need to
       if (!includeSelf) {
-         for (Iterator i = results.iterator(); i.hasNext(); ) {
-            AirlineInformation info = (AirlineInformation) i.next();
+         for (Iterator<AirlineInformation> i = results.iterator(); i.hasNext(); ) {
+            AirlineInformation info = i.next();
             if (info.getCode().equals(SystemData.get("airline.code")))
                i.remove();
          }
@@ -159,7 +159,7 @@ public class GetUserData extends DAO {
     * @return a UserDataMap
     * @throws DAOException if a JDBC error occurs
     */
-   public UserDataMap get(Collection ids) throws DAOException {
+   public UserDataMap get(Collection<Integer> ids) throws DAOException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
@@ -169,8 +169,8 @@ public class GetUserData extends DAO {
       log.debug("Raw set size = " + ids.size());
       int querySize = 0;
       UserDataMap result = new UserDataMap();
-      for (Iterator i = ids.iterator(); i.hasNext();) {
-         Integer id = (Integer) i.next();
+      for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
+         Integer id = i.next();
 
          // Pull from the cache if at all possible; this is an evil query
          UserData usr = (UserData) _cache.get(id);
@@ -206,13 +206,13 @@ public class GetUserData extends DAO {
    /**
     * Helper method to iterate through the result set.
     */
-   private List execute() throws SQLException {
+   private List<UserData> execute() throws SQLException {
 
       // Execute the query
       ResultSet rs = _ps.executeQuery();
 
       // Iterate through the results
-      List results = new ArrayList();
+      List<UserData> results = new ArrayList<UserData>();
       while (rs.next()) {
          UserData usr = new UserData(rs.getInt(1));
          usr.setAirlineCode(rs.getString(2));
@@ -234,13 +234,13 @@ public class GetUserData extends DAO {
    /**
     * Helper method to iterate through AirlineInformation result sets.
     */
-   private List executeAirlineInfo() throws SQLException {
+   private List<AirlineInformation> executeAirlineInfo() throws SQLException {
      
       // Execute the query
       ResultSet rs = _ps.executeQuery();
       
       // Iterate through the results
-      List results = new ArrayList();
+      List<AirlineInformation> results = new ArrayList<AirlineInformation>();
       while (rs.next()) {
          AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
          info.setDB(rs.getString(3));

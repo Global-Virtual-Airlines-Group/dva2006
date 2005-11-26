@@ -39,7 +39,7 @@ public class GetEvent extends DAO {
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
 			
 			// Return the results
@@ -83,7 +83,7 @@ public class GetEvent extends DAO {
 			List<Event> results = execute();
 			
 			// Load the airports
-			Map eMap = CollectionUtils.createMap(results, "ID");
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
 			
 			// Return the results
