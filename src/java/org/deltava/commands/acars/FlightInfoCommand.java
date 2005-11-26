@@ -67,7 +67,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			ctx.setAttribute("info", info, REQUEST);
 
 			// Get the route data from the DAFIF database
-			List routeEntries = StringUtils.split(info.getRoute(), " ");
+			List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
 			GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
 			int distance = info.getAirportD().getPosition().distanceTo(info.getAirportA());
 			
@@ -76,7 +76,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			NavigationDataMap navaids = navdao.getByID(routeEntries);
 			
 			// Filter out navaids and put them in the correct order
-			List routeInfo = new ArrayList();
+			List<NavigationDataBean> routeInfo = new ArrayList<NavigationDataBean>();
 			for (Iterator i = routeEntries.iterator(); i.hasNext();) {
 				String navCode = (String) i.next();
 				NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);

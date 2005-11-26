@@ -33,10 +33,10 @@ public class CollectionUtils {
 	 * @return a List of entries contained within c1, but not c2
 	 * @throws NullPointerException if c1 or c2 are null
 	 */
-	public static Collection getDelta(Collection<? extends Object> c1, Collection<? extends Object> c2) {
+	public static <T> Collection<T> getDelta(Collection<T> c1, Collection<T> c2) {
 
 		// Convert the first collection to a List to preserve data
-		List<Object> l1 = new ArrayList<Object>(c1);
+		List<T> l1 = new ArrayList<T>(c1);
 
 		// Remove the entries from the second collection and return
 		l1.removeAll(c2);
@@ -50,8 +50,8 @@ public class CollectionUtils {
 	 * @param c2 the first Collection of entries
 	 * @throws NullPointerException if c1 or c2 are null
 	 */
-	public static void setDelta(Collection<Object> c1, Collection<Object> c2) {
-		List<Object> tmpC1 = new ArrayList<Object>(c1); // we copy c1 since we modify it before c2.removeAll()
+	public static <T> void setDelta(Collection<T> c1, Collection<T> c2) {
+		List<T> tmpC1 = new ArrayList<T>(c1); // we copy c1 since we modify it before c2.removeAll()
 		c1.removeAll(c2);
 		c2.removeAll(tmpC1);
 	}
@@ -63,7 +63,7 @@ public class CollectionUtils {
 	 * @param c2 the second Collection of entries
 	 * @return TRUE if c1.size() != c2.size() or !c1.containsAll(c2), otherwise FALSE
 	 */
-	public static boolean hasDelta(Collection<? extends Object> c1, Collection<? extends Object> c2) {
+	public static <T> boolean hasDelta(Collection<T> c1, Collection<T> c2) {
 		return ((c1.size() != c2.size()) || (!c1.containsAll(c2)));
 	}
 
@@ -84,14 +84,16 @@ public class CollectionUtils {
 	 * @param keyProperty the property to call on each value to get the key value
 	 * @return a Map of the values, indexed by their key
 	 */
-	public static Map<Object, Object> createMap(Collection<? extends Object> values, String keyProperty) {
+	@SuppressWarnings("unchecked")
+	public static <K, V> Map<K, V> createMap(Collection<V> values, String keyProperty) {
 
-		Map<Object, Object> results = new HashMap<Object, Object>();
-		for (Iterator i = values.iterator(); i.hasNext(); ) {
-			Object obj = i.next();
+		Map<K, V> results = new HashMap<K, V>();
+		for (Iterator<V> i = values.iterator(); i.hasNext(); ) {
+			V obj = i.next();
 			try {
 				Method m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
-				results.put(m.invoke(obj, (Object []) null), obj);
+				Object key = m.invoke(obj, (Object []) null);
+				results.put((K) key, obj);
 			} catch (Exception e) { }
 		}
 		

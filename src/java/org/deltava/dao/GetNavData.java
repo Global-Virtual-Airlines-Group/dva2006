@@ -153,7 +153,7 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalArgumentException if distance is negative or > 300
 	 */
-	public Map getIntersections(GeoLocation loc, int distance) throws DAOException {
+	public Map<String, NavigationDataBean> getIntersections(GeoLocation loc, int distance) throws DAOException {
 		if ((distance < 0) || (distance > 300))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
@@ -161,7 +161,7 @@ public class GetNavData extends DAO {
 		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
 		double width = (height * 0.7);
 
-		Collection results = null;
+		Collection<NavigationDataBean> results = null;
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?) AND ((LATITUDE > ?) AND (LATITUDE < ?)) "
 					+ "AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
@@ -188,7 +188,7 @@ public class GetNavData extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalArgumentException if distance is negative or > 300
 	 */
-	public Map getObjects(GeoLocation loc, int distance) throws DAOException {
+	public Map<String, NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
 		if ((distance < 0) || (distance > 300))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
@@ -196,7 +196,7 @@ public class GetNavData extends DAO {
 		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
 		double width = (height * 0.7);
 
-		Collection results = null;
+		Collection<NavigationDataBean> results = null;
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND (ITEMTYPE <> ?) AND "
 					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");

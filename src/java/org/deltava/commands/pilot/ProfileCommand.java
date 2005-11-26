@@ -49,7 +49,7 @@ public class ProfileCommand extends AbstractFormCommand {
    protected void execSave(CommandContext ctx) throws CommandException {
       try {
          Connection con = ctx.getConnection();
-         List updates = new ArrayList();
+         List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
 
          // Get the Pilot Profile and e-mail configuration to update
          GetPilotDirectory rdao = new GetPilotDirectory(con);
@@ -125,8 +125,8 @@ public class ProfileCommand extends AbstractFormCommand {
         	 p.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
 
          // Load the ratings from the request and convert to a set to maintain uniqueness
-         Set newRatings = new HashSet(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"), p
-               .getRatings()));
+         Set<String> newRatings = new HashSet<String>(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"),
+        		 p.getRatings()));
 
          // Determine if we are promoting the pilot
          String newRank = ctx.getParameter("rank");
@@ -179,7 +179,7 @@ public class ProfileCommand extends AbstractFormCommand {
          // Update the Pilot's equipment type ratings
          if ((p_access.getCanPromote()) && CollectionUtils.hasDelta(newRatings, p.getRatings())) {
             // Figure out what ratings have been added
-            Collection addedRatings = CollectionUtils.getDelta(newRatings, p.getRatings());
+            Collection<String> addedRatings = CollectionUtils.getDelta(newRatings, p.getRatings());
             if (!addedRatings.isEmpty()) {
                ctx.setAttribute("addedRatings", addedRatings, REQUEST);
                p.addRatings(addedRatings);
@@ -209,14 +209,14 @@ public class ProfileCommand extends AbstractFormCommand {
 
          // Load the roles from the request and convert to a set to maintain uniqueness
          String[] roles = ctx.getRequest().getParameterValues("securityRoles");
-         Collection newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles, Collections.EMPTY_SET)
+         Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles, new HashSet<String>())
                : p.getRoles();
          newRoles.add("Pilot");
 
          // Update the Pilot's Security Roles
          if ((p_access.getCanChangeRoles()) && CollectionUtils.hasDelta(newRoles, p.getRoles())) {
             // Figure out what roles have been added
-            Collection addedRoles = CollectionUtils.getDelta(newRoles, p.getRoles());
+            Collection<String> addedRoles = CollectionUtils.getDelta(newRoles, p.getRoles());
             if (!addedRoles.isEmpty()) {
                ctx.setAttribute("addedRoles", addedRoles, REQUEST);
                p.addRoles(addedRoles);
@@ -387,7 +387,7 @@ public class ProfileCommand extends AbstractFormCommand {
                AirlineInformation info = (AirlineInformation) i.next();
 
                // Check Pilots & applicants
-               Set dupeResults = new HashSet(rdao.checkUnique(p2, info.getDB()));
+               Set<Integer> dupeResults = new HashSet<Integer>(rdao.checkUnique(p2, info.getDB()));
                dupeResults.addAll(adao.checkUnique(p2, info.getDB()));
                
                // Remove our entry, or that of our applicant entry
