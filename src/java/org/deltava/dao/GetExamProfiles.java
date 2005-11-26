@@ -67,12 +67,12 @@ import org.deltava.beans.testing.*;
 	 * @return a List of ExamProfile beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getExamProfiles() throws DAOException {
+	public List<ExamProfile> getExamProfiles() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EXAMINFO ORDER BY STAGE, NAME");
 			
 			// Execute the query
-			List results = new ArrayList();
+			List<ExamProfile> results = new ArrayList<ExamProfile>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				ExamProfile ep = new ExamProfile(rs.getString(1));
@@ -155,7 +155,7 @@ import org.deltava.beans.testing.*;
 	 * @return a List of QuestionProfiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getQuestionPool(String examName, boolean isRandom) throws DAOException {
+	public List<QuestionProfile> getQuestionPool(String examName, boolean isRandom) throws DAOException {
 	   
 	   // Check if we're displaying all questions
 	   boolean showAll = "ALL".equals(examName);
@@ -179,7 +179,7 @@ import org.deltava.beans.testing.*;
 		      _ps.setString(2, examName);
 			
 			// Execute the Query
-			List results = new ArrayList();
+			List<QuestionProfile> results = new ArrayList<QuestionProfile>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				QuestionProfile qp = new QuestionProfile(rs.getString(2));
@@ -241,12 +241,12 @@ import org.deltava.beans.testing.*;
 	 * @return a List of CheckRideScript beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getScripts() throws DAOException {
+	public List<CheckRideScript> getScripts() throws DAOException {
 	   try {
 	      prepareStatement("SELECT * FROM CR_DESCS");
 	      
 	      // Execute the query
-	      List results = new ArrayList();
+	      List<CheckRideScript> results = new ArrayList<CheckRideScript>();
 	      ResultSet rs = _ps.executeQuery();
 	      while (rs.next()) {
 	         CheckRideScript sc = new CheckRideScript(rs.getString(1));

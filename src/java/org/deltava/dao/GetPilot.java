@@ -53,7 +53,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a Map of GeoLocation objects, keyed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getPilotBoard() throws DAOException {
+	public Map<Integer, GeoLocation> getPilotBoard() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM PILOT_MAP");
 
@@ -61,7 +61,7 @@ public class GetPilot extends PilotReadDAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the result set
-			Map results = new HashMap();
+			Map<Integer, GeoLocation> results = new HashMap<Integer, GeoLocation>();
 			while (rs.next()) {
 				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 				results.put(new Integer(rs.getInt(1)), gp);
@@ -81,7 +81,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getNewestPilots() throws DAOException {
+	public List<Pilot> getNewestPilots() throws DAOException {
 		try {
 			prepareStatement("SELECT P.* FROM PILOTS P WHERE (P.PILOT_ID IS NOT NULL) ORDER BY PILOT_ID DESC");
 			return execute();
@@ -141,7 +141,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of all active/on leave Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getActivePilots(String orderBy) throws DAOException {
+	public List<Pilot> getActivePilots(String orderBy) throws DAOException {
 
 		StringBuilder sql = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON "
@@ -167,7 +167,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots in a particular equipment type
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilotsByEQ(String eqType) throws DAOException {
+	public List<Pilot> getPilotsByEQ(String eqType) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
@@ -188,12 +188,12 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilotsByEQRank(String rank, String eqType) throws DAOException {
+	public List<Pilot> getPilotsByEQRank(String rank, String eqType) throws DAOException {
 
 		// Get all the pilots with the rank (since this is usually used to filter out ACPs/CPs)
-		List pilots = getPilotsByRank(rank);
-		for (Iterator i = pilots.iterator(); i.hasNext();) {
-			Pilot p = (Pilot) i.next();
+		List<Pilot> pilots = getPilotsByRank(rank);
+		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
+			Pilot p = i.next();
 			if (!eqType.equals(p.getEquipmentType()))
 				i.remove();
 		}
@@ -207,7 +207,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of active Pilots with a particular rank
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilotsByRank(String rank) throws DAOException {
+	public List<Pilot> getPilotsByRank(String rank) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
@@ -229,7 +229,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @throws IllegalArgumentException if letter isn't a letter according to {@link Character#isLetter(char) }
 	 * @throws NullPointerException if letter is null
 	 */
-	public List getPilotsByLetter(String letter) throws DAOException {
+	public List<Pilot> getPilotsByLetter(String letter) throws DAOException {
 
 		// Check the letter
 		if (!Character.isLetter(letter.charAt(0)))
@@ -253,7 +253,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilotsByStatus(int status) throws DAOException {
+	public List<Pilot> getPilotsByStatus(int status) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
@@ -271,7 +271,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getPilots() throws DAOException {
+	public List<Pilot> getPilots() throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID");
@@ -291,14 +291,14 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List search(String fName, String lName, String eMail) throws DAOException {
+	public List<Pilot> search(String fName, String lName, String eMail) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) WHERE ");
 
 		// Add parameters if they are non-null
-		List searchTerms = new ArrayList();
+		List<String> searchTerms = new ArrayList<String>();
 		if (fName != null)
 			searchTerms.add("(P.FIRSTNAME LIKE ?)");
 		if (lName != null)
@@ -308,7 +308,7 @@ public class GetPilot extends PilotReadDAO {
         
         // If no search terms specified, return an empty list
         if (searchTerms.isEmpty())
-           return new ArrayList();
+           return new ArrayList<Pilot>();
         
         // Aggregate the search terms
 		for (Iterator i = searchTerms.iterator(); i.hasNext();) {

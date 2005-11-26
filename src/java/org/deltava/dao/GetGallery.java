@@ -92,7 +92,7 @@ public class GetGallery extends DAO {
 	 * @return a List of Images in the Fleet Gallery
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getFleetGallery() throws DAOException {
+	public List<Image> getFleetGallery() throws DAOException {
 		try {
 			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, " +
 					"I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
@@ -106,7 +106,7 @@ public class GetGallery extends DAO {
 		}
 	}
 
-	public List getPictureGallery(String orderBy, String month) throws DAOException {
+	public List<Image> getPictureGallery(String orderBy, String month) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, " +
@@ -137,15 +137,16 @@ public class GetGallery extends DAO {
 		}
 	}
 
-	public List getMonths() throws DAOException {
+	public Collection<String> getMonths() throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY ORDER BY DATE DESC");
+			prepareStatement("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY "
+					+ "ORDER BY DATE DESC");
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			List results = new ArrayList();
+			Collection<String> results = new LinkedHashSet<String>();
 			while (rs.next())
 				results.add(rs.getString(1));
 
@@ -158,11 +159,11 @@ public class GetGallery extends DAO {
 		}
 	}
 
-	private List execute() throws SQLException {
+	private List<Image> execute() throws SQLException {
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<Image> results = new ArrayList<Image>();
 		while (rs.next()) {
 			Image img = new Image(rs.getString(1), rs.getString(2));
 			img.setID(rs.getInt(3));

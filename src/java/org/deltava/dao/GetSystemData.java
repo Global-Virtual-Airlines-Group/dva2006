@@ -36,7 +36,7 @@ public class GetSystemData extends DAO {
 	 * @return a List of HTTPStatistics objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getHTTPStats(String orderBy) throws DAOException {
+	public List<HTTPStatistics> getHTTPStats(String orderBy) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM SYS_HTTPLOG ORDER BY " + orderBy);
 
@@ -44,7 +44,7 @@ public class GetSystemData extends DAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			List results = new ArrayList();
+			List<HTTPStatistics> results = new ArrayList<HTTPStatistics>();
 			while (rs.next()) {
 				HTTPStatistics stats = new HTTPStatistics(expandDate(rs.getDate(1)));
 				stats.setRequests(rs.getInt(2));
@@ -106,7 +106,7 @@ public class GetSystemData extends DAO {
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getCommands(java.util.Date d) throws DAOException {
+	public List<CommandLog> getCommands(java.util.Date d) throws DAOException {
 		try {
 			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
 					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
@@ -124,7 +124,7 @@ public class GetSystemData extends DAO {
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getCommands(String cmdName) throws DAOException {
+	public List<CommandLog> getCommands(String cmdName) throws DAOException {
 		try {
 			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
 					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UPPER(NAME)=?)");
@@ -142,7 +142,7 @@ public class GetSystemData extends DAO {
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getCommands(java.util.Date d, String remoteAddr) throws DAOException {
+	public List<CommandLog> getCommands(java.util.Date d, String remoteAddr) throws DAOException {
 		try {
 			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
 					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
@@ -158,13 +158,13 @@ public class GetSystemData extends DAO {
 	/**
 	 * Helper method to retrieve command log entries.
 	 */
-	private List executeCommandLog() throws SQLException {
+	private List<CommandLog> executeCommandLog() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<CommandLog> results = new ArrayList<CommandLog>();
 		while (rs.next()) {
 			CommandLog cmd = new CommandLog(rs.getTimestamp(1));
 			cmd.setPilotID(rs.getInt(2));
@@ -192,7 +192,7 @@ public class GetSystemData extends DAO {
 	 * @return a Collection of CommandStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getCommandStats(String orderBy) throws DAOException {
+	public Collection<CommandStatsEntry> getCommandStats(String orderBy) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT NAME, AVG(TOTAL_TIME) AS AVGT, AVG(BE_TIME) AS BE, "
@@ -200,15 +200,12 @@ public class GetSystemData extends DAO {
 	         + "COUNT(SUCCESS) AS TC FROM SYS_COMMANDS GROUP BY NAME ORDER BY ");
 	   sqlBuf.append(orderBy);
 	   
-	   List results = null;
+	   List<CommandStatsEntry> results = new ArrayList<CommandStatsEntry>();
 	   try {
 	      prepareStatement(sqlBuf.toString());
 	      
 	      // Execute the query
 	      ResultSet rs = _ps.executeQuery();
-
-	      // Iterate through the results
-	      results = new ArrayList();
 	      while (rs.next()) {
 	         CommandStatsEntry stat = new CommandStatsEntry(rs.getString(1));
 	         stat.setAvgTime(rs.getInt(2));
@@ -238,7 +235,7 @@ public class GetSystemData extends DAO {
 	 */
 	public Map getTaskExecution() throws DAOException {
 	   
-	   List results = null;
+	   List<TaskLastRun> results = new ArrayList<TaskLastRun>();
 	   try {
 	      prepareStatement("SELECT * FROM SYS_TASKS");
 	      
@@ -246,7 +243,6 @@ public class GetSystemData extends DAO {
 	      ResultSet rs = _ps.executeQuery();
 	      
 	      // Iterate through the results
-	      results = new ArrayList();
 	      while (rs.next())
 	         results.add(new TaskLastRun(rs.getString(1), rs.getTimestamp(2)));
 

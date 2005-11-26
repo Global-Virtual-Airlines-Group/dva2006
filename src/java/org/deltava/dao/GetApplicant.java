@@ -88,7 +88,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Map getByID(Collection ids, String tableName) throws DAOException {
 		
-		List results = new ArrayList();
+		List<Applicant> results = new ArrayList<Applicant>();
 		log.debug("Raw set size = " + ids.size());
 
 		// Build the SQL statement
@@ -119,7 +119,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 				sqlBuf.setLength(sqlBuf.length() - 1);
 
 			sqlBuf.append("))");
-			List uncached = null;
+			List<Applicant> uncached = null;
 			try {
 				prepareStatementWithoutLimits(sqlBuf.toString());
 				uncached = execute();
@@ -164,7 +164,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws IllegalArgumentException if letter isn't a letter according to {@link Character#isLetter(char) }
 	 * @throws NullPointerException if letter is null
 	 */
-	public List getByLetter(String letter) throws DAOException {
+	public List<Applicant> getByLetter(String letter) throws DAOException {
 
 		// Check the letter
 		if (!Character.isLetter(letter.charAt(0)))
@@ -186,7 +186,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @return a List of Applicants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStatus(int status, String orderBy) throws DAOException {
+	public List<Applicant> getByStatus(int status, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM APPLICANTS WHERE (STATUS=?)");
@@ -210,7 +210,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @return a List of Applicants
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByEquipmentType(String eqType) throws DAOException {
+	public List<Applicant> getByEquipmentType(String eqType) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM APPLICANTS WHERE (STATUS=?) AND (EQTYPE=?) ORDER BY LASTNAME");
 			_ps.setInt(1, Applicant.APPROVED);
@@ -229,7 +229,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @return a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection checkUnique(Person p, String dbName) throws DAOException {
+	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
@@ -245,7 +245,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			_ps.setString(4, p.getEmail());
 			
 			// Build result collection
-			Set results = new HashSet();
+			Set<Integer> results = new HashSet<Integer>();
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -269,7 +269,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
     * @param dbName the database name
     * @return a Collection of Database IDs as Integers
     */
-   public Collection checkSoundex(Person usr, String dbName) throws DAOException {
+   public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
       
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
@@ -288,7 +288,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
          ResultSet rs = _ps.executeQuery();
          
          // Iterate through the results
-         Collection results = new ArrayList();
+         Collection<Integer> results = new TreeSet<Integer>();
          while (rs.next())
             results.add(new Integer(rs.getInt(1)));
          
@@ -304,13 +304,13 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	/**
 	 * Helper method to extract data from the result set.
 	 */
-	private List execute() throws SQLException {
+	private List<Applicant> execute() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<Applicant> results = new ArrayList<Applicant>();
 		while (rs.next()) {
 			Applicant a = new Applicant(rs.getString(4), rs.getString(5));
 			a.setID(rs.getInt(1));

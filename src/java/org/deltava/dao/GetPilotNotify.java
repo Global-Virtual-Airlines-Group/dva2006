@@ -50,7 +50,7 @@ public class GetPilotNotify extends PilotReadDAO {
     * @throws DAOException if a JDBC error occurs
     * @throws IllegalArgumentException if notificationType is invalid
     */
-   public List getNotifications(String notificationType) throws DAOException {
+   public List<EMailAddress> getNotifications(String notificationType) throws DAOException {
       
       // Figure out the database field
       String fieldName = "";
@@ -74,7 +74,7 @@ public class GetPilotNotify extends PilotReadDAO {
          _ps.setBoolean(2, true);
          
          // Execute the query
-         List results = new ArrayList();
+         List<EMailAddress> results = new ArrayList<EMailAddress>();
          ResultSet rs = _ps.executeQuery();
          while (rs.next()) {
             EMailAddress email = new EMailNotificationImpl(rs.getString(1), rs.getString(2), rs.getString(3));

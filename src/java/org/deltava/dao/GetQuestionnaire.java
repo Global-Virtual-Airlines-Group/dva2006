@@ -105,7 +105,7 @@ public class GetQuestionnaire extends DAO {
     * @return a List of Examinations
     * @throws DAOException if a JDBC error occurs
     */
-   public List getPending() throws DAOException {
+   public List<Examination> getPending() throws DAOException {
       try {
          prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), A.FIRSTNAME, "
                + "A.LASTNAME FROM APPEXAMS E, APPQUESTIONS Q, APPLICANTS A WHERE (E.ID=Q.EXAM_ID) AND "
@@ -120,14 +120,14 @@ public class GetQuestionnaire extends DAO {
    /**
     * Helper method to iterate through the result set.
     */
-   private List execute() throws SQLException {
+   private List<Examination> execute() throws SQLException {
       
       // Execute the Query
       ResultSet rs = _ps.executeQuery();
       boolean hasName = (rs.getMetaData().getColumnCount() > 10);
       
       // Iterate through the result set
-      List results = new ArrayList();
+      List<Examination> results = new ArrayList<Examination>();
       while (rs.next()) {
          Examination e = new Examination(Examination.QUESTIONNAIRE_NAME);
          e.setID(rs.getInt(1));
