@@ -1,13 +1,13 @@
+// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.sql.Connection;
-import java.util.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 /**
- * Command to display the Staff Roster.
+ * A Web Site Command to display the Staff Roster.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -25,13 +25,9 @@ public class StaffRosterCommand extends AbstractCommand {
         try {
             Connection con = ctx.getConnection();
             
-            // Get the roster
+            // Get the roster and stuff in the request
             GetStaff dao = new GetStaff(con);
-            List results = dao.getStaff();
-
-            // Sort the results and stuff in the request
-            Collections.sort(results);
-            ctx.setAttribute("staffRoster", results, REQUEST);
+            ctx.setAttribute("staffRoster", dao.getStaff(), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

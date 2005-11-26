@@ -59,7 +59,7 @@ public class TransferProcessCommand extends AbstractCommand {
          ctx.setAttribute("currentEQ", currEQ, REQUEST);
          ctx.setAttribute("eqType", newEQ, REQUEST);
          if (txreq.getRatingOnly()) {
-        	 Set eqTypes = new HashSet();
+        	 Collection<EquipmentType> eqTypes = new HashSet<EquipmentType>();
         	 eqTypes.add(currEQ);
         	 ctx.setAttribute("activeEQ", eqTypes, REQUEST);
          } else {
@@ -85,7 +85,7 @@ public class TransferProcessCommand extends AbstractCommand {
          ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
          
          // Determine new equipment ratings if approved
-         Set newRatings = new TreeSet(usr.getRatings());
+         Set<String> newRatings = new TreeSet<String>(usr.getRatings());
          newRatings.addAll(newEQ.getPrimaryRatings());
          newRatings.addAll(newEQ.getSecondaryRatings());
          ctx.setAttribute("newRatings", newRatings, REQUEST);
