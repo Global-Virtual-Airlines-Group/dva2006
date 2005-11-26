@@ -81,7 +81,7 @@ return false;
 </tr>
 <tr>
  <td class="label">Online Event</td>
- <td class="data"><c:if test="${empty events}>NONE</c:if>
+ <td class="data"><c:if test="${empty events}">NONE</c:if>
 <c:if test="${!empty events}"><el:combo name="eventID" idx="*" size="1" options="${events}" value="${param.eventID}" /></c:if></td>
  <td class="label">Flight Date</td>
  <td class="data"><el:text name="flightDate" idx="*" size="8" max="10" value="${param.flightDate}" />
