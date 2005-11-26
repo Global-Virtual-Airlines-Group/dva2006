@@ -147,7 +147,7 @@ abstract class PilotReadDAO extends PilotDAO {
     * @return a Map of Pilots, indexed by the pilot code
     * @throws DAOException if a JDBC error occurs
     */
-   public Map getByID(Collection ids, String tableName) throws DAOException {
+   public Map<Integer, Pilot> getByID(Collection ids, String tableName) throws DAOException {
 
       // Get the datbaase - if we haven't specified one, use the current database
       String dbName = (tableName.indexOf('.') == -1) ? SystemData.get("airline.db") : tableName.substring(0, tableName
