@@ -199,7 +199,7 @@ abstract class PilotReadDAO extends PilotDAO {
             uncached = execute();
 
             // Convert to a map and load ratings/roles
-            Map ucMap = CollectionUtils.createMap(uncached, "ID");
+            Map<Integer, Pilot> ucMap = CollectionUtils.createMap(uncached, "ID");
             loadRatings(ucMap, dbName);
             loadRoles(ucMap, dbName);
          } catch (SQLException se) {
