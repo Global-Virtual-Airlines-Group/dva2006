@@ -32,7 +32,7 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * Creates a pre-populaed NavigationDataMap bean.
     * @param entries the navigation aid beans to add
     */
-   public NavigationDataMap(Collection entries) {
+   public NavigationDataMap(Collection<NavigationDataBean> entries) {
 	   this();
 	   addAll(entries);
    }
@@ -59,9 +59,9 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * Adds a number of navigation aids to the map.
     * @param beans a Collection of NavigationDataBeans
     */
-   public void addAll(Collection beans) {
-      for (Iterator i = beans.iterator(); i.hasNext(); )
-         add((NavigationDataBean) i.next());
+   public void addAll(Collection<NavigationDataBean> beans) {
+      for (Iterator<NavigationDataBean> i = beans.iterator(); i.hasNext(); )
+         add(i.next());
    }
    
    /**

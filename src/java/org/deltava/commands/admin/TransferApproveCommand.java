@@ -67,8 +67,8 @@ public class TransferApproveCommand extends AbstractCommand {
 			EquipmentType currentEQ = eqdao.get(usr.getEquipmentType());
 			
 			// Get the new ratings
-			List updates = new ArrayList();
-			Set newRatings = new TreeSet(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"),
+			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
+			Set<String> newRatings = new TreeSet<String>(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"),
 					usr.getRatings()));
 
 			// Check if we're switching programs
