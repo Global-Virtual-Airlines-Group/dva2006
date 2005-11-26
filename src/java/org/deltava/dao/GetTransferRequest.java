@@ -36,8 +36,8 @@ public class GetTransferRequest extends DAO {
          _ps.setInt(1, pilotID);
          
          // Execute the query, if empty return null
-         List results = execute();
-         return results.isEmpty() ? null : (TransferRequest) results.get(0);
+         List<TransferRequest> results = execute();
+         return results.isEmpty() ? null : results.get(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -56,8 +56,8 @@ public class GetTransferRequest extends DAO {
          _ps.setInt(1, checkRideID);
 
          // Execute the query, if empty return null
-         List results = execute();
-         return results.isEmpty() ? null : (TransferRequest) results.get(0);
+         List<TransferRequest> results = execute();
+         return results.isEmpty() ? null : results.get(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
@@ -68,7 +68,7 @@ public class GetTransferRequest extends DAO {
     * @return a List of TransferRequest beans
     * @throws DAOException if a JDBC error occurs
     */
-   public List getAll() throws DAOException {
+   public List<TransferRequest> getAll() throws DAOException {
       try {
          prepareStatement("SELECT * FROM TXREQUESTS ORDER BY CREATED");
          return execute();
@@ -80,13 +80,13 @@ public class GetTransferRequest extends DAO {
    /**
     * Helper method to iterate through the result set.
     */
-   private List execute() throws SQLException {
+   private List<TransferRequest> execute() throws SQLException {
       
       // Execute the query
       ResultSet rs = _ps.executeQuery();
       
       // Iterate through the result set
-      List results = new ArrayList();
+      List<TransferRequest> results = new ArrayList<TransferRequest>();
       while (rs.next()) {
          TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(4));
          txreq.setStatus(rs.getInt(2));

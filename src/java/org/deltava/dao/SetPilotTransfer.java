@@ -53,8 +53,8 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setString(9, p.getHomeAirport());
 			_ps.setString(10, p.getEquipmentType());
 			_ps.setString(11, p.getRank());
-			_ps.setString(12, (String) p.getNetworkIDs().get("VATSIM"));
-			_ps.setString(13, (String) p.getNetworkIDs().get("IVAO"));
+			_ps.setString(12, p.getNetworkIDs().get("VATSIM"));
+			_ps.setString(13, p.getNetworkIDs().get("IVAO"));
 			_ps.setTimestamp(14, createTimestamp(p.getCreatedOn()));
 			_ps.setInt(15, p.getLoginCount());
 			_ps.setTimestamp(16, createTimestamp(p.getLastLogin()));

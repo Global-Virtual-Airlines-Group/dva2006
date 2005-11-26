@@ -32,7 +32,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThread beans
     * @throws DAOException if a JDBC error occurs
     */
-   public List getByChannel(String channelName, boolean showImgs) throws DAOException {
+   public List<MessageThread> getByChannel(String channelName, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
@@ -57,7 +57,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThread beans
     * @throws DAOException if a JDBC error occurs
     */
-   public List getByAuthor(int userID, boolean showImgs) throws DAOException {
+   public List<MessageThread> getByAuthor(int userID, boolean showImgs) throws DAOException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
@@ -81,7 +81,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThread beans
     * @throws DAOException if a JDBC error occurs
     */
-   public List getByNotification(int userID) throws DAOException {
+   public List<MessageThread> getByNotification(int userID) throws DAOException {
       try {
          prepareStatement("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
         		 + "T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T, common.COOLER_NOTIFY N WHERE "
@@ -99,7 +99,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThreads
     * @throws DAOException if a JDBC error occurs
     */
-   public List getAll(boolean showImgs) throws DAOException {
+   public List<MessageThread> getAll(boolean showImgs) throws DAOException {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
@@ -124,7 +124,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThreads
     * @throws DAOException if a JDBC error occurs
     */
-   public List getSince(java.util.Date sd, boolean showImgs) throws DAOException {
+   public List<MessageThread> getSince(java.util.Date sd, boolean showImgs) throws DAOException {
       if (sd == null)
          return getAll(showImgs);
 
@@ -239,7 +239,7 @@ public class GetCoolerThreads extends DAO {
     * @return a List of MessageThreads
     * @throws DAOException if a JDBC error occurs
     */
-   public List search(SearchCriteria criteria) throws DAOException {
+   public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
@@ -276,8 +276,8 @@ public class GetCoolerThreads extends DAO {
    /**
     * Helper method to load result rows.
     */
-   private List execute() throws SQLException {
-      List results = new ArrayList();
+   private List<MessageThread> execute() throws SQLException {
+      List<MessageThread> results = new ArrayList<MessageThread>();
 
       // Execute the query
       ResultSet rs = _ps.executeQuery();

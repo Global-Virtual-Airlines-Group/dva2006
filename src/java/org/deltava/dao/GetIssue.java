@@ -57,7 +57,7 @@ public class GetIssue extends DAO {
 	 * @return a List of Issues
 	 * @throws DAOException the a JDBC error occurs
 	 */
-	public List getAll(String sortBy) throws DAOException {
+	public List<Issue> getAll(String sortBy) throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC  FROM common.ISSUES I "
 			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) GROUP BY I.ID ORDER BY " + sortBy);
@@ -73,7 +73,7 @@ public class GetIssue extends DAO {
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getUserIssues(int id) throws DAOException {
+	public List<Issue> getUserIssues(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
 			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
@@ -92,7 +92,7 @@ public class GetIssue extends DAO {
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStatus(int status) throws DAOException {
+	public List<Issue> getByStatus(int status) throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
 			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) GROUP BY I.ID");
@@ -110,7 +110,7 @@ public class GetIssue extends DAO {
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List search(String searchStr, boolean includeComments) throws DAOException {
+	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
@@ -158,14 +158,13 @@ public class GetIssue extends DAO {
 		_ps.close();
 	}
 	
-	private List execute() throws SQLException {
-
-		List results = new ArrayList();
+	private List<Issue> execute() throws SQLException {
 		
 		// Execute the result
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		
+
+		List<Issue> results = new ArrayList<Issue>();
 		while (rs.next()) {
 			Issue i = new Issue(rs.getInt(1), rs.getString(6));
 			i.setCreatedBy(rs.getInt(2));

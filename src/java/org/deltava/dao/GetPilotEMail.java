@@ -84,10 +84,10 @@ public class GetPilotEMail extends DAO {
    /**
     * Helper method to load EMail information.
     */
-   private List execute() throws SQLException {
+   private List<EMailConfiguration> execute() throws SQLException {
       
       // Execute the Query
-      Map results = new HashMap();
+      Map<String, EMailConfiguration> results = new HashMap<String, EMailConfiguration>();
       ResultSet rs = _ps.executeQuery();
       while (rs.next()) {
          EMailConfiguration result = new EMailConfiguration(rs.getInt(1), rs.getString(2));
@@ -106,7 +106,7 @@ public class GetPilotEMail extends DAO {
 
       // If we've retrieved nothing, exit
       if (results.isEmpty())
-         return Collections.EMPTY_LIST;
+    	  new ArrayList<EMailConfiguration>();
 
       // Build SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
@@ -121,7 +121,7 @@ public class GetPilotEMail extends DAO {
       prepareStatementWithoutLimits(sqlBuf.toString());
       rs = _ps.executeQuery();
       while (rs.next()) {
-         EMailConfiguration cfg = (EMailConfiguration) results.get(rs.getString(1));
+         EMailConfiguration cfg = results.get(rs.getString(1));
          if (cfg != null)
             cfg.addAlias(rs.getString(2));
       }
@@ -129,6 +129,6 @@ public class GetPilotEMail extends DAO {
       // Clean up and return
       rs.close();
       _ps.close();
-      return new ArrayList(results.values());
+      return new ArrayList<EMailConfiguration>(results.values());
    }
 }

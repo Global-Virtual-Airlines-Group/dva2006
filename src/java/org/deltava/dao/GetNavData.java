@@ -107,7 +107,7 @@ public class GetNavData extends DAO {
 	 * @return a NavigationDataMap bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public NavigationDataMap getByID(Collection ids) throws DAOException {
+	public NavigationDataMap getByID(Collection<String> ids) throws DAOException {
 
 		// Check for empty id set
 		if (ids.isEmpty())
@@ -120,8 +120,8 @@ public class GetNavData extends DAO {
 
 		// Build the SQL Statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.NAVDATA WHERE CODE IN (");
-		for (Iterator i = ids.iterator(); i.hasNext();) {
-			String code = ((String) i.next()).toUpperCase();
+		for (Iterator<String> i = ids.iterator(); i.hasNext();) {
+			String code = i.next().toUpperCase();
 			sqlBuf.append('\'');
 			sqlBuf.append(code);
 			sqlBuf.append("\',");
@@ -219,13 +219,13 @@ public class GetNavData extends DAO {
 	/**
 	 * Helper method to iterate through a NAVDATA result set.
 	 */
-	private List execute() throws SQLException {
+	private List<NavigationDataBean> execute() throws SQLException {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<NavigationDataBean> results = new ArrayList<NavigationDataBean>();
 		while (rs.next()) {
 			NavigationDataBean obj = null;
 			switch (rs.getInt(1)) {

@@ -52,7 +52,7 @@ public class GetEquipmentType extends DAO {
      * @return a List of EquipmentTypes
      * @throws DAOException if a JDBC error occurs
      */
-    public Collection getByStage(int stage) throws DAOException {
+    public Collection<EquipmentType> getByStage(int stage) throws DAOException {
         try {
             prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, " +
                     "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND " +
@@ -73,7 +73,7 @@ public class GetEquipmentType extends DAO {
      * @throws DAOException if a JDBC error occurs
      * @see GetEquipmentType#getActive()
      */
-    public Collection getActive(String dbName) throws DAOException {
+    public Collection<EquipmentType> getActive(String dbName) throws DAOException {
        
        // Build the SQL statement
        StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
@@ -101,7 +101,7 @@ public class GetEquipmentType extends DAO {
      * @throws DAOException if a JDBC error occurs
      * @see GetEquipmentType#getActive(String)
      */
-    public Collection getActive() throws DAOException {
+    public Collection<EquipmentType> getActive() throws DAOException {
        return getActive(SystemData.get("airline.db"));
     }
     
@@ -110,7 +110,7 @@ public class GetEquipmentType extends DAO {
      * @return a List of EquipmentTypes
      * @throws DAOException if a JDBC error occurs
      */
-    public List getAll() throws DAOException {
+    public List<EquipmentType> getAll() throws DAOException {
         try {
             prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, " +
                     "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND " +
@@ -160,13 +160,13 @@ public class GetEquipmentType extends DAO {
     /**
      * Helper method to iterate through the result set.
      */
-    private List execute() throws SQLException {
+    private List<EquipmentType> execute() throws SQLException {
 
        // Execute the query
         ResultSet rs = _ps.executeQuery();
 
         // Iterate through the results
-        List results = new ArrayList();
+        List<EquipmentType> results = new ArrayList<EquipmentType>();
         EquipmentType eq = new EquipmentType("");
         while (rs.next()) {
             String eqName = rs.getString(1);

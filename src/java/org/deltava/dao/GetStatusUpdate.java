@@ -30,7 +30,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans, sorted by descending date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByUser(int id) throws DAOException {
+	public List<StatusUpdate> getByUser(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P "
 					+ "WHERE (SU.PILOT_ID=?) AND (P.ID=SU.AUTHOR_ID) ORDER BY SU.CREATED DESC");
@@ -47,7 +47,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans, sorted by descending date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByStaffMember(int id) throws DAOException {
+	public List<StatusUpdate> getByStaffMember(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P "
 					+ "WHERE (SU.AUTHOR_ID=?) AND (P.ID=SU.PILOT_ID) ORDER BY SU.CREATED DESC");
@@ -65,7 +65,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans, sorted by descending date 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByDate(java.util.Date sd, java.util.Date ed) throws DAOException {
+	public List<StatusUpdate> getByDate(java.util.Date sd, java.util.Date ed) throws DAOException {
 		try {
 			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P WHERE "
 					+ "(SU.PILOT_ID=P.ID) AND (SU.CREATED >= ?) AND (SU.CREATED <= ?) ORDER BY SU.CREATED DESC");
@@ -83,7 +83,7 @@ public class GetStatusUpdate extends DAO {
 	 * @return a List of StatusUpdate beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByType(int updateType) throws DAOException {
+	public List<StatusUpdate> getByType(int updateType) throws DAOException {
 		try {
 			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P WHERE"
 					+ "(SU.PILOT_ID=P.ID) AND (SU.TYPE=?) ORDER BY SU.CREATED DESC");
@@ -97,9 +97,9 @@ public class GetStatusUpdate extends DAO {
 	/**
 	 * Private helper method to load data from the table.
 	 */
-	private List execute() throws SQLException {
+	private List<StatusUpdate> execute() throws SQLException {
 		
-		List results = new ArrayList();
+		List<StatusUpdate> results = new ArrayList<StatusUpdate>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));

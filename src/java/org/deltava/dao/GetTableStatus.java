@@ -26,13 +26,13 @@ public class GetTableStatus extends DAO {
      * @return a List of TableInfo beans
      * @throws DAOException if a JDBC error occurs
      */
-    public List execute(String dbName) throws DAOException {
+    public List<TableInfo> execute(String dbName) throws DAOException {
        
         try {
             prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + dbName);
             
             // Execute the query
-            List results = new ArrayList();
+            List<TableInfo> results = new ArrayList<TableInfo>();
             ResultSet rs = _ps.executeQuery();
             
             // Iterate through the results
@@ -41,7 +41,6 @@ public class GetTableStatus extends DAO {
                 info.setRows(rs.getInt(5));
                 info.setSize(rs.getLong(7));
                 info.setIndexSize(rs.getLong(9));
-                
                 results.add(info);
             }
             

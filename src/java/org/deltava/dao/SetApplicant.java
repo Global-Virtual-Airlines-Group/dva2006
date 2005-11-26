@@ -88,8 +88,8 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(4, a.getEmail());
 			_ps.setString(5, a.getLocation());
 			_ps.setString(6, a.getIMHandle());
-			_ps.setString(7, (String) a.getNetworkIDs().get("VATSIM"));
-			_ps.setString(8, (String) a.getNetworkIDs().get("IVAO"));
+			_ps.setString(7, a.getNetworkIDs().get("VATSIM"));
+			_ps.setString(8, a.getNetworkIDs().get("IVAO"));
 			_ps.setDouble(9, a.getLegacyHours());
 			_ps.setString(10, a.getLegacyURL());
 			_ps.setBoolean(11, a.getLegacyVerified());
