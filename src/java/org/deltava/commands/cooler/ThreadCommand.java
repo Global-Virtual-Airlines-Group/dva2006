@@ -93,20 +93,20 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors and online totals for the last post in each channel
-			Map users = new HashMap();
+			Map<Integer, Person> users = new HashMap<Integer, Person>();
 			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
 			GetFlightReports prdao = new GetFlightReports(con);
-			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
-				String dbTableName = (String) i.next();
+			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
+				String dbTableName = i.next();
 
 				// Get the pilots/applicants from each table and apply their online totals
 				if (UserDataMap.isPilotTable(dbTableName)) {
-					Map pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
+					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
 					users.putAll(pilots);
 				} else {
-					Map applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
+					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
 				}
 			}

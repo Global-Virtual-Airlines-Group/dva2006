@@ -4,6 +4,8 @@ package org.deltava.commands.admin;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -46,7 +48,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
       String fName2 = buildParameter(ctx.getParameter("firstName2"), exactMatch);
       String lName2 = buildParameter(ctx.getParameter("lastName2"), exactMatch);
 
-      Collection results = null;
+      Collection<Pilot> results = null;
       try {
          Connection con = ctx.getConnection();
          
@@ -70,7 +72,6 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
          
          // Save the results in the request
          ctx.setAttribute("results", results, REQUEST);
-
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
