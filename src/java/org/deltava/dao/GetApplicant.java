@@ -86,7 +86,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @return a Map of Applicants, indexed by the pilot code
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getByID(Collection ids, String tableName) throws DAOException {
+	public Map<Integer, Applicant> getByID(Collection ids, String tableName) throws DAOException {
 		
 		List<Applicant> results = new ArrayList<Applicant>();
 		log.debug("Raw set size = " + ids.size());

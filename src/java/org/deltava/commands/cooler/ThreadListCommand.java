@@ -80,10 +80,10 @@ public class ThreadListCommand extends AbstractViewCommand {
             ctx.setAttribute("channelName", "All Discussions", REQUEST);
 
          // Get either by channel or all; now filter by role
-         Set pilotIDs = new HashSet();
-         List threads = (ch == null) ? dao2.getAll(showImgThreads) : dao2.getByChannel(cName, showImgThreads);
-         for (Iterator i = threads.iterator(); i.hasNext();) {
-            MessageThread thread = (MessageThread) i.next();
+         Set<Integer> pilotIDs = new HashSet<Integer>();
+         List<MessageThread> threads = (ch == null) ? dao2.getAll(showImgThreads) : dao2.getByChannel(cName, showImgThreads);
+         for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+            MessageThread thread = i.next();
 
             // Get this thread's channel and see if we can read it
             Channel c = dao.get(thread.getChannel());
@@ -104,11 +104,11 @@ public class ThreadListCommand extends AbstractViewCommand {
          ctx.setAttribute("userData", udm, REQUEST);
 
          // Get the authors for the last post in each channel
-         Map authors = new HashMap();
+         Map<Integer, Person> authors = new HashMap<Integer, Person>();
          GetPilot pdao = new GetPilot(con);
          GetApplicant adao = new GetApplicant(con);
-         for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
-            String tableName = (String) i.next();
+         for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
+            String tableName = i.next();
             if (tableName.endsWith("APPLICANTS")) {
                authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
             } else {

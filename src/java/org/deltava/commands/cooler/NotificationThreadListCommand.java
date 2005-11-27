@@ -63,10 +63,10 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 
 			// Get either by channel or all; now filter by role
-			Set pilotIDs = new HashSet();
-			List threads = tdao.getByNotification(ctx.getUser().getID());
-			for (Iterator i = threads.iterator(); i.hasNext();) {
-				MessageThread thread = (MessageThread) i.next();
+			Set<Integer> pilotIDs = new HashSet<Integer>();
+			List<MessageThread> threads = tdao.getByNotification(ctx.getUser().getID());
+			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
+				MessageThread thread = i.next();
 
 				// Get this thread's channel and see if we can read it
 				Channel c = dao.get(thread.getChannel());
@@ -87,10 +87,10 @@ public class NotificationThreadListCommand extends AbstractViewCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel
-			Map authors = new HashMap();
+			Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
-				String tableName = (String) i.next();
+			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
+				String tableName = i.next();
 				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 
