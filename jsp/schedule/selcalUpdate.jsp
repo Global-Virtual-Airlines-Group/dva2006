@@ -37,6 +37,8 @@ been released for use by other <content:airline /> pilots.<br />
 </c:when>
 </c:choose>
 <br />
+To return to the list of available SELCAL codes, <el:cmd url="selcals" className="sec bld">Click Here</el:cmd>.<br />
+<br />
 <content:copyright />
 </content:region>
 </content:page>
