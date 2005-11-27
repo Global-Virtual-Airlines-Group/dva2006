@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -5,7 +6,8 @@ import java.util.*;
 
 import org.deltava.commands.*;
 
-import org.deltava.beans.cooler.Message;
+import org.deltava.beans.Pilot;
+import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
 
 import org.deltava.dao.GetCoolerChannels;
@@ -38,7 +40,7 @@ public class ChannelListCommand extends AbstractCommand {
 			
 			// Get the channels for the user's role
 			GetCoolerChannels dao = new GetCoolerChannels(con);
-			List channels = dao.getChannels(airline, ctx.getRoles());
+			List<Channel> channels = dao.getChannels(airline, ctx.getRoles());
 			channels.remove(0);
 			ctx.setAttribute("channels", channels, REQUEST);
 			
@@ -59,7 +61,7 @@ public class ChannelListCommand extends AbstractCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel
-			Map authors = new HashMap();
+			Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();

@@ -4,6 +4,7 @@ package org.deltava.commands.cooler;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Person;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.UserDataMap;
 import org.deltava.commands.*;
@@ -67,7 +68,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 			
 			// Get the DAO and search
-			List threads = null;
+			List<MessageThread> threads = null;
 			synchronized (CoolerSearchCommand.class) {
 				GetCoolerThreads dao = new GetCoolerThreads(con);
 				dao.setQueryStart(vc.getStart());
@@ -99,10 +100,10 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel
-			Map authors = new HashMap();
+			Map<Integer, Person> authors = new HashMap<Integer, Person>();
 			GetApplicant adao = new GetApplicant(con);
-			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
-				String tableName = (String) i.next();
+			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
+				String tableName = i.next();
 				if (tableName.endsWith("APPLICANTS")) {
 					authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
 				} else {

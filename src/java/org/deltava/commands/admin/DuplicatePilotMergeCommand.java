@@ -31,7 +31,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the pilot IDs to merge
-      Collection ids = new HashSet();
+      Collection<Integer> ids = new HashSet<Integer>();
       String[] mergeIDs = ctx.getRequest().getParameterValues("sourceID");
       for (int x = 0; x < mergeIDs.length; x++)
          ids.add(new Integer(StringUtils.parseHex(mergeIDs[x])));
@@ -41,7 +41,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
          
          // Get the DAO and the pilots
          GetPilot dao = new GetPilot(con);
-         Collection src = dao.getByID(ids, "PILOTS").values();
+         Collection<Pilot> src = dao.getByID(ids, "PILOTS").values();
          Pilot usr = dao.get(ctx.getID());
          if (usr == null)
             throw new CommandException("Invalid User - " + ctx.getID());
@@ -63,10 +63,10 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
          ctx.startTX();
          
          // Iterate through the Pilots
-         Collection sUpdates = new ArrayList();
+         Collection<StatusUpdate> sUpdates = new ArrayList<StatusUpdate>();
          SetPilotMerge mgdao = new SetPilotMerge(con);
-         for (Iterator i = src.iterator(); i.hasNext(); ) {
-            Pilot p = (Pilot) i.next();
+         for (Iterator<Pilot> i = src.iterator(); i.hasNext(); ) {
+            Pilot p = i.next();
             
             // Create a status update
             StatusUpdate su = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);

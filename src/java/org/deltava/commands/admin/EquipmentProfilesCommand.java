@@ -4,12 +4,9 @@ package org.deltava.commands.admin;
 import java.sql.Connection;
 import java.util.List;
 
-import org.deltava.beans.Ranks;
+import org.deltava.beans.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetEquipmentType;
-import org.deltava.dao.DAOException;
-import org.deltava.dao.GetPilot;
+import org.deltava.dao.*;
 
 import org.deltava.util.CollectionUtils;
 
@@ -42,7 +39,7 @@ public class EquipmentProfilesCommand extends AbstractCommand {
 			
 			// Get all of the Chief Pilots
 			GetPilot pdao = new GetPilot(con);
-			List pilots = pdao.getPilotsByRank(Ranks.RANK_CP);
+			List<Pilot> pilots = pdao.getPilotsByRank(Ranks.RANK_CP);
 			ctx.setAttribute("chiefPilots", CollectionUtils.createMap(pilots, "ID"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
