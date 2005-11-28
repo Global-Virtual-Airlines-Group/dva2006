@@ -107,7 +107,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 		}
 		
 		// Save airports in the request
-		Map<String, Airport> aMap = (Map) SystemData.getObject("airports");
+		Map<String, Airport> aMap = SystemData.getAirports();
 		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		airports.addAll(aMap.values());
 		ctx.setAttribute("airports", airports, REQUEST);

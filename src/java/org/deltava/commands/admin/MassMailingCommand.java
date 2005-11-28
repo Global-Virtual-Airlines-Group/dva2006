@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
+import org.deltava.beans.EMailAddress;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -37,7 +38,7 @@ public class MassMailingCommand extends AbstractCommand {
 
 		// If we're just executing the command and not in the HR role, get our equipment type and return
 		if ((eqType == null) && (!ctx.getRequest().isUserInRole("HR"))) {
-			Collection eqTypes = new HashSet();
+			Collection<String> eqTypes = new HashSet<String>();
 			eqTypes.add(ctx.getUser().getEquipmentType());
 			ctx.setAttribute("eqTypes", eqTypes, REQUEST);
 			result.setURL("/jsp/admin/massMail.jsp");
@@ -53,14 +54,14 @@ public class MassMailingCommand extends AbstractCommand {
 		// Check if we're sending to a role
 		boolean isRole = (eqType != null) && (eqType.startsWith("$role_"));
 		
-		List pilots = Collections.EMPTY_LIST;
-		Collection eqTypes = null;
+		List<? extends EMailAddress> pilots = new ArrayList<EMailAddress>();
+		Collection<Object> eqTypes = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get a list of equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			eqTypes = eqdao.getActive();
+			eqTypes = new ArrayList<Object>(eqdao.getActive());
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

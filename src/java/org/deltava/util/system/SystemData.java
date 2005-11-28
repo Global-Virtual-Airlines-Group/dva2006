@@ -185,6 +185,7 @@ public class SystemData implements Serializable {
 	 * @param airportCode the Airport code (IATA or ICAO)
 	 * @return the Airport bean, or null if not found
 	 * @throws IllegalStateException if the &quot;airports&quot; property has not been added
+	 * @see SystemData#getAirports()
 	 */
 	public static Airport getAirport(String airportCode) {
 		if (airportCode == null)
@@ -195,6 +196,16 @@ public class SystemData implements Serializable {
 
 		Map airports = (Map) _properties.get("airports");
 		return (Airport) airports.get(airportCode.toUpperCase());
+	}
+	
+	/**
+	 * Returns all Airports.
+	 * @return a Map of Airports, indexed by ICAO/IATA code.
+	 * @see SystemData#getAirport(String)
+	 */
+	@SuppressWarnings("unchecked")
+	public static Map<String, Airport> getAirports() {
+		return (Map) _properties.get("airports");
 	}
 
 	/**
