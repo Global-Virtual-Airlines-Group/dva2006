@@ -170,7 +170,7 @@ public class TestFlightReport extends AbstractBeanTestCase {
     public void testPromoEQ() {
        assertNotNull(_fr.getCaptEQType());
        
-       Set eqTypes = new HashSet();
+       Set<String> eqTypes = new HashSet<String>();
        eqTypes.add("B757-200");
        eqTypes.add("B767-300");
        _fr.setCaptEQType(eqTypes);

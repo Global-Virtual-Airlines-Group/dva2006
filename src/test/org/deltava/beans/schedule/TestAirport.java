@@ -87,7 +87,7 @@ public class TestAirport extends TestCase {
 	    assertTrue(_a.hasAirlineCode("DAL"));
 	    assertTrue(_a.hasAirlineCode("AF"));
 	    
-	    Set aCodes = new HashSet();
+	    Set<String> aCodes = new HashSet<String>();
 	    aCodes.add("NWA");
 	    aCodes.add("coa");
 	    _a.setAirlines(aCodes);

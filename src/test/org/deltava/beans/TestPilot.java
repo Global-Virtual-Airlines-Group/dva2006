@@ -85,7 +85,7 @@ public class TestPilot extends AbstractBeanTestCase {
         } catch (NullPointerException npe) { }
         
         // Test removal
-        ArrayList allRatings = new ArrayList(_p.getRatings());
+        ArrayList<String> allRatings = new ArrayList<String>(_p.getRatings());
         _p.removeRatings(allRatings);
         assertNotNull(_p.getRatings());
         assertEquals(0, _p.getRatings().size());
@@ -123,7 +123,7 @@ public class TestPilot extends AbstractBeanTestCase {
         assertTrue(_p.getRoles().contains("Admin"));
         assertTrue(_p.isInRole("ANYROLE"));
         
-        Set rNames = new HashSet();
+        Set<String> rNames = new HashSet<String>();
         rNames.add("Role2");
         rNames.add("Role3");
         rNames.add("Pilot");

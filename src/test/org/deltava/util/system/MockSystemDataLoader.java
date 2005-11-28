@@ -10,8 +10,8 @@ public class MockSystemDataLoader implements SystemDataLoader {
         super();
     }
     
-    public Map load() {
-        Map results = new HashMap();
+    public Map<String, Object> load() {
+        Map<String, Object> results = new HashMap<String, Object>();
         results.put(SystemData.LOADER_NAME, getClass().getName());
         results.put(SystemData.CFG_NAME, "test");
         results.put("stringVar", "STRING");

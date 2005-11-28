@@ -30,7 +30,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
         _tag.setMultiple(true);
         _tag.setOnChange("return true;");
         
-        List options = new ArrayList();
+        List<String> options = new ArrayList<String>();
         options.add("OPT1");
         options.add("OPT2");
         _tag.setOptions(options);
@@ -102,7 +102,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
     public void testComboAlias() throws Exception {
         _tag.setName("COMBO");
         
-        List options = new ArrayList();
+        List<Airport> options = new ArrayList<Airport>();
         options.add(new Airport("ATL", "KATL", "Atlanta GA"));
         options.add(new Airport("CLT", "KCLT", "Charlotte NC"));
         _tag.setOptions(options);

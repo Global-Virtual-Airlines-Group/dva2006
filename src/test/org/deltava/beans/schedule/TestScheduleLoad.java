@@ -17,9 +17,9 @@ public class TestScheduleLoad extends TestCase {
    
    private Logger log = Logger.getLogger(TestScheduleLoad.class);
    
-   private static Map _apMap = new HashMap();
-   private static Map _alMap = new TreeMap();
-   private static Set _airports;
+   private static Map<String, Airport> _apMap = new HashMap<String, Airport>();
+   private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();
+   private static Set<Airport> _airports;
 
    protected void setUp() throws Exception {
       super.setUp();
@@ -51,7 +51,7 @@ public class TestScheduleLoad extends TestCase {
          lr.close();
          
          // Create an airport set
-         _airports = new TreeSet(new AirportComparator(AirportComparator.IATA));
+         _airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.IATA));
          _airports.addAll(_apMap.values());
          log.info("Loaded " + _airports.size() + " airports");
       }
@@ -75,15 +75,15 @@ public class TestScheduleLoad extends TestCase {
       }
    }
    
-   private List loadScheduleCSV(String fName) throws IOException {
-      List results = new LinkedList();
+   private List<List<String>> loadScheduleCSV(String fName) throws IOException {
+      List<List<String>> results = new LinkedList<List<String>>();
       LineNumberReader lr = new LineNumberReader(new FileReader("data/" + fName), 65536);
       while (lr.ready()) {
          StringTokenizer tkns = new StringTokenizer(lr.readLine(), ",");
          if (tkns.countTokens() < 9) {
             log.warn("Invalid Token Count on Line " + lr.getLineNumber() + ", count = " + tkns.countTokens() + ", expected = 9");
          } else {
-            List entry = new ArrayList();
+            List<String> entry = new ArrayList<String>();
             while (tkns.hasMoreTokens())
                entry.add(tkns.nextToken());
             
@@ -125,19 +125,19 @@ public class TestScheduleLoad extends TestCase {
    }
    
    public void testTimes() throws IOException, ParseException {
-      List sched = loadScheduleCSV("afv_schedule.csv");
+      List<List<String>> sched = loadScheduleCSV("afv_schedule.csv");
       DateFormat df = new SimpleDateFormat("hh:mm aa");
-      for (Iterator i = sched.iterator(); i.hasNext(); ) {
-         List l = (List) i.next();
+      for (Iterator<List<String>> i = sched.iterator(); i.hasNext(); ) {
+         List<String> l = i.next();
          assertEquals(9, l.size());
-         String[] entry = (String[]) l.toArray(new String[0]);
+         String[] entry = l.toArray(new String[0]);
          
          // Load the schedule entry
-         ScheduleEntry se = new ScheduleEntry((Airline) _alMap.get(entry[0]), Integer.parseInt(entry[1]), Integer.parseInt(entry[2]));
+         ScheduleEntry se = new ScheduleEntry(_alMap.get(entry[0]), Integer.parseInt(entry[1]), Integer.parseInt(entry[2]));
          se.setEquipmentType(entry[3]);
-         se.setAirportD((Airport) _apMap.get(entry[4]));
+         se.setAirportD( _apMap.get(entry[4]));
          se.setTimeD(df.parse(entry[5]));
-         se.setAirportA((Airport) _apMap.get(entry[6]));
+         se.setAirportA(_apMap.get(entry[6]));
          se.setTimeA(df.parse(entry[7]));
          
          // Compare the times

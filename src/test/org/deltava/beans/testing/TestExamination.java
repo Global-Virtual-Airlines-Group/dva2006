@@ -56,7 +56,7 @@ public class TestExamination extends AbstractBeanTestCase {
         _exam.addQuestion(q2);
         _exam.addQuestion(q4);
         
-        List qs = new ArrayList(_exam.getQuestions());
+        List qs = new ArrayList<Question>(_exam.getQuestions());
         assertEquals(3, qs.size());
         assertEquals(qs.size(), _exam.getSize());
         

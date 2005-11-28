@@ -11,14 +11,14 @@ import javax.servlet.jsp.el.*;
 
 public class MockPageContext extends PageContext {
 
-    private Map _attrs;
+    private Map<String, Object> _attrs;
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;
     private JspWriter _out;
 
     public MockPageContext(JspWriter jspOut) {
         super();
-        _attrs = new HashMap();
+        _attrs = new HashMap<String, Object>();
         _out = jspOut;
     }
 

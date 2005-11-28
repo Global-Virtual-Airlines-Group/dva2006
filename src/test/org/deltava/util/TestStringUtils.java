@@ -33,7 +33,7 @@ public class TestStringUtils extends TestCase {
     }
     
     public void testListConcat() {
-    	ArrayList l = new ArrayList();
+    	ArrayList<String> l = new ArrayList<String>();
     	l.add("A");
     	l.add("B");
     	l.add("CD");

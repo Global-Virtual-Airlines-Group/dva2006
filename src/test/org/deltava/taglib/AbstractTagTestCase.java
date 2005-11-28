@@ -33,8 +33,8 @@ public class AbstractTagTestCase extends TestCase {
    // Quick helper class since ServletUnit does not support getParameterMap()
    protected class HttpServletRequestSimulatorHelper extends HttpServletRequestSimulator {
 
-      public Map getParameterMap() {
-         Map results = new HashMap();
+      public Map<String, String[]> getParameterMap() {
+         Map<String, String[]> results = new HashMap<String, String[]>();
          Enumeration pNames = getParameterNames();
          while (pNames.hasMoreElements()) {
             String pName = (String) pNames.nextElement();

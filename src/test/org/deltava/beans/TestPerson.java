@@ -19,7 +19,7 @@ public class TestPerson extends AbstractBeanTestCase {
     // which is required to be called
     private class MockPerson extends Person {
 
-        private List _roles = new ArrayList();
+        private List<String> _roles = new ArrayList<String>();
         
         MockPerson(String fName, String lName) {
             super(fName, lName);
@@ -33,7 +33,7 @@ public class TestPerson extends AbstractBeanTestCase {
             _roles.add(roleName);
         }
         
-        public Collection getRoles() {
+        public Collection<String> getRoles() {
             return _roles;
         }
         
@@ -98,7 +98,7 @@ public class TestPerson extends AbstractBeanTestCase {
         _p.addRole("TESTROLE");
         assertEquals(1, _p.getRoles().size());
         assertTrue(_p.isInRole("TESTROLE"));
-        List roles = new ArrayList(_p.getRoles());
+        List<String> roles = new ArrayList<String>(_p.getRoles());
         assertEquals("TESTROLE", roles.get(0));
     }
     

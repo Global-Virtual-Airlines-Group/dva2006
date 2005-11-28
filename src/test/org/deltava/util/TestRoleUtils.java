@@ -9,6 +9,8 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 
 public class TestRoleUtils extends TestCase {
+	
+	private static List<String> EMPTY = new ArrayList<String>();
 
    public static Test suite() {
       return new CoverageDecorator(TestRoleUtils.class, new Class[] { RoleUtils.class } );
@@ -17,12 +19,12 @@ public class TestRoleUtils extends TestCase {
    public void testAccess() {
       
       // Initialize roles
-      List adminUserRoles = Arrays.asList(new String[] {"Admin", "HR", "Fleet"});
-      List userRoles = Arrays.asList(new String[] {"HR", "Fleet"});
+      List<String> adminUserRoles = Arrays.asList(new String[] {"Admin", "HR", "Fleet"});
+      List<String> userRoles = Arrays.asList(new String[] {"HR", "Fleet"});
       
-      List r1Roles = Arrays.asList(new String[] {"Fleet", "PIREP" });
-      List r2Roles = Arrays.asList(new String[] {"PIREP" });
-      List r3Roles = Arrays.asList(new String[] {"*"});
+      List<String> r1Roles = Arrays.asList(new String[] {"Fleet", "PIREP" });
+      List<String> r2Roles = Arrays.asList(new String[] {"PIREP" });
+      List<String> r3Roles = Arrays.asList(new String[] {"*"});
       
       // Test access when we have admin role
       assertTrue(RoleUtils.hasAccess(adminUserRoles, r1Roles));
@@ -35,7 +37,7 @@ public class TestRoleUtils extends TestCase {
       assertTrue(RoleUtils.hasAccess(userRoles, r3Roles));
       
       // Test access with empty list
-      assertFalse(RoleUtils.hasAccess(Collections.EMPTY_LIST, r2Roles));
-      assertTrue(RoleUtils.hasAccess(Collections.EMPTY_LIST, r3Roles));
+      assertFalse(RoleUtils.hasAccess(EMPTY, r2Roles));
+      assertTrue(RoleUtils.hasAccess(EMPTY, r3Roles));
    }
 }
