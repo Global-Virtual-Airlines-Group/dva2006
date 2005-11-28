@@ -38,7 +38,7 @@ public class EventAssignCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 		
-		Set pilots = new HashSet();
+		Set<Pilot> pilots = new HashSet<Pilot>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -71,8 +71,8 @@ public class EventAssignCommand extends AbstractCommand {
 			ctx.startTX();
 			
 			// Get the signups for this event
-			for (Iterator i = e.getSignups().iterator(); i.hasNext(); ) {
-				Signup s = (Signup) i.next();
+			for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
+				Signup s = i.next();
 				
 				// Get the Pilot
 				UserData usrData = (UserData) usrmap.get(s.getPilotID());

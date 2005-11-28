@@ -33,8 +33,8 @@ public class RoutePlotMapService extends RouteMapService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		List tRoutes = new ArrayList();
-		Set routePoints = new LinkedHashSet();
+		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
+		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
 			GetNavRoute dao = new GetNavRoute(_con);
 
@@ -45,7 +45,7 @@ public class RoutePlotMapService extends RouteMapService {
 			// Add the departure airport
 			if (aD != null) {
 				routePoints.add(aD);
-				Set sids = new TreeSet(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
+				Set<TerminalRoute> sids = new TreeSet<TerminalRoute>(dao.getRoutes(aD.getCode(), TerminalRoute.SID));
 				tRoutes.addAll(sids);
 			}
 
@@ -74,7 +74,7 @@ public class RoutePlotMapService extends RouteMapService {
 			// Add the arrival airport
 			if (aA != null) {
 				routePoints.add(aA);
-				Set stars = new TreeSet(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
+				Set<TerminalRoute> stars = new TreeSet<TerminalRoute>(dao.getRoutes(aA.getCode(), TerminalRoute.STAR));
 				tRoutes.addAll(stars);
 			}
 		} catch (DAOException de) {
@@ -82,12 +82,12 @@ public class RoutePlotMapService extends RouteMapService {
 		}
 
 		// Convert points to an XML document
-		Document doc = formatPoints(new ArrayList(routePoints));
+		Document doc = formatPoints(new ArrayList<NavigationDataBean>(routePoints));
 		Element re = doc.getRootElement();
 
 		// Add SID/STAR names to XML document
-		for (Iterator i = tRoutes.iterator(); i.hasNext();) {
-			TerminalRoute tr = (TerminalRoute) i.next();
+		for (Iterator<TerminalRoute> i = tRoutes.iterator(); i.hasNext();) {
+			TerminalRoute tr = i.next();
 			Element e = new Element(tr.getTypeName().toLowerCase());
 			e.setAttribute("name", tr.getName());
 			e.setAttribute("transition", tr.getTransition());

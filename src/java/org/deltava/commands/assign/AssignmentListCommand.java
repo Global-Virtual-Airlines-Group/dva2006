@@ -64,8 +64,8 @@ public class AssignmentListCommand extends AbstractViewCommand {
          }
          
          // Build a Collection of access controllers and Pilot IDs
-         Set pilotIDs = new HashSet();
-         List accessList = new ArrayList();
+         Set<Integer> pilotIDs = new HashSet<Integer>();
+         List<AssignmentAccessControl> accessList = new ArrayList<AssignmentAccessControl>();
          for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
          	AssignmentInfo ai = (AssignmentInfo) i.next();
          	if (ai.getPilotID() != 0)

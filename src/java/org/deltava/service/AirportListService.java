@@ -55,11 +55,11 @@ public class AirportListService extends WebDataService {
 
    private class AirportListFilter implements AirportFilter {
       
-      private Collection _airportCodes;
+      private Collection<String> _airportCodes;
       
       AirportListFilter(Collection airports) {
          super();
-         _airportCodes = new HashSet();
+         _airportCodes = new HashSet<String>();
          for (Iterator i = airports.iterator(); i.hasNext(); ) {
             Airport a = (Airport) i.next();
             _airportCodes.add(a.getIATA());
@@ -109,8 +109,8 @@ public class AirportListService extends WebDataService {
 		doc.setRootElement(re);
       
       // Generate the destination list
-      Map allAirports = (Map) SystemData.getObject("airports");
-      Collection airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+      Map<String, Airport> allAirports = (Map) SystemData.getObject("airports");
+      Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
       airports.addAll(allAirports.values());
       for (Iterator i = airports.iterator(); i.hasNext(); ) {
          Airport a = (Airport) i.next();

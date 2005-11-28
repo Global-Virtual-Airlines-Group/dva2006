@@ -52,7 +52,7 @@ public class HomeCommand extends AbstractCommand {
 		}
 		
 		// Build a list of choices
-		List cList = new ArrayList();
+		List<Integer> cList = new ArrayList<Integer>();
 		for (int x = 0; x < DYN_CHOICES.length; x++)
 			cList.add(new Integer(DYN_CHOICES[x]));
 
@@ -101,7 +101,7 @@ public class HomeCommand extends AbstractCommand {
 			
 			// Calculate the contnt type
 			int ofs = RND.nextInt(cList.size());
-			Integer contentType = (Integer) cList.get(ofs);
+			Integer contentType = cList.get(ofs);
 			
 			// Figure out dynamic content
 			switch (contentType.intValue()) {

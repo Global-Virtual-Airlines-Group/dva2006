@@ -11,7 +11,7 @@ import org.deltava.beans.EquipmentType;
  * @see EquipmentType
  */
 
-public class EquipmentComparator extends AbstractComparator {
+public class EquipmentComparator<T extends EquipmentType> extends AbstractComparator<T> {
 
     public static final int STAGE = 0;
     public static final int NAME = 1;
@@ -45,10 +45,7 @@ public class EquipmentComparator extends AbstractComparator {
      * @throws ClassCastException if either object is not an EquipmentType 
      * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(Object o1, Object o2) {
-        EquipmentType et1 = (EquipmentType) o1;
-        EquipmentType et2 = (EquipmentType) o2;
-        
+    protected int compareImpl(T et1, T et2) {
         switch (_comparisonType) {
         	case NAME :
         	    return et1.getName().compareTo(et2.getName());

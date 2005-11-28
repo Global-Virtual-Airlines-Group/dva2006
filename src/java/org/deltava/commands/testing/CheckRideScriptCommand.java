@@ -91,7 +91,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
          	   throw securityException("Cannot edit Check Ride script");
          	
          	// Create single-entry equipment type list
-         	Set eqtypes = new HashSet();
+         	Set<String> eqtypes = new HashSet<String>();
          	eqtypes.add(sc.getEquipmentType());
          	ctx.setAttribute("actypes", eqtypes, REQUEST);
          	

@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.event.*;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.comparators.AirportComparator;
 
@@ -106,8 +107,8 @@ public class EventRoutesCommand extends AbstractFormCommand {
 		}
 		
 		// Save airports in the request
-		Map aMap = (Map) SystemData.getObject("airports");
-		Set airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		Map<String, Airport> aMap = (Map) SystemData.getObject("airports");
+		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		airports.addAll(aMap.values());
 		ctx.setAttribute("airports", airports, REQUEST);
 

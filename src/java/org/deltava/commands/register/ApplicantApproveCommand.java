@@ -74,7 +74,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			log.info("Hiring " + a.getName() + " into " + eq.getName() + " program (Stage " + eq.getStage() + ")");
 			
 			// Get the equipment ratings
-			Collection ratings = new TreeSet();
+			Collection<String> ratings = new TreeSet<String>();
 			ratings.addAll(eq.getPrimaryRatings());
 			ratings.addAll(eq.getSecondaryRatings());
 			
@@ -141,7 +141,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			exwdao.write(cr);
 			
 			// Write Status update history
-			List updates = new ArrayList();
+			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
 			
 			// Create a StatusUpdate for the registration
 			StatusUpdate upd = new StatusUpdate(a.getPilotID(), StatusUpdate.STATUS_CHANGE);

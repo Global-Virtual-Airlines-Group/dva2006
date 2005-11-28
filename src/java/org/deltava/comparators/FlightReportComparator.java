@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.Airport;
  * @version 1.0
  * @since 1.0
  */
-public class FlightReportComparator extends AbstractComparator {
+public class FlightReportComparator<T extends FlightReport> extends AbstractComparator<T> {
 
     public static final int DATE = 0;
     public static final int LENGTH = 1;
@@ -50,11 +50,9 @@ public class FlightReportComparator extends AbstractComparator {
      * @throws ClassCastException if either object is not an EquipmentType
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected int compareImpl(Object o1, Object o2) {
-        FlightReport f1 = (FlightReport) o1;
-        FlightReport f2 = (FlightReport) o2;
+    protected int compareImpl(T f1, T f2) {
 
-        int tmpResult;
+    	int tmpResult;
         Airport aO, aD;
         switch (_comparisonType) {
             case DATE:

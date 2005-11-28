@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.UserDataMap;
 
@@ -37,7 +38,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
       // Get the view start/end
       ViewContext vc = initView(ctx);
 
-      Collection results = new ArrayList();
+      Collection<FileEntry> results = null;
       try {
          Connection con = ctx.getConnection();
          
@@ -48,9 +49,9 @@ public class UserLibraryCommand extends AbstractViewCommand {
          results = dao.getFiles(SystemData.get("airline.db"));
          
          // Get the authors
-         Set authors = new HashSet();
-         for (Iterator i = results.iterator(); i.hasNext(); ) {
-            FileEntry e = (FileEntry) i.next();
+         Set<Integer> authors = new HashSet<Integer>();
+         for (Iterator<FileEntry> i = results.iterator(); i.hasNext(); ) {
+            FileEntry e = i.next();
             authors.add(new Integer(e.getAuthorID()));
          }
          
@@ -60,10 +61,10 @@ public class UserLibraryCommand extends AbstractViewCommand {
          ctx.setAttribute("userData", udmap, REQUEST);
          
 			// Get the author profiles
-			Map pilots = new HashMap();
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator it = udmap.getTableNames().iterator(); it.hasNext(); ) {
-			   String tableName = (String) it.next();
+			for (Iterator<String> it = udmap.getTableNames().iterator(); it.hasNext(); ) {
+			   String tableName = it.next();
 			   if (UserDataMap.isPilotTable(tableName))
 			      pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
 			}
@@ -80,11 +81,11 @@ public class UserLibraryCommand extends AbstractViewCommand {
 		ctx.setAttribute("access", access, REQUEST);
 		
 		// Create access map
-		Map accessMap = new HashMap();
+		Map<String, FileEntryAccessControl> accessMap = new HashMap<String, FileEntryAccessControl>();
 
 		// Validate our access to the results
-		for (Iterator i = results.iterator(); i.hasNext();) {
-			FileEntry e = (FileEntry) i.next();
+		for (Iterator<FileEntry> i = results.iterator(); i.hasNext();) {
+			FileEntry e = i.next();
 			access = new FileEntryAccessControl(ctx, e);
 			access.validate();
 			accessMap.put(e.getFileName(), access);

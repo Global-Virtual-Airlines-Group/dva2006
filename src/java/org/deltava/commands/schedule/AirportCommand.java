@@ -120,7 +120,7 @@ public class AirportCommand extends AbstractFormCommand {
 		}
 		
 		// Update the SystemData map
-		Map airports = (Map) SystemData.getObject("airports");
+		Map<String, Airport> airports = (Map) SystemData.getObject("airports");
 		airports.put(a.getIATA(), a);
 		airports.put(a.getICAO(), a);
 		

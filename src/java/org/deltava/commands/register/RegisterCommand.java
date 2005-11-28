@@ -55,8 +55,8 @@ public class RegisterCommand extends AbstractCommand {
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
 		// Sort and save the airports
-		Map airports = (Map) SystemData.getObject("airports");
-		Set apSet = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		Map<String, Airport> airports = (Map) SystemData.getObject("airports");
+		Set<Airport> apSet = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		apSet.addAll(airports.values());
 		ctx.setAttribute("airports", apSet, REQUEST);
 
@@ -97,8 +97,8 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Set Notification Options
-		Collection notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"),
-				Collections.EMPTY_LIST);
+		Collection<String> notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"),
+				new HashSet<String>());
 		for (int x = 0; x < NOTIFY_ALIASES.length; x++)
 			a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
 
@@ -129,7 +129,7 @@ public class RegisterCommand extends AbstractCommand {
 				AirlineInformation info = (AirlineInformation) i.next();
 
 				// Check Pilots & applicants
-				Set dupeResults = new HashSet(pdao.checkUnique(a, info.getDB()));
+				Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB()));
 				dupeResults.addAll(adao.checkUnique(a, info.getDB()));
 				if (!dupeResults.isEmpty()) {
 					ctx.release();

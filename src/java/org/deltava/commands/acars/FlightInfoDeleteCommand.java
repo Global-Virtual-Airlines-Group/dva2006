@@ -32,15 +32,15 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 
 		// Get the flight IDs
 		String IDs[] = ctx.getRequest().getParameterValues("flightID");
-		List flightIDs = new ArrayList();
+		List<String> flightIDs = new ArrayList<String>();
 		if (IDs == null) {
 			flightIDs.add(ctx.getParameter("id"));
 		} else {
 			flightIDs.addAll(Arrays.asList(IDs));			
 		}
 
-		Set deletedIDs = new HashSet();
-		Set skippedIDs = new HashSet();
+		Set<String> deletedIDs = new HashSet<String>();
+		Set<String> skippedIDs = new HashSet<String>();
 		try {
 			Connection con = ctx.getConnection();
 

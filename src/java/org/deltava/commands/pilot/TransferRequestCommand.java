@@ -42,7 +42,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
          
          // Get the active Equipment Profiles and determine what we can switch to
          GetEquipmentType eqdao = new GetEquipmentType(con);
-         List activeEQ = (List) eqdao.getActive();
+         List<EquipmentType> activeEQ = new ArrayList<EquipmentType>(eqdao.getActive());
          for (Iterator i = activeEQ.iterator(); i.hasNext(); ) {
             EquipmentType eq = (EquipmentType) i.next();
             if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
@@ -67,7 +67,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
             throw securityException("Cannot request transfer to " + eqType);
          
          // Populate the transfer request
-         EquipmentType eq = (EquipmentType) activeEQ.get(ofs);
+         EquipmentType eq = activeEQ.get(ofs);
          TransferRequest txreq = new TransferRequest(p.getID(), eqType);
          txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
          txreq.setStatus(_testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
