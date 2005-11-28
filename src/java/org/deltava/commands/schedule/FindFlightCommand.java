@@ -54,7 +54,7 @@ public class FindFlightCommand extends AbstractCommand {
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		
 		// Get the airports
-		Map<String, Airport> allAirports = (Map) SystemData.getObject("airports");
+		Map<String, Airport> allAirports = SystemData.getAirports();
 		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		airports.addAll(allAirports.values());
 		ctx.setAttribute("airports", airports, REQUEST);

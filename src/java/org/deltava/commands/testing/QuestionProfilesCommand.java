@@ -1,7 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
@@ -46,7 +46,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
          GetExamProfiles dao = new GetExamProfiles(con);
          
          // Get all exam names and save
-         List examNames = dao.getExamProfiles();
+         List<Object> examNames = new ArrayList<Object>(dao.getExamProfiles());
          examNames.add(0, ComboUtils.fromString("All Examinations", "ALL"));
          ctx.setAttribute("examNames", examNames, REQUEST);
          

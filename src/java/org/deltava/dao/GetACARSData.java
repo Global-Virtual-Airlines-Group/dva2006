@@ -83,7 +83,7 @@ public class GetACARSData extends DAO {
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			List results = new ArrayList();
+			List<Object> results = new ArrayList<Object>();
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the result set

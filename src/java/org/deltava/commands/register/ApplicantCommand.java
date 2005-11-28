@@ -138,7 +138,7 @@ public class ApplicantCommand extends AbstractFormCommand {
             RegisterCommand.NOTIFY_ALIASES), REQUEST);
 
 		// Sort and save the airports
-		Map<String, Airport> airports = (Map) SystemData.getObject("airports");
+		Map<String, Airport> airports = SystemData.getAirports();
 		Set<Airport> apSet = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		apSet.addAll(airports.values());
 		ctx.setAttribute("airports", apSet, REQUEST);

@@ -25,6 +25,7 @@ public class AirlineListCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
+	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {
