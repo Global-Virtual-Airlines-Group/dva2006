@@ -25,13 +25,13 @@ public class FleetGalleryCommand extends AbstractCommand {
      */
     public void execute(CommandContext ctx) throws CommandException {
 
-        List results = null;
+        List<Object> results = null;
         try {
             Connection con = ctx.getConnection();
 
             // Get the fleet gallery
             GetGallery dao = new GetGallery(con);
-            results = dao.getFleetGallery();
+            results = new ArrayList<Object>(dao.getFleetGallery());
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

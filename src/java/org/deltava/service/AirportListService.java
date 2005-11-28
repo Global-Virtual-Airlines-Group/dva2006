@@ -109,7 +109,7 @@ public class AirportListService extends WebDataService {
 		doc.setRootElement(re);
       
       // Generate the destination list
-      Map<String, Airport> allAirports = (Map) SystemData.getObject("airports");
+      Map<String, Airport> allAirports = SystemData.getAirports();
       Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
       airports.addAll(allAirports.values());
       for (Iterator i = airports.iterator(); i.hasNext(); ) {

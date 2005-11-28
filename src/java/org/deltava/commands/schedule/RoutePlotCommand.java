@@ -3,6 +3,7 @@ package org.deltava.commands.schedule;
 
 import java.util.*;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.commands.*;
@@ -31,7 +32,7 @@ public class RoutePlotCommand extends AbstractCommand {
 
 		// Sort and save the airports, and force ICAO codes
 		Map airports = (Map) SystemData.getObject("airports");
-		Set apSet = new TreeSet();
+		Set<ComboAlias> apSet = new TreeSet<ComboAlias>();
 		for (Iterator i = airports.values().iterator(); i.hasNext(); ) {
 			Airport a = (Airport) i.next();
 			apSet.add(ComboUtils.fromString(a.getName() + " (" + a.getICAO() + ")", a.getICAO()));

@@ -42,7 +42,7 @@ public class EventEditCommand extends AbstractCommand {
 		
 		// Save the airport list
 		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
-		airports.addAll(((Map) SystemData.getObject("airports")).values());
+		airports.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Strip out ACARS as a network name
