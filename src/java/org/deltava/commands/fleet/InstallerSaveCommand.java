@@ -5,9 +5,8 @@ import java.io.File;
 import java.util.List;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.beans.fleet.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -46,7 +45,7 @@ public class InstallerSaveCommand extends AbstractCommand {
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
 
-		List pilots = null;
+		List<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -100,8 +99,8 @@ public class InstallerSaveCommand extends AbstractCommand {
 		}
 
 		// Set status attributes
-      ctx.setAttribute("library", "Fleet", REQUEST);
-      ctx.setAttribute("librarycmd", "fleetlibrary", REQUEST);
+		ctx.setAttribute("library", "Fleet", REQUEST);
+		ctx.setAttribute("librarycmd", "fleetlibrary", REQUEST);
 
 		// Send the email message
 		if (!noNotify) {

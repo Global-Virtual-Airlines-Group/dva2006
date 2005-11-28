@@ -57,7 +57,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		if (navaidType == -1)
 			throw new CommandException("Unknown Data File - " + navData.getName());
 
-		List errors = new ArrayList();
+		List<String> errors = new ArrayList<String>();
 		int entryCount = 0;
 		try {
 			Connection con = ctx.getConnection();

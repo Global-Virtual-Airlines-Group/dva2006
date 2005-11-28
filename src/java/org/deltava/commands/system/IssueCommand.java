@@ -186,7 +186,7 @@ public class IssueCommand extends AbstractFormCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
 			// Get developers
-			Set devs = new HashSet();
+			Set<Pilot> devs = new HashSet<Pilot>();
 			Collection apps = ((Map) SystemData.getObject("apps")).values();
 			for (Iterator it = apps.iterator(); it.hasNext(); ) {
 			   AirlineInformation aInfo = (AirlineInformation) it.next();
@@ -204,9 +204,9 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("userData", udm, REQUEST);
 
 				// Get the Pilots posting in this issue
-				Map pilots = new HashMap();
-				for (Iterator it = udm.getTableNames().iterator(); it.hasNext(); ) {
-				   String tableName = (String) it.next();
+				Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
+				for (Iterator<String> it = udm.getTableNames().iterator(); it.hasNext(); ) {
+				   String tableName = it.next();
 				   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 				}
 				
@@ -256,10 +256,10 @@ public class IssueCommand extends AbstractFormCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the Pilots posting in this issue
-			Map pilots = new HashMap();
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			for (Iterator it = udm.getTableNames().iterator(); it.hasNext(); ) {
-			   String tableName = (String) it.next();
+			for (Iterator<String> it = udm.getTableNames().iterator(); it.hasNext(); ) {
+			   String tableName = it.next();
 			   pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 			
@@ -286,17 +286,17 @@ public class IssueCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
-	private Set getPilotIDs(Issue i) {
+	private Set<Integer> getPilotIDs(Issue i) {
 
-		Set results = new HashSet();
+		Set<Integer> results = new HashSet<Integer>();
 
 		// Add Creator / Assignee
 		results.add(new Integer(i.getCreatedBy()));
 		results.add(new Integer(i.getAssignedTo()));
 
 		// Add comment authors
-		for (Iterator ici = i.getComments().iterator(); ici.hasNext();) {
-			IssueComment ic = (IssueComment) ici.next();
+		for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
+			IssueComment ic = ici.next();
 			results.add(new Integer(ic.getCreatedBy()));
 		}
 

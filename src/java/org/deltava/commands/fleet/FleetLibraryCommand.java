@@ -44,7 +44,7 @@ public class FleetLibraryCommand extends AbstractLibraryCommand {
       if (isAdmin && !access.getCanCreate())
          throw securityException("Cannot update Fleet Library");
 
-      List results = new ArrayList();
+      List<Installer> results = new ArrayList<Installer>();
       try {
          Connection con = ctx.getConnection();
 
@@ -57,7 +57,7 @@ public class FleetLibraryCommand extends AbstractLibraryCommand {
                if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
                   results.addAll(0, dao.getFleet(info.getDB()));
                } else {
-                  Collection entries = dao.getFleet(info.getDB());
+                  Collection<Installer> entries = dao.getFleet(info.getDB());
                   appendDB(entries, info.getDB());
                   results.addAll(entries);
                }
@@ -72,8 +72,8 @@ public class FleetLibraryCommand extends AbstractLibraryCommand {
       }
 
       // Validate our access to the results
-      for (Iterator i = results.iterator(); i.hasNext();) {
-         FleetEntry e = (FleetEntry) i.next();
+      for (Iterator<Installer> i = results.iterator(); i.hasNext();) {
+         FleetEntry e = i.next();
          access.setEntry(e);
          access.validate();
 

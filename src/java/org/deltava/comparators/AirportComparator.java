@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.Airport;
  * @see Airport
  */
 
-public class AirportComparator extends AbstractComparator {
+public class AirportComparator<T extends Airport> extends AbstractComparator<T> {
 
     public static final int IATA = 0;
     public static final int ICAO = 1;
@@ -48,10 +48,7 @@ public class AirportComparator extends AbstractComparator {
      * @throws ClassCastException if either object is not an Airport
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected int compareImpl(Object o1, Object o2) {
-        Airport a1 = (Airport) o1;
-        Airport a2 = (Airport) o2;
-        
+    protected int compareImpl(T a1, T a2) {
         switch (_comparisonType) {
         	case ICAO :
         	    return a1.getICAO().compareTo(a2.getICAO());

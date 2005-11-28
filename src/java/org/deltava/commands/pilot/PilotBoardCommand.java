@@ -78,23 +78,23 @@ public class PilotBoardCommand extends AbstractCommand {
 			
 			// Get the Pilots and their locations
 			GetPilot dao = new GetPilot(con);
-			Map locations = dao.getPilotBoard();
-			Map pilots = dao.getByID(locations.keySet(), "PILOTS");
+			Map<Integer, GeoLocation> locations = dao.getPilotBoard();
+			Map<Integer, Pilot> pilots = dao.getByID(locations.keySet(), "PILOTS");
 			
 			// Calculate the random location adjuster (between -1.5 and +1.5)
 			Random rnd = new Random();
 			double rndAmt = ((rnd.nextDouble() * 3) - 1) / GeoLocation.DEGREE_MILES;
 			
 			// Loop through the GeoLocations, apply the random adjuster and combine with the Pilot
-			Set pilotLocations = new HashSet(pilots.size());
-			for (Iterator i = pilots.keySet().iterator(); i.hasNext(); ) {
-				Integer id = (Integer) i.next();
-				GeoPosition gp = (GeoPosition) locations.get(id);
+			Set<PilotLocation> pilotLocations = new HashSet<PilotLocation>(pilots.size());
+			for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				GeoPosition gp = new GeoPosition(locations.get(id));
 				gp.setLatitude(gp.getLatitude() + rndAmt);
 				gp.setLongitude(gp.getLongitude() + rndAmt);
 				
 				// Create the pilot location
-				Pilot usr = (Pilot) pilots.get(id);
+				Pilot usr = pilots.get(id);
 				if (usr != null)
 					pilotLocations.add(new PilotLocation(usr, gp));
 			}

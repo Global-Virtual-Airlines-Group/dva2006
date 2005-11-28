@@ -31,8 +31,8 @@ import org.deltava.util.system.SystemData;
 
 public class PIREPCommand extends AbstractFormCommand {
 
-	private static List _flightTimes;
-	private static List _flightYears;
+	private static Collection<String> _flightTimes;
+	private static Collection<String> _flightYears;
 
 	private static final Comparator _cmp = new AirportComparator(AirportComparator.NAME);
 
@@ -59,7 +59,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Initialize flight times
 		if (_flightTimes == null) {
-			_flightTimes = new ArrayList();
+			_flightTimes = new LinkedHashSet<String>();
 			for (int x = 2; x < 168; x++)
 				_flightTimes.add(String.valueOf(x / 10.0d));
 		}
@@ -67,7 +67,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Initialize flight years
 		if (_flightYears == null) {
 			Calendar c = Calendar.getInstance();
-			_flightYears = new ArrayList();
+			_flightYears = new LinkedHashSet<String>();
 			_flightYears.add(String.valueOf(c.get(Calendar.YEAR)));
 
 			// If we're in January/February, add the previous year
@@ -225,7 +225,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		PIREPAccessControl ac = null;
 		try {
 			Connection con = ctx.getConnection();
-			Set airlines = new TreeSet();
+			Set<Airline> airlines = new TreeSet<Airline>();
 
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
@@ -355,7 +355,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
-					List routeEntries = StringUtils.split(info.getRoute(), " ");
+					List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
 					GeoPosition lastWaypoint = new GeoPosition(fr.getAirportD());
 
 					// Get navigation aids
@@ -363,9 +363,9 @@ public class PIREPCommand extends AbstractFormCommand {
 					NavigationDataMap navaids = navdao.getByID(routeEntries);
 
 					// Filter out navaids and put them in the correct order
-					List routeInfo = new ArrayList();
-					for (Iterator i = routeEntries.iterator(); i.hasNext();) {
-						String navCode = (String) i.next();
+					List<NavigationDataBean> routeInfo = new ArrayList<NavigationDataBean>();
+					for (Iterator<String> i = routeEntries.iterator(); i.hasNext();) {
+						String navCode = i.next();
 						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
 						if (wPoint != null) {
 							if (lastWaypoint.distanceTo(wPoint) < fr.getDistance()) {

@@ -1,6 +1,5 @@
 package org.deltava.comparators;
 
-import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -12,7 +11,7 @@ import java.util.Comparator;
  * @since 1.0
  */
 
-public abstract class AbstractComparator implements Comparator, Serializable {
+public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Serializable {
 
     /**
      * Are we doing a reverse sort?
@@ -51,7 +50,7 @@ public abstract class AbstractComparator implements Comparator, Serializable {
      * @see AbstractComparator#compare(Object, Object)
      * @see Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected abstract int compareImpl(Object o1, Object o2);
+    protected abstract int compareImpl(T o1, T o2);
     
     /**
      * Sets the comparison type
@@ -128,7 +127,7 @@ public abstract class AbstractComparator implements Comparator, Serializable {
      * @see AbstractComparator#compareImpl(Object, Object)
      * @see Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    public final int compare(Object o1, Object o2) {
+    public final int compare(T o1, T o2) {
         int tmpResult = compareImpl(o1, o2);
         return _reverseSort ? (tmpResult * -1) : tmpResult;
     }

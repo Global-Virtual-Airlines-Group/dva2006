@@ -43,7 +43,7 @@ public class CheckRideScriptsCommand extends AbstractCommand {
       }
 
       // Create a map of access controllers
-      Map accessMap = new HashMap();
+      Map<String, CheckrideScriptAccessControl> accessMap = new HashMap<String, CheckrideScriptAccessControl>();
       
       // Check create access
       CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, null);

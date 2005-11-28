@@ -8,7 +8,7 @@ import org.deltava.beans.DateTime;
 import org.deltava.beans.TZInfo;
 
 import org.deltava.beans.event.Event;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
@@ -41,12 +41,12 @@ public class EventEditCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		
 		// Save the airport list
-		Set airports = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		airports.addAll(((Map) SystemData.getObject("airports")).values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Strip out ACARS as a network name
-		Set netNames = new TreeSet((Collection) SystemData.getObject("online.networks"));
+		Set<String> netNames = new TreeSet<String>((Collection) SystemData.getObject("online.networks"));
 		netNames.remove("ACARS");
 		ctx.setAttribute("networks", netNames, REQUEST);
 		
@@ -84,10 +84,10 @@ public class EventEditCommand extends AbstractCommand {
 			
 			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);
-			Map charts = new TreeMap();
-			for (Iterator i = e.getAirports().iterator(); i.hasNext(); ) {
-				Airport a = (Airport) i.next();
-				List aCharts = cdao.getCharts(a);
+			Map<Airport, Collection<Chart>> charts = new TreeMap<Airport, Collection<Chart>>();
+			for (Iterator<Airport> i = e.getAirports().iterator(); i.hasNext(); ) {
+				Airport a = i.next();
+				List<Chart> aCharts = cdao.getCharts(a);
 				if (!aCharts.isEmpty())
 				   charts.put(a, aCharts);
 			}

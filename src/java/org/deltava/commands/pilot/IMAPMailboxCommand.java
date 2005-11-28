@@ -1,6 +1,7 @@
 // Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
+import java.io.IOException;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -11,6 +12,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -22,6 +24,8 @@ import org.deltava.util.system.SystemData;
 
 public class IMAPMailboxCommand extends AbstractCommand {
 
+	//private class 
+	
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -51,10 +55,13 @@ public class IMAPMailboxCommand extends AbstractCommand {
                throw securityException("Cannot create IMAP mailbox");
             
 			// Pre-populate the mailbox address
-            String mbAddr = usr.getFirstName().toLowerCase();
+            String mbAddr = usr.getFirstName().toLowerCase() + "@" + SystemData.get("airline.domain");
             if (!edao.isAvailable(mbAddr))
-               mbAddr = mbAddr + usr.getLastName().substring(0, 1).toLowerCase();
-
+               mbAddr = mbAddr + usr.getLastName().substring(0, 1).toLowerCase() + "@" + SystemData.get("airline.domain");
+            
+            // Start a transaction
+            ctx.startTX();
+            
             // Create the mailbox profile
             emailCfg = new EMailConfiguration(usr.getID(), mbAddr);
             emailCfg.setMailDirectory(String.valueOf(usr.getID()));
@@ -62,14 +69,31 @@ public class IMAPMailboxCommand extends AbstractCommand {
             emailCfg.setQuota(SystemData.getInt("smtp.imap.quota"));
             emailCfg.setActive(true);
             
+            // Generate the mailbox directory
+            ProcessBuilder pBuilder = new ProcessBuilder("sudo", SystemData.get("smtp.imap.script"), emailCfg.getMailDirectory(),
+            		SystemData.get("smtp.imap.path"));
+            pBuilder.redirectErrorStream();
+            try {
+            	Process p = pBuilder.start();
+            	ThreadUtils.sleep(1000);
+            	if (p.exitValue() != 1)
+            		throw new DAOException("Unable to create mailbox - error " + p.exitValue());
+            } catch (IOException ie) {
+            	throw new DAOException(ie);
+            }
+            
             // Write the mailbox profile
             SetPilotEMail wdao = new SetPilotEMail(con);
             wdao.write(emailCfg, usr.getName());
+            
+            // Commit the transaction
+            ctx.commitTX();
             
             // Save context attributes
             ctx.setAttribute("pilot", usr, REQUEST);
             ctx.setAttribute("imap", emailCfg, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

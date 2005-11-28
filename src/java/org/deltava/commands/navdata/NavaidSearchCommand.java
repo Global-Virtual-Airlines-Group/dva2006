@@ -39,10 +39,10 @@ public class NavaidSearchCommand extends AbstractCommand {
          ctx.setAttribute("results", ndMap.getAll(), REQUEST);
 
          // Don't do search if the navaid was not found
-         Set navaids = new HashSet();
-         for (Iterator i = ndMap.getAll().iterator(); i.hasNext(); ) {
-        	 NavigationDataBean nv = (NavigationDataBean) i.next();
-        	 Map nMap = new HashMap();
+         Set<NavigationDataBean> navaids = new HashSet<NavigationDataBean>();
+         for (Iterator<NavigationDataBean> i = ndMap.getAll().iterator(); i.hasNext(); ) {
+        	 NavigationDataBean nv = i.next();
+        	 Map<String, NavigationDataBean> nMap = new HashMap<String, NavigationDataBean>();
         	 
           	// Get major items within 70 miles, and all minor items
           	nMap.putAll(dao.getObjects(nv, 140));

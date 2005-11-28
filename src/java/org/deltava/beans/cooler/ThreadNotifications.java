@@ -73,7 +73,7 @@ public class ThreadNotifications extends DatabaseBean implements Cacheable {
     * Returns the database IDs of all users signed up for notifications.
     * @return a Collection of Integers
     */
-   public Collection getIDs() {
+   public Collection<Integer> getIDs() {
       return _notifications;
    }
    

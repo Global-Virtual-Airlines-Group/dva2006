@@ -53,7 +53,7 @@ public class ManualSaveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		List pilots = null;
+		List<? extends EMailAddress> pilots = null;
 		Manual entry = null;
 		try {
 			Connection con = ctx.getConnection();

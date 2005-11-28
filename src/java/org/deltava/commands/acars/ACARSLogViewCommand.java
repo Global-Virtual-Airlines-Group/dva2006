@@ -54,8 +54,8 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 	 * @param viewEntries the view result entries
 	 * @return a Set of Pilot IDs
 	 */
-	protected Set getPilotIDs(Collection viewEntries) {
-		Set results = new HashSet();
+	protected Set<Integer> getPilotIDs(Collection viewEntries) {
+		Set<Integer> results = new HashSet<Integer>();
 		for (Iterator i = viewEntries.iterator(); i.hasNext();) {
 			ACARSLogEntry entry = (ACARSLogEntry) i.next();
 			results.add(new Integer(entry.getPilotID()));
@@ -75,8 +75,8 @@ public abstract class ACARSLogViewCommand extends AbstractViewCommand {
 
 		// Get the airline codes
 		Map apps = (Map) SystemData.getObject("apps");
-		for (Iterator<AirlineInformation> i = apps.values().iterator(); i.hasNext();) {
-			AirlineInformation info = i.next();
+		for (Iterator i = apps.values().iterator(); i.hasNext();) {
+			AirlineInformation info = (AirlineInformation) i.next();
 			if (pCode.toUpperCase().startsWith(info.getCode().toUpperCase()))
 				return true;
 		}

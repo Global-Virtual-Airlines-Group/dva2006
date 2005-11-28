@@ -4,11 +4,10 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.commands.*;
+import org.deltava.beans.FlightReport;
 
-import org.deltava.dao.DAOException;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.GetFlightReports;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.util.*;
 
@@ -58,7 +57,7 @@ public class LogBookCommand extends AbstractViewCommand {
             dao2.setQueryMax(vc.getCount());
             
             // Get the PIREP beans and load the promotion eligibility
-            Collection pireps = dao2.getByPilot(ctx.getID(), vc.getSortType());
+            Collection<FlightReport> pireps = dao2.getByPilot(ctx.getID(), vc.getSortType());
             dao2.getCaptEQType(pireps);
             vc.setResults(pireps);
         } catch (DAOException de) {
