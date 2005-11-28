@@ -60,9 +60,19 @@ public class DateTime implements java.io.Serializable, Comparable {
 	/**
 	 * Returns the date/time's local time value.
 	 * @return the local date/time
+	 * @see DateTime#getCalendar()
 	 */
 	public Date getDate() {
 	   return _dt.getTime();
+	}
+	
+	/**
+	 * Returns the underlying Calendar object.
+	 * @return the Calendar object with the local date/time
+	 * @see DateTime#getDate()
+	 */
+	public Calendar getCalendar() {
+		return _dt;
 	}
 	
 	/**
