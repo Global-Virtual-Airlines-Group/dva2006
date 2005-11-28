@@ -101,6 +101,9 @@ class ConnectionPoolEntry implements Comparable {
       try {
          _c.close();
       } catch (Exception e) {
+    	  // empty
+      } finally {
+    	  _c = null;
       }
    }
 
