@@ -50,7 +50,7 @@ public class TestQuestionProfile extends AbstractBeanTestCase {
         _q.addExam("737 First Officer");
         _q.addExam("CRJ First Officer");
         
-        List exams = new ArrayList(_q.getExamNames());
+        List<String> exams = new ArrayList<String>(_q.getExamNames());
         assertEquals(3, exams.size());
         assertTrue(_q.getExamNames().contains("737 First Officer"));
         assertTrue(_q.getExamNames().contains("737 Captain"));

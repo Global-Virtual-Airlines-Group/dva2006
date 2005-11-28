@@ -10,8 +10,8 @@ public class TagTestSystemDataLoader implements SystemDataLoader {
         super();
     }
 
-    public Map load() throws IOException {
-        Map results = new HashMap();
+    public Map<String, Object> load() throws IOException {
+        Map<String, Object> results = new HashMap<String, Object>();
         results.put("airline.name", "Airline Name");
         results.put("path.css", "/css");
         results.put("path.js", "/jslib");

@@ -93,7 +93,7 @@ public class TestConnectionPoolEntry extends TestCase {
     
     public void testIndexOf() {
        ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props.getProperty("url"), _props);
-       List l = new ArrayList();
+       List<ConnectionPoolEntry> l = new ArrayList<ConnectionPoolEntry>();
        l.add(_cpe);
        l.add(cpe2);
        assertEquals(0, l.indexOf(_cpe));

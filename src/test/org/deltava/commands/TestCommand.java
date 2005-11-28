@@ -47,7 +47,7 @@ public class TestCommand extends TestCase {
         _cmd.init("mock", "MockCommand");
         assertEquals("mock", _cmd.getID());
         assertEquals("MockCommand", _cmd.getName());
-        List roles = new ArrayList();
+        List<String> roles = new ArrayList<String>();
         _cmd.setRoles(roles);
         assertEquals(0, _cmd.getRoles().size());
         assertEquals(roles, _cmd.getRoles());
@@ -75,9 +75,9 @@ public class TestCommand extends TestCase {
             assertEquals("MockCommand", _cmd.getName());
         }
         
-        _cmd.setRoles(new ArrayList());
+        _cmd.setRoles(new ArrayList<String>());
         try {
-            _cmd.setRoles(new LinkedList());
+            _cmd.setRoles(new LinkedList<String>());
             fail("IllegalStateException expected");
         } catch (IllegalStateException ise) { }
     }

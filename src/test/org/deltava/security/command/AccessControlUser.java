@@ -7,7 +7,7 @@ import org.deltava.beans.Person;
 
 public class AccessControlUser extends Person {
    
-   private List _roles = new ArrayList();
+   private List<String> _roles = new ArrayList<String>();
    
    public AccessControlUser(String fName, String lName) {
       super(fName, lName);
@@ -30,7 +30,7 @@ public class AccessControlUser extends Person {
       _roles.remove(roleName);
    }
    
-   public Collection getRoles() {
+   public Collection<String> getRoles() {
       return _roles;
    }
 }

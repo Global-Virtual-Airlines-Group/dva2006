@@ -33,15 +33,15 @@ public class TestCollectionUtils extends TestCase {
       assertTrue(CollectionUtils.isEmpty(Collections.EMPTY_LIST));
       assertTrue(CollectionUtils.isEmpty(new ArrayList()));
       
-      List testList = new ArrayList();
+      List<String> testList = new ArrayList<String>();
       testList.add("test");
       assertFalse(CollectionUtils.isEmpty(testList));
    }
    
    public void testHasDelta() {
-      Collection c1 = Arrays.asList(new String[] {"1", "2", "3"});
-      Collection c2 = Arrays.asList(new String[] {"3", "4", "5"});
-      List c3 = Arrays.asList(new String[] {"1", "2", "3", "4"});
+      Collection<String> c1 = Arrays.asList(new String[] {"1", "2", "3"});
+      Collection<String> c2 = Arrays.asList(new String[] {"3", "4", "5"});
+      List<String> c3 = Arrays.asList(new String[] {"1", "2", "3", "4"});
       
       assertTrue(CollectionUtils.hasDelta(c1, c2));
       assertTrue(CollectionUtils.hasDelta(c1, c3));
@@ -49,15 +49,15 @@ public class TestCollectionUtils extends TestCase {
    }
    
    public void testGetDelta() {
-      Collection c1 = Arrays.asList(new String[] {"1", "2", "3"});
-      Collection c2 = Arrays.asList(new String[] {"3", "4", "5"});
+      Collection<String> c1 = Arrays.asList(new String[] {"1", "2", "3"});
+      Collection<String> c2 = Arrays.asList(new String[] {"3", "4", "5"});
 
-      Collection cd1 = CollectionUtils.getDelta(c1, c2);
+      Collection<String> cd1 = CollectionUtils.getDelta(c1, c2);
       assertEquals(2, cd1.size());
       assertTrue(cd1.contains("1"));
       assertTrue(cd1.contains("2"));
       
-      Collection cd2 = CollectionUtils.getDelta(c2, c1);
+      Collection<String> cd2 = CollectionUtils.getDelta(c2, c1);
       assertEquals(2, cd2.size());
       assertTrue(cd2.contains("4"));
       assertTrue(cd2.contains("5"));
@@ -65,8 +65,8 @@ public class TestCollectionUtils extends TestCase {
    
    public void testSetDelta() {
       // We do the double-list creation since arrays.asList returns an immutable collection
-      Collection c1 = new ArrayList(Arrays.asList(new String[] {"1", "2", "3"}));
-      Collection c2 = new ArrayList(Arrays.asList(new String[] {"3", "4", "5"}));
+      Collection<String> c1 = new ArrayList<String>(Arrays.asList(new String[] {"1", "2", "3"}));
+      Collection<String> c2 = new ArrayList<String>(Arrays.asList(new String[] {"3", "4", "5"}));
       
       CollectionUtils.setDelta(c1, c2);
       assertEquals(2, c1.size());
@@ -80,7 +80,7 @@ public class TestCollectionUtils extends TestCase {
    
    public void testLoadList() {
       String[] entries = {"1", "2", "3"};
-      Collection toList = CollectionUtils.loadList(entries, null);
+      Collection<String> toList = CollectionUtils.loadList(entries, null);
       assertEquals(entries.length, toList.size());
       
       assertNull(CollectionUtils.loadList(null, null));
@@ -88,7 +88,7 @@ public class TestCollectionUtils extends TestCase {
    }
    
    public void testCreateMap() {
-      Set ids = new HashSet();
+      Set<Object> ids = new HashSet<Object>();
       ids.add(new ID(1));
       ids.add(new ID(2));
       ids.add(new ID(10));
