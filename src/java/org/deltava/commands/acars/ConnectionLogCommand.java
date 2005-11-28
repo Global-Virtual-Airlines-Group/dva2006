@@ -4,6 +4,7 @@ package org.deltava.commands.acars;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.LogSearchCriteria;
 import org.deltava.beans.system.UserDataMap;
 
@@ -57,10 +58,10 @@ public class ConnectionLogCommand extends ACARSLogViewCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the users for each connection
-			Map pilots = new HashMap();
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator i = udm.getTableNames().iterator(); i.hasNext();) {
-				String dbTableName = (String) i.next();
+			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
+				String dbTableName = i.next();
 				pilots.putAll(pdao.getByID(udm.getByTable(dbTableName), dbTableName));
 			}
 

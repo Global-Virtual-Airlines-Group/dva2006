@@ -6,6 +6,8 @@ import java.util.Calendar;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A class to store Schedule Entry information.
  * @author Luke
@@ -14,6 +16,8 @@ import org.deltava.beans.*;
  */
 
 public class ScheduleEntry extends Flight {
+	
+	private static final String[] SST = {"Concorde", "TU-144"};
 
 	private DateTime _timeD;
 	private DateTime _timeA;
@@ -46,15 +50,14 @@ public class ScheduleEntry extends Flight {
 	public final int getLength() {
 		if (_length > 0)
 			return _length;
-
-		if ((_timeA == null) || (_timeD == null))
+		else if ((_timeA == null) || (_timeD == null))
 			throw new IllegalStateException("Arrival and Departure Times are not set");
 
 		// Calculate flight time in seconds, and then divide by 3600 and multiply by 10
 		long lengthS = _timeA.difference(_timeD);
 
-		// If the length is negative, then add 86400
-		if (lengthS < 0)
+		// If the length is negative (and we're not using an SST), then add 86400
+		if ((lengthS < 0) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1))
 			lengthS += 86400;
 
 		return (int) (lengthS / 360);

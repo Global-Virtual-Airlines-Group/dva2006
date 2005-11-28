@@ -68,23 +68,23 @@ public class RouteImportCommand extends AbstractCommand {
 			br.readLine();
 
 			// Iterate through the CSV data
-			Collection warns = new ArrayList();
+			Collection<String> warns = new ArrayList<String>();
 			int routesSaved = 0;
 			while (br.ready()) {
-				List tokens = StringUtils.split(br.readLine(), ",");
+				List<String> tokens = StringUtils.split(br.readLine(), ",");
 				if (tokens.size() != 13) {
 					log.warn("Possible bad data on Line #" + br.getLineNumber() + ", elements = " + tokens.size());
 					warns.add("Possible bad data on Line #" + br.getLineNumber() + ", elements = " + tokens.size());
 				}
 
 				// Create the preferred route
-				Airport airportD = SystemData.getAirport((String) tokens.get(0));
-				Airport airportA = SystemData.getAirport((String) tokens.get(2));
+				Airport airportD = SystemData.getAirport(tokens.get(0));
+				Airport airportA = SystemData.getAirport(tokens.get(2));
 				PreferredRoute pr = new PreferredRoute(airportD, airportA);
-				pr.setRoute((String) tokens.get(1));
+				pr.setRoute(tokens.get(1));
 
 				// Get the source/departure ARTCCs
-				Set artccList = new HashSet();
+				Set<String> artccList = new HashSet<String>();
 				artccList.add(tokens.get(tokens.size() - 1));
 				artccList.add(tokens.get(tokens.size()));
 				pr.setARTCC(StringUtils.listConcat(artccList, " "));

@@ -55,7 +55,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
             List selected = Arrays.asList(ids);
 
             // Get the list of results and split into two - the selected, and those remaining
-            List fList = new ArrayList();
+            List<Flight> fList = new ArrayList<Flight>();
             for (Iterator i = results.iterator(); i.hasNext();) {
                 Flight f = (Flight) i.next();
                 if (selected.contains(f.getFlightCode())) {

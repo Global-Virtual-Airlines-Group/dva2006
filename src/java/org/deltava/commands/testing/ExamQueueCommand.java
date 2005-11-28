@@ -43,7 +43,7 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			List results = dao.getSubmitted();
 
 			// Check our access level, remove those exams we cannot score and build a list of Pilot IDs
-			Set pilotIDs = new HashSet();
+			Set<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator i = results.iterator(); i.hasNext();) {
 				Test t = (Test) i.next();
 				ExamAccessControl access = new ExamAccessControl(ctx, t);

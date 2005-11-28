@@ -51,13 +51,13 @@ public class GalleryCommand extends AbstractViewCommand {
             dao.setQueryMax(vc.getCount());
 
             // Get the images
-            List results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null)); 
+            List<Image> results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null)); 
             vc.setResults(results);
             
             // Get all the Author IDs
-            Set authorIDs = new HashSet();
-            for (Iterator i = results.iterator(); i.hasNext(); ) {
-            	Image img = (Image) i.next();
+            Set<Integer> authorIDs = new HashSet<Integer>();
+            for (Iterator<Image> i = results.iterator(); i.hasNext(); ) {
+            	Image img = i.next();
             	authorIDs.add(new Integer(img.getAuthorID()));
             }
             

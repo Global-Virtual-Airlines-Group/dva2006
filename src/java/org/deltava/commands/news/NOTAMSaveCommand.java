@@ -4,9 +4,7 @@ package org.deltava.commands.news;
 import java.util.List;
 import java.sql.Connection;
 
-import org.deltava.beans.Notice;
-import org.deltava.beans.Person;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -36,7 +34,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		List pilots = null;
+		List<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
 

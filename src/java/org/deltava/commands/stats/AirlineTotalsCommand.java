@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 public class AirlineTotalsCommand extends AbstractCommand {
 
 	private ExpiringCache _cache;
-    private Set _tableStatus = new TreeSet();
+    private Set<TableInfo> _tableStatus = new TreeSet<TableInfo>();
     
     /**
      * Initializes the command.

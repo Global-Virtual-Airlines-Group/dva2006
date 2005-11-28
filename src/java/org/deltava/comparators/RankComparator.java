@@ -13,14 +13,14 @@ import java.util.*;
 
 public class RankComparator {
 
-   private List _ranks;
+   private List<String> _ranks;
    
    private RankStage _rs1;
    private RankStage _rs2;
    
-   public RankComparator(Collection ranks) {
+   public RankComparator(Collection<String> ranks) {
       super();
-      _ranks = new ArrayList(ranks);
+      _ranks = new ArrayList<String>(ranks);
    }
    
    protected class RankStage implements Comparable {

@@ -84,7 +84,8 @@ public class ApplicantCommand extends AbstractFormCommand {
          } catch (NumberFormatException nfe) { }
          
          // Set Notification Options
-         Collection notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"), Collections.EMPTY_LIST);
+         Collection<String> notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues("notifyOption"), 
+        		 new HashSet<String>());
          for (int x = 0; x < RegisterCommand.NOTIFY_ALIASES.length; x++)
             a.setNotifyOption(RegisterCommand.NOTIFY_ALIASES[x], notifyOptions.contains(RegisterCommand.NOTIFY_ALIASES[x]));
 
@@ -93,7 +94,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 
          // Get the Pilot DAO and check if we're unique
          GetPilotDirectory pdao = new GetPilotDirectory(con);
-         Set dupeResults = new HashSet(pdao.checkUnique(a, SystemData.get("airline.db")));
+         Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, SystemData.get("airline.db")));
          if (!dupeResults.isEmpty())
             throw new CommandException("Applicant name/email not unique");
          
@@ -137,8 +138,8 @@ public class ApplicantCommand extends AbstractFormCommand {
             RegisterCommand.NOTIFY_ALIASES), REQUEST);
 
 		// Sort and save the airports
-		Map airports = (Map) SystemData.getObject("airports");
-		Set apSet = new TreeSet(new AirportComparator(AirportComparator.NAME));
+		Map<String, Airport> airports = (Map) SystemData.getObject("airports");
+		Set<Airport> apSet = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 		apSet.addAll(airports.values());
 		ctx.setAttribute("airports", apSet, REQUEST);
       
@@ -256,7 +257,7 @@ public class ApplicantCommand extends AbstractFormCommand {
       GetPilotDirectory pdao = new GetPilotDirectory(c);
       
       // Do a soundex check on the applicant against each database
-      Collection soundexIDs = new ArrayList();
+      Collection<Integer> soundexIDs = new HashSet<Integer>();
       Collection airlines = ((Map) SystemData.getObject("apps")).values();
       for (Iterator i = airlines.iterator(); i.hasNext(); ) {
          AirlineInformation info = (AirlineInformation) i.next();
@@ -273,9 +274,9 @@ public class ApplicantCommand extends AbstractFormCommand {
       UserDataMap udmap = uddao.get(soundexIDs);
       
       // Load the users objects
-      Map persons = new HashMap();
-      for (Iterator i = udmap.getTableNames().iterator(); i.hasNext(); ) {
-         String tableName = (String) i.next();
+      Map<Integer, Person> persons = new HashMap<Integer, Person>();
+      for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
+         String tableName = i.next();
          Collection IDs = udmap.getByTable(tableName);
          if (UserDataMap.isPilotTable(tableName)) {
             persons.putAll(pdao.getByID(IDs, tableName));

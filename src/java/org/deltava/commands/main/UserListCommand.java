@@ -3,13 +3,14 @@ package org.deltava.commands.main;
 
 import java.util.*;
 
+import org.deltava.beans.Pilot;
+
 import org.deltava.commands.*;
 
 import org.deltava.comparators.PilotComparator;
 import org.deltava.security.UserPool;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to list logged in users.
@@ -33,7 +34,7 @@ public class UserListCommand extends AbstractCommand {
     		sortOpt = PilotComparator.TYPES[PilotComparator.PILOTCODE];
     	
     	// Initialize the comparator
-    	Set users = new TreeSet(new PilotComparator(sortOpt));
+    	Set<Pilot> users = new TreeSet<Pilot>(new PilotComparator<Pilot>(sortOpt));
 
         // Get and save the users in the request
     	users.addAll(UserPool.getPilots());

@@ -104,7 +104,7 @@ public class GetFlightReports extends DAO {
 	 * @return a List of FlightReports in SUBMITTED or HOLD status
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getDisposalQueue() throws DAOException {
+	public List<FlightReport> getDisposalQueue() throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, PIREPS PR "
 					+ "LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "

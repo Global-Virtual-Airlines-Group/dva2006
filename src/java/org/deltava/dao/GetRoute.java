@@ -87,8 +87,7 @@ public class GetRoute extends DAO {
           _ps.setString(1, aCode);
           
           // Iterate through the result set
-          @SuppressWarnings("unchecked")
-          Set<Airport> results = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+          Set<Airport> results = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
           ResultSet rs = _ps.executeQuery();
           while (rs.next()) {
              Airport a = SystemData.getAirport(rs.getString(1));

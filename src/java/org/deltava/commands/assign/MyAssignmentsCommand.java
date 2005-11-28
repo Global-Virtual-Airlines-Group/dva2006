@@ -4,7 +4,9 @@ package org.deltava.commands.assign;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Person;
 import org.deltava.beans.assign.AssignmentInfo;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetAssignment;
@@ -45,13 +47,13 @@ public class MyAssignmentsCommand extends AbstractViewCommand {
          dao.setQueryStart(vc.getStart());
          
          // Get the assignments
-         List results = dao.getByPilot(ctx.getUser().getID());
+         List<AssignmentInfo> results = dao.getByPilot(ctx.getUser().getID());
          vc.setResults(results);
          
          // Get the access controllers for the assignments
-         List accessList = new ArrayList(results.size());
-         for (Iterator i = results.iterator(); i.hasNext(); ) {
-         	AssignmentInfo ai = (AssignmentInfo) i.next();
+         List<AssignmentAccessControl> accessList = new ArrayList<AssignmentAccessControl>(results.size());
+         for (Iterator<AssignmentInfo> i = results.iterator(); i.hasNext(); ) {
+         	AssignmentInfo ai = i.next();
          	
          	// Calculate access to this flight assignment
             AssignmentAccessControl access = new AssignmentAccessControl(ctx, ai);
@@ -60,7 +62,7 @@ public class MyAssignmentsCommand extends AbstractViewCommand {
          }
          
          // Save dummy map of pilot IDs - the only one we need to add is our own
-         Map pilots = new HashMap();
+         Map<Integer, Person> pilots = new HashMap<Integer, Person>();
          pilots.put(new Integer(ctx.getUser().getID()), ctx.getUser());
          ctx.setAttribute("pilots", pilots, REQUEST);
          

@@ -52,7 +52,7 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Pull up the SELCAL codes
-			Collection codes = null;
+			Collection<SelectCall> codes = null;
 			if (SORT_CODES[4].equals(vc.getSortType()))
 				codes = dao.getReserved(ctx.getUser().getID());
 			else 

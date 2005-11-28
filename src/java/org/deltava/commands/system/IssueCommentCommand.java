@@ -1,8 +1,10 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -53,7 +55,7 @@ public class IssueCommentCommand extends AbstractCommand {
          boolean sendComment = Boolean.valueOf(ctx.getParameter("emailComment")).booleanValue();
          if (sendComment) {
             ctx.setAttribute("sendComment", Boolean.TRUE, REQUEST);
-            Set pilotIDs = new HashSet();
+            Set<Integer> pilotIDs = new HashSet<Integer>();
             
             // Create and populate the message context
             MessageContext mctx = new MessageContext();
@@ -84,12 +86,12 @@ public class IssueCommentCommand extends AbstractCommand {
             UserDataMap udm = uddao.get(pilotIDs);
 
             // Get the pilot profiles
-            Set pilots = new HashSet();
+            Set<Pilot> pilots = new HashSet<Pilot>();
             GetPilot pdao = new GetPilot(con);
-            for (Iterator pi = udm.getTableNames().iterator(); pi.hasNext(); ) {
-            	String dbTableName = (String) pi.next();
+            for (Iterator<String> pi = udm.getTableNames().iterator(); pi.hasNext(); ) {
+            	String dbTableName = pi.next();
             	if (UserDataMap.isPilotTable(dbTableName)) {
-            		Map pMap = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
+            		Map<Integer, Pilot> pMap = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
             		pilots.addAll(pMap.values());
             	}
             }

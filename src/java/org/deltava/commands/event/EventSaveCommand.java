@@ -94,7 +94,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// See which charts have been selected
 			String[] selectedCharts = ctx.getRequest().getParameterValues("charts");
 			if (selectedCharts != null) {
-				Set chartIDs = new HashSet();
+				Set<Integer> chartIDs = new HashSet<Integer>();
 				for (int x = 0; x < selectedCharts.length; x++)
 					chartIDs.add(new Integer(StringUtils.parseHex(selectedCharts[x])));
 
@@ -124,7 +124,7 @@ public class EventSaveCommand extends AbstractCommand {
 
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				Collection pilots = pdao.getNotifications(Person.EVENT);
+				Collection<? extends EMailAddress> pilots = pdao.getNotifications(Person.EVENT);
 
 				// Send the e-mail notification
 				if (pilots != null) {

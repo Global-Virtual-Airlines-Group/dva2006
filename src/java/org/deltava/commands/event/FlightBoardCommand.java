@@ -78,7 +78,7 @@ public class FlightBoardCommand extends AbstractCommand {
 
 				// Get the DAO and execute, and highlight our pilots
 				GetPilotOnline dao = new GetPilotOnline(con);
-				Map idMap = dao.getIDs(networkName);
+				Map<String, Integer> idMap = dao.getIDs(networkName);
 				info.setPilotIDs(idMap);
 			}
 			
@@ -86,9 +86,9 @@ public class FlightBoardCommand extends AbstractCommand {
 			if (!info.getCached()) {
 				// Get airports to load from DAFIF data and highlight our airline's code
 				List codes = (List) SystemData.getObject("online.highlightCodes");
-				Set airportIDs = new HashSet();
-				for (Iterator i = info.getPilots().iterator(); i.hasNext();) {
-					Pilot usr = (Pilot) i.next();
+				Set<String> airportIDs = new HashSet<String>();
+				for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
+					Pilot usr = i.next();
 					for (Iterator ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted()); ) {
 						String code = (String) ci.next();
 						if (usr.getCallsign().startsWith(code))
@@ -108,8 +108,8 @@ public class FlightBoardCommand extends AbstractCommand {
 				navaids.filter(NavigationDataBean.AIRPORT);
 
 				// Update the pilots with the proper airport data
-				for (Iterator i = info.getPilots().iterator(); i.hasNext();) {
-					Pilot usr = (Pilot) i.next();
+				for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
+					Pilot usr = i.next();
 
 					// Update the departure airport
 					if (navaids.contains(usr.getAirportD().getICAO())) {

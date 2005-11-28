@@ -5,7 +5,7 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.fleet.FleetEntry;
+import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -36,7 +36,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		List results = new ArrayList();
+		List<Manual> results = new ArrayList<Manual>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -50,7 +50,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
 					results.addAll(0, dao.getManuals(info.getDB()));
 				} else {
-					Collection entries = dao.getManuals(info.getDB());
+					Collection<Manual> entries = dao.getManuals(info.getDB());
 					appendDB(entries, info.getDB());
 					results.addAll(entries);
 				}
@@ -66,8 +66,8 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 		ctx.setAttribute("access", access, REQUEST);
 
 		// Validate our access to the results
-		for (Iterator i = results.iterator(); i.hasNext();) {
-			FleetEntry e = (FleetEntry) i.next();
+		for (Iterator<Manual> i = results.iterator(); i.hasNext();) {
+			FleetEntry e = i.next();
 			access.setEntry(e);
 			access.validate();
 

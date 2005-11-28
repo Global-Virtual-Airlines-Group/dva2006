@@ -9,7 +9,7 @@ import org.deltava.beans.Person;
  * @since 1.0
  */
 
-public class PersonComparator extends AbstractComparator {
+public class PersonComparator<T extends Person> extends AbstractComparator<T> {
 
     public static final int FIRSTNAME = 0;
     public static final int LASTNAME = 1;
@@ -43,9 +43,7 @@ public class PersonComparator extends AbstractComparator {
      * @throws ClassCastException if either object is not a Person
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected int compareImpl(Object o1, Object o2) {
-        Person p1 = (Person) o1;
-        Person p2 = (Person) o2;
+    protected int compareImpl(T p1, T p2) {
 
         int tmpResult;
         switch (_comparisonType) {

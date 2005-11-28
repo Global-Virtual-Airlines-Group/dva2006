@@ -4,6 +4,7 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
 
@@ -31,7 +32,7 @@ public class AirlineListCommand extends AbstractCommand {
 			
 			// Get the DAO and the airline list
 			GetAirline dao = new GetAirline(con);
-			List airlines = new ArrayList(dao.getAll().values());
+			List<Airline> airlines = new ArrayList<Airline>(dao.getAll().values());
 			
 			// Sort the airlines and save them
 			Collections.sort(airlines);

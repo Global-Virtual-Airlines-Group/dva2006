@@ -121,7 +121,7 @@ public class Mailer {
     * method will check for a valid e-mail address by comparing the address to {@link EMailAddress#INVALID_ADDR}.
     * @param addrs a Collection of recipient names/addresses
     */
-   public void send(Collection<EMailAddress> addrs) {
+   public void send(Collection<? extends EMailAddress> addrs) {
       _msgTo.addAll(addrs);
       send();
    }

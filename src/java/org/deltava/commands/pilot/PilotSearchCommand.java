@@ -57,7 +57,7 @@ public class PilotSearchCommand extends AbstractCommand {
       // Check the pilot code parameter
       int pilotCode = getPilotCode(ctx.getParameter("pilotCode"));
 
-      Collection results = null;
+      Collection<Pilot> results = null;
       try {
          Connection con = ctx.getConnection();
 
@@ -77,7 +77,7 @@ public class PilotSearchCommand extends AbstractCommand {
          
          // Get the search results
          if (pilotCode > 0) {
-            results = new ArrayList();
+            results = new ArrayList<Pilot>();
             Pilot p = dao.getPilotByCode(pilotCode, SystemData.get("airline.db"));
             if (p != null)
                results.add(p);
@@ -91,9 +91,9 @@ public class PilotSearchCommand extends AbstractCommand {
       }
 
       // Calculate access to each search result
-      Map accessMap = new HashMap();
-      for (Iterator i = results.iterator(); i.hasNext();) {
-         Pilot p = (Pilot) i.next();
+      Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
+      for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
+         Pilot p = i.next();
 
          // Calculate the access level
          PilotAccessControl access = new PilotAccessControl(ctx, p);

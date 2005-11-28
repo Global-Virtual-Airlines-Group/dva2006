@@ -4,6 +4,8 @@ package org.deltava.commands.pirep;
 import java.util.Collection;
 import java.sql.Connection;
 
+import org.deltava.beans.FlightReport;
+
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetFlightReports;
@@ -41,7 +43,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection pireps = dao.getDisposalQueue();
+			Collection<FlightReport> pireps = dao.getDisposalQueue();
 			dao.getCaptEQType(pireps);
 			vc.setResults(pireps);
 		} catch (DAOException de) {

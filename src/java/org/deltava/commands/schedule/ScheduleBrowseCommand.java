@@ -47,9 +47,9 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
       
       // Create the airport comparator and sorted result sets
-      AirportComparator ac = new AirportComparator(AirportComparator.NAME);
-      Set airportsD = new TreeSet(ac);
-      Set airportsA = new TreeSet(ac);
+      AirportComparator<Airport> ac = new AirportComparator<Airport>(AirportComparator.NAME);
+      Set<Airport> airportsD = new TreeSet<Airport>(ac);
+      Set<Airport> airportsA = new TreeSet<Airport>(ac);
       
       try {
          Connection con = ctx.getConnection();

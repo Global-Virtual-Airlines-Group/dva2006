@@ -29,12 +29,12 @@ public class QuestionnaireQueueCommand extends AbstractCommand {
 			
 			// Get the DAO and the questionnaire queue
 			GetQuestionnaire dao = new GetQuestionnaire(con);
-			List queue = dao.getPending();
+			List<Examination> queue = dao.getPending();
 			
 			// Build a collection of applicant IDs
-			Set applicantIDs = new HashSet();
-			for (Iterator i = queue.iterator(); i.hasNext(); ) {
-				Examination exam = (Examination) i.next();
+			Set<Integer> applicantIDs = new HashSet<Integer>();
+			for (Iterator<Examination> i = queue.iterator(); i.hasNext(); ) {
+				Examination exam = i.next();
 				applicantIDs.add(new Integer(exam.getPilotID()));
 			}
 			
