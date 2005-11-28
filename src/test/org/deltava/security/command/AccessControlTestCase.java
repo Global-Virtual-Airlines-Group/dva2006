@@ -19,7 +19,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	
 	protected class AccessControlContext implements SecurityContext {
 	   
-	   private final List ANONYMOUS_ROLES = Arrays.asList(new String[] {"Anonymous"});
+	   private final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] {"Anonymous"});
 	   
 	   private Person _usr;
 	   private HttpServletRequest _req;
@@ -38,7 +38,7 @@ public abstract class AccessControlTestCase extends TestCase {
 	      return _usr;
 	   }
 
-	   public Collection getRoles() {
+	   public Collection<String> getRoles() {
 	      return isAuthenticated() ? _usr.getRoles() : ANONYMOUS_ROLES;
 	   }
 

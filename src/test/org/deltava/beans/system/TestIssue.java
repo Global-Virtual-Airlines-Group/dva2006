@@ -99,11 +99,11 @@ public class TestIssue extends AbstractBeanTestCase {
 		_i.addComment(ic);
 		assertEquals(1, _i.getComments().size());
 		assertEquals(_i.getComments().size(), _i.getCommentCount());
-		assertEquals(ic, new ArrayList(_i.getComments()).get(0));
+		assertEquals(ic, new ArrayList<IssueComment>(_i.getComments()).get(0));
 		
 		_i.addComment(ic2);
 		assertEquals(2, _i.getComments().size());
-		assertEquals(ic2, new ArrayList(_i.getComments()).get(0));
+		assertEquals(ic2, new ArrayList<IssueComment>(_i.getComments()).get(0));
 		assertEquals(_i.getComments().size(), _i.getCommentCount());
 	}
 	

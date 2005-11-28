@@ -10,7 +10,7 @@ import org.hansel.CoverageDecorator;
 
 public class TestRankComparator extends TestCase {
    
-   private static final List RANKS = Arrays.asList(new String[] {"Trainee", "First Officer", "Captain", "Senior Captain",
+   private static final List<String> RANKS = Arrays.asList(new String[] {"Trainee", "First Officer", "Captain", "Senior Captain",
          "Assistant Chief Pilot", "Chief Pilot"});
    
    private RankComparator _rc;
@@ -91,7 +91,7 @@ public class TestRankComparator extends TestCase {
       _rc.setRank2("First Officer", -4);
       _rc.compare(); // just make sure we don't blow up
       
-      RankComparator rc2 = new RankComparator(new ArrayList());
+      RankComparator rc2 = new RankComparator(new ArrayList<String>());
       rc2.setRank1("First Officer", 3);
       rc2.setRank2("First Officer", 3);
       try {

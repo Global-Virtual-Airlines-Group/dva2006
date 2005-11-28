@@ -23,7 +23,7 @@ public class TestConnectionMonitor extends TestCase {
         assertEquals(5, _cm.getInterval());
         assertEquals(3, _cm.getInterval());
 
-        ArrayList pool1 = new ArrayList();
+        ArrayList<Object> pool1 = new ArrayList<Object>();
         pool1.add(new Object());
         assertEquals(pool1.size(), _cm.size());
         
@@ -34,10 +34,10 @@ public class TestConnectionMonitor extends TestCase {
     }
     
     public void testMultiplePools() {
-        ArrayList pool1 = new ArrayList();
+        ArrayList<Object> pool1 = new ArrayList<Object>();
         pool1.add(new Object());
         
-        ArrayList pool2 = new ArrayList();
+        ArrayList<Object> pool2 = new ArrayList<Object>();
         pool2.add(new Object());
         pool2.add(new Object());
     }

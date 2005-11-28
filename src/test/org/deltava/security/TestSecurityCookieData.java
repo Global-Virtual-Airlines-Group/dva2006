@@ -41,7 +41,7 @@ public class TestSecurityCookieData extends AbstractBeanTestCase {
     }
     
     public void testMapConstructor() {
-        Map data = new HashMap();
+        Map<String, String> data = new HashMap<String, String>();
         data.put("uid", "cn=Luke,ou=dva,o=sce");
         data.put("addr", "127.0.0.1");
         

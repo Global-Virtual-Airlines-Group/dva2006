@@ -29,7 +29,7 @@ public class TestCheckTag extends AbstractFormTagTestCase {
         _tag.setType("radio");
         _tag.setIdx("2");
         
-        List options = new ArrayList();
+        List<String> options = new ArrayList<String>();
         options.add("OPT1");
         options.add("OPT2");
         _tag.setOptions(options);
@@ -74,7 +74,7 @@ public class TestCheckTag extends AbstractFormTagTestCase {
     public void testComboAlias() throws Exception {
         _tag.setName("RADIO1");
         _tag.setType("radio");
-        List options = new ArrayList();
+        List<Airline> options = new ArrayList<Airline>();
         options.add(new Airline("DVA", "Delta Virtual"));
         options.add(new Airline("AF", "Air France"));
         _tag.setOptions(options);
@@ -99,7 +99,7 @@ public class TestCheckTag extends AbstractFormTagTestCase {
     public void testNumericValidation() throws Exception {
         _tag.setName("CHECK2");
         _tag.setIdx("0");
-        List options = new ArrayList();
+        List<String> options = new ArrayList<String>();
         options.add("OPT1");
         _tag.setOptions(options);
 

@@ -149,7 +149,7 @@ public class TestEquipmentType extends AbstractBeanTestCase {
     }
     
     public void testIndexOf() {
-       List eqTypes = new ArrayList();
+       List<EquipmentType> eqTypes = new ArrayList<EquipmentType>();
        eqTypes.add(_eq);
        assertTrue(_eq.equals(_eq.getName()));
        assertTrue(eqTypes.contains(_eq));

@@ -62,7 +62,7 @@ public class TestChannel extends AbstractBeanTestCase {
         assertEquals(2, _c.getRoles().size());
         assertFalse(_c.hasRole(null));
         
-        Set rNames = new HashSet();
+        Set<String> rNames = new HashSet<String>();
         rNames.add("Role3");
         rNames.add("Role4");
         _c.setRoles(rNames);
@@ -84,7 +84,7 @@ public class TestChannel extends AbstractBeanTestCase {
         assertTrue(_c.hasAirline("AFV"));
         assertFalse(_c.hasAirline(null));
         
-        Set aNames = new HashSet();
+        Set<String> aNames = new HashSet<String>();
         aNames.add("nwa");
         aNames.add("COA");
         aNames.add("coa");
