@@ -239,7 +239,8 @@
 		
 		<map name="connectProperties">
 			<useNewIO>false</useNewIO>
-			<useCompression>true</useCompression>
+			<useCompression>false</useCompression>
+			<autoReconnect>true</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>true</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
@@ -249,7 +250,7 @@
 		
 		<pool_size type="Integer">3</pool_size>
 		<pool_max_size type="Integer">6</pool_max_size>
-		<max_reqs type="Integer">50</max_reqs>
+		<max_reqs type="Integer">0</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 	</jdbc>
 	
@@ -360,7 +361,7 @@
 	</security>
 	
 	<cache>
-		<stats type="Integer">240</stats>
+		<stats type="Integer">15</stats>
 		<channels type="Integer">10</channels>
 		<cmdlog type="Integer">12</cmdlog>
 		<rss>
@@ -391,6 +392,7 @@
 			<enabled type="Boolean">true</enabled>
 			<quota type="Integer">10240000</quota>
 			<server>mail.deltava.org</server>
+			<default_pwd>12345</default_pwd>
 			<script>/usr/local/sbin/www/mailbox_create %1 %2</script>
 		</imap>
 	</smtp>
