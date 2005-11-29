@@ -13,6 +13,17 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+
+if (!confirm("Have you scored all Questions? Hit OK to submit.")) return false;
+setSubmit();
+disableButton('ScoreButton');
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -73,7 +84,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canScore}">
-<el:button type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" />
+<el:button ID="ScoreButton" type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" />
 </c:if>
  </td>
 </tr>
