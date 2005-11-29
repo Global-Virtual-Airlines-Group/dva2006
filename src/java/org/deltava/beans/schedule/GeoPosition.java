@@ -115,7 +115,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public void setLatitude(double lat) {
 		if (Math.abs(lat) > 90)
-			throw new IllegalArgumentException("Latitude cannot exceed 90 degrees");
+			throw new IllegalArgumentException("Latitude cannot exceed 90 degrees - " + lat);
 
 		_lat = lat;
 	}
