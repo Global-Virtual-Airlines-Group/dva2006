@@ -25,6 +25,8 @@ The ${flightPlan.typeName} format Flight Plan for the <span class="pri bld">${ev
 Online Event has been successfully updated, and will now be available for download by <content:airline /> 
 pilots from the Online Event page.<br />
 <br />
+To view this Online Event, <el:cmd url="event" linkID="0x${event.ID}" className="sec bld">Click Here</el:cmd>.<br />
+<br />
 <content:copyright />
 </content:region>
 </content:page>
