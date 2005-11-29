@@ -158,15 +158,15 @@
 		<!-- Precompile the files -->
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
-	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false" xpoweredBy="true" 
-			validateXml="truee" webXmlFragment="${jspc.webXMLInc}"
-	    	outputDir="${java.io.tmpdir}/src/jsp" />
+	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false"
+	    	xpoweredBy="true" validateXml="truee" webXmlFragment="${jspc.webXMLInc}"
+	    	compilerTargetVM="1.5" compilerSourceVM="1.5" outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
-			debuglevel="source" optimize="on" target="1.4" source="1.4">
+			debuglevel="source" optimize="on" target="1.5" source="1.5">
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
