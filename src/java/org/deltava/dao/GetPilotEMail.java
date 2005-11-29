@@ -106,7 +106,7 @@ public class GetPilotEMail extends DAO {
 
       // If we've retrieved nothing, exit
       if (results.isEmpty())
-    	  new ArrayList<EMailConfiguration>();
+    	  return Collections.emptyList();
 
       // Build SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT goto, address FROM postfix.alias WHERE (goto IN (");
