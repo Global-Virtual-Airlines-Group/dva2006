@@ -199,13 +199,12 @@ public class GetExam extends DAO {
 	 */
 	public List getSubmitted() throws DAOException {
 		try {
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, " +
-			      "P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, EXAMINFO EP WHERE " +
-			      "(P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.STATUS=?) AND (E.ID=Q.EXAM_ID) " +
-			      "GROUP BY E.ID ORDER BY E.CREATED_ON");
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, "
+			      + "P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, EXAMINFO EP WHERE "
+			      + "(P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND ((E.STATUS=?) OR ((E.STATUS=?) AND "
+			      + "(E.EXPIRY_TIME > NOW()))) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON");
 			_ps.setInt(1, Test.SUBMITTED);
-			
-			// Execute the query
+			_ps.setInt(2, Test.NEW);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
