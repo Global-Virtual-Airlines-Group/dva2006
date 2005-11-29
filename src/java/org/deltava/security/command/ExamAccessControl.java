@@ -1,11 +1,12 @@
 // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
+import java.util.Date;
+
 import org.deltava.security.SecurityContext;
 import org.deltava.commands.CommandSecurityException;
 
-import org.deltava.beans.testing.Test;
-import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.*;
 
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
@@ -52,11 +53,15 @@ public class ExamAccessControl extends AccessControl {
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
-        boolean isSubmitted = (_t.getStatus() == (isCR ? Test.NEW : Test.SUBMITTED)); 
-        
+        boolean isSubmitted = (_t.getStatus() == (isCR ? Test.NEW : Test.SUBMITTED));
+        if (!isCR) {
+        	Examination ex = (Examination) _t;
+        	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
+        }
+
         // Set access
         _canRead = isOurs || isExam || isHR;
-        _canSubmit = isOurs && (_t.getStatus() == Test.NEW);
+        _canSubmit = isOurs && !isSubmitted;
         _canEdit = (_t.getStatus() == Test.SCORED) && isHR && !isOurs;
         _canScore = isCR ? (_t.getStatus() != Test.SCORED) : (_canEdit || (isSubmitted && (isExam || isHR)));
         _canDelete = _ctx.isUserInRole("Admin");
