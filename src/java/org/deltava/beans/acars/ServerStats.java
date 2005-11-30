@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -10,48 +11,123 @@ import java.util.*;
  */
 
 public final class ServerStats implements java.io.Serializable {
-
-	public static final int START_TIME = 0;
-	public static final int CONNECT_COUNT = 1;
-	public static final int AUTH_COUNT = 2;
-	public static final int MSGS_IN = 3;
-	public static final int MSGS_OUT = 4;
-	public static final int CURRENT_CONNECT = 5;
-	public static final int MAX_CONNECT = 6;
 	
-	public static final String[] STAT_NAMES = {"Start Time", "Connections", "Authentications", "Messages In",
-		"Messages Out", "Current Connections", "Maximum Connections" };
-
-	private static long[] stats = {0, 0, 0, 0, 0, 0, 0};
+	private static Date _startDate;
+	private static int _authCount;
+	
+	private static int _maxConnects;
+	private static int _connectCount;
+	
+	private static long _bytesIn;
+	private static long _bytesOut;
+	
+	private static long _msgsIn;
+	private static long _msgsOut;
 
 	// Singleton
 	private ServerStats() {
 	}
 	
-	public static synchronized void add(int statType) {
-		if ((statType >= 0) && (statType < stats.length))
-			stats[statType]++;
+	public static ServerStats getInstance() {
+		return new ServerStats();
 	}
 	
-	public static synchronized void dec(int statType) {
-		if ((statType >= 0) && (statType < stats.length) && (stats[statType] > 0))
-			stats[statType]--;
+	/**
+	 * Returns the ACARS server start date.
+	 * @return the date/time the server was started
+	 * @see ServerStats#authenticate()
+	 */
+	public static Date getStartDate() {
+		return _startDate;
 	}
 	
-	public static synchronized void set(int statType, long statValue) {
-		if ((statType >= 0) && (statType < stats.length) && (statValue >= 0))
-			stats[statType] = statValue; 
+	/**
+	 * Returns the number of authentications the server has performed.
+	 * @return the authentication count
+	 * @see ServerStats#authenticate()
+	 */
+	public static int getAuthentications() {
+		return _authCount;
 	}
 	
-	public static synchronized long get(int statType) {
-		return ((statType >= 0) && (statType < stats.length)) ? stats[statType] : 0;
+	/**
+	 * Returns the number of current ACARS connections.
+	 * @return the number of connections
+	 */
+	public static int getConnections() {
+		return _connectCount;
 	}
 	
-	public static synchronized Map<Long, Long> getAll() {
-		Map<Long, Long> results = new HashMap<Long, Long>();
-		for (int x = 0; x < stats.length; x++)
-			results.put(new Long(x), new Long(stats[x]));
-		
-		return results;
+	/**
+	 * Returns the maximum number of concurrent ACARS connections.
+	 * @return the maximum number of connections
+	 */
+	public static int getMaxConnections() {
+		return _maxConnects;
+	}
+	
+	public static long getBytesIn() {
+		return _bytesIn;
+	}
+	
+	public static long getBytesOut() {
+		return _bytesOut;
+	}
+	
+	public static long getMsgsIn() {
+		return _msgsIn;
+	}
+	
+	public static long getMsgsOut() {
+		return _msgsOut;
+	}
+	
+	/**
+	 * Marks the ACARS server as started.
+	 */
+	public static void start() {
+		_startDate = new Date();
+	}
+	
+	/**
+	 * Logs a connection.
+	 */
+	public static synchronized void connect() {
+		_connectCount++;
+		if (_connectCount > _maxConnects)
+			_maxConnects = _connectCount;
+	}
+
+	/**
+	 * Logs an authentication.
+	 */
+	public static synchronized void authenticate() {
+		_authCount++;
+	}
+
+	/**
+	 * Logs a disconnection.
+	 */
+	public static synchronized void disconnect() {
+		if (_connectCount > 0)
+			_connectCount--;
+	}
+	
+	/**
+	 * Logs an inbound message.
+	 * @param length the message length in bytes
+	 */
+	public static synchronized void msgIn(int length) {
+		_msgsIn++;
+		_bytesIn += length;
+	}
+
+	/**
+	 * Logs an outbound message.
+	 * @param length the message length in bytes
+	 */
+	public static synchronized void msgOut(int length) {
+		_msgsOut++;
+		_bytesOut += length;
 	}
 }
