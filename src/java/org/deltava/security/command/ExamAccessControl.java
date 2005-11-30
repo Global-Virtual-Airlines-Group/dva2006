@@ -54,6 +54,7 @@ public class ExamAccessControl extends AccessControl {
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
         boolean isSubmitted = (_t.getStatus() == (isCR ? Test.NEW : Test.SUBMITTED));
+        boolean isScored = (_t.getStatus() == Test.SCORED);
         if (!isCR) {
         	Examination ex = (Examination) _t;
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
@@ -61,9 +62,9 @@ public class ExamAccessControl extends AccessControl {
 
         // Set access
         _canRead = isOurs || isExam || isHR;
-        _canSubmit = isOurs && !isSubmitted;
-        _canEdit = (_t.getStatus() == Test.SCORED) && isHR && !isOurs;
-        _canScore = isCR ? (_t.getStatus() != Test.SCORED) : (_canEdit || (isSubmitted && (isExam || isHR)));
+        _canSubmit = isOurs && !isCR && (_t.getStatus() == Test.NEW);
+        _canEdit = isScored && isHR && !isOurs;
+        _canScore = isCR ? !isScored : (_canEdit || (isSubmitted && (isExam || isHR)));
         _canDelete = _ctx.isUserInRole("Admin");
         
         // Throw an exception if we cannot view
