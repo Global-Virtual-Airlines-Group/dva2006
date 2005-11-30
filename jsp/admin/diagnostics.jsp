@@ -73,20 +73,6 @@
 </tr>
 </el:table>
 
-<!-- JDBC Driver Data Table -->
-<el:table className="view" space="default" pad="default">
-<tr class="title caps">
- <td class="left">REGISTERED JDBC DRIVERS</td>
-</tr>
-
-<!-- JDBC Driver Data -->
-<c:forEach var="driver" items="${jdbcDrivers}">
-<view:row entry="${driver}">
- <td class="left">${driver.class.name} v${driver.majorVersion}.${driver.minorVersion}.</td>
-</view:row>
-</c:forEach>
-</el:table>
-
 <!-- JDBC Connection Pool Data Table -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
@@ -174,6 +160,115 @@
 </tr>
 </c:if>
 </el:table>
+<br />
+<c:if test="${!empty acarsPool}">
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
+</tr>
+
+<!-- Table Header Bar-->
+<tr class="title">
+ <td width="10%">ID</td>
+ <td width="20%">USER</td>
+ <td width="10%">FLIGHT NUMBER</td>
+ <td width="10%">FLIGHT ID</td> 
+ <td width="25%">REMOTE ADDRESS</td>
+ <td width="10%">MESSAGES</td>
+ <td>BYTES</td>
+</tr>
+
+<!-- Table Connection Data -->
+<c:forEach var="con" items="${acarsPool}">
+<tr>
+ <td class="priB"><fmt:hex value="${con.ID}" /></td>
+ <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
+<c:if test="${con.flightID == 0}">
+ <td class="bld">N/A</td>
+ <td>N/A</td>
+</c:if>
+<c:if test="${con.flightID > 0}">
+ <td class="sec bld">${con.flightInfo.flightCode}</td>
+ <td><el:cmd url="acarsinfo" linkID="0x${con.flightID}"><fmt:int value="${con.flightID}" /></el:cmd></td>
+</c:if>
+ <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
+ <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
+ <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
+</tr>
+<tr>
+ <td colspan="7">Socket settings: <fmt:int value="${con.socket.sendBufferSize}" /> bytes out, 
+<fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. TCP_NODELAY = ${con.socket.tcpNoDelay}, 
+SO_KEEPALIVE = ${con.socket.keepAlive}</td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
+<c:if test="${!empty workers}">
+<!-- ACARS Server Worker threads -->
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="4">ACARS WORKER THREAD INFORMATION</td>
+</tr>
+
+<!-- Table Header Bar-->
+<tr class="title">
+ <td width="30%">THREAD NAME</td>
+ <td width="15%">THREAD STATUS</td>
+ <td wdith="10%">EXECUTION COUNT</td>
+ <td>CURRENTLY EXECUTING</td>
+</tr>
+
+<!-- Table Thread Data -->
+<c:forEach var="worker" items="${workers}">
+<tr>
+ <td class="pri bld">${worker}</td>
+ <td class="sec">${worker.statusName}</td>
+ <td><fmt:int value="${worker.executionCount}" /></td>
+ <td class="left">${worker.message}</td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
+<c:if test="${!empty acarsCmdStats}">
+<!-- ACARS Server Command Statistics -->
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="6">ACARS SERVER STATISTICS</td>
+</tr>
+
+<!-- Command Statistics Header -->
+<tr class="title">
+ <td width="30%">COMMAND NAME</td>
+ <td width="10%">INVOCATIONS</td>
+ <td width="15%">AVERAGE TIME</td>
+ <td width="15%">TOTAL TIME</td>
+ <td width="15%">MAXIMUM TIME</td>
+ <td>MINIMUM TIME</td>
+</tr>
+
+<!-- Command Statistics Data -->
+<c:forEach var="cmdStat" items="${acarsCmdStats}">
+<tr>
+ <td class="pri bld">${cmdStat.name}</td>
+ <td><fmt:int value="${cmdStat.count}" /></td>
+ <td class="bld"><fmt:int value="${cmdStat.totalTime / cmdStat.count}" /> ms</td>
+ <td><fmt:int value="${cmdStat.totalTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.maxTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.minTime}" /> ms</td>
+</tr>
+</c:forEach>
+
+<!-- Table Statistics Data -->
+<c:set var="statIdx" value="${0}" scope="request" />
+<c:forEach var="stat" items="${acarsStatNames}">
+<c:set var="statIdx" value="${statIdx + 1}" scope="request" />
+<tr>
+ <td colspan="6" class="left"><span class="pri bld">${stat}</span> <fmt:int value="${acarsStats[statIdx]}" /></td>
+</tr>
+</c:forEach>
+</el:table>
+<br />
+</c:if>
 <content:copyright />
 </content:region>
 </content:page>

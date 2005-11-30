@@ -1124,12 +1124,6 @@
 
 
 	<!-- ACARS log/data commands -->
-	<command id="acarspool">
-		<name>ACARS Connection Pool</name>
-		<class>org.deltava.commands.acars.ConnectionPoolCommand</class>
-		<roles>Admin</roles>
-	</command>
-
 	<command id="acarsinfo">
 		<name>ACARS Flight Info</name>
 		<class>org.deltava.commands.acars.FlightInfoCommand</class>

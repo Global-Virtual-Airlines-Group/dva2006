@@ -1,9 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
-import java.sql.DriverManager;
 
+import org.deltava.beans.acars.*;
 import org.deltava.commands.*;
 
 import org.deltava.jdbc.ConnectionPool;
@@ -22,58 +22,70 @@ import org.deltava.util.system.SystemData;
 
 public class DiagnosticCommand extends AbstractCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-    public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-       // Get the Connection Pool data
-       ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-       ctx.setAttribute("jdbcPoolInfo", (cPool == null) ? null : cPool.getPoolInfo(), REQUEST);
+		// Get the Connection Pool data
+		ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		ctx.setAttribute("jdbcPoolInfo", (cPool == null) ? null : cPool.getPoolInfo(), REQUEST);
 
-       // Get the Task Scheduler data
-       TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
-       if (tSched != null) {
-    	   ctx.setAttribute("taskRunning", Boolean.valueOf(tSched.isAlive()), REQUEST);
-    	   ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
-       }
-       
-       // Run the GC
-       System.gc();
-       
-       // Get Virtual Machine properties
-       Runtime rt = Runtime.getRuntime();
-       ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
-       ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
-       ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
-       ctx.setAttribute("pctMemory", new Double(Math.round(rt.totalMemory() * 100.0 / rt.maxMemory())), REQUEST);
-       
-       // Get JDBC drivers
-       ctx.setAttribute("jdbcDrivers", DriverManager.getDrivers(), REQUEST);
-       
-       // Get time zone info
-       TimeZone tz = TimeZone.getDefault();
-       ctx.setAttribute("timeZone", tz, REQUEST);
-       ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
-       
-       // Get Servlet context properties
-       ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
-       ctx.setAttribute("serverStart", _ctx.getAttribute("startedOn"), REQUEST);
-       ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
-       ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
-       ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
-       
-       // Get the Google Maps API usage count
-       ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
-       
-       // Get System properties
-       ctx.setAttribute("sys", System.getProperties(), REQUEST);
-       
-       // Forward to the JSP
-       CommandResult result = ctx.getResult();
-       result.setURL("/jsp/admin/diagnostics.jsp");
-       result.setSuccess(true);
-    }
+		// Get the Task Scheduler data
+		TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
+		if (tSched != null) {
+			ctx.setAttribute("taskRunning", Boolean.valueOf(tSched.isAlive()), REQUEST);
+			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
+		}
+
+		// Get ACARS server data
+		if (SystemData.getBoolean("acars.enabled")) {
+			// Get the ACARS Connection pool data and save in the request
+			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
+			ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+
+			// Get the acars worker info data and save in the request
+			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SystemData.getObject(SystemData.ACARS_DAEMON);
+			ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
+
+			// Save the ACARS statistics in the request
+			ctx.setAttribute("acarsStats", ServerStats.getInstance(), REQUEST);
+			ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
+		}
+
+		// Get Virtual Machine properties
+		Runtime rt = Runtime.getRuntime();
+		ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
+		ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
+		ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
+		ctx.setAttribute("pctMemory", new Double(Math.round(rt.totalMemory() * 100.0 / rt.maxMemory())), REQUEST);
+
+		// Get time zone info
+		TimeZone tz = TimeZone.getDefault();
+		ctx.setAttribute("timeZone", tz, REQUEST);
+		ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
+
+		// Get Servlet context properties
+		ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
+		ctx.setAttribute("serverStart", _ctx.getAttribute("startedOn"), REQUEST);
+		ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
+		ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
+		ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
+
+		// Get the Google Maps API usage count
+		ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
+
+		// Get System properties
+		ctx.setAttribute("sys", System.getProperties(), REQUEST);
+
+		// Run the GC
+		System.gc();
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/admin/diagnostics.jsp");
+		result.setSuccess(true);
+	}
 }
