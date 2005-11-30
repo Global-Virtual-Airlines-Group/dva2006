@@ -397,12 +397,6 @@ database.</td>
 <tr class="title caps">
  <td colspan="2">ACARS SERVER DATA</td>
 </tr>
-<content:filter roles="Admin">
-<tr>
- <td class="mid"><el:cmd className="bld" url="acarspool">Connection Pool</el:cmd></td>
- <td class="data">You can view current connections to the <content:airline /> ACARS server.</td>
-</tr>
-</content:filter>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarslogc">Connection Log</el:cmd></td>
  <td class="data">You can view the <content:airline /> ACARS server Connection log.</td>
