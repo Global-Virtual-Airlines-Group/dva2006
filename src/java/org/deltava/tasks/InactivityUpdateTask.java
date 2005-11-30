@@ -65,11 +65,11 @@ public class InactivityUpdateTask extends DatabaseTask {
 			Mailer mailer = new Mailer(isTest ? null : taskBy);
 
 			// Get the pilots to deactivate
-			Collection purgeBeans = dao.getPurgeable(true);
-			Map pilots = dao.getByID(purgeBeans, "PILOTS");
-			for (Iterator i = purgeBeans.iterator(); i.hasNext();) {
-				InactivityPurge ip = (InactivityPurge) i.next();
-				Pilot p = (Pilot) pilots.get(new Integer(ip.getID()));
+			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
+			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans, "PILOTS");
+			for (Iterator<InactivityPurge> i = purgeBeans.iterator(); i.hasNext();) {
+				InactivityPurge ip = i.next();
+				Pilot p = pilots.get(new Integer(ip.getID()));
 				if (p != null) {
 					log.info("Marking " + p.getName() + " Inactive");
 
@@ -103,9 +103,9 @@ public class InactivityUpdateTask extends DatabaseTask {
 			}
 			
 			// Get the Pilots to notify
-			Collection nPilots = dao.getInactivePilots(notifyDays);
-			for (Iterator i = nPilots.iterator(); i.hasNext();) {
-				Pilot p = (Pilot) i.next();
+			Collection<Pilot> nPilots = dao.getInactivePilots(notifyDays);
+			for (Iterator<Pilot> i = nPilots.iterator(); i.hasNext();) {
+				Pilot p = i.next();
 				
 				// Check if we've been notified already
 				InactivityPurge ip = idao.getInactivity(p.getID());
@@ -123,7 +123,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(nmt);
 					mctxt.addData("user", taskBy);
-					mctxt.addData("p", p);
+					mctxt.addData("pilot", p);
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
 
 					// Make sure we have a notification entry
