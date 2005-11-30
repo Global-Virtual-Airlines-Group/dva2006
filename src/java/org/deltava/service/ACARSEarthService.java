@@ -45,7 +45,7 @@ public class ACARSEarthService extends WebDataService {
 		}
 		
 		public static GoogleEarthColor make(int red, int green, int blue) {
-			return new GoogleEarthColor(red, green, blue, 0);
+			return new GoogleEarthColor(red, green, blue, 60);
 		}
 		
 		private GoogleEarthColor(int red, int green, int blue, int alpha) {
@@ -147,6 +147,9 @@ public class ACARSEarthService extends WebDataService {
 		for (Iterator<FlightInfo> i = flightData.keySet().iterator(); i.hasNext(); ) {
 			FlightInfo info = i.next();
 			Collection<Element> fData = createFlight(info, flightData.get(info), showData, COLORS[++colorOfs]);
+			if (colorOfs >= COLORS.length)
+				colorOfs = -1;
+			
 			Element fe = de;
 			if (flightData.size() > 1) {
 				fe = new Element("Folder");
