@@ -1,7 +1,8 @@
 // Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
-import java.io.IOException;
+import java.io.*;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
@@ -65,19 +66,27 @@ public class IMAPMailboxCommand extends AbstractCommand {
             // Create the mailbox profile
             emailCfg = new EMailConfiguration(usr.getID(), mbAddr);
             emailCfg.setMailDirectory(String.valueOf(usr.getID()));
-            emailCfg.setPassword("12345");
+            emailCfg.setPassword(SystemData.get("smtp.imap.default_pwd"));
             emailCfg.setQuota(SystemData.getInt("smtp.imap.quota"));
             emailCfg.setActive(true);
             
             // Generate the mailbox directory
             ProcessBuilder pBuilder = new ProcessBuilder("sudo", SystemData.get("smtp.imap.script"), emailCfg.getMailDirectory(),
             		SystemData.get("smtp.imap.path"));
-            pBuilder.redirectErrorStream();
+            pBuilder.redirectErrorStream(true);
             try {
             	Process p = pBuilder.start();
-            	ThreadUtils.sleep(1000);
+            	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            	ThreadUtils.sleep(1250);
             	if (p.exitValue() != 1)
             		throw new DAOException("Unable to create mailbox - error " + p.exitValue());
+            	
+            	// Get the stdout results
+            	Collection<String> pOut = new ArrayList<String>();
+            	while (br.ready())
+            		pOut.add(br.readLine());
+            	
+            	ctx.setAttribute("scriptResults", pOut, REQUEST);
             } catch (IOException ie) {
             	throw new DAOException(ie);
             }
