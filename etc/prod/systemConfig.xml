@@ -473,11 +473,11 @@
 		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">1000</sleep>
-		<timeout type="Integer">240</timeout>
+		<timeout type="Integer">120</timeout>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
 			<minimum type="Integer">58</minimum>
-			<latest type="Integer">59</latest>
+			<latest type="Integer">60</latest>
 		</build>
 		
 		<pool>
