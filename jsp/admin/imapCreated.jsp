@@ -25,6 +25,13 @@
 An IMAP mailbox for ${pilot.name} has been created on the <content:airline /> IMAP server ${IMAPServer}. 
 ${pilot.name}'s e-mail address has been set to ${imap.address}, with a mailbox quota of <fmt:int value="${imap.quota}" /> bytes.<br />
 <br />
+<c:if test="${!empty scriptResults}">
+Mailbox creation script output:<br />
+<c:forEach var="outData" items="${scriptResults}">
+${outData}<br />
+</c:forEach>
+<br />
+</c:if>
 To make changes to this address or to update ${pilot.name}'s mailbox aliases, you may edit his or her Pilot profile. 
 To do so, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
