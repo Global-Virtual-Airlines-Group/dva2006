@@ -62,7 +62,7 @@ public class GetStaff extends DAO {
     public Collection<Staff> getStaff() throws DAOException {
         try {
             prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.*  FROM STAFF S, PILOTS P "
-            	+ "WHERE (S.ID = P.ID) ORDER BY S.SORT_ORDER DESC, P.LASTNAME");
+            	+ "WHERE (S.ID = P.ID) ORDER BY S.SORT_ORDER, P.LASTNAME");
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
