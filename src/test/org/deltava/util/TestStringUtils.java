@@ -90,8 +90,9 @@ public class TestStringUtils extends TestCase {
     }
     
     public void testStripComma() {
-       assertEquals("Normal String", StringUtils.stripComma("Normal String"));
-       assertEquals("Normal String", StringUtils.stripComma(",Normal,,, String,,"));
-       assertNull(StringUtils.stripComma(null));
+       assertEquals("Normal String", StringUtils.strip("Normal String", ","));
+       assertEquals("Normal String", StringUtils.strip(",Normal,,, String,,", ","));
+       assertNull(StringUtils.strip(null, "XXX"));
+       assertEquals("Normal Stirng", StringUtils.strip("Normal String", null));
     }
 }
