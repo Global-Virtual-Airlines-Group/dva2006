@@ -65,9 +65,10 @@ public class SignatureUpdateCommand extends AbstractCommand {
             }
             
             // Check the image dimensions
+            boolean isHR = ctx.isUserInRole("HR");
             int maxX = SystemData.getInt("cooler.sig_max.x");
             int maxY = SystemData.getInt("cooler.sig_max.y");
-            if ((info.getWidth() > maxX) || (info.getHeight() > maxY)) {
+            if (!isHR && ((info.getWidth() > maxX) || (info.getHeight() > maxY))) {
                ctx.release();
                ctx.setMessage("Your Signature Image is too large. (Max = " + maxX + "x" + maxY + ", Yours = " +
                      info.getWidth() + "x" + info.getHeight());
@@ -76,7 +77,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
             
             // Check the image size
             int maxSize = SystemData.getInt("cooler.sig_max.size");
-            if (imgData.getSize() > maxSize) {
+            if (!isHR && (imgData.getSize() > maxSize)) {
                ctx.release();
                ctx.setMessage("Your signature Image is too large. (Max = " + maxSize + "bytes, Yours =" +
                      imgData.getSize() + " bytes");
