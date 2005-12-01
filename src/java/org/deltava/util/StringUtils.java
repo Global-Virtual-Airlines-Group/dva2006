@@ -275,18 +275,22 @@ public final class StringUtils {
    }
    
    /**
-    * Strips out commas when saving information into a comma-delimited file.
+    * Strips out specific charaters from a string.
     * @param s the input string
-    * @return the string with no commas
+    * @param chars the characters to remove
+    * @return the string with no characters specified in chars
     */
-   public static String stripComma(CharSequence s) {
+   public static String strip(CharSequence s, String chars) {
       if (s == null)
          return null;
+      else if (chars == null)
+    	  return s.toString();
       
+      // Strip out the characters
       StringBuilder buf = new StringBuilder(s.length());
       for (int x = 0; x < s.length(); x++) {
          char c = s.charAt(x);
-         if (c != ',')
+         if (chars.indexOf(c) == -1)
             buf.append(c);
       }
       
