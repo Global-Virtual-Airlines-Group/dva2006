@@ -45,7 +45,7 @@ return true;
 pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <c:if test="${!empty system_message}">
 <br />
-<span class="error bld">${system_message}></span>
+<span class="error bld">${system_message}</span>
 </c:if>
  </td>
 </tr>
