@@ -71,15 +71,26 @@ public class IMAPMailboxCommand extends AbstractCommand {
             emailCfg.setActive(true);
             
             // Generate the mailbox directory
-            ProcessBuilder pBuilder = new ProcessBuilder("sudo", SystemData.get("smtp.imap.script"), emailCfg.getMailDirectory(),
+            ProcessBuilder pBuilder = new ProcessBuilder(SystemData.get("smtp.imap.script"), emailCfg.getMailDirectory(),
             		SystemData.get("smtp.imap.path"));
             pBuilder.redirectErrorStream(true);
             try {
             	Process p = pBuilder.start();
             	BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
-            	ThreadUtils.sleep(1250);
-            	if (p.exitValue() != 1)
-            		throw new DAOException("Unable to create mailbox - error " + p.exitValue());
+            	
+            	// Wait for the process to complete
+            	int runTime = 0;
+            	while (runTime < 5000) {
+            		ThreadUtils.sleep(250);
+            		try {
+            			if (p.exitValue() != 1)
+                    		throw new DAOException("Unable to create mailbox - error " + p.exitValue());
+            			
+            			break;
+            		} catch (IllegalThreadStateException itse) {
+            			runTime += 250;            			
+            		}
+            	}
             	
             	// Get the stdout results
             	Collection<String> pOut = new ArrayList<String>();
