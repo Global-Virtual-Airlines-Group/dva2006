@@ -43,7 +43,7 @@
 <tr class="MenuItem">
  <td><el:cmd url="channels">CHANNELS</el:cmd></td>
 </tr>
-<tr class="MenuItem">
+<tr class="MenuItem bld">
  <td><el:cmd url="coolersearch">SEARCH</el:cmd></td>
 </tr>
 <content:filter roles="Admin">

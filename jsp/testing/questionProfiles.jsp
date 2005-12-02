@@ -57,7 +57,7 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title caps">
- <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

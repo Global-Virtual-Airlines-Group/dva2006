@@ -91,8 +91,8 @@ return true;
 <!-- Scroll Bar -->
 <tr class="title">
  <td colspan="7"><el:button onClick="void selectAll()" className="BUTTON" label="SELECT ALL" />
- <el:button type="submit" label="DELETE CONNECTIONS" className="BUTTON" /><br />
-<view:pgUp />&nbsp;<view:pgDn /></td>
+ <el:button type="submit" label="DELETE CONNECTIONS" className="BUTTON" /><view:scrollbar><br />
+<view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>

@@ -70,7 +70,7 @@ return true;
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="5"><view:pgUp />&nbsp;<view:pgDn /><br />
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
 <view:legend width="100" labels="Pending,Approved,Rejected" classes="opt1, ,err" /></td>
 </tr>
 </view:table>

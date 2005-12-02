@@ -48,7 +48,7 @@ ${route.airportD.name} - (<fmt:airport airport="${route.airportD}" />)${route.ai
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="5"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <content:copyright />
