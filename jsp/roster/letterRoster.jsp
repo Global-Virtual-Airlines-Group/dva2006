@@ -82,7 +82,8 @@
 
 <!-- Table Scroll/Bottom/Legend Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp />&nbsp;<view:pgDn />&nbsp;<view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" /></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" /></td>
 </tr>
 </view:table>
 </el:form>

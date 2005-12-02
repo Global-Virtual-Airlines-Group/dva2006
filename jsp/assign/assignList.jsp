@@ -103,8 +103,8 @@ ${leg.airportA.name} (<fmt:airport airport="${leg.airportA}" />)</td>
 
 <!-- Scroll Bar Row -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /><br />
- <view:legend width="95" labels="Available,Assigned,Complete" classes=" ,opt2,opt3" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="95" labels="Available,Assigned,Complete" classes=" ,opt2,opt3" /></td>
 </tr>
 </view:table>
 </el:form>

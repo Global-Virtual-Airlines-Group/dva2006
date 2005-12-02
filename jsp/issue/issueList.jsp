@@ -78,7 +78,8 @@ return true;
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:pgUp />&nbsp;<view:pgDn />&nbsp;<view:legend width="90" labels="Open,Fixed,Workaround,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
+ <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
+<view:legend width="90" labels="Open,Fixed,Workaround,Won't Fix,Deferred,Duplicate" classes="opt1, ,opt2,warn,err,opt3" /></td>
 </tr>
 </view:table>
 </el:form>

@@ -146,8 +146,7 @@ return true;
 <c:if test="${access.canImport}">
 &nbsp;<el:cmdbutton url="routeimport" label="IMPORT DOMESTIC ROUTES" />
 </c:if>
- <view:pgUp />&nbsp;<view:pgDn />
- </td>
+<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <div id="mapTable" class="hidden">

@@ -79,7 +79,7 @@ return true;
 </view:row>
 </c:forEach>
 <tr class="title">
- <td colspan="5"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 </el:form>

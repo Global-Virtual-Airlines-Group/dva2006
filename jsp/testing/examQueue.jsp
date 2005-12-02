@@ -26,9 +26,8 @@
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="25%">EXAMINATION NAME</td>
- <td width="10%">RANK</td>
  <td width="20%">PILOT NAME</td>
- <td width="10%">EQUIPMENT</td>
+ <td width="20%">RANK / EQUIPMENT</td>
  <td width="15%">CREATED ON</td>
  <td width="10%">QUESTIONS</td>
  <td>STAGE</td>
@@ -37,20 +36,19 @@
 <!-- Table Data -->
 <c:forEach var="exam" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[exam.pilotID]}" scope="request" />
-<tr>
+<view:row entry="${exam}">
  <td class="pri bld"><el:cmd url="exam" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
- <td>${pilot.rank}</td>
  <td class="bld"><el:cmd url="profile" linkID="0x${exam.pilotID}">${pilot.name}</el:cmd></td>
- <td>${pilot.equipmentType}</td>
+ <td>${pilot.rank}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="hh:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>
  <td class="sec"><fmt:int value="${exam.stage}" /></td>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />

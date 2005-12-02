@@ -65,7 +65,7 @@ return true;
 
 <!-- Table Footer Bar -->
 <tr class="title">
- <td colspan="7"><view:pgUp /> <view:pgDn /></td>
+ <td colspan="7"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

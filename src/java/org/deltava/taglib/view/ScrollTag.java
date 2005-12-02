@@ -1,3 +1,4 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Iterator;
@@ -20,6 +21,7 @@ import org.deltava.util.StringUtils;
 public abstract class ScrollTag extends LinkTag {
     
     protected TableTag _viewTag;
+    protected ScrollBarTag _scrollBarTag;
     protected String _tagLabel;
     
     /**
@@ -80,13 +82,17 @@ public abstract class ScrollTag extends LinkTag {
     }
    
     /**
-     * Validates the tag to ensure it is contained within an enclosing &lt;view:table&gt; tag.
+     * Validates the tag to ensure it is contained within an enclosing &lt;view:table&gt; tag and an
+     * enclosing &lt;view:scrollbar&gt; tag.
      * @throws JspException if the tag is not enclosed
      */
     protected void validateTag() throws JspException {
         _viewTag = (TableTag) TagSupport.findAncestorWithClass(this, org.deltava.taglib.view.TableTag.class);
+        _scrollBarTag = (ScrollBarTag) TagSupport.findAncestorWithClass(this, ScrollBarTag.class);
         if (_viewTag == null)
             throw new JspTagException("view:scroll Tag must be contained within view:table Tag");
+        else if (_scrollBarTag == null)
+        	throw new JspTagException("view:scroll Tag must be also contained within view:scrollbar Tag");
     }
     
     /**
