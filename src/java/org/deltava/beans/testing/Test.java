@@ -1,9 +1,10 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.ViewEntry;
 
 /**
  * An class to implement commonalities between user examinations and flight videos.
@@ -12,7 +13,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public abstract class Test extends DatabaseBean implements Serializable, Comparable {
+public abstract class Test extends DatabaseBean implements Comparable, ViewEntry {
 
     public static final int EXAM = 0;
     public static final int VIDEO = 1;

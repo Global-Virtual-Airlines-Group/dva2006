@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -15,6 +16,8 @@ public class Examination extends Test {
     * Applicant Questionnaire Examination Name.
     */
    public static final String QUESTIONNAIRE_NAME = "Initial Questionnaire";
+   
+   private static final String[] CLASS_NAMES = {"opt2", "opt1", null};
 
    private Date _expiryDate;
    private Map<Integer, Question> _questions;
@@ -110,5 +113,13 @@ public class Examination extends Test {
     */
    public void setExpiryDate(Date dt) {
       _expiryDate = dt;
+   }
+   
+   /**
+    * Returns the CSS class name for a view table row.
+    * @return the CSS class name 
+    */
+   public String getRowClassName() {
+	   return CLASS_NAMES[getStatus()];
    }
 }
