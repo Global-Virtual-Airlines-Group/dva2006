@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 /**
@@ -9,6 +10,8 @@ package org.deltava.beans.testing;
 
 public class CheckRide extends Test {
     
+	private static final String[] CLASS_NAMES = {"opt1", "opt1", null};
+	
 	private String _comments;
 	private int _acarsID;
 
@@ -126,5 +129,13 @@ public class CheckRide extends Test {
             throw new IllegalArgumentException("Score must be 0 or 1");
         
         _score = score;
+    }
+    
+    /**
+     * Returns the CSS class name for a view table row.
+     * @return the CSS class name 
+     */
+    public String getRowClassName() {
+ 	   return CLASS_NAMES[getStatus()];
     }
 }
