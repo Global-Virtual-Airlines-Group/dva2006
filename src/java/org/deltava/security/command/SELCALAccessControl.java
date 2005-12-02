@@ -40,9 +40,10 @@ public class SELCALAccessControl extends AccessControl {
 			return;
 
 		// Calculate access rights
+		boolean isMine = (_sc.getReservedBy() == _ctx.getUser().getID());
 		boolean isHR = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Schedule");
 		_canReserve = (_sc.getReservedBy() == 0) && (!_forceDeny);
-		_canRelease = (_sc.getReservedBy() == _ctx.getUser().getID()) || isHR;
+		_canRelease = isMine || ((_sc.getReservedBy() != 0) && isHR);
 	}
 	
 	/**
