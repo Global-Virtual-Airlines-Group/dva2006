@@ -45,6 +45,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 			SetSELCAL wdao = new SetSELCAL(con);
 			if (isReserve) {
 				int maxCodes = SystemData.getInt("users.selcal.max", 2);
+				dao.setQueryMax(0);
 				Collection<SelectCall> rSC = dao.getReserved(ctx.getUser().getID());
 				if (rSC.size() > maxCodes)
 					throw new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");
