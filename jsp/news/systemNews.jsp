@@ -47,7 +47,7 @@
 <c:if test="${access.canCreateNews}">
 <el:cmd url="newsedit">NEW SYSTEM NEWS ENTRY</el:cmd>&nbsp;|&nbsp;
 </c:if>
-<view:pgUp />&nbsp;<view:pgDn /></td>
+<view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar></td>
 </tr>
 </view:table>
 <content:copyright />

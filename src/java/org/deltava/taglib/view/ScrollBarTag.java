@@ -1,0 +1,86 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.taglib.view;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.commands.ViewContext;
+
+/**
+ * A JSP tag to selectively display view table scroll tags.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class ScrollBarTag extends TagSupport {
+
+	private ViewContext _vctx;
+	private boolean _forceDisplay;
+
+	/**
+	 * Sets wether the tag body should be always included. 
+	 * @param doForce TRUE if the body should be always rendered, otherwise FALSE
+	 */
+	public void setForce(boolean doForce) {
+		_forceDisplay = doForce;
+	}
+
+	/**
+	 * Returns wether we are at the start of the view.
+	 * @return TRUE if at the start of a view, otherwise FALSE
+	 * @see ScrollBarTag#hasView()
+	 */
+	protected boolean isViewStart() {
+		return ((_vctx == null) || (_vctx.getStart() == 0));
+	}
+
+	/**
+	 * Returns wether we are at the end of the view.
+	 * @return TRUE if at the end of a view, otherwise FALSE
+	 * @see ScrollBarTag#hasView()
+	 */
+	protected boolean isViewEnd() {
+		return ((_vctx == null) || _vctx.isEndOfView());
+	}
+
+	/**
+	 * Returns wether a view context is present in the requeust.
+	 * @return TRUE if a view context is present, otherwise FALSE
+	 */
+	protected boolean hasView() {
+		return (_vctx != null);
+	}
+
+	/**
+	 * Loads the view context from the page context, and determines wether to include the
+	 * tag body. The tag body will only be included if the view context is present and we are
+	 * not simaltaneously at the start and end of the view.
+	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
+	 * @throws JspException if an error occurs
+	 */
+	public int doStartTag() throws JspException {
+
+		// Get the view context
+		_vctx = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
+
+		// Check if we force display, otherwise display only if at start or end, or neither
+		if (_forceDisplay) {
+			return EVAL_BODY_INCLUDE;
+		} else if (_vctx == null) {
+			return SKIP_BODY;
+		} else if (isViewStart() && isViewEnd()) {
+			return SKIP_BODY;
+		}
+
+		return EVAL_BODY_INCLUDE;
+	}
+
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_forceDisplay = false;
+	}
+}

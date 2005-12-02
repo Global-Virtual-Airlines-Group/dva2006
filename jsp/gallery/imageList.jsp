@@ -79,7 +79,7 @@ return true;
 
 <!-- Scroll bar row -->
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

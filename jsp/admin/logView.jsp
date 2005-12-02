@@ -97,8 +97,8 @@ return true;
 
 <!-- Scroll/Legend Bar -->
 <tr class="title">
- <td colspan="4"><view:pgUp />&nbsp;<view:pgDn /><br />
- <view:legend width="100" labels="Debug,Info,Warning,Error,Fatal" classes="opt2, ,warn,err,err" /></td>
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="100" labels="Debug,Info,Warning,Error,Fatal" classes="opt2, ,warn,err,err" /></td>
 </tr>
 </view:table>
 </c:if>

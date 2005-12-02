@@ -71,7 +71,7 @@ return true;
 </c:if>
 </c:forEach>
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /><br />
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
 <view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
 </tr>
 </view:table>

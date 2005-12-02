@@ -62,13 +62,13 @@ return true;
 <!-- Scroll Bar -->
 <tr class="title">
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
- <td colspan="3"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="3"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
  <td colspan="2">PURGE BEFORE <el:text name="purgeDate" idx="*" size="10" max="10" />
  <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].purgeDate')" />
  <el:cmdbutton ID="PurgeButton" url="routepurge" post="true" label="PURGE OCEANIC ROUTES" /></td>
 </c:if>
 <c:if test="${!access.canDelete || (empty viewContext.results)}">
- <td colspan="5"><view:pgUp />&nbsp;<view:pgDn /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </c:if>
 </tr>
 </view:table>

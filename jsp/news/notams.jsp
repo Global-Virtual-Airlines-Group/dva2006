@@ -52,8 +52,8 @@
 <c:if test="${access.canCreateNOTAM}">
 <el:cmd url="notamedit">NEW NOTAM</el:cmd>&nbsp;|&nbsp;
 </c:if>
-<el:cmd url="notams" op="all">ALL NOTAMs</el:cmd>&nbsp;|&nbsp;<view:pgUp />
-&nbsp;<view:pgDn />&nbsp;|&nbsp;<el:cmd url="notams">ACTIVE NOTAMs</el:cmd></td>
+<el:cmd url="notams" op="all">ALL NOTAMs</el:cmd>&nbsp;|<view:scrollbar>&nbsp;<view:pgUp />
+&nbsp;<view:pgDn /></view:scrollbar>&nbsp;|&nbsp;<el:cmd url="notams">ACTIVE NOTAMs</el:cmd></td>
 </tr>
 </view:table>
 <content:copyright />

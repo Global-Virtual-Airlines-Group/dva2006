@@ -1,3 +1,4 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.*;
@@ -12,13 +13,12 @@ import javax.servlet.jsp.tagext.TagSupport;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class LegendTag extends TagSupport {
 
 	private String _textClass;
-	private String _boxWidth;
+	private int _boxWidth;
 	
 	private List<String> _labels = new ArrayList<String>();
 	private List<String> _classNames = new ArrayList<String>();
@@ -35,7 +35,7 @@ public class LegendTag extends TagSupport {
 	 * Sets the width of each legend table entry.
 	 * @param width the width in pixels or percent
 	 */
-	public void setWidth(String width) {
+	public void setWidth(int width) {
 		_boxWidth = width;
 	}
 	
@@ -67,7 +67,7 @@ public class LegendTag extends TagSupport {
 	public void release() {
 		super.release();
 		_textClass = null;
-		_boxWidth = null;
+		_boxWidth = 0;
 		_labels.clear();
 		_classNames.clear();
 	}
@@ -97,8 +97,8 @@ public class LegendTag extends TagSupport {
 					out.print(" " + _textClass);
 				
 				out.print('\"');
-				if (_boxWidth != null)
-					out.print(" width=\"" + _boxWidth + "\"");
+				if (_boxWidth != 0)
+					out.print(" width=\"" + String.valueOf(_boxWidth) + "\"");
 				
 				out.print('>');
 				out.print(_labels.get(x));

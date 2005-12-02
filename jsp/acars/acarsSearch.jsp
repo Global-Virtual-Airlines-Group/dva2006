@@ -133,7 +133,7 @@ return false;
 
 </tr>
 <tr class="title">
- <td colspan="6"><view:pgUp />&nbsp;<view:pgDn /> <el:button ID="MapButton" type="submit" className="BUTTON" label="DISPLAY USING GOOGLE EARTH" /></td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar><el:button ID="MapButton" type="submit" className="BUTTON" label="DISPLAY USING GOOGLE EARTH" /></td>
 </tr>
 </c:if>
 </view:table>
