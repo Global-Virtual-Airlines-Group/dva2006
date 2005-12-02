@@ -29,6 +29,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 
 		// Check if we're creating a new System News entry
 		boolean isNew = (ctx.getID() == 0);
+		boolean isActive = false;
 
 		// Create the Message Context
 		MessageContext mctxt = new MessageContext();
@@ -55,7 +56,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
-				nws.setActive("1".equals(ctx.getParameter("active")));
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -65,8 +65,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
-				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -77,6 +75,11 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				pilots = pdao.getNotifications(Person.NEWS);
 			}
+			
+			// Save the active flag
+			nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
+			isActive = nws.getActive();
 
 			// Get the write DAO and save the entry
 			SetNews wdao = new SetNews(con);
@@ -88,7 +91,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		}
 		
 		// Send the message
-		if ((isNew) && (pilots != null)) {
+		if (isNew && isActive && (pilots != null)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
