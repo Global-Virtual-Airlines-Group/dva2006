@@ -384,11 +384,10 @@ public class FlightReport extends Flight implements Comparable, ViewEntry {
    /**
     * Sets the length of this Flight, in <i>hours multiplied by 10</i>.
     * @param length the length of the flight, in <i>hours multiplied by 10</i>.
-    * @throws IllegalArgumentException if length < 0 or > 180
     */
    public void setLength(int length) {
       if ((length < 0) || (length > 180))
-            throw new IllegalArgumentException("Flight Length cannot be negative or > 18 hours - " + length);
+    	  length = 180;
 
       _length = length;
    }
