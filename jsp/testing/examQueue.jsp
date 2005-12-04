@@ -40,7 +40,7 @@
  <td class="pri bld"><el:cmd url="exam" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
  <td class="bld"><el:cmd url="profile" linkID="0x${exam.pilotID}">${pilot.name}</el:cmd></td>
  <td>${pilot.rank}, ${pilot.equipmentType}</td>
- <td class="sec"><fmt:date t="hh:mm" date="${exam.date}" /></td>
+ <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>
  <td class="sec"><fmt:int value="${exam.stage}" /></td>
 </view:row>
