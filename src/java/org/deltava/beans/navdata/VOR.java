@@ -50,11 +50,13 @@ public class VOR extends NavigationDataBean {
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuilder buf = new StringBuilder(getHTMLTitle());
+      StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
+      buf.append(getHTMLTitle());
       buf.append("Frequency: ");
       buf.append(_freq);
       buf.append("<br />");
       buf.append(getHTMLPosition());
+      buf.append("</span>");
       return buf.toString();
    }
 }

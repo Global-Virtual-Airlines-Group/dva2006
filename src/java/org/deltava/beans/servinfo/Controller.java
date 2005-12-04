@@ -148,7 +148,7 @@ public class Controller extends NetworkUser {
 	 * @return HTML text
 	 */
     public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<b>");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
@@ -158,7 +158,7 @@ public class Controller extends NetworkUser {
 		buf.append(getRatingName());
 		buf.append("<br /><br />Facility Type: ");
 		buf.append(getFacilityType());
-		buf.append("</span>");
+		buf.append("</span></div>");
 		return buf.toString();
     }
 }

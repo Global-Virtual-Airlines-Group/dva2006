@@ -78,7 +78,7 @@ public class PilotLocation implements MapEntry {
 	 * @return the info box text
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"small\"><b>");
+		StringBuilder buf = new StringBuilder("<span class=\"small mapInfoBox\"><b>");
 		buf.append(_usr.getName());
 		buf.append("</b> (");
 		buf.append(_usr.getPilotCode());

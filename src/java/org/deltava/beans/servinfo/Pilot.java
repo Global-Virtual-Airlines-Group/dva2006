@@ -310,7 +310,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @return HTML text
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<b>");
+		StringBuilder buf = new StringBuilder("<div style=\"mapInfoBox\"><b>");
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
@@ -324,7 +324,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 		buf.append(StringUtils.format(_altitude, "#,##0"));
 		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots</span>");
+		buf.append(" knots</span></div>");
 		return buf.toString();
 	}
 }
