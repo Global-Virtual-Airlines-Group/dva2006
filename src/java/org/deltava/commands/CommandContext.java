@@ -124,6 +124,14 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     }
     
     /**
+     * Returns wether an Administrator is impersonating another user.
+     * @return TRUE if superuser mode is on, otherwise FALSE
+     */
+    public boolean isSuperUser() {
+    	return (_req.getAttribute(SU_ATTR_NAME) instanceof Person);
+    }
+    
+    /**
      * Helper method to ensure a connection has been reserved.
      */
     private void checkConnection() {
