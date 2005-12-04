@@ -58,7 +58,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 				Date releaseDate = CalendarUtils.adjust(sc.getReservedOn(), SystemData.getInt("users.selcal.reserve"));
 				ctx.setAttribute("releaseDate", releaseDate, REQUEST);
 				ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("codes", new Integer(rSC.size()), REQUEST);
+				ctx.setAttribute("codes", new Integer(rSC.size() + 1), REQUEST);
 			} else {
 				if (sc.getReservedBy() != ctx.getUser().getID())
 					throw new CommandException(sc.getAircraftCode() + " not reserved by " + ctx.getUser().getName());
