@@ -15,7 +15,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="maxCodes" name="users.selcal.max" />
+<content:sysdata var="maxCodes" name="users.selcal.max" default="${1}" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

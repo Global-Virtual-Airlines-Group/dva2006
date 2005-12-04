@@ -155,6 +155,12 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Object</type>
+		</attribute>
+		<attribute>
 			<name>sort</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
