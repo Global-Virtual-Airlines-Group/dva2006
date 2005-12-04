@@ -277,7 +277,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
     * @return an HTML String
     */
    public String getInfoBox() {
-      StringBuilder buf = new StringBuilder("<b>");
+      StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
       buf.append(_name);
       buf.append("</b><br /><span class=\"small\"><br />IATA Code: ");
       buf.append(_iata);
@@ -287,7 +287,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
       buf.append(StringUtils.format(_position, true, GeoLocation.LATITUDE));
       buf.append("<br />Longitude: ");
       buf.append(StringUtils.format(_position, true, GeoLocation.LONGITUDE));
-      buf.append("</span>");
+      buf.append("</span></div>");
       return buf.toString();
    }
 

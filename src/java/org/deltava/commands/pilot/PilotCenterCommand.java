@@ -105,9 +105,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			if (txreq == null) {
 				// Get all active equipment programs, and see which we can switch to
 				GetEquipmentType eqdao = new GetEquipmentType(con);
-				Collection activeEQ = eqdao.getActive();
-				for (Iterator i = activeEQ.iterator(); i.hasNext();) {
-					EquipmentType eq = (EquipmentType) i.next();
+				Collection<EquipmentType> activeEQ = eqdao.getActive();
+				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
+					EquipmentType eq = i.next();
 					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
 						i.remove();
 				}

@@ -152,6 +152,10 @@ a:hover {
 	font-size: 9pt;
 }
 
+.mapInfoBox {
+	white-space: nowrap;
+}
+
 .bld {
 	font-weight: bold;
 }
