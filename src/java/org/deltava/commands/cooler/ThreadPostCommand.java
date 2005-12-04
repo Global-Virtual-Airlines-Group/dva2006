@@ -2,10 +2,10 @@
 package org.deltava.commands.cooler;
 
 import java.awt.Dimension;
-import java.sql.Connection;
 
+import java.util.*;
 import java.text.*;
-import java.util.Date;
+import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
@@ -75,7 +75,9 @@ public class ThreadPostCommand extends AbstractCommand {
          Channel ch = dao.get(cName);
          dao.setQueryMax(0);
          ctx.setAttribute("channel", ch, REQUEST);
-         ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
+         List channels = dao.getChannels(airline, ctx.getRoles());
+         channels.remove(0);
+         ctx.setAttribute("channels", channels, REQUEST);
 
          // Initialize the channel access controller
          CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, ch);
