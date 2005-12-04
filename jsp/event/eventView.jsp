@@ -64,14 +64,14 @@ return true;
  <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
 </tr>
 <tr class="title caps">
- <td colspan="5" class="left">AVAILABLE FLIGHT ROUTES</td>
+ <td colspan="6" class="left">AVAILABLE FLIGHT ROUTES</td>
 </tr>
 <c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
 <tr>
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
- <td class="data" colspan="4">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
+ <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
 </tr>
 <tr>
