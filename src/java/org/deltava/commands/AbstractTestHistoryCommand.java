@@ -37,27 +37,25 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		// Get the Pilot's equipment program
 		GetEquipmentType eqdao = new GetEquipmentType(c);
 		EquipmentType eq = eqdao.get(p.getEquipmentType());
-		
-		// Get the Pilot's examinations and check rides, and initialize the helper
-		GetExam exdao = new GetExam(c);
-		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
-		
+
 		// Get the Pilot's applicant profile to get eq program hired into
 		GetApplicant adao = new GetApplicant(c);
 		Applicant a = adao.getByPilotID(p.getID());
-		
+		EquipmentType ieq = (a != null) ? eqdao.get(a.getEquipmentType()) : null;
+
+		// Get the Pilot's examinations and check rides, and initialize the helper
+		GetExam exdao = new GetExam(c);
+		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
+
 		// Create a dummy FO exam for the hired in program
-		if (a != null) {
-			EquipmentType ieq = eqdao.get(a.getEquipmentType());
-			if ((ieq != null) && (ieq.getExamName(Ranks.RANK_FO) != null)) {
-				Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
-				ex.setSize(1);
-				ex.setScore(1);
-				ex.setPassFail(true); 
-				ex.setDate(p.getCreatedOn());
-				ex.setScoredOn(p.getCreatedOn());
-				_testHistory.addExam(ex);
-			}
+		if ((ieq != null) && !_testHistory.hasPassed(ieq.getExamName(Ranks.RANK_FO))) {
+			Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
+			ex.setSize(1);
+			ex.setScore(1);
+			ex.setPassFail(true);
+			ex.setDate(p.getCreatedOn());
+			ex.setScoredOn(p.getCreatedOn());
+			_testHistory.addExam(ex);
 		}
 	}
 }
