@@ -31,7 +31,7 @@ public class ScrollBarTag extends TagSupport {
 	 * @return TRUE if at the start of a view, otherwise FALSE
 	 * @see ScrollBarTag#hasView()
 	 */
-	protected boolean isViewStart() {
+	boolean isViewStart() {
 		return ((_vctx == null) || (_vctx.getStart() == 0));
 	}
 
@@ -40,7 +40,7 @@ public class ScrollBarTag extends TagSupport {
 	 * @return TRUE if at the end of a view, otherwise FALSE
 	 * @see ScrollBarTag#hasView()
 	 */
-	protected boolean isViewEnd() {
+	boolean isViewEnd() {
 		return ((_vctx == null) || _vctx.isEndOfView());
 	}
 
@@ -48,8 +48,16 @@ public class ScrollBarTag extends TagSupport {
 	 * Returns wether a view context is present in the requeust.
 	 * @return TRUE if a view context is present, otherwise FALSE
 	 */
-	protected boolean hasView() {
+	boolean hasView() {
 		return (_vctx != null);
+	}
+	
+	/**
+	 * Returns the view context.
+	 * @return the view context
+	 */
+	ViewContext getContext() {
+		return _vctx;
 	}
 
 	/**
