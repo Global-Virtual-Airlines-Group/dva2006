@@ -36,9 +36,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="notifythreads">MY WATCHED THREADS</el:cmd></td>
 </tr>
+<c:if test="${!empty channel}">
 <tr class="MenuItem">
- <td><el:cmd url="threadpost">START NEW THREAD</el:cmd></td>
+ <td><el:cmd url="threadpost" linkID="${channel}">START NEW THREAD</el:cmd></td>
 </tr>
+</c:if>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="channels">CHANNELS</el:cmd></td>
