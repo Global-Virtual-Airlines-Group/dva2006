@@ -1,3 +1,4 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -18,16 +19,10 @@ public class GetSystemDataTag extends TagSupport {
 
 	private String _varName;
 	private String _pName;
+	private Object _defaultValue;
 	
 	private boolean _doMapToList;
 	private boolean _doSort;
-	
-	/**
-	 * Initializes the tag handler. 
-	 */
-	public GetSystemDataTag() {
-		super();
-	}
 	
 	/**
 	 * Sets the request attribute name.
@@ -61,11 +56,16 @@ public class GetSystemDataTag extends TagSupport {
 	    _doSort = doSort;
 	}
 	
+	public void setDefault(Object value) {
+		_defaultValue = value;
+	}
+	
 	/**
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
 	    super.release();
+	    _defaultValue = null;
 	    _doMapToList = false;
 	    _doSort = false;
 	}
@@ -80,10 +80,12 @@ public class GetSystemDataTag extends TagSupport {
 		
 		// Get the system data object and stuff it into the request
 	    Object obj = SystemData.getObject(_pName);
+	    if (obj == null)
+	    	obj = _defaultValue;
 	    
 	    // If the object is a map and MapValues is selected, get the values object
 	    if ((obj instanceof Map) && (_doMapToList))
-	        obj = new ArrayList(new HashSet(((Map) obj).values()));
+	        obj = new LinkedHashSet(((Map) obj).values());
 	        
 	    // If we're a collection and Sort is selected, sort it
 	    if ((obj instanceof Collection) && (_doSort)) {
