@@ -18,7 +18,7 @@ import org.deltava.dao.*;
  */
 
 public class TestingCenterCommand extends AbstractTestHistoryCommand {
-   
+	
    /**
     * Executes the command.
     * @param ctx the Command context
@@ -26,8 +26,6 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
 
-      List allExams = null;
-      
       // Get the user Profile
       Pilot usr = (Pilot) ctx.getUser();
       ctx.setAttribute("pilot", usr, REQUEST);
@@ -40,11 +38,12 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 
          // Get all Examination Profiles
          GetExamProfiles epdao = new GetExamProfiles(con);
-         allExams = epdao.getExamProfiles();
+         List<ExamProfile> allExams = epdao.getExamProfiles();
          
          // Remove all examinations that we have passed or require a higher stage than us
-         for (Iterator i = allExams.iterator(); i.hasNext(); ) {
-            ExamProfile ep = (ExamProfile) i.next();
+         _testHistory.setDebug(ctx.isSuperUser());
+         for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext(); ) {
+            ExamProfile ep = i.next();
             if (!_testHistory.canWrite(ep))
                i.remove();
          }
