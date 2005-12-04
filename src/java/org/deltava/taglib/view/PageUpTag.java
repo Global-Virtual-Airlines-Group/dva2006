@@ -1,3 +1,4 @@
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import java.util.Map;
@@ -28,16 +29,15 @@ public class PageUpTag extends ScrollTag {
      * @throws JspException if an error occurs
      */
     public int doStartTag() throws JspException {
-        
         validateTag();
-        ViewContext vc = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
         
         // Check if we're at the start of the view; if so render nothing
-        if ((vc == null) || (vc.getStart() == 0))
+        if (_scrollBarTag.isViewStart())
             return SKIP_BODY;
         
         // Add Reserved parameters to the map
         // And yes, converting to a String array is stupid
+        ViewContext vc = _scrollBarTag.getContext();
         Map<String, Object> params = vc.getParameters();
         params.put(ViewContext.START, new String[] { String.valueOf(vc.getPreviousStart()) } );
         params.put(ViewContext.COUNT, new String[] { String.valueOf(vc.getCount()) } );
@@ -64,13 +64,11 @@ public class PageUpTag extends ScrollTag {
      * @throws JspException if an error occurs
      */
     public int doEndTag() throws JspException {
-        ViewContext vc = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
-
+    	
         // Check if we're at the start of the view; if so render nothing
-        if ((vc == null) || (vc.getStart() == 0))
-            return EVAL_PAGE;
-
-        super.doEndTag();
+        if (!_scrollBarTag.isViewStart())
+            super.doEndTag();
+        	
         release();
         return EVAL_PAGE;
     }
