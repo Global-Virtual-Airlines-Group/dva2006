@@ -44,7 +44,7 @@ public class EmptyLogEntriesCommand extends ACARSLogViewCommand {
          dao.setQueryMax(vc.getCount());
          
          // Get the empty connections
-         vc.setResults(isInfo ? dao.getUnreportedFlights(12) : dao.getUnusedConnections(12));
+         vc.setResults(isInfo ? dao.getUnreportedFlights(18) : dao.getUnusedConnections(18));
          
          // Load the Pilot data
          GetUserData usrdao = new GetUserData(con);
