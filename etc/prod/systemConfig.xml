@@ -393,7 +393,7 @@
 			<quota type="Integer">10240000</quota>
 			<server>mail.deltava.org</server>
 			<default_pwd>12345</default_pwd>
-			<script>/usr/local/sbin/www/mailbox_create %1 %2</script>
+			<script>/usr/local/sbin/www/mailbox_create</script>
 		</imap>
 	</smtp>
 	
