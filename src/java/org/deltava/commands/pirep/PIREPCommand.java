@@ -217,7 +217,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Get the current date/time in the user's local zone
 		Calendar cld = Calendar.getInstance();
-		cld.setTime(DateTime.convert(cld.getTime(), ctx.getUser().getTZ()));
+		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		cld.setTime(DateTime.convert(cld.getTime(), tz));
 
 		// Get all airlines
 		Map allAirlines = (Map) SystemData.getObject("airlines");
