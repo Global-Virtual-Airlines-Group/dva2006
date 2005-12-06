@@ -25,11 +25,13 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    
    private String _subject;
    private String _body;
+   private String _contentType;
    private DataSource _attach;
    
    /**
     * Creates a new STMP envelope.
     * @param from the originating address
+    * @see SMTPEnvelope#getFrom()
     */
    SMTPEnvelope(EMailAddress from) {
       super();
@@ -48,6 +50,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Returns the message body.
     * @return the message body
+    * @see SMTPEnvelope#setBody(String)
     */
    public String getBody() {
       return _body;
@@ -56,9 +59,19 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Returns the message subject.
     * @return the subject
+    * @see SMTPEnvelope#setSubject(String)
     */
    public String getSubject() {
       return _subject;
+   }
+   
+   /**
+    * Returns the message content type.
+    * @return the MIME type
+    * @see SMTPEnvelope#setContentType(String)
+    */
+   public String getContentType() {
+	   return _contentType;
    }
    
    /**
@@ -72,6 +85,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Returns the copy-to recipient list.
     * @return an array of Address beans, or null if empty
+    * @see SMTPEnvelope#addCopyTo(EMailAddress)
     */
    public Address[] getCopyTo() {
       return _copyTo.isEmpty() ? null : (Address[]) _copyTo.toArray(new InternetAddress[0]);
@@ -80,6 +94,9 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Returns the recipient list.
     * @return an array of Address beans 
+    * @see SMTPEnvelope#addRecipient(EMailAddress)
+    * @see SMTPEnvelope#addRecipients(Collection)
+    * @see SMTPEnvelope#setRecipient(EMailAddress)
     */
    public Address[] getRecipients() {
       return _msgTo.toArray(new InternetAddress[0]);
@@ -97,6 +114,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Sets the message body.
     * @param body the body text
+    * @see SMTPEnvelope#getBody()
     */
    public void setBody(String body) {
       _body = body;
@@ -105,14 +123,27 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Sets the message subject.
     * @param subj the subject
+    * @see SMTPEnvelope#getSubject()
     */
    public void setSubject(String subj) {
       _subject = subj;
    }
    
    /**
+    * Sets the message content type.
+    * @param cType the MIME type
+    * @see SMTPEnvelope#getContentType()
+    */
+   public void setContentType(String cType) {
+	   _contentType = cType;
+   }
+   
+   /**
     * Adds an address to the recipient list.
     * @param addr the e-mail address
+    * @see SMTPEnvelope#addRecipients(Collection)
+    * @see SMTPEnvelope#setRecipient(EMailAddress)
+    * @see SMTPEnvelope#getRecipients()
     */
    public void addRecipient(EMailAddress addr) {
       if ((addr != null) && (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))) {
@@ -126,6 +157,9 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Clears the recipient list and overwrites it with a single address.
     * @param addr the e-mail address
+    * @see SMTPEnvelope#addRecipient(EMailAddress)
+    * @see SMTPEnvelope#addRecipients(Collection)
+    * @see SMTPEnvelope#getRecipients()
     */
    public void setRecipient(EMailAddress addr) {
       _msgTo.clear();
@@ -135,15 +169,19 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
    /**
     * Adds a Collection of addresses to the recipient list.
     * @param addrs a Collection of EMailAddress beans
+    * @see SMTPEnvelope#addRecipient(EMailAddress)
+    * @see SMTPEnvelope#setRecipient(EMailAddress)
+    * @see SMTPEnvelope#getRecipients()
     */
-   public void addRecipients(Collection addrs) {
-      for (Iterator i = addrs.iterator(); i.hasNext(); )
-         addRecipient((EMailAddress) i.next());
+   public void addRecipients(Collection<EMailAddress> addrs) {
+      for (Iterator<EMailAddress> i = addrs.iterator(); i.hasNext(); )
+         addRecipient(i.next());
    }
    
    /**
-    * Adds an address to the copy-to list
+    * Adds an address to the copy-to list.
     * @param addr the e-mail address
+    * @see SMTPEnvelope#getCopyTo()
     */
    public void addCopyTo(EMailAddress addr) {
       if ((addr != null) && (!EMailAddress.INVALID_ADDR.equals(addr.getEmail()))) {
