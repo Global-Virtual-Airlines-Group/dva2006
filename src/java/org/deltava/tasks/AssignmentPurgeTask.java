@@ -46,7 +46,7 @@ public class AssignmentPurgeTask extends DatabaseTask {
 		   SetAssignment wdao = new SetAssignment(_con);
 		   for (Iterator i = assignments.iterator(); i.hasNext(); ) {
 		      AssignmentInfo a = (AssignmentInfo) i.next();
-		      if (cld.getTime().before(a.getAssignDate())) {
+		      if (cld.getTime().after(a.getAssignDate())) {
 		         Pilot usr = pdao.get(a.getPilotID());
 		         
 		         // If the assignment is repeatable, then release it - otherwise delete it
