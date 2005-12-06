@@ -18,12 +18,7 @@ public class CommandLinkTag extends LinkTag {
 	private String _cmdParam;
 	private String _cmdOpName;
 
-	/**
-	 * Creates a new CommandLink Tag.
-	 */
-	public CommandLinkTag() {
-		super();
-	}
+	private boolean _disableLink;
 
 	/**
 	 * Sets the ID parameter for the command invocation. If it starts with &quot;0x&quot; then turn the rest of the
@@ -39,6 +34,8 @@ public class CommandLinkTag extends LinkTag {
 				} catch (NumberFormatException nfe) {
 					_cmdParam = id;
 				}
+			} else {
+				_disableLink = true;
 			}
 		} else {
 			_cmdParam = id;
@@ -60,10 +57,28 @@ public class CommandLinkTag extends LinkTag {
 	public void setUrl(String url) {
 		_cmdName = url.toLowerCase() + ".do";
 	}
+	
+	/**
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_disableLink = false;
+		_cmdParam = null;
+	}
 
+	/**
+	 * Renders the start of the HREF tag to the JSP output stream. The HREF tag will not be rendered
+	 * if the linkID parameter is &quot;0x0&quot;.
+	 * @return TagSupport.EVAL_BODY_INCLUDE
+	 * @throws JspException if an error occurs 
+	 */
 	public final int doStartTag() throws JspException {
+		// Do nothing if disable flag set
+		if (_disableLink)
+			return EVAL_BODY_INCLUDE;
+		
 		StringBuilder url = new StringBuilder(_cmdName);
-
 		try {
 			if (_cmdParam != null) {
 				url.append("?id=");
@@ -85,8 +100,15 @@ public class CommandLinkTag extends LinkTag {
 		return super.doStartTag();
 	}
 
+	/**
+	 * Renders the end of the HREF tag to the JSP output stream.
+	 * @return TagSupport.EVAL_PAGE
+	 * @throws JspException if an error occurs
+	 */
 	public int doEndTag() throws JspException {
-		super.doEndTag();
+		if (!_disableLink)
+			super.doEndTag();
+		
 		release();
 		return EVAL_PAGE;
 	}
