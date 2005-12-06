@@ -51,10 +51,10 @@ public class AssignmentPurgeTask extends DatabaseTask {
 		         
 		         // If the assignment is repeatable, then release it - otherwise delete it
 		         if (a.isRepeating()) {
-		            log.info("Releasing Assignment " + a.getID() + " reserved by " + usr.getName());
+		            log.warn("Releasing Assignment " + a.getID() + " reserved by " + usr.getName());
 		            wdao.reset(a);
 		         } else {
-		            log.info("Deleting Assignment " + a.getID() + " reserved by " + usr.getName());
+		            log.warn("Deleting Assignment " + a.getID() + " reserved by " + usr.getName());
 		            wdao.delete(a);
 		         }
 		      } else {
