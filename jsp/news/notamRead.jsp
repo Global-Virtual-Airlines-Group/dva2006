@@ -9,6 +9,7 @@
 <head>
 <title><content:airline /> NOTAM</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:pics />
 <content:js name="common" />
 </head>
@@ -40,7 +41,8 @@
 </c:if>
 <tr>
  <td class="label" valign="top">Entry Text</td>
- <td class="data"><fmt:text value="${entry.body}" /></td>
+ <td class="data"><c:if test="${entry.isHTML}">${entry.body}</c:if>
+<c:if test="${!entry.isHTML}"><fmt:text value="${entry.body}" /></c:if></td>
 </tr>
 </el:table>
 
