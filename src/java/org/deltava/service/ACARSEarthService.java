@@ -12,7 +12,10 @@ import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.*;
+
+import static org.deltava.beans.navdata.NavigationDataBean.*;
 
 import org.deltava.dao.*;
 
@@ -115,10 +118,14 @@ public class ACARSEarthService extends WebDataService {
 
 		// Check if we add position records
 		boolean showData = Boolean.valueOf(ctx.getParameter("showData")).booleanValue();
+		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
+		
+		// Get the DAOs
+		GetACARSData dao = new GetACARSData(_con);
+		GetNavData navdao = new GetNavData(_con);
 
 		// Get ACARS data for the flights
-		GetACARSData dao = new GetACARSData(_con);
-		Map<FlightInfo,Collection<RouteEntry>> flightData = new LinkedHashMap<FlightInfo,Collection<RouteEntry>>();
+		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 				int id = i.next().intValue();
@@ -126,7 +133,33 @@ public class ACARSEarthService extends WebDataService {
 				if (info != null) {
 					@SuppressWarnings("unchecked")
 					Collection<RouteEntry> routeData = dao.getRouteEntries(id, true, info.getArchived());
-					flightData.put(info, routeData);
+					info.setRouteData(routeData);
+					
+					if (showRoute) {
+						List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
+						NavigationDataMap navaids = navdao.getByID(routeEntries);
+						GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
+						int distance = lastWaypoint.distanceTo(info.getAirportA());
+						
+						// Filter out navaids and put them in the correct order
+						Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
+						for (Iterator<String> ri = routeEntries.iterator(); ri.hasNext();) {
+							String navCode = ri.next();
+							NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
+							if (wPoint != null) {
+								if (lastWaypoint.distanceTo(wPoint) < distance) {
+									routeInfo.add(wPoint);
+									lastWaypoint.setLatitude(wPoint.getLatitude());
+									lastWaypoint.setLongitude(wPoint.getLongitude());
+								}
+							}
+						}
+
+						info.setPlanData(routeInfo);
+					}
+					
+					// Save the flight
+					flights.add(info);
 				} else {
 					log.warn("Cannot find ACARS flight " + id);
 				}
@@ -144,14 +177,14 @@ public class ACARSEarthService extends WebDataService {
 		
 		// Add the ACARS data
 		int colorOfs = -1;
-		for (Iterator<FlightInfo> i = flightData.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
 			FlightInfo info = i.next();
-			Collection<Element> fData = createFlight(info, flightData.get(info), showData, COLORS[++colorOfs]);
+			Collection<Element> fData = createFlight(info, showData, COLORS[++colorOfs]);
 			if (colorOfs >= COLORS.length)
 				colorOfs = -1;
 			
 			Element fe = de;
-			if (flightData.size() > 1) {
+			if (info.hasRouteData()) {
 				fe = new Element("Folder");
 				fe.addContent(XMLUtils.createElement("name", "Flight " + info.getID()));
 				fe.addContent(XMLUtils.createElement("visibility", "1"));
@@ -199,7 +232,7 @@ public class ACARSEarthService extends WebDataService {
 		Element e = new Element("LookAt");
 		e.addContent(XMLUtils.createElement("longitude", StringUtils.format(loc.getLongitude(), "##0.0000")));
 		e.addContent(XMLUtils.createElement("latitude", StringUtils.format(loc.getLatitude(), "##0.0000")));
-		e.addContent(XMLUtils.createElement("range", StringUtils.format(altitude, "##0.000")));
+		e.addContent(XMLUtils.createElement("range", StringUtils.format(0.3048d * altitude, "##0.000")));
 		if (heading == -1) {
 			e.addContent(XMLUtils.createElement("heading", "0.00"));
 			e.addContent(XMLUtils.createElement("tilt", "85.0000"));
@@ -214,8 +247,7 @@ public class ACARSEarthService extends WebDataService {
 	/**
 	 * Helper method to turn a flight record into a KML element.
 	 */
-	private Collection<Element> createFlight(FlightInfo info, Collection<RouteEntry> routeData, 
-			boolean showPositionData, GoogleEarthColor routeColor) {
+	private Collection<Element> createFlight(FlightInfo info, boolean showPositionData, GoogleEarthColor routeColor) {
 
 		// Create results
 		Collection<Element> results = new ArrayList<Element>();
@@ -238,7 +270,7 @@ public class ACARSEarthService extends WebDataService {
 		// Format the route
 		Element le = new Element("Placemark");
 		le.addContent(XMLUtils.createElement("name", "Flight Route"));
-		le.addContent(XMLUtils.createElement("description", String.valueOf(routeData.size()) + " Position Records"));
+		le.addContent(XMLUtils.createElement("description", String.valueOf(info.getRouteData().size()) + " Position Records"));
 		le.addContent(XMLUtils.createElement("visibility", "1"));
 		Element ls = new Element("Style");
 		Element lce = XMLUtils.createElement("LineStyle", "color", routeColor.toString());
@@ -253,8 +285,8 @@ public class ACARSEarthService extends WebDataService {
 
 		// Format all of the coordinates
 		StringBuilder buf = new StringBuilder();
-		for (Iterator i = routeData.iterator(); i.hasNext();) {
-			RouteEntry entry = (RouteEntry) i.next();
+		for (Iterator<RouteEntry> i = info.getRouteData().iterator(); i.hasNext();) {
+			RouteEntry entry = i.next();
 			buf.append(GeoUtils.format3D(entry, entry.getRadarAltitude()));
 			buf.append(" \n");
 		}
@@ -286,7 +318,7 @@ public class ACARSEarthService extends WebDataService {
 			fe.addContent(XMLUtils.createElement("visibility", "0"));
 			results.add(fe);
 			int pos = 0;
-			for (Iterator<RouteEntry> i = routeData.iterator(); i.hasNext();) {
+			for (Iterator<RouteEntry> i = info.getRouteData().iterator(); i.hasNext();) {
 				RouteEntry entry = i.next();
 				Element pe = new Element("Placemark");
 				pe.addContent(XMLUtils.createElement("name", "Route Point #" + String.valueOf(++pos)));
@@ -315,6 +347,75 @@ public class ACARSEarthService extends WebDataService {
 				pe.addContent(addLookAt(entry, entry.getAltitude(), entry.getHeading()));
 				fe.addContent(pe);
 			}
+		}
+		
+		// Format the flight plan data
+		if (info.hasPlanData()) {
+			Element fe = new Element("Folder");
+			fe.addContent(XMLUtils.createElement("name", "Flight Plan"));
+			fe.addContent(XMLUtils.createElement("visibility", "0"));
+			results.add(fe);
+			
+			// Create route line
+			Element rle = new Element("Placemark");
+			rle.addContent(XMLUtils.createElement("name", "Flight Route"));
+			rle.addContent(XMLUtils.createElement("description", info.getRoute()));
+			rle.addContent(XMLUtils.createElement("visibility", "1"));
+			Element rls = new Element("Style");
+			Element rlce = XMLUtils.createElement("LineStyle", "color", GoogleEarthColor.make(224, 192, 192, 48).toString());
+			rlce.addContent(XMLUtils.createElement("width", "2"));
+			rls.addContent(rlce);
+			rle.addContent(rls);
+			Element rlse = new Element("LineString");
+			rlse.addContent(XMLUtils.createElement("tessellate", "1"));
+
+			// Loop through the points
+			Random rnd = new Random();
+			StringBuilder pbuf = new StringBuilder();
+			for (Iterator<NavigationDataBean> i = info.getPlanData().iterator(); i.hasNext(); ) {
+				NavigationDataBean wp = i.next();
+				Element pe = new Element("Placemark");
+				pe.addContent(XMLUtils.createElement("name", wp.getName()));
+				pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
+				pe.addContent(XMLUtils.createElement("visibility", "0"));
+				Element pp = new Element("Point");
+				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 4000)));
+				pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
+				pe.addContent(pp);
+				pe.addContent(addLookAt(wp, 4500, rnd.nextInt(360)));
+				
+				// Format route point
+				pbuf.append(GeoUtils.format3D(wp, 0));
+				pbuf.append(" \n");
+
+				// Add icon
+				Element ps = new Element("Style");
+				Element pis = null;
+				switch (wp.getType()) {
+					case NDB:
+					case VOR:
+						pis = addIcon(4, 0, 1);
+						pis.addContent(XMLUtils.createElement("scale", "0.60"));
+						ps.addContent(pis);
+						pe.addContent(ps);
+						break;
+						
+					case INT:
+						pis = addIcon(4, 4, 0); // info icon
+						pis.addContent(XMLUtils.createElement("scale", "0.50"));
+						ps.addContent(pis);
+						pe.addContent(ps);
+						break;
+				}
+ 
+				if (pis != null)
+					fe.addContent(pe);
+			}
+			
+			// Save the coordinates
+			rlse.addContent(XMLUtils.createElement("coordinates", buf.toString()));
+			rle.addContent(rlse);
+			fe.addContent(rle);
 		}
 		
 		// Return results
