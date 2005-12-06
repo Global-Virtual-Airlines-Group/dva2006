@@ -29,7 +29,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 
 		// Check if we're creating a new System News entry
 		boolean isNew = (ctx.getID() == 0);
-		boolean isActive = false;
+		boolean doNotify = false;
 
 		// Create the Message Context
 		MessageContext mctxt = new MessageContext();
@@ -56,6 +56,10 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Update the entry
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
+				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
+				boolean isActive = Boolean.valueOf(ctx.getParameter("active")).booleanValue();
+				doNotify = (isActive && !nws.getActive());
+				nws.setActive(isActive);
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -65,6 +69,9 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				// Create the news entry
 				nws = new Notice(ctx.getParameter("subject"), ctx.getUser().getName(), ctx.getParameter("body"));
 				nws.setAuthorID(ctx.getUser().getID());
+				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
+				doNotify = nws.getActive();
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -76,11 +83,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				pilots = pdao.getNotifications(Person.NEWS);
 			}
 			
-			// Save the active flag
-			nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
-			isActive = nws.getActive();
-
 			// Get the write DAO and save the entry
 			SetNews wdao = new SetNews(con);
 			wdao.write(nws);
@@ -91,10 +93,11 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		}
 		
 		// Send the message
-		if (isNew && isActive && (pilots != null)) {
+		if (isNew && doNotify && (pilots != null)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
+			ctx.setAttribute("notifyUsers", new Integer(pilots.size()), REQUEST);
 		}
 
 		// Set status attributes

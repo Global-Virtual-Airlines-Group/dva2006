@@ -89,6 +89,7 @@ public class NewsSaveCommand extends AbstractCommand {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
+			ctx.setAttribute("notifyUsers", new Integer(pilots.size()), REQUEST);
 		}
 
 		// Set status attributes
