@@ -23,6 +23,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     
     private boolean _canRead;
     private boolean _canReply;
+    private boolean _canVote;
     private boolean _canLock;
     private boolean _canUnlock;
     private boolean _canResync;
@@ -103,6 +104,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanReply() {
         return _canReply;
+    }
+    
+    /**
+     * Returns if the user can cast a vote in the poll.
+     * @return TRUE if a vote can be cast, otherwise FALSE
+     */
+    public boolean getCanVote() {
+    	return _canVote;
     }
     
     /**
