@@ -57,7 +57,10 @@ public class NakedCheckRideCommand extends AbstractCommand {
 		         ctx.setAttribute("checkRide", cr, REQUEST);
 		      }
 		   }
-
+		   
+		   // Save the pilot in the request
+		   ctx.setAttribute("pilot", p, REQUEST);
+		   
 		   // If we already have a pending checkride, then send back an error
 		   if (hasRide) {
 		      ctx.release();
@@ -78,9 +81,6 @@ public class NakedCheckRideCommand extends AbstractCommand {
 		   // Get all equipment types
 		   GetEquipmentType eqdao = new GetEquipmentType(con);
 		   ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
-		   
-		   // Save the pilot in the request
-		   ctx.setAttribute("pilot", p, REQUEST);
 		   
 		   // If we are not doing a POST, then redirect
 		   if (ctx.getParameter("eqType") == null) {
