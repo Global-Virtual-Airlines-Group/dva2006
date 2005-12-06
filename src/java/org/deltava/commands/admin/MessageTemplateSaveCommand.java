@@ -62,6 +62,7 @@ public class MessageTemplateSaveCommand extends AbstractCommand {
 			mt.setSubject(ctx.getParameter("subject"));
 			mt.setDescription(ctx.getParameter("desc"));
 			mt.setBody(ctx.getParameter("body"));
+			mt.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
 			
 			// Get the write DAO and update the template
 			SetMessageTemplate wdao = new SetMessageTemplate(con);

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -29,11 +29,13 @@ public class SetMessageTemplate extends DAO {
 	 */
 	public void write(MessageTemplate mt) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY) VALUES (?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO MSG_TEMPLATES (NAME, SUBJECT, DESCRIPTION, BODY, ISHTML) "
+					+ "VALUES (?, ?, ?, ?, ?)");
 			_ps.setString(1, mt.getName());
 			_ps.setString(2, mt.getSubject());
 			_ps.setString(3, mt.getDescription());
 			_ps.setString(4, mt.getBody());
+			_ps.setBoolean(5, mt.getIsHTML());
 			
 			// Update the database
 			executeUpdate(1);
