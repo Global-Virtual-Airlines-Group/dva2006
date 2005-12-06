@@ -161,11 +161,11 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
     /**
      * Updates the user's network ID.
      * @param id the network ID
-     * @throws IllegalArgumentException if id is zero or negative
+     * @throws IllegalArgumentException if id is negative
      * @see NetworkUser#getID()
      */
     public void setID(int id) {
-        if (id < 1)
+        if (id < 0)
             throw new IllegalArgumentException("Invalid network ID - " + id);
         
         _id = id;
