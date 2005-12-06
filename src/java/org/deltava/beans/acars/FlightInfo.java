@@ -1,12 +1,15 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.acars;
 
-import java.util.Date;
+import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.ViewEntry;
 
+import org.deltava.beans.navdata.NavigationDataBean;
 import org.deltava.beans.schedule.Airport;
+
+import org.deltava.util.CollectionUtils;
 
 /**
  * A bean to store ACARS Flight Information records.
@@ -37,6 +40,9 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private boolean _offline;
    private boolean _hasPIREP;
    private boolean _archived;
+   
+   private Collection<RouteEntry> _routeData;
+   private Collection<NavigationDataBean> _planData;
    
    /**
     * Creates a new Flight Information record.
@@ -192,6 +198,46 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    }
    
    /**
+    * Returns the actual route data for this flight.
+    * @return a Collection of RouteEntry beans, or null
+    * @see FlightInfo#setRouteData(Collection)
+    * @see FlightInfo#hasRouteData()
+    */
+   public Collection<RouteEntry> getRouteData() {
+	   return _routeData;
+   }
+   
+   /**
+    * Returns the filed route for this flight.
+    * @return a Collection of NavigationDataBeans, or null
+    * @see FlightInfo#setPlanData(Collection)
+    * @see FlightInfo#hasPlanData()
+    */
+   public Collection<NavigationDataBean> getPlanData() {
+	   return _planData;
+   }
+   
+   /**
+    * Returns if this bean contains route data.
+    * @return TRUE if route data exists within the bean, otherwise FALSE
+    * @see FlightInfo#getRouteData()
+    * @see FlightInfo#setRouteData(Collection)
+    */
+   public boolean hasRouteData() {
+	   return CollectionUtils.isEmpty(_routeData);
+   }
+   
+   /**
+    * Returns if this bean contains flight plan data.
+    * @return TRUE if flight plan data exists within the bean, otherwise FALSE
+    * @see FlightInfo#getPlanData()
+    * @see FlightInfo#setPlanData(Collection)
+    */
+   public boolean hasPlanData() {
+	   return CollectionUtils.isEmpty(_planData);
+   }
+   
+   /**
     * Updates the ACARS Connection ID used for this flight.
     * @param id the connection ID
     * @throws IllegalArgumentException if id is zero or negative
@@ -344,12 +390,33 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    }
    
    /**
+    * Updates the actual route data for this flight.
+    * @param entries a Collection of RouteEntry beans
+    * @see FlightInfo#getRouteData()
+    * @see FlightInfo#hasRouteData()
+    */
+   public void setRouteData(Collection<RouteEntry> entries) {
+	   _routeData = entries;
+   }
+   
+   /**
+    * Updates the flight plan data for this flight.
+    * @param entries a Collection of NavigationDatbBeans
+    * @see FlightInfo#getPlanData()
+    * @see FlightInfo#hasPlanData()
+    */
+   public void setPlanData(Collection<NavigationDataBean> entries) {
+	   _planData = entries;
+   }
+   
+   /**
     * Compares two flights by comparing their start date/times.
     * @see Comparable#compareTo(Object)
     */
    public int compareTo(Object o2) {
       FlightInfo i2 = (FlightInfo) o2;
-      return _startTime.compareTo(i2.getStartTime());
+      int tmpResult = _startTime.compareTo(i2.getStartTime());
+      return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(i2.getID())) : tmpResult;
    }
    
    /**

@@ -34,7 +34,7 @@ if (!checkSubmit()) return false;
 
 // Build the URL
 var isChecked = false;
-var url = 'acars_earth.ws?showData=false&id=';
+var url = 'acars_earth.ws?showData=false&showRoute=' + form.showRoute.checked + '&id=';
 if (form.doMap.length) {
 	for (var x = 0; x < form.doMap.length; x++) {
 		isChecked = isChecked || form.doMap[x].checked;
@@ -104,7 +104,8 @@ return false;
  <td colspan="6" class="pri bld">NO ACARS FLIGHT REPORTS WERE FOUND.</td>
 </tr>
 <tr class="title">
- <td colspan="6">&nbsp;</td>
+ <td colspan="4">&nbsp;</td>
+ <td colspan="2" class="right"><el:box name="showRoute" idx="*" value="true" label="Show Filed Route" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty viewContext.results}">
