@@ -67,7 +67,7 @@ return true;
 <el:button type="SUBMIT" className="BUTTON" label="SAVE NOTAM" />
 </c:if>
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="newsdelete" op="NOTAM" linkID="0x${entry.ID}" label="DELETE NOTAM" />
+<el:cmdbutton url="newsdelete" op="notam" linkID="0x${entry.ID}" label="DELETE NOTAM" />
 </c:if>
  </td>
 </tr>
