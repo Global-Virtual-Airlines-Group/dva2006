@@ -92,7 +92,7 @@ public class MailerDaemon extends Thread {
 
 			// Add message body
 			MimeBodyPart body = new MimeBodyPart();
-			body.setText(env.getBody());
+			body.setContent(env.getBody(), env.getContentType());
 			mp.addBodyPart(body);
 
 			// If we have an attachment, add it

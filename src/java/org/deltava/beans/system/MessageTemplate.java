@@ -19,6 +19,7 @@ public class MessageTemplate implements Serializable, Comparable, Cacheable {
     
     private String _desc;
     private String _msgBody;
+    private boolean _isHTML;
     
     /**
      * Creates a new Message Template with a given name and subject.
@@ -65,6 +66,15 @@ public class MessageTemplate implements Serializable, Comparable, Cacheable {
     public String getBody() {
         return _msgBody;
     }
+    
+    /**
+     * Returns if the message should be sent as HTML or plain text.
+     * @return TRUE if the message is formatted as HTML, otherwise FALSE
+     * @see MessageTemplate#setIsHTML(boolean)
+     */
+    public boolean getIsHTML() {
+    	return _isHTML;
+    }
 
     /**
      * Updates the description of this message template.
@@ -93,6 +103,15 @@ public class MessageTemplate implements Serializable, Comparable, Cacheable {
      */
     public void setSubject(String subj) {
     	_subject = subj.trim();
+    }
+    
+    /**
+     * Sets wether this message should be sent as HTML or plain text.
+     * @param html TRUE if the message is HTML, otherwise FALSE
+     * @see MessageTemplate#setIsHTML(boolean)
+     */
+    public void setIsHTML(boolean html) {
+    	_isHTML = html;
     }
     
     /**

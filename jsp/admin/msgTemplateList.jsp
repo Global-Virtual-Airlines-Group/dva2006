@@ -25,6 +25,7 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="20%">TEMPLATE NAME</td>
+ <td width="5%">&nbsp;</td>
  <td width="30%">MESSAGE SUBJECT</td>
  <td>DESCRIPTION</td>
 </tr>
@@ -33,6 +34,7 @@
 <c:forEach var="template" items="${templates}">
 <view:row entry="${template}">
  <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}">${template.name}</el:cmd></td>
+ <td class="sec bld">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
  <td class="sec">${template.subject}</td>
  <td class="left">${template.description}</td>
 </view:row>
