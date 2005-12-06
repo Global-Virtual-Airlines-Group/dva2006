@@ -53,6 +53,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 			ex.setSize(1);
 			ex.setScore(1);
 			ex.setPassFail(true);
+			ex.setStatus(Test.SCORED);
 			ex.setDate(p.getCreatedOn());
 			ex.setScoredOn(p.getCreatedOn());
 			_testHistory.addExam(ex);
