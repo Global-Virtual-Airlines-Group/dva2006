@@ -342,6 +342,7 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
      */
     public int compareTo(Object o2) {
         Test t2 = (Test) o2;
-        return _createdOn.compareTo(t2.getDate());
+        int tmpResult = _createdOn.compareTo(t2.getDate());
+        return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(t2.getID())) : tmpResult;
     }
 }

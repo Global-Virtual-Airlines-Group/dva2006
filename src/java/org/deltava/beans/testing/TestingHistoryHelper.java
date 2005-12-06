@@ -189,7 +189,7 @@ public class TestingHistoryHelper {
 		}
 
 		// Check if we have at least 5 approved flights
-		log("Our Flight Legs=" + getFlightLegs(_myEQ));
+		log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 		return (getFlightLegs(_myEQ) >= 5);
 	}
 
@@ -223,7 +223,7 @@ public class TestingHistoryHelper {
 		}
 		
 		// Check if we have at least 5 approved flights
-		log("Our Flight Legs=" + getFlightLegs(_myEQ));
+		log(eq.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 		return (getFlightLegs(_myEQ) >= 5);
 	}
 
