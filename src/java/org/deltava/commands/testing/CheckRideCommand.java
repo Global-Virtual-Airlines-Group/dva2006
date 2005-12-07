@@ -63,8 +63,7 @@ public class CheckRideCommand extends AbstractCommand {
          if (cr.getStatus() == Test.SCORED) {
             result.setURL("/jsp/testing/cRideRead.jsp");
          } else {
-            boolean doEdit = access.getCanScore() || access.getCanSubmit();
-            result.setURL(doEdit ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
+            result.setURL(access.getCanScore() ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
          }
       } catch (DAOException de) {
          throw new CommandException(de);
