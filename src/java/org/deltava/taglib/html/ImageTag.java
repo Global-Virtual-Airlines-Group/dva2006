@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -42,32 +43,28 @@ public class ImageTag extends ElementTag {
     /**
      * Sets the width of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param width the width of the image in pixels
-     * @see ElementTag#setNumericAttr(String, String)
+     * @see ElementTag#setNumericAttr(String, int)
      */
-    public void setX(String width) {
+    public void setX(int width) {
         setNumericAttr("width", width);
     }
     
     /**
      * Sets the height of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param height the height of the image in pixels
-     * @see ElementTag#setNumericAttr(String, String)
+     * @see ElementTag#setNumericAttr(String, int)
      */
-    public void setY(String height) {
+    public void setY(int height) {
         setNumericAttr("height", height);
     }
     
     /**
      * Sets the border of ths image. This does nothing if a negative or non-numeric value is passed.
      * @param border the border of the image in pixels
-     * @see ElementTag#setNumericAttr(String, String)
      */
-    public void setBorder(String border) {
-        try {
-            int tmpValue = Integer.parseInt(border);
-            if (tmpValue >= 0)
-                _attrs.put("border", String.valueOf(tmpValue));
-        } catch (NumberFormatException nfe) { }
+    public void setBorder(int border) {
+    	if (border >= 0)
+    		_attrs.put("border", String.valueOf(border));
     }
     
     /**

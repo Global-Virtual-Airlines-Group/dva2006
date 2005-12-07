@@ -35,16 +35,19 @@
 			<name>x</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>y</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>border</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
 
@@ -321,11 +324,13 @@
 			<name>max</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>size</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>type</name>
@@ -402,11 +407,13 @@
 			<name>height</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>width</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>wrap</name>
@@ -449,11 +456,13 @@
 			<name>size</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>max</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>onChange</name>
@@ -491,6 +500,7 @@
 			<name>size</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>multiple</name>
@@ -556,6 +566,7 @@
 			<name>size</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 		<attribute>
 			<name>multiple</name>

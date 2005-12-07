@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -72,18 +73,18 @@ public class InputTag extends FormElementTag {
     /**
      * Sets the size of this field. This does nothing if a negative, zero or non-numeric value is passed.
      * @param len the size of the field
-     * @see ElementTag#setNumericAttr(String, String)
+     * @see ElementTag#setNumericAttr(String, int)
      */
-    public void setSize(String len) {
+    public void setSize(int len) {
         setNumericAttr("size", len);
     }
     
     /**
      * Sets the maximum length of this field. This does nothing if a negative, zero or non-numeric value is passed.
      * @param maxLen the maximum length of the field
-     * @see ElementTag#setNumericAttr(String, String)
+     * @see ElementTag#setNumericAttr(String, int)
      */
-    public void setMax(String maxLen) {
+    public void setMax(int maxLen) {
         setNumericAttr("maxlength", maxLen);
     }
     
