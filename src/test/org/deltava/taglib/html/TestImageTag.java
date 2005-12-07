@@ -20,9 +20,9 @@ public class TestImageTag extends AbstractTagTestCase {
 
     public void testImage() throws Exception {
         _tag.setSrc("image.gif");
-        _tag.setBorder("0");
-        _tag.setX("400");
-        _tag.setY("300");
+        _tag.setBorder(0);
+        _tag.setX(400);
+        _tag.setY(300);
         _tag.setCaption("Caption");
         
         assertSkipBody(_tag.doStartTag());

@@ -76,7 +76,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
     
     public void testBooleanProperties() throws Exception {
         _tag.setName("COMBO");
-        _tag.setSize("1");
+        _tag.setSize(1);
         _tag.setMultiple(true);
         
         assertSkipBody(_tag.doStartTag());
@@ -138,7 +138,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
     
     public void testNumericValidation() throws Exception {
         _tag.setName("COMBO");
-        _tag.setSize("0");
+        _tag.setSize(0);
         _tag.setIdx("asdasds");
         
         assertSkipBody(_tag.doStartTag());
@@ -147,7 +147,7 @@ public class TestComboTag extends AbstractFormTagTestCase {
         
         _jspOut.clearBuffer();
         _tag.setName("COMBO");
-        _tag.setSize("-1");
+        _tag.setSize(-1);
         _tag.setIdx(null);
         
         assertSkipBody(_tag.doStartTag());

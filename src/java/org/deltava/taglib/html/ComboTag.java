@@ -122,7 +122,7 @@ public class ComboTag extends FormElementTag {
 
 	/**
 	 * Sets the value(s) of this combo/listbox.
-	 * @param values a List of selected values
+	 * @param values a Collection of selected values
 	 */
 	public void setValues(Collection values) {
 		_value = values;
@@ -131,8 +131,9 @@ public class ComboTag extends FormElementTag {
 	/**
 	 * Sets the size of this combo/list box. This does nothing if a negative, zero or non-numeric value is passed.
 	 * @param size the size of the combo/list box, in entries
+	 * @see ElementTag#setNumericAttr(String, int)
 	 */
-	public void setSize(String size) {
+	public void setSize(int size) {
 		setNumericAttr("size", size);
 	}
 

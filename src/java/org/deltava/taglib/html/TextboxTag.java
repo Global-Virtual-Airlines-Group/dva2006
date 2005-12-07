@@ -53,7 +53,7 @@ public class TextboxTag extends FormElementTag {
      * Sets the width of the textbox. This does nothing if a negative, zero or non-numeric value is passed.
      * @param width the width of the textbox in columns
      */
-    public void setWidth(String width) {
+    public void setWidth(int width) {
         setNumericAttr("cols", width);
     }
     
@@ -69,7 +69,7 @@ public class TextboxTag extends FormElementTag {
      * Sets the height of the textbox. This does nothing if a negative, zero or non-numeric value is passed.
      * @param height the height of the textbox in rows
      */
-    public void setHeight(String height) {
+    public void setHeight(int height) {
         setNumericAttr("rows", height);
     }
     
