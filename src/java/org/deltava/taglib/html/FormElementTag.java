@@ -42,9 +42,9 @@ public abstract class FormElementTag extends ElementTag {
     /**
      * Private helper method to get and increment the current tab index count for the parent form tag.
      */
-    private String getFormIndexCount() {
+    private int getFormIndexCount() {
     	FormTag parent = getParentFormTag();
-    	return (parent == null) ? "" : String.valueOf(parent.incTabIndex());
+    	return (parent == null) ? 0 : parent.incTabIndex();
     }
     
     /**
@@ -57,11 +57,11 @@ public abstract class FormElementTag extends ElementTag {
     
     /**
      * Sets the tab index of this field. This does nothing if a negative, zero or non-numeric value is passed.
-     * @param index the tab index, or * if it should be retrieved from the parent form
-     * @see ElementTag#setNumericAttr(String, String)
+     * @param index the tab index, or * if it should be retrieved from the parent form.
+     * @see ElementTag#setNumericAttr(String, int)
      */
     public void setIdx(String index) {
-        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : index);
+        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : Integer.parseInt(index));
     }
     
     /**

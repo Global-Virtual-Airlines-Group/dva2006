@@ -24,8 +24,8 @@ public class TestFileUploadTag extends AbstractFormTagTestCase {
         _tag.setClassName("DEFAULTTEXT");
         _tag.setID("InputID");
         _tag.setName("FIELD1");
-        _tag.setSize("3");
-        _tag.setMax("4");
+        _tag.setSize(3);
+        _tag.setMax(4);
 
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());

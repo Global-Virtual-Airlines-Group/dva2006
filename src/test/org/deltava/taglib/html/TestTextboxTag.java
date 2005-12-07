@@ -22,8 +22,8 @@ public class TestTextboxTag extends AbstractFormTagTestCase {
     public void testProperties() throws Exception {
         _tag.setName("BODY");
         _tag.setIdx("1");
-        _tag.setHeight("5");
-        _tag.setWidth("100");
+        _tag.setHeight(5);
+        _tag.setWidth(100);
         
         assertEvalBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -68,8 +68,7 @@ public class TestTextboxTag extends AbstractFormTagTestCase {
     
     public void testNumericValidation() throws Exception {
         _tag.setName("BODY");
-        _tag.setHeight("-1");
-        _tag.setWidth("asfaf");
+        _tag.setHeight(-1);
         _tag.setIdx(null);
         
         assertEvalBody(_tag.doStartTag());

@@ -23,8 +23,8 @@ public class TestInputTag extends AbstractFormTagTestCase {
         _tag.setClassName("DEFAULTTEXT");
         _tag.setID("InputID");
         _tag.setName("FIELD1");
-        _tag.setSize("3");
-        _tag.setMax("4");
+        _tag.setSize(3);
+        _tag.setMax(4);
         
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -87,8 +87,7 @@ public class TestInputTag extends AbstractFormTagTestCase {
     
     public void testNumericValidation() throws Exception {
         _tag.setName("FIELD3");
-        _tag.setSize("-3");
-        _tag.setMax("asdjsakljd");
+        _tag.setSize(-3);
         _tag.setIdx("0");
         
         assertSkipBody(_tag.doStartTag());
@@ -103,7 +102,6 @@ public class TestInputTag extends AbstractFormTagTestCase {
 
         _jspOut.clearBuffer();
         _tag.setName("FIELD3");
-        _tag.setSize(null);
 
         assertSkipBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());

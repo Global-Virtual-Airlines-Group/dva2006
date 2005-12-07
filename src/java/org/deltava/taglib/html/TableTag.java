@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -28,9 +29,9 @@ public class TableTag extends ElementTag {
      */
     public void setSpace(String cSpacing) {
         if (DEFAULT.equalsIgnoreCase(cSpacing)) {
-            setNumericAttr("cellspacing", SystemData.get("html.table.spacing"));
+            setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0));
         } else {
-            setNumericAttr("cellspacing", cSpacing);
+            setNumericAttr("cellspacing", Integer.parseInt(cSpacing));
         }
     }
 
@@ -40,9 +41,9 @@ public class TableTag extends ElementTag {
      */
     public void setPad(String cPadding) {
         if (DEFAULT.equalsIgnoreCase(cPadding)) {
-            setNumericAttr("cellpadding", SystemData.get("html.table.padding"));
+            setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0));
         } else {
-            setNumericAttr("cellpadding", cPadding);
+            setNumericAttr("cellpadding", Integer.parseInt(cPadding));
         }
     }
     

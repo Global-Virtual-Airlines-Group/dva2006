@@ -128,16 +128,11 @@ public abstract class ElementTag extends TagSupport {
     }
     
     /**
-     * Sets a numeric attribute. If the raw value is non-numeric or negative, the attribute will
-     * <u>NOT</u> be set and this method will fail silently.
+     * Sets a numeric attribute.
      * @param attrName the attribute name
-     * @param rawValue the raw value from the JSP
+     * @param value the raw value from the JSP
      */
-    protected void setNumericAttr(String attrName, String rawValue) {
-        try {
-            int tmpValue = Integer.parseInt(rawValue);
-            if (tmpValue > 0)
-                _attrs.put(attrName, String.valueOf(tmpValue));
-        } catch (NumberFormatException nfe) { }
+    protected void setNumericAttr(String attrName, int value) {
+    	_attrs.put(attrName, String.valueOf(value));
     }
 }
