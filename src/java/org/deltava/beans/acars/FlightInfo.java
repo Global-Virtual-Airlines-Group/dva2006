@@ -224,7 +224,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @see FlightInfo#setRouteData(Collection)
     */
    public boolean hasRouteData() {
-	   return CollectionUtils.isEmpty(_routeData);
+	   return !CollectionUtils.isEmpty(_routeData);
    }
    
    /**
@@ -234,7 +234,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @see FlightInfo#setPlanData(Collection)
     */
    public boolean hasPlanData() {
-	   return CollectionUtils.isEmpty(_planData);
+	   return !CollectionUtils.isEmpty(_planData);
    }
    
    /**
