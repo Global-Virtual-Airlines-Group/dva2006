@@ -136,8 +136,8 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td><fmt:date fmt="t" t="hh:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
- <td><fmt:date fmt="t" t="hh:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
  <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
 </tr>
 </c:forEach>
