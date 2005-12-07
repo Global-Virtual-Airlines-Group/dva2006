@@ -375,11 +375,11 @@ public class ACARSEarthService extends WebDataService {
 			for (Iterator<NavigationDataBean> i = info.getPlanData().iterator(); i.hasNext(); ) {
 				NavigationDataBean wp = i.next();
 				Element pe = new Element("Placemark");
-				pe.addContent(XMLUtils.createElement("name", wp.getName()));
+				pe.addContent(XMLUtils.createElement("name", wp.getCode()));
 				pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
 				pe.addContent(XMLUtils.createElement("visibility", "0"));
 				Element pp = new Element("Point");
-				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 4000)));
+				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 10)));
 				pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
 				pe.addContent(pp);
 				pe.addContent(addLookAt(wp, 4500, rnd.nextInt(360)));
@@ -413,7 +413,7 @@ public class ACARSEarthService extends WebDataService {
 			}
 			
 			// Save the coordinates
-			rlse.addContent(XMLUtils.createElement("coordinates", buf.toString()));
+			rlse.addContent(XMLUtils.createElement("coordinates", pbuf.toString()));
 			rle.addContent(rlse);
 			fe.addContent(rle);
 		}
