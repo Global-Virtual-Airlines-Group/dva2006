@@ -42,7 +42,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="3">&nbsp;
+ <td colspan="4">&nbsp;
 <c:if test="${access.canCreate}">
 <el:cmdbutton url="msgtemplate" op="new" label="NEW MESSAGE TEMPLATE" />
 </c:if>
