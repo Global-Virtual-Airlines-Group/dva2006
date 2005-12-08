@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -79,10 +79,12 @@ public final class CoolerThreadAccessControl extends AccessControl {
         boolean isModerator = _ctx.isUserInRole("Moderator");
         boolean isClosed = _mt.getLocked() || _mt.getHidden();
         boolean channelAccess = (_c != null) ? RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles()) : true;
+        boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread
         _canRead = _ctx.isUserInRole("Admin") || (channelAccess && !_mt.getHidden());
         _canReply = _ctx.isAuthenticated() && _canRead && (isModerator || !isClosed);
+        _canVote = _canReply && !_mt.getOptions().isEmpty() && !hasVoted;
         _canResync = channelAccess && isModerator;
         _canLock = channelAccess && !isClosed && isModerator;
         _canUnlock = channelAccess && isClosed && isModerator;

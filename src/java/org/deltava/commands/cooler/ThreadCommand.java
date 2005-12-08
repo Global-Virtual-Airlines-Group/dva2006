@@ -1,7 +1,8 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
+import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -26,8 +27,9 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadCommand extends AbstractCommand {
 
-	private static final List SCORES = Arrays
-			.asList(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
+	private static final List<String> SCORES = Arrays.asList(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
+	private static final List<String> COLORS = Arrays.asList(new String[] {"blue", "black", "green", "red", "purple", "grey", 
+			"brown", "orange", "pink", "yellow"});
 
 	/**
 	 * Executes the command.
@@ -41,7 +43,6 @@ public class ThreadCommand extends AbstractCommand {
 
 		// Get the default airline
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -62,6 +63,21 @@ public class ThreadCommand extends AbstractCommand {
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(thread.getChannel());
+			
+			// Load the poll options (if any)
+			GetCoolerPolls tpdao = new GetCoolerPolls(con);
+			thread.addOptions(tpdao.getOptions(thread.getID()));
+			thread.addVotes(tpdao.getVotes(thread.getID()));
+			if (!thread.getOptions().isEmpty()) {
+				int maxVotes = 0;
+				for (Iterator<PollOption> i = thread.getOptions().iterator(); i.hasNext(); ) {
+					PollOption opt = i.next();
+					maxVotes = Math.max(maxVotes, opt.getVotes());
+				}
+				
+				ctx.setAttribute("barColors", COLORS, REQUEST);
+				ctx.setAttribute("maxVotes", new Integer(maxVotes), REQUEST);
+			}
 
 			// Check user access
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
@@ -126,6 +142,12 @@ public class ThreadCommand extends AbstractCommand {
 				cdao.setQueryMax(0);
 				ctx.setAttribute("channel", c, REQUEST);
 				ctx.setAttribute("channels", cdao.getChannels(airline, false), REQUEST);
+			}
+			
+			// Save the sticky date
+			if (ac.getCanResync() && (thread.getStickyUntil() != null)) {
+				DateFormat df = new SimpleDateFormat(ctx.getUser().getDateFormat());
+				ctx.setAttribute("stickyDate", df.format(thread.getStickyUntil()), REQUEST);
 			}
 
 			// Save the thread, pilots and access controller in the request

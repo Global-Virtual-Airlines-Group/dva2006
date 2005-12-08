@@ -43,7 +43,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Cooler Channel</td>
- <td class="data"><el:combo name="channel" idx="*" size="*" options="${channels}" /></td>
+ <td class="data"><el:combo name="channel" idx="*" size="1" options="${channels}" /></td>
 </tr>
 <tr>
  <td class="label">Pilot Name</td>

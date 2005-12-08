@@ -92,13 +92,16 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel ch = cdao.get(thread.getChannel());
+			
+			// Load the poll options (if any)
+			GetCoolerPolls tpdao = new GetCoolerPolls(con);
+			thread.addOptions(tpdao.getOptions(thread.getID()));
+			thread.addVotes(tpdao.getVotes(thread.getID()));
 
 			// Check user access
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
 			ac.updateContext(thread, ch);
 			ac.validate();
-
-			// Check our access level
 			if (!ac.getCanReply())
 				throw securityException("Cannot post in Message Thread " + ctx.getID());
 
@@ -143,17 +146,30 @@ public class ThreadReplyCommand extends AbstractCommand {
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			msg.setRemoteHost(ctx.getRequest().getRemoteHost());
 			msg.setBody(ctx.getParameter("msgText"));
-
-			// Add the response to the thread
-			thread.addPost(msg);
-
+			
 			// Start the transaction
 			ctx.startTX();
-
-			// Get the DAO and write the new response to the database
+			
+			// Get the DAO
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.writeMessage(msg);
-			wdao.synchThread(thread);
+
+			// Add the response to the thread
+			if (!StringUtils.isEmpty(msg.getBody())) {
+				thread.addPost(msg);
+				wdao.writeMessage(msg);
+				wdao.synchThread(thread);
+				ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
+			} else {
+				notifyList.clear();
+			}
+			
+			// Get our vote on the thread
+			if (ac.getCanVote() && (!StringUtils.isEmpty(ctx.getParameter("pollVote")))) {
+				PollVote v = new PollVote(thread.getID(), ctx.getUser().getID());
+				v.setOptionID(StringUtils.parseHex(ctx.getParameter("pollVote")));
+				wdao.vote(v);
+				ctx.setAttribute("isVote", Boolean.TRUE, REQUEST);
+			}
 
 			// Commit the transaction
 			ctx.commitTX();
@@ -164,7 +180,6 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 			// Save the thread in the request
 			ctx.setAttribute("thread", thread, REQUEST);
-			ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);

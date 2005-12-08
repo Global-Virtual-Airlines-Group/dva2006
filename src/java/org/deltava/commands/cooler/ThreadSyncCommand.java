@@ -1,11 +1,9 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
 
-import org.deltava.beans.cooler.Channel;
-import org.deltava.beans.cooler.MessageThread;
-
+import org.deltava.beans.cooler.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -20,8 +18,10 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 
 public class ThreadSyncCommand extends AbstractCommand {
 
-	/* (non-Javadoc)
-	 * @see org.deltava.commands.Command#execute(org.deltava.commands.CommandContext)
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		

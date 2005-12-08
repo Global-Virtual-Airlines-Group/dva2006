@@ -71,9 +71,9 @@ maximum Water Cooler image size is <fmt:int value="${maxX}" />x<fmt:int value="$
 and some loss of image quality may occur.<br /></c:if>
 </c:if>
 </c:if>
-<c:if test="${isReply}">
+<c:if test="${isReply || isVote}">
 <!-- New Response Message -->
-<div class="updateHdr">Water Cooler Message Post Created</div>
+<div class="updateHdr">Water Cooler Message ${isReply ? 'Post' : 'Vote'} Created</div>
 <br />
 Your response has been posted to the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span>.
 Thank you for your participation in the <content:airline /> Water Cooler!<br />
