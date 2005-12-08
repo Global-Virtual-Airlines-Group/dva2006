@@ -201,6 +201,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
 	   SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
 	   result._msgTo.addAll(_msgTo);
 	   result._copyTo.addAll(_copyTo);
+	   result.setContentType(_contentType);
 	   result.setAttachment(_attach);
 	   result.setSubject(_subject);
 	   result.setBody(_body);
