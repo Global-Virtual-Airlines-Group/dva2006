@@ -36,10 +36,11 @@ public class GetCoolerThreads extends DAO {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.CHANNEL=?)");
+    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
+    		  + "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.CHANNEL=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
-      sqlBuf.append(" ORDER BY SD DESC");
+      sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
 
       try {
          prepareStatement(sqlBuf.toString());
@@ -61,10 +62,11 @@ public class GetCoolerThreads extends DAO {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T WHERE (T.AUTHOR=?)");
+    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
+    		  + "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.AUTHOR=?)");
       if (!showImgs)
          sqlBuf.append(" AND (T.IMAGE_ID=0)");
-      sqlBuf.append(" ORDER BY SD DESC");
+      sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
       
       try {
          prepareStatement(sqlBuf.toString());
@@ -84,8 +86,9 @@ public class GetCoolerThreads extends DAO {
    public List<MessageThread> getByNotification(int userID) throws DAOException {
       try {
          prepareStatement("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-        		 + "T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T, common.COOLER_NOTIFY N WHERE "
-        		 + "(N.USER_ID=?) AND (T.ID=N.THREAD_ID) ORDER BY SD DESC");
+        		 + "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T, "
+        		 + "common.COOLER_NOTIFY N LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (N.USER_ID=?) "
+        		 + "AND (T.ID=N.THREAD_ID) GROUP BY T.ID ORDER BY SD DESC");
          _ps.setInt(1, userID);
          return execute();
       } catch (SQLException se) {
@@ -103,11 +106,12 @@ public class GetCoolerThreads extends DAO {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
+    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
+    		  + "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
       if (!showImgs)
          sqlBuf.append(" WHERE (T.IMAGE_ID=0)");
       
-      sqlBuf.append(" ORDER BY SD DESC");
+      sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
 
       try {
          prepareStatement(sqlBuf.toString());
@@ -130,11 +134,12 @@ public class GetCoolerThreads extends DAO {
 
       // Build the SQL statement
       StringBuilder sqlBuf = new StringBuilder("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM common.COOLER_THREADS T ");
+    		  + "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
+    		  + "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
       if (!showImgs)
          sqlBuf.append("WHERE (T.IMAGE_ID=0) ");
       
-      sqlBuf.append("HAVING (SD > ?) ORDER BY SD DESC");
+      sqlBuf.append("HAVING (SD > ?) GROUP BY T.ID ORDER BY SD DESC");
 
       try {
          prepareStatement(sqlBuf.toString());
@@ -243,9 +248,9 @@ public class GetCoolerThreads extends DAO {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
-			   + "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD FROM "
-			   + "common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) WHERE "
-			   + "(P.MSGBODY LIKE ?) ");
+			   + "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) "
+			   + "FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) "
+			   + "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (P.MSGBODY LIKE ?) ");
 	   if (!Channel.ALL.equals(criteria.getChannel()))
 		   sqlBuf.append("AND (T.CHANNEL=?) ");
 	   if (criteria.getSearchSubject())
@@ -256,7 +261,7 @@ public class GetCoolerThreads extends DAO {
 		   sqlBuf.append(")) ");
 	   }
 	   
-	   sqlBuf.append(" ORDER BY SD DESC");
+	   sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
 	   
       try {
          prepareStatement(sqlBuf.toString());
@@ -295,6 +300,7 @@ public class GetCoolerThreads extends DAO {
          t.setAuthorID(rs.getInt(11));
          t.setLastUpdatedOn(rs.getTimestamp(12));
          t.setLastUpdateID(rs.getInt(13));
+         t.setPoll(rs.getInt(15) > 0);
 
          // Add to results
          results.add(t);

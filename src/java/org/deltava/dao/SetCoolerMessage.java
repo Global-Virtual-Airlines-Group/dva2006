@@ -1,6 +1,8 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.cooler.*;
 
@@ -36,14 +38,14 @@ public class SetCoolerMessage extends DAO {
 			_ps.setString(4, msg.getRemoteAddr());
 			_ps.setString(5, msg.getRemoteHost());
 			_ps.setString(6, msg.getBody());
-			
+
 			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Writes a new Message Thread into the database
 	 * @param t the Message Thread
@@ -51,16 +53,16 @@ public class SetCoolerMessage extends DAO {
 	 * @throws IllegalStateException if there are no Posts in the Thread
 	 */
 	public void writeThread(MessageThread t) throws DAOException {
-		
+
 		// Get the first post in the thread
 		Message msg = t.getPosts().get(0);
 		if (msg == null)
 			throw new IllegalStateException("Empty Message Thread");
-	    
+
 		try {
-		    // Do the two INSERTs as a single transaction
-		    startTransaction();
-		    
+			// Do the two INSERTs as a single transaction
+			startTransaction();
+
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_THREADS (ID, SUBJECT, CHANNEL, IMAGE_ID, STICKY, "
 					+ "STICKY_CHANNEL, POSTS, AUTHOR, LASTUPDATE, LASTPOSTER, VIEWS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 0)");
 			_ps.setInt(1, t.getID());
@@ -74,28 +76,40 @@ public class SetCoolerMessage extends DAO {
 			_ps.setTimestamp(9, createTimestamp(msg.getCreatedOn()));
 			_ps.setInt(10, msg.getAuthorID());
 
-			// Write the thread to the database
+			// Write the thread to the database and get the new ID
 			executeUpdate(1);
-
-			// Get the new thread ID
 			t.setID(getNewID());
+			
+			// If we have poll options, write them to the database
+			if (!t.getOptions().isEmpty()) {
+				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, NAME) VALUES (?, ?)");
+				_ps.setInt(1, t.getID());
+				for (Iterator<PollOption> i = t.getOptions().iterator(); i.hasNext(); ) {
+					PollOption opt = i.next();
+					_ps.setString(2, opt.getName());
+					_ps.addBatch();
+				}
+				
+				_ps.executeBatch();
+				_ps.close();
+			}
 		} catch (SQLException se) {
-		    rollbackTransaction();
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
-		
+
 		// Save the message thread ID
 		msg.setThreadID(t.getID());
-		
+
 		try {
-		    writeMessage(msg);
-		    commitTransaction();
+			writeMessage(msg);
+			commitTransaction();
 		} catch (SQLException se) {
-		    rollbackTransaction();
-		    throw new DAOException(se);
+			rollbackTransaction();
+			throw new DAOException(se);
 		} catch (DAOException de) {
-		    rollbackTransaction();
-		    throw de;
+			rollbackTransaction();
+			throw de;
 		}
 	}
 
@@ -113,7 +127,7 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Changes the Channel for a Message Thread.
 	 * @param id the Message Thread ID
@@ -128,9 +142,9 @@ public class SetCoolerMessage extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
-		}		
+		}
 	}
-	
+
 	/**
 	 * Moderates a Thread by updating the locked and hidden flags.
 	 * @param id the thread ID
@@ -149,20 +163,20 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Deletes a Message Thread and all associated posts.
 	 * @param id the Message Thread database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void deleteThread(int id) throws DAOException {
-	   try {
-	      prepareStatement("DELETE FROM common.COOLER_THREADS WHERE (ID=?)");
-	      _ps.setInt(1, id);
-	      executeUpdate(1);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		try {
+			prepareStatement("DELETE FROM common.COOLER_THREADS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -172,30 +186,32 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void synchThread(MessageThread mt) throws DAOException {
 		try {
-		   setQueryMax(1);
+			startTransaction();
+
+			setQueryMax(1);
 			prepareStatement("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
 					+ "WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED ASC LIMIT 1) AS AID, (SELECT P.AUTHOR_ID FROM "
 					+ "common.COOLER_POSTS P WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED DESC LIMIT 1) AS LUID, "
 					+ "MAX(P.CREATED) FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (P.THREAD_ID=T.ID) "
 					+ "WHERE (T.ID=?) GROUP BY T.ID");
 			_ps.setInt(1, mt.getID());
-			
+
 			// Get the thread Author ID
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next())
 				throw new DAOException("Message Thread is empty");
-			
+
 			// Save the post count
 			if (mt.getPosts().isEmpty())
 				mt.setPostCount(rs.getInt(1));
-			
+
 			// Update the author/last update and clean up
 			mt.setAuthorID(rs.getInt(2));
 			mt.setLastUpdateID(rs.getInt(3));
 			mt.setLastUpdatedOn(rs.getTimestamp(4));
 			rs.close();
 			_ps.close();
-			
+
 			// Update the thread entry
 			prepareStatement("UPDATE common.COOLER_THREADS SET POSTS=?, AUTHOR=?, LASTPOSTER=?, LASTUPDATE=? WHERE (ID=?)");
 			_ps.setInt(1, mt.getPostCount());
@@ -204,11 +220,15 @@ public class SetCoolerMessage extends DAO {
 			_ps.setTimestamp(4, createTimestamp(mt.getLastUpdatedOn()));
 			_ps.setInt(5, mt.getID());
 			executeUpdate(1);
+
+			// Commit the transaction
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Unsticks a Water Cooler Message Thread.
 	 * @param id the Message Thread's database ID
@@ -220,6 +240,45 @@ public class SetCoolerMessage extends DAO {
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, id);
 			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Updates the sticky date on a Water Cooler Message Thread. This will unstick the thread if the date
+	 * is null or in the past.
+	 * @param id the Message Thread's database ID
+	 * @param sDate the new sticky date
+	 * @throws DAOException if a JDBC error occurs
+	 * @see SetCoolerMessage#unstickThread(int)
+	 */
+	public void restickThread(int id, java.util.Date sDate) throws DAOException {
+		if ((sDate == null) || (sDate.before(new java.util.Date())))
+			unstickThread(id);
+		
+		try {
+			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=? WHERE (ID=?)");
+			_ps.setTimestamp(1, createTimestamp(sDate));
+			_ps.setInt(2, id);
+			executeUpdate(0);
+		} catch(SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes a vote in a Water Cooler discussion poll.
+	 * @param vote the PollVote bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void vote(PollVote vote) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO common.COOLER_VOTES (ID, PILOT_ID, OPT_ID) VALUES (?, ?, ?)");
+			_ps.setInt(1, vote.getID());
+			_ps.setInt(2, vote.getPilotID());
+			_ps.setInt(3, vote.getOptionID());
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
