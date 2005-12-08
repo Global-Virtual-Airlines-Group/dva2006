@@ -33,6 +33,14 @@ var flags = 'height=280,width=250,menubar=no,toolbar=no,status=no,scrollbars=yes
 var w = window.open('emoticons.do', 'emoticonHelp', flags);
 return true;
 }
+
+function enablePoll()
+{
+var f = document.forms[0];
+if (!f.hasPoll) return false;
+f.pollOptions.disabled = !f.hasPoll.checked;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -46,7 +54,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="threadpost.do" method="POST" allowUpload="true" validate="return validate(this)">
+<el:form action="threadpost.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td colspan="2" class="left caps">New Water Cooler Discusion Thread</td>
@@ -76,16 +84,30 @@ return true;
  <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
 <c:if test="${imgBadSize}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgSize}" /> bytes).</div></c:if>
 <c:if test="${imgBadDim}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgX}" />
- by <fmt:int value="${imgY}" /> pixels).</div></c:if>
- </td>
+ by <fmt:int value="${imgY}" /> pixels).</div></c:if></td>
 </tr>
+
+<content:filter roles="PIREP,HR,Moderator">
+<!-- Pilot Poll -->
+<tr class="title caps">
+ <td colspan="2">PILOT POLL</td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="hasPoll" idx="*" value="true" onChange="void enablePoll()" label="Enable Pilot Poll in this Discussion Thread" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Poll Options</td>
+ <td class="data"><el:textbox name="pollOptions" idx="*" width="60" height="6"></el:textbox></td>
+</tr>
+</content:filter>
 
 <!-- Message Text -->
 <tr class="title caps">
  <td colspan="2">NEW MESSAGE TEXT</td>
 </tr>
 <tr>
- <td class="mid" colspan="2"><el:textbox name="msgText" width="125" height="8">${param.msgText}</el:textbox></td>
+ <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="125" height="8">${param.msgText}</el:textbox></td>
 </tr>
 
 <!-- Button Bar -->

@@ -72,11 +72,10 @@ public class ThreadPostCommand extends AbstractCommand {
 
          // Get the channel DAO and the list of channels
          GetCoolerChannels dao = new GetCoolerChannels(con);
-         Channel ch = dao.get(cName);
-         dao.setQueryMax(0);
-         ctx.setAttribute("channel", ch, REQUEST);
          List channels = dao.getChannels(airline, ctx.getRoles());
+         Channel ch = dao.get(cName);
          channels.remove(0);
+         ctx.setAttribute("channel", ch, REQUEST);
          ctx.setAttribute("channels", channels, REQUEST);
 
          // Initialize the channel access controller
@@ -138,7 +137,7 @@ public class ThreadPostCommand extends AbstractCommand {
                }
             } */
          }
-
+         
          // Create the new thread bean
          MessageThread mt = new MessageThread(ctx.getParameter("subject"));
          mt.setChannel(cName);
@@ -151,6 +150,14 @@ public class ThreadPostCommand extends AbstractCommand {
             } catch (ParseException pe) {
                throw new CommandException(pe);
             }
+         }
+         
+         // Create the Pilot poll
+         boolean hasPoll = Boolean.valueOf(ctx.getParameter("hasPoll")).booleanValue();
+         if (hasPoll) {
+        	 Collection<String> opts = StringUtils.split(ctx.getParameter("pollOptions"), "\n");
+        	 for (Iterator<String> i = opts.iterator(); i.hasNext(); )
+        		 mt.addOption(new PollOption(1, i.next()));
          }
 
          // Create the first post in the thread

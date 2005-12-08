@@ -14,6 +14,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${access.canResync}"><content:js name="datePicker" /></c:if>
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -26,7 +27,9 @@ if (act.indexOf('imgvote.do') != -1) {
 } else if (act.indexOf('threadmove.do') != -1) {
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
 } else {
-	if (!validateText(form.msgText, 3, 'text of your response')) return false;
+	var hasResponse = (form.msgText.value.length > 3);
+	if (!hasResponse)
+		if (!validateCheckBox(form.pollVote, 1, 'poll Vote')) return false;
 }
 
 setSubmit();
@@ -34,6 +37,8 @@ disableButton('SaveButton');
 disableButton('LockButton');
 disableButton('HideButton');
 disableButton('UnlockButton');
+disableButton('UnstickButton');
+disableButton('StickButton');
 disableButton('VoteButton');
 disableButton('ImgDeleteButton');
 disableButton('ResyncButton');
@@ -70,14 +75,12 @@ return true;
  <td colspan="2" class="left"><el:cmd className="title" url="channels">DVA WATER COOLER</el:cmd> | 
 <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
 </tr>
-
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
 <tr class="title caps">
  <td colspan="2" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
-
 <c:if test="${!empty img}">
 <!-- Attached Image -->
 <tr class="mid">
@@ -90,6 +93,22 @@ return true;
  <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
 <el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
 </td>
+</tr>
+</c:if>
+</c:if>
+<c:if test="${thread.poll}">
+<!-- Pilot Poll -->
+<tr>
+ <td class="label" valign="top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
+ <td class="data"><c:forEach var="opt" items="${thread.options}">
+<span style="width:250px;"><c:if test="${opt.votes > 0}"><el:img y="12" x="${(opt.votes / maxVotes) * 250}" caption="${opt.name}" src="cooler/bar_blue.png" /></c:if></span>
+${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.votes}" /> vote)</c:when>
+<c:when test="${opt.votes > 1}"> (<fmt:int value="${opt.votes}" /> votes)</c:when></c:choose><br /></c:forEach></td>
+</tr>
+<c:if test="${access.canVote}">
+<tr>
+ <td class="label" valign="top">Your Choice</td>
+ <td class="data"><el:check name="pollVote" type="radio" idx="*" cols="1" options="${thread.options}" /></td>
 </tr>
 </c:if>
 </c:if>
@@ -188,7 +207,45 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  </td>
 </tr>
 </c:forEach>
-
+<c:if test="${access.canLock || access.canUnlock || access.canDelete || (access.canResync && !noResync) || access.canUnstick}">
+<!-- Moderator Tools -->
+<tr class="title caps">
+ <td colspan="2">MODERATOR TOOLS</td>
+</tr>
+<tr class="pri bld mid">
+ <td colspan="2">
+<c:if test="${access.canLock}">
+ <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" linkID="0x${thread.ID}" op="lock" />
+ <el:cmdbutton ID="HideButton" label="HIDE" url="threadlock" linkID="0x${thread.ID}" op="hide" />
+</c:if>
+<c:if test="${access.canUnlock}">
+ <el:cmdbutton ID="UnlockButton" label="UNLOCK" url="threadunlock" linkID="0x${thread.ID}" op="unlock" />
+ <el:cmdbutton ID="UnhideButton" label="UNHIDE" url="threadunlock" linkID="0x${thread.ID}" op="unhide" />
+</c:if>
+<c:if test="${imgAccess.canDelete}">
+ <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
+</c:if>
+<c:if test="${access.canResync && !noResync}">
+ <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
+</c:if>
+<c:if test="${access.canUnstick}">
+ <el:cmdbutton ID="UnstickButton" label="UNSTICK" url="unstick" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canLock}">
+ MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
+ <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" linkID="0x${thread.ID}" />
+</c:if>
+<c:if test="${access.canResync}">
+ STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
+ <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" />
+ <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
+</c:if>
+ </td>
+</tr>
+</c:if>
 <content:filter roles="Pilot">
 <!-- Message Thread Update notification -->
 <tr class="title caps">
@@ -216,40 +273,12 @@ notification each time a reply is posted in this Thread.
 </c:if>
 
 <!-- Button Bar -->
+<c:if test="${access.canReply}">
 <tr class="buttons mid title">
- <td colspan="2">&nbsp;
-<c:if test="${access.canReply}">
- <el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-</c:if>
-<c:if test="${access.canLock}">
- <el:cmdbutton ID="LockButton" label="LOCK THREAD" url="threadlock" linkID="0x${thread.ID}" op="lock" />
- <el:cmdbutton ID="HideButton" label="HIDE THREAD" url="threadlock" linkID="0x${thread.ID}" op="hide" />
-</c:if>
-<c:if test="${access.canUnlock}">
- <el:cmdbutton ID="UnlockButton" label="UNLOCK THREAD" url="threadunlock" linkID="0x${thread.ID}" op="unlock" />
- <el:cmdbutton ID="UnhideButton" label="UNHIDE THREAD" url="threadunlock" linkID="0x${thread.ID}" op="unhide" />
-</c:if>
-<c:if test="${imgAccess.canDelete}">
- <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
-</c:if>
-<c:if test="${access.canResync && !noResync}">
- <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
-</c:if>
-<c:if test="${access.canUnstick}">
- <el:cmdbutton ID="UnstickButton" label="UNSTICK THREAD" url="unstick" linkID="0x${thread.ID}" />
-</c:if>
-<c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" linkID="0x${thread.ID}" />
-</c:if>
-<c:if test="${access.canLock}">
- MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
- <el:cmdbutton ID="MoveButton" label="MOVE THREAD" url="threadmove" post="true" linkID="0x${thread.ID}" />
-</c:if>
-<c:if test="${access.canReply}">
- <el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" />
-</c:if>
- </td>
+ <td colspan="2"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
+&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
+</c:if>
 </el:table>
 </el:form>
 <br />
