@@ -237,7 +237,13 @@
 		
 		<map name="connectProperties">
 			<useNewIO>false</useNewIO>
+			<useCompression>false</useCompression>
 			<autoReconnect>true</autoReconnect>
+			<cachePrepStmts>true</cachePrepStmts>
+			<cacheResultSetMetadata>true</cacheResultSetMetadata>
+			<continueBatchOnError>true</continueBatchOnError>
+			<useServerPrepStmts>true</useServerPrepStmts>
+			<dontTrackOpenResources>true</dontTrackOpenResources>
 		</map>
 		
 		<pool_size type="Integer">1</pool_size>
