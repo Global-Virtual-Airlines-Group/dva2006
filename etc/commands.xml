@@ -604,6 +604,12 @@
 		<roles>Moderator</roles>
 	</command>
 
+	<command id="threadstick">
+		<name>Stick Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ThreadStickCommand</class>
+		<roles>Moderator</roles>
+	</command>
+
 	<command id="unstick">
 		<name>Unstick Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadUnstickCommand</class>
