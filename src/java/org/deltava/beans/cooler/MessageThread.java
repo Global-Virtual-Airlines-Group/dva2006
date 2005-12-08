@@ -260,7 +260,9 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 * @see MessageThread#getStickyUntil()
 	 */
 	public void setStickyUntil(Date dt) {
-		if ((dt != null) && (dt.getTime() > System.currentTimeMillis()))
+		if (dt == null)
+			_stickyUntil = null;
+		else if (dt.getTime() > System.currentTimeMillis())
 			_stickyUntil = dt;
 	}
 
