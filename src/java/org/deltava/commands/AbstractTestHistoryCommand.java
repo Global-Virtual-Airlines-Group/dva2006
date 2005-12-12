@@ -9,6 +9,8 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
  * examinations/transfers a Pilot is eligible for.
@@ -48,15 +50,18 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
 
 		// Create a dummy FO exam for the hired in program
-		if ((ieq != null) && !_testHistory.hasPassed(ieq.getExamName(Ranks.RANK_FO))) {
-			Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
-			ex.setSize(1);
-			ex.setScore(1);
-			ex.setPassFail(true);
-			ex.setStatus(Test.SCORED);
-			ex.setDate(p.getCreatedOn());
-			ex.setScoredOn(p.getCreatedOn());
-			_testHistory.addExam(ex);
+		if (ieq != null) {
+			String foExam = ieq.getExamName(Ranks.RANK_FO);
+			if (!StringUtils.isEmpty(foExam) && !_testHistory.hasPassed(foExam)) {
+				Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
+				ex.setSize(1);
+				ex.setScore(1);
+				ex.setPassFail(true);
+				ex.setStatus(Test.SCORED);
+				ex.setDate(p.getCreatedOn());
+				ex.setScoredOn(p.getCreatedOn());
+				_testHistory.addExam(ex);
+			}
 		}
 	}
 }
