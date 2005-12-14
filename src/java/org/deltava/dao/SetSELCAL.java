@@ -99,7 +99,7 @@ public class SetSELCAL extends DAO {
 	public int free(int days) throws DAOException {
 		try {
 			prepareStatement("UPDATE SELCAL SET PILOT_ID=0, RESERVE_DATE=NULL WHERE (RESERVE_DATE < "
-					+ "DATE_SUB(NOW(), INTERVAL ? DAYS))");
+					+ "DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
 			return executeUpdate(0);
 		} catch (SQLException se) {
