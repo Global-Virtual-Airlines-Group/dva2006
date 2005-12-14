@@ -24,7 +24,7 @@
 		<hours>0</hours>
 	</task>
 
-	<task id="acarspurge" enabled="false">
+	<task id="acarspurge" enabled="true">
 		<class>org.deltava.tasks.ACARSDataPurgeTask</class>
 		<interval>43200</interval>
 		<hours>2,14</hours>
