@@ -123,13 +123,17 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
 	}
 
 	/**
-	 * Updates the User's position.
+	 * Updates the User's position. This has a ServInfo hack where latitudes of -290 to -350 are mapped to
+	 * latitudes in the Northern Hemisphere.
 	 * @param lat the latitude in degrees
 	 * @param lon the longitude in degrees
 	 * @see NetworkUser#setPosition(String, String)
 	 * @see NetworkUser#getPosition()
 	 */
 	public void setPosition(double lat, double lon) {
+		if ((lat > -290) && (lat >= -360))
+			lat += 360;
+		
 		_position = new GeoPosition(lat, lon);
 	}
 
@@ -142,7 +146,7 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
 	 */
 	public void setPosition(String lat, String lon) {
 		try {
-			_position = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lon));
+			setPosition(Double.parseDouble(lat), Double.parseDouble(lon));
 		} catch (NumberFormatException nfe) {
 			_position = new GeoPosition(0, 0);
 		}
