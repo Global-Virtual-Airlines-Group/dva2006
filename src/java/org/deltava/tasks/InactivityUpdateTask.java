@@ -71,7 +71,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 				InactivityPurge ip = i.next();
 				Pilot p = pilots.get(new Integer(ip.getID()));
 				if (p != null) {
-					log.info("Marking " + p.getName() + " Inactive");
+					log.warn("Marking " + p.getName() + " Inactive");
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
@@ -93,7 +93,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 
 					// Send notification message
 					mailer.setContext(mctxt);
-					mailer.send(p);
+					//mailer.send(p);
 				} else {
 					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
 				}
@@ -110,7 +110,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 				// Check if we've been notified already
 				InactivityPurge ip = idao.getInactivity(p.getID());
 				if ((ip == null) || (!ip.isNotified())) {
-					log.info("Notifying " + p.getName());
+					log.warn("Notifying " + p.getName());
 					
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
@@ -131,7 +131,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					
 					// Send the message
 					mailer.setContext(mctxt);
-					mailer.send(p);
+					//mailer.send(p);
 				}
 			}
 		} catch (DAOException de) {
