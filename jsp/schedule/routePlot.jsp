@@ -59,23 +59,29 @@ xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	map.clearOverlays();
 	
-	// Draw the markers
+	// Draw the markers and load the codes
 	var positions = new Array();
-	var xmlDoc = xmlreq.responseXML;
-	var waypoints = xmlDoc.documentElement.getElementsByTagName("pos");
+	var codes = new Array();
+	var xdoc = xmlreq.responseXML.documentElement;
+	var waypoints = xdoc.getElementsByTagName("pos");
 	for (var i = 0; i < waypoints.length; i++) {
 		var wp = waypoints[i];
 		var label = wp.firstChild;
 		var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
 		positions.push(p);
+		codes.push(wp.getAttribute("code"));
 		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
 	} // for
 	
 	// Draw the route
 	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
+	
+	// Save the codes
+	var f = document.forms[0];
+	f.routeCodes.value = codes.join(' ');
 
 	// Get the midpoint and center the map
-	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
+	var mps = xdoc.getElementsByTagName("midpoint");
 	var mpp = mps[0];
 	if (mpp) {
 		var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
@@ -83,11 +89,11 @@ xmlreq.onreadystatechange = function() {
 	}
 
 	// Load the SID/STAR list
-	var sids = xmlDoc.documentElement.getElementsByTagName("sid");
-	var stars = xmlDoc.documentElement.getElementsByTagName("star");
-	updateRoutes(document.forms[0].sid, sids);
-	updateRoutes(document.forms[0].star, stars);
-		
+	var sids = xdoc.getElementsByTagName("sid");
+	var stars = xdoc.getElementsByTagName("star");
+	updateRoutes(f.sid, sids);
+	updateRoutes(f.star, stars);
+	
 	// Focus on the map
 	if (isLoading)
 		isLoading.innerHTML = "";
@@ -152,12 +158,16 @@ return true;
  <td class="data"><el:combo name="star" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" /></td>
 </tr>
 <tr>
- <td class="label">Flight Route</td>
+ <td class="label">Waypoints</td>
  <td class="data"><el:text name="route" size="80" max="192" idx="*" value="" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
+</tr>
+<tr>
+ <td class="label">Flight Route</td>
+ <td class="data"><el:text name="routeCodes" size="144" max="320" readOnly="true" value="" /></td>
 </tr>
 </el:table>
 
