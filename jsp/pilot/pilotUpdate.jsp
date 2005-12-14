@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Pilot Profile Updated</title>
@@ -34,9 +35,14 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 <!-- Pilot Renamed -->
 <li>This Pilot's named has been changed to ${newName}.</li>
 </c:if>
-<c:if test="${renameNotUnique}">
+<c:if test="${!empty dupeResults}">
 <!-- Rename Failed; Not Unique -->
-<li><span class="warn">This Pilot could NOT be renamed, since the new name is not unique.</span></li>
+<li><span class="warn">This Pilot could NOT be renamed, since the new name is not unique There are <fmt:int value="${fn:sizeof(dupeResults)}" /> 
+matching <content:airline /> Pilots or Applicants with the same name.</span></li>
+<c:forEach var="user" items="${dupeResults}">
+<c:set var="userLoc" value="${userData[id]}" scope="request" />
+<li><el:profile location="${userLoc}">${user.name}</el:profile></li>
+</c:forEach>
 </c:if>
 <c:if test="${pwdUpdated}">
 <!-- Password Updated -->
