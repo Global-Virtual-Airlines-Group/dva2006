@@ -695,13 +695,19 @@
 		<class>org.deltava.commands.pirep.PIREPDisposalCommand</class>
 		<roles>PIREP</roles>
 	</command>
-	
+
 	<command id="pirepdelete">
 		<name>PIREP Delete</name>
 		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="acarsdelete">
+		<name>ACARS Data Delete</name>
+		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="sigupdate">
 		<name>Water Cooler Signature Update</name>
 		<class>org.deltava.commands.cooler.SignatureUpdateCommand</class>

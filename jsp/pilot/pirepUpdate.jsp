@@ -94,24 +94,27 @@ of the approval process for this Flight Report. This Check Ride has been <span c
 ${checkRide.passFail ? 'APPROVED' : 'REJECTED' }</span>.<br />
 </c:if>
 </c:if>
-
 <c:if test="${isHold}">
 <div class="updateHdr">Flight Report Held</div>
 <br />
 This Flight Report has been marked as &quot;On Hold&quot; and an e-mail message has been sent to
 ${pilot.name}. Please work to resolve any issues with this Flight Report within the next few days.<br />
 </c:if>
-
 <c:if test="${isReject}">
 <div class="updateHdr">Flight Report Rejected</div>
 <br />
 This Flight Report has been rejected and an e-mail message has been sent to ${pilot.name}.<br />
 </c:if>
-
 <c:if test="${isDeleted}">
 <div class="updateHdr">Flight Report Deleted</div>
 <br />
 This Flight Report has been succesfully deleted from the database.<br />
+<br />
+</c:if>
+<c:if test="${isACARSDeleted}">
+<div class="updateHdr">Flight Report ACARS Data Deleted</div>
+<br />
+<content:airline /> ACARS data for this Flight Report has been succesfully deleted from the database.<br />
 <br />
 </c:if>
 
