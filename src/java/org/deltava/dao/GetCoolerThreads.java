@@ -143,7 +143,7 @@ public class GetCoolerThreads extends DAO {
 		if (!showImgs)
 			sqlBuf.append("WHERE (T.IMAGE_ID=0) ");
 
-		sqlBuf.append("HAVING (SD > ?) GROUP BY T.ID ORDER BY SD DESC");
+		sqlBuf.append("GROUP BY T.ID HAVING (SD > ?) ORDER BY SD DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
