@@ -145,6 +145,9 @@ public class LibraryServlet extends GenericServlet {
 
       // Close the file and log download time
       long totalTime = System.currentTimeMillis() - startTime;
+      if (totalTime == 0)
+    	  totalTime++;
+    	  
       log.info(entry.getFileName().toLowerCase() + " download complete, " + (totalTime / 1000) + "s, "
             + (entry.getSize() * 1000 / totalTime) + " bytes/sec");
    }
