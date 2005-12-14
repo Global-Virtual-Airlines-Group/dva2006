@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 /**
@@ -13,11 +13,11 @@ public interface VersionInfo {
     public static final int MAJOR = 1;
     public static final int MINOR = 0;
     
-    public static final int BUILD = 56;
-    public static final int RELEASE_CANDIDATE = 10;
+    public static final int BUILD = 58;
+    public static final int RELEASE_CANDIDATE = 12;
     
     public static final String TXT_COPYRIGHT = "Copyright (c) 2004, 2005 Global Virtual Airline Group. All Rights Reserved.";
-    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004, 2005 Global Virtual Airline Group. All Rights Reserved.";
+    public static final String HTML_COPYRIGHT = "Copyright &copy; 2004, 2005 <a rel=\"external\" href=\"http://www.gvagroup.org/\">Global Virtual Airline Group</a>. All Rights Reserved.";
     
     public static final String APPNAME = "(Golgotha v" + String.valueOf(MAJOR) + "." + String.valueOf(MINOR) + ")";
 }
