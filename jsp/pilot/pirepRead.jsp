@@ -235,6 +235,9 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton url="pirepdelete" linkID="0x${pirep.ID}" label="DELETE REPORT" />
+<c:if test="${fn:isACARS(pirep)}">
+ <el:cmdbutton url="acarsdelete" linkID="0x${pirep.ID}" label="DELETE ACARS DATA" />
+</c:if> 
 </c:if>
  <el:cmdbutton url="profile" linkID="0x${pilot.ID}" label="VIEW PROFILE" />
  </td>
