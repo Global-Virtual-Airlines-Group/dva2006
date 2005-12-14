@@ -240,7 +240,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
 <c:if test="${access.canResync}">
  STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
- <el:button ID="CalendarButton" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" />
+ <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
  <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
 </c:if>
  </td>
