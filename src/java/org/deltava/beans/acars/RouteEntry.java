@@ -285,7 +285,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setAirSpeed(int speed) {
 		if ((speed < -20) || (speed > 700))
-			throw new IllegalArgumentException("Airspeed cannot be < -20 or > 700");
+			throw new IllegalArgumentException("Airspeed cannot be < -20 or > 700 - " + speed);
 
 		_aSpeed = speed;
 	}
@@ -293,12 +293,12 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	/**
 	 * Updates the aircraft's ground speed.
 	 * @param speed the speed in knots
-	 * @throws IllegalArgumentException if speed < -5 or speed > 1500
+	 * @throws IllegalArgumentException if speed < -5 or speed > 1600
 	 * @see RouteEntry#getGroundSpeed()
 	 */
 	public void setGroundSpeed(int speed) {
 		if ((speed < -5) || (speed > 1500))
-			throw new IllegalArgumentException("Ground speed cannot be < -5 or > 1500");
+			throw new IllegalArgumentException("Ground speed cannot be < -5 or > 1600 - " + speed);
 
 		_gSpeed = speed;
 	}
@@ -311,7 +311,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setVerticalSpeed(int speed) {
 		if ((speed < -7000) || (speed > 7000))
-			throw new IllegalArgumentException("Vertical speed cannot be < -7000 or > 7000");
+			throw new IllegalArgumentException("Vertical speed cannot be < -7000 or > 7000 - " + speed);
 
 		_vSpeed = speed;
 	}
@@ -337,7 +337,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setN1(double nn1) {
 		if ((nn1 < 0) || (nn1 > 145.0))
-			throw new IllegalArgumentException("N1 cannot be negative or > 145.0%");
+			throw new IllegalArgumentException("N1 cannot be negative or > 145.0% - " + nn1);
 
 		_n1 = nn1;
 	}
@@ -350,7 +350,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setN2(double nn2) {
 		if ((nn2 < 0) || (nn2 > 135.0))
-			throw new IllegalArgumentException("N2 cannot be negative or > 135.0%");
+			throw new IllegalArgumentException("N2 cannot be negative or > 135.0% - " + nn2);
 
 		_n2 = nn2;
 	}
@@ -475,6 +475,10 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append(String.valueOf(_flaps));
 			buf.append("<sup>o</sup><br />");
 		}
+		
+		// Add afterburner if deployed
+		if (isFlagSet(ACARSFlags.FLAG_AFTERBURNER))
+			buf.append("<b><i>AFTERBURNER</i></b><br />");
 
 		// Add Autopilot flags if set
 		if (isFlagSet(ACARSFlags.FLAG_AP_ANY)) {
