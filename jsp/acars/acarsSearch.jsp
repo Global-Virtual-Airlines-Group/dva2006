@@ -95,20 +95,22 @@ return false;
 <c:if test="${doSearch}">
 <el:form action="acarsprsearch.do" method="get" validate="return showMap(this)">
 <view:table className="view" space="default" pad="default" cmd="acarsprsearch">
+<c:if test="${empty viewContext.results}">
 <!-- Search Results -->
 <tr class="title">
  <td colspan="6" class="left caps">SEARCH RESULTS</td>
 </tr>
-<c:if test="${empty viewContext.results}">
 <tr>
  <td colspan="6" class="pri bld">NO ACARS FLIGHT REPORTS WERE FOUND.</td>
 </tr>
-<tr class="title">
- <td colspan="4">&nbsp;</td>
- <td colspan="2" class="right"><el:box name="showRoute" idx="*" value="true" label="Show Filed Route" /></td>
-</tr>
 </c:if>
 <c:if test="${!empty viewContext.results}">
+<!-- Search Results -->
+<tr class="title">
+ <td colspan="4" class="left caps">SEARCH RESULTS</td>
+ <td colspan="2" class="right"><el:box name="showRoute" idx="*" value="true" label="Show Filed Route" /></td>
+</tr>
+
 <!-- Table Header Data -->
 <tr class="title">
  <td width="10%">DATE</td>
