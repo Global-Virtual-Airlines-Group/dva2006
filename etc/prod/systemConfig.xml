@@ -311,9 +311,9 @@
 		</vatsim>
 		
 		<ivao>
-			<status_url>http://www.ivao.org/whazzup/status.txt</status_url>
+			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
-			<url>http://www.ivao.org/</url>
+			<url>http://www.ivao.aero/</url>
 		</ivao>
 		
 		<fpi>
@@ -476,7 +476,7 @@
 		<timeout type="Integer">120</timeout>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
-			<minimum type="Integer">58</minimum>
+			<minimum type="Integer">60</minimum>
 			<latest type="Integer">60</latest>
 		</build>
 		
