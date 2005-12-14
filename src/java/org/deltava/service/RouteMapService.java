@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.IOException;
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.jdom.*;
 
 import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.GetNavRoute;
@@ -91,9 +90,10 @@ public class RouteMapService extends WebDataService {
 		}
 
 		// Write the entries
-		for (Iterator i = points.iterator(); i.hasNext();) {
-			MapEntry entry = (MapEntry) i.next();
+		for (Iterator<NavigationDataBean> i = points.iterator(); i.hasNext();) {
+			NavigationDataBean entry = i.next();
 			Element e = XMLUtils.createElement("pos", entry.getInfoBox(), true);
+			e.setAttribute("code", entry.getCode());
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
 			e.setAttribute("color", entry.getIconColor());
