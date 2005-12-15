@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.util.*;
@@ -27,8 +28,8 @@ public class RoleFilterTag extends TagSupport {
         HttpServletRequest hreq = (HttpServletRequest) pageContext.getRequest();
       
         // Check if the user has any of the roles listed in our role section
-        for (Iterator i = _roles.iterator(); i.hasNext(); ) {
-            String role = (String) i.next();
+        for (Iterator<String> i = _roles.iterator(); i.hasNext(); ) {
+            String role = i.next();
             if (role.charAt(0) == '!') {
                 if (!hreq.isUserInRole(role.substring(1)))
                     return EVAL_BODY_INCLUDE;
