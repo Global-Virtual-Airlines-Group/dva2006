@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -95,9 +95,9 @@ public class ScheduleExportCommand extends AbstractCommand {
             buf.append(',');
             buf.append(String.valueOf(entry.getDistance()));
             buf.append(',');
-            buf.append(String.valueOf(entry.isHistoric()));
+            buf.append(String.valueOf(entry.getHistoric()));
             buf.append(',');
-            buf.append(String.valueOf(entry.canPurge()));
+            buf.append(String.valueOf(entry.getCanPurge()));
 
             // Write the entry
             out.println(buf.toString());

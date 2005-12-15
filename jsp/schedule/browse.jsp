@@ -44,6 +44,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:filter roles="Schedule"><c:set var="isSchedule" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -53,7 +54,8 @@ return true;
 <!-- Table Header Bars -->
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
- <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
+<c:if test="${isSchedule}"> <td><el:cmdbutton url="sched" op="edit" label="NEW ENTRY" /></td></c:if>
+ <td class="right" colspan="${isSchedule ? '4' : '5'}">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" /></td>
 </tr>
 <tr class="title caps">
@@ -69,7 +71,8 @@ return true;
 <!-- Table Data Section -->
 <c:forEach var="entry" items="${viewContext.results}">
 <tr>
- <td class="pri bld">${entry.flightCode}</td>
+<c:if test="${!isSchedule}"> <td class="pri bld">${entry.flightCode}</td></c:if>
+<c:if test="${isSchedule}"> <td><el:cmd className="bld" url="sched" op="edit" linkID="${entry.flightCode}">${entry.flightCode}</el:cmd></td></c:if>
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to
  ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>

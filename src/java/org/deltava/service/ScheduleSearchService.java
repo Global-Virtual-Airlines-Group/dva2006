@@ -69,7 +69,7 @@ public class ScheduleSearchService extends WebDataService {
          e.setAttribute("airline", f.getAirline().getCode());
          e.setAttribute("flightNumber", StringUtils.format(f.getFlightNumber(), "#000"));
          e.setAttribute("leg", String.valueOf(f.getLeg()));
-         e.setAttribute("historic", String.valueOf(f.isHistoric()));
+         e.setAttribute("historic", String.valueOf(f.getHistoric()));
          e.addContent(XMLUtils.createElement("eqType", f.getEquipmentType()));
          e.addContent(XMLUtils.createElement("length", String.valueOf(f.getLength() * 6)));
          

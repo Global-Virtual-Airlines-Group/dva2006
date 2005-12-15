@@ -1,11 +1,11 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.commands.CommandSecurityException;
 import org.deltava.security.SecurityContext;
 
 /**
- * An Access Controller for Route data.
+ * An Access Controller for Flight Schdeule data.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -13,6 +13,7 @@ import org.deltava.security.SecurityContext;
 
 public class ScheduleAccessControl extends AccessControl {
 	
+	private boolean _canEdit;
 	private boolean _canDelete;
 	private boolean _canImport;
 	private boolean _canExport;
@@ -33,9 +34,18 @@ public class ScheduleAccessControl extends AccessControl {
 		validateContext();
 
 		// Set role fields
-		_canDelete = _ctx.isUserInRole("Schedule");
-		_canImport = _canDelete;
-		_canExport = _canImport;
+		_canEdit = _ctx.isUserInRole("Schedule");
+		_canDelete = _canEdit;
+		_canImport = _canEdit;
+		_canExport = _canEdit;
+	}
+	
+	/**
+	 * Returns if route data can be modified.
+	 * @return TRUE if the rotue data can be modified, otherwise FALSE
+	 */
+	public boolean getCanEdit() {
+		return _canEdit;
 	}
 
 	/**
