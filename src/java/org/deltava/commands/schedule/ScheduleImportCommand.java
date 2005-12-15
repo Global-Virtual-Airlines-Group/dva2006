@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -107,7 +107,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 						entry.setPurge(Boolean.valueOf(tkns.nextToken()).booleanValue());
 
 						// Save the schedule entry
-						dao.create(entry);
+						dao.write(entry, true);
 						entryCount++;
 					} catch (DAOException de) {
 						errors.add("Error saving entry on line " + br.getLineNumber() + " - " + de.getMessage());

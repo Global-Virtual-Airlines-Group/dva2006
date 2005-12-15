@@ -65,7 +65,7 @@ public class SetSchedule extends DAO {
 	public void create(Airport a) throws DAOException {
 		try {
 			startTransaction();
-			
+
 			// Write the airport data
 			prepareStatement("INSERT INTO common.AIRPORTS (IATA, ICAO, TZ, NAME, LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getIATA());
@@ -75,16 +75,16 @@ public class SetSchedule extends DAO {
 			_ps.setDouble(5, a.getLatitude());
 			_ps.setDouble(6, a.getLongitude());
 			executeUpdate(1);
-			
+
 			// Write the airline data
 			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA) VALUES (?, ?)");
 			_ps.setString(2, a.getIATA());
-			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext(); ) {
+			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
 				String aCode = (String) i.next();
 				_ps.setString(1, aCode);
 				_ps.addBatch();
 			}
-			
+
 			// Execute and commit
 			_ps.executeBatch();
 			_ps.close();
@@ -103,7 +103,7 @@ public class SetSchedule extends DAO {
 	public void update(Airport a) throws DAOException {
 		try {
 			startTransaction();
-			
+
 			// Update the airport data
 			prepareStatement("UPDATE common.AIRPORTS SET ICAO=?, TZ=?, NAME=?, LATITUDE=?, LONGITUDE=? WHERE "
 					+ "(IATA=?)");
@@ -114,21 +114,21 @@ public class SetSchedule extends DAO {
 			_ps.setDouble(5, a.getLongitude());
 			_ps.setString(6, a.getIATA());
 			executeUpdate(1);
-			
+
 			// Clear out the airlines
 			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?)");
 			_ps.setString(1, a.getIATA());
 			executeUpdate(0);
-			
+
 			// Write the airline data
 			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA) VALUES (?, ?)");
 			_ps.setString(2, a.getIATA());
-			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext(); ) {
+			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
 				String aCode = (String) i.next();
 				_ps.setString(1, aCode);
 				_ps.addBatch();
 			}
-			
+
 			// Execute and commit
 			_ps.executeBatch();
 			_ps.close();
@@ -137,12 +137,13 @@ public class SetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
-	 * Deletes an Airport from the Schedule. This operation may fail if there are any Flight Reports or
-	 * Events that reference this Airport. In such a case, it is best to remove all Airlines from the Airport.
+	 * Deletes an Airport from the Schedule. This operation may fail if there are any Flight Reports or Events that
+	 * reference this Airport. In such a case, it is best to remove all Airlines from the Airport.
 	 * @param a the Airport bean
 	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if a is null
 	 */
 	public void delete(Airport a) throws DAOException {
 		try {
@@ -151,58 +152,99 @@ public class SetSchedule extends DAO {
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
-		}		
+		}
 	}
-	
+
+	/**
+	 * Deletes an Airline from the Schedule. This operation may fail if there are any Flight Reports that reference
+	 * this Airline. In such a case, it is best to disable the Airline.
+	 * @param a the Airline bean
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if a is null
+	 */
+	public void delete(Airline a) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM common.AIRLINES WHERE (CODE=?)");
+			_ps.setString(1, a.getCode());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Adds an entry to the Flight Schedule.
 	 * @param entry the Schedule Entry
+	 * @param doReplace TRUE if an existing entry can be replaced, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void create(ScheduleEntry entry) throws DAOException {
-	   try {
-	      prepareStatement("REPLACE INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, "
-	            + "EQTYPE, FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-	      _ps.setString(1, entry.getAirline().getCode());
-	      _ps.setInt(2, entry.getFlightNumber());
-	      _ps.setInt(3, entry.getLeg());
-	      _ps.setString(4, entry.getAirportD().getIATA());
-	      _ps.setString(5, entry.getAirportA().getIATA());
-	      _ps.setInt(6, entry.getDistance());
-	      _ps.setString(7, entry.getEquipmentType());
-	      _ps.setInt(8, entry.getLength());
-	      _ps.setTimestamp(9, createTimestamp(entry.getTimeD()));
-	      _ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
-	      _ps.setBoolean(11, entry.isHistoric());
-	      _ps.setBoolean(12, entry.canPurge());
-	            
-	      // Update the database
-	      executeUpdate(1);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+	public void write(ScheduleEntry entry, boolean doReplace) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, "
+				+ "FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, entry.getAirline().getCode());
+			_ps.setInt(2, entry.getFlightNumber());
+			_ps.setInt(3, entry.getLeg());
+			_ps.setString(4, entry.getAirportD().getIATA());
+			_ps.setString(5, entry.getAirportA().getIATA());
+			_ps.setInt(6, entry.getDistance());
+			_ps.setString(7, entry.getEquipmentType());
+			_ps.setInt(8, entry.getLength());
+			_ps.setTimestamp(9, createTimestamp(entry.getTimeD()));
+			_ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
+			_ps.setBoolean(11, entry.getHistoric());
+			_ps.setBoolean(12, entry.getCanPurge());
+
+			// Update the database
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
+	/**
+	 * Deletes an entry from the Flight Schedule.
+	 * @param entry the entry
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if entry is null
+	 */
+	public void delete(ScheduleEntry entry) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
+			_ps.setString(1, entry.getAirline().getCode());
+			_ps.setInt(2, entry.getFlightNumber());
+			_ps.setInt(3, entry.getLeg());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Purges entries from the Flight Schedule.
 	 * @param force TRUE if all entries should be purged, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void purge(boolean force) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("DELETE FROM SCHEDULE");
-	   if (!force)
-	      sqlBuf.append(" WHERE (CAN_PURGE=?)");
-	   
-	   try {
-	      prepareStatementWithoutLimits(sqlBuf.toString());
-	      if (!force)
-	         _ps.setBoolean(1, true);
-	      
-	      executeUpdate(0);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM SCHEDULE");
+		if (!force)
+			sqlBuf.append(" WHERE (CAN_PURGE=?)");
+
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			if (!force)
+				_ps.setBoolean(1, true);
+
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

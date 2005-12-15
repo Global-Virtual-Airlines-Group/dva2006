@@ -59,6 +59,14 @@ ${error}<br />
 </div>
 </c:if>
 </c:when>
+<c:when test="${!empty scheduleEntry}">
+<div class="updateHdr">Flight Schedule Updated</div>
+<br />
+The <content:airline /> Flight Schedule has been updated. Flight ${scheduleEntry.flightCode} has been
+${isCreate ? 'added into' : 'updated in'} the database.<br />
+<br />
+To review this schedule entry, <el:cmd url="schedule" linkID="${scheduleEntry.flightCode}" className="sec bld">click here</el:cmd>.<br />
+</c:when>
 </c:choose>
 <c:if test="${isAirport}">
 <br />

@@ -62,12 +62,12 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
    }
 
    public void testProperties() {
-      assertFalse(_e.isHistoric());
-      assertFalse(_e.canPurge());
+      assertFalse(_e.getHistoric());
+      assertFalse(_e.getCanPurge());
       _e.setPurge(true);
       _e.setHistoric(true);
-      assertTrue(_e.isHistoric());
-      assertTrue(_e.canPurge());
+      assertTrue(_e.getHistoric());
+      assertTrue(_e.getCanPurge());
 
       _e.setAirportD(_atl);
       _e.setAirportA(_jfk);
