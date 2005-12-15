@@ -170,11 +170,10 @@
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
- <td width="20%">USER</td>
- <td width="10%">FLIGHT NUMBER</td>
+ <td width="18%">USER</td>
  <td width="10%">FLIGHT ID</td> 
- <td width="25%">REMOTE ADDRESS</td>
- <td width="10%">MESSAGES</td>
+ <td width="27%">REMOTE ADDRESS</td>
+ <td width="15%">MESSAGES</td>
  <td>BYTES</td>
 </tr>
 
@@ -183,22 +182,18 @@
 <tr>
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
-<c:if test="${con.flightID == 0}">
- <td class="bld">N/A</td>
- <td>N/A</td>
-</c:if>
-<c:if test="${con.flightID > 0}">
- <td class="sec bld">${con.flightInfo.flightCode}</td>
- <td><el:cmd url="acarsinfo" linkID="0x${con.flightID}"><fmt:int value="${con.flightID}" /></el:cmd></td>
-</c:if>
+ <td class="sec bld">${(con.flightID == 0) ? 'N/A' : con.flightInfo.flightCode}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
  <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
 </tr>
 <tr>
- <td colspan="7">Socket settings: <fmt:int value="${con.socket.sendBufferSize}" /> bytes out, 
-<fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. TCP_NODELAY = ${con.socket.tcpNoDelay}, 
-SO_KEEPALIVE = ${con.socket.keepAlive}</td>
+ <td colspan="5" class="small">Socket: <fmt:int value="${con.socket.sendBufferSize}" /> bytes 
+out, <fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. NODELAY=${con.socket.tcpNoDelay}, 
+KEEPALIVE=${con.socket.keepAlive}</td>
+ <td colspan="2" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
+<fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> per message, 
+<fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> avg. bytes</td>
 </tr>
 </c:forEach>
 </el:table>
