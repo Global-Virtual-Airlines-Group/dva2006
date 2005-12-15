@@ -1,8 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import java.util.Date;
-import java.util.Calendar;
+import java.util.*;
 
 import org.deltava.beans.*;
 
@@ -40,7 +39,7 @@ public class ScheduleEntry extends Flight {
 	public ScheduleEntry(Airline a, int fNumber, int leg) {
 		super(a, fNumber, leg);
 	}
-
+	
 	/**
 	 * Returns the length of the flight, in hours <i>multiplied by 10</i>.
 	 * @return the length of the flight
@@ -120,7 +119,7 @@ public class ScheduleEntry extends Flight {
 	 * @return TRUE if this is a historic flight, FALSE otherwise
 	 * @see ScheduleEntry#setHistoric(boolean)
 	 */
-	public boolean isHistoric() {
+	public boolean getHistoric() {
 		return _historic;
 	}
 
@@ -129,7 +128,7 @@ public class ScheduleEntry extends Flight {
 	 * @return TRUE if the flight can be automatically purged from the database, otherwise FALSE
 	 * @see ScheduleEntry#setPurge(boolean)
 	 */
-	public boolean canPurge() {
+	public boolean getCanPurge() {
 		return _purge;
 	}
 
@@ -190,7 +189,8 @@ public class ScheduleEntry extends Flight {
 	/**
 	 * Updates this Schedule entry's "historic flight" flag.
 	 * @param historic the new "historic flight" flag value
-	 * @see ScheduleEntry#isHistoric()
+	 * @see ScheduleEntry#getHistoric()
+	 * @see ScheduleEntry#getCanPurge()
 	 */
 	public void setHistoric(boolean historic) {
 		_historic = historic;
@@ -199,8 +199,8 @@ public class ScheduleEntry extends Flight {
 	/**
 	 * Updates this Schedule entry's "no purge" flag. This typically is set on historic flights.
 	 * @param purge the new "no purge" flag value
-	 * @see ScheduleEntry#canPurge()
-	 * @see ScheduleEntry#isHistoric()
+	 * @see ScheduleEntry#getCanPurge()
+	 * @see ScheduleEntry#getHistoric()
 	 */
 	public void setPurge(boolean purge) {
 		_purge = purge;
