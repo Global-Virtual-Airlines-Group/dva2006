@@ -69,7 +69,7 @@ public class MailerDaemon extends Thread {
 	}
 
 	private void send(Session s, SMTPEnvelope env) {
-		if (env == null)
+		if ((env == null) || (!env.hasRecipients()))
 			return;
 
 		// Create the message
