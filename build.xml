@@ -298,7 +298,6 @@
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path.common}"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="lib/deploy" includes="*.jar">
-<!--				<exclude name="mysql*.jar" /> -->
 				<exclude name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -317,7 +316,6 @@
 				</modified>
 			</fileset>
 			<fileset dir="lib/deploy">
-<!--				<include name="mysql*.jar" /> -->
 				<include name="log4j*.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -355,5 +353,58 @@
 				</modified>
 			</fileset>
 		</scp>
+	</target>
+
+	<!-- Package source code -->
+	<target name="put_source">
+		<tar destfile="${java.io.tmpdir}/src/golgotha.tar" longfile="fail">
+			<tarfileset uid="500" group="gva" dir="${basedir}">
+				<include name="src/java/**/*.java" />
+				<include name="src/test/**/*.java" />
+				<include name="lib/**" />
+				<include name="jsp/**" />
+				<include name="sql/**" />
+				<include name="static/**" />
+				<include name="WEB-INF/**" />
+				<include name="*" />
+			</tarfileset>
+				
+			<!-- Data files -->
+			<tarfileset uid="500" group="gva" dir="${basedir}/data" prefix="data">
+				<exclude name="build_deploy.properties" />
+				<exclude name="build_doc.properties" />
+				<exclude name="jdbc.properties" />
+			</tarfileset>
+				
+			<!-- Sample data files with credentials -->
+			<tarfileset uid="500" group="gva" dir="${basedir}/etc/sample" prefix="data">
+				<include name="build_deploy.properties" />
+				<include name="build_doc.properties" />
+				<include name="jdbc.properties" />
+			</tarfileset>
+				
+			<!-- Configuration files -->
+			<tarfileset uid="500" group="gva" dir="${basedir}/etc" prefix="etc/prod">
+				<include name="commands.xml" />
+				<include name="services.xml" />
+				<include name="tasks.xml" />
+			</tarfileset>
+				
+			<!-- Sample configuration files with credentials -->
+			<tarfileset uid="500" group="gva" dir="${basedir}/etc/sample" prefix="etc/prod">
+				<include name="auth.properties" />
+				<include name="log4j.properties" />
+				<include name="systemConfig.xml" />
+			</tarfileset>
+		</tar>
+		
+		<!-- Compress the TAR -->
+		<gzip src="${java.io.tmpdir}/src/golgotha.tar" destfile="${java.io.tmpdir}/src/golgotha.tar.gz" />
+		<delete file="${java.io.tmpdir}/src/golgotha.tar" />
+			
+		<!-- Upload to the web site -->
+		<loadproperties srcFile="data/build_deploy.properties" />
+		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes"
+				trust="yes" password="${golgotha.ssh.pwd}" file="${java.io.tmpdir}/src/golgotha.tar.gz" />
 	</target>
 </project>
