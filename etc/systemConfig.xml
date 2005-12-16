@@ -455,7 +455,7 @@
 		</livemap>
 		
 		<port type="Integer">15527</port>
-		<sleep type="Integer">1000</sleep>
+		<sleep type="Integer">15000</sleep>
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
@@ -466,7 +466,10 @@
 		<pool>
 			<size type="Integer">100</size>
 			<multiple type="Boolean">true</multiple>
-			<threads type="Integer">2</threads>
+			<threads>
+				<logic type="Integer">2</logic>
+				<write type="Integer">2</write>
+			</threads>
 		</pool>
 		
 		<buffer>
