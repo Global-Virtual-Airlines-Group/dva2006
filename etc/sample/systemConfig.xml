@@ -477,7 +477,10 @@
 		<pool>
 			<size type="Integer">100</size>
 			<multiple type="Boolean">false</multiple>
-			<threads type="Integer">2</threads>
+			<threads>
+				<logic type="Integer">2</logic>
+				<write type="Integer">2</write>
+			</threads>
 		</pool>
 
 		<buffer>
