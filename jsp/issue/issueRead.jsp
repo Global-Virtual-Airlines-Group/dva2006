@@ -81,7 +81,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Issue Description</td>
- <td class="data"><fmt:text value="${issue.description}" /></td>
+ <td class="data"><fmt:msg value="${issue.description}" /></td>
 </tr>
 
 <!-- Issue Comments -->
