@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -36,7 +37,7 @@ public class GetSchedule extends DAO {
 	public List<ScheduleEntry> search(Flight criteria, String sortBy) throws DAOException {
 		
 		// Build the where clause
-		Collection<String> conditions = new HashSet<String>();
+		Collection<String> conditions = new LinkedHashSet<String>();
 		if (criteria.getAirline() != null) conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
 		if (criteria.getEquipmentType() != null) conditions.add("EQTYPE=\'" + criteria.getEquipmentType() + "\'");
 		if (criteria.getFlightNumber() != 0) conditions.add("FLIGHT=" + criteria.getFlightNumber());
@@ -55,7 +56,21 @@ public class GetSchedule extends DAO {
 			conditions.add("FLIGHT_TIME >= " + String.valueOf((criteria.getLength() / 10.0) - 1));
 			conditions.add("FLIGHT_TIME <= " + String.valueOf((criteria.getLength() / 10.0) + 1));
 		}
+		
+		// Set departure/arrival time criteria +/- 2 hours
+		if (criteria instanceof ScheduleSearchCriteria) {
+			ScheduleSearchCriteria ssc = (ScheduleSearchCriteria) criteria;
+			if (ssc.getHourD() != -1) {
+				conditions.add("TIME_D >= \'" + StringUtils.format(ssc.getHourD() - 1, "00") + ":00\'");
+				conditions.add("TIME_D <= \'" + StringUtils.format(ssc.getHourD() + 1, "00") + ":00\'");
+			}
 			
+			if (ssc.getHourA() != -1) {
+				conditions.add("TIME_A >= \'" + StringUtils.format(ssc.getHourA() - 1, "00") + ":00\'");
+				conditions.add("TIME_A <= \'" + StringUtils.format(ssc.getHourA() + 1, "00") + ":00\'");
+			}
+		}
+		
 		// Build the query string
 		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
 		for (Iterator<String> i = conditions.iterator(); i.hasNext(); ) {

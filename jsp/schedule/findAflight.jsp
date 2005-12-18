@@ -99,6 +99,12 @@ return true;
  <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${emptyList}" /></td>
 </tr>
 <tr>
+ <td class="label">Departure Time (+/- 2h)</td>
+ <td class="data"><el:combo name="hourD" idx="*" size="1" options="${hours}" value="${fafCriteria.hourD}" /></td>
+ <td class="label">Arrival Time (+/- 2h)</td>
+ <td class="data"><el:combo name="hourA" idx="*" size="1" options="${hours}" value="${fafCriteria.hourA}" /></td>
+</tr>
+<tr>
  <td class="label">Sort Flights by</td>
  <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" /></td>
  <td class="label">Maximum Results</td>

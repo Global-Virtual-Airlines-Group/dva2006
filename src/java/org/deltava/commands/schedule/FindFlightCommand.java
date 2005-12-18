@@ -28,19 +28,11 @@ public class FindFlightCommand extends AbstractCommand {
 		"Destination", "Departure Time", "Arrival Time", "Length", "Distance" }; 
 	private static final String[] SORT_OPTIONS = { "RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A",
 		"TIME_D", "TIME_A", "FLIGHT_TIME", "DISTANCE"};
-
-	/**
-	 * Helper method to parse a numeric request parameter.
-	 */
-	private int parse(String param) {
-		if ("".equals(param))
-			return 0;
-		try {
-			return Integer.parseInt(param);
-		} catch (NumberFormatException nfe) {
-			return 0;
-		}
-	}
+	
+	private static final List HOURS = ComboUtils.fromArray(new String[] {"-", "Midnight", "1 AM", "2 AM", "3 AM", "4 AM", "5 AM", "6 AM",
+			"7 AM", "8 AM", "9 AM", "10 AM", "11 AM", "Noon", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM",
+			"10 PM", "11 PM"}, new String[] {"-1", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+			"18", "19", "20", "21", "22", "23"});
 
 	/**
 	 * Executes the command.
@@ -52,6 +44,7 @@ public class FindFlightCommand extends AbstractCommand {
 		// Set combo variables for JSP
 		ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_NAMES, SORT_OPTIONS), REQUEST);
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
+		ctx.setAttribute("hours", HOURS, REQUEST);
 		
 		// Get the airports
 		Map<String, Airport> allAirports = SystemData.getAirports();
@@ -69,13 +62,15 @@ public class FindFlightCommand extends AbstractCommand {
 
 		// Populate the search criteria from the request
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
-		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, parse(ctx.getParameter("flightNumber")),
-				parse(ctx.getParameter("flightLeg")));
+		ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0),
+				StringUtils.parse(ctx.getParameter("flightLeg"), 0));
 		criteria.setEquipmentType(ctx.getParameter("eqType"));
 		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-		criteria.setDistance(parse(ctx.getParameter("distance")));
-		criteria.setMaxResults(parse(ctx.getParameter("maxResults")));
+		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
+		criteria.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
+		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
+		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
 			criteria.setMaxResults(100);
 		
