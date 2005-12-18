@@ -34,6 +34,8 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     private int _lastThreadID;
     
     static class AllChannel extends Channel implements ComboAlias {
+    	
+    	private static Collection<String> ROLES = Arrays.asList(new String[] {"*"});
     
     	AllChannel() {
     		super("ALL");
@@ -45,6 +47,10 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     	
     	public String getComboAlias() {
     		return getName();
+    	}
+    	
+    	public final Collection<String> getRoles() {
+    		return ROLES;
     	}
     }
     
