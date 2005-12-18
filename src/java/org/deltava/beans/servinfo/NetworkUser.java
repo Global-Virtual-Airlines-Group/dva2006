@@ -131,7 +131,7 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
 	 * @see NetworkUser#getPosition()
 	 */
 	public void setPosition(double lat, double lon) {
-		if ((lat > -290) && (lat >= -360))
+		if ((lat < -290) && (lat >= -420))
 			lat += 360;
 		
 		_position = new GeoPosition(lat, lon);
