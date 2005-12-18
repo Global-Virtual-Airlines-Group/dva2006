@@ -42,8 +42,9 @@ public class SetACARSLog extends DAO {
     */
    public void deleteInfo(int flightID) throws DAOException {
       try {
-         prepareStatement("DELETE FROM acars.FLIGHTS WHERE (ID=?)");
+         prepareStatement("DELETE FROM acars.FLIGHTS WHERE (ID=?) AND (ARCHIVED=?)");
          _ps.setInt(1, flightID);
+         _ps.setBoolean(2, false);
          executeUpdate(0);
       } catch (SQLException se) {
          throw new DAOException(se);
