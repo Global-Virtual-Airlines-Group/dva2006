@@ -40,7 +40,7 @@ public class GetServInfo extends DAO {
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
 	private static ExpiringCache _netCache = new ExpiringCache(3, 7200);
-	private static ExpiringCache _infoCache = new ExpiringCache(3, 240);
+	private static ExpiringCache _infoCache = new ExpiringCache(3, 180);
 
 	/**
 	 * Initializes the DAO with a particular HTTP connection.
@@ -257,7 +257,7 @@ public class GetServInfo extends DAO {
 										// Add to results
 										info.add(p);
 									} catch (Exception e) {
-										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getClass().getName());
+										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
 									}
 							}
 
