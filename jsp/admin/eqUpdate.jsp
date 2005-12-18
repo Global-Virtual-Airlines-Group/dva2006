@@ -28,6 +28,8 @@ This Equipment Profile has been renamed. It was formerly called the <span class=
 program, and all Pilots in this program have been updated.<br />
 <br />
 </c:if>
+To return to the list of Equipment Program profiles, <el:cmd url="eqtypes" className="sec bld">Click Here</el:cmd>.<br />
+<br />
 <content:copyright />
 </content:region>
 </content:page>
