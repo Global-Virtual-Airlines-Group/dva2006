@@ -68,12 +68,12 @@ return true;
  <td class="data">${q.question}</td>
 </tr>
 <tr>
- <td class="data ${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</td>
+ <td class="data small"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span></td>
 </tr>
 <tr>
 
 <!-- Score / Answer -->
- <td class="mid"><input type="checkbox" class="check" name="Score${q.number}" value="1" <c:if test="${fn:correct(q)}">checked="checked"</c:if> />Correct</td>
+ <td class="mid"><el:box className="small" name="Score${q.number}" value="1" checked="${fn:correct(q)}" label="Correct" /></td>
  <td class="data bld">${q.answer}</td>
 </tr>
 </c:forEach>
