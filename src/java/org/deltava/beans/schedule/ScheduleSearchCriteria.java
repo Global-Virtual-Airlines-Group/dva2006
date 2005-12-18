@@ -1,8 +1,9 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.beans.schedule;
 
-import org.deltava.beans.Flight;
-import org.deltava.beans.FlightReport;
+import java.util.*;
+
+import org.deltava.beans.*;
 
 /**
  * A bean to store search criteria for the Flight Schedule.
@@ -16,6 +17,9 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _distance;
 	private int _length;
 	private int _maxResults;
+	
+	private int _hourD;
+	private int _hourA;
 	
 	private String _sortBy;
 
@@ -37,6 +41,30 @@ public class ScheduleSearchCriteria extends Flight {
 	public final int getDistance() {
 		return _distance;
 	}
+	
+	public Date getTimeD() {
+		Calendar cld = Calendar.getInstance();
+		cld.set(Calendar.HOUR_OF_DAY, _hourD);
+		cld.set(Calendar.MINUTE, 0);
+		cld.set(Calendar.SECOND, 0);
+		return cld.getTime();
+	}
+	
+	public int getHourD() {
+		return _hourD;
+	}
+	
+	public Date getTimeA() {
+		Calendar cld = Calendar.getInstance();
+		cld.set(Calendar.HOUR_OF_DAY, _hourA);
+		cld.set(Calendar.MINUTE, 0);
+		cld.set(Calendar.SECOND, 0);
+		return cld.getTime();
+	}
+	
+	public int getHourA() {
+		return _hourA;
+	}
 
 	public final int getLength() {
 		return _length;
@@ -48,6 +76,14 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public void setSortBy(String sortBy) {
 		_sortBy = sortBy;
+	}
+	
+	public void setHourD(int hour) {
+		_hourD = hour;
+	}
+	
+	public void setHourA(int hour) {
+		_hourA = hour;
 	}
 
 	public void setLength(int length) {
