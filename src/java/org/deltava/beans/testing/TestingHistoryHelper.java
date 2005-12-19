@@ -183,8 +183,8 @@ public class TestingHistoryHelper {
 		}
 
 		// Check if we've reached the proper minimum stage
-		if (ep.getMinStage() > getMaxExamStage()) {
-			log(ep.getName() + " minStage=" + ep.getMinStage() + ", our minStage=" + getMaxExamStage());
+		if (ep.getMinStage() > getMaxCheckRideStage()) {
+			log(ep.getName() + " minStage=" + ep.getMinStage() + ", our maxCheckRideStage=" + getMaxCheckRideStage());
 			return false;
 		}
 
