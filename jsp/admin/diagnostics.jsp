@@ -188,7 +188,7 @@
  <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
 </tr>
 <tr>
- <td colspan="5" class="small">Socket: <fmt:int value="${con.socket.sendBufferSize}" /> bytes 
+ <td colspan="4" class="small">Socket: <fmt:int value="${con.socket.sendBufferSize}" /> bytes 
 out, <fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. NODELAY=${con.socket.tcpNoDelay}, 
 KEEPALIVE=${con.socket.keepAlive}</td>
  <td colspan="2" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
