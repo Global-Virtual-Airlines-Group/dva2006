@@ -18,8 +18,8 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _length;
 	private int _maxResults;
 	
-	private int _hourD;
-	private int _hourA;
+	private int _hourD = -1;
+	private int _hourA = -1;
 	
 	private String _sortBy;
 
