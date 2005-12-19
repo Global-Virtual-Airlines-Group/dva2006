@@ -179,10 +179,13 @@ public class ACARSEarthService extends WebDataService {
 		int colorOfs = -1;
 		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
 			FlightInfo info = i.next();
-			Collection<Element> fData = createFlight(info, showData, COLORS[++colorOfs]);
-			if (colorOfs >= COLORS.length)
-				colorOfs = -1;
 			
+			// Increment the line color
+			colorOfs++;
+			if (colorOfs >= COLORS.length)
+				colorOfs = 0;
+			
+			Collection<Element> fData = createFlight(info, showData, COLORS[++colorOfs]);
 			Element fe = de;
 			if (info.hasRouteData()) {
 				fe = new Element("Folder");
