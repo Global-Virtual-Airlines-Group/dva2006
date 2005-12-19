@@ -99,7 +99,15 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	</filter-mapping>
 	
 	<!-- Filter mappings to Flight Plans -->
-	
+	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<servlet-name>flightPlan</servlet-name>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<servlet-name>flightPlan</servlet-name>
+	</filter-mapping>
+
 	<!-- Filter mappings to Fleet Library -->
 	<filter-mapping>
 		<filter-name>SecurityCookieFilter</filter-name>
