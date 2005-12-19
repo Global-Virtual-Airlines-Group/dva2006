@@ -472,7 +472,7 @@
 		</livemap>
 		
 		<port type="Integer">15527</port>
-		<sleep type="Integer">1000</sleep>
+		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">120</timeout>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
@@ -491,8 +491,8 @@
 
 		<buffer>
 			<send type="Integer">16384</send>
-			<recv type="Integer">3072</recv>
-			<nio type="Integer">6144</nio>
+			<recv type="Integer">4096</recv>
+			<nio type="Integer">8192</nio>
 		</buffer>
 
 		<list name="login_msgs" attr="msg">
