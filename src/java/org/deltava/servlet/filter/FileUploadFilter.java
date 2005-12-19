@@ -45,7 +45,7 @@ public class FileUploadFilter implements Filter {
 
 		// Convert the request type
 		HttpServletRequest hreq = (HttpServletRequest) req;
-		if (("POST".equals(hreq.getMethod())) && (hreq.getContentType().startsWith(CONTENT_TYPE))) {
+		if (("POST".equalsIgnoreCase(hreq.getMethod())) && (hreq.getContentType().startsWith(CONTENT_TYPE))) {
 			log.debug("Processing form upload request");
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(hreq);
 
@@ -66,8 +66,12 @@ public class FileUploadFilter implements Filter {
 					if (fp.getFileName() != null) {
 						log.debug("Found File element " + p.getName() + ", file=" + fp.getFileName());
 						FileUpload upload = new FileUpload(fp.getFileName());
-						upload.load(fp.getInputStream());
-						hreq.setAttribute("FILE$" + p.getName(), upload);
+						try {
+							upload.load(fp.getInputStream());
+							hreq.setAttribute("FILE$" + p.getName(), upload);
+						} catch (IOException ie) {
+							log.warn("Cannot load attachment - " + ie.getMessage());
+						}
 					}
 				} else if (p.isParam()) {
 					ParamPart pp = (ParamPart) p;
