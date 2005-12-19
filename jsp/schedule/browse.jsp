@@ -54,9 +54,9 @@ return true;
 <!-- Table Header Bars -->
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
-<c:if test="${isSchedule}"> <td><el:cmdbutton url="sched" op="edit" label="NEW ENTRY" /></td></c:if>
- <td class="right" colspan="${isSchedule ? '4' : '5'}">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
- <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" /></td>
+ <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
+ <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" />
+<c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
 </tr>
 <tr class="title caps">
  <td width="15%">FLIGHT NUMBER</td>
