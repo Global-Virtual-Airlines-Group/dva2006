@@ -477,6 +477,7 @@
 		<pool>
 			<size type="Integer">100</size>
 			<multiple type="Boolean">false</multiple>
+			<kill_old type="Boolean">true</kill_old>
 			<threads>
 				<logic type="Integer">2</logic>
 				<write type="Integer">2</write>
