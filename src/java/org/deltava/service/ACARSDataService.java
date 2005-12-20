@@ -49,7 +49,7 @@ public class ACARSDataService extends WebDataService {
 		}
 
 		// Write the CSV header
-		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Flaps,");
+		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
 		ctx.println("NAV,HDG,APR,ALT,AT");
 
 		// Format the ACARS data
@@ -75,13 +75,16 @@ public class ACARSDataService extends WebDataService {
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getN2(), "##0.0"));
 			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getBank(), "##0.0"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getPitch(), "##0.0"));
+			ctx.print(",");
 			ctx.print((entry.getFlaps() == 0) ? "" : String.valueOf(entry.getFlaps()));
 			ctx.print(",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_NAV) ? "NAV," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_APR) ? "APR," : ",");
-			ctx.print("-,");
-			// ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_ALT) ? "ALT," : ",");
+			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_ALT) ? "ALT," : ",");
 			if (entry.isFlagSet(ACARSFlags.FLAG_AT_IAS)) {
 				ctx.println("IAS");
 			} else if (entry.isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
