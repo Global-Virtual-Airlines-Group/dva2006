@@ -454,6 +454,10 @@
 			<reload type="Integer">15000</reload>
 		</livemap>
 		
+		<list name="block" attr="addr">
+			<addr>127.0.0.1</addr>
+		</list>
+		
 		<port type="Integer">15527</port>
 		<sleep type="Integer">15000</sleep>
 		<timeout type="Integer">240</timeout>
