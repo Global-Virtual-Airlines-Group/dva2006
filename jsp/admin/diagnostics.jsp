@@ -93,7 +93,7 @@
 
 <!-- JDBC Data -->
 <c:forEach var="con" items="${jdbcPoolInfo}">
-<view:row entry="con">
+<view:row entry="${con}">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
  <td class="sec">${con.system? 'System' : 'User'}</td>
  <td class="bld">${con.inUse ? 'In Use' : 'Available'}</td>
@@ -111,6 +111,32 @@
  <td class="pri bld" colspan="6">JDBC CONNECTION POOL DATA IS NOT AVAILABLE</td>
 </tr>
 </c:if>
+</el:table>
+
+<!-- Servlet Scoreboard -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="x" class="left">SERVLET SCOREBOARD</td>
+</tr>
+
+<!-- Scoreboard Title Bar -->
+<tr class="title caps">
+ <td width="10%">THREAD NAME</td>
+ <td width="35%">REMOTE ADDRESS</td>
+ <td width="15%">EXECUTION TIME</td>
+ <td class="left">REQUEST URI</td>
+</tr>
+
+<!-- Scoreboard Data -->
+<c:forEach var="thread" items="${scoreBoard}">
+<view:row entry="${thread}">
+<tr>
+ <td class="pri bld">${thead.name}</td>
+ <td class="small">${thread.remoteHost} (${thread.remoteAddr})</td>
+ <td class="sec"><fmt:date fmt="dt" d="MM/dd" t="HH:mm:ss" date="${thread.startTime}" /> (<fmt:int value="${thread.executionTime}" /> ms)</td>
+ <td class="small left">${thread.URL}</td>
+</view:row>
+</c:forEach>
 </el:table>
 
 <!-- Scheduled Task Pool Data Table -->
