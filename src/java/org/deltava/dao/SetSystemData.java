@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.system.CommandLog;
+import org.deltava.beans.servlet.CommandLog;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.

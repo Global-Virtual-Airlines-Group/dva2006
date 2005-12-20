@@ -4,6 +4,8 @@ package org.deltava.commands.system;
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.servlet.ServletScoreboard;
+
 import org.deltava.commands.*;
 
 import org.deltava.jdbc.ConnectionPool;
@@ -39,6 +41,9 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("taskRunning", Boolean.valueOf(tSched.isAlive()), REQUEST);
 			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
 		}
+		
+		// Get servlet scoreboard
+		ctx.setAttribute("scoreBoard", ServletScoreboard.getScoreboard(), REQUEST);
 
 		// Get ACARS server data
 		if (SystemData.getBoolean("acars.enabled")) {
