@@ -71,7 +71,7 @@
 </tr>
 <tr class="MenuHeader"><td>OUR PEOPLE</td></tr>
 <c:if test="${empty pageContext.request.userPrincipal}">
-<tr class="MenuItem">
+<tr class="MenuItem bld pri">
  <td><el:cmd url="register">JOIN US</el:cmd></td>
 </tr>
 </c:if>
