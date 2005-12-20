@@ -43,14 +43,18 @@ Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> 
 members have posted over <fmt:int value="${coolerStats}" /> messages in our Water Cooler discussion 
 forum in the past 24 hours.</c:if><br />
 <br />
+<content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join <content:airline />' active pilot roster, 
 you may submit flight reports and contribute to our image library. If you are interested in a serious 
 virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
 between!) we welcome your interest.<br />
 <br />
+<el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br />
+<br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
 <br />
+</content:filter>
 <!-- Dynamic Content Type #${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
