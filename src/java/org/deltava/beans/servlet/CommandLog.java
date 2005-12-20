@@ -1,5 +1,5 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.beans.system;
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+package org.deltava.beans.servlet;
 
 import java.util.Date;
 import java.io.Serializable;

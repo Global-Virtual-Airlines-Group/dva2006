@@ -1,10 +1,14 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet;
 
+import java.io.IOException;
 import java.util.*;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.*;
 
 import org.deltava.beans.Person;
+import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.security.SecurityContext;
@@ -61,5 +65,18 @@ public abstract class GenericServlet extends HttpServlet {
      */
     protected ConnectionPool getConnectionPool() {
         return (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+    }
+    
+    /**
+     * Process the request. This is a stub method that merely adds hooks to {@link ServletScoreboard}.
+     * @param req the request
+     * @param rsp the response
+     * @throws ServletException if a Servlet error occurs
+     * @throws IOException if a network error occurs
+     */
+    protected void service(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
+ 	   ServletScoreboard.add(req, this);
+ 	   super.service(req, rsp);
+ 	   ServletScoreboard.complete();
     }
 }

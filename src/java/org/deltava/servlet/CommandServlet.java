@@ -1,15 +1,16 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.servlet;
 
+import java.util.*;
 import java.sql.Connection;
 import java.io.IOException;
-import java.util.*;
+
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.system.CommandLog;
+import org.deltava.beans.servlet.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.commands.*;
@@ -31,7 +32,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class CommandServlet extends HttpServlet {
+public class CommandServlet extends GenericServlet {
 
    private static final Logger log = Logger.getLogger(CommandServlet.class);
    private static final int MAX_EXEC_TIME = 20000;
@@ -73,7 +74,7 @@ public class CommandServlet extends HttpServlet {
       }
 
       // Save the connection pool
-      _jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+      _jdbcPool = getConnectionPool();
    }
 
    /**
