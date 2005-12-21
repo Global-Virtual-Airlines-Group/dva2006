@@ -716,7 +716,7 @@
 
 	<command id="acarsdelete">
 		<name>ACARS Data Delete</name>
-		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
+		<class>org.deltava.commands.pirep.ACARSDeleteCommand</class>
 		<roles>Pilot</roles>
 	</command>
 
