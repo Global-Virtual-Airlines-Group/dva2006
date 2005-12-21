@@ -173,6 +173,6 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 		if (_endTime > 0)
 			return null;
 
-		return (getExecutionTime() > 20) ? "warn" : "opt2";
+		return (getExecutionTime() > 20000) ? "warn" : "opt2";
 	}
 }
