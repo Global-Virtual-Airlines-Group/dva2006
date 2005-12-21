@@ -47,9 +47,8 @@ forum in the past 24 hours.</c:if><br />
 Please feel free to browse around our web site. Once you join <content:airline />' active pilot roster, 
 you may submit flight reports and contribute to our image library. If you are interested in a serious 
 virtual airline, designed for both the experienced pilot and the novice (and all of us that are in 
-between!) we welcome your interest.<br />
-<br />
-<el:cmd url="register" className="pri bld">Click Here to join <content:airline />.</el:cmd><br />
+between!) we welcome your interest. <el:cmd url="register" className="pri bld">Click Here to join 
+<content:airline />.</el:cmd><br />
 <br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
