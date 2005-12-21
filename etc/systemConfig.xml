@@ -152,7 +152,8 @@
 		<dc-9-32>aircraft/dc9.png</dc-9-32>
 		<dc-3>aircraft/dc3.png</dc-3>
 		<cv-880>aircraft/cv880.png</cv-880>
-		<do-328>aircraft/dc8.png</do-328>		
+		<do-328>aircraft/dc8.png</do-328>
+		<emb-120>aircraft/emb120.png</emb-120>
 	</map>
 
 	<!-- equipment types -->
