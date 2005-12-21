@@ -49,13 +49,11 @@ return true;
  <td class="label">Pilot Name</td>
  <td class="data"><el:text name="pilotName" idx="*" size="16" max="32" value="${param.pilotName}" /></td>
 </tr>
-<content:filter roles="Moderator,HR">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="checkSubject" idx="*" value="true" label="Check Subjects as well as Message Body" checked="${param.checkSubject}" /><br />
 <el:box name="nameMatch" idx="*" value="true" label="Partial Pilot Name match" checked="${param.nameMatch}" /></td>
 </tr>
-</content:filter>
 </el:table>
 
 <!-- Button Bar -->
