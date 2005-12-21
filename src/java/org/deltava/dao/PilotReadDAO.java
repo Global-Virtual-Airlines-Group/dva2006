@@ -160,6 +160,8 @@ abstract class PilotReadDAO extends PilotDAO {
       // Init the prepared statement
       StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
             + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
+      sqlBuf.append(dbName);
+      sqlBuf.append('.');
       sqlBuf.append(tableName);
       sqlBuf.append(" P LEFT JOIN ");
       sqlBuf.append(dbName);
