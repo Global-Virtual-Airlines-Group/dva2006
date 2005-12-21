@@ -22,6 +22,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
 
    private long _conID;
    private int _pilotID;
+   private int _positionCount;
    
    private Date _startTime;
    private Date _endTime;
@@ -195,6 +196,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public boolean getArchived() {
       return _archived;
+   }
+   
+   /**
+    * Returns the number of position records associated with this Flight.
+    * @return the number of positions
+    * @see FlightInfo#setPositionCount(int)
+    */
+   public int getPositionCount() {
+	   return _positionCount;
    }
    
    /**
@@ -387,6 +397,15 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public void setRemarks(String remarks) {
       _remarks = remarks;
+   }
+   
+   /**
+    * Updates the number of position records for this Flight.
+    * @param posCount the number of records
+    * @see FlightInfo#getPositionCount()
+    */
+   public void setPositionCount(int posCount) {
+	   _positionCount = posCount;
    }
    
    /**

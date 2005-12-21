@@ -159,7 +159,21 @@ public class GetACARSData extends DAO {
 	      
 	      // Get the first entry, or null
 	      List<FlightInfo> results = executeFlightInfo();
-	      return results.isEmpty() ? null : results.get(0);
+	      FlightInfo info = results.isEmpty() ? null : results.get(0);
+	      
+	      // Count the number of position records
+	      prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
+	    		  + " WHERE (FLIGHT_ID=?)");
+	      _ps.setInt(1, flightID);
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+	      info.setPositionCount(rs.next() ? rs.getInt(1) : 0);
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return info;
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -180,7 +194,21 @@ public class GetACARSData extends DAO {
 	      
 	      // Get the first entry, or null
 	      List<FlightInfo> results = executeFlightInfo();
-	      return results.isEmpty() ? null : results.get(0);
+	      FlightInfo info = results.isEmpty() ? null : results.get(0);
+	      
+	      // Count the number of position records
+	      prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
+	    		  + " WHERE (FLIGHT_ID=?)");
+	      _ps.setInt(1, info.getID());
+	      
+	      // Execute the query
+	      ResultSet rs = _ps.executeQuery();
+	      info.setPositionCount(rs.next() ? rs.getInt(1) : 0);
+	      
+	      // Clean up and return
+	      rs.close();
+	      _ps.close();
+	      return info;
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }

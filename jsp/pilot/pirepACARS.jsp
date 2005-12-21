@@ -7,7 +7,8 @@
 <c:if test="${fn:ACARS_ID(pirep) != 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data">${fn:ACARS_ID(pirep)} Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
+ <td class="data">${fn:ACARS_ID(pirep)} (<fmt:int value="${flightInfo.positionCount}" /> position records)
+ Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
  <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}">Google Earth</a></td>
 </tr>
 </c:if>
