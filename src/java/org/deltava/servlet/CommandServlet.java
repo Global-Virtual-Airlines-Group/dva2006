@@ -87,16 +87,10 @@ public class CommandServlet extends GenericServlet {
    /**
     * A private helper method to get the command name from the URL.
     */
-   private Command getCommand(String rawURL) throws CommandException {
+   private Command getCommand(String rawURL) {
       URLParser parser = new URLParser(rawURL);
       String cmdName = parser.getName().toLowerCase();
-
-      // Fetch the command from the map
-      Command cmd = _cmds.get(cmdName);
-      if (cmd == null)
-         throw new CommandException("Command " + cmdName + " not found");
-
-      return cmd;
+      return _cmds.get(cmdName);
    }
 
    /**
@@ -118,15 +112,20 @@ public class CommandServlet extends GenericServlet {
     */
    public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
       long startTime = System.currentTimeMillis();
+      
+      // Get the command
+      Command cmd = getCommand(req.getRequestURI());
+      if (cmd == null) {
+    	  RequestDispatcher rd = req.getRequestDispatcher("/jsp/error/error.jsp");
+    	  req.setAttribute("servlet_error", "Command not found");
+    	  log.warn("Command not found - " + req.getRequestURI());
+          rd.forward(req, rsp);
+          return;
+      }
 
       // Create the command context
       CommandContext ctxt = new CommandContext(req, rsp);
-      
-      Command cmd = null;
-      CommandResult result = null;
       try {
-         cmd = getCommand(req.getRequestURI());
-         
          // Validate command access
          if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles()))
             throw new CommandSecurityException("Not Authorized to execute", cmd.getName());
@@ -139,7 +138,7 @@ public class CommandServlet extends GenericServlet {
          log.debug("Executing " + req.getMethod() + " " + cmd.getName());
          cmd.execute(ctxt);
          ctxt.setCacheHeaders();
-         result = ctxt.getResult();
+         CommandResult result = ctxt.getResult();
          result.complete();
 
          // Redirect/forward/send status code
@@ -202,7 +201,7 @@ public class CommandServlet extends GenericServlet {
          }
          
          // Create the command result statistics entry
-         CommandLog cmdLog = new CommandLog((cmd == null) ? "null" : cmd.getID(), result);
+         CommandLog cmdLog = new CommandLog((cmd == null) ? "null" : cmd.getID(), ctxt.getResult());
          cmdLog.setRemoteAddr(req.getRemoteAddr());
          cmdLog.setRemoteHost(req.getRemoteHost());
          cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
