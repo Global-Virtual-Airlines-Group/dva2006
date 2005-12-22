@@ -53,9 +53,9 @@ public class CompressionFilter implements Filter {
 		boolean doCompress = false;
 		if (_bufferSize != 0) {
 			HttpServletRequest hreq = (HttpServletRequest) req;
-			List hdrs = Collections.list(hreq.getHeaders("Accept-Encoding"));
-			for (Iterator i = hdrs.iterator(); i.hasNext() && (!doCompress); ) {
-				String hdr = (String) i.next();
+			Enumeration hdrs = hreq.getHeaders("Accept-Encoding");
+			while (hdrs.hasMoreElements() && (!doCompress)) {
+				String hdr = (String) hdrs.nextElement();
 				doCompress = hdr.contains("gzip");
 			}
 			
@@ -66,7 +66,7 @@ public class CompressionFilter implements Filter {
 
 		// Act on compression setting
 		if (doCompress && (!(rsp instanceof GZIPResponseWrapper))) {
-			HttpServletResponseWrapper rspWrap = new GZIPResponseWrapper((HttpServletResponse) rsp);
+			GZIPResponseWrapper rspWrap = new GZIPResponseWrapper((HttpServletResponse) rsp);
 			req.setAttribute(GZIP_REQ_ATTR, Boolean.TRUE);
 			try {
 				fc.doFilter(req, rspWrap);
