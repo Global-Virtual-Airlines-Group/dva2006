@@ -160,6 +160,8 @@ public class GetACARSData extends DAO {
 	      // Get the first entry, or null
 	      List<FlightInfo> results = executeFlightInfo();
 	      FlightInfo info = results.isEmpty() ? null : results.get(0);
+	      if (info == null)
+	    	  return null;
 	      
 	      // Count the number of position records
 	      prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
