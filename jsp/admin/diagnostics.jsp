@@ -116,24 +116,23 @@
 <!-- Servlet Scoreboard -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="x" class="left">SERVLET SCOREBOARD</td>
+ <td colspan="4" class="left">SERVLET SCOREBOARD</td>
 </tr>
 
 <!-- Scoreboard Title Bar -->
 <tr class="title caps">
  <td width="10%">THREAD NAME</td>
  <td width="35%">REMOTE ADDRESS</td>
- <td width="15%">EXECUTION TIME</td>
+ <td width="20%">EXECUTION TIME</td>
  <td class="left">REQUEST URI</td>
 </tr>
 
 <!-- Scoreboard Data -->
 <c:forEach var="thread" items="${scoreBoard}">
 <view:row entry="${thread}">
-<tr>
- <td class="pri bld">${thead.name}</td>
+ <td class="pri small bld">${thread.name}</td>
  <td class="small">${thread.remoteHost} (${thread.remoteAddr})</td>
- <td class="sec"><fmt:date fmt="dt" d="MM/dd" t="HH:mm:ss" date="${thread.startTime}" /> (<fmt:int value="${thread.executionTime}" /> ms)</td>
+ <td class="sec small"><fmt:date fmt="dt" d="MM/dd" t="HH:mm:ss" date="${thread.startTime}" /> (<fmt:int value="${thread.executionTime}" /> ms)</td>
  <td class="small left">${thread.URL}</td>
 </view:row>
 </c:forEach>
@@ -241,12 +240,12 @@ KEEPALIVE=${con.socket.keepAlive}</td>
 
 <!-- Table Thread Data -->
 <c:forEach var="worker" items="${workers}">
-<tr>
+<view:row entry="${worker}">
  <td class="pri bld">${worker}</td>
  <td class="sec">${worker.statusName}</td>
  <td><fmt:int value="${worker.executionCount}" /></td>
  <td class="left">${worker.message}</td>
-</tr>
+</view:row>
 </c:forEach>
 </el:table>
 </c:if>
