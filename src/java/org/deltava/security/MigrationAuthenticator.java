@@ -1,13 +1,6 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security;
 
-import java.io.IOException;
-import java.util.Properties;
-
-import org.apache.log4j.Logger;
-
-import org.deltava.util.ConfigLoader;
-
 /**
  * An Authenticator used to migrate user data from one Directory to another. When a user is sucessfully authenticated by
  * the first (&quot;source&quot;) authenticator, the directory name and password are written into the second
@@ -17,49 +10,13 @@ import org.deltava.util.ConfigLoader;
  * @since 1.0
  */
 
-public class MigrationAuthenticator implements Authenticator {
-
-	private static final Logger log = Logger.getLogger(MigrationAuthenticator.class);
-
-	private Authenticator _src;
-	private Authenticator _dst;
+public class MigrationAuthenticator extends MultiAuthenticator {
 
 	/**
-	 * Initializes the authenticator.
-	 * @param propsFile the properties file to use
-	 * @throws SecurityException if an error occurs
+	 * Initializes the Authenticator.
 	 */
-	public void init(String propsFile) throws SecurityException {
-
-		Properties props = new Properties();
-		try {
-			props.load(ConfigLoader.getStream(propsFile));
-		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
-			throw new SecurityException(ie.getMessage());
-		}
-
-		// Initialize the source authenticator
-		try {
-			Class sc = Class.forName(props.getProperty("migration.src"));
-			_src = (Authenticator) sc.newInstance();
-			_src.init(props.getProperty("migration.src.properties"));
-		} catch (Exception e) {
-			SecurityException se = new SecurityException("Error loading Source - " + e.getMessage());
-			se.initCause(e);
-			throw se;
-		}
-
-		// Initialize the destination authenticator
-		try {
-			Class dc = Class.forName(props.getProperty("migration.dst"));
-			_dst = (Authenticator) dc.newInstance();
-			_dst.init(props.getProperty("migration.dst.properties"));
-		} catch (Exception e) {
-			SecurityException se = new SecurityException("Error loading Destination - " + e.getMessage());
-			se.initCause(e);
-			throw se;
-		}
+	public MigrationAuthenticator() {
+		super(MigrationAuthenticator.class);
 	}
 
 	/**
@@ -152,21 +109,5 @@ public class MigrationAuthenticator implements Authenticator {
     */
 	public void rename(String oldName, String newName) throws SecurityException {
 		_dst.rename(oldName, newName);
-	}
-
-	/**
-	 * Returns the Source Authenticator.
-	 * @return the Source Authenticator
-	 */
-	public Authenticator getSource() {
-		return _src;
-	}
-
-	/**
-	 * Returns the Destination Authenticator.
-	 * @return the destination Authenticator
-	 */
-	public Authenticator getDestination() {
-		return _dst;
 	}
 }
