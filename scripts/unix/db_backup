@@ -8,8 +8,9 @@ cd /home/backup/db
 # Dump LDIF data
 ldapctl stop
 slapcat -l ldif.txt -f /usr/local/etc/openldap/slapd.conf
-ldapctl start
 gzip -9 -f ldif.txt
+sleep 0.5
+ldapctl start
 
 # Dump core table
 echo 'Writing mySQL configuration'
@@ -17,16 +18,20 @@ mysqldump -C -h mysql.deltava.org mysql | gzip -9 > mysql.sql.gz
 
 # Dump table definitions
 echo 'Writing table definitions'
-mysqldump -C -K -d -h mysql.deltava.org common > common.sql
-mysqldump -C -K -d -h mysql.deltava.org acars > acars.sql
-mysqldump -C -K -d -h mysql.deltava.org dva > dva.sql
-mysqldump -C -K -d -h mysql.deltava.org afv > afv.sql
+mysqldump -C -K -d -h mysql.deltava.org -u root common > common.sql
+mysqldump -C -K -d -h mysql.deltava.org -u root acars > acars.sql
+mysqldump -C -K -d -h mysql.deltava.org -u root dva > dva.sql
+mysqldump -C -K -d -h mysql.deltava.org -u root afv > afv.sql
 tar cfvz create_tables.tar.gz *.sql
 rm *.sql
 
 # Dump e-mail data
 echo 'Writing e-mail configuration'
 mysqldump -C -K -h mysql.deltava.org postfix | gzip -9 > postfix.sql.gz
+
+# Dump TeamSpeak data
+echo 'Writing TeamSpeak configuration'
+mysqldump -C -K -h mysql.deltava.org teamspeak | gzip -9 > teamspeak.sql.gz
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
@@ -77,11 +82,3 @@ fi
 # Change file permissions
 chown -R root:gva *
 chmod 640 *
-
-# Check if we need to ftp the files somewhere
-shift
-#if [ "$2" = "ftp" ]
-#then
-  # FTP the file away
-#  ftp s87336331.onlinehome.us < /usr/local/sbin/www/ftp.script
-#fi
