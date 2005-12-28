@@ -84,10 +84,10 @@ public class ACARSEarthService extends WebDataService {
 		}
 		
 		public String toString() {
-			StringBuilder buf = new StringBuilder(formatHex(_blue));
+			StringBuilder buf = new StringBuilder(formatHex(_alpha));
+			buf.append(formatHex(_blue));
 			buf.append(formatHex(_green));
 			buf.append(formatHex(_red));
-			buf.append(formatHex(_alpha));
 			return buf.toString();
 		}
 		
