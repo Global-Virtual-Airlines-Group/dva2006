@@ -60,8 +60,9 @@ public class GetStatistics extends DAO {
 		try {
 			// Create prepared statement
 			prepareStatement("SELECT COUNT(ID), ROUND(SUM(FLIGHT_TIME), 1), SUM(DISTANCE) "
-					+ "FROM PIREPS WHERE (DATE > ?)");
+					+ "FROM PIREPS WHERE (DATE > ?) AND (STATUS=?)");
 			_ps.setQueryTimeout(5);
+			_ps.setInt(2, FlightReport.OK);
 
 			// Count all airline totals
 			_ps.setTimestamp(1, new Timestamp(AirlineTotals.BIRTHDATE.getTimeInMillis()));
