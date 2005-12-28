@@ -15,6 +15,7 @@ put dva_sys.sql.gz
 put dva_test.sql.gz
 put events.sql.gz
 put postfix.sql.gz
+put teamspeak.sql.gz
 
 lcd /home/backup/svn
 put svn_top.gz
