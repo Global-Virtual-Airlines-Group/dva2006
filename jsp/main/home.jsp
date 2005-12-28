@@ -156,7 +156,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <tr>
  <td class="pri bld"><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
  <td class="sec bld">${event.networkName}</td>
- <td class="small bld"><fmt:date date="${event.startTime}" /> - <fmt:date date="${event.endTime}" /></td>
+ <td class="small bld"><fmt:date t="HH:mm" date="${event.startTime}" /> - <fmt:date t="HH:mm" date="${event.endTime}" /></td>
  <td class="left small">${eRoute.airportD.name} (<fmt:airport airport="${eRoute.airportD}" />) - 
 ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </tr>
