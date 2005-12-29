@@ -1,10 +1,10 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
 /**
- * A JSP tag to generate an HTML button.
- * 
+ * A JSP tag to generate an XHTML button.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -17,7 +17,7 @@ public class ButtonTag extends ElementTag {
      */
     public ButtonTag() {
         super("input");
-        _attrs.put("type", "button");
+        _data.setAttribute("type", "button");
     }
 
     /**
@@ -28,8 +28,7 @@ public class ButtonTag extends ElementTag {
         
         // Do a proper XHTML closing tag        
         try {
-            _out.print(openHTML(false));
-            _out.print(" />");
+            _out.print(_data.open(true, true));
         } catch (Exception e) {
             throw new JspException(e);
         }
@@ -44,7 +43,7 @@ public class ButtonTag extends ElementTag {
      */
     public void release() {
         super.release();
-        _attrs.put("type", "button");
+        _data.setAttribute("type", "button");
     }
     
     /**
@@ -52,7 +51,7 @@ public class ButtonTag extends ElementTag {
      * @param label the button label
      */
     public void setLabel(String label) {
-        _attrs.put("value", label);
+    	_data.setAttribute("value", label);
     }
     
     /**
@@ -60,7 +59,7 @@ public class ButtonTag extends ElementTag {
      * @param type the button type
      */
     public void setType(String type) {
-        _attrs.put("type", type);
+    	_data.setAttribute("type", type);
     }
     
     /**
@@ -68,7 +67,7 @@ public class ButtonTag extends ElementTag {
      * @param js the JavaScript code
      */
     public void setOnClick(String js) {
-        _attrs.put("onclick", js);
+    	_data.setAttribute("onclick", js);
     }
     
     /**
@@ -76,6 +75,6 @@ public class ButtonTag extends ElementTag {
      * @param accessKey the Unicode value for this key combination
      */
     public void setKey(String accessKey) {
-        _attrs.put("accesskey", accessKey);
+    	_data.setAttribute("accesskey", accessKey);
     }
 }

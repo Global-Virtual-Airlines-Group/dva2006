@@ -53,7 +53,7 @@ public class AirportComboTag extends ComboTag {
 	public int doEndTag() throws JspException {
 		try {
 			validateState();
-			_out.println(openHTML(true));
+			_out.println(_data.open(true));
 			
 			// Render the first entry if present
 			if (_firstEntry != null)
@@ -67,7 +67,7 @@ public class AirportComboTag extends ComboTag {
 				}
 			}
 
-			_out.println(closeHTML());
+			_out.println(_data.close());
 		} catch (Exception e) {
 			throw new JspException(e);
 		}

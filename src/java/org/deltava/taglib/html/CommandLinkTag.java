@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -92,7 +93,7 @@ public class CommandLinkTag extends LinkTag {
 			}
 
 			// Update the HREF and call the superclass renderer
-			_attrs.put("href", url.toString());
+			_data.setAttribute("href", url.toString());
 		} catch (UnsupportedEncodingException uee) {
 			throw new JspException("UTF-8 encoding not supported - Laws of Universe no longer apply");
 		}
