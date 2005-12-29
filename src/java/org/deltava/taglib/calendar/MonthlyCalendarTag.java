@@ -2,6 +2,7 @@
 package org.deltava.taglib.calendar;
 
 import java.util.*;
+import java.text.*;
 import java.io.IOException;
 
 import javax.servlet.jsp.*;
@@ -28,7 +29,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @see org.deltava.taglib.calendar.CalendarTag#renderTableCell()
 	 */
 	@Override
-	void openTableCell() throws IOException {
+	protected void openTableCell() throws JspException {
 		// TODO Auto-generated method stub
 
 	}
@@ -37,7 +38,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @see org.deltava.taglib.calendar.CalendarTag#renderTableCell()
 	 */
 	@Override
-	void closeTableCell() throws IOException {
+	protected void closeTableCell() throws JspException {
 		// TODO Auto-generated method stub
 
 	}
@@ -52,6 +53,9 @@ public class MonthlyCalendarTag extends CalendarTag {
 			out.print("\" cellpadding=\"");
 			out.print(String.valueOf(_cellPad));
 			out.println("\">");
+			
+			// Write the header row
+			//out.print("<tr colspan=\"7\" class=\"")
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
