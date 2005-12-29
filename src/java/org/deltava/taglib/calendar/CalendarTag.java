@@ -2,10 +2,9 @@
 package org.deltava.taglib.calendar;
 
 import java.util.*;
-import java.io.IOException;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.tagext.*;
 
 import org.deltava.beans.CalendarEntry;
 import org.deltava.comparators.CalendarEntryComparator;
@@ -19,7 +18,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public abstract class CalendarTag extends TagSupport {
+public abstract class CalendarTag extends TagSupport implements IterationTag {
 
 	protected Date _startDate;
 	protected Date _endDate;
@@ -37,8 +36,8 @@ public abstract class CalendarTag extends TagSupport {
 
 	public abstract void setStartDate(Date dt);
 	
-	abstract void openTableCell() throws IOException;
-	abstract void closeTableCell() throws IOException;
+	protected abstract void openTableCell() throws JspException;
+	protected abstract void closeTableCell() throws JspException;
 
 	protected void calculateEndDate(int intervalType, int amount) {
 		Calendar cld = Calendar.getInstance();
@@ -134,18 +133,24 @@ public abstract class CalendarTag extends TagSupport {
 	}
 
 	/**
-	 * Increments the currently rendered date. This should be called by a Calendar Entry tag.
+	 * Determines if we have further days to render in the calendar. Subclasses are responsible for
+	 * opening and closing the table cells.
+	 * @return EVAL_BODY_AGAIN if current date is before endDate, otherwise SKIP_BODY 
+	 * @throws JspException never
 	 */
-	void increment() {
+	public int doAfterBody() throws JspException {
 		_currentDate.add(Calendar.DATE, 1);
+		return _currentDate.getTime().before(_endDate) ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
 
 	/**
-	 * Starts the Calendar tag by setting the current date to render.
+	 * Starts the Calendar tag by setting the current date to render. Subclasses are responsible for
+	 * opening and closing the table cells.
 	 * @return TagSupport.EVAL_BODY_INCLUDE always
 	 * @throws JspException never
 	 */
 	public int doStartTag() throws JspException {
+		// Generate the current date
 		_currentDate = Calendar.getInstance();
 		_currentDate.setTime(_startDate);
 		_currentDate.set(Calendar.HOUR, 0);
