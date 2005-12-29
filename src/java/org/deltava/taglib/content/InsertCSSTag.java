@@ -78,7 +78,7 @@ public class InsertCSSTag extends InsertContentTag {
 
       JspWriter out = pageContext.getOut();
       try {
-         out.print("<link rel=\"STYLESHEET\" type=\"text/css\" href=\"");
+         out.print("<link rel=\"stylesheet\" type=\"text/css\" href=\"");
          out.print(SystemData.get("path.css"));
          out.print('/');
          out.print(getScheme());
