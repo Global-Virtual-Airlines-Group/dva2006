@@ -96,7 +96,7 @@ public class ComboTag extends FormElementTag {
 	public int doEndTag() throws JspException {
 		try {
 			validateState();
-			_out.println(openHTML(true));
+			_out.println(_data.open(true));
 
 			// Render the first entry if present
 			if (_firstEntry != null)
@@ -110,7 +110,7 @@ public class ComboTag extends FormElementTag {
 				}
 			}
 
-			_out.println(closeHTML());
+			_out.println(_data.close());
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
@@ -131,10 +131,10 @@ public class ComboTag extends FormElementTag {
 	/**
 	 * Sets the size of this combo/list box. This does nothing if a negative, zero or non-numeric value is passed.
 	 * @param size the size of the combo/list box, in entries
-	 * @see ElementTag#setNumericAttr(String, int)
+	 * @see ElementTag#setNumericAttr(String, int, int)
 	 */
 	public void setSize(int size) {
-		setNumericAttr("size", size);
+		setNumericAttr("size", size, 1);
 	}
 
 	/**
@@ -142,7 +142,7 @@ public class ComboTag extends FormElementTag {
 	 * @param js the JavaScript code to execute
 	 */
 	public void setOnChange(String js) {
-		_attrs.put("onchange", js);
+		_data.setAttribute("onchange", js);
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class ComboTag extends FormElementTag {
 	 */
 	public void setMultiple(boolean allowMulti) {
 		if (allowMulti)
-			_attrs.put("multiple", "multiple");
+			_data.setAttribute("multiple", "multiple");
 	}
 
 	/**

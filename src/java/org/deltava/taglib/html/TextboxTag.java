@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -25,7 +26,7 @@ public class TextboxTag extends FormElementTag {
     public int doStartTag() throws JspException {
         try {
             validateState();
-            _out.print(openHTML(true));
+            _out.print(_data.open(true));
         } catch (Exception e) {
             throw new JspException(e);
         }
@@ -39,7 +40,7 @@ public class TextboxTag extends FormElementTag {
      */
     public int doEndTag() throws JspException {
         try {
-            _out.print(closeHTML());
+            _out.print(_data.close());
         } catch (Exception e) {
             throw new JspException(e);
         }
@@ -54,7 +55,7 @@ public class TextboxTag extends FormElementTag {
      * @param width the width of the textbox in columns
      */
     public void setWidth(int width) {
-        setNumericAttr("cols", width);
+        setNumericAttr("cols", width, 0);
     }
     
     /**
@@ -62,7 +63,7 @@ public class TextboxTag extends FormElementTag {
      * @param wrapType the wrap type, PHYSICAL or VIRTUAL
      */
     public void setWrap(String wrapType) {
-        _attrs.put("wrap", wrapType);
+        _data.setAttribute("wrap", wrapType);
     }
     
     /**
@@ -70,7 +71,7 @@ public class TextboxTag extends FormElementTag {
      * @param height the height of the textbox in rows
      */
     public void setHeight(int height) {
-        setNumericAttr("rows", height);
+        setNumericAttr("rows", height, 0);
     }
     
     /**
@@ -79,7 +80,7 @@ public class TextboxTag extends FormElementTag {
      */
     public void setReadOnly(boolean readOnly) {
         if (readOnly)
-            _attrs.put("readonly", "readonly");
+            _data.setAttribute("readonly", "readonly");
     }
     
     /**
@@ -88,7 +89,7 @@ public class TextboxTag extends FormElementTag {
      */
     public void setDisabled(boolean disabled) {
         if (disabled)
-            _attrs.put("disabled", "disabled");
+            _data.setAttribute("disabled", "disabled");
     }
     
     /**
@@ -96,7 +97,7 @@ public class TextboxTag extends FormElementTag {
      * @param jsCode the JavaScript code
      */
     public void setOnBlur(String jsCode) {
-       _attrs.put("onblur", jsCode);
+       _data.setAttribute("onblur", jsCode);
     }
     
     /**

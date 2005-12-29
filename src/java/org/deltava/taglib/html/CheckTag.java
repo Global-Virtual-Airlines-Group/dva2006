@@ -1,3 +1,4 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -66,7 +67,7 @@ public class CheckTag extends FormElementTag {
 	 * @param jsEvent the JavaScript event code
 	 */
 	public void setOnChange(String jsEvent) {
-		_attrs.put("onchange", jsEvent);
+		_data.setAttribute("onchange", jsEvent);
 	}
 
 	private void openSpanTag() throws Exception {
@@ -123,7 +124,7 @@ public class CheckTag extends FormElementTag {
 			isSelected = checkOption(opt, _value);
 		}
 
-		_out.print(openHTML(false));
+		_out.print(_data.open(false));
 		if (isSelected)
 			_out.print(" checked=\"checked\"");
 		
@@ -206,8 +207,8 @@ public class CheckTag extends FormElementTag {
 	 * @param checkType the element type, typically RADIO or CHECKBOX
 	 */
 	public void setType(String checkType) {
-		_attrs.put("type", checkType);
-		_attrs.put("class", checkType.substring(0, 5).toLowerCase());
+		_data.setAttribute("type", checkType);
+		_data.setAttribute("class", checkType.substring(0, 5).toLowerCase());
 	}
 
 	/**

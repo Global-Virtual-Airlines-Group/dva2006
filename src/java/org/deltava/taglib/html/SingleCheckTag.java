@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved. 
 package org.deltava.taglib.html;
 
 import java.io.IOException;
@@ -21,8 +21,8 @@ public class SingleCheckTag extends FormElementTag {
 	 */
 	public SingleCheckTag() {
 		super("input", false);
-		_attrs.put("type", "checkbox");
-		_attrs.put("class", "check");
+		_data.setAttribute("type", "checkbox");
+		_data.setAttribute("class", "check");
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class SingleCheckTag extends FormElementTag {
 	 * @param objValue the alias
 	 */
 	public final void setValue(Object objValue) {
-		_attrs.put("value", String.valueOf(objValue));
+		_data.setAttribute("value", String.valueOf(objValue));
 	}
 
 	/**
@@ -56,7 +56,7 @@ public class SingleCheckTag extends FormElementTag {
 	 */
 	public void setChecked(boolean checked) {
 		if (checked)
-			_attrs.put("checked", "checked");
+			_data.setAttribute("checked", "checked");
 	}
 	
 	/**
@@ -64,7 +64,7 @@ public class SingleCheckTag extends FormElementTag {
 	 * @param jsEvent the JavaScript event code
 	 */
 	public void setOnChange(String jsEvent) {
-		_attrs.put("onchange", jsEvent);
+		_data.setAttribute("onchange", jsEvent);
 	}
 
 	/**
@@ -72,8 +72,8 @@ public class SingleCheckTag extends FormElementTag {
 	 */
 	public void release() {
 		super.release();
-		_attrs.put("type", "checkbox");
-		_attrs.put("class", "check");
+		_data.setAttribute("type", "checkbox");
+		_data.setAttribute("class", "check");
 	}
 
 	/**
@@ -91,8 +91,7 @@ public class SingleCheckTag extends FormElementTag {
 			}
 			
 			// Open the tag and print the label
-			_out.print(openHTML(false));
-			_out.print(" />");
+			_out.print(_data.open(true, true));
 			_out.print(_label);
 			
 			// Close the span if it is opened

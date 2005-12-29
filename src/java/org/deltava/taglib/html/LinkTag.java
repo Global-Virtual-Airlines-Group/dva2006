@@ -1,10 +1,10 @@
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
 /**
  * A JSP tag to generate an HTML link.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -26,7 +26,7 @@ public class LinkTag extends ElementTag {
     public int doStartTag() throws JspException {
         try {
             validateLink();
-            _out.print(openHTML(true));
+            _out.print(_data.open(true));
         } catch(Exception e) {
             throw new JspException(e);
         }
@@ -40,7 +40,7 @@ public class LinkTag extends ElementTag {
      */
     public int doEndTag() throws JspException {
         try {
-            _out.print(closeHTML());
+            _out.print(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
         }
@@ -54,7 +54,7 @@ public class LinkTag extends ElementTag {
      * @param url the target URL
      */
     public void setUrl(String url) {
-        _attrs.put("href", url);
+        _data.setAttribute("href", url);
     }
     
     /**
@@ -62,7 +62,7 @@ public class LinkTag extends ElementTag {
      * @param js the JavaScript code to execute when this link is clicked
      */
     public void setOnClick(String js) {
-        _attrs.put("onclick", js);
+        _data.setAttribute("onclick", js);
     }
     
     /**
@@ -71,8 +71,8 @@ public class LinkTag extends ElementTag {
      * @param label
      */
     public void setLabel(String label) {
-        _attrs.put("onmouseover", "window.status=\'" + label + "\';");
-        _attrs.put("onmouseout", "window.status=\'\';");
+        _data.setAttribute("onmouseover", "window.status=\'" + label + "\';");
+        _data.setAttribute("onmouseout", "window.status=\'\';");
     }
     
     /**
@@ -80,7 +80,7 @@ public class LinkTag extends ElementTag {
      * @param targetFrame the target frame name
      */
     public void setTarget(String targetFrame) {
-        _attrs.put("target", targetFrame);
+        _data.setAttribute("target", targetFrame);
     }
     
     /**
@@ -88,7 +88,7 @@ public class LinkTag extends ElementTag {
      * @throws IllegalStateException if neither a URL nor onClick are present
      */
     protected void validateLink() throws IllegalStateException {
-        boolean isOK = (_attrs.containsKey("href") || _attrs.containsKey("onclick"));
+        boolean isOK = (_data.hasElement("href") || _data.hasElement("onclick"));
         if (!isOK)
             throw new IllegalStateException("HREF or onClick must be set");
     }

@@ -21,7 +21,7 @@ public class InputTag extends FormElementTag {
      */
     public InputTag() {
         super("input", true);
-        _attrs.put("type", "text");
+        _data.setAttribute("type", "text");
     }
 
     /**
@@ -33,7 +33,7 @@ public class InputTag extends FormElementTag {
     public int doEndTag() throws JspException {
         try {
             validateState();
-            _out.print(openHTML(false));
+            _out.print(_data.open(false));
             
             // Write the value
             if (_value != null) {
@@ -58,7 +58,7 @@ public class InputTag extends FormElementTag {
      */
     public void release() {
         super.release();
-        _attrs.put("type", "text");
+        _data.setAttribute("type", "text");
     }
     
     /**
@@ -67,25 +67,25 @@ public class InputTag extends FormElementTag {
      * @param type the field type
      */
     public void setType(String type) {
-        _attrs.put("type", type);
+        _data.setAttribute("type", type);
     }
     
     /**
      * Sets the size of this field. This does nothing if a negative, zero or non-numeric value is passed.
      * @param len the size of the field
-     * @see ElementTag#setNumericAttr(String, int)
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setSize(int len) {
-        setNumericAttr("size", len);
+        setNumericAttr("size", len, 1);
     }
     
     /**
      * Sets the maximum length of this field. This does nothing if a negative, zero or non-numeric value is passed.
      * @param maxLen the maximum length of the field
-     * @see ElementTag#setNumericAttr(String, int)
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setMax(int maxLen) {
-        setNumericAttr("maxlength", maxLen);
+        setNumericAttr("maxlength", maxLen, 1);
     }
     
     /**
@@ -94,7 +94,7 @@ public class InputTag extends FormElementTag {
      */
     public void setReadOnly(boolean readOnly) {
         if (readOnly)
-        	_attrs.put("readonly", "readonly");
+        	_data.setAttribute("readonly", "readonly");
     }
     
     /**
@@ -103,7 +103,7 @@ public class InputTag extends FormElementTag {
      */
     public void setDisabled(boolean disabled) {
         if (disabled)
-            _attrs.put("disabled", "disabled");
+            _data.setAttribute("disabled", "disabled");
     }
     
     /**
@@ -111,6 +111,6 @@ public class InputTag extends FormElementTag {
      * @param jsCode the JavaScript code
      */
     public void setOnBlur(String jsCode) {
-        _attrs.put("onblur", jsCode);
+        _data.setAttribute("onblur", jsCode);
     }
 }

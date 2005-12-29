@@ -27,10 +27,9 @@ public class ImageTag extends ElementTag {
      */
     public int doEndTag() throws JspException {
         
-        // Do a proper XHTML closing tag
+        // Do a proper XHTML tag
         try {
-            _out.print(openHTML(false));
-            _out.print(" />");
+            _out.print(_data.open(true));
         } catch (Exception e) {
             throw new JspException(e);
         }
@@ -43,28 +42,28 @@ public class ImageTag extends ElementTag {
     /**
      * Sets the width of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param width the width of the image in pixels
-     * @see ElementTag#setNumericAttr(String, int)
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setX(int width) {
-        setNumericAttr("width", width);
+        setNumericAttr("width", width, 1);
     }
     
     /**
      * Sets the height of ths image. This does nothing if a negative, zero or non-numeric value is passed.
      * @param height the height of the image in pixels
-     * @see ElementTag#setNumericAttr(String, int)
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setY(int height) {
-        setNumericAttr("height", height);
+        setNumericAttr("height", height, 1);
     }
     
     /**
      * Sets the border of ths image. This does nothing if a negative or non-numeric value is passed.
      * @param border the border of the image in pixels
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setBorder(int border) {
-    	if (border >= 0)
-    		_attrs.put("border", String.valueOf(border));
+    	setNumericAttr("border", border, 0);
     }
     
     /**
@@ -75,7 +74,7 @@ public class ImageTag extends ElementTag {
         StringBuilder buf = new StringBuilder(SystemData.get("path.img"));
         buf.append('/');
         buf.append(url);
-        _attrs.put("src", buf.toString());
+        _data.setAttribute("src", buf.toString());
     }
     
     /**
@@ -83,6 +82,6 @@ public class ImageTag extends ElementTag {
      * @param caption the caption for this mage
      */
     public void setCaption(String caption) {
-        _attrs.put("alt", caption);
+        _data.setAttribute("alt", caption);
     }
 }
