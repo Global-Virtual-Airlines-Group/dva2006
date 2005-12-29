@@ -52,7 +52,7 @@ public class PageDownTag extends ScrollTag {
         url.append(buildParameters(params));
        
         // Set the link and call the superclass renderer
-        _attrs.put("href", url.toString());
+        _data.setAttribute("href", url.toString());
         super.doStartTag();
         renderLabel();
         return SKIP_BODY;

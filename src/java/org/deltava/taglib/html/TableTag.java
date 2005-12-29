@@ -26,24 +26,26 @@ public class TableTag extends ElementTag {
     /**
      * Sets the CELLSPACING value for this table.
      * @param cSpacing the cellspacing attribute value.
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setSpace(String cSpacing) {
         if (DEFAULT.equalsIgnoreCase(cSpacing)) {
-            setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0));
+            setNumericAttr("cellspacing", SystemData.getInt("html.table.spacing", 0), 0);
         } else {
-            setNumericAttr("cellspacing", Integer.parseInt(cSpacing));
+            setNumericAttr("cellspacing", Integer.parseInt(cSpacing), 0);
         }
     }
 
     /**
      * Sets the CELLPADDING value for this table.
      * @param cPadding the cellpadding attribute value.
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setPad(String cPadding) {
         if (DEFAULT.equalsIgnoreCase(cPadding)) {
-            setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0));
+            setNumericAttr("cellpadding", SystemData.getInt("html.table.padding", 0), 0);
         } else {
-            setNumericAttr("cellpadding", Integer.parseInt(cPadding));
+            setNumericAttr("cellpadding", Integer.parseInt(cPadding), 0);
         }
     }
     
@@ -52,7 +54,7 @@ public class TableTag extends ElementTag {
      * @param width the width attribute value
      */
     public void setWidth(String width) {
-        _attrs.put("width", width);
+        _data.setAttribute("width", width);
     }
 
     /**
@@ -61,7 +63,7 @@ public class TableTag extends ElementTag {
      */
     public int doStartTag() throws JspException {
         try {
-            _out.print(openHTML(true));
+            _out.print(_data.open(true));
         } catch (Exception e) {
             throw new JspException(e);
         }
@@ -75,7 +77,7 @@ public class TableTag extends ElementTag {
      */
     public int doEndTag() throws JspException {
         try {
-            _out.print(closeHTML());
+            _out.print(_data.close());
         } catch (Exception e) {
             throw new JspException(e);
         }

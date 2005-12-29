@@ -52,16 +52,16 @@ public abstract class FormElementTag extends ElementTag {
      * @param name the field name
      */
     public void setName(String name) {
-        _attrs.put("name", name);
+        _data.setAttribute("name", name);
     }
     
     /**
      * Sets the tab index of this field. This does nothing if a negative, zero or non-numeric value is passed.
      * @param index the tab index, or * if it should be retrieved from the parent form.
-     * @see ElementTag#setNumericAttr(String, int)
+     * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setIdx(String index) {
-        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : Integer.parseInt(index));
+        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : Integer.parseInt(index), 1);
     }
     
     /**
@@ -90,7 +90,7 @@ public abstract class FormElementTag extends ElementTag {
      * @throws IllegalStateException if the NAME attribute is not set
      */
     protected void validateState() throws IllegalStateException {
-       if (!(_attrs.containsKey("name")))
+       if (!(_data.hasElement("name")))
            throw new IllegalStateException("Form Element must contain NAME");
        
        if (_validateParent) {

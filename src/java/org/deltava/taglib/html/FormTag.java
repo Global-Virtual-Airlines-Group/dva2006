@@ -59,14 +59,14 @@ public class FormTag extends ElementTag {
         }
         
         // Update the ACTION
-        _attrs.put("action", url.toString());
+        _data.setAttribute("action", url.toString());
         
         // Update the encoding type if uploads are permitted
         if (_allowUpload)
-            _attrs.put("enctype", "multipart/form-data");
+            _data.setAttribute("enctype", "multipart/form-data");
         
         try {
-            _out.println(openHTML(true));
+            _out.println(_data.open(true));
         } catch(Exception e) {
             throw new JspException(e);
         }
@@ -80,7 +80,7 @@ public class FormTag extends ElementTag {
      */
     public int doEndTag() throws JspException {
         try {
-            _out.println(closeHTML());
+            _out.println(_data.close());
         } catch(Exception e) {
             throw new JspException(e);
         }
@@ -147,7 +147,7 @@ public class FormTag extends ElementTag {
      * @param postType the action type, typically GET or POST 
      */
     public void setMethod(String postType) {
-        _attrs.put("method", postType.toLowerCase());
+        _data.setAttribute("method", postType.toLowerCase());
     }
     
     /**
@@ -155,7 +155,7 @@ public class FormTag extends ElementTag {
      * @param jsFunc JavaScript code to be passed as the onSubmit attribute
      */
     public void setValidate(String jsFunc) {
-        _attrs.put("onsubmit", jsFunc);
+        _data.setAttribute("onsubmit", jsFunc);
     }
     
     /**
