@@ -1,8 +1,10 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.Calendar;
+
+import org.deltava.util.CalendarUtils;
 
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
@@ -66,11 +68,8 @@ public abstract class DAO implements java.io.Serializable {
       if (dt == null)
          return null;
       
-      // Convert to a calendar
-      Calendar cld = Calendar.getInstance();
-      cld.setTime(dt);
-      
-      // If the hour value is zero, adjust forward by 12 hours
+      // Convert to a calendar - if the hour value is zero, adjust forward by 12 hours
+      Calendar cld = CalendarUtils.getInstance(dt);
       if (cld.get(Calendar.HOUR_OF_DAY) == 0)
          cld.add(Calendar.HOUR, 12);
       
