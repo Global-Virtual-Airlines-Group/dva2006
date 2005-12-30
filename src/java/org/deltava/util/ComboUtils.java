@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -139,11 +139,11 @@ public class ComboUtils {
      * @param choices the List of ComboAlias objects
      * @param alias the alias to search for
      * @return the first name matching the alias, or null if not found
-     * @see ComboUtils#getAlias(List, String)
+     * @see ComboUtils#getAlias(Collection, String)
      */
-    public static String getName(List choices, String alias) {
-        for (Iterator i = choices.iterator(); i.hasNext(); ) {
-            ComboAlias ca = (ComboAlias) i.next();
+    public static String getName(Collection<ComboAlias> choices, String alias) {
+        for (Iterator<ComboAlias> i = choices.iterator(); i.hasNext(); ) {
+            ComboAlias ca = i.next();
             if (ca.getComboAlias().equals(alias))
                 return ca.getComboName();
         }
@@ -152,15 +152,15 @@ public class ComboUtils {
     }
     
     /**
-     * Checks through a list of ComboAlias objects and returns the alias matching a given name.
-     * @param choices the List of ComboAlias objects
+     * Checks through a collection of ComboAlias objects and returns the alias matching a given name.
+     * @param choices a Collection of ComboAlias objects
      * @param name the name to search for
      * @return the first alias matching the name, or null if not found
-     * @see ComboUtils#getName(List, String)
+     * @see ComboUtils#getName(Collection, String)
      */
-    public static String getAlias(List choices, String name) {
-        for (Iterator i = choices.iterator(); i.hasNext(); ) {
-            ComboAlias ca = (ComboAlias) i.next();
+    public static String getAlias(Collection<ComboAlias> choices, String name) {
+        for (Iterator<ComboAlias> i = choices.iterator(); i.hasNext(); ) {
+            ComboAlias ca = i.next();
             if (ca.getComboName().equals(name))
                 return ca.getComboAlias();
         }
