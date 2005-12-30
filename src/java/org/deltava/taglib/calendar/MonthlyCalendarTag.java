@@ -20,11 +20,11 @@ import org.deltava.util.CalendarUtils;
 public class MonthlyCalendarTag extends CalendarTag {
 	
 	private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"}; 
-	private final DateFormat _df = new SimpleDateFormat("MMMM yyyy");
 	
 	private boolean _showDaysOfWeek;
 	
 	private XMLRenderer _table;
+	private XMLRenderer _dayTable;
 	private XMLRenderer _day;
 
 	/**
@@ -50,9 +50,12 @@ public class MonthlyCalendarTag extends CalendarTag {
 
 	/**
 	 * Opens the table cell for a new day.
-	 * @throws JspException if an I/O error occurs
 	 */
 	private void openTableCell() throws JspException {
+		// Since we have a day header, each cell is in its own table
+		_dayTable = new XMLRenderer("table");
+		_dayTable.setAttribute("border", String.valueOf(_border));
+		
 		// Generate the day elements
 		XMLRenderer hdr = new XMLRenderer("td");
 		hdr.setAttribute("class", _dayBarClass);
@@ -63,7 +66,9 @@ public class MonthlyCalendarTag extends CalendarTag {
 			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
 				_out.print("<tr>");
 			
-			// Render the table
+			// Render the day cell
+			_out.print(_dayTable.open(true));
+			_out.print("<tr>");
 			_out.print(hdr.open(true));
 			_out.print(String.valueOf(_currentDate.get(Calendar.DAY_OF_MONTH)));
 			_out.print(hdr.close());
@@ -76,11 +81,12 @@ public class MonthlyCalendarTag extends CalendarTag {
 	/**
 	 * Closes the table cell for a day. If the current day of week is a Saturday, then the
 	 * calendar table row will also be closed.
-	 * @throws JspException if an I/O error occurs
 	 */
 	private void closeTableCell() throws JspException {
 		try {
 			_out.print(_day.close());
+			_out.print("</tr>");
+			_out.print(_dayTable.close());
 			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
 				_out.println("</tr>");
 		} catch (IOException ie) {
@@ -102,18 +108,20 @@ public class MonthlyCalendarTag extends CalendarTag {
 		_table.setAttribute("class", _tableClass);
 		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
 		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
+		_table.setAttribute("border", String.valueOf(_border));
 		
 		_out = pageContext.getOut();
 		try {
 			_out.println(_table.open(true));
 			
 			// Write the header row
+			DateFormat df = new SimpleDateFormat("MMMM yyyy");
 			_out.print("<tr>");
 			XMLRenderer title = new XMLRenderer("td");
 			title.setAttribute("colspan", "7");
 			title.setAttribute("class", _topBarClass);
 			_out.print(title.open(true));
-			_out.print(_df.format(_startDate));
+			_out.print(df.format(_startDate));
 			_out.print(title.close());
 			_out.println("</tr>");
 			

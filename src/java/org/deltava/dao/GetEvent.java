@@ -50,6 +50,34 @@ public class GetEvent extends DAO {
 	}
 	
 	/**
+	 * Returns all Online Events within a certain date range.
+	 * @param startDate the start Date
+	 * @param days the number of days forward to query
+	 * @return a List of Event beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Event> getEvents(java.util.Date startDate, int days) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > ?) AND "
+					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAYS)) AND (STATUS !=?) ORDER BY STARTTIME");
+			_ps.setTimestamp(1, createTimestamp(startDate));
+			_ps.setTimestamp(2, createTimestamp(startDate));
+			_ps.setInt(3, days);
+			_ps.setInt(4, Event.CANCELED);
+			List<Event> results = execute();
+			
+			// Load the airports
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			loadRoutes(eMap);
+
+			// Return the results
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns wether there are any active Online Events schedule.
 	 * @return TRUE if at least one Event is scheduled, otherwise FALSE
 	 * @throws DAOException if a JDBC error occurs
