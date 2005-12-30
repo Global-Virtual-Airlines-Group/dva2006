@@ -70,16 +70,6 @@ public abstract class ElementTag extends TagSupport {
 	/**
 	 * Sets a numeric attribute.
 	 * @param attrName the attribute name
-	 * @param value the raw value from the JSP
-	 * @deprecated
-	 */
-	protected void setNumericAttr(String attrName, int value) {
-		_data.setAttribute(attrName, String.valueOf(value));
-	}
-	
-	/**
-	 * Sets a numeric attribute.
-	 * @param attrName the attribute name
 	 * @param value the value
 	 * @param minValue the minimum value for the attribute
 	 */
