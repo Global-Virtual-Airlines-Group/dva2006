@@ -457,7 +457,7 @@
 		<class>org.deltava.commands.event.FlightBoardCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="event">
 		<name>View Event</name>
 		<class>org.deltava.commands.event.EventCommand</class>
@@ -467,6 +467,12 @@
 	<command id="events">
 		<name>Online Event List</name>
 		<class>org.deltava.commands.event.EventListCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="eventcalendar">
+		<name>Online Event Calendar</name>
+		<class>org.deltava.commands.event.EventCalendarCommand</class>
 		<roles>*</roles>
 	</command>
 

@@ -33,6 +33,7 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 	protected String _topBarClass;
 	protected String _dayBarClass;
 	protected String _contentClass;
+	protected int _border;
 	
 	protected int _cellPad = SystemData.getInt("html.table.spacing", 0);
 	protected int _cellSpace = SystemData.getInt("html.table.padding", 0);
@@ -91,6 +92,14 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
      */
     public void setPad(int cPadding) {
     	_cellPad = cPadding;
+    }
+    
+    /**
+     * Sets the BORDER value for this table.
+     * @param border the border width attribute value
+     */
+    public void setBorder(int border) {
+    	_border = border;
     }
 
 	/**
