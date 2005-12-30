@@ -19,9 +19,21 @@ public class CalendarUtils {
 	 * @return the adjusted date/time
 	 */
 	public static Date adjust(Date dt, int days) {
-		Calendar cld = Calendar.getInstance();
-		cld.setTime(dt);
+		Calendar cld = getInstance(dt);
 		cld.add(Calendar.DATE, days);
 		return cld.getTime();
+	}
+	
+	/**
+	 * Returns a Calendar object initialized to a particular date/time.
+	 * @param dt the date/time, or null if the current date/time
+	 * @return a Calendar object
+	 */
+	public static Calendar getInstance(Date dt) {
+		Calendar cld = Calendar.getInstance();
+		if (dt != null)
+			cld.setTime(dt);
+		
+		return cld;
 	}
 }

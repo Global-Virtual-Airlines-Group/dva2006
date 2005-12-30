@@ -1,11 +1,11 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
 
 import org.deltava.beans.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A class to store Schedule Entry information.
@@ -164,8 +164,7 @@ public class ScheduleEntry extends Flight {
 	public void setTimeA(Date dt) {
 		TZInfo tz = (getAirportA() == null) ? TZInfo.local() : getAirportA().getTZ();
 		if (dt.before(_timeD.getDate())) {
-			Calendar cld = Calendar.getInstance();
-			cld.setTime(dt);
+			Calendar cld = CalendarUtils.getInstance(dt);
 			cld.add(Calendar.DATE, 1);
 			_timeA = new DateTime(cld.getTime(), tz);
 		} else {
