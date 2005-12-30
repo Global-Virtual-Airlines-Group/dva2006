@@ -11,35 +11,36 @@ import org.deltava.taglib.XMLRenderer;
 import org.deltava.util.CalendarUtils;
 
 /**
- * A JSP tag to generate a monthly calendar table.
+ * A JSP tag to generate a weekly Calendar.
  * @author Luke
  * @version 1.0
- * @since v1.0
+ * @since 1.0
  */
 
-public class MonthlyCalendarTag extends CalendarTag {
+public class WeeklyCalendarTag extends CalendarTag {
+
+	private static final String[] DAYS = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 	
-	private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"}; 
-	private final DateFormat _df = new SimpleDateFormat("MMMM yyyy");
-	
+	private final DateFormat _wf = new SimpleDateFormat("MMMM dd, yyyy");
+	private final DateFormat _df = new SimpleDateFormat("MMMM dd");
+
 	private boolean _showDaysOfWeek;
-	
+
 	private XMLRenderer _table;
 	private XMLRenderer _day;
 
 	/**
-	 * Sets the starting date for this monthly calendar tag. This is overriden to be the first
-	 * day of the month.
+	 * Sets the starting date for this calendar tag. This is overriden to be the first day of the week (Sunday).
 	 * @param dt the start date
 	 * @see CalendarTag#setStartDate(Date)
 	 */
 	public void setStartDate(Date dt) {
 		Calendar cld = CalendarUtils.getInstance(dt);
-		cld.set(Calendar.DAY_OF_MONTH, 1);
+		cld.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		_startDate = cld.getTime();
-		calculateEndDate(Calendar.MONTH, 1);
+		calculateEndDate(Calendar.DATE, 7);
 	}
-	
+
 	/**
 	 * Sets wether the days of the week should be displayed below the month bar.
 	 * @param showDOW TRUE if the days of the week should be displayed, otherwise FALSE
@@ -48,41 +49,19 @@ public class MonthlyCalendarTag extends CalendarTag {
 		_showDaysOfWeek = showDOW;
 	}
 
-	/**
-	 * Opens the table cell for a new day.
-	 * @throws JspException if an I/O error occurs
-	 */
 	private void openTableCell() throws JspException {
-		// Generate the day elements
-		XMLRenderer hdr = new XMLRenderer("td");
-		hdr.setAttribute("class", _dayBarClass);
 		_day = new XMLRenderer("td");
 		_day.setAttribute("class", _contentClass);
 		try {
-			// If we're at the start of a new week, open the row
-			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-				_out.print("<tr>");
-			
-			// Render the table
-			_out.print(hdr.open(true));
-			_out.print(String.valueOf(_currentDate.get(Calendar.DAY_OF_MONTH)));
-			_out.print(hdr.close());
 			_out.print(_day.open(true));
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
 	}
-	
-	/**
-	 * Closes the table cell for a day. If the current day of week is a Saturday, then the
-	 * calendar table row will also be closed.
-	 * @throws JspException if an I/O error occurs
-	 */
+
 	private void closeTableCell() throws JspException {
 		try {
 			_out.print(_day.close());
-			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-				_out.println("</tr>");
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
@@ -96,24 +75,25 @@ public class MonthlyCalendarTag extends CalendarTag {
 	public int doStartTag() throws JspException {
 		// Init the current date
 		super.doStartTag();
-		
+
 		// Generate the view table
 		_table = new XMLRenderer("table");
 		_table.setAttribute("class", _tableClass);
 		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
 		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
-		
+
 		_out = pageContext.getOut();
 		try {
 			_out.println(_table.open(true));
-			
+
 			// Write the header row
 			_out.print("<tr>");
 			XMLRenderer title = new XMLRenderer("td");
 			title.setAttribute("colspan", "7");
 			title.setAttribute("class", _topBarClass);
 			_out.print(title.open(true));
-			_out.print(_df.format(_startDate));
+			_out.print("Week of ");
+			_out.print(_wf.format(_startDate));
 			_out.print(title.close());
 			_out.println("</tr>");
 			
@@ -128,23 +108,21 @@ public class MonthlyCalendarTag extends CalendarTag {
 					
 				_out.println("</tr>");
 			}
-			
-			// Generate the week row and empty table cells
+
+			// Generate the week row
 			_out.print("<tr>");
-			for (int x = Calendar.SUNDAY; x < _currentDate.get(Calendar.DAY_OF_WEEK); x++)
-				_out.println("<td rowspan=\"2\">&nbsp;</td>");
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
-		
+
 		// Open the first table cell and start
 		openTableCell();
 		return EVAL_BODY_INCLUDE;
 	}
-	
+
 	/**
-	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called
-	 * to determine if further records are required.
+	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called to determine if
+	 * further records are required.
 	 * @return TagSupport.EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport.SKIP_BODY
 	 * @throws JspException never
 	 */
@@ -152,7 +130,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 		closeTableCell();
 		return super.doAfterBody();
 	}
-	
+
 	/**
 	 * Closes the calendar table.
 	 * @return TagSupport.EVAL_PAGE always
@@ -160,11 +138,6 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			// Render empty cells until we reach the end of the row
-			for (int x = _currentDate.get(Calendar.DAY_OF_WEEK); x <= Calendar.SATURDAY; x++)
-				_out.println("<td rowspan=\"2\">&nbsp;</td>");
-
-			// Close the row and the table
 			_out.println("</tr>");
 			_table.close();
 		} catch (IOException ie) {

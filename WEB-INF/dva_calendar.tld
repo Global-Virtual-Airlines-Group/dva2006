@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" version="2.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd">
+	<tlib-version>1.0</tlib-version>
+	<short-name>calendar</short-name>
+	<uri>http://dva2006.deltava.org/dva2006/calendar</uri>
+
+	<!-- Monthly Calendar -->
+	<tag>
+		<name>month</name>
+		<tag-class>org.deltava.taglib.calendar.MonthlyCalendarTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>startDate</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Date</type>
+		</attribute>
+		<attribute>
+			<name>showDaysOfWeek</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+	
+	<!-- Weekly Calendar -->
+	<tag>
+		<name>week</name>
+		<tag-class>org.deltava.taglib.calendar.MonthlyCalendarTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>startDate</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Date</type>
+		</attribute>
+		<attribute>
+			<name>showDaysOfWeek</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+	</tag>
+	
+	<!-- Calendar Entry -->
+	<tag>
+		<name>entry</name>
+		<tag-class>org.deltava.taglib.calendar.CalendarEntryTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>entry</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+</taglib>
