@@ -150,13 +150,13 @@ return true;
 <div class="sec bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
 <c:if test="${!fn:isRated(pirep)}">
-<div class="warning bld caps">Flight Leg flown without Aircraft type rating</div>
+<div class="warn bld caps">Flight Leg flown without Aircraft type rating</div>
 </c:if>
 <c:if test="${fn:routeWarn(pirep)}">
-<div class="warning bld caps">Flight Route not found in <content:airline /> schedule database</div>
+<div class="warn bld caps">Flight Route not found in <content:airline /> schedule database</div>
 </c:if>
 <c:if test="${fn:timeWarn(pirep)}">
-<div class="warning bld caps">Flight Length outside Schedule Guidelines</div>
+<div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
 <c:if test="${fn:isPromoLeg(pirep)}">
 <div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div>
