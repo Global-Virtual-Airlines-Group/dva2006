@@ -3,12 +3,13 @@ package org.deltava.taglib.calendar;
 
 import java.util.*;
 
-import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
 import org.deltava.beans.CalendarEntry;
 import org.deltava.comparators.CalendarEntryComparator;
 
+import org.deltava.util.CalendarUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -20,6 +21,8 @@ import org.deltava.util.system.SystemData;
 
 public abstract class CalendarTag extends TagSupport implements IterationTag {
 
+	protected JspWriter _out;
+	
 	protected Date _startDate;
 	protected Date _endDate;
 	protected Calendar _currentDate;
@@ -36,12 +39,8 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 
 	public abstract void setStartDate(Date dt);
 	
-	protected abstract void openTableCell() throws JspException;
-	protected abstract void closeTableCell() throws JspException;
-
 	protected void calculateEndDate(int intervalType, int amount) {
-		Calendar cld = Calendar.getInstance();
-		cld.setTime(_startDate);
+		Calendar cld = CalendarUtils.getInstance(_startDate);
 		cld.add(intervalType, amount);
 		_endDate = cld.getTime();
 	}
@@ -151,8 +150,7 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 	 */
 	public int doStartTag() throws JspException {
 		// Generate the current date
-		_currentDate = Calendar.getInstance();
-		_currentDate.setTime(_startDate);
+		_currentDate = CalendarUtils.getInstance(_startDate);
 		_currentDate.set(Calendar.HOUR, 0);
 		_currentDate.set(Calendar.MINUTE, 0);
 		_currentDate.set(Calendar.SECOND, 0);

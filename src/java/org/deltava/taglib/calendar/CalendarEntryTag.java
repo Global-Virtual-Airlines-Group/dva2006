@@ -9,7 +9,7 @@ import javax.servlet.jsp.tagext.*;
 import org.deltava.beans.CalendarEntry;
 
 /**
- * A JSP tag to render calendar entries to the 
+ * A JSP tag to save Calendar entries to the request context for rendering to a JSP.
  * @author Luke
  * @version 1.0
  * @since 1.0

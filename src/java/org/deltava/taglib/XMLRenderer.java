@@ -3,6 +3,8 @@ package org.deltava.taglib;
 
 import java.util.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A helper class to generate XML elements with attributes.
  * @author Luke
@@ -56,7 +58,8 @@ public class XMLRenderer {
 	 * @param value the attribute value
 	 */
 	public void setAttribute(String name, String value) {
-		_attrs.put(name.toLowerCase(), value);
+		if (!StringUtils.isEmpty(name) && !StringUtils.isEmpty(value))
+			_attrs.put(name.toLowerCase(), value);
 	}
 	
 	/**
