@@ -29,7 +29,7 @@ public class ImageTag extends ElementTag {
         
         // Do a proper XHTML tag
         try {
-            _out.print(_data.open(true));
+            _out.print(_data.open(true, true));
         } catch (Exception e) {
             throw new JspException(e);
         }
