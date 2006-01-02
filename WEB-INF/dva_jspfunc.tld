@@ -12,6 +12,12 @@
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>int sizeof(java.util.Collection)</function-signature>
 	</function>
+	
+	<function>
+		<name>subset</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.util.Collection subset(java.util.Collection, int)</function-signature>
+	</function>
 
 	<!-- Get a list entry -->
 	<function>
