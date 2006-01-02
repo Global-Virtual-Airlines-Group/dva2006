@@ -47,6 +47,23 @@ public class MiscFunctions {
 	}
 	
 	/**
+	 * Returns a subset of a Collection.
+	 * @param c the Collection
+	 * @param size the number of entries to return
+	 * @return a Collection with the specified number of entries, or less if c is smaller than size
+	 */
+	public static <T> Collection<T> subset(Collection<T> c, int size) {
+		if (c == null)
+			return null;
+		else if (c.size() <= size)
+			return c;
+
+		// Reduce the size
+		List<T> results = new ArrayList<T>(c);
+		return results.subList(0, size);
+	}
+	
+	/**
 	 * A JSP-friendly function to check if an object exists within a Collection. 
 	 * @param c the Collection
 	 * @param obj the Object
