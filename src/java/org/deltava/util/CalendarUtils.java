@@ -18,9 +18,9 @@ public class CalendarUtils {
 	 * @param days the number of days to adjust
 	 * @return the adjusted date/time
 	 */
-	public static Date adjust(Date dt, int days) {
+	public static Date adjust(Date dt, long days) {
 		Calendar cld = getInstance(dt);
-		cld.add(Calendar.DATE, days);
+		cld.add(Calendar.DATE, (int) days);
 		return cld.getTime();
 	}
 	
