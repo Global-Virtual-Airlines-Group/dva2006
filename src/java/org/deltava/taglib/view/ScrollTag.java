@@ -55,12 +55,12 @@ public abstract class ScrollTag extends LinkTag {
      * @param params a Map of paramater name/value pairs
      * @return the Query String
      */
-    protected String buildParameters(Map params) {
+    protected String buildParameters(Map<String, Object> params) {
         StringBuilder url = new StringBuilder();
         
         // Loop through the parameters
-        for (Iterator i = params.keySet().iterator(); i.hasNext(); ) {
-            String pName = (String) i.next();
+        for (Iterator<String> i = params.keySet().iterator(); i.hasNext(); ) {
+            String pName = i.next();
             String[] pValues = (String[]) params.get(pName);
             url.append(StringUtils.stripInlineHTML(pName));
             url.append('=');
