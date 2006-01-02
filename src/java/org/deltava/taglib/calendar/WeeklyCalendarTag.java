@@ -19,9 +19,6 @@ import org.deltava.util.CalendarUtils;
 
 public class WeeklyCalendarTag extends CalendarTag {
 
-	private boolean _showDaysOfWeek;
-
-	private XMLRenderer _table;
 	private XMLRenderer _day;
 
 	/**
@@ -30,18 +27,8 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @see CalendarTag#setStartDate(Date)
 	 */
 	public void setStartDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt);
-		cld.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
-		_startDate = cld.getTime();
+		_startDate = dt;
 		calculateEndDate(Calendar.DATE, 7);
-	}
-
-	/**
-	 * Sets wether the days of the week should be displayed below the month bar.
-	 * @param showDOW TRUE if the days of the week should be displayed, otherwise FALSE
-	 */
-	public void setShowDaysOfWeek(boolean showDOW) {
-		_showDaysOfWeek = showDOW;
 	}
 
 	/**
@@ -53,14 +40,6 @@ public class WeeklyCalendarTag extends CalendarTag {
 		// Init the current date
 		super.doStartTag();
 
-		// Generate the view table
-		_table = new XMLRenderer("table");
-		_table.setAttribute("class", _tableClass);
-		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
-		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
-		_table.setAttribute("border", String.valueOf(_border));
-
-		_out = pageContext.getOut();
 		try {
 			_out.println(_table.open(true));
 
@@ -75,21 +54,23 @@ public class WeeklyCalendarTag extends CalendarTag {
 			_out.print(wf.format(_startDate));
 			_out.print(title.close());
 			_out.println("</tr>");
-			
+
 			// Write the day rows
 			if (_showDaysOfWeek) {
 				Calendar dw = CalendarUtils.getInstance(_currentDate.getTime());
 				DateFormat df = new SimpleDateFormat("EEE MMM dd");
-				
+
 				// Write the row
 				_out.print("<tr>");
 				for (int x = 0; x < 7; x++) {
-					_out.print("<td>");
+					XMLRenderer dayHdr = new XMLRenderer("td");
+					dayHdr.setAttribute("class", _dayBarClass);
+					_out.print(dayHdr.open(true));
 					_out.print(df.format(dw.getTime()));
-					_out.print("</td>");
+					_out.print(dayHdr.close());
 					dw.add(Calendar.DATE, 1);
 				}
-					
+
 				_out.println("</tr>");
 			}
 
@@ -113,19 +94,19 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @throws JspException never
 	 */
 	public int doAfterBody() throws JspException {
-		
+
 		// Determine if we need to generate more cells
 		int result = super.doAfterBody();
 		try {
 			_out.print(_day.close());
-			
+
 			// Open the next cell if we need to
 			if (result == EVAL_BODY_AGAIN)
 				_out.print(_day.open(true));
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
-		 
+
 		return result;
 	}
 
@@ -137,7 +118,8 @@ public class WeeklyCalendarTag extends CalendarTag {
 	public int doEndTag() throws JspException {
 		try {
 			_out.println("</tr>");
-			_table.close();
+			super.doEndTag();
+			_out.println(_table.close());
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		} finally {

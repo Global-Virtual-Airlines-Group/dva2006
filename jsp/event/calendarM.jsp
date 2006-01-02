@@ -35,12 +35,12 @@ return true;
 <el:form action="eventcalendar.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td width="80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" /></td>
- <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>
+ <td width="80%" class="caps"><content:airline /> ONLINE EVENT CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
+ <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
 </el:table>
 <div class="mid">
-<calendar:week date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr" 
+<calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
 <el:cmd url="event" linkID="0x${event.ID}" className="pri bld">${event.name}</el:cmd><br />
@@ -63,7 +63,7 @@ ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /><
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
-</calendar:week>
+</calendar:month>
 </div>
 
 <!-- Button Bar -->
