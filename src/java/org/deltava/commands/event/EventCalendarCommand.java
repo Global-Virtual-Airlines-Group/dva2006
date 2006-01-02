@@ -5,6 +5,10 @@ import java.util.*;
 import java.text.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
+import org.deltava.beans.event.*;
+import org.deltava.beans.system.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -34,7 +38,7 @@ public class EventCalendarCommand extends AbstractCommand {
 		Calendar startDate = Calendar.getInstance();
 		try {
 			startDate.setTime(_df.parse(ctx.getParameter("startDate")));
-		} catch (ParseException pe) {
+		} catch (Exception e) {
 			// empty
 		}
 
@@ -43,7 +47,34 @@ public class EventCalendarCommand extends AbstractCommand {
 			
 			// Get the DAO and the events
 			GetEvent dao = new GetEvent(con);
-			ctx.setAttribute("events", dao.getEvents(startDate.getTime(), days), REQUEST);
+			Collection<Event> events = dao.getEventCalendar(startDate.getTime(), days);
+			ctx.setAttribute("events", events, REQUEST);
+			
+			// Get the Pilot IDs from the signups
+			Set<Integer> pilotIDs = new HashSet<Integer>();
+			for (Iterator<Event> i = events.iterator(); i.hasNext(); ) {
+				Event e = i.next();
+				for (Iterator<Signup> si = e.getSignups().iterator(); si.hasNext(); ) {
+					Signup s = si.next();
+					pilotIDs.add(new Integer(s.getPilotID()));
+				}
+			}
+			
+			// Load the signup user data
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udMap = uddao.get(pilotIDs);
+			
+			// Load the Pilots for the signups
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
+			GetPilot pdao = new GetPilot(con);
+			for (Iterator<String> i = udMap.getTableNames().iterator(); i.hasNext(); ) {
+				String dbTableName = i.next();
+				if (UserDataMap.isPilotTable(dbTableName))
+					pilots.putAll(pdao.getByID(udMap.getByTable(dbTableName), dbTableName));
+			}
+			
+			// Save the pilots
+			ctx.setAttribute("pilots", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

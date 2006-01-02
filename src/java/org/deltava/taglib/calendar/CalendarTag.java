@@ -2,6 +2,8 @@
 package org.deltava.taglib.calendar;
 
 import java.util.*;
+import java.text.*;
+import java.io.IOException;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
@@ -9,7 +11,9 @@ import javax.servlet.jsp.tagext.*;
 import org.deltava.beans.CalendarEntry;
 import org.deltava.comparators.CalendarEntryComparator;
 
-import org.deltava.util.CalendarUtils;
+import org.deltava.taglib.XMLRenderer;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -19,31 +23,57 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public abstract class CalendarTag extends TagSupport implements IterationTag {
+abstract class CalendarTag extends TagSupport implements IterationTag {
+	
+	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
+	private static final List<String> RESERVED_PARAMS = Arrays.asList(new String[] {"startDate"});
 
 	protected JspWriter _out;
 	
 	protected Date _startDate;
 	protected Date _endDate;
 	protected Calendar _currentDate;
+	private String _currentDateAttr;
 
 	protected Collection<CalendarEntry> _entries = new TreeSet<CalendarEntry>(new CalendarEntryComparator());
 
+	protected String _tableID;
 	protected String _tableClass;
 	protected String _topBarClass;
 	protected String _dayBarClass;
 	protected String _contentClass;
+	private String _scrollRowClass;
+	private String _cmdName;
+	
 	protected int _border;
+	protected boolean _showDaysOfWeek = true;
+	private boolean _showScrollTags = true;
+	
+	protected XMLRenderer _table;
 	
 	protected int _cellPad = SystemData.getInt("html.table.spacing", 0);
 	protected int _cellSpace = SystemData.getInt("html.table.padding", 0);
 
 	public abstract void setStartDate(Date dt);
 	
+	/**
+	 * Calculcates the end date based on the start date and a particular interval amount
+	 * @param intervalType the interval type (use Calendar constants)
+	 * @param amount the size of the interval
+	 * @see java.util.Calendar
+	 */
 	protected void calculateEndDate(int intervalType, int amount) {
 		Calendar cld = CalendarUtils.getInstance(_startDate);
 		cld.add(intervalType, amount);
 		_endDate = cld.getTime();
+	}
+	
+	/**
+	 * Sets the request attribute name for the current date.
+	 * @param attrName the request attribute name
+	 */
+	public void setDate(String attrName) {
+		_currentDateAttr = attrName;
 	}
 	
 	/**
@@ -52,6 +82,14 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 	 */
 	public void setTableClass(String cName) {
 		_tableClass = cName;
+	}
+	
+	/**
+	 * Sets the CSS ID for the view table.
+	 * @param id the ID
+	 */
+	public void setTableID(String id) {
+		_tableID = id;
 	}
 	
 	/**
@@ -78,6 +116,26 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 		_contentClass = cName;
 	}
 	
+	public void setScrollClass(String cName) {
+		_scrollRowClass = cName;
+	}
+	
+	public void setCmd(String cmdName) {
+		_cmdName = cmdName;
+	}
+	
+	/**
+	 * Sets wether the days of the week should be displayed below the title bar.
+	 * @param showDOW TRUE if the days of the week should be displayed, otherwise FALSE
+	 */
+	public void setShowDaysOfWeek(boolean showDOW) {
+		_showDaysOfWeek = showDOW;
+	}
+	
+	public void setScrollTags(boolean showScroll) {
+		_showScrollTags = showScroll;
+	}
+	
     /**
      * Sets the CELLSPACING value for this table.
      * @param cSpacing the cellspacing attribute value.
@@ -101,7 +159,7 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
     public void setBorder(int border) {
     	_border = border;
     }
-
+    
 	/**
 	 * Sets the entries to display in this calendar view table. Entries outside the table's date range will not be
 	 * added.
@@ -115,6 +173,30 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 				_entries.add(ce);
 		}
 	}
+	
+    /**
+     * Helper method to bundle request parameters into a URL string.
+     */
+    private String buildURL(Map<String, Object> params) {
+    	// Build the URL
+        StringBuilder url = new StringBuilder("/");
+        url.append(_cmdName);
+        url.append(".do?");
+        
+        // Loop through the parameters
+        for (Iterator<String> i = params.keySet().iterator(); i.hasNext(); ) {
+            String pName = i.next();
+            String[] pValues = (String[]) params.get(pName);
+            url.append(StringUtils.stripInlineHTML(pName));
+            url.append('=');
+            url.append(StringUtils.stripInlineHTML(pValues[0]));
+            if (i.hasNext())
+                url.append("&amp;");
+        }
+        
+        // Return the string
+        return url.toString();
+    }
 
 	/**
 	 * Returns all Calendar entries for the currently rendered Date, from midnight to 11:59PM.
@@ -148,6 +230,9 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 	 */
 	public int doAfterBody() throws JspException {
 		_currentDate.add(Calendar.DATE, 1);
+		if (_currentDateAttr != null)
+			pageContext.getRequest().setAttribute(_currentDateAttr, _currentDate.getTime());
+			
 		return _currentDate.getTime().before(_endDate) ? EVAL_BODY_AGAIN : SKIP_BODY;
 	}
 
@@ -163,7 +248,84 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 		_currentDate.set(Calendar.HOUR, 0);
 		_currentDate.set(Calendar.MINUTE, 0);
 		_currentDate.set(Calendar.SECOND, 0);
+		
+		// Save the current date in the request
+		if (_currentDateAttr != null)
+			pageContext.getRequest().setAttribute(_currentDateAttr, _currentDate.getTime());
+		
+		// Generate the view table
+		_table = new XMLRenderer("table");
+		_table.setAttribute("id", _tableID);
+		_table.setAttribute("class", _tableClass);
+		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
+		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
+		if (_border != 0)
+			_table.setAttribute("border", String.valueOf(_border));
+
+		// Init the renderer and return
+		_out = pageContext.getOut();
 		return EVAL_BODY_INCLUDE;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public int doEndTag() throws JspException {
+		if (!_showScrollTags)
+			return EVAL_PAGE;
+		
+    	// Get the URL parameters and the forward/backward start dates
+        Map params = new HashMap<String, Object>(pageContext.getRequest().getParameterMap());
+        params.keySet().removeAll(RESERVED_PARAMS);
+        Date bd = CalendarUtils.adjust(_startDate, (Math.abs(_endDate.getTime() - _startDate.getTime()) / 86400000) * -1);
+        Date fd = CalendarUtils.adjust(_startDate, Math.abs(_endDate.getTime() - _startDate.getTime()) / 86400000);
+        
+        try {
+        	// Build the backward URL
+        	XMLRenderer backURL = new XMLRenderer("a");
+        	params.put("startDate", new String[] { _df.format(bd) } );
+        	backURL.setAttribute("href", buildURL(params));
+
+        	// Build the forward URL
+        	XMLRenderer fwdURL = new XMLRenderer("a");
+        	params.put("startDate", new String[] { _df.format(fd) } );
+        	fwdURL.setAttribute("href", buildURL(params));
+        	
+        	// Render the scroll tag bar row
+        	XMLRenderer scrollRow = new XMLRenderer("tr");
+        	scrollRow.setAttribute("class", _scrollRowClass);
+        	_out.println(scrollRow.open(true));
+        	
+        	// Render the scroll back cell and link
+        	XMLRenderer sBackCell = new XMLRenderer("td");
+        	sBackCell.setAttribute("class", "left");
+        	sBackCell.setAttribute("colspan", "3");
+        	_out.print(sBackCell.open(true));
+        	_out.print(backURL.open(true));
+        	_out.print("GO BACK");
+        	_out.print(backURL.close());
+        	_out.print(sBackCell.close());
+        	
+        	// Render the middle cell
+        	_out.print("<td>&nbsp;</td>");
+        	
+        	// Render the scroll forward cell and link
+        	XMLRenderer sFwdCell = new XMLRenderer("td");
+        	sFwdCell.setAttribute("class", "right");
+        	sFwdCell.setAttribute("colspan", "3");
+        	_out.print(sFwdCell.open(true));
+        	_out.print(fwdURL.open(true));
+        	_out.print("GO FORWRAD");
+        	_out.print(fwdURL.close());
+        	_out.print(sFwdCell.close());
+
+        	// Close the row
+        	_out.println(scrollRow.close());
+        } catch (IOException ie) {
+        	throw new JspException(ie);
+        } finally {
+        	release();
+        }
+        
+        return EVAL_PAGE;
 	}
 
 	/**
@@ -173,10 +335,14 @@ public abstract class CalendarTag extends TagSupport implements IterationTag {
 		super.release();
 		_cellPad = SystemData.getInt("html.table.spacing", 0);
 		_cellSpace = SystemData.getInt("html.table.padding", 0);
+		_border = 0;
+		_showDaysOfWeek = true;
+		_showScrollTags = true;
 		_tableClass = null;
 		_topBarClass = null;
 		_dayBarClass = null;
 		_contentClass = null;
+		_currentDateAttr = null;
 		_entries.clear();
 	}
 }

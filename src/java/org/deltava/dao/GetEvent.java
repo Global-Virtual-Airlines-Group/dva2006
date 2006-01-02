@@ -56,10 +56,10 @@ public class GetEvent extends DAO {
 	 * @return a List of Event beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Event> getEvents(java.util.Date startDate, int days) throws DAOException {
+	public List<Event> getEventCalendar(java.util.Date startDate, int days) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > ?) AND "
-					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAYS)) AND (STATUS !=?) ORDER BY STARTTIME");
+					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (STATUS !=?) ORDER BY STARTTIME");
 			_ps.setTimestamp(1, createTimestamp(startDate));
 			_ps.setTimestamp(2, createTimestamp(startDate));
 			_ps.setInt(3, days);
@@ -69,7 +69,8 @@ public class GetEvent extends DAO {
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
-
+			loadSignups(eMap);
+			
 			// Return the results
 			return results;
 		} catch (SQLException se) {
@@ -145,6 +146,7 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 
@@ -154,15 +156,16 @@ public class GetEvent extends DAO {
 				return null;
 
 			// Get the first event and populate it
+			setQueryMax(0);
 			Event e = (Event) results.get(0);
 			loadFlightPlans(e);
-			loadSignups(e);
 			loadEQTypes(e);
 			
 			// Create a map and load the airports
 			Map<Integer, Event> eMap = new HashMap<Integer, Event>();
 			eMap.put(new Integer(e.getID()), e);
 			loadRoutes(eMap);
+			loadSignups(eMap);
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -178,8 +181,8 @@ public class GetEvent extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.EVENT_AIRPORTS WHERE (ID IN (");
-		for (Iterator i = events.keySet().iterator(); i.hasNext();) {
-			Integer id = (Integer) i.next();
+		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
 			sqlBuf.append(id.toString());
 			if (i.hasNext())
 				sqlBuf.append(',');
@@ -238,23 +241,37 @@ public class GetEvent extends DAO {
 	/**
 	 * Helper method to load signups for an event.
 	 */
-	private void loadSignups(Event e) throws SQLException {
+	private void loadSignups(Map<Integer, Event> events) throws SQLException {
+		if (events.isEmpty())
+			return;
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.EVENT_SIGNUPS WHERE (ID IN (");
+		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+
+		sqlBuf.append("))");
 
 		// Init the prepared statement
-		prepareStatementWithoutLimits("SELECT * FROM common.EVENT_SIGNUPS WHERE (ID=?)");
-		_ps.setInt(1, e.getID());
+		prepareStatementWithoutLimits(sqlBuf.toString());
 
 		// Execute the query and load the signups
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Signup s = new Signup(e.getID(), rs.getInt(2));
+			Signup s = new Signup(rs.getInt(1), rs.getInt(2));
 			s.setEquipmentType(rs.getString(3));
 			s.setAirportD(SystemData.getAirport(rs.getString(4)));
 			s.setAirportA(SystemData.getAirport(rs.getString(5)));
 			s.setRemarks(rs.getString(6));
 
 			// Add to results
-			e.addSignup(s);
+			Event e = events.get(new Integer(s.getEventID()));
+			if (e != null)
+				e.addSignup(s);
 		}
 
 		// Clean up

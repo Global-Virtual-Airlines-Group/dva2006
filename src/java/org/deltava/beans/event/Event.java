@@ -3,9 +3,7 @@ package org.deltava.beans.event;
 
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
-import org.deltava.beans.DatabaseBean;
-
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.assign.AssignmentInfo;
 
@@ -18,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Event extends DatabaseBean implements Comparable, ComboAlias {
+public class Event extends DatabaseBean implements Comparable, ComboAlias, CalendarEntry {
 
     public static final int NET_VATSIM = 0;
     public static final int NET_IVAO = 1;
@@ -49,7 +47,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
     private int _network;
     
     private Set<Chart> _charts;
-    private List<FlightPlan> _plans;
+    private Set<FlightPlan> _plans;
     
     private Set<Signup> _signups;
     private Set<Route> _routes;
@@ -61,8 +59,8 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
         super();
         setName(name);
         _charts = new TreeSet<Chart>();
-        _plans = new ArrayList<FlightPlan>();
-        _signups = new HashSet<Signup>();
+        _plans = new LinkedHashSet<FlightPlan>();
+        _signups = new LinkedHashSet<Signup>();
         _assignments = new ArrayList<AssignmentInfo>();
         _eqTypes = new TreeSet<String>();
         _routes = new TreeSet<Route>();
@@ -151,6 +149,10 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias {
      */
     public Date getStartTime() {
         return _startTime;
+    }
+    
+    public Date getDate() {
+    	return _startTime;
     }
     
     /**

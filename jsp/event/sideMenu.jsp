@@ -25,6 +25,9 @@
 </c:choose>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="eventcalendar" className="bld">EVENT CALENDAR</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="event">NEXT EVENT</el:cmd></td>
 </tr>
 <tr class="MenuItem">

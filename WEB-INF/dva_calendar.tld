@@ -18,6 +18,22 @@
 			<type>java.util.Date</type>
 		</attribute>
 		<attribute>
+			<name>date</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>entries</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<name>cmd</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>showDaysOfWeek</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -27,6 +43,11 @@
 			<name>tableClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>tableID</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>topBarClass</name>
@@ -40,6 +61,11 @@
 		</attribute>
 		<attribute>
 			<name>contentClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>scrollClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
@@ -66,13 +92,29 @@
 	<!-- Weekly Calendar -->
 	<tag>
 		<name>week</name>
-		<tag-class>org.deltava.taglib.calendar.MonthlyCalendarTag</tag-class>
+		<tag-class>org.deltava.taglib.calendar.WeeklyCalendarTag</tag-class>
 		<body-content>JSP</body-content>
 		<attribute>
 			<name>startDate</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>java.util.Date</type>
+		</attribute>
+		<attribute>
+			<name>entries</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Collection</type>
+		</attribute>
+		<attribute>
+			<name>cmd</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>date</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>showDaysOfWeek</name>
@@ -86,6 +128,11 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>tableID</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>topBarClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
@@ -97,6 +144,11 @@
 		</attribute>
 		<attribute>
 			<name>contentClass</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>scrollClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
@@ -119,7 +171,7 @@
 			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- Calendar Entry -->
 	<tag>
 		<name>entry</name>
@@ -130,5 +182,19 @@
 			<required>true</required>
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
+	</tag>
+
+	<!-- Spacer Entry -->
+	<tag>
+		<name>spacer</name>
+		<tag-class>org.deltava.taglib.calendar.CalendarEntrySpacerTag</tag-class>
+		<body-content>JSP</body-content>
+	</tag>
+
+	<!-- No Entries -->
+	<tag>
+		<name>empty</name>
+		<tag-class>org.deltava.taglib.calendar.CalendarEntryEmptyTag</tag-class>
+		<body-content>JSP</body-content>
 	</tag>
 </taglib>
