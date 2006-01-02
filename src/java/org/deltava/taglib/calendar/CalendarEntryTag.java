@@ -20,8 +20,12 @@ public class CalendarEntryTag extends TagSupport implements IterationTag {
 	private String _attrName;
 	private Iterator<CalendarEntry> _entries;
 	
-	public void setEntry(String attrName) {
+	public void setName(String attrName) {
 		_attrName = attrName;
+	}
+	
+	boolean hasMoreEntries() {
+		return _entries.hasNext();
 	}
 	
 	public int doStartTag() throws JspException {

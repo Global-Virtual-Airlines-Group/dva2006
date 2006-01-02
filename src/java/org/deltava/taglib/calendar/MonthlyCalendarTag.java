@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.servlet.jsp.*;
 
 import org.deltava.taglib.XMLRenderer;
-import org.deltava.util.CalendarUtils;
+import org.deltava.util.*;
 
 /**
  * A JSP tag to generate a monthly calendar table.
@@ -19,12 +19,6 @@ import org.deltava.util.CalendarUtils;
 
 public class MonthlyCalendarTag extends CalendarTag {
 	
-	private static final String[] DAYS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"}; 
-	
-	private boolean _showDaysOfWeek;
-	
-	private XMLRenderer _table;
-	private XMLRenderer _dayTable;
 	private XMLRenderer _day;
 
 	/**
@@ -41,54 +35,53 @@ public class MonthlyCalendarTag extends CalendarTag {
 	}
 	
 	/**
-	 * Sets wether the days of the week should be displayed below the month bar.
-	 * @param showDOW TRUE if the days of the week should be displayed, otherwise FALSE
-	 */
-	public void setShowDaysOfWeek(boolean showDOW) {
-		_showDaysOfWeek = showDOW;
-	}
-
-	/**
 	 * Opens the table cell for a new day.
 	 */
 	private void openTableCell() throws JspException {
-		// Since we have a day header, each cell is in its own table
-		_dayTable = new XMLRenderer("table");
-		_dayTable.setAttribute("border", String.valueOf(_border));
-		
 		// Generate the day elements
-		XMLRenderer hdr = new XMLRenderer("td");
-		hdr.setAttribute("class", _dayBarClass);
 		_day = new XMLRenderer("td");
 		_day.setAttribute("class", _contentClass);
 		try {
-			// If we're at the start of a new week, open the row
-			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
+			// If we're at the start of a new week, generate the headers and open the row
+			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+				renderDateRow(true);
 				_out.print("<tr>");
+			}
 			
 			// Render the day cell
-			_out.print(_dayTable.open(true));
-			_out.print("<tr>");
-			_out.print(hdr.open(true));
-			_out.print(String.valueOf(_currentDate.get(Calendar.DAY_OF_MONTH)));
-			_out.print(hdr.close());
 			_out.print(_day.open(true));
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
 	}
 	
-	/**
-	 * Closes the table cell for a day. If the current day of week is a Saturday, then the
-	 * calendar table row will also be closed.
-	 */
-	private void closeTableCell() throws JspException {
+	private void renderDateRow(boolean openRow) throws JspException {
+		
+		// Generate the table cell renderer and date formatted
+		XMLRenderer dayHdr = new XMLRenderer("td");
+		dayHdr.setAttribute("class", _dayBarClass);
+		DateFormat df = new SimpleDateFormat(_showDaysOfWeek ? "EEE MMM dd" : "MMM dd");
+		
+		Calendar cd = CalendarUtils.getInstance(_currentDate.getTime());
 		try {
-			_out.print(_day.close());
-			_out.print("</tr>");
-			_out.print(_dayTable.close());
-			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
-				_out.println("</tr>");
+			_out.println("<!-- Week of " + StringUtils.format(cd.getTime(), "MMMM dd") + " -->");
+			if (openRow)
+				_out.println("<tr>");
+			
+			// Render the table header cells
+			for (int x = _currentDate.get(Calendar.DAY_OF_WEEK); x <= Calendar.SATURDAY; x++) {
+				if (cd.getTime().before(_endDate)) {
+					_out.print(dayHdr.open(true));
+					_out.print(df.format(cd.getTime()));
+					_out.print(dayHdr.close());
+				} else {
+					_out.println("<td rowspan=\"2\">&nbsp;</td>");
+				}
+				
+				cd.add(Calendar.DATE, 1);
+			}
+
+			_out.println("</tr>");
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
@@ -103,14 +96,6 @@ public class MonthlyCalendarTag extends CalendarTag {
 		// Init the current date
 		super.doStartTag();
 		
-		// Generate the view table
-		_table = new XMLRenderer("table");
-		_table.setAttribute("class", _tableClass);
-		_table.setAttribute("cellspacing", String.valueOf(_cellSpace));
-		_table.setAttribute("cellpadding", String.valueOf(_cellPad));
-		_table.setAttribute("border", String.valueOf(_border));
-		
-		_out = pageContext.getOut();
 		try {
 			_out.println(_table.open(true));
 			
@@ -125,22 +110,16 @@ public class MonthlyCalendarTag extends CalendarTag {
 			_out.print(title.close());
 			_out.println("</tr>");
 			
-			// Write the day rows
-			if (_showDaysOfWeek) {
+			// Render the date row unless it's Sunday (since openTableCell() will do it then)
+			if (_currentDate.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) {
+				// Generate the week row and empty table cells
 				_out.print("<tr>");
-				for (int x = 0; x < DAYS.length; x++) {
-					_out.print("<td>");
-					_out.print(DAYS[x]);
-					_out.print("</td>");
-				}
-					
-				_out.println("</tr>");
+				for (int x = Calendar.SUNDAY; x < _currentDate.get(Calendar.DAY_OF_WEEK); x++)
+					_out.println("<td rowspan=\"2\">&nbsp;</td>");
+				
+				renderDateRow(false);
+				_out.print("<tr>");
 			}
-			
-			// Generate the week row and empty table cells
-			_out.print("<tr>");
-			for (int x = Calendar.SUNDAY; x < _currentDate.get(Calendar.DAY_OF_WEEK); x++)
-				_out.println("<td rowspan=\"2\">&nbsp;</td>");
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		}
@@ -157,8 +136,20 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @throws JspException never
 	 */
 	public int doAfterBody() throws JspException {
-		closeTableCell();
-		return super.doAfterBody();
+		try {
+			_out.print(_day.close());
+			if (_currentDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)
+				_out.println("</tr>");
+		} catch (IOException ie) {
+			throw new JspException(ie);
+		}
+		
+		// Determine if we need to open a new cell
+		int result = super.doAfterBody();
+		if (result == EVAL_BODY_AGAIN)
+			openTableCell();
+		
+		return result; 
 	}
 	
 	/**
@@ -168,13 +159,10 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 */
 	public int doEndTag() throws JspException {
 		try {
-			// Render empty cells until we reach the end of the row
-			for (int x = _currentDate.get(Calendar.DAY_OF_WEEK); x <= Calendar.SATURDAY; x++)
-				_out.println("<td rowspan=\"2\">&nbsp;</td>");
-
 			// Close the row and the table
 			_out.println("</tr>");
-			_table.close();
+			super.doEndTag();
+			_out.println(_table.close());
 		} catch (IOException ie) {
 			throw new JspException(ie);
 		} finally {

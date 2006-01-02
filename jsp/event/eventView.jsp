@@ -53,11 +53,11 @@ return true;
 <c:set var="formAction" value="event.do" scope="request" />
 <c:set var="formValidate" value="return false" scope="request" />
 </c:if>
-<el:form action="${formAction}" method="POST" linkID="0x${event.ID}" validate="${formValidate}">
+<el:form action="${formAction}" method="post" linkID="0x${event.ID}" validate="${formValidate}">
 <el:table className="form view" pad="default" space="default">
 <tr class="title caps">
- <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="hh:mm" /> -
- <fmt:date date="${event.endTime}" fmt="t" t="hh:mm" /></td>
+ <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
+ <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
 <tr>
  <td class="label">Signups Close on</td>
@@ -75,7 +75,7 @@ return true;
  (<fmt:airport airport="${route.airportA}" />)</td>
 </tr>
 <tr>
- <td class="data" colspan="4">${route.route}</td>
+ <td class="data" colspan="5">${route.route}</td>
 </tr>
 </c:forEach>
 <tr>
