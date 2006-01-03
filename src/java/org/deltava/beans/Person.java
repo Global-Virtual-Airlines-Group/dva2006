@@ -428,7 +428,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @throws NullPointerException if name is null
 	 */
 	public void setLastName(String name) {
-		_firstName = StringUtils.strip(name.trim(), ",");
+		_lastName = StringUtils.strip(name.trim(), ",");
 	}
 
 	/**
