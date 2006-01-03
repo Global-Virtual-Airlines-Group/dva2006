@@ -231,7 +231,8 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		// Get the entries
 		for (Iterator<CalendarEntry> i = _entries.iterator(); i.hasNext();) {
 			CalendarEntry ce = i.next();
-			if ((ce.getDate().after(sd.getTime())) && (ce.getDate().before(ed.getTime())))
+			Date entryDate = DateTime.convert(ce.getDate(), _tz);
+			if ((entryDate.after(sd.getTime())) && (entryDate.before(ed.getTime())))
 				results.add(ce);
 		}
 
