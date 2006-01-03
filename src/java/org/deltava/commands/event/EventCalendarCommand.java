@@ -5,7 +5,7 @@ import java.util.*;
 import java.text.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.system.*;
 
@@ -13,6 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Online Event calendar.
@@ -35,19 +36,24 @@ public class EventCalendarCommand extends AbstractCommand {
 
 		// Get the number of days and start date
 		int days = Integer.parseInt((String) ctx.getCmdParameter(OPERATION, "7"));
-		Calendar startDate = Calendar.getInstance();
+		Date startDate = null;
 		try {
-			startDate.setTime(_df.parse(ctx.getParameter("startDate")));
+			startDate = _df.parse(ctx.getParameter("startDate"));
 		} catch (Exception e) {
-			// empty
+			startDate = new Date();
 		}
+		
+		// Get the user's time zone
+		Person usr = ctx.getUser();
+		TZInfo tz = (usr != null) ? usr.getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		startDate = DateTime.convert(startDate, tz);
 
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the events
 			GetEvent dao = new GetEvent(con);
-			Collection<Event> events = dao.getEventCalendar(startDate.getTime(), days);
+			Collection<Event> events = dao.getEventCalendar(startDate, days);
 			ctx.setAttribute("events", events, REQUEST);
 			
 			// Get the Pilot IDs from the signups
@@ -82,7 +88,7 @@ public class EventCalendarCommand extends AbstractCommand {
 		}
 		
 		// Save the calendar options
-		ctx.setAttribute("startDate", startDate.getTime(), REQUEST);
+		ctx.setAttribute("startDate", startDate, REQUEST);
 		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
 		
 		// Forward to the JSP

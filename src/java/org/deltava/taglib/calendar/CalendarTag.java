@@ -7,8 +7,9 @@ import java.io.IOException;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
+import javax.servlet.http.HttpServletRequest;
 
-import org.deltava.beans.CalendarEntry;
+import org.deltava.beans.*;
 import org.deltava.comparators.CalendarEntryComparator;
 
 import org.deltava.taglib.XMLRenderer;
@@ -33,6 +34,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	protected Date _startDate;
 	protected Date _endDate;
 	protected Calendar _currentDate;
+	protected TZInfo _tz;
 	private String _currentDateAttr;
 
 	protected Collection<CalendarEntry> _entries = new TreeSet<CalendarEntry>(new CalendarEntryComparator());
@@ -174,6 +176,19 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		}
 	}
 	
+	/**
+	 * Sets the page context for the tag, and sets the user's time zone.
+	 * @param ctx the JSP page context
+	 */
+	public void setPageContext(PageContext ctx) {
+		super.setPageContext(ctx);
+		
+		// Determine the user's time zone
+		HttpServletRequest hreq = (HttpServletRequest) ctx.getRequest();
+		Person usr = (Person) hreq.getUserPrincipal();
+		_tz = (usr != null) ? usr.getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+	}
+	
     /**
      * Helper method to bundle request parameters into a URL string.
      */
@@ -206,9 +221,10 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	Collection<CalendarEntry> getCurrentEntries() {
 		Collection<CalendarEntry> results = new ArrayList<CalendarEntry>();
 
-		// Calculate the start/end points
-		Calendar sd = (Calendar) _currentDate.clone();
-		Calendar ed = (Calendar) _currentDate.clone();
+		// Calculate the start/end points, converted into the user's time zone
+		Date dayStart = DateTime.convert(_currentDate.getTime(), _tz);
+		Calendar sd = CalendarUtils.getInstance(dayStart);
+		Calendar ed = CalendarUtils.getInstance(dayStart);
 		sd.add(Calendar.SECOND, -1);
 		ed.add(Calendar.DATE, 1);
 
@@ -243,9 +259,13 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	 * @throws JspException never
 	 */
 	public int doStartTag() throws JspException {
+		// Convert the start/end dates to the user's time zone
+		_startDate = DateTime.convert(_startDate, _tz);
+		_endDate = DateTime.convert(_endDate, _tz);
+		
 		// Generate the current date
 		_currentDate = CalendarUtils.getInstance(_startDate);
-		_currentDate.set(Calendar.HOUR, 0);
+		_currentDate.set(Calendar.HOUR_OF_DAY, 0);
 		_currentDate.set(Calendar.MINUTE, 0);
 		_currentDate.set(Calendar.SECOND, 0);
 		
