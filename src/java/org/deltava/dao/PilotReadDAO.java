@@ -344,6 +344,8 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadRoles(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty())
+			return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
@@ -381,6 +383,8 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @throws SQLException if a JDBC error occurs
 	 */
 	protected final void loadRatings(Map<Integer, Pilot> pilots, String dbName) throws SQLException {
+		if (pilots.isEmpty())
+			return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
