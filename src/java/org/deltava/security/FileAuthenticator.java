@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -5,6 +6,7 @@ import java.io.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Person;
 import org.deltava.util.ConfigLoader;
 
 /**
@@ -91,22 +93,22 @@ public class FileAuthenticator implements Authenticator {
 	/**
 	 * Authenticates the user by searching for the directory name and then comparing the existing password on file to
 	 * the one specified. The DN search is case-insensitive.
-	 * @param dn the user's directory name
+	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if authentication fails
-	 * @see org.deltava.security.Authenticator#authenticate(java.lang.String, java.lang.String)
+	 * @see org.deltava.security.Authenticator#authenticate(Person, String)
 	 */
-	public void authenticate(String dn, String pwd) throws SecurityException {
-		UserInfo ui = _users.get(dn);
+	public void authenticate(Person usr, String pwd) throws SecurityException {
+		UserInfo ui = _users.get(usr.getDN());
 		if (ui == null)
-			throw new SecurityException(dn + " not found");
+			throw new SecurityException(usr.getDN() + " not found");
 
 		if (!ui.getPassword().equals(pwd)) {
-			log.warn(dn + " Authentication FAILURE - Invalid credentials");
+			log.warn(usr.getDN() + " Authentication FAILURE - Invalid credentials");
 			throw new SecurityException("Invalid Credentials");
 		}
 
-		log.info(dn + " authenticated");
+		log.info(usr.getDN() + " authenticated");
 	}
 
 	/**
@@ -142,19 +144,19 @@ public class FileAuthenticator implements Authenticator {
 
 	/**
 	 * Updates a user's password.
-	 * @param directoryName the user's fully-qualified Directory name
+	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void updatePassword(String directoryName, String pwd) throws SecurityException {
+	public void updatePassword(Person usr, String pwd) throws SecurityException {
 	   
 	   // Get the User
-	   UserInfo usr = _users.get(directoryName);
-	   if (usr == null)
-	      throw new SecurityException("User " + directoryName + " not found");
+	   UserInfo usrInfo = _users.get(usr.getDN());
+	   if (usrInfo == null)
+	      throw new SecurityException("User " + usr.getDN() + " not found");
 	   
 	   // Update the password
-	   usr.setPassword(pwd);
+	   usrInfo.setPassword(pwd);
 	   try {
 	      save();
 	   } catch (IOException ie) {
@@ -164,30 +166,19 @@ public class FileAuthenticator implements Authenticator {
 	
 	/**
 	 * Adds a user to the Directory.
-	 * @param directoryName the user's fully-qualified Directory name
+	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(String directoryName, String pwd) throws SecurityException {
-	   addUser(directoryName, pwd, null);
-	}
-
-	/**
-	 * Adds a user to the Directory.
-	 * @param directoryName the user's fully-qualified Directory name
-	 * @param pwd the user's password
-	 * @param userID the user's alias, or null if none
-	 * @throws SecurityException if an error occurs
-	 */
-	public void addUser(String directoryName, String pwd, String userID) throws SecurityException {
+	public void addUser(Person usr, String pwd) throws SecurityException {
 	   
 	   // Check if the user exists
-	   if (contains(directoryName))
-	      throw new SecurityException("User " + directoryName + " already exists");
+	   if (contains(usr.getDN()))
+	      throw new SecurityException("User " + usr.getDN() + " already exists");
 
 	   // Create the user object
-	   UserInfo usr = new UserInfo(directoryName, pwd, userID);
-	   _users.put(directoryName, usr);
+	   UserInfo usrInfo = new UserInfo(usr.getDN(), pwd, "usrID");
+	   _users.put(usr.getDN(), usrInfo);
 	   
 	   // Save the user list
 	   try {

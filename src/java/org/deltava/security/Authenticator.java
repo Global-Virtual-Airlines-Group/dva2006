@@ -1,14 +1,16 @@
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security;
 
+import org.deltava.beans.Person;
+
 /**
- * An interface for user authenticators. Authenticators are used only to validate user passwords, are are not used
- * for standard Directory operations.
+ * An interface for user authenticators.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public interface Authenticator extends java.io.Serializable {
+public interface Authenticator {
    
    /**
     * Default properties file used for authenticator configuration options.
@@ -24,11 +26,11 @@ public interface Authenticator extends java.io.Serializable {
 
     /**
      * Authenticate a particular user given a set of credentials.
-     * @param directoryName the fully-qualified directory name
+     * @param usr the user bean
      * @param pwd the password
      * @throws SecurityException if the authentication failed for any reason
      */
-    public void authenticate(String directoryName, String pwd) throws SecurityException;
+    public void authenticate(Person usr, String pwd) throws SecurityException;
     
     /**
      * Checks if a particular name exists in the Directory.
@@ -40,30 +42,19 @@ public interface Authenticator extends java.io.Serializable {
     
     /**
      * Updates a user's password.
-     * @param directoryName the fully-qualified directory name
+     * @param usr the user bean
      * @param pwd the new password
      * @throws SecurityException if an error occurs
      */
-    public void updatePassword(String directoryName, String pwd) throws SecurityException;
+    public void updatePassword(Person usr, String pwd) throws SecurityException;
 
     /**
      * Adds a user to the Directory.
-     * @param directoryName the fully-qualified directory name
+     * @param usr the user bean
      * @param pwd the user's password
      * @throws SecurityException if an error occurs
-     * @see Authenticator#addUser(String, String, String)
      */
-    public void addUser(String directoryName, String pwd) throws SecurityException;
-    
-    /**
-     * Adds a user to the Directory.
-     * @param directoryName the fully-qualified directory name
-     * @param pwd the user's password
-     * @param userID an alias for the user
-     * @throws SecurityException if an error occurs
-     * @see Authenticator#addUser(String, String)
-     */
-    public void addUser(String directoryName, String pwd, String userID) throws SecurityException;
+    public void addUser(Person usr, String pwd) throws SecurityException;
     
     /**
      * Renames a user in the Directory.

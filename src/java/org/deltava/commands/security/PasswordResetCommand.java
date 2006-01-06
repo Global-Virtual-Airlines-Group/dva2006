@@ -6,11 +6,8 @@ import java.sql.Connection;
 import org.deltava.beans.Pilot;
 
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 import org.deltava.mail.*;
-
-import org.deltava.dao.GetPilotDirectory;
-import org.deltava.dao.GetMessageTemplate;
-import org.deltava.dao.DAOException;
 
 import org.deltava.security.Authenticator;
 
@@ -55,22 +52,20 @@ public class PasswordResetCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 
 		// Get the User object - you cannot reset a staff member's password
-		String dName = null;
 		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the Directory name
-			GetPilotDirectory dao = new GetPilotDirectory(con);
-			dName = dao.getDirectoryName(fName, lName);
-			if (dName == null) {
+			GetPilot dao = new GetPilot(con);
+			usr = dao.getByName(fName, lName);
+			if (usr == null) {
 				ctx.setMessage("User " + fName + " " + lName + " not found");
 				ctx.release();
 				return;
 			}
 
-			// Load the pilot and save in the message context
-			usr = dao.getFromDirectory(dName);
+			// Save in the message context
 			mctxt.addData("pilot", usr);
 
 			// Load the message template
@@ -117,9 +112,9 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Get the authenticator and update the password
 		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 		try {
-			auth.updatePassword(dName, newPwd);
+			auth.updatePassword(usr, newPwd);
 		} catch (SecurityException se) {
-			ctx.setMessage("Error updating password for " + dName + " - " + se.getMessage());
+			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + se.getMessage());
 			return;
 		}
 		

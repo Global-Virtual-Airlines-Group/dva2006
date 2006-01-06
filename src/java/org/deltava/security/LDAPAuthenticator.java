@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.IOException;
@@ -9,6 +10,7 @@ import javax.naming.directory.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Person;
 import org.deltava.util.ConfigLoader;
 
 /**
@@ -61,26 +63,25 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
 	 * Authenticates the user by doing an LDAP bind operation and checking if it succeeded.
-	 * @param dn the user's directory name
+	 * @param usr the user bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if authentication fails for any reason, contained within the cause of the exception.
-	 * @see org.deltava.security.Authenticator#authenticate(java.lang.String, java.lang.String)
+	 * @see org.deltava.security.Authenticator#authenticate(Person, String)
 	 */
-	@SuppressWarnings("unchecked")
-	public void authenticate(String dn, String pwd) throws SecurityException {
+	public void authenticate(Person usr, String pwd) throws SecurityException {
 		// Create a new environment to connect to the LDAP server
-		Hashtable<String, String> userEnv = (Hashtable<String, String>) _env.clone();
-		userEnv.put(Context.SECURITY_PRINCIPAL, dn);
+		Hashtable<String, String> userEnv = new Hashtable<String, String>(_env);
+		userEnv.put(Context.SECURITY_PRINCIPAL, usr.getDN());
 		userEnv.put(Context.SECURITY_CREDENTIALS, pwd);
 
 		// Do the bind and see what happens
 		try {
 			DirContext ctxt = new InitialDirContext(userEnv);
 			ctxt.close();
-			log.info(dn + " authenticated");
+			log.info(usr.getName() + " authenticated");
 		} catch (NamingException ne) {
-			log.warn(dn + " Authentication FAILURE - " + ne.getMessage());
-			SecurityException se = new SecurityException("Authentication failure for " + dn);
+			log.warn(usr.getDN() + " Authentication FAILURE - " + ne.getMessage());
+			SecurityException se = new SecurityException("Authentication failure for " + usr.getDN());
 			se.initCause(ne);
 			throw se;
 		}
@@ -88,12 +89,12 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
 	 * Updates a user's password.
-	 * @param dName the fully-qualified directory name
+	 * @param usr the user bean
 	 * @param pwd the new password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void updatePassword(String dName, String pwd) throws SecurityException {
-		log.debug("Updating password for " + dName + " in Directory");
+	public void updatePassword(Person usr, String pwd) throws SecurityException {
+		log.debug("Updating password for " + usr.getName() + " in Directory");
 
 		// Bind to the directory
 		try {
@@ -101,9 +102,9 @@ public class LDAPAuthenticator implements Authenticator {
 			try {
 				SearchControls ctrls = new SearchControls();
 				ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
-			   ctxt.search(dName, "(objectClass=person)", null);
+			   ctxt.search(usr.getDN(), "(objectClass=person)", null);
 			} catch (NameNotFoundException nnfe) {
-				addUser(dName, pwd); // Add the user entry if not found
+				addUser(usr, pwd); // Add the user entry if not found
 				return;
 			}
 			   
@@ -112,7 +113,7 @@ public class LDAPAuthenticator implements Authenticator {
 			ModificationItem mod = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, attr);
 
 			// Modify the password
-			ctxt.modifyAttributes(dName, new ModificationItem[] { mod });
+			ctxt.modifyAttributes(usr.getDN(), new ModificationItem[] { mod });
 			ctxt.close();
 		} catch (NamingException ne) {
 			SecurityException se = new SecurityException("Error updating LDAP password");
@@ -123,23 +124,12 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
 	 * Adds a User to the Directory.
-	 * @param dName the User's fully-qualified Directory name
+	 * @param usr the user bean
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(String dName, String pwd) throws SecurityException {
-	   addUser(dName, pwd, null);
-	}
-	
-	/**
-	 * Adds a User to the Directory.
-	 * @param dName the User's fully-qualified Directory name
-	 * @param pwd the User's password
-	 * @param userID an alias for the user, or null if none
-	 * @throws SecurityException if an error occurs
-	 */
-	public void addUser(String dName, String pwd, String userID) throws SecurityException {
-		log.debug("Adding user " + dName + " to Directory");
+	public void addUser(Person usr, String pwd) throws SecurityException {
+		log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Bind to the directory
 		try {
@@ -148,15 +138,15 @@ public class LDAPAuthenticator implements Authenticator {
 			// Create the attributes for the password and other user data
 			Attributes attrs = new BasicAttributes("userPassword", pwd);
 			attrs.put("objectClass", "person");
-			attrs.put("sn", dName.substring(dName.indexOf(' ') + 1, dName.indexOf(',')));
-			if (userID != null)
-			   attrs.put("uid", userID);
+			attrs.put("sn", usr.getLastName());
+			/* if (userID != null)
+			   attrs.put("uid", userID); */
 
 			// Add the user to the directory
-			ctxt.bind(dName, null, attrs);
+			ctxt.bind(usr.getDN(), null, attrs);
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error adding User " + dName);
+			SecurityException se = new SecurityException("Error adding User " + usr.getDN());
 			se.initCause(ne);
 			throw se;
 		}
@@ -164,11 +154,11 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
      * Checks if a particular name exists in the Directory.
-     * @param dName the fully-qualified directory name
+     * @param directoryName the fully-qualified directory name
      * @return TRUE if the user exists, otherwise FALSE
      * @throws SecurityException if an error occurs
      */
-	public boolean contains(String dName) throws SecurityException {
+	public boolean contains(String directoryName) throws SecurityException {
 
 		// Bind to the directory
 		try {
@@ -177,7 +167,7 @@ public class LDAPAuthenticator implements Authenticator {
 			// Do the LDAP search
 			SearchControls ctrls = new SearchControls();
 			ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
-			NamingEnumeration ne = ctxt.search(dName, "(objectClass=person)", ctrls);
+			NamingEnumeration ne = ctxt.search(directoryName, "(objectClass=person)", ctrls);
 			boolean isOK = ne.hasMoreElements();
 			
 			// Close the context
@@ -186,7 +176,7 @@ public class LDAPAuthenticator implements Authenticator {
 		} catch (NameNotFoundException nfe) {
 			return false;
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error searching for User " + dName);
+			SecurityException se = new SecurityException("Error searching for User " + directoryName);
 			se.initCause(ne);
 			throw se;
 		}
