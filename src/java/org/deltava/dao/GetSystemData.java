@@ -119,36 +119,35 @@ public class GetSystemData extends DAO {
 	}
 
 	/**
-	 * Returns invocation statistics for a particular Web Site Command.
-	 * @param cmdName the Command to query
+	 * Returns invocation statistics for a remote address.
+	 * @param remoteAddr the user's IP address or host name
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CommandLog> getCommands(String cmdName) throws DAOException {
+	public List<CommandLog> getCommands(String remoteAddr) throws DAOException {
 		try {
 			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UPPER(NAME)=?)");
-			_ps.setString(1, cmdName.toUpperCase());
+					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (UCASE(REMOTE_ADDR)=?) OR "
+					+ "(INET_ATON(?)=REMOTE_ADDR) ORDER BY CMDDATE");
+			_ps.setString(1, remoteAddr.toUpperCase());
+			_ps.setString(2, remoteAddr.toUpperCase());
 			return executeCommandLog();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Returns invocation statistics for a date and remote user address.
-	 * @param d the Date to query
-	 * @param remoteAddr the user's IP address
+	 * Returns invocation statistics for a particular user.
+	 * @param pilotID the user's database ID
 	 * @return a List of CommandLog objects
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CommandLog> getCommands(java.util.Date d, String remoteAddr) throws DAOException {
+	public List<CommandLog> getCommands(int pilotID) throws DAOException {
 		try {
 			prepareStatement("SELECT CMDDATE, PILOT_ID, INET_NTOA(REMOTE_ADDR), REMOTE_HOST, NAME, RESULT, "
-					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (DATE(CMDDATE) = DATE(?)) "
-					+ "AND (UCASE(REMOTE_ADDR)=?) ORDER BY CMDDATE");
-			_ps.setTimestamp(1, createTimestamp(d));
-			_ps.setString(2, remoteAddr.toUpperCase());
+					+ "TOTAL_TIME, BE_TIME, SUCCESS FROM SYS_COMMANDS WHERE (PILOT_ID=?) ORDER BY CMDDATE");
+			_ps.setInt(1, pilotID);
 			return executeCommandLog();
 		} catch (SQLException se) {
 			throw new DAOException(se);

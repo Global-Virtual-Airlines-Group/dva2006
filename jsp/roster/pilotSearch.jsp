@@ -99,8 +99,8 @@ return false;
 <c:otherwise>
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="15%">&nbsp;</td>
- <td width="30%">PILOT NAME</td>
+ <td colspan="2" width="25%">&nbsp;</td>
+ <td width="20%">PILOT NAME</td>
  <td width="10%">PILOT ID</td>
  <td width="10%">JOINED ON</td>
  <td width="10%">LAST FLIGHT</td>
@@ -112,22 +112,27 @@ return false;
 <c:forEach var="pilot" items="${results}">
 <c:set var="access" value="${accessMap[pilot.ID]}" scope="request" />
 <view:row entry="${pilot}">
+<c:set var="cspan" value="${2}" scope="request" />
+<content:filter roles="HR">
+ <td><el:cmdbutton url="cmdlog" linkID="0x${pilot.ID}" label="VIEW LOG" /></td>
+<c:set var="cspan" value="${1}" scope="request" />
+</content:filter>
 <c:choose>
 <c:when test="${access.canActivate}">
- <td><el:cmdbutton url="activate" linkID="0x${pilot.ID}" label="ACTIVATE PILOT" /></td>
+ <td colspan="${cspan}"><el:cmdbutton url="activate" linkID="0x${pilot.ID}" label="ACTIVATE PILOT" /></td>
 </c:when>
 <c:when test="${access.canChangeSignature}">
- <td><el:cmdbutton url="sigupdate" linkID="0x${pilot.ID}" label="EDIT SIGNATURE" /></td>
+ <td colspan="${cspan}"><el:cmdbutton url="sigupdate" linkID="0x${pilot.ID}" label="EDIT SIGNATURE" /></td>
 </c:when>
 <c:otherwise>
- <td>&nbsp;</td>
+ <td colspan="${cspan}">&nbsp;</td>
 </c:otherwise>
 </c:choose>
  <td class="pri bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
+ <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
 <c:if test="${pilot.legs > 0}">
- <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
+ <td class="small"><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
  <td class="bld"><el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:int value="${pilot.legs}" /></el:cmd></td>
  <td class="pri bld"><el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:dec value="${pilot.hours}" /></el:cmd></td>
 </c:if>
@@ -139,7 +144,7 @@ return false;
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="7"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Transferred" classes=" ,opt2,opt3,warn,opt1" /></td>
+ <td colspan="8"><view:legend width="100" labels="Active,Inactive,Retired,On Leave,Transferred" classes=" ,opt2,opt3,warn,opt1" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
