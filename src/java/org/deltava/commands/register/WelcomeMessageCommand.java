@@ -89,7 +89,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 				
 				// Update the user
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				auth.updatePassword(usr.getDN(), usr.getPassword());
+				auth.updatePassword(usr, usr.getPassword());
 			}
 			
 			// Add data to the message

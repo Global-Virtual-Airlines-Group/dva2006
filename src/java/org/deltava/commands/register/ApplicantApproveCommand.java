@@ -166,7 +166,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.addUser(a.getDN(), a.getPassword());
+			auth.addUser(a, a.getPassword());
 			
 			// Commit the transactions
 			ctx.commitTX();
