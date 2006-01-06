@@ -452,7 +452,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// If we're updating the password, then save it
 			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				auth.updatePassword(p.getDN(), ctx.getParameter("pwd1"));
+				auth.updatePassword(p, ctx.getParameter("pwd1"));
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
 			}
 
