@@ -58,12 +58,12 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	}
 
 	/**
-	 * Returns the Directory Name for a particular pilot Code.
+	 * Returns the Pilot with a particular Pilot Code.
 	 * @param pilotCode the Pilot Code (eg DVA043)
 	 * @return the Directory Name of the Pilot, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public String getDirectoryName(String pilotCode) throws DAOException {
+	public Pilot getByCode(String pilotCode) throws DAOException {
 
 		// Parse the pilot code
 		StringBuilder code = new StringBuilder();
@@ -78,43 +78,14 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			return null;
 
 		try {
-			prepareStatement("SELECT LDAP_DN FROM PILOTS WHERE (PILOT_ID=?)");
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
 			_ps.setInt(1, Integer.parseInt(code.toString()));
 
 			// Execute the query and get return value
-			ResultSet rs = _ps.executeQuery();
-			String dN = rs.next() ? rs.getString(1) : null;
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return dN;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the Directory Name for a Pilot.
-	 * @param fName the Pilot's First (given) name
-	 * @param lName the Pilot's Last (family) name
-	 * @return the Pilot's Directory Name, or null if not found
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public String getDirectoryName(String fName, String lName) throws DAOException {
-		try {
-			prepareStatement("SELECT LDAP_DN FROM PILOTS WHERE (UCASE(FIRSTNAME)=?) AND (UCASE(LASTNAME)=?)");
-			_ps.setString(1, fName.toUpperCase());
-			_ps.setString(2, lName.toUpperCase());
-
-			// Execute the query and get return value
-			ResultSet rs = _ps.executeQuery();
-			String dN = rs.next() ? rs.getString(1) : null;
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return dN;
+			List<Pilot> results = execute();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

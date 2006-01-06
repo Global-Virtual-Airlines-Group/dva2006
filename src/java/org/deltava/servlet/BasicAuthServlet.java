@@ -60,16 +60,13 @@ public abstract class BasicAuthServlet extends GenericServlet {
 			// Get the DAO and the directory name for this user
 			GetPilotDirectory dao = new GetPilotDirectory(con);
 			String userID = tkns.nextToken();
-			String dN = dao.getDirectoryName(userID);
-			if (dN == null)
+			p = dao.getByCode(userID);
+			if (p == null)
 				throw new SecurityException("Unknown User ID - " + userID);
 
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.authenticate(dN, tkns.nextToken());
-
-			// If we got this far, load the user data
-			p = dao.getFromDirectory(dN);
+			auth.authenticate(p, tkns.nextToken());
 		} catch (SecurityException se) {
 			log.warn("Authentication failure - " + se.getMessage());
 		} catch (DAOException de) {

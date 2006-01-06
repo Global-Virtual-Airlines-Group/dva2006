@@ -61,19 +61,14 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			String dN = dao.getDirectoryName(fName, lName);
-			if (dN == null)
+			p = dao.getByName(fName, lName);
+			if (p == null)
 				throw new SecurityException("Unknown User Name");
 
 			// Get the authenticator and try to authenticate
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.authenticate(dN, ctx.getParameter("pwd"));
+			auth.authenticate(p, ctx.getParameter("pwd"));
 
-			// If we authenticated, load the pilot
-			p = dao.getFromDirectory(dN);
-			if (p == null)
-				throw new DAOException("Error loading Pilot " + dN);
-			
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			if (p.getStatus() == Pilot.ON_LEAVE) {
 			   log.info("Returning " + p.getName() + " from Leave");
