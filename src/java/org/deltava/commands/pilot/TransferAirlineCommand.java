@@ -165,9 +165,9 @@ public class TransferAirlineCommand extends AbstractCommand {
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			newUser.setPassword(PasswordGenerator.generate(8));
 			if (auth.contains(newUser.getDN())) {
-				auth.updatePassword(newUser.getDN(), newUser.getPassword());
+				auth.updatePassword(newUser, newUser.getPassword());
 			} else {
-				auth.addUser(newUser.getDN(), newUser.getPassword());
+				auth.addUser(newUser, newUser.getPassword());
 			}
 
 			// Commit transaction
