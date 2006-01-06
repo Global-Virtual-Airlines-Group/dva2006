@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.Person;
 import org.deltava.util.ConfigLoader;
 
 /**
@@ -52,16 +53,16 @@ public class SQLAuthenticator implements Authenticator {
 	 * Authenticates a user by validating the password against the database. If a database cryptographic function is
 	 * set, it is applied to the password within the statement. <i>This may result in credential data being passed over
 	 * the connection to the JDBC data source, depending on the driver implementation. </i>
-	 * @param dN the User's Directory Name
+	 * @param usr the User bean
 	 * @param pwd the supplied password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void authenticate(String dN, String pwd) throws SecurityException {
+	public void authenticate(Person usr, String pwd) throws SecurityException {
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM AUTH WHERE (USER=?) AND (PWD="
 					+ _props.getProperty("jdbc.cryptfunc") + "(?))");
-			ps.setString(1, dN);
+			ps.setString(1, usr.getDN());
 			ps.setString(2, pwd);
 
 			// Execute the query and check what we get back
@@ -75,12 +76,12 @@ public class SQLAuthenticator implements Authenticator {
 
 			// If we haven't authenticated, throw an execption
 			if (!isAuth)
-				throw new SecurityException("Invalid password for " + dN);
+				throw new SecurityException("Invalid password for " + usr.getDN());
 
-			log.info(dN + " authenticated");
+			log.info(usr.getName() + " authenticated");
 		} catch (SQLException se) {
-			log.warn(dN + " Authentication FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("Authentication failure for " + dN);
+			log.warn(usr.getDN() + " Authentication FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("Authentication failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}
@@ -90,12 +91,12 @@ public class SQLAuthenticator implements Authenticator {
 	 * Updates a User's password. If a database cryptographic function is set, it is applied to the password within the
 	 * statement. <i>This may result in credential data being passed over the connection to the JDBC data source,
 	 * depending on the driver implementation. </i>
-	 * @param dN the User's fully-qualified directory Name
+	 * @param usr the User bean
 	 * @param pwd the new password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void updatePassword(String dN, String pwd) throws SecurityException {
-		log.debug("Updating password for " + dN + " in Directory");
+	public void updatePassword(Person usr, String pwd) throws SecurityException {
+		log.debug("Updating password for " + usr.getDN() + " in Directory");
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO AUTH (USER, PWD) VALUES (?, ");
@@ -105,7 +106,7 @@ public class SQLAuthenticator implements Authenticator {
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, dN);
+			ps.setString(1, usr.getDN());
 			ps.setString(2, pwd);
 
 			// Update the directory
@@ -117,39 +118,27 @@ public class SQLAuthenticator implements Authenticator {
 
 			// If no rows were updated, throw an exception
 			if (rowsUpdated == 0) {
-				log.warn(dN + " password update FAILURE - Unknown User");
-				throw new SecurityException("Unknown User Name - " + dN);
+				log.warn(usr.getDN() + " password update FAILURE - Unknown User");
+				throw new SecurityException("Unknown User Name - " + usr.getDN());
 			}
 		} catch (SQLException se) {
-			log.warn(dN + " password update FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("Password Update failure for " + dN);
+			log.warn(usr.getDN() + " password update FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("Password Update failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}
 	}
 
 	/**
-	 * Adds a user to the Directory. 
-	 * @param dN the User's fully-qualified directory Name
-	 * @param pwd the User's password
-	 * @throws SecurityException if a JDBC error occurs
-	 * @see SQLAuthenticator#addUser(String, String, String)
-	 */
-	public void addUser(String dN, String pwd) throws SecurityException {
-	   addUser(dN, pwd, null);
-	}
-	
-	/**
 	 * Adds a user to the Directory. If a database cryptographic function is set, it is applied to the password within
 	 * the statement. <i>This may result in credential data being passed over the connection to the JDBC data source,
 	 * depending on the driver implementation. </i>
-	 * @param dN the User's fully-qualified directory Name
+	 * @param usr the User bean
 	 * @param pwd the User's password
-	 * @param userID an alias for the User, or null if none
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void addUser(String dN, String pwd, String userID) throws SecurityException {
-		log.debug("Adding user " + dN + " to Directory");
+	public void addUser(Person usr, String pwd) throws SecurityException {
+		log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO AUTH (USER, PWD, ALIAS) VALUES (?, ");
@@ -160,8 +149,8 @@ public class SQLAuthenticator implements Authenticator {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, pwd);
-			ps.setString(2, dN);
-			ps.setString(3, userID);
+			ps.setString(2, usr.getDN());
+			ps.setString(3, null);
 
 			// Update the directory
 			ps.executeUpdate();
@@ -170,8 +159,8 @@ public class SQLAuthenticator implements Authenticator {
 			ps.close();
 			c.close();
 		} catch (SQLException se) {
-			log.warn(dN + " user addition FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User addition failure for " + dN);
+			log.warn(usr.getDN() + " user addition FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("User addition failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}

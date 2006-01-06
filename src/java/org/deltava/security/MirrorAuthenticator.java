@@ -1,5 +1,7 @@
-// Copyright (c) 2004, 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.security;
+
+import org.deltava.beans.Person;
 
 /**
  * An Authenticator used to mirror data from one authenticator to another. When a user is sucessfully authenticated by
@@ -21,13 +23,13 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 
 	/**
 	 * Authenticates the user against the source authenticator.
-	 * @param directoryName the user's directory name
+	 * @param usr the User bean
 	 * @param pwd the user's supplied password
 	 * @throws SecurityException if authentication fails
-	 * @see Authenticator#authenticate(String, String)
+	 * @see Authenticator#authenticate(Person, String)
 	 */
-	public void authenticate(String directoryName, String pwd) throws SecurityException {
-		_src.authenticate(directoryName, pwd);
+	public void authenticate(Person usr, String pwd) throws SecurityException {
+		_src.authenticate(usr, pwd);
 	}
 
 	/**
@@ -43,39 +45,27 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	/**
 	 * Updates the user's password in both authenticators. If this operation fails, no guarantee of transaction
 	 * atomicity is given.
-	 * @param directoryName the user's directory name
+	 * @param usr the user bean
 	 * @param pwd the user's new password
 	 * @throws SecurityException if either update operation fails
-	 * @see Authenticator#updatePassword(String, String)
+	 * @see Authenticator#updatePassword(Person, String)
 	 */
-	public void updatePassword(String directoryName, String pwd) throws SecurityException {
-		_src.updatePassword(directoryName, pwd);
-		_dst.updatePassword(directoryName, pwd);
+	public void updatePassword(Person usr, String pwd) throws SecurityException {
+		_src.updatePassword(usr, pwd);
+		_dst.updatePassword(usr, pwd);
 	}
 
 	/**
 	 * Adds the user to both authenticators. If this operation fails, no guarantee of transaction
 	 * atomicity is given.
-	 * @param directoryName the user's directory name
+	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if either add operation fails
-	 * @see Authenticator#addUser(String, String)
+	 * @see Authenticator#addUser(Person, String)
 	 */
-	public void addUser(String directoryName, String pwd) throws SecurityException {
-		_src.addUser(directoryName, pwd);
-		_dst.addUser(directoryName, pwd);
-	}
-
-	/**
-	 *  Adds the user to both authenticators.
-	 * @param directoryName the user's directory name
-	 * @param pwd the user's password
-	 * @param userID an alias for the user
-	 * @see org.deltava.security.Authenticator#addUser(java.lang.String, java.lang.String, java.lang.String)
-	 */
-	public void addUser(String directoryName, String pwd, String userID) throws SecurityException {
-		_src.addUser(directoryName, pwd, userID);
-		_dst.addUser(directoryName, pwd, userID);
+	public void addUser(Person usr, String pwd) throws SecurityException {
+		_src.addUser(usr, pwd);
+		_dst.addUser(usr, pwd);
 	}
 
 	/* (non-Javadoc)
