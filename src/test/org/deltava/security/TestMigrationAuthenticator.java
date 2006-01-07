@@ -1,10 +1,10 @@
 package org.deltava.security;
 
+import org.deltava.beans.Person;
+
 import org.apache.log4j.PropertyConfigurator;
 
-import junit.framework.TestCase;
-
-public class TestMigrationAuthenticator extends TestCase {
+public class TestMigrationAuthenticator extends AuthenticatorTestCase {
 
     private MigrationAuthenticator _auth;
     
@@ -21,19 +21,21 @@ public class TestMigrationAuthenticator extends TestCase {
     }
     
     public void testSrcAuthenticationAndCopy() {
-    	assertFalse(_auth.getDestination().contains("cn=Luke Kolin,ou=afv,o=sce"));
-    	_auth.authenticate("cn=Luke Kolin,ou=afv,o=sce", "maddog");
-    	assertTrue(_auth.getDestination().contains("cn=Luke Kolin,ou=afv,o=sce"));
-    	_auth.removeUser("cn=Luke Kolin,ou=afv,o=sce");
-    	assertFalse(_auth.getDestination().contains("cn=Luke Kolin,ou=afv,o=sce"));
+    	Person usr2 = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=afv,o=sce");
+    	assertFalse(_auth.getDestination().contains(usr2.getDN()));
+    	_auth.authenticate(usr2, "maddog");
+    	assertTrue(_auth.getDestination().contains(usr2.getDN()));
+    	_auth.removeUser(usr2.getDN());
+    	assertFalse(_auth.getDestination().contains(usr2.getDN()));
     }
     
     public void testAddRemove() throws Exception {
-    	_auth.addUser("cn=Test User,ou=dva,o=sce", "test");
-    	assertTrue(_auth.contains("cn=Test User,ou=dva,o=sce"));
-    	assertTrue(_auth.getDestination().contains("cn=Test User,ou=dva,o=sce"));
-    	assertFalse(_auth.getSource().contains("cn=Test User,ou=dva,o=sce"));
-    	_auth.authenticate("cn=Test User,ou=dva,o=sce", "test");
-    	_auth.removeUser("cn=Test User,ou=dva,o=sce");
+    	Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
+    	_auth.addUser(usr2, "test");
+    	assertTrue(_auth.contains(usr2.getDN()));
+    	assertTrue(_auth.getDestination().contains(usr2.getDN()));
+    	assertFalse(_auth.getSource().contains(usr2.getDN()));
+    	_auth.authenticate(usr2, "test");
+    	_auth.removeUser(usr2.getDN());
     }
 }

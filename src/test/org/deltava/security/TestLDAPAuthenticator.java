@@ -1,12 +1,13 @@
 package org.deltava.security;
 
+import org.deltava.beans.Person;
+
 import org.apache.log4j.PropertyConfigurator;
 
-import junit.framework.TestCase;
-
-public class TestLDAPAuthenticator extends TestCase {
+public class TestLDAPAuthenticator extends AuthenticatorTestCase {
 
     private LDAPAuthenticator _auth;
+    private Person _usr;
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -21,9 +22,9 @@ public class TestLDAPAuthenticator extends TestCase {
     }
     
     public void testAuthentication() {
-        _auth.authenticate("cn=Luke Kolin, ou=dva, o=sce", "maddog");
+    	_auth.authenticate(_usr, "maddog");
         try {
-            _auth.authenticate("cn=Luke Kolin, ou=dva, o=sce", "bad_password");
+        	_auth.authenticate(_usr, "bad_password");
             fail("SecurityException expected");
         } catch (SecurityException se) {
             return;
@@ -36,9 +37,10 @@ public class TestLDAPAuthenticator extends TestCase {
     }
     
     public void testAddRemove() throws Exception {
-    	_auth.addUser("cn=Test User,ou=dva,o=sce", "test");
-    	assertTrue(_auth.contains("cn=Test User,ou=dva,o=sce"));
-    	_auth.authenticate("cn=Test User,ou=dva,o=sce", "test");
-    	_auth.removeUser("cn=Test User,ou=dva,o=sce");
+    	Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
+    	_auth.addUser(usr2, "test");
+    	assertTrue(_auth.contains(usr2.getDN()));
+    	_auth.authenticate(usr2, "test");
+    	_auth.removeUser(usr2.getDN());
     }
 }
