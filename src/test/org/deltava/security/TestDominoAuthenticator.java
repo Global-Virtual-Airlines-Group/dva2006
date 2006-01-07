@@ -1,18 +1,20 @@
 package org.deltava.security;
 
+import org.deltava.beans.Person;
+
 import org.apache.log4j.PropertyConfigurator;
 
-import junit.framework.TestCase;
-
-public class TestDominoAuthenticator extends TestCase {
+public class TestDominoAuthenticator extends AuthenticatorTestCase {
 
     private DominoAuthenticator _auth;
+    private Person _usr;
     
     protected void setUp() throws Exception {
         super.setUp();
         PropertyConfigurator.configure("data/log4j.test.properties");
         _auth = new DominoAuthenticator();
         _auth.init(Authenticator.DEFAULT_PROPS_FILE);
+        _usr = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin, ou=dva, o=sce");
     }
 
     protected void tearDown() throws Exception {
@@ -21,9 +23,9 @@ public class TestDominoAuthenticator extends TestCase {
     }
     
     public void testAuthentication() {
-        _auth.authenticate("cn=Luke Kolin, ou=dva, o=sce", "maddog");
+        _auth.authenticate(_usr, "maddog");
         try {
-            _auth.authenticate("cn=Luke Kolin, ou=dva, o=sce", "bad_password");
+            _auth.authenticate(_usr, "bad_password");
             fail("SecurityException expected");
         } catch (SecurityException se) {
             return;
@@ -31,7 +33,7 @@ public class TestDominoAuthenticator extends TestCase {
     }
     
     public void testSearch() throws Exception {
-    	_auth.authenticate("cn=Luke Kolin,ou=dva,o=sce", "maddog");
+    	_auth.authenticate(_usr, "maddog");
     	assertTrue(_auth.contains("cn=Luke Kolin,ou=dva,o=sce"));
     }
 }

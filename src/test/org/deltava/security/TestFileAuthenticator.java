@@ -1,10 +1,10 @@
 package org.deltava.security;
 
+import org.deltava.beans.Person;
+
 import org.apache.log4j.PropertyConfigurator;
 
-import junit.framework.TestCase;
-
-public class TestFileAuthenticator extends TestCase {
+public class TestFileAuthenticator extends AuthenticatorTestCase {
 
     private Authenticator _auth;
     
@@ -24,11 +24,13 @@ public class TestFileAuthenticator extends TestCase {
         assertNotNull(_auth);
         
         // Test authentication
-        _auth.authenticate("cn=Terry Eshenour,ou=dva,o=sce", "terry");
+        Person usr2 = new AuthPerson("Terry", "Eshenour", "cn=Terry Eshenour,ou=dva,o=sce");
+        _auth.authenticate(usr2, "terry");
         
         // Test bad password exception - this also tests case sensitivity
         try {
-            _auth.authenticate("cn=David Schaum,ou=dva,o=sce", "David");
+        	usr2 = new AuthPerson("David", "Schaum", "cn=David Schaum,ou=dva,o=sce");
+            _auth.authenticate(usr2, "David");
             fail("SecurityException expected");
         } catch (SecurityException se) { }
     }
