@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -51,24 +51,6 @@ public class SetPilot extends PilotWriteDAO {
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
 			_ps.setInt(1, Pilot.ON_LEAVE);
-			_ps.setInt(2, id);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Marks a Pilot as Transferred.
-	 * @param id the pilot database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void setTransferred(int id) throws DAOException {
-
-		invalidate(id);
-		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
-			_ps.setInt(1, Pilot.TRANSFERRED);
 			_ps.setInt(2, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
