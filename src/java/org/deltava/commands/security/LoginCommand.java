@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -7,6 +8,7 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.StatusUpdate;
 import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
@@ -70,8 +72,10 @@ public class LoginCommand extends AbstractCommand {
 			auth.authenticate(p, ctx.getParameter("pwd"));
 
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
+			boolean returnToActive = false;
 			if (p.getStatus() == Pilot.ON_LEAVE) {
 			   log.info("Returning " + p.getName() + " from Leave");
+			   returnToActive = true;
 			   p.setStatus(Pilot.ACTIVE);
 			} else if (p.getStatus() != Pilot.ACTIVE) {
 			   log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
@@ -104,6 +108,15 @@ public class LoginCommand extends AbstractCommand {
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p);
+			
+			// Mark as returned from leave
+			if (returnToActive) {
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				upd.setAuthorID(p.getID());
+				upd.setDescription("Returned from Leave of Absence");
+				sudao.write(upd);
+			}
 			
 			// Clear the inactivity interval (if any)
 			SetInactivity idao = new SetInactivity(con);
