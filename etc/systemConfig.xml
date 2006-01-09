@@ -336,6 +336,7 @@
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
 			<role>Developer</role>
+			<role>Dispatch</role>
 			<role>Examination</role>
 			<role>Event</role>
 			<role>Fleet</role>
