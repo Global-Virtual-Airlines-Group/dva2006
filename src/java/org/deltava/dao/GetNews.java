@@ -113,6 +113,7 @@ public class GetNews extends DAO {
     /**
      * Helper method to iterate through the result set.
      */
+    @SuppressWarnings("unchecked")
     private List execute() throws SQLException {
 
        // Execute the query
@@ -137,7 +138,7 @@ public class GetNews extends DAO {
           // Set common properties
           n.setID(rs.getInt(3));
           n.setAuthorID(rs.getInt(4));
-          n.setDate(rs.getTimestamp(5));
+          n.setDate(expandDate(rs.getDate(5)));
           
           // Add the object to the results
           results.add(n);
