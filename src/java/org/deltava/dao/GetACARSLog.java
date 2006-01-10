@@ -48,7 +48,7 @@ public class GetACARSLog extends GetACARSData {
 
 		// Add the terms
 		if (!terms.isEmpty()) {
-			buf.append("WHERE ");
+			buf.append(" WHERE ");
 			for (Iterator<String> i = terms.iterator(); i.hasNext();) {
 				buf.append(i.next());
 				if (i.hasNext())
@@ -56,11 +56,10 @@ public class GetACARSLog extends GetACARSData {
 			}
 		}
 
-		buf.append(" ORDER BY C.DATE DESC");
+		buf.append(" GROUP BY C.ID ORDER BY C.DATE DESC");
 
 		try {
-			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, " + "  " + ""
-					+ "WHERE (C.PILOT_ID=?) GROUP BY C.ID ORDER BY " + "C.DATE DESC");
+			prepareStatement(buf.toString());
 			int psOfs = 0;
 			if (criteria.getPilotID() != 0)
 				_ps.setInt(++psOfs, criteria.getPilotID());
