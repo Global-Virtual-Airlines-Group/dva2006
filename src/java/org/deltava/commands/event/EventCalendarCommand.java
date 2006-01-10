@@ -13,7 +13,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Online Event calendar.
@@ -40,14 +39,13 @@ public class EventCalendarCommand extends AbstractCommand {
 		try {
 			startDate = _df.parse(ctx.getParameter("startDate"));
 		} catch (Exception e) {
-			startDate = new Date();
+			Calendar cld = Calendar.getInstance();
+			cld.set(Calendar.HOUR, 0);
+			cld.set(Calendar.MINUTE, 0);
+			cld.set(Calendar.SECOND, 0);
+			startDate = cld.getTime();
 		}
 		
-		// Get the user's time zone
-		Person usr = ctx.getUser();
-		TZInfo tz = (usr != null) ? usr.getTZ() : TZInfo.get(SystemData.get("time.timezone"));
-		startDate = DateTime.convert(startDate, tz);
-
 		try {
 			Connection con = ctx.getConnection();
 			
