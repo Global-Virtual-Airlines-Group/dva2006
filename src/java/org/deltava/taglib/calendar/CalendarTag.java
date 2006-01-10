@@ -221,17 +221,21 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	Collection<CalendarEntry> getCurrentEntries() {
 		Collection<CalendarEntry> results = new ArrayList<CalendarEntry>();
 
-		// Calculate the start/end points, converted into the user's time zone
-		Date dayStart = DateTime.convert(_currentDate.getTime(), _tz);
-		Calendar sd = CalendarUtils.getInstance(dayStart);
-		Calendar ed = CalendarUtils.getInstance(dayStart);
+		// Create the current date in the user's local time and determine what the local equivalent is
+		DateTime ldt = new DateTime(_currentDate.getTime(), _tz);
+		ldt.convertTo(TZInfo.local());
+		
+		// Calculate the start/end points in the user's local time
+		Calendar sd = CalendarUtils.getInstance(ldt.getDate()); 
+		Calendar ed = CalendarUtils.getInstance(ldt.getDate());			
 		sd.add(Calendar.SECOND, -1);
 		ed.add(Calendar.DATE, 1);
 
 		// Get the entries
 		for (Iterator<CalendarEntry> i = _entries.iterator(); i.hasNext();) {
 			CalendarEntry ce = i.next();
-			Date entryDate = DateTime.convert(ce.getDate(), _tz);
+			//Date entryDate = DateTime.convert(ce.getDate(), _tz);
+			Date entryDate = ce.getDate();
 			if ((entryDate.after(sd.getTime())) && (entryDate.before(ed.getTime())))
 				results.add(ce);
 		}
@@ -260,10 +264,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	 * @throws JspException never
 	 */
 	public int doStartTag() throws JspException {
-		// Convert the start/end dates to the user's time zone
-		_startDate = DateTime.convert(_startDate, _tz);
-		_endDate = DateTime.convert(_endDate, _tz);
-		
+
 		// Generate the current date
 		_currentDate = CalendarUtils.getInstance(_startDate);
 		_currentDate.set(Calendar.HOUR_OF_DAY, 0);
