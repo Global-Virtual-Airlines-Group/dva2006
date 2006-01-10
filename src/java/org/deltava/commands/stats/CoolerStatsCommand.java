@@ -74,7 +74,7 @@ public class CoolerStatsCommand extends AbstractViewCommand {
 		}
 		
 		// Save the sorter types and labels in the request
-		ctx.setAttribute("labelName", GROUP_NAMES[StringUtils.arrayIndexOf(GROUP_NAMES, labelType)], REQUEST);
+		ctx.setAttribute("labelName", GROUP_CODE[StringUtils.arrayIndexOf(GROUP_CODE, labelType)], REQUEST);
 		ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
 		ctx.setAttribute("groupTypes", GROUP_OPTIONS, REQUEST);
 		
