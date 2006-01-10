@@ -271,8 +271,8 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#getBank()
 	 */
 	public void setBank(double b) {
-		if ((b < -90) || (b > 90))
-			throw new IllegalArgumentException("Bank angle cannot be < -90 or > 90 degrees");
+		if ((b < -170) || (b > 170))
+			throw new IllegalArgumentException("Bank angle cannot be < -170 or > 170 degrees");
 		
 		_bank = b;
 	}
