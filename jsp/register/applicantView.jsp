@@ -32,7 +32,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -180,11 +180,12 @@ return true;
  <td class="label">Registered from</td>
  <td class="data">${applicant.registerHostName}</td>
 </tr>
-
-<c:if test="${!empty soundexUsers}">
-<%@ include file="/jsp/register/appSoundexMatch.jsp" %> 
-</c:if>
-
+<tr>
+ <td class="label">Google Search</td>
+ <td class="data"><a rel="external" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
+do a Google search on &quot;${applicant.name}&quot;.</td>
+</tr>
+<c:if test="${!empty soundexUsers}"><%@ include file="/jsp/register/appSoundexMatch.jsp" %></c:if>
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->
 <tr class="title">
