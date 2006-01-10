@@ -58,7 +58,7 @@ public class PasswordResetCommand extends AbstractCommand {
 
 			// Get the Directory name
 			GetPilot dao = new GetPilot(con);
-			usr = dao.getByName(fName, lName);
+			usr = dao.getByName(fName + " " + lName, SystemData.get("airline.db"));
 			if (usr == null) {
 				ctx.setMessage("User " + fName + " " + lName + " not found");
 				ctx.release();

@@ -63,7 +63,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			p = dao.getByName(fName, lName);
+			p = dao.getByName(fName + " " + lName, SystemData.get("airline.db"));
 			if (p == null)
 				throw new SecurityException("Unknown User Name");
 
