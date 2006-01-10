@@ -1145,7 +1145,13 @@
 		<class>org.deltava.commands.system.LogViewCommand</class>
 		<roles>Admin</roles>
 	</command>
-	
+
+	<command id="cmdlog">
+		<name>View Command Log</name>
+		<class>org.deltava.commands.system.CommandLogViewCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="systemlogpurge">
 		<name>Purge System Log</name>
 		<class>org.deltava.commands.system.LogPurgeCommand</class>
