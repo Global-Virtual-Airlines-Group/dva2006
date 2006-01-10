@@ -13,17 +13,6 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
-<script language="JavaScript" type="text/javascript">
-function validate(form)
-{
-if (!checkSubmit()) return false;
-if (!validateText(form.addr, 8, 'IP address or host name')) return false;
-
-setSubmit();
-disableButton('SearchButton');
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -33,7 +22,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="cmdlog.do" method="post" validate="return validate(this)">
+<el:form action="cmdlog.do" method="post" validate="return true">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> WEB SITE COMMAND LOG</td>
@@ -58,17 +47,43 @@ return true;
 <c:if test="${doSearch}">
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="x" class="left">COMMAND LOG RESULTS</td>
+ <td colspan="6" class="left">COMMAND LOG RESULTS</td>
 </tr>
 <c:if test="${empty viewContext.results}">
 <tr>
- <td colspan="x" class="pri bld">No Command Log entries matching your criteria were found.</td>
+ <td colspan="6" class="pri bld">No Command Log entries matching your criteria were found.</td>
 </tr>
 </c:if>
 <c:if test="${!empty viewContext.results}">
 <tr class="title">
  <td width="15%">DATE</td>
- 
+ <td width="20%>PILOT NAME</td>
+ <td width="35%">ADDRESS</td>
+ <td width="10%">COMMAND</td>
+ <td width="10%">TIME</td>
+ <td>DB TIME</td>
+</tr>
+<c:forEach var="entry" items="${viewContext.results}">
+<c:set var="pilot" value="${pilots[entry.pilotID]}" scope="request" />
+<view:row entry="${entry}">
+ <td class="small"><fmt:date d="MM/dd/yy" t="HH:mm:ss" date="${entry.date}" /></td>
+<c:if test="${entry.pilotID != 0}">
+ <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd></td>
+</c:if>
+<c:if test="${entry.pilotID == 0}">
+ <td class="sec bld">ANONYMOUS</td>
+</c:if>
+ <td class="small">${entry.remoteHost} (${entry.remoteAddr})</td>
+ <td class="pri bld">${entry.name}</td>
+ <td><fmt:int value="${entry.time}" /> ms</td>
+ <td><fmt:int value="${entry.backEndTime}" /> ms</td>
+</view:row>
+</c:forEach>
+
+<!-- Scroll Bar -->
+<tr class="title">
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+</tr>
 </c:if>
 </el:table>
 </c:if>

@@ -1,9 +1,11 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.system;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.servlet.CommandLog;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -42,9 +44,9 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          Connection con = ctx.getConnection();
          
          // If we're searching for a pilot name, get it
+         GetPilot pdao = new GetPilot(con);
          int id = ctx.getID();
          if ((id == 0) && (ctx.getParameter("pilotName") != null)) {
-        	 GetPilot pdao = new GetPilot(con);
         	 Pilot usr = pdao.getByName(ctx.getParameter("pilotName"), SystemData.get("airline.db"));
         	 if (usr != null) {
         		 ctx.setAttribute("pilot", usr, REQUEST);
@@ -58,11 +60,18 @@ public class CommandLogViewCommand extends AbstractViewCommand {
          dao.setQueryMax(vc.getCount());
          
          // Do the query
-         if (id != 0) {
-        	 vc.setResults(dao.getCommands(id));
-         } else {
-        	 vc.setResults(dao.getCommands(addr));
+         Collection<CommandLog> results = (id != 0) ? dao.getCommands(id) : dao.getCommands(addr);
+         vc.setResults(results);
+         
+         // Load the pilot IDs
+         Collection<Integer> ids = new HashSet<Integer>();
+         for (Iterator<CommandLog> i = results.iterator(); i.hasNext(); ) {
+        	 CommandLog cl = i.next();
+        	 ids.add(new Integer(cl.getPilotID()));
          }
+         
+         // Get the pilot IDs
+         ctx.setAttribute("pilots", pdao.getByID(ids, "PILOTS"), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
