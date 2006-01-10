@@ -438,9 +438,12 @@ roles.</td>
 and database usage times here.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="systemlog">System Log</el:cmd></td>
- <td class="data">You can view and search for entries in the Application, Scheduled Task and ACARS Log 
-databases.</td>
+ <td class="mid"><el:cmd className="bld" url="systemlog">Application Log</el:cmd></td>
+ <td class="data">You can view and search for entries in the Application Log database.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
+ <td class="data">You can view and search for entries in the Command Log database.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarsempty">Empty ACARS Log Entries</el:cmd></td>
