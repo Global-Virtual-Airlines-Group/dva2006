@@ -48,7 +48,10 @@ return true;
 - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /><br />
 <c:forEach var="route" items="${event.routes}">${route.airportD.name} - ${route.airportA.name}<br /></c:forEach>
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="request" />
-<c:if test="${eventSize == 0}">
+<c:if test="${!event.canSignup}">
+<span class="warn bld">SIGNUPS NOT AVAILABLE</span>
+</c:if>
+<c:if test="${(eventSize == 0) && event.canSignup}">
 <span class="bld">NO SIGNUPS YET</span>
 </c:if>
 <c:if test="${eventSize > 0}">

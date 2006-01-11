@@ -284,14 +284,15 @@ public class SetEvent extends DAO {
 	 */
 	private void insert(Event e) throws SQLException {
 		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
-				+ "BRIEFING) VALUES (?, ?, ?, ?, ?, ?, ?)");
+				+ "BRIEFING, CAN_SIGNUP) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
 		_ps.setInt(3, e.getStatus());
 		_ps.setTimestamp(4, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(5, createTimestamp(e.getEndTime()));
-		_ps.setTimestamp(6, createTimestamp(e.getSignupDeadline()));
+		_ps.setTimestamp(6, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
 		_ps.setString(7, e.getBriefing());
+		_ps.setBoolean(8, e.getCanSignup());
 		
 		// Execute the update and get the Event ID
 		executeUpdate(1);
@@ -304,15 +305,16 @@ public class SetEvent extends DAO {
 	private void update(Event e) throws SQLException {
 		// Prepare the statement
 		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
-				+ "BRIEFING=?, STATUS=? WHERE (ID=?)");
+				+ "BRIEFING=?, CAN_SIGNUP=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
 		_ps.setTimestamp(3, createTimestamp(e.getStartTime()));
 		_ps.setTimestamp(4, createTimestamp(e.getEndTime()));
-		_ps.setTimestamp(5, createTimestamp(e.getSignupDeadline()));
+		_ps.setTimestamp(5, createTimestamp(e.getCanSignup() ? e.getSignupDeadline() : e.getStartTime()));
 		_ps.setString(6, e.getBriefing());
-		_ps.setInt(7, e.getStatus());
-		_ps.setInt(8, e.getID());
+		_ps.setBoolean(7, e.getCanSignup());
+		_ps.setInt(8, e.getStatus());
+		_ps.setInt(9, e.getID());
 		
 		// Execute the Update
 		executeUpdate(1);

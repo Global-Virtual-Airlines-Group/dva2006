@@ -52,7 +52,7 @@ public class EventAccessControl extends AccessControl {
 
       // Set access variables
       boolean isEvent = _ctx.isUserInRole("Event");
-      _canSignup = (_ev.getStatus() == Event.OPEN) && (!_ev.isSignedUp(_ctx.getUser().getID()));
+      _canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() &&  (!_ev.isSignedUp(_ctx.getUser().getID()));
       _canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
       _canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
       _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && (!_ev.getSignups().isEmpty()) && isEvent;

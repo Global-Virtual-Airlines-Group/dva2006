@@ -17,6 +17,14 @@
 <content:js name="datePicker" />
 <content:js name="airportRefresh" />
 <script language="JavaScript" type="text/javascript">
+function updateSignups()
+{
+var f = document.forms[0];
+f.closeDate.disabled = (!f.canSignup.checked);
+f.closeTime.disabled = (!f.canSignup.checked);
+return true;
+}
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -33,7 +41,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void updateSignups()">
 <content:page>
 <%@ include file="/jsp/event/header.jsp" %> 
 <%@ include file="/jsp/event/sideMenu.jsp" %>
@@ -74,6 +82,10 @@ return true;
  at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${event.canSignup}" label="Allow Signups for this Online Event" onChange="void updateSignups()" /></td>
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
