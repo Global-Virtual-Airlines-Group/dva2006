@@ -84,6 +84,7 @@ public class TransferApproveCommand extends AbstractCommand {
 					throw new CommandException("Invalid Rank - " + rank);
 
 				// Check if we're doing a promotion or a rating change
+				@SuppressWarnings("unchecked")
 				RankComparator rCmp = new RankComparator((List) SystemData.getObject("ranks"));
 				rCmp.setRank2(usr.getRank(), currentEQ.getStage());
 				rCmp.setRank1(rank, newEQ.getStage());
