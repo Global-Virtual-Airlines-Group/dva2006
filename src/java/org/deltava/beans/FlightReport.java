@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -11,7 +12,7 @@ import org.deltava.beans.schedule.Airline;
  * @since 1.0
  */
 
-public class FlightReport extends Flight implements Comparable, ViewEntry {
+public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 
    public static final int DRAFT = 0;
    public static final int SUBMITTED = 1;
