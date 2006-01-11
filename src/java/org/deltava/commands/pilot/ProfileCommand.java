@@ -402,7 +402,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Create the status update
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription("Renamed to " + p.getName());
+					upd.setDescription("Renamed from " + p.getName() + " to " + p2.getName());
 					updates.add(upd);
 
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
