@@ -1,9 +1,10 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.StatusUpdate;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -76,6 +77,11 @@ public class PilotActivationCommand extends AbstractCommand {
 				// Get the Message Template DAO
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctx.setTemplate(mtdao.get("USERACTIVATE"));
+				
+				// Create the status update entry
+				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setDescription("Returned to Active status");
 
 				// Start the transaction
 				ctx.startTX();
@@ -83,6 +89,10 @@ public class PilotActivationCommand extends AbstractCommand {
 				// Get the write DAO and save the pilot
 				SetPilot pwdao = new SetPilot(con);
 				pwdao.write(p);
+				
+				// Write the status update entry
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
+				sudao.write(upd);
 
 				// Get the authenticator and update the password
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
