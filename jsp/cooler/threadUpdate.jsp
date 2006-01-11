@@ -109,7 +109,8 @@ to the thread or you are impatient, you can <el:cmd className="sec bld" url="thr
 to display the discussion thread.<br />
 <br />
 </c:if>
-To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">click here</el:cmd><br />
+To return to the Water Cooler Channel containing this thread, <el:cmd url="channel" linkID="${thread.channel}" className="sec bld">Click Here</el:cmd>.<br />
+To view all Water Cooler discussion threads, <el:cmd url="channel" linkID="ALL" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
