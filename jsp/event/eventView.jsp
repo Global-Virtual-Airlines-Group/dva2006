@@ -59,10 +59,12 @@ return true;
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
  <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
+<c:if test="${event.canSignup}">
 <tr>
  <td class="label">Signups Close on</td>
  <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
 </tr>
+</c:if>
 <tr class="title caps">
  <td colspan="6" class="left">AVAILABLE FLIGHT ROUTES</td>
 </tr>
@@ -212,6 +214,15 @@ return true;
 <tr>
  <td class="label">Equipment Type</td>
  <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
+</tr>
+</c:if>
+<c:if test="${!event.canSignup}">
+<tr class="title caps">
+ <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
+</tr>
+<tr>
+ <td colspan="6" class="pri bld">This Online Event is posted for informational purposes only, and signups
+ are not currently available.</td>
 </tr>
 </c:if>
 </el:table>
