@@ -25,7 +25,7 @@ isOK = true;
 qNum = 1;
 var a = getElement('A' + qNum);
 while (isOK && (a != null)) {
-	isOK = (isOK && (a.value.length > 2));
+	isOK = (isOK && (a.value.length > 1));
 	qNum++;
 	a = getElement('A' + qNum);
 }
