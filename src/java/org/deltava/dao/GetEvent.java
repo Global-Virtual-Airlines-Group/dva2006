@@ -227,6 +227,7 @@ public class GetEvent extends DAO {
 			e.setEndTime(rs.getTimestamp(6));
 			e.setSignupDeadline(rs.getTimestamp(7));
 			e.setBriefing(rs.getString(8));
+			e.setCanSignup(rs.getBoolean(9));
 
 			// Add to results
 			results.add(e);

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Event extends DatabaseBean implements Comparable, ComboAlias, CalendarEntry {
+public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
 
     public static final int NET_VATSIM = 0;
     public static final int NET_IVAO = 1;
@@ -45,6 +45,7 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias, Calen
     
     private int _status;
     private int _network;
+    private boolean _canSignup;
     
     private Set<Chart> _charts;
     private Set<FlightPlan> _plans;
@@ -145,12 +146,17 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias, Calen
      * @return the date/time the Event starts
      * @see Event#setStartTime(Date)
      * @see Event#getEndTime()
+     * @see Event#getDate()
      * @see Event#getSignupDeadline()
      */
     public Date getStartTime() {
         return _startTime;
     }
     
+    /**
+     * Returns the start time for this Event.
+     * @see CalendarEntry#getDate()
+     */
     public Date getDate() {
     	return _startTime;
     }
@@ -166,8 +172,24 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias, Calen
         return _endTime;
     }
     
+    /**
+     * Returns the final date/time for pilots to sign up for this Event.
+     * @return the date/time signups close
+     * @see Event#setSignupDeadline(Date)
+     * @see Event#getStartTime()
+     * @see Event#getEndTime()
+     */
     public Date getSignupDeadline() {
         return _signupDeadline;
+    }
+    
+    /**
+     * Returns wether Pilots may sign up for this Event.
+     * @return TRUE if signups are permitted, otherwise FALSE
+     * @see Event#setCanSignup(boolean)
+     */
+    public boolean getCanSignup() {
+    	return _canSignup;
     }
 
     public Collection<Chart> getCharts() {
@@ -296,6 +318,10 @@ public class Event extends DatabaseBean implements Comparable, ComboAlias, Calen
 
     public void setStatus(int status) {
         _status = (status == Event.CANCELED) ? Event.CANCELED : Event.OPEN;
+    }
+    
+    public void setCanSignup(boolean doSignup) {
+    	_canSignup = doSignup;
     }
     
     public void addPlan(FlightPlan fp) {

@@ -46,6 +46,7 @@ public class EventEditCommand extends AbstractCommand {
 		ctx.setAttribute("airports", airports, REQUEST);
 		
 		// Strip out ACARS as a network name
+		@SuppressWarnings("unchecked")
 		Set<String> netNames = new TreeSet<String>((Collection) SystemData.getObject("online.networks"));
 		netNames.remove("ACARS");
 		ctx.setAttribute("networks", netNames, REQUEST);
