@@ -81,7 +81,8 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
 					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
-			_ps.setInt(1, Integer.parseInt(code.toString()));
+			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(2, Integer.parseInt(code.toString()));
 
 			// Execute the query and get return value
 			List<Pilot> results = execute();
