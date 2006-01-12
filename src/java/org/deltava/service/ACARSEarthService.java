@@ -48,7 +48,7 @@ public class ACARSEarthService extends WebDataService {
 		}
 		
 		public static GoogleEarthColor make(int red, int green, int blue) {
-			return new GoogleEarthColor(red, green, blue, 60);
+			return new GoogleEarthColor(red, green, blue, 80);
 		}
 		
 		private GoogleEarthColor(int red, int green, int blue, int alpha) {
@@ -277,7 +277,7 @@ public class ACARSEarthService extends WebDataService {
 		le.addContent(XMLUtils.createElement("visibility", "1"));
 		Element ls = new Element("Style");
 		Element lce = XMLUtils.createElement("LineStyle", "color", routeColor.toString());
-		lce.addContent(XMLUtils.createElement("width", "2"));
+		lce.addContent(XMLUtils.createElement("width", "3"));
 		ls.addContent(lce);
 		ls.addContent(XMLUtils.createElement("PolyStyle", "color", routeColor.dim(3).toString()));
 		le.addContent(ls);
