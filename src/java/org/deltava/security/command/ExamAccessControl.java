@@ -58,14 +58,16 @@ public class ExamAccessControl extends AccessControl {
         if (!isCR) {
         	Examination ex = (Examination) _t;
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
+        	_canScore = !isScored && (isExam || isHR);
         }
 
         // Set access
         _canRead = isOurs || isExam || isHR;
         _canSubmit = isOurs && !isCR && (_t.getStatus() == Test.NEW);
         _canEdit = isScored && isHR && !isOurs;
-        _canScore = isCR ? !isScored : (_canEdit || (isSubmitted && (isExam || isHR)));
         _canDelete = _ctx.isUserInRole("Admin");
+        if (!isCR)
+        	_canScore = _canEdit || (isSubmitted && (isExam || isHR));
         
         // Throw an exception if we cannot view
         if (!_canRead)
