@@ -28,7 +28,7 @@
  <td><el:img caption="Passed" x="21" y="21" src="testing/pass.png" /></td>
 </c:when>
 <c:when test="${fn:failed(exam)}">
- <td><el:img caption="Failed" x="21" y="21" src="testing/fail.png" /></td>
+ <td><el:img caption="Unsatisfactory" x="21" y="21" src="testing/fail.png" /></td>
 </c:when>
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>

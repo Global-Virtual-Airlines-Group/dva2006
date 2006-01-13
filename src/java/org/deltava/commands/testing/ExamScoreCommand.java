@@ -84,7 +84,7 @@ public class ExamScoreCommand extends AbstractCommand {
          
          // Check if we've passed the examination
          ex.setPassFail(score >= ep.getPassScore());
-         mctxt.addData("result", ex.getPassFail() ? "PASS" : "FAIL");
+         mctxt.addData("result", ex.getPassFail() ? "PASS" : "UNSATISFACTORY");
          
          // Check if we've rescored the examination
          ctx.setAttribute("reScore", Boolean.valueOf(ex.getStatus() == Test.SCORED), REQUEST);
