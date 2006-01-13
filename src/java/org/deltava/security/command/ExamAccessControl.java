@@ -58,6 +58,7 @@ public class ExamAccessControl extends AccessControl {
         if (!isCR) {
         	Examination ex = (Examination) _t;
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
+        } else {
         	_canScore = !isScored && (isExam || isHR);
         }
 
