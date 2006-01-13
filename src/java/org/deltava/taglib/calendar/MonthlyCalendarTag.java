@@ -28,7 +28,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	 * @see CalendarTag#setStartDate(Date)
 	 */
 	public void setStartDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt);
+		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.set(Calendar.DAY_OF_MONTH, 1);
 		_startDate = cld.getTime();
 		calculateEndDate(Calendar.MONTH, 1);
