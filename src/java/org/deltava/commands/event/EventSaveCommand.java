@@ -83,7 +83,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start"));
 			e.setEndTime(parseDateTime(ctx, "end"));
-			e.setSignupDeadline(parseDateTime(ctx, "close"));
+			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close") : e.getStartTime());
 
 			// Parse the equipment types
 			String[] eqTypes = ctx.getRequest().getParameterValues("eqTypes");

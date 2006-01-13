@@ -22,6 +22,12 @@ function updateSignups()
 var f = document.forms[0];
 f.closeDate.disabled = (!f.canSignup.checked);
 f.closeTime.disabled = (!f.canSignup.checked);
+
+// Get the calendar button
+var ccb = getElement('CloseCalendarButton');
+if (ccb)
+	ccb.disabled = (!f.canSignup.checked);
+
 return true;
 }
 
@@ -91,7 +97,7 @@ return true;
  <td class="label">Signups Close at</td>
  <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" />
  at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
+&nbsp;<el:button ID="CloseCalendarButton" className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
