@@ -59,7 +59,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			cr.setComments(ctx.getParameter("comments"));
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setScoredOn(new java.util.Date());
-			cr.setPassFail("1".equals(ctx.getParameter("passFail")));
+			cr.setPassFail(Boolean.valueOf(ctx.getParameter("passFail")).booleanValue());
 			cr.setStatus(Test.SCORED);
 
 			// Get the message tempate

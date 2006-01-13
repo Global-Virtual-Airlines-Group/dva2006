@@ -4,7 +4,9 @@ package org.deltava.commands.testing;
 import java.util.List;
 import java.sql.Connection;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.testing.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -21,7 +23,8 @@ import org.deltava.util.ComboUtils;
 
 public class CheckRideCommand extends AbstractCommand {
    
-   private static final List PASS_FAIL = ComboUtils.fromArray(new String[] {"PASS", "FAIL"}, new String[] {"1", "0"});
+   private static final List<ComboAlias> PASS_FAIL = ComboUtils.fromArray(new String[] {"PASS", "UNSATISFACTORY"},
+		   new String[] {"true", "false"});
    
    /**
     * Executes the command.
@@ -51,7 +54,7 @@ public class CheckRideCommand extends AbstractCommand {
          ctx.setAttribute("pilot", pdao.get(cr.getPilotID()), REQUEST);
          if (cr.getScorerID() != 0) {
             ctx.setAttribute("scorer", pdao.get(cr.getScorerID()), REQUEST);
-            ctx.setAttribute("score", cr.getPassFail() ? "1" : "0", REQUEST);
+            ctx.setAttribute("score", String.valueOf(cr.getPassFail()), REQUEST);
          }
          
          // Save the checkride and the access controller

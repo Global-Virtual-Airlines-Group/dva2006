@@ -47,11 +47,11 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			// Get the examinations for this user
 			Pilot usr = (Pilot) ctx.getUser();
 			GetExam exdao = new GetExam(con);
-			List exams = exdao.getExams(usr.getID());
+			List<Test> exams = exdao.getExams(usr.getID());
 
 			// Check if we already this examination in a passed or pending state
-			for (Iterator i = exams.iterator(); i.hasNext();) {
-				Test t = (Test) i.next();
+			for (Iterator<Test> i = exams.iterator(); i.hasNext();) {
+				Test t = i.next();
 				boolean isComplete = ((t.getStatus() == Test.SCORED) && t.getPassFail());
 				if ((t.getName().equals(examName)) && ((t.getStatus() != Test.SCORED) || isComplete))
 					throw securityException("Cannot re-take " + examName + " examination");
