@@ -27,13 +27,32 @@ public class CalendarUtils {
 	/**
 	 * Returns a Calendar object initialized to a particular date/time.
 	 * @param dt the date/time, or null if the current date/time
+	 * @param clearTime TRUE if the time portion should be set to midnight, otherwise FALSE
 	 * @return a Calendar object
 	 */
-	public static Calendar getInstance(Date dt) {
+	public static Calendar getInstance(Date dt, boolean clearTime) {
 		Calendar cld = Calendar.getInstance();
 		if (dt != null)
 			cld.setTime(dt);
 		
+		// Clear the time if requested
+		if (clearTime) {
+			cld.set(Calendar.HOUR_OF_DAY, 0);
+			cld.set(Calendar.MINUTE, 0);
+			cld.set(Calendar.SECOND, 0);
+			cld.set(Calendar.MILLISECOND, 0);
+		}
+		
 		return cld;
+	}
+
+	/**
+	 * Returns a Calendar object initialized to a particular date/time.
+	 * @param dt the date/time, or null if the current date/time
+	 * @return a Calendar object
+	 * @see CalendarUtils#getInstance(Date, boolean)
+	 */
+	public static Calendar getInstance(Date dt) {
+		return getInstance(dt, false);
 	}
 }

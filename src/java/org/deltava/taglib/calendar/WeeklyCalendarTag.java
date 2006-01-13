@@ -28,7 +28,7 @@ public class WeeklyCalendarTag extends CalendarTag {
 	 * @see CalendarTag#setStartDate(Date)
 	 */
 	public void setStartDate(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt);
+		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
 		_startDate = cld.getTime();
 		calculateEndDate(Calendar.DATE, 7);
