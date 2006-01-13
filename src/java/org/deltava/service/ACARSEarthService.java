@@ -30,8 +30,8 @@ import org.deltava.util.*;
 
 public class ACARSEarthService extends WebDataService {
 	
-	private static final GoogleEarthColor[] COLORS = {GoogleEarthColor.make(0, 208, 184), GoogleEarthColor.make(0, 205, 0),
-		GoogleEarthColor.make(240, 48, 48), GoogleEarthColor.make(240, 128, 80), GoogleEarthColor.make(240, 16, 240),
+	private static final GoogleEarthColor[] COLORS = {GoogleEarthColor.make(208, 184, 0), GoogleEarthColor.make(0, 205, 0),
+		GoogleEarthColor.make(240, 48, 48), GoogleEarthColor.make(80, 192, 240), GoogleEarthColor.make(240, 16, 240),
 		GoogleEarthColor.make(0, 240, 240), GoogleEarthColor.make(240, 240, 64) };
 
 	private static final Logger log = Logger.getLogger(ACARSEarthService.class);
