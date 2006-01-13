@@ -64,7 +64,7 @@
 </tr>
 </content:filter>
 <tr class="MenuItem">
- <td><el:cmd url="event">ONLINE EVENTS</el:cmd></td>
+ <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
