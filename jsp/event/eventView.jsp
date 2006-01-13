@@ -136,6 +136,7 @@ return true;
 </c:if>
 </content:filter>
 
+<c:if test="${event.canSignup}">
 <!-- Signups Section -->
 <tr class="title caps">
  <td colspan="6" class="left">PARTICIPATING PILOT LIST - <fmt:int value="${fn:sizeof(event.signups)}" /> PILOTS</td>
@@ -173,6 +174,7 @@ return true;
 <tr>
  <td colspan="6" class="pri bld">No Pilots have signed up yet for this Online Event.</td>
 </tr>
+</c:if>
 </c:if>
 
 <c:if test="${!empty pireps}">
