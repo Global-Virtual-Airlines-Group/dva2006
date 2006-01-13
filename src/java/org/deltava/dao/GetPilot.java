@@ -55,7 +55,8 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public Map<Integer, GeoLocation> getPilotBoard() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM PILOT_MAP");
+			prepareStatementWithoutLimits("SELECT * FROM PILOT_MAP WHERE (STATUS=?)");
+			_ps.setInt(1, Pilot.ACTIVE);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
