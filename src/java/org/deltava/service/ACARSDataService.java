@@ -50,7 +50,7 @@ public class ACARSDataService extends WebDataService {
 
 		// Write the CSV header
 		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-		ctx.println("NAV,HDG,APR,ALT,AT");
+		ctx.println("WindSpeed,WindHdg,NAV,HDG,APR,ALT,AT");
 
 		// Format the ACARS data
 		for (Iterator i = routeData.iterator(); i.hasNext();) {
@@ -80,6 +80,10 @@ public class ACARSDataService extends WebDataService {
 			ctx.print(StringUtils.format(entry.getPitch(), "##0.0"));
 			ctx.print(",");
 			ctx.print((entry.getFlaps() == 0) ? "" : String.valueOf(entry.getFlaps()));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getWindSpeed(), "##0"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getWindHeading(), "000"));
 			ctx.print(",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_NAV) ? "NAV," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
