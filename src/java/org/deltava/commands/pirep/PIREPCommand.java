@@ -41,13 +41,13 @@ public class PIREPCommand extends AbstractFormCommand {
 			FlightReport.FSVERSION.length);
 
 	// Month combolist values
-	private static final List months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April",
+	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April",
 			"May", "June", "July", "August", "September", "October", "November", "December" }, new String[] { "0", "1",
 			"2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
 
 	// Check ride approval values
-	private static final List crApprove = ComboUtils.fromArray(new String[] { "PASS", "FAIL" }, new String[] { "true",
-			"false" });
+	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" }, 
+			new String[] { "true", "false" });
 
 	/**
 	 * Initialize the command.
