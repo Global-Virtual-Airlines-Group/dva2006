@@ -101,6 +101,7 @@ public class InstallerSaveCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("library", "Fleet", REQUEST);
 		ctx.setAttribute("librarycmd", "fleetlibrary", REQUEST);
+		ctx.setAttribute("libraryop", "admin", REQUEST);
 
 		// Send the email message
 		if (!noNotify) {
