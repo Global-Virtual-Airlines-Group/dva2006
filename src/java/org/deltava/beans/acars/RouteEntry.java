@@ -32,6 +32,8 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private double _n1;
 	private double _n2;
 	private double _mach;
+	private int _wSpeed;
+	private int _wHdg;
 	private int _flaps;
 	private int _flags;
 
@@ -157,6 +159,22 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	   return _gpos.getHemisphere();
 	}
 
+	/**
+	 * Returns the ambient wind speed.
+	 * @return the speed in knots
+	 */
+	public int getWindSpeed() {
+		return _wSpeed;
+	}
+	
+	/**
+	 * Returns the ambient wind heading.
+	 * @return the wind heading in degrees
+	 */
+	public int getWindHeading() {
+		return _wHdg;
+	}
+	
 	/**
 	 * Returns the aircraft's airspeed.
 	 * @return the airspeed in knots
@@ -389,6 +407,28 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setFlags(int flags) {
 		_flags = flags;
+	}
+	
+	/**
+	 * Sets the ambient wind speed.
+	 * @param speed the speed in knots
+	 * @see RouteEntry#getWindSpeed()
+	 * @see RouteEntry#setWindSpeed(int)
+	 */
+	public void setWindSpeed(int speed) {
+		if (speed >= 0)
+			_wSpeed = speed;
+	}
+	
+	/**
+	 * Sets the ambient wind heading.
+	 * @param hdg the heading in degrees
+	 * @see RouteEntry#getWindHeading()
+	 * @see RouteEntry#setWindSpeed(int)
+	 */
+	public void setWindHeading(int hdg) {
+		if ((hdg >= 0) && (hdg < 360))
+			_wHdg = hdg;
 	}
 	
 	/**
