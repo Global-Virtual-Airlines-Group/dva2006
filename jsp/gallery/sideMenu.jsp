@@ -39,7 +39,7 @@
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
 </tr>
 <tr class="MenuItem">
- <td><el:cmd url="event">ONLINE EVENTS</el:cmd></td>
+ <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>CONTACT US</td></tr>
 <tr class="MenuItem">
