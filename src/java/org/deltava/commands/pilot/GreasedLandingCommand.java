@@ -49,7 +49,7 @@ public class GreasedLandingCommand extends AbstractViewCommand {
          // Get the DAO and the results
          GetFlightReportRecognition dao = new GetFlightReportRecognition(con);
          dao.setQueryMax(vc.getCount());
-         List results = isStaff ? dao.getStaffReports(daysBack) : dao.getGreasedLandings(daysBack);
+         List results = isStaff ? dao.getStaffReports(daysBack, 61) : dao.getGreasedLandings(daysBack, 61);
          ctx.setAttribute("pireps", results, REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);

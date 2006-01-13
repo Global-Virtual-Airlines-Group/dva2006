@@ -26,15 +26,18 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	/**
 	 * Returns Flight Reports with the smoothest touchdown speed.
 	 * @param days the number of days in the past to search
+	 * @param clientBuild the minimum ACARS client build number
 	 * @return a List of ACARSFlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getGreasedLandings(int days) throws DAOException {
+	public List<FlightReport> getGreasedLandings(int days, int clientBuild) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
 				+ "PILOTS P LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON (PC.ID=PR.ID) "
-				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
+				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) "
+				+ "LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND "
+				+ "(APR.LANDING_VSPEED < 0)");
 		
 		// Append number of days
 		if (days > 0)
@@ -44,9 +47,10 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, clientBuild);
+			_ps.setInt(2, FlightReport.OK);
 			if (days > 0)
-				_ps.setInt(2, days);
+				_ps.setInt(3, days);
 
 			return execute();
 		} catch (SQLException se) {
@@ -57,16 +61,18 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	/**
 	 * Retrieves ACARS Flight Reports logged by staff members.
 	 * @param days the number of days in the past to search
+	 * @param clientBuild the minimum ACARS client build number
 	 * @return a List of ACARSFlightReport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getStaffReports(int days) throws DAOException {
+	public List<FlightReport> getStaffReports(int days, int clientBuild) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
 			   + "PILOTS P, STAFF S LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON "
-			   + "(PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (P.ID=S.ID) AND (PR.STATUS=?) "
-			   + "AND (APR.LANDING_VSPEED < 0)");
+			   + "(PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON "
+			   + "(F.ID=APR.ACARS_ID) LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (P.ID=S.ID) AND "
+			   + "(C.CLIENT_BUILD >= ?) AND (PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 	   
 		// Append number of days
 		if (days > 0)
@@ -76,9 +82,10 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		
 	   try {
 	      prepareStatement(sqlBuf.toString());
-	      _ps.setInt(1, FlightReport.OK);
+	      _ps.setInt(1, clientBuild);
+	      _ps.setInt(2, FlightReport.OK);
 	      if (days > 0)
-				_ps.setInt(2, days);
+	    	  _ps.setInt(3, days);
 	      
 	      return execute();
 	   } catch (SQLException se) {
