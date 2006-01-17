@@ -25,7 +25,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void enableButton('SearchButton')">
 <content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
