@@ -266,7 +266,8 @@ promoted within the next 24 to 72 hours.</td></c:when>
 <c:if test="${!empty eqSwitch}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd></td>
- <td class="data">You are eligible to transfer to the following equipment types: <fmt:list value="${eqSwitch}" delim=", " /></td>
+ <td class="data">You are eligible to transfer to or request additional ratings in the following 
+equipment types: <fmt:list value="${eqSwitch}" delim=", " /></td>
 </tr>
 </c:if>
 <c:if test="${!empty txreq}">
@@ -277,10 +278,10 @@ Program to the <b>${txreq.equipmentType}</b> program.</td>
 </tr>
 </c:if>
 <tr>
-<c:if test="${pilot.legs >= 5}">
+<c:if test="${(pilot.legs >= 5) && !pilot.noExams}">
  <td class="mid"><el:cmd className="bld" url="testcenter">Testing Center</el:cmd></td>
 </c:if>
-<c:if test="${pilot.legs < 5}">
+<c:if test="${pilot.legs < 5 || pilot.noExams}">
  <td class="mid bld">Testing Center</td>
 </c:if>
  <td class="data">The <content:airline /> Testing Center is your single source for the written 

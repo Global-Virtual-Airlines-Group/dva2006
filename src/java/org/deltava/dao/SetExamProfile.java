@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -31,15 +31,14 @@ public class SetExamProfile extends DAO {
    public void update(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("UPDATE EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "+
-               "ACTIVE=?, REQUIRES_RIDE=?, EQTYPE=? WHERE (NAME=?)");
+               "ACTIVE=?, EQTYPE=? WHERE (NAME=?)");
          _ps.setInt(1, ep.getStage());
          _ps.setInt(2, ep.getSize());
          _ps.setInt(3, ep.getPassScore());
          _ps.setInt(4, ep.getTime());
          _ps.setBoolean(5, ep.getActive());
-         _ps.setBoolean(6, ep.getNeedsCheckRide());
-         _ps.setString(7, ep.getEquipmentType());
-         _ps.setString(8, ep.getName());
+         _ps.setString(6, ep.getEquipmentType());
+         _ps.setString(7, ep.getName());
          
          // Execute the update
          executeUpdate(1);
@@ -56,15 +55,14 @@ public class SetExamProfile extends DAO {
    public void create(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("INSERT INTO EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, " +
-               "REQUIRES_RIDE, EQTYPE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+               "EQTYPE) VALUES (?, ?, ?, ?, ?, ?, ?)");
          _ps.setString(1, ep.getName());
          _ps.setInt(2, ep.getStage());
          _ps.setInt(3, ep.getSize());
          _ps.setInt(4, ep.getPassScore());
          _ps.setInt(5, ep.getTime());
          _ps.setBoolean(6, ep.getActive());
-         _ps.setBoolean(7, ep.getNeedsCheckRide());
-         _ps.setString(8, ep.getEquipmentType());
+         _ps.setString(7, ep.getEquipmentType());
          
          // Execute the update
          executeUpdate(1);

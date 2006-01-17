@@ -24,29 +24,11 @@ public class SetPilot extends PilotWriteDAO {
 	}
 
 	/**
-	 * Deletes a Pilot from the database.
-	 * @param id the Pilot database ID
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void delete(int id) throws DAOException {
-
-		invalidate(id);
-		try {
-			prepareStatementWithoutLimits("DELETE FROM PILOTS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Marks a Pilot as &quot;On Leave&quot;.
 	 * @param id the Pilot database ID
 	 * @throws DAOException if a JDBC erorr occurs
 	 */
 	public void onLeave(int id) throws DAOException {
-
 		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE PILOTS SET STATUS=? WHERE (ID=?)");
@@ -82,7 +64,7 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
 				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, "
-				+ "STATUS=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+				+ "STATUS=?, NOEXAMS=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -115,9 +97,10 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(22, p.getRank());
 			_ps.setString(23, p.getEquipmentType());
 			_ps.setInt(24, p.getStatus());
-			_ps.setString(25, p.getFirstName());
-			_ps.setString(26, p.getLastName());
-			_ps.setInt(27, p.getID());
+			_ps.setBoolean(25, p.getNoExams());
+			_ps.setString(26, p.getFirstName());
+			_ps.setString(27, p.getLastName());
+			_ps.setInt(28, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
@@ -171,7 +154,6 @@ public class SetPilot extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void assignID(Pilot p) throws DAOException {
-		
 		invalidate(p);
 		try {
 			// Get the next available Pilot ID
