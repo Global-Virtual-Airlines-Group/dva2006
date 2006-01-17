@@ -107,7 +107,8 @@ return true;
 <tr>
  <td class="label">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
- <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /><br />
+<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" className="small warn bld" label="Disable Testing Center access" /></td>
 </c:if>  
 <c:if test="${!access.canChangeStatus}">
  <td colspan="${cspan}" class="data sec bld">${status}</td>

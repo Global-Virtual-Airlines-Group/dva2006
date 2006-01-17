@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -51,7 +51,6 @@ import org.deltava.beans.testing.*;
 			ep.setPassScore(rs.getInt(6));
 			ep.setTime(rs.getInt(7));
 			ep.setActive(rs.getBoolean(8));
-			ep.setNeedsCheckRide(rs.getBoolean(9));
 			
 			// Clean up and return
 			rs.close();
@@ -83,7 +82,6 @@ import org.deltava.beans.testing.*;
 				ep.setPassScore(rs.getInt(6));
 				ep.setTime(rs.getInt(7));
 				ep.setActive(rs.getBoolean(8));
-				ep.setNeedsCheckRide(rs.getBoolean(9));
 
 				// Add to results
 				results.add(ep);

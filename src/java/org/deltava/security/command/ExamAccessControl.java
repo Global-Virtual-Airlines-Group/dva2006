@@ -53,13 +53,11 @@ public class ExamAccessControl extends AccessControl {
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
-        boolean isSubmitted = (_t.getStatus() == (isCR ? Test.NEW : Test.SUBMITTED));
+        boolean isSubmitted = (_t.getStatus() == Test.SUBMITTED);
         boolean isScored = (_t.getStatus() == Test.SCORED);
         if (!isCR) {
         	Examination ex = (Examination) _t;
         	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
-        } else {
-        	_canScore = !isScored && (isExam || isHR);
         }
 
         // Set access

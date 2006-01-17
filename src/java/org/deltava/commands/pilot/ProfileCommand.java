@@ -116,7 +116,20 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription("Status changed to " + p.getStatusName());
 					updates.add(upd);
-					log.info(upd.getDescription());
+					log.info(p.getName() + " " + upd.getDescription());
+				}
+				
+				// Check Testing Center access
+				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
+				if (examsLocked != p.getNoExams()) {
+					p.setNoExams(examsLocked);
+					
+					// Write the status update entry
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
+					updates.add(upd);
+					log.info(p.getName() + " " + upd.getDescription());
 				}
 			}
 
@@ -148,6 +161,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						throw new CommandException("Unknown Equipment Type program - " + newEQ);
 
 					// Figure out if this is truly a promotion
+					@SuppressWarnings("unchecked")
 					RankComparator rcmp = new RankComparator((List) SystemData.getObject("ranks"));
 					rcmp.setRank2(p.getRank(), eq1.getStage());
 					rcmp.setRank1(newRank, eq2.getStage());

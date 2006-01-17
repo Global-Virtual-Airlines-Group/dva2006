@@ -55,6 +55,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private boolean _showSSThreads;
     private boolean _hasSignature;
     private boolean _showDefaultSignature;
+    private boolean _noExams;
     
     private int _mapType;
 
@@ -131,6 +132,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      */
     public boolean getShowSSThreads() {
         return _showSSThreads;
+    }
+    
+    /**
+     * Returns wither the pilot has been locked out of the Testing Center.
+     * @return TRUE if the Pilot cannot take any Examinations, otherwise FALSE
+     * @see Pilot#setNoExams(boolean)
+     */
+    public boolean getNoExams() {
+    	return _noExams;
     }
 
     /**
@@ -303,6 +313,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      */
     public void setShowSignatures(boolean showSigs) {
         _showSigs = showSigs;
+    }
+    
+    /**
+     * Updates wether this Pilot is locked out from taking new Examinations.
+     * @param noExams TRUE if the Testing Center is locked out, otherwise FALSE.
+     * @see Pilot#getNoExams()
+     */
+    public void setNoExams(boolean noExams) {
+    	_noExams = noExams;
     }
     
     /**

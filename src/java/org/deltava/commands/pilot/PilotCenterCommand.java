@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -6,6 +7,7 @@ import java.sql.Connection;
 import javax.servlet.http.HttpSession;
 
 import org.deltava.beans.*;
+import org.deltava.beans.testing.ExamProfile;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -117,6 +119,18 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			} else {
 				ctx.setAttribute("txreq", txreq, REQUEST);
 			}
+			
+			// See if we can write any examinations
+			GetExamProfiles epdao = new GetExamProfiles(con);
+			Collection<ExamProfile> exams = epdao.getExamProfiles();
+			for (Iterator<ExamProfile> i = exams.iterator(); i.hasNext(); ) {
+				ExamProfile ep = i.next();
+				if (!_testHistory.canWrite(ep))
+					i.remove();
+			}
+			
+			// Save the examinations
+			ctx.setAttribute("availableExams", exams, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
