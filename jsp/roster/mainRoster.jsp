@@ -43,7 +43,7 @@ return true;
  <td width="30%">PILOT NAME</td>
  <td width="10%">EQUIPMENT</td>
  <td width="16%">RANK</td>
- <td width="6%">HUB</td>
+ <td width="6%">HOME</td>
  <td width="8%">FLIGHTS</td>
  <td width="8%">HOURS</td>
  <td>LAST FLIGHT</td>
