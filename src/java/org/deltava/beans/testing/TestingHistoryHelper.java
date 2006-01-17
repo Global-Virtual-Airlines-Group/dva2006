@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -50,7 +50,7 @@ public class TestingHistoryHelper {
 		// Check if we're a captain
 		_isCaptain = (StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1);
 	}
-	
+
 	private void log(String msg) {
 		if (_debugLog)
 			log.warn(msg);
@@ -63,7 +63,7 @@ public class TestingHistoryHelper {
 	public void addExam(Examination ex) {
 		_tests.add(ex);
 	}
-	
+
 	/**
 	 * Toggles the debugging log.
 	 * @param isDebug TRUE if the log is active, otherwise FALSE
@@ -114,12 +114,13 @@ public class TestingHistoryHelper {
 
 	/**
 	 * Returns the highest stage Check Ride this user has passed.
-	 * @return the stage number of the highest check ride, or 1 if none passed
+	 * @return the stage number of the highest check ride, or the current stage if none passed
 	 * @see Test#getStage()
+	 * @see EquipmentType#getStage()
 	 */
 	public int getMaxCheckRideStage() {
 
-		int maxStage = 1;
+		int maxStage = _myEQ.getStage();
 		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
 			Test t = i.next();
 			if ((t instanceof CheckRide) && t.getPassFail())
@@ -155,7 +156,6 @@ public class TestingHistoryHelper {
 	 * @return TRUE if the user can take the Examination, otherwise FALSE
 	 */
 	public boolean canWrite(ExamProfile ep) {
-		
 		// If the exam isn't active, we cannot write it
 		if (!ep.getActive()) {
 			log(ep.getName() + " inactive");
@@ -180,6 +180,12 @@ public class TestingHistoryHelper {
 				log(ep.getName() + " eqType=" + ep.getEquipmentType() + ", our eqType=" + _usr.getEquipmentType());
 				return false;
 			}
+
+			// If the exam is limited to a specific equipment program, require 1/2 the legs required for promotion
+			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2)) {
+				log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
+				return false;
+			}
 		}
 
 		// Check if we've reached the proper minimum stage
@@ -188,9 +194,14 @@ public class TestingHistoryHelper {
 			return false;
 		}
 
-		// Check if we have at least 5 approved flights
-		log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
-		return (getFlightLegs(_myEQ) >= 5);
+		// If the exam is a higher stage than us, require Captan's rank
+		if ((ep.getStage() > getMaxCheckRideStage()) && !_isCaptain) {
+			log(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage() + ", not Captain");
+			return false;
+		}
+
+		// Check if we've been locked out of exams
+		return !_usr.getNoExams();
 	}
 
 	/**
@@ -200,15 +211,15 @@ public class TestingHistoryHelper {
 	 */
 	public boolean canSwitchTo(EquipmentType eq) {
 
-		// Make sure we're a captain if the stage is higher than our own
-		if ((eq.getStage() > _myEQ.getStage()) && (!_isCaptain))
-			return false;
-
 		// Check if we're not already in that program
 		if (_usr.getEquipmentType().equals(eq.getName())) {
 			log("Already in " + eq.getName() + " program");
 			return false;
 		}
+		
+		// If it's a stage 1 program, allow the transfer
+		if (eq.getStage() == 1)
+			return true;
 
 		// Check if we've passed the FO exam for that program
 		if (!hasPassed(eq.getExamName(Ranks.RANK_FO))) {
@@ -216,15 +227,13 @@ public class TestingHistoryHelper {
 			return false;
 		}
 
-		// Check if we have a checkride in that equipment's stage
-		if (eq.getStage() > getMaxCheckRideStage()) {
-			log(eq.getName() + " minStage=" + eq.getStage() + ", our minStage=" + getMaxExamStage());
+		// Check if we have a checkride in that equipment
+		if (!hasCheckRide(eq)) {
+			log("No " + eq.getName() + " check ride");
 			return false;
 		}
-		
-		// Check if we have at least 5 approved flights
-		log(eq.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
-		return (getFlightLegs(_myEQ) >= 5);
+
+		return true;
 	}
 
 	/**
@@ -235,11 +244,7 @@ public class TestingHistoryHelper {
 	public boolean canRequestCheckRide(EquipmentType eq) {
 
 		// Make sure we're a captain if the stage is higher than our own
-		if ((eq.getStage() > _myEQ.getStage()) && (!_isCaptain))
-			return false;
-
-		// Make sure the new stage isn't the same or lower than our current stage
-		if ((eq.getStage() <= _myEQ.getStage()))
+		if ((eq.getStage() > getMaxCheckRideStage()) && (!_isCaptain))
 			return false;
 
 		// Check if we've passed the FO exam for that program
@@ -250,8 +255,12 @@ public class TestingHistoryHelper {
 		if (_usr.getEquipmentType().equals(eq.getName()))
 			return false;
 
-		// Check if we don't have a checkride in that equipment's stage
-		return (eq.getStage() > getMaxCheckRideStage());
+		// Check if we don't have a checkride in that equipment program
+		if (hasCheckRide(eq))
+			return false;
+
+		// If we require a checkride, ensure we have a minimum number of legs
+		return (getFlightLegs(_myEQ) >= (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2));
 	}
 
 	/**
@@ -285,7 +294,6 @@ public class TestingHistoryHelper {
 				return true;
 		}
 
-		// If we got this far, we didn't pass
 		return false;
 	}
 
@@ -301,7 +309,24 @@ public class TestingHistoryHelper {
 				return true;
 		}
 
-		// If we got this far, we didn't submit
+		return false;
+	}
+
+	/**
+	 * Returns if a user has passed a checkride for a particular equipment type.
+	 * @param eq the Equipment Type bean
+	 * @return TRUE if the user passed the check ride, otherwise FALSE
+	 */
+	public boolean hasCheckRide(EquipmentType eq) {
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
+			if ((t instanceof CheckRide) && (t.getPassFail())) {
+				CheckRide cr = (CheckRide) t;
+				if (cr.getEquipmentType().equals(eq.getName()))
+					return true;
+			}
+		}
+
 		return false;
 	}
 }

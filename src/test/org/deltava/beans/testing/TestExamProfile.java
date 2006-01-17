@@ -33,12 +33,9 @@ public class TestExamProfile extends AbstractBeanTestCase {
         checkProperty("minStage", new Integer(2));
         checkProperty("time", new Integer(60));
         checkProperty("passScore", new Integer(75));
-        assertFalse(_exam.getNeedsCheckRide());
         assertFalse(_exam.getActive());
         assertEquals("warn", _exam.getRowClassName());
-        _exam.setNeedsCheckRide(true);
         _exam.setActive(true);
-        assertTrue(_exam.getNeedsCheckRide());
         assertTrue(_exam.getActive());
         assertNull(_exam.getRowClassName());
     }

@@ -18,11 +18,14 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 
 	public static final int NEW = 0;
 	public static final int PENDING = 1;
-	public static final int OK = 2;
+	public static final int ASSIGNED = 2;
+	public static final int OK = 3;
 
-	public static final String[] STATUS = { "New", "Pending Check Ride", "Complete" };
+	private static final String[] STATUS = { "New", "Pending Check Ride", "Check Ride Assigned", "Complete" };
 
 	private int _checkRideID;
+	private boolean _crSubmitted;
+	
 	private int _status;
 	private String _eqType;
 	private Date _date;
@@ -88,6 +91,15 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	}
 	
 	/**
+	 * Returns wether the associated Check Ride has been submitted.
+	 * @return TRUE if the Check Ride was submitted or graded, otherwise FALSE
+	 * @see TransferRequest#setCheckRideSubmitted(boolean)
+	 */
+	public boolean getCheckRideSubmitted() {
+		return _crSubmitted;
+	}
+	
+	/**
 	 * Returns if this Transfer Request is for an additional rating only.
 	 * @return TRUE if the rating is requested, not a program switch, otherwise FALSE
 	 * @see TransferRequest#setRatingOnly(boolean)
@@ -115,6 +127,19 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 			validateID(_checkRideID, id);
 			_checkRideID = id;
 		}
+	}
+	
+	/**
+	 * Updates wether the associated Check Ride has been submitted
+	 * @param isSubmitted TRUE if the Check Ride was submitted/graded, otherwise FALSE
+	 * @throws IllegalStateException if no Check Ride ID was supplied
+	 * @see TransferRequest#getCheckRideSubmitted()
+	 */
+	public void setCheckRideSubmitted(boolean isSubmitted) {
+		if (_checkRideID == 0)
+			throw new IllegalStateException("No Check Ride ID");
+		
+		_crSubmitted = isSubmitted;
 	}
 
 	/**
@@ -154,7 +179,10 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		String[] ROW_CLASSES = { null, "opt2", null };
+		if (getStatus() == ASSIGNED)
+			return _crSubmitted ? "opt3" : "opt1";
+			
+		String[] ROW_CLASSES = { null, "opt2", null, null };
 		return ROW_CLASSES[getStatus()];
 	}
 }

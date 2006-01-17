@@ -284,23 +284,24 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setNumberFormat(rs.getString(32));
 			p.setAirportCodeType(rs.getInt(33));
 			p.setMapType(rs.getInt(34));
+			p.setNoExams(rs.getBoolean(35));
 
-			// Check if this result set has a column 34-37, which is the PIREP totals
-			if (columnCount > 37) {
-				p.setLegs(rs.getInt(35));
-				p.setMiles(rs.getLong(36));
-				p.setHours(rs.getDouble(37));
-				p.setLastFlight(expandDate(rs.getDate(38)));
+			// Check if this result set has a column 36-39, which is the PIREP totals
+			if (columnCount > 38) {
+				p.setLegs(rs.getInt(36));
+				p.setMiles(rs.getLong(37));
+				p.setHours(rs.getDouble(38));
+				p.setLastFlight(expandDate(rs.getDate(39)));
 			}
 
-			// Check if this result set has a column 38, which is the signature ID
-			if (columnCount > 38)
-				p.setHasSignature((rs.getInt(39) != 0));
+			// Check if this result set has a column 40, which is the signature ID
+			if (columnCount > 39)
+				p.setHasSignature((rs.getInt(40) != 0));
 
-			// CHeck if this result set has a column 39/40, which are online legs/hours
-			if (columnCount > 40) {
-				p.setOnlineLegs(rs.getInt(40));
-				p.setOnlineHours(rs.getDouble(41));
+			// CHeck if this result set has a column 41/42, which are online legs/hours
+			if (columnCount > 41) {
+				p.setOnlineLegs(rs.getInt(41));
+				p.setOnlineHours(rs.getDouble(42));
 			}
 
 			// Add the pilot
