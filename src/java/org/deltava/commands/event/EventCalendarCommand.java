@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -12,6 +12,7 @@ import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.CalendarUtils;
 import org.deltava.util.ComboUtils;
 
 /**
@@ -42,6 +43,9 @@ public class EventCalendarCommand extends AbstractCommand {
 		} catch (Exception e) {
 			startDate = new Date();
 		}
+		
+		// Calculate the proper start date
+		startDate = (days == 7) ? getStartOfWeek(startDate) : getStartOfMonth(startDate);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -90,5 +94,17 @@ public class EventCalendarCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL((days == 7) ? "/jsp/event/calendarW.jsp" : "/jsp/event/calendarM.jsp");
 		result.setSuccess(true);
+	}
+	
+	private Date getStartOfMonth(Date dt) {
+		Calendar cld = CalendarUtils.getInstance(dt, true);
+		cld.set(Calendar.DAY_OF_MONTH, 1);
+		return cld.getTime();
+	}
+	
+	private Date getStartOfWeek(Date dt) {
+		Calendar cld = CalendarUtils.getInstance(dt, true);
+		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
+		return cld.getTime();
 	}
 }
