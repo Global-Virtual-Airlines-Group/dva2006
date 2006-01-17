@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -63,7 +63,7 @@ public class ExamScoreCommand extends AbstractCommand {
          int score = 0;
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
-            boolean isCorrect = "1".equals(ctx.getParameter("Score" + String.valueOf(x)));
+            boolean isCorrect = Boolean.valueOf(ctx.getParameter("Score" + String.valueOf(x))).booleanValue();
             if (isCorrect) {
                log.debug("Question #" + (x) + " is correct");
                q.setCorrect(true);
@@ -95,6 +95,7 @@ public class ExamScoreCommand extends AbstractCommand {
          ex.setStatus(Test.SCORED);
          ex.setScore(score);
          ex.setScorerID(ctx.getUser().getID());
+         ex.setComments(ctx.getParameter("comments"));
          
          // Update the examination in the database
          SetExam wdao = new SetExam(con);
