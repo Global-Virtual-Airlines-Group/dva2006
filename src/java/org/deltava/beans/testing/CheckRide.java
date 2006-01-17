@@ -1,8 +1,10 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
+import org.deltava.beans.EquipmentType;
+
 /**
- * A class to store Check Ride and Flight Video data.
+ * A class to store Check Ride data.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -12,7 +14,8 @@ public class CheckRide extends Test {
     
 	private static final String[] CLASS_NAMES = {"opt1", "opt1", null};
 	
-	private String _comments;
+	private String _eqType;
+	private String _acType;
 	private int _acarsID;
 
     /**
@@ -51,21 +54,22 @@ public class CheckRide extends Test {
     }
     
     /**
-     * Returns the Check Ride comments.
-     * @return the comments
-     * @see CheckRide#setComments(String)
+     * Returns the aircraft type used in this Check Ride.
+     * @return the aircraft type
+     * @see CheckRide#setAircraftType(String)
      */
-    public String getComments() {
-    	return _comments;
+    public String getAircraftType() {
+    	return _acType;
     }
     
     /**
-     * Returns the equipment type for the check ride, from the name.
+     * Returns the equipment type for the check ride.
      * @return the equipment type
+     * @see CheckRide#setEquipmentType(String)
+     * @see CheckRide#setEquipmentType(EquipmentType)
      */
     public String getEquipmentType() {
-    	String name = getName();
-    	return name.substring(0, name.indexOf(' '));
+    	return _eqType;
     }
     
     /**
@@ -75,15 +79,6 @@ public class CheckRide extends Test {
      */
     public int getSize() {
        return 1;
-    }
-    
-    /**
-     * Updates the Flight Video comments.
-     * @param comments the comments
-     * @see CheckRide#getComments()
-     */
-    public void setComments(String comments) {
-    	_comments = comments;
     }
     
     /**
@@ -129,6 +124,36 @@ public class CheckRide extends Test {
             throw new IllegalArgumentException("Score must be 0 or 1");
         
         _score = score;
+    }
+    
+    /**
+     * Sets the aircraft type used for this Check Ride.
+     * @param acType the aircraft type
+     * @see CheckRide#getAircraftType()
+     */
+    public void setAircraftType(String acType) {
+    	_acType = acType;
+    }
+    
+    /**
+     * Sets the equipment program for this Check Ride.
+     * @param eqType the equipment program.
+     * @see CheckRide#getEquipmentType()
+     * @see CheckRide#setEquipmentType(EquipmentType)
+     */
+    public void setEquipmentType(String eqType) {
+    	_eqType = eqType;
+    }
+    
+    /**
+     * Sets the equipment program and stage for this Check Ride.
+     * @param eq the Equipment Program bean
+     * @see CheckRide#setEquipmentType(String)
+     * @see Test#setStage(int)
+     */
+    public void setEquipmentType(EquipmentType eq) {
+    	setEquipmentType(eq.getName());
+    	setStage(eq.getStage());
     }
     
     /**
