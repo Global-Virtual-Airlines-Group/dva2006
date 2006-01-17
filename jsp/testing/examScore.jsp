@@ -73,10 +73,16 @@ return true;
 <tr>
 
 <!-- Score / Answer -->
- <td class="mid"><el:box className="small" name="Score${q.number}" value="1" checked="${fn:correct(q)}" label="Correct" /></td>
+ <td class="mid"><el:box className="small" name="Score${q.number}" value="true" checked="${fn:correct(q)}" label="Correct" /></td>
  <td class="data bld">${q.answer}</td>
 </tr>
 </c:forEach>
+
+<!-- Examination Comments -->
+<tr>
+ <td class="label" valign="top">Scorer Comments</td>
+ <td class="data"><el:textbox name="comments" idx="*" width="120" height="6">${exam.comments}</el:textbox></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->

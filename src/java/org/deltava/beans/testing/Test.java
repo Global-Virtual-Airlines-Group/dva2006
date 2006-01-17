@@ -49,6 +49,7 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
 
     private int _stage;
     private boolean _pass;
+    private String _comments;
     
     /**
      * Returns the type of examination.
@@ -165,6 +166,15 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
      */
     public boolean getPassFail() {
         return _pass;
+    }
+    
+    /**
+     * Returns the Examination comments.
+     * @return the comments
+     * @see Test#setComments(String)
+     */
+    public String getComments() {
+    	return _comments;
     }
     
     /**
@@ -302,6 +312,15 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
      */
     public void setPassFail(boolean passFail) {
         _pass = passFail;
+    }
+    
+    /**
+     * Updates the Examination comments.
+     * @param comments the comments
+     * @see Test#getComments()
+     */
+    public void setComments(String comments) {
+    	_comments = comments;
     }
     
     /**

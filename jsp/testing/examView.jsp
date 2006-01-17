@@ -68,6 +68,14 @@
  <td class="data">${q.answer}</td>
 </tr>
 </c:forEach>
+
+<c:if test="${!empty exam.comments}">
+<!-- Scorer Comments -->
+<tr>
+ <td class="label" valign="top">Scorer Comments</td>
+ <td class="data"><fmt:msg value="${exam.comments}" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->

@@ -32,24 +32,24 @@ public class GetExam extends DAO {
 	 */
 	public Examination getExam(int id) throws DAOException {
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE FROM EXAMS E, "
 					+ "EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.ID=?) AND (E.NAME=EP.NAME) AND (E.ID=Q.EXAM_ID) "
 					+ "GROUP BY E.ID");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query, return null if nothing
-			List results = execute();
+			List<Examination> results = execute();
 			if (results.isEmpty())
-			   return null;
-			
+				return null;
+
 			// Get the examination
-			Examination e = (Examination) results.get(0);
-						
+			Examination e = results.get(0);
+
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT * FROM EXAMQUESTIONS WHERE (EXAM_ID=?) ORDER BY QUESTION_NO");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
@@ -58,11 +58,11 @@ public class GetExam extends DAO {
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
 				q.setCorrect(rs.getBoolean(7));
-				
+
 				// Add question to the examination
 				e.addQuestion(q);
 			}
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -80,10 +80,10 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ID=?)");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query
 			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
@@ -100,8 +100,9 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
-		   setQueryMax(1);
-			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ACARS_ID=?)");
+			setQueryMax(1);
+			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE "
+					+ "(CR.EQTYPE=EQ.EQTYPE) AND (ACARS_ID=?)");
 			_ps.setInt(1, acarsID);
 
 			// Execute the query
@@ -111,7 +112,7 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Loads a pending Pilot Check Ride for a particular equipment type.
 	 * @param dbName the database name
@@ -121,27 +122,30 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public CheckRide getCheckRide(String dbName, int pilotID, String eqType) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".CHECKRIDES WHERE (PILOT_ID=?) AND (NAME=?) AND (STATUS=?)");
-	   
-	   try {
-	      setQueryMax(1);
-	      prepareStatement(sqlBuf.toString());
-	      _ps.setInt(1, pilotID);
-	      _ps.setString(2, eqType + " Check Ride");
-	      _ps.setInt(3, Test.NEW);
-	      
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, EQ.STAGE FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".CHECKRIDES CR, ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.EQTYPE=?) "
+				+ "AND (CR.STATUS=?)");
+
+		try {
+			setQueryMax(1);
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, pilotID);
+			_ps.setString(2, eqType);
+			_ps.setInt(3, Test.NEW);
+
 			// Execute the query
-			List results = executeCheckride();
-			return results.isEmpty() ? null : (CheckRide) results.get(0);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+			List<CheckRide> results = executeCheckride();
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Loads all Check Rides for a particular Pilot
 	 * @param pilotID the pilot Database ID
@@ -149,13 +153,14 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection getCheckRides(int pilotID) throws DAOException {
-	   try {
-	      prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?) ORDER BY CREATED");
-	      _ps.setInt(1, pilotID);
-	      return executeCheckride();
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		try {
+			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+					+ " AND (CR.PILOT_ID=?) ORDER BY CREATED");
+			_ps.setInt(1, pilotID);
+			return executeCheckride();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -164,27 +169,26 @@ public class GetExam extends DAO {
 	 * @return a List of Tests
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	@SuppressWarnings("unchecked")
 	public List<Test> getExams(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE " +
-			      "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.PILOT_ID=?) AND (EP.NAME=E.NAME) " +
-			      "AND (E.ID=Q.EXAM_ID) GROUP BY E.ID");
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE "
+					+ "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.PILOT_ID=?) AND (EP.NAME=E.NAME) "
+					+ "AND (E.ID=Q.EXAM_ID) GROUP BY E.ID");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query
 			List<Test> results = new ArrayList<Test>();
 			results.addAll(execute());
-			
+
 			// Load videos
 			prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?)");
 			_ps.setInt(1, id);
-			
+
 			// Execute the query
 			results.addAll(executeCheckride());
-			
+
 			// Sort the results to merge them in by date
-			TestComparator tc = new TestComparator(TestComparator.DATE);
+			TestComparator<Test> tc = new TestComparator<Test>(TestComparator.DATE);
 			Collections.sort(results, tc);
 			return results;
 		} catch (SQLException se) {
@@ -193,16 +197,16 @@ public class GetExam extends DAO {
 	}
 
 	/**
-	 * Loads all submitted Examinations and Check Rides.
+	 * Loads all submitted Examinations.
 	 * @return a List of Tests
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getSubmitted() throws DAOException {
+	public List<Examination> getSubmitted() throws DAOException {
 		try {
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, "
-			      + "P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, EXAMINFO EP WHERE "
-			      + "(P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND ((E.STATUS=?) OR ((E.STATUS=?) AND "
-			      + "(E.EXPIRY_TIME > NOW()))) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON");
+					+ "P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, EXAMINFO EP WHERE "
+					+ "(P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND ((E.STATUS=?) OR ((E.STATUS=?) AND "
+					+ "(E.EXPIRY_TIME < NOW()))) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON");
 			_ps.setInt(1, Test.SUBMITTED);
 			_ps.setInt(2, Test.NEW);
 			return execute();
@@ -210,7 +214,7 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Checks if a Pilot has an Examination open or awaiting scoring.
 	 * @param id the Pilot's database ID
@@ -218,38 +222,38 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getActiveExam(int id) throws DAOException {
-	   try {
-	      setQueryMax(1);
-	      prepareStatement("SELECT ID FROM EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))");
-	      _ps.setInt(1, id);
-	      _ps.setInt(2, Test.NEW);
-	      _ps.setInt(3, Test.SUBMITTED);
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      int testID = rs.next() ? rs.getInt(1) : 0;
-	      
-	      // Clean up and return
-	      rs.close();
-	      _ps.close();
-	      return testID;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT ID FROM EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))");
+			_ps.setInt(1, id);
+			_ps.setInt(2, Test.NEW);
+			_ps.setInt(3, Test.SUBMITTED);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int testID = rs.next() ? rs.getInt(1) : 0;
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return testID;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Helper method to parse the examination result set.
 	 */
 	private List<Examination> execute() throws SQLException {
-	   
-	   // Execute the Query
-	   ResultSet rs = _ps.executeQuery();
-	   boolean hasName = (rs.getMetaData().getColumnCount() > 13);
-	   
-	   // Iterate through the results
-	   List<Examination> results = new ArrayList<Examination>();
-	   while (rs.next()) {
+
+		// Execute the Query
+		ResultSet rs = _ps.executeQuery();
+		boolean hasName = (rs.getMetaData().getColumnCount() > 15);
+
+		// Iterate through the results
+		List<Examination> results = new ArrayList<Examination>();
+		while (rs.next()) {
 			Examination e = new Examination(rs.getString(2));
 			e.setID(rs.getInt(1));
 			e.setPilotID(rs.getInt(3));
@@ -260,57 +264,60 @@ public class GetExam extends DAO {
 			e.setScoredOn(rs.getTimestamp(8));
 			e.setScorerID(rs.getInt(9));
 			e.setPassFail(rs.getBoolean(10));
-			e.setSize(rs.getInt(11));
-			e.setScore(rs.getInt(12));
-			e.setStage(rs.getInt(13));
-			
+			e.setComments(rs.getString(11));
+			e.setSize(rs.getInt(12));
+			e.setScore(rs.getInt(13));
+			e.setStage(rs.getInt(14));
+
 			// If we're joining with pilots, get the pilot name
 			if (hasName) {
-			   e.setFirstName(rs.getString(14));
-			   e.setLastName(rs.getString(15));
+				e.setFirstName(rs.getString(15));
+				e.setLastName(rs.getString(16));
 			}
-			
+
 			// Add to results
 			results.add(e);
-	   }
-	   
-	   // Clean up and return
-	   rs.close();
-	   _ps.close();
-	   return results;
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
 	}
-	
+
 	/**
 	 * Helper method to parse the check ride result set.
 	 */
 	private List<CheckRide> executeCheckride() throws SQLException {
 
-	   // Execute the Query
-	   ResultSet rs = _ps.executeQuery();
-	   
-	   // Iterate through the results
-	   List<CheckRide> results = new ArrayList<CheckRide>();
-	   while (rs.next()) {
+		// Execute the Query
+		ResultSet rs = _ps.executeQuery();
+
+		// Iterate through the results
+		List<CheckRide> results = new ArrayList<CheckRide>();
+		while (rs.next()) {
 			CheckRide cr = new CheckRide(rs.getString(2));
 			cr.setID(rs.getInt(1));
 			cr.setPilotID(rs.getInt(3));
 			cr.setFlightID(rs.getInt(4));
 			cr.setStatus(rs.getInt(5));
-			cr.setStage(rs.getInt(6));
-			cr.setDate(rs.getTimestamp(7));
-			cr.setSubmittedOn(rs.getTimestamp(8));
-			cr.setScoredOn(rs.getTimestamp(9));
-			cr.setScorerID(rs.getInt(10));
-			cr.setPassFail(rs.getBoolean(11));
-			cr.setComments(rs.getString(12));
+			cr.setDate(rs.getTimestamp(6));
+			cr.setSubmittedOn(rs.getTimestamp(7));
+			cr.setScoredOn(rs.getTimestamp(8));
+			cr.setScorerID(rs.getInt(9));
+			cr.setPassFail(rs.getBoolean(10));
+			cr.setComments(rs.getString(11));
+			cr.setEquipmentType(rs.getString(12));
+			cr.setAircraftType(rs.getString(13));
+			cr.setStage(rs.getInt(14));
 
 			// Add to results
 			results.add(cr);
-	   }
-	   
-	   // Clean up and return
-	   rs.close();
-	   _ps.close();
-	   return results;
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
 	}
 }
