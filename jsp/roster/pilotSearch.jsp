@@ -86,14 +86,14 @@ return false;
 <c:if test="${!noResults}">
 <view:table className="view" pad="default" space="default" cmd="">
 <tr class="title caps">
- <td colspan="7" class="left">SEARCH RESULTS</td>
+ <td colspan="8" class="left">SEARCH RESULTS</td>
 </tr>
 
 <c:choose>
 <c:when test="${empty results}">
 <!-- No Pilots Found -->
 <tr>
- <td colspan="7" class="pri bld left">No Pilots matching your search criteria were found.</td>
+ <td colspan="8" class="pri bld left">No Pilots matching your search criteria were found.</td>
 </tr>
 </c:when>
 <c:otherwise>
