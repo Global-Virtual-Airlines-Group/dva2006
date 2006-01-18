@@ -64,17 +64,6 @@ public class EventSaveCommand extends AbstractCommand {
 			if (!access.getCanEdit())
 				throw securityException("Cannot edit Online Event");
 
-			// Load initial flight route
-			if (ctx.getParameter("route") != null) {
-				Route r = new Route(0, ctx.getParameter("route"));
-				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-				e.addRoute(r);
-				
-				// Add to the message context
-				mctxt.addData("route", r);
-			}
-
 			// Populate fields from the request
 			e.setNetwork(ctx.getParameter("network"));
 			e.setBriefing(ctx.getParameter("briefing"));
@@ -84,6 +73,17 @@ public class EventSaveCommand extends AbstractCommand {
 			e.setStartTime(parseDateTime(ctx, "start"));
 			e.setEndTime(parseDateTime(ctx, "end"));
 			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close") : e.getStartTime());
+			
+			// Load initial flight route
+			if (e.getCanSignup() && (ctx.getParameter("route") != null)) {
+				Route r = new Route(0, ctx.getParameter("route"));
+				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				e.addRoute(r);
+				
+				// Add to the message context
+				mctxt.addData("route", r);
+			}
 
 			// Parse the equipment types
 			String[] eqTypes = ctx.getRequest().getParameterValues("eqTypes");
