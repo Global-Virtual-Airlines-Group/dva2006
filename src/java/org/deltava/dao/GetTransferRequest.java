@@ -34,7 +34,7 @@ public class GetTransferRequest extends DAO {
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
-					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (ID=?)");
+					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=?)");
 			_ps.setInt(1, pilotID);
 
 			// Execute the query, if empty return null
