@@ -45,7 +45,7 @@
 </el:table>
 </el:form>
 <c:if test="${doSearch}">
-<el:table className="view" space="default" pad="default">
+<view:table className="view" space="default" pad="default" cmd="cmdlog">
 <tr class="title caps">
  <td colspan="6" class="left">COMMAND LOG RESULTS</td>
 </tr>
@@ -85,7 +85,7 @@
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </c:if>
-</el:table>
+</view:table>
 </c:if>
 <br />
 <content:copyright />
