@@ -1,4 +1,3 @@
-
 function getElement(eName)
 {
 return (document.all) ? document.all(eName) : document.getElementById(eName);
@@ -6,15 +5,17 @@ return (document.all) ? document.all(eName) : document.getElementById(eName);
 
 function disableButton(btnName)
 {
-var btn = getElement(btnName);
-if (btn) btn.disabled = true;
-return true;
+return enableElement(btnName, false);
 }
 
-function enableButton(btnName)
+function enableElement(eName, isEnabled)
 {
-var btn = getElement(btnName);
-if (btn) btn.disabled = false;
+return enableObject(getElement(eName), isEnabled);
+}
+
+function enableObject(e, isEnabled)
+{
+if (e) e.disabled = (!isEnabled);
 return true;
 }
 
@@ -58,10 +59,9 @@ self.location = '/' + url;
 return true;
 }
 
-
 function validateText(text, min, title)
 {
-if (!text) return true;
+if ((!text) || (text.disabled)) return true;
 if (text.value.length < min) {
 	alert('Please provide the ' + title + '.');
 	text.focus();
@@ -73,7 +73,7 @@ return true;
 
 function validateNumber(text, minValue, title)
 {
-if (!text) return true;
+if ((!text) || (text.disabled)) return true;
 intValue = parseFloat(text.value);
 if ((text.value.length < 1) || (intValue == Number.NaN)) {
 	alert('Please provide a numeric ' + title + '.');
@@ -92,6 +92,8 @@ return true;
 
 function validateEMail(text, title)
 {
+if ((!text) || (text.disabled)) return true;
+
 // Get the value
 var str = text.value;
 if (str.length < 5) {
@@ -143,7 +145,7 @@ return true;
 
 function validateCombo(combo, title)
 {
-if (!combo) return true;
+if ((!combo) || (combo.disabled)) return true;
 if (combo.selectedIndex == 0) {
 	alert('Please provide the ' + title + '.');
 	combo.focus();
@@ -155,7 +157,7 @@ return true;
 
 function validateFile(fileName, extType, title)
 {
-if ((!fileName) || (fileName.value.length == 0)) return true;
+if ((!fileName) || (fileName.disabled) || (fileName.value.length == 0)) return true;
 extTypes = extType.toLowerCase().split(',');
 
 fName = fileName.value;
