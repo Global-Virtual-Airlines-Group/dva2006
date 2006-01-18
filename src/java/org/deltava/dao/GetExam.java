@@ -119,10 +119,11 @@ public class GetExam extends DAO {
 	 * @param dbName the database name
 	 * @param pilotID the Pilot Database ID
 	 * @param eqType the equipment type used
+	 * @param status the CheckRide status
 	 * @return a CheckRide, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public CheckRide getCheckRide(String dbName, int pilotID, String eqType) throws DAOException {
+	public CheckRide getCheckRide(String dbName, int pilotID, String eqType, int status) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, EQ.STAGE FROM ");
@@ -137,7 +138,7 @@ public class GetExam extends DAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
-			_ps.setInt(3, Test.NEW);
+			_ps.setInt(3, status);
 
 			// Execute the query
 			List<CheckRide> results = executeCheckride();
