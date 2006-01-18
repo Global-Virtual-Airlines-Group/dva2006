@@ -136,7 +136,7 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	 * @see TransferRequest#getCheckRideSubmitted()
 	 */
 	public void setCheckRideSubmitted(boolean isSubmitted) {
-		if (_checkRideID == 0)
+		if (isSubmitted && (_checkRideID == 0))
 			throw new IllegalStateException("No Check Ride ID");
 		
 		_crSubmitted = isSubmitted;
