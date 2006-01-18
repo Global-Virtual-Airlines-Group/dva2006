@@ -20,14 +20,18 @@
 function updateSignups()
 {
 var f = document.forms[0];
-f.closeDate.disabled = (!f.canSignup.checked);
-f.closeTime.disabled = (!f.canSignup.checked);
+
+// Selectively enable fields if signups enabled
+enableObject(f.closeDate, f.canSignup.checked);
+enableObject(f.closeTime, f.canSignup.checked);
+enableObject(f.airportD, f.canSignup.checked);
+enableObject(f.airportA, f.canSignup.checked);
+enableObject(f.adCode, f.canSignup.checked);
+enableObject(f.aaCode, f.canSignup.checked);
+enableObject(f.route, f.canSignup.checked);
 
 // Get the calendar button
-var ccb = getElement('CloseCalendarButton');
-if (ccb)
-	ccb.disabled = (!f.canSignup.checked);
-
+enableElement('CloseCalendarButton', f.canSignup.checked);
 return true;
 }
 
@@ -91,7 +95,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${event.canSignup}" label="Allow Signups for this Online Event" onChange="void updateSignups()" /></td>
+ <td class="data"><el:box name="canSignup" idx="*" value="true" checked="${empty event ? true : event.canSignup}" label="Allow Signups for this Online Event" onChange="void updateSignups()" /></td>
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
