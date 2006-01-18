@@ -12,6 +12,7 @@ import org.deltava.beans.system.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.EventAccessControl;
 import org.deltava.util.CalendarUtils;
 import org.deltava.util.ComboUtils;
 
@@ -89,6 +90,11 @@ public class EventCalendarCommand extends AbstractCommand {
 		// Save the calendar options
 		ctx.setAttribute("startDate", startDate, REQUEST);
 		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
+		
+		// Calculate our access to create new events
+		EventAccessControl access = new EventAccessControl(ctx, null);
+		access.validate();
+		ctx.setAttribute("access", access, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

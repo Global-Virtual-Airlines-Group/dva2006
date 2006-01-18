@@ -59,12 +59,17 @@ return true;
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
  <fmt:date date="${event.endTime}" fmt="t" t="HH:mm" /></td>
 </tr>
+<tr>
+ <td class="label">Online Network</td>
+ <td class="data sec bld">${event.networkName}</td>
+</tr>
 <c:if test="${event.canSignup}">
 <tr>
  <td class="label">Signups Close on</td>
  <td colspan="5" class="data"><fmt:date date="${event.signupDeadline}" /></td>
 </tr>
 </c:if>
+<c:if test="${!empty event.routes}">
 <tr class="title caps">
  <td colspan="6" class="left">AVAILABLE FLIGHT ROUTES</td>
 </tr>
@@ -80,6 +85,7 @@ return true;
  <td class="data" colspan="5">${route.route}</td>
 </tr>
 </c:forEach>
+</c:if>
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td colspan="5" class="data"><el:textbox name="briefing" readOnly="true" width="135" height="8">${event.briefing}</el:textbox></td>
