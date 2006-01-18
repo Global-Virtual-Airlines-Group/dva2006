@@ -79,6 +79,8 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			// Generate the checkride
 			cr = new CheckRide(ctx.getParameter("crType") + " Check Ride");
 			cr.setDate(new java.util.Date());
+			cr.setAircraftType(ctx.getParameter("crType"));
+			cr.setEquipmentType(txreq.getEquipmentType());
 			cr.setPilotID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(Test.NEW);
