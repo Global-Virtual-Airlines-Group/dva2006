@@ -101,11 +101,11 @@
 <c:if test="${scoreCR}">
 <c:set var="isForm" value="true" scope="request" />
 <tr>
- <td class="label">Check Ride Instructions</td>
+ <td class="label" valign="top">Check Ride Instructions</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 <tr>
- <td class="label">Reviewer Comments</td>
+ <td class="label" valign="top">Reviewer Comments</td>
  <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </tr>
 <tr>
