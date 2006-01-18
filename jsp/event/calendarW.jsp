@@ -68,13 +68,6 @@ ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /><
 <calendar:empty>-</calendar:empty>
 </calendar:week>
 </div>
-
-<!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
-<tr>
- <td><content:filter roles="Event"><el:cmdbutton url="eventedit" label="NEW ONLINE EVENT" /></content:filter>&nbsp;</td>
-</tr>
-</el:table>
 </el:form>
 <br />
 <content:copyright />
