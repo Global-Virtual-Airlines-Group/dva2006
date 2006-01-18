@@ -57,7 +57,7 @@ public class ExamAccessControl extends AccessControl {
         boolean isScored = (_t.getStatus() == Test.SCORED);
         if (!isCR) {
         	Examination ex = (Examination) _t;
-        	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().after(new Date())));
+        	isSubmitted = isSubmitted || ((_t.getStatus() == Test.NEW) && (ex.getExpiryDate().before(new Date())));
         }
 
         // Set access
@@ -65,8 +65,7 @@ public class ExamAccessControl extends AccessControl {
         _canSubmit = isOurs && !isCR && (_t.getStatus() == Test.NEW);
         _canEdit = isScored && isHR && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin");
-        if (!isCR)
-        	_canScore = _canEdit || (isSubmitted && (isExam || isHR));
+        _canScore = _canEdit || (isSubmitted && (isExam || isHR));
         
         // Throw an exception if we cannot view
         if (!_canRead)
