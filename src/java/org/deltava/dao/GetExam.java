@@ -81,7 +81,8 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT * FROM CHECKRIDES WHERE (ID=?)");
+			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+					+ "AND (CR.ID=?)");
 			_ps.setInt(1, id);
 
 			// Execute the query
@@ -181,7 +182,8 @@ public class GetExam extends DAO {
 			results.addAll(execute());
 
 			// Load videos
-			prepareStatement("SELECT * FROM CHECKRIDES WHERE (PILOT_ID=?)");
+			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+					+ "AND (CR.PILOT_ID=?)");
 			_ps.setInt(1, id);
 
 			// Execute the query
