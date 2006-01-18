@@ -43,7 +43,7 @@ smoothest landings, and the greaser pilots who made them:<br />
  <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>
  <td colspan="2"><el:box name="doStaff" idx="*" value="true" label="Staff Members Only" checked="${isStaff}" /></td>
  <td class="right" colspan="2"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
-FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" /> 
+FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void document.forms[0].submit()" /> 
 <el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 
