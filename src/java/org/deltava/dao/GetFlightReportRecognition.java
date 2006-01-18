@@ -41,7 +41,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		
 		// Append number of days
 		if (days > 0)
-			sqlBuf.append(" AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
 		
@@ -76,7 +76,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 	   
 		// Append number of days
 		if (days > 0)
-			sqlBuf.append(" AND (DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
+			sqlBuf.append(" AND (PR.DATE > DATE_SUB(NOW(), INTERVAL ? DAY))");
 		
 		sqlBuf.append(" ORDER BY APR.LANDING_VSPEED DESC, PR.DATE DESC");
 		
