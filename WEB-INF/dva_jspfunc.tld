@@ -231,13 +231,6 @@
 		<function-signature>boolean isSubmitted(org.deltava.beans.testing.Test)</function-signature>
 	</function>
 	
-	<!-- Get Check Ride aircraft type -->
-	<function>
-		<name>eqType</name>
-		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
-		<function-signature>java.lang.String eqType(org.deltava.beans.testing.CheckRide)</function-signature>
-	</function>
-	
 	<!-- Get Captain's Examination Name -->
 	<function>
 		<name>examC</name>

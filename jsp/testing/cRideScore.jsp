@@ -37,7 +37,7 @@ return true;
 <el:form action="crscore.do" linkID="0x${checkRide.ID}" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">${fn:eqType(checkRide)} CHECK RIDE FOR ${pilot.name}</td>
+ <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name}</td>
 </tr>
 <tr>
  <td class="label">${fn:pending(checkRide) ? 'Assigned' : 'Scored'} by</td>
@@ -45,7 +45,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data">${fn:eqType(checkRide)} (Stage <fmt:int value="${checkRide.stage}" />)</td>
+ <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
 <c:if test="${checkRide.flightID != 0}">
 <tr>
