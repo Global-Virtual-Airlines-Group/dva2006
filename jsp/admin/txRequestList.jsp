@@ -48,7 +48,9 @@
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="140" labels="Check Ride Pending,Ride Assigned,Ride Submitted,Complete"
+classes="opt2,opt1,opt3, " /></td>
 </tr>
 </view:table>
 <content:copyright />
