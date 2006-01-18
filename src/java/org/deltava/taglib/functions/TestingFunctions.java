@@ -80,13 +80,4 @@ public class TestingFunctions {
 	public static boolean isSubmitted(Test t) {
 	   return (t.getStatus() == Test.SUBMITTED);
 	}
-	
-	/**
-	 * Returns the equipment type for a particular Check Ride. 
-	 * @param cr the CheckRide bean
-	 * @return the Equipment Type for the Check Ride
-	 */
-	public static String eqType(CheckRide cr) {
-		return cr.getName().substring(0, cr.getName().indexOf(' '));
-	}
 }
