@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -523,7 +524,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#addRatings(Collection)
      * @see Pilot#getRatings()
      */
-    public void removeRatings(Collection ratings) {
+    public void removeRatings(Collection<String> ratings) {
        _ratings.removeAll(ratings);
     }
     
@@ -553,7 +554,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * @see Pilot#addRoles(Collection)
      * @see Pilot#getRoles()
      */
-    public void removeRoles(Collection roles) {
+    public void removeRoles(Collection<String> roles) {
     	_roles.removeAll(roles);
     	_roles.add("Pilot");
     }
@@ -662,12 +663,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setShowSignatures(getShowSignatures());
        p2.setShowSSThreads(getShowSSThreads());
        p2._networkIDs.putAll(getNetworkIDs());
-       
        if (!StringUtils.isEmpty(getPilotCode()))
     	   p2.setPilotCode(getPilotCode());
        
-       for (Iterator i = getNotifyOptions().iterator(); i.hasNext(); )
-    	   p2.setNotifyOption((String) i.next(), true);
+       for (Iterator<String> i = getNotifyOptions().iterator(); i.hasNext(); )
+    	   p2.setNotifyOption(i.next(), true);
        
        return p2;
     }
