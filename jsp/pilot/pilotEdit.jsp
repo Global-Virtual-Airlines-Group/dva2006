@@ -126,6 +126,10 @@ return true;
  <td class="label" valign="top">Security Roles</td>
  <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
+<tr>
+ <td class="label">Subversion User ID</td>
+ <td colspan="${cspan}" class="data"><el:text name="uid" idx="*" size="10" max="24" value="${pilot.LDAPName}" /></td>
+</tr>
 </c:if>
 <tr>
  <td class="label">Rank / Equipment</td>

@@ -18,12 +18,6 @@
  <td colspan="${cspan}" class="data"><a href="mailto:${emailCfg.address}">${emailCfg.address}</a></td> 
 </c:if>
 </tr>
-<c:if test="${m_access.canChangePassword}">
-<tr>
- <td class="label">IMAP Server Password</td>
- <td colspan="${cspan}" class="data"><el:text name="IMAPPassword" idx="*" type="password" size="12" max="32" value="${emailCfg.password}" /></td>
-</tr>
-</c:if>
 <c:if test="${m_access.canEdit}">
 <tr>
  <td class="label">Mailbox Quota</td>

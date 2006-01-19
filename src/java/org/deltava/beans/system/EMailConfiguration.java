@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -16,7 +16,6 @@ import org.deltava.beans.ViewEntry;
 public class EMailConfiguration extends DatabaseBean implements ViewEntry {
 
 	private String _addr;
-	private String _pwd;
 	private String _mailDir;
 	private int _quota;
 	private boolean _active;
@@ -61,15 +60,6 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
      */
 	public String getMailDirectory() {
 		return _mailDir;
-	}
-	
-    /**
-     * Returns the mailbox password.
-     * @return the password
-     * @see EMailConfiguration#setPassword(String)
-     */
-	public String getPassword() {
-		return _pwd;
 	}
 	
     /**
@@ -136,15 +126,6 @@ public class EMailConfiguration extends DatabaseBean implements ViewEntry {
 			throw new IllegalArgumentException("Invalid Mailbox quota - " + quota);
 		
 		_quota = quota;
-	}
-	
-    /**
-     * Updates the mailbox password.
-     * @param pwd the new password
-     * @see EMailConfiguration#getPassword()
-     */
-	public void setPassword(String pwd) {
-		_pwd = pwd;
 	}
 	
     /**

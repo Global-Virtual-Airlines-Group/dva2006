@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.EMailConfiguration;
@@ -17,7 +17,6 @@ public class MailboxAccessControl extends AccessControl {
    
    private EMailConfiguration _cfg;
    
-   private boolean _canChangePassword;
    private boolean _canEdit;
    private boolean _canDelete;
 
@@ -42,15 +41,6 @@ public class MailboxAccessControl extends AccessControl {
       // Calculate access properties
       _canDelete = _ctx.isUserInRole("Admin");
       _canEdit = _ctx.isUserInRole("Admin");
-      _canChangePassword = _canDelete || _canEdit || (_ctx.getUser().getID() == _cfg.getID());
-   }
-   
-   /**
-    * Returns if the user can change the mailbox password.
-    * @return TRUE if the password can be changed, otherwise FALSE
-    */
-   public boolean getCanChangePassword() {
-      return _canChangePassword; 
    }
    
    /**

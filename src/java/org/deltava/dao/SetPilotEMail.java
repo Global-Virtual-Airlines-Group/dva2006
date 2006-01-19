@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -55,15 +55,14 @@ public class SetPilotEMail extends DAO {
             executeUpdate(0);
 			
 			// Write the mailbox record
-			prepareStatement("REPLACE INTO postfix.mailbox (username, password, name, maildir, quota, active, ID) VALUES "
-					+ "(?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO postfix.mailbox (username, name, maildir, quota, active, ID) VALUES "
+					+ "(?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, cfg.getAddress());
-			_ps.setString(2, cfg.getPassword());
-			_ps.setString(3, name);
-			_ps.setString(4, cfg.getMailDirectory());
-			_ps.setInt(5, cfg.getQuota());
-			_ps.setBoolean(6, cfg.getActive());
-			_ps.setInt(7, cfg.getID());
+			_ps.setString(2, name);
+			_ps.setString(3, cfg.getMailDirectory());
+			_ps.setInt(4, cfg.getQuota());
+			_ps.setBoolean(5, cfg.getActive());
+			_ps.setInt(6, cfg.getID());
 			executeUpdate(1);
 			
 			// Write the aliases
@@ -83,5 +82,23 @@ public class SetPilotEMail extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}		
+	}
+	
+	/**
+	 * Updates a Pilot's IMAP mailbox password.
+	 * @param id the Pilot's database ID
+	 * @param pwd the new password
+	 */
+	public void updatePassword(int id, String pwd) throws DAOException {
+		try {
+			prepareStatement("UPDATE postfix.mailbox SET crypt_pw=ENCRYPT(?) WHERE (ID=?)");
+			_ps.setString(1, pwd);
+			_ps.setInt(2, id);
+			
+			// Execute the query
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }

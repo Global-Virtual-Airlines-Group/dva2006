@@ -66,7 +66,6 @@ public class IMAPMailboxCommand extends AbstractCommand {
             // Create the mailbox profile
             emailCfg = new EMailConfiguration(usr.getID(), mbAddr);
             emailCfg.setMailDirectory(String.valueOf(usr.getID()));
-            emailCfg.setPassword(SystemData.get("smtp.imap.default_pwd"));
             emailCfg.setQuota(SystemData.getInt("smtp.imap.quota"));
             emailCfg.setActive(true);
             
@@ -105,6 +104,7 @@ public class IMAPMailboxCommand extends AbstractCommand {
             // Write the mailbox profile
             SetPilotEMail wdao = new SetPilotEMail(con);
             wdao.write(emailCfg, usr.getName());
+            wdao.updatePassword(emailCfg.getID(), SystemData.get("smtp.imap.default_pwd"));
             
             // Commit the transaction
             ctx.commitTX();
