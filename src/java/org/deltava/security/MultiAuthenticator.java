@@ -1,10 +1,12 @@
-// Copyright (c) 2004, 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+
+import org.deltava.beans.Person;
 
 import org.deltava.util.ConfigLoader;
 
@@ -15,7 +17,7 @@ import org.deltava.util.ConfigLoader;
  * @since 1.0
  */
 
-abstract class MultiAuthenticator implements Authenticator {
+public abstract class MultiAuthenticator implements Authenticator {
 	
 	/**
 	 * The &quot;source&quot; authenticator.
@@ -93,5 +95,28 @@ abstract class MultiAuthenticator implements Authenticator {
 	 */
 	public final Authenticator getDestination() {
 		return _dst;
+	}
+	
+	/**
+	 * Synchronizes user information between the source and destination authenticators. If the supplied credentials
+	 * cannot be used to authenticate against the destination authenticator, then they are called via an 
+	 * {@link Authenticator#addUser} or {@link Authenticator#updatePassword} call to syncrhonize the two 
+	 * authenticators. <i>This should only be called from a subclass' {@link Authenticator#authenticate} method
+	 * since the credentials are presumed to be valid in the source authenticator.</i> 
+	 * @param usr the Person bean
+	 * @param pwd the user's password
+	 * @throws SecurityException if an error occurs
+	 */
+	protected void sync(Person usr, String pwd) throws SecurityException {
+		try {
+			_dst.authenticate(usr, pwd);
+		} catch (SecurityException se) {
+			// FIXME This really should be usr, since each authenticator may store a different DN
+			if (_dst.contains(usr.getDN())) {
+				_dst.updatePassword(usr, pwd);
+			} else {
+				_dst.addUser(usr, pwd);
+			}
+		}
 	}
 }
