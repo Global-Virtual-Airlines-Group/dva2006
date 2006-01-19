@@ -1,17 +1,16 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
+import java.util.*;
 import java.io.IOException;
-import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.naming.*;
 import javax.naming.directory.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Person;
-import org.deltava.util.ConfigLoader;
+import org.deltava.beans.*;
+import org.deltava.util.*;
 
 /**
  * An authenticator to validate users against an LDAP server.
@@ -139,8 +138,11 @@ public class LDAPAuthenticator implements Authenticator {
 			Attributes attrs = new BasicAttributes("userPassword", pwd);
 			attrs.put("objectClass", "person");
 			attrs.put("sn", usr.getLastName());
-			/* if (userID != null)
-			   attrs.put("uid", userID); */
+			if (usr instanceof Pilot) {
+				Pilot p = (Pilot) usr;
+				if (p.getLDAPName() != null)
+					attrs.put("uid", p.getLDAPName());
+			}
 
 			// Add the user to the directory
 			ctxt.bind(usr.getDN(), null, attrs);
@@ -154,11 +156,11 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
      * Checks if a particular name exists in the Directory.
-     * @param directoryName the fully-qualified directory name
+     * @param usr the user bean
      * @return TRUE if the user exists, otherwise FALSE
      * @throws SecurityException if an error occurs
      */
-	public boolean contains(String directoryName) throws SecurityException {
+	public boolean contains(Person usr) throws SecurityException {
 
 		// Bind to the directory
 		try {
@@ -167,7 +169,7 @@ public class LDAPAuthenticator implements Authenticator {
 			// Do the LDAP search
 			SearchControls ctrls = new SearchControls();
 			ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
-			NamingEnumeration ne = ctxt.search(directoryName, "(objectClass=person)", ctrls);
+			NamingEnumeration ne = ctxt.search(usr.getDN(), "(objectClass=person)", ctrls);
 			boolean isOK = ne.hasMoreElements();
 			
 			// Close the context
@@ -176,7 +178,7 @@ public class LDAPAuthenticator implements Authenticator {
 		} catch (NameNotFoundException nfe) {
 			return false;
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error searching for User " + directoryName);
+			SecurityException se = new SecurityException("Error searching for User " + usr.getDN());
 			se.initCause(ne);
 			throw se;
 		}
@@ -184,21 +186,21 @@ public class LDAPAuthenticator implements Authenticator {
 
 	/**
 	 * Removes a User from the Directory.
-	 * @param dName the User's fully-qualified Directory name
+	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(String dName) throws SecurityException {
-		log.debug("Removing user " + dName + " from Directory");
-		if (!contains(dName))
-			throw new SecurityException(dName + " not found");
+	public void removeUser(Person usr) throws SecurityException {
+		log.debug("Removing user " + usr.getDN() + " from Directory");
+		if (!contains(usr))
+			throw new SecurityException(usr.getDN() + " not found");
 
 		// Bind to the Directory and remove
 		try {
 			DirContext ctxt = new InitialDirContext(_env);
-			ctxt.unbind(dName);
+			ctxt.unbind(usr.getDN());
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error removing User " + dName);
+			SecurityException se = new SecurityException("Error removing User " + usr.getDN());
 			se.initCause(ne);
 			throw se;
 		}
@@ -206,27 +208,27 @@ public class LDAPAuthenticator implements Authenticator {
 	
    /**
     * Renames a user in the Directory.
-    * @param oldName the old fully-qualified directory name
+    * @param usr the user bean
     * @param newName the new fully-qualified directory 
     * @throws SecurityException if an error occurs
     */
-	public void rename(String oldName, String newName) throws SecurityException {
+	public void rename(Person usr, String newName) throws SecurityException {
 
 		// Do nothing if we are not doing a case-sensitive change
-		if (oldName.equalsIgnoreCase(newName))
+		if (usr.getDN().equalsIgnoreCase(newName))
 		   return;
 		
-	   log.debug("Renaming user " + oldName + " to " + newName);
-		if (!contains(oldName))
-			throw new SecurityException(oldName + " not found");
+	   log.debug("Renaming user " + usr.getDN() + " to " + newName);
+		if (!contains(usr))
+			throw new SecurityException(usr.getDN() + " not found");
 
 		// Bind to the Directory and rename
 		try {
 		   DirContext ctxt = new InitialDirContext(_env);
-		   ctxt.rename(oldName, newName);
+		   ctxt.rename(usr.getDN(), newName);
 		   ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error renaming User " + oldName);
+			SecurityException se = new SecurityException("Error renaming User " + usr.getDN());
 			se.initCause(ne);
 			throw se;
 		}

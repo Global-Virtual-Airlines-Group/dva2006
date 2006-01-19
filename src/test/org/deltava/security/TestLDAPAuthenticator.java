@@ -14,10 +14,12 @@ public class TestLDAPAuthenticator extends AuthenticatorTestCase {
         PropertyConfigurator.configure("data/log4j.test.properties");
         _auth = new LDAPAuthenticator();
         _auth.init(Authenticator.DEFAULT_PROPS_FILE);
+        _usr = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=dva,o=sce");
     }
 
     protected void tearDown() throws Exception {
         _auth = null;
+        _usr = null;
         super.tearDown();
     }
     
@@ -32,15 +34,16 @@ public class TestLDAPAuthenticator extends AuthenticatorTestCase {
     }
     
     public void testSearch() throws Exception {
-    	assertTrue(_auth.contains("cn=Luke Kolin,ou=dva,o=sce"));
-    	assertFalse(_auth.contains("cn=Luke Kolin2,ou=dva,o=sce"));
+    	assertTrue(_auth.contains(_usr));
+    	_usr.setDN("cn=Luke Kolin2,ou=dva,o=sce");
+    	assertFalse(_auth.contains(_usr));
     }
     
     public void testAddRemove() throws Exception {
     	Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
     	_auth.addUser(usr2, "test");
-    	assertTrue(_auth.contains(usr2.getDN()));
+    	assertTrue(_auth.contains(usr2));
     	_auth.authenticate(usr2, "test");
-    	_auth.removeUser(usr2.getDN());
+    	_auth.removeUser(usr2);
     }
 }

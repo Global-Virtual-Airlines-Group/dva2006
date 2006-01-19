@@ -103,11 +103,15 @@ public class TS2Authenticator implements Authenticator {
 
 	/**
 	 * Checks if a particular name exists in the Directory.
-	 * @param directoryName the fully-qualified directory name
+	 * @param usr the user bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public boolean contains(String directoryName) throws SecurityException {
+	public boolean contains(Person usr) throws SecurityException {
+		
+		// Ensure we are a Pilot, not a Person
+		if (!(usr instanceof Pilot))
+			throw new SecurityException("Invalid object - " + usr.getClass().getName());
 
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
@@ -121,7 +125,7 @@ public class TS2Authenticator implements Authenticator {
 
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, directoryName);
+			ps.setString(1, ((Pilot) usr).getPilotCode());
 			ResultSet rs = ps.executeQuery();
 
 			// Count the results
@@ -161,7 +165,6 @@ public class TS2Authenticator implements Authenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(?) WHERE (s_client_name=?)");
 
-		Pilot p = (Pilot) usr;
 		Connection c = null;
 		try {
 			c = _pool.getConnection(true);
@@ -169,7 +172,7 @@ public class TS2Authenticator implements Authenticator {
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, usr.getPassword());
-			ps.setString(2, p.getPilotCode());
+			ps.setString(2, ((Pilot) usr).getPilotCode());
 
 			// Execute the update and clean up
 			int results = ps.executeUpdate();
@@ -208,7 +211,6 @@ public class TS2Authenticator implements Authenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(?), ?)");
 
-		Pilot p = (Pilot) usr;
 		Connection c = null;
 		try {
 			c = _pool.getConnection(true);
@@ -217,7 +219,7 @@ public class TS2Authenticator implements Authenticator {
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, Integer.parseInt(_props.getProperty("serverID", "1")));
 			ps.setInt(2, 0);
-			ps.setString(3, p.getPilotCode());
+			ps.setString(3, ((Pilot) usr).getPilotCode());
 			ps.setString(4, pwd);
 			ps.setString(5, df.format(new java.util.Date()));
 			
@@ -235,16 +237,16 @@ public class TS2Authenticator implements Authenticator {
 	/**
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
 	 */
-	public void rename(String oldName, String newName) throws SecurityException {
+	public void rename(Person usr, String newName) throws SecurityException {
 		log.warn("TS2Authenticator does not support renames");
 	}
 
 	/**
 	 * Removes a user from the Directory.
-	 * @param directoryName the User's fully-qualified directory Name
+	 * @param usr the User bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void removeUser(String directoryName) throws SecurityException {
+	public void removeUser(Person usr) throws SecurityException {
 		
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
@@ -257,7 +259,7 @@ public class TS2Authenticator implements Authenticator {
 			
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, directoryName.toUpperCase());
+			ps.setString(1, ((Pilot) usr).getPilotCode().toUpperCase());
 			
 			// Execute the query and clean up
 			ps.executeUpdate();
