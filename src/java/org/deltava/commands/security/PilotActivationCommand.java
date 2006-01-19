@@ -96,7 +96,7 @@ public class PilotActivationCommand extends AbstractCommand {
 
 				// Get the authenticator and update the password
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				if (auth.contains(p.getDN())) {
+				if (auth.contains(p)) {
 					auth.updatePassword(p, p.getPassword());
 				} else {
 					auth.addUser(p, p.getPassword());
