@@ -40,6 +40,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
     private String _pCodePrefix;
     private int _pCodeId;
+    
+    private String _ldapID;
 
     private Set<String> _ratings = new TreeSet<String>();
     private Set<String> _roles = new TreeSet<String>();
@@ -284,6 +286,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     public boolean getHasDefaultSignature() {
        return _showDefaultSignature;
     }
+    
+    /**
+     * Returns the Pilot's LDAP uid, used for SubVersion and raw HTTP access.
+     * @return the LDAP uid, or null
+     * @see Pilot#setLDAPName(String)
+     */
+    public String getLDAPName() {
+    	return _ldapID;
+    }
 
     /**
      * Queries wether this Pilot is a member of a particular security role.
@@ -490,6 +501,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
             throw new IllegalArgumentException("Miles cannot be negative");
 
         _miles = miles;
+    }
+    
+    /**
+     * Updates this Pilot's LDAP uid attribute, for use by Subversion and raw HTTP access.
+     * @param uid the userid, which will be converted to lowercase
+     * @see Pilot#getLDAPName()
+     */
+    public void setLDAPName(String uid) {
+    	_ldapID = StringUtils.isEmpty(uid) ? null : uid.toLowerCase();
     }
 
     /**
