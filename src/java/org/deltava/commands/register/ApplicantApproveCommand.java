@@ -134,6 +134,8 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			cr.setStatus(Test.SCORED);
 			cr.setSubmittedOn(new Date());
 			cr.setScoredOn(cr.getSubmittedOn());
+			cr.setAircraftType(a.getEquipmentType());
+			cr.setEquipmentType(a.getEquipmentType());
 			
 			// Write the check ride (call the DAO twice to write all fields)
 			SetExam exwdao = new SetExam(con);
