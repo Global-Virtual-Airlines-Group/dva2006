@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -15,10 +15,19 @@ import org.deltava.beans.Person;
 public class MigrationAuthenticator extends MultiAuthenticator {
 
 	/**
-	 * Initializes the Authenticator.
+	 * Loads the Authenticator.
 	 */
 	public MigrationAuthenticator() {
 		super(MigrationAuthenticator.class);
+	}
+	
+	/**
+	 * Initializes the Authenticator.
+	 * @param propsFile the name of the proeprties file to load
+	 * @throws SecurityException if an error occurs
+	 */
+	public void init(String propsFile) throws SecurityException {
+		init(propsFile, "migration");
 	}
 
 	/**
@@ -34,7 +43,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Figure out which authenticator to use
-		Authenticator auth = _dst.contains(usr.getDN()) ? _dst : _src;
+		Authenticator auth = _dst.contains(usr) ? _dst : _src;
 		auth.authenticate(usr, pwd);
 
 		// If we got this far, and we're not in the destination directory, then add us
@@ -44,12 +53,12 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 
 	/**
 	 * Checks if a particular name exists in either Directory.
-	 * @param directoryName the fully-qualified directory name
+	 * @param usr the user bean
 	 * @return TRUE if the user exists in either Authenticator, otherwise FALSE
 	 * @throws SecurityException if an error occurs
 	 */
-	public boolean contains(String directoryName) throws SecurityException {
-		return _src.contains(directoryName) || _dst.contains(directoryName);
+	public boolean contains(Person usr) throws SecurityException {
+		return _src.contains(usr) || _dst.contains(usr);
 	}
 
 	/**
@@ -59,7 +68,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs, or the user is not in the Destination directory
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		if (_dst.contains(usr.getDN())) {
+		if (_dst.contains(usr)) {
 			_dst.updatePassword(usr, pwd);
 		} else {
 			_dst.addUser(usr, pwd);
@@ -79,26 +88,26 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	/**
 	 * Removes a User from the Directory. This will remove from the first directory containing the user, first the
 	 * Destination, then the Source.
-	 * @param directoryName the User's fully-qualified Directory name
+	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs or the user does not exist
 	 */
-	public void removeUser(String directoryName) throws SecurityException {
-		if (_dst.contains(directoryName)) {
-			_dst.removeUser(directoryName);
-		} else if (_src.contains(directoryName)) {
-			_src.removeUser(directoryName);
+	public void removeUser(Person usr) throws SecurityException {
+		if (_dst.contains(usr)) {
+			_dst.removeUser(usr);
+		} else if (_src.contains(usr)) {
+			_src.removeUser(usr);
 		} else {
-			throw new SecurityException("Unknown User - " + directoryName);
+			throw new SecurityException("Unknown User - " + usr.getDN());
 		}
 	}
 	
    /**
     * Renames a user in the <i>Destination</i> Directory.
-    * @param oldName the old fully-qualified directory name
+    * @param usr the user bean
     * @param newName the new fully-qualified directory 
     * @throws SecurityException if an error occurs
     */
-	public void rename(String oldName, String newName) throws SecurityException {
-		_dst.rename(oldName, newName);
+	public void rename(Person usr, String newName) throws SecurityException {
+		_dst.rename(usr, newName);
 	}
 }

@@ -48,7 +48,7 @@ public abstract class MultiAuthenticator implements Authenticator {
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
-	public void init(String propsFile) throws SecurityException {
+	protected void init(String propsFile, String authPrefix) throws SecurityException {
 
 		Properties props = new Properties();
 		try {
@@ -60,9 +60,9 @@ public abstract class MultiAuthenticator implements Authenticator {
 
 		// Initialize the source authenticator
 		try {
-			Class sc = Class.forName(props.getProperty("migration.src"));
+			Class sc = Class.forName(props.getProperty(authPrefix + ".src"));
 			_src = (Authenticator) sc.newInstance();
-			_src.init(props.getProperty("migration.src.properties"));
+			_src.init(props.getProperty(authPrefix + ".src.properties"));
 		} catch (Exception e) {
 			SecurityException se = new SecurityException("Error loading Source - " + e.getMessage());
 			se.initCause(e);
@@ -71,9 +71,9 @@ public abstract class MultiAuthenticator implements Authenticator {
 
 		// Initialize the destination authenticator
 		try {
-			Class dc = Class.forName(props.getProperty("migration.dst"));
+			Class dc = Class.forName(props.getProperty(authPrefix + ".dst"));
 			_dst = (Authenticator) dc.newInstance();
-			_dst.init(props.getProperty("migration.dst.properties"));
+			_dst.init(props.getProperty(authPrefix + ".dst.properties"));
 		} catch (Exception e) {
 			SecurityException se = new SecurityException("Error loading Destination - " + e.getMessage());
 			se.initCause(e);
@@ -111,8 +111,7 @@ public abstract class MultiAuthenticator implements Authenticator {
 		try {
 			_dst.authenticate(usr, pwd);
 		} catch (SecurityException se) {
-			// FIXME This really should be usr, since each authenticator may store a different DN
-			if (_dst.contains(usr.getDN())) {
+			if (_dst.contains(usr)) {
 				_dst.updatePassword(usr, pwd);
 			} else {
 				_dst.addUser(usr, pwd);

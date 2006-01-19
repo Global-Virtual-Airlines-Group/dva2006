@@ -118,12 +118,12 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
-				
+
 				// Check Testing Center access
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
 				if (examsLocked != p.getNoExams()) {
 					p.setNoExams(examsLocked);
-					
+
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -303,17 +303,13 @@ public class ProfileCommand extends AbstractFormCommand {
 				SetPilotEMail ewdao = new SetPilotEMail(con);
 				ewdao.delete(p.getID());
 				ctx.setAttribute("imapDelete", Boolean.TRUE, REQUEST);
-			} else if (m_access.getCanChangePassword()) {
-				emailCfg.setPassword(ctx.getParameter("IMAPPassword"));
-
-				// Update the configuration
-				if (m_access.getCanEdit()) {
-					emailCfg.setAddress(ctx.getParameter("IMAPAddr"));
-					emailCfg.setMailDirectory(ctx.getParameter("IMAPPath"));
-					emailCfg.setQuota(Integer.parseInt(ctx.getParameter("IMAPQuota")));
-					emailCfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
-					emailCfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), ","));
-				}
+				emailCfg = null;
+			} else if (m_access.getCanEdit()) {
+				emailCfg.setAddress(ctx.getParameter("IMAPAddr"));
+				emailCfg.setMailDirectory(ctx.getParameter("IMAPPath"));
+				emailCfg.setQuota(Integer.parseInt(ctx.getParameter("IMAPQuota")));
+				emailCfg.setActive(Boolean.valueOf(ctx.getParameter("IMAPActive")).booleanValue());
+				emailCfg.setAliases(StringUtils.split(ctx.getParameter("IMAPAliases"), ","));
 
 				// Save the profile
 				SetPilotEMail ewdao = new SetPilotEMail(con);
@@ -421,7 +417,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
 					Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-					auth.rename(p.getDN(), newDN);
+					auth.rename(p, newDN);
 					p.setDN(newDN);
 					p.setFirstName(p2.getFirstName());
 					p.setLastName(p2.getLastName());
@@ -442,7 +438,7 @@ public class ProfileCommand extends AbstractFormCommand {
 							users.addAll(adao.getByID(udm.getByTable(dbTableName), dbTableName).values());
 						}
 					}
-					
+
 					// Save the Pilot profiles
 					ctx.setAttribute("userData", udm, REQUEST);
 					ctx.setAttribute("dupeResults", users, REQUEST);
@@ -465,8 +461,16 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// If we're updating the password, then save it
 			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
+				p.setPassword(ctx.getParameter("pwd1"));
+				
+				// If we have an IMAP mailbox, sync there first
+				if (emailCfg != null) {
+					SetPilotEMail ewdao = new SetPilotEMail(con);
+					ewdao.updatePassword(p.getID(), p.getPassword());
+				}
+				
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				auth.updatePassword(p, ctx.getParameter("pwd1"));
+				auth.updatePassword(p, p.getPassword());
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
 			}
 

@@ -164,7 +164,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			newUser.setPassword(PasswordGenerator.generate(8));
-			if (auth.contains(newUser.getDN())) {
+			if (auth.contains(newUser)) {
 				auth.updatePassword(newUser, newUser.getPassword());
 			} else {
 				auth.addUser(newUser, newUser.getPassword());

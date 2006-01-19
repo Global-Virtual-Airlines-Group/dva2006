@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -15,31 +15,43 @@ import org.deltava.beans.Person;
 public class MirrorAuthenticator extends MultiAuthenticator {
 
 	/**
-	 * Initializes the Authenticator.
+	 * Creates the Authenticator.
 	 */
 	public MirrorAuthenticator() {
 		super(MirrorAuthenticator.class);
 	}
+	
+	/**
+	 * Initializes the Authenticator.
+	 * @param propsFile the name of the proeprties file to load
+	 * @throws SecurityException if an error occurs
+	 */
+	public void init(String propsFile) throws SecurityException {
+		init(propsFile, "mirror");
+	}
 
 	/**
-	 * Authenticates the user against the source authenticator.
+	 * Authenticates the user against the source authenticator. This then synchronizes credentials
+	 * information with the destination authenticator.
 	 * @param usr the User bean
 	 * @param pwd the user's supplied password
 	 * @throws SecurityException if authentication fails
 	 * @see Authenticator#authenticate(Person, String)
+	 * @see MultiAuthenticator#sync(Person, String)
 	 */
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 		_src.authenticate(usr, pwd);
+		sync(usr, pwd);
 	}
 
 	/**
 	 * Returns if the source <i>and</i> destination authenticators contain a particular directory name.
-	 * @param directoryName the directory name
+	 * @param usr the user bean
 	 * @return TRUE if the source authenticator contains
-	 * @see org.deltava.security.Authenticator#contains(java.lang.String)
+	 * @see org.deltava.security.Authenticator#contains(Person)
 	 */
-	public boolean contains(String directoryName) throws SecurityException {
-		return _src.contains(directoryName) && _dst.contains(directoryName);
+	public boolean contains(Person usr) throws SecurityException {
+		return _src.contains(usr) && _dst.contains(usr);
 	}
 
 	/**
@@ -71,20 +83,21 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	/* (non-Javadoc)
 	 * @see org.deltava.security.Authenticator#rename(java.lang.String, java.lang.String)
 	 */
-	public void rename(String oldName, String newName) throws SecurityException {
-		_src.rename(oldName, newName);
-		_dst.rename(oldName, newName);
+	public void rename(Person usr, String newName) throws SecurityException {
+		_src.rename(usr, newName);
+		_dst.rename(usr, newName);
 	}
 
 	/**
 	 * Removes the user from both authenticators.
-	 * @see Authenticator#removeUser(String)
+	 * @param usr the user bean
+	 * @see Authenticator#removeUser(Person)
 	 */
-	public void removeUser(String directoryName) throws SecurityException {
-		if (_src.contains(directoryName))
-			_src.removeUser(directoryName);
+	public void removeUser(Person usr) throws SecurityException {
+		if (_src.contains(usr))
+			_src.removeUser(usr);
 		
-		if (_dst.contains(directoryName))
-			_dst.removeUser(directoryName);
+		if (_dst.contains(usr))
+			_dst.removeUser(usr);
 	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -16,6 +16,7 @@ import org.deltava.util.ConfigLoader;
  * @version 1.0
  * @since 1.0
  */
+
 public class FileAuthenticator implements Authenticator {
 
 	private static final Logger log = Logger.getLogger(FileAuthenticator.class);
@@ -113,11 +114,11 @@ public class FileAuthenticator implements Authenticator {
 
 	/**
 	 * Checks if a particular name exists in the Directory.
-	 * @param directoryName the fully-qualified directory name
+	 * @param usr the User bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
-	public boolean contains(String directoryName) {
-		return _users.containsKey(directoryName);
+	public boolean contains(Person usr) {
+		return _users.containsKey(usr.getDN());
 	}
 
 	/**
@@ -173,7 +174,7 @@ public class FileAuthenticator implements Authenticator {
 	public void addUser(Person usr, String pwd) throws SecurityException {
 	   
 	   // Check if the user exists
-	   if (contains(usr.getDN()))
+	   if (contains(usr))
 	      throw new SecurityException("User " + usr.getDN() + " already exists");
 
 	   // Create the user object
@@ -190,16 +191,16 @@ public class FileAuthenticator implements Authenticator {
 
 	/**
 	 * Removes a user from the Directory.
-	 * @param directoryName the user's fully-qualified Directory name
+	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(String directoryName) throws SecurityException {
+	public void removeUser(Person usr) throws SecurityException {
 	   
 	   // Check for the user
-	   if (!contains(directoryName))
-	      throw new SecurityException("User " + directoryName + " not found");
+	   if (!contains(usr))
+	      throw new SecurityException("User " + usr.getDN() + " not found");
 	   
-	   _users.remove(directoryName);
+	   _users.remove(usr.getDN());
 	   try {
 	      save();
 	   } catch (IOException ie) {
@@ -209,11 +210,11 @@ public class FileAuthenticator implements Authenticator {
 	
 	/**
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
-	 * @param oldName the old fullly-qualified Directory name
+	 * @param usr the User bean
 	 * @param newName the new fullly-qualified Directory name
 	 * @throws UnsupportedOperationException always
 	 */
-	public void rename(String oldName, String newName) throws SecurityException {
+	public void rename(Person usr, String newName) throws SecurityException {
 	   throw new UnsupportedOperationException();
 	}
 }

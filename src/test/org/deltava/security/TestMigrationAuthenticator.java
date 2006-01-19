@@ -22,20 +22,20 @@ public class TestMigrationAuthenticator extends AuthenticatorTestCase {
     
     public void testSrcAuthenticationAndCopy() {
     	Person usr2 = new AuthPerson("Luke", "Kolin", "cn=Luke Kolin,ou=afv,o=sce");
-    	assertFalse(_auth.getDestination().contains(usr2.getDN()));
+    	assertFalse(_auth.getDestination().contains(usr2));
     	_auth.authenticate(usr2, "maddog");
-    	assertTrue(_auth.getDestination().contains(usr2.getDN()));
-    	_auth.removeUser(usr2.getDN());
-    	assertFalse(_auth.getDestination().contains(usr2.getDN()));
+    	assertTrue(_auth.getDestination().contains(usr2));
+    	_auth.removeUser(usr2);
+    	assertFalse(_auth.getDestination().contains(usr2));
     }
     
     public void testAddRemove() throws Exception {
     	Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
     	_auth.addUser(usr2, "test");
-    	assertTrue(_auth.contains(usr2.getDN()));
-    	assertTrue(_auth.getDestination().contains(usr2.getDN()));
-    	assertFalse(_auth.getSource().contains(usr2.getDN()));
+    	assertTrue(_auth.contains(usr2));
+    	assertTrue(_auth.getDestination().contains(usr2));
+    	assertFalse(_auth.getSource().contains(usr2));
     	_auth.authenticate(usr2, "test");
-    	_auth.removeUser(usr2.getDN());
+    	_auth.removeUser(usr2);
     }
 }

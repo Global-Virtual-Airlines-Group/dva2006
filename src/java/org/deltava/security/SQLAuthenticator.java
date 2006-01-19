@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -61,7 +61,7 @@ public class SQLAuthenticator implements Authenticator {
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM AUTH WHERE (USER=?) AND (PWD="
-					+ _props.getProperty("jdbc.cryptfunc") + "(?))");
+					+ _props.getProperty("jdbc.cryptfunc", "") + "(?))");
 			ps.setString(1, usr.getDN());
 			ps.setString(2, pwd);
 
@@ -168,15 +168,15 @@ public class SQLAuthenticator implements Authenticator {
 
 	/**
 	 * Checks if a particular name exists in the Directory.
-	 * @param dN the fully-qualified directory name
+	 * @param usr the user bean
 	 * @return TRUE if the user exists, otherwise FALSE
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public boolean contains(String dN) throws SecurityException {
+	public boolean contains(Person usr) throws SecurityException {
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM AUTH WHERE (USER=?)");
-			ps.setString(1, dN);
+			ps.setString(1, usr.getDN());
 
 			// Execute the query
 			ResultSet rs = ps.executeQuery();
@@ -190,8 +190,8 @@ public class SQLAuthenticator implements Authenticator {
 			// Return result
 			return isOK;
 		} catch (SQLException se) {
-			log.warn(dN + " user search FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User search failure for " + dN);
+			log.warn(usr.getDN() + " user search FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("User search failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}
@@ -199,16 +199,16 @@ public class SQLAuthenticator implements Authenticator {
 
 	/**
 	 * Removes a user from the Directory.
-	 * @param dN the User's fully-qualified directory Name
+	 * @param usr the user bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void removeUser(String dN) throws SecurityException {
-		log.debug("Removing user " + dN + " from Directory");
+	public void removeUser(Person usr) throws SecurityException {
+		log.debug("Removing user " + usr.getDN() + " from Directory");
 
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("DELETE FROM AUTH WHERE (USER=?)");
-			ps.setString(1, dN);
+			ps.setString(1, usr.getDN());
 
 			// Execute the update
 			ps.executeUpdate();
@@ -217,8 +217,8 @@ public class SQLAuthenticator implements Authenticator {
 			ps.close();
 			c.close();
 		} catch (SQLException se) {
-			log.warn(dN + " user removal FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User removal failure for " + dN);
+			log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("User removal failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}
@@ -226,20 +226,20 @@ public class SQLAuthenticator implements Authenticator {
 	
 	/**
     * Renames a user in the Directory.
-    * @param oldName the old fully-qualified directory name
+    * @param usr the user bean
     * @param newName the new fully-qualified directory 
     * @throws SecurityException if an error occurs
     */
-	public void rename(String oldName, String newName) throws SecurityException {
-	   log.debug("Renaming user " + oldName + " to " + newName);
-		if (!contains(oldName))
-			throw new SecurityException(oldName + " not found");
+	public void rename(Person usr, String newName) throws SecurityException {
+	   log.debug("Renaming user " + usr.getDN() + " to " + newName);
+		if (!contains(usr))
+			throw new SecurityException(usr.getDN() + " not found");
 		
 		try {
 		   Connection c = getConnection();
 		   PreparedStatement ps = c.prepareStatement("UPDATE AUTH SET USER=? WHERE (USER=?)");
 		   ps.setString(1, newName);
-		   ps.setString(2, oldName);
+		   ps.setString(2, usr.getDN());
 		   
 			// Execute the update
 			ps.executeUpdate();
@@ -248,8 +248,8 @@ public class SQLAuthenticator implements Authenticator {
 			ps.close();
 			c.close();
 		} catch (SQLException se) {
-		   log.warn(oldName + " user removal FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User rename failure for " + oldName);
+		   log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
+			SecurityException e = new SecurityException("User rename failure for " + usr.getDN());
 			e.initCause(se);
 			throw e;
 		}
