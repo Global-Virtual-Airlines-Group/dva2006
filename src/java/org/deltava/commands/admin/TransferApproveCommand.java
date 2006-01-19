@@ -127,7 +127,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			}
 
 			// Figure out what ratings have been removed
-			Collection removedRatings = CollectionUtils.getDelta(usr.getRatings(), newRatings);
+			Collection<String> removedRatings = CollectionUtils.getDelta(usr.getRatings(), newRatings);
 			if (!removedRatings.isEmpty()) {
 				ctx.setAttribute("removedRatings", removedRatings, REQUEST);
 				usr.removeRatings(removedRatings);
