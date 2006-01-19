@@ -56,7 +56,7 @@ public class GetPilotEMail extends DAO {
    public EMailConfiguration getEMailInfo(int id) throws DAOException {
        try {
            setQueryMax(1);
-           prepareStatement("SELECT ID, username, password, maildir, quota, active FROM postfix.mailbox WHERE (ID=?)");
+           prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE (ID=?)");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
@@ -74,7 +74,7 @@ public class GetPilotEMail extends DAO {
     */
    public Collection getAll() throws DAOException {
       try {
-         prepareStatement("SELECT ID, username, password, maildir, quota, active FROM postfix.mailbox");
+         prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 
@@ -91,10 +91,9 @@ public class GetPilotEMail extends DAO {
       ResultSet rs = _ps.executeQuery();
       while (rs.next()) {
          EMailConfiguration result = new EMailConfiguration(rs.getInt(1), rs.getString(2));
-         result.setPassword(rs.getString(3));
-         result.setMailDirectory(rs.getString(4));
-         result.setQuota(rs.getInt(5));
-         result.setActive(rs.getBoolean(6));
+         result.setMailDirectory(rs.getString(3));
+         result.setQuota(rs.getInt(4));
+         result.setActive(rs.getBoolean(5));
 
          // Add to result map
          results.put(result.getAddress(), result);
