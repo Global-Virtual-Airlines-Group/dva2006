@@ -207,7 +207,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Figure out what ratings have been removed
-				Collection removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
+				Collection<String> removedRatings = CollectionUtils.getDelta(p.getRatings(), newRatings);
 				if (!removedRatings.isEmpty()) {
 					ctx.setAttribute("removedRatings", removedRatings, REQUEST);
 					p.removeRatings(removedRatings);
@@ -243,7 +243,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Figure out what roles have been removed
-				Collection removedRoles = CollectionUtils.getDelta(p.getRoles(), newRoles);
+				Collection<String> removedRoles = CollectionUtils.getDelta(p.getRoles(), newRoles);
 				if (!removedRoles.isEmpty()) {
 					ctx.setAttribute("removedRoles", removedRoles, REQUEST);
 					p.removeRoles(removedRoles);
