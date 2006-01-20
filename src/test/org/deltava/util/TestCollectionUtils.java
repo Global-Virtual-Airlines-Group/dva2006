@@ -3,17 +3,10 @@ package org.deltava.util;
 
 import java.util.*;
 
-import org.hansel.CoverageDecorator;
-
-import junit.framework.Test;
 import junit.framework.TestCase;
 
 public class TestCollectionUtils extends TestCase {
 
-   public static Test suite() {
-      return new CoverageDecorator(TestCollectionUtils.class, new Class[] { CollectionUtils.class } );
-  }
-   
    private class ID {
       
       private int _id;
@@ -99,5 +92,21 @@ public class TestCollectionUtils extends TestCase {
       assertTrue(m.containsKey(new Integer(1)));
       assertTrue(m.containsKey(new Integer(2)));
       assertTrue(m.containsKey(new Integer(10)));
+   }
+   
+   public void testHasMatches() {
+	   Set<String> c1 = new HashSet<String>();
+	   c1.add("A");
+	   c1.add("B");
+	   c1.add("C");
+	   Set<String> c2 = new HashSet<String>();
+	   c2.add("A");
+	   c2.add("C");
+	   c2.add("D");
+	   assertEquals(2, CollectionUtils.hasMatches(c1, c2));
+	   c2.remove("C");
+	   assertEquals(1, CollectionUtils.hasMatches(c1, c2));
+	   c1.remove("A");
+	   assertEquals(0, CollectionUtils.hasMatches(c1, c2));
    }
 }
