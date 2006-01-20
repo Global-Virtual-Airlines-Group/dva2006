@@ -1159,6 +1159,44 @@
 	</command>
 
 
+	<!-- Teamspeak Administration commands -->
+	<command id="ts2channels">
+		<name>TeamSpeak Channel List</name>	
+		<class>org.deltava.commands.ts2.ChannelListCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="ts2channeldelete">
+		<name>TeamSpeak Channel Delete</name>	
+		<class>org.deltava.commands.ts2.ChannelDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="ts2channel">
+		<name>TeamSpeak Channel</name>	
+		<class>org.deltava.commands.ts2.ChannelCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="ts2servers">
+		<name>TeamSpeak Virtual Server List</name>
+		<class>org.deltava.commands.ts2.ServerListCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="ts2srvdelete">
+		<name>TeamSpeak Virtual Server Delete</name>	
+		<class>org.deltava.commands.ts2.ServerDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="ts2server">
+		<name>TeamSpeak Virtual Server</name>	
+		<class>org.deltava.commands.ts2.ServerCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+
 	<!-- ACARS log/data commands -->
 	<command id="acarsinfo">
 		<name>ACARS Flight Info</name>

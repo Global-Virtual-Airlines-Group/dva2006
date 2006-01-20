@@ -64,7 +64,7 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
 				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, "
-				+ "STATUS=?, NOEXAMS=?, UID=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+				+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOACARS=?, UID=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -98,10 +98,12 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(23, p.getEquipmentType());
 			_ps.setInt(24, p.getStatus());
 			_ps.setBoolean(25, p.getNoExams());
-			_ps.setString(26, p.getLDAPName());
-			_ps.setString(27, p.getFirstName());
-			_ps.setString(28, p.getLastName());
-			_ps.setInt(29, p.getID());
+			_ps.setBoolean(26, p.getNoVoice());
+			_ps.setBoolean(27, p.getNoACARS());
+			_ps.setString(28, p.getLDAPName());
+			_ps.setString(29, p.getFirstName());
+			_ps.setString(30, p.getLastName());
+			_ps.setInt(31, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
@@ -124,7 +126,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void setLocation(int pilotID, GeoLocation loc) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO PILOT_MAP (ID, LAT, LNG) VALUES (?, ?, ?)");
 			_ps.setInt(1, pilotID);
 			_ps.setDouble(2, loc.getLatitude());
 			_ps.setDouble(3, loc.getLongitude());
@@ -141,7 +143,7 @@ public class SetPilot extends PilotWriteDAO {
 	 */
 	public void clearLocation(int pilotID) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM PILOT_MAP WHERE (ID=?)");
+			prepareStatementWithoutLimits("DELETE FROM PILOT_MAP WHERE (ID=?)");
 			_ps.setInt(1, pilotID);
 			executeUpdate(0);
 		} catch (SQLException se) {
@@ -158,7 +160,7 @@ public class SetPilot extends PilotWriteDAO {
 		invalidate(p);
 		try {
 			// Get the next available Pilot ID
-			prepareStatement("SELECT MAX(PILOT_ID)+1 FROM PILOTS");
+			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM PILOTS");
 			ResultSet rs = _ps.executeQuery();
 			p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
 
