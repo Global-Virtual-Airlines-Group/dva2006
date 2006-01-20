@@ -30,8 +30,6 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable {
 	private boolean _isHierarchical;
 	private boolean _isDefault;
 	
-	private Collection<String> _roles = new HashSet<String>();
-	
 	/**
 	 * Creates a new Channel bean.
 	 * @param name the channel name
@@ -145,29 +143,6 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable {
 	}
 	
 	/**
-	 * Returns the user roles authorized to access this channel.
-	 * @return a Collection of role names
-	 * @see Channel#addRole(String)
-	 * @see Channel#removeRole(String)
-	 * @see Channel#hasRole(String)
-	 */
-	public Collection<String> getRoles() {
-		return _roles;
-	}
-	
-	/**
-	 * Returns wether a particular security role is authorized to access this Channel.
-	 * @param role the Role name
-	 * @return TRUE if the role may access the Channel, otherwise FALSE
-	 * @see Channel#getRoles()
-	 * @see Channel#addRole(String)
-	 * @see Channel#removeRole(String)
-	 */
-	public boolean hasRole(String role) {
-		return _roles.contains(role);
-	}
-	
-	/**
 	 * Updates the Channel name.
 	 * @param name the name
 	 * @throws NullPointerException if name is null
@@ -277,28 +252,6 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable {
 		_isModerated = isModerated;
 	}
 	
-	/**
-	 * Adds a security role to the list of authorized roles for this Channel.
-	 * @param role the role name
-	 * @see Channel#getRoles()
-	 * @see Channel#hasRole(String)
-	 * @see Channel#removeRole(String)
-	 */
-	public void addRole(String role) {
-		_roles.add(role);
-	}
-	
-	/**
-	 * Removes a security role from the list of authorized roles for this Channel
-	 * @param role the role name
-	 * @see Channel#addRole(String)
-	 * @see Channel#getRoles()
-	 * @see Channel#hasRole(String)
-	 */
-	public void removeRole(String role) {
-		_roles.remove(role);
-	}
-
 	/**
 	 * Compares two Channels by comparing their names and server IDs.
 	 * @see java.lang.Comparable#compareTo(Object)

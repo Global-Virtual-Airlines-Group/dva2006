@@ -59,6 +59,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private boolean _hasSignature;
     private boolean _showDefaultSignature;
     private boolean _noExams;
+    private boolean _noVoice;
+    private boolean _noACARS;
     
     private int _mapType;
 
@@ -129,7 +131,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
-     * Returns wether the pilot will see Water Cooler screen shot message threads.
+     * Returns wether the Pilot will see Water Cooler screen shot message threads.
      * @return TRUE if the Pilot sees screen shot threads, otherwise FALSE
      * @see Pilot#setShowSSThreads(boolean)
      */
@@ -138,12 +140,30 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
-     * Returns wither the pilot has been locked out of the Testing Center.
+     * Returns wether the Pilot has been locked out of the ACARS server.
+     * @return TRUE if the Pilot has been locked out of the ACARS server, otherwise FALSE
+     * @see Pilot#setNoACARS(boolean)
+     */
+    public boolean getNoACARS() {
+    	return _noACARS;
+    }
+    
+    /**
+     * Returns wither the Pilot has been locked out of the Testing Center.
      * @return TRUE if the Pilot cannot take any Examinations, otherwise FALSE
      * @see Pilot#setNoExams(boolean)
      */
     public boolean getNoExams() {
     	return _noExams;
+    }
+    
+    /**
+     * Returns wether the Pilot has been locked out of the Voice server.
+     * @return TRUE if the Pilot has been locked out of the Voice server, otherwise FALSE
+     * @see Pilot#setNoVoice(boolean)
+     */
+    public boolean getNoVoice() {
+    	return _noVoice;
     }
 
     /**
@@ -328,12 +348,30 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
+     * Updates wether the Pilot is locked out of the ACARS server.
+     * @param noACARS TRUE if the Pilot cannot access the ACARS server, otherwise FALSE
+     * @see Pilot#getNoACARS()
+     */
+    public void setNoACARS(boolean noACARS) {
+    	_noACARS = noACARS;
+    }
+    
+    /**
      * Updates wether this Pilot is locked out from taking new Examinations.
-     * @param noExams TRUE if the Testing Center is locked out, otherwise FALSE.
+     * @param noExams TRUE if the Testing Center is locked out, otherwise FALSE
      * @see Pilot#getNoExams()
      */
     public void setNoExams(boolean noExams) {
     	_noExams = noExams;
+    }
+    
+    /**
+     * Updates wether the Pilot is locked out from the Voice server.
+     * @param noVoice TRUE if the Pilot cannot access the voice server, otherwise FALSE
+     * @see Pilot#getNoVoice()
+     */
+    public void setNoVoice(boolean noVoice) {
+    	_noVoice = noVoice;
     }
     
     /**

@@ -2,15 +2,15 @@
 package org.deltava.security;
 
 import java.sql.*;
-import java.text.*;
 import java.util.*;
 import java.io.IOException;
 
 import org.deltava.beans.*;
+import org.deltava.beans.ts2.Server;
 
 import org.deltava.jdbc.*;
 
-import org.deltava.util.ConfigLoader;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 import org.apache.log4j.Logger;
@@ -25,7 +25,6 @@ import org.apache.log4j.Logger;
 
 public class TS2Authenticator implements Authenticator {
 
-	private static final DateFormat df = new SimpleDateFormat("ddMMyyyyhhmmssSSS");
 	private static final Logger log = Logger.getLogger(TS2Authenticator.class);
 
 	private ConnectionPool _pool;
@@ -61,6 +60,11 @@ public class TS2Authenticator implements Authenticator {
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
+		
+		// Make sure we're not locked out
+		Pilot p = (Pilot) usr;
+		if (p.getNoVoice())
+			throw new SecurityException("Private Voice disabled");
 
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
@@ -69,7 +73,6 @@ public class TS2Authenticator implements Authenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(s_client_password)=?)");
 
-		Pilot p = (Pilot) usr;
 		Connection c = null;
 		try {
 			c = _pool.getConnection(true);
@@ -157,6 +160,14 @@ public class TS2Authenticator implements Authenticator {
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
+		
+		// If we're locked out, just remove the user
+		Pilot p = (Pilot) usr;
+		if (p.getNoVoice()) {
+			log.warn("Cannot update " + usr.getName() + " - Voice disabled");
+			removeUser(usr);
+			return;
+		}
 
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
@@ -203,13 +214,29 @@ public class TS2Authenticator implements Authenticator {
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
 		
+		// If our access has been locked out, then don't do the add
+		Pilot p = (Pilot) usr;
+		if (p.getNoVoice()) {
+			log.warn("Cannot add " + usr.getName() + " - Voice disabled");
+			return;
+		}
+		
+		// Get the servers that this person may access
+		@SuppressWarnings("unchecked")
+		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2Servers"));
+		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
+			Server srv = i.next();
+			if (CollectionUtils.hasMatches(usr.getRoles(), srv.getRoles()) == 0)
+				i.remove();
+		}
+		
 		// Build the SQL query
-		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients (i_client_server_id, b_client_privilege_serveradmin, s_client_name, s_client_password, " +
 				"dt_client_created) VALUES (?, ?, ?, ");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?), ?)");
+		sqlBuf.append("(?), NOW())");
 
 		Connection c = null;
 		try {
@@ -217,14 +244,19 @@ public class TS2Authenticator implements Authenticator {
 			
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, Integer.parseInt(_props.getProperty("serverID", "1")));
 			ps.setInt(2, 0);
-			ps.setString(3, ((Pilot) usr).getPilotCode());
+			ps.setString(3, p.getPilotCode());
 			ps.setString(4, pwd);
-			ps.setString(5, df.format(new java.util.Date()));
+			
+			// Add to the servers
+			for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
+				Server srv = i.next();
+				ps.setInt(1, srv.getID());
+				ps.addBatch();
+			}
 			
 			// Execute the update and clean up
-			ps.executeUpdate();
+			ps.executeBatch();
 			ps.close();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
