@@ -154,7 +154,7 @@ public class GetExam extends DAO {
 	 * @return a Collection of CheckRide beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection getCheckRides(int pilotID) throws DAOException {
+	public Collection<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
 			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
 					+ " AND (CR.PILOT_ID=?) ORDER BY CREATED");
