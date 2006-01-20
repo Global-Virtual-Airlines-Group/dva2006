@@ -12,6 +12,10 @@
 		<db>DVA</db>
 		<voice>
 			<url>rw.deltava.org/DAL</url>
+			<ts2>
+				<enabled type="Boolean">true</enabled>
+				<url>teamspeak://ts2.deltava.org/pilots</url>
+			</ts2>
 		</voice>
 		
 		<!-- Do we have newsletters? -->
@@ -350,6 +354,7 @@
 			<role>Fleet</role>
 			<role>Gallery</role>			
 			<role>HR</role>
+			<role>Instructor</role>
 			<role>News</role>
 			<role>NOTAM</role>
 			<role>PIREP</role>

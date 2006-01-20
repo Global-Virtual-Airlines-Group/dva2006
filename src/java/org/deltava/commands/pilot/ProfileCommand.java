@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -129,7 +129,33 @@ public class ProfileCommand extends AbstractFormCommand {
 					upd.setAuthorID(ctx.getUser().getID());
 					upd.setDescription(examsLocked ? "Testing Center locked out" : "Testing Center enabled");
 					updates.add(upd);
-					log.info(p.getName() + " " + upd.getDescription());
+					log.warn(p.getName() + " " + upd.getDescription());
+				}
+				
+				// Check Voice server access
+				boolean voiceLocked = Boolean.valueOf(ctx.getParameter("noVoice")).booleanValue();
+				if (voiceLocked != p.getNoVoice()) {
+					p.setNoVoice(voiceLocked);
+					
+					// Write the status update entry
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription(examsLocked ? "Voice access locked out" : "Voice access enabled");
+					updates.add(upd);
+					log.warn(p.getName() + " " + upd.getDescription());
+				}
+				
+				// Check ACARS server access
+				boolean acarsLocked = Boolean.valueOf(ctx.getParameter("noACARS")).booleanValue();
+				if (acarsLocked != p.getNoACARS()) {
+					p.setNoACARS(acarsLocked);
+					
+					// Write the status update entry
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription(examsLocked ? "ACARS access locked out" : "ACARS access enabled");
+					updates.add(upd);
+					log.warn(p.getName() + " " + upd.getDescription());
 				}
 			}
 

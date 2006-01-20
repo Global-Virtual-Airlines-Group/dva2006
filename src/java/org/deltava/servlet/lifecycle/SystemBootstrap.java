@@ -41,7 +41,7 @@ public class SystemBootstrap implements ServletContextListener {
 		super();
 		PropertyConfigurator.configure(getClass().getResource("/etc/log4j.properties"));
 		SystemBootstrap.log = Logger.getLogger(SystemBootstrap.class);
-		
+
 		// Force headless AWT operation
 		System.setProperty("java.awt.headless", "true");
 	}
@@ -97,7 +97,7 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
-		
+
 		// Start the Task Manager
 		try {
 			_taskSched = new TaskScheduler(TaskFactory.load(SystemData.get("config.tasks")));
@@ -117,7 +117,7 @@ public class SystemBootstrap implements ServletContextListener {
 			log.info("Loading Time Zones");
 			GetTimeZone dao = new GetTimeZone(c);
 			dao.initAll();
-			
+
 			// Load Database information
 			log.info("Loading Cross-Application data");
 			GetUserData uddao = new GetUserData(c);
@@ -132,14 +132,21 @@ public class SystemBootstrap implements ServletContextListener {
 			log.info("Loading Airports");
 			GetAirport dao2 = new GetAirport(c);
 			SystemData.add("airports", dao2.getAll());
-			
+
 			// Load last execution date/times for Scheduled Tasks
 			log.info("Loading Scheduled Task execution data");
 			GetSystemData sysdao = new GetSystemData(c);
-			Map taskInfo = sysdao.getTaskExecution();
-			for (Iterator i = taskInfo.values().iterator(); i.hasNext(); ) {
-			   TaskLastRun tlr = (TaskLastRun) i.next();
-			   _taskSched.setLastRunTime(tlr);
+			Map<String, TaskLastRun> taskInfo = sysdao.getTaskExecution();
+			for (Iterator<TaskLastRun> i = taskInfo.values().iterator(); i.hasNext();) {
+				TaskLastRun tlr = i.next();
+				_taskSched.setLastRunTime(tlr);
+			}
+
+			// Load TS2 server info if enabled
+			if (SystemData.getBoolean("airline.ts2.enabled")) {
+				log.info("Loading TeamSpeak 2 Voice Servers");
+				GetTS2Data ts2dao = new GetTS2Data(c);
+				SystemData.add("ts2Servers", ts2dao.getServers());
 			}
 		} catch (Exception ex) {
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
@@ -157,7 +164,7 @@ public class SystemBootstrap implements ServletContextListener {
 			} catch (Exception ex) {
 				log.error("Error Starting ACARS Daemon", ex);
 			}
-			
+
 			// Save the server
 			SystemData.add(SystemData.ACARS_DAEMON, _acarsServer);
 
@@ -166,7 +173,7 @@ public class SystemBootstrap implements ServletContextListener {
 			_acarsThread.setDaemon(true);
 			_acarsThread.start();
 		}
-		
+
 		// Start the mailer daemon
 		Thread mailerDaemon = new MailerDaemon();
 		SystemData.add(SystemData.SMTP_DAEMON, mailerDaemon);
@@ -188,19 +195,20 @@ public class SystemBootstrap implements ServletContextListener {
 		e.getServletContext().removeAttribute("jdbcConnectionPool");
 		if (_jdbcPool != null)
 			_jdbcPool.close();
-		
+
 		// Deregister JDBC divers
-		for (Enumeration en = DriverManager.getDrivers(); en.hasMoreElements(); ) { 
-			Driver driver = (Driver) en.nextElement(); 
+		for (Enumeration<Driver> en = DriverManager.getDrivers(); en.hasMoreElements();) {
+			Driver driver = en.nextElement();
 			if (driver.getClass().getClassLoader() == getClass().getClassLoader()) {
 				try {
 					DriverManager.deregisterDriver(driver);
+					log.warn("Deregistered JDBC driver " + driver.getClass().getName());
 				} catch (Exception ex) {
 					log.error("Error dregistering " + driver.getClass(), ex);
 				}
 			}
-		} 
-		
+		}
+
 		// Close the Log4J manager
 		LogManager.shutdown();
 	}

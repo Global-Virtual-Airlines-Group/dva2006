@@ -105,10 +105,12 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label">Pilot Status</td>
+ <td class="label" valign="top">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
- <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /> 
-<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" className="small error bld" label="Disable Testing Center access" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /><br />
+<el:box name="noACARS" idx="*" value="true" checked="${pilot.noACARS}" className="small" label="Disable ACARS access" /><br />
+<el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" className="small" label="Disable Private Voice access" /><br />
+<el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" className="small" label="Disable Testing Center access" /></td>
 </c:if>  
 <c:if test="${!access.canChangeStatus}">
  <td colspan="${cspan}" class="data sec bld">${status}</td>
