@@ -55,6 +55,19 @@ public class CollectionUtils {
 		c1.removeAll(c2);
 		c2.removeAll(tmpC1);
 	}
+	
+	/**
+	 * Compares two collections and returns the number of elements present in both Collections.
+	 * @param c1 the first Collection
+	 * @param c2 the second Collection
+	 * @return the number of entries present in both
+	 * @throws NullPointerException if c1 or c2 are null
+	 */
+	public static <T> int hasMatches(Collection<T> c1, Collection<T> c2) {
+		Collection<T> tmpC1 = new ArrayList<T>(c1);
+		tmpC1.removeAll(c2);
+		return (c1.size() - tmpC1.size());
+	}
 
 	/**
 	 * Compares two Collections to see if there are any differences between them. This is done by comparing
