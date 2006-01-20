@@ -232,7 +232,7 @@ public class GetSystemData extends DAO {
 	 * @return a Map of TaskLastRun beans, ordered by task ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getTaskExecution() throws DAOException {
+	public Map<String, TaskLastRun> getTaskExecution() throws DAOException {
 	   
 	   List<TaskLastRun> results = new ArrayList<TaskLastRun>();
 	   try {
