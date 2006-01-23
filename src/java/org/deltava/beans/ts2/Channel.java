@@ -3,8 +3,9 @@ package org.deltava.beans.ts2;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
+import org.deltava.util.ComboUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -14,7 +15,12 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Channel extends DatabaseBean implements Comparable, Cacheable {
+public class Channel extends DatabaseBean implements Comparable, Cacheable, ViewEntry {
+	
+	public static final Collection<ComboAlias> CODECS = ComboUtils.fromArray(new String[] { "CELP 5.1 kbit",
+			"CELP 6.3 kbit", "GSM 14.8 kbit", "GSM 16.4 kbit", "CELP Windows 5.2 kbit", "Speex 3.4 kbit", "Speex 5.2 kbit",
+			"Speex 7.2 kbit", "Speex 9.3 kbit", "Speex 12.3 kbit", "Speex 16.3 kbit", "Speex 19.5 kbit", "Speex 25.9 kbit"},
+			new String[] {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"});
 
 	private String _name;
 	private String _topic;
@@ -270,5 +276,13 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable {
 		StringBuilder buf = new StringBuilder("CH-");
 		buf.append(String.valueOf(getID()));
 		return buf.toString();
+	}
+	
+	/**
+	 * Returns the CSS class name when rendered in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		return _isDefault ? "opt2" : null;
 	}
 }
