@@ -15,6 +15,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.EventAccessControl;
 import org.deltava.util.CalendarUtils;
 import org.deltava.util.ComboUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Online Event calendar.
@@ -44,6 +45,11 @@ public class EventCalendarCommand extends AbstractCommand {
 		} catch (Exception e) {
 			startDate = new Date();
 		}
+		
+		// Create the current date in the user's local time and determine what the local equivalent is
+		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		DateTime ldt = new DateTime(startDate, tz);
+		ldt.convertTo(TZInfo.local());
 		
 		// Calculate the proper start date
 		startDate = (days == 7) ? getStartOfWeek(startDate) : getStartOfMonth(startDate);
