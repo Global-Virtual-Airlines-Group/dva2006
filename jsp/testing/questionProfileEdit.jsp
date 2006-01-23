@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Examination Question Profile</title>
@@ -33,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qprofile.do" linkID="${empty question ? '' : '0x'}${question.ID}" op="save" method="post" validate="return validate(this)">
+<el:form action="qprofile.do" linkID="${fn:dbID(question)}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
