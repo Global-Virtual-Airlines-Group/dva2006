@@ -1,9 +1,11 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+
+import org.deltava.beans.DatabaseBean;
 
 import org.deltava.util.StringUtils;
 
@@ -146,5 +148,15 @@ public class MiscFunctions {
          return 0;
       
       return (int) ((d2.getTime() - d1.getTime()) / 1000);
+   }
+   
+   /**
+    * Formats a database bean ID into hex, or as an empty string if zero or null.
+    * @param b the database bean
+    * @return the ID as hex if non-zero, otherwise an empty string
+    * @see DatabaseBean#getID()
+    */
+   public static String formatZeroID(DatabaseBean b) {
+	   return (b == null) || (b.getID() == 0) ? "" : StringUtils.formatHex(b.getID());
    }
 }

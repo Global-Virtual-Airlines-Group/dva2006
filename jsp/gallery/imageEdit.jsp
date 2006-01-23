@@ -43,7 +43,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imgsave.do" method="POST" linkID="${empty img ? 'new' : '0x' + img.ID}" allowUpload="true" validate="return validate(this)">
+<el:form action="imgsave.do" method="POST" linkID="${fn:dbID(msg)}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>
@@ -64,7 +64,7 @@ return true;
 <content:filter roles="Fleet,Gallery">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isFleet" idx="*" value="1" checked="${img.fleet}" label="Include Image in Fleet Gallery" /></td>
+ <td class="data"><el:box name="isFleet" idx="*" value="true" checked="${img.fleet}" label="Include Image in Fleet Gallery" /></td>
 </tr>
 </content:filter>
 <c:if test="${empty img}">
