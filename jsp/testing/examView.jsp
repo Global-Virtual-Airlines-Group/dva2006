@@ -39,6 +39,12 @@
  minutes late</span></c:if>
 </tr>
 </c:if>
+<c:if test="${!empty exam.scoredOn}">
+<tr>
+ <td class="label">Scored on</td>
+ <td class="data"><fmt:date fmt="d" date="${exam.scoredOn}" /> by ${scorer.name}</td>
+</tr>
+</c:if>
 
 <!-- Exam Questions -->
 <c:set var="qnum" value="0" scope="request" />
