@@ -27,7 +27,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new channel
-		boolean isNew = (ctx.getCmdParameter(ID, null) == null);
+		boolean isNew = StringUtils.isEmpty((String) ctx.getCmdParameter(ID, null));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -98,6 +98,9 @@ public class ChannelCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the codec list
+		ctx.setAttribute("codecs", Channel.CODECS, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
