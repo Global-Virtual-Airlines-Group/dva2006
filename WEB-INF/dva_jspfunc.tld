@@ -61,6 +61,13 @@
 		<function-signature>java.lang.String escape(java.lang.String)</function-signature>
 	</function>
 
+	<!-- Properly format a database ID -->
+	<function>
+		<name>dbID</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.lang.String formatZeroID(org.deltava.beans.DatabaseBean)</function-signature>
+	</function>
+
 	<!-- Concatenate a collection into a String -->
 	<function>
 		<name>splice</name>

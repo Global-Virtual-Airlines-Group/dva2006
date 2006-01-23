@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Issue Report #${issue.ID}</title>
@@ -28,15 +29,14 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jsp" %> 
+<%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="versions" name="issue_track.versions" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="issue.do" op="save" linkID="${empty issue ? '' : '0x'}${issue.ID}" validate="return validate(this)">
+<el:form method="post" action="issue.do" op="save" linkID="${fn:dbID(issue)}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
-<!-- Issue Title Bar -->
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
 </tr>

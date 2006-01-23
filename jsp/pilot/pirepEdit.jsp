@@ -100,7 +100,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="pirep.do" linkID="${empty pirep ? '' : '0x'}${pirep.ID}" op="save" validate="return validate(this)">
+<el:form method="post" action="pirep.do" linkID="${fn:dbID(pirep)}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title caps">
