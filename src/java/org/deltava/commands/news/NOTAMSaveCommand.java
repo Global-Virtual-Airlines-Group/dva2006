@@ -29,13 +29,15 @@ public class NOTAMSaveCommand extends AbstractCommand {
 
 		// Check if we're creating a new System News entry
 		boolean isNew = (ctx.getID() == 0);
-		boolean doNotify = false;
 
 		// Create the Message Context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
-
+		
+		// Check if we're notifiying users 
+		boolean doNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
 		List<? extends EMailAddress> pilots = null;
+		
 		try {
 			Connection con = ctx.getConnection();
 
@@ -57,9 +59,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				nws.setSubject(ctx.getParameter("subject"));
 				nws.setBody(ctx.getParameter("body"));
 				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
-				boolean isActive = Boolean.valueOf(ctx.getParameter("active")).booleanValue();
-				doNotify = (isActive && !nws.getActive());
-				nws.setActive(isActive);
+				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			} else {
 				NewsAccessControl access = new NewsAccessControl(ctx, null);
 				access.validate();
@@ -71,7 +71,6 @@ public class NOTAMSaveCommand extends AbstractCommand {
 				nws.setAuthorID(ctx.getUser().getID());
 				nws.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 				nws.setIsHTML(Boolean.valueOf(ctx.getParameter("isHTML")).booleanValue());
-				doNotify = nws.getActive();
 				
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -93,7 +92,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		}
 		
 		// Send the message
-		if (isNew && doNotify && (pilots != null)) {
+		if (doNotify && (pilots != null)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);

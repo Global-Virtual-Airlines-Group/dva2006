@@ -52,7 +52,8 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" idx="*" value="true" label="Notice is In Effect" checked="${entry.active}" /><br />
-<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" /></td>
+<el:box name="isHTML" value="true" label="Notice is HTML" checked="${entry.isHTML}" />
+<el:box name="noNotify" value="true" label="Don't send e-mail notification" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Entry Text</td>
