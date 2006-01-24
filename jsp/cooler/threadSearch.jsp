@@ -16,7 +16,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.searchStr, 4, 'Search Term')) return false;
+if (!validateText(form.searchStr, 3, 'Search Term')) return false;
 
 setSubmit();
 disableButton('SearchButton');
