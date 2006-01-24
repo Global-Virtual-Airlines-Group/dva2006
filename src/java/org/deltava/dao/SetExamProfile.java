@@ -31,14 +31,15 @@ public class SetExamProfile extends DAO {
    public void update(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("UPDATE EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "+
-               "ACTIVE=?, EQTYPE=? WHERE (NAME=?)");
+               "ACTIVE=?, EQTYPE=?, MIN_STAGE=? WHERE (NAME=?)");
          _ps.setInt(1, ep.getStage());
          _ps.setInt(2, ep.getSize());
          _ps.setInt(3, ep.getPassScore());
          _ps.setInt(4, ep.getTime());
          _ps.setBoolean(5, ep.getActive());
          _ps.setString(6, ep.getEquipmentType());
-         _ps.setString(7, ep.getName());
+         _ps.setInt(7, ep.getMinStage());
+         _ps.setString(8, ep.getName());
          
          // Execute the update
          executeUpdate(1);
