@@ -36,6 +36,8 @@ public class CheckRideCommand extends AbstractCommand {
       // Get the command result
       CommandResult result = ctx.getResult();
       
+      // Check if we are attempting to rescore
+      boolean isRescore = "edit".equals(ctx.getCmdParameter(OPERATION, null));
       try {
          Connection con = ctx.getConnection();
          
@@ -64,7 +66,7 @@ public class CheckRideCommand extends AbstractCommand {
          
          // Check if we can score/edit or not
          if (cr.getStatus() == Test.SCORED) {
-            result.setURL("/jsp/testing/cRideRead.jsp");
+            result.setURL(isRescore && access.getCanEdit() ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
          } else {
             result.setURL(access.getCanScore() ? "/jsp/testing/cRideScore.jsp" : "/jsp/testing/cRideRead.jsp");
          }
