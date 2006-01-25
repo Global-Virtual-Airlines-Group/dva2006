@@ -182,7 +182,7 @@ public class TestingHistoryHelper {
 			}
 
 			// If the exam is limited to a specific equipment program, require 1/2 the legs required for promotion
-			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2)) {
+			if (getFlightLegs(_myEQ) < (_myEQ.getPromotionLegs(Ranks.RANK_C))) {
 				log(ep.getName() + " Our Flight Legs=" + getFlightLegs(_myEQ));
 				return false;
 			}
