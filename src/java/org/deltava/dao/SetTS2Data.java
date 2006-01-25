@@ -133,6 +133,18 @@ public class SetTS2Data extends DAO {
 	}
 	
 	/**
+	 * Copies an existing TeamSpeak 2 client to a new server.
+	 * @param usr the existing User bean
+	 * @param serverID the new server database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void addToServer(User usr, int serverID) throws DAOException {
+		Collection<Integer> ids = new HashSet<Integer>();
+		ids.add(new Integer(serverID));
+		resync(usr, ids);
+	}
+	
+	/**
 	 * Deletes a TeamSpeak voice channel.
 	 * @param c the Channel bean
 	 * @throws DAOException if a JDBC error occurs
@@ -178,24 +190,25 @@ public class SetTS2Data extends DAO {
 	 * Removes a number of users from a TeamSpeak server. This should typically be called when
 	 * updating a server's roles.
 	 * @param srv the Server bean
-	 * @param ids a Collection of TeamSpeak User database IDs
+	 * @param pilotCodes a Collection of TeamSpeak User IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void removeUsers(Server srv, Collection<Integer> ids) throws DAOException {
-		if (ids.isEmpty())
+	public void removeUsers(Server srv, Collection<String> pilotCodes) throws DAOException {
+		if (pilotCodes.isEmpty() || (srv.getID() == 0))
 			return;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("DELETE FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) AND "
-				+ "(i_client_id IN (");
-		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-			Integer id = i.next();
-			sqlBuf.append(id.toString());
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) AND (");
+		for (Iterator<String> i = pilotCodes.iterator(); i.hasNext(); ) {
+			String code = i.next();
+			sqlBuf.append("(s_client_name=\'");
+			sqlBuf.append(code);
+			sqlBuf.append("\')");
 			if (i.hasNext())
-				sqlBuf.append(',');
+				sqlBuf.append(" OR ");
 		}
 		
-		sqlBuf.append("))");
+		sqlBuf.append(")");
 		
 		try {
 			prepareStatement(sqlBuf.toString());

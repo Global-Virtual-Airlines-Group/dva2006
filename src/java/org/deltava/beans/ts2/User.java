@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.deltava.beans.DatabaseBean;
 
+import org.deltava.util.UserID;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -36,6 +37,21 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 		setUserID(userID);
 		_createdOn = new Date();
 	}
+	
+	/**
+	 * Creates a new Teamspeak 2 user record as a copy of an existing user.
+	 * @param usr the existing user
+	 * @param serverID the new Server ID
+	 */
+	public User(User usr, int serverID) {
+		super();
+		_userID = usr._userID;
+		_pwd = usr._pwd;
+		_serverID = serverID;
+		_serverAdmin = usr._serverAdmin;
+		_createdOn = (Date) usr._createdOn.clone();
+		_lastOnline = (usr._createdOn == null) ? null : (Date) usr._createdOn.clone();
+	}
 
 	/**
 	 * Returns the user's TeamSpeak User ID.
@@ -44,6 +60,15 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 */
 	public String getUserID() {
 		return _userID;
+	}
+	
+	/**
+	 * Returns the user's pilot code.
+	 * @return the pilot code, or 0 if an internal account
+	 */
+	public int getPilotCode() {
+		UserID id = new UserID(_userID);
+		return id.getUserID();
 	}
 	
 	/**

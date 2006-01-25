@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.ts2.*;
 
 import org.deltava.util.cache.*;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load TeamSpeak 2 configuration data.
@@ -67,15 +68,13 @@ public class GetTS2Data extends DAO {
 	 * @return the User profile, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public User getUser(String id) throws DAOException {
+	public List<User> getUsers(String id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (s_client_name=?)");
 			_ps.setString(1, id);
 			
 			// Execute the query and return
-			List<User> results = executeUsers();
-			return results.isEmpty() ? null : results.get(0);
+			return executeUsers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -121,6 +120,63 @@ public class GetTS2Data extends DAO {
 			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
 					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description "
 					+ "FROM teamspeak.ts2_servers");
+			return executeServers();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all TeamSpeak 2 virtual servrs a user has access to.
+	 * @param pilotCode the pilot code
+	 * @return a Collection of Server beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Server> getServers(String pilotCode) throws DAOException {
+		if (StringUtils.isEmpty(pilotCode))
+			return Collections.emptySet();
+		
+		try {
+			prepareStatement("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
+				+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
+				+ "s.s_server_description FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c WHERE (c.s_client_name=?) "
+				+ "AND (s.i_server_id=c.i_client_server_id)");
+			_ps.setString(1, pilotCode);
+			return executeServers();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all TeamSpeak 2 virtual servers able to be accessed by members of particular security roles.
+	 * @param roles a Collection of role names
+	 * @return a Collection of server beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Server> getServers(Collection<String> roles) throws DAOException {
+		if (roles.isEmpty())
+			return Collections.emptySet();
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
+				+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
+				+ "s.s_server_description FROM teamspeak.ts2_servers s, teamspeak.ts2_server_roles r WHERE "
+				+ "(s.i_server_id=r.i_server_id) AND (");
+		for (Iterator<String> i = roles.iterator(); i.hasNext(); ) {
+			String role = i.next();
+			sqlBuf.append("(r.s_role_name=\'");
+			sqlBuf.append(role);
+			sqlBuf.append(')');
+			if (i.hasNext())
+				sqlBuf.append(" OR ");
+		}
+		
+		sqlBuf.append(')');
+		
+		// Execute the query
+		try {
+			prepareStatement(sqlBuf.toString());
 			return executeServers();
 		} catch (SQLException se) {
 			throw new DAOException(se);

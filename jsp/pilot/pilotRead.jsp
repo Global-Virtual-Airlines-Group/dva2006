@@ -84,6 +84,21 @@
 </tr>
 </c:if>
 
+<c:if test="${!pilot.noVoice}"><content:filter roles="HR,Instructor">
+<!-- TeamSpeak 2 Virtual Server access -->
+<tr class="title">
+ <td colspan="${cspan + 1}">TEAMSPEAK 2 ACCESS</td>
+</tr>
+<tr>
+ <td class="label">Virtual Servers</td>
+ <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
+<br />
+<c:forEach var="ts2Server" items="${ts2servers}">
+<span class="sec bld">${server.name}</span> (Port ${server.port}) - ${server.description}<br />
+</c:forEach></td>
+</tr>
+</content:filter></c:if>
+
 <!-- Pilot Statistics -->
 <tr class="title">
  <td colspan="${cspan + 1}">PILOT STATISTICS</td>

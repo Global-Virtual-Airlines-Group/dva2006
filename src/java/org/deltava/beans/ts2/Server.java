@@ -247,4 +247,12 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 		int tmpResult = _name.compareTo(s2._name);
 		return (tmpResult == 0) ? new Integer(_port).compareTo(new Integer(s2._port)) : tmpResult;
 	}
+	
+	/**
+	 * Returns the Server name.
+	 * @return the name
+	 */
+	public String toString() {
+		return _name;
+	}
 }
