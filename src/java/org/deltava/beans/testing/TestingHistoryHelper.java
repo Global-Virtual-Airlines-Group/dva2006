@@ -167,10 +167,16 @@ public class TestingHistoryHelper {
 			log(ep.getName() + " is the Initial Questionnaire");
 			return false;
 		}
-
+		
 		// Check if we've passed or submitted the exam
 		if (hasPassed(ep.getName()) || hasSubmitted(ep.getName())) {
 			log(ep.getName() + " is passed / submitted");
+			return false;
+		}
+		
+		// Check if it's the FO exam for the current program
+		if (ep.getName().equals(_myEQ.getExamName(Ranks.RANK_FO))) {
+			log(ep.getName() + " is FO exam for " + _myEQ.getName());
 			return false;
 		}
 
