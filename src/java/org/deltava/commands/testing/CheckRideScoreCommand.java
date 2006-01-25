@@ -79,18 +79,21 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			SetExam wdao = new SetExam(con);
 			wdao.write(cr);
 
-			// If we're scoring, update the transfer request
-			if (access.getCanScore()) {
-				GetTransferRequest txdao = new GetTransferRequest(con);
-				TransferRequest txreq = txdao.getByCheckRide(cr.getID());
-				if (txreq != null) {
-					mctxt.addData("txReq", txreq);
+			// Update the transfer request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
+			if (txreq != null) {
+				mctxt.addData("txReq", txreq);
+				if (cr.getPassFail()) {
 					txreq.setStatus(TransferRequest.OK);
-
-					// Write the transfer request
-					SetTransferRequest txwdao = new SetTransferRequest(con);
-					txwdao.write(txreq);
+				} else {
+					txreq.setStatus(TransferRequest.PENDING);
+					txreq.setCheckRideID(0);
 				}
+
+				// Write the transfer request
+				SetTransferRequest txwdao = new SetTransferRequest(con);
+				txwdao.write(txreq);
 			}
 
 			// Commit the transaction

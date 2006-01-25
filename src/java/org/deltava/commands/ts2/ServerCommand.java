@@ -4,6 +4,9 @@ package org.deltava.commands.ts2;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.Pilot;
 import org.deltava.beans.ts2.*;
 
 import org.deltava.commands.*;
@@ -20,6 +23,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ServerCommand extends AbstractFormCommand {
+	
+	private static final Logger log = Logger.getLogger(ServerCommand.class);
 	
 	private static final Collection<String> DEFAULT_ROLES = Arrays.asList(new String[] {"Pillot"});
 
@@ -48,6 +53,33 @@ public class ServerCommand extends AbstractFormCommand {
 				srv = new Server(ctx.getParameter("name"));
 			}
 			
+			// Get client records for the server
+			GetPilot pdao = new GetPilot(con);
+			Collection<User> usrs = dao.getUsers(srv.getID());
+			Collection<String> pilotCodes = new HashSet<String>();
+			Map<User, Pilot> pilots = new HashMap<User, Pilot>();
+			for (Iterator<User> i = usrs.iterator(); i.hasNext(); ) {
+				User usr = i.next();
+				if (usr.getUserID().startsWith(SystemData.get("airline.code"))) {
+					Pilot p = pdao.getPilotByCode(usr.getPilotCode(), SystemData.get("airline.db"));
+					if (p != null) {
+						pilotCodes.add(usr.getUserID());
+						pilots.put(usr, p);
+					}
+				}
+			}
+			
+			// Get client records for other servers
+			Map<User, Pilot> otherPilots = new HashMap<User, Pilot>();
+			for (Iterator<User> i = dao.getUsers().iterator(); i.hasNext(); ) {
+				User usr = i.next();
+				if (!pilotCodes.contains(usr.getUserID())) {
+					Pilot p = pdao.getPilotByCode(usr.getPilotCode(), SystemData.get("airline.db"));
+					if ((p != null) && (!otherPilots.values().contains(p)))
+						otherPilots.put(usr, p);
+				}
+			}
+			
 			// Update the bean from the request
 			srv.setDescription(ctx.getParameter("desc"));
 			srv.setWelcomeMessage(ctx.getParameter("msg"));
@@ -55,22 +87,55 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPassword(ctx.getParameter("pwd"));
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			
-			// Update the server roles
 			srv.setRoles(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRole"), DEFAULT_ROLES));
 			
-			// TODO Update the users if the roles change
+			// Build messages collection
+			Collection<String> msgs = new ArrayList<String>();
+			
+			// Start the transaction
+			ctx.startTX();
 			
 			// Get the write DAO and save the virtual server
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.write(srv);
 			
+			// Determine what users to remove from the server
+			Collection<String> removeIDs = new HashSet<String>();
+			for (Iterator<User> i = pilots.keySet().iterator(); i.hasNext(); ) {
+				User usr = i.next();
+				Pilot p = pilots.get(usr);
+				if (CollectionUtils.hasMatches(srv.getRoles(), p.getRoles()) == 0) {
+					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
+					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
+					removeIDs.add(usr.getUserID());
+				}
+			}
+			
+			// Update the users if the roles change
+			wdao.removeUsers(srv, removeIDs);
+			
+			// Determine what users to add to the server
+			for (Iterator<User> i = otherPilots.keySet().iterator(); i.hasNext(); ) {
+				User usr = i.next();
+				Pilot p = pilots.get(usr);
+				if (CollectionUtils.hasMatches(srv.getRoles(), p.getRoles()) > 0) {
+					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
+					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
+					wdao.addToServer(usr, srv.getID());
+				}
+			}
+			
+			// Commit transaction
+			ctx.commitTX();
+			
 			// Reload the system model
 			SystemData.add("ts2Servers", dao.getServers());
 			
-			// Save the server in the request
+			// Save the server and msgs in the request
 			ctx.setAttribute("server", srv, REQUEST);
+			ctx.setAttribute("msgs", msgs, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

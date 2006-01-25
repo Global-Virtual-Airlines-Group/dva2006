@@ -111,8 +111,13 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			ewdao.write(cr);
 
 			// If we are approving the checkride, then approve the transfer request
-			if ((txreq != null) && cr.getPassFail()) {
-				txreq.setStatus(TransferRequest.OK);
+			if (txreq != null) {
+				if (cr.getPassFail()) {
+					txreq.setStatus(TransferRequest.OK);	
+				} else {
+					txreq.setStatus(TransferRequest.PENDING);
+					txreq.setCheckRideID(0);
+				}
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
