@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 import org.deltava.beans.system.*;
+import org.deltava.beans.ts2.*;
 
 import org.deltava.comparators.RankComparator;
 
@@ -131,12 +132,12 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
-				
+
 				// Check Voice server access
 				boolean voiceLocked = Boolean.valueOf(ctx.getParameter("noVoice")).booleanValue();
 				if (voiceLocked != p.getNoVoice()) {
 					p.setNoVoice(voiceLocked);
-					
+
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -144,12 +145,12 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
-				
+
 				// Check ACARS server access
 				boolean acarsLocked = Boolean.valueOf(ctx.getParameter("noACARS")).booleanValue();
 				if (acarsLocked != p.getNoACARS()) {
 					p.setNoACARS(acarsLocked);
-					
+
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
@@ -471,6 +472,32 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 			}
 
+			// Update teamspeak data
+			GetTS2Data ts2dao = new GetTS2Data(con);
+			Collection<Server> srvs = ts2dao.getServers(p.getPilotCode());
+			Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
+			List<User> usrs = ts2dao.getUsers(p.getPilotCode());
+			User usr = usrs.isEmpty() ? null : usrs.get(0);
+
+			// Determine what TeamSpeak servers to remove us from
+			SetTS2Data ts2wdao = new SetTS2Data(con);
+			Collection<Server> rmvServers = CollectionUtils.getDelta(srvs, newSrvs);
+			for (Iterator<Server> i = rmvServers.iterator(); i.hasNext();) {
+				Server srv = i.next();
+				log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
+				ts2wdao.removeUsers(srv, Arrays.asList(new String[] { p.getPilotCode() }));
+			}
+
+			// Determine what servers to add us to
+			Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
+			for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
+				Server srv = i.next();			
+				if (usr != null) {
+					log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
+					ts2wdao.addToServer(usr, srv.getID());
+				}
+			}
+
 			// Write the Pilot profile
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
@@ -488,13 +515,13 @@ public class ProfileCommand extends AbstractFormCommand {
 			// If we're updating the password, then save it
 			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
 				p.setPassword(ctx.getParameter("pwd1"));
-				
+
 				// If we have an IMAP mailbox, sync there first
 				if (emailCfg != null) {
 					SetPilotEMail ewdao = new SetPilotEMail(con);
 					ewdao.updatePassword(p.getID(), p.getPassword());
 				}
-				
+
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				auth.updatePassword(p, p.getPassword());
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
@@ -636,8 +663,12 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID()), REQUEST);
 
 			// Get the online totals
-			GetFlightReports dao2 = new GetFlightReports(con);
-			dao2.getOnlineTotals(p);
+			GetFlightReports prdao = new GetFlightReports(con);
+			prdao.getOnlineTotals(p);
+			
+			// Get TeamSpeak2 data
+			GetTS2Data ts2dao = new GetTS2Data(con);
+			ctx.setAttribute("ts2Servers", ts2dao.getServers(p.getRoles()), REQUEST);
 
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);
