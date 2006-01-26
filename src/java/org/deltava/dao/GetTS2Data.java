@@ -167,7 +167,7 @@ public class GetTS2Data extends DAO {
 			String role = i.next();
 			sqlBuf.append("(r.s_role_name=\'");
 			sqlBuf.append(role);
-			sqlBuf.append(')');
+			sqlBuf.append("\')");
 			if (i.hasNext())
 				sqlBuf.append(" OR ");
 		}
@@ -287,7 +287,7 @@ public class GetTS2Data extends DAO {
 		_ps.close();
 		
 		// Load roles for each server
-		prepareStatementWithoutLimits("SELECT * FROM ts2_server_roles");
+		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_server_roles");
 		rs = _ps.executeQuery();
 		while (rs.next()) {
 			Server srv = results.get(new Integer(rs.getInt(1)));
