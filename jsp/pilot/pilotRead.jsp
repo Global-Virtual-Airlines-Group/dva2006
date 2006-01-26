@@ -90,7 +90,7 @@
  <td colspan="${cspan + 1}">TEAMSPEAK 2 ACCESS</td>
 </tr>
 <tr>
- <td class="label">Virtual Servers</td>
+ <td class="label" valign="top">Virtual Servers</td>
  <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
 <br />
 <c:forEach var="ts2Server" items="${ts2servers}">
