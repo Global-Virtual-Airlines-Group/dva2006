@@ -29,8 +29,8 @@
  <td width="10%">PILOT ID</td>
  <td width="15%">CURRENT RANK</td>
  <td width="15%">CURRENT PROGRAM</td>
- <td width="15%">REQUESTED PROGRAM</td>
- <td>REQUESTED ON</td>
+ <td width="15%"><el:cmd url="txrequests" className="title" sort="TX.EQTYPE,TX.STATUS">REQUESTED PROGRAM</el:cmd></td>
+ <td><el:cmd url="txrequests" className="title">REQUESTED ON</el:cmd></td>
 </tr>
 
 <!-- Table Data -->
@@ -49,7 +49,7 @@
 <!-- Scroll bar -->
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
-<view:legend width="140" labels="Check Ride Pending,Ride Assigned,Ride Submitted,Complete"
+<view:legend width="145" labels="Needs Check Ride,Ride Assigned,Ride Submitted,Complete"
 classes="opt2,opt1,opt3, " /></td>
 </tr>
 </view:table>
