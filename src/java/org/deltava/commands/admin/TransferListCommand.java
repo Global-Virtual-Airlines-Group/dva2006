@@ -38,7 +38,7 @@ public class TransferListCommand extends AbstractViewCommand {
          GetTransferRequest txdao = new GetTransferRequest(con);
          txdao.setQueryStart(vc.getStart());
          txdao.setQueryMax(vc.getCount());
-         vc.setResults(txdao.getAll());
+         vc.setResults(txdao.getAll(vc.getSortType()));
          
          // Build a set of Pilot IDs
          Set<Integer> pilotIDs = new HashSet<Integer>();

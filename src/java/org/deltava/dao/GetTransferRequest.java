@@ -68,13 +68,19 @@ public class GetTransferRequest extends DAO {
 
 	/**
 	 * Returns all Transfer Requests.
+	 * @param orderBy the sort order
 	 * @return a List of TransferRequest beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<TransferRequest> getAll() throws DAOException {
+	public List<TransferRequest> getAll(String orderBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
+				+ "CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) ORDER BY ");
+		sqlBuf.append((orderBy != null) ? orderBy : "TX.CREATED");
+		
 		try {
-			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
-					+ "(TX.CHECKRIDE_ID=CR.ID) ORDER BY TX.CREATED");
+			prepareStatement(sqlBuf.toString());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
