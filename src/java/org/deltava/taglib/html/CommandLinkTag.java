@@ -1,5 +1,7 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
+
+import java.util.*;
 
 import java.io.UnsupportedEncodingException;
 
@@ -16,9 +18,7 @@ import javax.servlet.jsp.JspException;
 public class CommandLinkTag extends LinkTag {
 
 	private String _cmdName;
-	private String _cmdParam;
-	private String _cmdOpName;
-
+	private Map<String, String> _cmdParams = new TreeMap<String, String>();
 	private boolean _disableLink;
 
 	/**
@@ -31,15 +31,15 @@ public class CommandLinkTag extends LinkTag {
 		if (id.startsWith("0x")) {
 			if (!"0x0".equals(id)) {
 				try {
-					_cmdParam = "0x" + Integer.toString(Integer.parseInt(id.substring(2)), 16).toUpperCase();
+					_cmdParams.put("id", "0x" + Integer.toString(Integer.parseInt(id.substring(2)), 16).toUpperCase());
 				} catch (NumberFormatException nfe) {
-					_cmdParam = id;
+					_cmdParams.put("id", id);
 				}
 			} else {
 				_disableLink = true;
 			}
 		} else {
-			_cmdParam = id;
+			_cmdParams.put("id", id);
 		}
 	}
 
@@ -48,7 +48,15 @@ public class CommandLinkTag extends LinkTag {
 	 * @param opName the operation name
 	 */
 	public void setOp(String opName) {
-		_cmdOpName = opName;
+		_cmdParams.put("op", opName);
+	}
+	
+	/**
+	 * Sets the sort parameter for the command invocation.
+	 * @param sortType the sort type
+	 */
+	public void setSort(String sortType) {
+		_cmdParams.put("sortType", sortType);
 	}
 
 	/**
@@ -65,7 +73,7 @@ public class CommandLinkTag extends LinkTag {
 	public void release() {
 		super.release();
 		_disableLink = false;
-		_cmdParam = null;
+		_cmdParams.clear();
 	}
 
 	/**
@@ -81,15 +89,17 @@ public class CommandLinkTag extends LinkTag {
 		
 		StringBuilder url = new StringBuilder(_cmdName);
 		try {
-			if (_cmdParam != null) {
-				url.append("?id=");
-				url.append(URLEncoder.encode(_cmdParam, "UTF-8"));
-			}
-
-			if (_cmdOpName != null) {
-				url.append((_cmdParam == null) ? "?" : "&amp;");
-				url.append("op=");
-				url.append(URLEncoder.encode(_cmdOpName, "UTF-8"));
+			if (!_cmdParams.isEmpty())
+				url.append('?');
+			
+			// Append the parameters
+			for (Iterator<String> i = _cmdParams.keySet().iterator(); i.hasNext(); ) {
+				String pName = i.next();
+				url.append(pName);
+				url.append('=');
+				url.append(URLEncoder.encode(_cmdParams.get(pName), "UTF-8"));
+				if (i.hasNext())
+					url.append("&amp;");
 			}
 
 			// Update the HREF and call the superclass renderer
