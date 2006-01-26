@@ -87,11 +87,11 @@
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td>&nbsp;
-<c:if test="${fn:isScored(checkRide) && access.canEdit}">
- <td><el:cmdbutton url="checkride" linkID="0x${checkRide.ID}" op="edit" label="RESCORE EXAMINATION" /></td>
+<c:if test="${!fn:pending(checkRide) && access.canEdit}">
+<el:cmdbutton url="checkride" linkID="0x${checkRide.ID}" op="edit" label="RESCORE EXAMINATION" />
 </c:if> 
 <c:if test="${access.canDelete}">
- <el:cmdbutton url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
+<el:cmdbutton url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
  </td>
 </tr>
