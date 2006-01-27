@@ -34,6 +34,7 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="fileLibEnabled" name="airline.files" />
+<content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
@@ -451,6 +452,14 @@ and database usage times here.</td>
  <td class="data">You can view empty ACARS Connection Log and Flight Information Log entries here, as
 well as pruning empty entries from the logs.</td>
 </tr>
+<c:if test="${ts2enabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ts2servers">TeamSpeak 2 Virtual Servers</el:cmd><br />
+<el:cmd className="bld" url="ts2channels">TeamSpeak 2 Voice Channels</el:cmd></td>
+ <td class="data">You can update TeamSpeak 2 virtual server permissions and configurations, and 
+create, edit or delete TeamSpeak 2 voice channels.</td>
+</tr>
+</c:if>
 </content:filter>
 <tr class="title"><td colspan="2">&nbsp;</td></tr>
 </el:table>
