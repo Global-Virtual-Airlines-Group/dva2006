@@ -355,7 +355,7 @@
 			<role>Signature</role>
 		</list>
 		
-		<auth>org.deltava.security.MigrationAuthenticator</auth>
+		<auth>org.deltava.security.MirrorAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
 	</security>
 	
