@@ -130,7 +130,7 @@ public class GetExam extends DAO {
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".CHECKRIDES CR, ");
 		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.EQTYPE=?) "
+		sqlBuf.append(".EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) "
 				+ "AND (CR.STATUS=?)");
 
 		try {
