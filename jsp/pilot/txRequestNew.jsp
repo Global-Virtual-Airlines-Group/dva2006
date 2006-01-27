@@ -31,7 +31,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="txrequest.do" method="POST" validate="return validate(this)">
+<el:form action="txrequest.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">NEW EQUIPMENT PROGRAM TRANSFER REQUEST</td>
