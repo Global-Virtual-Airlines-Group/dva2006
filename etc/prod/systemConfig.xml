@@ -168,11 +168,14 @@
 		<equipment>A319</equipment>
 		<equipment>A320</equipment>							
 		<equipment>A321</equipment>
-		<equipment>A330</equipment>
-		<equipment>A340</equipment>
+		<equipment>A330-200</equipment>
+		<equipment>A330-300</equipment>
+		<equipment>A340-300</equipment>
 		<equipment>ATR-72</equipment>
 		<equipment>B1900</equipment>
 		<equipment>BAE-146</equipment>
+		<equipment>B720</equipment>
+		<equipment>B707-120</equipment>
 		<equipment>B707-320</equipment>
 		<equipment>B727-200</equipment>
 		<equipment>B737-200</equipment>
