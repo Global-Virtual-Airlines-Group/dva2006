@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.util.*;
@@ -41,6 +42,7 @@ public class SystemBootstrap implements ServletContextListener {
 		super();
 		PropertyConfigurator.configure(getClass().getResource("/etc/log4j.properties"));
 		SystemBootstrap.log = Logger.getLogger(SystemBootstrap.class);
+		log.info("Initialized log4j");
 
 		// Force headless AWT operation
 		System.setProperty("java.awt.headless", "true");
@@ -56,25 +58,6 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Initialize system data
 		SystemData.init();
-
-		// Get and load the authenticator
-		String authClass = SystemData.get("security.auth");
-		Authenticator auth = null;
-		try {
-			Class c = Class.forName(authClass);
-			log.debug("Loaded class " + authClass);
-			auth = (Authenticator) c.newInstance();
-
-			// Initialize and store in the servlet context
-			auth.init(Authenticator.DEFAULT_PROPS_FILE);
-			SystemData.add(SystemData.AUTHENTICATOR, auth);
-		} catch (ClassNotFoundException cnfe) {
-			log.error("Cannot find authenticator class " + authClass);
-		} catch (SecurityException se) {
-			log.error("Error initializing authenticator - " + se.getMessage());
-		} catch (Exception ex) {
-			log.error("Error starting authenticator - " + ex.getClass().getName() + " - " + ex.getMessage());
-		}
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
@@ -97,6 +80,25 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
+		
+		// Get and load the authenticator
+		String authClass = SystemData.get("security.auth");
+		Authenticator auth = null;
+		try {
+			Class c = Class.forName(authClass);
+			log.debug("Loaded class " + authClass);
+			auth = (Authenticator) c.newInstance();
+
+			// Initialize and store in the servlet context
+			auth.init(Authenticator.DEFAULT_PROPS_FILE);
+			SystemData.add(SystemData.AUTHENTICATOR, auth);
+		} catch (ClassNotFoundException cnfe) {
+			log.error("Cannot find authenticator class " + authClass);
+		} catch (SecurityException se) {
+			log.error("Error initializing authenticator - " + se.getMessage());
+		} catch (Exception ex) {
+			log.error("Error starting authenticator - " + ex.getClass().getName() + " - " + ex.getMessage());
+		}
 
 		// Start the Task Manager
 		try {
@@ -143,7 +145,7 @@ public class SystemBootstrap implements ServletContextListener {
 			}
 
 			// Load TS2 server info if enabled
-			if (SystemData.getBoolean("airline.ts2.enabled")) {
+			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 				log.info("Loading TeamSpeak 2 Voice Servers");
 				GetTS2Data ts2dao = new GetTS2Data(c);
 				SystemData.add("ts2Servers", ts2dao.getServers());
