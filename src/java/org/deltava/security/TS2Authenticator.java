@@ -73,6 +73,7 @@ public class TS2Authenticator implements Authenticator {
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
 		sqlBuf.append("(s_client_password)=?)");
 
+		boolean isAuth = false;
 		Connection c = null;
 		try {
 			c = _pool.getConnection(true);
@@ -85,23 +86,23 @@ public class TS2Authenticator implements Authenticator {
 
 			// Execute the query
 			ResultSet rs = ps.executeQuery();
-			boolean isAuth = rs.next() ? (rs.getInt(1) == 1) : false;
+			isAuth = rs.next() ? (rs.getInt(1) == 1) : false;
 
 			// Clean up
 			rs.close();
 			ps.close();
-
-			// If we haven't authenticated, throw an execption
-			if (!isAuth)
-				throw new SecurityException("Invalid password for " + p.getPilotCode());
-
-			log.info(usr.getName() + " authenticated");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			_pool.release(c);
 		}
+		
+		// If we haven't authenticated, throw an execption
+		if (!isAuth)
+			throw new SecurityException("Invalid password for " + p.getPilotCode());
+
+		log.info(usr.getName() + " authenticated");
 	}
 
 	/**
