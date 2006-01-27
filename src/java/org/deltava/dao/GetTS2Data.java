@@ -3,6 +3,9 @@ package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
+import java.text.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.ts2.*;
 
@@ -17,7 +20,10 @@ import org.deltava.util.StringUtils;
  */
 
 public class GetTS2Data extends DAO {
+
+	private static final Logger log = Logger.getLogger(GetTS2Data.class);
 	
+	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 	private static final Cache _cache = new ExpiringCache(12, 600);
 
 	/**
@@ -27,7 +33,24 @@ public class GetTS2Data extends DAO {
 	public GetTS2Data(Connection c) {
 		super(c);
 	}
-
+	
+	/**
+	 * Helper method to convert a date from the godawful TS2 format.
+	 */
+	private java.util.Date getDate(String dt) {
+		if (dt == null)
+			return null;
+		
+		try {
+			synchronized (_df) {
+				return _df.parse(dt);
+			}
+		} catch (ParseException pe) {
+			log.warn("Error parsing date " + dt);
+			return new java.util.Date();
+		}
+	}
+	
 	/**
 	 * Returns an individual TeamSpeak voice Channel.
 	 * @param name the Channel name
@@ -221,7 +244,7 @@ public class GetTS2Data extends DAO {
 			c.setCodec(rs.getInt(7));
 			c.setMaxUsers(rs.getInt(9));
 			c.setPassword(rs.getString(11));
-			c.setCreatedOn(rs.getTimestamp(12));
+			c.setCreatedOn(getDate(rs.getString(12)));
 			
 			// Add to cache and results
 			_cache.add(c);
@@ -248,8 +271,8 @@ public class GetTS2Data extends DAO {
 			usr.setServerID(rs.getInt(2));
 			usr.setServerAdmin(rs.getInt(3) == -1);
 			usr.setPassword(rs.getString(5));
-			usr.setCreatedOn(rs.getTimestamp(6));
-			usr.setLastOnline(rs.getTimestamp(7));
+			usr.setCreatedOn(getDate(rs.getString(6)));
+			usr.setLastOnline(getDate(rs.getString(7)));
 			
 			// Add to cache and results
 			_cache.add(usr);
@@ -275,7 +298,7 @@ public class GetTS2Data extends DAO {
 			srv.setPort(rs.getInt(5));
 			srv.setPassword(rs.getString(6));
 			srv.setActive(rs.getInt(7) == -1);
-			srv.setCreatedOn(rs.getTimestamp(8));
+			srv.setCreatedOn(getDate(rs.getString(8)));
 			srv.setDescription(rs.getString(9));
 			
 			// Add to results
