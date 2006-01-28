@@ -71,7 +71,8 @@ public class AirlineCommand extends AbstractFormCommand {
 		}
 		
 		// Update the airline in the SystemData map
-		Map airlines = (Map) SystemData.getObject("airlines");
+		@SuppressWarnings("unchecked")
+		Map<String, Airline> airlines = (Map) SystemData.getObject("airlines");
 		if (a.getActive()) {
 			airlines.put(a.getCode(), a);
 		} else {
