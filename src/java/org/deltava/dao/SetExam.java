@@ -105,9 +105,6 @@ public class SetExam extends DAO {
 			// Update the exam
 			executeUpdate(1);
 
-			// Clean up
-			_ps.close();
-
 			// Prepare the statement for questions
 			prepareStatement("UPDATE EXAMQUESTIONS SET ANSWER=?, CORRECT=? WHERE (EXAM_ID=?) AND (QUESTION_ID=?)");
 			_ps.setInt(3, ex.getID());

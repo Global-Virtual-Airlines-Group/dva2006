@@ -219,7 +219,6 @@ public class SetFlightReport extends DAO {
 		prepareStatementWithoutLimits("DELETE FROM " + dbName.toLowerCase() + ".PROMO_EQ WHERE (ID=?)");
 		_ps.setInt(1, id);
 		executeUpdate(0);
-		_ps.close();
 
 		// Queue the new records
 		prepareStatementWithoutLimits("INSERT INTO " + dbName.toLowerCase() + ".PROMO_EQ (ID, EQTYPE) "
