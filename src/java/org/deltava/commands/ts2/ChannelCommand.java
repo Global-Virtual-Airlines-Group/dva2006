@@ -72,6 +72,7 @@ public class ChannelCommand extends AbstractFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/ts2/ts2Update.jsp");
+		result.setType(CommandResult.REQREDIRECT);
 		result.setSuccess(true);
 	}
 

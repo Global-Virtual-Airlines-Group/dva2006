@@ -11,6 +11,7 @@
 <title><content:airline /> TeamSpeak Channels</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />

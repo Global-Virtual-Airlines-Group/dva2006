@@ -1,6 +1,5 @@
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
-
-import java.io.Serializable;
 
 import java.io.*;
 import java.net.*;
@@ -12,7 +11,7 @@ import java.net.*;
  * @since 1.0
  */
 
-public abstract class DAO implements Serializable {
+public abstract class DAO {
 
     private static final int BUFFER_SIZE = 10240;
     

@@ -33,6 +33,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="roles" name="security.roles" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -55,15 +56,23 @@ return true;
 </tr>
 <tr>
  <td class="label">Welcome Message</td>
- <td class="data"><el:text name="msg" idx="*" size="32" max="80" value="${server.welcomeMessage}" /></td>
+ <td class="data"><el:text name="msg" idx="*" size="64" max="80" value="${server.welcomeMessage}" /></td>
 </tr>
 <tr>
  <td class="label">Server Password</td>
- <td class="data"><el:text name="pwd" idx="*" size="16" max="80" value="${server.password}" /></td>
+ <td class="data"><el:text name="pwd" idx="*" size="32" max="80" value="${server.password}" /></td>
+</tr>
+<tr>
+ <td class="label">Description</td>
+ <td class="data"><el:text name="desc" idx="*" size="64" max="80" value="${server.description}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Security Roles</td>
+ <td class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" checked="${server.active}" label="Server is Active" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /></td>
 </tr>
 </el:table>
  
