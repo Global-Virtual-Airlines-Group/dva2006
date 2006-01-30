@@ -639,8 +639,11 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get the DAO and load the pilot profile
 			GetPilot dao = new GetPilot(con);
 			Pilot p = dao.get(ctx.getID());
-			if (p == null)
-				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
+			if (p == null) {
+				CommandException ce = new CommandException("Invalid Pilot ID - " + ctx.getID());;
+				ce.setWarning(true);
+				throw ce;
+			}
 
 			// Get the access controller
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
