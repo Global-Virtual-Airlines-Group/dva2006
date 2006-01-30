@@ -168,10 +168,13 @@
 		<equipment>A319</equipment>
 		<equipment>A320</equipment>							
 		<equipment>A321</equipment>
-		<equipment>A330</equipment>
-		<equipment>A340</equipment>
+		<equipment>A330-200</equipment>
+		<equipment>A330-300</equipment>
+		<equipment>A340-300</equipment>
 		<equipment>ATR-72</equipment>
 		<equipment>B1900</equipment>
+		<equipment>B720</equipment>
+		<equipment>B707-120</equipment>
 		<equipment>B707-320</equipment>
 		<equipment>B727-200</equipment>
 		<equipment>B737-200</equipment>
@@ -282,6 +285,10 @@
 			<parser>org.deltava.util.log.ApacheLogParser</parser>
 		</http>
 	</log>
+
+	<testing>
+		<lockout type="Integer">24</lockout>
+	</testing>
 
 	<config>
 		<commands>/etc/commands.xml</commands>
@@ -470,8 +477,8 @@
 		<timeout type="Integer">240</timeout>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
-			<minimum type="Integer">58</minimum>
-			<latest type="Integer">59</latest>
+			<minimum type="Integer">62</minimum>
+			<latest type="Integer">60</latest>
 		</build>
 		
 		<pool>

@@ -18,7 +18,7 @@ import org.deltava.security.command.PilotAccessControl;
 import org.deltava.util.system.SystemData;
 
 /**
- * Web site command to display the Pilot Center.
+ * A Web Site Command to display the Pilot Center.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -78,7 +78,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Get the schedule size
 			GetSchedule sdao = new GetSchedule(con);
 			ctx.setAttribute("scheduleSize", new Integer(sdao.getFlightCount()), REQUEST);
-			
+
 			// Get the PIREP disposal queue size
 			if (ctx.isUserInRole("PIREP"))
 				ctx.setAttribute("pirepQueueSize", new Integer(prdao.getDisposalQueueSize()), REQUEST);
@@ -86,8 +86,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
 
-			// Initialize the testing history helper
+			// Initialize the testing history helper and check for test lockout
 			initTestHistory(p, con);
+			ctx.setAttribute("examLockout", Boolean.valueOf(_testHistory.isLockedOut(SystemData
+					.getInt("testing.lockout"))), REQUEST);
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
 			ctx.setAttribute("eqType", _testHistory.getEquipmentType(), REQUEST);
@@ -119,16 +121,16 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			} else {
 				ctx.setAttribute("txreq", txreq, REQUEST);
 			}
-			
+
 			// See if we can write any examinations
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			Collection<ExamProfile> exams = epdao.getExamProfiles();
-			for (Iterator<ExamProfile> i = exams.iterator(); i.hasNext(); ) {
+			for (Iterator<ExamProfile> i = exams.iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
 				if (!_testHistory.canWrite(ep))
 					i.remove();
 			}
-			
+
 			// Save the examinations
 			ctx.setAttribute("availableExams", exams, REQUEST);
 		} catch (DAOException de) {

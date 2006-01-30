@@ -293,6 +293,10 @@
 		</http>
 	</log>
 
+	<testing>
+		<lockout type="Integer">24</lockout>
+	</testing>
+
 	<config>
 		<commands>/etc/commands.xml</commands>
 		<services>/etc/services.xml</services>

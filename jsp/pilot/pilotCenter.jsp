@@ -39,6 +39,7 @@ return true;
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
 <content:sysdata var="selcalReserve" name="users.selcal.reserve" />
+<content:sysdata var="examLockoutHours" name="testing.lockout" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -287,7 +288,10 @@ Program to the <b>${txreq.equipmentType}</b> program.</td>
 </c:if>
  <td class="data">The <content:airline /> Testing Center is your single source for the written 
 examinations needed for promotions and additional type ratings. Here you can see your prior tests 
-and their results, in addition to writing new aircraft tests. 
+and their results, in addition to writing new aircraft tests.
+<c:if test="${examLockout}"><span class="sec bld">You completed a <content:airline /> pilot Examination 
+with an unsatisfactory score less than <fmt:int value="${examLockoutHours}" /> hours ago, and therefore 
+cannot access the Testing Center until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>

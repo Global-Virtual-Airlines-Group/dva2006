@@ -29,7 +29,7 @@ public class TestingHistoryHelper {
 	private boolean _isCaptain;
 	private boolean _debugLog;
 
-	private Collection<Test> _tests = new TreeSet<Test>();
+	private SortedSet<Test> _tests = new TreeSet<Test>();
 	private Collection<FlightReport> _pireps;
 
 	/**
@@ -334,5 +334,33 @@ public class TestingHistoryHelper {
 		}
 
 		return false;
+	}
+	
+	/**
+	 * Returns if the user is locked out of the Testing Center due to a failed examination.
+	 * @param lockoutHours the number of hours to remain locked out, or zero if no lockout
+	 * @return TRUE if the user is locked out, otherwise FALSE
+	 */
+	public boolean isLockedOut(int lockoutHours) {
+		
+		// If there is no last examination, or lockout period forget it
+		if (_tests.isEmpty() || (lockoutHours < 1))
+			return false;
+		
+		// If the last test is not an examination, forget it
+		Test t = _tests.last();
+		if (!(t instanceof Examination))
+			return false;
+		
+		// If the test is not scored and failed, then forget
+		if (t.getStatus() != Test.SCORED)
+			return false;
+		else if (t.getPassFail())
+			return false;
+		
+		// Check the time from the scoring
+		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
+		log("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		return (timeInterval < (lockoutHours * 3600));
 	}
 }
