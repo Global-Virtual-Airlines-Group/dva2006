@@ -4,8 +4,6 @@ package org.deltava.security.command;
 import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.commands.CommandSecurityException;
-
 public class TestExamProfileAccessControl extends AccessControlTestCase {
 
    private ExamProfileAccessControl _ac;
@@ -28,8 +26,8 @@ public class TestExamProfileAccessControl extends AccessControlTestCase {
    public void testAccess() throws Exception {
       try {
          _ac.validate();
-         fail("CommandSecurityException expected");
-      } catch (CommandSecurityException cse) { }
+         fail("AccessControlException expected");
+      } catch (AccessControlException cse) { }
 
       _user.addRole("Examination");
       _ac.validate();
@@ -48,8 +46,8 @@ public class TestExamProfileAccessControl extends AccessControlTestCase {
       _ctxt.logoff();
       try {
          _ac.validate();
-         fail("CommandSecurityException expected");
-      } catch (CommandSecurityException cse) { }
+         fail("AccessControlException expected");
+      } catch (AccessControlException cse) { }
    }
    
    public void testContextValidation() {

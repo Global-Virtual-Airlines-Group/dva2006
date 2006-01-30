@@ -4,7 +4,6 @@ package org.deltava.security.command;
 import org.deltava.beans.system.EMailConfiguration;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 /**
  * An Access Controller for mailbox profiles.
@@ -14,48 +13,49 @@ import org.deltava.commands.CommandSecurityException;
  */
 
 public class MailboxAccessControl extends AccessControl {
-   
-   private EMailConfiguration _cfg;
-   
-   private boolean _canEdit;
-   private boolean _canDelete;
 
-   /**
-    * Initializes the Access Controller.
-    * @param ctx the command context
-    * @param cfg the IMAP configuration bean
-    */
-   public MailboxAccessControl(SecurityContext ctx, EMailConfiguration cfg) {
-      super(ctx);
-      _cfg = cfg;
-   }
+	private EMailConfiguration _cfg;
 
-   /**
-    * Calculates access rights.
-    * @throws CommandSecurityException never
-    */
-   public void validate() throws CommandSecurityException {
-      if ((_cfg == null) || !_ctx.isAuthenticated())
-         return;
-      
-      // Calculate access properties
-      _canDelete = _ctx.isUserInRole("Admin");
-      _canEdit = _ctx.isUserInRole("Admin");
-   }
-   
-   /**
-    * Returns if the user can edit the mailbox profile.
-    * @return TRUE if the profile can be edited, otherwise FALSE
-    */
-   public boolean getCanEdit() {
-      return _canEdit;
-   }
-   
-   /**
-    * Returns if the user can delete the mailbox profile.
-    * @return TRUE if the profile can be deleted, otherwise FALSE
-    */
-   public boolean getCanDelete() {
-      return _canDelete;
-   }
+	private boolean _canEdit;
+	private boolean _canDelete;
+
+	/**
+	 * Initializes the Access Controller.
+	 * @param ctx the command context
+	 * @param cfg the IMAP configuration bean
+	 */
+	public MailboxAccessControl(SecurityContext ctx, EMailConfiguration cfg) {
+		super(ctx);
+		_cfg = cfg;
+	}
+
+	/**
+	 * Calculates access rights.
+	 */
+	public void validate() {
+		validateContext();
+
+		if ((_cfg == null) || !_ctx.isAuthenticated())
+			return;
+
+		// Calculate access properties
+		_canDelete = _ctx.isUserInRole("Admin");
+		_canEdit = _ctx.isUserInRole("Admin");
+	}
+
+	/**
+	 * Returns if the user can edit the mailbox profile.
+	 * @return TRUE if the profile can be edited, otherwise FALSE
+	 */
+	public boolean getCanEdit() {
+		return _canEdit;
+	}
+
+	/**
+	 * Returns if the user can delete the mailbox profile.
+	 * @return TRUE if the profile can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
+	}
 }

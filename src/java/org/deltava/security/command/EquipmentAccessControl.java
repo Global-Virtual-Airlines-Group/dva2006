@@ -1,7 +1,7 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 /**
  * An Access Controller for Equipment Type profile operations.
@@ -26,9 +26,8 @@ public final class EquipmentAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws CommandSecurityException never
      */
-	public void validate() throws CommandSecurityException {
+	public void validate() {
 		validateContext();
 
 		// Update access rights

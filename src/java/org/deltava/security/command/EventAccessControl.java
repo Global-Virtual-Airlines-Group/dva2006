@@ -3,7 +3,6 @@ package org.deltava.security.command;
 
 import org.deltava.beans.event.*;
 
-import org.deltava.commands.CommandSecurityException;
 import org.deltava.security.SecurityContext;
 
 /**
@@ -36,9 +35,8 @@ public class EventAccessControl extends AccessControl {
 
    /**
     * Calculates access rights.
-    * @throws CommandSecurityException never
     */
-   public void validate() throws CommandSecurityException {
+   public void validate() {
       validateContext();
 
       // Do nothing if not a Pilot

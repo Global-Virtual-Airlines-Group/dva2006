@@ -8,7 +8,6 @@ import com.kizna.servletunit.*;
 import junit.framework.TestCase;
 
 import org.deltava.beans.Person;
-import org.deltava.commands.CommandSecurityException;
 import org.deltava.security.SecurityContext;
 
 public abstract class AccessControlTestCase extends TestCase {
@@ -77,8 +76,10 @@ public abstract class AccessControlTestCase extends TestCase {
 	   try {
 	      ac.validate();
 	      fail("IllegalStateException expected");
-	   } catch (CommandSecurityException cse) {
+	   } catch (IllegalStateException ise) {
+		   return;
+	   } catch (Exception e) {
 	      fail("IllegalStateException expected");
-	   } catch (IllegalStateException ise) { }
+	   }
 	}
 }

@@ -13,8 +13,6 @@ import org.apache.log4j.Logger;
 import org.deltava.jdbc.*;
 import org.deltava.service.*;
 
-import org.deltava.dao.DAOException;
-
 import org.deltava.beans.Pilot;
 import org.deltava.beans.system.VersionInfo;
 
@@ -136,12 +134,14 @@ public class WebServiceServlet extends BasicAuthServlet {
 				log.info("Executing Web Service " + svc.getClass().getName());
 
 			rsp.setStatus(svc.execute(ctx));
-		} catch (ConnectionPoolFullException cpfe) {
-		   log.warn("Error executing Web Service - Connection Pool Full");
-		   rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Connection Pool Full");
-		} catch (DAOException de) {
-		   log.error("Error executing Web Service - " + de.getMessage(), de);
-			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} catch (ControllerException ce) {
+			if (ce.isWarning()) {
+				log.warn("Error executing Web Service - " + ce.getMessage());
+			} else {
+				log.error("Error executing Web Service - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);	
+			}
+		   
+			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ce.getMessage());
 		} catch (ServiceException se) {
 			rsp.sendError(se.getCode(), se.getMessage());
 		} finally {
