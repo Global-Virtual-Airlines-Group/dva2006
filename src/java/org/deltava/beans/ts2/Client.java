@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class User extends DatabaseBean implements Comparable, Cacheable {
+public class Client extends DatabaseBean implements Comparable, Cacheable {
 	
 	private String _userID;
 	private String _pwd;
@@ -30,9 +30,9 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * Creates a new TeamSpeak 2 user.
 	 * @param userID the user ID
 	 * @throws NullPointerException if userID is null
-	 * @see User#setUserID(String)
+	 * @see Client#setUserID(String)
 	 */
-	public User(String userID) {
+	public Client(String userID) {
 		super();
 		setUserID(userID);
 		_createdOn = new Date();
@@ -43,7 +43,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * @param usr the existing user
 	 * @param serverID the new Server ID
 	 */
-	public User(User usr, int serverID) {
+	public Client(Client usr, int serverID) {
 		super();
 		_userID = usr._userID;
 		_pwd = usr._pwd;
@@ -56,7 +56,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns the user's TeamSpeak User ID.
 	 * @return the user ID
-	 * @see User#setUserID(String)
+	 * @see Client#setUserID(String)
 	 */
 	public String getUserID() {
 		return _userID;
@@ -74,7 +74,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns the user's password. This may not be populated.
 	 * @return the password, or null if not populated
-	 * @see User#setPassword(String)
+	 * @see Client#setPassword(String)
 	 */
 	public String getPassword() {
 		return _pwd;
@@ -83,7 +83,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns the applicable TeamSpeak server ID. <i>This is usually 1</i>.
 	 * @return the server ID
-	 * @see User#setServerID(int)
+	 * @see Client#setServerID(int)
 	 */
 	public int getServerID() {
 		return _serverID;
@@ -92,7 +92,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns wether the user is a Server Administrator.
 	 * @return TRUE if the user is an Administrator, otherwise FALSE
-	 * @see User#setServerAdmin(boolean)
+	 * @see Client#setServerAdmin(boolean)
 	 */
 	public boolean getServerAdmin() {
 		return _serverAdmin;
@@ -101,7 +101,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns the date the user was created on.
 	 * @return the creation date/time
-	 * @see User#setCreatedOn(Date)
+	 * @see Client#setCreatedOn(Date)
 	 */
 	public Date getCreatedOn() {
 		return _createdOn;
@@ -110,7 +110,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Returns the date the user was last connected to TeamSpeak on.
 	 * @return the last online date/time
-	 * @see User#setLastOnline(Date)
+	 * @see Client#setLastOnline(Date)
 	 */
 	public Date getLastOnline() {
 		return _lastOnline;
@@ -120,7 +120,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * Updates the TeamSpeak user ID.
 	 * @param id the user ID
 	 * @throws NullPointerException if id is null
-	 * @see User#setUserID(String)
+	 * @see Client#setUserID(String)
 	 */
 	public void setUserID(String id) {
 		_userID = id.toUpperCase();
@@ -129,7 +129,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Updates the user's password.
 	 * @param pwd the password
-	 * @see User#getPassword()
+	 * @see Client#getPassword()
 	 */
 	public void setPassword(String pwd) {
 		_pwd = pwd;
@@ -139,7 +139,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * Sets the server database ID. <i>This is usually 1</i>.
 	 * @param id the server database ID
 	 * @throws IllegalArgumentException if id is negative
-	 * @see User#getServerID()
+	 * @see Client#getServerID()
 	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setServerID(int id) {
@@ -152,7 +152,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Updates wether the user is a Server Administrator. 
 	 * @param isAdmin TRUE if the user is an administrator, otherwise FALSE
-	 * @see User#getServerAdmin()
+	 * @see Client#getServerAdmin()
 	 */
 	public void setServerAdmin(boolean isAdmin) {
 		_serverAdmin = isAdmin;
@@ -161,8 +161,8 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	/**
 	 * Updates the creation date of this Teamspeak user.
 	 * @param dt the creation date/time
-	 * @see User#getCreatedOn()
-	 * @see User#setLastOnline(Date)
+	 * @see Client#getCreatedOn()
+	 * @see Client#setLastOnline(Date)
 	 */
 	public void setCreatedOn(Date dt) {
 		_createdOn = dt;
@@ -172,8 +172,8 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * Updates the last online date of this Teamspeak user
 	 * @param dt the last online date/time
 	 * @throws IllegalArgumentException if dt is before CreatedOn
-	 * @see User#getLastOnline()
-	 * @see User#setCreatedOn(Date)
+	 * @see Client#getLastOnline()
+	 * @see Client#setCreatedOn(Date)
 	 */
 	public void setLastOnline(Date dt) {
 		if ((dt != null) && dt.before(_createdOn))
@@ -187,7 +187,7 @@ public class User extends DatabaseBean implements Comparable, Cacheable {
 	 * @see Comparable#compareTo(Object)
 	 */
 	public int compareTo(Object o) {
-		User usr = (User) o;
+		Client usr = (Client) o;
 		return _userID.compareTo(usr._userID);
 	}
 	

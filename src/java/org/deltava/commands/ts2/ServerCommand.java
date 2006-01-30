@@ -26,7 +26,7 @@ public class ServerCommand extends AbstractFormCommand {
 	
 	private static final Logger log = Logger.getLogger(ServerCommand.class);
 	
-	private static final Collection<String> DEFAULT_ROLES = Arrays.asList(new String[] {"Pillot"});
+	private static final Collection<String> DEFAULT_ROLES = Arrays.asList(new String[] {"Pilot"});
 
 	/**
 	 * Callback method called when saving the profile.
@@ -48,6 +48,7 @@ public class ServerCommand extends AbstractFormCommand {
 				if (srv == null)
 					throw new CommandException("Invalid Server ID - " + ctx.getID());
 				
+				dao.setQueryMax(0);
 				srv.setName(ctx.getParameter("name"));
 			} else {
 				srv = new Server(ctx.getParameter("name"));
@@ -55,28 +56,26 @@ public class ServerCommand extends AbstractFormCommand {
 			
 			// Get client records for the server
 			GetPilot pdao = new GetPilot(con);
-			Collection<User> usrs = dao.getUsers(srv.getID());
-			Collection<String> pilotCodes = new HashSet<String>();
-			Map<User, Pilot> pilots = new HashMap<User, Pilot>();
-			for (Iterator<User> i = usrs.iterator(); i.hasNext(); ) {
-				User usr = i.next();
+			ClientPilotMap srvUsers = new ClientPilotMap();
+			Collection<Client> usrs = dao.getUsers(srv.getID());
+			for (Iterator<Client> i = usrs.iterator(); i.hasNext(); ) {
+				Client usr = i.next();
 				if (usr.getUserID().startsWith(SystemData.get("airline.code"))) {
 					Pilot p = pdao.getPilotByCode(usr.getPilotCode(), SystemData.get("airline.db"));
-					if (p != null) {
-						pilotCodes.add(usr.getUserID());
-						pilots.put(usr, p);
-					}
+					srvUsers.add(p, usr);
 				}
 			}
 			
 			// Get client records for other servers
-			Map<User, Pilot> otherPilots = new HashMap<User, Pilot>();
-			for (Iterator<User> i = dao.getUsers().iterator(); i.hasNext(); ) {
-				User usr = i.next();
-				if (!pilotCodes.contains(usr.getUserID())) {
-					Pilot p = pdao.getPilotByCode(usr.getPilotCode(), SystemData.get("airline.db"));
-					if ((p != null) && (!otherPilots.values().contains(p)))
-						otherPilots.put(usr, p);
+			Collection<Client> allUsers = dao.getUsers();
+			ClientPilotMap otherPilots = new ClientPilotMap();
+			for (Iterator<Client> i = allUsers.iterator(); i.hasNext(); ) {
+				Client usr = i.next();
+				if (usr.getUserID().startsWith(SystemData.get("airline.code"))) {
+					if (!srvUsers.contains(usr.getUserID())) {
+						Pilot p = pdao.getPilotByCode(usr.getPilotCode(), SystemData.get("airline.db"));
+						otherPilots.add(p, usr);
+					}
 				}
 			}
 			
@@ -87,7 +86,7 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPassword(ctx.getParameter("pwd"));
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			srv.setRoles(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRole"), DEFAULT_ROLES));
+			srv.setRoles(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRoles"), DEFAULT_ROLES));
 			
 			// Build messages collection
 			Collection<String> msgs = new ArrayList<String>();
@@ -101,13 +100,12 @@ public class ServerCommand extends AbstractFormCommand {
 			
 			// Determine what users to remove from the server
 			Collection<String> removeIDs = new HashSet<String>();
-			for (Iterator<User> i = pilots.keySet().iterator(); i.hasNext(); ) {
-				User usr = i.next();
-				Pilot p = pilots.get(usr);
-				if (CollectionUtils.hasMatches(srv.getRoles(), p.getRoles()) == 0) {
+			for (Iterator<Pilot> i = srvUsers.getPilots().iterator(); i.hasNext(); ) {
+				Pilot p = i.next();
+				if (!srv.hasAccess(p.getRoles())) {
 					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
-					removeIDs.add(usr.getUserID());
+					removeIDs.add(p.getPilotCode());
 				}
 			}
 			
@@ -115,12 +113,12 @@ public class ServerCommand extends AbstractFormCommand {
 			wdao.removeUsers(srv, removeIDs);
 			
 			// Determine what users to add to the server
-			for (Iterator<User> i = otherPilots.keySet().iterator(); i.hasNext(); ) {
-				User usr = i.next();
-				Pilot p = pilots.get(usr);
-				if (CollectionUtils.hasMatches(srv.getRoles(), p.getRoles()) > 0) {
+			for (Iterator<Pilot> i = otherPilots.getPilots().iterator(); i.hasNext(); ) {
+				Pilot p = i.next();
+				if (srv.hasAccess(p.getRoles())) {
 					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
+					Client usr = otherPilots.getClient(p.getPilotCode());
 					wdao.addToServer(usr, srv.getID());
 				}
 			}
@@ -147,6 +145,7 @@ public class ServerCommand extends AbstractFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/ts2/ts2Update.jsp");
+		result.setType(CommandResult.REQREDIRECT);
 		result.setSuccess(true);
 	}
 

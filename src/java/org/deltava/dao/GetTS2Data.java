@@ -91,7 +91,7 @@ public class GetTS2Data extends DAO {
 	 * @return the User profile, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<User> getUsers(String id) throws DAOException {
+	public List<Client> getUsers(String id) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (s_client_name=?)");
 			_ps.setString(1, id);
@@ -108,7 +108,7 @@ public class GetTS2Data extends DAO {
 	 * @return a Collection of User profiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<User> getUsers() throws DAOException {
+	public Collection<Client> getUsers() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM teamspeak.ts2_clients ORDER BY s_client_name");
 			return executeUsers();
@@ -123,7 +123,7 @@ public class GetTS2Data extends DAO {
 	 * @return a Collection of User profiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<User> getUsers(int serverID) throws DAOException {
+	public Collection<Client> getUsers(int serverID) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) ORDER BY s_client_name");
 			_ps.setInt(1, serverID);
@@ -260,13 +260,13 @@ public class GetTS2Data extends DAO {
 	/**
 	 * Helper method to parse User result sets.
 	 */
-	private List<User> executeUsers() throws SQLException {
-		List<User> results = new ArrayList<User>();
+	private List<Client> executeUsers() throws SQLException {
+		List<Client> results = new ArrayList<Client>();
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			User usr = new User(rs.getString(4));
+			Client usr = new Client(rs.getString(4));
 			usr.setID(rs.getInt(1));
 			usr.setServerID(rs.getInt(2));
 			usr.setServerAdmin(rs.getInt(3) == -1);

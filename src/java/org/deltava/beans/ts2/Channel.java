@@ -115,7 +115,7 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable, View
 	 * Returns the TeamSpeak server's database ID.
 	 * @return the database ID
 	 * @see Channel#setServerID(int)
-	 * @see User#getServerID()
+	 * @see Client#getServerID()
 	 */
 	public int getServerID() {
 		return _serverID;
