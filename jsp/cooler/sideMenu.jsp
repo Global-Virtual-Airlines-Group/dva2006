@@ -65,6 +65,11 @@
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
 </content:filter>
+<content:filter roles="HR,PIREP,Examination">
+<tr class="MenuItem">
+ <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
 </tr>
