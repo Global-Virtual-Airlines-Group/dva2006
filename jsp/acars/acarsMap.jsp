@@ -137,7 +137,7 @@ var routeWaypoints;
 
 // Reload ACARS data
 document.doRefresh = true;
-reloadData(false);
+reloadData(true);
 </script>
 </body>
 </html>
