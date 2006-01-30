@@ -1,3 +1,4 @@
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -34,6 +35,14 @@ public class ConnectionPool implements Recycler {
 
 	private Properties _props;
 	private boolean _autoCommit = true;
+	
+	public class ConnectionPoolFullException extends ConnectionPoolException {
+		
+		public ConnectionPoolFullException() {
+			super("Connection Pool Full", false);
+			setForwardURL("/jsp/error/poolFull.jsp");
+		}
+	}
 
 	/**
 	 * Creates a new JDBC connection pool.

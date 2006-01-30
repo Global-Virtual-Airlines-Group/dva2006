@@ -13,7 +13,7 @@ public class TestConnectionPoolException extends TestCase {
 
     public void testMessage() {
         try {
-            throw new ConnectionPoolException("MSG");
+            throw new ConnectionPoolException("MSG", false);
         } catch (ConnectionPoolException cpe) {
             assertEquals("MSG", cpe.getMessage());
         }

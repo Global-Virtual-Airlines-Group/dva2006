@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 import org.deltava.beans.cooler.Channel;
 import org.deltava.beans.cooler.MessageThread;
@@ -64,10 +63,9 @@ public final class CoolerThreadAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws CommandSecurityException never
      * @throws IllegalStateException if the message thread or cooler channel were not set
      */
-    public void validate() throws CommandSecurityException {
+    public void validate() {
         validateContext();
         
         // Validate that the thread has been set

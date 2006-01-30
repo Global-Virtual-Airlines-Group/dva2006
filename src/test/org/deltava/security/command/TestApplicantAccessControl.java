@@ -5,7 +5,6 @@ import junit.framework.Test;
 import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.Applicant;
-import org.deltava.commands.CommandSecurityException;
 
 public class TestApplicantAccessControl extends AccessControlTestCase {
    
@@ -66,8 +65,8 @@ public class TestApplicantAccessControl extends AccessControlTestCase {
       _ctxt.logoff();
       try {
          _ac.validate();
-         fail("CommandSecurityException expected");
-      } catch (CommandSecurityException cse) { }
+         fail("AccessControlException expected");
+      } catch (AccessControlException cse) { }
    }
    
    public void testContextValidation() {

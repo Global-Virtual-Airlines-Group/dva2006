@@ -1,17 +1,18 @@
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
-import org.deltava.dao.DAOException;
+import org.deltava.servlet.ControllerException;
 
 /**
- * An exception thrown by a web site command.
+ * An exception thrown by a Web Site Command.
  * @author Luke
  * @version 1.0
  * @since 1.0
  * @see Command
  */
 
-public class CommandException extends Exception {
-
+public class CommandException extends ControllerException {
+	
     /**
      * Create a new CommandException with an error message.
      * @param msg the error message
@@ -40,11 +41,11 @@ public class CommandException extends Exception {
     }
     
     /**
-     * Create a new CommandException that wraps a DAO exception. The intermediate DAO exception
-     * will be stripped out.
-     * @param de the root DAO Exception
+     * Create a new CommandException that wraps another Controller exception. The intermediate
+     * exception will be stripped out.
+     * @param ce the root Controller Exception
      */
-    public CommandException(DAOException de) {
-       this((de.getCause() == null) ? de : de.getCause());
+    public CommandException(ControllerException ce) {
+       this((ce.getCause() == null) ? ce : ce.getCause());
     }
 }

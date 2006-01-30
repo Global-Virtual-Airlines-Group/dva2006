@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.Pilot;
@@ -44,9 +43,8 @@ public final class PilotAccessControl extends AccessControl {
 
 	/**
 	 * Calculates access rights.
-	 * @throws CommandSecurityException never
 	 */
-	public void validate() throws CommandSecurityException {
+	public void validate() {
 		validateContext();
 
 		// Get the currently logged in user. If not logged in, just check e-mail access

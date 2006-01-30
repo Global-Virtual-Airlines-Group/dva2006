@@ -1,10 +1,9 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.system.MessageTemplate;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 /**
  * An Access Controller for Message Templates.
@@ -31,10 +30,10 @@ public final class MessageAccessControl extends AccessControl {
 	}
 
 	/**
-	 * Check's a User's access.
-	 * @throws CommandSecurityException never
+	 * Calculates a User's access.
 	 */
-	public void validate() throws CommandSecurityException {
+	public void validate() {
+		validateContext();
 		
 		// Set status flags
 		_canCreate = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Developer");
