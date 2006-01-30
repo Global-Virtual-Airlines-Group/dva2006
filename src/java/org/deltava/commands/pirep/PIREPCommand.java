@@ -325,8 +325,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			GetPilot dao2 = new GetPilot(con);
 			FlightReport fr = dao.get(ctx.getID());
-			if (fr == null)
-				throw new CommandException("Invalid Flight Report - " + ctx.getID());
+			if (fr == null) {
+				CommandException ce = new CommandException("Invalid Flight Report - " + ctx.getID());
+				ce.setWarning(true);
+				throw ce;
+			}
 
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
