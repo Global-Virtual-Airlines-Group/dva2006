@@ -57,7 +57,7 @@
 <c:if test="${!empty viewContext.results}">
 <tr class="title">
  <td width="15%">DATE</td>
- <td width="20%>PILOT NAME</td>
+ <td width="20%">PILOT NAME</td>
  <td width="35%">ADDRESS</td>
  <td width="10%">COMMAND</td>
  <td width="10%">TIME</td>

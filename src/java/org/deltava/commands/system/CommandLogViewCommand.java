@@ -29,7 +29,7 @@ public class CommandLogViewCommand extends AbstractViewCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the start/view/count and command result
-      ViewContext vc = initView(ctx);
+      ViewContext vc = initView(ctx, 150);
       CommandResult result = ctx.getResult();
       
       // If we have no address selected, redirect to the JSP
