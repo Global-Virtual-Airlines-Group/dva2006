@@ -476,8 +476,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetTS2Data ts2dao = new GetTS2Data(con);
 			Collection<Server> srvs = ts2dao.getServers(p.getPilotCode());
 			Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
-			List<User> usrs = ts2dao.getUsers(p.getPilotCode());
-			User usr = usrs.isEmpty() ? null : usrs.get(0);
+			List<Client> usrs = ts2dao.getUsers(p.getPilotCode());
+			Client usr = usrs.isEmpty() ? null : usrs.get(0);
 
 			// Determine what TeamSpeak servers to remove us from
 			SetTS2Data ts2wdao = new SetTS2Data(con);
