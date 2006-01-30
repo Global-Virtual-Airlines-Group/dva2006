@@ -370,7 +370,7 @@
 			<role>Signature</role>
 		</list>
 		
-		<auth>org.deltava.security.LDAPAuthenticator</auth>
+		<auth>org.deltava.security.MirrorAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
 	</security>
 	
