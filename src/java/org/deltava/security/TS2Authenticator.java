@@ -227,7 +227,7 @@ public class TS2Authenticator implements Authenticator {
 		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2Servers"));
 		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
 			Server srv = i.next();
-			if (!srv.hasAccess(usr.getRoles()))
+			if (!RoleUtils.hasAccess(usr.getRoles(), srv.getRoles()))
 				i.remove();
 		}
 		
