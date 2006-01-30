@@ -149,6 +149,14 @@ public class SystemBootstrap implements ServletContextListener {
 				log.info("Loading TeamSpeak 2 Voice Servers");
 				GetTS2Data ts2dao = new GetTS2Data(c);
 				SystemData.add("ts2Servers", ts2dao.getServers());
+				
+				// If we have ACARS, clear the flag
+				if (SystemData.getBoolean("acars.enabled")) {
+					SetTS2Data ts2wdao = new SetTS2Data(c);
+					int flagsCleared = ts2wdao.clearActiveFlags();
+					if (flagsCleared > 0)
+						log.warn("Reset " + flagsCleared + " TeamSpeak 2 client activity flags");
+				}
 			}
 		} catch (Exception ex) {
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
