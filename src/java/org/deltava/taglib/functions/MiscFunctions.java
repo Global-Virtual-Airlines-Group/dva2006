@@ -157,6 +157,6 @@ public class MiscFunctions {
     * @see DatabaseBean#getID()
     */
    public static String formatZeroID(DatabaseBean b) {
-	   return (b == null) || (b.getID() == 0) ? "" : StringUtils.formatHex(b.getID());
+	   return (b == null) || (b.getID() == 0) ? "" : ("0x" + String.valueOf(b.getID()));
    }
 }
