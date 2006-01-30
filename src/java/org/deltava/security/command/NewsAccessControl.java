@@ -1,7 +1,6 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.commands.CommandSecurityException;
 import org.deltava.security.SecurityContext;
 
 import org.deltava.beans.News;
@@ -36,9 +35,8 @@ public class NewsAccessControl extends AccessControl {
 
    /**
     * Calculates access rights.
-    * @throws CommandSecurityException never
     */
-   public void validate() throws CommandSecurityException {
+   public void validate() {
       validateContext();
       
       // Set access variables

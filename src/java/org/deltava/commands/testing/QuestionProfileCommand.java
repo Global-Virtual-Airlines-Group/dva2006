@@ -121,8 +121,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		// Check our access level
 		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
 		access.validate();
-		if (!access.getCanRead())
-			throw securityException("Cannot view Examination Question Profile");
 
 		try {
 			Connection con = ctx.getConnection();
@@ -150,7 +148,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	/**
 	 * Helper method to check edit/create/save access.
 	 */
-	private void validateEditAccess(CommandContext ctx) throws CommandSecurityException {
+	private void validateEditAccess(CommandContext ctx) throws CommandException {
 		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
 		access.validate();
 		if (!access.getCanEdit())

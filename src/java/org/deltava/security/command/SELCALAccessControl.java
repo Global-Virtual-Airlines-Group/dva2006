@@ -1,9 +1,8 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.schedule.SelectCall;
 
-import org.deltava.commands.CommandSecurityException;
 import org.deltava.security.SecurityContext;
 
 /**
@@ -33,9 +32,8 @@ public class SELCALAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws CommandSecurityException never
      */
-	public void validate() throws CommandSecurityException {
+	public void validate() {
 		if (!_ctx.isAuthenticated() || (_sc == null))
 			return;
 

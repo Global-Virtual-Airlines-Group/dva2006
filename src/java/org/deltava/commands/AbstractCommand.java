@@ -1,3 +1,4 @@
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -52,8 +53,12 @@ public abstract class AbstractCommand implements Command {
 	 * @param msg the exception message
 	 * @return a CommandSecurityException
 	 */
-	protected CommandSecurityException securityException(String msg) {
-		return new CommandSecurityException(msg, _name);
+	protected CommandException securityException(String msg) {
+		CommandException ce = new CommandException("Security Error - " + msg);
+		ce.setLogStackDump(false);
+		ce.setForwardURL("/jsp/error/securityViolation.jsp");
+		ce.setWarning(true);
+		return ce;
 	}
 
 	/**

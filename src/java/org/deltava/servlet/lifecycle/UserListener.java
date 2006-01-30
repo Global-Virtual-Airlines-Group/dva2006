@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -33,10 +34,10 @@ public class UserListener implements HttpSessionListener {
 	 * @param e the lifecycle event
 	 */
 	public void sessionCreated(HttpSessionEvent e) {
-	   if (log.isDebugEnabled()) {
-	      HttpSession s = e.getSession();
-	      log.debug("Created Session " + s.getId());
-	   }
+		if (log.isDebugEnabled()) {
+			HttpSession s = e.getSession();
+			log.debug("Created Session " + s.getId());
+		}
 	}
 
 	/**
@@ -51,26 +52,24 @@ public class UserListener implements HttpSessionListener {
 
 		// Get the user object
 		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+		if (p == null)
+			return;
 
 		// Log the user off
-		if (p != null) {
-		   p.logoff();
-		   UserPool.removePerson(p, s.getId());
-		   log.info(p.getName() + " logged out");
-		}
+		p.logoff();
+		UserPool.removePerson(p, s.getId());
+		log.info(p.getName() + " logged out");
 
 		// Get the JDBC connection pool and a system connection
 		ConnectionPool jdbcPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
 		try {
 			// Update the user's last login date
-			if (p != null) {
-			   con = jdbcPool.getConnection(true);
-				SetPilotLogin pldao = new SetPilotLogin(con);
-				pldao.logout((Pilot) p);
-			}
-		} catch (ConnectionPoolFullException cpfe) {
-		   log.warn("Connection Pool Full");
+			con = jdbcPool.getConnection(true);
+			SetPilotLogin pldao = new SetPilotLogin(con);
+			pldao.logout((Pilot) p);
+		} catch (ConnectionPoolException cpe) {
+			log.warn(cpe.getMessage(), cpe.getLogStackDump() ? cpe : null);
 		} catch (Exception ex) {
 			log.error("Error logging session close - " + ex.getMessage(), ex);
 		} finally {

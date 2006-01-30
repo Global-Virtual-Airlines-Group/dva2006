@@ -1,3 +1,4 @@
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -101,7 +102,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
         ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
         if (pool == null)
-            throw new ConnectionPoolException("No Connection Pool defined");
+            throw new ConnectionPoolException("No Connection Pool defined", false);
 
         // Check if a connection has already been reserved
         if (_con != null)

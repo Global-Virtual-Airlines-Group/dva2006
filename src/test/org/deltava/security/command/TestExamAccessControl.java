@@ -6,8 +6,6 @@ import junit.framework.Test;
 import org.deltava.beans.testing.Examination;
 import org.hansel.CoverageDecorator;
 
-import org.deltava.commands.CommandSecurityException;
-
 public class TestExamAccessControl extends AccessControlTestCase {
    
    private ExamAccessControl _ac;
@@ -118,8 +116,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
       assertFalse(_user.getID() == _exam.getPilotID());
       try {
          _ac.validate();
-         fail("CommandSecurityException expected");
-      } catch (CommandSecurityException cse) { }
+         fail("AccessControlException expected");
+      } catch (AccessControlException cse) { }
       
       assertEquals(org.deltava.beans.testing.Test.NEW, _exam.getStatus());
       _exam.setPilotID(_user.getID());
@@ -154,8 +152,8 @@ public class TestExamAccessControl extends AccessControlTestCase {
       _ctxt.logoff();
       try {
          _ac.validate();
-         fail("CommandSecurityException expected");
-      } catch (CommandSecurityException cse) { }
+         fail("AccessControlException expected");
+      } catch (AccessControlException cse) { }
    }
    
    public void testContextValidation() {

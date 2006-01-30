@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 /**
  * An Access Controller for Examination Profiles.
@@ -26,9 +25,9 @@ public class ExamProfileAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws CommandSecurityException if the User cannot read the profile.
+     * @throws AccessControlException if the User cannot read the profile.
      */
-    public void validate() throws CommandSecurityException {
+    public void validate() throws AccessControlException {
        validateContext();
         
         // Check if we are a member of the HR role
@@ -37,7 +36,7 @@ public class ExamProfileAccessControl extends AccessControl {
         
         // If we cannot read the profile, shut us down
         if (!_canRead)
-            throw new CommandSecurityException("Cannot view/edit Examination Profile", "");
+            throw new AccessControlException("Cannot view/edit Examination Profile");
     }
     
 	/**

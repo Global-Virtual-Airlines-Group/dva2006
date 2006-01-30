@@ -1,10 +1,9 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 import org.deltava.beans.testing.*;
 
@@ -37,14 +36,14 @@ public class ExamAccessControl extends AccessControl {
 
     /**
      * Calculates access rights.
-     * @throws CommandSecurityException if we cannot view the data
+     * @throws AccessControlException if we cannot view the data
      */
-    public void validate() throws CommandSecurityException {
+    public void validate() throws AccessControlException {
        validateContext();
        
         // Check if we're authenticated
         if (!_ctx.isAuthenticated())
-            throw new CommandSecurityException("Cannot view Examination", "");
+            throw new AccessControlException("Cannot view Examination");
 
         // Set access variables
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
@@ -69,7 +68,7 @@ public class ExamAccessControl extends AccessControl {
         
         // Throw an exception if we cannot view
         if (!_canRead)
-            throw new CommandSecurityException("Cannot view Examination", "");
+            throw new AccessControlException("Cannot view Examination");
     }
     
  	/**

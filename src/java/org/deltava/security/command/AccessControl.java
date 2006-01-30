@@ -1,10 +1,8 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import java.io.Serializable;
-
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
+import org.deltava.commands.CommandException;
 
 /**
  * A class to support dynamic access calculators for commands. Subclasses should implement boolean read-only
@@ -15,7 +13,7 @@ import org.deltava.commands.CommandSecurityException;
  * @since 1.0
  */
 
-public abstract class AccessControl implements Serializable {
+public abstract class AccessControl {
 
     /**
      * The security context to operate on.
@@ -43,7 +41,7 @@ public abstract class AccessControl implements Serializable {
     
     /**
      * Calculates access control rights
-     * @throws CommandSecurityException if no access at all is possible
+     * @throws CommandException if no access at all is possible
      */
-    public abstract void validate() throws CommandSecurityException;
+    public abstract void validate() throws CommandException;
 }

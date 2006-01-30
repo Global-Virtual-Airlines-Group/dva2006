@@ -1,7 +1,7 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.commands.CommandSecurityException;
 
 import org.deltava.beans.Person;
 import org.deltava.beans.Applicant;
@@ -35,15 +35,15 @@ public final class ApplicantAccessControl extends AccessControl {
 
 	/**
 	 * Calculates access rights.
-	 * @throws CommandSecurityException if the user cannot even read the profile
+	 * @throws AccessControlException if the user cannot even read the profile
 	 */
-	public void validate() throws CommandSecurityException {
+	public void validate() throws AccessControlException {
 		validateContext();
 		
 		// Gets the person object
 		Person p = _ctx.getUser();
 		if (p == null)
-			throw new CommandSecurityException("Not Authorized", "");
+			throw new AccessControlException("Not Authorized");
 		
 		// Sets role variables
 		boolean isOurs = (_ap.getID() == p.getID());
