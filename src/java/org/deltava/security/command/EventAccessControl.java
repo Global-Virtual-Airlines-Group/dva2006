@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.event.*;
@@ -52,10 +52,11 @@ public class EventAccessControl extends AccessControl {
 
       // Set access variables
       boolean isEvent = _ctx.isUserInRole("Event");
+      boolean hasSignups = (!_ev.getSignups().isEmpty());
       _canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() &&  (!_ev.isSignedUp(_ctx.getUser().getID()));
       _canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
       _canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
-      _canAssignFlights = (_ev.getStatus() == Event.CLOSED) && (!_ev.getSignups().isEmpty()) && isEvent;
+      _canAssignFlights = ((_ev.getStatus() == Event.CLOSED) || (_ev.getStatus() == Event.ACTIVE)) && hasSignups && isEvent;
       _canCancel = _canEdit;
    }
 
