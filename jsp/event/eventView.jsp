@@ -160,6 +160,7 @@ return true;
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="idx" value="${idx + 1}" scope="request" />
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
+<c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="request" />
 <c:set var="sa" value="${fn:get(sAccess, idx)}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
@@ -168,7 +169,7 @@ return true;
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld">${signup.equipmentType}</td>
  <td class="pri bld">${pilot.networkIDs[event.networkName]}</td>
  <td colspan="2">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
