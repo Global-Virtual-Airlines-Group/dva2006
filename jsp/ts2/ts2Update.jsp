@@ -26,6 +26,14 @@
 <br />
 The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on port ${server.port} has been 
 successfully updated.<br />
+<c:if test="${!empty msgs}">
+<br />
+<span class="small">
+<c:forEach var="msg" items="${msgs}">
+${msg}<br />
+</c:forEach>
+</span>
+</c:if>
 </c:if>
 <c:if test="${isDelete}">
 <!-- Virtual Server Deleted -->
@@ -35,7 +43,7 @@ The TeamSpeak 2 Virtual Server <span class="sec bld">${server.name}</span> on po
 deleted. All existing client credentials have been removed from the database.<br />
 </c:if>
 <br />
-To return to the list of TeamSpeak 2 virtual servers, <el:cmd url="ts2servers" className="sec bld">Click Here</el:cmd><br />
+To return to the list of TeamSpeak 2 virtual servers, <el:cmd url="ts2servers" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${!empty channel}">
 <c:if test="${isUpdate}">
@@ -48,7 +56,7 @@ The TeamSpeak 2 Voice Channel <span class="sec bld">${channel.name}</span> has b
 <br />
 The TeamSpeak 2 Voice Channel <span class="sec bld">${channel.name}</span> has been deleted.<br />
 </c:if>
-To return to the list of TeamSpeak 2 voice channels, <el:cmd url="ts2channels" className="sec bld">Click Here</el:cmd><br />
+To return to the list of TeamSpeak 2 voice channels, <el:cmd url="ts2channels" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />

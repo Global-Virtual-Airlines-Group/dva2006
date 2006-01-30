@@ -96,7 +96,7 @@ public class SetTS2Data extends DAO {
 	 * @param ids a Collection of TeamSpeak server database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void resync(User usr, Collection<Integer> ids) throws DAOException {
+	public void resync(Client usr, Collection<Integer> ids) throws DAOException {
 		try {
 			startTransaction();
 			
@@ -138,7 +138,7 @@ public class SetTS2Data extends DAO {
 	 * @param serverID the new server database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void addToServer(User usr, int serverID) throws DAOException {
+	public void addToServer(Client usr, int serverID) throws DAOException {
 		Collection<Integer> ids = new HashSet<Integer>();
 		ids.add(new Integer(serverID));
 		resync(usr, ids);
@@ -275,6 +275,39 @@ public class SetTS2Data extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Marks the Pilot as currently logged in.
+	 * @param pCode the Pilot Code
+	 * @param isActive TRUE if the Pilot is logged in, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setActive(String pCode, boolean isActive) throws DAOException {
+		try {
+			prepareStatement("UPDATE teamspeak.ts2_clients SET b_on_acars=? WHERE (s_client_name=?)");
+			_ps.setBoolean(1, isActive);
+			_ps.setString(2, pCode);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Marks all clients as logged out of ACARS. This is used on system startup to reset flags.
+	 * @return the number of flags that needed to be cleared
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int clearActiveFlags() throws DAOException {
+		try {
+			prepareStatement("UPDATE teamspeak.ts2_clients SET b_on_acars=? WHERE (b_on_acars=?)");
+			_ps.setBoolean(1, false);
+			_ps.setBoolean(2, true);
+			return executeUpdate(0);
+		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
