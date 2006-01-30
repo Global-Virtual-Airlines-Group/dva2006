@@ -1,6 +1,5 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<content:pics />
 <c:if test="${!empty exams}">
 <!-- Pilot Examination History -->
 <tr class="title caps">
@@ -33,13 +32,18 @@
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
  <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
- <td class="pri bld">${exam.score}</td>
  <td class="bld">${exam.size}</td>
+<c:if test="${!fn:passed(exam) && !fn:failed(exam)}">
+ <td colspan="2" class="sec bld">NOT SCORED</td>
+</c:if>
+<c:if test="${fn:passed(exam) || fn:failed(exam)}">
+ <td class="pri bld">${exam.score}</td>
 <c:if test="${fn:isCheckRide(exam)}">
  <td class="sec">N/A</td>
 </c:if>
 <c:if test="${!fn:isCheckRide(exam)}">
  <td class="sec"><fmt:dec value="${exam.score / exam.size * 100.0}" />%</td>
+</c:if>
 </c:if>
  <td><fmt:date fmt="d" date="${exam.date}" /></td>
 </tr>
