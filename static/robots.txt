@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /error404.html 
+Disallow: /error500.html
+Disallow: /thread.do
+Disallow: /roster.do
+Disallow: /profile.do
+Disallow: /staff.do
+Disallow: /pwdreset.do
+Disallow: /airlinestats.do
