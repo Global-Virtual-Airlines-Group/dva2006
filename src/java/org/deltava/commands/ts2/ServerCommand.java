@@ -12,7 +12,7 @@ import org.deltava.beans.ts2.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -102,7 +102,7 @@ public class ServerCommand extends AbstractFormCommand {
 			Collection<String> removeIDs = new HashSet<String>();
 			for (Iterator<Pilot> i = srvUsers.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if (!srv.hasAccess(p.getRoles())) {
+				if (!RoleUtils.hasAccess(p.getRoles(), srv.getRoles())) {
 					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					removeIDs.add(p.getPilotCode());
@@ -115,7 +115,7 @@ public class ServerCommand extends AbstractFormCommand {
 			// Determine what users to add to the server
 			for (Iterator<Pilot> i = otherPilots.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if (srv.hasAccess(p.getRoles())) {
+				if (RoleUtils.hasAccess(p.getRoles(), srv.getRoles())) {
 					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					Client usr = otherPilots.getClient(p.getPilotCode());

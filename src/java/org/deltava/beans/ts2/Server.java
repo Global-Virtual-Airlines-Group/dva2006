@@ -123,31 +123,11 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	 * @return a Collection of role names
 	 * @see Server#addRole(String)
 	 * @see Server#setRoles(Collection)
-	 * @see Server#hasAccess(Collection)
 	 */
 	public Collection<String> getRoles() {
 		return _roles;
 	}
-	
-	/**
-	 * Returns wether a user with a particular set of security roles may access this server.
-	 * @param userRoles a Collection of the user's security role names
-	 * @return TRUE if the user can access this virtual server, otherwise FALSE
-	 */
-	public boolean hasAccess(Collection<String> userRoles) {
-		// Check for empty (ie. all roles accepted) or admin roles
-		if ((_roles.isEmpty()) || (userRoles.contains("Admin")))
-			return true;
-		
-		for (Iterator<String> i = userRoles.iterator(); i.hasNext(); ) {
-			String role = i.next();
-			if (_roles.contains(role))
-				return true;
-		}
-		
-		return false;
-	}
-	
+
 	/**
 	 * Adds a security role name authorized to access this server.
 	 * @param role the role name
