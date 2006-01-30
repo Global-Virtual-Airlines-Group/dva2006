@@ -925,7 +925,7 @@
 	</command>
 
 	<command id="examsubmit">
-		<name>Score Examination</name>
+		<name>Submit Examination</name>
 		<class>org.deltava.commands.testing.ExamSubmitCommand</class>
 		<roles>Pilot</roles>
 	</command>
