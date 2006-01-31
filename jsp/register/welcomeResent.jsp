@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Welcome Message Sent</title>
@@ -21,7 +22,8 @@
 <div class="updateHdr">Welcome Message Sent</div>
 <br />
 The <content:airline /> welcome e-mail has been re-sent to ${applicant.name} at ${applicant.email}. 
-<c:if test="${empty questionnaire}">${applicant.name} has already completed the Initial Questionnaire.</c:if><br />
+<c:if test="${!empty questionnaire && fn:passed(questionnaire)}">${applicant.name} has already 
+completed the Initial Questionnaire.</c:if><br />
 <c:if test="${passwordUpdated}">
 <br />
 Since ${applicant.name} has already been hired as a <content:airline /> pilot, the welcome message has 
