@@ -3,7 +3,7 @@ package org.deltava.commands.ts2;
 
 import java.sql.Connection;
 
-import org.deltava.beans.ts2.Channel;
+import org.deltava.beans.ts2.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -90,12 +90,18 @@ public class ChannelCommand extends AbstractFormCommand {
 			if (ctx.getCmdParameter(ID, null) != null) {
 				Connection con = ctx.getConnection();
 				
+				// Get the DAO and the Channel
 				GetTS2Data dao = new GetTS2Data(con);
 				Channel c = dao.getChannel((String) ctx.getCmdParameter(ID, null));
 				if (c == null)
 					throw new CommandException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
 				
+				// Get the server
+				Server srv = dao.getServer(c.getServerID());
+				
+				// Save in the request
 				ctx.setAttribute("channel", c, REQUEST);
+				ctx.setAttribute("server", srv, REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);

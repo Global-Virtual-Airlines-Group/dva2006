@@ -173,6 +173,12 @@ public class ServerCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Get security roles
+		@SuppressWarnings("unchecked")
+		Collection<String> roles = (Collection<String>) SystemData.getObject("security.roles");
+		roles.add("Pilot");
+		ctx.setAttribute("roles", roles, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

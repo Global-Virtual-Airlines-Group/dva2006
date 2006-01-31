@@ -2,6 +2,7 @@
 package org.deltava.security;
 
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -26,6 +27,7 @@ import org.apache.log4j.Logger;
 public class TS2Authenticator implements Authenticator {
 
 	private static final Logger log = Logger.getLogger(TS2Authenticator.class);
+	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 
 	private ConnectionPool _pool;
 	private Properties _props;
@@ -187,12 +189,8 @@ public class TS2Authenticator implements Authenticator {
 			ps.setString(2, ((Pilot) usr).getPilotCode());
 
 			// Execute the update and clean up
-			int results = ps.executeUpdate();
+			ps.executeUpdate();
 			ps.close();
-
-			// Throw an error if not updated
-			if (results == 0)
-				throw new SecurityException("No Users updated");
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
@@ -212,8 +210,10 @@ public class TS2Authenticator implements Authenticator {
 	public void addUser(Person usr, String pwd) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
-		if (!(usr instanceof Pilot))
-			throw new SecurityException("Invalid object - " + usr.getClass().getName());
+		if (!(usr instanceof Pilot)) {
+			log.warn("Cannot add " + usr.getName() + " - " + usr.getClass().getName());
+			return;
+		}
 		
 		// If our access has been locked out, then don't do the add
 		Pilot p = (Pilot) usr;
@@ -231,13 +231,20 @@ public class TS2Authenticator implements Authenticator {
 				i.remove();
 		}
 		
+		// If no accessible servers, abort
+		if (srvs.isEmpty())
+			return;
+		
+		// Log addition
+		log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
+		
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients (i_client_server_id, b_client_privilege_serveradmin, s_client_name, s_client_password, " +
 				"dt_client_created) VALUES (?, ?, ?, ");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?), NOW())");
+		sqlBuf.append("(?), ?)");
 
 		Connection c = null;
 		try {
@@ -248,6 +255,9 @@ public class TS2Authenticator implements Authenticator {
 			ps.setInt(2, 0);
 			ps.setString(3, p.getPilotCode());
 			ps.setString(4, pwd);
+			synchronized (_df) {
+				ps.setString(5, _df.format(new java.util.Date()));
+			}
 			
 			// Add to the servers
 			for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
