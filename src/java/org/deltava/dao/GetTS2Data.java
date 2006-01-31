@@ -141,8 +141,8 @@ public class GetTS2Data extends DAO {
 	public Collection<Server> getServers() throws DAOException {
 		try {
 			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
-					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description "
-					+ "FROM teamspeak.ts2_servers");
+					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
+					+ "b_server_no_acars FROM teamspeak.ts2_servers");
 			return executeServers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -162,8 +162,8 @@ public class GetTS2Data extends DAO {
 		try {
 			prepareStatement("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
 				+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
-				+ "s.s_server_description FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c WHERE (c.s_client_name=?) "
-				+ "AND (s.i_server_id=c.i_client_server_id)");
+				+ "s.s_server_description b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c "
+				+ "WHERE (c.s_client_name=?) AND (s.i_server_id=c.i_client_server_id)");
 			_ps.setString(1, pilotCode);
 			return executeServers();
 		} catch (SQLException se) {
@@ -184,8 +184,8 @@ public class GetTS2Data extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
 				+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
-				+ "s.s_server_description FROM teamspeak.ts2_servers s, teamspeak.ts2_server_roles r WHERE "
-				+ "(s.i_server_id=r.i_server_id) AND (");
+				+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_server_roles r "
+				+ "WHERE (s.i_server_id=r.i_server_id) AND (");
 		for (Iterator<String> i = roles.iterator(); i.hasNext(); ) {
 			String role = i.next();
 			sqlBuf.append("(r.s_role_name=\'");
@@ -243,8 +243,10 @@ public class GetTS2Data extends DAO {
 			c.setDefault(rs.getInt(6) == -1);
 			c.setCodec(rs.getInt(7));
 			c.setMaxUsers(rs.getInt(9));
-			c.setPassword(rs.getString(11));
-			c.setCreatedOn(getDate(rs.getString(12)));
+			c.setTopic(rs.getString(11));
+			c.setDescription(rs.getString(12));
+			c.setPassword(rs.getString(13));
+			c.setCreatedOn(getDate(rs.getString(14)));
 			
 			// Add to cache and results
 			_cache.add(c);
@@ -300,6 +302,7 @@ public class GetTS2Data extends DAO {
 			srv.setActive(rs.getInt(7) == -1);
 			srv.setCreatedOn(getDate(rs.getString(8)));
 			srv.setDescription(rs.getString(9));
+			srv.setACARSOnly(rs.getBoolean(10));
 			
 			// Add to results
 			results.put(new Integer(srv.getID()), srv);

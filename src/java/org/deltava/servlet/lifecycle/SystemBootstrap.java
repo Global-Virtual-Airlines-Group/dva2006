@@ -148,7 +148,7 @@ public class SystemBootstrap implements ServletContextListener {
 			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 				log.info("Loading TeamSpeak 2 Voice Servers");
 				GetTS2Data ts2dao = new GetTS2Data(c);
-				SystemData.add("ts2Servers", ts2dao.getServers());
+				SystemData.add("ts2servers", ts2dao.getServers());
 				
 				// If we have ACARS, clear the flag
 				if (SystemData.getBoolean("acars.enabled")) {
@@ -212,7 +212,7 @@ public class SystemBootstrap implements ServletContextListener {
 			if (driver.getClass().getClassLoader() == getClass().getClassLoader()) {
 				try {
 					DriverManager.deregisterDriver(driver);
-					log.warn("Deregistered JDBC driver " + driver.getClass().getName());
+					log.info("Deregistered JDBC driver " + driver.getClass().getName());
 				} catch (Exception ex) {
 					log.error("Error dregistering " + driver.getClass(), ex);
 				}
