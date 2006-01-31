@@ -1,6 +1,6 @@
+// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -10,7 +10,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class EquipmentType implements Serializable, Comparable, ComboAlias {
+public class EquipmentType implements java.io.Serializable, Comparable, ComboAlias, ViewEntry {
 	
 	// Database constants
 	public static final int SECONDARY_RATING = 0;
@@ -393,5 +393,9 @@ public class EquipmentType implements Serializable, Comparable, ComboAlias {
 
     public String getComboName() {
         return getName();
+    }
+    
+    public String getRowClassName() {
+    	return _active ? null : "opt2";
     }
 }

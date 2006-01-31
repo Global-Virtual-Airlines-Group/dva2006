@@ -1,10 +1,10 @@
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.EquipmentType;
-import org.deltava.beans.Ranks;
+import org.deltava.beans.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -148,6 +148,33 @@ public class GetEquipmentType extends DAO {
     		while (rs.next())
     			results.add(rs.getString(1));
 
+    		// Clean up and return
+    		rs.close();
+    		_ps.close();
+    		return results;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
+    }
+    
+    /**
+     * Returns the number of Active Pilots in each Equipment Program.
+     * @return a Map of pilot numbers, keyed by Equipment Type name
+     * @throws DAOException if a JDBC error occurs
+     */
+    public Map<String, Integer> getPilotCounts() throws DAOException {
+    	try {
+    		prepareStatement("SELECT P.EQTYPE, COUNT(P.ID) FROM PILOTS P, EQTYPES EQ WHERE (P.STATUS=?) "
+    				+ "AND (P.EQTYPE=EQ.EQTYPE) GROUP BY P.EQTYPE ORDER BY EQ.STAGE DESC, P.EQTYPE");
+    		_ps.setInt(1, Pilot.ACTIVE);
+    		
+    		// Execute the query
+    		Map<String, Integer> results = new LinkedHashMap<String, Integer>();
+    		ResultSet rs = _ps.executeQuery();
+    		while (rs.next()) {
+    			results.put(rs.getString(1), new Integer(rs.getInt(2)));
+    		}
+    		
     		// Clean up and return
     		rs.close();
     		_ps.close();
