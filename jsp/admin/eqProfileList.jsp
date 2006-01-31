@@ -27,8 +27,9 @@
 <tr class="title caps">
  <td width="10%">PROGRAM NAME</td>
  <td width="5%">STAGE</td>
- <td width="10%">CHIEF PILOT</td>
- <td width="25%">RANKS</td>
+ <td width="12%">CHIEF PILOT</td>
+ <td width="23%">RANKS</td>
+ <td width="5%">SIZE</td>
  <td>RATINGS</td>
 </tr>
 
@@ -40,7 +41,8 @@
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
  <td><el:cmd url="profile" linkID="0x${chiefPilot.ID}">${chiefPilot.name}</el:cmd></td>
  <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
- <td class="small"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
+ <td><fmt:int value="${eqTypeStats[eqType.name]}" /></td>
+ <td class="left small"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
 <c:if test="${!empty eqType.secondaryRatings}">
 <br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
 </c:if>
@@ -50,7 +52,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="5">&nbsp;
+ <td colspan="6">&nbsp;
 <content:filter roles="HR"><el:cmdbutton url="eqedit" label="NEW EQUIPMENT TYPE" /></content:filter>
  </td>
 </tr>

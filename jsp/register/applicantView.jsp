@@ -215,6 +215,13 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
  <td class="label">Rank</td>
  <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
 </tr>
+<tr>
+ <td class="label" valign="top">Equipment Program Sizes</td>
+ <td class="data"><c:forEach var="eqType" items="${eqTypes}">
+<c:set var="eqSize" value="${eqTypeStats[eqType.name]}" scope="request" />
+<span class="sec bld">${eqType.name}</span> (Stage ${eqType.stage}) - <b><fmt:int value="${eqSize}" /> Pilots</b><br />
+</c:forEach></td>
+</tr>
 </c:if>
 </el:table>
 

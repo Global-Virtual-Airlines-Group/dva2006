@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -36,6 +36,7 @@ public class EquipmentProfilesCommand extends AbstractCommand {
 			// Get the DAO and execute
 			GetEquipmentType dao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", dao.getAll(), REQUEST);
+			ctx.setAttribute("eqTypeStats", dao.getPilotCounts(), REQUEST);
 			
 			// Get all of the Chief Pilots
 			GetPilot pdao = new GetPilot(con);
