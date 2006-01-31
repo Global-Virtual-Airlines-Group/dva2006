@@ -46,20 +46,20 @@ public class EventCalendarCommand extends AbstractCommand {
 			startDate = new Date();
 		}
 		
+		// Calculate the proper start date
+		startDate = (days == 7) ? getStartOfWeek(startDate) : getStartOfMonth(startDate);
+		
 		// Create the current date in the user's local time and determine what the local equivalent is
 		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
 		DateTime ldt = new DateTime(startDate, tz);
 		ldt.convertTo(TZInfo.local());
-		
-		// Calculate the proper start date
-		startDate = (days == 7) ? getStartOfWeek(startDate) : getStartOfMonth(startDate);
 		
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the events
 			GetEvent dao = new GetEvent(con);
-			Collection<Event> events = dao.getEventCalendar(startDate, days);
+			Collection<Event> events = dao.getEventCalendar(ldt.getDate(), days);
 			ctx.setAttribute("events", events, REQUEST);
 			
 			// Get the Pilot IDs from the signups
@@ -94,7 +94,7 @@ public class EventCalendarCommand extends AbstractCommand {
 		}
 		
 		// Save the calendar options
-		ctx.setAttribute("startDate", startDate, REQUEST);
+		ctx.setAttribute("startDate", ldt.getDate(), REQUEST);
 		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
 		
 		// Calculate our access to create new events

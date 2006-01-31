@@ -60,8 +60,8 @@ public class GetEvent extends DAO {
 		try {
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME >= ?) AND "
 					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (STATUS !=?) ORDER BY STARTTIME");
-			_ps.setDate(1, new java.sql.Date(startDate.getTime()));
-			_ps.setDate(2, new java.sql.Date(startDate.getTime()));
+			_ps.setTimestamp(1, createTimestamp(startDate));
+			_ps.setTimestamp(2, createTimestamp(startDate));
 			_ps.setInt(3, days);
 			_ps.setInt(4, Event.CANCELED);
 			List<Event> results = execute();
