@@ -53,7 +53,9 @@ public class SetTS2Data extends DAO {
 			c.setID(getNewID());
 			
 			// Clear default channel flag and commit
-			clearDefaultChannelFlag(c.getID());
+			if (c.getDefault())
+				clearDefaultChannelFlag(c.getID(), c.getServerID());
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -84,7 +86,9 @@ public class SetTS2Data extends DAO {
 			executeUpdate(1);
 			
 			// Clear default channel flag and commit
-			clearDefaultChannelFlag(c.getID());
+			if (c.getDefault())
+				clearDefaultChannelFlag(c.getID(), c.getServerID());
+			
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -319,9 +323,11 @@ public class SetTS2Data extends DAO {
 	/**
 	 * Helper method to clear the default channel flag for all channels but one.
 	 */
-	private void clearDefaultChannelFlag(int id) throws SQLException {
-		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE (i_channel_id <> ?)");
+	private void clearDefaultChannelFlag(int id, int serverID) throws SQLException {
+		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE " +
+				"(i_channel_id <> ?) AND (i_channel_server_id <> ?)");
 		_ps.setInt(1, id);
+		_ps.setInt(2, serverID);
 		executeUpdate(0);
 	}
 }

@@ -42,7 +42,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Virtual Server</td>
- <td class="data"><el:combo name="server" idx="*" size="1" value="0x${fn:hex(channel.serverID)}" options="${servers}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="server" idx="*" size="1" value="${server}" options="${servers}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Channel Name</td>

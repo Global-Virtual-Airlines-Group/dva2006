@@ -33,7 +33,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="roles" name="security.roles" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -71,7 +70,7 @@ return true;
  <td class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label">&nbsp;</td>
+ <td class="label" valign="top">Server Options</td>
  <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /><br />
 <el:box name="isACARS" idx="*" value="true" checked="${server.ACARSOnly}" label="Virtual Server is accessible by logged in ACARS users only" /></td>
 </tr>
