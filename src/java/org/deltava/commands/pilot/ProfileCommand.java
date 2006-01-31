@@ -119,7 +119,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
-
+				
 				// Check Testing Center access
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
 				if (examsLocked != p.getNoExams()) {
@@ -368,6 +368,12 @@ public class ProfileCommand extends AbstractFormCommand {
 					log.info("Staff Profile Updated");
 				}
 			}
+			
+			// If we're not currently active, then clear any address validation entries
+			if (p_access.getCanChangeStatus() && (p.getStatus() != 0)) {
+				SetAddressValidation avwdao = new SetAddressValidation(con);
+				avwdao.delete(p.getID());
+			}
 
 			// Check if we're updating the e-mail address
 			String newEMail = ctx.getParameter("email");
@@ -511,6 +517,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Write the status updates
 			SetStatusUpdate stwdao = new SetStatusUpdate(con);
 			stwdao.write(updates);
+			
+			// Commit the transaction
+			ctx.commitTX();
 
 			// If we're updating the password, then save it
 			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
@@ -525,10 +534,10 @@ public class ProfileCommand extends AbstractFormCommand {
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				auth.updatePassword(p, p.getPassword());
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
+				
+				// Commit the transaction
+				ctx.commitTX();
 			}
-
-			// Commit the transaction
-			ctx.commitTX();
 
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
