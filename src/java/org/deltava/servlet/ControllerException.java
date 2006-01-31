@@ -11,7 +11,7 @@ package org.deltava.servlet;
 
 public abstract class ControllerException extends Exception {
 
-	private boolean _logStackDump;
+	private boolean _logStackDump = true;
 	private boolean _isWarn;
 	private String _fwdURL;
 	
