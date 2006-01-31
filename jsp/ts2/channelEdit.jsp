@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> TeamSpeak Voice Channel</title>
@@ -41,7 +42,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Virtual Server</td>
- <td class="data"><el:combo name="server" idx="*" size="1" value="${channel.serverID}" options="${servers}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="server" idx="*" size="1" value="0x${fn:hex(channel.serverID)}" options="${servers}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Channel Name</td>
