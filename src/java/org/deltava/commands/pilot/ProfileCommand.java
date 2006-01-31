@@ -340,7 +340,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 				// Save the profile
 				SetPilotEMail ewdao = new SetPilotEMail(con);
-				ewdao.write(emailCfg, p.getName());
+				ewdao.update(emailCfg, p.getName());
 			}
 
 			// If we have access to the Staff profile, update it
