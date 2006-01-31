@@ -112,6 +112,7 @@ public abstract class MultiAuthenticator implements Authenticator {
 			_dst.authenticate(usr, pwd);
 		} catch (SecurityException se) {
 			if (_dst.contains(usr)) {
+				log.warn("Updating password for " + usr.getName() + " in " + _dst.getClass().getSimpleName());
 				_dst.updatePassword(usr, pwd);
 			} else {
 				_dst.addUser(usr, pwd);

@@ -162,7 +162,7 @@ public class GetTS2Data extends DAO {
 		try {
 			prepareStatement("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
 				+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
-				+ "s.s_server_description b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c "
+				+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c "
 				+ "WHERE (c.s_client_name=?) AND (s.i_server_id=c.i_client_server_id)");
 			_ps.setString(1, pilotCode);
 			return executeServers();
@@ -216,8 +216,8 @@ public class GetTS2Data extends DAO {
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
-					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description "
-					+ "FROM teamspeak.ts2_servers WHERE (i_server_id=?)");
+					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
+					+ "b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?)");
 			_ps.setInt(1, id);
 			List<Server> results = executeServers();
 			return results.isEmpty() ? null : results.get(0);
