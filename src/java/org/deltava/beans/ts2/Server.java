@@ -22,8 +22,9 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	private String _pwd;
 	private int _maxUsers;
 	private int _port;
-	private boolean _active;
 	private Date _createdOn;
+	private boolean _active;
+	private boolean _acarsOnly;
 	
 	private Collection<String> _roles = new TreeSet<String>();
 
@@ -107,6 +108,15 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	 */
 	public boolean getActive() {
 		return _active;
+	}
+	
+	/**
+	 * Returns if the Server can only be accessed when logged into ACARS.
+	 * @return TRUE if the Server is accessible to ACARS-only users, otherwise FALSE
+	 * @see Server#setACARSOnly(boolean)
+	 */
+	public boolean getACARSOnly() {
+		return _acarsOnly;
 	}
 
 	/**
@@ -228,6 +238,15 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+	}
+	
+	/**
+	 * Updates wether the Server is only available to logged in ACARS users.
+	 * @param isACARSOnly TRUE if the Server is accessible to ACARS-only users, otherwise FALSE
+	 * @see Server#getACARSOnly()
+	 */
+	public void setACARSOnly(boolean isACARSOnly) {
+		_acarsOnly = isACARSOnly;
 	}
 	
 	/**

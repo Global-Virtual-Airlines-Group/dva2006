@@ -56,7 +56,10 @@ public class ChannelCommand extends AbstractFormCommand {
 
 			// Get the write DAO and save the channel
 			SetTS2Data wdao = new SetTS2Data(con);
-			wdao.write(c);
+			if (isNew)
+				wdao.write(c);
+			else
+				wdao.update(c);
 
 			// Save the channel in the request
 			ctx.setAttribute("channel", c, REQUEST);

@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.text.*;
 import java.util.*;
 
 import org.deltava.beans.ts2.*;
@@ -14,6 +15,8 @@ import org.deltava.beans.ts2.*;
  */
 
 public class SetTS2Data extends DAO {
+	
+	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 
 	/**
 	 * Initializes the Data Access Object.
@@ -43,7 +46,7 @@ public class SetTS2Data extends DAO {
 			_ps.setString(7, c.getTopic());
 			_ps.setString(8, c.getDescription());
 			_ps.setString(9, c.getPassword());
-			_ps.setTimestamp(10, createTimestamp(c.getCreatedOn()));
+			_ps.setString(10, _df.format(c.getCreatedOn()));
 			executeUpdate(1);
 			
 			// Get the new channel ID
@@ -112,8 +115,8 @@ public class SetTS2Data extends DAO {
 			_ps.setInt(3, usr.getServerAdmin() ? -1 : 0);
 			_ps.setString(4, usr.getUserID());
 			_ps.setString(5, usr.getPassword());
-			_ps.setTimestamp(6, createTimestamp(usr.getCreatedOn()));
-			_ps.setTimestamp(7, createTimestamp(usr.getLastOnline()));
+			_ps.setString(6, _df.format(usr.getCreatedOn()));
+			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(usr.getLastOnline()));
 			
 			// Write one entry per server
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
@@ -231,13 +234,13 @@ public class SetTS2Data extends DAO {
 			startTransaction();
 			if (isNew) {
 				prepareStatement("INSERT INTO teamspeak.ts2_servers (s_server_name, s_server_welcomemessage, i_server_maxusers, "
-						+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, NOW(), ?)");
+						+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, b_server_no_acars) "
+						+ "VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
 			} else {
 				prepareStatement("UPDATE teamspeak.ts2_servers SET s_server_name=?, s_server_welcomemessage=?, "
-						+ "i_server_maxusers=?, i_server_udpport=?, s_server_password=?, b_server_active=?, s_server_description=? "
-						+ "WHERE (i_server_id=?)");
-				_ps.setInt(8, srv.getID());
+						+ "i_server_maxusers=?, i_server_udpport=?, s_server_password=?, b_server_active=?, s_server_description=?, "
+						+ "b_server_no_acars=? WHERE (i_server_id=?)");
+				_ps.setInt(9, srv.getID());
 			}
 			
 			// Set the parameters
@@ -248,6 +251,7 @@ public class SetTS2Data extends DAO {
 			_ps.setString(5, srv.getPassword());
 			_ps.setInt(6, srv.getActive() ? -1 : 0);
 			_ps.setString(7, srv.getDescription());
+			_ps.setBoolean(8, srv.getACARSOnly());
 			
 			// Write the server
 			executeUpdate(1);
@@ -316,7 +320,7 @@ public class SetTS2Data extends DAO {
 	 * Helper method to clear the default channel flag for all channels but one.
 	 */
 	private void clearDefaultChannelFlag(int id) throws SQLException {
-		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WERE (i_channel_id <> ?)");
+		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE (i_channel_id <> ?)");
 		_ps.setInt(1, id);
 		executeUpdate(0);
 	}

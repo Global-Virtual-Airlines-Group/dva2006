@@ -86,6 +86,7 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPassword(ctx.getParameter("pwd"));
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			srv.setACARSOnly(Boolean.valueOf(ctx.getParameter("isACARS")).booleanValue());
 			srv.setRoles(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRoles"), DEFAULT_ROLES));
 			
 			// Build messages collection

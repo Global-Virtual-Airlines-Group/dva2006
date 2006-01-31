@@ -72,7 +72,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /><br />
+<el:box name="isACARS" idx="*" value="true" checked="${server.ACARSOnly}" label="Virtual Server is accessible by logged in ACARS users only" /></td>
 </tr>
 </el:table>
  
