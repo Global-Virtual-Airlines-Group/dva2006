@@ -224,7 +224,7 @@ public class TS2Authenticator implements Authenticator {
 		
 		// Get the servers that this person may access
 		@SuppressWarnings("unchecked")
-		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2Servers"));
+		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
 		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
 			Server srv = i.next();
 			if (!RoleUtils.hasAccess(usr.getRoles(), srv.getRoles()))
