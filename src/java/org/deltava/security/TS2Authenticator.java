@@ -71,9 +71,9 @@ public class TS2Authenticator implements Authenticator {
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
-		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?) AND (");
+		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?) AND (s_client_password=");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(s_client_password)=?)");
+		sqlBuf.append("(?))");
 
 		boolean isAuth = false;
 		Connection c = null;
@@ -88,7 +88,7 @@ public class TS2Authenticator implements Authenticator {
 
 			// Execute the query
 			ResultSet rs = ps.executeQuery();
-			isAuth = rs.next() ? (rs.getInt(1) == 1) : false;
+			isAuth = rs.next() ? (rs.getInt(1) > 0) : false;
 
 			// Clean up
 			rs.close();
@@ -181,11 +181,11 @@ public class TS2Authenticator implements Authenticator {
 
 		Connection c = null;
 		try {
-			c = _pool.getConnection(true);
+			c = _pool.getConnection();
 
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setString(1, usr.getPassword());
+			ps.setString(1, pwd);
 			ps.setString(2, ((Pilot) usr).getPilotCode());
 
 			// Execute the update and clean up
@@ -248,7 +248,7 @@ public class TS2Authenticator implements Authenticator {
 
 		Connection c = null;
 		try {
-			c = _pool.getConnection(true);
+			c = _pool.getConnection();
 			
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
@@ -298,7 +298,7 @@ public class TS2Authenticator implements Authenticator {
 		
 		Connection c = null;
 		try {
-			c = _pool.getConnection(true);
+			c = _pool.getConnection();
 			
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
