@@ -15,8 +15,8 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 3, 'First Name')) return false;
-if (!validateText(form.lastName, 3, 'Last Name')) return false;
+if (!validateText(form.firstName, 2, 'First Name')) return false;
+if (!validateText(form.lastName, 2, 'Last Name')) return false;
 if (!validateText(form.pwd, 3, 'Password')) return false;
 
 setSubmit();
