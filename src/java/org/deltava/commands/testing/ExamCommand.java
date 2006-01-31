@@ -68,7 +68,7 @@ public class ExamCommand extends AbstractCommand {
             ctx.setAttribute("timeRemaining", new Long((ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000), REQUEST);
 
             result.setURL("/jsp/testing/examTake.jsp");
-         } else if ((ex.getStatus() == Test.SUBMITTED) && access.getCanScore()) {
+         } else if ((ex.getStatus() != Test.SCORED) && access.getCanScore()) {
             result.setURL("/jsp/testing/examScore.jsp");
          } else if (("edit".equals(opName)) && (access.getCanEdit())) {
             result.setURL("/jsp/testing/examScore.jsp");
