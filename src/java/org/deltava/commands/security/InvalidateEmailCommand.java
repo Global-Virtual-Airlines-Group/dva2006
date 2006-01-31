@@ -58,7 +58,16 @@ public class InvalidateEmailCommand extends AbstractCommand {
             // Commit the transaction
             ctx.commitTX();
          } else {
-            ctx.setAttribute("alreadyInvalid", Boolean.TRUE, REQUEST);
+        	 // Check if the old address is still there
+        	 if (EMailAddress.INVALID_ADDR.equals(p.getEmail())) {
+        		 ctx.setAttribute("alreadyInvalid", Boolean.TRUE, REQUEST);        		 
+        	 } else {
+        		 p.setEmail(EMailAddress.INVALID_ADDR);
+        		 
+                 // Write the e-mail address
+                 SetPilot pwdao = new SetPilot(con);
+                 pwdao.write(p);
+        	 }
          }
          
          // Save the pilot in the request
