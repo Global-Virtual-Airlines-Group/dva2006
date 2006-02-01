@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -13,6 +13,8 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.taskman.DatabaseTask;
+
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -51,6 +53,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 			SetStatusUpdate sudao = new SetStatusUpdate(_con);
 			SetPilot pwdao = new SetPilot(_con);
 			SetInactivity iwdao = new SetInactivity(_con);
+			SetTS2Data ts2wdao = new SetTS2Data(_con);
 
 			// Get the Message templates
 			GetMessageTemplate mtdao = new GetMessageTemplate(_con);
@@ -90,6 +93,12 @@ public class InactivityUpdateTask extends DatabaseTask {
 					// Deactivate the Pilot
 					p.setStatus(Pilot.INACTIVE);
 					pwdao.write(p);
+					
+					// Clear TS2 credentials
+					if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
+						if (!StringUtils.isEmpty(p.getPilotCode()))
+							ts2wdao.delete(p.getPilotCode());
+					}
 
 					// Send notification message
 					mailer.setContext(mctxt);
