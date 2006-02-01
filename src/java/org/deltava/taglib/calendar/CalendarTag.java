@@ -336,7 +336,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
         	sFwdCell.setAttribute("colspan", "3");
         	_out.print(sFwdCell.open(true));
         	_out.print(fwdURL.open(true));
-        	_out.print("GO FORWRAD");
+        	_out.print("GO FORWARD");
         	_out.print(fwdURL.close());
         	_out.print(sFwdCell.close());
 
