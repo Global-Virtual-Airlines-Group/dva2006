@@ -200,11 +200,26 @@ public class SystemBootstrap implements ServletContextListener {
 		ThreadUtils.kill(_taskSched, 500);
 		ThreadUtils.kill((Thread) SystemData.getObject(SystemData.SMTP_DAEMON), 500);
 		ThreadUtils.kill(_acarsThread, 500);
+		
+		// If ACARS is enabled, then clean out the active flags
+		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
+			log.info("Resetting TeamSpeak 2 client activity flags");
+			
+			Connection c = null;
+			try {
+				c = _jdbcPool.getConnection(true);
+				
+				SetTS2Data ts2wdao = new SetTS2Data(c);
+				ts2wdao.clearActiveFlags();
+			} catch (DAOException de) {
+				log.error(de.getMessage(), de);
+			} finally {
+				_jdbcPool.release(c);
+			}
+		}
 
-		// Shut down and remove the JDBC connection pool
-		e.getServletContext().removeAttribute("jdbcConnectionPool");
-		if (_jdbcPool != null)
-			_jdbcPool.close();
+		// Shut down the JDBC connection pool
+		_jdbcPool.close();
 
 		// Deregister JDBC divers
 		for (Enumeration<Driver> en = DriverManager.getDrivers(); en.hasMoreElements();) {
