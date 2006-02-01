@@ -119,7 +119,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
-				
+
 				// Check Testing Center access
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();
 				if (examsLocked != p.getNoExams()) {
@@ -368,7 +368,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					log.info("Staff Profile Updated");
 				}
 			}
-			
+
 			// If we're not currently active, then clear any address validation entries
 			if (p_access.getCanChangeStatus() && (p.getStatus() != 0)) {
 				SetAddressValidation avwdao = new SetAddressValidation(con);
@@ -479,29 +479,35 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Update teamspeak data
-			GetTS2Data ts2dao = new GetTS2Data(con);
-			Collection<Server> srvs = ts2dao.getServers(p.getPilotCode());
-			Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
-			List<Client> usrs = ts2dao.getUsers(p.getPilotCode());
-			Client usr = usrs.isEmpty() ? null : usrs.get(0);
+			if (p.getStatus() == Pilot.ACTIVE) {
+				GetTS2Data ts2dao = new GetTS2Data(con);
+				Collection<Server> srvs = ts2dao.getServers(p.getPilotCode());
+				Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
+				List<Client> usrs = ts2dao.getUsers(p.getPilotCode());
+				Client usr = usrs.isEmpty() ? null : usrs.get(0);
 
-			// Determine what TeamSpeak servers to remove us from
-			SetTS2Data ts2wdao = new SetTS2Data(con);
-			Collection<Server> rmvServers = CollectionUtils.getDelta(srvs, newSrvs);
-			for (Iterator<Server> i = rmvServers.iterator(); i.hasNext();) {
-				Server srv = i.next();
-				log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
-				ts2wdao.removeUsers(srv, Arrays.asList(new String[] { p.getPilotCode() }));
-			}
-
-			// Determine what servers to add us to
-			Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
-			for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
-				Server srv = i.next();			
-				if (usr != null) {
-					log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
-					ts2wdao.addToServer(usr, srv.getID());
+				// Determine what TeamSpeak servers to remove us from
+				SetTS2Data ts2wdao = new SetTS2Data(con);
+				Collection<Server> rmvServers = CollectionUtils.getDelta(srvs, newSrvs);
+				for (Iterator<Server> i = rmvServers.iterator(); i.hasNext();) {
+					Server srv = i.next();
+					log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
+					ts2wdao.removeUsers(srv, Arrays.asList(new String[] { p.getPilotCode() }));
 				}
+
+				// Determine what servers to add us to
+				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
+				for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
+					Server srv = i.next();
+					if (usr != null) {
+						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
+						ts2wdao.addToServer(usr, srv.getID());
+					}
+				}
+			} else if (!StringUtils.isEmpty(p.getPilotCode())) {
+				log.info("Removed " + p.getPilotCode() + " from TeamSpeak servers");
+				SetTS2Data ts2wdao = new SetTS2Data(con);
+				ts2wdao.delete(p.getPilotCode());
 			}
 
 			// Write the Pilot profile
@@ -517,7 +523,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Write the status updates
 			SetStatusUpdate stwdao = new SetStatusUpdate(con);
 			stwdao.write(updates);
-			
+
 			// Commit the transaction
 			ctx.commitTX();
 
@@ -534,7 +540,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				auth.updatePassword(p, p.getPassword());
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
-				
+
 				// Commit the transaction
 				ctx.commitTX();
 			}
@@ -649,7 +655,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			GetPilot dao = new GetPilot(con);
 			Pilot p = dao.get(ctx.getID());
 			if (p == null) {
-				CommandException ce = new CommandException("Invalid Pilot ID - " + ctx.getID());;
+				CommandException ce = new CommandException("Invalid Pilot ID - " + ctx.getID());
+				;
 				ce.setWarning(true);
 				throw ce;
 			}
@@ -677,7 +684,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get the online totals
 			GetFlightReports prdao = new GetFlightReports(con);
 			prdao.getOnlineTotals(p);
-			
+
 			// Get TeamSpeak2 data
 			GetTS2Data ts2dao = new GetTS2Data(con);
 			ctx.setAttribute("ts2Servers", ts2dao.getServers(p.getRoles()), REQUEST);
