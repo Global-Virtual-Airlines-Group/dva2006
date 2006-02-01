@@ -194,6 +194,21 @@ public class SetTS2Data extends DAO {
 	}
 	
 	/**
+	 * Deletes TeamSpeak 2 credentials for a Pilot.
+	 * @param pilotCode the Pilot code
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(String pilotCode) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_clients WHERE (UCASE(s_client_name)=?)");
+			_ps.setString(1, pilotCode.toUpperCase());
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Removes a number of users from a TeamSpeak server. This should typically be called when
 	 * updating a server's roles.
 	 * @param srv the Server bean
