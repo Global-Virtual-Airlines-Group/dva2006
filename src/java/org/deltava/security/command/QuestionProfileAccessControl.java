@@ -36,7 +36,7 @@ public class QuestionProfileAccessControl extends AccessControl {
         
         _canRead = isHR || isExam;
         _canEdit = isHR || isExam;
-        if (_canRead)
+        if (!_canRead)
         	throw new AccessControlException("Cannot view Question Profile");
     }
 
