@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -59,7 +59,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
-			CheckRide cr = crdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT), 
+			CheckRide cr = crdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT),
 					fr.getEquipmentType(), Test.SUBMITTED);
 
 			// Get the Transfer Request
@@ -106,6 +106,13 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			SetFlightReport wdao = new SetFlightReport(con);
 			wdao.dispose(ctx.getUser(), fr, FlightReport.OK);
 
+			// Archive the Position data
+			if (fr instanceof ACARSFlightReport) {
+				SetACARSLog acdao = new SetACARSLog(con);
+				acdao.archivePositions(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				ctx.setAttribute("acarsArchive", Boolean.TRUE, REQUEST);
+			}
+
 			// Get the CheckRide write DAO and update the checkride
 			SetExam ewdao = new SetExam(con);
 			ewdao.write(cr);
@@ -113,7 +120,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// If we are approving the checkride, then approve the transfer request
 			if (txreq != null) {
 				if (cr.getPassFail()) {
-					txreq.setStatus(TransferRequest.OK);	
+					txreq.setStatus(TransferRequest.OK);
 				} else {
 					txreq.setStatus(TransferRequest.PENDING);
 					txreq.setCheckRideID(0);
