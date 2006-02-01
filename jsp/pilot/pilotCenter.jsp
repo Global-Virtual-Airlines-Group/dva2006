@@ -280,10 +280,10 @@ Program to the <b>${txreq.equipmentType}</b> program.</td>
 </tr>
 </c:if>
 <tr>
-<c:if test="${(pilot.legs >= 5) && !pilot.noExams}">
+<c:if test="${(pilot.legs >= 5) && !pilot.noExams && !examLockout}">
  <td class="mid"><el:cmd className="bld" url="testcenter">Testing Center</el:cmd></td>
 </c:if>
-<c:if test="${pilot.legs < 5 || pilot.noExams}">
+<c:if test="${pilot.legs < 5 || pilot.noExams || examLockout}">
  <td class="mid bld">Testing Center</td>
 </c:if>
  <td class="data">The <content:airline /> Testing Center is your single source for the written 
