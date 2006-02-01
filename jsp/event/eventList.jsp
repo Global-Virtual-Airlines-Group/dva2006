@@ -41,7 +41,7 @@
  <td class="pri bld">${event.networkName}</td>
  <td class="sec">${event.statusName}</td>
  <td class="small"><c:forEach var="route" items="${event.routes}">
-${route.airportD.name} - (<fmt:airport airport="${route.airportD}" />)${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
+${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)<br />
 </c:forEach></td>
 </view:row>
 </c:forEach>
