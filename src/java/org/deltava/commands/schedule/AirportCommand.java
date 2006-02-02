@@ -68,7 +68,7 @@ public class AirportCommand extends AbstractFormCommand {
 					throw new CommandException("Invalid Airport Code - " + aCode);
 				
 				// Load airport fields
-				a.setName(StringUtils.strip(ctx.getParameter("name"), ","));
+				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
 			} else {
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
