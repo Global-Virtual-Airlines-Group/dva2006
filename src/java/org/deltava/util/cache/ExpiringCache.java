@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -26,7 +26,11 @@ public class ExpiringCache extends Cache {
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
-			_expiryTime = createdOn + _expiry;
+			if (entryData instanceof ExpiringCacheable) {
+				_expiryTime = ((ExpiringCacheable) entryData).getExpiryDate().getTime();
+			} else {
+				_expiryTime = createdOn + _expiry;
+			}
 		}
 
 		public Cacheable getData() {
