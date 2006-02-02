@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -10,7 +11,7 @@ package org.deltava.util.cache;
 public interface Cacheable {
 
     /**
-     * Returns the cache key for this object. Caches call this method when 
+     * Returns the cache key for this object. Caches call this method when adding the object.
      * @return the cache key for the object
      */
     public Object cacheKey();
