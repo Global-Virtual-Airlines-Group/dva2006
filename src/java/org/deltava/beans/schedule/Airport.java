@@ -96,7 +96,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * @see Airport#getName()
 	 */
 	public void setName(String name) {
-		_name = name;
+		_name = StringUtils.strip(name, ",");
 	}
 
 	/**

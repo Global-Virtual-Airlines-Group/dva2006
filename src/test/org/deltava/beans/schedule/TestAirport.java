@@ -34,6 +34,9 @@ public class TestAirport extends TestCase {
 	    assertNotNull(_a.getPosition());
 	    assertEquals(0, _a.getLatitude(), 0.0001);
 	    assertEquals(0, _a.getLongitude(), 0.0001);
+	    assertEquals(0, _a.getAltitude());
+	    _a.setName("Atlanta, GA");
+	    assertEquals(_a.getName(), "Atlanta GA");
 	}
 	
 	public void testComboAlias() {
