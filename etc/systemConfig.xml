@@ -475,6 +475,7 @@
 		<port type="Integer">15527</port>
 		<sleep type="Integer">15000</sleep>
 		<timeout type="Integer">240</timeout>
+		<ban_length type="Integer">15</ban_length>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
 			<minimum type="Integer">62</minimum>
