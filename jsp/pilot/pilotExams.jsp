@@ -9,8 +9,8 @@
  <td>&nbsp;</td>
  <td width="30%">EXAMINATION / CHECK RIDE NAME</td>
  <td width="15%">TYPE</td>
- <td width="10%">SCORE</td>
  <td width="10%">QUESTIONS</td>
+ <td width="10%">SCORE</td>
  <td width="10%">PERCENT</td>
  <td>DATE</td>
 </tr>
