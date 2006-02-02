@@ -1,13 +1,13 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
 import java.sql.*;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.*;
 
+import org.deltava.util.CalendarUtils;
 import org.deltava.util.cache.*;
 
 /**
@@ -72,9 +72,10 @@ public class GetStatistics extends DAO {
 			result.setTotalHours(rs.getDouble(2));
 			result.setTotalMiles(rs.getLong(3));
 			rs.close();
+			rs = null;
 
-			// Count YTD totals
-			Calendar c = Calendar.getInstance();
+			// Count MTD totals
+			Calendar c = CalendarUtils.getInstance(null, true);
 			c.set(Calendar.DAY_OF_MONTH, 1);
 			_ps.setTimestamp(1, new Timestamp(c.getTimeInMillis()));
 			rs = _ps.executeQuery();
@@ -83,6 +84,7 @@ public class GetStatistics extends DAO {
 			result.setMTDHours(rs.getDouble(2));
 			result.setMTDMiles(rs.getInt(3));
 			rs.close();
+			rs = null;
 
 			// Count YTD totals
 			c.set(Calendar.DAY_OF_YEAR, 1);
@@ -93,7 +95,9 @@ public class GetStatistics extends DAO {
 			result.setYTDHours(rs.getDouble(2));
 			result.setYTDMiles(rs.getInt(3));
 			rs.close();
+			rs = null;
 			_ps.close();
+			_ps = null;
 
 			// Get Online totals
 			prepareStatement("SELECT COUNT(DISTANCE), ROUND(SUM(FLIGHT_TIME), 1), SUM(DISTANCE) "
