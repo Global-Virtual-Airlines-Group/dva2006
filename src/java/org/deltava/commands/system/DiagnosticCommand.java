@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -50,6 +50,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			// Get the ACARS Connection pool data and save in the request
 			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
 			ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+			ctx.setAttribute("acarsBans", acarsPool.getBanInfo(), REQUEST);
 
 			// Get the acars worker info data and save in the request
 			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SystemData.getObject(SystemData.ACARS_DAEMON);
@@ -59,6 +60,9 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("acarsStats", ServerStats.getInstance(), REQUEST);
 			ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
 		}
+		
+		// Run the GC
+		System.gc();
 
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
@@ -84,9 +88,6 @@ public class DiagnosticCommand extends AbstractCommand {
 
 		// Get System properties
 		ctx.setAttribute("sys", System.getProperties(), REQUEST);
-
-		// Run the GC
-		System.gc();
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
