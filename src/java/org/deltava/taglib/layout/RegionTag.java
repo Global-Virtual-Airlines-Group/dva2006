@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.util.*;
@@ -58,8 +58,8 @@ public class RegionTag extends BrowserDetectingTag {
 	public void setRows(int rowCount) {
 		if (rowCount < 0)
 			throw new IllegalArgumentException("Invalid row count - " + rowCount);
-
-		_attrs.put("rowspan", String.valueOf(rowCount));
+		else if (isIE())
+			_attrs.put("rowspan", String.valueOf(rowCount));
 	}
 
 	/**
@@ -71,8 +71,8 @@ public class RegionTag extends BrowserDetectingTag {
 	public void setCols(int colCount) {
 		if (colCount < 0)
 			throw new IllegalArgumentException("Invalid column count - " + colCount);
-
-		_attrs.put("colspan", String.valueOf(colCount));
+		else if (isIE())
+			_attrs.put("colspan", String.valueOf(colCount));
 	}
 
 	/**
