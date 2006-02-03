@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Collection;
@@ -14,5 +14,6 @@ public interface ACARSAdminInfo {
 
    public Collection getPoolInfo();
    public Collection getMapEntries();
+   public Collection getBanInfo();
    public boolean isEmpty();
 }
