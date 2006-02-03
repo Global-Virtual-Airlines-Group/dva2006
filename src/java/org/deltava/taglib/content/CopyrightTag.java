@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.lang.reflect.Field;
@@ -58,6 +58,8 @@ public class CopyrightTag extends TagSupport {
       if (_rcBuild > 0) {
           jw.print(" Release Candidate ");
           jw.print(String.valueOf(_rcBuild));
+       } else if (VersionInfo.FINAL) {
+    	   jw.print(" FINAL");
        }
       
       jw.print(")</div>");
