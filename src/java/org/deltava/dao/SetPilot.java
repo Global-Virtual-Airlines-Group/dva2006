@@ -64,7 +64,8 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
 				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, "
-				+ "STATUS=?, NOEXAMS=?, NOVOICE=?, NOACARS=?, UID=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+				+ "STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, FIRSTNAME=?, LASTNAME=? "
+				+ "WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -99,7 +100,7 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(24, p.getStatus());
 			_ps.setBoolean(25, p.getNoExams());
 			_ps.setBoolean(26, p.getNoVoice());
-			_ps.setBoolean(27, p.getNoACARS());
+			_ps.setInt(27, p.getACARSRestriction());
 			_ps.setString(28, p.getLDAPName());
 			_ps.setString(29, p.getFirstName());
 			_ps.setString(30, p.getLastName());
