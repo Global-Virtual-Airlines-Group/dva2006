@@ -286,7 +286,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setMapType(rs.getInt(34));
 			p.setNoExams(rs.getBoolean(35));
 			p.setNoVoice(rs.getBoolean(36));
-			p.setNoACARS(rs.getBoolean(37));
+			p.setACARSRestriction(rs.getInt(37));
 			p.setLDAPName(rs.getString(38));
 
 			// Check if this result set has a column 39-42, which is the PIREP totals
