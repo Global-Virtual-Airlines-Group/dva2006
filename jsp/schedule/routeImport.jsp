@@ -38,7 +38,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Upload CSV File</td>
- <td class="data"><el:file name="routeData" idx="*" className="small" size="80" max="144" /><br />
+ <td class="data"><el:file name="routeData" idx="*" className="small req" size="80" max="144" /><br />
 <span class="small">FAA Preferred Route data must be in CSV format, with the following fields in the file:<br />
 <b><i>Orig, Route String, Dest, Hours1, Hours2, Hours3, Type, Area, Altitude, Aircraft, Direction, 
 Seq,DCNTR,ACNTR</b></i>.<br />

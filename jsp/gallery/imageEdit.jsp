@@ -43,14 +43,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imgsave.do" method="POST" linkID="${fn:dbID(msg)}" allowUpload="true" validate="return validate(this)">
+<el:form action="imgsave.do" method="post" linkID="${fn:dbID(msg)}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left"><content:airline /> IMAGE GALLERY ENTRY</td>
 </tr>
 <tr>
  <td class="label">Image Title</td>
- <td class="data"><el:text name="title" idx="*" className="pri bld" size="48" max="96" value="${img.name}" /></td>
+ <td class="data"><el:text name="title" idx="*" className="pri bld req" size="48" max="96" value="${img.name}" /></td>
 </tr>
 <tr>
  <td class="label">Created by</td>
@@ -59,7 +59,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Image Description</td>
- <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${img.description}" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${img.description}" className="req" /></td>
 </tr>
 <content:filter roles="Fleet,Gallery">
 <tr>
@@ -70,7 +70,7 @@ return true;
 <c:if test="${empty img}">
 <tr>
  <td class="label">Upload Image</td>
- <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" /></td>
+ <td class="data"><el:file name="img" className="small req" idx="*" size="64" max="144" /></td>
 </tr>
 </c:if>
 </el:table>

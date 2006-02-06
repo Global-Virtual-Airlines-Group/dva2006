@@ -74,6 +74,15 @@ INPUT.radio, INPUT.check {
 	font-size: 8pt;
 }
 
+INPUT.req, TEXTAREA.req {
+	border: 1px solid #E00404;
+	background: #FFF8FA;
+}
+
+SELECT.req {
+	border: 1px solid #E00404;
+}
+
 *.label :link, *.label :visited {
 	font-size: 9pt;	
 	font-family: Tahoma, Verdana;

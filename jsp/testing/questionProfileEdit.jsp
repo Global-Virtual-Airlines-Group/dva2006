@@ -42,11 +42,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Question Text</td>
- <td class="data bld"><el:text name="question" idx="*" size="120" max="255" value="${question.question}" /></td>
+ <td class="data bld"><el:text name="question" idx="*" size="120" className="req" max="255" value="${question.question}" /></td>
 </tr>
 <tr>
  <td class="label">Correct Answer</td>
- <td class="data"><el:text name="correct" idx="*" size="120" max="255" value="${question.correctAnswer}" /></td>
+ <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>

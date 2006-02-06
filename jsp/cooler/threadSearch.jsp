@@ -39,7 +39,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Search String</td>
- <td class="data"><el:text name="searchStr" idx="*" size="16" max="32" value="${param.searchStr}" /></td>
+ <td class="data"><el:text name="searchStr" idx="*" size="20" className="pri bld req" max="34" value="${param.searchStr}" /></td>
 </tr>
 <tr>
  <td class="label">Cooler Channel</td>

@@ -51,7 +51,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Upload Data File</td>
- <td class="data"><el:file name="navData" idx="*" className="small" size="80" max="144" />&nbsp;
+ <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
 <span class="small">AIRAC data must be in PSS Format.</span></td>
 </tr>
 </el:table>

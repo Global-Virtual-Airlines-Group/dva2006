@@ -38,7 +38,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" className="req" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

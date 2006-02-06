@@ -20,7 +20,7 @@ var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.firstName, 3, 'First (given) Name')) return false;
+if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
 if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
 if (!validateEMail(form.email, 'E-Mail Address')) return false;
 if (!validateCombo(form.homeAirport, 'Home Airport')) return false;
@@ -64,17 +64,17 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${param.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" firstEntry="-" value="${param.homeAirport}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" className="req" firstEntry="-" value="${param.homeAirport}" onChange="void changeAirport(this)" />
  <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
- <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" firstEntry="-" value="${param.location}" /></td>
+ <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" className="req" firstEntry="-" value="${param.location}" /></td>
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -95,7 +95,7 @@ return true;
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="48" max="64" value="${param.email}" />
+ <td class="data"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" />
 <c:if test="${notUnique}"><div class="small error">Another <content:airline /> Pilot or Applicant is 
 currently registed with this e-mail address.</div></c:if>
  </td>
@@ -111,16 +111,16 @@ currently registed with this e-mail address.</div></c:if>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" firstEntry="< TIME ZONE >" value="${param.tz}" /></td>
+ <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="< TIME ZONE >" value="${param.tz}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td class="data"><el:text name="df" idx="*" value="${empty param.df ? 'MM/dd/yyyy' : param.df}" size="12" max="25" />&nbsp;
-<el:text name="tf" idx="*" value="${empty param.tf ? 'hh:mm' : param.tf}" size="6" max="9" /></td>
+ <td class="data"><el:text name="df" idx="*" className="req" value="${empty param.df ? 'MM/dd/yyyy' : param.df}" size="12" max="25" />&nbsp;
+<el:text name="tf" idx="*" className="req" value="${empty param.tf ? 'HH:mm' : param.tf}" size="6" max="9" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
- <td class="data"><el:text name="nf" idx="*" value="${empty param.nf ? '#,##0.0' : param.nf}" size="9" max="15" /></td>
+ <td class="data"><el:text name="nf" idx="*" className="req" value="${empty param.nf ? '#,##0.0' : param.nf}" size="9" max="15" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>

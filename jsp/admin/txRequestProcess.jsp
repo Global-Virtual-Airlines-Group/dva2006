@@ -100,8 +100,8 @@ return true;
 <c:if test="${!txReq.ratingOnly}">
 <tr>
  <td class="label">Transfer to</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${activeEQ}" value="${eqType}" />
- as <el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${activeEQ}" value="${eqType}" />
+ as <el:combo name="rank" idx="*" size="1" options="${eqType.ranks}" className="req" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Promotion to Captain</td>
@@ -121,7 +121,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
+ <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" className="req" options="${eqType.primaryRatings}" value="${eqType.name}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Comments</td>

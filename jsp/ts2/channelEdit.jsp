@@ -46,7 +46,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Channel Name</td>
- <td class="data"><el:text name="name" idx="*" size="24" max="40" value="${channel.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="26" max="40" value="${channel.name}" /></td>
 </tr>
 <tr>
  <td class="label">Channel Topic</td>
@@ -62,7 +62,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Maximum Users</td>
- <td class="data"><el:text name="maxUsers" idx="*" size="3" max="4" value="${channel.maxUsers}" /></td>
+ <td class="data"><el:text name="maxUsers" idx="*" size="3" max="4" className="req" value="${channel.maxUsers}" /></td>
 </tr>
 <tr>
  <td class="label">Channel Codec</td>

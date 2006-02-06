@@ -48,15 +48,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport</td>
- <td class="data"><el:combo className="bld" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" /></td>
+ <td class="data"><el:combo className="bld req" name="airport" size="1" idx="*" firstEntry="< SELECT >" options="${airports}" value="${chart.airport}" /></td>
 </tr>
 <tr>
  <td class="label">Chart Name</td>
- <td class="data"><el:text className="pri bld" name="name" idx="*" size="32" max="64" value="${chart.name}" /></td>
+ <td class="data"><el:text className="pri bld req" name="name" idx="*" size="32" max="64" value="${chart.name}" /></td>
 </tr>
 <tr>
  <td class="label">Chart Type</td>
- <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" firstEntry="< SELECT >" value="${chart.typeName}" /></td>
+ <td class="data"><el:combo name="chartType" size="1" idx="*" options="${chartTypes}" className="req" firstEntry="< SELECT >" value="${chart.typeName}" /></td>
 </tr>
 <c:if test="${!empty chart}">
 <tr>

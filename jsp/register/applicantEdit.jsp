@@ -64,17 +64,17 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${applicant.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${applicant.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">Home Airport</td>
- <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="homeAirport" size="1" idx="*" options="${airports}" className="req" value="${applicant.homeAirport}" onChange="void changeAirport(this)" />
  <el:text name="homeAirportCode" size="3" max="4" onBlur="void setAirport(document.forms[0].homeAirport, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Location</td>
- <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" value="${applicant.location}" /></td>
+ <td class="data"><el:combo name="location" idx="*" size="1" options="${locations}" className="req" value="${applicant.location}" /></td>
 </tr>
 <tr>
  <td class="label">VATSIM ID#</td>
@@ -95,7 +95,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="48" max="64" value="${applicant.email}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="48" max="64" className="req" value="${applicant.email}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -117,16 +117,16 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" value="${applicant.TZ}" /></td>
+ <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" value="${applicant.TZ}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td class="data"><el:text name="df" idx="*" value="${applicant.dateFormat}" size="12" max="25" />&nbsp;
-<el:text name="tf" idx="*" value="${applicant.timeFormat}" size="6" max="9" /></td>
+ <td class="data"><el:text name="df" idx="*" value="${applicant.dateFormat}" className="req" size="12" max="25" />&nbsp;
+<el:text name="tf" idx="*" value="${applicant.timeFormat}" className="req" size="6" max="9" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
- <td class="data"><el:text name="nf" idx="*" value="${applicant.numberFormat}" size="9" max="15" /></td>
+ <td class="data"><el:text name="nf" idx="*" value="${applicant.numberFormat}" className="req" size="9" max="15" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
@@ -181,11 +181,11 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${applicant.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" className="req" firstEntry="-" value="${applicant.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Rank</td>
- <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" firstEntry="-" value="${applicant.rank}" /></td>
+ <td class="data"><el:combo name="rank" idx="*" size="1" options="${ranks}" className="req" firstEntry="-" value="${applicant.rank}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Equipment Program Sizes</td>

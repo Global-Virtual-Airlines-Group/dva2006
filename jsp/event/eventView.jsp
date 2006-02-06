@@ -216,13 +216,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" /></td>
+ <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" className="req" /></td>
  <td class="label" valign="top" rowspan="2">Remarks</td> 
  <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="55" height="2"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" firstEntry="-" /></td>
+ <td class="data" colspan="2"><el:combo name="eqType" idx="*" size="1" options="${!empty event.equipmentTypes ? event.equipmentTypes : user.ratings}" className="req" firstEntry="-" /></td>
 </tr>
 </c:if>
 <c:if test="${!event.canSignup}">

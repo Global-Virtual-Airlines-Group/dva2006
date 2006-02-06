@@ -61,7 +61,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Thread Title</td>
- <td class="data"><el:text name="subject" className="pri bld" idx="*" size="64" max="80" value="${param.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld req" idx="*" size="64" max="80" value="${param.subject}" /></td>
 </tr>
 <tr>
  <td class="label">Water Cooler Channel</td>
@@ -107,7 +107,7 @@ return true;
  <td colspan="2">NEW MESSAGE TEXT</td>
 </tr>
 <tr>
- <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="125" height="8">${param.msgText}</el:textbox></td>
+ <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="125" className="req" height="8">${param.msgText}</el:textbox></td>
 </tr>
 
 <!-- Button Bar -->

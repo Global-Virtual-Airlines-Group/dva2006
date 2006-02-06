@@ -43,19 +43,19 @@ return true;
 </tr>
 <tr>
  <td class="label">Server Name</td>
- <td class="data"><el:text name="name" idx="*" size="32" max="40" value="${server.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="32" max="40" value="${server.name}" /></td>
 </tr>
 <tr>
  <td class="label">UDP Port</td>
- <td class="data"><el:text name="port" idx="*" size="4" max="5" value="${server.port}" /></td>
+ <td class="data"><el:text name="port" idx="*" className="req" size="4" max="5" value="${server.port}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Users</td>
- <td class="data"><el:text name="maxUsers" idx="*" size="4" max="4" value="${server.maxUsers}" /></td>
+ <td class="data"><el:text name="maxUsers" idx="*" className="req" size="4" max="4" value="${server.maxUsers}" /></td>
 </tr>
 <tr>
  <td class="label">Welcome Message</td>
- <td class="data"><el:text name="msg" idx="*" size="64" max="80" value="${server.welcomeMessage}" /></td>
+ <td class="data"><el:text name="msg" idx="*" size="64" max="80" className="req" value="${server.welcomeMessage}" /></td>
 </tr>
 <tr>
  <td class="label">Server Password</td>

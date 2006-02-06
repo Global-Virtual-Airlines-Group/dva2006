@@ -47,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="flibsave.do" linkID="${entry.fileName}" op="save" method="POST" validate="return validate(this)">
+<el:form action="flibsave.do" linkID="${entry.fileName}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
 <c:choose>
@@ -61,15 +61,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Installer Title</td>
- <td class="data"><el:text name="title" className="pri bld" idx="*" size="48" max="80" value="${entry.name}" /></td>
+ <td class="data"><el:text name="title" className="pri bld req" idx="*" size="48" max="80" value="${entry.name}" /></td>
 </tr>
 <tr>
  <td class="label">Installer Filename</td>
- <td class="data"><el:text name="fileName" idx="*" size="32" max="48" value="${entry.fileName}" /></td>
+ <td class="data"><el:text name="fileName" idx="*" size="32" max="48" className="req" value="${entry.fileName}" /></td>
 </tr>
 <tr>
  <td class="label">Installer Code</td>
- <td class="data bld"><el:text name="code" idx="*" size="12" max="12" value="${entry.code}" /></td>
+ <td class="data bld"><el:text name="code" idx="*" size="12" max="12" className="req" value="${entry.code}" /></td>
 </tr>
 <tr>
  <td class="label">Fleet Library Image</td>
@@ -77,13 +77,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Version Number</td>
- <td class="data"><el:text name="majorVersion" idx="*" size="1" max="2" value="${entry.majorVersion}" />.
-<el:text name="minorVersion" idx="*" size="1" max="2" value="${entry.minorVersion}" />.
-<el:text name="subVersion" idx="*" size="1" max="2" value="${entry.subVersion}" /></td>
+ <td class="data"><el:text name="majorVersion" idx="*" size="1" max="2" className="req" value="${entry.majorVersion}" />.
+<el:text name="minorVersion" idx="*" size="1" max="2" className="req" value="${entry.minorVersion}" />.
+<el:text name="subVersion" idx="*" size="1" max="2" className="req" value="${entry.subVersion}" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="3">${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="120" className="req" height="3">${entry.description}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">Installer Security</td>

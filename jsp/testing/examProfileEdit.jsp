@@ -20,8 +20,8 @@ if (!validateText(form.examName, 10, 'Examination Name')) return false;
 if (!validateNumber(form.stage, 1, 'Examination Stage')) return false;
 if (!validateNumber(form.minStage, 0, 'Examination Minimum Stage')) return false;
 if (!validateNumber(form.questions, 1, 'Examination Size')) return false;
-if (!validateNumber(form.questions, 0, 'Passing Score')) return false;
-if (!validateNumber(form.questions, 5, 'Examination Duration')) return false;
+if (!validateNumber(form.passScore, 0, 'Passing Score')) return false;
+if (!validateNumber(form.time, 5, 'Examination Duration')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -46,7 +46,7 @@ return true;
 <tr>
  <td class="label">Examination Name</td>
 <c:if test="${empty eProfile}">
- <td class="data"><el:text name="examName" className="pri bld" idx="*" size="32" max="48" value="" /></td>
+ <td class="data"><el:text name="examName" className="pri bld req" idx="*" size="32" max="48" value="" /></td>
 </c:if>
 <c:if test="${!empty eProfile}">
  <td class="data pri bld">${eProfile.name}</td>
@@ -58,7 +58,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Stage</td>
- <td class="data"><el:text name="stage" idx="*" size="1" max="1" value="${eProfile.stage}" /></td>
+ <td class="data"><el:text name="stage" idx="*" size="1" max="1" className="req" value="${eProfile.stage}" /></td>
 </tr>
 <tr>
  <td class="label">Minimum Stage</td>
@@ -66,15 +66,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Questions</td>
- <td class="data"><el:text name="size" idx="*" size="2" max="2" value="${eProfile.size}" /></td>
+ <td class="data"><el:text name="size" idx="*" size="2" max="2" className="req" value="${eProfile.size}" /></td>
 </tr>
 <tr>
  <td class="label">Passing Score</td>
- <td class="data"><el:text name="passScore" idx="*" size="2" max="2" value="${eProfile.passScore}" /></td>
+ <td class="data"><el:text name="passScore" idx="*" size="2" max="2" className="req" value="${eProfile.passScore}" /></td>
 </tr>
 <tr>
  <td class="label">Testing Time</td>
- <td class="data"><el:text name="time" idx="*" size="2" max="2" value="${eProfile.time}" /> minutes</td>
+ <td class="data"><el:text name="time" idx="*" size="2" max="2" className="req" value="${eProfile.time}" /> minutes</td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

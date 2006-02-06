@@ -53,12 +53,12 @@ space below.</td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="40" max="80" value="${addr.address}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="40" max="80" className="req" value="${addr.address}" /></td>
 </tr>
 <c:if test="${!empty addr}">
 <tr>
  <td class="label">Validation Code</td>
- <td class="data"><el:text name="code" idx="*" size="26" max="32" value="${param.code}" /></td>
+ <td class="data"><el:text name="code" idx="*" size="26" max="32" className="req" value="${param.code}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty system_message}">

@@ -44,15 +44,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Channel Name</td>
- <td class="data"><el:text name="newName" idx="*" className="pri bld" size="20" max="64" value="${channel.name}" /></td>
+ <td class="data"><el:text name="newName" idx="*" className="pri bld req" size="20" max="64" value="${channel.name}" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="desc" idx="*" size="80" max="144" value="${channel.description}" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="80" max="144" className="req" value="${channel.description}" /></td>
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airline" width="175" options="${airlines}" checked="${channel.airlines}" /></td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
 </tr>
 <tr>
  <td class="label">Authorized Roles</td>

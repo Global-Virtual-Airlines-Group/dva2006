@@ -41,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Entry Title</td>
- <td class="data"><el:text name="subject" className="pri bld" idx="*" size="64" max="96" value="${entry.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld req" idx="*" size="64" max="96" value="${entry.subject}" /></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
@@ -51,7 +51,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Entry Text</td>
- <td class="data"><el:textbox name="body" idx="*" width="120" height="6">${entry.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" idx="*" width="120" height="6" className="req">${entry.body}</el:textbox></td>
 </tr>
 </el:table>
 

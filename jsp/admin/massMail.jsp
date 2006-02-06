@@ -40,7 +40,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Message Subject</td>
- <td class="data"><el:text name="subject" idx="*" size="48" max="64" value="${param.subject}" /></td>
+ <td class="data"><el:text name="subject" idx="*" size="48" max="64" className="bld req" value="${param.subject}" /></td>
 </tr>
 <tr>
  <td class="label">Attached File</td>
@@ -48,11 +48,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Recipient Program / Security Role</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" options="${eqTypes}" value="${param.eqType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" firstEntry="-" className="req" options="${eqTypes}" value="${param.eqType}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Message Text</td>
- <td class="data"><el:textbox name="body" idx="*" width="120" height="15">${param.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" className="req" idx="*" width="120" height="15">${param.body}</el:textbox></td>
 </tr>
 </el:table>
 
