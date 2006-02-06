@@ -41,7 +41,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.COOLER };
 	private static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
 			"Send Fleet Notifications", "Send Water Cooler Notifications" };
-
+	
 	/**
 	 * Callback method called when saving the profile.
 	 * @param ctx the Command context
@@ -147,14 +147,14 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				// Check ACARS server access
-				boolean acarsLocked = Boolean.valueOf(ctx.getParameter("noACARS")).booleanValue();
-				if (acarsLocked != p.getNoACARS()) {
-					p.setNoACARS(acarsLocked);
+				int newACARSRest = StringUtils.arrayIndexOf(Pilot.RESTRICT, ctx.getParameter("ACARSrestrict"));
+				if (newACARSRest != p.getACARSRestriction()) {
+					p.setACARSRestriction(newACARSRest);
 
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription(examsLocked ? "ACARS access locked out" : "ACARS access enabled");
+					upd.setDescription("ACARS restrictions set to " + p.getACARSRestrictionName());
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
@@ -575,6 +575,7 @@ public class ProfileCommand extends AbstractFormCommand {
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
 		ctx.setAttribute("statuses", ComboUtils.fromArray(Pilot.STATUS), REQUEST);
 		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);
+		ctx.setAttribute("acarsRest", ComboUtils.fromArray(Pilot.RESTRICT), REQUEST);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -656,7 +657,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			Pilot p = dao.get(ctx.getID());
 			if (p == null) {
 				CommandException ce = new CommandException("Invalid Pilot ID - " + ctx.getID());
-				;
 				ce.setWarning(true);
 				throw ce;
 			}
