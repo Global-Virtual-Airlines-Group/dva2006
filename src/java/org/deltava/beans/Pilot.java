@@ -34,14 +34,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     /**
      * ACARS restriction codes.
      */
-    public static final int ACARS_BLOCK = 2;
+    public static final int ACARS_BLOCK = 3;
+    public static final int ACARS_NOMSGS = 2;
     public static final int ACARS_RESTRICT = 1;
     public static final int ACARS_OK = 0;
     
     /**
      * Valid ACARS restrictions.
      */
-    public static final String[] RESTRICT = {"Unlimited", "Restricted Messaging", "Blocked"};
+    public static final String[] RESTRICT = {"Unlimited Usage", "Restricted Messaging", "Flight Reports Only", "Blocked"};
     
     /**
      * Valid route mapping types.
