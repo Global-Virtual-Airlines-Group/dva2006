@@ -44,11 +44,11 @@ e-mail message, into the space provided below.</td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="32" max="80" value="${!empty addr ? addr : param.email}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="32" max="80" className="req" value="${!empty addr ? addr : param.email}" /></td>
 </tr>
 <tr>
  <td class="label">Validation Code</td>
- <td class="data"><el:text name="code" idx="*" size="24" max="36" value="${!empty code ? code : param.code}" /></td>
+ <td class="data"><el:text name="code" idx="*" size="24" max="36" className="req" value="${!empty code ? code : param.code}" /></td>
 </tr>
 <c:if test="${invalidInfo}">
 <tr>

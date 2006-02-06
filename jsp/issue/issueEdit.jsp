@@ -60,7 +60,7 @@ return true;
 </c:if>
 <tr>
  <td class="label">Issue Title</td>
- <td class="data"><el:text name="subject" className="pri bld" size="64" max="128" idx="2" value="${issue.subject}" /></td>
+ <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="2" value="${issue.subject}" /></td>
 </tr>
 <tr>
  <td class="label">Issue Priority</td>
@@ -90,7 +90,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Issue Description</td>
- <td class="data"><el:textbox name="desc" width="120" height="5" idx="7">${issue.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" width="120" height="5" idx="7" className="req">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
 <tr>

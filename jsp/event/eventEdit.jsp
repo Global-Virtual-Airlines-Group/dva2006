@@ -73,23 +73,23 @@ return true;
 </tr>
 <tr>
  <td class="label">Event Name</td>
- <td class="data"><el:text name="name" idx="*" size="48" max="80" value="${event.name}" /></td>
+ <td class="data"><el:text name="name" className="pri bld req" idx="*" size="48" max="80" value="${event.name}" /></td>
 </tr>
 <tr>
  <td class="label">Online Network</td>
- <td class="data"><el:check type="radio" name="network" idx="*" className="sec bld" options="${networks}" value="${network}" /></td>
+ <td class="data"><el:check type="radio" name="network" idx="*" className="sec bld req" options="${networks}" value="${network}" /></td>
 </tr>
 <tr>
  <td class="label">Event Starts on</td>
- <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" />
- at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" />
+ <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" className="req" />
+ at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label">Event Ends on</td>
- <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" />
- at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" />
+ <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" className="req" />
+ at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
@@ -99,14 +99,14 @@ return true;
 </tr>
 <tr>
  <td class="label">Signups Close at</td>
- <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" />
- at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" />
+ <td class="data"><el:text name="closeDate" idx="*" size="10" max="10" value="${fn:dateFmt(signupDeadline, 'MM/dd/yyyy')}" className="req" />
+ at <el:text name="closeTime" idx="*" size="4" max="5" value="${fn:dateFmt(signupDeadline, 'HH:mm')}" className="req" />
 &nbsp;<el:button ID="CloseCalendarButton" className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].closeDate')" />
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
- <td class="data"><el:textbox name="briefing" idx="*" width="120" height="15">${event.briefing}</el:textbox></td>
+ <td class="data"><el:textbox name="briefing" idx="*" width="120" className="req" height="15">${event.briefing}</el:textbox></td>
 </tr>
 <tr>
  <td class="label" valign="top">Equipment Types</td>
@@ -121,17 +121,17 @@ to a specific set of equipment.</span><br />
 <!-- Initial Flight Route -->
 <tr>
  <td class="label">Departure Airport</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" />&nbsp;
+ <td class="data"><el:combo name="airportD" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;
 <el:text name="adCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Destination Airport</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="" />&nbsp;
+ <td class="data"><el:combo name="airportA" idx="*" size="1" options="${airports}" firstEntry="" className="req" />&nbsp;
 <el:text name="aaCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Flight Routing</td>
- <td class="data"><el:text name="route" idx="*" size="110" max="255" value="" /></td>
+ <td class="data"><el:text name="route" idx="*" size="110" max="255" value="" className="req" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty event}">

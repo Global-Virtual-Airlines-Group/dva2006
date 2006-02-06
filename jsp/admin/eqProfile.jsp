@@ -60,15 +60,15 @@ return true;
 <!-- Equipment Profile Data -->
 <tr>
  <td class="label">Program Name</td>
- <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="" options="${allEQ}" value="${eqType.name}" /></td>
+ <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="< NAME >" className="req" options="${allEQ}" value="${eqType.name}" /></td>
 </tr>
 <tr>
  <td class="label">Chief Pilot</td>
- <td class="data"><el:combo name="cp" size="1" idx="*" firstEntry="" options="${chiefPilots}" value="${eqType.CPID}" /></td>
+ <td class="data"><el:combo name="cp" size="1" idx="*" firstEntry="" className="req" options="${chiefPilots}" value="${eqType.CPID}" /></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
- <td class="data"><el:text name="stage" size="1" max="1" idx="*" value="${empty eqType ? 1 : eqType.stage}" /></td>
+ <td class="data"><el:text name="stage" size="1" max="1" idx="*" value="${empty eqType ? 1 : eqType.stage}" className="req" /></td>
 </tr>
 <tr>
  <td class="label">Available Ranks</td>
@@ -76,7 +76,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Primary Ratings</td>
- <td class="data"><el:check name="pRatings" cols="9" width="85" className="small" separator="<div style=\"clear:both;\" />" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="pRatings" cols="9" width="85" className="small req" separator="<div style=\"clear:both;\" />" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Secondary Ratings</td>
@@ -88,7 +88,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Legs for Promotion</td>
- <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" value="${empty captLegs ? 10 : captLegs}" /></td>
+ <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty captLegs ? 10 : captLegs}" /></td>
 </tr>
 <tr>
  <td class="label">Captain's Examination</td>

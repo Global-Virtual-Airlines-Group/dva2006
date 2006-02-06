@@ -42,15 +42,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Airport Name</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld" size="24" max="36" value="${airport.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="24" max="36" value="${airport.name}" /></td>
 </tr>
 <tr>
  <td class="label">IATA Code</td>
- <td class="data"><el:text name="iata" idx="*" className="bld" size="2" max="3" value="${airport.IATA}" /></td>
+ <td class="data"><el:text name="iata" idx="*" className="bld req" size="2" max="3" value="${airport.IATA}" /></td>
 </tr>
 <tr>
  <td class="label">ICAO Code</td>
- <td class="data"><el:text name="icao" idx="*" size="4" max="4" value="${airport.ICAO}" /></td>
+ <td class="data"><el:text name="icao" idx="*" size="4" max="4" className="req" value="${airport.ICAO}" /></td>
 </tr>
 <tr>
  <td class="label">Latitude</td>
@@ -68,7 +68,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" firstEntry="-" value="${airport.TZ}" /></td>
+ <td class="data"><el:combo name="tz" size="1" idx="*" options="${timeZones}" className="req" firstEntry="-" value="${airport.TZ}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Airlines</td>
