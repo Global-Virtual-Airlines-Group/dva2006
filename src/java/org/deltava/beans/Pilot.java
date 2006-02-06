@@ -16,6 +16,9 @@ import org.deltava.util.cache.Cacheable;
 
 public class Pilot extends Person implements Cacheable, ComboAlias {
     
+	/**
+	 * Pilot status codes.
+	 */
     public static final int ACTIVE = 0;
     public static final int INACTIVE = 1;
     public static final int RETIRED = 2;
@@ -27,6 +30,18 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      * Valid pilot statuses.
      */
     public static final String[] STATUS = {"Active", "Inactive", "Retired", "Transferred", "Suspended", "On Leave"};
+    
+    /**
+     * ACARS restriction codes.
+     */
+    public static final int ACARS_BLOCK = 2;
+    public static final int ACARS_RESTRICT = 1;
+    public static final int ACARS_OK = 0;
+    
+    /**
+     * Valid ACARS restrictions.
+     */
+    public static final String[] RESTRICT = {"Unlimited", "Restricted Messaging", "Blocked"};
     
     /**
      * Valid route mapping types.
@@ -60,7 +75,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     private boolean _showDefaultSignature;
     private boolean _noExams;
     private boolean _noVoice;
-    private boolean _noACARS;
+    
+    private int _ACARSRestrict;
     
     private int _mapType;
 
@@ -140,12 +156,23 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     }
     
     /**
-     * Returns wether the Pilot has been locked out of the ACARS server.
-     * @return TRUE if the Pilot has been locked out of the ACARS server, otherwise FALSE
-     * @see Pilot#setNoACARS(boolean)
+     * Returns the Pilot's ACARS restrictions.
+     * @return an ACARS restriction code
+     * @see Pilot#getACARSRestrictionName()
+     * @see Pilot#setACARSRestriction(int)
      */
-    public boolean getNoACARS() {
-    	return _noACARS;
+    public int getACARSRestriction() {
+    	return _ACARSRestrict;
+    }
+    
+    /**
+     * Returns the Pilot's ACARS restriction name.
+     * @return an ACARS restriction name
+     * @see Pilot#getACARSRestriction()
+     * @see Pilot#setACARSRestriction(int)
+     */
+    public String getACARSRestrictionName() {
+    	return RESTRICT[_ACARSRestrict]; 
     }
     
     /**
@@ -349,11 +376,16 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     
     /**
      * Updates wether the Pilot is locked out of the ACARS server.
-     * @param noACARS TRUE if the Pilot cannot access the ACARS server, otherwise FALSE
-     * @see Pilot#getNoACARS()
+     * @param code a valid ACARS restriction code
+     * @throws IllegalArgumentException if code is negative or invalid
+     * @see Pilot#getACARSRestriction()
+     * @see Pilot#getACARSRestrictionName()
      */
-    public void setNoACARS(boolean noACARS) {
-    	_noACARS = noACARS;
+    public void setACARSRestriction(int code) {
+    	if ((code < 0) || (code >= RESTRICT.length))
+    		throw new IllegalArgumentException("Invalid ACARS Restriction code - " + code);
+    	
+    	_ACARSRestrict = code;
     }
     
     /**

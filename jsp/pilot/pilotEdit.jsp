@@ -21,6 +21,8 @@ var hasSignature = ${pilot.hasSignature};
 function validate(form)
 {
 if (!checkSubmit()) return false;
+if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
+if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
 if (!validateEMail(form.email, 'E-Mail Address')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
@@ -100,17 +102,20 @@ return true;
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label">First / Last Name</td>
- <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${pilot.lastName}" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label" valign="top">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /><br />
-<el:box name="noACARS" idx="*" value="true" checked="${pilot.noACARS}" label="Disable ACARS access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /></td>
+</tr>
+<tr>
+ <td class="label">ACARS Capabilities</td>
+ <td colspan="${cspan}" class="data"><el:combo name="ACARSrestrict" size="1" idx="*" options="${acarsRest}" value="${pilot.ACARSRestrictionName}" /></td>
 </c:if>  
 <c:if test="${!access.canChangeStatus}">
  <td colspan="${cspan}" class="data sec bld">${status}</td>
@@ -180,7 +185,7 @@ return true;
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td colspan="${cspan}" class="data"><el:text name="email" value="${pilot.email}" idx="*" size="48" max="64" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="email" value="${pilot.email}" idx="*" size="48" max="64" className="req" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">E-Mail Notifications</td>
@@ -221,16 +226,16 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Time Zone</td>
- <td colspan="${cspan}" class="data"><el:combo name="tz" size="1" options="${timeZones}" value="${pilot.TZ}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="tz" size="1" options="${timeZones}" className="req" value="${pilot.TZ}" /></td>
 </tr>
 <tr>
  <td class="label">Date/Time Format</td>
- <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}" size="15" max="25" />
- <el:text name="tf" value="${pilot.timeFormat}" size="9" max="9" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}" className="req" size="15" max="25" />
+ <el:text name="tf" value="${pilot.timeFormat}" className="req" size="9" max="9" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
- <td colspan="${cspan}" class="data"><el:text name="nf" value="${pilot.numberFormat}" size="12" max="15" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="nf" value="${pilot.numberFormat}" className="req" size="12" max="15" /></td>
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
