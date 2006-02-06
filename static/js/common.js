@@ -95,46 +95,15 @@ function validateEMail(text, title)
 if ((!text) || (text.disabled)) return true;
 
 // Get the value
-var str = text.value;
-if (str.length < 5) {
+if (text.value.length < 5) {
 	alert('Please provide a ' + title + '.');
 	text.focus();
 	return false;
 }
 
-var lat = str.indexOf('@');
-var ldot = str.indexOf('.');
-if (lat == - 1){
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
-
-if ((str.indexOf('.') < 1) || (str.indexOf('.') == str.length)) {
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
-
-if (str.indexOf('@', (lat+1)) != -1) {
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
-
-if ((str.substring(lat-1, lat) == '.') || (str.substring(lat+1, lat+2) == '.')) {
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
-
-if (str.indexOf('.', (lat+2)) == -1) {
-	alert('Please provide a valid ' + title + '.');
-	text.focus();
-	return false;
-}
-		
-if (str.indexOf(" ") != -1){
+// Test using regexp
+var pattern = /^[\w](([_\.\-\+]?[\w]+)*)@([\w]+)(([\.-]?[\w]+)*)\.([A-Za-z]{2,})$/;
+if (!pattern.test(text.value)) {
 	alert('Please provide a valid ' + title + '.');
 	text.focus();
 	return false;
