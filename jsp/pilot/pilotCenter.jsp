@@ -180,14 +180,35 @@ Installer log entries.</td>
 </tr>
 </content:filter>
 
+<!-- Flight Schedule Section -->
+<tr class="title caps">
+ <td colspan="2"><content:airline /> FLIGHT SCHEDULE</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="findflight">Find A Flight</el:cmd></td>
+ <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time,
+  Aircraft Type and Flight Length, and pick a flight at random!</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="browse">Browse Schedule</el:cmd></td>
+ <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains 
+<fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
+</tr>
+
 <!-- Flight Planning Section -->
 <tr class="title caps">
  <td colspan="2">FLIGHT PLANNING RESOURCES</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="routes" op="domestic">Preferred Routes</el:cmd></td>
- <td class="data">We've obtained over 12,900 preferred flight routes from the Federal Aviation 
- Administration, providing mulitple routes from almost 100 airports in the United States and Canada.</td>
+ <td class="mid"><el:cmd className="bld" url="routeplot">Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, 
+including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
+ <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
+ 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
+ can have our automated system randomly assign flights for you to fly.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="pri bld" url="charts" linkID="${pilot.homeAirport}">Approach Charts</el:cmd></td>
@@ -195,13 +216,19 @@ Installer log entries.</td>
  Delta Virtual Airlines, Continental and Northwest Airlines.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
- <td class="data">Our servers automatically download North Atlantic Track information every day.</td>
-</tr>
-<tr>
  <td class="mid bld">Navigation Aids</td>
  <td class="data">You can search for a particular Airport, VOR, NDB or Intersection.
 <el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="routes" op="domestic">Preferred Routes</el:cmd></td>
+ <td class="data">We've obtained over 12,900 preferred flight routes from the Federal Aviation 
+ Administration, providing mulitple routes from almost 100 airports in the United States and Canada. 
+<i>NOTE: These are for flight planning purposes only, and is NOT a schedule.</i></td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
+ <td class="data">Our servers automatically download North Atlantic Track information every day.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
@@ -218,27 +245,6 @@ Installer log entries.</td>
 <el:button ID="METARButton" onClick="javascript:void showNAV()" type="button" className="BUTTON" label="GO" /><br />
 <span class="small sec">(Please note that these are external sites not affiliated with Delta
  Virtual Airlines. We make no representations as to the content and/or availability of these resources.)</span></td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="findflight">Find A Flight</el:cmd></td>
- <td class="data">If you're looking for a flight at random, you can select an Airport, Departure Time,
-  Aircraft Type and Flight Length, and pick a flight at random!</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="browse">Browse Schedule</el:cmd></td>
- <td class="data">You are able to browse the <content:airline /> Flight Schedule, which contains 
-<fmt:int value="${scheduleSize}" /> flight legs to a variety of different destinations.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="routeplot">Route Plotter</el:cmd></td>
- <td class="data">You can use our Google Maps tool to visually display a flight route between two airports, 
-including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
- <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
- 'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
- can have our automated system randomly assign flights for you to fly.</td>
 </tr>
 
 <!-- Testing Section -->

@@ -41,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Search String</td>
- <td class="data"><el:text name="searchStr" idx="*" size="24" max="48" value="${param.searchStr}" /></td>
+ <td class="data"><el:text name="searchStr" idx="*" size="24" max="48" className="req" value="${param.searchStr}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Results</td>

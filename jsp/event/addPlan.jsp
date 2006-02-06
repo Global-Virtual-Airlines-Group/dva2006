@@ -41,11 +41,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" className="req" /></td>
 </tr>
 <tr>
  <td class="label">Flight Plan File</td>
- <td class="data"><el:file name="planFile" className="small" idx="*" size="80" max="144" /></td>
+ <td class="data"><el:file name="planFile" className="small req" idx="*" size="80" max="144" /></td>
 </tr>
 </el:table>
 

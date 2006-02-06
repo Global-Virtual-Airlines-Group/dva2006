@@ -69,7 +69,7 @@ return true;
 <c:if test="${access.canScore}">
 <tr>
  <td class="label">Check Ride Status</td>
- <td class="data"><el:check type="radio" name="passFail" idx="*" options="${passFail}" value="${score}" /></td>
+ <td class="data"><el:check type="radio" name="passFail" className="req" idx="*" options="${passFail}" value="${score}" /></td>
 </tr>
 </c:if>
 <tr>

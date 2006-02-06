@@ -42,15 +42,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Aircraft Type</td>
- <td class="data"><el:combo name="eqType" idx="*" size="1" options="${actypes}" firstEntry="-" value="${script.equipmentType}" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" className="req" options="${actypes}" firstEntry="-" value="${script.equipmentType}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
- <td class="data"><el:combo name="programType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${script.program}" /></td>
+ <td class="data"><el:combo name="programType" idx="*" size="1" className="req" options="${eqTypes}" firstEntry="-" value="${script.program}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Script Text</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="120" height="10">${script.description}</el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="120" height="10" className="req">${script.description}</el:textbox></td>
 </tr>
 </el:table>
 

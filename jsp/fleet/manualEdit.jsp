@@ -58,15 +58,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Document Title</td>
- <td class="data"><el:text name="title" className="pri bld" idx="*" size="48" max="80" value="${entry.name}" /></td>
+ <td class="data"><el:text name="title" className="pri bld req" idx="*" size="48" max="80" value="${entry.name}" /></td>
 </tr>
 <tr>
  <td class="label">Version Number</td>
- <td class="data"><el:text name="version" idx="*" size="1" max="2" value="${entry.version}" /></td>
+ <td class="data"><el:text name="version" idx="*" size="1" max="2" className="req" value="${entry.version}" /></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="3">${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="120" height="3" className="req">${entry.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
@@ -89,7 +89,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Update File</td>
- <td class="data"><el:file name="file" className="small" size="96" max="192" /></td>
+ <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

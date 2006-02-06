@@ -38,7 +38,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Upload Data File</td>
- <td class="data"><el:file name="csvData" idx="*" className="small" size="80" max="144" /></td>
+ <td class="data"><el:file name="csvData" idx="*" className="small req" size="80" max="144" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

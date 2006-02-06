@@ -124,7 +124,7 @@ ${navaid.frequency}</span></c:if></td>
 </tr>
 <tr>
  <td class="label">Navigation Aid Code</td>
- <td class="data"><el:text name="navaidCode" idx="*" size="5" max="5" value="${param.navaidCode}" /></td>
+ <td class="data"><el:text name="navaidCode" className="pri bld req" idx="*" size="6" max="5" value="${param.navaidCode}" /></td>
 </tr>
 </el:table>
 

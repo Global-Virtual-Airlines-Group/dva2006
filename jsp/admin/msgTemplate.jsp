@@ -56,16 +56,16 @@ return true;
  <td class="data pri bld">${template.name}</td>
 </c:if>
 <c:if test="${empty template}">
- <td class="data"><el:text name="name" className="pri bld" idx="*" size="20" max="32" value="${template.name}" /></td>
+ <td class="data"><el:text name="name" className="pri bld req" idx="*" size="20" max="32" value="${template.name}" /></td>
 </c:if>
 </tr>
 <tr>
  <td class="label">E-Mail Subject</td>
- <td class="data"><el:text name="subject" idx="*" size="48" max="64" value="${template.subject}" /></td>
+ <td class="data"><el:text name="subject" idx="*" size="48" max="64" className="req" value="${template.subject}" /></td>
 </tr>
 <tr>
  <td class="label">Template Description</td>
- <td class="data"><el:text name="desc" idx="*" size="64" max="128" value="${template.description}" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="64" max="128" className="req" value="${template.description}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
@@ -73,7 +73,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Template Text</td>
- <td class="data"><el:textbox name="body" idx="*" width="120" height="10">${template.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" idx="*" width="120" className="req" height="10">${template.body}</el:textbox></td>
 </tr>
 </el:table>
 

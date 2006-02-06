@@ -123,32 +123,32 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this)" firstEntry="< AIRLINE >" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this)" className="req" firstEntry="< AIRLINE >" /></td>
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
- <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" value="${pirep.flightNumber}" />
- <el:text name="flightLeg" idx="*" size="1" max="1" value="${pirep.leg}" /></td>
+ <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" className="req" value="${pirep.flightNumber}" />
+ <el:text name="flightLeg" idx="*" size="1" max="1" className="req" value="${pirep.leg}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" firstEntry="< EQUIPMENT >" /></td>
+ <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="< EQUIPMENT >" /></td>
 </tr>
 <tr>
  <td class="label">Departed from</td>
- <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Arrived at</td>
- <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
+ <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Flown on</td>
- <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" onChange="setDaysInMonth(this)" />
- <el:combo name="dateD" idx="*" size="1" options="${emptyList}" />&nbsp;
- <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" options="${years}" /></td>
+ <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" className="req" onChange="setDaysInMonth(this)" />
+ <el:combo name="dateD" idx="*" size="1" className="req" options="${emptyList}" />&nbsp;
+ <el:combo name="dateY" idx="*" size="1" value="${pirep.date.year + 1900}" className="req" options="${years}" /></td>
 </tr>
 <tr>
  <td class="label">Online Flight</td>
@@ -162,7 +162,7 @@ return true;
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 100) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><el:combo name="flightTime" idx="*" size="1" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
+ <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
 <el:text name="tmpHours" size="1" max="2" value="${tmpH}" /> hours, <el:text name="tmpMinutes" size="1" max="2" value="${tmpM}" /> minutes&nbsp;
 <el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>

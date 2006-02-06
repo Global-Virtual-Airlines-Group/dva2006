@@ -48,16 +48,16 @@ interest in <content:airline />!</td>
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="firstName" className="pri bld" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
-<el:text name="lastName" className="pri bld" idx="*" size="18" max="32" value="${param.lastName}" /></td>
+ <td class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${param.firstName}" />&nbsp;
+<el:text name="lastName" className="pri bld req" idx="*" size="18" max="32" value="${param.lastName}" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="48" max="64" value="${param.email}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="48" max="64" className="req" value="${param.email}" /></td>
 </tr>
 <tr>
  <td class="label">Other Information</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="150" height="7"></el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="150" className="req" height="7"></el:textbox></td>
 </tr>
 </el:table>
 

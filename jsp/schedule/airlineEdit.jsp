@@ -39,11 +39,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:text name="name" idx="*" className="pri bld" size="24" max="32" value="${airline.name}" /></td>
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="24" max="32" value="${airline.name}" /></td>
 </tr>
 <tr>
  <td class="label">Airline Code</td>
- <td class="data"><el:text name="code" idx="*" className="bld" size="3" max="3" value="${airline.code}" /></td>
+ <td class="data"><el:text name="code" idx="*" className="bld req" size="3" max="3" value="${airline.code}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

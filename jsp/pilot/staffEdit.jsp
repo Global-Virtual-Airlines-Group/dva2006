@@ -8,7 +8,7 @@
 <tr>
  <td class="label">Title</td>
  <c:if test="${access.canChangeRoles}">
- <td colspan="${cspan}" class="data"><el:text className="bld" name="staffTitle" value="${staff.title}" size="48" max="64" /></td>
+ <td colspan="${cspan}" class="data"><el:text className="bld req" name="staffTitle" value="${staff.title}" size="48" max="64" /></td>
  </c:if>
  <c:if test="${!access.canChangeRoles}">
  <td colspan="${cspan}" class="data bld">${staff.title}</td>
@@ -16,12 +16,12 @@
 </tr>
 <tr>
  <td class="label" valign="top">Biographical Profile</td>
- <td colspan="${cspan}" class="data"><el:textbox name="staffBody" height="4" width="100">${staff.body}</el:textbox></td>
+ <td colspan="${cspan}" class="data"><el:textbox name="staffBody" height="4" width="100" className="req">${staff.body}</el:textbox></td>
 </tr>
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label">Sort Order</td>
- <td colspan="${cspan}" class="data"><el:text name="staffSort" value="${staff.sortOrder}" size="1" max="1" />
+ <td colspan="${cspan}" class="data"><el:text name="staffSort" value="${staff.sortOrder}" className="req" size="1" max="1" />
  <span class="small"><input type="checkbox" name="removeStaff" value="1" />Remove Staff Profile</span></td>
 </tr>
 </c:if>

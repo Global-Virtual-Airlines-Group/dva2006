@@ -42,8 +42,8 @@ return true;
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
- <td class="data"><el:text name="fName" idx="1" size="10" max="16" />
- <el:text name="lName" idx="2" size="16" max="14" /></td>
+ <td class="data"><el:text name="fName" idx="1" size="10" max="16" className="req" />
+ <el:text name="lName" idx="2" size="16" max="14" className="req" /></td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
