@@ -856,6 +856,12 @@
 		<roles>HR,PIREP</roles>
 	</command>
 
+	<command id="txreqdelete">
+		<name>Delete Transfer Request</name>
+		<class>org.deltava.commands.admin.TransferDeleteCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="txairline">
 		<name>Transfer Airline</name>
 		<class>org.deltava.commands.pilot.TransferAirlineCommand</class>

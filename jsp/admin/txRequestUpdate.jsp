@@ -59,7 +59,13 @@ has been rejected. An e-mail message has been sent to ${pilot.name} informing of
 ${pilot.name}'s pending Check Ride has been deleted.<br />
 </c:if>
 </c:if>
-<c:if test="${isApprove || isReject}">
+<c:if test="${isDelete}">
+<div class="updateHdr">Equipment Program Transfer Deleted</div>
+<br />
+${pilot.name}'s equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program 
+has been deleted.<c:if test="${checkRideDelete}"> ${pilot.name}'s pending Check Ride has been deleted.</c:if><br />
+</c:if>
+<c:if test="${isApprove || isReject || isDelete}">
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests">click here</el:cmd>.<br />
 </c:if>
