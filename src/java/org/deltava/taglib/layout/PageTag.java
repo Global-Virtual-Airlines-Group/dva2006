@@ -55,7 +55,7 @@ public class PageTag extends BrowserDetectingTag {
 
 		// Render a table for IE
 		try {
-			pageContext.getOut().print("<table class=\"ieLayout\" width=\"100%\" cellspacing=\"0\" cellpadding=\"0\">");
+			pageContext.getOut().print("<table id=\"ieLayout\" cellspacing=\"0\" cellpadding=\"0\"><tbody>");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}
@@ -77,7 +77,7 @@ public class PageTag extends BrowserDetectingTag {
 				if (_rowOpen)
 					out.print("</tr>");
 				
-				out.print("</table>");
+				out.print("</tbody></table>");
 			} catch (Exception e) {
 				throw new JspException(e);
 			}

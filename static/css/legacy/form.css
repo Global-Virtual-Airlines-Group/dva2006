@@ -75,11 +75,7 @@ INPUT.radio, INPUT.check {
 }
 
 INPUT.req, TEXTAREA.req {
-	border: 1px solid #E00404;
 	background: #FFF8FA;
-}
-
-SELECT.req {
 	border: 1px solid #E00404;
 }
 
