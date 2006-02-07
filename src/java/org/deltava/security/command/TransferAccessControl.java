@@ -21,6 +21,7 @@ public class TransferAccessControl extends AccessControl {
    private boolean _canAssignRide;
    private boolean _canApprove;
    private boolean _canReject;
+   private boolean _canDelete;
    
    /**
     * Initialize the Access Controller.
@@ -60,6 +61,7 @@ public class TransferAccessControl extends AccessControl {
       _canApprove = (_treq.getStatus() == TransferRequest.OK) && hrPIREP;
       _canAssignRide = (_treq.getStatus() == TransferRequest.PENDING) && hrExam && (_checkRide == null);
       _canReject = hrPIREP || hrExam;
+      _canDelete = _ctx.isUserInRole("Admin");
    }
 
    /**
@@ -72,7 +74,7 @@ public class TransferAccessControl extends AccessControl {
    
    /**
     * Returns if this Transfer Request can be canceled and deleted.
-    * @return TRUE if the Request can be deleted, otherwise FALSE
+    * @return TRUE if the Request can be rejected, otherwise FALSE
     */
    public boolean getCanReject() {
       return _canReject;
@@ -84,5 +86,13 @@ public class TransferAccessControl extends AccessControl {
     */
    public boolean getCanAssignRide() {
       return _canAssignRide;
+   }
+   
+   /**
+    * Returns if the Transfer Request can be deleted without cancellation.
+    * @return TRUE if the Request can be deleted, otherwise FALSE
+    */
+   public boolean getCanDelete() {
+	   return _canDelete;
    }
 }

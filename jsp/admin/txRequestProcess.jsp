@@ -26,6 +26,7 @@ disableButton('ProfileButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
 disableButton('RejectButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>
@@ -146,6 +147,9 @@ return true;
 </c:if>
 <c:if test="${access.canReject}">
 <el:cmdbutton ID="RejectButton" url="txreqreject" linkID="0x${txReq.ID}" label="REJECT TRANSFER" />
+</c:if>
+<c:if test="${access.canDelete}">
+<el:cmdbutton ID="DeleteButton" url="txreqdelete" linkID="0x${txReq.ID}" label="DELETE TRANSFER" />
 </c:if>
  </td>
 </tr>
