@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -80,8 +80,8 @@ public class TransferRejectCommand extends AbstractCommand {
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
 			swdao.write(upd);
 			
-			// If the Check Ride has not been scored, delete it
-			if ((cr != null) && (cr.getStatus() != Test.SCORED)) {
+			// If the Check Ride has not been scored or submitted, delete it
+			if ((cr != null) && (cr.getStatus() == Test.NEW)) {
 			   SetExam exwdao = new SetExam(con);
 			   exwdao.delete(cr);
 			   
