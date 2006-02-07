@@ -34,15 +34,36 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns a PIREP with a particular database ID.
 	 * @param id the database ID
-	 * @return the Flight Report, nor null if not found
+	 * @return the Flight Report, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FlightReport get(int id) throws DAOException {
+		return get(id, SystemData.get("airline.db"));
+	}
+	
+	/**
+	 * Returns a PIREP with a particular database ID.
+	 * @param id the database ID
+	 * @param dbName the database Name
+	 * @return the Flight Report, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public FlightReport get(int id, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
+		
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 
 			// Execute the query, if nothing returned then give back null
@@ -322,7 +343,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns Draft Flight Reports for a particular Pilot (with optional city pair).
 	 * @param pilotID the Pilot's Database ID
@@ -332,7 +353,7 @@ public class GetFlightReports extends DAO {
 	 * @return a List of Draft FlightReports matching the above criteria
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
 
 		// Build the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
