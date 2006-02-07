@@ -1,4 +1,14 @@
-/* Main Cascading Style Sheet (C) 2005 Global Virtual Airline Group. */
+/* Main Cascading Style Sheet (C) 2005, 2006 Global Virtual Airlines Group. */
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the main IE formatting table */
+
+TABLE#ieLayout {
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	left: 0px;
+}
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the top header image section */
@@ -187,4 +197,11 @@ a:hover {
 
 .visible {
 	visibility: visible;
+}
+
+/* This is an IE-only hack for required SELECT elements */
+SELECT.req {
+	background: #FFF8FA;
+	border: 1px solid #E00404;
+	color: #9F0303;
 }
