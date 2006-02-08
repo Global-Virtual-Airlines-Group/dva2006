@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -66,9 +66,9 @@ public class SetStatusUpdate extends DAO {
 	 * @param updates a Collection of StatusUpdates
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Collection updates) throws DAOException {
-		for (Iterator i = updates.iterator(); i.hasNext();) {
-			StatusUpdate upd = (StatusUpdate) i.next();
+	public void write(Collection<StatusUpdate> updates) throws DAOException {
+		for (Iterator<StatusUpdate> i = updates.iterator(); i.hasNext();) {
+			StatusUpdate upd = i.next();
 			write(SystemData.get("airline.db"), upd);
 		}
 	}
