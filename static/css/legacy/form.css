@@ -79,6 +79,10 @@ INPUT.req, TEXTAREA.req {
 	border: 1px solid #E00404;
 }
 
+SELECT.req {
+	border: 1px solid #E00404;
+}
+
 *.label :link, *.label :visited {
 	font-size: 9pt;	
 	font-family: Tahoma, Verdana;
