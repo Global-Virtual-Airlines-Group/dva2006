@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 	/**
-	 * Executes the command.
+	 * Executes the command
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
 	 */
@@ -67,9 +67,14 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			GetFlightReports frdao = new GetFlightReports(con);
-			List results = frdao.getByPilot(p.getID(), "DATE DESC");
-			if (results.size() > 0)
-				ctx.setAttribute("lastFlight", results.get(0), REQUEST);
+			List<FlightReport> results = frdao.getByPilot(p.getID(), "DATE DESC");
+			for (Iterator<FlightReport> i = results.iterator(); i.hasNext(); ) {
+				FlightReport fr = i.next();
+				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
+					ctx.setAttribute("lastFlight", results.get(0), REQUEST);
+					break;
+				}
+			}
 
 			// Get online hours
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
