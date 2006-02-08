@@ -18,6 +18,7 @@
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="db" name="airline.db" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -88,6 +89,13 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 The e-mail address for ${pilot.name} has been changed to ${addrValid.address}. <span class="warn bld">This change 
 will not take effect until the address has been validated.</span> To validate the new e-mail 
 address, <el:cmd url="emailupd" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
+<c:if test="${isBlocked}">
+<!-- User Suspended -->
+<br />
+The user account for ${pilot.name} has been suspended.<c:if test="${acarsEnabled}"> Please note that 
+if this user is currently logged into the ACARS server, you will need terminate the connection using 
+an ACARS client.</c:if><br />
 </c:if>
 <br />
 To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">Click Here</el:cmd>.<br />

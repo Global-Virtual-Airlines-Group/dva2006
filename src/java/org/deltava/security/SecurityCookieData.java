@@ -1,9 +1,10 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.Map;
 
 /**
- * Insert description here
+ * A bean containing data stored in the security cookie.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -31,26 +32,42 @@ public class SecurityCookieData {
         setExpiryDate(System.currentTimeMillis() + SecurityCookieData.DEFAULT_EXPIRY);
     }
     
-    public SecurityCookieData(Map cookieData) {
-        this((String) cookieData.get("uid"));
-        _remoteAddr = (String) cookieData.get("addr");
+    /**
+     * Creates a new security cookie data bean.
+     * @param cookieData a map of parameters
+     */
+    public SecurityCookieData(Map<String, String> cookieData) {
+        this(cookieData.get("uid"));
+        _remoteAddr = cookieData.get("addr");
     }
     
+    /**
+     * Returns the expiration date of the cookie.
+     * @return the expiration date as a 64-bit Unix timestamp
+     */
     public long getExpiryDate() {
         return _expiryDate;
     }
     
+    /**
+     * Returns the user's screen width.
+     * @return the width in pixels
+     */
     public int getScreenX() {
        return _screenX;
     }
     
+    /**
+     * Returns the user's screen height.
+     * @return the height in pixels
+     */
     public int getScreenY() {
        return _screenY;
     }
     
  	/**
  	 * Retrieves the user ID from this security cookie.
- 	 * @return the JNDI DN of the user
+ 	 * @return the Directory Name of the user
  	 */
  	public String getUserID() {
  		return _userID;
@@ -65,7 +82,8 @@ public class SecurityCookieData {
  		return _pwd;
  	}
 
-	 /** The IP Address of the user.
+	 /**
+	  * Returns the remote address of the user.
 	 * @return the IP address
 	 */
 	public String getRemoteAddr() {
