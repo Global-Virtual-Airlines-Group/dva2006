@@ -16,7 +16,7 @@
 <script language="JavaScript type="text/javascript">
 function validate(form)
 {
-<c:if test="${!access.canApprove}">return false;</c:if>
+<c:if test="${access.canApprove}">
 if (!checkSubmit()) return false;
 if (!validateCombo(form.eqType, 'Equipment Program')) return false;
 if (!validateCombo(form.rank, 'Rank')) return false;
@@ -27,7 +27,8 @@ disableButton('HireButton');
 disableButton('RejectButton');
 disableButton('QuestionnaireButton');
 disableButton('ResendButton');
-return true;
+</c:if>
+return ${access.canApprove};
 }
 </script>
 </head>
@@ -178,14 +179,21 @@ return true;
 </tr>
 <tr>
  <td class="label">Registered from</td>
- <td class="data">${applicant.registerHostName}</td>
+ <td class="data">${applicant.registerAddress} (${applicant.registerHostName})</td>
 </tr>
+<c:if test="${!empty applicant.comments}">
+<tr>
+ <td class="label" valign="top">Comments</td>
+ <td class="data"><fmt:msg value="${applicant.comments}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Google Search</td>
  <td class="data"><a rel="external" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
 do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
 <c:if test="${!empty soundexUsers}"><%@ include file="/jsp/register/appSoundexMatch.jsp" %></c:if>
+<c:if test="${!empty netmaskUsers}"><%@ include file="/jsp/register/appNetmaskMatch.jsp" %></c:if>
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->
 <tr class="title">
