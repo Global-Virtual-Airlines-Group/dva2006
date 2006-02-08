@@ -171,6 +171,9 @@ Applicant profile for ${pilot.name}.</td>
 <content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
 </content:filter>
+<c:if test="${access.canSuspend}">
+ <el:cmdbutton url="suspend" linkID="0x${pilot.ID}" label="SUSPEND" />
+</c:if>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
 </content:filter>

@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -6,7 +7,7 @@ import java.io.Serializable;
 import org.deltava.beans.*;
 
 /**
- * A singleton class for tracking connected users.
+ * A singleton class for tracking connected and blocked users.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -15,6 +16,7 @@ import org.deltava.beans.*;
 public class UserPool implements Serializable {
 
 	private static Map<Object, UserSessionWrapper> _users = new TreeMap<Object, UserSessionWrapper>();
+	private static Collection<Integer> _blockedUsers = new HashSet<Integer>();
 
 	// We're a singleton, alone and lonely
 	private UserPool() {
@@ -41,29 +43,38 @@ public class UserPool implements Serializable {
 	}
 
 	/**
-	 * Adds a person to the user pool. See the notes for {@link UserPool#removePerson(Person, String)}for an
+	 * Adds a person to the user pool. See the notes for {@link UserPool#remove(Person, String)} for an
 	 * explanation of why we add the session ID.
 	 * @param p the Person to add
 	 * @param sessionID the session ID
-	 * @see UserPool#removePerson(Person, String)
+	 * @see UserPool#remove(Person, String)
 	 */
-	public synchronized static void addPerson(Person p, String sessionID) {
-		if (p != null) {
+	public synchronized static void add(Person p, String sessionID) {
+		if ((p != null) && (!isBlocked(p))) {
 			UserSessionWrapper uw = new UserSessionWrapper(p, sessionID);
 			_users.put(p.cacheKey(), uw);
 		}
+	}
+	
+	/**
+	 * Locks a user out of the application.
+	 * @param p the user to block
+	 * @see UserPool#isBlocked(Person)
+	 */
+	public synchronized static void block(Person p) {
+		_blockedUsers.add(new Integer(p.getID()));
 	}
 
 	/**
 	 * Removes a person from the user pool, provided that the supplied Session ID matches. This additional check is
 	 * performed because this method is usually called from a session lifecycle handler, and a session for a user may
-	 * timeout after that same user has launched a new session. In such a circumstance, we do <i>not </i> want to remove
-	 * the user from the pool.
+	 * timeout after that same user has launched a new session. In such a circumstance, we do <i>not</i> want to
+	 * remove the user from the pool.
 	 * @param p the Person to remove
 	 * @param sessionID the session ID to match
-	 * @see UserPool#addPerson(Person, String)
+	 * @see UserPool#add(Person, String)
 	 */
-	public synchronized static void removePerson(Person p, String sessionID) {
+	public synchronized static void remove(Person p, String sessionID) {
 
 		// Check if the session ID matches the person we wish to remove
 		UserSessionWrapper uw = _users.get(p.cacheKey());
@@ -73,12 +84,25 @@ public class UserPool implements Serializable {
 
 	/**
 	 * Queries wether a particular user is currently logged in.
-	 * @param id The <i>database ID </i> of the person
+	 * @param userID The <i>database ID </i> of the person
 	 * @return TRUE if the user is logged in, otherwise FALSE
 	 * @see Pilot#getID()
+	 * @see UserPool#isBlocked(Person)
 	 */
-	public synchronized static boolean contains(int id) {
-		return _users.containsKey(new Integer(id));
+	public synchronized static boolean contains(int userID) {
+		return _users.containsKey(new Integer(userID));
+	}
+	
+	/**
+	 * Queries wether a particular user is locked out of the system.
+	 * @param usr the Pilot bean
+	 * @return TRUE if the user is locked out, otherwise FALSE
+	 * @see Pilot#getID()
+	 * @see UserPool#contains(int)
+	 * @see UserPool#block(Person)
+	 */
+	public synchronized static boolean isBlocked(Person usr) {
+		return (usr != null) ? _blockedUsers.contains(new Integer(usr.getID())) : false;
 	}
 
 	/**
@@ -122,8 +146,8 @@ public class UserPool implements Serializable {
 	 */
 	public static Collection<String> getUserNames() {
 		Set<String> result = new TreeSet<String>();
-		for (Iterator i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = (UserSessionWrapper) i.next();
+		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
+			UserSessionWrapper uw = i.next();
 			result.add(uw.getPerson().getName());
 		}
 
@@ -131,10 +155,11 @@ public class UserPool implements Serializable {
 	}
 
 	/**
-	 * Clears the user pool.
+	 * Clears the user pool and blocked user list.
 	 */
 	public synchronized static void clear() {
 		_users.clear();
+		_blockedUsers.clear();
 	}
 
 	/**

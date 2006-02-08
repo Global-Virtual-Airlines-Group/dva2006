@@ -29,6 +29,7 @@ public final class PilotAccessControl extends AccessControl {
 	private boolean _canChangeStaffProfile;
 	private boolean _canChangeMailProfile;
 	private boolean _canTransfer;
+	private boolean _canSuspend;
 	private boolean _canActivate;
 
 	/**
@@ -68,8 +69,10 @@ public final class PilotAccessControl extends AccessControl {
 		_canChangeStatus = isHR;
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
 		_canChangeRoles = _ctx.isUserInRole("Admin");
-		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED));
-		_canTransfer = _ctx.isUserInRole("HR") && (status != Pilot.TRANSFERRED);
+		_canTransfer = _canChangeStatus && (status != Pilot.TRANSFERRED);
+		_canSuspend = _canChangeStatus && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE)); 
+		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || 
+				(status == Pilot.SUSPENDED));
 
 		// Check if there is a staff profile in the request
 		Object sProfile = _ctx.getRequest().getAttribute("staff");
@@ -119,6 +122,14 @@ public final class PilotAccessControl extends AccessControl {
 	 */
 	public boolean getCanChangeStatus() {
 		return _canChangeStatus;
+	}
+	
+	/**
+	 * Returns if the Pilot can be suspended/blocked.
+	 * @return TRUE if the Pilot can be blocked, otherwise FALSE
+	 */
+	public boolean getCanSuspend() {
+		return _canSuspend;
 	}
 	
 	/**
