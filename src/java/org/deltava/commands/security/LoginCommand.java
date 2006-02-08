@@ -136,7 +136,7 @@ public class LoginCommand extends AbstractCommand {
 			}
 
 			// Add the user to the User pool
-			UserPool.addPerson(p, s.getId());
+			UserPool.add(p, s.getId());
 
 			// Commit the transaction
 			ctx.commitTX();
