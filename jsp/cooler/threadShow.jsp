@@ -114,11 +114,14 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 </c:if>
 
 <!-- Thread Posts -->
+<c:set var="postIdx" value="${0}" scope="request" />
+<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="request" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
+<c:set var="postIdx" value="${postIdx + 1}" scope="request" />
 <tr>
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
@@ -181,7 +184,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  <td class="postDate">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Admin,Moderator">
  from ${msg.remoteAddr} (${msg.remoteHost})
-</content:filter> 
+</content:filter>
+<c:if test="${access.canEdit && (postIdx == postCount)}">
+<span class="right"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:emd></span>
+</c:if>
 </td>
 </tr>
 <tr>
@@ -265,10 +271,10 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->
 <tr class="title caps">
- <td colspan="2">NEW RESPONSE</td>
+ <td colspan="2">${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
 </tr>
 <tr class="mid">
- <td colspan="2"><el:textbox name="msgText" width="125" height="8"></el:textbox></td>
+ <td colspan="2"><el:textbox name="msgText" width="125" height="8">${lastPost.text}</el:textbox></td>
 </tr>
 </c:if>
 
@@ -280,6 +286,7 @@ notification each time a reply is posted in this Thread.
 </tr>
 </c:if>
 </el:table>
+<el:text name="doEdit" type="hidden" value="${doEdit}" />
 </el:form>
 <br />
 <content:copyright />
