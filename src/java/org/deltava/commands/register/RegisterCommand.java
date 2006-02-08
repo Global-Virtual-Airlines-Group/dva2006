@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -84,10 +84,12 @@ public class RegisterCommand extends AbstractCommand {
 		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
+		a.setComments(ctx.getParameter("comments"));
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
-		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? ctx.getRequest().getRemoteAddr() : hostName);
+		a.setRegisterAddress(ctx.getRequest().getRemoteAddr());
+		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? a.getRegisterAddress() : hostName);
 
 		// Parse legacy hours
 		try {

@@ -1,0 +1,15 @@
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<!-- TCP/IP network mask Potential Match list -->
+<tr class="title caps">
+ <td colspan="2"><fmt:int value="${fn:sizeof(soundexUsers)}" /> USERS REGISTERED FROM ${netmaskAddr}</td>
+</tr>
+
+<c:forEach var="person" items="${netmaskUsers}">
+<c:set var="personLoc" value="${userData[person.ID]}" scope="request" />
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:profile location="${personLoc}">${person.name}</el:profile> 
+<a href="mailto:${person.email}" class="small">${person.email}</a>, registered on <fmt:date date="${person.createdOn}" /> 
+from ${person.registerAddress} (${person.registerHostName})</td>
+</tr>
+</c:forEach>

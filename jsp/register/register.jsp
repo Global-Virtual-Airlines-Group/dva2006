@@ -143,6 +143,18 @@ currently registed with this e-mail address.</div></c:if>
  <td class="label">Verification URL</td>
  <td class="data"><el:text name="legacyURL" idx="*" size="64" max="128" value="${param.legacyURL}" /></td>
 </tr>
+
+<!-- Applicant Comments -->
+<tr class="title">
+ <td colspan="2">ADDITIONAL INFORMATION</td>
+</tr>
+<tr>
+ <td class="label" rowspan="2">Comments</td>
+ <td class="data small">Plase provide any comments or additional information that you fell would assist
+in processing your application.</td>
+</tr>
+ <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -67,18 +67,19 @@ public class SetApplicant extends PilotWriteDAO {
 
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
 						+ "VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
-						+ "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, DFORMAT, TFORMAT, NFORMAT, "
-						+ "AIRPORTCODE, TZ, UISCHEME, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-				_ps.setInt(25, a.getID());
+						+ "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, "
+						+ "NFORMAT, AIRPORTCODE, TZ, UISCHEME, COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)");
+				_ps.setInt(27, a.getID());
 			} else {
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
 						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, CREATED=?, "
-						+ "REGHOSTNAME=?, DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, TZ=?, UISCHEME=?, EQTYPE=?, "
-						+ "RANK=? WHERE (ID=?)");
-				_ps.setString(25, a.getEquipmentType());
-				_ps.setString(26, a.getRank());
-				_ps.setInt(27, a.getID());
+						+ "REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, "
+						+ "TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=? WHERE (ID=?)");
+				_ps.setString(27, a.getEquipmentType());
+				_ps.setString(28, a.getRank());
+				_ps.setInt(29, a.getID());
 			}
 
 			// Set the fields
@@ -100,12 +101,14 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setInt(16, a.getEmailAccess());
 			_ps.setTimestamp(17, createTimestamp(a.getCreatedOn()));
 			_ps.setString(18, a.getRegisterHostName());
-			_ps.setString(19, a.getDateFormat());
-			_ps.setString(20, a.getTimeFormat());
-			_ps.setString(21, a.getNumberFormat());
-			_ps.setInt(22, a.getAirportCodeType());
-			_ps.setString(23, a.getTZ().getID());
-			_ps.setString(24, a.getUIScheme());
+			_ps.setString(19, a.getRegisterAddress());
+			_ps.setString(20, a.getDateFormat());
+			_ps.setString(21, a.getTimeFormat());
+			_ps.setString(22, a.getNumberFormat());
+			_ps.setInt(23, a.getAirportCodeType());
+			_ps.setString(24, a.getTZ().getID());
+			_ps.setString(25, a.getUIScheme());
+			_ps.setString(26, a.getComments());
 
 			// Update the database and commit
 			executeUpdate(1);
@@ -122,7 +125,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void hire(Applicant a) throws DAOException {
-		
 		invalidate(a);
 		try {
 			// Update the applicant status
@@ -145,7 +147,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
-		
 		invalidate(id);
 		try {
 			startTransaction();

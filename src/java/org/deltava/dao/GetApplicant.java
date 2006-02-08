@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -46,7 +46,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (ID=?)");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 
 			// Get results, return first or null
@@ -66,7 +66,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (PILOT_ID=?)");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
 
 			// Get results, return first or null
@@ -92,7 +92,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		log.debug("Raw set size = " + ids.size());
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT A.*, INET_NTOA(A.REGADDR) FROM ");
 		sqlBuf.append(tableName);
 		sqlBuf.append(" A WHERE (A.ID IN (");
 		int querySize = 0;
@@ -145,7 +145,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
 		   setQueryMax(1);
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (LDAP_DN=?)");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?)");
 			_ps.setString(1, directoryName);
 
 			// Get results, return first or null
@@ -171,7 +171,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new IllegalArgumentException("Invalid Lastname Letter - " + letter);
 
 		try {
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (UPPER(LEFT(LASTNAME, 1))=?) ORDER BY LASTNAME");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE "
+					+ "(UPPER(LEFT(LASTNAME, 1))=?) ORDER BY LASTNAME");
 			_ps.setString(1, letter.substring(0, 1).toUpperCase());
 			return execute();
 		} catch (SQLException se) {
@@ -189,7 +190,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public List<Applicant> getByStatus(int status, String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM APPLICANTS WHERE (STATUS=?)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?)");
 		if (!StringUtils.isEmpty(orderBy)) {
 			sqlBuf.append(" ORDER BY ");
 			sqlBuf.append(orderBy);
@@ -212,7 +213,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public List<Applicant> getByEquipmentType(String eqType) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM APPLICANTS WHERE (STATUS=?) AND (EQTYPE=?) ORDER BY LASTNAME");
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
+					+ "(EQTYPE=?) ORDER BY LASTNAME");
 			_ps.setInt(1, Applicant.APPROVED);
 			_ps.setString(2, eqType);
 			return execute();
@@ -261,6 +263,46 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		}
 	}
 	
+	/**
+	 * Searches for Applicants registering from the same TCP/IP network.
+	 * @param addr the network Address
+	 * @param maskAddr the network Mask
+	 * @param dbName the database name
+	 * @return a Collection of Database IDs as Integers
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkAddress(String addr, String maskAddr, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".APPLICANTS A WHERE (A.STATUS<>?) AND ((INET_ATON(?) & INET_ATON(?)) = "
+				+ "(REGADDR & INET_ATON(?)))");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, Applicant.REJECTED);
+			_ps.setString(2, addr);
+			_ps.setString(3, maskAddr);
+			_ps.setString(4, maskAddr);
+			
+	         // Execute the query
+	         ResultSet rs = _ps.executeQuery();
+	         
+	         // Iterate through the results
+	         Collection<Integer> results = new HashSet<Integer>();
+	         while (rs.next())
+	            results.add(new Integer(rs.getInt(1)));
+
+	         // Clean up and return
+	         rs.close();
+	         _ps.close();
+	         return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
    /**
     * Performs a soundex search on a Person's full name to detect possible matches. The soundex
     * implementation is dependent on the capabilities of the underlying database engine, and is not
@@ -268,6 +310,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
     * @param usr the Person to check for
     * @param dbName the database name
     * @return a Collection of Database IDs as Integers
+    * @throws DAOException if a JDBC error occurs
     */
    public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
       
@@ -332,17 +375,16 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setNotifyOption(Person.NEWS, rs.getBoolean(19));
 			a.setEmailAccess(rs.getInt(20));
 			a.setCreatedOn(rs.getTimestamp(21));
-			a.setLoginCount(rs.getInt(22));
-			a.setLastLogin(rs.getTimestamp(23));
-			a.setLastLogoff(rs.getTimestamp(24));
-			a.setLoginHost(rs.getString(25));
-			a.setRegisterHostName(rs.getString(26));
-			a.setDateFormat(rs.getString(27));
-			a.setTimeFormat(rs.getString(28));
-			a.setNumberFormat(rs.getString(29));
-			a.setAirportCodeType(rs.getInt(30));
-			a.setTZ(TZInfo.get(rs.getString(31)));
-			a.setUIScheme(rs.getString(32));
+			// skip 22
+			a.setRegisterHostName(rs.getString(23));
+			a.setDateFormat(rs.getString(24));
+			a.setTimeFormat(rs.getString(25));
+			a.setNumberFormat(rs.getString(26));
+			a.setAirportCodeType(rs.getInt(27));
+			a.setTZ(TZInfo.get(rs.getString(28)));
+			a.setUIScheme(rs.getString(29));
+			a.setComments(rs.getString(30));
+			a.setRegisterAddress(rs.getString(31));
 
 			// Add to results and cache
 			results.add(a);
