@@ -186,7 +186,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
  from ${msg.remoteAddr} (${msg.remoteHost})
 </content:filter>
 <c:if test="${access.canEdit && (postIdx == postCount)}">
-<span class="right"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:emd></span>
+<span class="right"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:cmd></span>
 </c:if>
 </td>
 </tr>
