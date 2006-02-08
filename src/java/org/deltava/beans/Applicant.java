@@ -35,7 +35,10 @@ public class Applicant extends Person {
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
+    
     private String _registerHostName;
+    private String _registerAddress;
+    private String _comments;
     
     /**
      * Create an Applicant object with a given first and last name, converted to "propert case"
@@ -77,12 +80,32 @@ public class Applicant extends Person {
     }
     
     /**
+     * Returns any additional Applicant comments.
+     * @return the comments
+     * @see Applicant#setComments(String)
+     */
+    public String getComments() {
+    	return _comments;
+    }
+    
+    /**
      * Returns the host name this Applicant registered from.
      * @return the host name
      * @see Applicant#setRegisterHostName(String)
+     * @see Applicant#getRegisterAddress()
      */
     public String getRegisterHostName() {
        return _registerHostName;
+    }
+    
+    /**
+     * Returns the address this Applicant registered from.
+     * @return the IP address
+     * @see Applicant#setRegisterAddress(String)
+     * @see Applicant#getRegisterHostName()
+     */
+    public String getRegisterAddress() {
+    	return _registerAddress;
     }
     
     /**
@@ -107,9 +130,29 @@ public class Applicant extends Person {
      * Sets the host name this Applicant registered from.
      * @param hostName the host name
      * @see Applicant#getRegisterHostName()
+     * @see Applicant#setRegisterAddress(String)
      */
     public void setRegisterHostName(String hostName) {
        _registerHostName = hostName;
+    }
+    
+    /**
+     * Sets the remote address this Applicant registered from.
+     * @param addr the IP address
+     * @see Applicant#getRegisterAddress()
+     * @see Applicant#setRegisterHostName(String)
+     */
+    public void setRegisterAddress(String addr) {
+    	_registerAddress = addr;
+    }
+    
+    /**
+     * Updates the Applicant comments.
+     * @param comments the comments
+     * @see Applicant#getComments()
+     */
+    public void setComments(String comments) {
+    	_comments = comments;
     }
     
     /**
