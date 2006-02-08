@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -25,7 +25,7 @@ public class SetCoolerMessage extends DAO {
 
 	/**
 	 * Writes a new Post to the Water Cooler.
-	 * @param msg the Message
+	 * @param msg the Message post bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void writeMessage(Message msg) throws DAOException {
@@ -40,6 +40,26 @@ public class SetCoolerMessage extends DAO {
 			_ps.setString(6, msg.getBody());
 
 			// Update the database
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates an existing Post in the Water Cooler.
+	 * @param msg the Message post bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void update(Message msg) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET MSGBODY=?, REMOTE_HOST=?, "
+					+ "REMOTE_ADDR=INET_ATON(?) WHERE (THREAD_ID=?) AND (POST_ID=?)");
+			_ps.setString(1, msg.getBody());
+			_ps.setString(2, msg.getRemoteHost());
+			_ps.setString(3, msg.getRemoteAddr());
+			_ps.setInt(4, msg.getThreadID());
+			_ps.setInt(5, msg.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -92,6 +112,7 @@ public class SetCoolerMessage extends DAO {
 				
 				_ps.executeBatch();
 				_ps.close();
+				_ps = null;
 			}
 		} catch (SQLException se) {
 			rollbackTransaction();

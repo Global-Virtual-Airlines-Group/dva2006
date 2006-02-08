@@ -40,6 +40,9 @@ public class ThreadCommand extends AbstractCommand {
 
 		// Get the user for the channel list
 		Person p = ctx.getUser();
+		
+		// Determine if we are editing the last post
+		boolean doEdit = "edit".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// Get the default airline
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
@@ -85,6 +88,11 @@ public class ThreadCommand extends AbstractCommand {
 			ac.validate();
 			if (!ac.getCanRead())
 				throw securityException("Cannot read Message Thread " + ctx.getID());
+			
+			// Make sure we can edit the thread and save the last post content
+			doEdit &= ac.getCanEdit();
+			if (doEdit)
+				ctx.setAttribute("lastPost", thread.getLastPost(), REQUEST);
 
 			// If we have an image, load its metadata
 			if (thread.getImage() != 0) {
@@ -160,7 +168,8 @@ public class ThreadCommand extends AbstractCommand {
 			ctx.release();
 		}
 
-		// Save scores choices
+		// Save scores choices and if we are editing
+		ctx.setAttribute("doEdit", Boolean.valueOf(doEdit), REQUEST);
 		ctx.setAttribute("scores", SCORES, REQUEST);
 
 		// Forward to the JSP
