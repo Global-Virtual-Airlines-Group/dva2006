@@ -83,6 +83,12 @@ Thank you for your participation in the <content:airline /> Water Cooler!<br />
 discussion thread response.<br />
 </c:if>
 </c:if>
+<c:if test="${isEdit}">
+<div class="updateHdr">Water Cooler Post Updated</div>
+<br />
+Your response in the discussion thread <span class="pri bld">&quot;${thread.subject}&quot;</span> has .
+been updated.Thank you for your participation in the <content:airline /> Water Cooler!<br />
+</c:if>
 <c:if test="${isUnstuck}">
 <!-- Thread Unstuck -->
 <div class="updateHdr">Water Cooler Message Thread Unstuck</div>

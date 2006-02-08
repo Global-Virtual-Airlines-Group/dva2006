@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.ViewEntry;
 
 /**
- * A class to store Water Cooler threads.
+ * A class to store Water Cooler message threads.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -33,7 +33,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	private int _views;
 	private int _postCount;
 
-	private Set<Message> _posts;
+	private SortedSet<Message> _posts;
 
 	private Collection<PollOption> _pollOptions;
 	private Collection<PollVote> _pollVotes;
@@ -405,10 +405,22 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 * Returns this thread's messages.
 	 * @return a List of posts, or an empty list if no messages have been added
 	 * @see MessageThread#getPostCount()
+	 * @see MessageThread#getLastPost()
 	 * @see MessageThread#addPost(Message)
 	 */
 	public List<Message> getPosts() {
 		return (_posts == null) ? new ArrayList<Message>() : new ArrayList<Message>(_posts);
+	}
+	
+	/**
+	 * Returns the last post in a message thread.
+	 * @return the last post, or null if no messages have been added.
+	 * @see MessageThread#getPosts()
+	 * @see MessageThread#getLastPost()
+	 * @see MessageThread#addPost(Message) 
+	 */
+	public Message getLastPost() {
+		return (_posts == null) ? null : _posts.last();
 	}
 
 	/**

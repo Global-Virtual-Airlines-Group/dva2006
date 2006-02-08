@@ -1,11 +1,11 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import java.util.List;
+
+import org.deltava.beans.cooler.*;
+
 import org.deltava.security.SecurityContext;
-
-import org.deltava.beans.cooler.Channel;
-import org.deltava.beans.cooler.MessageThread;
-
 import org.deltava.util.RoleUtils;
 
 /**
@@ -22,6 +22,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     
     private boolean _canRead;
     private boolean _canReply;
+    private boolean _canEdit;
     private boolean _canVote;
     private boolean _canLock;
     private boolean _canUnlock;
@@ -88,6 +89,13 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canUnlock = channelAccess && isClosed && isModerator;
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
         _canDelete = _ctx.isUserInRole("Admin");
+        
+        // Check if we can update the thread - ie. we have written the last reply and we can edit
+        if (_canReply && (!_mt.getPosts().isEmpty())) {
+        	List<Message> posts = _mt.getPosts();
+        	Message msg = posts.get(posts.size() - 1);
+        	_canEdit = (msg.getAuthorID() == _ctx.getUser().getID());
+        }
     }
     
     /**
@@ -104,6 +112,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanReply() {
         return _canReply;
+    }
+    
+    /**
+     * Returns if the last post can be edited.
+     * @return TRUE if the post can be edited, otherwise FALSE
+     */
+    public boolean getCanEdit() {
+    	return _canEdit;
     }
     
     /**

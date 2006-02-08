@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.security.command.CoolerThreadAccessControl;
 import org.deltava.util.StringUtils;
 
 /**
- * A Web Site Command to handle Water Cooler response posting.
+ * A Web Site Command to handle Water Cooler response posting and editing.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -78,6 +78,9 @@ public class ThreadReplyCommand extends AbstractCommand {
 		// Initialze the Mailer context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
+		
+		// Determine if we are editing the last post
+		boolean doEdit = Boolean.valueOf(ctx.getParameter("doEdit")).booleanValue();
 
 		Collection<Person> notifyList = new HashSet<Person>();
 		try {
@@ -104,13 +107,15 @@ public class ThreadReplyCommand extends AbstractCommand {
 			ac.validate();
 			if (!ac.getCanReply())
 				throw securityException("Cannot post in Message Thread " + ctx.getID());
+			else if (doEdit && !ac.getCanEdit())
+				throw securityException("Cannot update Message Thread post in " + ctx.getID());
 
 			// Get the notification entries, and remove our own
 			ThreadNotifications nt = tdao.getNotifications(thread.getID());
 			nt.removeUser(ctx.getUser());
 
 			// If we are set to notify people for this thread, then load the data
-			if (!nt.getIDs().isEmpty()) {
+			if (!doEdit && (!nt.getIDs().isEmpty())) {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("THREADNOTIFY"));
 
@@ -141,7 +146,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			}
 
 			// Create the new reply bean
-			Message msg = new Message(ctx.getUser().getID());
+			Message msg = doEdit ? thread.getLastPost() : new Message(ctx.getUser().getID());
 			msg.setThreadID(thread.getID());
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			msg.setRemoteHost(ctx.getRequest().getRemoteHost());
@@ -155,10 +160,16 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 			// Add the response to the thread
 			if (!StringUtils.isEmpty(msg.getBody())) {
-				thread.addPost(msg);
-				wdao.writeMessage(msg);
+				if (doEdit) {
+					ctx.setAttribute("isEdit", Boolean.TRUE, REQUEST);
+					wdao.update(msg);
+				} else {
+					ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
+					thread.addPost(msg);
+					wdao.writeMessage(msg);
+				}
+				
 				wdao.synchThread(thread);
-				ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
 			} else {
 				notifyList.clear();
 			}
@@ -196,7 +207,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			// Save notification message count
 			ctx.setAttribute("notifyMsgs", new Integer(notifyList.size()), REQUEST);
 		}
-
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
