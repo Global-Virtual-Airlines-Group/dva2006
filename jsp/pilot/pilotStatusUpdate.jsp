@@ -1,4 +1,3 @@
-<content:pics />
 <c:if test="${!empty statusUpdates}">
 <content:filter roles="HR,Examination">
 <c:set var="isHR" value="${true}" scope="request" />
