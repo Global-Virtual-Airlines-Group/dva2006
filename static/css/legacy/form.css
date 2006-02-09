@@ -74,12 +74,12 @@ INPUT.radio, INPUT.check {
 	font-size: 8pt;
 }
 
-INPUT.req, TEXTAREA.req {
-	background: #FFF8FA;
+SELECT.req {
 	border: 1px solid #E00404;
 }
 
-SELECT.req {
+INPUT.req, TEXTAREA.req {
+	background: #FFF8FA;
 	border: 1px solid #E00404;
 }
 
