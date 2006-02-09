@@ -149,9 +149,9 @@ currently registed with this e-mail address.</div></c:if>
  <td colspan="2">ADDITIONAL INFORMATION</td>
 </tr>
 <tr>
- <td class="label" rowspan="2">Comments</td>
- <td class="data small">Plase provide any comments or additional information that you fell would assist
-in processing your application.</td>
+ <td class="label" rowspan="2" valign="top">Comments</td>
+ <td class="data"><span class="small">Plase provide any comments or additional information that you feel would assist
+in processing your application.</span></td>
 </tr>
  <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
 </tr>
