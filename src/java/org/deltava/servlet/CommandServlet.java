@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -35,11 +35,15 @@ import org.deltava.util.system.SystemData;
 public class CommandServlet extends GenericServlet {
 
 	private static final Logger log = Logger.getLogger(CommandServlet.class);
+	
 	private static final int MAX_EXEC_TIME = 20000;
+	private static final String ERR_PAGE = "/jsp/error/error.jsp";
 
-	private ConnectionPool _jdbcPool;
+	//private ConnectionPool _jdbcPool;
 	private Map<String, Command> _cmds;
-	private List<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
+	
+	private Collection<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
+	private int _maxCmdLogSize;
 
 	/**
 	 * Returns the servlet description.
@@ -73,8 +77,8 @@ public class CommandServlet extends GenericServlet {
 			throw new ServletException(ce);
 		}
 
-		// Save the connection pool
-		_jdbcPool = getConnectionPool();
+		// Save the max command log size
+		_maxCmdLogSize = SystemData.getInt("cache.cmdlog", 20);
 	}
 
 	/**
@@ -91,6 +95,26 @@ public class CommandServlet extends GenericServlet {
 		URLParser parser = new URLParser(rawURL);
 		String cmdName = parser.getName().toLowerCase();
 		return _cmds.get(cmdName);
+	}
+	
+	/**
+	 * A private helper method to dump the command logs.
+	 */
+	private void dumpCommandLogs() {
+		ConnectionPool pool = getConnectionPool();
+		Connection c = null;
+		try {
+			c = pool.getConnection(true);
+			SetSystemData swdao = new SetSystemData(c);
+			swdao.logCommands(_cmdLogPool);
+		} catch (DAOException de) {
+			log.warn("Error writing command result staitistics - " + de.getMessage());
+		} finally {
+			pool.release(c);
+			_cmdLogPool.clear();
+		}
+
+		log.debug("Batched command logs");
 	}
 
 	/**
@@ -174,22 +198,32 @@ public class CommandServlet extends GenericServlet {
 			} catch (Exception e) {
 				throw new CommandException("Error forwarding to " + result.getURL(), e);
 			}
-		} catch (ControllerException ce) {
-			String errPage = (ce.getForwardURL() == null) ? "/jsp/error/error.jsp" : ce.getForwardURL();
-			String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
-
+		} catch (Exception e) {
+			String errPage = ERR_PAGE;
+			boolean logWarning = false;
+			boolean logStackDump = true;
+			if (e instanceof CommandException) {
+				CommandException ce = (CommandException) e;
+				if (ce.getForwardURL() != null) 
+					errPage = ce.getForwardURL();
+				
+				logWarning = ce.isWarning();
+				logStackDump = ce.getLogStackDump();
+			}
+			
 			// Log the error
-			if (ce.isWarning()) {
-				log.warn(usrName + " executing " + cmd.getName() + " - " + ce.getMessage());
+			String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
+			if (logWarning) {
+				log.warn(usrName + " executing " + cmd.getName() + " - " + e.getMessage());
 			} else {
-				log.error(usrName + " executing " + cmd.getName() + " - " + ce.getMessage(),
-						ce.getLogStackDump() ? ce : null);
+				log.error(usrName + " executing " + cmd.getName() + " - " + e.getMessage(),
+						logStackDump ? e : null);
 			}
 
 			// Redirect to the error page
 			RequestDispatcher rd = req.getRequestDispatcher(errPage);
-			req.setAttribute("servlet_error", ce.getMessage());
-			req.setAttribute("servlet_exception", (ce.getCause() == null) ? ce : ce.getCause());
+			req.setAttribute("servlet_error", e.getMessage());
+			req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 			rd.forward(req, rsp);
 		} finally {
 			long execTime = System.currentTimeMillis() - startTime;
@@ -210,21 +244,8 @@ public class CommandServlet extends GenericServlet {
 				_cmdLogPool.add(cmdLog);
 
 				// If the pool is full, batch the entries
-				if (_cmdLogPool.size() >= SystemData.getInt("cache.cmdlog")) {
-					Connection c = null;
-					try {
-						c = _jdbcPool.getConnection(true);
-						SetSystemData swdao = new SetSystemData(c);
-						swdao.logCommands(_cmdLogPool);
-					} catch (DAOException de) {
-						log.warn("Error writing command result staitistics - " + de.getMessage());
-					} finally {
-						_jdbcPool.release(c);
-						_cmdLogPool.clear();
-					}
-
-					log.debug("Batched command logs");
-				}
+				if (_cmdLogPool.size() >= _maxCmdLogSize)
+					dumpCommandLogs();
 			}
 		}
 	}
