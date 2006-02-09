@@ -72,24 +72,24 @@ return true;
 <el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="2" class="left"><el:cmd className="title" url="channels">DVA WATER COOLER</el:cmd> | 
+ <td colspan="3" class="left"><el:cmd className="title" url="channels">DVA WATER COOLER</el:cmd> | 
 <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
 <tr class="title caps">
- <td colspan="2" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
+ <td colspan="3" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty img}">
 <!-- Attached Image -->
 <tr class="mid">
- <td colspan="2"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
+ <td colspan="3"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
 </tr>
 <c:if test="${(!empty img.votes) || imgAccess.canVote}">
 <tr>
  <td class="label">Image Feedback</td>
- <td class="data"><c:if test="${!empty img.votes}"><span class="pri bld">${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></span></c:if>
+ <td class="data" colspan="2"><c:if test="${!empty img.votes}"><span class="pri bld">${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></span></c:if>
  <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
 <el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
 </td>
@@ -100,7 +100,7 @@ return true;
 <!-- Pilot Poll -->
 <tr>
  <td class="label" valign="top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
- <td class="data"><c:forEach var="opt" items="${thread.options}">
+ <td class="data" colspan="2"><c:forEach var="opt" items="${thread.options}">
 <span style="width:250px;"><c:if test="${opt.votes > 0}"><el:img y="12" x="${(opt.votes / maxVotes) * 250}" caption="${opt.name}" src="cooler/bar_blue.png" /></c:if></span>
 ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.votes}" /> vote)</c:when>
 <c:when test="${opt.votes > 1}"> (<fmt:int value="${opt.votes}" /> votes)</c:when></c:choose><br /></c:forEach></td>
@@ -108,7 +108,7 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 <c:if test="${access.canVote}">
 <tr>
  <td class="label" valign="top">Your Choice</td>
- <td class="data"><el:check name="pollVote" type="radio" idx="*" cols="1" options="${thread.options}" /></td>
+ <td class="data" colspan="2"><el:check name="pollVote" type="radio" idx="*" cols="1" options="${thread.options}" /></td>
 </tr>
 </c:if>
 </c:if>
@@ -122,6 +122,7 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="request" />
+<c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="request" />
 <tr>
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
@@ -181,17 +182,17 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <span class="mid"><a href="aim:goim?screenname=${pilot.IMHandle}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" /></a></span>
 </c:if>
  </td>
- <td class="postDate">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
+ <td class="postDate" colspan="${canEdit ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Admin,Moderator">
  from ${msg.remoteAddr} (${msg.remoteHost})
 </content:filter>
-<c:if test="${access.canEdit && (postIdx == postCount)}">
-<span class="right"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:cmd></span>
-</c:if>
-</td>
+<c:if test="${canEdit}">
+ </td>
+ <td class="postEdit"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:cmd>
+</c:if></td>
 </tr>
 <tr>
- <td class="postBody"><fmt:msg value="${msg.body}" />
+ <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" />
 <c:if test="${isPilot && (pilot.hasSignature || pilot.hasDefaultSignature)}">
 <br />
 <c:choose>
@@ -216,10 +217,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:if test="${access.canLock || access.canUnlock || access.canDelete || (access.canResync && !noResync) || access.canUnstick}">
 <!-- Moderator Tools -->
 <tr class="title caps">
- <td colspan="2">MODERATOR TOOLS</td>
+ <td colspan="3">MODERATOR TOOLS</td>
 </tr>
 <tr class="pri bld mid">
- <td colspan="2">
+ <td colspan="3">
 <c:if test="${access.canLock}">
  <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" linkID="0x${thread.ID}" op="lock" />
  <el:cmdbutton ID="HideButton" label="HIDE" url="threadlock" linkID="0x${thread.ID}" op="hide" />
@@ -255,10 +256,10 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <content:filter roles="Pilot">
 <!-- Message Thread Update notification -->
 <tr class="title caps">
- <td colspan="2">UPDATE NOTIFICATIONS</td>
+ <td colspan="3">UPDATE NOTIFICATIONS</td>
 </tr>
 <tr class="pri bld mid">
- <td colspan="2">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
+ <td colspan="3">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
 notification each time a reply is posted in this Thread.
 <el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
 <c:if test="${(!empty notify.IDs) && access.canResync}">
@@ -271,17 +272,17 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->
 <tr class="title caps">
- <td colspan="2">${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
+ <td colspan="3">${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
 </tr>
 <tr class="mid">
- <td colspan="2"><el:textbox name="msgText" width="125" height="8">${lastPost.text}</el:textbox></td>
+ <td colspan="3"><el:textbox name="msgText" width="125" height="8">${lastPost.body}</el:textbox></td>
 </tr>
 </c:if>
 
 <!-- Button Bar -->
 <c:if test="${access.canReply}">
 <tr class="buttons mid title">
- <td colspan="2"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
+ <td colspan="3"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
 &nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 </c:if>
