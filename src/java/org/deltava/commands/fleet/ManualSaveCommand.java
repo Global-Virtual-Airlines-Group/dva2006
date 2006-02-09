@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -59,7 +59,7 @@ public class ManualSaveCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Library entry
-			GetLibrary dao = new GetLibrary(con);
+			GetDocuments dao = new GetDocuments(con);
 			entry = dao.getManual(fName, SystemData.get("airline.db"));
 
 			// Check our access level

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -37,7 +37,7 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and newsletters
-			GetLibrary dao = new GetLibrary(con);
+			GetDocuments dao = new GetDocuments(con);
 			results = dao.getNewsletters(SystemData.get("airline.db"));
 		} catch (DAOException de) {
 			throw new CommandException(de);
