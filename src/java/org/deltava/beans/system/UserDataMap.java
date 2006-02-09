@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -158,11 +158,10 @@ public class UserDataMap implements java.io.Serializable, Map {
 	}
 	
 	/**
-	 * <i>NOT IMPLEMENTED</i>
-	 * @throws UnsupportedOperationException always
+	 * Clears the map.
 	 */
 	public void clear() {
-		throw new UnsupportedOperationException();
+		_entries.clear();
 	}
 	
 	/**
@@ -182,11 +181,11 @@ public class UserDataMap implements java.io.Serializable, Map {
 	}
 
 	/**
-	 * <i>NOT IMPLEMENTED</i>
-	 * @throws UnsupportedOperationException always
+	 * Returns the map's entries.
+	 * @return a Set of MapEntry objects
 	 */
 	public Set entrySet() {
-		throw new UnsupportedOperationException();
+		return _entries.entrySet();
 	}
 	
 	/**
@@ -194,7 +193,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @throws UnsupportedOperationException always
 	 */
 	public Set keySet() {
-		throw new UnsupportedOperationException();
+		return _entries.keySet();
 	}
 	
 	/**
