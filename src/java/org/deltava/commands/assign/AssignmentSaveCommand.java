@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -30,8 +30,11 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
       // Check for the flight assignment
       AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
-      if (info == null)
-          throw new CommandException("Flight Assignment data not in session");
+      if (info == null) {
+    	  CommandException ce = new CommandException("Flight Assignment data not in session");
+    	  ce.setLogStackDump(false);
+    	  throw ce;
+      }
 
       try {
           Connection con = ctx.getConnection();
@@ -52,8 +55,8 @@ public class AssignmentSaveCommand extends AbstractCommand {
              // Write the PIREPs to the database
              ctx.setAttribute("pirepsWritten", Boolean.TRUE, REQUEST);
               SetFlightReport pwdao = new SetFlightReport(con);
-              for (Iterator i = info.getFlights().iterator(); i.hasNext();) {
-                  FlightReport fr = (FlightReport) i.next();
+              for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
+                  FlightReport fr = i.next();
                   fr.setCreatedOn(now);
                   fr.setDate(now);
                   fr.setRank(ctx.getUser().getRank());
