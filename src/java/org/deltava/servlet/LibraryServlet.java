@@ -70,7 +70,7 @@ public class LibraryServlet extends GenericServlet {
 			Map airlines = (Map) SystemData.getObject("apps");
 
 			// Get the Library DAO
-			GetLibrary rdao = new GetLibrary(c);
+			GetDocuments rdao = new GetDocuments(c);
 			if (!"usrlibrary".equals(url.getLastPath())) {
 				for (Iterator i = airlines.values().iterator(); (entry == null) && i.hasNext();) {
 					AirlineInformation aInfo = (AirlineInformation) i.next();

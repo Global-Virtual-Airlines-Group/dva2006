@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -10,7 +11,7 @@ import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetLibrary;
+import org.deltava.dao.GetDocuments;
 import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.FleetEntryAccessControl;
@@ -41,7 +42,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO
-			GetLibrary dao = new GetLibrary(con);
+			GetDocuments dao = new GetDocuments(con);
 
 			// Get the document libraries from the other airlines
 			Map apps = (Map) SystemData.getObject("apps");
