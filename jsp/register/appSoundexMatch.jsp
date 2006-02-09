@@ -9,6 +9,6 @@
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:profile location="${personLoc}">${person.name}</el:profile> 
-<a href="mailto:${person.email}" class="small">${person.email}</a>, registered on <fmt:date date="${person.createdOn}" /></td>
+<a href="mailto:${person.email}" class="small">${person.email}</a>, registered on <fmt:date fmt="d" date="${person.createdOn}" /></td>
 </tr>
 </c:forEach>
