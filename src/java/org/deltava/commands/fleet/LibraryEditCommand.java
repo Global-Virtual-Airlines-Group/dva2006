@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 import org.deltava.beans.fleet.*;
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetLibrary;
+import org.deltava.dao.GetDocuments;
 import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.FleetEntryAccessControl;
@@ -61,7 +61,7 @@ public class LibraryEditCommand extends AbstractCommand {
          Connection con = ctx.getConnection();
 
          // Get the DAO and the library entry
-         GetLibrary dao = new GetLibrary(con);
+         GetDocuments dao = new GetDocuments(con);
          if (isManual) {
             entry = dao.getManual(fName, SystemData.get("airline.db"));
          } else {
