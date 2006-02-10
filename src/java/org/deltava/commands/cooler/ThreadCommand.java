@@ -116,7 +116,7 @@ public class ThreadCommand extends AbstractCommand {
 			UserDataMap udm = uddao.getByThread(thread.getID());
 			ctx.setAttribute("userData", udm, REQUEST);
 
-			// Get the authors and online totals for the last post in each channel
+			// Get the authors and online totals for each user
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
 			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
@@ -133,6 +133,12 @@ public class ThreadCommand extends AbstractCommand {
 					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
 				}
+			}
+			
+			// Get statistics for all posters
+			if (ctx.isUserInRole("Moderator")) {
+				GetStatistics stdao = new GetStatistics(con);
+				ctx.setAttribute("postStats", stdao.getCoolerStatistics(udm.getIDs()), REQUEST);
 			}
 			
 			// Get the thread notifications
