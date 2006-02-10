@@ -189,8 +189,18 @@ public class UserDataMap implements java.io.Serializable, Map {
 	}
 	
 	/**
-	 * <i>NOT IMPLEMENTED</i>
-	 * @throws UnsupportedOperationException always
+	 * Returns the database IDs contained within the map.
+	 * @return a Collection of Integers
+	 * @see UserDataMap#keySet()
+	 */
+	public Collection<Integer> getIDs() {
+		return _entries.keySet();
+	}
+	
+	/**
+	 * Returns the database IDs contained within the map.
+	 * @return a Set of Integers
+	 * @see UserDataMap#getIDs()
 	 */
 	public Set keySet() {
 		return _entries.keySet();
