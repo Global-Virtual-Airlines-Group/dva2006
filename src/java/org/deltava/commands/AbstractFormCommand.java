@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 /**
@@ -26,7 +27,7 @@ public abstract class AbstractFormCommand extends AbstractCommand {
         }
         
         // default is read
-        return AbstractFormCommand.READ;
+        return READ;
     }
     
     /**
@@ -51,9 +52,24 @@ public abstract class AbstractFormCommand extends AbstractCommand {
         }
     }
     
+    /**
+     * Method called when saving the form.
+     * @param ctx the Command Context
+     * @throws CommandException if an unhandled error occurs
+     */
     protected abstract void execSave(CommandContext ctx) throws CommandException;
     
+    /**
+     * Method called when editing the form.
+     * @param ctx the Command Context
+     * @throws CommandException if an unhandled error occurs
+     */
     protected abstract void execEdit(CommandContext ctx) throws CommandException;
     
+    /**
+     * Method called when reading the form.
+     * @param ctx the Command Context
+     * @throws CommandException if an unhandled error occurs
+     */
     protected abstract void execRead(CommandContext ctx) throws CommandException;
 }
