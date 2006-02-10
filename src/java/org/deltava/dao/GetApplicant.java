@@ -22,6 +22,7 @@ import org.deltava.util.StringUtils;
 public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 	private static final Logger log = Logger.getLogger(GetApplicant.class);
+	private static final String NO_IP = "0.0.0.0";
 
 	/**
 	 * Initialize the Data Access Object.
@@ -272,6 +273,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> checkAddress(String addr, String maskAddr, String dbName) throws DAOException {
+		if (NO_IP.equals(addr))
+			return Collections.emptyList();
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
