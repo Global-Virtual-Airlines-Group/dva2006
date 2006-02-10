@@ -27,8 +27,9 @@ public class GetDocuments extends GetLibrary {
 	}
 
 	/**
-	 * Returns metadata about a specific Manual <i>in the current database</i>.
+	 * Returns metadata about a specific Manual .
 	 * @param fName the filename
+	 * @param dbName the database name
 	 * @return a Manual, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -48,7 +49,36 @@ public class GetDocuments extends GetLibrary {
 
 			// Get results - if empty return null
 			List<Manual> results = loadManuals();
-			return results.isEmpty() ? null : (Manual) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns metadata about a specific Newsletter.
+	 * @param fName the filename
+	 * @param dbName the database name
+	 * @return a Newsletter, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Newsletter getNewsletter(String fName, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
+
+		try {
+			setQueryMax(1);
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, fName);
+			
+			// Get results - if empty return null
+			List<Newsletter> results = loadNewsletters();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -109,7 +139,7 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".DOCS D LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.NEWSLETTER=0) GROUP BY D.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -126,7 +156,7 @@ public class GetDocuments extends GetLibrary {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+		boolean hasTotals = (rs.getMetaData().getColumnCount() > 6);
 
 		// Iterate through the result set
 		List<Manual> results = new ArrayList<Manual>();
@@ -137,9 +167,8 @@ public class GetDocuments extends GetLibrary {
 			doc.setVersion(rs.getInt(4));
 			doc.setSecurity(rs.getInt(5));
 			doc.setDescription(rs.getString(6));
-			doc.setIsNewsletter(rs.getBoolean(7));
 			if (hasTotals)
-				doc.setDownloadCount(rs.getInt(8));
+				doc.setDownloadCount(rs.getInt(7));
 
 			// Add to results
 			results.add(doc);
@@ -168,7 +197,7 @@ public class GetDocuments extends GetLibrary {
 			nws.setName(rs.getString(2));
 			nws.setCategory(rs.getString(3));
 			nws.setSecurity(rs.getInt(5));
-			nws.setDate(rs.getTimestamp(6));
+			nws.setDate(expandDate(rs.getDate(6)));
 			nws.setDescription(rs.getString(7));
 			if (hasTotals)
 				nws.setDownloadCount(rs.getInt(8));

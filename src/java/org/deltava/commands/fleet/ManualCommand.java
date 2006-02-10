@@ -25,14 +25,14 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ManualSaveCommand extends AbstractCommand {
+public class ManualCommand extends LibraryEditCommand {
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
-	public void execute(CommandContext ctx) throws CommandException {
+	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
 		String fName = (String) ctx.getCmdParameter(Command.ID, null);
@@ -83,7 +83,6 @@ public class ManualSaveCommand extends AbstractCommand {
 			entry.setName(ctx.getParameter("title"));
 			entry.setVersion(Integer.parseInt(ctx.getParameter("version")), 0, 0);
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
-			entry.setIsNewsletter(Boolean.valueOf(ctx.getParameter("isNewsletter")).booleanValue());
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
 
@@ -121,8 +120,8 @@ public class ManualSaveCommand extends AbstractCommand {
 		}
 
 		// Set status attributes
-		ctx.setAttribute("library", entry.getIsNewsletter() ? "Newsletter" : "Document", REQUEST);
-		ctx.setAttribute("librarycmd", entry.getIsNewsletter() ? "newsletters" : "doclibrary", REQUEST);
+		ctx.setAttribute("library", "Document", REQUEST);
+		ctx.setAttribute("librarycmd", "doclibrary", REQUEST);
 
 		// Send notification
 		if (!noNotify) {

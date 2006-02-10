@@ -22,6 +22,11 @@
 		<newsletters>
 			<enabled type="Boolean">true</enabled>
 			<name>Delta FLY!</name>
+			<list name="categories" attr="category" unique="true">
+				<category>Delta FLY!</category>
+				<category>Mad Dog Program</category>
+				<category>Flight Academy</category>
+			</list>
 		</newsletters>
 		
 		<!-- Copyright disclaimer -->
@@ -86,8 +91,7 @@
 	</time>
 	
 	<!-- pilot ranks -->
-	<list name="ranks" attr="rank">
-		<rank>Trainee</rank>
+	<list name="ranks" attr="rank" unique="true">
 		<rank>First Officer</rank>
 		<rank>Captain</rank>
 		<rank>Senior Captain</rank>
@@ -120,7 +124,7 @@
 	</map>
 	
 	<!-- Pilot Locations -->
-	<list name="locations" attr="location">
+	<list name="locations" attr="location" unique="true">
 		<location>Northeastern United States</location>
 		<location>Southeastern United States</location>
 		<location>Midwestern United States</location>

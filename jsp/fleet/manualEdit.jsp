@@ -40,11 +40,10 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="dlibsave.do" linkID="${entry.fileName}" op="save" method="POST" allowUpload="true" validate="return validate(this)">
+<el:form action="doclib.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
 <c:choose>
@@ -65,7 +64,7 @@ return true;
  <td class="data"><el:text name="version" idx="*" size="1" max="2" className="req" value="${entry.version}" /></td>
 </tr>
 <tr>
- <td class="label">Description</td>
+ <td class="label" valign="top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="120" height="3" className="req">${entry.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
@@ -93,9 +92,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" />
-<c:if test="${newsletterEnabled}">
-<br /><el:box name="isNewsletter" idx="*" value="true" label="This is an airline Newsletter" /></c:if></td>
+ <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
 </el:table>
 
