@@ -11,10 +11,10 @@
 <head>
 <c:choose>
 <c:when test="${!empty entry}">
-<title><content:airline /> Fleet Library - ${entry.name}</title>
+<title><content:airline /> Newsletter - ${entry.name}</title>
 </c:when>
 <c:otherwise>
-<title>New <content:airline /> Fleet Library Entry</title>
+<title>New <content:airline /> Newsletter</title>
 </c:otherwise>
 </c:choose>
 <content:css name="main" browserSpecific="true" />
@@ -24,13 +24,11 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.title, 10, 'Installer Title')) return false;
-if (!validateNumber(form.majorVersion, 1, 'Major Version Number')) return false;
-if (!validateNumber(form.minorVersion, 0, 'Minor Version Number')) return false;
-if (!validateNumber(form.subVersion, 0, 'Sub-Version Number')) return false;
+if (!validateText(form.title, 10, 'Newsletter Title')) return false;
+if (!validateCombo(form.category, 'Newsletter Category')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateText(form.code, 3, 'Installer Code')) return false;
-if (!validateText(form.fileName, 8, 'Installer Filename')) return false;
+if (!validateText(form.date, 8, 'Publishing Date')) return false;
+if (!validateFile(form.file, 'pdf', 'Uploaded Newsletter')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -43,55 +41,41 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:sysdata var="allEQ" name="eqtypes" sort="true" />
+<content:sysdata var="cats" name="airline.newsletters.categories" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="fleetlib.do" linkID="${entry.fileName}" op="save" method="post" validate="return validate(this)">
+<el:form action="newsletter.do" linkID="${entry.fileName}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
 <c:choose>
 <c:when test="${!empty entry}">
- <td colspan="2">FLEET LIBRARY - ${entry.name}</td>
+ <td colspan="2"><content:airline /> NEWSLETTER - ${entry.name}</td>
 </c:when>
 <c:otherwise>
- <td colspan="2">NEW FLEET LIBRARY ENTRY</td>
+ <td colspan="2">NEW <content:airline /> NEWSLETTER</td>
 </c:otherwise>
 </c:choose>
 </tr>
 <tr>
- <td class="label">Installer Title</td>
+ <td class="label">Newsletter Title</td>
  <td class="data"><el:text name="title" className="pri bld req" idx="*" size="48" max="80" value="${entry.name}" /></td>
 </tr>
 <tr>
- <td class="label">Installer Filename</td>
- <td class="data"><el:text name="fileName" idx="*" size="32" max="48" className="req" value="${entry.fileName}" /></td>
-</tr>
-<tr>
- <td class="label">Installer Code</td>
- <td class="data bld"><el:text name="code" idx="*" size="12" max="12" className="req" value="${entry.code}" /></td>
-</tr>
-<tr>
- <td class="label">Fleet Library Image</td>
- <td class="data"><el:text name="img" idx="*" size="18" max="32" value="${entry.image}" /></td>
-</tr>
-<tr>
- <td class="label">Version Number</td>
- <td class="data"><el:text name="majorVersion" idx="*" size="1" max="2" className="req" value="${entry.majorVersion}" />.
-<el:text name="minorVersion" idx="*" size="1" max="2" className="req" value="${entry.minorVersion}" />.
-<el:text name="subVersion" idx="*" size="1" max="2" className="req" value="${entry.subVersion}" /></td>
+ <td class="label">Category</td>
+ <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="< SELECT >" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" className="req" height="3">${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="120" height="4" className="req">${entry.description}</el:textbox></td>
 </tr>
 <tr>
- <td class="label">Installer Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+ <td class="label">Publishing Date</td>
+ <td class="data"><el:text name="date" idx="*" size="10" max="10" className="req" value="${entry.date}" /></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
- <td class="label">Installer Size</td>
+ <td class="label">Document Size</td>
 <c:if test="${entry.size > 0}">
  <td class="data sec bld"><fmt:int value="${entry.size}" /> bytes</td>
 </c:if>
@@ -105,6 +89,14 @@ return true;
 </tr>
 </c:if>
 <tr>
+ <td class="label">Document Security</td>
+ <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+</tr>
+<tr>
+ <td class="label">Update File</td>
+ <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
@@ -115,12 +107,13 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE INSTALLER" />
+<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MANUAL" />
 </c:if>
  </td>
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>

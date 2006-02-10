@@ -1,6 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.fleet.*;
@@ -11,7 +12,7 @@ import org.deltava.dao.DAOException;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -21,69 +22,85 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class LibraryEditCommand extends AbstractCommand {
+public abstract class LibraryEditCommand extends AbstractFormCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	private static final List<String> DOC_TYPES = Arrays.asList(new String[] { "fleet", "manual", "newsletter" });
+	private static final List<String> JSP_HDR = Arrays.asList(new String[] { "installer", "manual", "nws" });
+	private static final Map<String, String> JSP_NAMES = CollectionUtils.createMap(DOC_TYPES, JSP_HDR);
 
-      // Get the file name, or if we're creating a new file
-      String fName = (String) ctx.getCmdParameter(ID, "NEW");
-      ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
+	/**
+	 * Method called when editing the form.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	protected final void execEdit(CommandContext ctx) throws CommandException {
 
-      // Figure out what type of entry we are attempting to create
-      boolean isManual = "manual".equals(ctx.getCmdParameter(Command.OPERATION, "fleet"));
+		// Get the file name, or if we're creating a new file
+		String fName = (String) ctx.getCmdParameter(ID, "NEW");
+		ctx.setAttribute("securityOptions", ComboUtils.fromArray(LibraryEntry.SECURITY_LEVELS), REQUEST);
 
-      // Get the command results
-      CommandResult result = ctx.getResult();
+		// Figure out what type of entry we are attempting to create
+		String docType = (String) ctx.getCmdParameter(Command.OPERATION, "fleet");
 
-      // If we're creating a new entry, check our access
-      if ("NEW".equals(fName)) {
-         FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
-         access.validate();
-         if (!access.getCanCreate())
-            throw securityException("Cannot create Library Entry");
-         
-         // Save the access controller
-         ctx.setAttribute("access", access, REQUEST);
+		// Get the command results
+		CommandResult result = ctx.getResult();
 
-         // Forward to the JSP
-         result.setURL(isManual ? "/jsp/fleet/manualEdit.jsp" : "/jsp/fleet/installerEdit.jsp");
-         result.setSuccess(true);
-         return;
-      }
+		// If we're creating a new entry, check our access
+		if ("NEW".equals(fName)) {
+			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+			access.validate();
+			if (!access.getCanCreate())
+				throw securityException("Cannot create Library Entry");
 
-      FleetEntry entry = null;
-      try {
-         Connection con = ctx.getConnection();
+			// Save the access controller
+			ctx.setAttribute("access", access, REQUEST);
 
-         // Get the DAO and the library entry
-         GetDocuments dao = new GetDocuments(con);
-         if (isManual) {
-            entry = dao.getManual(fName, SystemData.get("airline.db"));
-         } else {
-            entry = dao.getInstaller(fName, SystemData.get("airline.db"));
-         }
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+			// Forward to the JSP
+			result.setURL("/jsp/fleet/" + JSP_NAMES.get(docType) + "Edit.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
-      // Check our access level
-      FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
-      access.validate();
-      if (!access.getCanEdit()) throw securityException("Cannot edit Library Entry for " + fName);
+		LibraryEntry entry = null;
+		try {
+			Connection con = ctx.getConnection();
 
-      // Save the entry in the request
-      ctx.setAttribute("entry", entry, REQUEST);
-      ctx.setAttribute("access", access, REQUEST);
+			// Get the DAO and the library entry
+			GetDocuments dao = new GetDocuments(con);
+			if ("manual".equals(docType)) {
+				entry = dao.getManual(fName, SystemData.get("airline.db"));
+			} else if ("newsletter".equals(docType)) {
+				entry = dao.getNewsletter(fName, SystemData.get("airline.db"));
+			} else {
+				entry = dao.getInstaller(fName, SystemData.get("airline.db"));
+			}
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
 
-      // Forward to the JSP
-      result.setURL(isManual ? "/jsp/fleet/manualEdit.jsp" : "/jsp/fleet/installerEdit.jsp");
-      result.setSuccess(true);
-   }
+		// Check our access level
+		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
+		access.validate();
+		if (!access.getCanEdit())
+			throw securityException("Cannot edit Library Entry for " + fName);
+
+		// Save the entry in the request
+		ctx.setAttribute("entry", entry, REQUEST);
+		ctx.setAttribute("access", access, REQUEST);
+
+		// Forward to the JSP
+		result.setURL("/jsp/fleet/" + JSP_NAMES.get(docType) + "Edit.jsp");
+		result.setSuccess(true);
+	}
+	
+	/**
+     * Method called when reading the form. <i>NOT IMPLEMENTED</i>
+     * @param ctx the Command Context
+     * @throws UnsupportedOperationException always
+     */
+	protected final void execRead(CommandContext ctx) throws CommandException {
+		throw new UnsupportedOperationException();
+	}
 }
