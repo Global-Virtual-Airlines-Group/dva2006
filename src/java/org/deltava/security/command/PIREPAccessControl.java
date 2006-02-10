@@ -58,10 +58,13 @@ public final class PIREPAccessControl extends AccessControl {
 		_canSubmit = (status == FlightReport.DRAFT) && (_ourPIREP || isPirep || isHR);
 		_canHold = ((isPirep || isHR) && (status == FlightReport.SUBMITTED));
 		_canApprove = ((isPirep || isHR) && ((status == FlightReport.SUBMITTED) || (status == FlightReport.HOLD)) || (isHR && (status == FlightReport.REJECTED)));
-
 		_canReject = (status != FlightReport.REJECTED) && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = (_canSubmit || _canHold || _canApprove || _canReject);
-		_canDelete = (_ourPIREP && (status == FlightReport.DRAFT)) || ((_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) == 0) && _ctx.isUserInRole("Admin"));
+		
+		// Get the flight assignment ID
+		int assignID = _pirep.getDatabaseID(FlightReport.DBID_ASSIGN);
+		_canDelete = (_ourPIREP && (status == FlightReport.DRAFT)) || (_ctx.isUserInRole("Admin") && (((status == FlightReport.REJECTED)
+				&& (assignID != 0)) || (assignID == 0)));
 	}
 
 	/**
