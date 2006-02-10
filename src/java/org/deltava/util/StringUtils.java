@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -162,6 +162,23 @@ public final class StringUtils {
 			return Integer.parseInt(value);
 		} catch (NumberFormatException nfe) {
 			return defaultValue;
+		}
+	}
+	
+	/**
+	 * Parses a date using a given format pattern.
+	 * @param dt the date to parse
+	 * @param fmt the format pattern
+	 * @return the parsed Date
+	 * @throws IllegalArgumentException if the date cannot be parsed
+	 * @see DateFormat#parse(java.lang.String)
+	 */
+	public static Date parseDate(String dt, String fmt) {
+		DateFormat df = new SimpleDateFormat(fmt);
+		try {
+			return df.parse(dt);
+		} catch (ParseException pe) {
+			throw new IllegalArgumentException(pe);
 		}
 	}
 

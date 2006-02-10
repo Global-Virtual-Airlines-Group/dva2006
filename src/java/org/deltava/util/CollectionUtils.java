@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -108,6 +108,27 @@ public class CollectionUtils {
 				Object key = m.invoke(obj, (Object []) null);
 				results.put((K) key, obj);
 			} catch (Exception e) { }
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Converts two Collections into a Map. The resulting Map will be the same size as the smallest of
+	 * the two supplied Collections, and the key/value pairs will be assigned in the normal iteration order
+	 * of each Collection. 
+	 * @param keys a Collection of key objects
+	 * @param values a Collection of value objects
+	 * @return a Map of key/value pairs.
+	 */
+	public static <K, V> Map<K, V> createMap(Collection<K> keys, Collection<V> values) {
+		
+		Map<K, V> results = new HashMap<K, V>();
+		Iterator<V> vi = values.iterator();
+		for (Iterator<K> ki = keys.iterator(); ki.hasNext() && vi.hasNext(); ) {
+			K key = ki.next();
+			V value = vi.next();
+			results.put(key, value);
 		}
 		
 		return results;
