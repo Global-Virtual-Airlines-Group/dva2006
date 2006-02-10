@@ -18,29 +18,30 @@ import org.deltava.util.cache.*;
  */
 
 public class GetStatistics extends DAO {
-	
-	private static final Cache _cache = new ExpiringCache(2, 1800); 
+
+	private static final Cache _coolerStatsCache = new ExpiringCache(100, 1800);
+	private static final Cache _cache = new ExpiringCache(2, 1800);
 
 	private class CacheableInteger implements Cacheable {
-		
+
 		private Object _key;
 		private int _value;
-		
+
 		public CacheableInteger(Object cacheKey, int value) {
 			super();
 			_key = cacheKey;
 			_value = value;
 		}
-		
+
 		public Object cacheKey() {
 			return _key;
 		}
-		
+
 		public int getValue() {
 			return _value;
 		}
 	}
-	
+
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c a JDBC connection
@@ -155,12 +156,14 @@ public class GetStatistics extends DAO {
 	 * @return a List of StatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
+	public List<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy, boolean descSort)
+			throws DAOException {
 
 		// Generate SQL statement
 		StringBuilder sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
 		sqlBuf.append(orderBy);
-		if (descSort) sqlBuf.append(" DESC");
+		if (descSort)
+			sqlBuf.append(" DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -180,7 +183,62 @@ public class GetStatistics extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
+	/**
+	 * Returns Water Cooler posting statistics for a number of users.
+	 * @param ids a Collection of database IDs
+	 * @return a Map of post counts, indexed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Integer> getCoolerStatistics(Collection<Integer> ids) throws DAOException {
+		if (ids.isEmpty())
+			return Collections.emptyMap();
+
+		// Load from the cache
+		Map<Integer, Integer> results = new HashMap<Integer, Integer>();
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
+			Integer id = i.next();
+			if (_coolerStatsCache.contains(id)) {
+				CacheableInteger result = (CacheableInteger) _coolerStatsCache.get(id);
+				results.put(id, new Integer(result.getValue()));
+				i.remove();
+			}
+		}
+
+		// If we've loaded everything from the cache, return
+		if (ids.isEmpty())
+			return results;
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT AUTHOR_ID, COUNT(*) FROM common.COOLER_POSTS WHERE (AUTHOR_ID");
+		sqlBuf.append((ids.size() == 1) ? "=" : " IN (");
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+
+		sqlBuf.append((ids.size() == 1) ? ")" : "))");
+		sqlBuf.append(" GROUP BY AUTHOR_ID");
+
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.put(new Integer(rs.getInt(1)), new Integer(rs.getInt(2)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Returns Water Cooler posting statistics.
 	 * @param orderBy the order by column within SQL
@@ -189,39 +247,40 @@ public class GetStatistics extends DAO {
 	 * @return a List of CoolerStatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<CoolerStatsEntry> getCoolerStatistics(String orderBy, String groupBy, String distinctBy) throws DAOException {
-	   
-	   // Generate SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT ");
-	   sqlBuf.append(groupBy);
-	   sqlBuf.append("AS LBL, COUNT(DISTINCT CP.POST_ID) AS PC, COUNT(DISTINCT ");
-	   sqlBuf.append(distinctBy);
-	   sqlBuf.append(") AS DSTNCT FROM PILOTS P, common.COOLER_POSTS CP WHERE (P.ID=CP.AUTHOR_ID)");
-	   sqlBuf.append(" GROUP BY LBL ORDER BY ");
-	   sqlBuf.append(orderBy);
-	   
-	   try {
-	      prepareStatement(sqlBuf.toString());
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      
-	      // Iterate through the results
-	      List<CoolerStatsEntry> results = new ArrayList<CoolerStatsEntry>();
-	      while (rs.next()) {
-	         CoolerStatsEntry entry = new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3));
-	         results.add(entry);
-	      }
-	      
-	      // Clean up and return
-	      rs.close();
-	      _ps.close();
-	      return results;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+	public List<CoolerStatsEntry> getCoolerStatistics(String orderBy, String groupBy, String distinctBy)
+			throws DAOException {
+
+		// Generate SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		sqlBuf.append(groupBy);
+		sqlBuf.append("AS LBL, COUNT(DISTINCT CP.POST_ID) AS PC, COUNT(DISTINCT ");
+		sqlBuf.append(distinctBy);
+		sqlBuf.append(") AS DSTNCT FROM PILOTS P, common.COOLER_POSTS CP WHERE (P.ID=CP.AUTHOR_ID)");
+		sqlBuf.append(" GROUP BY LBL ORDER BY ");
+		sqlBuf.append(orderBy);
+
+		try {
+			prepareStatement(sqlBuf.toString());
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+
+			// Iterate through the results
+			List<CoolerStatsEntry> results = new ArrayList<CoolerStatsEntry>();
+			while (rs.next()) {
+				CoolerStatsEntry entry = new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3));
+				results.add(entry);
+			}
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Retrieves Water Cooler post counts.
 	 * @param days the number of days in the past to count
@@ -229,29 +288,29 @@ public class GetStatistics extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int getCoolerStatistics(int days) throws DAOException {
-		
+
 		// Check the cache
 		CacheableInteger result = (CacheableInteger) _cache.get(new Integer(days));
 		if (result != null)
 			return result.getValue();
-		
+
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE "
 					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
-			
+
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			result = new CacheableInteger(new Integer(days), rs.next() ? rs.getInt(1) : 0);
-			
+
 			// Clean up
 			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-		
+
 		// Return the result
 		_cache.add(result);
 		return result.getValue();
