@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -34,6 +34,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private double _mach;
 	private int _wSpeed;
 	private int _wHdg;
+	private int _fuelFlow;
 	private int _flaps;
 	private int _flags;
 
@@ -98,6 +99,15 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public double getBank() {
 		return _bank;
+	}
+	
+	/**
+	 * Returns the aircraft's fuel flow for all engines.
+	 * @return the flow in pounds per hour
+	 * @see RouteEntry#setFuelFlow(int)
+	 */
+	public int getFuelFlow() {
+		return _fuelFlow;
 	}
 
 	/**
@@ -350,12 +360,12 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	/**
 	 * Updates the aircraft's average N1 speed.
 	 * @param nn1 the N1 speed as a percentage
-	 * @throws IllegalArgumentException if nn1 is negative or > 145
+	 * @throws IllegalArgumentException if nn1 is negative or > 155
 	 * @see RouteEntry#getN1()
 	 */
 	public void setN1(double nn1) {
-		if ((nn1 < 0) || (nn1 > 145.0))
-			throw new IllegalArgumentException("N1 cannot be negative or > 145.0% - " + nn1);
+		if ((nn1 < 0) || (nn1 > 155.0))
+			throw new IllegalArgumentException("N1 cannot be negative or > 155.0% - " + nn1);
 
 		_n1 = nn1;
 	}
@@ -363,14 +373,27 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	/**
 	 * Updates the aircraft's average N2 speed.
 	 * @param nn2 the N2 speed as a percentage
-	 * @throws IllegalArgumentException if nn2 is negative or > 135
+	 * @throws IllegalArgumentException if nn2 is negative or > 145
 	 * @see RouteEntry#getN2()
 	 */
 	public void setN2(double nn2) {
-		if ((nn2 < 0) || (nn2 > 135.0))
-			throw new IllegalArgumentException("N2 cannot be negative or > 135.0% - " + nn2);
+		if ((nn2 < 0) || (nn2 > 145.0))
+			throw new IllegalArgumentException("N2 cannot be negative or > 145.0% - " + nn2);
 
 		_n2 = nn2;
+	}
+	
+	/**
+	 * Updates the aircraft's total fuel flow.
+	 * @param flow the flow in pounds per hour
+	 * @throws IllegalArgumentException if flow is negative or &gt; 120000
+	 * @see RouteEntry#getFuelFlow()
+	 */
+	public void setFuelFlow(int flow) {
+		if ((flow < 0) || (flow > 120000))
+			throw new IllegalArgumentException("Fuel Flow cannot be negative or > 120000 - " + flow);
+		
+		_fuelFlow = flow;
 	}
 
 	/**
@@ -507,7 +530,9 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		buf.append(StringUtils.format(_n1, "##0.0"));
 		buf.append("%, N<sub>2</sub>: ");
 		buf.append(StringUtils.format(_n2, "##0.0"));
-		buf.append("%<br />");
+		buf.append("%<br />Fuel Flow:");
+		buf.append(StringUtils.format(_fuelFlow, "#,##0"));
+		buf.append(" lbs/hr<br />");
 
 		// Add flaps logging if deployed
 		if (_flaps > 0) {
