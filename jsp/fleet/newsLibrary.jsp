@@ -10,22 +10,33 @@
 <head>
 <title><content:airline /> Newsletters</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function setCategory(combo)
+{
+var catName = combo.options[combo.selectedIndex].text;
+self.location = '/newsletters.do?category=' + escape(catName);
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="cats" name="airline.newsletters.categories" />
 <content:filter roles="Fleet"><c:set var="isFleetMgr" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="newsletters" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="newslibrary">
 <!-- Table Header Bar -->
-<tr class="title caps">
+<tr class="title">
  <td width="30%">TITLE</td>
  <td width="5%">&nbsp;</td>
  <td width="10%">SIZE</td>
@@ -37,7 +48,8 @@
  <td width="10%">&nbsp;</td>
 </c:otherwise>
 </c:choose>
- <td class="left">DESCRIPTION</td>
+ <td width="15%" class="left">DESCRIPTION</td>
+ <td class="right">CATEGORY <el:combo name="category" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${catName}" onChange="void setCategory(this)" /></td>
 </tr>
 
 <!-- Table Data Section -->
@@ -47,18 +59,18 @@
  <td class="pri bld"><el:cmd url="libedit" linkID="${doc.fileName}" op="manual">${doc.name}</el:cmd></td>
 </c:if>
 <c:if test="${!isFleetMgr}">
- <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
+ <td class="pri bld"><el:link url="/newsletter/${doc.fileName}">${doc.name}</el:link></td>
 </c:if>
- <td><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
+ <td><el:link url="/newsletter/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
  <td class="sec bld"><fmt:int value="${doc.size}" /></td>
- <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
+ <td class="small left" colspan="3"><fmt:text value="${doc.description}" /></td>
 </tr>
 </c:forEach>
 
 <!-- Download Acrobat -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="4">All <content:airline /> newsletters require <span class="pri bld">Adobe Acrobat Reader 5</span> or
+ <td colspan="5">All <content:airline /> newsletters require <span class="pri bld">Adobe Acrobat Reader 5</span> or
  newer in order to be viewed. If you are having difficulties viewing our newsletters, please click on the link to
  the left to download the latest version of Adobe Acrobat Reader.<br />
 This is a free download.</td>
@@ -66,9 +78,11 @@ This is a free download.</td>
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="5">&nbsp;</td>
+ <td colspan="6">&nbsp;</td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>

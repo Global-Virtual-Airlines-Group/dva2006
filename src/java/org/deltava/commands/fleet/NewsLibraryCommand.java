@@ -6,59 +6,72 @@ import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.fleet.FleetEntry;
+import org.deltava.beans.fleet.Newsletter;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.FleetEntryAccessControl;
+
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to view Newsletters. Note that this command will display library entries from other
- * Airlines, with the proviso that <i>all files are in the same library path</i>.
+ * A Web Site Command to view Newsletters. Note that this command will display library entries from other Airlines, with
+ * the proviso that <i>all files are in the same library path</i>.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
 public class NewsLibraryCommand extends AbstractViewCommand {
-   
-   private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
 
-   /**
+	private static final Logger log = Logger.getLogger(DocumentLibraryCommand.class);
+
+	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
-   public void execute(CommandContext ctx) throws CommandException {
+	public void execute(CommandContext ctx) throws CommandException {
 
-      Collection results = null;
+		// Get the newsletter category
+		String catName = ctx.getParameter("category");
+		if (catName == null)
+			catName = SystemData.get("airline.newsletters.name");
+		
+		// Save the category name
+		ctx.setAttribute("catName", catName, REQUEST);
+
+		Collection<Newsletter> results = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and newsletters
 			GetDocuments dao = new GetDocuments(con);
-			results = dao.getNewsletters(SystemData.get("airline.db"));
+			if ("ALL".equals(catName))
+				results = dao.getNewsletters(SystemData.get("airline.db"));
+			else
+				results = dao.getNewslettersByCategory(catName);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Calculate access for adding content
 		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
 		ctx.setAttribute("access", access, REQUEST);
 
 		// Validate our access to the results
 		access = new FleetEntryAccessControl(ctx, null);
-		for (Iterator i = results.iterator(); i.hasNext();) {
-			FleetEntry e = (FleetEntry) i.next();
-			access.setEntry(e);
+		for (Iterator<Newsletter> i = results.iterator(); i.hasNext();) {
+			Newsletter nws = i.next();
+			access.setEntry(nws);
 			access.validate();
 
 			// Check that the resource exists
-			if (e.getSize() == 0) {
-				log.warn(e.getFullName() + " not found in file system!");
+			if (nws.getSize() == 0) {
+				log.warn(nws.getFullName() + " not found in file system!");
 				if (!ctx.isUserInRole("Fleet"))
 					i.remove();
 			} else if (!access.getCanView()) {
@@ -73,5 +86,5 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/fleet/newsLibrary.jsp");
 		result.setSuccess(true);
-   }
+	}
 }

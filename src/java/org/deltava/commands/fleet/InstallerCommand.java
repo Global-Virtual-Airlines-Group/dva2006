@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -23,14 +23,14 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class InstallerSaveCommand extends AbstractCommand {
+public class InstallerCommand extends LibraryEditCommand {
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
-	public void execute(CommandContext ctx) throws CommandException {
+	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Get the file name and if we are saving a new document
 		String fName = (String) ctx.getCmdParameter(ID, null);

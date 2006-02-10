@@ -266,22 +266,22 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="libedit">
-		<name>Edit Library Entry</name>
-		<class>org.deltava.commands.fleet.LibraryEditCommand</class>
-		<roles>Fleet</roles>	
-	</command>
-
-	<command id="dlibsave">
-		<name>Save Manual</name>
-		<class>org.deltava.commands.fleet.ManualSaveCommand</class>
+	<command id="doclib">
+		<name>Manual Edit</name>
+		<class>org.deltava.commands.fleet.ManualCommand</class>
 		<roles>Fleet</roles>	
 	</command>
 	
-	<command id="flibsave">
-		<name>Save Installer</name>
-		<class>org.deltava.commands.fleet.InstallerSaveCommand</class>
+	<command id="fleetlib">
+		<name>Installer Edit</name>
+		<class>org.deltava.commands.fleet.InstallerCommand</class>
 		<roles>Fleet</roles>
+	</command>
+
+	<command id="newsletter">
+		<name>Newsletter Edit</name>
+		<class>org.deltava.commands.fleet.NewsletterCommand</class>
+		<roles>Fleet,HR</roles>
 	</command>
 
 	<command id="fleetlog">
