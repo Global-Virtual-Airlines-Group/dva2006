@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
 public abstract class LibraryEditCommand extends AbstractFormCommand {
 
 	private static final List<String> DOC_TYPES = Arrays.asList(new String[] { "fleet", "manual", "newsletter" });
-	private static final List<String> JSP_HDR = Arrays.asList(new String[] { "installer", "manual", "nws" });
+	private static final List<String> JSP_HDR = Arrays.asList(new String[] { "installer", "manual", "newsletter" });
 	private static final Map<String, String> JSP_NAMES = CollectionUtils.createMap(DOC_TYPES, JSP_HDR);
 
 	/**
