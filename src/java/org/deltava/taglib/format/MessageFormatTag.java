@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.net.URL;
@@ -41,7 +41,9 @@ public class MessageFormatTag extends TagSupport {
 		imgbuf.append(SystemData.get("path.img"));
 		imgbuf.append("/cooler/emoticons/");
 		imgbuf.append(name);
-		imgbuf.append(".gif\" border=\"0\" />");
+		imgbuf.append(".gif\" border=\"0\" alt=\"");
+		imgbuf.append(name);
+		imgbuf.append("\" />");
 		return imgbuf.toString();
 	}
 	
