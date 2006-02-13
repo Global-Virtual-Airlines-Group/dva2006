@@ -78,7 +78,7 @@ return true;
  <td class="right">SELECT <el:combo name="instName" idx="1" size="1" firstEntry="< INSTALLER >" options="${fleet}" onChange="void selectAC(this)" /></td>
 </tr>
 <tr>
- <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" /></td>
+ <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" caption="Fleet Library" /></td>
  <td valign="top"><div id="divName" class="pri bld"></div><br />
 <div id="divSize" class="sec bld"></div><br />
 <div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 

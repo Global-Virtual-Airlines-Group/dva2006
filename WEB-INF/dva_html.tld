@@ -28,7 +28,7 @@
 		</attribute>
 		<attribute>
 			<name>caption</name>
-			<required>false</required>
+			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
