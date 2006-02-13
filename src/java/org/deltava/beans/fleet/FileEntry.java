@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import org.deltava.beans.DatabaseBean;
@@ -13,6 +13,7 @@ import org.deltava.beans.DatabaseBean;
 public class FileEntry extends LibraryEntry {
    
    private int _authorID;
+   private String _category;
 
    /**
     * Creates a new File Library bean.
@@ -31,6 +32,15 @@ public class FileEntry extends LibraryEntry {
       return _authorID;
    }
    
+	/**
+	 * Returns the file category.
+	 * @return the category
+	 * @see FileEntry#setCategory(String)
+	 */
+	public String getCategory() {
+		return _category;
+	}
+   
    /**
     * Updates the ID of the contributor.
     * @param id the contributor's database ID
@@ -40,4 +50,13 @@ public class FileEntry extends LibraryEntry {
       DatabaseBean.validateID(_authorID, id);
       _authorID = id;
    }
+   
+	/**
+	 * Updates the file category.
+	 * @param ct the category
+	 * @see FileEntry#getCategory()
+	 */
+	public void setCategory(String ct) {
+		_category = ct;
+	}
 }

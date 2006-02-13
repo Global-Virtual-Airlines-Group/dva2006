@@ -160,7 +160,7 @@ public class GetLibrary extends DAO {
 	   
 	   // Execute the query
 	   ResultSet rs = _ps.executeQuery();
-	   boolean hasTotals = (rs.getMetaData().getColumnCount() > 6);
+	   boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 	   
 	   // Iterate through the result set
 	   List<FileEntry> results = new ArrayList<FileEntry>();
@@ -168,11 +168,12 @@ public class GetLibrary extends DAO {
 	      File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
 	      FileEntry entry = new FileEntry(f.getPath());
 	      entry.setName(rs.getString(2));
-	      entry.setSecurity(rs.getInt(4));
-	      entry.setAuthorID(rs.getInt(5));
-	      entry.setDescription(rs.getString(6));
+	      entry.setCategory(rs.getString(3));
+	      entry.setSecurity(rs.getInt(5));
+	      entry.setAuthorID(rs.getInt(6));
+	      entry.setDescription(rs.getString(7));
 	      if (hasTotals)
-	         entry.setDownloadCount(rs.getInt(7));
+	         entry.setDownloadCount(rs.getInt(8));
 	      
 	      // Add to results
 	      results.add(entry);
