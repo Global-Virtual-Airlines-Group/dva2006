@@ -21,7 +21,7 @@
 <script language="JavaScript" type="text/javascript">
 function setChannel(combo)
 {
-var channel = combo.options[combo.selectedIndex].text;
+var channel = combo.options[combo.selectedIndex].value;
 self.location = '/channel.do?id=' + escape(channel);
 return true;
 }

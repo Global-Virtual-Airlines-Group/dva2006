@@ -36,7 +36,7 @@ public class ChannelAdminCommand extends AbstractCommand {
 			
 			// Get the DAO and the channel list
 			GetCoolerChannels dao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", dao.getAll(airline), REQUEST);
+			ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

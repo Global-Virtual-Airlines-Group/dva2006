@@ -155,7 +155,10 @@ public class ThreadCommand extends AbstractCommand {
 			if (ac.getCanUnlock() || ac.getCanLock()) {
 				cdao.setQueryMax(0);
 				ctx.setAttribute("channel", c, REQUEST);
-				ctx.setAttribute("channels", cdao.getChannels(airline, false), REQUEST);
+				Collection<Channel> channels = cdao.getChannels(airline, false);
+				channels.remove(Channel.ALL);
+				channels.remove(Channel.SHOTS);
+				ctx.setAttribute("channels", channels, REQUEST);
 			}
 			
 			// Save the sticky date
