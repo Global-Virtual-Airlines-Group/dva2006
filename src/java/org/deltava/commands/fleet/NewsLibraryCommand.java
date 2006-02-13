@@ -60,6 +60,7 @@ public class NewsLibraryCommand extends AbstractViewCommand {
 
 		// Calculate access for adding content
 		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
+		access.validate();
 		ctx.setAttribute("access", access, REQUEST);
 
 		// Validate our access to the results
