@@ -29,6 +29,15 @@ import org.deltava.util.system.SystemData;
 public class NewsletterCommand extends LibraryEditCommand {
 
 	/**
+	 * Method called when editing the form.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	protected void execEdit(CommandContext ctx) throws CommandException {
+		super.execEdit(ctx, "newsletter");
+	}
+	
+	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
