@@ -36,8 +36,8 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
+				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
+						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
 						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.CHANNEL=?)");
 		if (!showImgs)
 			sqlBuf.append(" AND (T.IMAGE_ID=0)");
@@ -46,6 +46,23 @@ public class GetCoolerThreads extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, channelName);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Screen Shot message threads.
+	 * @return a List of MessageThread beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<MessageThread> getScreenShots() throws DAOException {
+		try {
+			prepareStatement("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+					+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
+					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE "
+					+ "(T.IMAGE_ID <> 0) GROUP BY T.ID ORDER BY SD DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
