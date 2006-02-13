@@ -1,8 +1,10 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
+import java.util.Collection;
 
+import org.deltava.beans.cooler.Channel;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -36,7 +38,10 @@ public class ChannelAdminCommand extends AbstractCommand {
 			
 			// Get the DAO and the channel list
 			GetCoolerChannels dao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
+			Collection<Channel> channels = dao.getChannels(airline, ctx.getRoles());
+			channels.remove(Channel.ALL);
+			channels.remove(Channel.SHOTS);
+			ctx.setAttribute("channels", channels, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
