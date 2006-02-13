@@ -26,6 +26,15 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ManualCommand extends LibraryEditCommand {
+	
+	/**
+	 * Method called when editing the form.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	protected void execEdit(CommandContext ctx) throws CommandException {
+		super.execEdit(ctx, "manual");
+	}
 
 	/**
 	 * Executes the command.

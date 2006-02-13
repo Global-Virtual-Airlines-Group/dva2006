@@ -7,7 +7,6 @@
 		<domain>deltava.org</domain>
 		<url>www.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
-		<files type="Boolean">true</files>
 		<code>DVA</code>
 		<db>DVA</db>
 		<voice>
@@ -17,6 +16,14 @@
 				<url>teamspeak://ts2.deltava.org/pilots</url>
 			</ts2>
 		</voice>
+		
+		<!-- Do we have a file library? -->
+		<files>
+			<enabled type="Boolean">true</enabled>
+			<list name="categories" attr="category" unique="true">
+				<category>Fuel Planners</category>
+			</list>
+		</files>
 		
 		<!-- Do we have newsletters? -->
 		<newsletters>
