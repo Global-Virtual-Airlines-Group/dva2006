@@ -53,7 +53,7 @@ return true;
  <td><span id="FleetDesc"></span></td>
 </tr>
 <tr valign="middle">
- <td colspan="2" class="mid"><el:img ID="FleetPic" x="600" y="450" src="blank.png" /></td>
+ <td colspan="2" class="mid"><el:img ID="FleetPic" x="600" y="450" src="blank.png" caption="Fleet Gallery" /></td>
 </tr>
 <tr class="title">
  <td colspan="2">&nbsp;</td>

@@ -29,8 +29,8 @@ major event per month, and ad hoc events approximately once every seven to ten d
 <br />
 <el:table space="2" pad="2">
 <tr>
- <td><el:link url="http://www.vatsim.net/" target="_NEW"><el:img src="network/${vatsimImg}" border="0" /></el:link></td>
- <td><el:link url="http://www.ivao.org/" target="_NEW"><el:img src="network/${ivaoImg}" border="0" /></el:link></td>
+ <td><el:link url="http://www.vatsim.net/" target="_NEW"><el:img src="network/${vatsimImg}" border="0" caption="VATSIM" /></el:link></td>
+ <td><el:link url="http://www.ivao.org/" target="_NEW"><el:img src="network/${ivaoImg}" border="0" caption="IVAO" /></el:link></td>
 </tr>
 </el:table>
 <br />
