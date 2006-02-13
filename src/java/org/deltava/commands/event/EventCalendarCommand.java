@@ -38,10 +38,11 @@ public class EventCalendarCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the number of days and start date
-		int days = Integer.parseInt((String) ctx.getCmdParameter(OPERATION, "31"));
+		int days = 31;
 		Date startDate = null;
 		try {
 			startDate = _df.parse(ctx.getParameter("startDate"));
+			days = Integer.parseInt((String) ctx.getCmdParameter(OPERATION, "31"));
 		} catch (Exception e) {
 			startDate = new Date();
 		}
