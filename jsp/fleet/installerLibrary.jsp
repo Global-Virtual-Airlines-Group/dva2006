@@ -29,14 +29,14 @@
  <td width="10%">CODE</td>
  <td width="10%">SIZE</td>
  <td width="10%">VERSION</td>
- <td width="15%"><el:cmdbutton url="libedit" op="fleet" label="NEW INSTALLER" /></td>
+ <td width="15%"><el:cmdbutton url="fleetlib" op="edit" label="NEW INSTALLER" /></td>
  <td>DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="installer" items="${fleet}">
 <view:row entry="${installer}">
- <td class="pri bld"><el:cmd url="libedit" linkID="${installer.fileName}" op="fleet">${installer.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="fleetlib" linkID="${installer.fileName}" op="edit">${installer.name}</el:cmd></td>
  <td>${installer.code}</td>
  <td class="sec small"><fmt:int value="${installer.size}" /> bytes</td>
  <td class="bld">${installer.version}</td>

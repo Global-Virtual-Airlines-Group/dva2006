@@ -42,7 +42,7 @@ return true;
  <td width="10%">SIZE</td>
 <c:choose>
 <c:when test="${access.canCreate}">
- <td width="10%"><el:cmdbutton url="libedit" op="manual" label="NEW NEWSLETTER" /></td>
+ <td width="10%"><el:cmdbutton url="newsletter" op="edit" label="NEW NEWSLETTER" /></td>
 </c:when>
 <c:otherwise>
  <td width="10%">&nbsp;</td>
@@ -56,7 +56,7 @@ return true;
 <c:forEach var="doc" items="${docs}">
 <tr>
 <c:if test="${isFleetMgr}">
- <td class="pri bld"><el:cmd url="libedit" linkID="${doc.fileName}" op="manual">${doc.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="newsletter" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
 </c:if>
 <c:if test="${!isFleetMgr}">
  <td class="pri bld"><el:link url="/newsletter/${doc.fileName}">${doc.name}</el:link></td>

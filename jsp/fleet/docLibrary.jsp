@@ -32,7 +32,7 @@
  <td width="5%">VERSION</td>
 <c:choose>
 <c:when test="${access.canCreate}">
- <td width="10%"><el:cmdbutton url="libedit" op="manual" label="NEW MANUAL" /></td>
+ <td width="10%"><el:cmdbutton url="doclib" op="edit" label="NEW MANUAL" /></td>
 </c:when>
 <c:otherwise>
  <td width="10%">&nbsp;</td>
@@ -45,7 +45,7 @@
 <c:forEach var="doc" items="${docs}">
 <view:row entry="${doc}">
 <c:if test="${isFleetMgr}">
- <td class="pri bld"><el:cmd url="libedit" linkID="${doc.fileName}" op="manual">${doc.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="doclib" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
 </c:if>
 <c:if test="${!isFleetMgr}">
  <td class="pri bld"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>

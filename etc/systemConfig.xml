@@ -7,7 +7,6 @@
 		<domain>deltava.org</domain>
 		<url>dva2006.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
-		<files type="Boolean">true</files>
 		<code>DVA</code>
 		<db>DVA</db>
 		<voice>
@@ -18,14 +17,23 @@
 			</ts2>
 		</voice>
 		
+		<!-- Do we have a file library? -->
+		<files>
+			<enabled type="Boolean">true</enabled>
+			<list name="categories" attr="category" unique="true">
+				<category>Fuel Planners</category>
+			</list>
+		</files>
+		
 		<!-- Do we have newsletters? -->
 		<newsletters>
 			<enabled type="Boolean">true</enabled>
 			<name>Delta FLY!</name>
 			<list name="categories" attr="category" unique="true">
 				<category>Delta FLY!</category>
-				<category>Mad Dog Program</category>
 				<category>Flight Academy</category>
+				<category>Mad Dog Program</category>
+				<caategory>777 Program</caategory>
 			</list>
 		</newsletters>
 		

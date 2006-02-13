@@ -33,9 +33,10 @@ return true;
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
-<content:sysdata var="fileLibEnabled" name="airline.files" />
+<content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
 <content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
+<content:sysdata var="newsletterCats" name="airline.newsletters.categories" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
 <content:sysdata var="selcalReserve" name="users.selcal.reserve" />
@@ -162,9 +163,10 @@ contributions from our community that will enhance your flight simulation experi
 </c:if>
 <c:if test="${newsletterEnabled}">
 <tr>
- <td class="mid"><el:cmd className="bld" url="newsletters">${newsletter}</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="newsletters">Newsletters</el:cmd></td>
  <td class="data">${newsletter} is the official <content:airline /> newsletter, and is published regularly.
- You can view back issues of ${newsletter} here.</td>
+ You can view back issues of ${newsletter} here. You can also download copies of the other <content:airline />
+ newsletters (<fmt:list value="${newsletterCats}" delim=", " />) here.</td>
 </tr>
 </c:if>
 <content:filter roles="Fleet">
