@@ -69,6 +69,7 @@ public class UserFileCommand extends AbstractFormCommand {
 
 			// Populate the bean
 			entry.setName(ctx.getParameter("title"));
+			entry.setCategory(ctx.getParameter("category"));
 			entry.setDescription(ctx.getParameter("desc"));
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 
