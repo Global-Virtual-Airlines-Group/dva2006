@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -201,6 +201,9 @@ public class GetServInfo extends DAO {
 							// Load the type
 							switch (NetworkUser.getType(si.get(SITokens.TYPE))) {
 								case NetworkUser.ATC:
+									if (si.size() < SITokens.FACILITY)
+										break;
+									
 									try {
 										Controller c = new Controller(id);
 										c.setCallsign(si.get(SITokens.CALLSIGN));
