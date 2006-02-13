@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -13,9 +13,10 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
+public class Channel implements java.io.Serializable, Comparable, Cacheable, ComboAlias, ViewEntry {
 
-    public static final Channel ALL = new AllChannel();
+    public static final Channel ALL = new AllChannel("All Discussions", "ALL", true);
+    public static final Channel SHOTS = new AllChannel("Screen Shots", "SSHOTS", false);
     
     public static final int INFOTYPE_AIRLINE = 0;
     public static final int INFOTYPE_ROLE = 1;
@@ -33,16 +34,21 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     private String _lastSubject;
     private int _lastThreadID;
     
-    static class AllChannel extends Channel implements ComboAlias {
+    static class AllChannel extends Channel {
     	
     	private static Collection<String> ROLES = Arrays.asList(new String[] {"*"});
+    	
+    	private String _myName;
+    	private boolean _topOfList;
     
-    	AllChannel() {
-    		super("ALL");
+    	AllChannel(String name, String alias, boolean isTopOfList) {
+    		super(alias);
+    		_myName = name;
+    		_topOfList = isTopOfList;
     	}
     	
     	public String getComboName() {
-    		return "All Discussions";
+    		return _myName;
     	}
     	
     	public String getComboAlias() {
@@ -51,6 +57,11 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
     	
     	public final Collection<String> getRoles() {
     		return ROLES;
+    	}
+    	
+    	public final int compareTo(Object o) {
+    		Channel c2 = (Channel) o;
+    		return _topOfList ? -1 : getName().compareTo(c2.getName());
     	}
     }
     
@@ -73,6 +84,14 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
      */
     public String getName() {
         return _name;
+    }
+    
+    public String getComboName() {
+    	return _name;
+    }
+    
+    public String getComboAlias() {
+    	return _name;
     }
     
     /**
@@ -314,6 +333,7 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
 
     /**
      * Returns the cache key.
+     * @return the cache key
      * @see Cacheable
      */
     public Object cacheKey() {
@@ -340,6 +360,15 @@ public class Channel implements java.io.Serializable, Cacheable, ViewEntry {
      */
     public int hashCode() {
         return _name.hashCode();
+    }
+    
+    /**
+     * Compares two Channels by comparing their names.
+     * @see Comparable#compareTo(Object)
+     */
+    public int compareTo(Object o) {
+    	Channel c2 = (Channel) o;
+    	return _name.compareTo(c2._name);
     }
     
     /**

@@ -41,7 +41,8 @@ public class ChannelListCommand extends AbstractCommand {
 			// Get the channels for the user's role
 			GetCoolerChannels dao = new GetCoolerChannels(con);
 			List<Channel> channels = dao.getChannels(airline, ctx.getRoles());
-			channels.remove(0);
+			channels.remove(Channel.ALL);
+			channels.remove(Channel.SHOTS);
 			ctx.setAttribute("channels", channels, REQUEST);
 			
 			// Get the last posts in each of the returned channels

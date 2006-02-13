@@ -24,12 +24,12 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadListCommand extends AbstractViewCommand {
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+public void execute(CommandContext ctx) throws CommandException {
 
       // Get the user for the channel list
       Person p = ctx.getUser();
@@ -68,20 +68,28 @@ public class ThreadListCommand extends AbstractViewCommand {
          ctx.setAttribute("channelAccess", cAccess, REQUEST);
 
          // Get the Message Threads for this channel - add by 10% for filtering
-         GetCoolerThreads dao2 = new GetCoolerThreads(con);
-         dao2.setQueryStart(vc.getStart());
-         dao2.setQueryMax(Math.round(vc.getCount() * 1.25f));
+         GetCoolerThreads tdao = new GetCoolerThreads(con);
+         tdao.setQueryStart(vc.getStart());
+         tdao.setQueryMax(Math.round(vc.getCount() * 1.275f));
 
          // Initialize the access controller and the set to store pilot IDs
+         Collection<Integer> pilotIDs = new HashSet<Integer>();
          CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
          
-         // Save the channel name if showing all
-         if (ch == null)
-            ctx.setAttribute("channelName", "All Discussions", REQUEST);
-
-         // Get either by channel or all; now filter by role
-         Set<Integer> pilotIDs = new HashSet<Integer>();
-         List<MessageThread> threads = (ch == null) ? dao2.getAll(showImgThreads) : dao2.getByChannel(cName, showImgThreads);
+         // Figure out what message threads to display
+         List<MessageThread> threads = null;
+         if (ch != null)
+        	 threads = tdao.getByChannel(cName, showImgThreads);
+         else if (Channel.SHOTS.equals(cName)) {
+        	 ctx.setAttribute("channelName", Channel.SHOTS.getComboName(), REQUEST);
+        	 ctx.setAttribute("channel", Channel.SHOTS, REQUEST);
+        	 threads = tdao.getScreenShots();
+         } else {
+        	 ctx.setAttribute("channelName", Channel.ALL.getComboName(), REQUEST);
+        	 threads = tdao.getAll(showImgThreads);
+         }
+         
+         // Validate our access to each thread
          for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
             MessageThread thread = i.next();
 
@@ -131,5 +139,4 @@ public class ThreadListCommand extends AbstractViewCommand {
       CommandResult result = ctx.getResult();
       result.setURL("/jsp/cooler/threadList.jsp");
       result.setSuccess(true);
-   }
-}
+   }}
