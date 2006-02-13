@@ -2,11 +2,10 @@
 
 /* ------------------------------------------------------------------ */
 /* Controls the sizing and formatting of the main IE formatting table */
-
 TABLE#ieLayout {
-	position: absolute;
+	position: relative;
 	width: 100%;
-	top: 0px;
+	top: -16px;
 	left: 0px;
 }
 
