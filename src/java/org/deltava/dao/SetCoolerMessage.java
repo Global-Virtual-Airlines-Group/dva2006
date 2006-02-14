@@ -31,13 +31,14 @@ public class SetCoolerMessage extends DAO {
 	public void writeMessage(Message msg) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, "
-					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY) VALUES (?, ?, ?, INET_ATON(?), ?, ?)");
+					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
 			_ps.setInt(1, msg.getThreadID());
 			_ps.setInt(2, msg.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(msg.getCreatedOn()));
 			_ps.setString(4, msg.getRemoteAddr());
 			_ps.setString(5, msg.getRemoteHost());
 			_ps.setString(6, msg.getBody());
+			_ps.setBoolean(7, msg.getContentWarning());
 
 			// Update the database
 			executeUpdate(1);
@@ -54,12 +55,13 @@ public class SetCoolerMessage extends DAO {
 	public void update(Message msg) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET MSGBODY=?, REMOTE_HOST=?, "
-					+ "REMOTE_ADDR=INET_ATON(?) WHERE (THREAD_ID=?) AND (POST_ID=?)");
+					+ "REMOTE_ADDR=INET_ATON(?), CONTENTWARN=? WHERE (THREAD_ID=?) AND (POST_ID=?)");
 			_ps.setString(1, msg.getBody());
 			_ps.setString(2, msg.getRemoteHost());
 			_ps.setString(3, msg.getRemoteAddr());
-			_ps.setInt(4, msg.getThreadID());
-			_ps.setInt(5, msg.getID());
+			_ps.setBoolean(4, msg.getContentWarning());
+			_ps.setInt(5, msg.getThreadID());
+			_ps.setInt(6, msg.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

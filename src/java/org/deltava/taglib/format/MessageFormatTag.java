@@ -11,7 +11,7 @@ import org.deltava.beans.cooler.Emoticons;
 
 import org.deltava.taglib.ContentHelper;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -24,6 +24,7 @@ import org.deltava.util.system.SystemData;
 public class MessageFormatTag extends TagSupport {
 
 	private String _msg;
+	private boolean _useFilter;
 
 	/**
 	 * Updates the text to format.
@@ -31,6 +32,14 @@ public class MessageFormatTag extends TagSupport {
 	 */
 	public void setValue(String msg) {
 		_msg = msg;
+	}
+	
+	/**
+	 * Toggles the profanity filter.
+	 * @param doFilter TRUE if the filter should be used, otherwise FALSE
+	 */
+	public void setFilter(boolean doFilter) {
+		_useFilter = doFilter; 
 	}
 
 	/**
@@ -67,6 +76,10 @@ public class MessageFormatTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
+		
+		// If we're using the filter, then apply it
+		if (_useFilter)
+			_msg = ProfanityFilter.filter(_msg);
 
 		// Break out the string
 		StringTokenizer tkns = new StringTokenizer(_msg, " \n\r", true);

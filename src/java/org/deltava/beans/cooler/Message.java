@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.Date;
@@ -6,17 +7,18 @@ import org.deltava.beans.DatabaseBean;
 
 /**
  * A class to store Water Cooler posts.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class Message extends DatabaseBean implements Comparable {
     
     private int _threadID;
     private int _authorID;
     private Date _createdOn;
     private String _msgBody;
+    private boolean _contentWarning;
     
     private String _remoteHost;
     private String _remoteAddr;
@@ -89,6 +91,15 @@ public class Message extends DatabaseBean implements Comparable {
     }
     
     /**
+     * Returns wether this message contains questionable content.
+     * @return TRUE if there is questionable content, otherwise FALSE
+     * @see Message#setContentWarning(boolean)
+     */
+    public boolean getContentWarning() {
+    	return _contentWarning;
+    }
+    
+    /**
      * Updates the date/time the message was written.
      * @param dt the date & time this message was created
      * @see Message#getCreatedOn()
@@ -135,6 +146,15 @@ public class Message extends DatabaseBean implements Comparable {
      */
     public void setRemoteHost(String hostName) {
         _remoteHost = hostName;
+    }
+    
+    /**
+     * Toggles the content warning flag for this message.
+     * @param isWarn TRUE if the message contains questionable content, otherwise FALSE
+     * @see Message#getContentWarning()
+     */
+    public void setContentWarning(boolean isWarn) {
+    	_contentWarning = isWarn;
     }
     
     /**

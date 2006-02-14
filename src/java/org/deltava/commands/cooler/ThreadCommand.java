@@ -180,6 +180,9 @@ public class ThreadCommand extends AbstractCommand {
 		// Save scores choices and if we are editing
 		ctx.setAttribute("doEdit", Boolean.valueOf(doEdit), REQUEST);
 		ctx.setAttribute("scores", SCORES, REQUEST);
+		
+		// Disable content filter if requested
+		ctx.setAttribute("noFilter", Boolean.valueOf(ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator")), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
