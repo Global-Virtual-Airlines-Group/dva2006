@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -206,7 +206,8 @@ public class GetCoolerThreads extends DAO {
 
 			// Fetch the thread posts
 			prepareStatementWithoutLimits("SELECT THREAD_ID, POST_ID, AUTHOR_ID, CREATED, INET_NTOA(REMOTE_ADDR), "
-					+ "REMOTE_HOST, MSGBODY FROM common.COOLER_POSTS WHERE (THREAD_ID=?) ORDER BY CREATED");
+					+ "REMOTE_HOST, MSGBODY, CONTENTWARN FROM common.COOLER_POSTS WHERE (THREAD_ID=?) "
+					+ "ORDER BY CREATED");
 			_ps.setInt(1, id);
 
 			// Execute the query
@@ -219,6 +220,7 @@ public class GetCoolerThreads extends DAO {
 				msg.setRemoteAddr(rs.getString(5));
 				msg.setRemoteHost(rs.getString(6));
 				msg.setBody(rs.getString(7));
+				msg.setContentWarning(rs.getBoolean(8));
 				t.addPost(msg);
 			}
 

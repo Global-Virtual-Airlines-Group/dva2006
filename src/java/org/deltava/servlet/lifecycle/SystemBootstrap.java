@@ -1,10 +1,10 @@
 // Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
+import java.io.*;
 import java.util.*;
 import java.sql.*;
 import javax.servlet.*;
-import java.io.IOException;
 
 import org.apache.log4j.*;
 
@@ -16,7 +16,7 @@ import org.deltava.mail.MailerDaemon;
 import org.deltava.security.*;
 import org.deltava.taskman.*;
 
-import org.deltava.util.ThreadUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -58,6 +58,23 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Initialize system data
 		SystemData.init();
+		
+		// Load the profanity filter
+		try {
+			InputStream is = ConfigLoader.getStream("/etc/profanity.txt");
+			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is));
+			
+			// Load the content
+			Collection<String> words = new LinkedHashSet<String>();
+			while (lr.ready())
+				words.add(lr.readLine());
+			
+			// Init the profanity filter
+			log.info("Initializing Content Filter");
+			ProfanityFilter.init(words);
+		} catch (IOException ie) {
+			log.warn("Cannot load Profanity Filter - " + ie.getMessage());
+		}
 
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
