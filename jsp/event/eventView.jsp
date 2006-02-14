@@ -61,7 +61,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Online Network</td>
- <td class="data sec bld">${event.networkName}</td>
+ <td colspan="5" class="data sec bld">${event.networkName}</td>
 </tr>
 <c:if test="${event.canSignup}">
 <tr>
