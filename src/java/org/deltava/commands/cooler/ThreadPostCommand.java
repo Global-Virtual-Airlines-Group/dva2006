@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.awt.Dimension;
@@ -29,204 +29,201 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadPostCommand extends AbstractCommand {
 
-   /*private static final Logger log = Logger.getLogger(ThreadPostCommand.class); */
+	/* private static final Logger log = Logger.getLogger(ThreadPostCommand.class); */
 
-   private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
+	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
-   private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
-   private static final String[] IMG_ALIASES = { "0", "1" };
+	private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
+	private static final String[] IMG_ALIASES = { "0", "1" };
 
-   /*private static final int IMG_REJECT = 0;
-   private static final int IMG_RESIZE = 1; */
+	/*
+	 * private static final int IMG_REJECT = 0; private static final int IMG_RESIZE = 1;
+	 */
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      // Set result URL
-      CommandResult result = ctx.getResult();
+		// Set result URL
+		CommandResult result = ctx.getResult();
 
-      // Get the user for the channel list
-      Person p = ctx.getUser();
-      
-      // Get the default airline
-      AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
+		// Get the user for the channel list
+		Person p = ctx.getUser();
 
-      // Get the channel name
-      String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
-      ctx.setAttribute("imgOpts", ComboUtils.fromArray(IMG_OPTIONS, IMG_ALIASES), REQUEST);
+		// Get the default airline
+		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
-      try {
-         Connection con = ctx.getConnection();
-         
-         // Get the Pilot's airline
-         GetUserData uddao = new GetUserData(con);
-         if (p != null) {
-         	UserData usrData = uddao.get(p.getID());
-         	if (usrData != null)
-         		airline = SystemData.getApp(usrData.getAirlineCode());
-         }
+		// Get the channel name
+		String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
+		ctx.setAttribute("imgOpts", ComboUtils.fromArray(IMG_OPTIONS, IMG_ALIASES), REQUEST);
 
-         // Get the channel DAO and the list of channels
-         GetCoolerChannels dao = new GetCoolerChannels(con);
-         List channels = dao.getChannels(airline, ctx.getRoles());
-         Channel ch = dao.get(cName);
-         channels.remove(0);
-         ctx.setAttribute("channel", ch, REQUEST);
-         ctx.setAttribute("channels", channels, REQUEST);
+		try {
+			Connection con = ctx.getConnection();
 
-         // Initialize the channel access controller
-         CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, ch);
-         access.validate();
-         ctx.setAttribute("channelAccess", access, REQUEST);
+			// Get the Pilot's airline
+			GetUserData uddao = new GetUserData(con);
+			if (p != null) {
+				UserData usrData = uddao.get(p.getID());
+				if (usrData != null)
+					airline = SystemData.getApp(usrData.getAirlineCode());
+			}
 
-         // Check to see if we can post in this channel
-         if (!access.getCanPost()) throw securityException("Cannot post in channel " + cName);
+			// Get the channel DAO and the list of channels
+			GetCoolerChannels dao = new GetCoolerChannels(con);
+			List<Channel> channels = dao.getChannels(airline, ctx.getRoles());
+			Channel ch = dao.get(cName);
+			channels.remove(Channel.ALL);
+			channels.remove(Channel.SHOTS);
+			ctx.setAttribute("channel", ch, REQUEST);
+			ctx.setAttribute("channels", channels, REQUEST);
 
-         // Check if we're doing a GET; if so jump to the create JSP
-         if ("GET".equals(ctx.getRequest().getMethod())) {
-            result.setURL("/jsp/cooler/threadCreate.jsp");
-            result.setSuccess(true);
-            return;
-         }
+			// Initialize the channel access controller
+			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, ch);
+			access.validate();
+			ctx.setAttribute("channelAccess", access, REQUEST);
 
-         // Check if we are loading an image. If so, check the image size
-         FileUpload img = ctx.getFile("img");
-         if (img != null) {
-            ImageInfo imgInfo = new ImageInfo(img.getBuffer());
-            imgInfo.check();
+			// Check to see if we can post in this channel
+			if (!access.getCanPost())
+				throw securityException("Cannot post in channel " + cName);
 
-            // Save image info
-            ctx.setAttribute("imgSize", new Integer(img.getSize()), REQUEST);
-            ctx.setAttribute("imgX", new Integer(imgInfo.getWidth()), REQUEST);
-            ctx.setAttribute("imgY", new Integer(imgInfo.getHeight()), REQUEST);
+			// Check if we're doing a GET; if so jump to the create JSP
+			if ("GET".equalsIgnoreCase(ctx.getRequest().getMethod())) {
+				result.setURL("/jsp/cooler/threadCreate.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
-            // Validate the image
-            boolean badSize = img.getSize() > SystemData.getInt("cooler.img_max.size");
-            boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.y"))
-                  || (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
+			// Check if we are loading an image. If so, check the image size
+			FileUpload img = ctx.getFile("img");
+			if (img != null) {
+				ImageInfo imgInfo = new ImageInfo(img.getBuffer());
+				imgInfo.check();
 
-            // If the image is too big, figure out what to do
-            /* int imgOpt = Integer.parseInt(ctx.getParameter("imgOption")); */
-            if (badSize || (badDim /* && (imgOpt == IMG_REJECT ) */ )) {
-               ctx.setAttribute("imgBadSize", Boolean.valueOf(badSize), REQUEST);
-               ctx.setAttribute("imgBadDim", Boolean.valueOf(badDim), REQUEST);
+				// Save image info
+				ctx.setAttribute("imgSize", new Integer(img.getSize()), REQUEST);
+				ctx.setAttribute("imgX", new Integer(imgInfo.getWidth()), REQUEST);
+				ctx.setAttribute("imgY", new Integer(imgInfo.getHeight()), REQUEST);
 
-               // Redirect back to the JSP
-               result.setURL("/jsp/cooler/threadCreate.jsp");
-               result.setSuccess(true);
-               return;
-            }
+				// Validate the image
+				boolean badSize = img.getSize() > SystemData.getInt("cooler.img_max.size");
+				boolean badDim = (imgInfo.getHeight() > SystemData.getInt("cooler.img_max.y"))
+						|| (imgInfo.getWidth() > SystemData.getInt("cooler.img_max.x"));
 
-            // Resize the image - DISABLED
-            /*
-            if (badDim) {
-               ImageScaler scaler = new ImageScaler(img.getBuffer());
-               scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight()));
+				// If the image is too big, figure out what to do
+				/* int imgOpt = Integer.parseInt(ctx.getParameter("imgOption")); */
+				if (badSize || (badDim /* && (imgOpt == IMG_REJECT ) */)) {
+					ctx.setAttribute("imgBadSize", Boolean.valueOf(badSize), REQUEST);
+					ctx.setAttribute("imgBadDim", Boolean.valueOf(badDim), REQUEST);
 
-               // Replace the FileUpload data
-               try {
-                  img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
-                  ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST);
-               } catch (IOException ie) {
-                  log.warn("Error scaling image - " + ie.getMessage(), ie);
-                  img = null;
-               }
-            } */
-         }
-         
-         // Create the new thread bean
-         MessageThread mt = new MessageThread(ctx.getParameter("subject"));
-         mt.setChannel(cName);
-         mt.setAuthorID(p.getID());
+					// Redirect back to the JSP
+					result.setURL("/jsp/cooler/threadCreate.jsp");
+					result.setSuccess(true);
+					return;
+				}
 
-         // Parse the sticky date
-         if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) {
-            try {
-               mt.setStickyUntil(_df.parse(ctx.getParameter("stickyDate")));
-            } catch (ParseException pe) {
-               throw new CommandException(pe);
-            }
-         }
-         
-         // Create the Pilot poll
-         boolean hasPoll = Boolean.valueOf(ctx.getParameter("hasPoll")).booleanValue();
-         if (hasPoll) {
-        	 Collection<String> opts = StringUtils.split(ctx.getParameter("pollOptions"), "\n");
-        	 for (Iterator<String> i = opts.iterator(); i.hasNext(); )
-        		 mt.addOption(new PollOption(1, i.next()));
-         }
+				// Resize the image - DISABLED
+				/*
+				 * if (badDim) { ImageScaler scaler = new ImageScaler(img.getBuffer());
+				 * scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight()));
+				 *  // Replace the FileUpload data try { img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
+				 * ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST); } catch (IOException ie) { log.warn("Error
+				 * scaling image - " + ie.getMessage(), ie); img = null; } }
+				 */
+			}
+			
+			// Create the new thread bean
+			MessageThread mt = new MessageThread(ProfanityFilter.filter(ctx.getParameter("subject")));
+			mt.setChannel(cName);
+			mt.setAuthorID(p.getID());
 
-         // Create the first post in the thread
-         Message msg = new Message(p.getID());
-         msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
-         msg.setRemoteHost(ctx.getRequest().getRemoteHost());
-         msg.setBody(ctx.getParameter("msgText"));
-         mt.addPost(msg);
-         
-         // Start the transaction
-         ctx.startTX();
+			// Parse the sticky date
+			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) {
+				try {
+					mt.setStickyUntil(_df.parse(ctx.getParameter("stickyDate")));
+				} catch (ParseException pe) {
+					throw new CommandException(pe);
+				}
+			}
 
-         // Write the image to the gallery if we have one
-         if (img != null) {
-            Image gImg = new Image(mt.getSubject(), "Water Cooler Screen Shot");
-            gImg.setAuthorID(p.getID());
-            gImg.setCreatedOn(new Date());
-            gImg.load(img.getBuffer());
+			// Create the Pilot poll
+			boolean hasPoll = Boolean.valueOf(ctx.getParameter("hasPoll")).booleanValue();
+			if (hasPoll) {
+				Collection<String> opts = StringUtils.split(ctx.getParameter("pollOptions"), "\n");
+				for (Iterator<String> i = opts.iterator(); i.hasNext();)
+					mt.addOption(new PollOption(1, i.next()));
+			}
 
-            // Save the image to the gallery
-            SetGalleryImage imgdao = new SetGalleryImage(con);
-            imgdao.write(gImg);
+			// Create the first post in the thread
+			Message msg = new Message(p.getID());
+			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			msg.setRemoteHost(ctx.getRequest().getRemoteHost());
+			msg.setBody(ctx.getParameter("msgText"));
+			msg.setContentWarning(ProfanityFilter.flag(msg.getBody()));
+			mt.addPost(msg);
 
-            // Save the image ID
-            mt.setImage(gImg.getID());
-            ctx.setAttribute("hasImage", Boolean.TRUE, REQUEST);
-         }
+			// Start the transaction
+			ctx.startTX();
 
-         // Get the write DAO and write to the database
-         SetCoolerMessage wdao = new SetCoolerMessage(con);
-         wdao.writeThread(mt);
-         
-         // Create a notification entry if we requested on
-         if ("1".equals(ctx.getParameter("updateNotify"))) {
-            SetCoolerNotification nwdao = new SetCoolerNotification(con);
-            nwdao.add(mt.getID(), ctx.getUser().getID());
-            ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
-         }
-         
-         // Commit the transaction
-         ctx.commitTX();
+			// Write the image to the gallery if we have one
+			if (img != null) {
+				Image gImg = new Image(mt.getSubject(), "Water Cooler Screen Shot");
+				gImg.setAuthorID(p.getID());
+				gImg.setCreatedOn(new Date());
+				gImg.load(img.getBuffer());
 
-         // Save the thread in the request
-         ctx.setAttribute("thread", mt, REQUEST);
-         ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
-      } catch (DAOException de) {
-         ctx.rollbackTX();
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+				// Save the image to the gallery
+				SetGalleryImage imgdao = new SetGalleryImage(con);
+				imgdao.write(gImg);
 
-      // Forward to the JSP
-      result.setType(CommandResult.REQREDIRECT);
-      result.setURL("/jsp/cooler/threadUpdate.jsp");
-      result.setSuccess(true);
-   }
+				// Save the image ID
+				mt.setImage(gImg.getID());
+				ctx.setAttribute("hasImage", Boolean.TRUE, REQUEST);
+			}
 
-   /**
-    * Helper method to calculate the new image size for a rescaled image
-    */
-   public Dimension getNewImageSize(int imgX, int imgY) {
+			// Get the write DAO and write to the database
+			SetCoolerMessage wdao = new SetCoolerMessage(con);
+			wdao.writeThread(mt);
 
-      // Figure out the scaling required to bring each dimension into compliance, and get the smallest one
-      double scaleX = (imgX / SystemData.getInt("cooler.img_max.x"));
-      double scaleY = (imgY / SystemData.getInt("cooler.img_max.y"));
-      double scale = Math.min(scaleX, scaleY);
+			// Create a notification entry if we requested on
+			if ("1".equals(ctx.getParameter("updateNotify"))) {
+				SetCoolerNotification nwdao = new SetCoolerNotification(con);
+				nwdao.add(mt.getID(), ctx.getUser().getID());
+				ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
+			}
 
-      // Generate the new dimensions
-      return new Dimension((int) Math.round(imgX * scale) - 1, (int) Math.round(imgY * scale) - 1);
-   }
+			// Commit the transaction
+			ctx.commitTX();
+
+			// Save the thread in the request
+			ctx.setAttribute("thread", mt, REQUEST);
+			ctx.setAttribute("isPosted", Boolean.TRUE, REQUEST);
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/cooler/threadUpdate.jsp");
+		result.setSuccess(true);
+	}
+
+	/**
+	 * Helper method to calculate the new image size for a rescaled image
+	 */
+	public Dimension getNewImageSize(int imgX, int imgY) {
+
+		// Figure out the scaling required to bring each dimension into compliance, and get the smallest one
+		double scaleX = (imgX / SystemData.getInt("cooler.img_max.x"));
+		double scaleY = (imgY / SystemData.getInt("cooler.img_max.y"));
+		double scale = Math.min(scaleX, scaleY);
+
+		// Generate the new dimensions
+		return new Dimension((int) Math.round(imgX * scale) - 1, (int) Math.round(imgY * scale) - 1);
+	}
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.io.IOException;
@@ -6,7 +6,7 @@ import java.io.IOException;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A JSP tag to support writing formatted text. 
@@ -19,6 +19,7 @@ public class TextFormatTag extends TagSupport {
 
     private String _value;
     private String _className;
+    private boolean _useFilter;
 
     /**
      * Sets the value to format.
@@ -26,6 +27,14 @@ public class TextFormatTag extends TagSupport {
      */
     public void setValue(String value) {
         _value = value;
+    }
+    
+    /**
+	 * Toggles the profanity filter.
+	 * @param doFilter TRUE if the filter should be used, otherwise FALSE
+	 */
+    public void setFilter(boolean doFilter) {
+    	_useFilter = doFilter;
     }
     
     /**
@@ -52,6 +61,10 @@ public class TextFormatTag extends TagSupport {
      * @see StringUtils#stripInlineHTML(String)
      */
     public int doEndTag() throws JspException {
+    	
+		// If we're using the filter, then apply it
+    	if (_useFilter)
+    		_value = ProfanityFilter.filter(_value);
         
         JspWriter out = pageContext.getOut();
         try {
