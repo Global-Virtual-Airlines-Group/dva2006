@@ -1,7 +1,10 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
+
+import org.deltava.beans.testing.ExamProfile;
 
 import org.deltava.commands.*;
 
@@ -26,23 +29,30 @@ public class ExamProfilesCommand extends AbstractCommand {
     */
    public void execute(CommandContext ctx) throws CommandException {
 
-      // Check our access
-      ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
-      access.validate();
-      if (!access.getCanRead())
-         throw securityException("Not Authorized");
-      
+      Collection<ExamProfile> results = null;
       try {
          Connection con = ctx.getConnection();
          
          // Get the DAO and the exam profile list
          GetExamProfiles dao = new GetExamProfiles(con);
-         ctx.setAttribute("examProfiles", dao.getExamProfiles(), REQUEST);
+         results = dao.getExamProfiles();
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
          ctx.release();
       }
+
+      // Check our access
+      for (Iterator<ExamProfile> i = results.iterator(); i.hasNext(); ) {
+    	  ExamProfile ep = i.next();
+    	  ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
+    	  access.validate();
+    	  if (!access.getCanRead())
+    		  i.remove();
+      }
+      
+      // Save in the request
+      ctx.setAttribute("examProfiles", results, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();

@@ -15,7 +15,7 @@ public class TestExamProfileAccessControl extends AccessControlTestCase {
 
    protected void setUp() throws Exception {
       super.setUp();
-      _ac = new ExamProfileAccessControl(_ctxt);
+      _ac = new ExamProfileAccessControl(_ctxt, null);
    }
 
    protected void tearDown() throws Exception {
@@ -24,11 +24,6 @@ public class TestExamProfileAccessControl extends AccessControlTestCase {
    }
 
    public void testAccess() throws Exception {
-      try {
-         _ac.validate();
-         fail("AccessControlException expected");
-      } catch (AccessControlException cse) { }
-
       _user.addRole("Examination");
       _ac.validate();
       
@@ -44,13 +39,11 @@ public class TestExamProfileAccessControl extends AccessControlTestCase {
    
    public void testAnonymousAccess() throws Exception {
       _ctxt.logoff();
-      try {
-         _ac.validate();
-         fail("AccessControlException expected");
-      } catch (AccessControlException cse) { }
+      _ac.validate();
+      assertFalse(_ac.getCanRead());
    }
    
    public void testContextValidation() {
-      doContextValidation(new ExamProfileAccessControl(null));
+      doContextValidation(new ExamProfileAccessControl(null, null));
    }
 }
