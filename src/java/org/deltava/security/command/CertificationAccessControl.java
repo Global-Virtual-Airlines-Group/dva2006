@@ -1,0 +1,67 @@
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.security.command;
+
+import org.deltava.security.SecurityContext;
+
+/**
+ * An Access Controller for Flight Academy certification profiles.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class CertificationAccessControl extends AccessControl {
+	
+	private boolean _canCreate;
+	private boolean _canEdit;
+	private boolean _canDelete;
+
+	/**
+	 * Creates the Access Controller.
+	 * @param ctx the security context
+	 */
+	public CertificationAccessControl(SecurityContext ctx) {
+		super(ctx);
+	}
+
+	/**
+	 * Calculates access rights.
+	 * @throws AccessControlException if the user cannot view the Certification profile.
+	 */
+	public void validate() throws AccessControlException {
+		validateContext();
+
+		// Calculate roles - abort if we cannot read
+		boolean isHR = _ctx.isUserInRole("HR");
+		if (!isHR && !_ctx.isUserInRole("Instructor"))
+			throw new AccessControlException("Not Authorized");
+		
+		_canCreate = isHR;
+		_canEdit = isHR;
+		_canDelete = _ctx.isUserInRole("Admin");
+	}
+	
+	/**
+	 * Returns if the user can create a new Certification profile.
+	 * @return TRUE if a profile can be created, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
+	}
+
+	/**
+	 * Returns if the user can edit a Certification profile.
+	 * @return TRUE if the profile can be edited, otherwise FALSE
+	 */
+	public boolean getCanEdit() {
+		return _canEdit;
+	}
+	
+	/**
+	 * Returns if the user can delete a Certification profile.
+	 * @return TRUE if the profile can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
+	}
+}

@@ -52,12 +52,11 @@
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
-<c:if test="${eProfile.active}">
- <td class="data ter bld caps">Examination is Available</td>
-</c:if>
-<c:if test="${!eProfile.active}">
- <td class="data error bld caps">Examination is Not Available</td>
-</c:if>
+ <td class="data bld caps">
+<c:if test="${eProfile.active}"><span class="ter">Examination is Available</span></c:if>
+<c:if test="${!eProfile.active}"><span class="error">Examination is Not Available</span></c:if>
+<c:if test="${eProfile.academy}"><br />
+Examination is part of the <content:airline /> Flight Academy</c:if></td>
 </tr>
 </el:table>
 

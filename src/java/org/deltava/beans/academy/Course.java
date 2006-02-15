@@ -1,0 +1,219 @@
+// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.academy;
+
+import java.util.*;
+
+import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.ViewEntry;
+
+/**
+ * A bean to store Flight Academy Course information.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class Course extends DatabaseBean implements ViewEntry, Comparable {
+	
+	public static final int STARTED = 0;
+	public static final int ABANDONED = 1;
+	public static final int COMPLETE = 2;
+	
+	public static final String[] STATUS_NAMES = {"In Progress", "Abandoned", "Complete"};
+	
+	private String _certName;
+	private int _pilotID;
+	private int _status;
+	
+	private Date _startDate;
+	private Date _endDate;
+	
+	private Collection<CourseProgress> _progress;
+	private Collection<CourseComment> _comments;
+
+	/**
+	 * Creates a new Course bean.
+	 * @param name the Certification name
+	 * @param pilotID the database ID of the Pilot taking the course
+	 * @throws NullPointerException if name is null
+	 * @throws IllegalArgumentException if pilotID is zero or negative
+	 */
+	public Course(String name, int pilotID) {
+		super();
+		setName(name);
+		setPilotID(pilotID);
+		_progress = new TreeSet<CourseProgress>();
+		_comments = new TreeSet<CourseComment>();
+	}
+	
+	/**
+	 * Returns the certification name.
+	 * @return the name
+	 * @see Course#setName(String)
+	 */
+	public String getName() {
+		return _certName;
+	}
+	
+	/**
+	 * Returns the database ID of the Pilot taking the course.
+	 * @return the database ID
+	 * @see Course#setPilotID(int)
+	 */
+	public int getPilotID() {
+		return _pilotID;
+	}
+	
+	/**
+	 * Returns the status of this Course.
+	 * @return the status code
+	 * @see Course#setStatus(int)
+	 * @see Course#getStatusName()
+	 */
+	public int getStatus() { 
+		return _status;
+	}
+	
+	/**
+	 * Returns the status of this Course.
+	 * @return the status name
+	 * @see Course#getStatus()
+	 * @see Course#setStatus(int)
+	 */
+	public String getStatusName() {
+		return STATUS_NAMES[_status];
+	}
+	
+	/**
+	 * Returns the date this Course was started.
+	 * @return the start date/time
+	 * @see Course#setStartDate(Date)
+	 */
+	public Date getStartDate() {
+		return _startDate;
+	}
+	
+	/**
+	 * Returns the date this Course was completed or abandoned.
+	 * @return the end date/time, or null if in progress
+	 * @see Course#setEndDate(Date)
+	 */
+	public Date getEndDate() {
+		return _endDate;
+	}
+	
+	/**
+	 * Returns any progress entries associated with this Course.
+	 * @return a Collection of CourseProgress beans
+	 * @see Course#addProgress(CourseProgress)
+	 */
+	public Collection<CourseProgress> getProgress() {
+		return _progress;
+	}
+	
+	/**
+	 * Returns any comments associated with this Course.
+	 * @return a Collection of CourseComment beans
+	 * @see Course#addComment(CourseComment)
+	 */
+	public Collection<CourseComment> getComments() {
+		return _comments;
+	}
+	
+	/**
+	 * Adds a new Progress entry. If an existing entry is found, it is overwritten.
+	 * @param cp the Progress bean
+	 * @see Course#getProgress()
+	 */
+	public void addProgress(CourseProgress cp) {
+		if (_progress.contains(cp))
+			_progress.remove(cp);
+		
+		_progress.add(cp);
+	}
+	
+	/**
+	 * Adds a new Comment entry.
+	 * @param c the Comment bean
+	 * @see Course#getComments()
+	 */
+	public void addComment(CourseComment c) {
+		_comments.add(c);
+	}
+	
+	/**
+	 * Updates the database ID of the enrolled Pilot.
+	 * @param id the database ID
+	 * @throws IllegalArgumentException if id is zero or negative or changes
+	 * @see Course#getPilotID()
+	 */
+	public void setPilotID(int id) {
+		validateID(_pilotID, id);
+		_pilotID = id;
+	}
+	
+	/**
+	 * Updates the certification name for this Course.
+	 * @param name the name
+	 * @throws NullPointerException if name is null
+	 * @see Course#getName()
+	 */
+	public void setName(String name) {
+		_certName = name.trim();
+	}
+	
+	/**
+	 * Updates this Course's completion status.
+	 * @param code the status code
+	 * @throws IllegalArgumentException if code is negative or invalid
+	 * @see Course#getStatus()
+	 * @see Course#getStatusName()
+	 */
+	public void setStatus(int code) {
+		if ((code < 0) || (code >= STATUS_NAMES.length))
+			throw new IllegalArgumentException("Invalid Status - " + code);
+		
+		_status = code;
+	}
+	
+	/**
+	 * Updates the start date for this Course.
+	 * @param dt the start date/time
+	 * @see Course#getStartDate()
+	 */
+	public void setStartDate(Date dt) {
+		_startDate = dt;
+	}
+	
+	/**
+	 * Updates the completion date for this Course.
+	 * @param dt the end date/time
+	 * @throws IllegalArgumentException if dt is before startDate
+	 * @see Course#getEndDate()
+	 */
+	public void setEndDate(Date dt) {
+		if ((dt != null) && (dt.before(_startDate)))
+			throw new IllegalArgumentException("Invalid End Date - " + dt);
+		
+		_endDate = dt;
+	}
+
+	/**
+	 * Returns the CSS row class name if displayed in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		final String[] CLASS_NAMES = {"opt1", "warn", null};
+		return CLASS_NAMES[_status];
+	}
+
+	/**
+	 * Compares two Courses by comparing their start date/times and Pilot IDs.
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object o) {
+		Course c2 = (Course) o;
+		int tmpResult = new Integer(_pilotID).compareTo(new Integer(c2._pilotID));
+		return (tmpResult == 0) ? _startDate.compareTo(c2._startDate) : tmpResult;
+	}
+}
