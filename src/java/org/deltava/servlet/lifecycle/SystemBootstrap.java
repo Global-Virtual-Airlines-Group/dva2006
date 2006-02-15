@@ -69,6 +69,8 @@ public class SystemBootstrap implements ServletContextListener {
 			while (lr.ready())
 				words.add(lr.readLine());
 			
+			lr.close();
+			
 			// Init the profanity filter
 			log.info("Initializing Content Filter");
 			ProfanityFilter.init(words);

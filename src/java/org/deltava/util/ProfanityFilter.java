@@ -12,7 +12,7 @@ import java.util.*;
 
 public class ProfanityFilter {
 	
-	private static Collection<String> _badWords = new HashSet<String>();
+	private static Collection<String> _badWords = new TreeSet<String>(Collections.reverseOrder());
 	
 	// Singleton
 	private ProfanityFilter() {
@@ -25,6 +25,13 @@ public class ProfanityFilter {
 	public static synchronized void init(Collection<String> words) {
 		for (Iterator<String> i = words.iterator(); i.hasNext(); )
 			_badWords.add(i.next().toUpperCase());
+	}
+	
+	/**
+	 * Clears the filter list. <i>Used for unit testing</i>
+	 */
+	protected static void clear() {
+		_badWords.clear();
 	}
 	
 	/**
@@ -62,7 +69,7 @@ public class ProfanityFilter {
 		for (Iterator<String> i = _badWords.iterator(); i.hasNext(); ) {
 			String word = i.next();
 			if (ucMsg.contains(word))
-				StringUtils.replace(msg, word, "****");
+				msg = StringUtils.replace(msg, word, "****");
 		}
 		
 		return msg;
