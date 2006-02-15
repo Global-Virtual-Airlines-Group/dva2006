@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.Date;
@@ -49,6 +49,8 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
 
     private int _stage;
     private boolean _pass;
+    private boolean _academy;
+    
     private String _comments;
     
     /**
@@ -123,6 +125,15 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
      */
     public String getStatusName() {
     	return EXAMSTATUS[_status]; 
+    }
+    
+    /**
+     * Returns wether this Test is part of the Flight Academy.
+     * @return TRUE if the Test is part of the Flight Academy, otherwise FALSE
+     * @see Test#setAcademy(boolean)
+     */
+    public boolean getAcademy() {
+    	return _academy;
     }
     
     /**
@@ -232,6 +243,15 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
     public void setPilotID(int id) {
         validateID(_pilotID, id);
         _pilotID = id;
+    }
+    
+    /**
+     * Marks this Test as part of the Flight Academy.
+     * @param academy TRUE if the Test is part of the Flight Academy, otherwise FALSE
+     * @see Test#getAcademy()
+     */
+    public void setAcademy(boolean academy) {
+    	_academy = academy;
     }
     
     /**

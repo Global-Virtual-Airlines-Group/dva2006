@@ -20,7 +20,9 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
     private int _time;
     private String _eqType;
     private int _minStage;
+    
     private boolean _active;
+    private boolean _flightAcademy;
     
     /**
      * Creates a new Examination profile.
@@ -102,6 +104,15 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      */
     public boolean getActive() {
         return _active;
+    }
+    
+    /**
+     * Returns wther this examination is part of the Flight Academy.
+     * @return TRUE if the Examination is part of the Academy, otherwise FALSE
+     * @see ExamProfile#setAcademy(boolean) 
+     */
+    public boolean getAcademy() {
+    	return _flightAcademy;
     }
 
     /**
@@ -188,6 +199,15 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
     }
     
     /**
+     * Marks this Examination as part of the Flight Academy.
+     * @param academy TRUE if the Examination is part of the Flight Academy, otherwise FALSE
+     * @see ExamProfile#setAcademy(boolean)
+     */
+    public void setAcademy(boolean academy) {
+    	_flightAcademy = academy;
+    }
+    
+    /**
      * Compares two examinations by comparing their stage and name.
      * @see Comparable#compareTo(Object)
      */
@@ -219,6 +239,6 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      * @return the CSS class name
      */
     public String getRowClassName() {
-    	return _active ? null : "warn"; 
+    	return !_active ? "warn" : (_flightAcademy ? "opt1" : null); 
     }
 }

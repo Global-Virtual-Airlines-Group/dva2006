@@ -78,7 +78,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" className="sec" idx="*" value="1" label="Examination is Active" checked="${eProfile.active}" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" label="Examination is Active" checked="${eProfile.active}" /><br />
+<el:box name="isAcademy" className="sec" idx="*" value="true" label="This is a Fleet Academy Examination" checked="${eProfile.academy}" /></td>
 </tr>
 </el:table>
 

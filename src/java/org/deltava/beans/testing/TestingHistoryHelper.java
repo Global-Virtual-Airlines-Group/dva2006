@@ -168,6 +168,10 @@ public class TestingHistoryHelper {
 			return false;
 		}
 		
+		// If it's part of the Flight Academy, no
+		if (ep.getAcademy())
+			return false;
+		
 		// Check if we've passed or submitted the exam
 		if (hasPassed(ep.getName()) || hasSubmitted(ep.getName())) {
 			log(ep.getName() + " is passed / submitted");

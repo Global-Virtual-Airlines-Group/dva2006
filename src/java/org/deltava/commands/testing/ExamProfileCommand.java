@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -26,11 +26,6 @@ public class ExamProfileCommand extends AbstractFormCommand {
     */
    protected void execSave(CommandContext ctx) throws CommandException {
 
-      // Check our access level
-      ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
-      access.validate();
-      if (!access.getCanEdit()) throw securityException("Cannot edit Examination Profile");
-
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
          Connection con = ctx.getConnection();
@@ -40,10 +35,18 @@ public class ExamProfileCommand extends AbstractFormCommand {
          if (examName != null) {
             GetExamProfiles rdao = new GetExamProfiles(con);
             ep = rdao.getExamProfile(examName);
-            if (ep == null) throw new CommandException("Examination " + examName + " not found");
+            if (ep == null)
+            	throw notFoundException("Examination " + examName + " not found");
          } else {
             ep = new ExamProfile(ctx.getParameter("examName"));
+            ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
          }
+         
+         // Check our access level
+         ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
+         access.validate();
+         if (!access.getCanEdit())
+        	 throw securityException("Cannot edit Examination Profile");
 
          // Load the fields from the request
          ep.setEquipmentType("N/A".equals(ctx.getParameter("eqType")) ? null : ctx.getParameter("eqType"));
@@ -52,7 +55,9 @@ public class ExamProfileCommand extends AbstractFormCommand {
          ep.setSize(Integer.parseInt(ctx.getParameter("size")));
          ep.setPassScore(Integer.parseInt(ctx.getParameter("passScore")));
          ep.setTime(Integer.parseInt(ctx.getParameter("time")));
-         ep.setActive("1".equals(ctx.getParameter("active")));
+         ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+         if (ctx.getParameter("isAcademy") != null)
+        	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 
          // Get the write DAO and save the profile
          SetExamProfile wdao = new SetExamProfile(con);
@@ -84,24 +89,27 @@ public class ExamProfileCommand extends AbstractFormCommand {
     */
    protected void execEdit(CommandContext ctx) throws CommandException {
 
-      // Check our access level
-      ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
-      access.validate();
-      if (!access.getCanEdit()) throw securityException("Cannot edit Examination Profile");
-
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
          Connection con = ctx.getConnection();
 
          // Get the DAO and the exam profile
          GetExamProfiles dao = new GetExamProfiles(con);
+         ExamProfile ep = null;
          if (examName != null) {
-            ExamProfile ep = dao.getExamProfile(examName);
-            if (ep == null) throw new CommandException("Invalid Exam Name - " + examName);
-
+            ep = dao.getExamProfile(examName);
+            if (ep == null)
+            	throw notFoundException("Invalid Exam Name - " + examName);
+            
             // Save the profile in the request
             ctx.setAttribute("eProfile", ep, REQUEST);
          }
+         
+         // Check our access level
+         ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
+         access.validate();
+         if (!access.getCanEdit())
+         	throw securityException("Cannot edit Examination Profile");
 
          // Get Equipment Type programs
          GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -125,12 +133,6 @@ public class ExamProfileCommand extends AbstractFormCommand {
     */
    protected void execRead(CommandContext ctx) throws CommandException {
 
-      // Check our access level
-      ExamProfileAccessControl access = new ExamProfileAccessControl(ctx);
-      access.validate();
-      if (!access.getCanRead())
-         throw securityException("Cannot view Examination Profile");
-
       String examName = (String) ctx.getCmdParameter(Command.ID, null);
       try {
          Connection con = ctx.getConnection();
@@ -138,7 +140,14 @@ public class ExamProfileCommand extends AbstractFormCommand {
          // Get the DAO and the exam profile
          GetExamProfiles dao = new GetExamProfiles(con);
          ExamProfile ep = dao.getExamProfile(examName);
-         if (ep == null) throw new CommandException("Invalid Exam Name - " + examName);
+         if (ep == null)
+        	 throw notFoundException("Invalid Examination Name - " + examName);
+         
+         // Check our access level
+         ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
+         access.validate();
+         if (!access.getCanRead())
+            throw securityException("Cannot view Examination Profile");
 
          // Save the profile in the request
          ctx.setAttribute("eProfile", ep, REQUEST);
