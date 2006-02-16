@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
@@ -132,7 +132,7 @@ public class SelectCall implements java.io.Serializable, Comparable, ViewEntry {
 	/**
 	 * Updates the Pilot reserving this aircraft's SELCAL code.
 	 * @param id the Pilot's database ID
-	 * @throw IllegalArgumentException if id is negative
+	 * @throws IllegalArgumentException if id is negative
 	 * @see SelectCall#getReservedBy()
 	 */
 	public void setReservedBy(int id) {
