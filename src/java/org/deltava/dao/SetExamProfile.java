@@ -31,7 +31,7 @@ public class SetExamProfile extends DAO {
    public void update(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("UPDATE EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "+
-               "ACTIVE=?, EQTYPE=?, MIN_STAGE=? WHERE (NAME=?)");
+               "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=? WHERE (NAME=?)");
          _ps.setInt(1, ep.getStage());
          _ps.setInt(2, ep.getSize());
          _ps.setInt(3, ep.getPassScore());
@@ -39,7 +39,8 @@ public class SetExamProfile extends DAO {
          _ps.setBoolean(5, ep.getActive());
          _ps.setString(6, ep.getEquipmentType());
          _ps.setInt(7, ep.getMinStage());
-         _ps.setString(8, ep.getName());
+         _ps.setBoolean(8, ep.getAcademy());
+         _ps.setString(9, ep.getName());
          
          // Execute the update
          executeUpdate(1);
@@ -56,7 +57,7 @@ public class SetExamProfile extends DAO {
    public void create(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("INSERT INTO EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, " +
-               "EQTYPE) VALUES (?, ?, ?, ?, ?, ?, ?)");
+               "EQTYPE, MIN_STAGE, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
          _ps.setString(1, ep.getName());
          _ps.setInt(2, ep.getStage());
          _ps.setInt(3, ep.getSize());
@@ -64,6 +65,8 @@ public class SetExamProfile extends DAO {
          _ps.setInt(5, ep.getTime());
          _ps.setBoolean(6, ep.getActive());
          _ps.setString(7, ep.getEquipmentType());
+         _ps.setInt(8, ep.getMinStage());
+         _ps.setBoolean(9, ep.getAcademy());
          
          // Execute the update
          executeUpdate(1);
