@@ -61,7 +61,7 @@ public class ThreadCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread thread = tdao.getThread(ctx.getID());
 			if (thread == null)
-				throw new CommandException("Unknown Message Thread - " + ctx.getID());
+				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
