@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -93,7 +93,7 @@ public class SetSELCAL extends DAO {
 	/**
 	 * Frees aircraft SELCAL codes reserved for a set interval.
 	 * @param days the interval in days
-	 * @returns the number of codes freed up
+	 * @return the number of codes freed up
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public int free(int days) throws DAOException {
