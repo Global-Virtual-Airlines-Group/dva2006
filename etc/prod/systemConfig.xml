@@ -33,6 +33,7 @@
 				<category>Delta FLY!</category>
 				<category>Mad Dog Program</category>
 				<category>Flight Academy</category>
+				<category>Triple 7 Program</category>
 			</list>
 		</newsletters>
 		
@@ -341,7 +342,7 @@
 		</ivao>
 		
 		<fpi>
-			<status_url>http://golgotha.deltava.org/fpi-data.txt</status_url>
+			<status_url>http://www.deltava.org/fpi-data.txt</status_url>
 			<banner>fpi.png</banner>
 			<url>http://www.flightproject.net/</url>
 		</fpi>
