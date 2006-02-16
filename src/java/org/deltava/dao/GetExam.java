@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -33,9 +33,9 @@ public class GetExam extends DAO {
 	public Examination getExam(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE FROM EXAMS E, "
-					+ "EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.ID=?) AND (E.NAME=EP.NAME) AND (E.ID=Q.EXAM_ID) "
-					+ "GROUP BY E.ID");
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, EP.ACADEMY "
+					+ "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.ID=?) AND (E.NAME=EP.NAME) AND "
+					+ "(E.ID=Q.EXAM_ID) GROUP BY E.ID");
 			_ps.setInt(1, id);
 
 			// Execute the query, return null if nothing
@@ -149,7 +149,7 @@ public class GetExam extends DAO {
 	}
 
 	/**
-	 * Loads all Check Rides for a particular Pilot
+	 * Loads all Check Rides for a particular Pilot.
 	 * @param pilotID the pilot Database ID
 	 * @return a Collection of CheckRide beans
 	 * @throws DAOException if a JDBC error occurs
@@ -173,7 +173,7 @@ public class GetExam extends DAO {
 	 */
 	public List<Test> getExams(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE "
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, EP.ACADEMY "
 					+ "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.PILOT_ID=?) AND (EP.NAME=E.NAME) "
 					+ "AND (E.ID=Q.EXAM_ID) GROUP BY E.ID");
 			_ps.setInt(1, id);
@@ -207,9 +207,10 @@ public class GetExam extends DAO {
 	public List<Examination> getSubmitted() throws DAOException {
 		try {
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, "
-					+ "P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, EXAMINFO EP WHERE "
-					+ "(P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND ((E.STATUS=?) OR ((E.STATUS=?) AND "
-					+ "(E.EXPIRY_TIME < NOW()))) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON");
+					+ "EP.ACADEMY, P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, "
+					+ "EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND ((E.STATUS=?) OR "
+					+ "((E.STATUS=?) AND (E.EXPIRY_TIME < NOW()))) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID "
+					+ "ORDER BY E.CREATED_ON");
 			_ps.setInt(1, Test.SUBMITTED);
 			_ps.setInt(2, Test.NEW);
 			return execute();
@@ -252,7 +253,7 @@ public class GetExam extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 15);
+		boolean hasName = (rs.getMetaData().getColumnCount() > 16);
 
 		// Iterate through the results
 		List<Examination> results = new ArrayList<Examination>();
@@ -271,11 +272,12 @@ public class GetExam extends DAO {
 			e.setSize(rs.getInt(12));
 			e.setScore(rs.getInt(13));
 			e.setStage(rs.getInt(14));
+			e.setAcademy(rs.getBoolean(15));
 
 			// If we're joining with pilots, get the pilot name
 			if (hasName) {
-				e.setFirstName(rs.getString(15));
-				e.setLastName(rs.getString(16));
+				e.setFirstName(rs.getString(16));
+				e.setLastName(rs.getString(17));
 			}
 
 			// Add to results
@@ -312,7 +314,8 @@ public class GetExam extends DAO {
 			cr.setComments(rs.getString(11));
 			cr.setEquipmentType(rs.getString(12));
 			cr.setAircraftType(rs.getString(13));
-			cr.setStage(rs.getInt(14));
+			cr.setAcademy(rs.getBoolean(14));
+			cr.setStage(rs.getInt(15));
 
 			// Add to results
 			results.add(cr);
