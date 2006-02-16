@@ -28,19 +28,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 	private static final String[] OPNAMES = { "", "", "hold", "approve", "reject" };
 
 	/**
-	 * Private helper method to convert the operation name into a code. The code returned will be the same as the new
-	 * PIREP status.
-	 */
-	private int getOperation(String opName) throws CommandException {
-		for (int x = 1; x < OPNAMES.length; x++) {
-			if (OPNAMES[x].equals(opName))
-				return x;
-		}
-
-		throw new CommandException("Invalid Operation - " + opName);
-	}
-
-	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error (typically database) occurs
@@ -49,7 +36,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
-		int opCode = getOperation(opName);
+		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
+		if (opCode < 2)
+			throw new CommandException("Invalid Operation - " + opName);
+		
 		ctx.setAttribute("opName", opName, REQUEST);
 
 		// Initialize the Message Context
