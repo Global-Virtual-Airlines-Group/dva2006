@@ -17,7 +17,7 @@
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.4" use="false"
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.5" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
