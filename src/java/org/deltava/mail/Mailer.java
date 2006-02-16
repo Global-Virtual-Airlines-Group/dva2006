@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
@@ -104,8 +104,10 @@ public class Mailer {
     * @param addr the recipient name/address
     */
    public void send(EMailAddress addr) {
-      _msgTo.add(addr);
-      send();
+	   if (addr != null) {
+		   _msgTo.add(addr);
+		   send();
+	   }
    }
    
    /**
