@@ -82,9 +82,9 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns the Pilot's examinations. Returns the Pilot's equipment program. This method is useful when we use this
-	 * class and do not wish to call the {@link org.deltava.dao.GetExam} DAO a second time.
-	 * @return a List of Test beans
+	 * Returns the Pilot's examinations. This method is useful when we use this class and do not wish to call the
+	 * {@link org.deltava.dao.GetExam} DAO a second time.
+	 * @return a Collection of Test beans
 	 */
 	public Collection<Test> getExams() {
 		return _tests;
