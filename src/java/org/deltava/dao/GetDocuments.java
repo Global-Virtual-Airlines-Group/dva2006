@@ -98,7 +98,8 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(dbName.toLowerCase());
 		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
 		sqlBuf.append(dbName.toLowerCase());
-		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) GROUP BY N.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) GROUP BY N.NAME ORDER BY "
+				+ "N.CATEGORY, N.PUBLISHED DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -117,7 +118,8 @@ public class GetDocuments extends GetLibrary {
 	public Collection<Newsletter> getNewslettersByCategory(String catName) throws DAOException {
 		try {
 			prepareStatement("SELECT N.*, COUNT(L.FILENAME) FROM NEWSLETTERS N LEFT JOIN "
-					+ "DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.CATEGORY=?) GROUP BY N.NAME");
+					+ "DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.CATEGORY=?) GROUP BY N.NAME "
+					+ "ORDER BY N.PUBLISHED DESC");
 			_ps.setString(1, catName);
 			return loadNewsletters();
 		} catch (SQLException se) {
