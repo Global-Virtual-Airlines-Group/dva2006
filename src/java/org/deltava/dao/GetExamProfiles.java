@@ -51,6 +51,7 @@ import org.deltava.beans.testing.*;
 			ep.setPassScore(rs.getInt(6));
 			ep.setTime(rs.getInt(7));
 			ep.setActive(rs.getBoolean(8));
+			ep.setAcademy(rs.getBoolean(9));
 			
 			// Clean up and return
 			rs.close();
@@ -82,6 +83,7 @@ import org.deltava.beans.testing.*;
 				ep.setPassScore(rs.getInt(6));
 				ep.setTime(rs.getInt(7));
 				ep.setActive(rs.getBoolean(8));
+				ep.setAcademy(rs.getBoolean(9));
 
 				// Add to results
 				results.add(ep);

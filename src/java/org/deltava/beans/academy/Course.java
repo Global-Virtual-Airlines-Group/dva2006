@@ -24,6 +24,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	private String _certName;
 	private int _pilotID;
 	private int _status;
+	private int _stage;
 	
 	private Date _startDate;
 	private Date _endDate;
@@ -72,6 +73,15 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 */
 	public int getStatus() { 
 		return _status;
+	}
+	
+	/**
+	 * Returns the stage value of this Course.
+	 * @return the stage
+	 * @see Course#setStage(int)
+	 */
+	public int getStage() {
+		return _stage;
 	}
 	
 	/**
@@ -174,6 +184,19 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 			throw new IllegalArgumentException("Invalid Status - " + code);
 		
 		_status = code;
+	}
+	
+	/**
+	 * Updates this Course's stage.
+	 * @param stage the stage number
+	 * @throws IllegalArgumentException if stage is zero or negative
+	 * @see Course#getStage()
+	 */
+	public void setStage(int stage) {
+		if (stage < 1)
+			throw new IllegalArgumentException("Invalid stage - " + stage);
+		
+		_stage = stage;
 	}
 	
 	/**
