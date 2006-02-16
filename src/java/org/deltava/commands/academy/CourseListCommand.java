@@ -1,0 +1,48 @@
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.academy;
+
+import java.sql.Connection;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+/**
+ * A Web Site Command to display Flight Academy certifications.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class CourseListCommand extends AbstractViewCommand {
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Load the view context and if we are getting all courses
+		ViewContext vc = initView(ctx);
+		boolean isActive = "active".equals(ctx.getCmdParameter(OPERATION, null));
+
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the courses
+			GetAcademyCourses dao = new GetAcademyCourses(con);
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(vc.getCount());
+			ctx.setAttribute("courses", isActive? dao.getActive() : dao.getAll(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/academy/courseList.jsp");
+		result.setSuccess(true);
+	}
+}

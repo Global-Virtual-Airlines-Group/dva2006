@@ -119,9 +119,21 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 * Adds an associated Examination name. 
 	 * @param name the Examination name
 	 * @see Certification#getExamNames()
+	 * @see Certification#setExams(Collection)
 	 */
 	public void addExamName(String name) {
 		_examNames.add(name.trim());
+	}
+	
+	/**
+	 * Clears and Updates the list of requirement Examinations.
+	 * @param exams a Collecton of Examination names
+	 * @see Certification#addExamName(String)
+	 * @see Certification#getExamNames()
+	 */
+	public void setExams(Collection<String> exams) {
+		_examNames.clear();
+		_examNames.addAll(exams);
 	}
 	
 	/**
