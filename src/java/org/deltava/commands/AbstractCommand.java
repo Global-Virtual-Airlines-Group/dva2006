@@ -174,13 +174,16 @@ public abstract class AbstractCommand implements Command {
 	}
 
 	/**
-	 * Parses one or two HTTP request parameters into a date/time value, using the default format patterns.
+	 * Parses one or two HTTP request parameters into a date/time value, using the user's format patterns or
+	 * the default format patterns if the user is not authenticated.
 	 * @param ctx the Command Context
 	 * @param paramHdr the parameter name header
 	 * @return a date/time value, or null if not found or unparseable
 	 * @see AbstractCommand#parseDateTime(CommandContext, String, String, String)
 	 */
 	protected Date parseDateTime(CommandContext ctx, String paramHdr) {
-		return parseDateTime(ctx, paramHdr, SystemData.get("time.date_format"), SystemData.get("time.time_format"));
+		String dfmt = (ctx.getUser() == null) ? SystemData.get("time.date_format") : ctx.getUser().getDateFormat();
+		String tfmt = (ctx.getUser() == null) ? SystemData.get("time.time_format") : ctx.getUser().getTimeFormat();
+		return parseDateTime(ctx, paramHdr, dfmt, tfmt);
 	}
 }
