@@ -18,8 +18,9 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	public static final int STARTED = 0;
 	public static final int ABANDONED = 1;
 	public static final int COMPLETE = 2;
+	public static final int PENDING = 3;
 	
-	public static final String[] STATUS_NAMES = {"In Progress", "Abandoned", "Complete"};
+	public static final String[] STATUS_NAMES = {"In Progress", "Abandoned", "Complete", "Pending"};
 	
 	private String _certName;
 	private int _pilotID;
@@ -29,7 +30,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	private Date _startDate;
 	private Date _endDate;
 	
-	private Collection<CourseProgress> _progress;
+	private Map<Integer, CourseProgress> _progress;
 	private Collection<CourseComment> _comments;
 
 	/**
@@ -43,7 +44,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 		super();
 		setName(name);
 		setPilotID(pilotID);
-		_progress = new TreeSet<CourseProgress>();
+		_progress = new TreeMap<Integer, CourseProgress>();
 		_comments = new TreeSet<CourseComment>();
 	}
 	
@@ -116,9 +117,19 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * Returns any progress entries associated with this Course.
 	 * @return a Collection of CourseProgress beans
 	 * @see Course#addProgress(CourseProgress)
+	 * @see Course#getProgress(int)
 	 */
 	public Collection<CourseProgress> getProgress() {
-		return _progress;
+		return _progress.values();
+	}
+	
+	/**
+	 * Returns a particular progress entry.
+	 * @param seq the sequence number
+	 * @return a CourgeProgress bean, or null if not found
+	 */
+	public CourseProgress getProgress(int seq) {
+		return _progress.get(new Integer(seq));
 	}
 	
 	/**
@@ -136,10 +147,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * @see Course#getProgress()
 	 */
 	public void addProgress(CourseProgress cp) {
-		if (_progress.contains(cp))
-			_progress.remove(cp);
-		
-		_progress.add(cp);
+		_progress.put(new Integer(cp.getID()), cp);
 	}
 	
 	/**

@@ -57,7 +57,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM CERTS WHERE (ACTIVE=?) ORDER BY STAGE, NAME");
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C, CERTREQS CRS WHERE (C.ACTIVE=?) "
+					+ "AND (C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
 			return execute();
 		} catch (SQLException se) { 
@@ -72,7 +73,8 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM CERTS ORDER BY STAGE, NAME");
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C, CERTREQS CR WHERE (C.NAME=CR.CERTNAME) "
+					+ "GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			return execute();
 		} catch (SQLException se) { 
 			throw new DAOException(se);
@@ -86,6 +88,8 @@ public class GetAcademyCertifications extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		ResultSetMetaData rmd = rs.getMetaData();
+		boolean hasReqCount = (rmd.getColumnCount() > 4);
 		
 		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
@@ -94,6 +98,9 @@ public class GetAcademyCertifications extends DAO {
 			cert.setStage(rs.getInt(2));
 			cert.setReqs(rs.getInt(3));
 			cert.setActive(rs.getBoolean(4));
+			if (hasReqCount)
+				cert.setReqCount(rs.getInt(5));
+			
 			results.add(cert);
 		}
 		

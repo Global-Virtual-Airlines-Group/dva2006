@@ -129,7 +129,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// See if we can write any examinations
 			GetExamProfiles epdao = new GetExamProfiles(con);
-			Collection<ExamProfile> exams = epdao.getExamProfiles();
+			Collection<ExamProfile> exams = epdao.getExamProfiles(false);
 			for (Iterator<ExamProfile> i = exams.iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
 				if (!_testHistory.canWrite(ep))
