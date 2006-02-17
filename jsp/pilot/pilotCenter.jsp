@@ -143,9 +143,9 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="doclibrary">Document Library</el:cmd></td>
- <td class="data">The <content:airline /> Document Library contains all of Delta Virtual 
- Airlines' official airline procedure manauls, as well as operating manuals for each equipment 
- type. All manuals are stored in cross-platform Adobe Acrobat PDF files.</td>
+ <td class="data">The <content:airline /> Document Library contains all of <content:airline />'s
+ official airline procedure manauls, as well as operating manuals for each equipment type. All
+ manuals are stored in cross-platform Adobe Acrobat PDF files.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary">Fleet Library</el:cmd></td>
