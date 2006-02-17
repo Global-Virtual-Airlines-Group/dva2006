@@ -23,6 +23,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	private String _name;
 	private int _stage;
 	private int _preReqs;
+	private int _reqCount;
 	private boolean _active;
 	
 	private Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
@@ -86,9 +87,19 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	}
 	
 	/**
+	 * Returns the number of Requirements for this Certification.
+	 * @return the number of requirements
+	 * @see Certification#setReqCount(int)
+	 */
+	public int getReqCount() {
+		return _reqs.isEmpty() ? _reqCount : _reqs.size();
+	}
+	
+	/**
 	 * Returns the requirements for this Certification.
 	 * @return a Collection of requirement beans
 	 * @see Certification#addRequirement(CertificationRequirement)
+	 * @see Certification#setRequirements(Collection)
 	 */
 	public Collection<CertificationRequirement> getRequirements() {
 		return _reqs;
@@ -107,12 +118,43 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 * Adds a requirement for this Certification.
 	 * @param req the requirement bean
 	 * @see Certification#getRequirements()
+	 * @see Certification#setRequirements(Collection)
 	 */
 	public void addRequirement(CertificationRequirement req) {
 		if (req.getID() == 0)
 			req.setID(_reqs.size() + 1);
 		
 		_reqs.add(req);
+	}
+	
+	/**
+	 * Clears and updates the requirements for this Certification.
+	 * @param reqs a Collection of CertificationRequirement beans
+	 * @see Certification#addRequirement(CertificationRequirement)
+	 * @see Certification#getRequirements()
+	 */
+	public void setRequirements(Collection<CertificationRequirement> reqs) {
+		_reqs.clear();
+		for (Iterator<CertificationRequirement> i = reqs.iterator(); i.hasNext(); )
+			addRequirement(i.next());
+	}
+	
+	/**
+	 * Updates the number of requirements for this Certification.
+	 * @param count the number of requirements
+	 * @throws IllegalStateException if requirement text already loaded
+	 * @throws IllegalArgumentException if count is negative
+	 * @see Certification#getReqCount()
+	 * @see Certification#getRequirements()
+	 * @see Certification#addRequirement(CertificationRequirement)
+	 */
+	public void setReqCount(int count) {
+		if (!_reqs.isEmpty())
+			throw new IllegalStateException("Requirements already loaded");
+		else if (count < 0)
+			throw new IllegalArgumentException("Invalid Requirement count - " + count);
+			
+		_reqCount = count;
 	}
 	
 	/**

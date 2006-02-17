@@ -61,11 +61,13 @@ public class CourseProgress extends CertificationRequirement implements ViewEntr
 	/**
 	 * Updates the Course ID for this Progress entry.
 	 * @param id the database ID of the Course
-	 * @throws IllegalArgumentException if id is zero or negative
+	 * @throws IllegalArgumentException if id is negative
 	 * @see CourseProgress#getCourseID()
 	 */
 	public void setCourseID(int id) {
-		DatabaseBean.validateID(_courseID, id);
+		if (id > 0)
+			DatabaseBean.validateID(_courseID, id);
+		
 		_courseID = id;
 	}
 

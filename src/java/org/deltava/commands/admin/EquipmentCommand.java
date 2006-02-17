@@ -51,7 +51,7 @@ public class EquipmentCommand extends AbstractCommand {
 			
 			// Get the Examination names
 			GetExamProfiles exdao = new GetExamProfiles(con);
-			ctx.setAttribute("exams", exdao.getExamProfiles(), REQUEST);
+			ctx.setAttribute("exams", exdao.getExamProfiles(false), REQUEST);
 			
 			// Save the equipment profile and access controller
 			ctx.setAttribute("eqType", eq, REQUEST);
