@@ -129,7 +129,7 @@
 		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
 		 compiler="modern">
 			<compilerarg value="-Xlint:unchecked" />
-	    	<classpath>
+	    	<classpath id="acars.classpath">
 				<pathelement path="${classpath}" />
 	    		<pathelement location="lib/deploy/jdom-1.0.jar" />
 	    		<pathelement location="lib/deploy/log4j-1.2.12.jar" />
@@ -148,7 +148,7 @@
 		<taskdef classname="org.apache.jasper.JspC" name="jasper2"> 
 			<classpath id="jspc.classpath"> 
 				<pathelement path="${classpath}" />
-				<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
+				<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
 				<fileset dir="./lib" includes="**/*.jar" /> 
 			</classpath> 
 		</taskdef>
@@ -161,14 +161,15 @@
 		<mkdir dir="${java.io.tmpdir}/src/jsp" />
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false"
-	    	xpoweredBy="true" validateXml="truee" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.5" compilerSourceVM="1.5" outputDir="${java.io.tmpdir}/src/jsp" />
+	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
+	    	compilerTargetVM="1.5" compilerSourceVM="1.5" trimSpaces="false"
+			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
-		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp" debug="on"
-			debuglevel="source" optimize="on" target="1.5" source="1.5" nowarn="on">
+		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp"
+			debug="on" debuglevel="source" optimize="on" target="1.5" source="1.5" nowarn="on">
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
