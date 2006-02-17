@@ -11,7 +11,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CertificationAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to view and update Flight Academy certification profiles.
@@ -122,11 +122,18 @@ public class CertificationCommand extends AbstractFormCommand {
 				ctx.setAttribute("cert", cert, REQUEST);
 			} else if (!access.getCanCreate())
 				throw securityException("Cannot create Certification");
+			
+			// Get available examinations
+			GetExamProfiles exdao = new GetExamProfiles(con);
+			ctx.setAttribute("exams", exdao.getExamProfiles(true), REQUEST); 
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Save prerequisite choices
+		ctx.setAttribute("preReqNames", ComboUtils.fromArray(Certification.REQ_NAMES), REQUEST);
 		
 		// Foward to the JSP
 		CommandResult result = ctx.getResult();

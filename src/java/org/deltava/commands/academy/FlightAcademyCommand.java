@@ -35,7 +35,7 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
-			Collection<ExamProfile> allExams = epdao.getExamProfiles();
+			Collection<ExamProfile> allExams = epdao.getExamProfiles(true);
 
 			// Remove all examinations that we have passed or require a higher stage than us
 			_academyHistory.setDebug(ctx.isSuperUser());

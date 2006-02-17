@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -31,32 +31,13 @@ import org.deltava.beans.testing.*;
 	 */
 	public ExamProfile getExamProfile(String examName) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM EXAMINFO WHERE (NAME=?)");
 			_ps.setString(1, examName);
 			
 			// Execute the query - return null if not found
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-			   rs.close();
-			   _ps.close();
-			   return null;
-			}
-			
-			// Populate the examination profile
-			ExamProfile ep = new ExamProfile(rs.getString(1));
-			ep.setStage(rs.getInt(2));
-			ep.setMinStage(rs.getInt(3));
-			ep.setEquipmentType(rs.getString(4));
-			ep.setSize(rs.getInt(5));
-			ep.setPassScore(rs.getInt(6));
-			ep.setTime(rs.getInt(7));
-			ep.setActive(rs.getBoolean(8));
-			ep.setAcademy(rs.getBoolean(9));
-			
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return ep;
+			List<ExamProfile> results = execute();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -70,32 +51,28 @@ import org.deltava.beans.testing.*;
 	public List<ExamProfile> getExamProfiles() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM EXAMINFO ORDER BY STAGE, NAME");
-			
-			// Execute the query
-			List<ExamProfile> results = new ArrayList<ExamProfile>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				ExamProfile ep = new ExamProfile(rs.getString(1));
-				ep.setStage(rs.getInt(2));
-				ep.setMinStage(rs.getInt(3));
-				ep.setEquipmentType(rs.getString(4));
-				ep.setSize(rs.getInt(5));
-				ep.setPassScore(rs.getInt(6));
-				ep.setTime(rs.getInt(7));
-				ep.setActive(rs.getBoolean(8));
-				ep.setAcademy(rs.getBoolean(9));
-
-				// Add to results
-				results.add(ep);
-			}
-				
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Returns all Examination profiles included within the Flight Academy or Testing Center.
+	 * @param isAcademy TRUE if Flight Academy exams should be returned, otherwise FALSE for
+	 * the Testing Center
+	 * @return a List of ExamProfile beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<ExamProfile> getExamProfiles(boolean isAcademy) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM EXAMINFO WHERE (ACADEMY=?) ORDER BY STAGE, NAME");
+			_ps.setBoolean(1, isAcademy);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+
 	}
 
 	/**
@@ -262,5 +239,36 @@ import org.deltava.beans.testing.*;
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
+	}
+	
+	/**
+	 * Helper method to parse ExamProfile result sets.
+	 */
+	private List<ExamProfile> execute() throws SQLException {
+		
+		// Execute the query
+		ResultSet rs = _ps.executeQuery();
+		
+		// Iterate through the results
+		List<ExamProfile> results = new ArrayList<ExamProfile>();
+		while (rs.next()) {
+			ExamProfile ep = new ExamProfile(rs.getString(1));
+			ep.setStage(rs.getInt(2));
+			ep.setMinStage(rs.getInt(3));
+			ep.setEquipmentType(rs.getString(4));
+			ep.setSize(rs.getInt(5));
+			ep.setPassScore(rs.getInt(6));
+			ep.setTime(rs.getInt(7));
+			ep.setActive(rs.getBoolean(8));
+			ep.setAcademy(rs.getBoolean(9));
+
+			// Add to results
+			results.add(ep);
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
 	}
 }

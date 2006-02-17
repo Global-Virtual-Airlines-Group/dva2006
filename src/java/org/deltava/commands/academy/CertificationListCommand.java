@@ -6,6 +6,8 @@ import java.sql.Connection;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.CertificationAccessControl;
+
 /**
  * A Web Site Command to display Flight Academy certifications.
  * @author Luke
@@ -33,6 +35,11 @@ public class CertificationListCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the access controller
+		CertificationAccessControl access = new CertificationAccessControl(ctx);
+		access.validate();
+		ctx.setAttribute("access", access, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

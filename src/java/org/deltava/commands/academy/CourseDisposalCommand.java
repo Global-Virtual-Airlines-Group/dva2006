@@ -62,7 +62,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			switch (opCode) {
 				case Course.STARTED :
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
-					canExec = access.getCanRestart();
+					canExec = access.getCanRestart() || access.getCanStart();
 					break;
 					
 				case Course.ABANDONED :

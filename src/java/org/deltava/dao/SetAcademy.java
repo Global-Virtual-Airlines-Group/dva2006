@@ -141,21 +141,10 @@ public class SetAcademy extends DAO {
 			}
 			
 			// Write course progress
-			prepareStatementWithoutLimits("INSERT INTO COURSEPROGRESS (ID, SEQ, REQENTRY, COMPLETE, COMPLETED) "
-					+ "VALUES (?, ?, ?, ?, ?)");
-			_ps.setInt(1, c.getID());
 			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
 				CourseProgress cp = i.next();
-				_ps.setInt(2, cp.getID());
-				_ps.setString(3, cp.getText());
-				_ps.setBoolean(4, cp.getComplete());
-				_ps.setTimestamp(5, createTimestamp(cp.getCompletedOn()));
-				_ps.addBatch();
+				updateProgress(cp);
 			}
-			
-			// Execute the batch update
-			_ps.executeBatch();
-			_ps.close();
 			
 			// Commit the transaction
 			commitTransaction();
@@ -198,6 +187,26 @@ public class SetAcademy extends DAO {
 			_ps.setInt(2, courseID);
 			_ps.setInt(3, seq);
 			_ps.setBoolean(4, false);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates a Flight Academy Course progress entry.
+	 * @param cp the CourseProgress bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void updateProgress(CourseProgress cp) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO COURSEPROGRESS (ID, SEQ, REQENTRY, COMPLETE, COMPLETED) "
+					+ "VALUES (?, ?, ?, ?, ?)");
+			_ps.setInt(1, cp.getCourseID());
+			_ps.setInt(2, cp.getID());
+			_ps.setString(3, cp.getText());
+			_ps.setBoolean(4, cp.getComplete());
+			_ps.setTimestamp(5, createTimestamp(cp.getCompletedOn()));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -1257,4 +1257,66 @@
 		<class>org.deltava.commands.acars.EmptyLogEntriesCommand</class>
 		<roles>Admin</roles>
 	</command>
+
+
+	<!-- Flight Academy Commands -->
+	<command id="academy">
+		<name>Flight Academy</name>
+		<class>org.deltava.commands.academy.FlightAcademyCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="enroll">
+		<name>Flight Academy Enrollment</name>
+		<class>org.deltava.commands.academy.EnrollCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="certs">
+		<name>Academy Certifications</name>
+		<class>org.deltava.commands.academy.CertificationListCommand</class>
+		<roles>HR,Instructor</roles>
+	</command>
+
+	<command id="cert">
+		<name>Academy Certification</name>
+		<class>org.deltava.commands.academy.CertificationCommand</class>
+		<roles>HR,Instructor</roles>
+	</command>
+	
+	<command id="certreqs">
+		<name>Academy Certification Requirements</name>
+		<class>org.deltava.commands.academy.CertificationRequirementsCommand</class>
+		<roles>HR,Instructor</roles>
+	</command>
+
+	<command id="course">
+		<name>Flight Academy Course</name>
+		<class>org.deltava.commands.academy.CourseCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="courses">
+		<name>Flight Academy Courses</name>
+		<class>org.deltava.commands.academy.CourseListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="coursecomment">
+		<name>Flight Academy Course Comment</name>
+		<class>org.deltava.commands.academy.CourseCommentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="courseprogress">
+		<name>Flight Academy Course Progress</name>
+		<class>org.deltava.commands.academy.CourseProgressCommand</class>
+		<roles>HR,Instructor</roles>
+	</command>
+	
+	<command id="coursedispose">
+		<name>Flight Academy Course Disposal</name>
+		<class>org.deltava.commands.academy.CourseDisposalCommand</class>
+		<roles>Pilot,Instructor,HR</roles>
+	</command>
 </commands>

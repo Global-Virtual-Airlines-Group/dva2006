@@ -1,8 +1,9 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.beans.academy.Course;
+import java.util.Iterator;
 
+import org.deltava.beans.academy.*;
 import org.deltava.security.SecurityContext;
 
 /**
@@ -19,6 +20,7 @@ public class CourseAccessControl extends AccessControl {
 	private boolean _canComment;
 	private boolean _canCancel;
 	private boolean _canRestart;
+	private boolean _canStart;
 	private boolean _canApprove;
 	private boolean _canUpdateProgress;
 	private boolean _canDelete;
@@ -47,16 +49,24 @@ public class CourseAccessControl extends AccessControl {
 		boolean isINS = _ctx.isUserInRole("Instructor");
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
 		boolean isStarted = (_c.getStatus() == Course.STARTED);
+		boolean isPending = (_c.getStatus() == Course.PENDING);
 		if (!isMine && !isINS && !isHR)
 			throw new AccessControlException("Not Authorized");
 		
 		// Assign access rights
 		_canComment = isINS || isHR || (isMine && isStarted);
+		_canStart = (isINS || isHR) && isPending;
 		_canCancel = (isHR || isMine) && isStarted;
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
-		_canApprove = isHR && isStarted;
 		_canUpdateProgress = (isHR || isINS) && isStarted;
-		_canDelete = _ctx.isUserInRole("Admin");
+		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
+		
+		// Check if we've met all of the requirements
+		_canApprove = isHR && isStarted;
+		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
+			CourseProgress cp = i.next();
+			_canApprove &= cp.getComplete();
+		}
 	}
 
 	/**
@@ -73,6 +83,14 @@ public class CourseAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdateProgress() {
 		return _canUpdateProgress;
+	}
+	
+	/**
+	 * Returns if the user can start the Course. 
+	 * @return TRUE if the course can be started, otherwise FALSE
+	 */
+	public boolean getCanStart() {
+		return _canStart;
 	}
 	
 	/**
