@@ -15,13 +15,14 @@
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
+<c:if test="${access.canComment}">
 if (!checkSubmit()) return false;
 if (!validateText(form.comment, 10, 'Issue Comments')) return false;
 
 setSubmit();
 disableButton('EditButton');
-disableButton('CommentButton');
-return true;
+disableButton('CommentButton');</c:if>
+return ${access.canComment};
 }
 
 function toggleCheckbox()
@@ -122,12 +123,12 @@ return true;
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td>
- <c:if test="${access.canEdit}">
+<c:if test="${access.canEdit}">
  <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" linkID="0x${issue.ID}" />
- </c:if>
- <c:if test="${access.canComment}">
+</c:if>
+<c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
- </c:if>
+</c:if>
  </td>
 </tr>
 </el:table>
