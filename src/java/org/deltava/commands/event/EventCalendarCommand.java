@@ -2,7 +2,6 @@
 package org.deltava.commands.event;
 
 import java.util.*;
-import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -13,9 +12,6 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EventAccessControl;
-import org.deltava.util.CalendarUtils;
-import org.deltava.util.ComboUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Online Event calendar.
@@ -24,12 +20,8 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class EventCalendarCommand extends AbstractCommand {
+public class EventCalendarCommand extends AbstractCalendarCommand {
 	
-	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
-	private static final List<ComboAlias> TYPE_OPTIONS = ComboUtils.fromArray(new String[] {"Month", "Week"}, 
-			new String[] { "31", "7"});
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -37,30 +29,14 @@ public class EventCalendarCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the number of days and start date
-		int days = 31;
-		Date startDate = null;
-		try {
-			startDate = _df.parse(ctx.getParameter("startDate"));
-			days = Integer.parseInt((String) ctx.getCmdParameter(OPERATION, "31"));
-		} catch (Exception e) {
-			startDate = new Date();
-		}
-		
-		// Calculate the proper start date
-		startDate = (days == 7) ? getStartOfWeek(startDate) : getStartOfMonth(startDate);
-		
-		// Create the current date in the user's local time and determine what the local equivalent is
-		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
-		DateTime ldt = new DateTime(startDate, tz);
-		ldt.convertTo(TZInfo.local());
-		
+		// Initialize the calendar context
+		CalendarContext cctx = initCalendar(ctx);
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the events
 			GetEvent dao = new GetEvent(con);
-			Collection<Event> events = dao.getEventCalendar(ldt.getDate(), days);
+			Collection<Event> events = dao.getEventCalendar(cctx.getStartDate(), cctx.getDays());
 			ctx.setAttribute("events", events, REQUEST);
 			
 			// Get the Pilot IDs from the signups
@@ -94,10 +70,6 @@ public class EventCalendarCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Save the calendar options
-		ctx.setAttribute("startDate", ldt.getDate(), REQUEST);
-		ctx.setAttribute("typeOptions", TYPE_OPTIONS, REQUEST);
-		
 		// Calculate our access to create new events
 		EventAccessControl access = new EventAccessControl(ctx, null);
 		access.validate();
@@ -105,19 +77,7 @@ public class EventCalendarCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL((days == 7) ? "/jsp/event/calendarW.jsp" : "/jsp/event/calendarM.jsp");
+		result.setURL((cctx.getDays() == 7) ? "/jsp/event/calendarW.jsp" : "/jsp/event/calendarM.jsp");
 		result.setSuccess(true);
-	}
-	
-	private Date getStartOfMonth(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt, true);
-		cld.set(Calendar.DAY_OF_MONTH, 1);
-		return cld.getTime();
-	}
-	
-	private Date getStartOfWeek(Date dt) {
-		Calendar cld = CalendarUtils.getInstance(dt, true);
-		cld.add(Calendar.DATE, 1 - cld.get(Calendar.DAY_OF_WEEK));
-		return cld.getTime();
 	}
 }
