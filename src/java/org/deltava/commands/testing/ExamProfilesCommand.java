@@ -51,8 +51,13 @@ public class ExamProfilesCommand extends AbstractCommand {
     		  i.remove();
       }
       
+      // Check our access to create profiles
+      ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, null);
+      access.validate();
+      
       // Save in the request
       ctx.setAttribute("examProfiles", results, REQUEST);
+      ctx.setAttribute("access", access, REQUEST);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
