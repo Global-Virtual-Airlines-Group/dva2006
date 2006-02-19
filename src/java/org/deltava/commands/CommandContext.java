@@ -327,7 +327,10 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
         if (obj instanceof Integer)
             return ((Integer) obj).intValue();
 
-        throw new CommandException("Invalid Database ID - " + obj);
+        // Build a non-stackdumped exception
+        CommandException ce = new CommandException("Invalid Database ID - " + obj);
+        ce.setLogStackDump(false);
+        throw ce;
     }
     
     /**
