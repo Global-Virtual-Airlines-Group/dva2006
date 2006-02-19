@@ -26,7 +26,13 @@
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="35%">EXAM NAME</td>
+ <td width="15%">EXAM NAME</td>
+<c:if test="${access.canEdit}">
+ <td width="20%"><el:cmdbutton url="eprofile" op="edit" label="NEW EXAMINATION PROFILE" /></td>
+</c:if>
+<c:if test="${!access.canEdit}">
+ <td width="20%">&nbsp;</td>
+</c:if>
  <td width="15%">EQUIPMENT TYPE</td>
  <td width="10%">STAGE</td>
  <td width="10%">MIN STAGE</td>
@@ -37,7 +43,7 @@
 <!-- Table Examination Profile Data -->
 <c:forEach var="exam" items="${examProfiles}">
 <view:row entry="${exam}">
- <td class="pri bld"><el:cmd url="eprofile" linkID="${exam.name}" op="read">${exam.name}</el:cmd></td>
+ <td class="pri bld" colspan="2"><el:cmd url="eprofile" linkID="${exam.name}" op="read">${exam.name}</el:cmd></td>
  <td>${empty exam.equipmentType ? 'N/A' : exam.equipmentType}</td>
  <td class="sec bld"><fmt:int value="${exam.stage}" /></td>
  <td class="sec"><fmt:int value="${exam.minStage}" /></td>
@@ -48,9 +54,7 @@
 
 <!-- Table Legend Bar -->
 <tr class="title">
- <td colspan="6" align="middle">
-<view:legend width="95" labels="Active,Inactive" classes=" ,warn" />
- </td>
+ <td colspan="7"><view:legend width="95" labels="Active,Inactive" classes=" ,warn" /></td>
 </tr>
 </view:table>
 <content:copyright />
