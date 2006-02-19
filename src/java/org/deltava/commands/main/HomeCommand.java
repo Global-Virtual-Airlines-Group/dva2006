@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -10,6 +10,7 @@ import org.deltava.beans.acars.ACARSAdminInfo;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -42,11 +43,12 @@ public class HomeCommand extends AbstractCommand {
 
 		// Get Command result
 		CommandResult result = ctx.getResult();
-
+		String myHost = SystemData.get("airline.url");
+		
 		// Check that the hostname is correct
-		if (!ctx.getRequest().getServerName().equals(SystemData.get("airline.url"))) {
+		if (!ctx.getRequest().getServerName().equals(myHost)) {
 			result.setType(CommandResult.REDIRECT);
-			result.setURL("http://" + SystemData.get("airline.url") + "/");
+			result.setURL("http://" + myHost + "/");
 			result.setSuccess(true);
 			return;
 		}
@@ -139,6 +141,13 @@ public class HomeCommand extends AbstractCommand {
 			
 			// Save the content type
 			ctx.setAttribute("dynContentType", contentType, REQUEST);
+			
+			// Determine where we are referring from
+			String referHost = ctx.getRequest().getHeader("Referer");
+			if ((!StringUtils.isEmpty(referHost)) && (!referHost.contains(myHost))) {
+				SetSystemData wdao = new SetSystemData(con);
+				wdao.logReferer(referHost);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

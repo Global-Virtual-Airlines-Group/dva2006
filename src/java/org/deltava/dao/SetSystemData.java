@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -96,6 +96,22 @@ public class SetSystemData extends DAO {
 			int rowsDeleted = _ps.executeUpdate();
 			_ps.close();
 			return rowsDeleted;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Logs a hit referred from an external web page.
+	 * @param hostName the external host name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void logReferer(String hostName) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("INSERT INTO SYS_REFERERS (HOSTNAME, DATE, HITS) VALUES "
+					+ "(?, CURDATE(), 1) ON DUPLICATE KEY UPDATE HITS=HITS+1");
+			_ps.setString(1, hostName.toLowerCase());
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
