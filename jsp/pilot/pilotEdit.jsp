@@ -140,11 +140,11 @@ return true;
 </c:if>
 <tr>
  <td class="label">Rank / Equipment</td>
-<c:if test="${access.canPromote}">
+<c:if test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank}" />
  <el:combo name="eqType" size="1" idx="*" options="${eqTypes}" value="${pilot.equipmentType}" /></td>
 </c:if>
-<c:if test="${!access.canPromote}">
+<c:if test="${!access.canChangeStatus}">
  <td colspan="${cspan}" class="data">${pilot.rank}, ${pilot.equipmentType}</td>
 </c:if> 
 </tr>
