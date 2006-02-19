@@ -1,0 +1,106 @@
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.pilot;
+
+import java.sql.Connection;
+
+import org.deltava.beans.*;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.security.command.PilotAccessControl;
+
+/**
+ * A Web Site Command to promote a Pilot to Captain.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class PromoteCommand extends AbstractTestHistoryCommand {
+
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+		
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the Pilot
+			GetPilot pdao = new GetPilot(con);
+			Pilot usr = pdao.get(ctx.getID());
+			if (usr == null)
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+			
+			// Check our access
+			PilotAccessControl access = new PilotAccessControl(ctx, usr);
+			access.validate();
+			if (!access.getCanPromote())
+				throw securityException("Cannot promote " + usr.getName());
+			
+			// Init the test history
+			initTestHistory(usr, con);
+			
+			// Make sure we are a First Officer
+			if (!Ranks.RANK_FO.equals(usr.getRank())) {
+				CommandException ce = new CommandException(usr.getName() + " is not a First Officer");
+				ce.setLogStackDump(false);
+				throw ce;
+			}
+			
+			// Make sure we have passed the examination
+			EquipmentType eq = _testHistory.getEquipmentType();
+			if (!_testHistory.hasPassed(eq.getExamName(Ranks.RANK_C))) {
+				CommandException ce = new CommandException(usr.getName() + " has not passed Captain's exam");
+				ce.setLogStackDump(false);
+				throw ce;
+			}
+			
+			// Make sure we have the legs
+			if (_testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C)) {
+				CommandException ce = new CommandException(usr.getName() + " has insufficient flight legs");
+				ce.setLogStackDump(false);
+				throw ce;
+			}
+			
+			// Create the status update bean
+			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.INTPROMOTION);
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription("Promoted to Captain, " + usr.getEquipmentType());
+			
+			// Update the Pilot
+			usr.setRank(Ranks.RANK_C);
+			
+			// Start a transaction
+			ctx.startTX();
+			
+			// Write the Pilot Profile
+			SetPilot pwdao = new SetPilot(con);
+			pwdao.write(usr);
+			
+			// Write the Status Update
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
+			sudao.write(upd);
+			
+			// Commit
+			ctx.commitTX();
+			
+			// Save the pilot in the request
+			ctx.setAttribute("pilot", usr, REQUEST);
+		} catch (DAOException de) {
+			ctx.rollbackTX();
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/pilot/pilotUpdate.jsp");
+		result.setSuccess(true);
+	}
+}

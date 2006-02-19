@@ -11,6 +11,7 @@
 <title><content:airline /> Promotion Queue</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -24,10 +25,11 @@
 <el:table className="view" pad="default" space="default">
 <!-- Table Header Bar -->
 <tr class="title caps">
+ <td width="10%">&nbsp;</td>
  <td width="10%">PILOT CODE</td>
- <td width="30%">PILOT NAME</td>
- <td width="15%">EQUIPMENT TYPE</td>
- <td width="14%">RANK</td>
+ <td width="25%">PILOT NAME</td>
+ <td width="10%">EQUIPMENT</td>
+ <td width="10%">RANK</td>
  <td width="8%">FLIGHTS</td>
  <td width="8%">HOURS</td>
  <td>LAST FLIGHT</td>
@@ -36,6 +38,7 @@
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${queue}">
 <view:row entry="${pilot}">
+ <td><el:cmdbutton url="promote" linkID="0x${pilot.ID}" label="PROMOTE" /></td>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" linkID="0x${pilot.ID}" op="edit" className="bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
@@ -45,6 +48,11 @@
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
 </view:row>
 </c:forEach>
+
+<!-- Bottom Bar -->
+<tr class="title caps">
+ <td colspan="8">&nbsp;</td>
+</tr>
 </el:table>
 <content:copyright />
 </content:region>
