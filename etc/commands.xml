@@ -954,6 +954,12 @@
 		<roles>HR,PIREP</roles>
 	</command>
 
+	<command id="promote">
+		<name>Promote to Captain</name>
+		<class>org.deltava.commands.pilot.PromoteCommand</class>
+		<roles>HR,PIREP</roles>
+	</command>
+
 
 	<!-- Testing Admin Commands -->
 	<command id="examqueue">
@@ -1272,6 +1278,18 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="academycalendar">
+		<name>Flight Academy Calendar</name>
+		<class>org.deltava.commands.academy.InstructionCalendarCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="isession">
+		<name>Flight Academy Instruction Session</name>
+		<class>org.deltava.commands.academy.InstructionSessionCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="certs">
 		<name>Academy Certifications</name>
 		<class>org.deltava.commands.academy.CertificationListCommand</class>
@@ -1283,7 +1301,13 @@
 		<class>org.deltava.commands.academy.CertificationCommand</class>
 		<roles>HR,Instructor</roles>
 	</command>
-	
+
+	<command id="certdelete">
+		<name>Delete Academy Certification</name>
+		<class>org.deltava.commands.academy.CertificationDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="certreqs">
 		<name>Academy Certification Requirements</name>
 		<class>org.deltava.commands.academy.CertificationRequirementsCommand</class>
@@ -1294,6 +1318,12 @@
 		<name>Flight Academy Course</name>
 		<class>org.deltava.commands.academy.CourseCommand</class>
 		<roles>Pilot</roles>
+	</command>
+
+	<command id="coursedelete">
+		<name>Delete Academy Course</name>
+		<class>org.deltava.commands.academy.CourseDeleteCommand</class>
+		<roles>HR,Instructor</roles>
 	</command>
 
 	<command id="courses">
