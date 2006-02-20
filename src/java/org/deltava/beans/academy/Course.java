@@ -117,7 +117,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * Returns any progress entries associated with this Course.
 	 * @return a Collection of CourseProgress beans
 	 * @see Course#addProgress(CourseProgress)
-	 * @see Course#getProgress(int)
+	 * @see Course#getProgressEntry(int)
 	 */
 	public Collection<CourseProgress> getProgress() {
 		return _progress.values();
@@ -128,7 +128,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * @param seq the sequence number
 	 * @return a CourgeProgress bean, or null if not found
 	 */
-	public CourseProgress getProgress(int seq) {
+	public CourseProgress getProgressEntry(int seq) {
 		return _progress.get(new Integer(seq));
 	}
 	
@@ -234,7 +234,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		final String[] CLASS_NAMES = {"opt1", "warn", null};
+		final String[] CLASS_NAMES = {"opt1", "warn", null, "opt2"};
 		return CLASS_NAMES[_status];
 	}
 
@@ -246,5 +246,12 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 		Course c2 = (Course) o;
 		int tmpResult = new Integer(_pilotID).compareTo(new Integer(c2._pilotID));
 		return (tmpResult == 0) ? _startDate.compareTo(c2._startDate) : tmpResult;
+	}
+	
+	/**
+	 * Returns the Certification name.
+	 */
+	public String toString() {
+		return _certName;
 	}
 }

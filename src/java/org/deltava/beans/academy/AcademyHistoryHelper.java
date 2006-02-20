@@ -96,7 +96,7 @@ public class AcademyHistoryHelper {
 	public Course getCurrentCourse() {
 		for (Iterator<Course> i = _courses.values().iterator(); i.hasNext(); ) {
 			Course c = i.next();
-			if (c.getStatus() == Course.STARTED)
+			if ((c.getStatus() == Course.STARTED) || (c.getStatus() == Course.PENDING))
 				return c;
 		}
 		

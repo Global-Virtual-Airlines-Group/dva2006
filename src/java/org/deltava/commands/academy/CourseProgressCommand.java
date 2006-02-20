@@ -49,7 +49,7 @@ public class CourseProgressCommand extends AbstractCommand {
 				throw securityException("Cannot update progress");
 
 			// Get the course progress entry
-			CourseProgress cp = c.getProgress(seq);
+			CourseProgress cp = c.getProgressEntry(seq);
 			if (cp == null)
 				throw notFoundException("Cannot find entry " + seq);
 			
