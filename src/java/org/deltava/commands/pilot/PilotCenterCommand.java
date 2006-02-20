@@ -7,6 +7,7 @@ import java.sql.Connection;
 import javax.servlet.http.HttpSession;
 
 import org.deltava.beans.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.testing.ExamProfile;
 import org.deltava.beans.system.TransferRequest;
 
@@ -135,6 +136,13 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				if (!_testHistory.canWrite(ep))
 					i.remove();
 			}
+			
+			// See if we are enrolled in a Flight Academy course
+			GetAcademyCourses fadao = new GetAcademyCourses(con);
+			List<Course> courses = new ArrayList<Course>(fadao.getByPilot(ctx.getUser().getID()));
+			ctx.setAttribute("courses", courses, REQUEST);
+			if (!courses.isEmpty())
+				ctx.setAttribute("course", courses.get(courses.size() - 1), REQUEST);
 
 			// Save the examinations
 			ctx.setAttribute("availableExams", exams, REQUEST);
