@@ -58,6 +58,12 @@
  <td class="label">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
+<c:if test="${!empty courses}">
+</tr>
+ <td class="label">Flight Academy Certifications</td>
+ <td colspan="${cspan}" class="data"><fmt:list value="${courses}" delim=", " /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Home Airport</td>
  <td colspan="${cspan}" class="data">${airport.name} (<fmt:airport airport="${airport}" />)</td>
