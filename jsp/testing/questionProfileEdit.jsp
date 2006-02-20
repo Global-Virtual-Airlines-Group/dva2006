@@ -18,7 +18,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
-if (!validateText(form.correct, 5, 'Correct Answer to this Question')) return false;
+if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
 
 setSubmit();
 disableButton('SaveButton');
