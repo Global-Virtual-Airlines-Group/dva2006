@@ -25,7 +25,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the course name
-		String name = (String) ctx.getCmdParameter(ID, "");
+		String name = ctx.getParameter("courseName");
 		
 		Course c = null;
 		try {

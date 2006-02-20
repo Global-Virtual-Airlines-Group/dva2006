@@ -31,7 +31,6 @@ public class CertificationCommand extends AbstractFormCommand {
 		
 		// Get the certification name
 		String name = (String) ctx.getCmdParameter(ID, null);
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -83,6 +82,10 @@ public class CertificationCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set status attributes
+		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("isNew", Boolean.valueOf(name == null), REQUEST);
 		
 		// Foward to the JSP
 		CommandResult result = ctx.getResult();
@@ -166,6 +169,7 @@ public class CertificationCommand extends AbstractFormCommand {
 
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);
+			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

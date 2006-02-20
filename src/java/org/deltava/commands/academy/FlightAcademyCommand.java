@@ -55,11 +55,15 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			// Save the exams and certifications available
 			ctx.setAttribute("exams", allExams, REQUEST);
 			ctx.setAttribute("certs", _allCerts, REQUEST);
+			ctx.setAttribute("courses", _academyHistory.getCourses(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Save pilot name
+		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
