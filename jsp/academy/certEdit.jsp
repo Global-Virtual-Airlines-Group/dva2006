@@ -41,19 +41,19 @@ return true;
 </tr>
 <tr>
  <td class="label">Certification Name</td>
- <td class="data"><el:text name="name" className="pri bld" idx="*" size="24" max="32" value="${cert.name}" /></td>
+ <td class="data"><el:text name="name" className="pri bld req" idx="*" size="32" max="32" value="${cert.name}" /></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
- <td class="data"><el:text className="bld" name="stage" idx="*" size="1" max="1" value="${cert.stage}" /></td>
+ <td class="data"><el:text className="bld req" name="stage" idx="*" size="1" max="1" value="${cert.stage}" /></td>
 </tr>
 <tr>
  <td class="label">Prerequisites</td>
- <td class="data"><el:combo name="preReqs" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="preReqs" className="req" idx="*" size="1" value="${cert.reqName}" options="${preReqNames}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Required Examinations</td>
- <td class="data"><el:check name="reqExams" width="125" cols="4" separator="<div style=\"clear:both;\" />" checked="${cert.examNames}" options="${exams}" /></td>
+ <td class="data"><el:check name="reqExams" width="150" cols="4" className="small" separator="<div style=\"clear:both;\" />" checked="${cert.examNames}" options="${exams}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

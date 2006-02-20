@@ -4,11 +4,12 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Flight Academt Course - ${course.name}</title>
+<title>Flight Academy Course - ${course.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -43,7 +44,7 @@ return ${access.canComment};
 <el:form action="coursecomment.do" linkID="0x${course.ID}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="2">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} ${pilot.pilotCode}</td>
+ <td colspan="2">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Course</td>
@@ -66,7 +67,7 @@ return ${access.canComment};
 
 <!-- Course Progress -->
 <tr class="title caps">
- <td colspan="2">COURSE PROGRESS - <fmt:int value="$fn:sizeof(course.progress)}" /> ENTRIES</td>
+ <td colspan="2">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <view:row entry="${progress}">
@@ -84,7 +85,7 @@ return ${access.canComment};
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
- <td colspan="2">DISCUSSION - <fmt:int value="$fn:sizeof(course.comments)}" /> ENTRIES</td>
+ <td colspan="2">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
@@ -109,16 +110,16 @@ return ${access.canComment};
 <tr>
  <td> 
 <c:if test="${access.canStart}">
- <el:cmdbutton ID="EnrollButton" url="coursedisposal" linkID="0x${course.ID}" op="restart" label="ENROLL STUDENT" />
+ <el:cmdbutton ID="EnrollButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="coursedisposal" linkID="0x${course.ID}" op="abandon" label="WITHDRAW" />
+ <el:cmdbutton ID="CancelButton" url="coursedispose" linkID="0x${course.ID}" op="abandon" label="WITHDRAW" />
 </c:if>
 <c:if test="${access.canRestart}">
- <el:cmdbutton ID="ReturnButton" url="coursedisposal" linkID="0x${course.ID}" op="restart" label="RETURN" />
+ <el:cmdbutton ID="ReturnButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="RETURN" />
 </c:if>
 <c:if test="${access.canApprove}">
- <el:cmdbutton ID="ApproveButton" url="coursedisposal" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
+ <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />

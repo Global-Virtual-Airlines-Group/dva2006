@@ -58,11 +58,11 @@ public class CourseAccessControl extends AccessControl {
 		_canStart = (isINS || isHR) && isPending;
 		_canCancel = (isHR || isMine) && isStarted;
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
-		_canUpdateProgress = (isHR || isINS) && isStarted;
+		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
-		_canApprove = isHR && isStarted;
+		_canApprove = isHR && isStarted && !isMine;
 		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
 			CourseProgress cp = i.next();
 			_canApprove &= cp.getComplete();

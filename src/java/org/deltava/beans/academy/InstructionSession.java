@@ -23,6 +23,7 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	private String _courseName;
 	private int _instructorID;
 	private int _pilotID;
+	private int _courseID;
 	
 	private Date _startTime;
 	private Date _endTime;
@@ -34,12 +35,15 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	
 	/**
 	 * Creates a new Instruction Session bean.
-	 * @param courseID the database ID of the course
-	 * @throws IllegalArgumentException if courseID is zero or negative
+	 * @param id the database ID
+	 * @param courseID the database ID of the Course
+	 * @throws IllegalArgumentException if id is negative or courseID is zero or negative
 	 */
-	public InstructionSession(int courseID) {
+	public InstructionSession(int id, int courseID) {
 		super();
-		setID(courseID);
+		setCourseID(courseID);
+		if (id != 0)
+			setID(id);
 	}
 	
 	/**
@@ -69,6 +73,15 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	 */
 	public int getPilotID() {
 		return _pilotID;
+	}
+	
+	/**
+	 * Returns the Flight Academy Course ID.
+	 * @return the database ID of the Course
+	 * @see InstructionSession#setCourseID(int)
+	 */
+	public int getCourseID() {
+		return _courseID; 
 	}
 	
 	/**
@@ -162,6 +175,17 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	public void setPilotID(int id) {
 		validateID(_pilotID, id);
 		_pilotID = id;
+	}
+
+	/**
+	 * Updates the Flight Academy Course..
+	 * @param id the Course database ID
+	 * @throws IllegalArgumentException if id is zero or negative
+	 * @see InstructionSession#getCourseID()
+	 */
+	public void setCourseID(int id) {
+		validateID(_courseID, id);
+		_courseID = id;
 	}
 	
 	/**

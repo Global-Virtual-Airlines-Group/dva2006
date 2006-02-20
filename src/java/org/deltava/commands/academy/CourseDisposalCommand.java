@@ -35,7 +35,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
 		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
-		if (opCode < 1)
+		if (opCode < 0)
 			throw new CommandException("Invalid Operation - " + opName);
 
 		// Initialize the Message Context
@@ -86,7 +86,9 @@ public class CourseDisposalCommand extends AbstractCommand {
 			if (ctx.getUser().getID() != c.getPilotID()) {
 				GetPilot pdao = new GetPilot(con);
 				usr = pdao.get(c.getPilotID());
-			}
+				ctx.setAttribute("pilot", usr, REQUEST);
+			} else
+				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 			
 			// Get the DAO and update the course 
 			SetAcademy wdao = new SetAcademy(con);

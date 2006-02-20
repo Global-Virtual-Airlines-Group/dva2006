@@ -71,12 +71,12 @@ public class SetAcademy extends DAO {
 			executeUpdate(1);
 			
 			// Clear the exams
-			prepareStatementWithoutLimits("DELETE FROM CERTEXAMS WHERE (NAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM CERTEXAMS WHERE (CERTNAME=?)");
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
 			// Clear the requirements
-			prepareStatementWithoutLimits("DELETE FROM CERTREQS WHERE (NAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM CERTREQS WHERE (CERTNAME=?)");
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
@@ -143,6 +143,9 @@ public class SetAcademy extends DAO {
 			// Write course progress
 			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
 				CourseProgress cp = i.next();
+				if (cp.getCourseID() == 0)
+					cp.setCourseID(c.getID());
+				
 				updateProgress(cp);
 			}
 			
@@ -239,6 +242,43 @@ public class SetAcademy extends DAO {
 		try {
 			prepareStatement("DELETE FROM COURSES WHERE (ID=?)");
 			_ps.setInt(1, courseID);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Flight Academy Certification from the database.
+	 * @param certName the certification name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(String certName) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM CERTS WHERE (NAME=?)");
+			_ps.setString(1, certName);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes an Instruction Calendar entry.
+	 * @param s the InstructionSession bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(InstructionSession s) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
+					+ "STATUS, NOSHOW, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, s.getID());
+			_ps.setInt(2, s.getInstructorID());
+			_ps.setTimestamp(3, createTimestamp(s.getStartTime()));
+			_ps.setTimestamp(4, createTimestamp(s.getEndTime()));
+			_ps.setInt(5, s.getStatus());
+			_ps.setBoolean(6, s.getNoShow());
+			_ps.setString(7, s.getRemarks());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

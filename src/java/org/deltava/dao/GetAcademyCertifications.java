@@ -57,10 +57,18 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C, CERTREQS CRS WHERE (C.ACTIVE=?) "
-					+ "AND (C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C LEFT JOIN CERTREQS CR ON "
+					+ "(C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
-			return execute();
+			Collection<Certification> results = execute();
+			
+			// Load the exams
+			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
+				Certification c = i.next();
+				loadExams(c);
+			}
+			
+			return results;
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}
@@ -73,9 +81,17 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C, CERTREQS CR WHERE (C.NAME=CR.CERTNAME) "
-					+ "GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
-			return execute();
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C LEFT JOIN CERTREQS CR ON " 
+					+ "(C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
+			Collection<Certification> results = execute();
+			
+			// Load the exams
+			for (Iterator<Certification> i = results.iterator(); i.hasNext(); ) {
+				Certification c = i.next();
+				loadExams(c);
+			}
+			
+			return results;
 		} catch (SQLException se) { 
 			throw new DAOException(se);
 		}

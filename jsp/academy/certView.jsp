@@ -47,6 +47,7 @@
 <tr class="title caps">
  <td colspan="2">REQUIREMENTS FOR COMPLETION</td>
 </tr>
+<c:if test="${!empty cert.requirements}">
 <c:set var="reqNum" value="${0}" scope="request" />
 <c:forEach var="req" items="${cert.requirements}">
 <c:set var="reqNum" value="${reqNum + 1}" scope="request" />
@@ -55,12 +56,26 @@
  <td class="data"><fmt:text value="${req.text}" /></td>
 </tr>
 </c:forEach>
+</c:if>
+<c:if test="${empty cert.requirements}">
+<tr>
+ <td colspan="2" class="pri bld mid">This Flight Academy Certification has no extra requirements.</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td> <c:if test="${access.canEdit}"><el:cmdbutton url="cert" linkID="${cert.name}" op="edit" label="EDIT CERTIFICATION PROFILE" /></c:if></td>
+ <td> 
+<c:if test="${access.canEdit}">
+ <el:cmdbutton url="cert" linkID="${cert.name}" op="edit" label="EDIT CERTIFICATION PROFILE" />
+ <el:cmdbutton url="certreqs" linkID="${cert.name}" op="edit" label="EDIT REQUIREMENTS" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton url="certdelete" linkID="${cert.name}" label="DELETE CERTIFICATION PROFILE" />
+</c:if>
+ </td>
 </tr>
 </el:table>
 <content:copyright />
