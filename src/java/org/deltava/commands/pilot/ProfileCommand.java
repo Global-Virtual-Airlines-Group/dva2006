@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -677,6 +677,10 @@ public class ProfileCommand extends AbstractFormCommand {
 				GetApplicant adao = new GetApplicant(con);
 				ctx.setAttribute("applicant", adao.getByPilotID(p.getID()), REQUEST);
 			}
+			
+			// Get Academy Certifications
+			GetAcademyCourses fadao = new GetAcademyCourses(con);
+			ctx.setAttribute("courses", fadao.getByPilot(p.getID()), REQUEST);
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
