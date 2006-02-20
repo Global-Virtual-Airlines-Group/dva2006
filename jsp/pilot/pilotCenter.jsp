@@ -41,6 +41,8 @@ return true;
 <content:sysdata var="selcalMax" name="users.selcal.max" />
 <content:sysdata var="selcalReserve" name="users.selcal.reserve" />
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
+<content:sysdata var="academyEnabled" name="airline.academy.enabled" />
+<content:sysdata var="academyFlights" name="airline.academy.minFlights" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -303,6 +305,53 @@ cannot access the Testing Center until this interval has passed.</span></c:if>
 <c:if test="${pilot.legs < 5}"><span class="sec bld">As a new <content:airline /> pilot, you will 
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
+
+<c:if test="${academyEnabled && (pilot.legs >= academyFlights)}">
+<!-- Flight Academy Section -->
+<tr class="title caps">
+ <td colspan="2">FLIGHT ACADEMY</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="academy">Flight Academy</el:cmd></td>
+ <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. You 
+can continue your professional training here and obtain a number of special ratings demonstrating your 
+skill as a Pilot.<c:if test="${!empty courses}"><br />
+<br />
+You have completed or are enrolled in the following <content:airline /> Flight Academy courses: 
+<fmt:list value="${courses}" delim=", " />.</c:if>
+<c:if test="${!empty course}"><br />
+You are currently enrolled in the <el:cmd url="course" linkID="0x${course.ID}" className="pri bld">${course.name}</el:cmd> 
+Flight Academy course.</c:if></td>
+</tr>
+<c:if test="${!empty course}">
+<tr>
+ <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
+ <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a
+training session with a Flight Academy instructor to meet online for test flights, check rides and other 
+situations where a virtual Flight Instructor can asisst you in your development.</td>
+</tr>
+</c:if>
+<content:filter roles="HR,Instructor">
+<tr>
+ <td class="mid"><el:cmd url="courses" className="bld">Active Courses</el:cmd></td>
+ <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy 
+training course.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="certs" className="bld">Certification Profiles</el:cmd></td>
+ <td class="data">You can view and/or modify Flight Academy certification profiles here, to change 
+the requirements, necessary examinations and prerequisites for each <content:airline /> Flight Academy 
+pilot Certification.</td>
+</tr>
+<c:if test="${empty course}">
+<tr>
+ <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
+ <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a
+training session with a Flight Academy student.</td>
+</tr>
+</c:if>
+</content:filter>
+</c:if>
 
 <content:filter roles="PIREP">
 <!-- Flight Report Admin Section -->
