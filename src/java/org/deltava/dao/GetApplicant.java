@@ -173,7 +173,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 		try {
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE "
-					+ "(UPPER(LEFT(LASTNAME, 1))=?) ORDER BY LASTNAME");
+					+ "(UPPER(LEFT(LASTNAME, 1))=?) ORDER BY CREATED DESC");
 			_ps.setString(1, letter.substring(0, 1).toUpperCase());
 			return execute();
 		} catch (SQLException se) {
