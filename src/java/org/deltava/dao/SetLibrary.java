@@ -30,7 +30,7 @@ public class SetLibrary extends DAO {
 	 */
 	public void download(String fName, int pilotID) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, ?, ?)");
+			prepareStatement("REPLACE INTO DOWNLOADS (FILENAME, DATE, USER_ID) VALUES (?, ?, ?)");
 			_ps.setString(1, fName);
 			_ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
 			_ps.setInt(3, pilotID);
