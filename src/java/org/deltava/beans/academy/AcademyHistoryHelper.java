@@ -118,6 +118,11 @@ public class AcademyHistoryHelper {
 		return false;
 	}
 	
+	/**
+	 * Returns wether a Pilot has passed a particular Examination.
+	 * @param examName the Examination name
+	 * @return TRUE if the examination has been passed, otherwise FALSE
+	 */
 	public boolean passedExam(String examName) {
 		for (Iterator<Test> i = _tests.iterator(); i.hasNext(); ) {
 			Test t = i.next();
@@ -128,6 +133,11 @@ public class AcademyHistoryHelper {
 		return false;
 	}
 	
+	/**
+	 * Returns wether a Pilot has completed the requirements for a Flight Academy certifcation. 
+	 * @param certName the Certification name
+	 * @return TRUE if the certification has been granted or can be, otherwise FALSE
+	 */
 	public boolean hasCompleted(String certName) {
 		
 		// Check if we're enrolled in the course
