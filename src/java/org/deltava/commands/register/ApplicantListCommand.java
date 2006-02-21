@@ -54,7 +54,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			List results = null;
 			if (ctx.getParameter("status") != null) {
 				int statusCode = StringUtils.arrayIndexOf(Applicant.STATUS, ctx.getParameter("status"));
-				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "LASTNAME");
+				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "CREATED DESC");
 			} else if (ctx.getParameter("eqType") != null) {
 				results = dao.getByEquipmentType(ctx.getParameter("eqType"));
 			} else if (!StringUtils.isEmpty(ctx.getParameter("letter"))) {
