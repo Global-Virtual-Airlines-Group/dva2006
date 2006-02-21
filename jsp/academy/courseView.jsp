@@ -17,9 +17,16 @@
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
-<c:if test="${access.canComment}">
+<c:if test="${access.canComment || access.canUpdateProgress}">
 if (!checkSubmit()) return false;
-if (!validateText(form.msgText, 5, 'Course Comments')) return false;
+
+// Validate response
+var act = form.action;
+if (act.indexOf('courseprogress.do') != -1) {
+
+} else {
+	if (!validateText(form.msgText, 5, 'Course Comments')) return false;
+}
 
 setSubmit();
 disableButton('EnrollButton');
@@ -27,8 +34,10 @@ disableButton('CancelButton');
 disableButton('ReturnButton');
 disableButton('ApproveButton');
 disableButton('DeleteButton');
+disableButton('SchedButton');
+disableButton('Progress Button');
 disableButton('CommentButton');</c:if>
-return ${access.canComment};
+return ${access.canComment || access.canUpdateProgress};
 }
 </script>
 </head>
@@ -73,8 +82,8 @@ return ${access.canComment};
 <view:row entry="${progress}">
  <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" />
 <c:if test="${access.canUpdateProgress}"><br />
-<el:cmdbutton url="courseprogress" linkID="0x${course.ID}" op="${!progress.complete}&seq=${progress.ID}" label="${progress.complete ? 'COMPLETE' : 'INCOMPLETE'}" />
-</c:if></td>
+<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Completed" /></c:if>
+</td>
  <td class="data"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete}"><br />
 <br />
@@ -118,11 +127,15 @@ return ${access.canComment};
 <c:if test="${access.canRestart}">
  <el:cmdbutton ID="ReturnButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="RETURN" />
 </c:if>
-<c:if test="${access.canApprove}">
+<c:if test="${access.canApprove && isComplete}">
  <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
+</c:if>
+<c:if test="${access.canUpdateProgress}">
+ <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" linkID="0x${course.ID}" label="UPDATE PROGRESS" />
+ <el:cmdbutton ID="SchedButton" url="insession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton ID="DeleteButton" url="coursedelete" linkID="0x${course.ID}" label="DELETE COURSE" />
