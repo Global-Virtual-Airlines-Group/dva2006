@@ -104,9 +104,10 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		try {
 		   setQueryMax(1);
 			prepareStatement("SELECT COUNT(PR.ID) FROM PIREPS PR, PROMO_EQ PE WHERE (PR.ID=PE.ID) AND "
-					+ "(PR.PILOT_ID=?) AND (PE.EQTYPE=?)");
+					+ "(PR.PILOT_ID=?) AND (PE.EQTYPE=?) AND (PR.STATUS=?)");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
+			_ps.setInt(3, FlightReport.OK);
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
