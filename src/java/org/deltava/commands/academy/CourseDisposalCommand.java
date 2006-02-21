@@ -4,7 +4,7 @@ package org.deltava.commands.academy;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -72,7 +72,14 @@ public class CourseDisposalCommand extends AbstractCommand {
 					break;
 					
 				case Course.COMPLETE :
-					canExec = access.getCanApprove();
+					// Get our exams and init the academy helper
+					GetExam exdao = new GetExam(con);
+					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+					AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
+					helper.addExams(exdao.getExams(c.getPilotID()));
+					
+					// Check our access
+					canExec = access.getCanApprove() && helper.hasCompleted(c.getName());
 					mctx.setTemplate(mtdao.get("COURSECOMPLETE"));
 					ctx.setAttribute("isCompleted", Boolean.TRUE, REQUEST);
 					break;

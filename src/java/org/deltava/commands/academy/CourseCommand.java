@@ -36,6 +36,13 @@ public class CourseCommand extends AbstractCommand {
 			if (c == null)
 				throw notFoundException("Invalid Course - " + ctx.getID());
 			
+			// Get our exams and init the academy helper
+			GetExam exdao = new GetExam(con);
+			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+			AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
+			helper.addExams(exdao.getExams(c.getPilotID()));
+			ctx.setAttribute("isComplete", Boolean.valueOf(helper.hasCompleted(c.getName())), REQUEST);
+			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
