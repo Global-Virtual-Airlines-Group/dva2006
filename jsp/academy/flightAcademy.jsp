@@ -19,17 +19,34 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 
-var c = form.courseName;
-if (!c) return false;
-if (c.selectedIndex == 0) {
-	alert('Please select the Course you wish to enroll in.');
-	c.focus();
-	return false;
-}
+// Validate response
+var act = form.action;
+if (act.indexOf('enroll.do') != -1)
+{
+	var c = form.courseName;
+	if (!c) return false;
+	if (c.selectedIndex == 0) {
+		alert('Please select the Course you wish to enroll in.');
+		c.focus();
+		return false;
+	}
+	
+	// Check if we're sure
+	var cName = c.options[c.selectedIndex].text;
+	if (!confirm('Are you sure you wish to enroll in the ' + cName + ' Flight Academy Course?')) return false;
+} else {
+	var c = form.examName;
+	if (!c) return false;
+	if (c.selectedIndex == 0) {
+		alert('Please select the Examination you wish to take.');
+		c.focus();
+		return false;
+	}
 
-// Check if we're sure
-var cName = c.options[c.selectedIndex].text;
-if (!confirm('Are you sure you wish to enroll in the ' + cName + ' Flight Academy Course?')) return false;
+	// Check if we're sure
+	var tName = c.options[c.selectedIndex].text;
+	if (!confirm('Are you sure you wish to take the ' + tName + ' Examination?')) return false;
+}
 
 setSubmit();
 disableButton('EnrollButton');
@@ -136,7 +153,7 @@ The <content:airline /> Flight Academy instructors score examianations within 72
 </tr>
 <tr class="title">
  <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="< SELECT EXAM >" />
- <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
+ <el:cmdbutton ID="ExamButton" url="newexam" post="true" label="NEW EXAMINATION" /></td>
 </c:if>
 </c:if>
 </tr>

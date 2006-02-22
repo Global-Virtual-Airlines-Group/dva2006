@@ -1,9 +1,10 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -11,8 +12,9 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
+import org.deltava.security.command.InstructionAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
@@ -22,6 +24,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class InstructionSessionCommand extends AbstractFormCommand {
+	
+	private static final List STATUSES = ComboUtils.fromArray(InstructionSession.STATUS_NAMES);
 
 	/**
 	 * Method called when saving the form.
@@ -62,18 +66,19 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				
 				// Populate the bean
 				s = new InstructionSession(0, c.getID());
-				s.setInstructorID(ctx.getUser().getID());
 			}
 			
 			// Check our access
-			CourseAccessControl access = new CourseAccessControl(ctx, c);
+			InstructionAccessControl access = new InstructionAccessControl(ctx, s);
 			access.validate();
-			if (!access.getCanUpdateProgress())
+			if (!access.getCanEdit())
 				throw securityException("Cannot update Instruction Session");
 			
 			// Load from the request
+			s.setInstructorID(Integer.parseInt("instructor"));
 			s.setStartTime(parseDateTime(ctx, "start"));
 			s.setEndTime(parseDateTime(ctx, "end"));
+			s.setStatus(StringUtils.arrayIndexOf(InstructionSession.STATUS_NAMES, ctx.getParameter("status")));
 			s.setNoShow(Boolean.valueOf(ctx.getParameter("noShow")).booleanValue());
 			s.setRemarks(ctx.getParameter("remarks"));
 			
@@ -140,8 +145,21 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				if (c == null)
 					throw notFoundException("Invalid Course - " + s.getCourseID());
 				
+				// Check our access
+				InstructionAccessControl access = new InstructionAccessControl(ctx, s);
+				access.validate();
+				if (!access.getCanEdit())
+					throw securityException("Cannot update Instruction Session");
+				
 				// Save in the request
 				ctx.setAttribute("session", s, REQUEST);
+				
+				// Get the user's local time zone
+				TZInfo tz = ctx.getUser().getTZ();
+				
+				// Convert the dates to local time for the input fields
+				ctx.setAttribute("startTime", DateTime.convert(s.getStartTime(), tz), REQUEST);
+				ctx.setAttribute("endTime", DateTime.convert(s.getEndTime(), tz), REQUEST);
 			} else {
 				int courseID = StringUtils.parseHex(ctx.getParameter("course"));
 				
@@ -149,14 +167,19 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				c = dao.get(courseID);
 				if (c == null)
 					throw notFoundException("Invalid Course - " + courseID);
+				
+				// Check our access
+				CourseAccessControl access = new CourseAccessControl(ctx, c);
+				access.validate();
+				if (!access.getCanSchedule())
+					throw securityException("Cannot schedule Instruction Session");
 			}
 			
-			// Check our access
-			CourseAccessControl access = new CourseAccessControl(ctx, c);
-			access.validate();
-			if (!access.getCanUpdateProgress())
-				throw securityException("Cannot edit Instruction Session");
-
+			// Get Instructor Pilots
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			ctx.setAttribute("instructors", pdao.getByRole("Instructor", "PILOTS"), REQUEST);
+			ctx.setAttribute("pilot", pdao.get(c.getPilotID()), REQUEST);
+			
 			// Save in the request
 			ctx.setAttribute("course", c, REQUEST);
 		} catch (DAOException de) {
@@ -164,6 +187,9 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set options
+		ctx.setAttribute("statuses", STATUSES, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -192,8 +218,17 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			if (c == null)
 				throw notFoundException("Invalid Course - " + s.getCourseID());
 			
+			// Get the Pilot IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			IDs.add(new Integer(s.getPilotID()));
+			IDs.add(new Integer(s.getInstructorID()));
+			
+			// Get the Pilots
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			
 			// Get our access
-			CourseAccessControl access = new CourseAccessControl(ctx, c);
+			InstructionAccessControl access = new InstructionAccessControl(ctx, s);
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
 			
