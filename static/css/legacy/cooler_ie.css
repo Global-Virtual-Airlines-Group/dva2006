@@ -1,0 +1,125 @@
+/* Cascading Style Sheet for Water Cooler pages */
+
+TABLE.thread {
+	table-layout: auto;
+	border-collapse: separate;
+	border-spacing: 3px 3px;
+	border-width: 4px 4px 4px 4px;
+	padding: 6px 6px 6px 6px;
+	width: 100%;
+}
+
+/* Title Top Row */
+TR.title {
+	font-size: 9pt;
+	background-color: #0000A1;
+	font-family: Tahoma, Verdana;
+	vertical-align: middle;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+/* Button Bottom Row */
+TR.buttons {
+	background-color: #0000A1;
+	vertical-align: middle;
+}
+
+TR {
+	font-family: Tahoma, Verdana;
+	vertical-align: middle;
+	background-color: #EFEFEF;
+	font-size: 9pt;
+}
+
+TD.postInfo {
+	text-align: left;
+	vertical-align: top;
+	width: 155px;
+}
+
+TD.postDate {
+	font-size: 8pt;
+	background-color: #F7F7FF;
+	height: 19px;
+}
+
+TD.postBody {
+	text-align: left;
+	vertical-align: top;
+}
+
+TD.postEdit {
+	width: 90px;
+	text-align: center;
+	background-color: #F7F7FF;
+	height: 19px;
+}
+
+INPUT, TEXTAREA {
+	font-family: Tahoma, Verdana;
+	font-size: 9pt;
+	color: #000000;
+	border: 1px solid #0000A1;
+	background: #F0F4F8;
+}
+
+*.postEdit :link, *.postEdit :visited {
+	font-size: 8pt;
+	color: #0000A1;
+	font-weight: bold;
+	font-family: Tahoma, Verdana;
+}
+
+*.postInfo :link, *.postInfo :visited {
+	font-size: 9pt;
+	color: #0000A1;
+	font-weight: bold;
+	text-decoration: none;
+	font-family: Tahoma, Verdana;
+}
+
+*.title :link, *.title :visited {
+	font-size: 9pt;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-family: Tahoma, Verdana;
+	text-decoration: underline;
+	color: #EFFFFF;
+}
+
+TABLE.defaultSig {
+    width: 400px;
+    height: 132px;
+    background-repeat: no-repeat;
+    padding: 0px;
+    color: Navy;
+    border-style: solid;
+    border-width: 25px 0px 25px 0px;
+    background: Navy;
+    border-color: Navy;
+}
+
+DIV.defaultSigText {
+    width: 400px;
+    max-height: 0px;
+    text-align: center;
+    font-size: 10pt;
+    position: relative;
+    top: -46px;
+}
+
+H2 {
+    color: #6699FF;
+    font-family: Trebuchet MS, Verdana;
+    font-size: 17pt;
+    font-weight: bold;
+    font-variant: small-caps;
+}
+
+SPAN.defaultSig {
+    color: #6699FF;
+    font-size: 10pt;
+    position:relative;
+    top: 65px;
+}
