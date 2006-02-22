@@ -96,8 +96,9 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			cr.setScoredOn(new Date());
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
-			cr.setComments(ctx.getParameter("comments"));
 			cr.setStatus(Test.SCORED);
+			if (ctx.getParameter("dComments") != null)
+				cr.setComments(ctx.getParameter("dComments"));
 
 			// Start a JDBC transaction
 			ctx.startTX();
