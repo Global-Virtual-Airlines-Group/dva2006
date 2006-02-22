@@ -10,7 +10,7 @@
 <head>
 <title><content:airline /> Water Cooler - ${thread.subject}</title>
 <content:css name="main" browserSpecific="true" />
-<content:css name="cooler" />
+<content:css name="cooler" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
