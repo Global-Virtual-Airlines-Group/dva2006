@@ -405,6 +405,11 @@ for promotion to the rank of Captain in their Equipment Program.</td>
  <td class="mid"><el:cmd className="bld" url="questionnaires">Applicant Questionnaires</el:cmd></td>
  <td class="data">You can view and score pending Applicant Questionnaires.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dupeSearch">Duplicate Pilots</el:cmd></td>
+ <td class="data">You can search for and merge duplicate pilot names and IDs into a single <content:airline />
+ Pilot profile.</td>
+</tr>
 </content:filter> 
 <content:filter roles="HR,Examination">
 <tr>
