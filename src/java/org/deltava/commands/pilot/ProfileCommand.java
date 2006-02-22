@@ -95,11 +95,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setHasDefaultSignature(Boolean.valueOf(ctx.getParameter("useDefaultSig")).booleanValue());
 
 			// Set Notification Options
-			String[] notifyOpts = ctx.getRequest().getParameterValues("notifyOption");
+			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
 			if (notifyOpts != null) {
-				List notifyOptions = Arrays.asList(notifyOpts);
 				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-					p.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+					p.setNotifyOption(NOTIFY_ALIASES[x], notifyOpts.contains(NOTIFY_ALIASES[x]));
 			} else {
 				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
 					p.setNotifyOption(NOTIFY_ALIASES[x], false);

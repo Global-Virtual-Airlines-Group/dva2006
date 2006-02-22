@@ -1,7 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.cooler.Channel;
@@ -49,10 +49,10 @@ public class ChannelCommand extends AbstractFormCommand {
 			}
 			
 			// Load roles and airlines
-			c.setAirlines(Arrays.asList(ctx.getRequest().getParameterValues("airline")));
-			String[] roles = ctx.getRequest().getParameterValues("securityRoles");
+			c.setAirlines(ctx.getParameters("airline"));
+			Collection<String> roles = ctx.getParameters("securityRoles");
 			if (roles != null)
-				c.setRoles(Arrays.asList(roles));
+				c.setRoles(roles);
 			
 			// Check our access
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);

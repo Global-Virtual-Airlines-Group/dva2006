@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class for storing run-time data needed for Command invocations. This class handles reserving and
  * releasing JDBC Connections, since by doing so we can easily return connections back to the pool in a
- * <b>finally </b> block without nasty scope issues.
+ * <b>finally</b> block without nasty scope issues.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -326,11 +326,16 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
         Object obj = getCmdParameter(Command.ID, new Integer(0));
         if (obj instanceof Integer)
             return ((Integer) obj).intValue();
-
-        // Build a non-stackdumped exception
-        CommandException ce = new CommandException("Invalid Database ID - " + obj);
-        ce.setLogStackDump(false);
-        throw ce;
+        
+        // Try and convert into an integer
+        try {
+        	return Integer.parseInt(obj.toString());
+        } catch (Exception e) {
+            // Build a non-stackdumped exception
+            CommandException ce = new CommandException("Invalid Database ID - " + obj);
+            ce.setLogStackDump(false);
+            throw ce;
+        }
     }
     
     /**
@@ -340,6 +345,16 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      */
     public String getParameter(String pName) {
         return _req.getParameter(pName);
+    }
+    
+    /**
+     * Returns the values of a collection of request parameters.
+     * @param pName the parameter name
+     * @return a Collection parameter values, or null if not present
+     */
+    public Collection<String> getParameters(String pName) {
+    	String[] pValues = _req.getParameterValues(pName);
+    	return (pValues == null) ? null : Arrays.asList(pValues);
     }
     
     /**

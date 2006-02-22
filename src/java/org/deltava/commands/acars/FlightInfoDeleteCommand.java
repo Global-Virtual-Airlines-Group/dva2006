@@ -31,12 +31,12 @@ public class FlightInfoDeleteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the flight IDs
-		String IDs[] = ctx.getRequest().getParameterValues("flightID");
+		Collection<String> IDs = ctx.getParameters("flightID");
 		List<String> flightIDs = new ArrayList<String>();
 		if (IDs == null) {
 			flightIDs.add(ctx.getParameter("id"));
 		} else {
-			flightIDs.addAll(Arrays.asList(IDs));			
+			flightIDs.addAll(IDs);			
 		}
 
 		Set<String> deletedIDs = new HashSet<String>();
