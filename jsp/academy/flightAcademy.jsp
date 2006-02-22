@@ -33,6 +33,7 @@ if (!confirm('Are you sure you wish to enroll in the ' + cName + ' Flight Academ
 
 setSubmit();
 disableButton('EnrollButton');
+disableButton('ExamButton');
 return true;
 }
 </script>
@@ -109,6 +110,34 @@ you may not enroll in any other Flight Academy courses.</td>
 <tr class="title">
  <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="< SELECT COURSE >" />
  <el:button ID="EnrollButton" type="submit" className="BUTTON" label="ENROLL IN COURSE" /></td>
+</c:if>
+<c:if test="${!empty exams}">
+<!-- Examination Section -->
+<tr class="title caps">
+ <td class="left" colspan="5">EXAMINATIONS</td>
+</tr>
+<c:if test="${examActive != 0}">
+ <td class="left" colspan="4">You currently are in the process of taking a Pilot Examination.
+ Until this examination has been submitted and scored, you cannot take any new examinations.</td>
+ <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
+</c:if>
+<c:if test="${examActive == 0}">
+ <td class="left" colspan="5">Please select a written examination from the list below. Make sure that
+ you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
+<br />
+Our exams are timed. You will see time remaining at the top of the examianation page. After starting
+ you have 40 minutes to complete and submit the examianation. <i>After 40 minutes the examianation will
+ be automatically submitted, regardless of number of questions answered</i>.<br />
+<br />
+The <content:airline /> Flight Academy instructors score examianations within 72 hours of submission,
+ and the results of your examination will be sent to you by email. Until it is scored, you will not be
+ able to take any exam again.<span class="pri bld">Make sure that you are prepared before you begin
+ an examination!</span></td>
+</tr>
+<tr class="title">
+ <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="< SELECT EXAM >" />
+ <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
+</c:if>
 </c:if>
 </tr>
 </el:table>
