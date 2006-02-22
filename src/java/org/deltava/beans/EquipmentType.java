@@ -203,13 +203,12 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
     
     /**
-     * Updates available ranks. This is typically called from a command when reading a multi-value HTTP
-     * request parameter.
-     * @param ranks rank names
+     * Updates the available ranks for this Equipment Program.
+     * @param ranks a Collection of rank names
      */
-    public void setRanks(String[] ranks) {
+    public void setRanks(Collection<String> ranks) {
     	_ranks.clear();
-    	_ranks.addAll(Arrays.asList(ranks));
+    	_ranks.addAll(ranks);
     }
 
     /**
@@ -248,19 +247,18 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
     
     /**
-     * Loads primary/secondary ratings. This is typically called from a command when reading a multi-value
-     * HTTP request parameter.
-     * @param pr primary ratings
-     * @param sr secondary ratings
+     * Loads primary/secondary ratings.
+     * @param pr a Collection of primary ratings
+     * @param sr a Collection of secondary ratings
      */
-    public void setRatings(String[] pr, String[] sr) {
+    public void setRatings(Collection<String> pr, Collection<String> sr) {
     	_primaryRatings.clear();
     	if (pr != null)
-    	   _primaryRatings.addAll(Arrays.asList(pr));
+    	   _primaryRatings.addAll(pr);
     	
     	_secondaryRatings.clear();
     	if (sr != null)
-    	   _secondaryRatings.addAll(Arrays.asList(sr));
+    	   _secondaryRatings.addAll(sr);
     }
     
     /**

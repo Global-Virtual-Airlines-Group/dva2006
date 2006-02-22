@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -33,9 +33,7 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Initialize default command result
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/pilot/passwordReset.jsp");
-
-		boolean isAuthorized = ctx.getRequest().isUserInRole("HR");
-		if (ctx.isAuthenticated() && !isAuthorized)
+		if (ctx.isAuthenticated() && !ctx.isUserInRole("HR"))
 			throw securityException("Not Authorized");
 
 		// Check for first/last name
@@ -50,6 +48,7 @@ public class PasswordResetCommand extends AbstractCommand {
 
 		// Create the messaging context
 		MessageContext mctxt = new MessageContext();
+		mctxt.addData("user", ctx.getUser());
 
 		// Get the User object - you cannot reset a staff member's password
 		Pilot usr = null;
@@ -97,7 +96,7 @@ public class PasswordResetCommand extends AbstractCommand {
 		}
 
 		// Check the e-mail address
-		if (!isAuthorized) {
+		if (!ctx.isUserInRole("HR")) {
 			if (!usr.getEmail().equalsIgnoreCase(ctx.getParameter("eMail"))) {
 				ctx.setMessage("Cannot reset password for " + usr.getName() + " - Invalid E-Mail Address");
 				return;
@@ -117,7 +116,7 @@ public class PasswordResetCommand extends AbstractCommand {
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + se.getMessage());
 			return;
 		}
-		
+
 		// Generate an HTTP session if one doesn't exist
 		ctx.getRequest().getSession(true);
 
@@ -127,8 +126,8 @@ public class PasswordResetCommand extends AbstractCommand {
 		mailer.send(usr);
 
 		// Forward to JSP
+		result.setURL("/jsp/pilot/passwordResetComplete.jsp");
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("pwdresetdone.do");
 		result.setSuccess(true);
 	}
 }

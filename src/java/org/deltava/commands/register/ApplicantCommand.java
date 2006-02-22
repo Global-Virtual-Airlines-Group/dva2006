@@ -84,8 +84,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			}
 
 			// Set Notification Options
-			Collection<String> notifyOptions = CollectionUtils.loadList(ctx.getRequest().getParameterValues(
-					"notifyOption"), new HashSet<String>());
+			Collection<String> notifyOptions = ctx.getParameters("notifyOption");
 			for (int x = 0; x < RegisterCommand.NOTIFY_ALIASES.length; x++)
 				a.setNotifyOption(RegisterCommand.NOTIFY_ALIASES[x], notifyOptions
 						.contains(RegisterCommand.NOTIFY_ALIASES[x]));

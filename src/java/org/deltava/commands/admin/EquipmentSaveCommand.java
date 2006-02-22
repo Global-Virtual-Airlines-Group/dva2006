@@ -48,12 +48,8 @@ public class EquipmentSaveCommand extends AbstractCommand {
 			eq.setCPID(Integer.parseInt(ctx.getParameter("cp")));
 			eq.setStage(Integer.parseInt(ctx.getParameter("stage")));
 			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			eq.setRanks(ctx.getRequest().getParameterValues("ranks"));
-			
-			// Update primary/secondary ratings
-			String[] pRatings = ctx.getRequest().getParameterValues("pRatings");
-			String[] sRatings = ctx.getRequest().getParameterValues("sRatings");
-			eq.setRatings(pRatings, sRatings);
+			eq.setRanks(ctx.getParameters("ranks"));
+			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
 
 			// Update examination names
 			eq.setExamName(Ranks.RANK_FO, ctx.getParameter("examFO"));

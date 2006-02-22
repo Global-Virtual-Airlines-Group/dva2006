@@ -65,7 +65,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
 			
 			// Load the examination names
-			Collection<String> eNames = Arrays.asList(ctx.getRequest().getParameterValues("reqExams"));
+			Collection<String> eNames = ctx.getParameters("reqExams");
 			cert.setExams(eNames);
 			
 			// Get the write DAO and save the certification

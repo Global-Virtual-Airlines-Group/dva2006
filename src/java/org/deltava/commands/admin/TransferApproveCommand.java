@@ -68,8 +68,8 @@ public class TransferApproveCommand extends AbstractCommand {
 			
 			// Get the new ratings
 			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
-			Set<String> newRatings = new TreeSet<String>(CollectionUtils.loadList(ctx.getRequest().getParameterValues("ratings"),
-					usr.getRatings()));
+			Collection<String> ratings = ctx.getParameters("ratings");
+			Set<String> newRatings = new TreeSet<String>((ratings == null) ? usr.getRatings() : ratings);
 
 			// Check if we're switching programs
 			String eqType = ctx.getParameter("eqType");

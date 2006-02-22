@@ -86,18 +86,18 @@ public class EventSaveCommand extends AbstractCommand {
 			}
 
 			// Parse the equipment types
-			String[] eqTypes = ctx.getRequest().getParameterValues("eqTypes");
+			Collection<String> eqTypes = ctx.getParameters("eqTypes");
 			if (eqTypes != null) {
-				for (int x = 0; x < eqTypes.length; x++)
-					e.addEquipmentType(eqTypes[x]);
+				for (Iterator<String> i = eqTypes.iterator(); i.hasNext(); )
+					e.addEquipmentType(i.next());
 			}
 
 			// See which charts have been selected
-			String[] selectedCharts = ctx.getRequest().getParameterValues("charts");
+			Collection<String> selectedCharts = ctx.getParameters("charts");
 			if (selectedCharts != null) {
 				Set<Integer> chartIDs = new HashSet<Integer>();
-				for (int x = 0; x < selectedCharts.length; x++)
-					chartIDs.add(new Integer(StringUtils.parseHex(selectedCharts[x])));
+				for (Iterator<String> i = selectedCharts.iterator(); i.hasNext(); )
+					chartIDs.add(new Integer(StringUtils.parseHex(i.next())));
 
 				// Load the charts
 				GetChart cdao = new GetChart(con);

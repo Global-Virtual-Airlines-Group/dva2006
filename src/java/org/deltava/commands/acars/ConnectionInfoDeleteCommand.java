@@ -28,7 +28,7 @@ public class ConnectionInfoDeleteCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
       
       // Get the connection IDs
-      List<String> conIDs = Arrays.asList(ctx.getRequest().getParameterValues("conID"));
+      Collection<String> conIDs = ctx.getParameters("conID");
       
       Set<String> deletedIDs = new HashSet<String>();
       Set<String> skippedIDs = new HashSet<String>();

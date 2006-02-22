@@ -143,7 +143,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				// Save in the request
 				ctx.setAttribute("session", s, REQUEST);
 			} else {
-				int courseID = StringUtils.parseHex((String) ctx.getCmdParameter(OPERATION, "0"));
+				int courseID = StringUtils.parseHex(ctx.getParameter("course"));
 				
 				// Get the Course
 				c = dao.get(courseID);

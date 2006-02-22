@@ -124,6 +124,8 @@ public class PilotSearchCommand extends AbstractCommand {
     * Helper method to convert a pilot code to a numeric value.
     */
    private int getPilotCode(CharSequence pcValue) {
+	   if (pcValue == null)
+		   return 0;
 
       StringBuilder buf = new StringBuilder();
       for (int x = 0; x < pcValue.length(); x++) {

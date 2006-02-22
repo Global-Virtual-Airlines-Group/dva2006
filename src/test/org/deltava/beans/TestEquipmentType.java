@@ -66,7 +66,7 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertTrue(_eq.getRanks().contains("RANK4"));
         
         // Set ranks via array
-        _eq.setRanks(new String[] {"First Officer", "Captain"});
+        _eq.setRanks(Arrays.asList(new String[] {"First Officer", "Captain"}));
         assertEquals(2, _eq.getRanks().size());
         assertTrue(_eq.getRanks().contains("First Officer"));
         assertTrue(_eq.getRanks().contains("Captain"));
@@ -128,7 +128,7 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertFalse(_eq.getPrimaryRatings().contains("CRJ-700"));
         
         // Set ratings via array
-        _eq.setRatings(new String[] {"B727-100", "B727-200"}, new String[] {"TU-154" });
+        _eq.setRatings(Arrays.asList(new String[] {"B727-100", "B727-200"}), Arrays.asList(new String[] {"TU-154" }));
         assertEquals(2, _eq.getPrimaryRatings().size());
         assertTrue(_eq.getPrimaryRatings().contains("B727-100"));
         assertTrue(_eq.getPrimaryRatings().contains("B727-200"));

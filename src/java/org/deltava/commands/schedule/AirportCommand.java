@@ -76,7 +76,7 @@ public class AirportCommand extends AbstractFormCommand {
 			
 			// Update the aiport from the request
 			a.setTZ(ctx.getParameter("tz"));
-			a.setAirlines(Arrays.asList(ctx.getRequest().getParameterValues("airline")));
+			a.setAirlines(ctx.getParameters("airline"));
 			
 			// Build the airport latitude/longitude
 			try {
