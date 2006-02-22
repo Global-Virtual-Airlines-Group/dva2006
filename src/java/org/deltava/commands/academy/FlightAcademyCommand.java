@@ -52,6 +52,11 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 					i.remove();
 			}
 			
+			// Check if we have an examination open
+			GetExam exdao = new GetExam(con);
+			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
+			ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
+			
 			// Save the exams and certifications available
 			ctx.setAttribute("exams", allExams, REQUEST);
 			ctx.setAttribute("certs", _allCerts, REQUEST);

@@ -1,7 +1,7 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -53,9 +53,9 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Load the fields from the request
 			qp.setCorrectAnswer(ctx.getParameter("correct"));
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			String examNames[] = ctx.getRequest().getParameterValues("examNames");
+			Collection<String> examNames = ctx.getParameters("examNames");
 			if (examNames != null)
-			   qp.setExams(Arrays.asList(examNames));
+			   qp.setExams(examNames);
 
 			// Get the write DAO and save the profile
 			SetExamProfile wdao = new SetExamProfile(con);
