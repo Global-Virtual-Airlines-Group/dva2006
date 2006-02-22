@@ -68,6 +68,16 @@ with information about this session.</c:if><br />
 <br />
 To view the <content:airline /> Flight Acadamy Instruction Calendar, <el:cmd url="academycalendar" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
+<c:if test="${isSessionCancel}">
+<c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<!-- Flight Academy Instructor Session Canceled -->
+<div class="updateHdr">Flight Academy Instructor Session Canceled</div>
+<br />
+The Flight Academy Instructor Session with ${pilot.name} and ${ins.name} has been canceled, and the 
+Fleet Academy Instruction Calendar has been updated. An e-mail message has been sent to ${pilot.name} 
+with information about this session.<br />
+</c:if>
 <br />
 To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />
 <content:filter roles="Instructor,HR">

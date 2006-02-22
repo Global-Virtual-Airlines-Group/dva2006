@@ -18,7 +18,7 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	public static final int CANCELED = 1;
 	public static final int COMPLETE = 2;
 	
-	private static final String[] STATUS_NAMES = {"Scheduled", "Canceled", "Completed"};
+	public static final String[] STATUS_NAMES = {"Scheduled", "Canceled", "Completed"};
 
 	private String _courseName;
 	private int _instructorID;

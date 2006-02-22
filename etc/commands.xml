@@ -1284,6 +1284,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="icancel">
+		<name>Cancel Flight Academy Instruction</name>
+		<class>org.deltava.commands.academy.InstructionCancelCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="certs">
 		<name>Academy Certifications</name>
 		<class>org.deltava.commands.academy.CertificationListCommand</class>
