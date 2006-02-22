@@ -42,7 +42,7 @@ return false;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="pilotsearch.do" method="post" validate="return validate(this)">
+<el:form action="dupesearch.do" method="post" validate="return validate(this)">
 <!-- Search Criteria -->
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
