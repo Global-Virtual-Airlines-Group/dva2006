@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -101,10 +101,14 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
             log.info("Updating statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy"));
             try {
                dao.write(stats);
-               if (!f.delete()) {
-                  log.error("Cannot delete " + f.getName());
+               if (stats.getRequests() > 5) {
+            	   if (!f.delete()) {
+            		   log.error("Cannot delete " + f.getName());
+            	   } else {
+            		   log.info("Deleted " + f.getAbsolutePath());
+            	   }
                } else {
-            	   log.info("Deleted " + f.getAbsolutePath());
+            	   log.warn("Invalid log entries detected in " + f.getName());
                }
             } catch (DAOException de) {
                log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy") + " - "
