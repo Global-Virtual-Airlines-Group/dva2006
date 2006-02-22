@@ -116,12 +116,6 @@
 		<roles>Anonymous,HR</roles>
 	</command>
 
-	<command id="pwdresetdone">
-		<name>Password Reset Complete</name>
-		<class>org.deltava.commands.security.PasswordResetCompleteCommand</class>
-		<roles>Anonymous,HR</roles>
-	</command>
-
 	<command id="validate">
 		<name>E-Mail Validation</name>
 		<class>org.deltava.commands.security.ValidateEmailCommand</class>
