@@ -135,7 +135,7 @@ return ${access.canComment || access.canUpdateProgress};
 </c:if>
 <c:if test="${access.canUpdateProgress}">
  <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" linkID="0x${course.ID}" label="UPDATE PROGRESS" />
- <el:cmdbutton ID="SchedButton" url="insession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
+ <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
 </c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton ID="DeleteButton" url="coursedelete" linkID="0x${course.ID}" label="DELETE COURSE" />
