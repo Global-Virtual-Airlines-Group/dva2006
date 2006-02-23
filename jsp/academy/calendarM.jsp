@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Academy Instruction Calendar</title>
@@ -35,7 +34,13 @@ return true;
 <el:form action="academycalendar.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td width="80%" class="caps"><content:airline /> INSTRUCTION CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
+ <td width="70%" class="caps"><content:airline /> INSTRUCTION CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
+<c:if test="${isMine}">
+ <td width="10%"><el:cmd url="academycalendar" op="31" linkID="0&amp;startDate=${startDate}">ALL SESSIONS</el:cmd></td>
+</c:if>
+<c:if test="${!isMine && !empty user}">
+ <td width="10%"><el:cmd url="academycalendar" op="31" linkID="0x${user.ID}&amp;startDate=${startDate}">MY SESSIONS</el:cmd></td>
+</c:if>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
 </el:table>
