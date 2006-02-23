@@ -15,6 +15,7 @@ import org.deltava.security.command.CourseAccessControl;
 import org.deltava.security.command.InstructionAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Flight Academy instruction sessions. 
@@ -57,7 +58,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				if (c == null)
 					throw notFoundException("Invalid Course - " + s.getCourseID());
 			} else {
-				int courseID = StringUtils.parseHex(ctx.getParameter("courseID"));
+				int courseID = StringUtils.parseHex(ctx.getParameter("course"));
 				
 				// Get the Course
 				c = dao.get(courseID);
@@ -75,9 +76,9 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				throw securityException("Cannot update Instruction Session");
 			
 			// Load from the request
-			s.setInstructorID(Integer.parseInt("instructor"));
-			s.setStartTime(parseDateTime(ctx, "start"));
-			s.setEndTime(parseDateTime(ctx, "end"));
+			s.setInstructorID(Integer.parseInt(ctx.getParameter("instructor")));
+			s.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			s.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			s.setStatus(StringUtils.arrayIndexOf(InstructionSession.STATUS_NAMES, ctx.getParameter("status")));
 			s.setNoShow(Boolean.valueOf(ctx.getParameter("noShow")).booleanValue());
 			s.setRemarks(ctx.getParameter("remarks"));
@@ -177,7 +178,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			
 			// Get Instructor Pilots
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			ctx.setAttribute("instructors", pdao.getByRole("Instructor", "PILOTS"), REQUEST);
+			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
 			ctx.setAttribute("pilot", pdao.get(c.getPilotID()), REQUEST);
 			
 			// Save in the request
