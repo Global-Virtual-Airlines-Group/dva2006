@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -47,9 +47,11 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			// Check for an existing check ride
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(txreq.getCheckRideID());
+			if ((cr != null) && (cr.getStatus() == Test.NEW))
+				throw securityException("Check Ride " + txreq.getCheckRideID() + " already exists");
 
 			// Check our access level
-			TransferAccessControl access = new TransferAccessControl(ctx, txreq, cr);
+			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
 			access.validate();
 			if (!access.getCanAssignRide())
 				throw securityException("Cannot assign Check Ride");
