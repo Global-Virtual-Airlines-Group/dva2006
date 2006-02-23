@@ -32,7 +32,7 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the DAO and the Calendar
 			GetAcademyCourses dao = new GetAcademyCourses(con);
-			Collection<InstructionSession> sessions = dao.getCalendar(cctx.getStartDate(), cctx.getDays(), 0);
+			Collection<InstructionSession> sessions = dao.getCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
 			ctx.setAttribute("sessions", sessions, REQUEST);
 			
 			// Get the Pilot IDs from the sessions
@@ -51,6 +51,10 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save pilot data
+		ctx.setAttribute("user", ctx.getUser(), REQUEST);
+		ctx.setAttribute("isMine", Boolean.valueOf(ctx.getID() == 0), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
