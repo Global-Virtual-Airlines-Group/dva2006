@@ -3,11 +3,11 @@
 # Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 
 # Figure out which one to do
-if [ "$1" = "full" ]
+if [ "$2" = "full" ]
 then
   echo 'Performing full FTP backup'
-  ftp backup.deltava.org < /usr/local/sbin/www/ftp.full.script
+  ftp $1 < /usr/local/sbin/www/ftp.full.script
 else
   echo 'Performing incremental FTP backup'
-  ftp backup.deltava.org < /usr/local/sbin/www/ftp.script
+  ftp $1 < /usr/local/sbin/www/ftp.script
 fi

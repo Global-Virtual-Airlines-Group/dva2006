@@ -22,15 +22,25 @@ put navdata.sql.gz
 put postfix.sql.gz
 put teamspeak.sql.gz
 
+cd /svn
+lcd /etc/svn
+put svn.access
+
 lcd /home/backup/svn
 put svn_1xxx.gz
 put svn_15xx.gz
 put svn_top.gz
 
+cd /cfg
 lcd /usr/local/apache2/conf
 put httpd.conf
 
-lcd /etc/svn
-put svn.access
+lcd /home/backup/cfg
+put ldap.tar.gz
+put authlib.tar.gz
+put tomcat.tar.gz
+put postfix.tar.gz
+put imapd.tar.gz
+put mysql.tar.gz
 
 bye
