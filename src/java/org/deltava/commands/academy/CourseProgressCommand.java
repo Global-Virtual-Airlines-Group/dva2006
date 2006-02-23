@@ -31,8 +31,6 @@ public class CourseProgressCommand extends AbstractCommand {
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 
-		// Get the sequence number
-		int seq = Integer.parseInt(ctx.getParameter("seq"));
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -47,6 +45,9 @@ public class CourseProgressCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanUpdateProgress())
 				throw securityException("Cannot update progress");
+			
+			// Loop through the fields on the form
+			int seq = 0;
 
 			// Get the course progress entry
 			CourseProgress cp = c.getProgressEntry(seq);
