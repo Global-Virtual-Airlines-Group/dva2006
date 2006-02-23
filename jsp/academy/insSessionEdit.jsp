@@ -31,6 +31,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -46,7 +47,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Instructor Name</td>
- <td class="data"><el:combo name="instructor" idx="*" size="1" options="${instructors}" value="${session.instructorID}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="instructor" idx="*" size="1" className="req" options="${instructors}" value="${session.instructorID}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Course Name</td>
@@ -57,23 +58,25 @@ return true;
  <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="${fn:dateFmt(startTime, 'MM/dd/yyyy')}" className="req" />
  at <el:text name="startTime" idx="*" size="4" max="5" value="${fn:dateFmt(startTime, 'HH:mm')}" className="req" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
-&nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
+&nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">End Date/Time</td>
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${fn:dateFmt(endTime, 'MM/dd/yyyy')}" className="req" />
  at <el:text name="endTime" idx="*" size="4" max="5" value="${fn:dateFmt(endTime, 'HH:mm')}" className="req" />
 &nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
-&nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
+&nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data sec"><el:combo name="status" idx="*" size="1" options="${statuses}" value="${session.status}" firstEntry="-" /></td>
+ <td class="data sec"><el:combo name="status" idx="*" size="1" className="req" options="${statuses}" value="${session.status}" firstEntry="-" /></td>
 </tr>
+<c:if test="${!empty session}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noShow" idx="*" value="true" checked="${session.noShow}" label="Pilot did not attend Instruction Session" /></td>
 </tr>
+</c:if>
 <tr>
  <td class="label" valign="top">Remarks</td>
  <td class="data"><el:textbox name="remarks" idx="*" width="120" height="6">${session.remarks}</el:textbox></td>
@@ -86,6 +89,7 @@ return true;
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE INSTRUCTION SESSION" /></td>
 </tr>
 </el:table>
+<el:text name="course" type="hidden" value="${fn:hex(course.ID)}" />
 </el:form>
 <br />
 <content:copyright />

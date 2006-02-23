@@ -272,7 +272,7 @@ public class SetAcademy extends DAO {
 		try {
 			prepareStatement("REPLACE INTO INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
 					+ "STATUS, NOSHOW, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, s.getID());
+			_ps.setInt(1, s.getCourseID());
 			_ps.setInt(2, s.getInstructorID());
 			_ps.setTimestamp(3, createTimestamp(s.getStartTime()));
 			_ps.setTimestamp(4, createTimestamp(s.getEndTime()));
