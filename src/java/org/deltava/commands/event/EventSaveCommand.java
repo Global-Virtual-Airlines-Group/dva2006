@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -70,8 +70,8 @@ public class EventSaveCommand extends AbstractCommand {
 			e.setCanSignup(Boolean.valueOf(ctx.getParameter("canSignup")).booleanValue());
 
 			// Parse the start/end/deadline times
-			e.setStartTime(parseDateTime(ctx, "start"));
-			e.setEndTime(parseDateTime(ctx, "end"));
+			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
+			e.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close") : e.getStartTime());
 			
 			// Load initial flight route
