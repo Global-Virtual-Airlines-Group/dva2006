@@ -1,7 +1,7 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
-import java.util.Date;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
@@ -46,27 +46,23 @@ public class CourseProgressCommand extends AbstractCommand {
 			if (!access.getCanUpdateProgress())
 				throw securityException("Cannot update progress");
 			
-			// Loop through the fields on the form
-			int seq = 0;
-
-			// Get the course progress entry
-			CourseProgress cp = c.getProgressEntry(seq);
-			if (cp == null)
-				throw notFoundException("Cannot find entry " + seq);
-			
-			// Update completion
-			boolean isComplete = Boolean.valueOf((String) ctx.getCmdParameter(OPERATION, "false")).booleanValue();
-			if ((isComplete) && (!cp.getComplete())) {
-				cp.setComplete(true);
-				cp.setCompletedOn(new Date());
-			} else if (!isComplete) {
-				cp.setComplete(false);
-				cp.setCompletedOn(null);
-			}
-			
-			// Get the write DAO and update the progress entry
+			// Loop through the progress entries
 			SetAcademy wdao = new SetAcademy(con);
-			wdao.updateProgress(cp);
+			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
+				CourseProgress cp = i.next();
+			
+				// Get the status
+				boolean isComplete = Boolean.valueOf(ctx.getParameter("progress" + cp.getID())).booleanValue();
+				if ((isComplete) && (!cp.getComplete())) {
+					cp.setComplete(true);
+					cp.setCompletedOn(new Date());
+					wdao.updateProgress(cp);
+				} else if (!isComplete) {
+					cp.setComplete(false);
+					cp.setCompletedOn(null);
+					wdao.updateProgress(cp);
+				}
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
