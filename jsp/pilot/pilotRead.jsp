@@ -100,7 +100,7 @@
 </tr>
 </c:if>
 
-<c:if test="${!pilot.noVoice}"><content:filter roles="HR,Instructor">
+<c:if test="${!pilot.noVoice && !empty ts2Servers}"><content:filter roles="HR,Instructor">
 <!-- TeamSpeak 2 Virtual Server access -->
 <tr class="title">
  <td colspan="${cspan + 1}">TEAMSPEAK 2 ACCESS</td>
@@ -109,8 +109,8 @@
  <td class="label" valign="top">Virtual Servers</td>
  <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
 <br />
-<c:forEach var="ts2Server" items="${ts2servers}">
-<span class="sec bld">${server.name}</span> (Port ${server.port}) - ${server.description}<br />
+<c:forEach var="ts2Server" items="${ts2Servers}">
+<span class="sec bld">${ts2Server.name}</span> (Port ${ts2Server.port}) - ${ts2Server.description}<br />
 </c:forEach></td>
 </tr>
 </content:filter></c:if>
