@@ -29,6 +29,7 @@ xmlreq.onreadystatechange = function() {
 	} // for
 	
 	// Focus on the map
+	updateOverlays();
 	isLoading.innerHTML = '';
 	return true;
 } // function
@@ -93,6 +94,7 @@ xreq.onreadystatechange = function() {
 		map.addOverlay(routeData);
 	}
 	
+	updateOverlays();
 	return true;
 } // function
 
