@@ -153,7 +153,7 @@ The <content:airline /> Flight Academy instructors score examianations within 72
 </tr>
 <tr class="title">
  <td colspan="5">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${exams}" firstEntry="< SELECT EXAM >" />
- <el:cmdbutton ID="ExamButton" url="newexam" post="true" label="NEW EXAMINATION" /></td>
+ <el:cmdbutton ID="ExamButton" url="newacademyexam" post="true" label="NEW EXAMINATION" /></td>
 </c:if>
 </c:if>
 </tr>
