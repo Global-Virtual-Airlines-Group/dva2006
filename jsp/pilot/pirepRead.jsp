@@ -275,7 +275,6 @@ map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
 addMarkers(map, 'gRoute');
-// addMarkers(map, 'routeMarkers');
 </c:if>
 <c:if test="${!empty filedRoute}">
 addMarkers(map, 'gfRoute');
@@ -288,6 +287,10 @@ addMarkers(map, 'filedMarkers');
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
 </c:if>
+
+// Update overlays for Date Line fix and set mapMove event
+updateOverlays();
+GEvent.addListener(map, "moveend", function() { updateOverlays() });
 </script>
 </c:if>
 </body>
