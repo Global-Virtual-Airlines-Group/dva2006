@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -29,7 +29,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 	 * @param c the JDBC connection to use
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected final void initTestHistory(Pilot p, Connection c) throws DAOException {
+	protected final void initTestHistory(Person p, Connection c) throws DAOException {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
@@ -47,7 +47,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
-		_testHistory = new TestingHistoryHelper(p, eq, exdao.getExams(p.getID()), pireps);
+		_testHistory = new TestingHistoryHelper((Pilot) p, eq, exdao.getExams(p.getID()), pireps);
 
 		// Create a dummy FO exam for the hired in program
 		if (ieq != null) {
