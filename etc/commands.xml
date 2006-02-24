@@ -1272,6 +1272,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="newacademyexam">
+		<name>Create Flight Academy Examination</name>
+		<class>org.deltava.commands.academy.ExamCreateCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="academycalendar">
 		<name>Flight Academy Calendar</name>
 		<class>org.deltava.commands.academy.InstructionCalendarCommand</class>

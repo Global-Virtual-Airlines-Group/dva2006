@@ -1,10 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -44,21 +43,8 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			if (ep == null)
 				throw new CommandException("Invalid Examination - " + examName);
 
-			// Get the examinations for this user
-			Pilot usr = (Pilot) ctx.getUser();
-			GetExam exdao = new GetExam(con);
-			List<Test> exams = exdao.getExams(usr.getID());
-
-			// Check if we already this examination in a passed or pending state
-			for (Iterator<Test> i = exams.iterator(); i.hasNext();) {
-				Test t = i.next();
-				boolean isComplete = ((t.getStatus() == Test.SCORED) && t.getPassFail());
-				if ((t.getName().equals(examName)) && ((t.getStatus() != Test.SCORED) || isComplete))
-					throw securityException("Cannot re-take " + examName + " examination");
-			}
-            
             // Initialize the testing history helper
-            initTestHistory(usr, con);
+            initTestHistory(ctx.getUser(), con);
 
 			// Check if we can take the exam
             if (!_testHistory.canWrite(ep))
@@ -70,9 +56,10 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
 			// Create the examination
 			ex = new Examination(examName);
-			ex.setPilotID(usr.getID());
+			ex.setPilotID(ctx.getUser().getID());
 			ex.setStage(ep.getStage());
 			ex.setStatus(Test.NEW);
+			ex.setAcademy(false);
 
 			// Set the creation/expiration date/times
 			Calendar cld = Calendar.getInstance();
