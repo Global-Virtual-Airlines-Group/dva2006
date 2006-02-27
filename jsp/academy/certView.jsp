@@ -37,6 +37,16 @@
  <td class="label">Examinations</td>
  <td class="data"><fmt:list value="${cert.examNames}" delim=", " /></td>
 </tr>
+<c:if test="${!empty docs}">
+<tr>
+ <td class="label" valign="top">Study Documents</td>
+ <td class="data"><span class="sec bld"><i>To modify this list, please update the Documents in the 
+<content:airline /> Document Library.</i></span><br />
+<c:forEach var="doc" items="${docs}">
+<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
+</c:forEach></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data bld"><c:if test="${cert.active}"><span class="ter">CERTIFICATION IS AVAILABLE</span></c:if>

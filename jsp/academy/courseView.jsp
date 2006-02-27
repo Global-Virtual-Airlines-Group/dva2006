@@ -63,6 +63,14 @@ return ${access.canComment || access.canUpdateProgress};
  <td class="label">Stage</td>
  <td class="data bld"><fmt:int value="${course.stage}" /></td>
 </tr>
+<c:if test="${!empty docs}">
+<tr>
+ <td class="label" valign="top">Study Documents</td>
+ <td class="data"><c:forEach var="doc" items="${docs}">
+<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
+</c:forEach></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Course Status</td>
  <td class="data"><span class="sec bld">${course.statusName}</span>, started on <fmt:date fmt="d" date="${course.startDate}" /></td>
@@ -80,14 +88,18 @@ return ${access.canComment || access.canUpdateProgress};
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <view:row entry="${progress}">
- <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" />
-<c:if test="${access.canUpdateProgress}"><br />
-<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Completed" /></c:if>
-</td>
+ <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" /></td>
  <td class="data"><fmt:text value="${progress.text}" />
-<c:if test="${progress.complete}"><br />
-<br />
-<span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /></span></c:if></td>
+<c:if test="${progress.complete || access.canUpdateProgress}">
+<br /><hr />
+<c:if test="${progress.complete}">
+<span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /></span>
+</c:if>
+<c:if test="${access.canUpdateProgress}">
+<el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Completed" />
+</c:if>
+</c:if>
+</td>
 </view:row>
 </c:forEach>
 

@@ -166,6 +166,10 @@ public class CertificationCommand extends AbstractFormCommand {
 			// Check our access - this'll blow up if we cannot view
 			CertificationAccessControl access = new CertificationAccessControl(ctx);
 			access.validate();
+			
+			// Get associated documents
+			GetDocuments ddao = new GetDocuments(con);
+			ctx.setAttribute("docs", ddao.getByCertification(cert.getName()), REQUEST);
 
 			// Save in the request
 			ctx.setAttribute("cert", cert, REQUEST);

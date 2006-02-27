@@ -27,7 +27,10 @@ Your ${exam.name} Pilot Examination has been submitted to <content:airline />. P
 between 48 and 96 hours for this Examination to be evaluated and scored. Your will receive an
 e-mail notification when this is complete.<br />
 <br />
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter">Click Here</el:cmd>.<br />
+<c:if test="${exam.academy}">
+To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isScore}">
 <!-- Examination Scored -->
@@ -37,8 +40,8 @@ This ${exam.name} Pilot Examination for ${pilot.name} has been successfully scor
 message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring
 of this Examination.<br />
 <br />
-To view the Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}">Click Here</el:cmd>.<br />
-To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.<br />
+To view the Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isDelete}">
 <!-- Examination/Check Ride Deleted -->
