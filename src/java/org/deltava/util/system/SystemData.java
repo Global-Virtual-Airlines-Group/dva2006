@@ -207,7 +207,7 @@ public class SystemData implements Serializable {
 	public static Map<String, Airport> getAirports() {
 		return (Map) _properties.get("airports");
 	}
-
+	
 	/**
 	 * Returns an Airline object.
 	 * @param airlineCode the Airline code
@@ -223,6 +223,23 @@ public class SystemData implements Serializable {
 
 		Map airlines = (Map) _properties.get("airlines");
 		return (Airline) airlines.get(airlineCode.trim().toUpperCase());
+	}
+	
+	/**
+	 * Returns all airlines for the current web application.
+	 * @return a Collection of Airline beans
+	 */
+	public static Map<String, Airline> getAirlines() {
+		String code = (String) _properties.get("airline.code");
+		Map airlines = (Map) _properties.get("airlines");
+		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
+		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+			Airline a = (Airline) i.next();
+			if (a.getApps().contains(code))
+				results.put(a.getCode(), a);
+		}
+		
+		return results;
 	}
 	
 	/**

@@ -29,6 +29,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -46,8 +47,12 @@ return true;
  <td class="data"><el:text name="code" idx="*" className="bld req" size="3" max="3" value="${airline.code}" /></td>
 </tr>
 <tr>
+ <td class="label" valign="top">Web Applications</td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" checked="${channel.airlines}" /></td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" idx="*" value="1" label="Airline is Active" checked="${airline.active}" /></td>
+ <td class="data"><el:box name="active" idx="*" value="true" label="Airline is Active" checked="${airline.active}" /></td>
 </tr>
 </el:table>
 

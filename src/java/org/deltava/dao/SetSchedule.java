@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -30,12 +30,29 @@ public class SetSchedule extends DAO {
 	 */
 	public void create(Airline al) throws DAOException {
 		try {
+			startTransaction();
+			
+			// Write the airline data
 			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, ACTIVE) VALUES (?, ?, ?)");
 			_ps.setString(1, al.getCode());
 			_ps.setString(2, al.getName());
 			_ps.setBoolean(3, al.getActive());
 			executeUpdate(1);
+			
+			// Write the webapp data
+			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
+			_ps.setString(1, al.getCode());
+			for (Iterator<String> i = al.getApps().iterator(); i.hasNext(); ) {
+				_ps.setString(2, i.next());
+				_ps.addBatch();
+			}
+			
+			// Write and commit
+			_ps.executeBatch();
+			_ps.close();
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -47,12 +64,34 @@ public class SetSchedule extends DAO {
 	 */
 	public void update(Airline al) throws DAOException {
 		try {
+			startTransaction();
+			
+			// Write the airline data
 			prepareStatement("UPDATE common.AIRLINES SET NAME=?, ACTIVE=? WHERE (CODE=?)");
 			_ps.setString(1, al.getName());
 			_ps.setBoolean(2, al.getActive());
 			_ps.setString(3, al.getCode());
 			executeUpdate(1);
+			
+			// Clear the webapp data
+			prepareStatementWithoutLimits("DELETE FROM common.APP_AIRLINES WHERE (CODE=?)");
+			_ps.setString(1, al.getCode());
+			executeUpdate(0);
+			
+			// Write the webapp data
+			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
+			_ps.setString(1, al.getCode());
+			for (Iterator<String> i = al.getApps().iterator(); i.hasNext(); ) {
+				_ps.setString(2, i.next());
+				_ps.addBatch();
+			}
+
+			// Write and commit
+			_ps.executeBatch();
+			_ps.close();
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
