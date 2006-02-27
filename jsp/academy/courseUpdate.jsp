@@ -78,6 +78,18 @@ The Flight Academy Instructor Session with ${pilot.name} and ${ins.name} has bee
 Fleet Academy Instruction Calendar has been updated. An e-mail message has been sent to ${pilot.name} 
 with information about this session.<br />
 </c:if>
+<c:if test="${isAssign}">
+<div class="updateHdr">Flight Academy Check Ride Assigned</div>
+<br />
+This <content:airline /> Fleet Academy ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
+and an e-mail message has been sent to the Pilot.<br />
+</c:if>
+<c:if test="${isRideAlreadyAssigned}">
+<div class="updateHdr">Check Ride Pending</div>
+<br />
+A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can 
+be assigned while one is currently pending.<br />
+</c:if>
 <br />
 To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />
 <content:filter roles="Instructor,HR">

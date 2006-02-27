@@ -1355,4 +1355,10 @@
 		<class>org.deltava.commands.academy.CourseDisposalCommand</class>
 		<roles>Pilot,Instructor,HR</roles>
 	</command>
+
+	<command id="courseride">
+		<name>Flight Academy Check Ride Assignment</name>
+		<class>org.deltava.commands.academy.CourseCheckRideCommand</class>
+		<roles>Instructor,HR</roles>
+	</command>
 </commands>

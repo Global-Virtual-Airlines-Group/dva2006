@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -43,14 +44,33 @@ public class CourseCommand extends AbstractCommand {
 			helper.addExams(exdao.getExams(c.getPilotID()));
 			ctx.setAttribute("isComplete", Boolean.valueOf(helper.hasCompleted(c.getName())), REQUEST);
 			
+			// Get the certification profile
+			Certification cert = cdao.get(c.getName());
+			if (cert == null)
+				throw notFoundException("Invalid Certification - " + c.getName());
+			
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			
-			// Load documents if its our course
+			// Load documents/exams if its our course
 			if (access.getCanComment()) {
 				GetDocuments ddao = new GetDocuments(con);
 				ctx.setAttribute("docs", ddao.getByCertification(c.getName()), REQUEST);
+				
+				// Show exam status
+				Collection<Test> exams = new TreeSet<Test>();
+				for (Iterator<Test> i = helper.getExams().iterator(); i.hasNext(); ) {
+					Test t = i.next();
+					if (cert.getExamNames().contains(t.getName())) {
+						exams.add(t);
+					} else if ((t instanceof CheckRide) && (t.getName().startsWith(cert.getName()))) {
+						exams.add(t);
+					}
+				}
+				
+				// Save examination status
+				ctx.setAttribute("exams", exams, REQUEST);
 			}
 			
 			// Get Pilot IDs for comments
