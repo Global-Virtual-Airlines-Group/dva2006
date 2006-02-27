@@ -48,7 +48,7 @@ return true;
  <td class="data"><el:combo name="crType" idx="*" size="1" firstEntry="-" options="${empty eqType ? actypes : eqType.primaryRatings}" value="${param.crType}" /></td>
 </tr>
 <tr>
- <td class="label">Comments</td>
+ <td class="label" valign="top">Comments</td>
  <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
 </tr>
 <tr>
