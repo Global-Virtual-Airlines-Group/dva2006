@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -48,12 +48,15 @@ public class CommandStats implements java.io.Serializable {
 		}
 		
 		public void log(long execTime) {
+			if (execTime == 0)
+				execTime++;
+			
 			_count++;
 			_totalTime += execTime;
 			if (execTime > _maxTime)
 				_maxTime = execTime;
 			
-			if ((execTime < _minTime) && (execTime > 0))
+			if (execTime < _minTime)
 				_minTime = execTime;
 		}
 		
