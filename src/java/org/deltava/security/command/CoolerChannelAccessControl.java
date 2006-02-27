@@ -3,9 +3,10 @@ package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.Channel;
 
-import org.deltava.util.RoleUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -40,15 +41,22 @@ public class CoolerChannelAccessControl extends AccessControl {
     public void validate() {
        validateContext();
        
-       // Validate airlines
-       if ((_c != null) && (!_c.getAirlines().contains(SystemData.get("airline.code"))))
-    	   return;
-
         // Set state objects
-        _canAccess = (_c == null) ? true : RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles());
         _canPost = _canAccess && _ctx.isAuthenticated();
         _canEdit = _ctx.isUserInRole("Admin");
         _canRead = (_c != null) && _canEdit;
+        
+        // Validate that we can access the channel
+        _canAccess = true;
+        if (_c != null) {
+        	_canAccess = RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles());
+        	
+        	// Get the pilot code; if none use the default
+        	Pilot usr = (Pilot) _ctx.getUser();
+        	UserID id = new UserID(usr.getPilotCode());
+        	String airlineCode = StringUtils.isEmpty(usr.getPilotCode()) ? SystemData.get("airline.code") : id.getAirlineCode();
+        	_canAccess &= (_c.getAirlines().contains(airlineCode.toUpperCase()));
+        }
     }
     
     /**
