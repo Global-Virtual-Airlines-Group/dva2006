@@ -14,7 +14,6 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<c:set var="scoreCR" value="${access.canApprove && crAccess.canScore}" scope="request" />
 <c:if test="${googleMap}">
 <content:js name="googleMaps" />
 <map:api version="1" />

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -7,7 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.testing.CheckRide;
+import org.deltava.beans.testing.*;
 
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
@@ -17,8 +17,7 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
-import org.deltava.security.command.ExamAccessControl;
-import org.deltava.security.command.PIREPAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -123,7 +122,9 @@ public class PIREPCommand extends AbstractFormCommand {
 					fr = new FlightReport(a, Integer.parseInt(ctx.getParameter("flightNumber")), Integer.parseInt(ctx
 							.getParameter("flightLeg")));
 				} catch (NumberFormatException nfe) {
-					throw new CommandException("Invalid Flight/Leg Number");
+					CommandException ce = new CommandException("Invalid Flight/Leg Number");
+					ce.setLogStackDump(false);
+					throw ce;
 				}
 			} else {
 				fr.setAirline(a);
@@ -131,7 +132,9 @@ public class PIREPCommand extends AbstractFormCommand {
 					fr.setFlightNumber(Integer.parseInt(ctx.getParameter("flightNumber")));
 					fr.setLeg(Integer.parseInt(ctx.getParameter("flightLeg")));
 				} catch (NumberFormatException nfe) {
-					throw new CommandException("Invalid Flight/Leg Number");
+					CommandException ce = new CommandException("Invalid Flight/Leg Number");
+					ce.setLogStackDump(false);
+					throw ce;
 				}
 			}
 
@@ -159,7 +162,9 @@ public class PIREPCommand extends AbstractFormCommand {
 				double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
 				fr.setLength((int) (fTime * 10));
 			} catch (NumberFormatException nfe) {
-				throw new CommandException("Invalid Flight Time");
+				CommandException ce = new CommandException("Invalid Flight Time");
+				ce.setLogStackDump(false);
+				throw ce;
 			}
 
 			// Calculate the date
@@ -221,7 +226,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		cld.setTime(DateTime.convert(cld.getTime(), tz));
 
 		// Get all airlines
-		Map allAirlines = (Map) SystemData.getObject("airlines");
+		Map<String, Airline> allAirlines = SystemData.getAirlines();
 
 		PIREPAccessControl ac = null;
 		try {
@@ -248,7 +253,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			} else {
 				FlightReport fr = dao.get(ctx.getID());
 				if (fr == null)
-					throw new CommandException("Invalid Flight Report - " + ctx.getID());
+					throw notFoundException("Invalid Flight Report - " + ctx.getID());
 
 				// Check our access
 				ac = new PIREPAccessControl(ctx, fr);
@@ -266,8 +271,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
-				for (Iterator i = allAirlines.values().iterator(); i.hasNext();) {
-					Airline a = (Airline) i.next();
+				for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
+					Airline a = i.next();
 					if (a.getActive() || (fr.getAirline().equals(a)))
 						airlines.add(a);
 				}
@@ -325,11 +330,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			GetPilot dao2 = new GetPilot(con);
 			FlightReport fr = dao.get(ctx.getID());
-			if (fr == null) {
-				CommandException ce = new CommandException("Invalid Flight Report - " + ctx.getID());
-				ce.setWarning(true);
-				throw ce;
-			}
+			if (fr == null)
+				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 
 			// Get the pilot who approved/rejected this PIREP
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
@@ -348,6 +350,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetEvent evdao = new GetEvent(con);
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			}
+			
+			// Create the access controller and stuff it in the request
+			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
+			ac.validate();
+			ctx.setAttribute("access", ac, REQUEST);
 
 			// Check if this is an ACARS flight - search for an open checkride, and load the ACARS data
 			if (fr instanceof ACARSFlightReport) {
@@ -381,12 +388,12 @@ public class PIREPCommand extends AbstractFormCommand {
 					}
 					
 					// Get the connectoin data
-					ConnectionEntry ac = ardao.getConnection(info.getConnectionID());
+					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
 
 					// Save ACARS info
 					ctx.setAttribute("filedRoute", routeInfo, REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
-					ctx.setAttribute("conInfo", ac, REQUEST);
+					ctx.setAttribute("conInfo", conInfo, REQUEST);
 				}
 
 				// Get the check ride
@@ -397,14 +404,26 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// If we have a check ride, then save it and calculate the access level
 				if (cr != null) {
-					ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
-					crAccess.validate();
-
-					// Save the checkride and its access controller
+					ExamAccessControl crAccess = null;
+					try {
+						crAccess = new ExamAccessControl(ctx, cr);
+						crAccess.validate();
+						
+						// Save the access controller
+						ctx.setAttribute("crAccess", crAccess, REQUEST);
+						if (crAccess.getCanScore())
+							ctx.setAttribute("crPassFail", crApprove, REQUEST);
+						
+						// Determine if we can score the exam
+						boolean canScoreCR = ac.getCanApprove() && crAccess.getCanScore() &&
+							(cr.getStatus() == Test.SUBMITTED);
+						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
+					} catch (AccessControlException ace) {
+						// nothing
+					}
+					
+					// Save the checkride
 					ctx.setAttribute("checkRide", cr, REQUEST);
-					ctx.setAttribute("crAccess", crAccess, REQUEST);
-					if (crAccess.getCanScore())
-						ctx.setAttribute("crPassFail", crApprove, REQUEST);
 				}
 			}
 
@@ -424,11 +443,6 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Get the pilot/PIREP beans in the request
 			ctx.setAttribute("pilot", dao2.get(fr.getDatabaseID(FlightReport.DBID_PILOT)), REQUEST);
 			ctx.setAttribute("pirep", fr, REQUEST);
-
-			// Create the access controller and stuff it in the request
-			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
-			ac.validate();
-			ctx.setAttribute("access", ac, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
