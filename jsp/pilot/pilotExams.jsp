@@ -7,8 +7,8 @@
 </tr>
 <tr class="title mid caps">
  <td>&nbsp;</td>
- <td width="30%">EXAMINATION / CHECK RIDE NAME</td>
- <td width="15%">TYPE</td>
+ <td width="25%">EXAMINATION / CHECK RIDE NAME</td>
+ <td width="22%">TYPE</td>
  <td width="10%">QUESTIONS</td>
  <td width="10%">SCORE</td>
  <td width="10%">PERCENT</td>
@@ -17,6 +17,7 @@
  
 <!-- Pilot Examination Data -->
 <c:forEach var="exam" items="${exams}">
+<c:set var="examType" value="${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}" scope="request" />
 <c:set var="cmdName" value="${fn:isCheckRide(exam) ? 'checkride' : 'exam'}" scope="request" />
 <tr class="mid">
 <c:choose>
@@ -31,7 +32,7 @@
 </c:when>
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
- <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
+ <td class="sec">${exam.academy ? 'Flight Academy ' : ''}${examType}</td>
  <td class="bld">${exam.size}</td>
 <c:if test="${!fn:passed(exam) && !fn:failed(exam)}">
  <td colspan="2" class="sec bld">NOT SCORED</td>
