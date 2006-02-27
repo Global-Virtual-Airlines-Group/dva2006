@@ -47,49 +47,54 @@ return ${access.canComment || access.canUpdateProgress};
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
+<c:set var="cspan" value="${(!empty exams) ? 6 : 1}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="coursecomment.do" linkID="0x${course.ID}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="2">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="${cspan + 1}">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Course</td>
- <td class="data pri bld">${course.name}</td>
+ <td colspan="${cspan}" class="data pri bld">${course.name}</td>
 </tr>
 <tr>
  <td class="label">Stage</td>
- <td class="data bld"><fmt:int value="${course.stage}" /></td>
+ <td colspan="${cspan}" class="data bld"><fmt:int value="${course.stage}" /></td>
 </tr>
 <c:if test="${!empty docs}">
 <tr>
  <td class="label" valign="top">Study Documents</td>
- <td class="data"><c:forEach var="doc" items="${docs}">
+ <td colspan="${cspan}" class="data"><c:forEach var="doc" items="${docs}">
 <el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
 </c:forEach></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Course Status</td>
- <td class="data"><span class="sec bld">${course.statusName}</span>, started on <fmt:date fmt="d" date="${course.startDate}" /></td>
+ <td colspan="${cspan}" class="data"><span class="sec bld">${course.statusName}</span>, started on 
+<fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
 <c:if test="${!empty course.endDate}">
 <tr>
  <td class="label">Completed on</td>
- <td class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
+ <td colspan="${cspan}" class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
 </tr>
+</c:if>
+<c:if test="${!empty exams}">
+<%@ include file="/jsp/pilot/pilotExams.jsp" %>
 </c:if>
 
 <!-- Course Progress -->
 <tr class="title caps">
- <td colspan="2">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
+ <td colspan="${cpsan + 1}">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <view:row entry="${progress}">
  <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" /></td>
- <td class="data"><fmt:text value="${progress.text}" />
+ <td colspan="${cspan}" class="data"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
 <c:if test="${progress.complete}">
@@ -106,14 +111,14 @@ return ${access.canComment || access.canUpdateProgress};
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
- <td colspan="2">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
+ <td colspan="${cpsan + 1}">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
 <tr>
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
 <fmt:date date="${comment.createdOn}" /></td>
- <td class="data"><fmt:msg value="${comment.text}" /></td>
+ <td colspan="${cspan}" class="data"><fmt:msg value="${comment.text}" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -121,7 +126,7 @@ return ${access.canComment || access.canUpdateProgress};
 <!-- New Comment -->
 <tr>
  <td class="label" valign="top">New Comment</td>
- <td class="data"><el:textbox name="msgText" width="120" height="6" idx="*" /></td>
+ <td colspan="${cspan}" class="data"><el:textbox name="msgText" width="120" height="6" idx="*" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -140,13 +145,14 @@ return ${access.canComment || access.canUpdateProgress};
  <el:cmdbutton ID="ReturnButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="RETURN" />
 </c:if>
 <c:if test="${access.canApprove && isComplete}">
- <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
+ <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="completed" label="AWARD CERTIFICATION" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canUpdateProgress}">
  <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" linkID="0x${course.ID}" label="UPDATE PROGRESS" />
+ <el:cmdbutton ID="RideButton" url="courseride" linkID="0x${course.ID}" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canSchedule}">
  <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
