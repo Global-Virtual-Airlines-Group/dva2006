@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.Map;
@@ -7,10 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetAirline;
-import org.deltava.dao.SetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -50,7 +47,8 @@ public class AirlineCommand extends AbstractFormCommand {
 			
 			// Update the airline from the request
 			a.setName(ctx.getParameter("name"));
-			a.setActive("1".equals(ctx.getParameter("active")));
+			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			a.setApps(ctx.getParameters("airlines"));
 			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);
@@ -73,11 +71,7 @@ public class AirlineCommand extends AbstractFormCommand {
 		// Update the airline in the SystemData map
 		@SuppressWarnings("unchecked")
 		Map<String, Airline> airlines = (Map) SystemData.getObject("airlines");
-		if (a.getActive()) {
-			airlines.put(a.getCode(), a);
-		} else {
-			airlines.remove(a.getCode());
-		}
+		airlines.put(a.getCode(), a);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
