@@ -6,9 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.fleet.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetDocuments;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
@@ -27,14 +25,14 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 	private static final List<String> DOC_TYPES = Arrays.asList(new String[] { "fleet", "manual", "newsletter" });
 	private static final List<String> JSP_HDR = Arrays.asList(new String[] { "installer", "manual", "newsletter" });
 	private static final Map<String, String> JSP_NAMES = CollectionUtils.createMap(DOC_TYPES, JSP_HDR);
-
+	
 	/**
 	 * Method called when editing the form.
 	 * @param ctx the Command context
 	 * @param docType the document type
 	 * @throws CommandException if an unhandled error occurs
 	 */
-	protected final void execEdit(CommandContext ctx, String docType) throws CommandException {
+	protected void execEdit(CommandContext ctx, String docType) throws CommandException {
 
 		// Get the file name, or if we're creating a new file
 		String fName = (String) ctx.getCmdParameter(ID, "NEW");
@@ -66,7 +64,14 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 			// Get the DAO and the library entry
 			GetDocuments dao = new GetDocuments(con);
 			if ("manual".equals(docType)) {
-				entry = dao.getManual(fName, SystemData.get("airline.db"));
+				Manual m = dao.getManual(fName, SystemData.get("airline.db"));
+				
+				// Load academy data
+				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
+
+				// Save the entry
+				entry = m;
 			} else if ("newsletter".equals(docType)) {
 				entry = dao.getNewsletter(fName, SystemData.get("airline.db"));
 			} else {

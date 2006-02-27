@@ -90,7 +90,8 @@ public class ManualCommand extends LibraryEditCommand {
 			// Populate fields from the request
 			entry.setDescription(ctx.getParameter("desc"));
 			entry.setName(ctx.getParameter("title"));
-			entry.setVersion(Integer.parseInt(ctx.getParameter("version")), 0, 0);
+			entry.setVersion(Integer.parseInt(ctx.getParameter("version")));
+			entry.addCertifications(ctx.getParameters("certNames"));
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 			if (mFile != null)
 				entry.setSize(mFile.getBuffer().length);
@@ -111,7 +112,7 @@ public class ManualCommand extends LibraryEditCommand {
 
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);
-			wdao.write(entry);
+			wdao.write(entry, isNew);
 
 			// Dump the uploaded file to the filesystem
 			if (mFile != null) {

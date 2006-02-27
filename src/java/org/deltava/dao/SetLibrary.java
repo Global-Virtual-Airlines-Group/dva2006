@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Iterator;
 
 import org.deltava.beans.fleet.*;
 
@@ -45,12 +46,15 @@ public class SetLibrary extends DAO {
 	/**
 	 * Writes a Manual to the Document Library. This handles INSERT and UPDATE operations.
 	 * @param m the Manual metadata
+	 * @param isNew if we are performing an INSERT instead of an UPDATE
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Manual m) throws DAOException {
+	public void write(Manual m, boolean isNew) throws DAOException {
 		try {
-			if (m.getDownloadCount() == 0) {
-				prepareStatement("REPLACE INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES "
+			startTransaction();
+			
+			if (isNew) {
+				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES "
 						+ "(?, ?, ?, ?, ?, ?)");
 			} else {
 				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=? WHERE "
@@ -67,7 +71,30 @@ public class SetLibrary extends DAO {
 
 			// Update the database
 			executeUpdate(1);
+			
+			// Clean out the certification names
+			if (!isNew) {
+				prepareStatementWithoutLimits("DELETE FROM CERTDOCS WHERE (FILENAME=?)");
+				_ps.setString(1, m.getFileName());
+				executeUpdate(0);
+			}
+			
+			// Write the certification names
+			prepareStatement("INSERT INTO CERTDOCS (CERTNAME, FILENAME) VALUES (?, ?)");
+			_ps.setString(2, m.getFileName());
+			for (Iterator<String> i = m.getCertifications().iterator(); i.hasNext(); ) {
+				_ps.setString(1, i.next());
+				_ps.addBatch();
+			}
+			
+			// Execute the batch statement
+			_ps.executeBatch();
+			_ps.close();
+			
+			// Commit the transaction
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

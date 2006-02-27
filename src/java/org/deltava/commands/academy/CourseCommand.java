@@ -47,6 +47,12 @@ public class CourseCommand extends AbstractCommand {
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			
+			// Load documents if its our course
+			if (access.getCanComment()) {
+				GetDocuments ddao = new GetDocuments(con);
+				ctx.setAttribute("docs", ddao.getByCertification(c.getName()), REQUEST);
+			}
+			
 			// Get Pilot IDs for comments
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
