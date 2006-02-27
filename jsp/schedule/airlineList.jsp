@@ -25,8 +25,9 @@
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="50%">AIRLINE NAME</td>
- <td width="20%">AIRLINE CODE</td>
+ <td width="35%">AIRLINE NAME</td>
+ <td width="15%">WEB APPLICATIONS</td>
+ <td width="15%">AIRLINE CODE</td>
  <td><el:cmdbutton url="airline" op="edit" label="NEW AIRLINE" /></td>
 </tr>
 
@@ -34,6 +35,7 @@
 <c:forEach var="airline" items="${airlines}">
 <view:row entry="${airline}">
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
+ <td><fmt:list value="${airline.apps}" delim=", " /></td>
  <td class="bld">${airline.code}</td>
 <c:if test="${airline.active}">
  <td class="ter bld">Airline is currently Active</td>
@@ -46,7 +48,7 @@
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="3">&nbsp;</td>
+ <td colspan="4">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
