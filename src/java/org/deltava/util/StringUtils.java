@@ -27,7 +27,7 @@ public final class StringUtils {
 	 * @param s the String to check
 	 * @return TRUE if s is null or empty, otherwise FALSE
 	 */
-	public static boolean isEmpty(String s) {
+	public static boolean isEmpty(CharSequence s) {
 		return ((s == null) || (s.length() == 0));
 	}
 
