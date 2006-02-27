@@ -42,7 +42,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
 			
 			// Check for an existing check ride
 			GetExam exdao = new GetExam(con);
@@ -60,13 +60,13 @@ public class CheckRideAssignCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			p = dao.get(txreq.getID());
 			if (p == null)
-				throw new CommandException("Invalid Pilot - " + txreq.getID());
+				throw notFoundException("Invalid Pilot - " + txreq.getID());
 
 			// Get the Equipment Type for the check ride
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(ctx.getParameter("eqType"));
 			if (eq == null)
-				throw new CommandException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
+				throw notFoundException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
 			
 			// Check if we are using the script
 			String comments = ctx.getParameter("comments");
