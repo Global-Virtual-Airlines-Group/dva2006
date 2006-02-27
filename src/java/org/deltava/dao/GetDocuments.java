@@ -49,12 +49,18 @@ public class GetDocuments extends GetLibrary {
 
 			// Get results - if empty return null
 			List<Manual> results = loadManuals();
-			return results.isEmpty() ? null : results.get(0);
+			if (results.isEmpty())
+				return null;
+			
+			// Load the certifications
+			Manual m = results.get(0);
+			m.addCertifications(getCertifications(fName, dbName));
+			return m;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns metadata about a specific Newsletter.
 	 * @param fName the filename
@@ -63,7 +69,7 @@ public class GetDocuments extends GetLibrary {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Newsletter getNewsletter(String fName, String dbName) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName.toLowerCase());
@@ -75,7 +81,7 @@ public class GetDocuments extends GetLibrary {
 			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			
+
 			// Get results - if empty return null
 			List<Newsletter> results = loadNewsletters();
 			return results.isEmpty() ? null : results.get(0);
@@ -85,8 +91,7 @@ public class GetDocuments extends GetLibrary {
 	}
 
 	/**
-	 * Returns all newsletters. This takes a database name so we can display the contents of other
-	 * airlines' libraries.
+	 * Returns all newsletters. This takes a database name so we can display the contents of other airlines' libraries.
 	 * @param dbName the database name
 	 * @return a Collection of Newsletter beans
 	 * @throws DAOException if a JDBC error occurs
@@ -108,7 +113,7 @@ public class GetDocuments extends GetLibrary {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all Newsletters within a particular category.
 	 * @param catName the category name
@@ -152,6 +157,52 @@ public class GetDocuments extends GetLibrary {
 	}
 
 	/**
+	 * Returns all Manuals associated with a particular Flight Academy certification.
+	 * @param certName the Certification name
+	 * @return a Collection of Manual beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Manual> getByCertification(String certName) throws DAOException {
+		try {
+			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM CERTDOCS CD, DOCS D LEFT JOIN "
+					+ "DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (CD.FILENAME=D.FILENAME) AND "
+					+ "(CD.CERTNAME=?) GROUP BY D.NAME");
+			_ps.setString(1, certName);
+			return loadManuals();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Helper method to returns all Flight Academy Certifications associated with a particular Manual.
+	 */
+	private Collection<String> getCertifications(String fileName, String dbName) throws SQLException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT CERTNAME FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
+		
+		// Prepare the statement
+		prepareStatement(sqlBuf.toString());
+		_ps.setString(1, fileName);
+
+		// Execute the Query
+		ResultSet rs = _ps.executeQuery();
+
+		// Iterate through the results
+		Collection<String> results = new LinkedHashSet<String>();
+		while (rs.next())
+			results.add(rs.getString(1));
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
+	}
+
+	/**
 	 * Helper method to load from the Document Library table.
 	 */
 	private List<Manual> loadManuals() throws SQLException {
@@ -181,16 +232,16 @@ public class GetDocuments extends GetLibrary {
 		_ps.close();
 		return results;
 	}
-	
+
 	/**
 	 * Helper method to load from the Newsletter Library table.
 	 */
 	private List<Newsletter> loadNewsletters() throws SQLException {
-		
+
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
-		
+
 		// Iterate through the result set
 		List<Newsletter> results = new ArrayList<Newsletter>();
 		while (rs.next()) {
@@ -203,7 +254,7 @@ public class GetDocuments extends GetLibrary {
 			nws.setDescription(rs.getString(7));
 			if (hasTotals)
 				nws.setDownloadCount(rs.getInt(8));
-			
+
 			// Add to results
 			results.add(nws);
 		}

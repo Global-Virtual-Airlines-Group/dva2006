@@ -82,6 +82,12 @@ return true;
  <td class="data">Downloaded <b><fmt:int value="${entry.downloadCount}" /></b> times</td>
 </tr>
 </c:if>
+<content:filter roles="Instructor,HR">
+<tr>
+ <td class="label" valign="top">Flight Academy Certifications</td>
+ <td class="data"><el:check name="certNames" width="150" cols="3" className="small" separator="<div style=\"clear:both;\" />" checked="${entry.certifications}" options="${certs}" /></td>
+</tr>
+</content:filter>
 <tr>
  <td class="label">Document Security</td>
  <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
