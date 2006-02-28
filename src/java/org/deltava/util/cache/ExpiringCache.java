@@ -75,26 +75,42 @@ public class ExpiringCache extends Cache {
 
 		_expiry = expiry * 1000;
 	}
+	
+	public Cacheable get(Object key) {
+		return get(key, false);
+	}
 
 	/**
-	 * Returns an unexpired entry from the cache.
+	 * Returns an entry from the cache.
 	 * @param key the cache key
+	 * @param ifExpired TRUE if expired entries can be returned, otherwise FALSE
 	 * @return the cache entry, or null if not present or expired
+	 * @see ExpiringCache#isExpired(Object)
 	 */
-	public synchronized Cacheable get(Object key) {
-	   request();
+	public synchronized Cacheable get(Object key, boolean ifExpired) {
+		request();
 		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
 		if (entry == null)
 			return null;
 
 		// If we're expired, remove the entry and return null
-		if (entry.isExpired()) {
+		if (entry.isExpired() && !ifExpired) {
 			_cache.remove(entry.getData().cacheKey());
 			return null;
 		}
 
 		hit();
 		return entry.getData();
+	}
+	
+	/**
+	 * Queries the cache to determine if an object has expired
+	 * @param key the cache key
+	 * @return TRUE if the object is present and expired, otherwise FALSE
+	 */
+	public synchronized boolean isExpired(Object key) {
+		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
+		return (entry == null) ? false : entry.isExpired();
 	}
 
 	/**
@@ -114,15 +130,15 @@ public class ExpiringCache extends Cache {
 		purge();
 		checkOverflow();
 	}
-	
+
 	/**
 	 * Purges expired entries from the cache.
 	 */
 	private void purge() {
-	   for (Iterator i = _cache.values().iterator(); i.hasNext(); ) {
-	      ExpiringCacheEntry entry = (ExpiringCacheEntry) i.next();
-	      if (entry.isExpired())
-	         i.remove();
-	   }
+		for (Iterator i = _cache.values().iterator(); i.hasNext();) {
+			ExpiringCacheEntry entry = (ExpiringCacheEntry) i.next();
+			if (entry.isExpired())
+				i.remove();
+		}
 	}
 }
