@@ -367,6 +367,7 @@
 
 		<list name="roles" attr="role" sorted="true">
 			<role>Admin</role>
+			<role>Blog</role>
 			<role>Developer</role>
 			<role>Dispatch</role>
 			<role>Examination</role>
@@ -485,7 +486,7 @@
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>Ralph Snyder</tasks_by>
+		<tasks_by>David Keech</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->
@@ -507,10 +508,10 @@
 		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">120</timeout>
 		<ban_length type="Integer">15</ban_length>
-		<position_interval type="Integer">1500</position_interval>
+		<position_interval type="Integer">500</position_interval>
 		<build>
-			<minimum type="Integer">60</minimum>
-			<latest type="Integer">60</latest>
+			<minimum type="Integer">63</minimum>
+			<latest type="Integer">63</latest>
 		</build>
 		
 		<pool>
@@ -539,4 +540,11 @@
 			<text type="Boolean">false</text>
 		</ack>
 	</acars>
+	
+	<!-- Flight Academy Data -->
+	<academy>
+		<enabled type="Boolean">true</enabled>
+		<minFlights type="Integer">10</minFlights>
+		<eqType>EMB-120</eqType>
+	</academy>
 </config>
