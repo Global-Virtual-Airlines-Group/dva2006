@@ -61,12 +61,15 @@ public class SetBlog extends DAO {
 	 */
 	public void write(Comment c) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO BLOGCOMMENTS (ID, CREATED, AUTHOR, EMAIL, BODY) VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO BLOGCOMMENTS (ID, CREATED, AUTHOR, EMAIL, BODY, REMOTE_ADDR, "
+					+ "REMOTE_HOST) VALUES (?, ?, ?, ?, ?, ATON(?), ?)");
 			_ps.setInt(1, c.getID());
 			_ps.setTimestamp(2, createTimestamp(c.getDate()));
 			_ps.setString(3, c.getName());
 			_ps.setString(4, c.getEmail());
-			_ps.setString(5, c.getEmail());
+			_ps.setString(5, c.getBody());
+			_ps.setString(6, c.getRemoteAddr());
+			_ps.setString(7, c.getRemoteHost());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

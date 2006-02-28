@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Journal - ${author.name}</title>
+<content:css name="main" browserSpecific="true" />
+<content:css name="form" />
+<content:js name="common" />
+<content:pics />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+<c:if test="${access.canComment}">
+if (!checkSubmit()) return false;
+if (!validateText(form.body, 8, 'Entry Feedback')) return false;
+
+setSubmit();
+disableButton('EditButton');
+disableButton('CommentButton');
+disableButton('DeleteButton');</c:if>
+return ${access.canComment};
+}
+</script>
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@ include file="/jsp/blog/header.jsp" %> 
+<%@ include file="/jsp/blog/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<el:form action="blogcomment.do" method="post" linkID="0x${entry.ID}" validate="return validate(this)">
+<el:table className="form" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="2">${entry.title} - <fmt:date fmt="d" date="${entry.date}" /></td>
+</tr>
+<tr>
+ <td colspan="2" class="left"><fmt:msg value="${entry.body}" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">FEEDBACK - <fmt:int value="${entry.size}" /> COMMENTS</td>
+</tr>
+<c:forEach var="comment" items="${entry.comments}">
+<tr>
+ <td class="label">${comment.name}<br />
+<fmt:date date="${comment.date}" /></td>
+ <td class="data"><fmt:msg value="${comment.body}" filter="${!access.canDelete}" />
+<c:if test="${access.canDelete}">
+<hr />
+<span class="small">Posted from ${comment.remoteAddr} (${comment.remoteHost})</span>
+ <el:cmd url="blogdelete" op="false&amp;cID=${comment.date.time}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
+</tr>
+</c:forEach>
+<c:if test="${access.canComment}">
+<tr class="title caps">
+ <td colspan="2">ADD NEW COMMENT</td>
+</tr>
+<tr>
+ <td class="label">Your Name</td>
+<c:if test="${empty pageContext.request.userPrincipal}">
+ <td class="data"><el:text name="name" idx="*" className="pri bld req" size="24" max="64" value="" /></td>
+</c:if>
+<c:if test="${!empty pageContext.request.userPrincipal}">
+ <td class="data pri bld">${pageContext.request.remoteUser}</td>
+</c:if>
+</tr>
+<c:if test="${empty pageContext.request.userPrincipal}">
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td class="data"><el:text name="email" idx="*" size="48" max="128" value="" /></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label" valign="top">Comments</td>
+ <td class="data"><el:textbox name="body" idx="*" width="120" height="7" className="req" /></td>
+</tr>
+</c:if>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><c:if test="${access.canComment}">
+ <el:button ID="CommentButton" type="submit" className="BUTTON" label="SUBMIT COMMENT" />
+</c:if>
+<c:if test="${access.canEdit}">
+ <el:cmdbutton ID="EditButton" url="blogentry" op="edit" linkID="0x${entry.ID}" label="EDIT JOURNAL ENTRY" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" url="blogdelete" op="true" linkID="0x${entry.ID}" label="DELETE ENTRY" />
+</c:if>
+</td></tr>
+</el:table>
+</el:form>
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+</body>
+</html>
