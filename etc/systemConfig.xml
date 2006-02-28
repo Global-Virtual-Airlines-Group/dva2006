@@ -36,7 +36,7 @@
 				<caategory>777 Program</caategory>
 			</list>
 		</newsletters>
-		
+
 		<!-- Copyright disclaimer -->
 		<copyright>In no way are we affiliated with Delta Air Lines or its affiliates. All images, logos and trademarks remain property of their respective owners.</copyright>
 		
@@ -358,6 +358,7 @@
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
+			<role>Blog</role>
 			<role>Developer</role>
 			<role>Dispatch</role>
 			<role>Examination</role>
@@ -520,4 +521,11 @@
 			<msg>Don't be a goof.</msg>
 		</list>
 	</acars>
+
+	<!-- Flight Academy Data -->
+	<academy>
+		<enabled type="Boolean">true</enabled>
+		<minFlights type="Integer">10</minFlights>
+		<eqType>EMB-120</eqType>
+	</academy>
 </config>
