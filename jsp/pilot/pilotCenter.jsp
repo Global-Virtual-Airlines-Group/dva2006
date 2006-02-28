@@ -41,8 +41,8 @@ return true;
 <content:sysdata var="selcalMax" name="users.selcal.max" />
 <content:sysdata var="selcalReserve" name="users.selcal.reserve" />
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
-<content:sysdata var="academyEnabled" name="airline.academy.enabled" />
-<content:sysdata var="academyFlights" name="airline.academy.minFlights" />
+<content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:sysdata var="academyFlights" name="academy.minFlights" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
