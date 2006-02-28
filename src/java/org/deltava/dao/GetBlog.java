@@ -57,11 +57,21 @@ public class GetBlog extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Entry> getLatest(int id, boolean showPrivate) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(C.CREATED) FROM BLOG E LEFT JOIN "
+				+ "BLOGCOMMENTS C ON (E.ID=C.ID) WHERE (E.AUTHOR_ID=?) ");
+		if (!showPrivate)
+			sqlBuf.append("AND (E.PRIVATE=?) ");
+		
+		sqlBuf.append("GROUP BY E.ID ORDER BY E.CREATED DESC");
+		
 		try {
-			prepareStatement("SELECT E.*, COUNT(C.CREATED) FROM BLOG E LEFT JOIN BLOGCOMMENTS C ON "
-					+ "(E.ID=C.ID) WHERE (E.AUTHOR_ID=?) AND (E.PRIVATE=?) GROUP BY E.ID ORDER BY E.CREATED DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
-			_ps.setBoolean(2, showPrivate);
+			if (!showPrivate)
+				_ps.setBoolean(2, false);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -82,6 +92,39 @@ public class GetBlog extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the ID of all blog entry authors.
+	 * @param showPrivate TRUE if private entries should be included, otherwise FALSE
+	 * @return a Collection of database IDs 
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getAuthors(boolean showPrivate) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AUTHOR_ID FROM BLOG");
+		if (!showPrivate)
+			sqlBuf.append(" WHERE (PRIVATE=?)");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			if (!showPrivate)
+				_ps.setBoolean(1, false);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			Collection<Integer> results = new HashSet<Integer>();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Helper method to parse result sets.
@@ -90,6 +133,7 @@ public class GetBlog extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasCounts = (rs.getMetaData().getColumnCount() > 6);
 		
 		// Iterate through the results
 		List<Entry> results = new ArrayList<Entry>();
@@ -100,6 +144,8 @@ public class GetBlog extends DAO {
 			e.setAuthorID(rs.getInt(3));
 			e.setPrivate(rs.getBoolean(5));
 			e.setBody(rs.getString(6));
+			if (hasCounts)
+				e.setSize(rs.getInt(7));
 			
 			// Add to results
 			results.add(e);
@@ -117,16 +163,18 @@ public class GetBlog extends DAO {
 	private void loadComments(Entry e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT * FROM BLOGCOMMENTS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT *, NTOA(REMOTE_ADDR) FROM BLOGCOMMENTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Comment c = new Comment(rs.getString(3), rs.getString(5));
+			Comment c = new Comment(rs.getString(3), rs.getString(7));
 			c.setID(rs.getInt(1));
 			c.setDate(rs.getTimestamp(2));
 			c.setEmail(rs.getString(4));
+			c.setRemoteHost(rs.getString(6));
+			c.setRemoteAddr(rs.getString(8));
 			e.addComment(c);
 		}
 		

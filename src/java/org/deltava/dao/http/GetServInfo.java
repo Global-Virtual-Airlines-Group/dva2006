@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -39,7 +39,7 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static ExpiringCache _netCache = new ExpiringCache(3, 7200);
+	private static Cache _netCache = new ExpiringCache(3, 7200);
 	private static ExpiringCache _infoCache = new ExpiringCache(3, 180);
 
 	/**

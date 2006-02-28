@@ -59,6 +59,7 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			
 			// Load fields from request
 			e.setBody(ctx.getParameter("body"));
+			e.setDate(parseDateTime(ctx, "entry", "MM/dd/yyyy", "HH:mm"));
 			e.setLocked(Boolean.valueOf(ctx.getParameter("isLocked")).booleanValue());
 			e.setPrivate(Boolean.valueOf(ctx.getParameter("isPrivate")).booleanValue());
 			
