@@ -18,6 +18,9 @@ public class Comment extends DatabaseBean implements Comparable, CalendarEntry {
 	private String _name;
 	private String _eMail;
 	private String _body;
+	
+	private String _remoteAddr;
+	private String _remoteHost;
 
 	/**
 	 * Creates a new blog entry comment.
@@ -68,6 +71,26 @@ public class Comment extends DatabaseBean implements Comparable, CalendarEntry {
 	}
 	
 	/**
+	 * Returns the remote IP address of the Comment poster.
+	 * @return the IP address
+	 * @see Comment#getRemoteHost()
+	 * @see Comment#setRemoteAddr(String)
+	 */
+	public String getRemoteAddr() {
+		return _remoteAddr;
+	}
+	
+	/**
+	 * Returns the remote host name of the Comment poster.
+	 * @return the host name
+	 * @see Comment#getRemoteAddr()
+	 * @see Comment#setRemoteHost(String)
+	 */
+	public String getRemoteHost() {
+		return _remoteHost;
+	}
+	
+	/**
 	 * Updates the author name.
 	 * @param name the name
 	 * @throws NullPointerException if name is null
@@ -93,6 +116,26 @@ public class Comment extends DatabaseBean implements Comparable, CalendarEntry {
 	 */
 	public void setDate(Date dt) {
 		_date = dt;
+	}
+	
+	/**
+	 * Updates the remote IP address of the comment poster.
+	 * @param addr the IP address
+	 * @see Comment#setRemoteHost(String)
+	 * @see Comment#getRemoteAddr()
+	 */
+	public void setRemoteAddr(String addr) {
+		_remoteAddr = addr;
+	}
+	
+	/**
+	 * Updates the remote host name of the comment poster.
+	 * @param host the host name
+	 * @see Comment#setRemoteAddr(String)
+	 * @see Comment#getRemoteHost()
+	 */
+	public void setRemoteHost(String host) {
+		_remoteHost = host;
 	}
 
 	/**
