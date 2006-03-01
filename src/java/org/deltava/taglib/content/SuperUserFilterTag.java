@@ -28,7 +28,15 @@ public class SuperUserFilterTag extends TagSupport {
 	}
 	
 	/**
-	 * Renders the start of the JSP tag and applies the filter
+	 * Releases the tag's state variables.
+	 */
+	public void release() {
+		super.release();
+		_varName = null;
+	}
+	
+	/**
+	 * Renders the start of the JSP tag and applies the filter.
 	 * @return EVAL_BODY_INCLUDE if acting as a superUser, otherwise SKIP_BODY
 	 * @throws JspException if an error occurs
 	 */
@@ -50,5 +58,15 @@ public class SuperUserFilterTag extends TagSupport {
 			req.setAttribute(_varName, su);
 		
 		return EVAL_BODY_INCLUDE;
+	}
+	
+	/**
+	 * Renders the JSP closing tag and releases state.
+	 * @return EVAL_PAGE always
+	 * @throws JspException never
+	 */
+	public int doEndTag() throws JspException {
+		release();
+		return EVAL_PAGE;
 	}
 }
