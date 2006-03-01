@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -84,7 +84,7 @@ public class SetPilotEMail extends DAO {
             executeUpdate(0);
 			
 			// Update the mailbox record
-            prepareStatement("UPDATE postfix.mailbox SET username=?, name=?, maildir=?, quota=?, active=?, WHERE (ID=?)");
+            prepareStatement("UPDATE postfix.mailbox SET username=?, name=?, maildir=?, quota=?, active=? WHERE (ID=?)");
 			_ps.setString(1, cfg.getAddress());
 			_ps.setString(2, name);
 			_ps.setString(3, cfg.getMailDirectory());
