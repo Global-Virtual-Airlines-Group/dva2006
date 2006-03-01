@@ -41,6 +41,8 @@ public class GetServInfo extends DAO {
 
 	private static Cache _netCache = new ExpiringCache(3, 7200);
 	private static ExpiringCache _infoCache = new ExpiringCache(3, 180);
+	
+	private boolean _useCache = true;
 
 	/**
 	 * Initializes the DAO with a particular HTTP connection.
@@ -80,7 +82,7 @@ public class GetServInfo extends DAO {
 		public static final int ARR_LAT = 33;
 		public static final int ARR_LON = 34;
 
-		private List _tkns;
+		private List<String> _tkns;
 
 		public SITokens(String data) {
 			super();
@@ -88,7 +90,7 @@ public class GetServInfo extends DAO {
 		}
 
 		public String get(int idx) {
-			return (String) _tkns.get(idx);
+			return _tkns.get(idx);
 		}
 
 		public int size() {
@@ -100,12 +102,26 @@ public class GetServInfo extends DAO {
 		Airport a = SystemData.getAirport(airportCode);
 		return (a == null) ? new Airport(airportCode, airportCode, airportCode) : a;
 	}
+	
+	/**
+	 * Optionally disables the use of the DAO cache.
+	 * @param useCache TRUE if the cache should be used, otherwise FALSE
+	 */
+	public void setUseCache(boolean useCache) {
+		_useCache = useCache;
+	}
 
+	/**
+	 * Loads network data URLs.
+	 * @param netName the network name
+	 * @return a Network Status bean
+	 * @throws DAOException if an HTTP error occurs
+	 */
 	public NetworkStatus getStatus(String netName) throws DAOException {
 
 		// Get from the cache if possible
 		NetworkStatus status = (NetworkStatus) _netCache.get(netName);
-		if (status != null) {
+		if ((status != null) && (_useCache)) {
 			status.setCached();
 			return status;
 		}
@@ -135,11 +151,17 @@ public class GetServInfo extends DAO {
 		}
 	}
 
+	/**
+	 * Loads network data.
+	 * @param networkName the network name
+	 * @return a NetworkInfo bean
+	 * @throws DAOException if an HTTP error occurs
+	 */
 	public NetworkInfo getInfo(String networkName) throws DAOException {
 
 		// Get from the cache if possible
 		NetworkInfo info = (NetworkInfo) _infoCache.get(networkName);
-		if (info != null) {
+		if ((info != null) && (_useCache)) {
 			info.setCached();
 			return info;
 		}
