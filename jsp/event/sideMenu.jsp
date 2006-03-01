@@ -7,22 +7,20 @@
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>ONLINE EVENTS</td></tr>
 <tr class="MenuItem">
-<c:choose>
-<c:when test="${empty pageContext.request.userPrincipal}">
+<content:authUser anonymous="true">
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
-</c:when>
-<c:otherwise>
- <td class="MenuItem sec caps">WELCOME, ${pageContext.request.remoteUser}</td>
+</content:authUser>
+<content:authUser var="user">
+ <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
 </tr>
-<c:if test="${!empty superUser}">
+<content:superUser var="superUser">
 <tr class="MenuItem">
  <td class="ter bld">${superUser.name}</td>
 </tr>
-</c:if>
+</content:superUser>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</c:otherwise>
-</c:choose>
+</content:authUser>
 </tr>
 <tr class="MenuItem">
  <td><el:cmd url="eventcalendar" className="bld">EVENT CALENDAR</el:cmd></td>
