@@ -1361,4 +1361,29 @@
 		<class>org.deltava.commands.academy.CourseCheckRideCommand</class>
 		<roles>Instructor,HR</roles>
 	</command>
+
+	<!-- Blog commands -->
+	<command id="blog">
+		<name>Journal</name>
+		<class>org.deltava.commands.blog.BlogCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="blogentry">
+		<name>Journal Entry</name>
+		<class>org.deltava.commands.blog.BlogEntryCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="blogcomment">
+		<name>Journal Entry Comment</name>
+		<class>org.deltava.commands.blog.BlogCommentCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="blogdelete">
+		<name>Delete Journal Content</name>
+		<class>org.deltava.commands.blog.BlogDeleteCommand</class>
+		<roles>Blog</roles>
+	</command>
 </commands>

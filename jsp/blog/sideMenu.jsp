@@ -10,12 +10,11 @@
  <td><el:link url="/">HOME</el:link></td>
 </tr>
 <tr class="MenuItem">
-<c:choose>
-<c:when test="${empty pageContext.request.userPrincipal}">
+<content:authUser anonymous="true">
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
-</c:when>
-<c:otherwise>
- <td class="MenuItem sec caps">WELCOME, ${pageContext.request.remoteUser}</td>
+</content:authUser>
+<content:authUser var="user">
+ <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
 </tr>
 <content:superUser var="superUser">
 <tr class="MenuItem">
@@ -24,8 +23,7 @@
 </content:superUser>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</c:otherwise>
-</c:choose>
+</content:authUser>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr class="MenuItem">
@@ -35,14 +33,15 @@
 <tr class="MenuItem">
  <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
 </tr>
-<c:if test="${!empty authors}">
+<c:if test="${!empty authors || access.canCreate}">
 <tr class="MenuHeader"><td>JOURNALS</td></tr>
 <c:if test="${access.canCreate}">
 <tr class="MenuItem">
  <td><el:cmd url="blogentry" op="edit">NEW JOURNAL ENTRY</el:cmd></td>
 </tr>
 </c:if>
-<c:forEach var="a" items="${authors}">
+<c:forEach var="aID" items="${authorIDs}">
+<c:set var="author" value="${authors[aID]}" scope="request" />
 <tr class="MenuItem">
  <td><el:cmd url="blog" linkID="0x${a.ID}">${a.name}</el:cmd></td>
 </tr>
