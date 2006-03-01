@@ -35,10 +35,10 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="blog.do" method="post" linkID="${fn:dbID(entry)}" validate="return validate(this)">
+<el:form action="blogentry.do" method="post" op="save" linkID="${fn:dbID(entry)}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">
+ <td colspan="2"><c:if test="${empty entry}">NEW </c:if>JOURNAL ENTRY</td>
 </tr>
 <tr>
  <td class="label">Entry Title</td>
@@ -46,7 +46,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Published on</td>
- <td class="data"><el:text name="entryDateTime" idx="*" className="req" size="16" max="16" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy HH:mm')}" /></td>
+ <td class="data"><el:text name="entryDateTime" idx="*" className="req" size="17" max="16" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy HH:mm')}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

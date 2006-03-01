@@ -32,7 +32,7 @@ public class GetBlog extends DAO {
 	public Entry get(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT * FROM BLOG WHERE (E.ID=?)");
+			prepareStatement("SELECT * FROM BLOG WHERE (ID=?)");
 			_ps.setInt(1, id);
 			
 			// Execute the query, return null if empty
@@ -133,7 +133,7 @@ public class GetBlog extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasCounts = (rs.getMetaData().getColumnCount() > 6);
+		boolean hasCounts = (rs.getMetaData().getColumnCount() > 7);
 		
 		// Iterate through the results
 		List<Entry> results = new ArrayList<Entry>();
@@ -143,9 +143,10 @@ public class GetBlog extends DAO {
 			e.setDate(rs.getTimestamp(2));
 			e.setAuthorID(rs.getInt(3));
 			e.setPrivate(rs.getBoolean(5));
-			e.setBody(rs.getString(6));
+			e.setLocked(rs.getBoolean(6));
+			e.setBody(rs.getString(7));
 			if (hasCounts)
-				e.setSize(rs.getInt(7));
+				e.setSize(rs.getInt(8));
 			
 			// Add to results
 			results.add(e);
@@ -163,7 +164,7 @@ public class GetBlog extends DAO {
 	private void loadComments(Entry e) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT *, NTOA(REMOTE_ADDR) FROM BLOGCOMMENTS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT *, INET_NTOA(REMOTE_ADDR) FROM BLOGCOMMENTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		
 		// Execute the query

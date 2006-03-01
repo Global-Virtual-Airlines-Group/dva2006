@@ -89,20 +89,28 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the blog entry
-			GetBlog dao = new GetBlog(con);
-			Entry e = dao.get(ctx.getID());
-			if (e == null)
-				throw notFoundException("Invalid Blog entry - " + ctx.getID());
-			
+			Entry e = null;
+			if (ctx.getID() != 0) {
+				GetBlog dao = new GetBlog(con);
+				e = dao.get(ctx.getID());
+				if (e == null)
+					throw notFoundException("Invalid Blog entry - " + ctx.getID());
+			}
+				
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, e);
 			ac.validate();
-			if (!ac.getCanEdit())
-				throw securityException("Cannot edit blog entry");
+			boolean canExec = (e == null) ? ac.getCanCreate() : ac.getCanEdit();
+			if (!canExec)
+				throw securityException("Cannot create/edit blog entry");
 
 			// Load the pilot data
-			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("author", pdao.get(e.getAuthorID()), REQUEST);
+			if (e != null) {
+				GetPilot pdao = new GetPilot(con);
+				ctx.setAttribute("author", pdao.get(e.getAuthorID()), REQUEST);
+			} else {
+				ctx.setAttribute("author", ctx.getUser(), REQUEST);
+			}
 
 			// Save the blog entry in the request
 			ctx.setAttribute("entry", e, REQUEST);

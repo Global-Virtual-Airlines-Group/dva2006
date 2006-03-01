@@ -11,10 +11,11 @@
 <title><content:airline /> Journals</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/blog/header.jsp" %> 
 <%@ include file="/jsp/blog/sideMenu.jsp" %>
@@ -24,7 +25,7 @@
 <view:table className="view" space="default" pad="default" cmd="blog">
 <c:if test="${!showAll}">
 <tr class="title caps">
- <td>JOURNAL - ${author.name}</td>
+ <td colspan="2">JOURNAL - ${author.name}</td>
 </tr>
 </c:if>
 <c:forEach var="entry" items="${viewContext.results}">
@@ -32,7 +33,7 @@
 <tr class="title caps" valign="top">
  <td width="65%">${entry.title} - <fmt:date fmt="d" date="${entry.date}" />
 <c:if test="${showAll}"> <el:cmd url="blog" linkID="0x${author.ID}">${author.name}</el:cmd></c:if></td>
- <td><fmt:int value="${entry.size}" /> COMMENTS - <el:cmd url="blogentry" linkID="0x${entry.id}">VIEW ENTRY</el:cmd></td>
+ <td><fmt:int value="${entry.size}" /> COMMENTS - <el:cmd url="blogentry" linkID="0x${entry.ID}">VIEW ENTRY</el:cmd></td>
 </tr>
 <tr>
  <td colspan="2" class="left"><fmt:msg value="${entry.body}" />

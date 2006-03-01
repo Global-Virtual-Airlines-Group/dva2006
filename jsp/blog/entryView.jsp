@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Journal - ${author.name}</title>
@@ -28,7 +29,7 @@ return ${access.canComment};
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/blog/header.jsp" %> 
 <%@ include file="/jsp/blog/sideMenu.jsp" %>
@@ -48,13 +49,13 @@ return ${access.canComment};
 </tr>
 <c:forEach var="comment" items="${entry.comments}">
 <tr>
- <td class="label">${comment.name}<br />
+ <td class="label" valign="top">${comment.name}<br />
 <fmt:date date="${comment.date}" /></td>
  <td class="data"><fmt:msg value="${comment.body}" filter="${!access.canDelete}" />
 <c:if test="${access.canDelete}">
 <hr />
 <span class="small">Posted from ${comment.remoteAddr} (${comment.remoteHost})</span>
- <el:cmd url="blogdelete" op="false&amp;cID=${comment.date.time}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
+ <el:cmd url="blogdelete" op="false&id=${fn:hex(entry.ID)}&cID=${comment.date.time}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
 </tr>
 </c:forEach>
 <c:if test="${access.canComment}">
@@ -63,19 +64,19 @@ return ${access.canComment};
 </tr>
 <tr>
  <td class="label">Your Name</td>
-<c:if test="${empty pageContext.request.userPrincipal}">
+<content:authUser anonymous="true">
  <td class="data"><el:text name="name" idx="*" className="pri bld req" size="24" max="64" value="" /></td>
-</c:if>
-<c:if test="${!empty pageContext.request.userPrincipal}">
- <td class="data pri bld">${pageContext.request.remoteUser}</td>
-</c:if>
+</content:authUser>
+<content:authUser var="user">
+ <td class="data pri bld">${user.name}</td>
+</content:authUser>
 </tr>
-<c:if test="${empty pageContext.request.userPrincipal}">
+<content:authUser anonymous="true">
 <tr>
  <td class="label">E-Mail Address</td>
  <td class="data"><el:text name="email" idx="*" size="48" max="128" value="" /></td>
 </tr>
-</c:if>
+</content:authUser>
 <tr>
  <td class="label" valign="top">Comments</td>
  <td class="data"><el:textbox name="body" idx="*" width="120" height="7" className="req" /></td>
