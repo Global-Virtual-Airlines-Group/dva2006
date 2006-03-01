@@ -111,7 +111,10 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Get the authenticator and update the password
 		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 		try {
-			auth.updatePassword(usr, newPwd);
+			if (auth.contains(usr))
+				auth.updatePassword(usr, newPwd);
+			else
+				auth.addUser(usr, newPwd);
 		} catch (SecurityException se) {
 			ctx.setMessage("Error updating password for " + usr.getDN() + " - " + se.getMessage());
 			return;
