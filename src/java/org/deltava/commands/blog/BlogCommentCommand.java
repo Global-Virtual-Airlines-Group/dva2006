@@ -48,6 +48,8 @@ public class BlogCommentCommand extends AbstractCommand {
 			c.setEmail(ctx.isAuthenticated() ? ctx.getUser().getEmail() : ctx.getParameter("eMail"));
 			c.setID(e.getID());
 			c.setDate(new java.util.Date());
+			c.setRemoteAddr(ctx.getRequest().getRemoteAddr());
+			c.setRemoteHost(ctx.getRequest().getRemoteHost());
 
 			// Get the DAO and save the comment
 			SetBlog wdao = new SetBlog(con);
