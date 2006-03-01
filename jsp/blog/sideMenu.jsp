@@ -41,7 +41,7 @@
 </tr>
 </c:if>
 <c:forEach var="aID" items="${authorIDs}">
-<c:set var="author" value="${authors[aID]}" scope="request" />
+<c:set var="a" value="${authors[aID]}" scope="request" />
 <tr class="MenuItem">
  <td><el:cmd url="blog" linkID="0x${a.ID}">${a.name}</el:cmd></td>
 </tr>
