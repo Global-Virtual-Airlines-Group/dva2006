@@ -5,7 +5,7 @@
 		<interval>86400</interval>
 	</task>
 	
-	<task id="nat" enabled="true">
+	<task id="nat" enabled="false">
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<interval>86400</interval>
 		<hours>14</hours>
