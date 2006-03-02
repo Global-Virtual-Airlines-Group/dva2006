@@ -14,8 +14,17 @@ import org.deltava.util.CalendarUtils;
  */
 
 public abstract class DAO {
+	
+	private static volatile long _queryCount = 0;
 
+	/**
+	 * The maximum number of rows to return.
+	 */
 	protected int _queryMax;
+	
+	/**
+	 * The row number at which to start returning results.
+	 */
 	protected int _queryStart;
 
 	private Connection _c;
@@ -155,6 +164,7 @@ public abstract class DAO {
 		// Set the query timeout and fetch size
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize(_queryMax > 100 ? 100 : _queryMax);
+		_queryCount++;
 	}
 
 	/**
@@ -169,6 +179,7 @@ public abstract class DAO {
 		_ps = _c.prepareStatement(sql);
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize(100);
+		_queryCount++;
 	}
 
 	/**
@@ -270,5 +281,13 @@ public abstract class DAO {
 			} catch (Exception e) {
 			}
 		}
+	}
+	
+	/**
+	 * Returns the total number of queries executed since the JVM was started.
+	 * @return the number of queries
+	 */
+	public final static long getQueryCount() {
+		return _queryCount;
 	}
 }

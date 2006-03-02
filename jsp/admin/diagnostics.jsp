@@ -23,7 +23,6 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<!-- System Data Table -->
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">SYSTEM INFORMATION</td>
@@ -46,7 +45,7 @@
 </tr>
 <tr>
  <td class="label">Application Started on</td>
- <td class="data"><fmt:date date="${startedOn}" /></td>
+ <td class="data"><fmt:date date="${startedOn}" /> (<fmt:int value="${execTime / 60}" /> minutes</td>
 </tr>
 <tr>
  <td class="label">Servlet API</td>
@@ -66,6 +65,10 @@
 <tr>
  <td class="label">Local Time Zone</td>
  <td class="data">${timeZone.ID} - ${tzName}</td>
+</tr>
+<tr>
+ <td class="label">Database Transactions</td>
+ <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" /> / minute)</td>
 </tr>
 <tr>
  <td class="label">Google Maps API Usage</td>
