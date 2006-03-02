@@ -9,8 +9,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> NOTAMs</title>
+<content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
+<content:rss title="${airlineName} NOTAMs" path="/notams_rss.ws" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -21,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="news">
+<view:table className="view" pad="default" space="default" cmd="notams">
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="5%">ID</td>

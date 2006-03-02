@@ -10,11 +10,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Event Calendar</title>
+<content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="calendar" />
 <content:pics />
 <content:js name="common" />
+<content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script language="JavaScript" type="text/javascript">
 function switchType(combo)
 {

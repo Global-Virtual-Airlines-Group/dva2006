@@ -9,9 +9,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Journals</title>
+<content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:js name="common" />
+<content:rss title="${airlineName} Journals" path="/blog_rss.ws" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -24,6 +26,7 @@
 <content:region id="main">
 <view:table className="view" space="default" pad="default" cmd="blog">
 <c:if test="${!showAll}">
+<c:set var="author" value="${authors[authorID]}" scope="request" />
 <tr class="title caps">
  <td colspan="2">JOURNAL - ${author.name}</td>
 </tr>
