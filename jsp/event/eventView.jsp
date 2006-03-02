@@ -11,13 +11,12 @@
 <head>
 <title><content:airline /> Online Event - ${event.name}</title>
 <content:sysdata var="airlineName" name="airline.name" />
-<c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:rss title="${airlineName} Online Events" url="http://${serverName}/event_rss.ws" />
+<content:rss title="${airlineName} Online Events" path="/event_rss.ws" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {

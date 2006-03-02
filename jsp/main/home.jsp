@@ -12,10 +12,9 @@
 <content:sysdata var="airlineName" name="airline.name" />
 <content:sysdata var="desc" name="airline.meta.desc" />
 <content:sysdata var="keywords" name="airline.meta.keywords" />
-<c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
-<content:rss title="${airlineName} News" url="http://${serverName}/news_rss.ws" />
+<content:rss title="${airlineName} News" path="/news_rss.ws" />
 <content:js name="common" />
 <content:pics />
 <meta name="Description" content="${desc}" />
