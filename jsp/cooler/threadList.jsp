@@ -11,13 +11,12 @@
 <title><content:airline /> Water Cooler</title>
 <meta http-equiv="REFRESH" content="300" />
 <content:sysdata var="airlineName" name="airline.name" />
-<c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:rss title="${airlineName} Water Cooler" url="http://${serverName}/cooler_rss.ws" />
+<content:rss title="${airlineName} Water Cooler" path="/cooler_rss.ws" />
 <script language="JavaScript" type="text/javascript">
 function setChannel(combo)
 {

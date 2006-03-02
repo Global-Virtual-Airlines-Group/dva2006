@@ -6,12 +6,15 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<c:set var="author" value="${authors[entry.authorID]}" scope="request" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Journal - ${author.name}</title>
+<content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:js name="common" />
+<content:rss title="${airlineName} Journals" path="/blog_rss.ws" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -55,7 +58,7 @@ return ${access.canComment};
 <c:if test="${access.canDelete}">
 <hr />
 <span class="small">Posted from ${comment.remoteAddr} (${comment.remoteHost})</span>
- <el:cmd url="blogdelete" op="false&id=${fn:hex(entry.ID)}&cID=${comment.date.time}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
+ <el:cmd url="blogdelete" linkID="0x${entry.ID}" op="${fn:hex(comment.date.time)}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
 </tr>
 </c:forEach>
 <c:if test="${access.canComment}">

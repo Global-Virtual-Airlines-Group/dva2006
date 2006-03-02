@@ -25,17 +25,10 @@ public class TestInsertRSSTag extends AbstractTagTestCase {
 
    public void testOutput() throws JspException {
       _tag.setTitle("RSS Feed");
-      _tag.setUrl("http://localhost/rss/feed.ws");
+      _tag.setPath("/rss/feed.ws");
       
       assertSkipBody(_tag.doStartTag());
       assertEvalPage(_tag.doEndTag());
       assertEquals(RSS_START + "RSS Feed\" href=\"http://localhost/rss/feed.ws\" />", _jspOut.toString());
-   }
-   
-   public void testURLValidation() {
-      try {
-         _tag.setUrl("malformed://URLException");
-         fail("JspException expected");
-      } catch (JspException je) { }
    }
 }
