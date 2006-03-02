@@ -8,6 +8,7 @@ import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
 
+import org.deltava.dao.DAO;
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.taskman.TaskScheduler;
 
@@ -77,11 +78,16 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("tzName", tz.getDisplayName(tz.inDaylightTime(new Date()), TimeZone.LONG), REQUEST);
 
 		// Get Servlet context properties
+		Date startDate = (Date) _ctx.getAttribute("startedOn");
 		ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
-		ctx.setAttribute("serverStart", _ctx.getAttribute("startedOn"), REQUEST);
+		ctx.setAttribute("serverStart", startDate, REQUEST);
 		ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
 		ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
 		ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
+		
+		// Calculate DAO usage count
+		ctx.setAttribute("execTime", new Long((System.currentTimeMillis() - startDate.getTime()) / 1000), REQUEST);
+		ctx.setAttribute("daoUsageCount", new Long(DAO.getQueryCount()), REQUEST);
 
 		// Get the Google Maps API usage count
 		ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
