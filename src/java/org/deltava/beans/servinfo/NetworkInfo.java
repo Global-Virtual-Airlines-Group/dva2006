@@ -75,25 +75,57 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     /**
      * Returns the active Controllers on this network.
      * @return a Collection of Controller beans
-     * @see NetworkInfo#getControllers(GeoLocation, int)
+     * @see NetworkInfo#getControllers(GeoLocation)
      * @see NetworkInfo#getPilots()
      */
     public Collection<Controller> getControllers() {
-        return new ArrayList<Controller>(_controllers.values());
+        return new LinkedHashSet<Controller>(_controllers.values());
     }
     
     /**
      * Returns all Controllers within a specific distance of a particular point. 
      * @param gl the location
-     * @param distance the distance in miles
      * @return a Collection of Controller beans
      * @see NetworkInfo#getControllers()
      */
-    public Collection<Controller> getControllers(GeoLocation gl, int distance) {
-    	List<Controller> results = new ArrayList<Controller>();
+    public Collection<Controller> getControllers(GeoLocation gl) {
+    	if (gl == null)
+    		return getControllers();
+    	
+    	// Strip out based on distance and facility type
+    	Collection<Controller> results = new LinkedHashSet<Controller>();
     	for (Iterator<Controller> i = _controllers.values().iterator(); i.hasNext(); ) {
     		Controller c = i.next();
-    		if (GeoUtils.distance(gl, c.getPosition()) <= distance)
+    		int maxDistance = 200;
+    		switch (c.getFacility()) {
+    			case Controller.OBSERVER:
+    			case Controller.DEL:
+    				maxDistance = 15;
+    				break;
+    				
+    			case Controller.GND:
+    				maxDistance = 30;
+    				break;
+    				
+    			case Controller.TWR:
+    				maxDistance = 50;
+    				break;
+    				
+    			case Controller.APP:
+    				maxDistance = 120;
+    				break;
+    				
+    			case Controller.CTR:
+    				maxDistance = 700;
+    				break;
+    				
+    			case Controller.FSS:
+    				maxDistance = 1500;
+    				break;
+    		}
+    		
+    		// Add if we're not too far away
+    		if (GeoUtils.distance(gl, c.getPosition()) <= maxDistance)
     			results.add(c);
     	}
     	

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import org.deltava.util.StringUtils;
@@ -15,8 +15,20 @@ public class Controller extends NetworkUser {
    private static final String[] RATINGS = {"", "Observer", "Student", "Senior Student", "Senior Student", "Controller",
          "Senior Controller", "Senior Controller", "Instructor", "Senior Instructor", "Senior Instructor", "Supervisor", "Administrator"};
    
+   /**
+    * Facility types.
+    */
    private static final String[] FACILITIES = {"Observer", "Flight Service Station", "Clearance Delivery", "Ground", "Tower",
          "Approach/Departure", "Center"};
+   
+   public static final int OBSERVER = 0;
+   public static final int FSS = 1;
+   public static final int DEL = 2;
+   public static final int GND = 3;
+   public static final int TWR = 4;
+   public static final int APP = 5;
+   public static final int DEP = 5;
+   public static final int CTR = 6;
    
    private static final String[] COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
    
