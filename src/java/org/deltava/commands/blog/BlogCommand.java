@@ -50,6 +50,8 @@ public class BlogCommand extends AbstractViewCommand {
 			Map authors = pdao.getByID(authorIDs, "PILOTS");
 			ctx.setAttribute("authorIDs", authors.keySet(), REQUEST);
 			ctx.setAttribute("authors", authors, REQUEST);
+			if (!showAll)
+				ctx.setAttribute("authorID", new Integer(ctx.getID()), REQUEST);
 			
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, null);
