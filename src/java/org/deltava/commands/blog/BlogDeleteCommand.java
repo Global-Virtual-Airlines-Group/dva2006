@@ -11,6 +11,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.BlogAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to delete blog comments and entries.
  * @author Luke
@@ -28,7 +30,7 @@ public class BlogDeleteCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		Entry e = null;
-		boolean doEntry = Boolean.valueOf((String) ctx.getCmdParameter(OPERATION, null)).booleanValue();
+		String commentID = (String) ctx.getCmdParameter(OPERATION, null);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -46,15 +48,15 @@ public class BlogDeleteCommand extends AbstractCommand {
 			
 			// If we're deleting an entry, then nuke the entire thing
 			SetBlog wdao = new SetBlog(con);
-			if (doEntry) {
+			if (StringUtils.isEmpty(commentID)) {
 				wdao.delete(e.getID());
 			} else {
 				// Get the timestamp
-				long commentID = 0;
+				long id = 0;
 				try {
-					commentID = Long.parseLong(ctx.getParameter("cID"));
+					id = StringUtils.parseHex(commentID);
 				} catch (Exception ex) {
-					CommandException ce = new CommandException("Invalid Comment timestamp - " + ctx.getParameter("cID"));
+					CommandException ce = new CommandException("Invalid Comment timestamp - " + commentID);
 					ce.setLogStackDump(false);
 					throw ce;
 				}
@@ -62,7 +64,7 @@ public class BlogDeleteCommand extends AbstractCommand {
 				// Find the comment
 				for (Iterator<Comment> i = e.getComments().iterator(); i.hasNext(); ) {
 					Comment c = i.next();
-					if (c.getDate().getTime() == commentID) {
+					if (c.getDate().getTime() == id) {
 						wdao.delete(c);
 						break;
 					}
@@ -78,7 +80,7 @@ public class BlogDeleteCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REDIRECT);
 		result.setSuccess(true);
-		if (doEntry) {
+		if (StringUtils.isEmpty(commentID)) {
 			result.setURL("blog", null, e.getAuthorID());
 		} else {
 			result.setURL("blogentry", "read", e.getID());

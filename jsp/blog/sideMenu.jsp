@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <!-- Sidebar Navigation Frame -->
@@ -18,7 +19,7 @@
 </tr>
 <content:superUser var="superUser">
 <tr class="MenuItem">
- <td class="ter bld">${superUser.name}</td>
+ <td class="ter bld">${fn:upper(superUser.name)}</td>
 </tr>
 </content:superUser>
 <tr class="MenuItem">
@@ -43,7 +44,7 @@
 <c:forEach var="aID" items="${authorIDs}">
 <c:set var="a" value="${authors[aID]}" scope="request" />
 <tr class="MenuItem">
- <td><el:cmd url="blog" linkID="0x${a.ID}">${a.name}</el:cmd></td>
+ <td><el:cmd url="blog" linkID="0x${a.ID}">${fn:upper(a.name)}</el:cmd></td>
 </tr>
 </c:forEach>
 </c:if>

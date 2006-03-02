@@ -2,6 +2,8 @@
 package org.deltava.commands.blog;
 
 import java.sql.Connection;
+import java.util.Collection;
+import java.util.Map;
 
 import org.deltava.beans.blog.Entry;
 
@@ -141,9 +143,14 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			if (e == null)
 				throw notFoundException("Invalid Blog entry - " + ctx.getID());
 			
-			// Load the pilot data
+			// Get the author IDs
+			Collection<Integer> authorIDs = dao.getAuthors(ctx.isUserInRole("Admin"));
+			
+			// Load the author names
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("author", pdao.get(e.getAuthorID()), REQUEST);
+			Map authors = pdao.getByID(authorIDs, "PILOTS");
+			ctx.setAttribute("authorIDs", authors.keySet(), REQUEST);
+			ctx.setAttribute("authors", authors, REQUEST);
 			
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, e);
