@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -25,7 +25,6 @@ public class AirlineListCommand extends AbstractCommand {
      * @param ctx the Command context
      * @throws CommandException if an unhandled error occurs
      */
-	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 
 		try {
@@ -33,11 +32,10 @@ public class AirlineListCommand extends AbstractCommand {
 			
 			// Get the DAO and the airline list
 			GetAirline dao = new GetAirline(con);
-			List<Airline> airlines = new ArrayList<Airline>(dao.getAll().values());
+			Map<String, Airline> airlines = dao.getAll();
 			
 			// Sort the airlines and save them
-			Collections.sort(airlines);
-			ctx.setAttribute("airlines", airlines, REQUEST);
+			ctx.setAttribute("airlines", airlines.values(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
