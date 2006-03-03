@@ -51,7 +51,7 @@ public class CopyrightTag extends TagSupport {
    private void displayCopyright() throws Exception {
       JspWriter jw = pageContext.getOut();
       jw.println("<hr />");
-      jw.print("<div class=\"copyright\">");
+      jw.print("<div class=\"small\">");
       jw.print(pageContext.getServletContext().getServletContextName());
       jw.print(" ");
       jw.print(VersionInfo.APPNAME + " " + VersionInfo.HTML_COPYRIGHT + " (Build " + VersionInfo.BUILD);
