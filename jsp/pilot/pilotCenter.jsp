@@ -275,11 +275,15 @@ promoted within the next 24 to 72 hours.</td></c:when>
 </c:choose>
 </tr>
 </c:if>
-<c:if test="${!empty eqSwitch}">
+<c:if test="${!empty eqSwitch || !empty eqSwitchFOExam}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd></td>
- <td class="data">You are eligible to transfer to or request additional ratings in the following 
-equipment types: <fmt:list value="${eqSwitch}" delim=", " /></td>
+ <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional
+ ratings in the following equipment types: <fmt:list value="${eqSwitch}" delim=", " />.</c:if>
+<c:if test="${!empty eqSwitch && !empty eqSwitchFOExam}"><br /><br /></c:if>
+<c:if test="${!empty eqSwitchFOExam}">You are eligible to transfer to or request additional ratings in
+ the following equipment types upon successful completion of the First Officer's examination for these
+ equipment programs: <fmt:list value="${eqSwitchFOExam}" delim=", " />.</c:if></td>
 </tr>
 </c:if>
 <c:if test="${!empty txreq}">
@@ -306,6 +310,7 @@ cannot access the Testing Center until this interval has passed.</span></c:if>
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
 
+<content:filter roles="HR,Instructor">
 <c:if test="${academyEnabled && (pilot.legs >= academyFlights)}">
 <!-- Flight Academy Section -->
 <tr class="title caps">
@@ -352,6 +357,7 @@ training session with a Flight Academy student.</td>
 </c:if>
 </content:filter>
 </c:if>
+<content:filter roles="HR,Instructor">
 
 <content:filter roles="PIREP">
 <!-- Flight Report Admin Section -->

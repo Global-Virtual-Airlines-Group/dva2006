@@ -16,6 +16,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -108,6 +109,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("isFO", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
 			}
+			
+			// Get Exam profiles
+			GetExamProfiles epdao = new GetExamProfiles(con);
+			Map<String, ExamProfile> exams = CollectionUtils.createMap(epdao.getExamProfiles(false), "name");
 
 			// Check if we are trying to switch equipment types
 			GetTransferRequest txdao = new GetTransferRequest(con);
@@ -116,22 +121,28 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Get all active equipment programs, and see which we can switch to
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				Collection<EquipmentType> activeEQ = eqdao.getActive();
+				Collection<EquipmentType> needFOExamEQ = new TreeSet<EquipmentType>();
 				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = i.next();
-					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
+					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq)) {
+						ExamProfile ep = exams.get(eq.getExamName(Ranks.RANK_FO));
+						if ((ep != null) && (_testHistory.canWrite(ep)))
+							needFOExamEQ.add(eq);
+						
 						i.remove();
+					}
 				}
 
 				// Save the equipment types we can get promoted to
 				ctx.setAttribute("eqSwitch", activeEQ, REQUEST);
+				ctx.setAttribute("eqSwitchFOExam", needFOExamEQ, REQUEST);
 			} else {
 				ctx.setAttribute("txreq", txreq, REQUEST);
 			}
 
 			// See if we can write any examinations
-			GetExamProfiles epdao = new GetExamProfiles(con);
-			Collection<ExamProfile> exams = epdao.getExamProfiles(false);
-			for (Iterator<ExamProfile> i = exams.iterator(); i.hasNext();) {
+			Collection<ExamProfile> allExams = exams.values();
+			for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
 				if (!_testHistory.canWrite(ep))
 					i.remove();
@@ -145,7 +156,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("course", courses.get(courses.size() - 1), REQUEST);
 
 			// Save the examinations
-			ctx.setAttribute("availableExams", exams, REQUEST);
+			ctx.setAttribute("availableExams", allExams, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
