@@ -207,8 +207,8 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
 <el:table className="defaultSig" pad="0"><tr>
- <td valign="bottom" style="background-image: url(${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
-  <div class="defaultSigText"><h2>${pilot.name}</h2><span class="pri bld defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
+ <td valign="bottom" style="background-image: url(http://www.${pilotLoc.domain}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+ <div class="defaultSigText"><h2>${pilot.name}</h2><span class="pri bld defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
 </c:when> 
