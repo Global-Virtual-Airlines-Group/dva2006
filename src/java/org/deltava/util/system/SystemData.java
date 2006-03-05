@@ -235,7 +235,7 @@ public class SystemData implements Serializable {
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
 		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
 			Airline a = (Airline) i.next();
-			if (a.getApps().contains(code))
+			if (a.getApplications().contains(code))
 				results.put(a.getCode(), a);
 		}
 		
