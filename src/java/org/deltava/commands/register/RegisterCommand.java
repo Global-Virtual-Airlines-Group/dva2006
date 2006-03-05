@@ -100,8 +100,10 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
-		for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-			a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+		if (notifyOptions != null) {
+			for (int x = 0; x < NOTIFY_ALIASES.length; x++)
+				a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+		}
 
 		// Save the applicant in the request
 		ctx.setAttribute("applicant", a, REQUEST);
