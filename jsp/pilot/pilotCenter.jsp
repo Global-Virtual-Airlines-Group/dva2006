@@ -357,7 +357,7 @@ training session with a Flight Academy student.</td>
 </c:if>
 </content:filter>
 </c:if>
-<content:filter roles="HR,Instructor">
+</content:filter>
 
 <content:filter roles="PIREP">
 <!-- Flight Report Admin Section -->
