@@ -92,6 +92,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			GetPilot pdao = new GetPilot(con);
 			usr = pdao.get(c.getPilotID());
 			ctx.setAttribute("pilot", usr, REQUEST);
+			mctx.addData("instructor", pdao.get(s.getInstructorID()));
 			
 			// Save the request
 			SetAcademy wdao = new SetAcademy(con);

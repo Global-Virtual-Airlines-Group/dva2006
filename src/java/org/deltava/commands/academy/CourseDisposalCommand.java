@@ -103,6 +103,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// Save the course
 			ctx.setAttribute("course", c, REQUEST);
+			mctx.addData("course", c);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
