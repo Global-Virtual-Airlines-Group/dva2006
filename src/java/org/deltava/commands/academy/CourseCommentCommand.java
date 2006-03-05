@@ -57,6 +57,8 @@ public class CourseCommentCommand extends AbstractCommand {
 			// Get the DAO and the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("COURSECOMMENT"));
+			mctxt.addData("comment", cc);
+			mctxt.addData("course", c);
 			
 			// Get Pilot IDs from comments
 			Collection<Integer> IDs = new HashSet<Integer>();
