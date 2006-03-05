@@ -35,7 +35,7 @@ public class AirlineListCommand extends AbstractCommand {
 			Map<String, Airline> airlines = dao.getAll();
 			
 			// Sort the airlines and save them
-			ctx.setAttribute("airlines", airlines.values(), REQUEST);
+			ctx.setAttribute("airlines", new TreeSet<Airline>(airlines.values()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

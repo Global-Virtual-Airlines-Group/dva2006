@@ -18,6 +18,7 @@
 <content:page>
 <%@ include file="/jsp/schedule/header.jsp" %> 
 <%@ include file="/jsp/schedule/sideMenu.jsp" %>
+<content:sysdata var="apps" name="apps" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -25,8 +26,8 @@
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="35%">AIRLINE NAME</td>
- <td width="15%">WEB APPLICATIONS</td>
+ <td width="30%">AIRLINE NAME</td>
+ <td width="20%">WEB APPLICATIONS</td>
  <td width="15%">AIRLINE CODE</td>
  <td><el:cmdbutton url="airline" op="edit" label="NEW AIRLINE" /></td>
 </tr>
@@ -35,7 +36,9 @@
 <c:forEach var="airline" items="${airlines}">
 <view:row entry="${airline}">
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
- <td><fmt:list value="${airline.apps}" delim=", " /></td>
+ <td class="sec small"><c:forEach var="appCode" items="${airline.applications}">
+<c:set var="appName" value="${apps[appCode]}" scope="request" />
+${appName.name}<br /></c:forEach></td>
  <td class="bld">${airline.code}</td>
 <c:if test="${airline.active}">
  <td class="ter bld">Airline is currently Active</td>
