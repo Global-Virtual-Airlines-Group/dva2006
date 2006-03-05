@@ -45,7 +45,7 @@
 </tr>
 <tr>
  <td class="label">Application Started on</td>
- <td class="data"><fmt:date date="${startedOn}" /> (<fmt:int value="${execTime / 60}" /> minutes</td>
+ <td class="data"><fmt:date date="${startedOn}" /> (<fmt:int value="${execTime / 60}" /> minutes)</td>
 </tr>
 <tr>
  <td class="label">Servlet API</td>
@@ -68,7 +68,8 @@
 </tr>
 <tr>
  <td class="label">Database Transactions</td>
- <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" /> / minute)</td>
+ <td class="data"><fmt:int value="${daoUsageCount}" /> queries, (<fmt:dec value="${(daoUsageCount * 60) / execTime}" />
+ per minute)</td>
 </tr>
 <tr>
  <td class="label">Google Maps API Usage</td>
