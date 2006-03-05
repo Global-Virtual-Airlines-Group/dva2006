@@ -48,7 +48,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Web Applications</td>
- <td class="data"><el:check name="airlines" width="175" options="${airlines}" checked="${channel.airlines}" /></td>
+ <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

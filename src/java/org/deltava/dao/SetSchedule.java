@@ -42,7 +42,7 @@ public class SetSchedule extends DAO {
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
 			_ps.setString(1, al.getCode());
-			for (Iterator<String> i = al.getApps().iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
 				_ps.setString(2, i.next());
 				_ps.addBatch();
 			}
@@ -81,7 +81,7 @@ public class SetSchedule extends DAO {
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
 			_ps.setString(1, al.getCode());
-			for (Iterator<String> i = al.getApps().iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = al.getApplications().iterator(); i.hasNext(); ) {
 				_ps.setString(2, i.next());
 				_ps.addBatch();
 			}

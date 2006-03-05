@@ -60,7 +60,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	 * @see Airline#addApp(String)
 	 * @see org.deltava.beans.system.AirlineInformation#getCode()
 	 */
-	public Collection<String> getApps() {
+	public Collection<String> getApplications() {
 		return _apps;
 	}
 	
@@ -95,7 +95,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	 * Adds a web application to this Airline.
 	 * @param app the application code
 	 * @see Airline#setApps(Collection)
-	 * @see Airline#getApps()
+	 * @see Airline#getApplications()
 	 * @see org.deltava.beans.system.AirlineInformation#getCode()
 	 */
 	public void addApp(String app) {
@@ -105,7 +105,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	/**
 	 * Updates the web applications this Airline is enabled for.
 	 * @param apps a Collection of application codes
-	 * @see Airline#getApps()
+	 * @see Airline#getApplications()
 	 * @see Airline#addApp(String)
 	 * @see org.deltava.beans.system.AirlineInformation#getCode()
 	 */
