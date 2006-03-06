@@ -84,12 +84,10 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
 			if (txreq != null) {
 				mctxt.addData("txReq", txreq);
-				if (cr.getPassFail()) {
+				if (cr.getPassFail())
 					txreq.setStatus(TransferRequest.OK);
-				} else {
+				else
 					txreq.setStatus(TransferRequest.PENDING);
-					txreq.setCheckRideID(0);
-				}
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
