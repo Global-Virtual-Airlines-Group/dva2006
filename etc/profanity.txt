@@ -252,10 +252,10 @@ doggystyle
 douche bag
 douche_bag
 douchebag
-fag
+fag 
 faggit
 faggot
-fart
+fart 
 fart knocker
 fart licker
 fart_knocker
@@ -264,7 +264,7 @@ farter
 farting
 fartknocker
 fartlicker
-farts
+farts 
 fatass
 fcuk
 finger fuck
