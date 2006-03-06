@@ -23,6 +23,11 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>host</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>force</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>

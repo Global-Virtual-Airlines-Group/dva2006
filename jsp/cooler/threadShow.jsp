@@ -10,8 +10,11 @@
 <head>
 <title><content:airline /> Water Cooler - ${thread.subject}</title>
 <content:css name="main" browserSpecific="true" />
-<content:css name="cooler" browserSpecific="true" />
+<content:css name="cooler" />
 <content:css name="form" />
+<c:forEach var="domain" items="${userData.domains}">
+<content:css host="www.${domain}" name="signature" browserSpecific="true" />
+</c:forEach>
 <content:pics />
 <content:js name="common" />
 <c:if test="${access.canResync}"><content:js name="datePicker" /></c:if>
