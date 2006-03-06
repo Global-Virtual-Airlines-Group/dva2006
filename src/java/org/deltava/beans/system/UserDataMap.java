@@ -92,8 +92,8 @@ public class UserDataMap implements java.io.Serializable, Map {
 	public Collection<UserData> getByTable(String tableName) {
 
 		Set<UserData> results = new HashSet<UserData>();
-		for (Iterator i = _entries.values().iterator(); i.hasNext();) {
-			UserData usr = (UserData) i.next();
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
+			UserData usr = i.next();
 			String usrTable = usr.getDB() + "." + usr.getTable();
 			if (tableName.equals(usrTable))
 				results.add(usr);
@@ -107,13 +107,26 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return a Collection of table names in DB.TABLE format
 	 */
 	public Collection<String> getTableNames() {
-
 		Set<String> results = new HashSet<String>();
-		for (Iterator i = _entries.values().iterator(); i.hasNext();) {
-			UserData usr = (UserData) i.next();
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
+			UserData usr = i.next();
 			results.add(usr.getDB() + "." + usr.getTable());
 		}
 
+		return results;
+	}
+	
+	/**
+	 * Returns all domains containing users within this container.
+	 * @return a Collection of domain names
+	 */
+	public Collection<String> getDomains() {
+		Set<String> results = new HashSet<String>();
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext(); ) {
+			UserData usr = i.next();
+			results.add(usr.getDomain());
+		}
+		
 		return results;
 	}
 	
