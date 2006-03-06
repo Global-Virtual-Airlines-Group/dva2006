@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
@@ -121,10 +121,11 @@ public class TransferRequest extends DatabaseBean implements Comparable, ViewEnt
 	 * Updates the database ID of the assigned Check Ride.
 	 * @param id the Check Ride's database ID
 	 * @throws IllegalArgumentException if id is negative
+	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setCheckRideID(int id) {
 		if (id != 0) {
-			validateID(_checkRideID, id);
+			validateID((_status == PENDING) ? 0 : _checkRideID, id);
 			_checkRideID = id;
 		}
 	}
