@@ -2,12 +2,11 @@
 package org.deltava.taglib.functions;
 
 import java.util.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.*;
 
 import org.deltava.beans.DatabaseBean;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A JSP Function Library to store miscellaneous functions.
@@ -45,7 +44,7 @@ public class MiscFunctions {
 	 * @return the first Object returned by the Collection's iterator.
 	 */
 	public static Object first(Collection c) {
-		return c.iterator().next();
+		return CollectionUtils.isEmpty(c) ? null : c.iterator().next();
 	}
 	
 	/**
