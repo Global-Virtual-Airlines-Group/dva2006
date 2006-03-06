@@ -6,6 +6,7 @@ put ldif.txt.gz
 put create_tables.tar.gz
 put acars.sql.gz
 put afv.sql.gz
+put afv_academy.sql.gz
 put afv_gallery.sql.gz
 put afv_sched.sql.gz
 put afv_sys.sql.gz
@@ -13,6 +14,7 @@ put afv_test.sql.gz
 put common.sql.gz
 put cooler.sql.gz
 put dva.sql.gz
+put dva_academy.sql.gz
 put dva_gallery.sql.gz
 put dva_sched.sql.gz
 put dva_sys.sql.gz
@@ -20,6 +22,7 @@ put dva_test.sql.gz
 put events.sql.gz
 put navdata.sql.gz
 put postfix.sql.gz
+put sqmail.sql.gz
 put teamspeak.sql.gz
 
 cd /svn

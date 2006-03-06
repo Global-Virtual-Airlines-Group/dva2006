@@ -28,6 +28,7 @@ rm *.sql
 # Dump e-mail data
 echo 'Writing e-mail configuration'
 mysqldump -C -K -h mysql.deltava.org postfix | gzip -9 > postfix.sql.gz
+mysqldump -C -K -h mysql.deltava.org sqmail | gzip -9 > sqmail.sql.gz
 
 # Dump TeamSpeak data
 echo 'Writing TeamSpeak configuration'
@@ -35,12 +36,12 @@ mysqldump -C -K -h mysql.deltava.org teamspeak | gzip -9 > teamspeak.sql.gz
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
-mysqldump -C -n -t -K -h mysql.deltava.org -u root common AIRLINEINFO TZ AIRLINES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org -u root common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
 
 # Dump Water Cooler
 echo 'Writing Water Cooler'
-mysqldump -C -n -t -K -h mysql.deltava.org -u root common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_POSTS COOLER_NOTIFY | gzip -9 > cooler.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES | gzip -9 > cooler.sql.gz
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
@@ -58,17 +59,19 @@ mysqldump -C -n -t -K -h mysql.deltava.org -u root acars CONS FLIGHTS POSITIONS 
 
 # Dump DVA database
 echo 'Writing DVA database'
-mysqldump -C -n -t -K -h mysql.deltava.org -u root dva PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > dva.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENTS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS | gzip -9 > dva.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org -u root dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > dva_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u root dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS | gzip -9 > dva_sys.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u root dva SCHEDULE ROUTES | gzip -9 > dva_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS SYS_REFERERS | gzip -9 > dva_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root dva SCHEDULE ROUTES SELCAL | gzip -9 > dva_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root dva CERTS CERTREQS CERTEXAMS CERTDOCS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR | gzip -9 > dva_acadamy.sql.gz
 
 # Dump AFV database
 echo 'Writing AFV database'
-mysqldump -C -n -t -K -h mysql.deltava.org -u root afv PILOTS RATINGS ROLES PIREPS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENTS ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org -u root afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QE_INFO EXAMS EXAMQUESTIONS TXREQUESTS | gzip -9 > afv_test.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u root afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS | gzip -9 > afv_sys.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org -u root afv SCHEDULE ROUTES | gzip -9 > afv_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS SYS_REFERERS | gzip -9 > afv_sys.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root afv SCHEDULE ROUTES SELCAL | gzip -9 > afv_sched.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org -u root afv CERTS CERTREQS CERTEXAMS CERTDOCS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR | gzip -9 > afv_acadamy.sql.gz
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
