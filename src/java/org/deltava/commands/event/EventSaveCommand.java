@@ -72,7 +72,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// Parse the start/end/deadline times
 			e.setStartTime(parseDateTime(ctx, "start", SystemData.get("time.date_format"), "HH:mm"));
 			e.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
-			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close") : e.getStartTime());
+			e.setSignupDeadline(e.getCanSignup() ? parseDateTime(ctx, "close", SystemData.get("time.date_format"), "HH:mm") : e.getStartTime());
 			
 			// Load initial flight route
 			if (e.getCanSignup() && (ctx.getParameter("route") != null)) {
