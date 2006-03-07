@@ -82,7 +82,8 @@ public class InsertCSSTag extends InsertContentTag {
 	public int doEndTag() throws JspException {
 		
 		// Build the path to the CSS file
-		StringBuilder buf = new StringBuilder(SystemData.get("path.css"));
+		StringBuilder buf = new StringBuilder("/");
+		buf.append(SystemData.get("path.css"));
 		buf.append('/');
 		buf.append(getScheme());
 		buf.append('/');
@@ -102,7 +103,8 @@ public class InsertCSSTag extends InsertContentTag {
 		try {
 			// Build the resource name if host specified
 			if (_host != null) {
-				URL url = new URL(pageContext.getRequest().getProtocol(), _host, buf.toString());
+				String protocol = pageContext.getRequest().getProtocol(); 
+				URL url = new URL(protocol.substring(0, protocol.indexOf('/')), _host, buf.toString());
 				buf = new StringBuilder(url.toString());
 			}
 			
@@ -116,7 +118,7 @@ public class InsertCSSTag extends InsertContentTag {
 			JspWriter out = pageContext.getOut();			
 			out.print("<link rel=\"stylesheet\" type=\"text/css\" href=\"");
 			out.print(buf.toString());
-			out.print(".\" />");
+			out.print("\" />");
 		} catch (Exception e) {
 			throw new JspException(e);
 		}

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -115,6 +115,7 @@ public class ThreadCommand extends AbstractCommand {
 			uddao.setQueryMax(0);
 			UserDataMap udm = uddao.getByThread(thread.getID());
 			ctx.setAttribute("userData", udm, REQUEST);
+			ctx.setAttribute("userDomains", udm.getDomains(), REQUEST);
 
 			// Get the authors and online totals for each user
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
