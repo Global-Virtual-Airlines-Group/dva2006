@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -310,7 +310,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * @return HTML text
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<div style=\"mapInfoBox\"><b>");
+		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><b>");
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
