@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.security.command.GalleryAccessControl;
 
 public class GalleryImageCommand extends AbstractCommand {
 	
-	private static final List SCORES = Arrays.asList(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
+	private static final List<String> SCORES = Arrays.asList(new String[] {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"});
 
     /**
      * Executes the command.
@@ -65,7 +65,7 @@ public class GalleryImageCommand extends AbstractCommand {
 			GetGallery dao = new GetGallery(con);
 			img = dao.getImageData(ctx.getID());
 			if (img == null)
-				throw new CommandException("Cannot find Gallery image " + ctx.getID());
+				throw notFoundException("Cannot find Gallery image " + ctx.getID());
 			
 			// Get the Image author
 			GetPilot pdao = new GetPilot(con);
