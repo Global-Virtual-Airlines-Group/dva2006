@@ -47,11 +47,11 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	/**
 	 * Returns if the source <i>and</i> destination authenticators contain a particular directory name.
 	 * @param usr the user bean
-	 * @return TRUE if the source authenticator contains
+	 * @return TRUE if the source authenticator contains the user, otherwise FALSE
 	 * @see org.deltava.security.Authenticator#contains(Person)
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		return _src.contains(usr) && _dst.contains(usr);
+		return _src.contains(usr);
 	}
 
 	/**
