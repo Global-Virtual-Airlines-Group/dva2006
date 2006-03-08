@@ -1,7 +1,9 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A class to store information about written examinations.
@@ -12,114 +14,150 @@ import java.util.*;
 
 public class Examination extends Test {
 
-   /**
-    * Applicant Questionnaire Examination Name.
-    */
-   public static final String QUESTIONNAIRE_NAME = "Initial Questionnaire";
-   
-   private static final String[] CLASS_NAMES = {"opt2", "opt1", null};
+	/**
+	 * Applicant Questionnaire Examination Name.
+	 */
+	public static final String QUESTIONNAIRE_NAME = "Initial Questionnaire";
 
-   private Date _expiryDate;
-   private Map<Integer, Question> _questions;
-   private int _size;
+	private static final String[] CLASS_NAMES = { "opt2", "opt1", null };
 
-   /**
-    * Creates a new examination.
-    * @param name the name of the examination
-    */
-   public Examination(String name) {
-      super(name);
-      _questions = new TreeMap<Integer, Question>();
-   }
+	private Date _expiryDate;
+	private Map<Integer, Question> _questions;
+	private int _size;
+	private boolean _empty;
 
-   /**
-    * Returns the number of questions in this Examination.
-    * @return the number of questions
-    * @see Examination#setSize(int)
-    */
-   public int getSize() {
-      return (_questions.size() == 0) ? _size : _questions.size();
-   }
+	/**
+	 * Creates a new examination.
+	 * @param name the name of the examination
+	 */
+	public Examination(String name) {
+		super(name);
+		_questions = new TreeMap<Integer, Question>();
+	}
 
-   /**
-    * Returns the Expiration Date of this Examination.
-    * @return the date/time this exam must be completed by
-    * @see Examination#setExpiryDate(Date)
-    */
-   public Date getExpiryDate() {
-      return _expiryDate;
-   }
+	/**
+	 * Returns the number of questions in this Examination.
+	 * @return the number of questions
+	 * @see Examination#setSize(int)
+	 */
+	public int getSize() {
+		return (_questions.size() == 0) ? _size : _questions.size();
+	}
 
-   /**
-    * Returns this Examination's questions.
-    * @return a List of questions.
-    * @see Question
-    * @see Examination#addQuestion(Question)
-    */
-   public Collection<Question> getQuestions() {
-      return _questions.values();
-   }
+	/**
+	 * Returns the Expiration Date of this Examination.
+	 * @return the date/time this exam must be completed by
+	 * @see Examination#setExpiryDate(Date)
+	 */
+	public Date getExpiryDate() {
+		return _expiryDate;
+	}
 
-   /**
-    * Returns a specific Question from the Examination.
-    * @param idx the question number
-    * @return the Question with the specified number, or null if not present
-    */
-   public Question getQuestion(int idx) {
-      return _questions.get(new Integer(idx));
-   }
+	/**
+	 * Returns this Examination's questions.
+	 * @return a List of questions.
+	 * @see Question
+	 * @see Examination#addQuestion(Question)
+	 */
+	public Collection<Question> getQuestions() {
+		return _questions.values();
+	}
 
-   /**
-    * Returns the test type.
-    * @return always Text.EXAM
-    * @see Test#getType()
-    */
-   public int getType() {
-      return Test.EXAM;
-   }
+	/**
+	 * Returns wether this Examination's answers were empty.
+	 * @return TRUE if all Answers are blank, otherwise FALSE
+	 * @see Examination#setEmpty(boolean)
+	 */
+	public boolean getEmpty() {
+		if (_questions.isEmpty())
+			return _empty;
 
-   /**
-    * Adds a Question to the Examination.
-    * @param q the Question to add
-    * @see Examination#getQuestions()
-    */
-   public void addQuestion(Question q) {
-      // Generate a question number if the question does not currently have one
-      int qNum = (q.getNumber() == 0) ? (_questions.size() + 1) : q.getNumber();
-      _questions.put(new Integer(qNum), q);
-      q.setNumber(qNum);
-   }
+		// Check the question answers
+		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext();) {
+			Question q = i.next();
+			if (!StringUtils.isEmpty(q.getAnswer()))
+				return false;
+		}
 
-   /**
-    * Updates the size of this examination.
-    * @param size the number of questions
-    * @throws IllegalStateException if at least one question has been aded to this exam
-    * @throws IllegalArgumentException if size is zero or negative
-    * @see Examination#getSize()
-    */
-   public void setSize(int size) {
-      if (_questions.size() != 0)
-         throw new IllegalStateException("Question Pool already populated");
-      else if (size < 1)
-         throw new IllegalArgumentException("Examination Size cannot be zero or negative");
+		return true;
+	}
 
-      _size = size;
-   }
+	/**
+	 * Returns a specific Question from the Examination.
+	 * @param idx the question number
+	 * @return the Question with the specified number, or null if not present
+	 */
+	public Question getQuestion(int idx) {
+		return _questions.get(new Integer(idx));
+	}
 
-   /**
-    * Updates the expiration date of this Examination.
-    * @param dt the new expiration date
-    * @see Examination#getExpiryDate()
-    */
-   public void setExpiryDate(Date dt) {
-      _expiryDate = dt;
-   }
-   
-   /**
-    * Returns the CSS class name for a view table row.
-    * @return the CSS class name 
-    */
-   public String getRowClassName() {
-	   return CLASS_NAMES[getStatus()];
-   }
+	/**
+	 * Returns the test type.
+	 * @return always Text.EXAM
+	 * @see Test#getType()
+	 */
+	public int getType() {
+		return Test.EXAM;
+	}
+
+	/**
+	 * Marks this Examination as having all blank answers.
+	 * @param isEmpty TRUE if all answers are blank, otherwise FALSE
+	 * @throws IllegalStateException if Questions have been populated
+	 * @see Examination#getEmpty()
+	 */
+	public void setEmpty(boolean isEmpty) {
+		if (!_questions.isEmpty())
+			throw new IllegalStateException("Questions already loaded");
+
+		_empty = isEmpty;
+	}
+
+	/**
+	 * Adds a Question to the Examination.
+	 * @param q the Question to add
+	 * @see Examination#getQuestions()
+	 */
+	public void addQuestion(Question q) {
+		// Generate a question number if the question does not currently have one
+		int qNum = (q.getNumber() == 0) ? (_questions.size() + 1) : q.getNumber();
+		_questions.put(new Integer(qNum), q);
+		q.setNumber(qNum);
+	}
+
+	/**
+	 * Updates the size of this examination.
+	 * @param size the number of questions
+	 * @throws IllegalStateException if at least one question has been aded to this exam
+	 * @throws IllegalArgumentException if size is zero or negative
+	 * @see Examination#getSize()
+	 */
+	public void setSize(int size) {
+		if (_questions.size() != 0)
+			throw new IllegalStateException("Question Pool already populated");
+		else if (size < 1)
+			throw new IllegalArgumentException("Examination Size cannot be zero or negative");
+
+		_size = size;
+	}
+
+	/**
+	 * Updates the expiration date of this Examination.
+	 * @param dt the new expiration date
+	 * @see Examination#getExpiryDate()
+	 */
+	public void setExpiryDate(Date dt) {
+		_expiryDate = dt;
+	}
+
+	/**
+	 * Returns the CSS class name for a view table row.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		if (getEmpty() && (getStatus() == Test.SCORED))
+			return "warn";
+
+		return CLASS_NAMES[getStatus()];
+	}
 }

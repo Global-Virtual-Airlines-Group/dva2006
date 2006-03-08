@@ -253,7 +253,7 @@ public class GetExam extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 16);
+		boolean hasName = (rs.getMetaData().getColumnCount() > 17);
 
 		// Iterate through the results
 		List<Examination> results = new ArrayList<Examination>();
@@ -268,16 +268,17 @@ public class GetExam extends DAO {
 			e.setScoredOn(rs.getTimestamp(8));
 			e.setScorerID(rs.getInt(9));
 			e.setPassFail(rs.getBoolean(10));
-			e.setComments(rs.getString(11));
-			e.setSize(rs.getInt(12));
-			e.setScore(rs.getInt(13));
-			e.setStage(rs.getInt(14));
-			e.setAcademy(rs.getBoolean(15));
+			e.setEmpty(rs.getBoolean(11));
+			e.setComments(rs.getString(12));
+			e.setSize(rs.getInt(13));
+			e.setScore(rs.getInt(14));
+			e.setStage(rs.getInt(15));
+			e.setAcademy(rs.getBoolean(16));
 
 			// If we're joining with pilots, get the pilot name
 			if (hasName) {
-				e.setFirstName(rs.getString(16));
-				e.setLastName(rs.getString(17));
+				e.setFirstName(rs.getString(17));
+				e.setLastName(rs.getString(18));
 			}
 
 			// Add to results
