@@ -93,14 +93,15 @@ public class SetExam extends DAO {
 
 			// Prepare the statement for the examination
 			prepareStatement("UPDATE EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, PASS=?, "
-					+ "COMMENTS=? WHERE (ID=?)");
+					+ "COMMENTS=?, ISEMPTY=? WHERE (ID=?)");
 			_ps.setInt(1, ex.getStatus());
 			_ps.setTimestamp(2, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(3, createTimestamp(ex.getScoredOn()));
 			_ps.setInt(4, ex.getScorerID());
 			_ps.setBoolean(5, ex.getPassFail());
 			_ps.setString(6, ex.getComments());
-			_ps.setInt(7, ex.getID());
+			_ps.setBoolean(7, ex.getEmpty());
+			_ps.setInt(8, ex.getID());
 
 			// Update the exam
 			executeUpdate(1);
@@ -120,10 +121,10 @@ public class SetExam extends DAO {
 
 			// Update the questions
 			_ps.executeBatch();
-
-			// Commit the transaction and clean up
-			commitTransaction();
 			_ps.close();
+
+			// Commit the transaction
+			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
