@@ -119,6 +119,7 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 <!-- Thread Posts -->
 <c:set var="postIdx" value="${0}" scope="request" />
 <c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="request" />
+<c:set var="contentWarn" value="${false}" scope="request" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
@@ -126,6 +127,7 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="request" />
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="request" />
+<c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="request" />
 <tr>
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
