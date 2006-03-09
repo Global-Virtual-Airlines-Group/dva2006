@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -49,6 +50,12 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			// Check if we can take the exam
             if (!_testHistory.canWrite(ep))
 				throw securityException("Cannot take " + examName);
+            
+            // Check if we have a pending Transfer Request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.get(ctx.getUser().getID());
+			if (txreq != null)
+				throw securityException("Cannot take " + examName + " - Pending Equipment Transfer");
 
 			// Get the Message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
