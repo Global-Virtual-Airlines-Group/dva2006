@@ -106,12 +106,18 @@ return true;
  <td class="left" colspan="7">PILOT EXAMINATIONS</td>
 </tr>
 <tr>
-<c:if test="${examActive != 0}">
+<c:choose>
+<c:when test="${examActive != 0}">
  <td class="left" colspan="6">You currently are in the process of taking a Pilot Examination.
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
  <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
-</c:if>
-<c:if test="${examActive == 0}">
+</c:when>
+<c:when test="${!empty txreq}">
+ <td class="left" colspan="7">You currently are in the process of transferring between Equipment
+ Programs. Until your Equipment Program Transfer has been completed, you cannot take any new
+ examinations.</td>
+</c:when>
+<c:otherwise>
  <td class="left" colspan="7">Please select a written examination from the list below. Make sure that
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
@@ -127,7 +133,8 @@ The specific program Chief Pilot or Assistant Chief Pilots score examianations w
 <tr class="title">
  <td colspan="7">SELECT EXAMINATION <el:combo name="examName" idx="1" size="1" options="${availableExams}" firstEntry="< SELECT EXAM >" />
  <el:button ID="ExamButton" type="SUBMIT" className="BUTTON" label="NEW EXAMINATION" /></td>
-</c:if>
+</c:otherwise>
+</c:choose>
 </tr>
 </el:table>
 </el:form>

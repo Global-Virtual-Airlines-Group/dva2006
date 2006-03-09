@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -43,6 +44,14 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			List<ExamProfile> allExams = epdao.getExamProfiles();
+			
+			// Check if we have a Transfer Request open
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.get(usr.getID());
+			if (txreq != null) {
+				allExams.clear();
+				ctx.setAttribute("txreq", txreq, REQUEST);
+			}
 
 			// Remove all examinations that we have passed or require a higher stage than us
 			_testHistory.setDebug(ctx.isSuperUser());
