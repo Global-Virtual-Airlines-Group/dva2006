@@ -135,9 +135,6 @@ map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 var routeData;
 var routeWaypoints;
 
-// Set mapMove event for Date Line fix
-GEvent.addListener(map, "moveend", function() { updateOverlays() });
-
 // Reload ACARS data
 document.doRefresh = true;
 reloadData(true);
