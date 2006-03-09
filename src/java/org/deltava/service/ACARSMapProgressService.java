@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.IOException;
@@ -8,8 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.dao.*;
@@ -41,6 +40,7 @@ public class ACARSMapProgressService extends WebDataService {
 		}
 		
 		// Get the DAO and the route data
+		FlightInfo info = null;
 		Collection routePoints = null;
 		Collection routeWaypoints = null;
 		try {
@@ -48,7 +48,7 @@ public class ACARSMapProgressService extends WebDataService {
 			routePoints = dao.getRouteEntries(id, false, false);
 			
 			// Load the route and the route waypoints
-			FlightInfo info = dao.getInfo(id);
+			info = dao.getInfo(id);
 			if (info != null) {
 				GetNavRoute navdao = new GetNavRoute(_con);
 				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
@@ -63,6 +63,12 @@ public class ACARSMapProgressService extends WebDataService {
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
+		
+		// Determine if we cross the International Date Line
+		double longD = info.getAirportD().getLongitude();
+		double longA = info.getAirportA().getLongitude();
+		boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
+		re.setAttribute("crossIDL", String.valueOf(crossIDL));
 
 		// Write the positions
 		for (Iterator i = routePoints.iterator(); i.hasNext(); ) {
