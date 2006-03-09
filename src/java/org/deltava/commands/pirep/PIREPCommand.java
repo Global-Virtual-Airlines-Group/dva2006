@@ -12,8 +12,6 @@ import org.deltava.beans.testing.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
-import org.deltava.comparators.AirportComparator;
-
 import org.deltava.dao.*;
 import org.deltava.util.*;
 
@@ -33,19 +31,17 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static Collection<String> _flightTimes;
 	private static Collection<String> _flightYears;
 
-	private static final Comparator _cmp = new AirportComparator(AirportComparator.NAME);
-
 	// Flight Simulator versions
 	private static final List fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
 			FlightReport.FSVERSION.length);
 
 	// Month combolist values
-	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March", "April",
-			"May", "June", "July", "August", "September", "October", "November", "December" }, new String[] { "0", "1",
-			"2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
+	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
+			"April", "May", "June", "July", "August", "September", "October", "November", "December" }, new String[] {
+			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11" });
 
 	// Check ride approval values
-	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" }, 
+	private static final List<ComboAlias> crApprove = ComboUtils.fromArray(new String[] { "PASS", "UNSATISFACTORY" },
 			new String[] { "true", "false" });
 
 	/**
@@ -83,7 +79,7 @@ public class PIREPCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we are doing a submit & save
-		boolean doSubmit = "1".equals(ctx.getParameter("doSubmit"));
+		boolean doSubmit = Boolean.valueOf(ctx.getParameter("doSubmit")).booleanValue();
 
 		FlightReport fr = null;
 		try {
@@ -292,7 +288,6 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Save airport/airline lists in the request
 		ctx.setAttribute("airline", "DVA", REQUEST);
-		ctx.setAttribute("airportSorter", _cmp, REQUEST);
 
 		// Save Flight Simulator versions
 		ctx.setAttribute("fsVersions", fsVersions, REQUEST);
@@ -350,7 +345,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetEvent evdao = new GetEvent(con);
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
 			}
-			
+
 			// Create the access controller and stuff it in the request
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
@@ -386,7 +381,7 @@ public class PIREPCommand extends AbstractFormCommand {
 							}
 						}
 					}
-					
+
 					// Get the connectoin data
 					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
 
@@ -408,20 +403,20 @@ public class PIREPCommand extends AbstractFormCommand {
 					try {
 						crAccess = new ExamAccessControl(ctx, cr);
 						crAccess.validate();
-						
+
 						// Save the access controller
 						ctx.setAttribute("crAccess", crAccess, REQUEST);
 						if (crAccess.getCanScore())
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
-						
+
 						// Determine if we can score the exam
-						boolean canScoreCR = ac.getCanApprove() && crAccess.getCanScore() &&
-							(cr.getStatus() == Test.SUBMITTED);
+						boolean canScoreCR = ac.getCanApprove() && crAccess.getCanScore()
+								&& (cr.getStatus() == Test.SUBMITTED);
 						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
 					} catch (AccessControlException ace) {
 						// nothing
 					}
-					
+
 					// Save the checkride
 					ctx.setAttribute("checkRide", cr, REQUEST);
 				}
@@ -433,11 +428,16 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (!(fr instanceof ACARSFlightReport))
 					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA()
 							.getPosition(), 100), REQUEST);
+				
+				// Determine if we are crossing the International Date Line
+				double longD = fr.getAirportD().getLongitude();
+				double longA = fr.getAirportA().getLongitude();
+				boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
+				ctx.setAttribute("crossIDL", Boolean.valueOf(crossIDL), REQUEST);
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
-						REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request
