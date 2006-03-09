@@ -306,4 +306,20 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Clears content warnings from all posts in a Water Cooler discussion thread.
+	 * @param threadID the thread ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearWarning(int threadID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET CONTENTWARN=? WHERE (THREAD_ID=?)");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, threadID);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
