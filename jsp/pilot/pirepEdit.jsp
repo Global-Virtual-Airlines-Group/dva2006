@@ -52,7 +52,7 @@ return true;
 function saveSubmit()
 {
 var f = document.forms[0];
-f.doSubmit.value = '1';
+f.doSubmit.value = 'true';
 return cmdPost(f.action);
 }
 
