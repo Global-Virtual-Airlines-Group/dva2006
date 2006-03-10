@@ -191,8 +191,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </c:if>
  </td>
  <td class="postDate" colspan="${canEdit ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
-<content:filter roles="Admin,Moderator">
- from ${msg.remoteAddr} (${msg.remoteHost})
+<content:filter roles="Moderator">
+ from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error">CONTENT 
+WARNING</span></c:if>
 </content:filter>
 <c:if test="${canEdit}">
  </td>
@@ -240,6 +241,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:if test="${imgAccess.canDelete}">
  <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
 </c:if>
+<content:filter roles="Moderator"><c:if test="${contentWarn}">
+ <el:cmdbutton ID="UnfilterButton" label="CLEAR CONTENT WARNING" url="clearcontentwarn" linkID="0x${thread.ID}" />
+</c:if></content:filter>
 <c:if test="${access.canResync && !noResync}">
  <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
 </c:if>
