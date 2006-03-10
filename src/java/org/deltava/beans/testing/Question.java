@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.DatabaseBean;
