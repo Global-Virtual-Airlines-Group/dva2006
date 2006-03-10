@@ -88,7 +88,9 @@ if (isToggled) {
 	addMarkers(map, arrayName);
 }
 
-updateOverlays();
+if (crossIDL)
+	updateOverlays();
+
 return true;
 }
 
