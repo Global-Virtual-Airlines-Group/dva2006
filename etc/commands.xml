@@ -604,6 +604,12 @@
 		<roles>Moderator</roles>
 	</command>
 
+	<command id="clearcontentwarn">
+		<name>Clear Water Cooler Content Warning</name>
+		<class>org.deltava.commands.cooler.ContentOverrideCommand</class>
+		<roles>Moderator</roles>
+	</command>
+
 	<command id="threadkill">
 		<name>Delete Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadDeleteCommand</class>
