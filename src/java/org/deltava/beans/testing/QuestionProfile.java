@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -21,6 +22,7 @@ public class QuestionProfile extends Question implements ViewEntry {
    /**
     * Creates a new Question Profile.
     * @param text the question text
+    * @throws NullPointerException if text is null
     */
    public QuestionProfile(String text) {
       super(text);

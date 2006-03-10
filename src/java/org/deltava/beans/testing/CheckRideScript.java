@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 /**
