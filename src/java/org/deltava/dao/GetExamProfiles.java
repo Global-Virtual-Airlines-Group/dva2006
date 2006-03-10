@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.testing.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to read examination configuration data.
  * @author Luke
@@ -84,9 +86,11 @@ public class GetExamProfiles extends DAO {
 		try {
 			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM QUESTIONINFO Q "
 					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON "
-					+ "(EQ.EXAM_ID=E.ID) WHERE (Q.ID=?) AND (E.EMPTY=?) GROUP BY Q.ID");
+					+ "(EQ.EXAM_ID=E.ID) WHERE (Q.ID=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
+					+ "INTERVAL ? DAY)) GROUP BY Q.ID");
 			_ps.setInt(1, id);
 			_ps.setBoolean(2, false);
+			_ps.setInt(3, SystemData.getInt("testing.correct_ratio_age", 90));
 
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
@@ -142,7 +146,7 @@ public class GetExamProfiles extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
 				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
 				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) WHERE (Q.ACTIVE=?) AND "
-				+ "(E.ISEMPTY=?)");
+				+ "(E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY))");
 
 		if (!showAll)
 			sqlBuf.append(" AND (QE.EXAM_NAME=?)");
@@ -155,8 +159,9 @@ public class GetExamProfiles extends DAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, true);
 			_ps.setBoolean(2, false);
+			_ps.setInt(3, SystemData.getInt("testing.correct_ratio_age", 90));
 			if (!showAll)
-				_ps.setString(3, examName);
+				_ps.setString(4, examName);
 
 			// Execute the Query
 			List<QuestionProfile> results = new ArrayList<QuestionProfile>();

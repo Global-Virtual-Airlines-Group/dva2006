@@ -308,6 +308,7 @@
 
 	<testing>
 		<lockout type="Integer">24</lockout>
+		<correct_ratio_age type="Integer">90</correct_ratio_age>
 	</testing>
 
 	<config>
@@ -445,7 +446,6 @@
 		<show type="Boolean">true</show>
 		<list name="versions" attr="version" sorted="true">
 			<version>1.0</version>
-			<version>1.01</version>
 			<version>1.1</version>
 		</list>
 		
