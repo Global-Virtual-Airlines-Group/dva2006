@@ -185,7 +185,7 @@ public class ACARSEarthService extends WebDataService {
 			if (colorOfs >= COLORS.length)
 				colorOfs = 0;
 			
-			Collection<Element> fData = createFlight(info, showData, COLORS[++colorOfs]);
+			Collection<Element> fData = createFlight(info, showData, COLORS[colorOfs]);
 			Element fe = de;
 			if (info.hasRouteData()) {
 				fe = new Element("Folder");
