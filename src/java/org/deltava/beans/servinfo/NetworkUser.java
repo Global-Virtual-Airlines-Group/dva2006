@@ -194,7 +194,10 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
      * @see NetworkUser#getName()
      */
     public void setName(String name) {
-        _name = StringUtils.properCase(name.substring(0, name.lastIndexOf(' ')));
+    	if (name.lastIndexOf(' ') != -1)
+    		name = name.substring(0, name.lastIndexOf(' '));
+    	
+        _name = StringUtils.properCase(name);
     }
     
     /**
