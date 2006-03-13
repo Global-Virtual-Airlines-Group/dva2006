@@ -57,7 +57,6 @@ public class AssignmentSaveCommand extends AbstractCommand {
               SetFlightReport pwdao = new SetFlightReport(con);
               for (Iterator<FlightReport> i = info.getFlights().iterator(); i.hasNext();) {
                   FlightReport fr = i.next();
-                  fr.setCreatedOn(now);
                   fr.setDate(now);
                   fr.setRank(ctx.getUser().getRank());
                   pwdao.write(fr);
