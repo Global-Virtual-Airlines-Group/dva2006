@@ -49,7 +49,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			if (cr == null) {
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
 				cr.setAircraftType(fr.getEquipmentType());
-				cr.setDate(fr.getCreatedOn());
+				cr.setDate(fr.getDate());
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
 				cr.setSubmittedOn(fr.getDate());
