@@ -105,7 +105,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 
 			// Update the transfer request
 			txreq.setCheckRideID(cr.getID());
-			txreq.setStatus(TransferRequest.PENDING);
+			txreq.setStatus(TransferRequest.ASSIGNED);
 
 			// Save the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);
