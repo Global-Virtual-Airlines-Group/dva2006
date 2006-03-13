@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.testing.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -84,10 +85,10 @@ public class GetExamProfiles extends DAO {
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM QUESTIONINFO Q "
-					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON "
-					+ "(EQ.EXAM_ID=E.ID) WHERE (Q.ID=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
-					+ "INTERVAL ? DAY)) GROUP BY Q.ID");
+			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM QUESTIONINFO Q "
+					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) "
+					+ "LEFT JOIN QUESTIONMINFO MQ ON (MQ.ID=Q.ID) WHERE (Q.ID=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON "
+					+ ">= DATE_SUB(NOW(), INTERVAL ? DAY)) GROUP BY Q.ID");
 			_ps.setInt(1, id);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, SystemData.getInt("testing.correct_ratio_age", 90));
@@ -100,8 +101,12 @@ public class GetExamProfiles extends DAO {
 				return null;
 			}
 
+			// Check if we are multiple choice
+			boolean isMultiChoice = (rs.getInt(7) > 0);
+
 			// Populate the Question Profile
-			QuestionProfile qp = new QuestionProfile(rs.getString(2));
+			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
+					rs.getString(2));
 			qp.setID(rs.getInt(1));
 			qp.setCorrectAnswer(rs.getString(3));
 			qp.setActive(rs.getBoolean(4));
@@ -111,6 +116,22 @@ public class GetExamProfiles extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
+
+			// Get multiple choice choices
+			if (isMultiChoice) {
+				MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
+				prepareStatementWithoutLimits("SELECT ANSWER FROM QUESTIONMINFO WHERE (ID=?) ORDER BY SEQ");
+				_ps.setInt(1, qp.getID());
+
+				// Execute the Query
+				rs = _ps.executeQuery();
+				while (rs.next())
+					mqp.addChoice(rs.getString(1));
+
+				// Clean up
+				rs.close();
+				_ps.close();
+			}
 
 			// Get the exams for this question
 			prepareStatementWithoutLimits("SELECT EXAM_NAME FROM QE_INFO WHERE (QUESTION_ID=?)");
@@ -145,8 +166,9 @@ public class GetExamProfiles extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
 				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
-				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) WHERE (Q.ACTIVE=?) AND "
-				+ "(E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY))");
+				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) LEFT JOIN QUESTIONMINFO MQ "
+				+ "ON (Q.ID=MQ.ID) WHERE (Q.ACTIVE=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
+				+ "INTERVAL ? DAY))");
 
 		if (!showAll)
 			sqlBuf.append(" AND (QE.EXAM_NAME=?)");
@@ -164,10 +186,17 @@ public class GetExamProfiles extends DAO {
 				_ps.setString(4, examName);
 
 			// Execute the Query
+			boolean hasMultiChoice = false;
 			List<QuestionProfile> results = new ArrayList<QuestionProfile>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				QuestionProfile qp = new QuestionProfile(rs.getString(2));
+				// Check if we are multiple choice
+				boolean isMultiChoice = (rs.getInt(7) > 0);
+				hasMultiChoice |= isMultiChoice;
+				
+				// Populate the Question Profile
+				QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
+						rs.getString(2));
 				qp.setID(rs.getInt(1));
 				qp.setCorrectAnswer(rs.getString(3));
 				qp.setActive(rs.getBoolean(4));
@@ -178,9 +207,41 @@ public class GetExamProfiles extends DAO {
 				results.add(qp);
 			}
 
-			// Clean up and return
+			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Convert to a map so we can load multiple choices
+			if (hasMultiChoice) {
+				Map<Integer, QuestionProfile> resultMap = CollectionUtils.createMap(results, "ID");
+				
+				// Build the SQL statement
+				sqlBuf = new StringBuilder("SELECT MQ.* FROM QUESTIONMINFO MQ, QUESTIONINFO Q, QE_INFO QE WHERE "
+						+ "(Q.ID=QE.QUESTION_ID) AND (Q.ID=MQ.ID)");
+				if (!showAll)
+					sqlBuf.append(" AND (QE.EXAM_NAME=?)");
+				
+				sqlBuf.append(" ORDER BY MQ.ID, MQ.SEQ");
+				
+				// Prepare the query
+				prepareStatementWithoutLimits(sqlBuf.toString());
+				if (!showAll)
+					_ps.setString(1, examName);
+				
+				// Execute the query
+				rs = _ps.executeQuery();
+				while (rs.next()) {
+					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) resultMap.get(new Integer(rs.getInt(1)));
+					if (mqp != null)
+						mqp.addChoice(rs.getString(3));
+				}
+				
+				// Clean up
+				rs.close();
+				_ps.close();
+			}
+			
+			// Return results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
