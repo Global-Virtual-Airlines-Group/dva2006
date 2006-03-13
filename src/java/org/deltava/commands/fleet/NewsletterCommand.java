@@ -52,7 +52,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 		FileUpload mFile = ctx.getFile("file");
 		if (isNew && (mFile == null)) {
 			throw new CommandException("No Manual Uploaded");
-		} else if (mFile != null) {
+		} else if (isNew && (mFile != null)) {
 			fName = mFile.getName();
 		}
 
