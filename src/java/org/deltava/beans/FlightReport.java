@@ -88,7 +88,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    public static final String DBID_ACARS = "$ACARS$";
 
    private Date _date;
-   private Date _createdOn;
    private Date _submittedOn;
    private Date _disposedOn;
    private int _length;
@@ -207,15 +206,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
     */
    public Date getDate() {
       return _date;
-   }
-
-   /**
-    * The date/time this Flight Report was created.
-    * @return the creation date/time of this PIREP.
-    * @see FlightReport#setCreatedOn(Date)
-    */
-   public Date getCreatedOn() {
-      return _createdOn;
    }
 
    /**
@@ -484,15 +474,6 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    }
 
    /**
-    * Updates the date/time this Flight Report was created on.
-    * @param cd when this Flight Report was created
-    * @see FlightReport#getCreatedOn()
-    */
-   public void setCreatedOn(Date cd) {
-      _createdOn = cd;
-   }
-
-   /**
     * Updates the date that this Flight was flown on.
     * @param dt when this flight was flown. The time component is undefined.
     * @see FlightReport#getDate()
@@ -539,11 +520,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    }
 
    /**
-    * Compare two Flight Reports by comparing their creation date/time.
+    * Compare two Flight Reports by comparing their date/time.
     * @see Comparable#compareTo(Object)
     */
    public int compareTo(FlightReport fr2) {
-      return _createdOn.compareTo(fr2.getCreatedOn());
+      return _date.compareTo(fr2.getDate());
    }
 
    /**
