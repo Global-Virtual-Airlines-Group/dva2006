@@ -24,7 +24,7 @@
 <br />
 Your request to be transferred to the <span class="pri bld">${txReq.equipmentType}</span> program has been 
 submitted. A Check Ride may be required in order to complete the transfer. If this is the case, you will 
-be notified via e-mail within the next 24 to 72 hours regarding the requirements for your your Check Ride.<br />
+be notified via e-mail within the next 24 to 72 hours regarding the requirements for your Check Ride.<br />
 </c:if>
 <c:if test="${isApprove}">
 <c:if test="${txReq.ratingOnly}">
