@@ -222,6 +222,9 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canApprove && (!scoreCR)}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="approve" post="true" label="APPROVE FLIGHT" />
+<c:if test="${fn:isACARS(pirep)}"><content:filter roles="HR">
+ <el:cmdbutton url="crflag" linkID="0x${pirep.ID}" label="MARK AS CHECK RIDE" />
+</content:filter></c:if>
 </c:if>
 <c:if test="${access.canHold}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="hold" post="true" label="HOLD" />
