@@ -6,7 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>New <content:airline /> Equipment Transfer Request</title>
+<title>New <content:airline /> ${isRating ? 'Equipment Transfer' : 'Additional Rating'} Request</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -34,7 +34,7 @@ return true;
 <el:form action="txrequest.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">NEW EQUIPMENT PROGRAM TRANSFER REQUEST</td>
+ <td colspan="2">NEW ${isRating ? 'EQUIPMENT PROGRAM TRANSFER' : 'ADDITIONAL RATING'} REQUEST</td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
@@ -42,14 +42,14 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="ratingOnly" idx="*" value="true" label="Request equipment type ratings only" /></td>
+ <td class="data"><el:box name="ratingOnly" idx="*" checked="${isRating}" value="true" label="Request equipment type ratings only" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT TRANSFER REQUEST" /></td>
+ <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT TRANSFER/RATING REQUEST" /></td>
 </tr>
 </el:table>
 </el:form>

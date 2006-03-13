@@ -277,7 +277,13 @@ promoted within the next 24 to 72 hours.</td></c:when>
 </c:if>
 <c:if test="${!empty eqSwitch || !empty eqSwitchFOExam}">
 <tr>
- <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd></td>
+<c:if test="${!empty eqSwitch}">
+ <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br />
+<el:cmd className="bld" op="rating" url="txrequest">Request Additional Ratings</el:cmd></td>
+</c:if>
+<c:if test="${empty eqSwitch}">
+ <td class="mid">&nbsp;</td>
+</c:if>
  <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional
  ratings in the following equipment types: <fmt:list value="${eqSwitch}" delim=", " />.</c:if>
 <c:if test="${!empty eqSwitch && !empty eqSwitchFOExam}"><br /><br /></c:if>
@@ -286,11 +292,18 @@ promoted within the next 24 to 72 hours.</td></c:when>
  equipment programs: <fmt:list value="${eqSwitchFOExam}" delim=", " />.</c:if></td>
 </tr>
 </c:if>
-<c:if test="${!empty txreq}">
+<c:if test="${(!empty txreq) && (!txreq.ratingOnly)}">
 <tr>
  <td class="mid bld">Switch Equipment Programs</td>
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested a change of Equipment 
-Program to the <b>${txreq.equipmentType}</b> program.</td>
+Program to the <span class="bld">${txreq.equipmentType}</span> program.</td>
+</tr>
+</c:if>
+<c:if test="${(!empty txreq) && txreq.ratingOnly}">
+<tr>
+ <td class="mid bld">Request Additional Rating</td>
+ <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type
+ ratings in the <span class="bld">${txreq.equipmentType}</span> program.</td>
 </tr>
 </c:if>
 <tr>

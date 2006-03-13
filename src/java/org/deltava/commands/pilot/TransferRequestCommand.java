@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -54,6 +54,10 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			if (eqType == null) {
 				ctx.release();
 				ctx.setAttribute("availableEQ", activeEQ, REQUEST);
+				
+				// Determine if we are requesting an additional rating only
+				boolean isRating = "rating".equals(ctx.getCmdParameter(OPERATION, null));
+				ctx.setAttribute("isRating", Boolean.valueOf(isRating), REQUEST);
 
 				// Forward to the JSP
 				result.setURL("/jsp/pilot/txRequestNew.jsp");
