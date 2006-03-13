@@ -175,7 +175,7 @@ public class GetServInfo extends DAO {
 
 			String iData = br.readLine();
 			while (iData != null) {
-				if (iData.charAt(0) == '!') {
+				if ((iData.length() > 0) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
 					log.debug("Loading Section " + sectionName);
 
@@ -242,6 +242,9 @@ public class GetServInfo extends DAO {
 
 								default:
 								case NetworkUser.PILOT:
+									if (si.size() < SITokens.ROUTE)
+										break;
+									
 									try {
 										Pilot p = new Pilot(id);
 										p.setCallsign(si.get(SITokens.CALLSIGN));
