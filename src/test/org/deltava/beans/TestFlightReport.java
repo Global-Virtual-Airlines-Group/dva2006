@@ -126,8 +126,8 @@ public class TestFlightReport extends AbstractBeanTestCase {
     
     public void testComparison() {
         FlightReport fr2 = new FlightReport(_a, 123, 2);
-        _fr.setCreatedOn(new Date());
-        fr2.setCreatedOn(new Date(_fr.getCreatedOn().getTime() + 1));
+        _fr.setDate(new Date());
+        fr2.setDate(new Date(_fr.getDate().getTime() + 1));
         assertEquals(-1, _fr.compareTo(fr2));
         assertEquals(1, fr2.compareTo(_fr));
         assertFalse(_fr.equals(fr2));
