@@ -36,7 +36,7 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
 
 			// See if there's a checkride
 			GetExam exdao = new GetExam(con);

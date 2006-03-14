@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -21,27 +21,27 @@ import org.deltava.security.command.ScheduleAccessControl;
 public class RouteDeleteCommand extends AbstractCommand {
 
 	/**
-     * Executes the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occurs
-     */
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
+
 		// Check our access level
 		ScheduleAccessControl access = new ScheduleAccessControl(ctx);
 		access.validate();
 		if (!access.getCanDelete())
 			throw securityException("Cannot delete Oceanic Route");
-		
+
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the Route - we don't care what it is (so long as it exists)
 			GetRoute dao = new GetRoute(con);
 			Object route = dao.get(ctx.getID());
 			if (route == null)
-				throw new CommandException("Invalid Oceanic Route - " + ctx.getID());
-			
+				throw notFoundException("Invalid Oceanic Route - " + ctx.getID());
+
 			// Get the DAO and delete the route
 			SetRoute wdao = new SetRoute(con);
 			wdao.deleteOceanic(ctx.getID());
@@ -50,10 +50,10 @@ public class RouteDeleteCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Set status variable for the JSP
 		ctx.setAttribute("isDelete", Boolean.TRUE, REQUEST);
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);

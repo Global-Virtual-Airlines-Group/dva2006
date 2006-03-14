@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -40,7 +40,7 @@ public class ApplicantRejectCommand extends AbstractCommand {
 			GetApplicant dao = new GetApplicant(con);
 			a = dao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 
 			// Check our access
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);

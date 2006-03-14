@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.text.*;
@@ -32,23 +32,23 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the old flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		ScheduleEntry id = FlightCodeParser.parse(fCode);
-		
+
 		// Check our access
 		ScheduleAccessControl ac = new ScheduleAccessControl(ctx);
 		ac.validate();
 		if (!ac.getCanEdit())
 			throw securityException("Cannot modify Flight Schedule");
-		
+
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the existing entry or create a new one
 			GetSchedule dao = new GetSchedule(con);
 			ScheduleEntry entry = null;
 			if (id != null) {
 				entry = dao.get(id);
 				if (entry == null)
-					throw new CommandException("Invalid Schedule Entry - " + fCode);
+					throw notFoundException("Invalid Schedule Entry - " + fCode);
 			} else {
 				// Create a new entry
 				Airline a = SystemData.getAirline(ctx.getParameter("airline"));
@@ -57,26 +57,30 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 					int fLeg = Integer.parseInt(ctx.getParameter("flightLeg"));
 					entry = new ScheduleEntry(a, fNumber, fLeg);
 				} catch (NumberFormatException nfe) {
-					throw new CommandException("Invalid Flight data " + nfe.getMessage());
+					CommandException ce = new CommandException("Invalid Flight data " + nfe.getMessage());
+					ce.setLogStackDump(false);
+					throw ce;
 				}
 			}
-			
+
 			// Update the entry
 			entry.setEquipmentType(ctx.getParameter("eqType"));
 			entry.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 			entry.setPurge(Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue());
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
-			
+
 			// Parse date/times
 			DateFormat df = new SimpleDateFormat("HH:mm");
 			try {
 				entry.setTimeD(df.parse(ctx.getParameter("timeD")));
 				entry.setTimeA(df.parse(ctx.getParameter("timeA")));
 			} catch (ParseException pe) {
-				throw new CommandException(pe.getMessage());
+				CommandException ce = new CommandException(pe.getMessage());
+				ce.setLogStackDump(false);
+				throw ce;
 			}
-			
+
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
 			if (id == null) {
@@ -86,7 +90,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				wdao.write(entry, true);
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
-			
+
 			// Set status attribute
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
 		} catch (DAOException de) {
@@ -94,7 +98,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
@@ -108,7 +112,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		
+
 		// Get the flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		ScheduleEntry id = FlightCodeParser.parse(fCode);
@@ -120,8 +124,8 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				GetSchedule dao = new GetSchedule(con);
 				ScheduleEntry entry = dao.get(id);
 				if (entry == null)
-					throw new CommandException("Invalid Schedule Entry - " + fCode);
-				
+					throw notFoundException("Invalid Schedule Entry - " + fCode);
+
 				// Save the entry in the request
 				ctx.setAttribute("entry", entry, REQUEST);
 			}

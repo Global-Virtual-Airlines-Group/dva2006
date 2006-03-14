@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -35,7 +35,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			GetAssignment dao = new GetAssignment(con);
 			AssignmentInfo assign = dao.get(ctx.getID());
 			if (assign == null)
-				throw new CommandException("Invalid Flight Assignment - " + ctx.getID());
+				throw notFoundException("Invalid Flight Assignment - " + ctx.getID());
 
 			// Calculate our access
 			AssignmentAccessControl access = new AssignmentAccessControl(ctx, assign);

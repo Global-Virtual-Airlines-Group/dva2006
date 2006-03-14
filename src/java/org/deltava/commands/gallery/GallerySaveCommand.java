@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -44,7 +44,7 @@ public class GallerySaveCommand extends AbstractCommand {
 				GetGallery rdao = new GetGallery(con);
 				img = rdao.getImageData(ctx.getID());
 				if (img == null)
-					throw new CommandException("Cannot find Gallery image " + ctx.getID());
+					throw notFoundException("Cannot find Gallery image " + ctx.getID());
 				
 				// Check our access
 				GalleryAccessControl access = new GalleryAccessControl(ctx, img);
@@ -71,8 +71,11 @@ public class GallerySaveCommand extends AbstractCommand {
 				
 				// Get the image itself
 				FileUpload imgData = ctx.getFile("img");
-				if (imgData == null)
-					throw new CommandException("No Attached Image");
+				if (imgData == null) {
+					CommandException ce = new CommandException("No Attached Image");
+					ce.setLogStackDump(false);
+					throw ce;
+				}
 
 				// Get the image properties
 				ImageInfo imgInfo = new ImageInfo(imgData.getBuffer());

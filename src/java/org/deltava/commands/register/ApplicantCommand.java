@@ -43,7 +43,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -96,12 +96,12 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, SystemData.get("airline.db")));
 			if (!dupeResults.isEmpty())
-				throw new CommandException("Applicant name/email not unique");
+				throw notFoundException("Applicant name/email not unique");
 
 			// Check if we're unique
 			dupeResults.addAll(dao.checkUnique(a, SystemData.get("airline.db")));
 			if (dupeResults.size() != 1)
-				throw new CommandException("Applicant name/email not unique");
+				throw notFoundException("Applicant name/email not unique");
 
 			// Get the DAO and write to the database
 			SetApplicant wdao = new SetApplicant(con);
@@ -150,7 +150,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -206,7 +206,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			GetApplicant dao = new GetApplicant(con);
 			Applicant a = dao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);

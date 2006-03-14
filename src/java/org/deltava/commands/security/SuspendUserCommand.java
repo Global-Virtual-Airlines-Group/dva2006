@@ -39,7 +39,7 @@ public class SuspendUserCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw new CommandException("Invalid User ID - " + ctx.getID());
+				throw notFoundException("Invalid User ID - " + ctx.getID());
 			
 			// Check our current status
 			PilotAccessControl access = new PilotAccessControl(ctx, usr);

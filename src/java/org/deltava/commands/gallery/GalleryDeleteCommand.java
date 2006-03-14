@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class GalleryDeleteCommand extends AbstractCommand {
 			GetGallery rdao = new GetGallery(con);
 			Image img = rdao.getImageData(ctx.getID());
 			if (img == null)
-				throw new CommandException("Unknown Image Gallery image - " + ctx.getID());
+				throw notFoundException("Unknown Image Gallery image - " + ctx.getID());
 			
 			// Check our access level
 	        GalleryAccessControl access = new GalleryAccessControl(ctx, img);

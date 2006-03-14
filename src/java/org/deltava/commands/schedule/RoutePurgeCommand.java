@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.Date;
@@ -48,7 +48,9 @@ public class RoutePurgeCommand extends AbstractCommand {
 			try {
 				purgeDate = _df.parse(ctx.getParameter("purgeDate"));
 			} catch (ParseException pe) {
-				throw new CommandException("Invalid Purge Date - " + ctx.getParameter("purgeDate"));
+				CommandException ce = new CommandException("Invalid Purge Date - " + ctx.getParameter("purgeDate"));
+				ce.setLogStackDump(false);
+				throw ce;
 			}
 		}
 

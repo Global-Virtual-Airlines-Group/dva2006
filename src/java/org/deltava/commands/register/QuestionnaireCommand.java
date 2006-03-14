@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -43,7 +43,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          GetQuestionnaire exdao = new GetQuestionnaire(con);
          Examination ex = exdao.get(id);
          if (ex == null)
-            throw new CommandException("Invalid Questionnaire - " + id);
+            throw notFoundException("Invalid Questionnaire - " + id);
          
          // Get our access and fail gracefully if we can no longer read it
          QuestionnaireAccessControl access = new QuestionnaireAccessControl(ctx, ex);
@@ -61,7 +61,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          GetApplicant adao = new GetApplicant(con);
          Applicant a = adao.get(ex.getPilotID());
          if (a == null)
-         	throw new CommandException("Invalid Applicant ID - " + ex.getPilotID());
+         	throw notFoundException("Invalid Applicant ID - " + ex.getPilotID());
          
          // Save the questionnaire and the access controller
          ctx.setAttribute("exam", ex, REQUEST);

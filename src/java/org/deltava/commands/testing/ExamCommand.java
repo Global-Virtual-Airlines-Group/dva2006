@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -40,7 +40,7 @@ public class ExamCommand extends AbstractCommand {
          GetExam dao = new GetExam(con);
          Examination ex = dao.getExam(ctx.getID());
          if (ex == null)
-            throw new CommandException("Invalid Examination - " + ctx.getID());
+            throw notFoundException("Invalid Examination - " + ctx.getID());
          
          // Check our access level
          ExamAccessControl access = new ExamAccessControl(ctx, ex);

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -90,7 +90,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread thread = tdao.getThread(ctx.getID());
 			if (thread == null)
-				throw new CommandException("Unknown Message Thread - " + ctx.getID());
+				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);

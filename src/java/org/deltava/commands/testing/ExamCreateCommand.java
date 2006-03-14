@@ -42,7 +42,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw new CommandException("Invalid Examination - " + examName);
+				throw notFoundException("Invalid Examination - " + examName);
 
             // Initialize the testing history helper
             initTestHistory(ctx.getUser(), con);

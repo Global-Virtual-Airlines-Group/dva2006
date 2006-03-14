@@ -51,7 +51,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			Collection<Pilot> src = dao.getByID(ids, "PILOTS").values();
 			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw new CommandException("Invalid User - " + ctx.getID());
+				throw notFoundException("Invalid User - " + ctx.getID());
 
 			// Validate our access
 			for (Iterator i = src.iterator(); i.hasNext();) {

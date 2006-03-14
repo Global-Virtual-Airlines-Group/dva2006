@@ -184,7 +184,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					EquipmentType eq1 = eqdao.get(p.getEquipmentType());
 					EquipmentType eq2 = eqdao.get(newEQ);
 					if (eq2 == null)
-						throw new CommandException("Unknown Equipment Type program - " + newEQ);
+						throw notFoundException("Unknown Equipment Type program - " + newEQ);
 
 					// Figure out if this is truly a promotion
 					@SuppressWarnings("unchecked")

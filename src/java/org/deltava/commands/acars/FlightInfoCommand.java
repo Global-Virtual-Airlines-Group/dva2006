@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -39,7 +39,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			GetACARSLog dao = new GetACARSLog(con);
 			FlightInfo info = dao.getInfo(ctx.getID());
 			if (info == null)
-				throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
+				throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
 
 			// Get the Connection data
 			ConnectionEntry conInfo = dao.getConnection(info.getConnectionID());
@@ -58,7 +58,7 @@ public class FlightInfoCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(pilotID);
 			if (usr == null)
-				throw new CommandException("Invalid Pilot ID - " + pilotID);
+				throw notFoundException("Invalid Pilot ID - " + pilotID);
 
 			// Save the data we have loaded
 			ctx.setAttribute("pilot", usr, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -71,7 +71,7 @@ public class EventCommand extends AbstractCommand {
 			// Load the event. We reload since getFutureEvents() does not populate child lists
 			Event e = edao.get(eventID);
 			if (e == null)
-				throw new CommandException("Invalid Online Event - " + eventID);
+				throw notFoundException("Invalid Online Event - " + eventID);
 
 			// Calculate our access
 			EventAccessControl eAccess = new EventAccessControl(ctx, e);

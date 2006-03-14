@@ -1,4 +1,4 @@
-//Copyright (c) 2005 James Brickell. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -52,7 +52,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			GetPilot rdao = new GetPilot(con);
 			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
-				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// Check access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
@@ -79,7 +79,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Get the airline to change to
 			AirlineInformation aInfo = (AirlineInformation) airlines.get(ctx.getParameter("dbName"));
 			if (aInfo == null)
-				throw new CommandException("Invalid Airline - " + ctx.getParameter("dbName"));
+				throw notFoundException("Invalid Airline - " + ctx.getParameter("dbName"));
 
 			// Get the equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
