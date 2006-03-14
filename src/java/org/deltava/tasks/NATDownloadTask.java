@@ -1,18 +1,21 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2002, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
+import javax.net.ssl.*;
+import java.security.cert.*;
+
 import java.util.Date;
 import java.io.IOException;
 
 import org.deltava.beans.schedule.OceanicRoute;
 
+import org.deltava.dao.*;
 import org.deltava.dao.http.GetNATs;
-import org.deltava.dao.SetRoute;
-import org.deltava.dao.DAOException;
 
 import org.deltava.taskman.DatabaseTask;
 
+import org.deltava.util.http.SSLUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -35,25 +38,41 @@ public class NATDownloadTask extends DatabaseTask {
 	 * Executes the task.
 	 */
 	protected void execute() {
-
 		try {
+			HttpURLConnection con = null;
+			
 			// Create the URL connection to the NAT Download side
-			URL url = new URL(SystemData.get("config.nat"));
-			log.info("Loading NAT track data from " + url.toString());
-			HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			URL url = new URL(SystemData.get("config.nat.url"));
+			if ("https".equals(url.getProtocol())) {
+				con = (HttpsURLConnection) url.openConnection();
 
+				// Load a special keystore if necessary
+				String keyStore = SystemData.get("config.nat.keystore");
+				if (keyStore != null) {
+					log.info("Loading custom SSL keystore " + keyStore);
+					X509Certificate cert = SSLUtils.load(keyStore);
+					SSLContext ctx = SSLUtils.getContext(cert);
+					((HttpsURLConnection) con).setSSLSocketFactory(ctx.getSocketFactory());
+				}
+			} else {
+				con = (HttpURLConnection) url.openConnection();				
+			}
+			
 			// Build the oceanic route bean
 			OceanicRoute or = new OceanicRoute(OceanicRoute.NAT);
 			or.setDate(new Date());
 			or.setSource(url.getHost());
 
 			// Get the DAO and the NAT data
+			log.info("Loading NAT track data from " + url.toString());
 			GetNATs dao = new GetNATs(con);
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database
 			SetRoute wdao = new SetRoute(_con);
 			wdao.write(or);
+		} catch (CertificateException ce) {
+			log.error("Cannot load SSL certificate - " + ce.getMessage());
 		} catch (IOException ie) {
 			log.error("Error downloading NAT Tracks - " + ie.getMessage(), ie);
 		} catch (DAOException de) {
