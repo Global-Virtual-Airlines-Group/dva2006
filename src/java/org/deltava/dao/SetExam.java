@@ -152,18 +152,20 @@ public class SetExam extends DAO {
 		try {
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO " + dbName.toLowerCase()
-						+ ".CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, "
-						+ "ACTYPE, GRADED_BY, CREATED, COMMENTS, PASS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO " + dbName.toLowerCase() + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
+						+ "STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getPilotID());
-				_ps.setInt(3, cr.getStatus());
-				_ps.setString(4, cr.getEquipmentType());
-				_ps.setString(5, cr.getAircraftType());
-				_ps.setInt(6, cr.getScorerID());
-				_ps.setTimestamp(7, createTimestamp(cr.getDate()));
-				_ps.setString(8, cr.getComments());
-				_ps.setBoolean(9, cr.getPassFail());
+				_ps.setInt(3, cr.getFlightID());
+				_ps.setInt(4, cr.getStatus());
+				_ps.setString(5, cr.getEquipmentType());
+				_ps.setString(6, cr.getAircraftType());
+				_ps.setInt(7, cr.getScorerID());
+				_ps.setTimestamp(8, createTimestamp(cr.getDate()));
+				_ps.setTimestamp(9, createTimestamp(cr.getSubmittedOn()));
+				_ps.setString(10, cr.getComments());
+				_ps.setBoolean(11, cr.getPassFail());
 			} else {
 				prepareStatement("UPDATE " + dbName.toLowerCase() + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
 						+ "ACARS_ID=?, GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
