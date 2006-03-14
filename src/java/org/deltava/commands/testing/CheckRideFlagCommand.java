@@ -52,7 +52,9 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				cr.setDate(fr.getDate());
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
-				cr.setSubmittedOn(fr.getDate());
+				cr.setSubmittedOn(new java.util.Date());
+				cr.setScorerID(ctx.getUser().getID());
+				cr.setPilotID(fr.getDatabaseID(FlightReport.DBID_PILOT));
 				
 				// Determine the equipment type based on the primary type
 				GetEquipmentType eqdao = new GetEquipmentType(con);
