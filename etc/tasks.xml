@@ -5,10 +5,10 @@
 		<interval>86400</interval>
 	</task>
 	
-	<task id="nat" enabled="false">
+	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<interval>86400</interval>
-		<hours>14</hours>
+		<hours>20</hours>
 	</task>
 	
 	<task id="assignpurge" enabled="false">

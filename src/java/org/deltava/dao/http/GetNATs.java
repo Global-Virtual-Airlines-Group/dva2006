@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.http;
 
 import java.io.*;
@@ -27,35 +28,39 @@ public class GetNATs extends DAO {
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String getTrackInfo() throws DAOException {
-
 		try {
 			BufferedReader br = getReader();
-			StringWriter out = new StringWriter();
-
-			//	Start/end flags
-			boolean isSOF = false;
-			boolean isEOF = false;
+			StringBuilder buf = new StringBuilder();
 
 			// Read through the URL results
+			boolean isWriting = false;
 			String data = br.readLine();
 			while (data != null) {
 				data = data.trim();
-				isEOF = isEOF || (isSOF && (data.startsWith("<br>") || (data.indexOf("</pre>") != -1)));
-
-				// If we're after the SOF but before the EOF, append the data
-				if (isSOF && !(isEOF)) {
-					out.write(data);
-					out.write("<br>");
-					out.write(System.getProperty("line.separator"));
+				
+				// Check for start/end of NAT segment
+				if (!isWriting && data.contains("NAT-")) {
+					buf.append(data);
+					buf.append("<br />");
+					buf.append(System.getProperty("line.separator"));
+					isWriting = true;
+				} else if (isWriting && (data.startsWith("END OF PART"))) {
+					buf.append(data);
+					buf.append("<br /><hr />");
+					buf.append(System.getProperty("line.separator"));
+					isWriting = false;
+				} else if (isWriting) {
+					buf.append(data);
+					buf.append("<br />");
+					buf.append(System.getProperty("line.separator"));
 				}
 
 				// Read next line
-				isSOF = isSOF || (data.indexOf("<pre>") != -1);
 				data = br.readLine();
 			}
 
 			// Return the data
-			return out.toString();
+			return buf.toString();
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}
