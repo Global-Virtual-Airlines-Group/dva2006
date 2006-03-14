@@ -35,7 +35,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
 			
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
@@ -47,7 +47,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			Pilot usr = pdao.get(txreq.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot - " + txreq.getID());
+				throw notFoundException("Invalid Pilot - " + txreq.getID());
 
 			// Get the check ride (if any)
 			GetExam exdao = new GetExam(con);

@@ -1,4 +1,4 @@
- // Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.Arrays;
@@ -34,7 +34,6 @@ public class PilotLocationCommand extends AbstractCommand {
 		
 		// Check if we are deleting the profile
 		boolean isDelete = "delete".equals(ctx.getCmdParameter(OPERATION, null));
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -70,7 +69,9 @@ public class PilotLocationCommand extends AbstractCommand {
 					loc.setLatitude(latD, latM, latS);
 					loc.setLongitude(lonD, lonM, lonS);
 				} catch (NumberFormatException nfe) {
-					throw new CommandException("Error parsing Pilot latitude/longitude");
+					CommandException ce = new CommandException("Error parsing Pilot latitude/longitude");
+					ce.setLogStackDump(false);
+					throw ce;
 				}
 				
 				// Update the pilot location

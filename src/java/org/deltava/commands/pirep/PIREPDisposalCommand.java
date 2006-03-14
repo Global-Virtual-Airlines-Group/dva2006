@@ -37,8 +37,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
 		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
-		if (opCode < 2)
-			throw new CommandException("Invalid Operation - " + opName);
+		if (opCode < 2) {
+			CommandException ce = new CommandException("Invalid Operation - " + opName);
+			ce.setLogStackDump(false);
+			throw ce;
+		}
 		
 		ctx.setAttribute("opName", opName, REQUEST);
 
@@ -54,7 +57,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID());
 			if (fr == null)
-				throw new CommandException("Flight Report Not Found");
+				throw notFoundException("Flight Report Not Found");
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -96,7 +99,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			if (p == null)
-			   throw new CommandException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
+			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 			
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
 			int pirepCount = rdao.getCount(p.getID()) + 1;

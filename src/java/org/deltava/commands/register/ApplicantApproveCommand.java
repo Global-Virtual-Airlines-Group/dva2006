@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -50,7 +50,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			GetApplicant dao = new GetApplicant(con);
 			a = dao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 			
 			// Check our access level
 			ApplicantAccessControl access = new ApplicantAccessControl(ctx, a);
@@ -68,7 +68,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(a.getEquipmentType());
 			if (eq == null)
-			   throw new CommandException("Invalid Equipment Program - " + a.getEquipmentType());
+			   throw notFoundException("Invalid Equipment Program - " + a.getEquipmentType());
 			
 			// Log equipment type
 			log.info("Hiring " + a.getName() + " into " + eq.getName() + " program (Stage " + eq.getStage() + ")");

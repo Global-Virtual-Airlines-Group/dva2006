@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -48,7 +48,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(ctx.getID());
 			if (txreq == null)
-				throw new CommandException("Invalid Transfer Request - " + ctx.getID());
+				throw notFoundException("Invalid Transfer Request - " + ctx.getID());
 
 			// Check our access
 			TransferAccessControl access = new TransferAccessControl(ctx, txreq);
@@ -60,7 +60,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			usr = pdao.get(txreq.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot - " + txreq.getID());
+				throw notFoundException("Invalid Pilot - " + txreq.getID());
 			
 			// Get the current equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -76,12 +76,12 @@ public class TransferApproveCommand extends AbstractCommand {
 			if (eqType != null) {
 				EquipmentType newEQ = eqdao.get(eqType);
 				if ((currentEQ == null) || (newEQ == null))
-					throw new CommandException("Invalid Equipment Program - " + eqType + " / " + usr.getEquipmentType());
+					throw notFoundException("Invalid Equipment Program - " + eqType + " / " + usr.getEquipmentType());
 
 				// Validate the rank
 				String rank = ctx.getParameter("rank");
 				if (!newEQ.getRanks().contains(rank))
-					throw new CommandException("Invalid Rank - " + rank);
+					throw notFoundException("Invalid Rank - " + rank);
 
 				// Check if we're doing a promotion or a rating change
 				@SuppressWarnings("unchecked")

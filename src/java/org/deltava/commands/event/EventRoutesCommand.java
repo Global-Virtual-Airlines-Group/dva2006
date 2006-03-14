@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw new CommandException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event - " + ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);
@@ -90,7 +90,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw new CommandException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event - " + ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, e);

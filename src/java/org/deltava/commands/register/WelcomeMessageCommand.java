@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -44,7 +44,7 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			GetApplicant adao = new GetApplicant(con);
 			a = adao.get(ctx.getID());
 			if (a == null)
-				throw new CommandException("Invalid Applicant - " + ctx.getID());
+				throw notFoundException("Invalid Applicant - " + ctx.getID());
 			
 			// Get the Questionnaire
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
@@ -71,13 +71,13 @@ public class WelcomeMessageCommand extends AbstractCommand {
 				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(a.getPilotID());
 				if (usr == null)
-					throw new CommandException("Cannot load Pilot Profile");
+					throw notFoundException("Cannot load Pilot Profile");
 				
 				// Load the equipment profile
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				EquipmentType eqType = eqdao.get(a.getEquipmentType());
 				if (eqType == null)
-					throw new CommandException("Cannot load Equipment Profle");
+					throw notFoundException("Cannot load Equipment Profle");
 				
 				// Add the equipment profile
 				mctxt.addData("eqType", eqType);

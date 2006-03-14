@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -32,13 +32,13 @@ public class ThreadSyncCommand extends AbstractCommand {
 			GetCoolerThreads dao = new GetCoolerThreads(con);
 			MessageThread mt = dao.getThread(ctx.getID());
 			if (mt == null)
-				throw new CommandException("Invalid Thread - " + ctx.getID());
+				throw notFoundException("Invalid Thread - " + ctx.getID());
 			
 			// Get the DAO and the Channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw new CommandException("Invalid Channel - " + ctx.getID());
+				throw notFoundException("Invalid Channel - " + ctx.getID());
 			
 			// Check our access
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

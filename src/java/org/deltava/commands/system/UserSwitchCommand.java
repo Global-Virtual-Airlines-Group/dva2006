@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -40,7 +40,7 @@ public class UserSwitchCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

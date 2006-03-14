@@ -46,7 +46,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			GetPilot dao = new GetPilot(con);
 			p = dao.get(ctx.getID());
 			if (p == null)
-				throw new CommandException("Invalid Pilot - " + ctx.getID());
+				throw notFoundException("Invalid Pilot - " + ctx.getID());
 
 			// Check our access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);

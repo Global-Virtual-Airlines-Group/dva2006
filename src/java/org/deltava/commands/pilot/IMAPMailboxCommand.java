@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.io.*;
@@ -42,12 +42,15 @@ public class IMAPMailboxCommand extends AbstractCommand {
             GetPilotEMail edao = new GetPilotEMail(con);
 			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot - " + ctx.getID());
+				throw notFoundException("Invalid Pilot - " + ctx.getID());
 			
 			// Get the Mailbox profile
 			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
-			if (emailCfg != null)
-				throw new CommandException(usr.getName() + " already has an IMAP mailbox");
+			if (emailCfg != null) {
+				CommandException ce = new CommandException(usr.getName() + " already has an IMAP mailbox");
+				ce.setLogStackDump(false);
+				throw ce;
+			}
             
             // Check our access
             PilotAccessControl access = new PilotAccessControl(ctx, usr);

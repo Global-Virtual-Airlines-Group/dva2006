@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -43,7 +43,7 @@ public class ChartCommand extends AbstractFormCommand {
 				GetChart dao = new GetChart(con);
 				c = dao.get(ctx.getID());
 				if (c == null)
-					throw new CommandException("Invalid Approach Chart - " + ctx.getID());
+					throw notFoundException("Invalid Approach Chart - " + ctx.getID());
 
 				// Get our access
 				ChartAccessControl access = new ChartAccessControl(ctx);
@@ -67,8 +67,11 @@ public class ChartCommand extends AbstractFormCommand {
 
 				// Load the image data
 				FileUpload imgData = ctx.getFile("img");
-				if (imgData == null)
-					throw new CommandException("No Image Data Uploaded");
+				if (imgData == null) {
+					CommandException ce = new CommandException("No Image Data Uploaded");
+					ce.setLogStackDump(false);
+					throw ce;
+				}
 
 				// Get image metadata
 				ImageInfo info = new ImageInfo(imgData.getBuffer());
@@ -78,7 +81,7 @@ public class ChartCommand extends AbstractFormCommand {
 				c.setImgType(info.getFormat());
 				c.load(imgData.getBuffer());
 			}
-			
+
 			// Save the chart in the request
 			ctx.setAttribute("chart", c, REQUEST);
 
@@ -120,7 +123,7 @@ public class ChartCommand extends AbstractFormCommand {
 		boolean isOK = (isNew) ? access.getCanCreate() : access.getCanEdit();
 		if (!isOK)
 			throw securityException("Cannot create/edit Approach Chart");
-		
+
 		// Save chart types
 		ctx.setAttribute("chartTypes", ComboUtils.fromArray(Chart.TYPENAMES, Chart.TYPES), REQUEST);
 
@@ -139,7 +142,7 @@ public class ChartCommand extends AbstractFormCommand {
 			GetChart dao = new GetChart(con);
 			Chart c = dao.get(ctx.getID());
 			if (c == null)
-				throw new CommandException("Invalid Approach Chart - " + ctx.getID());
+				throw notFoundException("Invalid Approach Chart - " + ctx.getID());
 
 			// Save the chart in the request
 			ctx.setAttribute("chart", c, REQUEST);
@@ -148,7 +151,7 @@ public class ChartCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save chart access
 		ctx.setAttribute("access", access, REQUEST);
 
@@ -176,7 +179,7 @@ public class ChartCommand extends AbstractFormCommand {
 			GetChart dao = new GetChart(con);
 			Chart c = dao.get(ctx.getID());
 			if (c == null)
-				throw new CommandException("Invalid Approach Chart - " + ctx.getID());
+				throw notFoundException("Invalid Approach Chart - " + ctx.getID());
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);

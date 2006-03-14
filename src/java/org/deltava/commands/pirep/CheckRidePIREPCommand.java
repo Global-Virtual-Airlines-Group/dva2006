@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -36,7 +36,7 @@ public class CheckRidePIREPCommand extends AbstractCommand {
          GetFlightReports dao = new GetFlightReports(con);
          ACARSFlightReport afr = dao.getACARS(SystemData.get("airline.db"), ctx.getID());
          if (afr == null)
-            throw new CommandException("Invalid ACARS Flight ID - " + ctx.getID());
+            throw notFoundException("Invalid ACARS Flight ID - " + ctx.getID());
          
          // Save the flight ID - we'll pass this to the PIREP command
          pirepID = afr.getID();

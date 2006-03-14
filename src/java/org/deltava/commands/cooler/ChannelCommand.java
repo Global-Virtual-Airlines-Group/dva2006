@@ -43,7 +43,7 @@ public class ChannelCommand extends AbstractFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(con);
 				c = dao.get(channel);
 				if (c == null)
-					throw new CommandException("Invalid Water Cooler Channel - " + channel);
+					throw notFoundException("Invalid Water Cooler Channel - " + channel);
 			} else {
 				c = new Channel(ctx.getParameter("newName"));
 			}
@@ -115,7 +115,7 @@ public class ChannelCommand extends AbstractFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(con);
 				c = dao.get(channel);
 				if (c == null)
-					throw new CommandException("Invalid Water Cooler Channel - " + channel);
+					throw notFoundException("Invalid Water Cooler Channel - " + channel);
 			}
 			
 			// Check our access

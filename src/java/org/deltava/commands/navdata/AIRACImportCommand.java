@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -55,7 +55,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		// Get the navaid type
 		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName());
 		if (navaidType == -1)
-			throw new CommandException("Unknown Data File - " + navData.getName());
+			throw notFoundException("Unknown Data File - " + navData.getName());
 
 		List<String> errors = new ArrayList<String>();
 		int entryCount = 0;

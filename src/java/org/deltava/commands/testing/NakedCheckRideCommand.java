@@ -44,7 +44,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(ctx.getID());
 			if (p == null)
-				throw new CommandException("Invalid Pilot ID - " + ctx.getID());
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// Check if we already have a pending checkride
 			boolean hasRide = false;
@@ -95,7 +95,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			// Get the equipment type for the Check Ride
 			EquipmentType eqType = eqdao.get(ctx.getParameter("eqType"));
 			if (eqType == null)
-				throw new CommandException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
+				throw notFoundException("Invalid Equipment Program - " + ctx.getParameter("eqType"));
 
 			// Make sure the assigned type is part of the primary ratings
 			String acType = ctx.getParameter("crType");

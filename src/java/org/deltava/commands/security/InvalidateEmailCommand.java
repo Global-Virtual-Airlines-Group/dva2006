@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -33,7 +33,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
          GetPilot dao = new GetPilot(con);
          Pilot p = dao.get(ctx.getID());
          if (p == null)
-            throw new CommandException("Invalid Pilot - " + ctx.getID());
+            throw notFoundException("Invalid Pilot - " + ctx.getID());
          
          // Check if the address has already been invalidated
          GetAddressValidation avdao = new GetAddressValidation(con);

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.util.List;
@@ -44,7 +44,7 @@ public class NewsSaveCommand extends AbstractCommand {
 				GetNews dao = new GetNews(con);
 				nws = dao.getNews(ctx.getID());
 				if (nws == null)
-					throw new CommandException("Invalid System News entry - " + ctx.getID());
+					throw notFoundException("Invalid System News entry - " + ctx.getID());
 
 				// Check our access
 				NewsAccessControl access = new NewsAccessControl(ctx, nws);

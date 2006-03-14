@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -41,7 +41,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			GetExam rdao = new GetExam(con);
 			CheckRide cr = rdao.getCheckRide(ctx.getID());
 			if (cr == null)
-				throw new CommandException("Invalid Check Ride - " + ctx.getID());
+				throw notFoundException("Invalid Check Ride - " + ctx.getID());
 
 			// Check our access level
 			ExamAccessControl access = new ExamAccessControl(ctx, cr);

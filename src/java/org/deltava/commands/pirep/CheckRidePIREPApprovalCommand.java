@@ -49,7 +49,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			FlightReport fr = rdao.get(ctx.getID());
 			if (fr == null)
-				throw new CommandException("Flight Report Not Found");
+				throw notFoundException("Flight Report Not Found");
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -76,7 +76,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			if (p == null)
-				throw new CommandException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
+				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

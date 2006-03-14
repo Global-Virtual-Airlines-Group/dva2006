@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -52,7 +52,7 @@ public class CancelValidationCommand extends AbstractCommand {
          GetPilot pdao = new GetPilot(con);
          Pilot usr = pdao.get(id);
          if (usr == null)
-            throw new CommandException("Invalid Pilot ID - " + id);
+            throw notFoundException("Invalid Pilot ID - " + id);
          
          // Save user/address validation in request
          ctx.setAttribute("pilot", usr, REQUEST);

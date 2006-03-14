@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -34,7 +34,7 @@ public class AirportDeleteCommand extends AbstractCommand {
 			GetAirport dao = new GetAirport(con);
 			Airport a = dao.get((String) ctx.getCmdParameter(Command.ID, null));
 			if (a == null)
-				throw new CommandException("Unknown Airport - " + ctx.getCmdParameter(Command.ID, null));
+				throw notFoundException("Unknown Airport - " + ctx.getCmdParameter(Command.ID, null));
 			
 			// Get the write DAO and delete the airport
 			SetSchedule wdao = new SetSchedule(con);

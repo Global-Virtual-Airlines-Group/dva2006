@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.Date;
@@ -18,53 +18,55 @@ import org.deltava.dao.DAOException;
  */
 
 public class LogPurgeCommand extends AbstractCommand {
-   
-   private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
-      
-      // Get the command result
-      CommandResult result = ctx.getResult();
-      
-      // If no log name specified, jump to the JSP
-      String logName = ctx.getParameter("logName");
-      if (logName == null) {
-         result.setURL("/jsp/admin/logPurge.jsp");
-         result.setSuccess(true);
-         return;
-      }
+	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
-      // Get the purge date
-      Date pd = null;
-      try {
-         pd = _df.parse(ctx.getParameter("purgeDate"));
-      } catch (ParseException pe) {
-         throw new CommandException("Invalid Date - " + pe.getMessage());
-      }
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and purge the log
-         SetSystemLog wdao = new SetSystemLog(con);
-         int entriesDeleted = wdao.purge(logName, pd);
-         
-         // Save the number of entries deleted
-         ctx.setAttribute("rowsDeleted", new Integer(entriesDeleted), REQUEST);
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
-      
-      // Forward to the JSP
-      result.setType(CommandResult.REQREDIRECT);
-      result.setURL("/jsp/admin/logPurge.jsp");
-      result.setSuccess(true);
-   }
+		// Get the command result
+		CommandResult result = ctx.getResult();
+
+		// If no log name specified, jump to the JSP
+		String logName = ctx.getParameter("logName");
+		if (logName == null) {
+			result.setURL("/jsp/admin/logPurge.jsp");
+			result.setSuccess(true);
+			return;
+		}
+
+		// Get the purge date
+		Date pd = null;
+		try {
+			pd = _df.parse(ctx.getParameter("purgeDate"));
+		} catch (ParseException pe) {
+			CommandException ce = new CommandException("Invalid Date - " + pe.getMessage());
+			ce.setLogStackDump(false);
+			throw ce;
+		}
+
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the DAO and purge the log
+			SetSystemLog wdao = new SetSystemLog(con);
+			int entriesDeleted = wdao.purge(logName, pd);
+
+			// Save the number of entries deleted
+			ctx.setAttribute("rowsDeleted", new Integer(entriesDeleted), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
+		// Forward to the JSP
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/admin/logPurge.jsp");
+		result.setSuccess(true);
+	}
 }

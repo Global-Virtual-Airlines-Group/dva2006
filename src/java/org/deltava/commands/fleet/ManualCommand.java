@@ -50,8 +50,8 @@ public class ManualCommand extends LibraryEditCommand {
 		// Get the uploaded file
 		FileUpload mFile = ctx.getFile("file");
 		if (isNew && (mFile == null)) {
-			throw new CommandException("No Manual Uploaded");
-		} else if (mFile != null) {
+			throw notFoundException("No Manual Uploaded");
+		} else if (isNew && (mFile != null)) {
 			fName = mFile.getName();
 		}
 

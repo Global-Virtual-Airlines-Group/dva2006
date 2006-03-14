@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.io.File;
@@ -124,7 +124,7 @@ public class UserFileCommand extends AbstractFormCommand {
 			GetLibrary dao = new GetLibrary(con);
 			FileEntry entry = dao.getFile(fName);
 			if ((entry == null) && !StringUtils.isEmpty(fName))
-				throw new CommandException("Invalid Filename - " + fName);
+				throw notFoundException("Invalid Filename - " + fName);
 
 			// Check our access
 			FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);

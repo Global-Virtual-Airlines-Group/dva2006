@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.sql.Connection;
@@ -35,7 +35,7 @@ public class UserFileDeleteCommand extends AbstractCommand {
          GetLibrary dao = new GetLibrary(con);
          FileEntry entry = dao.getFile(fName);
          if (entry == null)
-            throw new CommandException("Invalid file name - " + fName);
+            throw notFoundException("Invalid file name - " + fName);
          
          // Check our access
          FileEntryAccessControl access = new FileEntryAccessControl(ctx, entry);

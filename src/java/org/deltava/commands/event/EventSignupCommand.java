@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -39,14 +39,14 @@ public class EventSignupCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw new CommandException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event - " + ctx.getID());
 			
 			// Check our access to sign up or cancel
 			boolean ourAccess = false;
 			if (isCancel) {
 				Signup s = e.getSignup(ctx.getUser().getID());
 				if (s == null)
-					throw new CommandException("Not Signed up for " + e.getName());
+					throw notFoundException("Not Signed up for " + e.getName());
 				
 				SignupAccessControl access = new SignupAccessControl(ctx, e, s);
 				access.validate();
@@ -64,7 +64,7 @@ public class EventSignupCommand extends AbstractCommand {
 			// Find the route
 			Route r = e.getRoute(ctx.getParameter("route"));
 			if (r == null)
-				throw new CommandException("Invalid Event Route - " + ctx.getParameter("route"));
+				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
 			
 			// Create the signup from the request
 			Signup s = new Signup(e.getID(), ctx.getUser().getID());

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -35,13 +35,13 @@ public class NotificationClearCommand extends AbstractCommand {
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			MessageThread mt = tdao.getThread(threadID);
 			if (mt == null)
-				throw new CommandException("Invalid Message Thread - " + threadID);
+				throw notFoundException("Invalid Message Thread - " + threadID);
 			
 			// Get the DAO and the channel
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
 			Channel c = cdao.get(mt.getChannel());
 			if (c == null)
-				throw new CommandException("Invalid Channel - " + mt.getChannel());
+				throw notFoundException("Invalid Channel - " + mt.getChannel());
 			
 			// Validate our access to the thread
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

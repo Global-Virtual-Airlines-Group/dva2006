@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.Collection;
@@ -42,7 +42,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				GetExamProfiles rdao = new GetExamProfiles(con);
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
-					throw new CommandException("Invalid Question Profile - " + ctx.getID());
+					throw notFoundException("Invalid Question Profile - " + ctx.getID());
 				
 				// Update question text
 				qp.setQuestion(ctx.getParameter("question"));
@@ -92,7 +92,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			GetExamProfiles dao = new GetExamProfiles(con);
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if ((qp == null) && (ctx.getID() != 0))
-				throw new CommandException("Invalid Question Profile - " + ctx.getID());
+				throw notFoundException("Invalid Question Profile - " + ctx.getID());
 			
 			// Get exam names
 			ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
@@ -129,7 +129,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			GetExamProfiles dao = new GetExamProfiles(con);
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if (qp == null)
-				throw new CommandException("Invalid Question Profile - " + ctx.getID());
+				throw notFoundException("Invalid Question Profile - " + ctx.getID());
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);

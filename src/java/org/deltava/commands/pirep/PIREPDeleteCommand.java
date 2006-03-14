@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -32,7 +32,7 @@ public class PIREPDeleteCommand extends AbstractCommand {
           GetFlightReports dao = new GetFlightReports(con);
           FlightReport fr = dao.get(ctx.getID());
           if (fr == null)
-             throw new CommandException("Invalid Flight Report - " + ctx.getID());
+             throw notFoundException("Invalid Flight Report - " + ctx.getID());
           
           // Check our access level
           PIREPAccessControl access = new PIREPAccessControl(ctx, fr);

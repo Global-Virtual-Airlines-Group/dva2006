@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -82,7 +82,7 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
          if (id != null) {
             CheckRideScript sc = dao.getScript(id);
             if (sc == null)
-               throw new CommandException("Invalid Check Ride script - " + id);
+               throw notFoundException("Invalid Check Ride script - " + id);
          
             // Calculate our access
             CheckrideScriptAccessControl access = new CheckrideScriptAccessControl(ctx, sc);

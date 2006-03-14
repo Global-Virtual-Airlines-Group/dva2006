@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.sql.Connection;
@@ -39,7 +39,7 @@ public class NewsDeleteCommand extends AbstractCommand {
          GetNews dao = new GetNews(con);
          News nws = isNOTAM ? dao.getNOTAM(ctx.getID()) : dao.getNews(ctx.getID());
          if (nws == null)
-            throw new CommandException("Invalid System News/NOTAM - " + ctx.getID());
+            throw notFoundException("Invalid System News/NOTAM - " + ctx.getID());
          
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, nws);

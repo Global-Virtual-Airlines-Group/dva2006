@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -36,7 +36,7 @@ public class EventCancelCommand extends AbstractCommand {
          GetEvent dao = new GetEvent(con);
          Event e = dao.get(ctx.getID());
          if (e == null)
-            throw new CommandException("Unknown Online Event - " + ctx.getID());
+            throw notFoundException("Unknown Online Event - " + ctx.getID());
 
          // Check our access level
          EventAccessControl access = new EventAccessControl(ctx, e);

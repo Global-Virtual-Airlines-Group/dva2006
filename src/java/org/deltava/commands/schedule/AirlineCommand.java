@@ -40,7 +40,7 @@ public class AirlineCommand extends AbstractFormCommand {
 				GetAirline dao = new GetAirline(con);
 				a = dao.get(aCode);
 				if (a == null)
-					throw new CommandException("Invalid Airline - " + aCode);
+					throw notFoundException("Invalid Airline - " + aCode);
 			} else {
 				a = new Airline(ctx.getParameter("code")); 
 			}
@@ -99,7 +99,7 @@ public class AirlineCommand extends AbstractFormCommand {
 				GetAirline dao = new GetAirline(con);
 				Airline a = dao.get(aCode);
 				if (a == null)
-					throw new CommandException("Invalid Airline - " + aCode);
+					throw notFoundException("Invalid Airline - " + aCode);
 
 				// Save the airline in the request
 				ctx.setAttribute("airline", a, REQUEST);

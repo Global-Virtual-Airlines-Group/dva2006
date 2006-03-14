@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -46,12 +46,12 @@ public class EventReleaseCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event e = dao.get(ctx.getID());
 			if (e == null)
-				throw new CommandException("Invalid Online Event - " + ctx.getID());
+				throw notFoundException("Invalid Online Event - " + ctx.getID());
 			
 			// Get the Signup for the Pilot
 			Signup s = e.getSignup(pilotID);
 			if (s == null)
-				throw new CommandException("Pilot " + pilotID + " not signed up for Online Event - " + ctx.getID());
+				throw notFoundException("Pilot " + pilotID + " not signed up for Online Event - " + ctx.getID());
 			
 			// Get the access controller
 			SignupAccessControl access = new SignupAccessControl(ctx, e, s);

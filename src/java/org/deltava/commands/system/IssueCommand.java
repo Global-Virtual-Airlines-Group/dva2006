@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -62,7 +62,7 @@ public class IssueCommand extends AbstractFormCommand {
 				GetIssue dao = new GetIssue(con);
 				i = dao.get(ctx.getID());
 				if (i == null)
-					throw new CommandException("Invalid Issue " + ctx.getID());
+					throw notFoundException("Invalid Issue " + ctx.getID());
 
 				// Check our access
 				access = new IssueAccessControl(ctx, i);
@@ -170,7 +170,7 @@ public class IssueCommand extends AbstractFormCommand {
 			} else {
 				i = dao.get(ctx.getID());
 				if (i == null)
-					throw new CommandException("Invalid Issue - " + ctx.getID());
+					throw notFoundException("Invalid Issue - " + ctx.getID());
 
 				// Check our access
 				access = new IssueAccessControl(ctx, i);
@@ -248,7 +248,7 @@ public class IssueCommand extends AbstractFormCommand {
 			GetIssue dao = new GetIssue(con);
 			Issue i = dao.get(ctx.getID());
 			if (i == null)
-				throw new CommandException("Invalid Issue - " + ctx.getID());
+				throw notFoundException("Invalid Issue - " + ctx.getID());
 			
 			// Get the userData DAO
 			GetUserData uddao = new GetUserData(con);
@@ -287,7 +287,6 @@ public class IssueCommand extends AbstractFormCommand {
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
 	private Set<Integer> getPilotIDs(Issue i) {
-
 		Set<Integer> results = new HashSet<Integer>();
 
 		// Add Creator / Assignee

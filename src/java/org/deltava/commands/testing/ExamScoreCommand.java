@@ -45,7 +45,7 @@ public class ExamScoreCommand extends AbstractCommand {
          GetExam rdao = new GetExam(con);
          Examination ex = rdao.getExam(ctx.getID());
          if (ex == null)
-            throw new CommandException("Invalid Examination - " + ctx.getID());
+            throw notFoundException("Invalid Examination - " + ctx.getID());
          
          // Check our access level
          ExamAccessControl access = new ExamAccessControl(ctx, ex);
@@ -57,7 +57,7 @@ public class ExamScoreCommand extends AbstractCommand {
          GetExamProfiles epdao = new GetExamProfiles(con);
          ExamProfile ep = epdao.getExamProfile(ex.getName());
          if (ep == null)
-            throw new CommandException("Cannot load Examination Profile - " + ex.getName());
+            throw notFoundException("Cannot load Examination Profile - " + ex.getName());
          
          // Calculate the score
          int score = 0;

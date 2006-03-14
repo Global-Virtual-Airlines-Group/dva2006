@@ -30,11 +30,8 @@ public class AssignmentSaveCommand extends AbstractCommand {
 
       // Check for the flight assignment
       AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
-      if (info == null) {
-    	  CommandException ce = new CommandException("Flight Assignment data not in session");
-    	  ce.setLogStackDump(false);
-    	  throw ce;
-      }
+      if (info == null)
+    	  throw notFoundException("Flight Assignment data not in session");
 
       try {
           Connection con = ctx.getConnection();

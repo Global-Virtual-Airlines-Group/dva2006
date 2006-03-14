@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -32,14 +32,14 @@ public class ThreadMoveCommand extends AbstractCommand {
 			GetCoolerThreads trdao = new GetCoolerThreads(con);
 			MessageThread t = trdao.getThread(ctx.getID());
 			if (t == null)
-				throw new CommandException("Invalid Message Thread - " + ctx.getID());
+				throw notFoundException("Invalid Message Thread - " + ctx.getID());
 			
 			// Get the Channel we wish to move to
 			String newChannel = ctx.getParameter("newChannel");
 			GetCoolerChannels crdao = new GetCoolerChannels(con);
 			Channel ch = crdao.get(newChannel);
 			if (ch == null)
-				throw new CommandException("Invalid Channel - " + newChannel);
+				throw notFoundException("Invalid Channel - " + newChannel);
 			
 			// Check our access to the new channel - if we cannot read the new channel, then abort
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);

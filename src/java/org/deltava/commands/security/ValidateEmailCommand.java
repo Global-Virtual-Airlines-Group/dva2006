@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -63,7 +63,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 			GetUserData usrdao = new GetUserData(con);
 			UserData usr = usrdao.get(av.getID());
 			if (usr == null)
-				throw new CommandException("Invalid Pilot/Applicant ID - " + av.getID());
+				throw notFoundException("Invalid Pilot/Applicant ID - " + av.getID());
 
 			// Get the applicant or pilot
 			if (usr.isApplicant()) {
@@ -76,7 +76,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 			// Check that the user exists
 			if (p == null)
-				throw new CommandException("Invalid Pilot/Applicant - " + av.getID());
+				throw notFoundException("Invalid Pilot/Applicant - " + av.getID());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

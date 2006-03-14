@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -74,7 +74,9 @@ public class BuildAssignmentCommand extends AbstractCommand {
 		}
 
 		// If we got this far, it's an unknown opName
-		throw new CommandException("Invalid Operation");
+		CommandException ce = new CommandException("Invalid Operation - " + opName);
+		ce.setLogStackDump(false);
+		throw ce;
 	}
 
 	/**

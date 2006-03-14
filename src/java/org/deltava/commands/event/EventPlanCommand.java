@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -38,7 +38,7 @@ public class EventPlanCommand extends AbstractCommand {
 			GetEvent dao = new GetEvent(con);
 			Event ev = dao.get(ctx.getID());
 			if (ev == null)
-				throw new CommandException("Invalid Event - " + ctx.getID());
+				throw notFoundException("Invalid Event - " + ctx.getID());
 			
 			// Check our access
 			EventAccessControl access = new EventAccessControl(ctx, ev);
@@ -59,19 +59,25 @@ public class EventPlanCommand extends AbstractCommand {
 			
 			// Get the flight plan
 			FileUpload plan = ctx.getFile("planFile");
-			if (plan == null)
-				throw new CommandException("No Flight Plan Attached");
+			if (plan == null) {
+				CommandException ce = new CommandException("No Flight Plan Attached");
+				ce.setLogStackDump(false);
+				throw ce;
+			}
 			
 			// Validate the flight plan type
 			String fExt = plan.getName().substring(plan.getName().lastIndexOf('.') + 1);
 			int planType = StringUtils.arrayIndexOf(FlightPlan.PLAN_EXT, fExt.toLowerCase());
-			if (planType == - 1)
-				throw new CommandException("Unknown Flight Plan type - " + fExt);
+			if (planType == - 1) {
+				CommandException ce = new CommandException("Unknown Flight Plan type - " + fExt);
+				ce.setLogStackDump(false);
+				throw ce;
+			}
 			
 			// Validate the route
 			Route r = ev.getRoute(ctx.getParameter("route"));
 			if (r == null)
-				throw new CommandException("Invalid Event Route - " + ctx.getParameter("route"));
+				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
 			
 			// Build the flight plan bean
 			FlightPlan fp = new FlightPlan(planType);
