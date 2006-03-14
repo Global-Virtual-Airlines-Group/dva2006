@@ -315,7 +315,10 @@
 		<commands>/etc/commands.xml</commands>
 		<services>/etc/services.xml</services>
 		<tasks>/etc/tasks.xml</tasks>
-		<nat>http://www.natroutes.glideslope.de/html/nats.php3</nat>
+		<nat>
+			<url>https://www.notams.jcs.mil/common/nat.html</url>
+			<keystore>/etc/jcs.notams.cer</keystore>
+		</nat>
 	</config>
 	
 	<online>
