@@ -2,7 +2,10 @@
 package org.deltava.commands.main;
 
 import java.util.*;
+import java.net.*;
 import java.sql.Connection;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSAdminInfo;
@@ -22,6 +25,8 @@ import org.deltava.util.system.SystemData;
 
 public class HomeCommand extends AbstractCommand {
 
+	private static final Logger log = Logger.getLogger(HomeCommand.class);
+	
 	private static final Random RND = new Random();
 
 	// Dynamic content codes
@@ -143,10 +148,19 @@ public class HomeCommand extends AbstractCommand {
 			ctx.setAttribute("dynContentType", contentType, REQUEST);
 			
 			// Determine where we are referring from
-			String referHost = ctx.getRequest().getHeader("Referer");
-			if ((!StringUtils.isEmpty(referHost)) && (!referHost.contains(myHost))) {
-				SetSystemData wdao = new SetSystemData(con);
-				wdao.logReferer(referHost);
+			String referer = ctx.getRequest().getHeader("Referer");
+			if (!StringUtils.isEmpty(referer)) {
+				try {
+					URL url = new URL(referer);
+					
+					// Log the referring host
+					if (!myHost.equalsIgnoreCase(url.getHost())) {
+						SetSystemData wdao = new SetSystemData(con);
+						wdao.logReferer(referer, url.getHost());
+					}
+				} catch (MalformedURLException mue) {
+					log.warn("Invalid HTTP referer - " + referer);
+				}
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
