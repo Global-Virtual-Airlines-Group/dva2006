@@ -29,7 +29,6 @@ xmlreq.onreadystatechange = function() {
 	} // for
 	
 	// Focus on the map
-	updateOverlays();
 	isLoading.innerHTML = '';
 	return true;
 } // function
@@ -66,9 +65,13 @@ xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id + "&time=" + d.getTi
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 
+	// Load the XML
 	var xdoc = xreq.responseXML;
+	var wsdata = xdoc.documentElement;
+	
+	// Draw the flight route
 	if (doRoute) {
-		var wps = xdoc.documentElement.getElementsByTagName("route");
+		var wps = wsdata.getElementsByTagName("route");
 		var waypoints = new Array();
 		for (var i = 0; i < wps.length; i++) {
 			var wp = wps[i];
@@ -80,8 +83,9 @@ xreq.onreadystatechange = function() {
 		map.addOverlay(routeWaypoints);
 	}
 	
+	// Draw the flight progress
 	if (doProgress) {
-		var pos = xdoc.documentElement.getElementsByTagName("pos");
+		var pos = wsdata.getElementsByTagName("pos");
 		var positions = new Array();
 		for (var i = 0; i < pos.length; i++) {
 			var pe = pos[i];
@@ -94,7 +98,10 @@ xreq.onreadystatechange = function() {
 		map.addOverlay(routeData);
 	}
 	
-	updateOverlays();
+	// Check if we cross the IDL on either the route or the progress
+	if (wsdata.getAttribute("crossIDL") == "true")
+		updateOverlays();
+	
 	return true;
 } // function
 
