@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
@@ -56,7 +56,7 @@ public class MessageTemplateCommand extends AbstractCommand {
 			GetMessageTemplate dao = new GetMessageTemplate(con);
 			MessageTemplate msg = dao.get((String) ctx.getCmdParameter(Command.ID, null));
 			if (msg == null)
-				throw new CommandException("Invalid Message Template - " + ctx.getCmdParameter(Command.ID, null));
+				throw notFoundException("Invalid Message Template - " + ctx.getCmdParameter(Command.ID, null));
 			
 			// Update our access to calculate deletion rights
 			access = new MessageAccessControl(ctx, msg);

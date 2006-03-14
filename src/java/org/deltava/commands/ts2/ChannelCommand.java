@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -37,7 +37,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			if (!isNew) {
 				c = dao.getChannel((String) ctx.getCmdParameter(ID, null));
 				if (c == null)
-					throw new CommandException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
+					throw notFoundException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
 				
 				c.setName(ctx.getParameter("name"));
 			} else {
@@ -94,7 +94,7 @@ public class ChannelCommand extends AbstractFormCommand {
 				GetTS2Data dao = new GetTS2Data(con);
 				Channel c = dao.getChannel((String) ctx.getCmdParameter(ID, null));
 				if (c == null)
-					throw new CommandException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
+					throw notFoundException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
 				
 				// Get the server
 				Server srv = dao.getServer(c.getServerID());

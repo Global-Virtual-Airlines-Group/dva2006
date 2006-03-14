@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -41,7 +41,7 @@ public class ChartDeleteCommand extends AbstractCommand {
          GetChart dao = new GetChart(con);
          Chart c = dao.get(ctx.getID());
          if (c == null)
-            throw new CommandException("Invalid Approach Chart - " + ctx.getID());
+            throw notFoundException("Invalid Approach Chart - " + ctx.getID());
          
          // Save the chart in the request
          ctx.setAttribute("chart", c, REQUEST);

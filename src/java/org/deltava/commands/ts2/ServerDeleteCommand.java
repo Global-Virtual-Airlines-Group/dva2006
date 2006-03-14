@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -32,7 +32,7 @@ public class ServerDeleteCommand extends AbstractCommand {
 			GetTS2Data dao = new GetTS2Data(con);
 			Server srv = dao.getServer(ctx.getID());
 			if (srv == null)
-				throw new CommandException("Invalid Server ID - " + ctx.getID());
+				throw notFoundException("Invalid Server ID - " + ctx.getID());
 			
 			// Get the write DAO and delete the server
 			SetTS2Data wdao = new SetTS2Data(con);

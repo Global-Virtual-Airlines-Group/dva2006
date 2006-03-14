@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -35,7 +35,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			GetFlightReports frdao = new GetFlightReports(con);
 			FlightReport pirep = frdao.get(ctx.getID());
 			if (pirep == null)
-				throw new CommandException("Flight Report Not Found");
+				throw notFoundException("Flight Report Not Found");
 
 			// Check our access level
 			PIREPAccessControl access = new PIREPAccessControl(ctx, pirep);

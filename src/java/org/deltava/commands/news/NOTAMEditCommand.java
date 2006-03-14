@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
 import java.sql.Connection;
@@ -52,7 +52,7 @@ public class NOTAMEditCommand extends AbstractCommand {
          GetNews dao = new GetNews(con);
          Notice notam = dao.getNOTAM(ctx.getID());
          if (notam == null)
-            throw new CommandException("Invalid NOTAM entry - " + ctx.getID());
+            throw notFoundException("Invalid NOTAM entry - " + ctx.getID());
          
          // Check our access
          NewsAccessControl access = new NewsAccessControl(ctx, notam);

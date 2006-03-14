@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -27,47 +27,54 @@ public class SELCALReserveCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
+
 		// Get the SELCAL code
 		String code = (String) ctx.getCmdParameter(ID, "");
-		
+
 		// Check if we are reserving
 		boolean isReserve = "reserve".equals(ctx.getCmdParameter(OPERATION, ""));
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the DAO and the selcal data
 			GetSELCAL dao = new GetSELCAL(con);
 			SelectCall sc = dao.get(code);
 			if (sc == null)
-				throw new CommandException("No SELCAL data for " + code);
-			
+				throw notFoundException("No SELCAL data for " + code);
+
 			SetSELCAL wdao = new SetSELCAL(con);
 			if (isReserve) {
 				int maxCodes = SystemData.getInt("users.selcal.max", 2);
 				dao.setQueryMax(0);
 				Collection<SelectCall> rSC = dao.getReserved(ctx.getUser().getID());
-				if (rSC.size() > maxCodes)
-					throw new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");
-				
+				if (rSC.size() > maxCodes) {
+					CommandException ce = new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");
+					ce.setLogStackDump(false);
+					throw ce;
+				}
+
 				// Reserve the code
 				sc.setReservedOn(new Date());
 				wdao.reserve(code, ctx.getUser().getID());
-				
+
 				// Save and calculate the release date
 				Date releaseDate = CalendarUtils.adjust(sc.getReservedOn(), SystemData.getInt("users.selcal.reserve"));
 				ctx.setAttribute("releaseDate", releaseDate, REQUEST);
 				ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("codes", new Integer(rSC.size() + 1), REQUEST);
 			} else {
-				if (sc.getReservedBy() != ctx.getUser().getID())
-					throw new CommandException(sc.getAircraftCode() + " not reserved by " + ctx.getUser().getName());
-				
+				if (sc.getReservedBy() != ctx.getUser().getID()) {
+					CommandException ce = new CommandException(sc.getAircraftCode() + " not reserved by "
+							+ ctx.getUser().getName());
+					ce.setLogStackDump(false);
+					throw ce;
+				}
+
 				// Free the reservation
 				wdao.free(sc.getCode());
 				ctx.setAttribute("isFree", Boolean.TRUE, REQUEST);
 			}
-			
+
 			// Save the SELCAL code in the request
 			ctx.setAttribute("sc", sc, REQUEST);
 		} catch (DAOException de) {
@@ -75,7 +82,7 @@ public class SELCALReserveCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);

@@ -71,7 +71,7 @@ public class InstallerCommand extends LibraryEditCommand {
 
 			// Check if we're uploading to ensure that the file does not already exist
 			if (isNew && (entry != null)) {
-				throw new CommandException("Installer " + fName + " already exists");
+				throw notFoundException("Installer " + fName + " already exists");
 			} else if (isNew) {
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Installer(f.getAbsolutePath());

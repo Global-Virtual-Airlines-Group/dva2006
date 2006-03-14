@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -35,13 +35,13 @@ public class NotificationToggleCommand extends AbstractCommand {
          GetCoolerThreads tdao = new GetCoolerThreads(con);
          MessageThread thread = tdao.getThread(id);
          if (thread == null)
-            throw new CommandException("Invalid Message Thread - " + id);
+            throw notFoundException("Invalid Message Thread - " + id);
 
          // Get the Channel profile
          GetCoolerChannels cdao = new GetCoolerChannels(con);
          Channel c = cdao.get(thread.getChannel());
          if (c == null)
-            throw new CommandException("Invalid Channel - " + thread.getChannel());
+            throw notFoundException("Invalid Channel - " + thread.getChannel());
          
          // Get the Notifications for this thread, and if we're doing an add or a remove
          ThreadNotifications nt = tdao.getNotifications(id);

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.util.Collection;
@@ -140,7 +140,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 					GetPilot pdao = new GetPilot(con);
 					Pilot p = pdao.get(av.getID());
 					if (p == null)
-						throw new CommandException("You do not exist!");
+						throw notFoundException("You do not exist!");
 
 					// Update the Pilot's address
 					p.setEmail(av.getAddress());

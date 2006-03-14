@@ -169,7 +169,9 @@ public class PIREPCommand extends AbstractFormCommand {
 						.getParameter("dateM")), Integer.parseInt(ctx.getParameter("dateD")));
 				fr.setDate(pd.getTime());
 			} catch (NumberFormatException nfe) {
-				throw new CommandException("Invalid Flight Date");
+				CommandException ce = new CommandException("Invalid Flight Date");
+				ce.setLogStackDump(false);
+				throw ce;
 			}
 
 			// Validate the date
@@ -177,9 +179,12 @@ public class PIREPCommand extends AbstractFormCommand {
 			Calendar backwardLimit = Calendar.getInstance();
 			forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
 			backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
-			if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime())))
-				throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
+			if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime()))) {
+				CommandException ce = new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
 						+ backwardLimit.getTime() + " - " + forwardLimit.getTime());
+				ce.setLogStackDump(false);
+				throw ce;
+			}
 
 			// Get the DAO and write the updateed PIREP to the database
 			SetFlightReport wdao = new SetFlightReport(con);
@@ -428,7 +433,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (!(fr instanceof ACARSFlightReport))
 					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA()
 							.getPosition(), 100), REQUEST);
-				
+
 				// Determine if we are crossing the International Date Line
 				double longD = fr.getAirportD().getLongitude();
 				double longA = fr.getAirportA().getLongitude();
@@ -437,7 +442,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
+						REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request

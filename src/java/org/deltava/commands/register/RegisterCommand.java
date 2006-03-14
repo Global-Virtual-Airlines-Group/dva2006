@@ -151,13 +151,13 @@ public class RegisterCommand extends AbstractCommand {
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			ExamProfile ep = epdao.getExamProfile(Examination.QUESTIONNAIRE_NAME);
 			if (ep == null)
-				throw new CommandException("Invalid Examination - " + Examination.QUESTIONNAIRE_NAME);
+				throw notFoundException("Invalid Examination - " + Examination.QUESTIONNAIRE_NAME);
 
 			// Load the question pool for the questionnaire
 			epdao.setQueryMax(ep.getSize());
 			List qPool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME, true);
 			if (qPool.isEmpty())
-				throw new CommandException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
+				throw notFoundException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
 
 			// Start the transaction
 			ctx.startTX();

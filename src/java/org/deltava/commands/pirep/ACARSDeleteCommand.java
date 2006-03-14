@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.sql.Connection;
@@ -33,7 +33,7 @@ public class ACARSDeleteCommand extends AbstractCommand {
 			GetFlightReports dao = new GetFlightReports(con);
 			FlightReport fr = dao.get(ctx.getID());
 			if (fr == null)
-				throw new CommandException("Invalid Flight Report - " + ctx.getID());
+				throw notFoundException("Invalid Flight Report - " + ctx.getID());
 			
 			// Check our Access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
