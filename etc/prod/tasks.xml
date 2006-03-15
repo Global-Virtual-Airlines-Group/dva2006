@@ -12,8 +12,8 @@
 		<hours>0</hours>
 	</task>
 
-	<task id="nat" enabled="true">
-		<class>org.deltava.tasks.NATDownloadTask</class>
+	<task id="pacot" enabled="true">
+		<class>org.deltava.tasks.PACOTDownloadTask</class>
 		<interval>86400</interval>
 		<hours>3</hours>
 	</task>
