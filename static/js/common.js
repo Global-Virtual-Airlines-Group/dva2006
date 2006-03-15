@@ -29,6 +29,12 @@ if (document.isSubmit) {
 return true;
 }
 
+function clearSubmit()
+{
+document.isSubmit = false;
+return true;
+}
+
 function setSubmit()
 {
 document.isSubmit = true;
