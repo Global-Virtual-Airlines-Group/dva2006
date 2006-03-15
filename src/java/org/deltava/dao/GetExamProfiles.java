@@ -164,7 +164,7 @@ public class GetExamProfiles extends DAO {
 		boolean showAll = "ALL".equalsIgnoreCase(examName);
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM "
 				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
 				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) LEFT JOIN QUESTIONMINFO MQ "
 				+ "ON (Q.ID=MQ.ID) WHERE (Q.ACTIVE=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
