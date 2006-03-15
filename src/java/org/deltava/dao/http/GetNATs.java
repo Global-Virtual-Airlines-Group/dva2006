@@ -12,7 +12,7 @@ import org.deltava.dao.DAOException;
  * @version 1.0
  * @since 1.0
  */
-public class GetNATs extends DAO {
+public class GetNATs extends DAO implements TrackDAO {
 
 	/**
 	 * Initializes the DAO with a particular HTTP connection.
@@ -60,6 +60,7 @@ public class GetNATs extends DAO {
 			}
 
 			// Return the data
+			br.close();
 			return buf.toString();
 		} catch (IOException ie) {
 			throw new DAOException(ie);

@@ -11,7 +11,7 @@ import java.io.IOException;
 import org.deltava.beans.schedule.OceanicRoute;
 
 import org.deltava.dao.*;
-import org.deltava.dao.http.GetNATs;
+import org.deltava.dao.http.*;
 
 import org.deltava.taskman.DatabaseTask;
 
@@ -65,7 +65,7 @@ public class NATDownloadTask extends DatabaseTask {
 
 			// Get the DAO and the NAT data
 			log.info("Loading NAT track data from " + url.toString());
-			GetNATs dao = new GetNATs(con);
+			TrackDAO dao = new GetNATs(con);
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database

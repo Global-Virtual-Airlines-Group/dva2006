@@ -29,7 +29,7 @@
  <td class="data">${route.source}</td>
 </tr>
 <tr>
- <td colspan="2" class="left"><fmt:text value="${route.route}" /></td>
+ <td colspan="2" class="left">${route.route}</td>
 </tr>
 </el:table>
 
