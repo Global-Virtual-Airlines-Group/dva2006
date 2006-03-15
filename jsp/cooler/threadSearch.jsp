@@ -25,7 +25,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void enableElement('SearchButton', true)">
+<body onload="enableElement('SearchButton', true); clearSubmit()">
 <content:page>
 <%@ include file="/jsp/cooler/header.jsp" %> 
 <%@ include file="/jsp/cooler/sideMenu.jsp" %>
