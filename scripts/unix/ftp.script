@@ -1,6 +1,5 @@
 bin
 lcd /home/backup/db
-put my.cnf
 put mysql.sql.gz
 put ldif.txt.gz
 put create_tables.tar.gz
