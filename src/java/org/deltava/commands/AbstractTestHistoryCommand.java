@@ -36,7 +36,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		Collection<FlightReport> pireps = frdao.getByPilot(p.getID(), null);
 		frdao.getCaptEQType(pireps);
 
-		// Get the Pilot's equipment program
+		// Get the Pilot's equipment program and all equipment types
 		GetEquipmentType eqdao = new GetEquipmentType(c);
 		EquipmentType eq = eqdao.get(p.getEquipmentType());
 
@@ -48,6 +48,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
 		_testHistory = new TestingHistoryHelper((Pilot) p, eq, exdao.getExams(p.getID()), pireps);
+		_testHistory.setEquipmentTypes(eqdao.getAll());
 
 		// Create a dummy FO exam for the hired in program
 		if (ieq != null) {
@@ -62,6 +63,21 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 				ex.setScoredOn(p.getCreatedOn());
 				_testHistory.addExam(ex);
 			}
+		}
+		
+		// Determine the maximum stage we qualify for Captain's rank in
+		int stage = 1;
+		Collection<EquipmentType> eqTypes = getTypes(stage);
+		while (!eqTypes.isEmpty()) {
+			for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext(); ) {
+				eq = i.next();
+				if (_testHistory.promotionEligible(eq)) {
+					_maxCaptainStage = stage;
+					break;
+				}
+			}
+			
+			eqTypes = getTypes(++stage);
 		}
 	}
 }

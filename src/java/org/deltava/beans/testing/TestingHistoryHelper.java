@@ -31,6 +31,7 @@ public class TestingHistoryHelper {
 
 	private SortedSet<Test> _tests = new TreeSet<Test>();
 	private Collection<FlightReport> _pireps;
+	private Collection<EquipmentType> _allEQ;
 
 	/**
 	 * Initializes the helper.
@@ -63,6 +64,14 @@ public class TestingHistoryHelper {
 	public void addExam(Examination ex) {
 		_tests.add(ex);
 	}
+	
+	/**
+	 * Initializes the collection of Equipment programs.
+	 * @param eqTypes a Collection of EquipmentType beans
+	 */
+	public void setEquipmentTypes(Collection<EquipmentType> eqTypes) {
+		_allEQ = new TreeSet<EquipmentType>(eqTypes);
+	}
 
 	/**
 	 * Toggles the debugging log.
@@ -88,6 +97,20 @@ public class TestingHistoryHelper {
 	 */
 	public Collection<Test> getExams() {
 		return _tests;
+	}
+	
+	/**
+	 * Helper method to retrieve all equipment types for a given stage.
+	 */
+	private Collection<EquipmentType> getTypes(int stage) {
+		Collection<EquipmentType> results = new HashSet<EquipmentType>();
+		for (Iterator<EquipmentType> i = _allEQ.iterator(); i.hasNext(); ) {
+			EquipmentType eq = i.next();
+			if (eq.getStage() == stage)
+				results.add(eq);
+		}
+		
+		return results;
 	}
 
 	/**
@@ -245,6 +268,15 @@ public class TestingHistoryHelper {
 
 		return true;
 	}
+	
+	/**
+	 * Returns if the Pilot has completed enough flight legs in their current program to request a switch
+	 * or additional ratings. 
+	 * @return TRUE if the Pilot has completed one half of the legs required for promotion to Captain, otherwise FALSE
+	 */
+	public boolean canRequestSwitch() {
+		return (getFlightLegs(_myEQ) >= (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2));
+	}
 
 	/**
 	 * Returns if a user can request a Check Ride to move to a particular equipment program.
@@ -270,19 +302,33 @@ public class TestingHistoryHelper {
 			return false;
 
 		// If we require a checkride, ensure we have a minimum number of legs
-		return (getFlightLegs(_myEQ) >= (_myEQ.getPromotionLegs(Ranks.RANK_C) / 2));
+		return canRequestSwitch();
 	}
 
 	/**
-	 * Returns if we can promote a user to Captain within the equipment program.
+	 * Returns if we can promote a user to Captain within the equipment program. <i>This is essentially the same call
+	 * as {@link TestingHistoryHelper#promotionEligible(EquipmentType)} except that we also check if we are a First
+	 * Officer in the specific program.
 	 * @param eq the EquipmentType bean
-	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE.
+	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE
+	 * @see TestingHistoryHelper#promotionEligible(EquipmentType)
 	 */
 	public boolean canPromote(EquipmentType eq) {
 
 		// Check if we're a First Officer
 		if (!_usr.getRank().equals(Ranks.RANK_FO))
 			return false;
+
+		// Check if we're otherwise eligible
+		return promotionEligible(eq);
+	}
+	
+	/**
+	 * Returns wether we could have promoted the user to Captain within an equipment program. 
+	 * @param eq the EquipmentType bean
+	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE
+	 */
+	public boolean promotionEligible(EquipmentType eq) {
 
 		// Check if we've passed the examination
 		if (!hasPassed(eq.getExamName(Ranks.RANK_C)))
