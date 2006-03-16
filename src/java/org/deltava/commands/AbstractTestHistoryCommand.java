@@ -64,20 +64,5 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 				_testHistory.addExam(ex);
 			}
 		}
-		
-		// Determine the maximum stage we qualify for Captain's rank in
-		int stage = 1;
-		Collection<EquipmentType> eqTypes = getTypes(stage);
-		while (!eqTypes.isEmpty()) {
-			for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext(); ) {
-				eq = i.next();
-				if (_testHistory.promotionEligible(eq)) {
-					_maxCaptainStage = stage;
-					break;
-				}
-			}
-			
-			eqTypes = getTypes(++stage);
-		}
 	}
 }

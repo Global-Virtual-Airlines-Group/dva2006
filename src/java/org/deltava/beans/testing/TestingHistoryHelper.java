@@ -26,7 +26,6 @@ public class TestingHistoryHelper {
 
 	private Pilot _usr;
 	private EquipmentType _myEQ;
-	private boolean _isCaptain;
 	private boolean _debugLog;
 
 	private SortedSet<Test> _tests = new TreeSet<Test>();
@@ -47,9 +46,6 @@ public class TestingHistoryHelper {
 		_pireps = pireps;
 		if (tests != null)
 			_tests.addAll(tests);
-
-		// Check if we're a captain
-		_isCaptain = (StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1);
 	}
 
 	private void log(String msg) {
@@ -64,7 +60,7 @@ public class TestingHistoryHelper {
 	public void addExam(Examination ex) {
 		_tests.add(ex);
 	}
-	
+
 	/**
 	 * Initializes the collection of Equipment programs.
 	 * @param eqTypes a Collection of EquipmentType beans
@@ -98,19 +94,41 @@ public class TestingHistoryHelper {
 	public Collection<Test> getExams() {
 		return _tests;
 	}
-	
+
 	/**
 	 * Helper method to retrieve all equipment types for a given stage.
 	 */
 	private Collection<EquipmentType> getTypes(int stage) {
 		Collection<EquipmentType> results = new HashSet<EquipmentType>();
-		for (Iterator<EquipmentType> i = _allEQ.iterator(); i.hasNext(); ) {
+		for (Iterator<EquipmentType> i = _allEQ.iterator(); i.hasNext();) {
 			EquipmentType eq = i.next();
 			if (eq.getStage() == stage)
 				results.add(eq);
 		}
-		
+
 		return results;
+	}
+
+	/**
+	 * Returns wether a Pilot qualifies for Captain's rank in a particular stage.
+	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs in <i>ANY</i> equipment
+	 *         program in a particular stage.
+	 */
+	public boolean isCaptainInStage(int stage) {
+
+		// Check if we're already a captain
+		if ((StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1) && (stage == _myEQ.getStage()))
+			return true;
+
+		// Iterate through the equipment types in a stage
+		Collection<EquipmentType> eqTypes = getTypes(stage);
+		for (Iterator<EquipmentType> i = eqTypes.iterator(); i.hasNext();) {
+			EquipmentType eq = i.next();
+			if (promotionEligible(eq))
+				return true;
+		}
+
+		return false;
 	}
 
 	/**
@@ -190,17 +208,17 @@ public class TestingHistoryHelper {
 			log(ep.getName() + " is the Initial Questionnaire");
 			return false;
 		}
-		
+
 		// If it's part of the Flight Academy, no
 		if (ep.getAcademy())
 			return false;
-		
+
 		// Check if we've passed or submitted the exam
 		if (hasPassed(ep.getName()) || hasSubmitted(ep.getName())) {
 			log(ep.getName() + " is passed / submitted");
 			return false;
 		}
-		
+
 		// Check if it's the FO exam for the current program
 		if (ep.getName().equals(_myEQ.getExamName(Ranks.RANK_FO))) {
 			log(ep.getName() + " is FO exam for " + _myEQ.getName());
@@ -227,9 +245,10 @@ public class TestingHistoryHelper {
 			return false;
 		}
 
-		// If the exam is a higher stage than us, require Captan's rank
-		if ((ep.getStage() > getMaxCheckRideStage()) && !_isCaptain) {
-			log(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage() + ", not Captain");
+		// If the exam is a higher stage than us, require Captan's rank in the stage below
+		if ((ep.getStage() > getMaxCheckRideStage()) && !isCaptainInStage(ep.getStage() - 1)) {
+			log(ep.getName() + " stage=" + ep.getStage() + ", our Stage=" + getMaxCheckRideStage()
+					+ ", not Captain in stage " + (ep.getStage() - 1));
 			return false;
 		}
 
@@ -249,7 +268,7 @@ public class TestingHistoryHelper {
 			log("Already in " + eq.getName() + " program");
 			return false;
 		}
-		
+
 		// If it's a stage 1 program, allow the transfer
 		if (eq.getStage() == 1)
 			return true;
@@ -268,10 +287,10 @@ public class TestingHistoryHelper {
 
 		return true;
 	}
-	
+
 	/**
-	 * Returns if the Pilot has completed enough flight legs in their current program to request a switch
-	 * or additional ratings. 
+	 * Returns if the Pilot has completed enough flight legs in their current program to request a switch or additional
+	 * ratings.
 	 * @return TRUE if the Pilot has completed one half of the legs required for promotion to Captain, otherwise FALSE
 	 */
 	public boolean canRequestSwitch() {
@@ -285,8 +304,8 @@ public class TestingHistoryHelper {
 	 */
 	public boolean canRequestCheckRide(EquipmentType eq) {
 
-		// Make sure we're a captain if the stage is higher than our own
-		if ((eq.getStage() > getMaxCheckRideStage()) && (!_isCaptain))
+		// Make sure we're a captain in the previous stage if the stage is higher than our own
+		if ((eq.getStage() > getMaxCheckRideStage()) && (!isCaptainInStage(eq.getStage() - 1)))
 			return false;
 
 		// Check if we've passed the FO exam for that program
@@ -306,9 +325,9 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if we can promote a user to Captain within the equipment program. <i>This is essentially the same call
-	 * as {@link TestingHistoryHelper#promotionEligible(EquipmentType)} except that we also check if we are a First
-	 * Officer in the specific program.
+	 * Returns if we can promote a user to Captain within the equipment program. <i>This is essentially the same call as
+	 * {@link TestingHistoryHelper#promotionEligible(EquipmentType)} except that we also check if we are a First Officer
+	 * in the specific program.
 	 * @param eq the EquipmentType bean
 	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE
 	 * @see TestingHistoryHelper#promotionEligible(EquipmentType)
@@ -322,9 +341,9 @@ public class TestingHistoryHelper {
 		// Check if we're otherwise eligible
 		return promotionEligible(eq);
 	}
-	
+
 	/**
-	 * Returns wether we could have promoted the user to Captain within an equipment program. 
+	 * Returns wether we could have promoted the user to Captain within an equipment program.
 	 * @param eq the EquipmentType bean
 	 * @return TRUE if the user is eligible to be promoted to captain, otherwise FALSE
 	 */
@@ -385,29 +404,29 @@ public class TestingHistoryHelper {
 
 		return false;
 	}
-	
+
 	/**
 	 * Returns if the user is locked out of the Testing Center due to a failed examination.
 	 * @param lockoutHours the number of hours to remain locked out, or zero if no lockout
 	 * @return TRUE if the user is locked out, otherwise FALSE
 	 */
 	public boolean isLockedOut(int lockoutHours) {
-		
+
 		// If there is no last examination, or lockout period forget it
 		if (_tests.isEmpty() || (lockoutHours < 1))
 			return false;
-		
+
 		// If the last test is not an examination, forget it
 		Test t = _tests.last();
 		if (!(t instanceof Examination))
 			return false;
-		
+
 		// If the test is not scored and failed, then forget
 		if (t.getStatus() != Test.SCORED)
 			return false;
 		else if (t.getPassFail())
 			return false;
-		
+
 		// Check the time from the scoring
 		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
 		log("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
