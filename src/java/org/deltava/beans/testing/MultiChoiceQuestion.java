@@ -10,7 +10,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class MultiChoiceQuestion extends Question {
+public class MultiChoiceQuestion extends Question implements MultipleChoice {
 
 	private Collection<String> _choices = new LinkedHashSet<String>();
 	
@@ -50,5 +50,13 @@ public class MultiChoiceQuestion extends Question {
 	 */
 	public void addChoice(String choice) {
 		_choices.add(choice.trim());
+	}
+	
+    /**
+     * Returns if the user has provided the exact correct answer.
+     * @return FALSE always
+     */
+	public final boolean getExactMatch() {
+		return false;
 	}
 }

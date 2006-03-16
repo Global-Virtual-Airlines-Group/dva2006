@@ -25,7 +25,18 @@ isOK = true;
 qNum = 1;
 var a = getElement('A' + qNum);
 while (isOK && (a != null)) {
-	isOK = (isOK && (a.value.length > 1));
+	if (a.value) {
+		isOK = (isOK && (a.value.length > 1));
+	} else {
+		var checkCount = 0;
+		for (var x = 0; x < a.length; x++) {
+			if (a[x].checked)
+				checkCount++;
+		}
+		
+		isOK = (isOK && (checkCount > 0));
+	}
+	
 	qNum++;
 	a = getElement('A' + qNum);
 }
@@ -68,15 +79,26 @@ return true;
 
 function saveAnswer(qNum, id)
 {
+var txtbox = getElement('A' + qNum);
+if (!txtbox) return false;
+
+// Create the AJAX request
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-// Get the exam answer
-var txtbox = getElement('A' + qNum);
-if ((txtbox) && (txtbox.value.length > 1)) {
+// Save the answer
+if ((txtbox.value) && (txtbox.value.length > 1)) {
 	xmlreq.send('answer=' + txtbox.value);
 	window.status = 'Saved answer to Question #' + qNum;
+} else if (txtbox.length) {
+	for (var x = 0; x < txtbox.length; x++) {
+		if (txtbox[x].checked) {
+			xmlreq.send('answer=' + txtbox[x].value);
+			window.status = 'Saved answer to Question #' + qNum + ' - ' + txtbox[x].value;
+			break;
+		}	
+	}
 }
 
 return true;
@@ -117,7 +139,12 @@ return true;
 <!-- Answer# ${q.number} -->
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
+<c:if test="${!fn:isMultiChoice(q)}">
  <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
+</c:if>
+<c:if test="${fn:isMultiChoice(q)}">
+ <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" type="radio" name="answer${q.number}" className="small" width="400" options="${q.choices}" value="${q.answer}" /></td>
+</c:if>
 </tr>
 </c:forEach>
 </el:table>

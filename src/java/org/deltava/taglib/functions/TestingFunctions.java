@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.testing.*;
@@ -19,6 +19,15 @@ public class TestingFunctions {
 	 */
 	public static boolean isCheckRide(Test t) {
 		return (t instanceof CheckRide);
+	}
+	
+	/**
+	 * Returns wether the question is a multiple-choice question
+	 * @param q the Question or QuestionProfile bean
+	 * @return TRUE if the question is multiple-choice, otherwise FALSE
+	 */
+	public static boolean isMultiChoice(Question q) {
+		return (q instanceof MultipleChoice);
 	}
 	
 	/**

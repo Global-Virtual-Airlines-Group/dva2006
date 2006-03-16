@@ -99,6 +99,20 @@ public class Examination extends Test {
 	public int getType() {
 		return Test.EXAM;
 	}
+	
+	/**
+	 * Returns if the examination has any multiple-choice questions.
+	 * @return TRUE if there is at least one multiple-choice question, otherwise FALSE
+	 */
+	public boolean hasMultipleChoice() {
+		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
+			Question q = i.next();
+			if (q instanceof MultipleChoice)
+				return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Marks this Examination as having all blank answers.

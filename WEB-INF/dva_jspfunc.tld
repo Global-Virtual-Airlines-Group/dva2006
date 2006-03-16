@@ -138,7 +138,7 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean isCheckRide(org.deltava.beans.FlightReport)</function-signature>
 	</function>
-	
+
 	<!-- Check for Online Flight Report -->
 	<function>
 		<name>isOnline</name>
@@ -195,6 +195,13 @@
 		<function-signature>boolean isCheckRide(org.deltava.beans.testing.Test)</function-signature>
 	</function>
 	
+	<!-- Check for multiple-choice question -->
+	<function>
+		<name>isMultiChoice</name>
+		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
+		<function-signature>boolean isMultiChoice(org.deltava.beans.testing.Question)</function-signature>
+	</function>
+
 	<!-- Check for correctly answered question -->
 	<function>
 		<name>correct</name>
