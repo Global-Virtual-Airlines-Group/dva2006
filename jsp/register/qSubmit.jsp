@@ -24,9 +24,24 @@ isOK = true;
 qNum = 1;
 var a = getElement('A' + qNum);
 while (isOK && (a != null)) {
-	isOK = (isOK && (a.value.length > 2));
+	if (a.value) {
+		isOK = (isOK && (a.value.length > 1));
+	} else {
+		var checkCount = 0;
+		for (var x = 0; x < a.length; x++) {
+			if (a[x].checked)
+				checkCount++;
+		}
+		
+		isOK = (isOK && (checkCount > 0));
+	}
+
 	qNum++;
 	a = getElement('A' + qNum);
+}
+
+if (!isOK) {
+	if (!confirm("You have not answered all Questions. Hit OK to submit.")) return false;
 }
 
 setSubmit();

@@ -4,15 +4,14 @@ package org.deltava.commands.testing;
 import java.util.Collection;
 import java.sql.Connection;
 
-import org.deltava.beans.testing.QuestionProfile;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetExamProfiles;
-import org.deltava.dao.SetExamProfile;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionProfileAccessControl;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
@@ -32,7 +31,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 		// Check our access level
 		validateEditAccess(ctx);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -44,14 +42,24 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				if (qp == null)
 					throw notFoundException("Invalid Question Profile - " + ctx.getID());
 				
-				// Update question text
+				// Update question text / answer
 				qp.setQuestion(ctx.getParameter("question"));
+				qp.setCorrectAnswer(ctx.getParameter((qp instanceof MultipleChoice) ? "correctChoice" : "correct"));
 			} else {
-				qp = new QuestionProfile(ctx.getParameter("question"));
+				// Check if we're creating a multiple-choice question
+				boolean isMC = Boolean.valueOf(ctx.getParameter("isMultiChoice")).booleanValue();
+				if (isMC) {
+					MultiChoiceQuestionProfile mqp = new MultiChoiceQuestionProfile(ctx.getParameter("question"));
+					mqp.setChoices(StringUtils.split(ctx.getParameter("answerChoices"), "\n"));
+					mqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
+					qp = mqp;
+				} else {
+					qp = new QuestionProfile(ctx.getParameter("question"));
+					qp.setCorrectAnswer(ctx.getParameter("correct"));
+				}
 			}
 
 			// Load the fields from the request
-			qp.setCorrectAnswer(ctx.getParameter("correct"));
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			Collection<String> examNames = ctx.getParameters("examNames");
 			if (examNames != null)

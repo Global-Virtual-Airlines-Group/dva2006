@@ -24,6 +24,28 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function tooggleAnswerBox()
+{
+var f = document.forms[0];
+if (f.correct) f.correct.disabled = f.isMultiChoice.checked;
+return true;
+}
+
+function updateAnswerCombo()
+{
+var f = document.forms[0];
+if ((!f.answerChoices) || (!f.correctChoice)) return false;
+
+// Copy each line in the textbox to an answer choice
+var choices = f.answerChoices.text.split('\n');
+f.correctChoice.options.length = 1;
+f.correctChoice.options.length = choices.length + 1;
+for (var x = 0; x < choices.length; x++)
+	f.correctChoice.options[x + 1] = new Option(choices[x], choices[x]);
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -44,10 +66,12 @@ return true;
  <td class="label">Question Text</td>
  <td class="data bld"><el:text name="question" idx="*" size="120" className="req" max="255" value="${question.question}" /></td>
 </tr>
+<c:if test="${(!empty question) && !fn:isMultiChoice(question)}">
 <tr>
  <td class="label">Correct Answer</td>
  <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
 </tr>
+</c:if>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="120" separator="<div style=\"clear:both;\" />" className="small" checked="${question.examNames}" options="${examNames}" /></td>
@@ -69,6 +93,25 @@ return true;
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" className="sec" value="true" checked="${question.active}" label="Question is Available" /></td>
 </tr>
+<c:if test="${empty question || fn:isMultiChoice(question)}">
+<tr class="title caps">
+ <td colspan="2">MULTIPLE CHOICE QUESTION</td>
+</tr>
+<c:if test="${empty question}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isMultiChoice" idx="*" value="true" label="This is a multiple choice question" onChange="void tooggleAnswerBox()" /></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label" valign="top">Answer Choices</td>
+ <td class="data"><el:textbox name="answerChoices" idx="*" width="120" height="5" onBlur="void updateAnswerCombo()">${fn:splice(question.choices, 'X')}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Correct Answer</td>
+ <td class="data"><el:combo name="correctChoice" size="1" idx="*" options="${question.choices}" value="${question.correctAnswer}" /></td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -82,5 +125,9 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${fn:isMultiChoice(question)}">
+<script language="JavaScript" type="text/javascript">
+updateAnswerCombo();
+</script></c:if>
 </body>
 </html>

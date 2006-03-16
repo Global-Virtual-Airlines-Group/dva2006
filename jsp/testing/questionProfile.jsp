@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Examination Question Profile</title>
@@ -24,12 +25,20 @@
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
- <td colspan="2">EXAMINATION QUESTION PROFILE</td>
+ <td colspan="2">${fn:isMultiChoice(question) ? 'MULTIPLE CHOICE ' : ''}EXAMINATION QUESTION PROFILE</td>
 </tr>
 <tr>
  <td class="label">Question Text</td>
  <td class="data bld">${question.question}</td>
 </tr>
+<c:if test="${fn:isMultiChoice(question)}">
+<tr>
+ <td class="label" valign="top">Answer Choices
+ <td class="data"><c:forEach var="choice" items="${question.choices}">
+${choice}<br />
+</c:forEach></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Correct Answer</td>
  <td class="data">${question.correctAnswer}</td>

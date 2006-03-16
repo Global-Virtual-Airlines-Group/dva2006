@@ -7,6 +7,8 @@ import java.util.*;
 import org.deltava.beans.testing.*;
 import org.deltava.comparators.TestComparator;
 
+import org.deltava.util.CollectionUtils;
+
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
@@ -47,13 +49,18 @@ public class GetExam extends DAO {
 			Examination e = results.get(0);
 
 			// Load the questions for this examination
-			prepareStatementWithoutLimits("SELECT * FROM EXAMQUESTIONS WHERE (EXAM_ID=?) ORDER BY QUESTION_NO");
+			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ) FROM EXAMQUESTIONS EQ LEFT JOIN "
+					+ "EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) "
+					+ "WHERE (EQ.EXAM_ID=?) ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				Question q = new Question(rs.getString(4));
+				boolean isMC = (rs.getInt(8) > 0);
+				
+				// Create the question
+				Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
 				q.setID(rs.getInt(2));
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
@@ -63,9 +70,31 @@ public class GetExam extends DAO {
 				e.addQuestion(q);
 			}
 
-			// Clean up and return
+			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Load multiple choice questions
+			if (e.hasMultipleChoice()) {
+				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
+				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM EXAMQUESIONSM WHERE "
+						+ "(EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
+
+				// Execute the query
+				rs = _ps.executeQuery();
+				while (rs.next()) {
+					Question q = qMap.get(new Integer(rs.getInt(1)));
+					if (q != null) {
+						MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+						mq.addChoice(rs.getString(3));
+					}
+				}
+				
+				// Clean up
+				rs.close();
+				_ps.close();
+			}
+			
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);
