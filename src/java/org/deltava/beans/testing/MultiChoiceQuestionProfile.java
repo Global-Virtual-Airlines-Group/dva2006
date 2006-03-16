@@ -10,7 +10,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class MultiChoiceQuestionProfile extends QuestionProfile {
+public class MultiChoiceQuestionProfile extends QuestionProfile implements MultipleChoice {
 
 	private Collection<String> _choices = new LinkedHashSet<String>();
 	
