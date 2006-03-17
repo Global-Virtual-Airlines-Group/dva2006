@@ -1016,6 +1016,12 @@
 		<roles>HR,Examination</roles>
 	</command>
 
+	<command id="crscriptdelete">
+		<name>Check Ride Script Delete</name>
+		<class>org.deltava.commands.testing.CheckRideScriptDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+
 
 	<!-- Pilot Registration Commands -->
 	<command id="register">
