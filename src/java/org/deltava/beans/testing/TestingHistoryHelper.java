@@ -115,6 +115,10 @@ public class TestingHistoryHelper {
 	 *         program in a particular stage.
 	 */
 	public boolean isCaptainInStage(int stage) {
+		
+		// Check for staff member
+		if (Ranks.RANK_ACP.equals(_usr.getRank()) || Ranks.RANK_CP.equals(_usr.getRank()))
+			return true;
 
 		// Check if we're already a captain
 		if ((StringUtils.arrayIndexOf(CAPT_RANKS, _usr.getRank()) != -1) && (stage == _myEQ.getStage()))
