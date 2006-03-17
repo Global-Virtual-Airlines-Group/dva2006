@@ -998,6 +998,12 @@
 		<roles>HR,Examination</roles>
 	</command>
 
+	<command id="qpdelete">
+		<name>Question Profile Delete</name>
+		<class>org.deltava.commands.testing.QuestionDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="crscripts">
 		<name>Check Ride Scripts</name>
 		<class>org.deltava.commands.testing.CheckRideScriptsCommand</class>

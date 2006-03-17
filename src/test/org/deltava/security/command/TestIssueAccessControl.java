@@ -140,8 +140,4 @@ public class TestIssueAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanReassign());
       assertFalse(_ac.getCanResolve());
    }
-   
-   public void testContextValidation() {
-      doContextValidation(new QuestionProfileAccessControl(null));
-   }
 }

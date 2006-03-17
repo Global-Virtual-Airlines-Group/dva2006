@@ -28,9 +28,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
      * @throws CommandException if an error occurs
      */
 	protected void execSave(CommandContext ctx) throws CommandException {
-
-		// Check our access level
-		validateEditAccess(ctx);
 		try {
 			Connection con = ctx.getConnection();
 
@@ -58,6 +55,12 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 				}
 			}
+			
+			// Validate our access
+			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
+			access.validate();
+			if (!access.getCanEdit())
+				throw securityException("Cannot modify Examination Question Profile");
 
 			// Load the fields from the request
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
@@ -77,9 +80,13 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
+		// Set status attribute
+		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/testing/profileUpdate.jsp");
+		result.setType(CommandResult.REQREDIRECT);
 		result.setSuccess(true);
 	}
 
@@ -89,10 +96,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
      * @throws CommandException if an error occurs
      */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
-		// Check our access level
-		validateEditAccess(ctx);
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -102,11 +105,21 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			if ((qp == null) && (ctx.getID() != 0))
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
 			
+			// Validate our access
+			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
+			access.validate();
+			if (!access.getCanEdit())
+				throw securityException("Cannot modify Examination Question Profile");
+			
 			// Get exam names
 			ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);
+			if (qp instanceof MultipleChoice) {
+				MultipleChoice mqp = (MultipleChoice) qp;
+				ctx.setAttribute("qChoices", StringUtils.listConcat(mqp.getChoices(), "\n"), REQUEST);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -125,11 +138,6 @@ public class QuestionProfileCommand extends AbstractFormCommand {
      * @throws CommandException if an error occurs
      */
 	protected void execRead(CommandContext ctx) throws CommandException {
-
-		// Check our access level
-		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
-		access.validate();
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -138,9 +146,14 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if (qp == null)
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
+			
+			// Check our access level
+			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
+			access.validate();
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);
+			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -151,15 +164,5 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/testing/questionProfile.jsp");
 		result.setSuccess(true);
-	}
-
-	/**
-	 * Helper method to check edit/create/save access.
-	 */
-	private void validateEditAccess(CommandContext ctx) throws CommandException {
-		QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
-		access.validate();
-		if (!access.getCanEdit())
-			throw securityException("Cannot modify Examination Question Profile");
 	}
 }
