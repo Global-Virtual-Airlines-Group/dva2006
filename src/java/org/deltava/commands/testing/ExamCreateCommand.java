@@ -76,7 +76,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
 			// Load the question pool for this examination
 			epdao.setQueryMax(ep.getSize());
-			List<QuestionProfile> qPool = epdao.getQuestionPool(examName, true);
+			Collection<QuestionProfile> qPool = epdao.getQuestionPool(examName, true, true);
 			if (qPool.isEmpty()) {
 				CommandException ce = new CommandException("Empty Question Pool for " + examName);
 				ce.setLogStackDump(false);

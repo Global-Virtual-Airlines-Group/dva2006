@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -53,7 +53,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
          // Get the question list and save
          dao.setQueryStart(vc.getStart());
          dao.setQueryMax(vc.getCount());
-         vc.setResults(dao.getQuestionPool(examName, false));
+         vc.setResults(dao.getQuestionPool(examName, false, false));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
