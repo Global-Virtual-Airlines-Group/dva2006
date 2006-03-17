@@ -22,6 +22,7 @@ if (!validateText(form.msgText, 15, 'Check Ride content')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 </script>
@@ -57,7 +58,10 @@ return true;
 <!-- Button bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHECK RIDE SCRIPT" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE CHECK RIDE SCRIPT" />
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" url="crscriptdelete" linkID="${script.equipmentType}" label="DELETE CHECK RIDE SCRIPT" />
+</c:if></td>
 </tr>
 </el:table>
 </el:form>
