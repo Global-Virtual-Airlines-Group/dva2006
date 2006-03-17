@@ -86,12 +86,12 @@ public class GetExamProfiles extends DAO {
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM QUESTIONINFO Q "
-					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) "
-					+ "LEFT JOIN QUESTIONMINFO MQ ON (MQ.ID=Q.ID) WHERE (Q.ID=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON "
-					+ ">= DATE_SUB(NOW(), INTERVAL ? DAY)) GROUP BY Q.ID");
-			_ps.setInt(1, id);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, SystemData.getInt("testing.correct_ratio_age", 90));
+					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND "
+					+ "(E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ "
+					+ "ON (MQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID");
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
+			_ps.setInt(3, id);
 
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
@@ -166,9 +166,9 @@ public class GetExamProfiles extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM "
 				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
-				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) LEFT JOIN QUESTIONMINFO MQ "
-				+ "ON (Q.ID=MQ.ID) WHERE (Q.ACTIVE=?) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
-				+ "INTERVAL ? DAY))");
+				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND "
+				+ "(E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ ON "
+				+ "(Q.ID=MQ.ID) WHERE (Q.ACTIVE=?)");
 
 		if (!showAll)
 			sqlBuf.append(" AND (QE.EXAM_NAME=?)");
@@ -179,9 +179,9 @@ public class GetExamProfiles extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, true);
-			_ps.setBoolean(2, false);
-			_ps.setInt(3, SystemData.getInt("testing.correct_ratio_age", 90));
+			_ps.setBoolean(1, false);
+			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
+			_ps.setBoolean(3, true);
 			if (!showAll)
 				_ps.setString(4, examName);
 

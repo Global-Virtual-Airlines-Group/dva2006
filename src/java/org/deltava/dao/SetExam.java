@@ -79,8 +79,8 @@ public class SetExam extends DAO {
 				for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
 					Question q = i.next();
 					if (q instanceof MultipleChoice) {
-						MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
-						_ps.setInt(2, mq.getID());
+						MultipleChoice mq = (MultipleChoice) q;
+						_ps.setInt(2, q.getID());
 						
 						// Save the choices
 						int seq = 0;

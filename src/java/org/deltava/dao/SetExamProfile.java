@@ -16,18 +16,18 @@ import org.deltava.beans.testing.*;
 public class SetExamProfile extends DAO {
 
    /**
-    * Initialize the Data Access Object.
-    * @param c the JDBC connection to use
-    */
+	 * Initialize the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
    public SetExamProfile(Connection c) {
       super(c);
    }
 
    /**
-    * Saves an existing Examination Profile to the database.
-    * @param ep the ExamProfile bean to update
-    * @throws DAOException if a JDBC error occurs
-    */
+	 * Saves an existing Examination Profile to the database.
+	 * @param ep the ExamProfile bean to update
+	 * @throws DAOException if a JDBC error occurs
+	 */
    public void update(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("UPDATE EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "+
@@ -50,10 +50,10 @@ public class SetExamProfile extends DAO {
    }
    
    /**
-    * Saves a new Examination Profile to the database.
-    * @param ep the ExamProfile bean to save
-    * @throws DAOException if a JDBC error occurs
-    */
+	 * Saves a new Examination Profile to the database.
+	 * @param ep the ExamProfile bean to save
+	 * @throws DAOException if a JDBC error occurs
+	 */
    public void create(ExamProfile ep) throws DAOException {
       try {
          prepareStatement("INSERT INTO EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, " +
@@ -76,11 +76,11 @@ public class SetExamProfile extends DAO {
    }
    
    /**
-    * Writes an Examination Question Profile to the database. This call can handle both INSERT and UPDATE
-    * operations. If an INSERT operation is performed, the auto-assigned database ID will be set in the bean.
-    * @param qp the QuestionProfile bean to write
-    * @throws DAOException if a JDBC error occurs
-    */
+	 * Writes an Examination Question Profile to the database. This call can handle both INSERT and UPDATE operations.
+	 * If an INSERT operation is performed, the auto-assigned database ID will be set in the bean.
+	 * @param qp the QuestionProfile bean to write
+	 * @throws DAOException if a JDBC error occurs
+	 */
    public void write(QuestionProfile qp) throws DAOException {
       try {
          startTransaction();
@@ -106,6 +106,13 @@ public class SetExamProfile extends DAO {
             prepareStatementWithoutLimits("DELETE FROM QE_INFO WHERE (QUESTION_ID=?)");
             _ps.setInt(1, qp.getID());
             executeUpdate(0);
+            
+            // Clear out the multiple choice options if we have them
+            if (qp instanceof MultipleChoice) {
+            	prepareStatementWithoutLimits("DELETE FROM QUESTIONMINFO WHERE (ID=?)");
+            	_ps.setInt(1, qp.getID());
+            	executeUpdate(0);
+            }
          }
          
          // Write the exam names
@@ -121,6 +128,26 @@ public class SetExamProfile extends DAO {
          _ps.executeBatch();
          _ps.close();
          
+         // Write the multiple choice entries
+         if (qp instanceof MultipleChoice) {
+        	 MultipleChoice mq = (MultipleChoice) qp;
+        	 prepareStatementWithoutLimits("INSERT INTO QUESTIONMINFO (ID, SEQ, ANSWER) VALUES (?, ?, ?)");
+        	 _ps.setInt(1, qp.getID());
+        	 
+        	 // Write the entries
+        	 int seq = 0;
+        	 for (Iterator<String> i = mq.getChoices().iterator(); i.hasNext(); ) {
+        		 String choice = i.next();
+        		 _ps.setInt(2, ++seq);
+        		 _ps.setString(3, choice);
+        		 _ps.addBatch();
+        	 }
+        	 
+        	 // Execute the batch transaction
+        	 _ps.executeBatch();
+        	 _ps.close();
+         }
+         
          // Commit the transaction
          commitTransaction();
       } catch (SQLException se) {
@@ -130,11 +157,11 @@ public class SetExamProfile extends DAO {
    }
 
    /**
-    * Writes a multiple-choice Examination Question Profile to the database. This call can handle both INSERT and UPDATE
-    * operations. If an INSERT operation is performed, the auto-assigned database ID will be set in the bean.
-    * @param mqp the QuestionProfile bean to write
-    * @throws DAOException if a JDBC error occurs
-    */
+	 * Writes a multiple-choice Examination Question Profile to the database. This call can handle both INSERT and
+	 * UPDATE operations. If an INSERT operation is performed, the auto-assigned database ID will be set in the bean.
+	 * @param mqp the QuestionProfile bean to write
+	 * @throws DAOException if a JDBC error occurs
+	 */
    public void write(MultiChoiceQuestionProfile mqp) throws DAOException {
 	   
 	   boolean isNew = (mqp.getID() == 0);
@@ -172,10 +199,10 @@ public class SetExamProfile extends DAO {
    }
    
    /**
-    * Writes a Check Ride script to the database. This call can handle both INSERT and UPDATE operations.
-    * @param sc the Check Ride script
-    * @throws DAOException if a JDBC error occurs
-    */
+	 * Writes a Check Ride script to the database. This call can handle both INSERT and UPDATE operations.
+	 * @param sc the Check Ride script
+	 * @throws DAOException if a JDBC error occurs
+	 */
    public void write(CheckRideScript sc) throws DAOException {
       try {
          prepareStatement("REPLACE INTO CR_DESCS (EQTYPE, EQPROGRAM, BODY) VALUES (?, ?, ?)");
@@ -186,5 +213,36 @@ public class SetExamProfile extends DAO {
       } catch (SQLException se) {
          throw new DAOException(se);
       }
+   }
+   
+   /**
+    * Deletes an Examination Question profile from the database.
+    * @param qp the QuestionProfile bean
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void delete(QuestionProfile qp) throws DAOException {
+	   try {
+		   prepareStatement("DELETE FROM QUESTIONINFO WHERE (QUESTION_ID=?)");
+		   _ps.setInt(1, qp.getID());
+		   executeUpdate(1);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+
+   /**
+    * Deletes a Check Ride Script from the database.
+    * @param sc the CheckRideScript bean
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void delete(CheckRideScript sc) throws DAOException {
+	   try {
+		   prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?) AND (EQPROGRAM=?)");
+		   _ps.setString(1, sc.getEquipmentType());
+		   _ps.setString(2, sc.getProgram());
+		   executeUpdate(1);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
    }
 }

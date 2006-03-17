@@ -48,6 +48,11 @@ To view all Examination Profiles, <el:cmd url="eprofiles">Click Here</el:cmd>.<b
 The script for the ${script.equipmentType} Check ride in the <span class="sec bld">${script.program}</span> 
 equipment program has been saved in the database.<br />
 </c:if>
+<c:if test="${!(empty question) && isDelete}">
+<div class="updateHdr">Examination Question Deleted</div>
+<br />
+This Pilot Examination Question has been succesfully removed from the database.<br />
+</c:if>
 <br />
 <content:copyright />
 </content:region>

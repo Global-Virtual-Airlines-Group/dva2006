@@ -30,7 +30,7 @@ public class QuestionProfilesCommand extends AbstractViewCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Check our access
-      QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx);
+      QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, null);
       access.validate();
       ctx.setAttribute("access", access, REQUEST);
       

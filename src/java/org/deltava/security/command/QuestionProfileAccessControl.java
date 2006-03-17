@@ -1,6 +1,8 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import org.deltava.beans.testing.QuestionProfile;
+
 import org.deltava.security.SecurityContext;
 
 /**
@@ -11,16 +13,20 @@ import org.deltava.security.SecurityContext;
  */
 
 public class QuestionProfileAccessControl extends AccessControl {
+	
+	private QuestionProfile _qp;
 
     private boolean _canRead;
     private boolean _canEdit;
+    private boolean _canDelete;
     
     /**
      * Initializes the Access Controller.
      * @param ctx the command context
      */
-    public QuestionProfileAccessControl(SecurityContext ctx) {
+    public QuestionProfileAccessControl(SecurityContext ctx, QuestionProfile qp) {
         super(ctx);
+        _qp = qp;
     }
 
     /**
@@ -36,6 +42,7 @@ public class QuestionProfileAccessControl extends AccessControl {
         
         _canRead = isHR || isExam;
         _canEdit = isHR || isExam;
+        _canDelete = isHR && (_qp != null) && (_qp.getTotalAnswers() == 0); 
         if (!_canRead)
         	throw new AccessControlException("Cannot view Question Profile");
     }
@@ -54,5 +61,13 @@ public class QuestionProfileAccessControl extends AccessControl {
      */
     public boolean getCanEdit() {
         return _canEdit;
+    }
+    
+    /**
+     * Returns if the profile can be deleted.
+     * @return TRUE if it can be deleted, otherwise FALSE
+     */
+    public boolean getCanDelete() {
+    	return _canDelete;
     }
 }
