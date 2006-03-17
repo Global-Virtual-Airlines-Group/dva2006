@@ -44,7 +44,7 @@ public class CheckrideScriptAccessControl extends AccessControl {
       
       // Check creation/deletion access
       _canCreate = true;
-      _canDelete = _ctx.isUserInRole("Admin");
+      _canDelete = _ctx.isUserInRole("HR");
       if (_sc == null) {
          _canEdit = true;
          return;
