@@ -155,7 +155,7 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Load the question pool for the questionnaire
 			epdao.setQueryMax(ep.getSize());
-			List qPool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME, true);
+			Collection<QuestionProfile> qPool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME, true, true);
 			if (qPool.isEmpty())
 				throw notFoundException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
 

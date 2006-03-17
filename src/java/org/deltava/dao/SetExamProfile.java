@@ -222,7 +222,7 @@ public class SetExamProfile extends DAO {
     */
    public void delete(QuestionProfile qp) throws DAOException {
 	   try {
-		   prepareStatement("DELETE FROM QUESTIONINFO WHERE (QUESTION_ID=?)");
+		   prepareStatement("DELETE FROM QUESTIONINFO WHERE (ID=?)");
 		   _ps.setInt(1, qp.getID());
 		   executeUpdate(1);
 	   } catch (SQLException se) {
@@ -237,9 +237,8 @@ public class SetExamProfile extends DAO {
     */
    public void delete(CheckRideScript sc) throws DAOException {
 	   try {
-		   prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?) AND (EQPROGRAM=?)");
+		   prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?)");
 		   _ps.setString(1, sc.getEquipmentType());
-		   _ps.setString(2, sc.getProgram());
 		   executeUpdate(1);
 	   } catch (SQLException se) {
 		   throw new DAOException(se);

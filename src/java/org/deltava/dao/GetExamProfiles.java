@@ -154,25 +154,38 @@ public class GetExamProfiles extends DAO {
 	/**
 	 * Loads all Questions linked to a particular Pilot Examination.
 	 * @param examName the Examination name
-	 * @param isRandom randomly order questions
+	 * @param isRandom randomly order Questions
+	 * @param isActive only include active Questions
 	 * @return a List of QuestionProfiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<QuestionProfile> getQuestionPool(String examName, boolean isRandom) throws DAOException {
+	public Collection<QuestionProfile> getQuestionPool(String examName, boolean isRandom, boolean isActive) throws DAOException {
 
 		// Check if we're displaying all questions
 		boolean showAll = "ALL".equalsIgnoreCase(examName);
+		isActive |= showAll;
+		
+		// Build conditions
+		Collection<String> conditions = new ArrayList<String>();
+		if (isActive) conditions.add("(Q.ACTIVE=?)");
+		if (!showAll) conditions.add("(QE.EXAM_NAME=?)");
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM "
 				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
 				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND "
 				+ "(E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ ON "
-				+ "(Q.ID=MQ.ID) WHERE (Q.ACTIVE=?)");
+				+ "(Q.ID=MQ.ID) ");
 
-		if (!showAll)
-			sqlBuf.append(" AND (QE.EXAM_NAME=?)");
+		// Append conditions
+		if (!conditions.isEmpty()) sqlBuf.append("WHERE ");
+		for (Iterator<String> i = conditions.iterator(); i.hasNext(); ) {
+			sqlBuf.append(i.next());
+			if (i.hasNext())
+				sqlBuf.append(" AND ");
+		}
 
+		// Add GROUP/ORDER BY
 		sqlBuf.append(" GROUP BY Q.ID");
 		if (isRandom)
 			sqlBuf.append(" ORDER BY RAND()");
@@ -181,7 +194,8 @@ public class GetExamProfiles extends DAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
-			_ps.setBoolean(3, true);
+			if (isActive)
+				_ps.setBoolean(3, isActive);
 			if (!showAll)
 				_ps.setString(4, examName);
 
