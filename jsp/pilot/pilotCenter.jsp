@@ -262,16 +262,17 @@ every day.</td>
 <c:choose>
 <c:when test="${captPromote}"> 
  <td class="data">You are eligible for a promotion to Captain in the <span class="pri bld">${eqType.name}</span>
-program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be
-promoted within the next 24 to 72 hours.</td></c:when>
+program. Your name is on the list of Pilots eligible for a promotion, and you can expect to be promoted 
+within the next 24 to 72 hours. You are also eligible for equipment transfers and additional ratings in 
+higher stage equipment type programs.</td></c:when>
 <c:when test="${promoteLegs < fn:promoLegs(eqType, 'Captain')}">
  <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" />
- Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the
- rank of Captain in the ${eqType.name} program.</td></c:when>
+ Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the 
+rank of Captain in the ${eqType.name} program.</td></c:when>
 <c:when test="${promoteLegs >= fn:promoLegs(eqType, 'Captain')}">
- <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flights in the
- <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the rank of Captain
- in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span>
+ <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight Legs
+ in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the rank of
+ Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span>
  examination in order to be eligible for promotion to Captain</i>.</td></c:when>
 </c:choose>
 </tr>
@@ -290,8 +291,19 @@ promoted within the next 24 to 72 hours.</td></c:when>
 <c:if test="${!empty eqSwitch && !empty eqSwitchFOExam}"><br /><br /></c:if>
 <c:if test="${!empty eqSwitchFOExam}">You are eligible to transfer to or request additional ratings in
  the following equipment types upon successful completion of the First Officer's examination for these
- equipment programs: <fmt:list value="${eqSwitchFOExam}" delim=", " />.</c:if></td>
-</tr>
+ equipment programs: <fmt:list value="${eqSwitchFOExam}" delim=", " />.</c:if>
+<c:if test="${(isFO && !captPromote) || (promoteLegs < fn:promoLegs(eqType, 'Captain'))}"><br />
+<c:if test="${isFO && !captPromote}">
+<br />
+<i>You will not be eligible for equipment type transfers or additional ratings in higher stage equipment type 
+programs until you beome eligible for promotion to Captain in the ${eqType.name} program.</i><br />
+</c:if>
+<c:if test="${promoteLegs < (fn:promoLegs(eqType, 'Captain') / 2)}">
+<i>You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
+until you have completed <fmt:int value="${fn:promoLegs(eqType, 'Captain') / 2}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> 
+Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
+</c:if>
+</td></tr>
 </c:if>
 <c:if test="${(!empty txreq) && (!txreq.ratingOnly)}">
 <tr>

@@ -15,7 +15,7 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
    
    protected void setUp() throws Exception {
       super.setUp();
-      _ac = new QuestionProfileAccessControl(_ctxt);
+      _ac = new QuestionProfileAccessControl(_ctxt, null);
    }
 
    protected void tearDown() throws Exception {
@@ -24,16 +24,22 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
    }
 
    public void testAccess() throws Exception {
-      _ac.validate();
+	   try {
+		   _ac.validate();
+		   fail("AccessControlException expected");
+	   } catch (AccessControlException ace) {
+	   }
       
       assertFalse(_ac.getCanRead());
       assertFalse(_ac.getCanEdit());
+      assertFalse(_ac.getCanDelete());
       
       _user.addRole("Examination");
       _ac.validate();
       
       assertTrue(_ac.getCanRead());
       assertTrue(_ac.getCanEdit());
+      assertFalse(_ac.getCanDelete());
 
       _user.addRole("HR");
       _user.removeRole("Examination");
@@ -41,9 +47,17 @@ public class TestQuestionProfileAccessControl extends AccessControlTestCase {
 
       assertTrue(_ac.getCanRead());
       assertTrue(_ac.getCanEdit());
+      assertFalse(_ac.getCanDelete());
+      
+      _user.addRole("Admin");
+      _ac.validate();
+      
+      assertTrue(_ac.getCanRead());
+      assertTrue(_ac.getCanEdit());
+      assertFalse(_ac.getCanDelete());
    }
    
    public void testContextValidation() {
-      doContextValidation(new QuestionProfileAccessControl(null));
+      doContextValidation(new QuestionProfileAccessControl(null, null));
    }
 }
