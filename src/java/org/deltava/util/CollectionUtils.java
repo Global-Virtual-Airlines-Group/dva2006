@@ -99,12 +99,14 @@ public class CollectionUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> createMap(Collection<V> values, String keyProperty) {
-
+		Method m = null;
 		Map<K, V> results = new HashMap<K, V>();
 		for (Iterator<V> i = values.iterator(); i.hasNext(); ) {
 			V obj = i.next();
 			try {
-				Method m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
+				if (m == null)
+					m = obj.getClass().getMethod(StringUtils.getPropertyMethod(keyProperty), (Class []) null);
+				
 				Object key = m.invoke(obj, (Object []) null);
 				results.put((K) key, obj);
 			} catch (Exception e) { }
@@ -122,7 +124,6 @@ public class CollectionUtils {
 	 * @return a Map of key/value pairs.
 	 */
 	public static <K, V> Map<K, V> createMap(Collection<K> keys, Collection<V> values) {
-		
 		Map<K, V> results = new HashMap<K, V>();
 		Iterator<V> vi = values.iterator();
 		for (Iterator<K> ki = keys.iterator(); ki.hasNext() && vi.hasNext(); ) {
