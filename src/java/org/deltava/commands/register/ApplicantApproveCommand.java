@@ -43,6 +43,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 		
 		Applicant a = null;
+		EquipmentType eq = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -66,7 +67,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Get the Equipment Type hired into
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(a.getEquipmentType());
+			eq = eqdao.get(a.getEquipmentType());
 			if (eq == null)
 			   throw notFoundException("Invalid Equipment Program - " + a.getEquipmentType());
 			
@@ -189,6 +190,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 		// Send e-mail notification
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctxt);
+		mailer.setCC(Mailer.makeAddress(eq.getCPEmail(), eq.getCPName()));
 		mailer.send(a);
 
 		// Forward to the JSP
