@@ -319,6 +319,10 @@
 			<url>https://www.notams.jcs.mil/common/nat.html</url>
 			<keystore>/etc/jcs.notams.cer</keystore>
 		</nat>
+		<pacot>
+			<url>https://www.notams.jcs.mil/tracks/pTracks.html?advsw=PAC</url>
+			<keystore>/etc/jcs.notams.cer</keystore>
+		</pacot>
 	</config>
 	
 	<online>
