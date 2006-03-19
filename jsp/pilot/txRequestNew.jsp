@@ -34,7 +34,7 @@ return true;
 <el:form action="txrequest.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">NEW ${isRating ? 'EQUIPMENT PROGRAM TRANSFER' : 'ADDITIONAL RATING'} REQUEST</td>
+ <td colspan="2">NEW ${isRating ? 'ADDITIONAL RATING' : 'EQUIPMENT PROGRAM TRANSFER'} REQUEST</td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
