@@ -25,13 +25,14 @@ function reloadData(isAuto)
 // Get auto refresh
 var f = document.forms[0];
 var doRefresh = f.autoRefresh.checked;
-if (document.pauseRefresh) return false;
 
-// Generate XMLHTTPRequest
-var isLoading = getElement('isLoading');
-isLoading.innerHTML = ' - LOADING...';
-var xmlreq = generateXMLRequest('${imgPath}');
-xmlreq.send(null);
+// Generate XMLHTTPRequest if we're not already viewing a flight
+if (!document.pauseRefresh) {
+	var isLoading = getElement('isLoading');
+	isLoading.innerHTML = ' - LOADING...';
+	var xmlreq = generateXMLRequest('${imgPath}');
+	xmlreq.send(null);
+}
 
 // Set timer to reload the data
 if (doRefresh && isAuto)

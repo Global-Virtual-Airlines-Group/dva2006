@@ -61,7 +61,7 @@ function showFlightProgress(marker, doProgress, doRoute)
 // Build the XML Requester
 var d = new Date();
 var xreq = GXmlHttp.create();
-xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id + "&time=" + d.getTime(), true);
+xreq.open("GET", "acars_progress.ws?id=" + marker.flight_id + "&time=" + d.getTime() + "&route=" + doRoute, true);
 xreq.onreadystatechange = function() {
 	if (xreq.readyState != 4) return false;
 

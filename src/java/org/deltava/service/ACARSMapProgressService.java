@@ -39,6 +39,9 @@ public class ACARSMapProgressService extends WebDataService {
 			return HttpServletResponse.SC_NOT_FOUND;
 		}
 		
+		// Determine if we show the route
+		boolean doRoute = Boolean.valueOf(ctx.getParameter("route")).booleanValue();
+		
 		// Get the DAO and the route data
 		FlightInfo info = null;
 		Collection routePoints = null;
@@ -51,9 +54,9 @@ public class ACARSMapProgressService extends WebDataService {
 			info = dao.getInfo(id);
 			if (info != null) {
 				GetNavRoute navdao = new GetNavRoute(_con);
-				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
+				routeWaypoints = doRoute ? navdao.getRouteWaypoints(info.getRoute()) : Collections.emptySet();
 			} else {
-				routeWaypoints = Collections.EMPTY_SET;
+				routeWaypoints = Collections.emptySet();
 			}
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
