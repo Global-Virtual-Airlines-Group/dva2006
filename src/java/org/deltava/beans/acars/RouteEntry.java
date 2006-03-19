@@ -462,6 +462,9 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if ((_alt < 10000) && (_aSpeed > 250))
 			return true;
 		
+		if ((_radarAlt < 1500) && (_vSpeed < -1500))
+			return true;
+		
 		if ((Math.abs(_bank) > 40) || (Math.abs(_pitch) > 40))
 			return true;
 		
