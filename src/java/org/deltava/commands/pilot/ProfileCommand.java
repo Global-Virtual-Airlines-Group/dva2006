@@ -82,12 +82,16 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setIMHandle(ctx.getParameter("imHandle"));
 			p.setEmailAccess(Integer.parseInt(ctx.getParameter("privacyOption")));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
-			p.setDateFormat(ctx.getParameter("df"));
-			p.setTimeFormat(ctx.getParameter("tf"));
-			p.setNumberFormat(ctx.getParameter("nf"));
 			p.setAirportCodeType(ctx.getParameter("airportCodeType"));
 			p.setMapType(ctx.getParameter("mapType"));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
+			try {
+				p.setDateFormat(ctx.getParameter("df"));
+				p.setTimeFormat(ctx.getParameter("tf"));
+				p.setNumberFormat(ctx.getParameter("nf"));
+			} catch (IllegalArgumentException iae) {
+				log.error("Error setting date/number format - " + iae.getMessage());
+			}
 
 			// Get Water Cooler option checkboxes
 			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
