@@ -51,7 +51,7 @@ public class GetExam extends DAO {
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ) FROM EXAMQUESTIONS EQ LEFT JOIN "
 					+ "EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) "
-					+ "WHERE (EQ.EXAM_ID=?) ORDER BY EQ.QUESTION_NO");
+					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
@@ -77,8 +77,9 @@ public class GetExam extends DAO {
 			// Load multiple choice questions
 			if (e.hasMultipleChoice()) {
 				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
-				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM EXAMQUESIONSM WHERE "
+				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM EXAMQUESTIONSM WHERE "
 						+ "(EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
+				_ps.setInt(1, e.getID());
 
 				// Execute the query
 				rs = _ps.executeQuery();

@@ -21,12 +21,12 @@ function validate(form)
 if (!checkSubmit()) return false;
 
 // Check if all questions were answered
-isOK = true;
-qNum = 1;
-var a = getElement('A' + qNum);
-while (isOK && (a != null)) {
-	if (a.value) {
-		isOK = (isOK && (a.value.length > 1));
+var isOK = true;
+var qNum = 1;
+var a = getElementsById('A' + qNum);
+while (isOK && (a.length > 0)) {
+	if (a.length == 1) {
+		isOK = (isOK && (a[0].value.length > 1));
 	} else {
 		var checkCount = 0;
 		for (var x = 0; x < a.length; x++) {
@@ -38,7 +38,7 @@ while (isOK && (a != null)) {
 	}
 	
 	qNum++;
-	a = getElement('A' + qNum);
+	a = getElementsById('A' + qNum);
 }
 
 if ((!isOK) && (!document.isExpired)) {
@@ -79,7 +79,7 @@ return true;
 
 function saveAnswer(qNum, id)
 {
-var txtbox = getElement('A' + qNum);
+var txtbox = getElementsById('A' + qNum);
 if (!txtbox) return false;
 
 // Create the AJAX request
@@ -88,14 +88,12 @@ xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
 xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 
 // Save the answer
-if ((txtbox.value) && (txtbox.value.length > 1)) {
-	xmlreq.send('answer=' + txtbox.value);
-	window.status = 'Saved answer to Question #' + qNum;
-} else if (txtbox.length) {
+if ((txtbox.length == 1) && (txtbox[0].value.length > 1)) {
+	xmlreq.send('answer=' + txtbox[0].value);
+} else if (txtbox.length > 1) {
 	for (var x = 0; x < txtbox.length; x++) {
 		if (txtbox[x].checked) {
 			xmlreq.send('answer=' + txtbox[x].value);
-			window.status = 'Saved answer to Question #' + qNum + ' - ' + txtbox[x].value;
 			break;
 		}	
 	}
@@ -143,7 +141,7 @@ return true;
  <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
 </c:if>
 <c:if test="${fn:isMultiChoice(q)}">
- <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" type="radio" name="answer${q.number}" className="small" width="400" options="${q.choices}" value="${q.answer}" /></td>
+ <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
 </c:if>
 </tr>
 </c:forEach>
@@ -154,7 +152,7 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canSubmit}">
-<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT EXAMINATION" /></td>
+<el:button ID="SubmitButton" type="SUBMIT" className="BUTTON" label="SUBMIT EXAMINATION" />
 </c:if>
  </td>
 </tr>

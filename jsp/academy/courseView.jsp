@@ -89,7 +89,7 @@ return ${access.canComment || access.canUpdateProgress};
 
 <!-- Course Progress -->
 <tr class="title caps">
- <td colspan="${cpsan + 1}">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
+ <td colspan="${cspan + 1}">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <view:row entry="${progress}">
@@ -111,7 +111,7 @@ return ${access.canComment || access.canUpdateProgress};
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
- <td colspan="${cpsan + 1}">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
+ <td colspan="${cspan + 1}">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="request" />

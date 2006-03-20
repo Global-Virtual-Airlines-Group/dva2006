@@ -1,6 +1,18 @@
 function getElement(eName)
 {
-return (document.all) ? document.all(eName) : document.getElementById(eName);
+return document.getElementById(eName);
+}
+
+function getElementsById(eName)
+{
+var elements = new Array();
+var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
+for (var x = 0; x < all.length; x++) {
+	if (all[x].id == eName)
+		elements.push(all[x]);
+}
+
+return elements;
 }
 
 function disableButton(btnName)
@@ -203,7 +215,7 @@ return req;
 
 function initLinks()
 {
-if (!document.getElementsByTagName) return;
+if (!document.getElementsByTagName) return false;
 var anchors = document.getElementsByTagName("a");
 for (var i = 0; i < anchors.length; i++) {
 	var anchor = anchors[i];

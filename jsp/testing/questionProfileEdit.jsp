@@ -43,12 +43,18 @@ function updateAnswerCombo()
 var f = document.forms[0];
 if ((!f.answerChoices) || (!f.correctChoice)) return false;
 
+// Save the old answer
+var oldAnswer = f.correctChoice.options[f.correctChoice.selectedIndex].text;
+
 // Copy each line in the textbox to an answer choice
 var choices = f.answerChoices.value.split('\n');
 f.correctChoice.options.length = 1;
 f.correctChoice.options.length = choices.length + 1;
-for (var x = 0; x < choices.length; x++)
+for (var x = 0; x < choices.length; x++) {
 	f.correctChoice.options[x + 1] = new Option(choices[x], choices[x]);
+	if (choices[x] == oldAnswer)
+		f.correctChoice.selectedIndex = x + 1;
+}
 
 return true;
 }
