@@ -6,8 +6,7 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A helper class to extract information from a user's examination/check ride history.
@@ -326,6 +325,19 @@ public class TestingHistoryHelper {
 
 		// If we require a checkride, ensure we have a minimum number of legs
 		return canRequestSwitch();
+	}
+	
+	/**
+	 * Returns if a Pilot can request additional ratings in an Equipment Type. This checks if the
+	 * equipment type has any ratings that the Pilot does not current have.
+	 * @param eq the EquipmentType bean
+	 * @return TRUE if the user is missing any ratings, otherwise FALSE
+	 */
+	public boolean canRequestRatings(EquipmentType eq) {
+		Collection<String> ratings = new HashSet<String>(eq.getPrimaryRatings());
+		ratings.addAll(eq.getSecondaryRatings());
+		Collection<String> extraRatings = CollectionUtils.getDelta(ratings, _usr.getRatings());
+		return !extraRatings.isEmpty();
 	}
 
 	/**

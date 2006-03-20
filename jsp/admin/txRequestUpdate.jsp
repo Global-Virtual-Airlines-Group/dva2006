@@ -65,6 +65,11 @@ ${pilot.name}'s pending Check Ride has been deleted.<br />
 ${pilot.name}'s equipment program transfer request to the <span class="pri bld">${txreq.equipmentType}</span> program 
 has been deleted.<c:if test="${checkRideDelete}"> ${pilot.name}'s pending Check Ride has been deleted.</c:if><br />
 </c:if>
+<c:if test="${isEmpty}">
+<div class="updateHdr">Equipment Program Transfer Unavailable</div>
+<br />
+You are not able to request a transfer into or additional ratings in any <content:airline /> Equipment programs.<br />
+</c:if>
 <c:if test="${isApprove || isReject || isDelete}">
 <br />
 To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests">click here</el:cmd>.<br />

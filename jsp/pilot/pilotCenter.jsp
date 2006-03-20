@@ -278,6 +278,7 @@ rank of Captain in the ${eqType.name} program.</td></c:when>
 </tr>
 </c:if>
 <c:if test="${!empty eqSwitch || !empty eqSwitchFOExam}">
+<c:set var="canSwitchFO" value="${!empty eqSwitchFOExam && (promoteLegs >= (fn:promoLegs(eqType, 'Captain') / 2))}" scope="request" />
 <tr>
 <c:if test="${!empty eqSwitch}">
  <td class="mid"><el:cmd className="bld" url="txrequest">Switch Equipment Programs</el:cmd><br />
@@ -287,11 +288,11 @@ rank of Captain in the ${eqType.name} program.</td></c:when>
  <td class="mid">&nbsp;</td>
 </c:if>
  <td class="data"><c:if test="${!empty eqSwitch}">You are eligible to transfer to or request additional
- ratings in the following equipment types: <fmt:list value="${eqSwitch}" delim=", " />.</c:if>
-<c:if test="${!empty eqSwitch && !empty eqSwitchFOExam}"><br /><br /></c:if>
-<c:if test="${!empty eqSwitchFOExam}">You are eligible to transfer to or request additional ratings in
- the following equipment types upon successful completion of the First Officer's examination for these
- equipment programs: <fmt:list value="${eqSwitchFOExam}" delim=", " />.</c:if>
+ ratings in the following equipment types: <b><fmt:list value="${eqSwitch}" delim=", " /></b>.</c:if>
+<c:if test="${!empty eqSwitch && canSwitchFO}"><br /><br /></c:if>
+<c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the 
+the following equipment types upon successful completion of the First Officer's examination for these 
+equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
 <c:if test="${(isFO && !captPromote) || (promoteLegs < fn:promoLegs(eqType, 'Captain'))}"><br />
 <c:if test="${isFO && !captPromote}">
 <br />
@@ -299,9 +300,10 @@ rank of Captain in the ${eqType.name} program.</td></c:when>
 programs until you beome eligible for promotion to Captain in the ${eqType.name} program.</i><br />
 </c:if>
 <c:if test="${promoteLegs < (fn:promoLegs(eqType, 'Captain') / 2)}">
+<br />
 <i>You will not be eligible for equipment type transfers or additional ratings in new equipment type programs 
-until you have completed <fmt:int value="${fn:promoLegs(eqType, 'Captain') / 2}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> 
-Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
+in Stage <fmt:int value="${eqType.stage}" /> and below until you have completed <fmt:int value="${fn:promoLegs(eqType, 'Captain') / 2}" /> 
+of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight legs in the <fmt:list value="${eqType.primaryRatings}" delim=", " />.</i></c:if>
 </c:if>
 </td></tr>
 </c:if>
