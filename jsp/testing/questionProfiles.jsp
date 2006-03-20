@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Examination Questions</title>
@@ -39,7 +40,7 @@ return true;
  <td width="6%">CORRECT</td>
  <td width="6%">ASKED</td>
  <td width="6%">&nbsp;</td>
- <td width="15%" class="left">QUESTION TEXT</td>
+ <td width="15%" colspan="2" class="left">QUESTION TEXT</td>
  <td width="15%"><c:if test="${access.canEdit}"><el:cmdbutton url="qprofile" op="edit" label="NEW QUESTION" /> </td></c:if>
  <td class="right">SELECT EXAMINATION <el:combo name="eName" size="1" options="${examNames}" value="${param.id}" onChange="void setExamName(this)" /></td>
 </tr>
@@ -50,14 +51,17 @@ return true;
  <td><el:cmd className="pri bld" url="qprofile" linkID="0x${q.ID}">VIEW</el:cmd></td>
  <td><fmt:int value="${q.correctAnswers}" /></td>
  <td><fmt:int value="${q.totalAnswers}" /></td>
- <td><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</td>
+ <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>
+<c:if test="${q.totalAnswers == 0}">-</c:if></td>
+ <td width="5%"><c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
+<c:if test="${!fn:isMultiChoice(q)}">&nbsp;</c:if></td>
  <td class="left small" colspan="3">${q.question}</td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title caps">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

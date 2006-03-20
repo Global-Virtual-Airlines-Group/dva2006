@@ -86,7 +86,7 @@ public class SetExam extends DAO {
 						int seq = 0;
 						for (Iterator<String> ci = mq.getChoices().iterator(); ci.hasNext(); ) {
 							String choice = ci.next();
-							_ps.setInt(3, seq);
+							_ps.setInt(3, ++seq);
 							_ps.setString(4, choice);
 							_ps.addBatch();
 						}

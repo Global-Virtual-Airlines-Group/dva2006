@@ -192,12 +192,15 @@ public class GetExamProfiles extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, false);
-			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
+			
+			// Set the parameters
+			int pNum = 0;
+			_ps.setBoolean(++pNum, false);
+			_ps.setInt(++pNum, SystemData.getInt("testing.correct_ratio_age", 90));
 			if (isActive)
-				_ps.setBoolean(3, isActive);
+				_ps.setBoolean(++pNum, isActive);
 			if (!showAll)
-				_ps.setString(4, examName);
+				_ps.setString(++pNum, examName);
 
 			// Execute the Query
 			boolean hasMultiChoice = false;
