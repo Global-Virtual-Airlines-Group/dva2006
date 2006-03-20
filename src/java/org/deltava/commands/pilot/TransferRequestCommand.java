@@ -33,6 +33,10 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 		// Get the Pilot object
 		Pilot p = (Pilot) ctx.getUser();
 		ctx.setAttribute("pilot", p, REQUEST);
+		
+		// Determine if we are requesting an additional rating only
+		boolean isRating = "rating".equals(ctx.getCmdParameter(OPERATION, null));
+		ctx.setAttribute("isRating", Boolean.valueOf(isRating), REQUEST);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -47,6 +51,8 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 				EquipmentType eq = (EquipmentType) i.next();
 				if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
 					i.remove();
+				else if (isRating && !_testHistory.canRequestRatings(eq))
+					i.remove();
 			}
 
 			// If we're just doing a GET, then redirect to the JSP
@@ -54,13 +60,10 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			if (eqType == null) {
 				ctx.release();
 				ctx.setAttribute("availableEQ", activeEQ, REQUEST);
-				
-				// Determine if we are requesting an additional rating only
-				boolean isRating = "rating".equals(ctx.getCmdParameter(OPERATION, null));
-				ctx.setAttribute("isRating", Boolean.valueOf(isRating), REQUEST);
+				ctx.setAttribute("isEmpty", Boolean.valueOf(activeEQ.isEmpty()), REQUEST);
 
 				// Forward to the JSP
-				result.setURL("/jsp/pilot/txRequestNew.jsp");
+				result.setURL(activeEQ.isEmpty() ? "/jsp/admin/txRequestUpdate.jsp" : "/jsp/pilot/txRequestNew.jsp");
 				result.setSuccess(true);
 				return;
 			}
