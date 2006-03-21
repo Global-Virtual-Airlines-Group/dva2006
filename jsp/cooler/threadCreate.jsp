@@ -84,7 +84,8 @@ return true;
  <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
 <c:if test="${imgBadSize}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgSize}" /> bytes).</div></c:if>
 <c:if test="${imgBadDim}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgX}" />
- by <fmt:int value="${imgY}" /> pixels).</div></c:if></td>
+ by <fmt:int value="${imgY}" /> pixels).</div></c:if>
+<c:if test="${imgInvalid}"><div class="error bld">Your attached image is in an unknown format.</div></c:if></td>
 </tr>
 
 <content:filter roles="PIREP,HR,Moderator">
