@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.awt.Dimension;
@@ -100,7 +100,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			FileUpload img = ctx.getFile("img");
 			if (img != null) {
 				ImageInfo imgInfo = new ImageInfo(img.getBuffer());
-				imgInfo.check();
+				boolean imgOK = imgInfo.check();
 
 				// Save image info
 				ctx.setAttribute("imgSize", new Integer(img.getSize()), REQUEST);
@@ -114,7 +114,8 @@ public class ThreadPostCommand extends AbstractCommand {
 
 				// If the image is too big, figure out what to do
 				/* int imgOpt = Integer.parseInt(ctx.getParameter("imgOption")); */
-				if (badSize || (badDim /* && (imgOpt == IMG_REJECT ) */)) {
+				if (!imgOK || badSize || (badDim /* && (imgOpt == IMG_REJECT ) */)) {
+					ctx.setAttribute("imgInvalid", Boolean.valueOf(!imgOK), REQUEST);
 					ctx.setAttribute("imgBadSize", Boolean.valueOf(badSize), REQUEST);
 					ctx.setAttribute("imgBadDim", Boolean.valueOf(badDim), REQUEST);
 
