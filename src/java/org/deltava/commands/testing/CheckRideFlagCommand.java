@@ -66,6 +66,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				cr.setEquipmentType(eqTypes.iterator().next());
 			} else {
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setStatus(Test.SUBMITTED);
 			}
 			
 			// Update the flight report
