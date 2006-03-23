@@ -41,7 +41,7 @@ return true;
 function hireApplicant()
 {
 var f = document.forms[0];
-f.doHire.value = '1';
+f.doHire.value = 'true';
 return cmdPost(f.action);
 }
 </script>
@@ -130,7 +130,7 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">Airport Codes</td>
- <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeType}" /></td>
+ <td class="data"><el:check name="airportCodeType" idx="*" type="radio" cols="2" options="${acTypes}" value="${applicant.airportCodeTypeName}" /></td>
 </tr>
 <tr>
  <td class="label">User Interface</td>
