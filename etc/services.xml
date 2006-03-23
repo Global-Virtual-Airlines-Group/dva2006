@@ -17,6 +17,7 @@
 	<service id="si_route" class="org.deltava.service.ServInfoRouteService" />
 	<service id="route" class="org.deltava.service.RouteMapService" />
 	<service id="routeplot" class="org.deltava.service.RoutePlotMapService" />
+	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
 
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 

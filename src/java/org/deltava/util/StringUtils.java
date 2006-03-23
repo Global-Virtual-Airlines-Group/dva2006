@@ -237,6 +237,8 @@ public final class StringUtils {
 	 * @see StringTokenizer#StringTokenizer(String, String)
 	 */
 	public static List<String> split(String s, String delim) {
+		if (s == null)
+			return null;
 
 		List<String> results = new ArrayList<String>();
 		StringTokenizer tk = new StringTokenizer(s, delim, true);
