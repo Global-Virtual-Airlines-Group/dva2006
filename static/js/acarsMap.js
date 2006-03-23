@@ -109,8 +109,3 @@ xreq.send(null);
 return true;
 }
 
-function mapZoom(lat, lng, size)
-{
-map.centerAndZoom(new GPoint(lng, lat), size);
-return true;
-}

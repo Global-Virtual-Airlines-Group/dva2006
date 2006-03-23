@@ -22,7 +22,12 @@ return enableElement(btnName, false);
 
 function enableElement(eName, isEnabled)
 {
-return enableObject(getElement(eName), isEnabled);
+var objs = getElementsById(eName);
+if (!objs) return false;
+for (var x = 0; x < objs.length; x++)
+	enableObject(objs[x], isEnabled);
+
+return true;
 }
 
 function enableObject(e, isEnabled)
