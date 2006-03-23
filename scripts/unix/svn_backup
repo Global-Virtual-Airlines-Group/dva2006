@@ -48,6 +48,16 @@ if [ "`cat /tmp/svn.revision`" -gt "2000" ] ;then
  echo 2000 > /tmp/svn.revision_base
 fi
 
+# If we have more than 2500 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "2500" ] ;then
+ if [ ! -f "/home/backup/svn/svn_25xx.gz" ] ;then
+  echo 'Backing up revisions 2000-2499'
+  svnadmin dump /usr/local/svn --incremental --revision 2000:2499 | gzip -9 > svn_25xx.gz
+ fi
+
+ echo 2500 > /tmp/svn.revision_base
+fi
+
 # Back up the last revisions
 echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
 svnadmin dump /usr/local/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | gzip -9 > svn_top.gz
