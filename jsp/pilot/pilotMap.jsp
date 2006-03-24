@@ -17,34 +17,7 @@
 <map:api version="1" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
-function updateMarkers()
-{
-// Load equipment types
-var eqNames = new Array();
-var ec = getElementsById('eq');
-for (var x = 0; x < ec.length; x++) {
-	if (ec[x].checked)
-		eqNames[ec[x].text] = "true";
-}
 
-// Load rank names
-var rankNames = new Array();
-var rc = getElementsById('rnk');
-for (var x = 0; x < rc.length; x++) {
-	if (rc[x].checked)
-		rankNames[rc[x].text] = "true";
-}
-
-// Go through the markers
-map.clearOverlays();
-for (var x = 0; x < pMarkers.length; x++) {
-	var mrk = pMarkers[x];
-	if ((eqNames[mrk.eqType]) && (rankNames[mrk.rank]))
-		map.addOverlay(mrk);
-}
-
-return true;
-}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -60,18 +33,18 @@ return true;
 <el:form action="pilotboard.do" method="get" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> PILOT LOCATIONS</td>
+ <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="data" colspan="2"><map:div ID="googleMap" x="700" y="650" /></td>
 </tr>
 <tr>
- <td class="label">Equipment Programs</td>
- <td class="data"><el:check ID="eq" name="eqTypes" width="80" cols="6" className="small" separator="<div style=\"clear:both;\" />" checked="${eqTypes}" options="${eqTypes}" onChange="void updateMarkers()" /></td>
+ <td class="label" valign="top">Equipment Programs</td>
+ <td class="data"><el:check name="eqTypes" width="80" cols="6" className="small" separator="<div style=\"clear:both;\" />" checked="${eqTypes}" options="${eqTypes}" onChange="void updateMarkers(this)" /></td>
 </tr>
 <tr>
- <td class="label">Pilot Ranks</td>
- <td class="data"><el:check ID="rnk" name="ranks" width="140" cols="6" className="small" separator="<div style=\"clear:both;\" />" checked="${ranks}" options="${ranks}" onChange="void updateMarkers()" /></td>
+ <td class="label" valign="top">Pilot Ranks</td>
+ <td class="data"><el:check name="ranks" width="160" cols="3" className="small" separator="<div style=\"clear:both;\" />" checked="${ranks}" options="${ranks}" onChange="void updateMarkers(this)" /></td>
 </tr>
 </el:table>
 
@@ -95,11 +68,20 @@ return true;
 var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, 14);
+map.centerAndZoom(mapC, 13);
 addMarkers(map, 'hq');
 
+// Initialize the marker hashtables
+var pMarkers = new Array();
+pMarkers['EMB-120'] = new Array();
+<c:forEach var="rank" items="${ranks}">
+pMarkers['${rank}'] = new Array();
+</c:forEach>
+<c:forEach var="eqType" items="${eqTypes}">
+pMarkers['${eqType}'] = new Array();
+</c:forEach>
+
 // Load the markers
-var pMarkers;
 var xmlreq = generateXMLRequest('${imgPath}');
 xmlreq.send(null);
 </script>
