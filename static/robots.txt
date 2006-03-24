@@ -3,6 +3,7 @@ Disallow: /error404.html
 Disallow: /error500.html
 Disallow: /thread.do
 Disallow: /roster.do
+Disallow: /logbook.do
 Disallow: /profile.do
 Disallow: /staff.do
 Disallow: /pwdreset.do
