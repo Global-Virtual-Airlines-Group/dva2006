@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -22,99 +22,104 @@ import org.deltava.util.ConfigLoader;
 
 public class CommandFactory {
 
-    private static final Logger log = Logger.getLogger(CommandFactory.class);
-    
-    private CommandFactory() {
-    }
-    
-    /**
-     * Helper method to parse comma-delimited list of roles.
-     */
-    private static Collection<String> getRoles(String roleNames) {
-        if (roleNames == null) {
-            Collection<String> results = new HashSet<String>();
-            results.add("*");
-            return results;
-        }
-        
-        // Loop through the roles
-        Set<String> results = new TreeSet<String>();
-        StringTokenizer tkns = new StringTokenizer(roleNames, ",");
-        while (tkns.hasMoreTokens())
-            results.add(tkns.nextToken().trim());
-        
-        // Return the roles
-        return results;
-    }
-    
-    /**
-     * Returns the initialized command objects.
-     * @return a Map of initialized command objects
-     * @throws IOException if an I/O error occurs
-     * @see Command#init(String, String)
-     */
-    public static Map<String, Command> load(String configXML, ServletContext sc) throws IOException {
-        // Gracefully fail if no commands found
-        if (configXML == null) {
-            log.warn("No Commands loaded");
-            return new HashMap<String, Command>();
-        }
-        
-        // Get the file
-        InputStream is = ConfigLoader.getStream(configXML);
-        
-        // Create the builder and load the file into an XML in-memory document
-        Document doc = null;
-        try {
-            SAXBuilder builder = new SAXBuilder();
-            doc = builder.build(is);
-            is.close();
-        } catch (JDOMException je) {
-            IOException ie = new IOException("XML Parse Error in " + configXML);
-            ie.initCause(je);
-            throw ie;
-        }
-        
-        // Get the root element
-        Element root = doc.getRootElement();
-        if (root == null)
-            throw new IOException("Empty XML Document");
-        
-        // Parse through the commands
-        Map<String, Command> results = new HashMap<String, Command>();
-        List cmds = root.getChildren("command");
-        for (Iterator i = cmds.iterator(); i.hasNext(); ) {
-            Element e = (Element) i.next();
-            String cmdID = e.getAttributeValue("id").trim();
-            String cmdClassName = e.getChildTextTrim("class");
-            
-            Command cmd = null;
-            try {
-                Class c = Class.forName(cmdClassName);
-                cmd = (Command) c.newInstance();
-                log.debug("Loaded command " + cmdID);
-                
-                // init the command
-                cmd.setContext(sc);
-                cmd.init(cmdID, e.getChildTextTrim("name"));
-                cmd.setRoles(getRoles(e.getChildText("roles")));
-                
-                // Save the command in the map
-                results.put(cmdID.toLowerCase(), cmd);
-                log.debug("Initialized command " + cmdID);
-            } catch (CommandException ce) {
-                log.error("Error initializing " + cmdID + " - " + ce.getMessage());
-            } catch (ClassNotFoundException cnfe) {
-            	log.error("Cannot find class " + cmdClassName + " for " + cmdID);
-            } catch (NoClassDefFoundError ncde) { 
-                log.error("Cannot find class " + cmdClassName + " for " + cmdID);
-            } catch (Exception ex) {
-                log.error("Cannot start " + cmdID + " - "  + ex.getClass().getName());
-            }
-        }
-        
-        // Return the commands
-        log.info("Loaded " + results.size() + " commands");
-        return results;
-    }
+	private static final Logger log = Logger.getLogger(CommandFactory.class);
+
+	private CommandFactory() {
+	}
+
+	/**
+	 * Helper method to parse comma-delimited list of roles.
+	 */
+	private static Collection<String> getRoles(String roleNames) {
+		if (roleNames == null) {
+			Collection<String> results = new HashSet<String>();
+			results.add("*");
+			return results;
+		}
+
+		// Loop through the roles
+		Set<String> results = new TreeSet<String>();
+		StringTokenizer tkns = new StringTokenizer(roleNames, ",");
+		while (tkns.hasMoreTokens())
+			results.add(tkns.nextToken().trim());
+
+		// Return the roles
+		return results;
+	}
+
+	/**
+	 * Returns the initialized command objects.
+	 * @return a Map of initialized command objects
+	 * @throws IOException if an I/O error occurs
+	 * @see Command#init(String, String)
+	 */
+	public static Map<String, Command> load(String configXML, ServletContext sc) throws IOException {
+		// Gracefully fail if no commands found
+		if (configXML == null) {
+			log.warn("No Commands loaded");
+			return new HashMap<String, Command>();
+		}
+
+		// Get the file
+		InputStream is = ConfigLoader.getStream(configXML);
+
+		// Create the builder and load the file into an XML in-memory document
+		Document doc = null;
+		try {
+			SAXBuilder builder = new SAXBuilder();
+			doc = builder.build(is);
+			is.close();
+		} catch (JDOMException je) {
+			IOException ie = new IOException("XML Parse Error in " + configXML);
+			ie.initCause(je);
+			throw ie;
+		}
+
+		// Get the root element
+		Element root = doc.getRootElement();
+		if (root == null)
+			throw new IOException("Empty XML Document");
+
+		// Parse through the commands
+		Map<String, Command> results = new HashMap<String, Command>();
+		List cmds = root.getChildren("command");
+		for (Iterator i = cmds.iterator(); i.hasNext();) {
+			Element e = (Element) i.next();
+			String cmdID = e.getAttributeValue("id").trim();
+			String cmdClassName = e.getChildTextTrim("class");
+
+			// Check if the command ID is unique
+			if (results.containsKey(cmdID))
+				log.warn("Duplicate command ID " + cmdID);
+			else {
+				Command cmd = null;
+				try {
+					Class c = Class.forName(cmdClassName);
+					cmd = (Command) c.newInstance();
+					log.debug("Loaded command " + cmdID);
+
+					// init the command
+					cmd.setContext(sc);
+					cmd.init(cmdID, e.getChildTextTrim("name"));
+					cmd.setRoles(getRoles(e.getChildText("roles")));
+
+					// Save the command in the map
+					results.put(cmdID.toLowerCase(), cmd);
+					log.debug("Initialized command " + cmdID);
+				} catch (CommandException ce) {
+					log.error("Error initializing " + cmdID + " - " + ce.getMessage());
+				} catch (ClassNotFoundException cnfe) {
+					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
+				} catch (NoClassDefFoundError ncde) {
+					log.error("Cannot find class " + cmdClassName + " for " + cmdID);
+				} catch (Exception ex) {
+					log.error("Cannot start " + cmdID + " - " + ex.getClass().getName());
+				}
+			}
+		}
+
+		// Return the commands
+		log.info("Loaded " + results.size() + " commands");
+		return results;
+	}
 }
