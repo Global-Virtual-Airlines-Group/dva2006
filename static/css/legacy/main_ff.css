@@ -204,3 +204,7 @@ a:hover {
 .visible {
 	visibility: visible;
 }
+
+*.small A {
+	font-size: 8pt;
+}
