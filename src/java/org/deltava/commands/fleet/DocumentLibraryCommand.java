@@ -10,11 +10,9 @@ import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
-import org.deltava.dao.GetDocuments;
-import org.deltava.dao.DAOException;
-
-import org.deltava.security.command.FleetEntryAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -37,6 +35,9 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
+		// Calculate access for adding content
+		FleetEntryAccessControl access = null;
+		
 		List<Manual> results = new ArrayList<Manual>();
 		try {
 			Connection con = ctx.getConnection();
@@ -56,19 +57,19 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 					results.addAll(entries);
 				}
 			}
+			
+			// Load the user's Flight Academy courses
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 
-		// Calculate access for adding content
-		FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, null);
-		ctx.setAttribute("access", access, REQUEST);
-
 		// Validate our access to the results
 		for (Iterator<Manual> i = results.iterator(); i.hasNext();) {
-			FleetEntry e = i.next();
+			Manual e = i.next();
 			access.setEntry(e);
 			access.validate();
 
@@ -84,6 +85,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 		// Save the results in the request
 		ctx.setAttribute("docs", results, REQUEST);
+		ctx.setAttribute("access", access, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
