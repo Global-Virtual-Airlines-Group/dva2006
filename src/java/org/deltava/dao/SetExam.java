@@ -177,8 +177,8 @@ public class SetExam extends DAO {
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
 				prepareStatement("INSERT INTO " + dbName.toLowerCase() + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
-						+ "STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES "
+						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getPilotID());
 				_ps.setInt(3, cr.getFlightID());
@@ -190,6 +190,7 @@ public class SetExam extends DAO {
 				_ps.setTimestamp(9, createTimestamp(cr.getSubmittedOn()));
 				_ps.setString(10, cr.getComments());
 				_ps.setBoolean(11, cr.getPassFail());
+				_ps.setBoolean(12, cr.getAcademy());
 			} else {
 				prepareStatement("UPDATE " + dbName.toLowerCase() + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
 						+ "ACARS_ID=?, GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");

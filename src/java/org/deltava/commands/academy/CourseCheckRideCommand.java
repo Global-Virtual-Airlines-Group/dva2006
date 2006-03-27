@@ -102,7 +102,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			CheckRide cr = new CheckRide(c.getName());
 			cr.setDate(new Date());
 			cr.setAcademy(true);
-			cr.setPilotID(ctx.getID());
+			cr.setPilotID(p.getID());
 			cr.setScorerID(ctx.getUser().getID());
 			cr.setStatus(Test.NEW);
 			cr.setComments(ctx.getParameter("comments"));
