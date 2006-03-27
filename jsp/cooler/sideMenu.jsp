@@ -76,6 +76,9 @@
  <td><el:cmd url="airlinestats">AIRLINE TOTALS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="flightstats">FLIGHT TOTALS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="httpstats">SERVER STATISTICS</el:cmd></td>
 </tr>
 <content:filter roles="Moderator">
