@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -83,7 +83,7 @@ public class MassMailingCommand extends AbstractCommand {
 			   ctx.setAttribute("eqType", eqType, REQUEST);
 			} else if (eqType != null) {
 			   GetPilot dao = new GetPilot(con);
-				pilots = dao.getPilotsByEQ(eqType);
+				pilots = dao.getPilotsByEQ(eqType, true);
 				ctx.setAttribute("eqType", eqType, REQUEST);
 			}
 		} catch (DAOException de) {
