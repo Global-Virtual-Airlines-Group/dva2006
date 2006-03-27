@@ -7,25 +7,31 @@
 		<class>org.deltava.commands.main.HomeCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="roster">
 		<name>Pilot Roster</name>
 		<class>org.deltava.commands.main.RosterCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="lroster">
 		<name>Public Logbooks</name>
 		<class>org.deltava.commands.main.RosterLetterCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
+	<command id="eqroster">
+		<name>Equipment Program Roster</name>
+		<class>org.deltava.commands.main.EquipmentRosterCommand</class>
+		<roles>HR,PIREP,Examination</roles>
+	</command>
+
 	<command id="centuryclub">
 		<name>Century Club</name>
 		<class>org.deltava.commands.main.CenturyClubCommand</class>
 		<roles>*</roles>
 	</command>
-	
+
 	<command id="landings">
 		<name>Greased Landings</name>
 		<class>org.deltava.commands.pilot.GreasedLandingCommand</class>
