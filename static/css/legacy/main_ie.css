@@ -198,6 +198,10 @@ a:hover {
 	visibility: visible;
 }
 
+*.small A {
+	font-size: 8pt;
+}
+
 /* This is an IE-only hack for required SELECT elements */
 SELECT.req {
 	background: #FFF8FA;
