@@ -5,8 +5,6 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "pilotmap.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	var isLoading = getElement('isLoading');
-	isLoading.innerHTML = ' - REDRAWING...';
 	
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
@@ -38,6 +36,8 @@ xmlreq.onreadystatechange = function() {
 	return true;
 } // function
 
+var isLoading = getElement('isLoading');
+isLoading.innerHTML = ' - REDRAWING...';
 return xmlreq;
 }
 
