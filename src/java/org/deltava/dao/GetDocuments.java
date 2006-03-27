@@ -7,6 +7,7 @@ import java.util.*;
 
 import org.deltava.beans.fleet.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -150,7 +151,12 @@ public class GetDocuments extends GetLibrary {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			return loadManuals();
+			Collection<Manual> results = loadManuals();
+			Map<String, Manual> docMap = CollectionUtils.createMap(results, "fileName");
+			
+			// Load the certifications for the manual
+			loadCertifications(dbName, docMap);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -173,9 +179,35 @@ public class GetDocuments extends GetLibrary {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
-	 * Helper method to returns all Flight Academy Certifications associated with a particular Manual.
+	 * Helper method to load Flight Academy Certifications into Manual beans.
+	 */
+	private void loadCertifications(String dbName, Map<String, Manual> manuals) throws SQLException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(".CERTDOCS");
+		
+		// Prepare and execute the statement
+		prepareStatementWithoutLimits(sqlBuf.toString());
+		ResultSet rs = _ps.executeQuery();
+
+		// Iterate through the results
+		while (rs.next()) {
+			Manual m = manuals.get(rs.getString(1));
+			if (m != null)
+				m.addCertification(rs.getString(2));
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+	
+	/**
+	 * Helper method to return all Flight Academy Certifications associated with a particular Manual.
 	 */
 	private Collection<String> getCertifications(String fileName, String dbName) throws SQLException {
 
