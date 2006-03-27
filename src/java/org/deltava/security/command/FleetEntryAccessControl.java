@@ -14,11 +14,11 @@ import org.deltava.beans.fleet.LibraryEntry;
 
 public class FleetEntryAccessControl extends AccessControl {
 
-   private LibraryEntry _entry;
-
+   protected LibraryEntry _entry;
+   
+   protected boolean _canView;
    private boolean _canEdit;
    private boolean _canDelete;
-   private boolean _canView;
    private boolean _canCreate;
 
    /**
