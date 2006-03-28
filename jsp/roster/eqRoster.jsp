@@ -60,7 +60,7 @@ return true;
  <td class="sec">${pilot.homeAirport}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
  <td><fmt:dec value="${pilot.hours}" /></td>
- <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
+ <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
 </tr>
 </c:forEach>
 
