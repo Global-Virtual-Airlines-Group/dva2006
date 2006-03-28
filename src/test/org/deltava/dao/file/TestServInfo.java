@@ -1,9 +1,10 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.util.*;
 
 import org.deltava.beans.servinfo.NetworkInfo;
+import org.deltava.dao.file.GetServInfo;
 import org.deltava.util.system.SystemData;
 
 public class TestServInfo extends AbstractURLConnectionTestCase {
