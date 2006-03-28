@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.servlet.CommandLog;
+import org.deltava.beans.system.HelpEntry;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
@@ -113,6 +114,23 @@ public class SetSystemData extends DAO {
 					+ "(LCASE(?), LCASE(?), CURDATE(), 1) ON DUPLICATE KEY UPDATE HITS=HITS+1");
 			_ps.setString(1, url);
 			_ps.setString(2, hostName);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Writes an Online Help Entry to the database.
+	 * @param entry the HelpEntry bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(HelpEntry entry) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("REPLACE INTO HELP (ID, SUBJECT, BODY) VALUES (?, ?, ?)");
+			_ps.setString(1, entry.getTitle());
+			_ps.setString(2, entry.getSubject());
+			_ps.setString(3, entry.getBody());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
