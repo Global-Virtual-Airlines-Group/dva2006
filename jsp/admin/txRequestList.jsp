@@ -25,7 +25,7 @@
 <view:table className="view" pad="default" space="default" cmd="txrequests">
 <!-- Table Header Bar-->
 <tr class="title caps">
- <td width="30%">PILOT NAME</td>
+ <td width="30%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
  <td width="10%">PILOT ID</td>
  <td width="15%">CURRENT RANK</td>
  <td width="15%">CURRENT PROGRAM</td>
