@@ -17,7 +17,7 @@ import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.GetPilotOnline;
 import org.deltava.dao.DAOException;
-import org.deltava.dao.http.GetServInfo;
+import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.util.system.SystemData;
 

@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import org.deltava.dao.DAOException;
 

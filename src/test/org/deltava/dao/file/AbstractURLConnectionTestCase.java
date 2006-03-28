@@ -1,9 +1,10 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.net.*;
 
 import org.apache.log4j.PropertyConfigurator;
+import org.deltava.dao.file.FileURLConnection;
 
 import junit.framework.TestCase;
 

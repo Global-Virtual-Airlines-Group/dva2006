@@ -1,5 +1,5 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.net.*;

@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.net.URLConnection;
@@ -19,7 +19,7 @@ public class GetPACOTs extends DAO implements TrackDAO {
 	 * Initializes the DAO with a particular HTTP connection.
 	 * @param c the HTTP connection
 	 */
-	public GetPACOTs(URLConnection c) {
+	public GetPACOTs(URLConnection c) throws DAOException {
 		super(c);
 	}
 

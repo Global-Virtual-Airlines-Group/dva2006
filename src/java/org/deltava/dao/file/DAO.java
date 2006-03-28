@@ -1,8 +1,10 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.http;
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.net.*;
+
+import org.deltava.dao.DAOException;
 
 /**
  * An abstract class to support HTTP-based Data Access Objects.
@@ -13,18 +15,30 @@ import java.net.*;
 
 public abstract class DAO {
 
-    private static final int BUFFER_SIZE = 10240;
-    
-    protected URLConnection _c;
-    private int _size = BUFFER_SIZE;
+    private InputStream _is;
+    private int _size = 10240;
     
     /**
-     * Initializes the DAO with a particular URL connection. We use the generic superclass so that files can be loaded.
+     * Initializes the Data Access Object with a particular URL connection. We use the generic superclass so
+     * that files can be loaded.
      * @param c the URL connection 
      */
-    public DAO(URLConnection c) {
+    public DAO(URLConnection c) throws DAOException {
         super();
-        _c = c;
+        try {
+        	_is = c.getInputStream();
+        } catch (IOException ie) {
+        	throw new DAOException(ie);
+        }
+    }
+    
+    /**
+     * Initializes the Data Access Object with a particular input stream.
+     * @param is the input stream
+     */
+    public DAO(InputStream is) {
+    	super();
+    	_is = is;
     }
     
     /**
@@ -45,7 +59,6 @@ public abstract class DAO {
      * @throws IOException if a network error occurs
      */
     protected BufferedReader getReader() throws IOException {
-        InputStream in = _c.getInputStream();
-        return new BufferedReader(new InputStreamReader(in), _size);
+        return new BufferedReader(new InputStreamReader(_is), _size);
     }
 }
