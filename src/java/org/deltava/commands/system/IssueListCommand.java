@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.StringUtils;
 public class IssueListCommand extends AbstractViewCommand {
    
    // Sort options
-   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA", "I.STATUS DESC", "I.CREATED",
+   private static final String[] SORT_CODE = {"I.ID", "I.PRIORITY DESC", "I.AREA, I.RESOLVED DESC", "I.STATUS DESC", "I.CREATED",
          "I.RESOLVED DESC", "LC DESC"};
    private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"ID", "Priority", "Area", "Status", "Creation Date",
          "Resolution Date", "Last Comment"}, SORT_CODE);
