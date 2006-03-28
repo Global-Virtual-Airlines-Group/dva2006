@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Pilot Roster - ${param.eqType}</title>
+<title><content:airline /> Pilot Roster - ${param.id}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -33,9 +33,9 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="eqroster">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="2" class="left">PILOT ROSTER</td>
+ <td colspan="2" class="left">PILOT ROSTER - ${param.id}</td>
  <td><el:box name="showAll" idx="*" value="true" checked="${showAll}" label="Show Inactive Pilots" /></td>
- <td colspan="4" class="right">EQUIPMENT TYPE <el:combo name="eqType" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void sort()" /></td>
+ <td colspan="5" class="right">EQUIPMENT TYPE <el:combo name="id" size="1" options="${eqTypes}" value="${param.id}" onChange="void sort()" /></td>
 </tr>
 
 <!-- Table Header Bar-->
