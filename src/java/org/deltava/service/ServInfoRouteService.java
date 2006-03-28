@@ -14,7 +14,7 @@ import org.jdom.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.servinfo.*;
 
-import org.deltava.dao.http.GetServInfo;
+import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;

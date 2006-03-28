@@ -1,5 +1,5 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
@@ -48,7 +48,7 @@ public class GetServInfo extends DAO {
 	 * Initializes the DAO with a particular HTTP connection.
 	 * @param c the HTTP connection
 	 */
-	public GetServInfo(URLConnection c) {
+	public GetServInfo(URLConnection c) throws DAOException {
 		super(c);
 	}
 

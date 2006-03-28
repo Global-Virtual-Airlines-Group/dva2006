@@ -1,4 +1,4 @@
-package org.deltava.dao.http;
+package org.deltava.dao.file;
 
 import java.net.*;
 import javax.net.ssl.*;
@@ -10,6 +10,9 @@ import junit.framework.TestCase;
 import org.apache.log4j.PropertyConfigurator;
 
 import org.deltava.dao.DAOException;
+import org.deltava.dao.file.GetNATs;
+import org.deltava.dao.file.GetPACOTs;
+import org.deltava.dao.file.TrackDAO;
 import org.deltava.util.http.SSLUtils;
 
 public class TestTrackDAO extends TestCase {

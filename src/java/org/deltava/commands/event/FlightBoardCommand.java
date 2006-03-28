@@ -16,7 +16,7 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.GetNavData;
 import org.deltava.dao.GetPilotOnline;
-import org.deltava.dao.http.GetServInfo;
+import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.util.system.SystemData;
 
