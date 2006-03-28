@@ -1128,6 +1128,18 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="helplist">
+		<name>Online Help Entries</name>
+		<class>org.deltava.commands.system.HelpListCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="help">
+		<name>Online Help</name>
+		<class>org.deltava.commands.system.HelpEntryCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="taskexec">
 		<name>Scheduled Task Execute</name>
 		<class>org.deltava.commands.system.TaskExecuteCommand</class>
