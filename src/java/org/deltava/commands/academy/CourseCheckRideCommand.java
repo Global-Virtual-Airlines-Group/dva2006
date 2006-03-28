@@ -139,7 +139,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/testing/courseUpdate.jsp");
+		result.setURL("/jsp/academy/courseUpdate.jsp");
 		result.setSuccess(true);
 	}
 }
