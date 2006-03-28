@@ -338,7 +338,6 @@ cannot access the Testing Center until this interval has passed.</span></c:if>
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
 
-<content:filter roles="HR,Instructor">
 <c:if test="${academyEnabled && (pilot.legs >= academyFlights)}">
 <!-- Flight Academy Section -->
 <tr class="title caps">
@@ -385,7 +384,6 @@ training session with a Flight Academy student.</td>
 </c:if>
 </content:filter>
 </c:if>
-</content:filter>
 
 <content:filter roles="PIREP">
 <!-- Flight Report Admin Section -->
@@ -404,6 +402,10 @@ training session with a Flight Academy student.</td>
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
  <td colspan="2">HUMAN RESOURCES</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="eqroster" linkID="${pilot.equipmentType}">Pilot Roster</el:cmd></td>
+ <td class="data">You can view the Pilot Roster divided by Equipment Program.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="txrequests">Equipment Transfer Requests</el:cmd></td>
@@ -522,6 +524,10 @@ database.</td>
  <td class="mid"><el:cmd className="bld" url="msgtemplates">E-Mail Message Templates</el:cmd></td>
  <td class="data">The <content:airline /> web site sends out e-mail notification messages to inform members of
 new Online Events, System News entries and NOTAMs, and Flight Report approval or rejection.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="helplist">Online Help</el:cmd></td>
+ <td class="data">You can view and edit <content:airline /> Online Help entries.</td>
 </tr>
 </content:filter>
 <content:filter roles="Admin">
