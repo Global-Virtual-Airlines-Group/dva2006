@@ -1,6 +1,5 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
-
-import java.io.Serializable;
 
 /**
  * A class for storing Online Help entries.
@@ -9,9 +8,10 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class HelpEntry implements Serializable, Comparable {
+public class HelpEntry implements java.io.Serializable, Comparable {
 
     private String _title;
+    private String _subject;
     private String _body;
     
     /**
@@ -28,18 +28,35 @@ public class HelpEntry implements Serializable, Comparable {
     
     /**
      * Returns this entry's Title.
-     * @return The title of this Help Entry
+     * @return the title of this Help Entry
      */
     public String getTitle() {
         return _title;
     }
+    
+    /**
+     * Returns this entry's Subject.
+     * @return the subject of this Help Entry
+     */
+    public String getSubject() {
+    	return _subject;
+    }
 
     /**
      * Returns this entry's Body.
-     * @return The body content of this Help Entry
+     * @return the body content of this Help Entry
      */
     public String getBody() {
         return _body;
+    }
+    
+    /**
+     * Updates this entry's subject.
+     * @param subj the subject
+     * @throws NullPointerException if subj is null
+     */
+    public void setSubject(String subj) {
+    	_subject = subj.trim(); 
     }
     
     /**
@@ -52,13 +69,6 @@ public class HelpEntry implements Serializable, Comparable {
         return _title.compareTo(he2.getTitle());
     }
 
-    /**
-     * Returns the title's hashcode.
-     */
-    public int hashCode() {
-       return _title.hashCode();
-    }
-    
     /**
      * Checks for equality using the title.
      */
