@@ -298,7 +298,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	public boolean equals(Object o2) {
 		try {
 			Airport a2 = (Airport) o2;
-			return (_iata.equals(a2.getIATA()) && _icao.equals(a2.getICAO()));
+			return (a2 == null) ? false : (_iata.equals(a2.getIATA()) && _icao.equals(a2.getICAO()));
 		} catch (ClassCastException cce) {
 			return false;
 		}
