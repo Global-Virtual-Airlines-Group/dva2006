@@ -158,8 +158,8 @@ return true;
  <td class="label">Flight Simulator</td>
  <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="FS${pirep.FSVersion}" /></td>
 </tr>
-<c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 100}" scope="request" />
-<c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 100) * 6}" scope="request" />
+<c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="request" />
+<c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>
  <td class="data"><el:combo name="flightTime" idx="*" size="1" className="req" firstEntry="< HOURS >" options="${flightTimes}" value="${flightTime}" />&nbsp;
@@ -178,7 +178,7 @@ return true;
 <!-- PIREP Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE AS DRAFT" />
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" />
 <c:if test="${access.canSubmitIfEdit}">
 &nbsp;<el:button ID="SubmitButton" onClick="void saveSubmit()" className="BUTTON" label="SUBMIT FLIGHT REPORT" />
 </c:if>
