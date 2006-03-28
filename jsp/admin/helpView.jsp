@@ -5,19 +5,13 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Mass Mailing</title>
+<title><content:airline /> Online Help</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
 <body>
-<content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
-
-<!-- Main Body Frame -->
-<content:region id="main">
 <el:form action="help.do" op="read" method="get" linkID="${help.title}" validate="return false">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -30,7 +24,5 @@
 </el:form>
 <br />
 <content:copyright />
-</content:region>
-</content:page>
 </body>
 </html>

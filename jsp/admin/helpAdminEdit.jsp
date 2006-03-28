@@ -26,6 +26,12 @@ return true;
 </head>
 <content:copyright visible="false" />
 <body>
+<content:page>
+<%@ include file="/jsp/main/header.jsp" %>
+<%@ include file="/jsp/main/sideMenu.jsp" %>
+
+<!-- Main Body Frame -->
+<content:region id="main">
 <el:form action="help.do" method="post" op="save" linkID="${help.title}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
@@ -43,12 +49,11 @@ return true;
  <td class="label" valign="top">Help Entry Text</td>
  <td class="data"><el:textbox name="body" idx="*" className="small req" width="140" height="8">${help.body}</el:textbox></td>
 </tr>
-<tr class="title">
- <td colspan="2"><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE HELP ENTRY" /></td>
-</tr>
 </el:table>
 </el:form>
 <br />
 <content:copyright />
+</content:region>
+</content:page>
 </body>
 </html>
