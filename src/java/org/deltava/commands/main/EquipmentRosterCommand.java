@@ -36,7 +36,7 @@ public class EquipmentRosterCommand extends AbstractViewCommand {
 			GetPilot dao = new GetPilot(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			vc.setResults(dao.getPilotsByEQ(ctx.getParameter("eqType"), !showAll));
+			vc.setResults(dao.getPilotsByEQ(ctx.getParameter("id"), !showAll));
 			
 			// Get the Equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
