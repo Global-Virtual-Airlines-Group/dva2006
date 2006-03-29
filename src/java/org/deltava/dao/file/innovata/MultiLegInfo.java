@@ -5,13 +5,25 @@ import java.util.*;
 
 import org.deltava.beans.schedule.*;
 
+/**
+ * A class to track multiple-leg flights during a schedule import.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
 class MultiLegInfo implements Comparable {
 
 	private String _flightCode;
 	private int _flightNumber;
 	private List<String> _apCodes = new ArrayList<String>();
-	private List<ScheduleEntry> _entries = new ArrayList<ScheduleEntry>();
+	private List<DailyScheduleEntry> _entries = new ArrayList<DailyScheduleEntry>();
 
+	/**
+	 * Creates a new Multiple Leg information bean.
+	 * @param flightCode the flight code
+	 * @param fNumber the flight number
+	 */
 	MultiLegInfo(String flightCode, int fNumber) {
 		super();
 		_flightCode = flightCode;
@@ -50,8 +62,40 @@ class MultiLegInfo implements Comparable {
 		addAirports(aA.getIATA());
 	}
 
-	public void addEntry(ScheduleEntry se) {
+	/**
+	 * Adds a Schedule Entry.
+	 * @param se the Schedule Entry bean
+	 */
+	public void addEntry(DailyScheduleEntry se) {
 		_entries.add(se);
+	}
+	
+	/**
+	 * Adds a Schedule Entry, replacing an existing Entry covering this route pair.
+	 * @param se the Schedule Entry bean
+	 */
+	public void replaceEntry(DailyScheduleEntry se) {
+		ScheduleEntry ee = getEntry(se.getAirportD(), se.getAirportA());
+		if (ee != null)
+			_entries.remove(ee);
+		
+		_entries.add(se);
+	}
+	
+	/**
+	 * Returns a leg entry for a given airport pair.
+	 * @param ad the departure Airport bean
+	 * @param aa the arrival Airport bean
+	 * @return the first ScheduleEntry bean matching these airports, or null if not found
+	 */
+	public DailyScheduleEntry getEntry(Airport ad, Airport aa) {
+		for (Iterator<DailyScheduleEntry> i = _entries.iterator(); i.hasNext(); ) {
+			DailyScheduleEntry se = i.next();
+			if (se.getAirportA().equals(aa) && se.getAirportD().equals(ad))
+				return se;
+		}
+	
+		return null;
 	}
 
 	public List<String> getDepartsFrom() {
@@ -84,10 +128,12 @@ class MultiLegInfo implements Comparable {
 			results.add(null);
 
 		// Order the legs
-		for (Iterator<ScheduleEntry> i = _entries.iterator(); i.hasNext();) {
-			ScheduleEntry e = i.next();
+		for (Iterator<DailyScheduleEntry> i = _entries.iterator(); i.hasNext();) {
+			DailyScheduleEntry e = i.next();
 			int ofs = apCodes.indexOf(e.getAirportD().getIATA());
-			if (ofs != -1) {
+			if (ofs >= results.size()) {
+				System.out.println(_flightCode);
+			} else if (ofs != -1) {
 				e.setLeg(ofs + 1);
 				results.set(ofs, e);
 			}

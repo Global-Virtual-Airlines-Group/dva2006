@@ -145,14 +145,15 @@ public Collection<ScheduleEntry> process() throws IOException {
 			if (a == null)
 				log.warn("Unknown Airline " + flightCode);
 			else if (flightID.getUserID() >= 9600)
-				log.warn("Skipping charter " + flightID);
+				log.debug("Skipping charter " + flightID);
 			else if (!includeFlight)
-				log.warn("Skipping flight (NOT EFFECTIVE) " + flightID);
+				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
 			else {
 				// Build the leg information
-				ScheduleEntry se = new ScheduleEntry(a, flightID.getUserID(), 1);
+				DailyScheduleEntry se = new DailyScheduleEntry(a, flightID.getUserID(), 1);
 				se.setAirportD(airportD);
 				se.setAirportA(airportA);
+				se.setDays(tkns.get(2));
 				se.setEquipmentType(tkns.get(8));
 				try {
 					se.setTimeD(_tf.parse(tkns.get(4)));
@@ -170,8 +171,16 @@ public Collection<ScheduleEntry> process() throws IOException {
 				boolean isExistML = legs.containsKey(flightCode);
 				MultiLegInfo ml = isExistML ? legs.get(flightCode) : new MultiLegInfo(flightCode, flightID.getUserID());
 				if (stops == 0) {
-					log.info("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
-					ml.addEntry(se);
+					// Check to see if we already have a leg
+					DailyScheduleEntry ee = ml.getEntry(airportD, airportA);
+					if ((ee != null) && (ee.getDays() < se.getDays())) {
+						log.info("Replacing " + flightCode + " Leg " + (ml.getLegs() + 1));
+						ml.replaceEntry(se);
+					} else if (ee == null) {
+						log.info("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
+						ml.addEntry(se);
+					}
+					
 					ml.addAirport(airportD.getIATA());
 					ml.addAirport(airportA.getIATA());
 				} else if (stops < (ml.getDepartsFrom().size() - 1)) {
