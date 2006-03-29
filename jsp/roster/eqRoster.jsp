@@ -34,7 +34,7 @@ return true;
 <!-- Table Sort Combo Bar -->
 <tr class="title">
  <td colspan="2" class="left">PILOT ROSTER - ${param.id}</td>
- <td><el:box name="showAll" idx="*" value="true" checked="${showAll}" label="Show Inactive Pilots" /></td>
+ <td><el:box name="showAll" idx="*" value="true" checked="${showAll}" label="Show Inactive Pilots" onChange="void sort()" /></td>
  <td colspan="5" class="right">EQUIPMENT TYPE <el:combo name="id" size="1" options="${eqTypes}" value="${param.id}" onChange="void sort()" /></td>
 </tr>
 
