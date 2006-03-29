@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Globa Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -296,10 +296,12 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * airports having the same IATA code but different ICAO codes.
 	 */
 	public boolean equals(Object o2) {
-		try {
+		if (o2 instanceof Airport) {
 			Airport a2 = (Airport) o2;
 			return (a2 == null) ? false : (_iata.equals(a2.getIATA()) && _icao.equals(a2.getICAO()));
-		} catch (ClassCastException cce) {
+		} else if (o2 instanceof String) {
+			return _iata.equals(o2) || _icao.equals(o2);
+		} else {
 			return false;
 		}
 	}
