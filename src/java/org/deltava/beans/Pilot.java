@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -728,7 +728,6 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2.setEmailAccess(getEmailAccess());
        p2.setEquipmentType(getEquipmentType());
        p2.setHomeAirport(getHomeAirport());
-       p2.setIMHandle(getIMHandle());
        p2.setLastLogin(getLastLogin());
        p2.setLastLogoff(getLastLogoff());
        p2.setLocation(getLocation());
@@ -756,10 +755,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
        p2._networkIDs.putAll(getNetworkIDs());
        if (!StringUtils.isEmpty(getPilotCode()))
     	   p2.setPilotCode(getPilotCode());
-       
+
        for (Iterator<String> i = getNotifyOptions().iterator(); i.hasNext(); )
     	   p2.setNotifyOption(i.next(), true);
        
+       for (Iterator<String> i = getIMServices().iterator(); i.hasNext(); ) {
+    	   String svc = i.next();
+    	   p2.setIMHandle(svc, getIMHandle(svc));
+       }
+    	   
        return p2;
     }
     

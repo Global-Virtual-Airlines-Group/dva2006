@@ -86,7 +86,11 @@ return true;
 </tr>
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data"><el:text name="imHandle" idx="*" size="14" max="36" value="${param.imHandle}" /></td>
+ <td class="data"><el:text name="aimHandle" idx="*" size="14" max="36" value="${param.aimHandle}" /></td>
+</tr>
+<tr>
+ <td class="label">MSN Messenger</td>
+ <td class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${param.msnHandle}" /></td>
 </tr>
 
 <!-- E-Mail Information -->

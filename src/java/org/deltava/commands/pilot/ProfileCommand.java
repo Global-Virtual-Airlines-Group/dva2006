@@ -76,10 +76,11 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Update the profile with data from the request
 			p.setHomeAirport(ctx.getParameter("homeAirport"));
-			p.setNetworkID("VATSIM", ctx.getParameter("VATSIM_ID"));
-			p.setNetworkID("IVAO", ctx.getParameter("IVAO_ID"));
+			p.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
+			p.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			p.setLocation(ctx.getParameter("location"));
-			p.setIMHandle(ctx.getParameter("imHandle"));
+			p.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
+			p.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
 			p.setEmailAccess(Integer.parseInt(ctx.getParameter("privacyOption")));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setAirportCodeType(ctx.getParameter("airportCodeType"));

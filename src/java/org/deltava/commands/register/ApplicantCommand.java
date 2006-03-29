@@ -60,9 +60,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 			a.setLastName(ctx.getParameter("lastName"));
 			a.setEmail(ctx.getParameter("eMail"));
 			a.setLocation(ctx.getParameter("location"));
-			a.setIMHandle(ctx.getParameter("imHandle"));
-			a.setNetworkID("VATSIM", ctx.getParameter("VATSIM_ID"));
-			a.setNetworkID("IVAO", ctx.getParameter("IVAO_ID"));
+			a.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
+			a.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
+			a.setNetworkID(OnlineNetwork.VATSIM, ctx.getParameter("VATSIM_ID"));
+			a.setNetworkID(OnlineNetwork.IVAO, ctx.getParameter("IVAO_ID"));
 			a.setLegacyURL(ctx.getParameter("legacyURL"));
 			a.setLegacyVerified("1".equals(ctx.getParameter("legacyOK")));
 			a.setHomeAirport(ctx.getParameter("homeAirport"));

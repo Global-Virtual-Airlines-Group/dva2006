@@ -66,20 +66,20 @@ public class SetApplicant extends PilotWriteDAO {
 				a.setID(getNewID());
 
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
-						+ "VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
+						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
 						+ "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, "
-						+ "NFORMAT, AIRPORTCODE, TZ, UISCHEME, COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+						+ "NFORMAT, AIRPORTCODE, TZ, UISCHEME, COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
 						+ "?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setInt(27, a.getID());
 			} else {
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
-						+ "IMHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
+						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
 						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, CREATED=?, "
 						+ "REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, "
 						+ "TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=? WHERE (ID=?)");
-				_ps.setString(27, a.getEquipmentType());
-				_ps.setString(28, a.getRank());
-				_ps.setInt(29, a.getID());
+				_ps.setString(28, a.getEquipmentType());
+				_ps.setString(29, a.getRank());
+				_ps.setInt(30, a.getID());
 			}
 
 			// Set the fields
@@ -88,27 +88,28 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setString(3, a.getLastName());
 			_ps.setString(4, a.getEmail());
 			_ps.setString(5, a.getLocation());
-			_ps.setString(6, a.getIMHandle());
-			_ps.setString(7, a.getNetworkIDs().get("VATSIM"));
-			_ps.setString(8, a.getNetworkIDs().get("IVAO"));
-			_ps.setDouble(9, a.getLegacyHours());
-			_ps.setString(10, a.getLegacyURL());
-			_ps.setBoolean(11, a.getLegacyVerified());
-			_ps.setString(12, a.getHomeAirport());
-			_ps.setBoolean(13, a.getNotifyOption(Person.FLEET));
-			_ps.setBoolean(14, a.getNotifyOption(Person.EVENT));
-			_ps.setBoolean(15, a.getNotifyOption(Person.NEWS));
-			_ps.setInt(16, a.getEmailAccess());
-			_ps.setTimestamp(17, createTimestamp(a.getCreatedOn()));
-			_ps.setString(18, a.getRegisterHostName());
-			_ps.setString(19, a.getRegisterAddress());
-			_ps.setString(20, a.getDateFormat());
-			_ps.setString(21, a.getTimeFormat());
-			_ps.setString(22, a.getNumberFormat());
-			_ps.setInt(23, a.getAirportCodeType());
-			_ps.setString(24, a.getTZ().getID());
-			_ps.setString(25, a.getUIScheme());
-			_ps.setString(26, a.getComments());
+			_ps.setString(6, a.getIMHandle(InstantMessage.AIM));
+			_ps.setString(7, a.getIMHandle(InstantMessage.MSN));
+			_ps.setString(8, a.getNetworkIDs().get(OnlineNetwork.VATSIM));
+			_ps.setString(9, a.getNetworkIDs().get(OnlineNetwork.IVAO));
+			_ps.setDouble(10, a.getLegacyHours());
+			_ps.setString(11, a.getLegacyURL());
+			_ps.setBoolean(12, a.getLegacyVerified());
+			_ps.setString(13, a.getHomeAirport());
+			_ps.setBoolean(14, a.getNotifyOption(Person.FLEET));
+			_ps.setBoolean(15, a.getNotifyOption(Person.EVENT));
+			_ps.setBoolean(16, a.getNotifyOption(Person.NEWS));
+			_ps.setInt(17, a.getEmailAccess());
+			_ps.setTimestamp(18, createTimestamp(a.getCreatedOn()));
+			_ps.setString(19, a.getRegisterHostName());
+			_ps.setString(20, a.getRegisterAddress());
+			_ps.setString(21, a.getDateFormat());
+			_ps.setString(22, a.getTimeFormat());
+			_ps.setString(23, a.getNumberFormat());
+			_ps.setInt(24, a.getAirportCodeType());
+			_ps.setString(25, a.getTZ().getID());
+			_ps.setString(26, a.getUIScheme());
+			_ps.setString(27, a.getComments());
 
 			// Update the database and commit
 			executeUpdate(1);
