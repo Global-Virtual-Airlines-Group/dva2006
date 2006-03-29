@@ -1,15 +1,17 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.schedule;
+package org.deltava.dao.file.innovata;
 
 import java.io.*;
 import java.util.*;
+import java.text.*;
 
 import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
 import org.deltava.beans.TZInfo;
-import org.deltava.dao.file.GetSchedule;
+import org.deltava.beans.schedule.*;
+import org.deltava.dao.file.innovata.GetSchedule;
 
 public class TestInnovataScheduleLoad extends TestCase {
 
@@ -81,9 +83,14 @@ public class TestInnovataScheduleLoad extends TestCase {
 	
 	public void testLoadSchedule() throws Exception {
 		
+		// set the effective Date
+		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+		
 		// Get the data and the DAO
 		InputStream is = new FileInputStream("data/iv_directs.csv");
 		GetSchedule dao = new GetSchedule(is, _alMap.values(), _apMap.values());
+		dao.setBufferSize(32768);
+		dao.setEffectiveDate(df.parse("04/04/2006"));
 		dao.load();
 		Collection<ScheduleEntry> entries = dao.process();
 		
