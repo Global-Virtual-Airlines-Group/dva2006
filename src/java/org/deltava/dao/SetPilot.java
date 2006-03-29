@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -63,9 +63,9 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
-				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, RANK=?, EQTYPE=?, "
-				+ "STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, FIRSTNAME=?, LASTNAME=? "
-				+ "WHERE (ID=?)");
+				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, RANK=?, "
+				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, FIRSTNAME=?, "
+				+ "LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -94,17 +94,18 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setString(18, p.getNumberFormat());
 			_ps.setInt(19, p.getAirportCodeType());
 			_ps.setInt(20, p.getMapType());
-			_ps.setString(21, p.getIMHandle());
-			_ps.setString(22, p.getRank());
-			_ps.setString(23, p.getEquipmentType());
-			_ps.setInt(24, p.getStatus());
-			_ps.setBoolean(25, p.getNoExams());
-			_ps.setBoolean(26, p.getNoVoice());
-			_ps.setInt(27, p.getACARSRestriction());
-			_ps.setString(28, p.getLDAPName());
-			_ps.setString(29, p.getFirstName());
-			_ps.setString(30, p.getLastName());
-			_ps.setInt(31, p.getID());
+			_ps.setString(21, p.getIMHandle(InstantMessage.AIM));
+			_ps.setString(22, p.getIMHandle(InstantMessage.MSN));
+			_ps.setString(23, p.getRank());
+			_ps.setString(24, p.getEquipmentType());
+			_ps.setInt(25, p.getStatus());
+			_ps.setBoolean(26, p.getNoExams());
+			_ps.setBoolean(27, p.getNoVoice());
+			_ps.setInt(28, p.getACARSRestriction());
+			_ps.setString(29, p.getLDAPName());
+			_ps.setString(30, p.getFirstName());
+			_ps.setString(31, p.getLastName());
+			_ps.setInt(32, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

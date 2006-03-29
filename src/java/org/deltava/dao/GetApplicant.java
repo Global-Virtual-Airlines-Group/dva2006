@@ -364,30 +364,31 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setPilotID(rs.getInt(2)); // Status must be populated first
 			a.setEmail(rs.getString(6));
 			a.setLocation(rs.getString(7));
-			a.setIMHandle(rs.getString(8));
-			a.setNetworkID("VATSIM", rs.getString(9));
-			a.setNetworkID("IVAO", rs.getString(10));
-			a.setLegacyHours(rs.getDouble(11));
-			a.setLegacyURL(rs.getString(12));
-			a.setLegacyVerified(rs.getBoolean(13));
-			a.setHomeAirport(rs.getString(14));
-			a.setEquipmentType(rs.getString(15));
-			a.setRank(rs.getString(16));
-			a.setNotifyOption(Person.FLEET, rs.getBoolean(17));
-			a.setNotifyOption(Person.EVENT, rs.getBoolean(18));
-			a.setNotifyOption(Person.NEWS, rs.getBoolean(19));
-			a.setEmailAccess(rs.getInt(20));
-			a.setCreatedOn(rs.getTimestamp(21));
-			// skip 22
-			a.setRegisterHostName(rs.getString(23));
-			a.setDateFormat(rs.getString(24));
-			a.setTimeFormat(rs.getString(25));
-			a.setNumberFormat(rs.getString(26));
-			a.setAirportCodeType(rs.getInt(27));
-			a.setTZ(TZInfo.get(rs.getString(28)));
-			a.setUIScheme(rs.getString(29));
-			a.setComments(rs.getString(30));
-			a.setRegisterAddress(rs.getString(31));
+			a.setIMHandle(InstantMessage.AIM, rs.getString(8));
+			a.setIMHandle(InstantMessage.MSN, rs.getString(9));
+			a.setNetworkID(OnlineNetwork.VATSIM, rs.getString(10));
+			a.setNetworkID(OnlineNetwork.IVAO, rs.getString(11));
+			a.setLegacyHours(rs.getDouble(12));
+			a.setLegacyURL(rs.getString(13));
+			a.setLegacyVerified(rs.getBoolean(14));
+			a.setHomeAirport(rs.getString(15));
+			a.setEquipmentType(rs.getString(16));
+			a.setRank(rs.getString(17));
+			a.setNotifyOption(Person.FLEET, rs.getBoolean(18));
+			a.setNotifyOption(Person.EVENT, rs.getBoolean(19));
+			a.setNotifyOption(Person.NEWS, rs.getBoolean(20));
+			a.setEmailAccess(rs.getInt(21));
+			a.setCreatedOn(rs.getTimestamp(22));
+			// skip 23
+			a.setRegisterHostName(rs.getString(24));
+			a.setDateFormat(rs.getString(25));
+			a.setTimeFormat(rs.getString(26));
+			a.setNumberFormat(rs.getString(27));
+			a.setAirportCodeType(rs.getInt(28));
+			a.setTZ(TZInfo.get(rs.getString(29)));
+			a.setUIScheme(rs.getString(30));
+			a.setComments(rs.getString(31));
+			a.setRegisterAddress(rs.getString(32));
 
 			// Add to results and cache
 			results.add(a);

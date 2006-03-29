@@ -186,8 +186,11 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <span class="pri bld">${pilot.name}</span><br />
 <span class="caps">APPLICANT</span><br />
 </c:if>
-<c:if test="${!empty pilot.IMHandle}">
-<span class="mid"><a href="aim:goim?screenname=${pilot.IMHandle}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a></span>
+<c:if test="${!empty pilot.IMHandle['AIM']}">
+<a href="aim:goim?screenname=${pilot.IMHandle['AIM']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
+</c:if>
+<c:if test="${!empty pilot.IMHandle['MSN']}">
+<a href="msnim:chat?contact=${pilot.IMHandle['MSN']}"><img border="0" src="http://blockchecker.msnfanatic.com/status/${pilot.IMHandle['MSN']}.gif" alt="My MSN status" /></a>
 </c:if>
  </td>
  <td class="postDate" colspan="${canEdit ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />

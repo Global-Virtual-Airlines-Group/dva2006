@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -258,53 +259,54 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setDN(rs.getString(6));
 			p.setEmail(rs.getString(7));
 			p.setLocation(rs.getString(8));
-			p.setIMHandle(rs.getString(9));
-			p.setLegacyHours(rs.getDouble(10));
-			p.setHomeAirport(rs.getString(11));
-			p.setEquipmentType(rs.getString(12));
-			p.setRank(rs.getString(13));
-			p.setNetworkID("VATSIM", rs.getString(14));
-			p.setNetworkID("IVAO", rs.getString(15));
-			p.setCreatedOn(rs.getTimestamp(16));
-			p.setLoginCount(rs.getInt(17));
-			p.setLastLogin(rs.getTimestamp(18));
-			p.setLastLogoff(rs.getTimestamp(19));
-			p.setTZ(TZInfo.get(rs.getString(20)));
-			p.setNotifyOption(Person.FLEET, rs.getBoolean(21));
-			p.setNotifyOption(Person.EVENT, rs.getBoolean(22));
-			p.setNotifyOption(Person.NEWS, rs.getBoolean(23));
-			p.setEmailAccess(rs.getInt(24));
-			p.setShowSignatures(rs.getBoolean(25));
-			p.setShowSSThreads(rs.getBoolean(26));
-			p.setHasDefaultSignature(rs.getBoolean(27));
-			p.setUIScheme(rs.getString(28));
-			p.setLoginHost(rs.getString(29));
-			p.setDateFormat(rs.getString(30));
-			p.setTimeFormat(rs.getString(31));
-			p.setNumberFormat(rs.getString(32));
-			p.setAirportCodeType(rs.getInt(33));
-			p.setMapType(rs.getInt(34));
-			p.setNoExams(rs.getBoolean(35));
-			p.setNoVoice(rs.getBoolean(36));
-			p.setACARSRestriction(rs.getInt(37));
-			p.setLDAPName(rs.getString(38));
+			p.setIMHandle(InstantMessage.AIM, rs.getString(9));
+			p.setIMHandle(InstantMessage.MSN, rs.getString(10));
+			p.setLegacyHours(rs.getDouble(11));
+			p.setHomeAirport(rs.getString(12));
+			p.setEquipmentType(rs.getString(13));
+			p.setRank(rs.getString(14));
+			p.setNetworkID(OnlineNetwork.VATSIM, rs.getString(15));
+			p.setNetworkID(OnlineNetwork.IVAO, rs.getString(16));
+			p.setCreatedOn(rs.getTimestamp(17));
+			p.setLoginCount(rs.getInt(18));
+			p.setLastLogin(rs.getTimestamp(19));
+			p.setLastLogoff(rs.getTimestamp(20));
+			p.setTZ(TZInfo.get(rs.getString(21)));
+			p.setNotifyOption(Person.FLEET, rs.getBoolean(22));
+			p.setNotifyOption(Person.EVENT, rs.getBoolean(23));
+			p.setNotifyOption(Person.NEWS, rs.getBoolean(24));
+			p.setEmailAccess(rs.getInt(25));
+			p.setShowSignatures(rs.getBoolean(26));
+			p.setShowSSThreads(rs.getBoolean(27));
+			p.setHasDefaultSignature(rs.getBoolean(28));
+			p.setUIScheme(rs.getString(29));
+			p.setLoginHost(rs.getString(30));
+			p.setDateFormat(rs.getString(31));
+			p.setTimeFormat(rs.getString(32));
+			p.setNumberFormat(rs.getString(33));
+			p.setAirportCodeType(rs.getInt(34));
+			p.setMapType(rs.getInt(35));
+			p.setNoExams(rs.getBoolean(36));
+			p.setNoVoice(rs.getBoolean(37));
+			p.setACARSRestriction(rs.getInt(38));
+			p.setLDAPName(rs.getString(39));
 
-			// Check if this result set has a column 39-42, which is the PIREP totals
-			if (columnCount > 41) {
-				p.setLegs(rs.getInt(39));
-				p.setMiles(rs.getLong(40));
-				p.setHours(rs.getDouble(41));
-				p.setLastFlight(expandDate(rs.getDate(42)));
+			// Check if this result set has a column 40-43, which is the PIREP totals
+			if (columnCount > 42) {
+				p.setLegs(rs.getInt(40));
+				p.setMiles(rs.getLong(41));
+				p.setHours(rs.getDouble(42));
+				p.setLastFlight(expandDate(rs.getDate(43)));
 			}
 
 			// Check if this result set has a column 43, which is the signature ID
-			if (columnCount > 42)
-				p.setHasSignature((rs.getInt(43) != 0));
+			if (columnCount > 43)
+				p.setHasSignature((rs.getInt(44) != 0));
 
-			// CHeck if this result set has columns 44/45, which are online legs/hours
-			if (columnCount > 44) {
-				p.setOnlineLegs(rs.getInt(44));
-				p.setOnlineHours(rs.getDouble(45));
+			// CHeck if this result set has columns 45/46, which are online legs/hours
+			if (columnCount > 45) {
+				p.setOnlineLegs(rs.getInt(45));
+				p.setOnlineHours(rs.getDouble(46));
 			}
 
 			// Add the pilot
