@@ -86,7 +86,11 @@ return cmdPost(f.action);
 </tr>
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data"><el:text name="imHandle" idx="*" size="14" max="36" value="${applicant.IMHandle}" /></td>
+ <td class="data"><el:text name="aimHandle" idx="*" size="14" max="36" value="${applicant.IMHandle['AIM']}" /></td>
+</tr>
+<tr>
+ <td class="label">MSN Messenger</td>
+ <td class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${applicant.IMHandle['MSN']}" /></td>
 </tr>
 
 <!-- E-Mail Information -->

@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -60,7 +60,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _ldapDN;
 	private String _email;
 	private int _emailAccess;
-	private String _imHandle;
+
+	private Map<String, String> _imHandles = new TreeMap<String, String>();
 
 	private String _eqType;
 	private String _rank;
@@ -242,11 +243,24 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Returns the Person's Instant Messenger handle.
-	 * @return the AIM handle
-	 * @see Person#setIMHandle(String)
+	 * @param service the IM service name
+	 * @return the IM handle, or null if not found
+	 * @throws NullPointerException if service is null
+	 * @see Person#getIMServices()
+	 * @see Person#setIMHandle(String, String)
 	 */
-	public String getIMHandle() {
-		return _imHandle;
+	public String getIMHandle(String service) {
+		return _imHandles.get(service.toUpperCase());
+	}
+
+	/**
+	 * Returns the Person's registed Instant Messenger services.
+	 * @return a Collection of service names
+	 * @see Person#getIMHandle(String)
+	 * @see Person#setIMHandle(String, String)
+	 */
+	public Collection<String> getIMServices() {
+		return new LinkedHashSet<String>(_imHandles.keySet());
 	}
 
 	/**
@@ -567,11 +581,15 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Update this Person's Instant Messaging handle.
+	 * @param service the messaging service
 	 * @param handle the new handle
-	 * @see Person#getIMHandle()
+	 * @throws NullPointerException if service is null
+	 * @see Person#getIMHandle(String)
+	 * @see Person#getIMServices()
 	 */
-	public void setIMHandle(String handle) {
-		_imHandle = handle;
+	public void setIMHandle(String service, String handle) {
+		if ((handle != null) && (StringUtils.isEmpty(handle.trim())))
+			_imHandles.put(service.toUpperCase(), handle);
 	}
 
 	/**

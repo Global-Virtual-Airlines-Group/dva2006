@@ -88,18 +88,30 @@ return ${access.canApprove};
  <td class="label">Location</td>
  <td class="data">${applicant.location}</td>
 </tr>
+<c:if test="${!empty applicant.networkIDs['VATSIM']}">
 <tr>
  <td class="label">VATSIM ID#</td>
  <td class="data">${applicant.networkIDs['VATSIM']}</td>
 </tr>
+</c:if>
+<c:if test="${!empty applicant.networkIDs['IVAO']}">
 <tr>
  <td class="label">IVAO ID#</td>
  <td class="data">${applicant.networkIDs['IVAO']}</td>
 </tr>
+</c:if>
+<c:if test="${!empty applicant.IMHandle['AIM']}">
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data">${applicant.IMHandle}</td>
+ <td class="data">${applicant.IMHandle['AIM']}</td>
 </tr>
+</c:if>
+<c:if test="${!empty applicant.IMHandle['MSN']}">
+<tr>
+ <td class="label">MSN Messenger</td>
+ <td class="data">${applicant.IMHandle['MSN']}</td>
+</tr>
+</c:if>
 
 <!-- E-Mail Information -->
 <tr class="title">
