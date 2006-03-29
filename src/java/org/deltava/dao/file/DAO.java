@@ -23,7 +23,7 @@ public abstract class DAO {
      * that files can be loaded.
      * @param c the URL connection 
      */
-    public DAO(URLConnection c) throws DAOException {
+    protected DAO(URLConnection c) throws DAOException {
         super();
         try {
         	_is = c.getInputStream();
@@ -36,7 +36,7 @@ public abstract class DAO {
      * Initializes the Data Access Object with a particular input stream.
      * @param is the input stream
      */
-    public DAO(InputStream is) {
+    protected DAO(InputStream is) {
     	super();
     	_is = is;
     }
