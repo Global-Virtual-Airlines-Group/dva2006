@@ -180,7 +180,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${fn:isACARS(pirep)}">
-<%@ include file="/jsp/pilot/pirepACARS.jsp" %> 
+<%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
 </c:if>
 <tr>
 <c:if test="${googleMap}">

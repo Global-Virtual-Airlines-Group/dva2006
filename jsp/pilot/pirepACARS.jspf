@@ -9,7 +9,7 @@
  <td class="label">ACARS Flight ID</td>
  <td class="data">${fn:ACARS_ID(pirep)} (<fmt:int value="${flightInfo.positionCount}" /> position records)
  Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
- <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}">Google Earth</a></td>
+ <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></td>
 </tr>
 </c:if>
 <c:if test="${!empty conInfo && (conInfo.clientBuild > 0)}">
