@@ -52,7 +52,7 @@ return true;
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${viewContext.results}">
-<tr>
+<view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.firstName} ${pilot.lastName}</el:cmd></td>
  <td class="small"><el:link url="mailto:${pilot.email}">${pilot.email}</el:link></td>
@@ -61,12 +61,13 @@ return true;
  <td><fmt:int value="${pilot.legs}" /></td>
  <td><fmt:dec value="${pilot.hours}" /></td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" default="-" /></td>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="8"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+<view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" /></td>
 </tr>
 </view:table>
 </el:form>
