@@ -247,10 +247,20 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @return the IM handle, or null if not found
 	 * @throws NullPointerException if service is null
 	 * @see Person#getIMServices()
+	 * @see Person#getIMHandle()
 	 * @see Person#setIMHandle(String, String)
 	 */
 	public String getIMHandle(String service) {
 		return _imHandles.get(service.toUpperCase());
+	}
+	
+	/**
+	 * Returns a Map containing this Person's Instant Messenger handles.
+	 * @return the Instant Messenger IDs
+	 * @see Person#getIMHandle(String)
+	 */
+	public Map<String, String> getIMHandle() {
+		return new HashMap<String, String>(_imHandles);
 	}
 
 	/**
@@ -588,7 +598,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getIMServices()
 	 */
 	public void setIMHandle(String service, String handle) {
-		if ((handle != null) && (StringUtils.isEmpty(handle.trim())))
+		if ((handle != null) && (!StringUtils.isEmpty(handle.trim())))
 			_imHandles.put(service.toUpperCase(), handle);
 	}
 
