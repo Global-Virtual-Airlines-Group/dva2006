@@ -167,7 +167,7 @@ return true;
 <el:button ID="CalcButton" className="BUTTON" label="CALCULATE" onClick="void hoursCalc()" /></td>
 </tr>
 <c:if test="${isACARS}">
-<%@ include file="/jsp/pilot/pirepACARS.jsp" %> 
+<%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
 </c:if>
 <tr>
  <td class="label" valign="top">Remarks</td>

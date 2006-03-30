@@ -86,7 +86,7 @@
 <!-- ACARS PIREP data -->
 <el:table className="form" space="default" pad="default">
 <c:if test="${!empty pirep.remarks}">
-<%@include file="/jsp/pilot/pirepACARS.jsp" %>
+<%@include file="/jsp/pilot/pirepACARS.jspf" %>
 <tr>
  <td class="label">Comments</td>
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
