@@ -1,8 +1,9 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved. 
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.taglib.html;
 
-import java.io.IOException;
 import javax.servlet.jsp.*;
+
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to support the generation of HTML single-option checkboxes.
@@ -64,7 +65,7 @@ public class SingleCheckTag extends FormElementTag {
 	 * @param jsEvent the JavaScript event code
 	 */
 	public void setOnChange(String jsEvent) {
-		_data.setAttribute("onchange", jsEvent);
+		_data.setAttribute(ContentHelper.isIE(pageContext) ? "onblur" : "onchange", jsEvent);
 	}
 
 	/**
@@ -97,8 +98,8 @@ public class SingleCheckTag extends FormElementTag {
 			// Close the span if it is opened
 			if (_labelClassName != null)
 				_out.print("</span>");
-		} catch (IOException ie) {
-			throw new JspException(ie);
+		} catch (Exception e) {
+			throw new JspException(e);
 		}
 
 		release();

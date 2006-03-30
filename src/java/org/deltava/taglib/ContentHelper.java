@@ -51,4 +51,22 @@ public class ContentHelper {
 		Set content = (Set) ctx.findAttribute(CONTENT_MAP_ATTR);
 		return (content == null) ? false : content.contains(contentType + "$" + contentName);
 	}
+	
+    /**
+     * Detects if the browser is Microsoft Internet Explorer.
+     * @return TRUE if the browser is Internet Explorer, otherwise FALSE
+     * @see org.deltava.servlet.filter.BrowserTypeFilter
+     */
+    public static boolean isIE(PageContext ctx) {
+        return (ctx.getRequest().getAttribute("browser$ie") != null);
+    }
+    
+    /**
+     * Detects if the browser is Mozilla Firefox.
+     * @return TRUE if the browser is Firefox, otherwise FALSE
+     * @see org.deltava.servlet.filter.BrowserTypeFilter
+     */
+    public static boolean isFirefox(PageContext ctx) {
+        return (ctx.getRequest().getAttribute("browser$mozilla") != null);
+    }
 }

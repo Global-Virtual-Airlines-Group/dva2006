@@ -4,8 +4,8 @@ package org.deltava.taglib.content;
 import java.net.*;
 import java.security.Principal;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.*;
+import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.Person;
 import org.deltava.taglib.ContentHelper;
@@ -91,9 +91,9 @@ public class InsertCSSTag extends InsertContentTag {
 
 		// Append browser-specific extension
 		if (_browserSpecific) {
-			if (isFirefox()) {
+			if (ContentHelper.isFirefox(pageContext)) {
 				buf.append("_ff");
-			} else if (isIE()) {
+			} else if (ContentHelper.isIE(pageContext)) {
 				buf.append("_ie");
 			}
 		}
