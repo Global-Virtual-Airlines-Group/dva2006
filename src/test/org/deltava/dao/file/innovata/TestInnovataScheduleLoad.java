@@ -11,11 +11,14 @@ import org.apache.log4j.*;
 
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.schedule.*;
+
+import org.deltava.dao.DAOException;
 import org.deltava.dao.file.innovata.GetSchedule;
 
 public class TestInnovataScheduleLoad extends TestCase {
 
-	private Logger log = Logger.getLogger("TestInnovataSched");
+	private static final Logger log = Logger.getLogger("TestInnovataSched");
+	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
 	private static Map<String, Airport> _apMap = new HashMap<String, Airport>();
 	private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();
@@ -70,6 +73,30 @@ public class TestInnovataScheduleLoad extends TestCase {
 			lr.close();
 		}
 	}
+	
+	protected Collection<CSVTokens> loadTestData(String fName, String effDate) {
+
+		// Get the data and the DAO
+		try {
+			InputStream is = new FileInputStream("data/innovata/" + fName);
+			GetSchedule dao = new GetSchedule(is, _alMap.values(), _apMap.values());
+			
+			dao.setEffectiveDate(_df.parse(effDate));
+			Collection<CSVTokens> tkns = dao.load();
+			assertNotNull(tkns);
+			assertFalse(tkns.isEmpty());
+
+			return tkns;
+		} catch (FileNotFoundException fnfe) {
+			fail("Cannot find data/innovata/" + fName);
+		} catch (DAOException de) {
+			fail(de.getMessage());
+		} catch (ParseException pe) {
+			fail("Invalid effective date - " + pe.getMessage());
+		}
+
+		return Collections.emptySet();
+	}
 
 	public void testValidTZ() {
 		for (Iterator<Airport> i = _apMap.values().iterator(); i.hasNext();) {
@@ -81,16 +108,45 @@ public class TestInnovataScheduleLoad extends TestCase {
 		}
 	}
 	
+	public void testLoadSingleFlight() {
+		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5037.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+	}
+	
+	public void testMultiLegStartsInFuture() {
+		GetSchedule dao = new GetSchedule(loadTestData("iv_dl110.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+	}
+	
+	public void testDuplicatePair() {
+		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5597.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+	}
+	
+	public void testMultiStageMultiDay() {
+		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5029.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+	}
+	
 	public void testLoadSchedule() throws Exception {
 		
-		// set the effective Date
-		DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
-		
 		// Get the data and the DAO
-		InputStream is = new FileInputStream("data/iv_directs.csv");
+		InputStream is = new FileInputStream("data/innovata/iv_directs.csv");
 		GetSchedule dao = new GetSchedule(is, _alMap.values(), _apMap.values());
 		dao.setBufferSize(32768);
-		dao.setEffectiveDate(df.parse("04/04/2006"));
+		dao.setEffectiveDate(_df.parse("04/04/2006"));
 		dao.load();
 		Collection<ScheduleEntry> entries = dao.process();
 		

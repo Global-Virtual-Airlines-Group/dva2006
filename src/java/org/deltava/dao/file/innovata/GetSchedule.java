@@ -46,6 +46,17 @@ public class GetSchedule extends DAO {
 	}
 
 	/**
+	 * Initializes the Data Access Object with a preloaded set of tokens.
+	 * @param tokens the tokens
+	 * @param airlines a Collection of Airline beans
+	 * @param airports a Collection of Airport beans
+	 */
+	public GetSchedule(Collection<CSVTokens> tokens, Collection<Airline> airlines, Collection<Airport> airports) {
+		this((InputStream) null, airlines, airports);
+		_data.addAll(tokens);
+	}
+
+	/**
 	 * Sets the effective date of the schedule import. Flights starting after this date (or ending before this date)
 	 * will not be loaded.
 	 * @param dt the effective date/time
@@ -81,8 +92,9 @@ public class GetSchedule extends DAO {
 	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
+	 * @return a Collection of CSVTokens beans
 	 */
-	public void load() throws DAOException {
+	public Collection<CSVTokens> load() throws DAOException {
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
@@ -104,15 +116,17 @@ public class GetSchedule extends DAO {
 			log.error("Error at line " + br.getLineNumber() + " - " + ie.getMessage(), ie);
 			throw new DAOException(ie);
 		}
+		
+		return _data;
 	}
 
 	/**
 	 * Processes the Schedule entries from the collection.
 	 * @return a Collection of ScheduleEntry beans
 	 */
-public Collection<ScheduleEntry> process() throws IOException {
+	public Collection<ScheduleEntry> process() {
 		Map<String, MultiLegInfo> legs = new LinkedHashMap<String, MultiLegInfo>();
-		PrintWriter pw = new PrintWriter("c:\\temp\\schedule.csv");
+		//PrintWriter pw = new PrintWriter("c:\\temp\\schedule.csv");
 		String year = "-" + String.valueOf(_effDate.get(Calendar.YEAR));
 
 		// Parse the loaded data
@@ -120,9 +134,7 @@ public Collection<ScheduleEntry> process() throws IOException {
 			CSVTokens tkns = i.next();
 			String flightCode = tkns.get(7);
 			UserID flightID = new UserID(flightCode);
-
-			// List<String> info = tkns.getAll();
-			pw.println(tkns.getAll());
+			//pw.println(tkns.getAll());
 
 			// Load the Airports
 			Airport airportD = getAirport(tkns.get(3), tkns.getLineNumber());
@@ -144,7 +156,7 @@ public Collection<ScheduleEntry> process() throws IOException {
 			Airline a = _airlines.get(flightID.getAirlineCode());
 			if (a == null)
 				log.warn("Unknown Airline " + flightCode);
-			else if (flightID.getUserID() >= 9600)
+			else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
 			else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
@@ -179,15 +191,21 @@ public Collection<ScheduleEntry> process() throws IOException {
 					} else if (ee == null) {
 						log.info("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
 						ml.addEntry(se);
+						
+						// Load airports only if we haven't had a multi-leg info entry yet
+						if (!ml.isAirportListLoaded()) {
+							ml.addAirport(airportD.getIATA());
+							ml.addAirport(airportA.getIATA());
+						}
 					}
-					
-					ml.addAirport(airportD.getIATA());
-					ml.addAirport(airportA.getIATA());
 				} else if (stops < (ml.getDepartsFrom().size() - 1)) {
 					log.info("Intermediate stage in " + flightID);
 				} else {
-					log.info("Loading multi-stage info for " + flightID);
-					ml.setAirports(airportD, airportA, tkns.get(11));
+					if (ml.getDays() < se.getDays()) {
+						log.info("Loading multi-stage info for " + flightID);
+						ml.setAirports(airportD, airportA, tkns.get(11));
+						ml.setDays(tkns.get(2));
+					}
 				}
 
 				// add to the map
@@ -196,7 +214,7 @@ public Collection<ScheduleEntry> process() throws IOException {
 			}
 		}
 
-		pw.close();
+		//pw.close();
 
 		// Go through the MultiLegInfo beans
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
@@ -211,4 +229,5 @@ public Collection<ScheduleEntry> process() throws IOException {
 		}
 
 		return results;
-	}}
+	}
+}

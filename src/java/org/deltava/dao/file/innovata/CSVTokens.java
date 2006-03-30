@@ -1,8 +1,7 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 class CSVTokens implements Comparable {
 
@@ -62,5 +61,18 @@ class CSVTokens implements Comparable {
 			tmpResult = (_tkns.get(10).compareTo(t2.get(10)) * -1);
 		
 		return (tmpResult == 0) ? _tkns.get(4).compareTo(t2.get(4)) : tmpResult; 
+	}
+	
+	public String toString() {
+		StringBuilder buf = new StringBuilder();
+		for (Iterator<String> i = _tkns.iterator(); i.hasNext(); ) {
+			buf.append('\"');
+			buf.append(i.next());
+			buf.append('\"');
+			if (i.hasNext())
+				buf.append(',');
+		}
+		
+		return buf.toString();
 	}
 }

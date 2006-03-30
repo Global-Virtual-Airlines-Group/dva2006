@@ -13,12 +13,15 @@ import org.deltava.beans.schedule.*;
  */
 
 class MultiLegInfo implements Comparable {
+	
+	private int _dayCount;
 
 	private String _flightCode;
 	private int _flightNumber;
 	private List<String> _apCodes = new ArrayList<String>();
 	private List<DailyScheduleEntry> _entries = new ArrayList<DailyScheduleEntry>();
-
+	private boolean _authAirportList;
+	
 	/**
 	 * Creates a new Multiple Leg information bean.
 	 * @param flightCode the flight code
@@ -56,10 +59,10 @@ class MultiLegInfo implements Comparable {
 	}
 
 	public void setAirports(Airport aD, Airport aA, String stopCodes) {
-		_apCodes.clear();
 		addAirports(aD.getIATA());
 		addAirports(stopCodes);
 		addAirports(aA.getIATA());
+		_authAirportList = true;
 	}
 
 	/**
@@ -97,6 +100,16 @@ class MultiLegInfo implements Comparable {
 	
 		return null;
 	}
+	
+	public int getDays() {
+		return _dayCount;
+	}
+	
+	public void setDays(String days) {
+		_dayCount = 0;
+		for (int x = 0; x < days.length(); x++)
+			_dayCount += Character.isDigit(days.charAt(x)) ? 1 : 0;
+	}
 
 	public List<String> getDepartsFrom() {
 		if (_apCodes.isEmpty())
@@ -109,6 +122,10 @@ class MultiLegInfo implements Comparable {
 
 	public int getLegs() {
 		return _entries.size();
+	}
+	
+	public boolean isAirportListLoaded() {
+		return _authAirportList;
 	}
 
 	public Collection<ScheduleEntry> getEntries() {
