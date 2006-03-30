@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.DateTime;
+import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servinfo.*;
 
@@ -36,7 +37,7 @@ public class ServInfoDataService extends WebDataService {
 	private static final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	// Networks
-	public static final String[] NETWORKS = { "VATSIM", "IVAO" };
+	public static final String[] NETWORKS = { OnlineNetwork.VATSIM, OnlineNetwork.IVAO };
 
 	/**
 	 * Executes the Web Service, returning a ServInfo data feed.
