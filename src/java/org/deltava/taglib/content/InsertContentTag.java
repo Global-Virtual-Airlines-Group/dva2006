@@ -1,7 +1,7 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
-import org.deltava.taglib.BrowserDetectingTag;
+import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * An abstract class for content insertion JSP tags.
@@ -10,7 +10,7 @@ import org.deltava.taglib.BrowserDetectingTag;
  * @since 1.0
  */
 
-public abstract class InsertContentTag extends BrowserDetectingTag {
+public abstract class InsertContentTag extends TagSupport {
 	
     protected boolean _forceInclude;
     

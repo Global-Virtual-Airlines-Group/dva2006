@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.*;
 
-import org.deltava.taglib.BrowserDetectingTag;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to render page layouts in a browser-specific way. On Mozilla, absolutely positioned DIV elements will be
@@ -16,7 +16,7 @@ import org.deltava.taglib.BrowserDetectingTag;
  * @since 1.0
  */
 
-public class RegionTag extends BrowserDetectingTag {
+public class RegionTag extends TagSupport {
 
 	private Map<String, String> _attrs = new HashMap<String, String>();
 	
@@ -58,7 +58,7 @@ public class RegionTag extends BrowserDetectingTag {
 	public void setRows(int rowCount) {
 		if (rowCount < 0)
 			throw new IllegalArgumentException("Invalid row count - " + rowCount);
-		else if (isIE())
+		else if (ContentHelper.isIE(pageContext))
 			_attrs.put("rowspan", String.valueOf(rowCount));
 	}
 
@@ -71,7 +71,7 @@ public class RegionTag extends BrowserDetectingTag {
 	public void setCols(int colCount) {
 		if (colCount < 0)
 			throw new IllegalArgumentException("Invalid column count - " + colCount);
-		else if (isIE())
+		else if (ContentHelper.isIE(pageContext))
 			_attrs.put("colspan", String.valueOf(colCount));
 	}
 
@@ -99,7 +99,7 @@ public class RegionTag extends BrowserDetectingTag {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (isIE()) {
+			if (ContentHelper.isIE(pageContext)) {
 				if (!_parent.isRowOpen()) {
 					out.print("<tr>");
 					_parent.setRowOpen(true);
@@ -138,7 +138,7 @@ public class RegionTag extends BrowserDetectingTag {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (isIE()) {
+			if (ContentHelper.isIE(pageContext)) {
 				out.print("</td>");
 				if (_closeRow) {
 					out.print("</tr>");

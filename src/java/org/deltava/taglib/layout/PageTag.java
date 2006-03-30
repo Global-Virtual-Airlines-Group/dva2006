@@ -1,9 +1,10 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.layout;
 
 import javax.servlet.jsp.*;
+import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.BrowserDetectingTag;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to render page layouts in a browser-specific way. On Mozilla, absolutely positioned DIV elements will be
@@ -13,7 +14,7 @@ import org.deltava.taglib.BrowserDetectingTag;
  * @since 1.0
  */
 
-public class PageTag extends BrowserDetectingTag {
+public class PageTag extends TagSupport {
 	
 	private boolean _rowOpen;
 
@@ -50,7 +51,7 @@ public class PageTag extends BrowserDetectingTag {
 	 */
 	public int doStartTag() throws JspException {
 		// Do nothing for Mozilla
-		if (isFirefox())
+		if (ContentHelper.isFirefox(pageContext))
 			return EVAL_BODY_INCLUDE;
 
 		// Render a table for IE
@@ -71,7 +72,7 @@ public class PageTag extends BrowserDetectingTag {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (isIE()) {
+		if (ContentHelper.isIE(pageContext)) {
 			JspWriter out = pageContext.getOut();
 			try {
 				if (_rowOpen)
