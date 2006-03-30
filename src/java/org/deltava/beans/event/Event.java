@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     /**
      * Online Network names.
      */
-    public static final String[] NETWORKS = {"VATSIM", "IVAO"};
+    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO};
     
     public static final int OPEN = 0;
     public static final int CANCELED = 1;
