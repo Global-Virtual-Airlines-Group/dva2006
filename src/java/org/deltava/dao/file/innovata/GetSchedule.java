@@ -26,6 +26,7 @@ public class GetSchedule extends DAO {
 	private static final Logger log = Logger.getLogger(GetSchedule.class);
 	private static final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
 	private static final DateFormat _tf = new SimpleDateFormat("HHmm");
+	private static final DateFormat _ftf = new SimpleDateFormat("HH:mm");
 
 	private Calendar _effDate;
 	private Map<String, Airline> _airlines;
@@ -78,17 +79,6 @@ public class GetSchedule extends DAO {
 		return a;
 	}
 
-	public int getDaysOfWeek(String dayCodes) {
-		int days = 0;
-		for (int x = 0; x < dayCodes.length(); x++) {
-			char c = dayCodes.charAt(x);
-			if (!Character.isSpaceChar(c))
-				days++;
-		}
-
-		return days;
-	}
-
 	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
@@ -126,7 +116,6 @@ public class GetSchedule extends DAO {
 	 */
 	public Collection<ScheduleEntry> process() {
 		Map<String, MultiLegInfo> legs = new LinkedHashMap<String, MultiLegInfo>();
-		//PrintWriter pw = new PrintWriter("c:\\temp\\schedule.csv");
 		String year = "-" + String.valueOf(_effDate.get(Calendar.YEAR));
 
 		// Parse the loaded data
@@ -134,7 +123,6 @@ public class GetSchedule extends DAO {
 			CSVTokens tkns = i.next();
 			String flightCode = tkns.get(7);
 			UserID flightID = new UserID(flightCode);
-			//pw.println(tkns.getAll());
 
 			// Load the Airports
 			Airport airportD = getAirport(tkns.get(3), tkns.getLineNumber());
@@ -144,9 +132,9 @@ public class GetSchedule extends DAO {
 			boolean includeFlight = true;
 			try {
 				long eff = _effDate.getTimeInMillis();
-				Date startDate = StringUtils.isEmpty(tkns.get(0)) ? new Date(eff) : _df.parse(tkns.get(0) + year);
-				Date endDate = StringUtils.isEmpty(tkns.get(1)) ? new Date(eff + 1000) : _df.parse(tkns.get(1) + year);
-				includeFlight = (startDate.getTime() <= eff) && (endDate.getTime() > eff);
+				Date startDate = StringUtils.isEmpty(tkns.get(0)) ? new Date(eff - 1) : _df.parse(tkns.get(0) + year);
+				Date endDate = StringUtils.isEmpty(tkns.get(1)) ? new Date(eff + 1) : _df.parse(tkns.get(1) + year);
+				includeFlight = ((startDate.getTime() <= eff) && (endDate.getTime() >= eff));
 			} catch (ParseException pe) {
 				log.warn("Unknown start/end date - " + pe.getMessage());
 				includeFlight = false;
@@ -174,6 +162,8 @@ public class GetSchedule extends DAO {
 						timeA = timeA.substring(0, timeA.indexOf('+'));
 
 					se.setTimeA(_tf.parse(timeA));
+					Calendar ft = CalendarUtils.getInstance(_ftf.parse(tkns.get(12)));
+					se.setLength((ft.get(Calendar.HOUR) * 10) + (ft.get(Calendar.MINUTE) / 6));
 				} catch (ParseException pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
 				}
@@ -213,8 +203,6 @@ public class GetSchedule extends DAO {
 					legs.put(flightCode, ml);
 			}
 		}
-
-		//pw.close();
 
 		// Go through the MultiLegInfo beans
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();

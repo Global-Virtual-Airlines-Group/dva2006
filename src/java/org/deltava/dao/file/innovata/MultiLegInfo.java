@@ -6,7 +6,7 @@ import java.util.*;
 import org.deltava.beans.schedule.*;
 
 /**
- * A class to track multiple-leg flights during a schedule import.
+ * A class to track multiple-leg flights during an Innovata schedule import.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -33,10 +33,18 @@ class MultiLegInfo implements Comparable {
 		_flightNumber = fNumber;
 	}
 
+	/**
+	 * Returns the Flight Code.
+	 * @return the flight code
+	 */
 	public String getFlightCode() {
 		return _flightCode;
 	}
 
+	/**
+	 * Compares two multi-leg beans by comparing their flight numbers.
+	 * @see Comparable#compareTo(Object)
+	 */
 	public int compareTo(Object o2) {
 		MultiLegInfo i2 = (MultiLegInfo) o2;
 		return new Integer(_flightNumber).compareTo(new Integer(i2._flightNumber));
@@ -59,6 +67,7 @@ class MultiLegInfo implements Comparable {
 	}
 
 	public void setAirports(Airport aD, Airport aA, String stopCodes) {
+		_apCodes.clear();
 		addAirports(aD.getIATA());
 		addAirports(stopCodes);
 		addAirports(aA.getIATA());
@@ -101,10 +110,18 @@ class MultiLegInfo implements Comparable {
 		return null;
 	}
 	
+	/**
+	 * Returns the number of days in the week this flight is operated on.
+	 * @return the number of days
+	 */
 	public int getDays() {
 		return _dayCount;
 	}
 	
+	/**
+	 * Sets the number of days in the week this leg is operated.
+	 * @param days a string with day numbers or spaces
+	 */
 	public void setDays(String days) {
 		_dayCount = 0;
 		for (int x = 0; x < days.length(); x++)
@@ -124,6 +141,10 @@ class MultiLegInfo implements Comparable {
 		return _entries.size();
 	}
 	
+	/**
+	 * Returns wether an authoritative airport list has been loaded.
+	 * @return TRUE if all airports are loaded, otherwise FALSE
+	 */
 	public boolean isAirportListLoaded() {
 		return _authAirportList;
 	}
