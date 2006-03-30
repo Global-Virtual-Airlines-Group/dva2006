@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -151,11 +151,11 @@ public class FlightReportFunctions {
     	if (fr == null) {
     		return "Offline";
     	} else if (fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
-            return "VATSIM";
+            return OnlineNetwork.VATSIM;
         } else if (fr.hasAttribute(FlightReport.ATTR_IVAO)) {
-            return "IVAO";
+            return OnlineNetwork.IVAO;
         } else if (fr.hasAttribute(FlightReport.ATTR_FPI)) {
-            return "FPI";
+            return OnlineNetwork.FPI;
         }
         
         return "Offline";

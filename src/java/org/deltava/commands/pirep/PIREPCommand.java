@@ -145,11 +145,11 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Figure out what network the flight was flown on
 			String net = ctx.getParameter("network");
-			if ("VATSIM".equals(net)) {
+			if (OnlineNetwork.VATSIM.equals(net)) {
 				fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-			} else if ("IVAO".equals(net)) {
+			} else if (OnlineNetwork.IVAO.equals(net)) {
 				fr.setAttribute(FlightReport.ATTR_IVAO, true);
-			} else if ("FPI".equals(net)) {
+			} else if (OnlineNetwork.FPI.equals(net)) {
 				fr.setAttribute(FlightReport.ATTR_FPI, true);
 			}
 
