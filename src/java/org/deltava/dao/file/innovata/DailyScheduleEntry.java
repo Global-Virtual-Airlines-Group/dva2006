@@ -24,10 +24,18 @@ class DailyScheduleEntry extends ScheduleEntry {
 		super(a, fNumber, leg);
 	}
 
+	/**
+	 * Returns the number of days in the week this leg is operated.
+	 * @return the number of days
+	 */
 	public int getDays() {
 		return _dayCount;
 	}
 	
+	/**
+	 * Sets the number of days in the week this leg is operated.
+	 * @param days a string with day numbers or spaces
+	 */
 	public void setDays(String days) {
 		_dayCount = 0;
 		for (int x = 0; x < days.length(); x++)
