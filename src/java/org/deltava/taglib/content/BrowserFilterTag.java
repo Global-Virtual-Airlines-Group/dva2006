@@ -1,9 +1,10 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
 
-import org.deltava.taglib.BrowserDetectingTag;
+import org.deltava.taglib.ContentHelper;
 
 /**
  * A JSP tag to filter content based on the browser type.
@@ -12,7 +13,7 @@ import org.deltava.taglib.BrowserDetectingTag;
  * @since 1.0
  */
 
-public class BrowserFilterTag extends BrowserDetectingTag {
+public class BrowserFilterTag extends TagSupport {
 
 	private boolean _showIE;
 	private boolean _showMoz;
@@ -39,9 +40,9 @@ public class BrowserFilterTag extends BrowserDetectingTag {
 	 * @throws JspException never
 	 */
 	public int doStartTag() throws JspException {
-		if (isIE() && _showIE)
+		if (ContentHelper.isIE(pageContext) && _showIE)
 			return EVAL_BODY_INCLUDE;
-		else if (isFirefox() && _showMoz)
+		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
 			return EVAL_BODY_INCLUDE;
 		else
 			return SKIP_BODY;
