@@ -22,10 +22,13 @@ public class TestInnovataScheduleLoad extends TestCase {
 
 	private static Map<String, Airport> _apMap = new HashMap<String, Airport>();
 	private static Map<String, Airline> _alMap = new TreeMap<String, Airline>();
+	
+	private Date _effDate; 
 
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
+		_effDate = _df.parse("04/04/2006");
 
 		// Load airlines
 		if (_alMap.isEmpty()) {
@@ -110,6 +113,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 	
 	public void testLoadSingleFlight() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5037.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
 		assertFalse(entries.isEmpty());
@@ -118,6 +122,16 @@ public class TestInnovataScheduleLoad extends TestCase {
 	
 	public void testMultiLegStartsInFuture() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl110.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+	}
+	
+	public void testLegsInPast() {
+		GetSchedule dao = new GetSchedule(loadTestData("iv_dl263.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
 		assertFalse(entries.isEmpty());
@@ -126,6 +140,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 	
 	public void testDuplicatePair() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5597.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
 		assertFalse(entries.isEmpty());
@@ -134,7 +149,16 @@ public class TestInnovataScheduleLoad extends TestCase {
 	
 	public void testMultiStageMultiDay() {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5029.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
 		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
+		assertFalse(entries.isEmpty());
+		log.info("Loaded " + entries.size() + " entries");
+		
+		// Try second flight
+		dao = new GetSchedule(loadTestData("iv_dl5328.csv", "04/04/2006"), _alMap.values(), _apMap.values());
+		dao.setEffectiveDate(_effDate);
+		entries = dao.process();
 		assertNotNull(entries);
 		assertFalse(entries.isEmpty());
 		log.info("Loaded " + entries.size() + " entries");
@@ -146,7 +170,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		InputStream is = new FileInputStream("data/innovata/iv_directs.csv");
 		GetSchedule dao = new GetSchedule(is, _alMap.values(), _apMap.values());
 		dao.setBufferSize(32768);
-		dao.setEffectiveDate(_df.parse("04/04/2006"));
+		dao.setEffectiveDate(_effDate);
 		dao.load();
 		Collection<ScheduleEntry> entries = dao.process();
 		
