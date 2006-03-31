@@ -14,8 +14,8 @@ import org.deltava.beans.schedule.*;
 
 class MultiLegInfo implements Comparable {
 	
-	private int _dayCount;
-
+	private DailyScheduleEntry _startEnd; 
+	
 	private String _flightCode;
 	private int _flightNumber;
 	private List<String> _apCodes = new ArrayList<String>();
@@ -40,6 +40,10 @@ class MultiLegInfo implements Comparable {
 	public String getFlightCode() {
 		return _flightCode;
 	}
+	
+	public DailyScheduleEntry getMainEntry() {
+		return _startEnd;
+	}
 
 	/**
 	 * Compares two multi-leg beans by comparing their flight numbers.
@@ -50,6 +54,10 @@ class MultiLegInfo implements Comparable {
 		return new Integer(_flightNumber).compareTo(new Integer(i2._flightNumber));
 	}
 
+	/**
+	 * Adds an Airport to the list of airports served by this flight.
+	 * @param apCode the airport code
+	 */
 	public void addAirport(String apCode) {
 		if (_apCodes.isEmpty())
 			_apCodes.add(apCode);
@@ -59,18 +67,25 @@ class MultiLegInfo implements Comparable {
 				_apCodes.add(apCode);
 		}
 	}
+	
+	public void setMainEntry(DailyScheduleEntry se) {
+		_startEnd = se;
+	}
 
-	public void addAirports(String apCodes) {
-		StringTokenizer tkns = new StringTokenizer(apCodes, "!");
+	/**
+	 * Adds a number of Airports to the list of airports served by this flight.
+	 */
+	private void addAirports(String apCodes, String sep) {
+		StringTokenizer tkns = new StringTokenizer(apCodes, sep);
 		while (tkns.hasMoreTokens())
 			_apCodes.add(tkns.nextToken().toUpperCase());
 	}
 
 	public void setAirports(Airport aD, Airport aA, String stopCodes) {
 		_apCodes.clear();
-		addAirports(aD.getIATA());
-		addAirports(stopCodes);
-		addAirports(aA.getIATA());
+		addAirport(aD.getIATA());
+		addAirports(stopCodes, "!");
+		addAirport(aA.getIATA());
 		_authAirportList = true;
 	}
 
@@ -110,24 +125,6 @@ class MultiLegInfo implements Comparable {
 		return null;
 	}
 	
-	/**
-	 * Returns the number of days in the week this flight is operated on.
-	 * @return the number of days
-	 */
-	public int getDays() {
-		return _dayCount;
-	}
-	
-	/**
-	 * Sets the number of days in the week this leg is operated.
-	 * @param days a string with day numbers or spaces
-	 */
-	public void setDays(String days) {
-		_dayCount = 0;
-		for (int x = 0; x < days.length(); x++)
-			_dayCount += Character.isDigit(days.charAt(x)) ? 1 : 0;
-	}
-
 	public List<String> getDepartsFrom() {
 		if (_apCodes.isEmpty())
 			return Collections.emptyList();
@@ -149,13 +146,20 @@ class MultiLegInfo implements Comparable {
 		return _authAirportList;
 	}
 
+	/**
+	 * Returns the Schedule entries for this flight, setting the leg numbers.
+	 * @return a Collection of ScheduleEntry beans
+	 */
 	public Collection<ScheduleEntry> getEntries() {
 
 		// Do no processing if only one leg
 		if (_entries.size() == 1)
 			return new HashSet<ScheduleEntry>(_entries);
-		else if (_entries.size() == 0)
-			return Collections.emptySet();
+		else if (_entries.size() == 0) {
+			Collection<ScheduleEntry> results = new HashSet<ScheduleEntry>();
+			results.add(_startEnd);
+			return results;
+		}
 
 		// Order the departure airports
 		List<String> apCodes = getDepartsFrom();
@@ -170,13 +174,13 @@ class MultiLegInfo implements Comparable {
 			DailyScheduleEntry e = i.next();
 			int ofs = apCodes.indexOf(e.getAirportD().getIATA());
 			if (ofs >= results.size()) {
-				System.out.println(_flightCode);
+				//System.out.println(_flightCode);
 			} else if (ofs != -1) {
 				e.setLeg(ofs + 1);
 				results.set(ofs, e);
 			}
 		}
-
+		
 		return results;
 	}
 }

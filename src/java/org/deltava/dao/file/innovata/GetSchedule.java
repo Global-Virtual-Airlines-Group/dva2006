@@ -32,6 +32,21 @@ public class GetSchedule extends DAO {
 	private Map<String, Airline> _airlines;
 	private Map<String, Airport> _airports;
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
+	
+	private Collection<String> _invalidAirports = new TreeSet<String>();
+	
+	// Innovata Equipment Types
+	private static final String[] IV_EQTYPES = {"310", "319", "320", "321", "332", "340", "343", "732",
+		"733", "735", "737", "738", "744", "747", "752", "753", "757", "762",
+		"763", "764", "767", "772", "777", "77W", "ARJ", "AT5", "AT7", "CR2", "CR7",
+		"CRJ", "D93", "D95", "E70", "EM2", "ER3", "ER4", "ERJ", "M80", "M87", "M88", "M90", "SF3" };
+	
+	// Our equipment types
+	private static final String[] EQTYPES = {"A310", "A319", "A320", "A321", "A330-200", "A340-300", "A340-300", "B737-200",
+		"B737-300", "B737-500", "B737-700", "B737-800", "B747-400", "B747-200", "B757-200", "B757-300", "B757-200", "B767-200",
+		"B767-300", "B767-400", "B767-400", "B777-200", "B777-200", "B777-300", "BAE-146", "ATR-72", "ATR-72", "CRJ-200", "CRJ-700",
+		"CRJ-200", "DC-9-32", "DC-9-50", "ERJ-170", "EMB-120", "ERJ-135", "ERJ-145", "ERJ-145", "MD-88", "MD-88", "MD-88", "MD-90",
+		"SF340"};
 
 	/**
 	 * Initializes the Data Access Object.
@@ -74,9 +89,18 @@ public class GetSchedule extends DAO {
 		if (a == null) {
 			log.warn("Unknown Airport at Line " + line + " - " + code);
 			a = new Airport(code, code, "Unknown - " + code);
+			_invalidAirports.add(code);
 		}
 
 		return a;
+	}
+	
+	/**
+	 * Returns all unknown airport codes from the import.
+	 * @return a Collection of airport codes
+	 */
+	public Collection<String> getUnknownAirports() {
+		return _invalidAirports;
 	}
 
 	/**
@@ -154,7 +178,6 @@ public class GetSchedule extends DAO {
 				se.setAirportD(airportD);
 				se.setAirportA(airportA);
 				se.setDays(tkns.get(2));
-				se.setEquipmentType(tkns.get(8));
 				try {
 					se.setTimeD(_tf.parse(tkns.get(4)));
 					String timeA = tkns.get(6);
@@ -167,6 +190,15 @@ public class GetSchedule extends DAO {
 				} catch (ParseException pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
 				}
+				
+				// Map the equipment type
+				int eqOfs = StringUtils.arrayIndexOf(IV_EQTYPES, tkns.get(8));
+				if (eqOfs != -1)
+					se.setEquipmentType(EQTYPES[eqOfs]);
+				else {
+					log.warn("Unknown equipment code - " + tkns.get(8));
+					se.setEquipmentType(tkns.get(8));
+				}
 
 				// Get the multi-leg info
 				int stops = Integer.parseInt(tkns.get(10));
@@ -176,10 +208,10 @@ public class GetSchedule extends DAO {
 					// Check to see if we already have a leg
 					DailyScheduleEntry ee = ml.getEntry(airportD, airportA);
 					if ((ee != null) && (ee.getDays() < se.getDays())) {
-						log.info("Replacing " + flightCode + " Leg " + (ml.getLegs() + 1));
+						log.debug("Replacing " + flightCode + " Leg " + (ml.getLegs() + 1));
 						ml.replaceEntry(se);
 					} else if (ee == null) {
-						log.info("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
+						log.debug("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
 						ml.addEntry(se);
 						
 						// Load airports only if we haven't had a multi-leg info entry yet
@@ -189,12 +221,15 @@ public class GetSchedule extends DAO {
 						}
 					}
 				} else if (stops < (ml.getDepartsFrom().size() - 1)) {
-					log.info("Intermediate stage in " + flightID);
+					log.debug("Intermediate stage in " + flightID);
 				} else {
-					if (ml.getDays() < se.getDays()) {
-						log.info("Loading multi-stage info for " + flightID);
+					if ((!isExistML) || (ml.getMainEntry().getDays() < se.getDays())) {
+						log.debug("Loading multi-stage info for " + flightID);
+						if (se.getLength() > 12)
+							se.setLength(se.getLength() - 5);
+						
 						ml.setAirports(airportD, airportA, tkns.get(11));
-						ml.setDays(tkns.get(2));
+						ml.setMainEntry(se);
 					}
 				}
 
@@ -205,15 +240,27 @@ public class GetSchedule extends DAO {
 		}
 
 		// Go through the MultiLegInfo beans
+		int invalidFlights = 0;
 		Collection<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		for (Iterator<MultiLegInfo> i = new TreeSet<MultiLegInfo>(legs.values()).iterator(); i.hasNext();) {
 			MultiLegInfo inf = i.next();
-			if (inf.getEntries().isEmpty())
-				log.debug("empty");
-			else if (inf.getLegs() != (inf.getDepartsFrom().size()))
-				log.warn(inf.getFlightCode() + " stops=" + inf.getDepartsFrom() + ", entries=" + inf.getLegs());
-			else
-				results.addAll(inf.getEntries());
+			if (inf.getEntries().isEmpty()) {
+				log.warn(inf.getFlightCode() + " empty");
+				invalidFlights++;
+			} else if (inf.getEntries().size() > (inf.getDepartsFrom().size())) {
+				log.warn(inf.getFlightCode() + " stops=" + inf.getDepartsFrom() + ", entries=" + inf.getEntries().size());
+				invalidFlights++;
+			} else {
+				// Trim out nulls
+				Collection<ScheduleEntry> entries = inf.getEntries();
+				for (Iterator<ScheduleEntry> ei = entries.iterator(); ei.hasNext(); ) {
+					ScheduleEntry se = ei.next();
+					if (se == null)
+						ei.remove();
+				}
+				
+				results.addAll(entries);
+			}
 		}
 
 		return results;
