@@ -169,6 +169,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <font color="#0000A1"><b>${ccLevels['CC100']}</b></font><br />
 </c:when>
 </c:choose>
+<c:if test="${!empty pilot.motto}">
+<span class="small"><i>"${pilot.motto}"</i></span><br />
+</c:if>
 <br />
 <b><fmt:int fmt="#,##0" value="${pilot.legs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.hours}" /></b> hours total<br />
 <c:if test="${pilot.onlineLegs > 0}">

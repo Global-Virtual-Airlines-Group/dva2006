@@ -81,6 +81,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setLocation(ctx.getParameter("location"));
 			p.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
 			p.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
+			p.setMotto(ctx.getParameter("motto"));
 			p.setEmailAccess(Integer.parseInt(ctx.getParameter("privacyOption")));
 			p.setTZ(TZInfo.get(ctx.getParameter("tz")));
 			p.setAirportCodeType(ctx.getParameter("airportCodeType"));

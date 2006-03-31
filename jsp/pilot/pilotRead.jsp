@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>${pilot.name} (${pilot.pilotCode})</title>
+<title>${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -26,7 +26,7 @@
 <el:table className="form" pad="default" space="default">
 <!-- Pilot Title Bar -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="${cspan + 1}">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
 </tr>
 
 <!-- Pilot Data -->
@@ -94,6 +94,12 @@
 <tr>
  <td class="label">MSN Messenger</td>
  <td colspan="${cspan}" class="data">${pilot.IMHandle['MSN']}</td>
+</tr>
+</c:if>
+<c:if test="${!empty pilot.motto}">
+<tr>
+ <td colspan="label">
+ <td colspan="${cspan}" class="data"><i>${pilot.motto}</i></td>
 </tr>
 </c:if>
 
