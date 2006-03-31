@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -167,7 +167,7 @@ public class ComboTag extends FormElementTag {
 	 * @param choices a List of choices
 	 */
 	public void setOptions(Collection choices) {
-		_options = choices;
+		_options = (choices == null) ? Collections.emptySet() : choices;
 	}
 
 	/**
