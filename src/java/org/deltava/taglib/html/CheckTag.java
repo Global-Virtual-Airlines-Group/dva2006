@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -229,9 +229,9 @@ public class CheckTag extends FormElementTag {
 
 	/**
 	 * Sets the choices for this checkbox/radio button.
-	 * @param choices a List of choices
+	 * @param choices a Collection of choices
 	 */
 	public void setOptions(Collection choices) {
-		_options = choices;
+		_options = (choices == null) ? Collections.emptySet() : choices;
 	}
 }
