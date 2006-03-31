@@ -183,7 +183,9 @@ public class ThreadCommand extends AbstractCommand {
 		ctx.setAttribute("scores", SCORES, REQUEST);
 		
 		// Disable content filter if requested
-		ctx.setAttribute("noFilter", Boolean.valueOf(ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator")), REQUEST);
+		boolean forceFilter = Boolean.valueOf(ctx.getParameter("filter")).booleanValue();
+		boolean noFilter = (!forceFilter) || ctx.isUserInRole("HR") || ctx.isUserInRole("Moderator");
+		ctx.setAttribute("noFilter", Boolean.valueOf(noFilter), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
