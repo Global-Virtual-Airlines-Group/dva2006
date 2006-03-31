@@ -328,7 +328,6 @@
 	<online>
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
-			<network>ACARS</network>
 			<network>IVAO</network>
 		</list>
 		
@@ -518,7 +517,7 @@
 		<position_interval type="Integer">500</position_interval>
 		<build>
 			<minimum type="Integer">63</minimum>
-			<latest type="Integer">64</latest>
+			<latest type="Integer">65</latest>
 		</build>
 		
 		<pool>
