@@ -64,6 +64,8 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
     private long _miles;
     private Date _lastFlight;
+    
+    private String _motto;
 
     private int _legs;
     private int _onlineLegs;
@@ -203,6 +205,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
      */
     public String getStatusName() {
         return Pilot.STATUS[getStatus()];
+    }
+    
+    /**
+     * Returns the Pilot's motto
+     * @return the motto text
+     * @see Pilot#setMotto(String)
+     */
+    public String getMotto() {
+    	return _motto;
     }
     
     /**
@@ -440,6 +451,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
     public void setHasDefaultSignature(boolean hasSig) {
        if (!_hasSignature)
           _showDefaultSignature = hasSig;
+    }
+    
+    /**
+     * Updates the Pilot's motto.
+     * @param txt the motto text
+     * @see Pilot#getMotto()
+     */
+    public void setMotto(String txt) {
+    	_motto = txt;
     }
     
     /**

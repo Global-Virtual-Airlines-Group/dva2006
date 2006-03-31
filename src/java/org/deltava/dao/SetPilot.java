@@ -64,7 +64,7 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
 				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, RANK=?, "
-				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, FIRSTNAME=?, "
+				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, "
 				+ "LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
@@ -103,9 +103,10 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setBoolean(27, p.getNoVoice());
 			_ps.setInt(28, p.getACARSRestriction());
 			_ps.setString(29, p.getLDAPName());
-			_ps.setString(30, p.getFirstName());
-			_ps.setString(31, p.getLastName());
-			_ps.setInt(32, p.getID());
+			_ps.setString(30, p.getMotto());
+			_ps.setString(31, p.getFirstName());
+			_ps.setString(32, p.getLastName());
+			_ps.setInt(33, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

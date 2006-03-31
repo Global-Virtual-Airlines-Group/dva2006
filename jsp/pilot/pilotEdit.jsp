@@ -182,6 +182,13 @@ return true;
  <td class="label">MSN Messenger</td>
  <td colspan="${cspan}" class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${pilot.IMHandle['MSN']}" /></td>
 </tr>
+<c:if test="${!empty pilot.pilotCode}">
+<tr>
+ <td class="label">Personal Motto</td>
+ <td colspan="${cspan}" class="data"><el:text name="motto" idx="*" value="${pilot.motto}" size="24" max="36" /></td>
+</tr>
+</c:if>
+
 
 <!-- E-Mail Information -->
 <tr class="title">

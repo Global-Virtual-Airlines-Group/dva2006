@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.Pilot;
@@ -86,9 +86,19 @@ public class PilotLocation implements MapEntry {
 		buf.append(_usr.getRank());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
+		buf.append("<br />");
+		
+		// Add motto if not empty
+		if (!StringUtils.isEmpty(_usr.getMotto())) {
+			buf.append('\"');
+			buf.append(_usr.getMotto());
+			buf.append("\"<br />");
+		}
+
+		// Add Location		
 		buf.append("<br />Location: ");
 		buf.append(_usr.getLocation());
-		buf.append("<br /><br />Position: ");
+		buf.append("<br />Position: ");
 		buf.append(StringUtils.format(_position, true, GeoLocation.ALL));
 		buf.append("<br />Joined on: ");
 		buf.append(StringUtils.format(_usr.getCreatedOn(), "EEEE MMMM dd, yyyy"));
