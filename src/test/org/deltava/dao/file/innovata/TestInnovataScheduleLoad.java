@@ -15,6 +15,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.innovata.GetSchedule;
 
+import org.deltava.util.StringUtils;
+
 public class TestInnovataScheduleLoad extends TestCase {
 
 	private static final Logger log = Logger.getLogger("TestInnovataSched");
@@ -177,5 +179,27 @@ public class TestInnovataScheduleLoad extends TestCase {
 		assertNotNull(entries);
 		assertFalse(entries.isEmpty());
 		log.info("Loaded " + entries.size() + " entries");
+		
+		// Write the entries
+		PrintWriter pw = new PrintWriter(new FileWriter("c:\\temp\\sched_out.txt"));
+		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+			ScheduleEntry se = i.next();
+			pw.print(se.getFlightCode());
+			pw.print(",");
+			pw.print(se.getAirportD().getIATA());
+			pw.print(",");
+			pw.print(StringUtils.format(se.getTimeD(), "HH:mm"));
+			pw.print(",");
+			pw.print(se.getAirportA().getIATA());
+			pw.print(",");
+			pw.print(StringUtils.format(se.getTimeA(), "HH:mm"));
+			pw.print(",");
+			pw.print(se.getEquipmentType());
+			pw.print(",");
+			pw.println(StringUtils.format((se.getLength() / 10.0), "#0.0"));
+		}
+		
+		// Close and dump eqtypes
+		pw.close();
 	}
 }
