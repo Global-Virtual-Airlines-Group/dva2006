@@ -17,8 +17,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/cooler/header.jsp" %> 
-<%@ include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jspf" %> 
+<%@ include file="/jsp/cooler/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
