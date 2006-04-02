@@ -122,11 +122,11 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			ctx.release();
 		}
 		
-		// Set channel name attribute
-		ctx.setAttribute("channelName", "Search Results", REQUEST);
+		// Set search attribute
+		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
-		result.setURL("/jsp/cooler/threadList.jsp");
+		result.setURL("/jsp/cooler/threadSearch.jsp");
 		result.setSuccess(true);
 	}
 }
