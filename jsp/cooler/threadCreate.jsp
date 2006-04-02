@@ -46,8 +46,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/cooler/header.jsp" %> 
-<%@ include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jspf" %> 
+<%@ include file="/jsp/cooler/sideMenu.jspf" %>
 <content:sysdata var="maxX" name="cooler.img_max.x" />
 <content:sysdata var="maxY" name="cooler.img_max.y" />
 <content:sysdata var="maxSize" name="cooler.img_max.size" />
