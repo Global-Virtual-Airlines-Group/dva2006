@@ -15,8 +15,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@include file="/jsp/gallery/header.jspf" %> 
+<%@include file="/jsp/gallery/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">

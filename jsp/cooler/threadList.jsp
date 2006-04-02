@@ -29,8 +29,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/cooler/header.jsp" %> 
-<%@ include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jspf" %> 
+<%@ include file="/jsp/cooler/sideMenu.jspf" %>
 <c:set var="channelName" value="${empty channelName ? channel.name : channelName}" scope="request" />
 <c:set var="viewCmdName" value="${empty viewCmd ? 'channel' : viewCmd}" scope="request" />
 

@@ -16,8 +16,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/schedule/header.jsp" %> 
-<%@ include file="/jsp/schedule/sideMenu.jsp" %>
+<%@ include file="/jsp/schedule/header.jspf" %> 
+<%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="apps" name="apps" />
 
 <!-- Main Body Frame -->

@@ -32,8 +32,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/gallery/header.jsp" %> 
-<%@ include file="/jsp/gallery/sideMenu.jsp" %>
+<%@ include file="/jsp/gallery/header.jspf" %> 
+<%@ include file="/jsp/gallery/sideMenu.jspf" %>
 <content:sysdata var="db" name="airline.db" />
 
 <!-- Main Body Frame -->

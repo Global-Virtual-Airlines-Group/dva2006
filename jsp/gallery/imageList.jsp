@@ -36,8 +36,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@include file="/jsp/gallery/header.jsp" %> 
-<%@include file="/jsp/gallery/sideMenu.jsp" %>
+<%@include file="/jsp/gallery/header.jspf" %> 
+<%@include file="/jsp/gallery/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
