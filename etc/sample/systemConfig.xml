@@ -500,4 +500,11 @@
 			<text type="Boolean">false</text>
 		</ack>
 	</acars>
+
+	<!-- Flight Academy Data -->
+	<academy>
+		<enabled type="Boolean">true</enabled>
+		<minFlights type="Integer">10</minFlights>
+		<eqType>EMB-120</eqType>
+	</academy>
 </config>
