@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.io.*;
@@ -44,9 +44,19 @@ public class FileUpload {
     /**
      * Returns the buffer.
      * @return the buffer
+     * @see FileUpload#getInputStream()
      */
     public byte[] getBuffer() {
         return _buffer;
+    }
+    
+    /**
+     * Returns an input stream backed by the buffer.
+     * @return an input stream
+     * @see FileUpload#getBuffer()
+     */
+    public InputStream getInputStream() {
+    	return new ByteArrayInputStream(_buffer);
     }
     
     /**
