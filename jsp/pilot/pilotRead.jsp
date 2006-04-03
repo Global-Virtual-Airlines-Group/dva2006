@@ -84,6 +84,22 @@
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data sec">${pilot.location}</td>
 </tr>
+<c:if test="${!empty pilot.motto}">
+<tr>
+ <td class="label">Personal Motto</td>
+ <td colspan="${cspan}" class="data"><i>${pilot.motto}</i></td>
+</tr>
+</c:if>
+
+<c:if test="${access.canViewEmail}">
+<!-- E-Mail Information -->
+<tr class="title">
+ <td colspan="${cspan + 1}">E-MAIL / INSTANT MESSAGING INFORMATION</td>
+</tr>
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td colspan="${cspan}" class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
+</tr>
 <c:if test="${!empty pilot.IMHandle['AOL']}">
 <tr>
  <td class="label">AOL Instant Messenger</td>
@@ -96,22 +112,6 @@
  <td colspan="${cspan}" class="data">${pilot.IMHandle['MSN']}</td>
 </tr>
 </c:if>
-<c:if test="${!empty pilot.motto}">
-<tr>
- <td class="label">Personal Motto</td>
- <td colspan="${cspan}" class="data"><i>${pilot.motto}</i></td>
-</tr>
-</c:if>
-
-<c:if test="${access.canViewEmail}">
-<!-- E-Mail Information -->
-<tr class="title">
- <td colspan="${cspan + 1}">E-MAIL CONTACT INFORMATION</td>
-</tr>
-<tr>
- <td class="label">E-Mail Address</td>
- <td colspan="${cspan}" class="data"><a href="mailto:${pilot.email}">${pilot.email}</a></td>
-</tr>
 </c:if>
 
 <c:if test="${!pilot.noVoice && !empty ts2Servers}"><content:filter roles="HR,Instructor">

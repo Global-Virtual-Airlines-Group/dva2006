@@ -174,14 +174,6 @@ return true;
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data"><el:combo name="location" idx="*" size="1" options="${locations}" value="${pilot.location}" /></td>
 </tr>
-<tr>
- <td class="label">AOL Instant Messenger</td>
- <td colspan="${cspan}" class="data"><el:text name="aimHandle" idx="*" size="10" max="32" value="${pilot.IMHandle['AOL']}" /></td>
-</tr>
-<tr>
- <td class="label">MSN Messenger</td>
- <td colspan="${cspan}" class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${pilot.IMHandle['MSN']}" /></td>
-</tr>
 <c:if test="${!empty pilot.pilotCode}">
 <tr>
  <td class="label">Personal Motto</td>
@@ -192,7 +184,7 @@ return true;
 
 <!-- E-Mail Information -->
 <tr class="title">
- <td colspan="${cspan + 1}">E-MAIL CONTACT INFORMATION</td>
+ <td colspan="${cspan + 1}">E-MAIL / INSTANT MESSAGING INFORMATION</td>
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
@@ -201,6 +193,14 @@ return true;
 <tr>
  <td class="label" valign="top">E-Mail Notifications</td>
  <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" separator="<DIV STYLE=\"clear:both;\" />" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
+</tr>
+<tr>
+ <td class="label">AOL Instant Messenger</td>
+ <td colspan="${cspan}" class="data"><el:text name="aimHandle" idx="*" size="10" max="32" value="${pilot.IMHandle['AOL']}" /></td>
+</tr>
+<tr>
+ <td class="label">MSN Messenger</td>
+ <td colspan="${cspan}" class="data"><el:text name="msnHandle" idx="*" size="32" max="128" value="${pilot.IMHandle['MSN']}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Privacy Options</td>
