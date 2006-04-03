@@ -62,8 +62,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/cooler/header.jsp" %> 
-<%@ include file="/jsp/cooler/sideMenu.jsp" %>
+<%@ include file="/jsp/cooler/header.jspf" %> 
+<%@ include file="/jsp/cooler/sideMenu.jspf" %>
 <c:set var="serverName" value="${pageContext.request.serverName}" scope="request" />
 <c:set var="user" value="${pageContext.request.userPrincipal}" scope="request" />
 <content:sysdata var="imgPath" name="path.img" />
@@ -189,8 +189,8 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <span class="pri bld">${pilot.name}</span><br />
 <span class="caps">APPLICANT</span><br />
 </c:if>
-<c:if test="${!empty pilot.IMHandle['AIM']}">
-<a href="aim:goim?screenname=${pilot.IMHandle['AIM']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
+<c:if test="${!empty pilot.IMHandle['AOL']}">
+<a href="aim:goim?screenname=${pilot.IMHandle['AOL']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
 </c:if>
 <c:if test="${!empty pilot.IMHandle['MSN']}">
 <a href="msnim:chat?contact=${pilot.IMHandle['MSN']}"><img border="0" src="http://blockchecker.msnfanatic.com/status/${pilot.IMHandle['MSN']}.gif" alt="My MSN status" /></a>
