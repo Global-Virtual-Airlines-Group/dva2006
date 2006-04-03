@@ -15,6 +15,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
+if (!validateCombo(form.schedType, 'Schedule Type')) return false;
 if (!validateFile(form.csvData, 'csv', 'Flight Schedule data')) return false;
 
 setSubmit();
@@ -26,8 +27,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/schedule/header.jspf" %> 
+<%@ include file="/jsp/schedule/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -39,6 +40,10 @@ return true;
 <tr>
  <td class="label" valign="top">Upload Data File</td>
  <td class="data"><el:file name="csvData" idx="*" className="small req" size="80" max="144" /></td>
+</tr>
+<tr>
+ <td class="label">Schedule Format</td>
+ <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
