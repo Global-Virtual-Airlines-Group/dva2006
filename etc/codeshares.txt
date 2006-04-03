@@ -1,0 +1,19 @@
+DVC,4083,4932,ASA
+DVC,4933,5912,Comair
+DVC,5913,6057,American Eagle
+DVC,6058,6212,Freedom Airlines
+DVC,6213,6432,Chautauqua Airlines
+DVC,6433,6492,Shuttle America
+KAL,7850-7939,Korean Air
+MX,8000,8149,Aeromexico
+AI,8150,8287,Alitalia
+AF,8288,8659,Air France
+OK,8710,8769,Czech Airlines
+CO,2100,3662,Continental
+NW,6493,7779,Northwest
+CZ,7830,7839,China Southern
+AT,7840,7849,Royal Air Maroc
+AJ,8840,8899,Air Jamaica
+AV,8900,8939,Avianca
+LY,8975,8991,EL AL
+AS,8992,9124,Alaska Airlines

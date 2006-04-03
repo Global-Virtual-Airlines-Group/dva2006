@@ -21,7 +21,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class GetSchedule extends DAO implements ScheduleLoadDAO {
+public class GetSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetSchedule.class);
 	private static final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
@@ -29,11 +29,7 @@ public class GetSchedule extends DAO implements ScheduleLoadDAO {
 	private static final DateFormat _ftf = new SimpleDateFormat("HH:mm");
 
 	private Calendar _effDate;
-	private Map<String, Airline> _airlines;
-	private Map<String, Airport> _airports;
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
-	
-	private Collection<String> _errors = new ArrayList<String>();
 	
 	// Innovata Equipment Types
 	private static final String[] IV_EQTYPES = {"310", "319", "320", "321", "332", "340", "343", "732",
@@ -62,7 +58,7 @@ public class GetSchedule extends DAO implements ScheduleLoadDAO {
 	 * @param tokens the tokens
 	 */
 	public GetSchedule(Collection<CSVTokens> tokens) {
-		super((InputStream) null);
+		super(null);
 		_data.addAll(tokens);
 	}
 
@@ -73,32 +69,6 @@ public class GetSchedule extends DAO implements ScheduleLoadDAO {
 	 */
 	public void setEffectiveDate(Date dt) {
 		_effDate.setTime(dt);
-	}
-	
-	/**
-	 * Initializes the list of airlines.
-	 * @param airlines a Collection of Airline beans
-	 * @see ScheduleLoadDAO#setAirports(Collection)
-	 */
-	public void setAirlines(Collection<Airline> airlines) {
-		_airlines = CollectionUtils.createMap(airlines, "code");
-	}
-	
-	/**
-	 * Initalizes the list of airports.
-	 * @param airports a Collection of Airport beans
-	 * @see ScheduleLoadDAO#setAirlines(Collection)
-	 */
-	public void setAirports(Collection<Airport> airports) {
-		_airports = CollectionUtils.createMap(airports, "IATA");
-	}
-	
-	/**
-	 * Returns any error messages from the load.
-	 * @return a Collection of error messages
-	 */
-	public Collection<String> getErrorMessages() {
-		return _errors;
 	}
 
 	/**
