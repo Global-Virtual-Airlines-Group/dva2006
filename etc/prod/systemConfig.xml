@@ -550,7 +550,7 @@
 	<!-- Flight Academy Data -->
 	<academy>
 		<enabled type="Boolean">true</enabled>
-		<minFlights type="Integer">10</minFlights>
+		<minFlights type="Integer">5</minFlights>
 		<eqType>EMB-120</eqType>
 	</academy>
 </config>
