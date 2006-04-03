@@ -22,6 +22,7 @@ public class ExamAccessControl extends AccessControl {
     private boolean _canSubmit;
     private boolean _canScore;
     private boolean _canEdit;
+    private boolean _canViewAnswers;
     private boolean _canDelete;
     
     /**
@@ -66,6 +67,7 @@ public class ExamAccessControl extends AccessControl {
         _canEdit = isScored && isHR && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin");
         _canScore = _canEdit || (isSubmitted && (_t.getAcademy() ? isINS : isExam));
+        _canViewAnswers = isScored && (isHR || (_t.getAcademy() ? isINS : isExam));
         
         // Throw an exception if we cannot view
         if (!_canRead)
@@ -110,5 +112,13 @@ public class ExamAccessControl extends AccessControl {
      */
     public boolean getCanDelete() {
         return _canDelete;
+    }
+    
+    /**
+     * Returns if the correct answers to this Test's questions can be viewed.
+     * @return TRUE if the correct answers can be viewed, otherwise FALSE
+     */
+    public boolean getCanViewAnswers() {
+    	return _canViewAnswers;
     }
 }
