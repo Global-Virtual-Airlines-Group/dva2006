@@ -100,10 +100,10 @@ return ${access.canApprove};
  <td class="data">${applicant.networkIDs['IVAO']}</td>
 </tr>
 </c:if>
-<c:if test="${!empty applicant.IMHandle['AIM']}">
+<c:if test="${!empty applicant.IMHandle['AOL']}">
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td class="data">${applicant.IMHandle['AIM']}</td>
+ <td class="data">${applicant.IMHandle['AOL']}</td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.IMHandle['MSN']}">
