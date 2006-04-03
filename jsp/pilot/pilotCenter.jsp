@@ -338,13 +338,18 @@ cannot access the Testing Center until this interval has passed.</span></c:if>
 be eligible to take written examinations once you have completed 5 flights.</span></c:if></td>
 </tr>
 
-<c:if test="${academyEnabled && (pilot.legs >= academyFlights)}">
+<c:if test="${academyEnabled}">
 <!-- Flight Academy Section -->
 <tr class="title caps">
  <td colspan="2">FLIGHT ACADEMY</td>
 </tr>
 <tr>
+<c:if test="${pilot.legs >= academyFlights}">
  <td class="mid"><el:cmd className="bld" url="academy">Flight Academy</el:cmd></td>
+</c:if>
+<c:if test="${pilot.legs < academyFlights}">
+ <td class="mid bld">Flight Academy</td>
+</c:if>
  <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. You 
 can continue your professional training here and obtain a number of special ratings demonstrating your 
 skill as a Pilot.<c:if test="${!empty courses}"><br />
@@ -353,7 +358,11 @@ You have completed or are enrolled in the following <content:airline /> Flight A
 <fmt:list value="${courses}" delim=", " />.</c:if>
 <c:if test="${!empty course}"><br />
 You are currently enrolled in the <el:cmd url="course" linkID="0x${course.ID}" className="pri bld">${course.name}</el:cmd> 
-Flight Academy course.</c:if></td>
+Flight Academy course.</c:if>
+<c:if test="${pilot.legs < academyFlights}"><br />
+<br />
+<i>You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
+<fmt:int value="${academyFlights}" /> Flight legs.</i></c:if></td>
 </tr>
 <c:if test="${!empty course}">
 <tr>
