@@ -24,12 +24,15 @@ public class MultiChoiceQuestion extends Question implements MultipleChoice {
 	}
 
 	/**
-	 * Creates a new Question from an existing Question Profile.
+	 * Creates a new Multiple-Choice Question from an existing Multiple-Choice Question Profile. The choices
+	 * will be rearranged in random order.
 	 * @param qp the multiple choice Question Profile
 	 */
 	public MultiChoiceQuestion(MultiChoiceQuestionProfile qp) {
 		super(qp);
-		_choices.addAll(qp.getChoices());
+		List<String> rndChoices = new ArrayList<String>(qp.getChoices());
+		Collections.shuffle(rndChoices);
+		_choices.addAll(rndChoices);
 	}
 	
 	/**
