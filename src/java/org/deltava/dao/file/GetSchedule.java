@@ -9,21 +9,17 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
 
-import org.deltava.util.CollectionUtils;
-
 /**
+ * A Data Access Object to load an exported Flight Schedule.
  * @author Luke
- *
+ * @version 1.0
+ * @since 1.0
  */
-public class GetSchedule extends DAO implements ScheduleLoadDAO {
+
+public class GetSchedule extends ScheduleLoadDAO {
 	
 	private static final DateFormat _df = new SimpleDateFormat("HH:mm");
 	
-	private Map<String, Airline> _airlines;
-	private Map<String, Airport> _airports;
-
-	private Collection<String> _errors = new ArrayList<String>();
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the input stream to read
@@ -32,32 +28,6 @@ public class GetSchedule extends DAO implements ScheduleLoadDAO {
 		super(is);
 	}
 
-	/**
-	 * Initializes the list of airlines.
-	 * @param airlines a Collection of Airline beans
-	 * @see ScheduleLoadDAO#setAirports(Collection)
-	 */
-	public void setAirlines(Collection<Airline> airlines) {
-		_airlines = CollectionUtils.createMap(airlines, "code");
-	}
-	
-	/**
-	 * Initalizes the list of airports.
-	 * @param airports a Collection of Airport beans
-	 * @see ScheduleLoadDAO#setAirlines(Collection)
-	 */
-	public void setAirports(Collection<Airport> airports) {
-		_airports = CollectionUtils.createMap(airports, "IATA");
-	}
-	
-	/**
-	 * Returns any error messages from the load.
-	 * @return a Collection of error messages
-	 */
-	public Collection<String> getErrorMessages() {
-		return _errors;
-	}
-	
 	/**
 	 * Helper method to load an airport bean.
 	 */

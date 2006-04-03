@@ -35,7 +35,7 @@ return true;
 <el:form action="schedimport.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD</td>
+ <td colspan="2">FLIGHT SCHEDULE DATA UPLOAD - STEP ONE</td>
 </tr>
 <tr>
  <td class="label" valign="top">Upload Data File</td>
@@ -44,10 +44,6 @@ return true;
 <tr>
  <td class="label">Schedule Format</td>
  <td class="data"><el:combo name="schedType" idx="*" size="1" options="${schedTypes}" firstEntry="-" /></td>
-</tr>
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge Existing Schedule" checked="true" /></td>
 </tr>
 </el:table>
 
