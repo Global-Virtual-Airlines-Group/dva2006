@@ -750,11 +750,11 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- Email Address tag, for viewing e-mail addresses from the Cooler -->
 	<tag>
 		<name>email</name>
-		<tag-class>org.deltava.taglib.html.EMailDisplayTag</tag-class>
+		<tag-class>org.deltava.taglib.html.EMailLinkTag</tag-class>
 		<body-content>empty</body-content>
 		<attribute>
 			<name>user</name>
@@ -772,5 +772,18 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
-	</tag>		
+	</tag>
+	
+	<!-- Email Authorization tag, for selectively showing content -->
+	<tag>
+		<name>showaddr</name>
+		<tag-class>org.deltava.taglib.html.EMailDisplayTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>user</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.Person</type>
+		</attribute>
+	</tag>
 </taglib>
