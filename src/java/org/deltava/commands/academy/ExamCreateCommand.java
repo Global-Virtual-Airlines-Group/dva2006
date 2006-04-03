@@ -9,6 +9,7 @@ import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to create new Flight Academy Examinations.
@@ -45,6 +46,9 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			
 			// Load the test history
 			initHistory(ctx.getUser(), con);
+			boolean examsLocked = _academyHistory.isLockedOut(SystemData.getInt("testing.lockout"));
+			if (examsLocked)
+				throw securityException("Testing Center locked out");
 			
 			// Check if we can take the exam
             if (!_academyHistory.canWrite(ep))

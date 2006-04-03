@@ -90,6 +90,21 @@ public class AcademyHistoryHelper {
 	}
 	
 	/**
+	 * Returns if a user has submitted a particular Examination.
+	 * @param examName the Examination name
+	 * @return TRUE if the user has submitted this Examination, otherwise FALSE
+	 */
+	public boolean hasSubmitted(String examName) {
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
+			if ((t.getStatus() == Test.SUBMITTED) && (t.getName().equals(examName)))
+				return true;
+		}
+
+		return false;
+	}
+	
+	/**
 	 * Returns the Course that the Pilot is currently enrolled in
 	 * @return a Course bean, or null
 	 */
@@ -258,8 +273,8 @@ public class AcademyHistoryHelper {
 			return false;
 		
 		// If we've already passed the exam, then no
-		if (passedExam(ep.getName())) {
-			log("Already passed " + ep.getName());
+		if (passedExam(ep.getName()) || hasSubmitted(ep.getName())) {
+			log("Already submitted/passed " + ep.getName());
 			return false;
 		}
 		
@@ -273,5 +288,33 @@ public class AcademyHistoryHelper {
 		// Get the cert and see if it is included 
 		Certification c = _certs.get(cr.getName());
 		return ((c != null) && (c.getExamNames().contains(ep.getName())));
+	}
+	
+	/**
+	 * Returns if the user is locked out of the Testing Center due to a failed examination.
+	 * @param lockoutHours the number of hours to remain locked out, or zero if no lockout
+	 * @return TRUE if the user is locked out, otherwise FALSE
+	 */
+	public boolean isLockedOut(int lockoutHours) {
+
+		// If there is no last examination, or lockout period forget it
+		if (_tests.isEmpty() || (lockoutHours < 1))
+			return false;
+
+		// If the last test is not an examination, forget it
+		Test t = _tests.last();
+		if (!(t instanceof Examination))
+			return false;
+
+		// If the test is not scored and failed, then forget
+		if (t.getStatus() != Test.SCORED)
+			return false;
+		else if (t.getPassFail())
+			return false;
+
+		// Check the time from the scoring
+		long timeInterval = (System.currentTimeMillis() - t.getScoredOn().getTime()) / 1000;
+		log("Exam Lockout: interval = " + timeInterval + "s, period = " + (lockoutHours * 3600) + "s");
+		return (timeInterval < (lockoutHours * 3600));
 	}
 }

@@ -10,6 +10,7 @@ import org.deltava.beans.system.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to create a new Pilot Examination.
@@ -46,6 +47,9 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
             // Initialize the testing history helper
             initTestHistory(ctx.getUser(), con);
+			boolean examsLocked = _testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
+			if (examsLocked)
+				throw securityException("Testing Center locked out");
 
 			// Check if we can take the exam
             if (!_testHistory.canWrite(ep))
