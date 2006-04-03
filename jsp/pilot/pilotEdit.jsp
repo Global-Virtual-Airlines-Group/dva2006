@@ -176,7 +176,7 @@ return true;
 </tr>
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td colspan="${cspan}" class="data"><el:text name="aimHandle" idx="*" size="10" max="32" value="${pilot.IMHandle['AIM']}" /></td>
+ <td colspan="${cspan}" class="data"><el:text name="aimHandle" idx="*" size="10" max="32" value="${pilot.IMHandle['AOL']}" /></td>
 </tr>
 <tr>
  <td class="label">MSN Messenger</td>
