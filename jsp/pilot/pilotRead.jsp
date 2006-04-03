@@ -84,10 +84,10 @@
  <td class="label">Location</td>
  <td colspan="${cspan}" class="data sec">${pilot.location}</td>
 </tr>
-<c:if test="${!empty pilot.IMHandle['AIM']}">
+<c:if test="${!empty pilot.IMHandle['AOL']}">
 <tr>
  <td class="label">AOL Instant Messenger</td>
- <td colspan="${cspan}" class="data">${pilot.IMHandle['AIM']}</td>
+ <td colspan="${cspan}" class="data">${pilot.IMHandle['AOL']}</td>
 </tr>
 </c:if>
 <c:if test="${!empty pilot.IMHandle['MSN']}">
@@ -98,7 +98,7 @@
 </c:if>
 <c:if test="${!empty pilot.motto}">
 <tr>
- <td colspan="label">
+ <td class="label">Personal Motto</td>
  <td colspan="${cspan}" class="data"><i>${pilot.motto}</i></td>
 </tr>
 </c:if>
