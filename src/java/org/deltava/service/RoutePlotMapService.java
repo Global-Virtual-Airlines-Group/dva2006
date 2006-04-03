@@ -1,20 +1,17 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
 import org.deltava.beans.navdata.*;
 
-import org.deltava.dao.GetNavRoute;
-import org.deltava.dao.DAOException;
-
-import org.deltava.util.StringUtils;
-import org.deltava.util.XMLUtils;
+import org.deltava.dao.*;
+import org.deltava.util.*;
 
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
@@ -78,11 +75,14 @@ public class RoutePlotMapService extends RouteMapService {
 				tRoutes.addAll(stars);
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
+		// Convert the points into a List
+		List<NavigationDataBean> points = new ArrayList<NavigationDataBean>(routePoints);
+
 		// Convert points to an XML document
-		Document doc = formatPoints(new ArrayList<NavigationDataBean>(routePoints));
+		Document doc = formatPoints(points);
 		Element re = doc.getRootElement();
 
 		// Add SID/STAR names to XML document
@@ -95,16 +95,24 @@ public class RoutePlotMapService extends RouteMapService {
 			re.addContent(e);
 		}
 
+		// Determine if we cross the International Date Line
+		if (points.size() > 1) {
+			double longD = points.get(0).getLongitude();
+			double longA = points.get(points.size() - 1).getLongitude();
+			boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
+			re.setAttribute("crossIDL", String.valueOf(crossIDL));
+		}
+
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 }
