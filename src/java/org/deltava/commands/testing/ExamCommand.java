@@ -53,12 +53,12 @@ public class ExamCommand extends AbstractCommand {
          Pilot p = pdao.get(ex.getPilotID());
          ctx.setAttribute("pilot", p, REQUEST);
          
-         // See if we have an examination open
+         // Display answers only if we have the necessary role
          int activeExamID = dao.getActiveExam(ctx.getUser().getID());
          if (ex.getPilotID() == ctx.getUser().getID()) {
-         	ctx.setAttribute("showAnswers", Boolean.valueOf(ex.getPassFail() && (activeExamID == 0)), REQUEST);
+         	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers() && (activeExamID == 0)), REQUEST);
          } else {
-         	ctx.setAttribute("showAnswers", Boolean.valueOf(activeExamID == 0), REQUEST);
+         	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
          }
          
          // Determine what we will do with the examination
@@ -66,7 +66,6 @@ public class ExamCommand extends AbstractCommand {
          if (access.getCanSubmit()) {
             // Calculate time remaining
             ctx.setAttribute("timeRemaining", new Long((ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000), REQUEST);
-
             result.setURL("/jsp/testing/examTake.jsp");
          } else if ((ex.getStatus() != Test.SCORED) && access.getCanScore()) {
             result.setURL("/jsp/testing/examScore.jsp");
