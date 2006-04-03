@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.file.DAO;
+import org.deltava.dao.file.*;
 
 import org.deltava.util.*;
 
@@ -21,7 +21,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class GetSchedule extends DAO {
+public class GetSchedule extends DAO implements ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetSchedule.class);
 	private static final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
@@ -33,7 +33,7 @@ public class GetSchedule extends DAO {
 	private Map<String, Airport> _airports;
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
 	
-	private Collection<String> _invalidAirports = new TreeSet<String>();
+	private Collection<String> _errors = new ArrayList<String>();
 	
 	// Innovata Equipment Types
 	private static final String[] IV_EQTYPES = {"310", "319", "320", "321", "332", "340", "343", "732",
@@ -51,24 +51,18 @@ public class GetSchedule extends DAO {
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the input stream to read
-	 * @param airlines a Collection of Airline beans
-	 * @param airports a Collection of Airport beans
 	 */
-	public GetSchedule(InputStream is, Collection<Airline> airlines, Collection<Airport> airports) {
+	public GetSchedule(InputStream is) {
 		super(is);
-		_airlines = CollectionUtils.createMap(airlines, "code");
-		_airports = CollectionUtils.createMap(airports, "IATA");
 		_effDate = CalendarUtils.getInstance(null);
 	}
 
 	/**
 	 * Initializes the Data Access Object with a preloaded set of tokens.
 	 * @param tokens the tokens
-	 * @param airlines a Collection of Airline beans
-	 * @param airports a Collection of Airport beans
 	 */
-	public GetSchedule(Collection<CSVTokens> tokens, Collection<Airline> airlines, Collection<Airport> airports) {
-		this((InputStream) null, airlines, airports);
+	public GetSchedule(Collection<CSVTokens> tokens) {
+		super((InputStream) null);
 		_data.addAll(tokens);
 	}
 
@@ -80,6 +74,32 @@ public class GetSchedule extends DAO {
 	public void setEffectiveDate(Date dt) {
 		_effDate.setTime(dt);
 	}
+	
+	/**
+	 * Initializes the list of airlines.
+	 * @param airlines a Collection of Airline beans
+	 * @see ScheduleLoadDAO#setAirports(Collection)
+	 */
+	public void setAirlines(Collection<Airline> airlines) {
+		_airlines = CollectionUtils.createMap(airlines, "code");
+	}
+	
+	/**
+	 * Initalizes the list of airports.
+	 * @param airports a Collection of Airport beans
+	 * @see ScheduleLoadDAO#setAirlines(Collection)
+	 */
+	public void setAirports(Collection<Airport> airports) {
+		_airports = CollectionUtils.createMap(airports, "IATA");
+	}
+	
+	/**
+	 * Returns any error messages from the load.
+	 * @return a Collection of error messages
+	 */
+	public Collection<String> getErrorMessages() {
+		return _errors;
+	}
 
 	/**
 	 * Helper method to load an airport bean.
@@ -88,21 +108,13 @@ public class GetSchedule extends DAO {
 		Airport a = _airports.get(code.toUpperCase());
 		if (a == null) {
 			log.warn("Unknown Airport at Line " + line + " - " + code);
+			_errors.add("Unknown Airport at Line " + line + " - " + code);
 			a = new Airport(code, code, "Unknown - " + code);
-			_invalidAirports.add(code);
 		}
 
 		return a;
 	}
 	
-	/**
-	 * Returns all unknown airport codes from the import.
-	 * @return a Collection of airport codes
-	 */
-	public Collection<String> getUnknownAirports() {
-		return _invalidAirports;
-	}
-
 	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
@@ -161,14 +173,16 @@ public class GetSchedule extends DAO {
 				includeFlight = ((startDate.getTime() <= eff) && (endDate.getTime() >= eff));
 			} catch (ParseException pe) {
 				log.warn("Unknown start/end date - " + pe.getMessage());
+				_errors.add("Unknown start/end date - " + pe.getMessage());
 				includeFlight = false;
 			}
 
 			// Load the airline
 			Airline a = _airlines.get(flightID.getAirlineCode());
-			if (a == null)
+			if (a == null) {
 				log.warn("Unknown Airline " + flightCode);
-			else if (flightID.getUserID() >= 9000)
+				_errors.add("Unknown Airline " + flightCode);
+			} else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
 			else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
@@ -189,6 +203,7 @@ public class GetSchedule extends DAO {
 					se.setLength((ft.get(Calendar.HOUR) * 10) + (ft.get(Calendar.MINUTE) / 6));
 				} catch (ParseException pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
+					_errors.add("Error parsing time - " + pe.getMessage());
 				}
 				
 				// Map the equipment type
