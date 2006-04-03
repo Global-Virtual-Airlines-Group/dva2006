@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -11,11 +11,13 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.SetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.dao.file.*;
+import org.deltava.dao.file.innovata.GetSchedule;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,6 +28,10 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ScheduleImportCommand extends AbstractCommand {
+	
+	private static final int NATIVE = 0;
+	private static final int INNOVATA = 1;
+	private static final String[] SCHED_TYPES = {"Native", "Innovata LLC"};
 
 	/**
 	 * Executes the command.
@@ -33,6 +39,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Save schedule types
+		ctx.setAttribute("schedTypes", ComboUtils.fromArray(SCHED_TYPES), REQUEST);
 
 		// Get the command results
 		CommandResult result = ctx.getResult();
@@ -53,6 +62,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 
 		// Check if we are purging the schedule
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
+		int scheduleType = StringUtils.arrayIndexOf(SCHED_TYPES, ctx.getParameter("schedType"));
 
 		DateFormat df = new SimpleDateFormat("HH:mm");
 		Collection<String> errors = new ArrayList<String>();
