@@ -239,6 +239,6 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      * @return the CSS class name
      */
     public String getRowClassName() {
-    	return !_active ? "warn" : (_flightAcademy ? "opt1" : null); 
+    	return !_active ? "warn" : (_flightAcademy ? "opt2" : null); 
     }
 }
