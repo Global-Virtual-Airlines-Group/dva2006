@@ -14,8 +14,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/schedule/header.jspf" %> 
+<%@ include file="/jsp/schedule/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
