@@ -685,7 +685,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			
 			// Get Academy Certifications
 			GetAcademyCourses fadao = new GetAcademyCourses(con);
-			ctx.setAttribute("courses", fadao.getByPilot(p.getID()), REQUEST);
+			ctx.setAttribute("courses", fadao.getCompletedByPilot(p.getID()), REQUEST);
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);

@@ -84,6 +84,24 @@ public class GetAcademyCourses extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all completed Flight Academy Course profiles for a particular Pilot.
+	 * @param pilotID the Pilot's databae ID
+	 * @return a Collection of Course beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Course> getCompletedByPilot(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
+					+ "AND (C.PILOT_ID=?) AND (C.STATUS=?) ORDER BY C.STARTDATE");
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, Course.COMPLETE);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all active Flight Academy Course profiles.
