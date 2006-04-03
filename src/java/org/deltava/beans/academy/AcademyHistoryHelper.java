@@ -283,6 +283,9 @@ public class AcademyHistoryHelper {
 		if (cr == null) {
 			log("Cannot take " + ep.getName() + " Not enrolled in a course");
 			return false;
+		} else if (cr.getStatus() == Course.PENDING) {
+			log("Cannot take " + ep.getName() + " Course pending");
+			return false;
 		}
 		
 		// Get the cert and see if it is included 
