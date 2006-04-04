@@ -36,10 +36,10 @@ return true;
 <tr class="title">
  <td width="70%" class="caps"><content:airline /> INSTRUCTION CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
 <c:if test="${isMine}">
- <td width="10%"><el:cmd url="academycalendar" op="31" linkID="0&amp;startDate=${startDate}">ALL SESSIONS</el:cmd></td>
+ <td width="10%" class="mid"><el:cmd url="academycalendar" op="31" linkID="0&startDate=${startDate}">ALL SESSIONS</el:cmd></td>
 </c:if>
 <c:if test="${!isMine && !empty user}">
- <td width="10%"><el:cmd url="academycalendar" op="31" linkID="0x${user.ID}&amp;startDate=${startDate}">MY SESSIONS</el:cmd></td>
+ <td width="10%" class="mid"><el:cmd url="academycalendar" op="31" linkID="0x${user.ID}&startDate=${startDate}">MY SESSIONS</el:cmd></td>
 </c:if>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="30" onChange="void switchType(this)" /></td>
 </tr>
