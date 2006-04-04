@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -8,7 +9,7 @@ import org.deltava.taglib.ContentHelper;
  * A JSP tag to render buttons that execute web site commands.
  * @author Luke
  * @version 1.0
- * @since 1.0 Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+ * @since 1.0 
  */
 
 public class CommandButtonTag extends ButtonTag {
@@ -18,13 +19,6 @@ public class CommandButtonTag extends ButtonTag {
    private String _opName;
 
    private boolean _doPost;
-
-   /**
-    * Create a new CommandButton element tag.
-    */
-   public CommandButtonTag() {
-      super();
-   }
 
    /**
     * Releases state and readies the tag for another invocation.
