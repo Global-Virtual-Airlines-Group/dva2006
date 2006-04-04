@@ -230,3 +230,10 @@ for (var i = 0; i < anchors.length; i++) {
 
 return true;
 }
+
+function showHelp(helpname)
+{
+URLflags = 'height=460,width=660,menubar=no,toolbar=no,status=no,scrollbars=yes,resizable=yes';
+var w = window.open('/help.do?id=' + helpname, 'HELP', URLflags);
+return true;
+}
