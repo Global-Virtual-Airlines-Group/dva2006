@@ -37,7 +37,12 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * @see ScheduleLoadDAO#setAirports(Collection)
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
-		_airlines = CollectionUtils.createMap(airlines, "code");
+		_airlines = new HashMap<String, Airline>();
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
+			Airline a = i.next();
+			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext(); )
+				_airlines.put(ci.next(), a);
+		}
 	}
 	
 	/**
@@ -70,5 +75,22 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 */
 	public Collection<String> getErrorMessages() {
 		return _errors;
+	}
+	
+	/**
+	 * Applies code share airline information to Schedule entries.
+	 * @param entries a Collection of ScheduleEntry beans
+	 */
+	protected void updateCodeshares(Collection<ScheduleEntry> entries) {
+		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+			ScheduleEntry se = i.next(); 
+			for (Iterator<PartnerAirline> pi = _partners.iterator(); pi.hasNext(); ) {
+				PartnerAirline pa = pi.next();
+				if (pa.contains(se.getFlightNumber())) {
+					se.setAirline(pa.getAirline());
+					break;
+				}
+			}
+		}
 	}
 }

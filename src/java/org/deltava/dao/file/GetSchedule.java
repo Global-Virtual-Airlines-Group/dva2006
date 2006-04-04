@@ -100,7 +100,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 			throw new DAOException(ie);
 		}
 		
-		// Return results
+		// Update the codeshare airlines
+		updateCodeshares(results);
 		return results;
 	}
 }

@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -38,19 +37,24 @@ return true;
 </tr>
 <tr>
  <td class="label">Import Results</td>
- <td class="data"><fmt:int value="${fn:sizeof(entries)}" /> Schedule Entries loaded</td>
+ <td class="data"><fmt:int value="${fn:sizeof(sessionScope.entries)}" /> Schedule Entries loaded</td>
 </tr>
 <c:if test="${!empty errors}">
 <tr>
  <td class="label" valign="top">Import Errors</td>
- <td class="data small"><c:forEach var="error" items="${errors}">
+ <td class="data small"><c:forEach var="error" items="${sessionScope.errors}">
 ${error}<br />
 </c:forEach></td>
 </tr>
 </c:if>
 <tr>
- <td class="label">&nbsp;</td>
+ <td class="label">Schedule Purge</td>
  <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge existing Schedule Entries" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Import Options</td>
+ <td class="data"><el:box name="canPurge" idx="*" value="true" label="Mark imported Schedule Entries as Purgeable" /><br />
+<el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /></td>
 </tr>
 </el:table>
 
@@ -60,6 +64,7 @@ ${error}<br />
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE FLIGHT SCHEDULE" /></td>
 </tr>
 </el:table>
+<el:text name="doImport" value="true" type="hidden" readOnly="true" />
 </el:form>
 <br />
 <content:copyright />

@@ -4,7 +4,7 @@ DVC,5913,6057,American Eagle
 DVC,6058,6212,Freedom Airlines
 DVC,6213,6432,Chautauqua Airlines
 DVC,6433,6492,Shuttle America
-KAL,7850-7939,Korean Air
+KAL,7850,7939,Korean Air
 MX,8000,8149,Aeromexico
 AI,8150,8287,Alitalia
 AF,8288,8659,Air France

@@ -33,16 +33,17 @@ public class GetSchedule extends ScheduleLoadDAO {
 	
 	// Innovata Equipment Types
 	private static final String[] IV_EQTYPES = {"310", "319", "320", "321", "332", "340", "343", "732",
-		"733", "735", "737", "738", "744", "747", "752", "753", "757", "762",
-		"763", "764", "767", "772", "777", "77W", "ARJ", "AT5", "AT7", "CR2", "CR7",
-		"CRJ", "D93", "D95", "E70", "EM2", "ER3", "ER4", "ERJ", "M80", "M87", "M88", "M90", "SF3" };
+		"733", "734", "735", "737", "738", "744", "747", "752", "753", "757",
+		"762", "763", "764", "767", "772", "777", "77W", "ARJ", "AT5", "AT7",
+		"CR2", "CR7", "CRJ", "D93", "D95", "E70", "EM2", "ER3", "ER4", "ERJ", "M80",
+		"M87", "M88", "M90", "SF3" };
 	
 	// Our equipment types
 	private static final String[] EQTYPES = {"A310", "A319", "A320", "A321", "A330-200", "A340-300", "A340-300", "B737-200",
-		"B737-300", "B737-500", "B737-700", "B737-800", "B747-400", "B747-200", "B757-200", "B757-300", "B757-200", "B767-200",
-		"B767-300", "B767-400", "B767-400", "B777-200", "B777-200", "B777-300", "BAE-146", "ATR-72", "ATR-72", "CRJ-200", "CRJ-700",
-		"CRJ-200", "DC-9-32", "DC-9-50", "ERJ-170", "EMB-120", "ERJ-135", "ERJ-145", "ERJ-145", "MD-88", "MD-88", "MD-88", "MD-90",
-		"SF340"};
+		"B737-300", "B737-400", "B737-500", "B737-700", "B737-800", "B747-400", "B747-200", "B757-200", "B757-300", "B757-200",
+		"B767-200", "B767-300", "B767-400", "B767-400", "B777-200", "B777-200", "B777-300", "BAE-146", "ATR-72", "ATR-72",
+		"CRJ-200", "CRJ-700", "CRJ-200", "DC-9-32", "DC-9-50", "ERJ-170", "EMB-120", "ERJ-135", "ERJ-145", "ERJ-145", "MD-88",
+		"MD-88", "MD-88", "MD-90", "SF340"};
 
 	/**
 	 * Initializes the Data Access Object.
@@ -76,11 +77,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 */
 	private Airport getAirport(String code, int line) {
 		Airport a = _airports.get(code.toUpperCase());
-		if (a == null) {
-			log.warn("Unknown Airport at Line " + line + " - " + code);
+		if (a == null)
 			_errors.add("Unknown Airport at Line " + line + " - " + code);
-			a = new Airport(code, code, "Unknown - " + code);
-		}
 
 		return a;
 	}
@@ -129,6 +127,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 			CSVTokens tkns = i.next();
 			String flightCode = tkns.get(7);
 			UserID flightID = new UserID(flightCode);
+			int eqOfs = StringUtils.arrayIndexOf(IV_EQTYPES, tkns.get(8));
 
 			// Load the Airports
 			Airport airportD = getAirport(tkns.get(3), tkns.getLineNumber());
@@ -150,10 +149,15 @@ public class GetSchedule extends ScheduleLoadDAO {
 			// Load the airline
 			Airline a = _airlines.get(flightID.getAirlineCode());
 			if (a == null) {
-				log.warn("Unknown Airline " + flightCode);
-				_errors.add("Unknown Airline " + flightCode);
+				log.warn("Unknown Airline " + flightID.getAirlineCode());
+				_errors.add("Unknown Airline " + flightID.getAirlineCode());
+			} else if (eqOfs == -1) {
+				log.warn("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
+				_errors.add("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
 			} else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
+			else if ((airportD == null) || (airportA == null))
+				log.debug("Invalid Airport(s)");
 			else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
 			else {
@@ -161,6 +165,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 				DailyScheduleEntry se = new DailyScheduleEntry(a, flightID.getUserID(), 1);
 				se.setAirportD(airportD);
 				se.setAirportA(airportA);
+				se.setEquipmentType(EQTYPES[eqOfs]);
 				se.setDays(tkns.get(2));
 				try {
 					se.setTimeD(_tf.parse(tkns.get(4)));
@@ -176,15 +181,6 @@ public class GetSchedule extends ScheduleLoadDAO {
 					_errors.add("Error parsing time - " + pe.getMessage());
 				}
 				
-				// Map the equipment type
-				int eqOfs = StringUtils.arrayIndexOf(IV_EQTYPES, tkns.get(8));
-				if (eqOfs != -1)
-					se.setEquipmentType(EQTYPES[eqOfs]);
-				else {
-					log.warn("Unknown equipment code - " + tkns.get(8));
-					se.setEquipmentType(tkns.get(8));
-				}
-
 				// Get the multi-leg info
 				int stops = Integer.parseInt(tkns.get(10));
 				boolean isExistML = legs.containsKey(flightCode);
@@ -247,7 +243,9 @@ public class GetSchedule extends ScheduleLoadDAO {
 				results.addAll(entries);
 			}
 		}
-
+		
+		// Update the codeshare airlines
+		updateCodeshares(results);
 		return results;
 	}
 }
