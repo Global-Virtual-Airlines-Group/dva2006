@@ -67,6 +67,8 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 				
 				// Populate the bean
 				s = new InstructionSession(0, c.getID());
+				s.setInstructorID(Integer.parseInt(ctx.getParameter("instructor")));
+				s.setPilotID(c.getPilotID());
 			}
 			
 			// Check our access
