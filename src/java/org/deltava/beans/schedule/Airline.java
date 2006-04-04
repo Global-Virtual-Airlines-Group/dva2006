@@ -7,7 +7,7 @@ import org.deltava.beans.ComboAlias;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A class for storing airline information.
+ * A class for storing Airline information.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -20,6 +20,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	private boolean _active = true;
 	
 	private Collection<String> _apps = new TreeSet<String>();
+	private Collection<String> _codes = new HashSet<String>();
 	
 	/**
 	 * Create a new Airline using a code.
@@ -43,6 +44,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 		super();
 		_code = code.trim().toUpperCase();
 		_name = name.trim();
+		_codes.add(_code);
 	}
 	
 	/**
@@ -62,6 +64,15 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	 */
 	public Collection<String> getApplications() {
 		return _apps;
+	}
+	
+	/**
+	 * Returns all valid airline codes for this Airline.
+	 * @return a Collection of Airline codes
+	 * @see Airline#addCode(String)
+	 */
+	public Collection<String> getCodes() {
+		return _codes;
 	}
 	
 	/**
@@ -113,6 +124,30 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 		_apps.clear();
 		_apps.addAll(apps);
 	}
+	
+	/**
+	 * Adds an alternate airline code to this Airline
+	 * @param code the airline code
+	 * @throws NullPointerException if code is null
+	 * @see Airline#getCodes()
+	 */
+	public void addCode(String code) {
+		_codes.add(code.trim().toUpperCase());
+	}
+	
+	/**
+	 * Clears and updates the list of alternate airline codes.
+	 * @param codes a Collection of airline codes
+	 * @throws NullPointerException if codes is null
+	 * @see Airline#addCode(String)
+	 * @see Airline#getCodes()
+	 */
+	public void setCodes(Collection<String> codes) {
+		_codes.clear();
+		_codes.add(_code);
+		for (Iterator<String> i = codes.iterator(); i.hasNext(); )
+			addCode(i.next());
+	}
 
 	public String getComboAlias() {
 		return _code;
@@ -157,6 +192,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	
 	/**
 	 * Cache key.
+	 * @return the Airline code
 	 */
 	public Object cacheKey() {
 	    return _code;

@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.util.*;
@@ -212,6 +213,7 @@ public class SystemData implements Serializable {
 	 * Returns an Airline object.
 	 * @param airlineCode the Airline code
 	 * @return the Airline bean, or null if not found
+	 * @throws NullPointerException if airlineCode is null
 	 * @throws IllegalStateException if the &quot;airlines&quot; property has not been added
 	 */
 	public static Airline getAirline(String airlineCode) {
@@ -221,8 +223,20 @@ public class SystemData implements Serializable {
 		if (!_properties.containsKey("airlines"))
 			throw new IllegalStateException("Airlines not Loaded");
 
+		// Search based on primary code
 		Map airlines = (Map) _properties.get("airlines");
-		return (Airline) airlines.get(airlineCode.trim().toUpperCase());
+		Airline a = (Airline) airlines.get(airlineCode.trim().toUpperCase());
+		if (a != null)
+			return a;
+		
+		// Search based on secondary codes
+		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
+			a = (Airline) i.next();
+			if (a.getCodes().contains(airlineCode.toUpperCase()))
+				return a;
+		}
+		
+		return null;
 	}
 	
 	/**

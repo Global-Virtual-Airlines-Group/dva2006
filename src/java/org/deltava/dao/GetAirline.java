@@ -92,6 +92,19 @@ public class GetAirline extends DAO {
 		// Clean up
 		rs.close();
 		_ps.close();
+		
+		// Load alternate codes
+		prepareStatementWithoutLimits("SELECT * FROM common.AIRLINE_CODES");
+		rs = _ps.executeQuery();
+		while (rs.next()) {
+			Airline a = results.get(rs.getString(1).trim());
+			if (a != null)
+				a.addCode(rs.getString(2));
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
 
 		// Load web app information
 		prepareStatementWithoutLimits("SELECT UCASE(CODE), UCASE(APPCODE) FROM common.APP_AIRLINES");

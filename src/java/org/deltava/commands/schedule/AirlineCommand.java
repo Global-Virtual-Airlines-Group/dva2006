@@ -9,6 +9,7 @@ import org.deltava.beans.schedule.Airline;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -49,6 +50,7 @@ public class AirlineCommand extends AbstractFormCommand {
 			a.setName(ctx.getParameter("name"));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			a.setApps(ctx.getParameters("airlines"));
+			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
 			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);
@@ -103,6 +105,7 @@ public class AirlineCommand extends AbstractFormCommand {
 
 				// Save the airline in the request
 				ctx.setAttribute("airline", a, REQUEST);
+				ctx.setAttribute("altCodes", StringUtils.listConcat(a.getCodes(), "\n"), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

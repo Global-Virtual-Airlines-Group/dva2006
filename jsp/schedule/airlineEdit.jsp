@@ -27,8 +27,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/schedule/header.jspf" %> 
+<%@ include file="/jsp/schedule/sideMenu.jspf" %>
 <content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
@@ -49,6 +49,10 @@ return true;
 <tr>
  <td class="label" valign="top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${airline.applications}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Alternate Codes</td>
+ <td class="data"><el:textbox name="altCodes" idx="*" width="50" height="3">${altCodes}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
