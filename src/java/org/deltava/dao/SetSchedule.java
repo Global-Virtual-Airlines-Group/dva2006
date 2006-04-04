@@ -39,6 +39,21 @@ public class SetSchedule extends DAO {
 			_ps.setBoolean(3, al.getActive());
 			executeUpdate(1);
 			
+			// Write the alternate codes
+			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
+			_ps.setString(1, al.getCode());
+			for (Iterator<String> i = al.getCodes().iterator(); i.hasNext(); ) {
+				String code = i.next();
+				if (!code.equals(al.getCode())) {
+					_ps.setString(2, code);
+					_ps.addBatch();
+				}
+			}
+			
+			// Execute update
+			_ps.executeBatch();
+			_ps.close();
+			
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
 			_ps.setString(1, al.getCode());
@@ -73,10 +88,30 @@ public class SetSchedule extends DAO {
 			_ps.setString(3, al.getCode());
 			executeUpdate(1);
 			
+			// Clear the alternate code data
+			prepareStatementWithoutLimits("DELETE FROM common.AIRLINE_CODES WHERE (CODE=?)");
+			_ps.setString(1, al.getCode());
+			executeUpdate(0);
+			
 			// Clear the webapp data
 			prepareStatementWithoutLimits("DELETE FROM common.APP_AIRLINES WHERE (CODE=?)");
 			_ps.setString(1, al.getCode());
 			executeUpdate(0);
+			
+			// Write the alternate codes
+			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
+			_ps.setString(1, al.getCode());
+			for (Iterator<String> i = al.getCodes().iterator(); i.hasNext(); ) {
+				String code = i.next();
+				if (!code.equals(al.getCode())) {
+					_ps.setString(2, code);
+					_ps.addBatch();
+				}
+			}
+			
+			// Execute update
+			_ps.executeBatch();
+			_ps.close();
 			
 			// Write the webapp data
 			prepareStatement("INSERT INTO common.APP_AIRLINES (CODE, APPCODE) VALUES (?, ?)");
