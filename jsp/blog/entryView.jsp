@@ -34,8 +34,8 @@ return ${access.canComment};
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/blog/header.jsp" %> 
-<%@ include file="/jsp/blog/sideMenu.jsp" %>
+<%@ include file="/jsp/blog/header.jspf" %> 
+<%@ include file="/jsp/blog/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
