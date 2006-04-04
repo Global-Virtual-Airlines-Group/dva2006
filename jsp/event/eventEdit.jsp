@@ -53,8 +53,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="void updateSignups()">
 <content:page>
-<%@ include file="/jsp/event/header.jsp" %> 
-<%@ include file="/jsp/event/sideMenu.jsp" %>
+<%@ include file="/jsp/event/header.jspf" %> 
+<%@ include file="/jsp/event/sideMenu.jspf" %>
 <content:sysdata var="allEQ" name="eqtypes" />
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="defaultNetwork" name="online.default_network" />

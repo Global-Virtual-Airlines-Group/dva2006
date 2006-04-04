@@ -20,8 +20,8 @@ s<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.o
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/event/header.jsp" %> 
-<%@ include file="/jsp/event/sideMenu.jsp" %>
+<%@ include file="/jsp/event/header.jspf" %> 
+<%@ include file="/jsp/event/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
