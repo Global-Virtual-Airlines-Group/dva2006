@@ -28,7 +28,9 @@ public abstract class DAO {
         try {
         	_is = c.getInputStream();
         } catch (IOException ie) {
-        	throw new DAOException(ie);
+        	DAOException de = new DAOException(ie);
+        	de.setLogStackDump(false);
+        	throw de;
         }
     }
     
