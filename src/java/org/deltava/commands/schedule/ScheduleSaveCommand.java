@@ -36,14 +36,16 @@ public class ScheduleSaveCommand extends AbstractCommand {
 		}
 		
 		// If we're doing a get, then redirect to the JSP
-		if (ctx.getParameter("doPurge") == null) {
+		if (ctx.getParameter("doImport") == null) {
 			result.setURL("/jsp/schedule/flightSave.jsp");
 			result.setSuccess(true);
 			return;
 		}
 		
-		// Determine if we are doing a purge
+		// Load import options
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
+		boolean canPurge = Boolean.valueOf(ctx.getParameter("canPurge")).booleanValue();
+		boolean isHistoric = Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue();
 		
 		// Save the entries
 		try {
@@ -60,6 +62,8 @@ public class ScheduleSaveCommand extends AbstractCommand {
 			// Save the schedule entries
 			for (Iterator i = entries.iterator(); i.hasNext(); ) {
 				ScheduleEntry se = (ScheduleEntry) i.next();
+				se.setPurge(canPurge);
+				se.setHistoric(isHistoric);
 				dao.write(se, false);
 			}
 			

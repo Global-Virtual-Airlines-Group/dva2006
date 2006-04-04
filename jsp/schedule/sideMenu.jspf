@@ -36,6 +36,15 @@
 <tr class="MenuItem">
  <td><el:cmd url="routes" op="oceanic">OCEANIC TRACKS</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="schedimport">SCHEDULE IMPORT</el:cmd></td>
+</tr>
+<tr class="MenuItem">
+ <td><el:cmd url="schedexport">SCHEDULE EXPORT</el:cmd></td>
+</tr>
+<tr class="MenuItem">
+ <td><el:cmd url="navimport">NAVIGATION DATA</el:cmd></td>
+</tr>
 <tr class="MenuHeader"><td>CONTACT US</td></tr>
 <tr class="MenuItem">
  <td><el:link url="mailto:${infoEmail}">CORPORATE OFFICES</el:link></td>
