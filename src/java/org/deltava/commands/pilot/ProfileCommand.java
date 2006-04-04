@@ -383,6 +383,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check if we're updating the e-mail address
 			String newEMail = ctx.getParameter("email");
 			boolean isEMailUpdate = !p.getEmail().equals(newEMail);
+			if (StringUtils.isEmpty(newEMail))
+				isEMailUpdate = false;
+			
+			// Update e-mail address
 			if (isEMailUpdate && ctx.isUserInRole("HR")) {
 				p.setEmail(newEMail);
 			} else if (isEMailUpdate) {
