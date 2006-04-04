@@ -786,4 +786,16 @@
 			<type>org.deltava.beans.Person</type>
 		</attribute>
 	</tag>
+	
+	<!-- Help tag, for rendering Help popup links -->
+	<tag>
+		<name>help</name>
+		<tag-class>org.deltava.taglib.html.HelpLinkTag</tag-class>
+		<body-content>JSP</body-content>
+		<attribute>
+			<name>entry</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+	</tag>
 </taglib>
