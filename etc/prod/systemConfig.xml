@@ -489,6 +489,7 @@
 			<maxDays type="Integer">1</maxDays>
 			<minDays type="Integer">45</minDays>
 			<pad_hours type="Double">0.5</pad_hours>
+			<draft_purge type="Integer">30</draft_purge>
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->

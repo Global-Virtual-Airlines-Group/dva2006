@@ -121,19 +121,28 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Returns all Flight Reports awaiting disposition.
-	 * @return a List of FlightReports in SUBMITTED or HOLD status
+	 * Returns all Flight Reports in particular statuses.
+	 * @param status a Collection of Integer status codes
+	 * @return a List of FlightReports in the specified statuses
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getDisposalQueue() throws DAOException {
+	public List<FlightReport> getByStatus(Collection<Integer> status) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* "
+				+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN "
+				+ "ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (");
+		for (Iterator<Integer> i = status.iterator(); i.hasNext(); ) {
+			Integer st = i.next();
+			sqlBuf.append("(PR.STATUS=");
+			sqlBuf.append(st.toString());
+			sqlBuf.append(')');
+			if (i.hasNext())
+				sqlBuf.append(" AND ");
+		}
+		
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, PIREPS PR "
-					+ "LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) "
-					+ "WHERE (PR.PILOT_ID=P.ID) AND ((PR.STATUS = ?) OR (PR.STATUS = ?)) ORDER BY DATE");
-			_ps.setInt(1, FlightReport.SUBMITTED);
-			_ps.setInt(2, FlightReport.HOLD);
-
-			// Return the results
+			prepareStatement(sqlBuf.toString());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
