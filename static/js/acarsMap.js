@@ -16,7 +16,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var label = a.firstChild;
-		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
+		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
 		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, null);
 		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; map.removeOverlay(routeData); map.removeOverlay(routeWaypoints); });
 		mrk.flight_id = a.getAttribute("flight_id");
@@ -75,7 +75,7 @@ xreq.onreadystatechange = function() {
 		var waypoints = new Array();
 		for (var i = 0; i < wps.length; i++) {
 			var wp = wps[i];
-			var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 			waypoints.push(p);
 		} // for
 	
@@ -89,7 +89,7 @@ xreq.onreadystatechange = function() {
 		var positions = new Array();
 		for (var i = 0; i < pos.length; i++) {
 			var pe = pos[i];
-			var p = new GPoint(parseFloat(pe.getAttribute("lng")), parseFloat(pe.getAttribute("lat")));
+			var p = new GLatLng(parseFloat(pe.getAttribute("lat")), parseFloat(pe.getAttribute("lng")));
 			positions.push(p);
 		} // for
 		
@@ -108,4 +108,3 @@ xreq.onreadystatechange = function() {
 xreq.send(null);
 return true;
 }
-

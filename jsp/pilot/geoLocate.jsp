@@ -13,7 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function updateLocation()
@@ -21,13 +21,13 @@ function updateLocation()
 var f = document.forms[0];
 
 // Calculate latitude/longitude
-var lat = parseInt(f.latD.value) + (parseInt(f.latM.value) /60) + (parseInt(f.latS.value) / 3600);
+var lat = parseInt(f.latD.value) + (parseInt(f.latM.value) / 60) + (parseInt(f.latS.value) / 3600);
 lat *= (f.latDir.selectedIndex * -1);
-var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) /60) + (parseInt(f.lonS.value) / 3600);
+var lng = parseInt(f.lonD.value) + (parseInt(f.lonM.value) / 60) + (parseInt(f.lonS.value) / 3600);
 lng *= (f.lonDir.selectedIndex * -1);
 
 map.removeOverlay(usrLocation);
-usrLocation = googleMarker('${imgPath}','blue',new GPoint(lng, lat),labelText);
+usrLocation = googleMarker('${imgPath}','blue',new GLatLng(lat, lng),labelText);
 map.addOverlay(usrLocation);
 return true;
 }
@@ -44,7 +44,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -100,10 +100,10 @@ randomize your location within a 3 mile circle each time the Pilot Location Boar
 <script language="JavaScript" type="text/javascript">
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
+var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
+map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
 
 // Add user's location
 var usrLocation;
