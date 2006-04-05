@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -8,6 +8,7 @@ import javax.servlet.jsp.*;
 import org.deltava.beans.GeoLocation;
 
 import org.deltava.taglib.ContentHelper;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -49,10 +50,10 @@ public class PointArrayTag extends GoogleMapEntryTag {
 
 				// Generate the google point and push it into the array
 				out.print(_jsVarName);
-				out.print(".push(new GPoint(");
-				out.print(StringUtils.format(entry.getLongitude(), "##0.00000"));
-				out.print(',');
+				out.print(".push(new GLatLng(");
 				out.print(StringUtils.format(entry.getLatitude(), "##0.00000"));
+				out.print(',');
+				out.print(StringUtils.format(entry.getLongitude(), "##0.00000"));
 				out.println("));");
 			}
 			

@@ -16,11 +16,11 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -138,10 +138,10 @@
 <map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.75" />
 
 // Build the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
+var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
+map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 
 // Add the route and markers
 addMarkers(map, 'gRoute');

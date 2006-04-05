@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import java.util.*;
@@ -11,7 +11,7 @@ import org.deltava.beans.MapEntry;
 import org.deltava.taglib.ContentHelper;
 
 /**
- * A JSP Tag to generate a JavaScript array of Google Maps GMarkers.
+ * A JSP Tag to generate a JavaScript array of Google Maps v2 GMarkers.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -20,7 +20,6 @@ import org.deltava.taglib.ContentHelper;
 public class MarkerArrayTag extends GoogleMapEntryTag {
 
 	private Collection _entries;
-
 	private String _color;
 
 	/**

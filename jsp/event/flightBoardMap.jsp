@@ -18,7 +18,7 @@
 <content:js name="common" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function setNetwork(combo)
@@ -47,7 +47,7 @@ if (!selectedRoute) {
 	var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
 	for (var i = 0; i < navaids.length; i++) {
 		var nav = navaids[i];
-		points.push(new GPoint(parseFloat(nav.getAttribute("lng")), parseFloat(nav.getAttribute("lat"))));
+		points.push(new GLatLng(parseFloat(nav.getAttribute("lat")), parseFloat(nav.getAttribute("lng"))));
 	}
 	
 	allRoutes[pilotID] = new GPolyline(points, '#4080AF', 2, 0.8);
@@ -66,7 +66,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -100,7 +100,7 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GSmallMapControl());
 map.addControl(new GMapTypeControl());
 
@@ -118,7 +118,7 @@ var allRoutes = new Array();
 var selectedRoute;
 
 // Center the map and add positions
-map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
+map.setCenter(new GLatLng(38.88, -93.25), 4);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>

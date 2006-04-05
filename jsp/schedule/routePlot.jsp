@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
@@ -67,7 +67,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < waypoints.length; i++) {
 		var wp = waypoints[i];
 		var label = wp.firstChild;
-		var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+		var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 		positions.push(p);
 		codes.push(wp.getAttribute("code"));
 		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
@@ -84,8 +84,8 @@ xmlreq.onreadystatechange = function() {
 	var mps = xdoc.getElementsByTagName("midpoint");
 	var mpp = mps[0];
 	if (mpp) {
-		var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
-		map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+		var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
+		map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
 	}
 
 	// Load the SID/STAR list
@@ -131,7 +131,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -189,11 +189,11 @@ return true;
 <script language="JavaScript" type="text/javascript">
 // Create the map
 var mapdiv = getElement('googleMap');
-map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
-map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
+map.setCenter(new GLatLng(38.88, -93.25), 4);
 </script>
 </body>
 </html>

@@ -17,7 +17,7 @@
 <content:js name="acarsMap" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function reloadData(isAuto)
@@ -44,10 +44,10 @@ return true;
 function saveSettings()
 {
 // Get the latitude, longitude and zoom level
-var myLat = map.getCenterLatLng().y;
-var myLng = map.getCenterLatLng().x;
-var myZoom = map.getZoomLevel();
-var myType = (map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
+var myLat = map.getCenter().lat();
+var myLng = map.getCenter().lng();
+var myZoom = map.getZoom();
+var myType = map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
 
 // Save the cookies
 var expiryDate = new Date(2006, 11, 31);
@@ -77,11 +77,11 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
-<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
+<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
@@ -123,13 +123,13 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
-<map:marker var="mapC" point="${mapCenter}" />
+<map:point var="mapC" point="${mapCenter}" />
 
 // Create the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, ${zoomLevel});
+map.setCenter(mapC, ${zoomLevel});
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 
 // Placeholder for route

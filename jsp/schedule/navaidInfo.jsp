@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -44,7 +44,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -147,10 +147,10 @@ ${navaid.frequency}</span></c:if></td>
 <map:markers var="navaids" items="${navaids}" />
 
 // Build the map
-var map = new GMap(getElement("googleMap"));
+var map = new GMap2(getElement("googleMap"));
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(navP, getDefaultZoom(90));
+map.setCenter(navP, getDefaultZoom(90));
 
 // Add the navaid markers
 for (var x = 0; x < navaids.length; x++)

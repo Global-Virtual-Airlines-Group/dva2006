@@ -16,7 +16,7 @@
 <content:js name="common" />
 <c:if test="${googleMap}">
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 </c:if>
 <script language="JavaScript" type="text/javascript">
@@ -50,7 +50,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var label = a.firstChild;
-		var p = new GPoint(parseFloat(a.getAttribute("lng")), parseFloat(a.getAttribute("lat")));
+		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
 		if (a.getAttribute("color")) {
 			var mrk = googleMarker('${imgPath}', a.getAttribute("color"), p, label.data);
 			routeMarkers.push(mrk);
@@ -75,7 +75,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -269,10 +269,10 @@ getACARSData();
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
 </c:if>
 // Build the map
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GSmallZoomControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, getDefaultZoom(${pirep.distance}));
+map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 
 <c:if test="${!empty mapRoute}">
 // Add the route and markers

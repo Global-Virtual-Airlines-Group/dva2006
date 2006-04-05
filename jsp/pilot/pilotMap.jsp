@@ -14,14 +14,14 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="pilotMap" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void enableElement('eq', false); void enableElement('rnk', false);">
+<body onload="void enableElement('eq', false); void enableElement('rnk', false);" onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -65,10 +65,10 @@
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
 <map:marker var="hq" point="${mapCenter}" />
-var map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.centerAndZoom(mapC, 13);
+map.setCenter(mapC, 4);
 addMarkers(map, 'hq');
 
 // Initialize the marker hashtables

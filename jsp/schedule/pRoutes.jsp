@@ -16,7 +16,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="1" />
+<map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
@@ -55,11 +55,11 @@ if (mapdiv.className == 'hidden') {
 	mapdiv.className = 'visible';
 
 	// Create the map
-	map = new GMap(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+	map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
 	map.addControl(new GLargeMapControl());
 	map.addControl(new GMapTypeControl());
 	map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
-	map.centerAndZoom(new GPoint(-93.25, 38.88), 13);
+	map.setCenter(new GLatLng(38.88, -93.25), 4);
 }
 
 // Generate an XMLHTTP request
@@ -80,7 +80,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < waypoints.length; i++) {
 		var wp = waypoints[i];
 		var label = wp.firstChild;
-		var p = new GPoint(parseFloat(wp.getAttribute("lng")), parseFloat(wp.getAttribute("lat")));
+		var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 		positions.push(p);
 		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
 	} // for
@@ -91,7 +91,7 @@ xmlreq.onreadystatechange = function() {
 	// Get the midpoint and center the map
 	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
 	var mpp = mps[0];
-	var mp = new GPoint(parseFloat(mpp.getAttribute("lng")), parseFloat(mpp.getAttribute("lat")));
+	var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
 	map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
 	
 	// Focus on the map
