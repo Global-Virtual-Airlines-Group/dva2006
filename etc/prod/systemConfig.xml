@@ -140,6 +140,7 @@
 		<location>Western United States</location>
 		<location>Eastern Canada</location>
 		<location>Western Canada</location>
+		<location>West Indies</location>
 		<location>Central America</location>
 		<location>South America</location>
 		<location>Western Europe</location>
@@ -147,9 +148,13 @@
 		<location>Eastern Europe</location>
 		<location>Middle East</location>
 		<location>Southern Asia</location>
+		<location>India</location>
+		<location>Southeast Asia</location>
 		<location>Far East</location>
+		<location>China</location>
 		<location>Japan</location>
 		<location>Australia</location>
+		<location>New Zealand</location>
 		<location>Africa</location>
 	</list>
 	
