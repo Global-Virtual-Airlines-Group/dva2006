@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -10,7 +10,7 @@ import org.deltava.taglib.ContentHelper;
 import org.deltava.util.StringUtils;
 
 /**
- * A JSP Tag to generate a Google Maps Point.
+ * A JSP Tag to generate a Google Maps v2 Lat/Long point.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -45,10 +45,10 @@ public class PointTag extends GoogleMapEntryTag {
 			}
 
 			// Create the GPoint
-			out.print("new GPoint(");
-			out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));
-			out.print(',');
+			out.print("new GLatLng(");
 			out.print(StringUtils.format(_entry.getLatitude(), "##0.00000"));
+			out.print(',');
+			out.print(StringUtils.format(_entry.getLongitude(), "##0.00000"));
 			out.print(");");
 			
 			// Mark the JavaScript marker variable as included
