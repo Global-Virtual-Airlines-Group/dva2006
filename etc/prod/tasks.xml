@@ -18,6 +18,12 @@
 		<hours>3</hours>
 	</task>
 
+	<task id="draftpurge" enabled="false">
+		<class>org.deltava.tasks.DraftPIREPPurgeTask</class>
+		<interval>86400</interval>
+		<hours>8</hours>
+	</task>
+
 	<task id="assignpurge" enabled="true">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
 		<interval>86400</interval>
