@@ -1,15 +1,13 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
-import java.util.Collection;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.FlightReport;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetFlightReports;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Site Command to display Flight Reports awaiting disposition.
@@ -19,6 +17,8 @@ import org.deltava.dao.DAOException;
  */
 
 public class PIREPQueueCommand extends AbstractViewCommand {
+	
+	private static final Integer PENDING[] = { new Integer(FlightReport.SUBMITTED), new Integer(FlightReport.HOLD) };
 
     /**
      * Executes the command.
@@ -43,7 +43,7 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getDisposalQueue();
+			Collection<FlightReport> pireps = dao.getByStatus(Arrays.asList(PENDING));
 			dao.getCaptEQType(pireps);
 			vc.setResults(pireps);
 		} catch (DAOException de) {
