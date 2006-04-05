@@ -4,7 +4,7 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -12,6 +12,8 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to post comments in a Flight Academy Course.
@@ -33,7 +35,7 @@ public class CourseCommentCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 
-		Collection<? extends EMailAddress> addrs = null;
+		Collection<Pilot> addrs = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -71,6 +73,15 @@ public class CourseCommentCommand extends AbstractCommand {
 			// Load Pilot Information
 			GetPilot pdao = new GetPilot(con);
 			addrs = pdao.getByID(IDs, "PILOTS").values();
+			
+			// Get instructors
+			GetPilotDirectory pddao = new GetPilotDirectory(con);
+			Collection<Pilot> ins = pddao.getByRole("Instructor", SystemData.get("airline.db"));
+			for (Iterator<Pilot> i = ins.iterator(); i.hasNext(); ) {
+				Pilot p = i.next();
+				if (!IDs.contains(new Integer(p.getID())))
+					addrs.add(p);
+			}
 			
 			// Get the write DAO and write the comment
 			SetAcademy wdao = new SetAcademy(con);
