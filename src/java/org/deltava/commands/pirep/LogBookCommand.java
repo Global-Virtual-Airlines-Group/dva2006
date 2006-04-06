@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.*;
 public class LogBookCommand extends AbstractViewCommand {
 	
     // List of query columns we can order by
-    private static final String[] SORT_CODE = {"DATE DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
+    private static final String[] SORT_CODE = {"DATE DESC, PR.ID DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
     private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Flight Time"};
     private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
 
