@@ -170,8 +170,8 @@
 Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
-<%@ include file="/jsp/pilot/pilotExams.jsp" %>
-<%@ include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
+<%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 </el:table>
 <c:if test="${access.canEdit || access.canChangeStatus}">
 <!-- Button Bar -->

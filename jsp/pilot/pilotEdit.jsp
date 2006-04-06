@@ -260,10 +260,10 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
  <td class="label">User Interface</td>
  <td colspan="${cspan}" class="data"><el:combo name="uiScheme" size="1" options="${schemes}" value="${pilot.UIScheme}" /></td>
 </tr>
-<%@ include file="/jsp/pilot/staffEdit.jsp" %>
-<%@ include file="/jsp/pilot/eMailEdit.jsp" %>
-<%@ include file="/jsp/pilot/pilotExams.jsp" %>
-<%@ include file="/jsp/pilot/pilotStatusUpdate.jsp" %>
+<%@ include file="/jsp/pilot/staffEdit.jspf" %>
+<%@ include file="/jsp/pilot/eMailEdit.jspf" %>
+<%@ include file="/jsp/pilot/pilotExams.jspf" %>
+<%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 <!-- Pilot Statistics -->
 <tr class="title">
  <td colspan="${cspan + 1}">PILOT STATISTICS</td>
