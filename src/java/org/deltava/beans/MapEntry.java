@@ -1,8 +1,8 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
- * An interface to define icon formatting for entries that can be displayed in maps.
+ * An interface to define icon formatting for entries that can be displayed in Google Maps.
  * @author Luke
  * @version 1.0
  * @since 1.0

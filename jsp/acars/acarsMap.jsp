@@ -47,7 +47,7 @@ function saveSettings()
 var myLat = map.getCenter().lat();
 var myLng = map.getCenter().lng();
 var myZoom = map.getZoom();
-var myType = map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
+var myType = (map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
 
 // Save the cookies
 var expiryDate = new Date(2006, 11, 31);
