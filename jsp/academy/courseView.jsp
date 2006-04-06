@@ -84,7 +84,7 @@ return ${access.canComment || access.canUpdateProgress};
 </tr>
 </c:if>
 <c:if test="${!empty exams}">
-<%@ include file="/jsp/pilot/pilotExams.jsp" %>
+<%@ include file="/jsp/pilot/pilotExams.jspf" %>
 </c:if>
 
 <!-- Course Progress -->
