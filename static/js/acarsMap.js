@@ -15,13 +15,24 @@ xmlreq.onreadystatechange = function() {
 	map.clearOverlays();
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
-		var label = a.firstChild;
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
 		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, null);
-		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; map.removeOverlay(routeData); map.removeOverlay(routeWaypoints); });
 		mrk.flight_id = a.getAttribute("flight_id");
-		mrk.infoLabel = label.data;
+		var tabs = parseInt(a.getAttribute("tabs"));
 		mrk.infoShow = clickIcon;
+		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; map.removeOverlay(routeData); map.removeOverlay(routeWaypoints); });
+		if (tabs == 0) {
+			var label = a.firstChild;
+			mrk.infoLabel = label.data;
+		} else {
+			mrk.tabs = new Array();
+			var tbs = a.getElementsByTagName("tab");
+			for (var x = 0; x < tbs.length; x++) {
+				var tab = tbs[x];
+				var label = tab.firstChild;
+				mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), label.data));
+			}
+		}
 		
 		// Set the the click handler
 		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
@@ -45,7 +56,13 @@ var isRoute = f.showRoute.checked;
 var isInfo = f.showInfo.checked;
 
 // Display the info
-if (isInfo) this.openInfoWindowHtml(this.infoLabel);
+if (isInfo && (this.tabs)) {
+	this.openInfoWindowTabsHtml(this.tabs)
+} else if (isInfo) {
+	this.openInfoWindowHtml(this.infoLabel);
+}
+
+// Display flight progress / route
 if (isProgress || isRoute) {
 	map.removeOverlay(routeData);
 	map.removeOverlay(routeWaypoints);
