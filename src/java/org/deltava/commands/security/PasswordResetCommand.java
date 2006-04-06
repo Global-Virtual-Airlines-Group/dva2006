@@ -106,7 +106,7 @@ public class PasswordResetCommand extends AbstractCommand {
 		// Generate a new password for the user and save the user in the request
 		String newPwd = PasswordGenerator.generate(10);
 		usr.setPassword(newPwd);
-		ctx.setAttribute("user", usr, REQUEST);
+		ctx.setAttribute("pilot", usr, REQUEST);
 
 		// Get the authenticator and update the password
 		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);

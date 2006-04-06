@@ -23,7 +23,7 @@
 <tr class="title caps"><td>PASSWORD RESET COMPLETE</td></tr>
 </el:table>
 <br />
-The password for ${user.name} has been successfully reset. An e-mail message has been sent to this user
+The password for ${pilot.name} has been successfully reset. An e-mail message has been sent to ${pilot.firstName} 
 at the e-mail address we have on file, notifying this Pilot of the new password.<br />
 <br />
 <content:copyright />
