@@ -138,8 +138,14 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
+		<attribute>
+			<name>startDate</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.util.Date</type>
+		</attribute>
 	</tag>
-	
+
 	<!-- Table tag, for defining HTML tables -->
 	<tag>
 		<name>table</name>
