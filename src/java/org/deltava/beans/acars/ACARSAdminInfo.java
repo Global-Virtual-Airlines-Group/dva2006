@@ -13,7 +13,7 @@ import java.util.Collection;
 public interface ACARSAdminInfo {
 
    public Collection getPoolInfo();
-   public Collection getMapEntries();
+   public Collection<RouteEntry> getMapEntries();
    public Collection getBanInfo();
    public boolean isEmpty();
 }

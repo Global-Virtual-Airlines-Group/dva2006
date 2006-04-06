@@ -1,16 +1,14 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.io.IOException;
 import java.util.*;
-
+import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
 
-import org.deltava.beans.MapEntry;
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.acars.ACARSAdminInfo;
+import org.deltava.beans.*;
+import org.deltava.beans.acars.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -41,15 +39,27 @@ public class ACARSMapService extends WebService {
 		doc.setRootElement(re);
 
 		// Add the items
-		for (Iterator i = acarsPool.getMapEntries().iterator(); i.hasNext();) {
-			MapEntry entry = (MapEntry) i.next();
-			Element e = XMLUtils.createElement("aircraft", entry.getInfoBox(), true);
+		for (Iterator<RouteEntry> i = acarsPool.getMapEntries().iterator(); i.hasNext();) {
+			RouteEntry entry = i.next();
+			Element e = new Element("aircraft");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
+			e.setAttribute("flight_id", String.valueOf(entry.getID()));
 			e.setAttribute("color", entry.getIconColor());
-			if (entry instanceof DatabaseBean)
-				e.setAttribute("flight_id", String.valueOf(((DatabaseBean) entry).getID()));
-			
+			if (entry instanceof TabbedMapEntry) {
+				TabbedMapEntry tme = (TabbedMapEntry) entry;
+				e.setAttribute("tabs", String.valueOf(tme.getTabNames().size()));
+				for (int x = 0; x < tme.getTabNames().size(); x++) {
+					Element te = new Element("tab");
+					te.setAttribute("name", tme.getTabNames().get(x));
+					te.addContent(new CDATA(tme.getTabContents().get(x)));
+					e.addContent(te);
+				}
+			} else {
+				e.setAttribute("tabs", "0");
+				e.addContent(new CDATA(entry.getInfoBox()));
+			}
+
 			re.addContent(e);
 		}
 
