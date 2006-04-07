@@ -48,15 +48,15 @@ public class PilotBoardCommand extends AbstractCommand {
       }
       
       public String getInfoBox() {
-         StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"small bld\">");
+         StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"bld\">");
          buf.append(SystemData.get("airline.name"));
-         buf.append("</span><span class=\"small\"><br /><br />Position: ");
+         buf.append("</span><br /><br />Position: ");
          buf.append(StringUtils.format(_gPos, true, GeoLocation.ALL));
          buf.append("<br /><a href=\"http://");
          buf.append(SystemData.get("airline.url"));
          buf.append("/\">http://");
          buf.append(SystemData.get("airline.url"));
-         buf.append("/</a></span></div>");
+         buf.append("/</a></div>");
          return buf.toString();
       }
    }

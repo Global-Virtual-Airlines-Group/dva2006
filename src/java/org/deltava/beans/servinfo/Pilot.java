@@ -314,7 +314,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 		buf.append(getCallsign());
 		buf.append("</b> (");
 		buf.append(StringUtils.stripInlineHTML(getName()));
-		buf.append(")<span class=\"small\"><br /><br />Flying from ");
+		buf.append(")<br /><br />Flying from ");
 		buf.append(_airportD.getICAO());
 		buf.append(" to ");
 		buf.append(_airportA.getICAO());
@@ -324,7 +324,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 		buf.append(StringUtils.format(_altitude, "#,##0"));
 		buf.append(" feet<br />Speed: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" knots</span></div>");
+		buf.append(" knots</div>");
 		return buf.toString();
 	}
 }
