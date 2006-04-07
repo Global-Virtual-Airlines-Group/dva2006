@@ -118,7 +118,7 @@
 </c:if>
 <c:if test="${!scoreCR}">
 <tr>
- <td class="label">Check Ride Instructions</td>
+ <td class="label" valign="top">Check Ride Instructions</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 </c:if>
