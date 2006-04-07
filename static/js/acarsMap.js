@@ -1,4 +1,4 @@
-function generateXMLRequest(imgPath)
+function generateXMLRequest()
 {
 // Build the XML Requester
 var d = new Date();
@@ -16,7 +16,7 @@ xmlreq.onreadystatechange = function() {
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		var mrk = googleMarker(imgPath, a.getAttribute("color"), p, null);
+		var mrk = googleMarker(document.imgPath, a.getAttribute("color"), p, null);
 		mrk.flight_id = a.getAttribute("flight_id");
 		var tabs = parseInt(a.getAttribute("tabs"));
 		mrk.infoShow = clickIcon;
@@ -123,5 +123,18 @@ xreq.onreadystatechange = function() {
 } // function
 
 xreq.send(null);
+return true;
+}
+
+function renderBlowup(lat, lng, color, zoom)
+{
+// Create the map
+var bmap = new GMap2(getElement("mapBlowupBox"), G_SATELLITE_TYPE);
+bmap.setCenter(new GLatLng(lat, lng), zoom);
+bmap.setMapType(G_SATELLITE_TYPE);
+
+// Create the marker
+var mrk = googleMarker(document.imgPath, color, p, null);
+bmap.addOverlay(mrk);
 return true;
 }
