@@ -493,7 +493,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @return an HTML String
 	 */
 	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"small mapInfoBox\">Position: <b>");
+		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">Position: <b>");
 		buf.append(StringUtils.format(_gpos, true, GeoLocation.ALL));
 		buf.append("</b><br /> Altitude: ");
 		buf.append(StringUtils.format(_alt, "#,000"));
@@ -568,11 +568,11 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append("Autothrottle: MACH<br />");
 		}
 		
+		buf.append("</span>");
+		
 		// Add Pause/slew flags
 		if (isFlagSet(ACARSFlags.FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-
-		buf.append("</span>");
 
 		return buf.toString();
 	}
