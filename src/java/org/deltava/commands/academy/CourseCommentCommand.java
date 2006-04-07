@@ -76,7 +76,7 @@ public class CourseCommentCommand extends AbstractCommand {
 			
 			// Get instructors
 			GetPilotDirectory pddao = new GetPilotDirectory(con);
-			Collection<Pilot> ins = pddao.getByRole("Instructor", SystemData.get("airline.db"));
+			Collection<Pilot> ins = new ArrayList<Pilot>(pddao.getByRole("Instructor", SystemData.get("airline.db")));
 			for (Iterator<Pilot> i = ins.iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
 				if (!IDs.contains(new Integer(p.getID())))
