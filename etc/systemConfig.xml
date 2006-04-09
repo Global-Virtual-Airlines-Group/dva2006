@@ -348,6 +348,7 @@
 		</fpi>
 		
 		<default_network>VATSIM</default_network>
+		<events_assigned_by>Andrew Dalrymple</events_assigned_by>
 	</online>
 	
 	<security>
@@ -501,6 +502,7 @@
 		<build>
 			<minimum type="Integer">62</minimum>
 			<latest type="Integer">60</latest>
+			<dispatch type="Integer">1</dispatch>
 		</build>
 		
 		<pool>
