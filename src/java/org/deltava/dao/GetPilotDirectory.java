@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -103,7 +103,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS WHERE (((FIRSTNAME=?) AND (LASTNAME=?)) OR (EMAIL=?))");
 
 		try {
@@ -128,119 +128,120 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			throw new DAOException(se);
 		}
 	}
-	
-   /**
-    * Returns all Pilots who have a particular security role.
-    * @param roleName the role name
-    * @param dbName the database name
-    * @return a List of Pilots
-    * @throws DAOException if a JDBC error occurs
-    */
-   public List<Pilot> getByRole(String roleName, String dbName) throws DAOException {
-      
-      // Build the SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-            + "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
-      sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".PILOTS P LEFT JOIN ");
-      sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
-      sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
-      
-   	try {
-           prepareStatement(sqlBuf.toString());
-   		_ps.setString(1, roleName);
-   		_ps.setInt(2, FlightReport.OK);
-   		return execute();
-   	} catch (SQLException se) {
-           throw new DAOException(se);
-       }
-   }
-   
-   /**
-    * Performs a soundex search on a Person's full name to detect possible matches. The soundex
-    * implementation is dependent on the capabilities of the underlying database engine, and is not
-    * guaranteed to be consistent (or even supported) across different database servers.
-    * @param usr the Person to check for
-    * @param dbName the database name
-    * @return a Collection of Database IDs as Integers
-    */
-   public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
-      
-      // Build the SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
-      		+ "AS SX FROM ");
-      sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".PILOTS P WHERE (ID<>?)");
-      
-      // If we're checking for an applicant, remove its PilotID
-      int appPilotID = 0;
-      if (usr instanceof Applicant) {
-         Applicant a = (Applicant) usr;
-         appPilotID = a.getPilotID();
-         if (appPilotID > 0)
-            sqlBuf.append(" AND (ID<>?)");
-      }
-      
-      sqlBuf.append(" HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR (LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
-      
-      try {
-         prepareStatement(sqlBuf.toString());
-         _ps.setString(1, usr.getName());
-         _ps.setInt(2, usr.getID());
-         if (appPilotID > 0)
-            _ps.setInt(3, appPilotID);
-         
-         // Execute the query
-         ResultSet rs = _ps.executeQuery();
-         
-         // Iterate through the results
-         Collection<Integer> results = new ArrayList<Integer>();
-         while (rs.next())
-            results.add(new Integer(rs.getInt(1)));
-         
-         // Clean up and return
-         rs.close();
-         _ps.close();
-         return results;
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
-   
-   /**
-    * Searches for a Pilot name (or fragment thereof) and returns the database IDs of Pilots matching the name.
-    * @param fullName the full name or fragment 
-    * @param dbName the database name
-    * @param doFragment TRUE if a partial match will be accepted, otherwise FALSE
-    * @return a Collection of database IDs as Integers
-    * @throws DAOException if a JDBC error occurs
-    */
-   public Collection<Integer> search(String fullName, String dbName, boolean doFragment) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".PILOTS P WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))");
-	   sqlBuf.append(doFragment ? " LIKE ?)" : "=?)");
-	   
-	   try {
-		   prepareStatement(sqlBuf.toString());
-		   _ps.setString(1, doFragment ? "%" + fullName.toUpperCase() + "%" : fullName.toUpperCase());
-		   
-		   // Execute the query
-		   Collection<Integer> results = new ArrayList<Integer>();
-		   ResultSet rs = _ps.executeQuery();
-		   while (rs.next())
-			   results.add(new Integer(rs.getInt(1)));
-		   
-		   // Clean up and return
-		   rs.close();
-		   _ps.close();
-		   return results;
-	   } catch (SQLException se) {
-		   throw new DAOException(se);
-	   }
-   }
+
+	/**
+	 * Returns all Pilots who have a particular security role.
+	 * @param roleName the role name
+	 * @param dbName the database name
+	 * @return a List of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> getByRole(String roleName, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ROLES R ON (P.ID=R.ID) WHERE (R.ROLE=?) AND (F.STATUS=?) GROUP BY P.ID");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, roleName);
+			_ps.setInt(2, FlightReport.OK);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Performs a soundex search on a Person's full name to detect possible matches. The soundex implementation is
+	 * dependent on the capabilities of the underlying database engine, and is not guaranteed to be consistent (or even
+	 * supported) across different database servers.
+	 * @param usr the Person to check for
+	 * @param dbName the database name
+	 * @return a Collection of Database IDs as Integers
+	 */
+	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder(
+				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) " + "AS SX FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P WHERE (ID<>?)");
+
+		// If we're checking for an applicant, remove its PilotID
+		int appPilotID = 0;
+		if (usr instanceof Applicant) {
+			Applicant a = (Applicant) usr;
+			appPilotID = a.getPilotID();
+			if (appPilotID > 0)
+				sqlBuf.append(" AND (ID<>?)");
+		}
+
+		sqlBuf.append(" HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR (LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, usr.getName());
+			_ps.setInt(2, usr.getID());
+			if (appPilotID > 0)
+				_ps.setInt(3, appPilotID);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+
+			// Iterate through the results
+			Collection<Integer> results = new ArrayList<Integer>();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Searches for a Pilot name (or fragment thereof) and returns the database IDs of Pilots matching the name.
+	 * @param fullName the full name or fragment
+	 * @param dbName the database name
+	 * @param doFragment TRUE if a partial match will be accepted, otherwise FALSE
+	 * @return a Collection of database IDs as Integers
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> search(String fullName, String dbName, boolean doFragment) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))");
+		sqlBuf.append(doFragment ? " LIKE ?)" : "=?)");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, doFragment ? "%" + fullName.toUpperCase() + "%" : fullName.toUpperCase());
+
+			// Execute the query
+			Collection<Integer> results = new ArrayList<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
