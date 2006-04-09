@@ -8,12 +8,11 @@ import org.deltava.beans.FlightReport;
 import org.deltava.beans.assign.AssignmentInfo;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetAssignment;
-import org.deltava.dao.GetFlightReports;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display a Flight Assignment.
@@ -46,9 +45,9 @@ public class AssignmentCommand extends AbstractCommand {
          
          // Load the Flight Reports for this Assignment
          GetFlightReports frdao = new GetFlightReports(con);
-         List pireps = frdao.getByAssignment(ctx.getID());
-         for (Iterator i = pireps.iterator(); i.hasNext(); ) {
-            FlightReport fr = (FlightReport) i.next();
+         List<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
+         for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
+            FlightReport fr = i.next();
             assign.addFlight(fr);
          }
          

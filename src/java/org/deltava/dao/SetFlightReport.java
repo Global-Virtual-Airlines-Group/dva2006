@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -215,13 +215,15 @@ public class SetFlightReport extends DAO {
 	 * Helper method to write promotion equipment types.
 	 */
 	private void writePromoEQ(int id, String dbName, Collection eqTypes) throws SQLException {
+		dbName = formatDBName(dbName);
+		
 		// Delete the existing records
-		prepareStatementWithoutLimits("DELETE FROM " + dbName.toLowerCase() + ".PROMO_EQ WHERE (ID=?)");
+		prepareStatementWithoutLimits("DELETE FROM " + dbName + ".PROMO_EQ WHERE (ID=?)");
 		_ps.setInt(1, id);
 		executeUpdate(0);
 
 		// Queue the new records
-		prepareStatementWithoutLimits("INSERT INTO " + dbName.toLowerCase() + ".PROMO_EQ (ID, EQTYPE) "
+		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) "
 				+ "VALUES (?, ?)");
 		_ps.setInt(1, id);
 		for (Iterator i = eqTypes.iterator(); i.hasNext();) {
@@ -304,7 +306,7 @@ public class SetFlightReport extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf
 				.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 						+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "

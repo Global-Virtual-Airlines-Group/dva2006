@@ -12,6 +12,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AssignmentAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to release a Flight Assignment.
  * @author Luke
@@ -45,7 +47,7 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
-			List pireps = frdao.getByAssignment(ctx.getID());
+			List<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
 
 			// Get the PIREP write DAO and init counters
 			SetFlightReport fwdao = new SetFlightReport(con);
@@ -56,8 +58,8 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			ctx.startTX();
 
 			// Delete PIREPs in draft status, and remove the Assignment ID for the others
-			for (Iterator i = pireps.iterator(); i.hasNext();) {
-				FlightReport fr = (FlightReport) i.next();
+			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
+				FlightReport fr = i.next();
 				if (fr.getStatus() == FlightReport.DRAFT) {
 					fwdao.delete(fr.getID());
 					flightsDeleted++;

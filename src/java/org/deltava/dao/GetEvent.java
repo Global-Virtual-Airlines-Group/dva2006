@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -33,14 +33,43 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?) "
+			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > ?) AND (STATUS != ?) "
 					+ "ORDER BY STARTTIME");
-			_ps.setInt(1, Event.CANCELED);
+			_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+			_ps.setInt(2, Event.CANCELED);
 			List<Event> results = execute();
 			
 			// Load the airports
 			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
 			loadRoutes(eMap);
+			
+			// Return the results
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns all future Online Events with signups that are available for assignment.
+	 * @return a List of Event beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Event> getAssignableEvents() throws DAOException {
+		try {
+			Timestamp now = new Timestamp(System.currentTimeMillis());
+			prepareStatement("select E.*, COUNT(S.ID) from common.EVENTS E LEFT JOIN common.EVENT_SIGNUPS S "
+					+ "ON (E.ID=S.ID) WHERE (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) "
+					+ "GROUP BY E.ID ORDER BY E.STARTTIME DESC");
+			_ps.setTimestamp(1, now);
+			_ps.setTimestamp(2, now);
+			_ps.setInt(3, Event.CANCELED);
+			List<Event> results = execute();
+			
+			// Load the airports
+			Map<Integer, Event> eMap = CollectionUtils.createMap(results, "ID");
+			loadRoutes(eMap);
+			loadSignups(eMap);
 			
 			// Return the results
 			return results;

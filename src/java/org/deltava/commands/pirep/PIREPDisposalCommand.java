@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -147,7 +147,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
 			   GetAssignment fadao = new GetAssignment(con);
 			   AssignmentInfo assign = fadao.get(assignID);
-			   List flights = rdao.getByAssignment(assignID);
+			   List flights = rdao.getByAssignment(assignID, SystemData.get("airline.db"));
 			   for (Iterator i = flights.iterator(); i.hasNext(); )
 			      assign.addFlight((FlightReport) i.next());
 			   
