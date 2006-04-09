@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -29,7 +30,7 @@ public class GetTableStatus extends DAO {
     public List<TableInfo> execute(String dbName) throws DAOException {
        
         try {
-            prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + dbName);
+            prepareStatementWithoutLimits("SHOW TABLE STATUS FROM " + formatDBName(dbName));
             
             // Execute the query
             List<TableInfo> results = new ArrayList<TableInfo>();

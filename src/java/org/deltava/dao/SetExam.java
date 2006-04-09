@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -176,7 +176,7 @@ public class SetExam extends DAO {
 		try {
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO " + dbName.toLowerCase() + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
+				prepareStatement("INSERT INTO " + formatDBName(dbName) + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
 						+ "STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES "
 						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
@@ -192,7 +192,7 @@ public class SetExam extends DAO {
 				_ps.setBoolean(11, cr.getPassFail());
 				_ps.setBoolean(12, cr.getAcademy());
 			} else {
-				prepareStatement("UPDATE " + dbName.toLowerCase() + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
+				prepareStatement("UPDATE " + formatDBName(dbName) + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
 						+ "ACARS_ID=?, GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
 				_ps.setInt(1, cr.getStatus());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));

@@ -39,14 +39,14 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Applicant get(int id) throws DAOException {
-		
+
 		// Check if we're in the cache
 		Applicant a = (Applicant) _cache.get(new Integer(id));
 		if (a != null)
 			return a;
 
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 
@@ -66,7 +66,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
 
@@ -77,18 +77,18 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
-	 * Returns a Map of applicant based on a group of database IDs. This is typically called by a Water Cooler thread/channel
-	 * list command.
+	 * Returns a Map of applicant based on a group of database IDs. This is typically called by a Water Cooler
+	 * thread/channel list command.
 	 * @param ids a Collection of database IDs. These can either be Integers, or {@link UserData} beans
-	 * @param tableName the table to read from, in <i>DATABASE.TABLE</i> format for a remote database, or
-	 * <i>TABLE</i> for a table in the current airline's database.
+	 * @param tableName the table to read from, in <i>DATABASE.TABLE</i> format for a remote database, or <i>TABLE</i>
+	 * for a table in the current airline's database.
 	 * @return a Map of Applicants, indexed by the pilot code
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, Applicant> getByID(Collection ids, String tableName) throws DAOException {
-		
+
 		List<Applicant> results = new ArrayList<Applicant>();
 		log.debug("Raw set size = " + ids.size());
 
@@ -112,7 +112,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 					sqlBuf.append(',');
 			}
 		}
-		
+
 		// Only execute the prepared statement if we haven't gotten anything from the cache
 		log.debug("Uncached set size = " + querySize);
 		if (querySize > 0) {
@@ -145,7 +145,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?)");
 			_ps.setString(1, directoryName);
 
@@ -189,14 +189,14 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Applicant> getByStatus(int status, String orderBy) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?)");
 		if (!StringUtils.isEmpty(orderBy)) {
 			sqlBuf.append(" ORDER BY ");
 			sqlBuf.append(orderBy);
 		}
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, status);
@@ -233,20 +233,19 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> checkUnique(Person p, String dbName) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR "
-	         + "(EMAIL=?))");
-	   
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR " + "(EMAIL=?))");
+
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, Applicant.REJECTED);
 			_ps.setString(2, p.getFirstName());
 			_ps.setString(3, p.getLastName());
 			_ps.setString(4, p.getEmail());
-			
+
 			// Build result collection
 			Set<Integer> results = new HashSet<Integer>();
 
@@ -263,7 +262,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Searches for Applicants registering from the same TCP/IP network.
 	 * @param addr the network Address
@@ -275,77 +274,77 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Collection<Integer> checkAddress(String addr, String maskAddr, String dbName) throws DAOException {
 		if (NO_IP.equals(addr))
 			return Collections.emptyList();
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".APPLICANTS A WHERE (A.STATUS<>?) AND ((INET_ATON(?) & INET_ATON(?)) = "
 				+ "(REGADDR & INET_ATON(?)))");
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Applicant.REJECTED);
 			_ps.setString(2, addr);
 			_ps.setString(3, maskAddr);
 			_ps.setString(4, maskAddr);
-			
-	         // Execute the query
-	         ResultSet rs = _ps.executeQuery();
-	         
-	         // Iterate through the results
-	         Collection<Integer> results = new HashSet<Integer>();
-	         while (rs.next())
-	            results.add(new Integer(rs.getInt(1)));
 
-	         // Clean up and return
-	         rs.close();
-	         _ps.close();
-	         return results;
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+
+			// Iterate through the results
+			Collection<Integer> results = new HashSet<Integer>();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
-   /**
-    * Performs a soundex search on a Person's full name to detect possible matches. The soundex
-    * implementation is dependent on the capabilities of the underlying database engine, and is not
-    * guaranteed to be consistent (or even supported) across different database servers.
-    * @param usr the Person to check for
-    * @param dbName the database name
-    * @return a Collection of Database IDs as Integers
-    * @throws DAOException if a JDBC error occurs
-    */
-   public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
-      
-      // Build the SQL statement
-      StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) "
-      		+ "AS SX FROM ");
-      sqlBuf.append(dbName.toLowerCase());
-      sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
-    		  + "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
-      
-      try {
-         prepareStatement(sqlBuf.toString());
-         _ps.setString(1, usr.getName());
-         _ps.setInt(2, usr.getID());
-         _ps.setInt(3, Applicant.REJECTED);
-         
-         // Execute the query
-         ResultSet rs = _ps.executeQuery();
-         
-         // Iterate through the results
-         Collection<Integer> results = new TreeSet<Integer>();
-         while (rs.next())
-            results.add(new Integer(rs.getInt(1)));
-         
-         // Clean up and return
-         rs.close();
-         _ps.close();
-         return results;
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
+
+	/**
+	 * Performs a soundex search on a Person's full name to detect possible matches. The soundex implementation is
+	 * dependent on the capabilities of the underlying database engine, and is not guaranteed to be consistent (or even
+	 * supported) across different database servers.
+	 * @param usr the Person to check for
+	 * @param dbName the database name
+	 * @return a Collection of Database IDs as Integers
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder(
+				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) " + "AS SX FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
+				+ "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, usr.getName());
+			_ps.setInt(2, usr.getID());
+			_ps.setInt(3, Applicant.REJECTED);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+
+			// Iterate through the results
+			Collection<Integer> results = new TreeSet<Integer>();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Helper method to extract data from the result set.

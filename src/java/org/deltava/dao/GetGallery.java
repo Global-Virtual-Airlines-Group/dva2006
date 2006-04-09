@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -13,6 +14,7 @@ import org.deltava.util.system.SystemData;
  * @version 1.0
  * @since 1.0
  */
+
 public class GetGallery extends DAO {
 
 	/**
@@ -43,8 +45,9 @@ public class GetGallery extends DAO {
 	public Image getImageData(int id, String dbName) throws DAOException {
 		
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".GALLERY WHERE (ID=?)");
 		
 		try {
@@ -72,7 +75,10 @@ public class GetGallery extends DAO {
 			_ps.close();
 
 			// Load gallery image votes
-			prepareStatementWithoutLimits("SELECT * FROM GALLERYSCORE WHERE (IMG_ID=?)");
+			sqlBuf = new StringBuilder("SELECT * FROM ");
+			sqlBuf.append(dbName);
+			sqlBuf.append(".GALLERYSCORE WHERE (IMG_ID=?)");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 			rs = _ps.executeQuery();
 			while (rs.next())
