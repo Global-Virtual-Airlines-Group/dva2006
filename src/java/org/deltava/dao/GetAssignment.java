@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -106,15 +106,18 @@ public class GetAssignment extends DAO {
 	 * @return a List of AssignmentInfo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<AssignmentInfo> getByEvent(int eventID) throws DAOException {
+	public List<AssignmentInfo> getByEvent(int eventID, String dbName) throws DAOException {
+		
+		dbName = formatDBName(dbName);
 		try {
 			// Load the assignment info
-			prepareStatement("SELECT * FROM ASSIGNMENTS WHERE (EVENT_ID=?)");
+			prepareStatement("SELECT * FROM " + dbName + ".ASSIGNMENTS WHERE (EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			List<AssignmentInfo> results = loadInfo();
 
 			// Load the legs
-			prepareStatementWithoutLimits("SELECT L.* FROM ASSIGNMENTS A, ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
+			prepareStatementWithoutLimits("SELECT L.* FROM " + dbName + ".ASSIGNMENTS A, " + dbName + 
+					".ASSIGNLEGS L WHERE (A.ID=L.ID) AND (A.EVENT_ID=?)");
 			_ps.setInt(1, eventID);
 			loadLegs(results);
 

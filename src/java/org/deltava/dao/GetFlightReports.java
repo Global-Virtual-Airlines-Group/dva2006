@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -40,7 +40,7 @@ public class GetFlightReports extends DAO {
 	public FlightReport get(int id) throws DAOException {
 		return get(id, SystemData.get("airline.db"));
 	}
-	
+
 	/**
 	 * Returns a PIREP with a particular database ID.
 	 * @param id the database ID
@@ -49,20 +49,21 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FlightReport get(int id, String dbName) throws DAOException {
-		
+
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
-		
+
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 
@@ -79,33 +80,34 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns an ACARS-logged PIREP with a particular ACARS Flight ID.
-	 * @param dbName  the database Name
+	 * @param dbName the database Name
 	 * @param acarsID the ACARS flight ID
 	 * @return the ACARSFlightReport, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ACARSFlightReport getACARS(String dbName, int acarsID) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".PILOTS P, ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".PIREPS PR, ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
-			   + "AND (APR.ACARS_ID=?)");
-	   
-	   try {
-	      setQueryMax(1);
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
+				+ "AND (APR.ACARS_ID=?)");
+
+		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, acarsID);
-			
+
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
 			if (results.size() == 0)
@@ -115,9 +117,9 @@ public class GetFlightReports extends DAO {
 			ACARSFlightReport afr = (ACARSFlightReport) results.get(0);
 			afr.setCaptEQType(getCaptEQType(afr.getID()));
 			return afr;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -127,12 +129,12 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<FlightReport> getByStatus(Collection<Integer> status) throws DAOException {
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* "
 				+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN "
 				+ "ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (");
-		for (Iterator<Integer> i = status.iterator(); i.hasNext(); ) {
+		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
 			sqlBuf.append("(PR.STATUS=");
 			sqlBuf.append(st.toString());
@@ -140,9 +142,9 @@ public class GetFlightReports extends DAO {
 			if (i.hasNext())
 				sqlBuf.append(" OR ");
 		}
-		
+
 		sqlBuf.append(") ORDER BY PR.DATE, PR.ID");
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			return execute();
@@ -150,7 +152,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns the number of Flight Reports awaiting disposition.
 	 * @return the number Flight Reports in SUBMITTED or HOLD status
@@ -165,7 +167,7 @@ public class GetFlightReports extends DAO {
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			int results = rs.next() ? rs.getInt(1) : 0;
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -178,17 +180,27 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns all Flight Reports associated with a particular Flight Assignment.
 	 * @param id the Flight Assignment database ID
+	 * @param dbName the database name
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getByAssignment(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ASSIGN_ID=?)");
-			_ps.setInt(1, id);
+	public List<FlightReport> getByAssignment(int id, String dbName) throws DAOException {
 
-			// Return the results
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ASSIGN_ID=?)");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -198,21 +210,33 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns all Flight Reports associated with a particular Online Event.
 	 * @param id the Online Event database ID
+	 * @param dbName the database name
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByEvent(int id) throws DAOException {
+	public List<FlightReport> getByEvent(int id, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
+
 		try {
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all Flight Reports flown on a certain date.
 	 * @param dt the date
@@ -222,15 +246,15 @@ public class GetFlightReports extends DAO {
 	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-				+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
-				+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
+					+ "PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR ON "
+					+ "(PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.
 	 * @param id the Pilot database ID
@@ -290,19 +314,16 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns online legs/hours for a group of Pilots .
 	 * @param pilots a Map of Pilot objects to populate with results
+	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
-	   
-	   // Trim the database name if it's in DB.TABLE format
-	   if (dbName.indexOf('.') != -1)
-	      dbName = dbName.substring(0, dbName.indexOf('.'));
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append('.');
-		sqlBuf.append("PIREPS F WHERE ((F.ATTR & ?) != 0) AND (F.STATUS=?) AND F.PILOT_ID IN (");
+		StringBuilder sqlBuf = new StringBuilder(
+				"SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PIREPS F WHERE ((F.ATTR & ?) != 0) AND (F.STATUS=?) AND F.PILOT_ID IN (");
 
 		// Append the Pilot IDs
 		int setSize = 0;
@@ -354,7 +375,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns Draft Flight Reports for a particular Pilot (with optional city pair).
 	 * @param pilotID the Pilot's Database ID
@@ -364,13 +385,15 @@ public class GetFlightReports extends DAO {
 	 * @return a List of Draft FlightReports matching the above criteria
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName) throws DAOException {
+	public List<FlightReport> getDraftReports(int pilotID, Airport airportD, Airport airportA, String dbName)
+			throws DAOException {
 
 		// Build the prepared statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.* FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?) AND (PR.STATUS=?)");
 
 		// Add departure/arrival airports if specified
@@ -392,7 +415,7 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns the number of approved Flight Reports for a particular Pilot.
 	 * @param pilotID the Pilot database ID
@@ -400,23 +423,23 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occuurs
 	 */
 	public int getCount(int pilotID) throws DAOException {
-	   try {
-	      setQueryMax(1);
-	      prepareStatement("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
-	      _ps.setInt(1, pilotID);
-	      _ps.setInt(2, FlightReport.OK);
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      int result = (rs.next()) ? rs.getInt(1) : 0;
-	      
-	      // Clean up and return
-	      rs.close();
-	      _ps.close();
-	      return result;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, FlightReport.OK);
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = (rs.next()) ? rs.getInt(1) : 0;
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -437,8 +460,8 @@ public class GetFlightReports extends DAO {
 
 			// Build the PIREP as a standard one, or an ACARS pirep
 			Airline a = SystemData.getAirline(rs.getString(8));
-			FlightReport p = (isACARS) ? new ACARSFlightReport(a, rs.getInt(9), rs.getInt(10)) : new FlightReport(a, rs.getInt(9), rs
-					.getInt(10));
+			FlightReport p = (isACARS) ? new ACARSFlightReport(a, rs.getInt(9), rs.getInt(10)) : new FlightReport(a, rs
+					.getInt(9), rs.getInt(10));
 
 			// Populate the data
 			p.setFirstName(rs.getString(1));
@@ -510,22 +533,22 @@ public class GetFlightReports extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void getCaptEQType(Collection<FlightReport> pireps) throws DAOException {
-		
+
 		// Do nothing if empty
 		if (pireps.isEmpty())
 			return;
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, EQTYPE FROM PROMO_EQ WHERE (ID IN (");
-		for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
+		for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
 			FlightReport fr = i.next();
 			sqlBuf.append(String.valueOf(fr.getID()));
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
-		
+
 		sqlBuf.append("))");
-		
+
 		// Convert PIREPs to a Map for lookup
 		Map pMap = CollectionUtils.createMap(pireps, "ID");
 		try {
@@ -538,7 +561,7 @@ public class GetFlightReports extends DAO {
 				if (fr != null)
 					fr.setCaptEQType(rs.getString(2));
 			}
-			
+
 			// Clean up
 			rs.close();
 			_ps.close();
