@@ -4,15 +4,14 @@ package org.deltava.commands.event;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.system.UserDataMap;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.EventAccessControl;
-import org.deltava.security.command.SignupAccessControl;
+import org.deltava.security.command.*;
 
 /**
  * A Web Site Command to display an Online Event.
@@ -93,26 +92,28 @@ public class EventCommand extends AbstractCommand {
 			// Get the DAO and load the Charts
 			GetChart cdao = new GetChart(con);
 			e.addCharts(cdao.getChartsByEvent(e.getID()));
-
-			// Get the DAO and load the Flight Reports
-			GetFlightReports frdao = new GetFlightReports(con);
-			ctx.setAttribute("pireps", frdao.getByEvent(eventID), REQUEST);
 			
 			// Get the location of all the pilots
 			GetUserData usrdao = new GetUserData(con);
 			UserDataMap udm = usrdao.getByEvent(e.getID());
 			ctx.setAttribute("userData", udm, REQUEST);
-
-			// Get the DAO and load the Pilots
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
+			
+			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
+			GetFlightReports frdao = new GetFlightReports(con);
+			
+			// Load the Pilots and Flight Reports
+			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
+			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();
+				pireps.addAll(frdao.getByEvent(e.getID(), tableName));
 				pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
 			}
 			
-			// Save the pilots
+			// Save the pilots and flight reports
 			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("pireps", pireps, REQUEST);
 
 			// Save event info in the request
 			ctx.setAttribute("event", e, REQUEST);

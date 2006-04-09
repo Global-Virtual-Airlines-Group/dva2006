@@ -38,7 +38,6 @@ public class EventAssignCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
 		
-		Set<Pilot> pilots = new HashSet<Pilot>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -71,14 +70,13 @@ public class EventAssignCommand extends AbstractCommand {
 			ctx.startTX();
 			
 			// Get the signups for this event
+			GetPilot pdao = new GetPilot(con);
 			for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
 				Signup s = i.next();
 				
 				// Get the Pilot
 				UserData usrData = (UserData) usrmap.get(s.getPilotID());
-				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(usrData);
-				pilots.add(usr);
 				mctxt.addData("pilot", usr);
 				
 				// Create a Flight Assignment
@@ -89,7 +87,7 @@ public class EventAssignCommand extends AbstractCommand {
 				ai.setStatus(AssignmentInfo.RESERVED);
 				
 				// Create an Assignment Leg
-				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(SystemData.get("airline.code")), usr.getPilotNumber(),1);
+				AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(usrData.getAirlineCode()), usr.getPilotNumber(),1);
 				leg.setEquipmentType(s.getEquipmentType());
 				leg.setAirportD(s.getAirportD());
 				leg.setAirportA(s.getAirportA());
@@ -103,6 +101,7 @@ public class EventAssignCommand extends AbstractCommand {
 				fr.setDatabaseID(FlightReport.DBID_PILOT, s.getPilotID());
 				fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
 				fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
+				fr.setDate(e.getStartTime());
 				switch (e.getNetwork()) {
 					case Event.NET_VATSIM :
 						fr.setAttribute(FlightReport.ATTR_VATSIM, true);
@@ -116,6 +115,11 @@ public class EventAssignCommand extends AbstractCommand {
 				// Write the Flight Report to the proper database
 				fwdao.write(fr, usrData.getDB());
 				mctxt.addData("pirep", fr);
+				
+				// Send the message
+				Mailer mailer = new Mailer(ctx.getUser());
+				mailer.setContext(mctxt);
+				mailer.send(usr);
 			}
 			
 			// Commit the transaction
@@ -130,11 +134,6 @@ public class EventAssignCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
-		// Send the notification message
-		Mailer mailer = new Mailer(ctx.getUser());
-		mailer.setContext(mctxt);
-		mailer.send(pilots);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
