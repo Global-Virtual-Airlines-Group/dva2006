@@ -234,6 +234,20 @@ public abstract class DAO {
 		s = null;
 		return threadID;
 	}
+	
+	/**
+	 * Formats a database name by converting to lowercase. This method will also return the database name component of
+	 * a table name expressed in DB.TABLE format.
+	 * @param db the database/table name
+	 * @return the converted database name
+	 */
+	protected String formatDBName(String db) {
+		int ofs = db.indexOf('.');
+		if (ofs == -1)
+			return db.toLowerCase();
+		
+		return db.substring(0, ofs).toLowerCase();
+	}
 
 	/**
 	 * Marks the start of a multi-step database transaction. This turns off the autoCommit property of the JDBC

@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -60,7 +61,7 @@ public class GetImage extends DAO {
      */
     public byte[] getSignatureImage(int id, String dbName) throws DAOException {
     	StringBuilder sqlBuf = new StringBuilder("SELECT WC_SIG FROM ");
-    	sqlBuf.append(dbName.toLowerCase());
+    	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".SIGNATURES WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
     }
@@ -86,7 +87,7 @@ public class GetImage extends DAO {
     	
     	// Build the SQL statement
     	StringBuilder sqlBuf = new StringBuilder("SELECT IMG FROM ");
-    	sqlBuf.append(dbName.toLowerCase());
+    	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".GALLERY WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
     }

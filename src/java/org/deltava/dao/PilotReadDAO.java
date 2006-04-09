@@ -83,13 +83,14 @@ abstract class PilotReadDAO extends PilotDAO {
 	public final Pilot getByName(String fullName, String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
 				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))=?) "
 				+ "GROUP BY P.ID");
 
@@ -152,8 +153,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Get the datbaase - if we haven't specified one, use the current database
 		int ofs = tableName.indexOf('.');
-		String dbName = (ofs == -1) ? SystemData.get("airline.db") : tableName.substring(0, ofs);
-		dbName = dbName.toLowerCase();
+		String dbName = (ofs == -1) ? SystemData.get("airline.db") : formatDBName(tableName);
 		if (ofs != -1)
 			tableName = tableName.substring(ofs + 1);
 
@@ -356,7 +356,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, ROLE FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".ROLES WHERE (ID IN (");
 		for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
 			Integer id = (Integer) i.next();
@@ -395,10 +395,10 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID, RATING FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".RATINGS WHERE (ID IN (");
-		for (Iterator i = pilots.keySet().iterator(); i.hasNext();) {
-			Integer id = (Integer) i.next();
+		for (Iterator<Integer> i = pilots.keySet().iterator(); i.hasNext();) {
+			Integer id = i.next();
 			sqlBuf.append(id.toString());
 			if (i.hasNext())
 				sqlBuf.append(',');

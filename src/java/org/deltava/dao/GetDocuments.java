@@ -37,10 +37,11 @@ public class GetDocuments extends GetLibrary {
 	public Manual getManual(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOCS D LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
 		try {
@@ -72,10 +73,11 @@ public class GetDocuments extends GetLibrary {
 	public Newsletter getNewsletter(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
 		try {
@@ -100,10 +102,11 @@ public class GetDocuments extends GetLibrary {
 	public Collection<Newsletter> getNewsletters(String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT N.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".NEWSLETTERS N LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) GROUP BY N.NAME ORDER BY "
 				+ "N.CATEGORY, N.PUBLISHED DESC");
 
@@ -143,10 +146,11 @@ public class GetDocuments extends GetLibrary {
 	public Collection<Manual> getManuals(String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT D.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOCS D LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) GROUP BY D.NAME");
 
 		try {
@@ -187,7 +191,7 @@ public class GetDocuments extends GetLibrary {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".CERTDOCS");
 		
 		// Prepare and execute the statement
@@ -213,7 +217,7 @@ public class GetDocuments extends GetLibrary {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CERTNAME FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
 		
 		// Prepare the statement

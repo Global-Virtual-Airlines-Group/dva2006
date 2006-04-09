@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -36,10 +36,11 @@ public class GetLibrary extends DAO {
 	public Collection<Installer> getFleet(String dbName) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".FLEET F LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
 
 		try {
@@ -57,16 +58,17 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Installer getInstaller(String fName, String dbName) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".FLEET F LEFT JOIN ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
-	   
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".FLEET F LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
+
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
 
@@ -77,7 +79,7 @@ public class GetLibrary extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns metadata about a specifc Installer <i>in the current database</i>.
 	 * @param code the Installer code
@@ -86,20 +88,21 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Installer getInstallerByCode(String code, String dbName) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".FLEET F LEFT JOIN ");
-	   sqlBuf.append(dbName.toLowerCase());
-	   sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY "
-	         + "F.NAME ORDER BY F.NAME"); 
-	   
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".FLEET F LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY "
+				+ "F.NAME ORDER BY F.NAME");
+
 		try {
-		   setQueryMax(1);
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, code.toUpperCase());
-			
+
 			// Get results - if empty return null
 			List results = loadInstallers();
 			return results.isEmpty() ? null : (Installer) results.get(0);
@@ -107,7 +110,7 @@ public class GetLibrary extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns metadata about a specifc file <i>in the current database</i>.
 	 * @param fName the filename
@@ -115,20 +118,20 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public FileEntry getFile(String fName) throws DAOException {
-	   try {
-	      setQueryMax(1);
-	      prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
 					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
 			_ps.setString(1, fName);
-			
+
 			// Get results - if empty return null
 			List results = loadFiles();
 			return results.isEmpty() ? null : (FileEntry) results.get(0);
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
-	
+
 	/**
 	 * Returns the contents of the File Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
@@ -137,52 +140,53 @@ public class GetLibrary extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<FileEntry> getFiles(String dbName) throws DAOException {
-	   
+
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".FILES F LEFT JOIN ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
-		
+
 		try {
 			prepareStatement(sqlBuf.toString());
 			return loadFiles();
 		} catch (SQLException se) {
-		   throw new DAOException(se);
+			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Helper method to load from the File Library table.
 	 */
 	private List<FileEntry> loadFiles() throws SQLException {
-	   
-	   // Execute the query
-	   ResultSet rs = _ps.executeQuery();
-	   boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
-	   
-	   // Iterate through the result set
-	   List<FileEntry> results = new ArrayList<FileEntry>();
-	   while (rs.next()) {
-	      File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
-	      FileEntry entry = new FileEntry(f.getPath());
-	      entry.setName(rs.getString(2));
-	      entry.setCategory(rs.getString(3));
-	      entry.setSecurity(rs.getInt(5));
-	      entry.setAuthorID(rs.getInt(6));
-	      entry.setDescription(rs.getString(7));
-	      if (hasTotals)
-	         entry.setDownloadCount(rs.getInt(8));
-	      
-	      // Add to results
-	      results.add(entry);
-	   }
-	   
-	   // Clean up and return
-	   rs.close();
-	   _ps.close();
-	   return results;
+
+		// Execute the query
+		ResultSet rs = _ps.executeQuery();
+		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
+
+		// Iterate through the result set
+		List<FileEntry> results = new ArrayList<FileEntry>();
+		while (rs.next()) {
+			File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
+			FileEntry entry = new FileEntry(f.getPath());
+			entry.setName(rs.getString(2));
+			entry.setCategory(rs.getString(3));
+			entry.setSecurity(rs.getInt(5));
+			entry.setAuthorID(rs.getInt(6));
+			entry.setDescription(rs.getString(7));
+			if (hasTotals)
+				entry.setDownloadCount(rs.getInt(8));
+
+			// Add to results
+			results.add(entry);
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
 	}
 
 	/**

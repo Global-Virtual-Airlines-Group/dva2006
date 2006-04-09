@@ -58,7 +58,7 @@ public class GetExam extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				boolean isMC = (rs.getInt(8) > 0);
-				
+
 				// Create the question
 				Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
 				q.setID(rs.getInt(2));
@@ -73,7 +73,7 @@ public class GetExam extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
-			
+
 			// Load multiple choice questions
 			if (e.hasMultipleChoice()) {
 				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
@@ -90,12 +90,12 @@ public class GetExam extends DAO {
 						mq.addChoice(rs.getString(3));
 					}
 				}
-				
+
 				// Clean up
 				rs.close();
 				_ps.close();
 			}
-			
+
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -156,10 +156,11 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(String dbName, int pilotID, String eqType, int status) throws DAOException {
 
 		// Build the SQL statement
+		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, EQ.STAGE FROM ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".CHECKRIDES CR, ");
-		sqlBuf.append(dbName.toLowerCase());
+		sqlBuf.append(dbName);
 		sqlBuf.append(".EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) "
 				+ "AND (CR.STATUS=?)");
 

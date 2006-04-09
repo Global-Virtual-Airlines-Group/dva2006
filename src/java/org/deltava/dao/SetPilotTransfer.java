@@ -15,33 +15,39 @@ import org.deltava.beans.*;
 
 public class SetPilotTransfer extends SetPilot {
 
-   /**
-    * Initializes the Data Access Object.
-    * @param c the JDBC connection to use
-    */
-   public SetPilotTransfer(Connection c) {
-      super(c);
-   }
+	/**
+	 * Initializes the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public SetPilotTransfer(Connection c) {
+		super(c);
+	}
 
-   /**
-    * Writes a new Pilot to a database.
-    * @param p the Pilot/Applicant
-    * @param dbName the database name
-    * @throws DAOException if a JDBC error occurs
-    */
-   public void transfer(Person p, String dbName, Collection ratings) throws DAOException {
-      
-      // Get the database ID
-      int id = (p instanceof Applicant) ? ((Applicant) p).getPilotID() : p.getID();
-      try {
-         startTransaction();
-         
+	/**
+	 * Writes a new Pilot to a database.
+	 * @param p the Pilot/Applicant
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void transfer(Person p, String dbName, Collection ratings) throws DAOException {
+
+		// Get the database ID
+		int id = (p instanceof Applicant) ? ((Applicant) p).getPilotID() : p.getID();
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, IMHANDLE, MSNHANDLE, "
+						+ "LEGACY_HOURS, HOME_AIRPORT, EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, "
+						+ "LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, UISCHEME, LOGINHOSTNAME, "
+						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+		try {
+			startTransaction();
+
 			// Write the new Pilot object
-			prepareStatement("INSERT INTO " + dbName.toLowerCase() + ".PILOTS (FIRSTNAME, LASTNAME, STATUS, "
-			      + "LDAP_DN, EMAIL, LOCATION, IMHANDLE, MSNHANDLE, LEGACY_HOURS, HOME_AIRPORT, EQTYPE, RANK, "
-			      + "VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, "
-			      + "NEWS_NOTIFY, SHOW_EMAIL, UISCHEME, LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, "
-			      + "ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, p.getFirstName());
 			_ps.setString(2, p.getLastName());
 			_ps.setInt(3, Pilot.ACTIVE);
@@ -73,18 +79,18 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setInt(29, p.getAirportCodeType());
 			_ps.setInt(30, id);
 			executeUpdate(1);
-			
+
 			// Write the ratings - don't bother writing roles
 			writeRatings(id, ratings, dbName, false);
-			
+
 			// Commit the transaction
 			commitTransaction();
-      } catch (SQLException se) {
-         rollbackTransaction();
-         throw new DAOException(se);
-      }
-   }
-   
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Marks a Pilot as Transferred.
 	 * @param id the pilot database ID
