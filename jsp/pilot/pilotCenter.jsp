@@ -232,7 +232,7 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
- <td class="data">Our servers automatically download North Atlantic and Pacifc Track information 
+ <td class="data">Our servers automatically download North Atlantic and Pacific Track information 
 every day.</td>
 </tr>
 <tr>
