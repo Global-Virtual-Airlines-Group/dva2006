@@ -1,4 +1,4 @@
-//Copyright 2005 Luke J. Kolin. All Rights Reserved.
+//Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -32,13 +32,14 @@ public class GetChart extends DAO {
     }
 
     /**
-     * Returns all Airports with available charts
+     * Returns all Airports with available charts.
      * @return a List of Airports
      * @throws DAOException if a JDBC error occurs
      */
     public List<Airport> getAirports() throws DAOException {
         try {
-            prepareStatementWithoutLimits("SELECT DISTINCT (IATA) FROM common.CHARTS");
+            prepareStatementWithoutLimits("SELECT DISTINCT C.IATA FROM common.CHARTS C, common.AIRPORTS A " +
+            		"WHERE (C.IATA=A.IATA) ORDER BY A.NAME");
             
             // Get the airport info map
             Map airports = (Map) SystemData.getObject("airports");
@@ -50,7 +51,8 @@ public class GetChart extends DAO {
             // Iterate through the results
             while (rs.next()) {
                 Airport a = (Airport) airports.get(rs.getString(1));
-                results.add(a);
+                if (a != null)
+                	results.add(a);
             }
             
             // Clean up and return
