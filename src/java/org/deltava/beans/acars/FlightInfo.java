@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -42,7 +42,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private boolean _hasPIREP;
    private boolean _archived;
    
-   private Collection<RouteEntry> _routeData;
+   private SortedSet<RouteEntry> _routeData;
    private Collection<NavigationDataBean> _planData;
    
    /**
@@ -205,6 +205,14 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public int getPositionCount() {
 	   return _positionCount;
+   }
+   
+   /**
+    * Returns the last logged position for this flight.
+    * @return the latest PositionEntry, or NULL if no route data
+    */
+   public RouteEntry getPosition() {
+	   return hasRouteData() ? _routeData.last() : null;
    }
    
    /**
@@ -415,7 +423,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @see FlightInfo#hasRouteData()
     */
    public void setRouteData(Collection<RouteEntry> entries) {
-	   _routeData = entries;
+	   _routeData = new TreeSet<RouteEntry>(entries);
    }
    
    /**
