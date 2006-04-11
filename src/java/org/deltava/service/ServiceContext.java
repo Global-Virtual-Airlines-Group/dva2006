@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -35,7 +35,7 @@ public class ServiceContext implements Serializable, SecurityContext {
       
       private OutputBuffer() {
          super();
-         _buffer = new StringBuilder(64);
+         _buffer = new StringBuilder(256);
       }
       
       public void print(CharSequence value) {
