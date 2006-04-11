@@ -4,8 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
-
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.system.SystemData;
@@ -63,14 +63,29 @@ public class GetACARSData extends DAO {
 	}
 
 	/**
+	 * Loads completed route data for a particular ACARS filght ID, including data when on the ground.
+	 * @param flightID the ACARS flight ID
+	 * @param isArchived TRUE if the positions should be read from the archive, otherwise FALSE
+	 * @return a List of RouteEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 * @see GetACARSData#getRouteEntries(int, boolean, boolean)
+	 */
+	@SuppressWarnings("unchecked")
+	public List<RouteEntry> getRouteEntries(int flightID, boolean isArchived) throws DAOException {
+		List results = getRouteEntries(flightID, true, isArchived);
+		return (List<RouteEntry>) results; 
+	}
+
+	/**
 	 * Loads complete route data for a particular ACARS flight ID.
 	 * @param flightID the ACARS flight ID
 	 * @param includeOnGround TRUE if entries on the ground are RouteEntry beans, otherwise FALSE
-	 * @param isArchived TRUE if the positions should be read from the archive
-	 * @return a List of RouteEntry beans
+	 * @param isArchived TRUE if the positions should be read from the archive, otherwise FALSE
+	 * @return a List of GeoLocation beans
 	 * @throws DAOException if a JDBC error occurs
+	 * @see GetACARSData#getRouteEntries(int, boolean)
 	 */
-	public List getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
+	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
@@ -83,7 +98,7 @@ public class GetACARSData extends DAO {
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			List<Object> results = new ArrayList<Object>();
+			List<GeoLocation> results = new ArrayList<GeoLocation>();
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the result set
