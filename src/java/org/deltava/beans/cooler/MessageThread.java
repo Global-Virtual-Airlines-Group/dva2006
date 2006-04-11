@@ -34,6 +34,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	private int _postCount;
 
 	private SortedSet<Message> _posts;
+	private SortedSet<ThreadUpdate> _updates;
 
 	private Collection<PollOption> _pollOptions;
 	private Collection<PollVote> _pollVotes;
@@ -359,6 +360,18 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 
 		_posts.add(msg);
 	}
+	
+	/**
+	 * Adds a thread update entry to this thread.
+	 * @param upd the update entry bean
+	 * @see MessageThread#getUpdates()
+	 */
+	public void addUpdate(ThreadUpdate upd) {
+		if (_updates == null)
+			_updates = new TreeSet<ThreadUpdate>();
+		
+		_updates.add(upd);
+	}
 
 	/**
 	 * Adds poll options to this thread.
@@ -410,6 +423,15 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 */
 	public List<Message> getPosts() {
 		return (_posts == null) ? new ArrayList<Message>() : new ArrayList<Message>(_posts);
+	}
+	
+	/**
+	 * Returns this thread's update history
+	 * @return a Collection of ThreadUpdate beans
+	 * @see MessageThread#addUpdate(ThreadUpdate)
+	 */
+	public Collection<ThreadUpdate> getUpdates() {
+		return (_updates == null) ? new TreeSet<ThreadUpdate>() : new ArrayList<ThreadUpdate>(_updates);
 	}
 	
 	/**

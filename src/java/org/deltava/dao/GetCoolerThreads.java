@@ -179,12 +179,14 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public MessageThread getThread(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.COOLER_THREADS WHERE (ID=?)");
 			_ps.setInt(1, id);
 
 			// Execute the query - if id not found return null
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
+				_ps.close();
 				rs.close();
 				return null;
 			}
@@ -224,6 +226,25 @@ public class GetCoolerThreads extends DAO {
 				t.addPost(msg);
 			}
 
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// Fetch the thread updates
+			prepareStatementWithoutLimits("SELECT CREATED, AUTHOR, MESSAGE FROM common.COOLER_THREADHISTORY "
+					+ "WHERE (ID=?)");
+			_ps.setInt(1, id);
+			
+			// Execute the query
+			rs = _ps.executeQuery();
+			while (rs.next()) {
+				ThreadUpdate upd = new ThreadUpdate(id);
+				upd.setDate(rs.getTimestamp(1));
+				upd.setAuthorID(rs.getInt(2));
+				upd.setMessage(rs.getString(3));
+				t.addUpdate(upd);
+			}
+			
 			// Clean up
 			rs.close();
 			_ps.close();

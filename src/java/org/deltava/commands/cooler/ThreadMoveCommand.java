@@ -48,15 +48,28 @@ public class ThreadMoveCommand extends AbstractCommand {
 			if (!access.getCanRead())
 				throw securityException("Cannot move Thread to " + newChannel);
 			
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(t.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Moved to Channel \"" + newChannel + "\"");
+			
+			// Start a transaction
+			ctx.startTX();
+			
+			// Update the thread
+			SetCoolerMessage wdao = new SetCoolerMessage(con);
+			wdao.setChannel(ctx.getID(), newChannel);
+			wdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
+			
 			// Save thread and set new channel
 			ctx.setAttribute("isMoved", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("newChannel", newChannel, REQUEST);
 			ctx.setAttribute("thread", t, REQUEST);
-			
-			// Update the thread
-			SetCoolerMessage twdao = new SetCoolerMessage(con);
-			twdao.setChannel(ctx.getID(), newChannel);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

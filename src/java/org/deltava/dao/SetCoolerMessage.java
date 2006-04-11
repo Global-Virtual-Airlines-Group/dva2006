@@ -28,7 +28,7 @@ public class SetCoolerMessage extends DAO {
 	 * @param msg the Message post bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void writeMessage(Message msg) throws DAOException {
+	public void write(Message msg) throws DAOException {
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, "
 					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
@@ -74,7 +74,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalStateException if there are no Posts in the Thread
 	 */
-	public void writeThread(MessageThread t) throws DAOException {
+	public void write(MessageThread t) throws DAOException {
 
 		// Get the first post in the thread
 		Message msg = t.getPosts().get(0);
@@ -125,7 +125,7 @@ public class SetCoolerMessage extends DAO {
 		msg.setThreadID(t.getID());
 
 		try {
-			writeMessage(msg);
+			write(msg);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -133,6 +133,25 @@ public class SetCoolerMessage extends DAO {
 		} catch (DAOException de) {
 			rollbackTransaction();
 			throw de;
+		}
+	}
+	
+	/**
+	 * Writes a Discussion Thread update to the database.
+	 * @param upd the ThreadUpdate bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(ThreadUpdate upd) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_THREADHISTORY (ID, CREATED, AUTHOR, MESSAGE) "
+					+ "VALUES (?, ?, ?, ?)");
+			_ps.setInt(1, upd.getID());
+			_ps.setTimestamp(2, createTimestamp(upd.getDate()));
+			_ps.setInt(3, upd.getAuthorID());
+			_ps.setString(4, upd.getMessage());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
 		}
 	}
 

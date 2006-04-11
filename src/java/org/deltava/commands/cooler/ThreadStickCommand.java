@@ -11,6 +11,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to update the sticky date of a Water Cooler thread.
  * @author Luke
@@ -59,11 +61,24 @@ public class ThreadStickCommand extends AbstractCommand {
 			access.validate();
 			if (!access.getCanResync())
 				throw securityException("Cannot update Message Thread sticky date");
+			
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(mt.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Message Thread stuck until " + StringUtils.format(stickyDate, "MMMM dd, yyyy"));
+
+			// Start a transaction
+			ctx.startTX();
 
 			// Restick the thread, or if the date is in the past then unstick it
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.restickThread(mt.getID(), stickyDate);
+			wdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

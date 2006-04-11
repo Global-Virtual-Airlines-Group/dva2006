@@ -3,8 +3,7 @@ package org.deltava.commands.cooler;
 
 import java.sql.Connection;
 
-import org.deltava.beans.cooler.MessageThread;
-
+import org.deltava.beans.cooler.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -33,10 +32,23 @@ public class ContentOverrideCommand extends AbstractCommand {
 			if (mt ==  null)
 				throw notFoundException("Invalid Thread - " + ctx.getID());
 			
-			// Clean out the thread
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(mt.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Content Warning flag cleared");
+			
+			// Start a transaction
+			ctx.startTX();
+			
+			// Clean out the thread and log the status
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.clearWarning(mt.getID());
+			wdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

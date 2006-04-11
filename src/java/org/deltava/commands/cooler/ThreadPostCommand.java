@@ -186,7 +186,7 @@ public class ThreadPostCommand extends AbstractCommand {
 
 			// Get the write DAO and write to the database
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.writeThread(mt);
+			wdao.write(mt);
 
 			// Create a notification entry if we requested on
 			if ("1".equals(ctx.getParameter("updateNotify"))) {

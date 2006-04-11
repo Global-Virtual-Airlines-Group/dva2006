@@ -166,7 +166,7 @@ public class ThreadReplyCommand extends AbstractCommand {
 				} else {
 					ctx.setAttribute("isReply", Boolean.TRUE, REQUEST);
 					thread.addPost(msg);
-					wdao.writeMessage(msg);
+					wdao.write(msg);
 				}
 				
 				wdao.synchThread(thread);

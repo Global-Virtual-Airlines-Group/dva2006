@@ -24,13 +24,19 @@ public class ThreadLockCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+        // Determine what operation we are performing
+        String opName = (String) ctx.getCmdParameter(Command.OPERATION, "lock");
+        boolean isHide = opName.equals("hide");
+        boolean isLock = (isHide || opName.equals("lock"));
 
+		MessageThread thread = null;
 		try {
 			Connection con = ctx.getConnection();
 			
             // Get the Message Thread
             GetCoolerThreads tdao = new GetCoolerThreads(con);
-            MessageThread thread = tdao.getThread(ctx.getID());
+            thread = tdao.getThread(ctx.getID());
             if (thread == null)
                 throw notFoundException("Unknown Message Thread - " + ctx.getID());
 			
@@ -47,24 +53,32 @@ public class ThreadLockCommand extends AbstractCommand {
             if (!ac.getCanLock())
                 throw securityException("Cannot moderate Message Thread " + ctx.getID());
             
-            // Determine what operation we are performing
-            String opName = (String) ctx.getCmdParameter(Command.OPERATION, "lock");
-            boolean isHide = opName.equals("hide");
-            boolean isLock = (isHide || opName.equals("lock"));
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(thread.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Message Thread locked");
+            
+			// Start a transaction
+			ctx.startTX();
 
             // Get the DAO to lock/hide the message thread
             SetCoolerMessage wdao = new SetCoolerMessage(con);
             wdao.moderateThread(thread.getID(), isHide, isLock);
-			
-            // Save the thread and operations in the request
-            ctx.setAttribute("thread", thread, REQUEST);
-            ctx.setAttribute("isHidden", Boolean.valueOf(isHide), REQUEST);
-            ctx.setAttribute("isLocked", Boolean.valueOf(isLock), REQUEST);
+            wdao.write(upd);
+            
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+        // Save the thread and operations in the request
+        ctx.setAttribute("thread", thread, REQUEST);
+        ctx.setAttribute("isHidden", Boolean.valueOf(isHide), REQUEST);
+        ctx.setAttribute("isLocked", Boolean.valueOf(isLock), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

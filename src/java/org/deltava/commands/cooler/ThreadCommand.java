@@ -110,10 +110,20 @@ public class ThreadCommand extends AbstractCommand {
 				imgAccess.validate();
 				ctx.setAttribute("imgAccess", imgAccess, REQUEST);
 			}
+			
+			// Get the locations of the pilots writing updates
+			Collection<Integer> updateIDs = new HashSet<Integer>();
+			for (Iterator<ThreadUpdate> ui = thread.getUpdates().iterator(); ui.hasNext(); ) {
+				ThreadUpdate upd = ui.next();
+				updateIDs.add(new Integer(upd.getAuthorID()));
+			}
 
-			// Get the location of all the Pilots
+			// Get the location of all the Pilots posting in the thread
 			uddao.setQueryMax(0);
 			UserDataMap udm = uddao.getByThread(thread.getID());
+			udm.putAll(uddao.get(updateIDs));
+			
+			// Save the user data in the request
 			ctx.setAttribute("userData", udm, REQUEST);
 			ctx.setAttribute("userDomains", udm.getDomains(), REQUEST);
 

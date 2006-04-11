@@ -230,6 +230,19 @@ WARNING</span></c:if>
  </td>
 </tr>
 </c:forEach>
+<content:filter roles="HR,Moderator"><c:if test="${!empty thread.updates}">
+<!-- Thread Status History -->
+<tr class="title caps">
+ <td colspan="3">THREAD STATUS HISTORY</td>
+</tr>
+<c:forEach var="update" items="${thread.updates}">
+<c:set var="pilot" value="${pilots[update.authorID]}" scope="request" />
+<tr>
+ <td class="mid small"><fmt:date date="${update.date}" t="HH:mm" /></td>
+ <td colspan="2">${update.message} by <span class="pri bld">${pilot.name}</span></td>
+</tr>
+</c:forEach>
+</c:if></content:filter>
 <c:if test="${access.canLock || access.canUnlock || access.canDelete || (access.canResync && !noResync) || access.canUnstick}">
 <!-- Moderator Tools -->
 <tr class="title caps">
