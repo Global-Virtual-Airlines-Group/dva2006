@@ -75,6 +75,13 @@ document.cookie = 'acarsMapType=; expires=' + expiryDate.toGMTString();
 alert('Your <content:airline /> ACARS Map preferences have been cleared.');
 return true;
 }
+
+function showEarth()
+{
+var f = document.forms[0];
+self.location = '/acars_map_earth.ws?showRoute=' + f.showRoute.checked;
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -115,7 +122,8 @@ return true;
 <tr class="title">
  <td><el:button ID="RefreshButton" className="BUTTON" onClick="void reloadData(false)" label="REFRESH ACARS DATA" />&nbsp;
 <el:button ID="SettingsButton" className="BUTTON" onClick="void saveSettings()" label="SAVE SETTINGS" />&nbsp;
-<el:button ID="ClearButton" className="BUTTON" onClick="void clearSettings()" label="CLEAR SETTINGS" /></td>
+<el:button ID="ClearButton" className="BUTTON" onClick="void clearSettings()" label="CLEAR SETTINGS" />&nbsp;
+<el:button ID="EarthButton" className="BUTTON" onClick="void showEarth()" label="DISPLAY IN GOOGLE EARTH" /></td>
 </tr>
 </el:table>
 </el:form>
