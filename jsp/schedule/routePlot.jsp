@@ -188,12 +188,11 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var mapdiv = getElement('googleMap');
-map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+var map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 map.setCenter(new GLatLng(38.88, -93.25), 4);
+map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 </script>
 </body>
 </html>
