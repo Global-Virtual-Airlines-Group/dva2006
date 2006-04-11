@@ -44,19 +44,19 @@ public class ACARSMapProgressService extends WebDataService {
 		
 		// Get the DAO and the route data
 		FlightInfo info = null;
-		Collection routePoints = null;
-		Collection routeWaypoints = null;
+		Collection<GeoLocation> routePoints = null;
+		Collection<? extends MapEntry> routeWaypoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(_con);
 			routePoints = dao.getRouteEntries(id, false, false);
 			
 			// Load the route and the route waypoints
 			info = dao.getInfo(id);
-			if (info != null) {
+			if ((info != null) && doRoute) {
 				GetNavRoute navdao = new GetNavRoute(_con);
-				routeWaypoints = doRoute ? navdao.getRouteWaypoints(info.getRoute()) : Collections.emptySet();
+				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
 			} else {
-				routeWaypoints = Collections.emptySet();
+				routeWaypoints = new HashSet<MapEntry>(); 
 			}
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
@@ -74,8 +74,8 @@ public class ACARSMapProgressService extends WebDataService {
 		re.setAttribute("crossIDL", String.valueOf(crossIDL));
 
 		// Write the positions
-		for (Iterator i = routePoints.iterator(); i.hasNext(); ) {
-			GeoLocation entry = (GeoLocation) i.next();
+		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
+			GeoLocation entry = i.next();
 			Element e = new Element("pos");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));
@@ -83,8 +83,8 @@ public class ACARSMapProgressService extends WebDataService {
 		}
 		
 		// Write the route
-		for (Iterator i = routeWaypoints.iterator(); i.hasNext(); ) {
-			MapEntry entry = (MapEntry) i.next();
+		for (Iterator<? extends MapEntry> i = routeWaypoints.iterator(); i.hasNext(); ) {
+			MapEntry entry = i.next();
 			Element e = XMLUtils.createElement("route", entry.getInfoBox(), true);
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(entry.getLongitude(), "##0.00000"));

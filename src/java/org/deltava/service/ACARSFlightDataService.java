@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -42,11 +42,14 @@ public class ACARSFlightDataService extends WebDataService {
 		}
 		
 		// Get the DAO and the route data
-		Collection routePoints = null;
+		Collection<GeoLocation> routePoints = null;
 		try {
 			GetACARSData dao = new GetACARSData(_con);
 			FlightInfo info = dao.getInfo(id);
-			routePoints = (info == null) ? Collections.EMPTY_LIST : dao.getRouteEntries(id, false, info.getArchived());
+			if (info != null)
+				routePoints = dao.getRouteEntries(id, false, info.getArchived());
+			else
+				routePoints = Collections.emptyList();
 		} catch (DAOException de) {
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
@@ -57,8 +60,8 @@ public class ACARSFlightDataService extends WebDataService {
 		doc.setRootElement(re);
 		
 		// Write the positions - Gracefully handle geopositions - don't append a color and let the JS handle this
-		for (Iterator i = routePoints.iterator(); i.hasNext(); ) {
-			GeoLocation entry = (GeoLocation) i.next();
+		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext(); ) {
+			GeoLocation entry = i.next();
 			Element e = null;
 			if (entry instanceof MapEntry) {
 				MapEntry me = (MapEntry) entry;

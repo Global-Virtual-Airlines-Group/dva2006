@@ -63,8 +63,7 @@ public class ACARSEarthService extends GoogleEarthService {
 				int id = i.next().intValue();
 				FlightInfo info = dao.getInfo(id);
 				if (info != null) {
-					@SuppressWarnings("unchecked")
-					Collection<RouteEntry> routeData = dao.getRouteEntries(id, true, info.getArchived());
+					Collection<RouteEntry> routeData = dao.getRouteEntries(id, info.getArchived());
 					info.setRouteData(routeData);
 					
 					if (showRoute) {
@@ -117,7 +116,16 @@ public class ACARSEarthService extends GoogleEarthService {
 			if (colorOfs >= COLORS.length)
 				colorOfs = 0;
 			
-			Collection<Element> fData = createFlight(info, showData, COLORS[colorOfs]);
+			// Generate the start/end airport and the route
+			Collection<Element> results = new ArrayList<Element>();
+			results.add(createAirport(info.getAirportD(), "Departed from " + info.getAirportD().getName()));
+			results.add(createProgress(info.getRouteData(), COLORS[colorOfs]));
+			results.add(createAirport(info.getAirportA(), "Landed at " + info.getAirportA().getName()));
+			results.add(createPositionData(info.getRouteData(), showData));
+			if (info.hasPlanData())
+				results.add(createFlightRoute("Flight Plan", info.getPlanData(), false));
+
+			// Add to the folder
 			Element fe = de;
 			if (info.hasRouteData()) {
 				fe = new Element("Folder");
@@ -127,7 +135,7 @@ public class ACARSEarthService extends GoogleEarthService {
 			}
 			
 			// Add the children
-			for (Iterator<Element> ci = fData.iterator(); ci.hasNext(); )
+			for (Iterator<Element> ci = results.iterator(); ci.hasNext(); )
 				fe.addContent(ci.next());
 		}
 
