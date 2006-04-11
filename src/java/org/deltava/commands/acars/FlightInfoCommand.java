@@ -91,12 +91,12 @@ public class FlightInfoCommand extends AbstractCommand {
 
 			// Load the route data
 			dao.setQueryMax(0);
-			List positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
+			List<GeoLocation> positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
 
 			// Calculate and save the map center for the Google Map
 			if (!positions.isEmpty()) {
-			   GeoPosition start = new GeoPosition((GeoLocation) positions.get(0));
-			   GeoLocation end = (GeoLocation) positions.get(positions.size() - 1);
+			   GeoPosition start = new GeoPosition(positions.get(0));
+			   GeoLocation end = positions.get(positions.size() - 1);
 			   ctx.setAttribute("mapCenter", start.midPoint(end), REQUEST);
 			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(end)), REQUEST);
 			} else {
