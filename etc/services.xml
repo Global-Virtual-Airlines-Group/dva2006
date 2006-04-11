@@ -26,5 +26,8 @@
 	<service id="acars_progress" class="org.deltava.service.ACARSMapProgressService" />
 	<service id="acars_pirep" class="org.deltava.service.ACARSFlightDataService" />
 	<service id="acars_earth" class="org.deltava.service.ACARSEarthService" />
+	
+	<!-- The name of the ACARSMapEarthService is harcoded in ACARSMapEarthLinkService -->
+	<service id="acars_map_load" class="org.deltava.service.ACARSMapEarthLinkService" />
 	<service id="acars_map_earth" class="org.deltava.service.ACARSMapEarthService" />
 </services>
