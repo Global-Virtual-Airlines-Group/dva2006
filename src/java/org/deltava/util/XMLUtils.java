@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.jdom.*;
@@ -13,6 +13,13 @@ import org.jdom.output.XMLOutputter;
  */
 
 public class XMLUtils {
+
+	/**
+	 * Private singleton constructor. <i>Not implemented</i>
+	 */ 
+	protected XMLUtils() {
+		super();
+	}
 
 	/**
 	 * Creates a new XML document element.
@@ -54,6 +61,20 @@ public class XMLUtils {
 		e2.setText(value);
 		e.addContent(e2);
 		return e;
+	}
+	
+	/**
+	 * Updates a child element's text. If the element does not exist, it will be created. 
+	 * @param e the parent Element
+	 * @param ceName the child element name
+	 * @param value the child element value
+	 */
+	public static void setChildText(Element e, String ceName, String value) {
+		Element ce = e.getChild(ceName);
+		if (ce == null)
+			e.addContent(createElement(ceName, value));
+		else
+			ce.setText(value);
 	}
 	
 	/**
