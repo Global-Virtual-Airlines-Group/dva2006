@@ -21,12 +21,13 @@ public class ThreadUnstickCommand extends AbstractCommand {
 
 	public void execute(CommandContext ctx) throws CommandException {
 
+		MessageThread mt = null;
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the thread
 			GetCoolerThreads dao = new GetCoolerThreads(con);
-			MessageThread mt = dao.getThread(ctx.getID());
+			mt = dao.getThread(ctx.getID());
 			if (mt == null)
 				throw notFoundException("Invalid Message Thread -" + ctx.getID());
 			
@@ -43,19 +44,30 @@ public class ThreadUnstickCommand extends AbstractCommand {
 			if (!access.getCanUnstick())
 				throw securityException("Cannot unstick Thread " + mt.getID());
 			
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(mt.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Message Thread unstuck");
+			
+			// Start a transaction
+			ctx.startTX();
+			
 			// Unstick the thread
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.unstickThread(mt.getID());
+			wdao.write(upd);
 			
-			// Save the message thread
-			ctx.setAttribute("thread", mt, REQUEST);
+            // Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 		
-		// Set status attribute
+		// Set message thread and status attribute
+		ctx.setAttribute("thread", mt, REQUEST);
 		ctx.setAttribute("isUnstuck", Boolean.TRUE, REQUEST);
 
 		// Forward to the JSP
