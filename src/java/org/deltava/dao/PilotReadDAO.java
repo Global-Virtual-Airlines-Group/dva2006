@@ -153,7 +153,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Get the datbaase - if we haven't specified one, use the current database
 		int ofs = tableName.indexOf('.');
-		String dbName = (ofs == -1) ? SystemData.get("airline.db") : formatDBName(tableName);
+		String dbName = (ofs == -1) ? SystemData.get("airline.db").toLowerCase() : formatDBName(tableName);
 		if (ofs != -1)
 			tableName = tableName.substring(ofs + 1);
 
