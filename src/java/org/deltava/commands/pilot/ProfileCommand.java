@@ -444,7 +444,8 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Remove our entry, or that of our applicant entry
 					dupeResults.remove(new Integer(p.getID()));
-					dupeResults.remove(new Integer(a.getID()));
+					if (a != null)
+						dupeResults.remove(new Integer(a.getID()));
 				}
 
 				// If we're unique, continue the update
