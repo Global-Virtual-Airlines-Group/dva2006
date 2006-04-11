@@ -10,9 +10,11 @@ import org.apache.log4j.Logger;
 
 import org.jdom.*;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 
@@ -45,18 +47,21 @@ public class ACARSMapEarthService extends GoogleEarthService {
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
 		Collection<Integer> ids = acarsPool.getFlightIDs();
 
+		// Load the flight information
+		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			GetACARSData dao = new GetACARSData(_con);
 			GetNavData navdao = new GetNavData(_con);
 			
 			// Loop through the flights
+			Collection<Integer> userIDs = new HashSet<Integer>();
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 				int flightID = i.next().intValue();
 				FlightInfo info = dao.getInfo(flightID);
 				if (info != null) {
-					@SuppressWarnings("unchecked")
-					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID, true, info.getArchived());
+					userIDs.add(new Integer(info.getPilotID()));
+					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID, info.getArchived());
 					info.setRouteData(routeData);
 					
 					// Load the flight plan
@@ -87,9 +92,75 @@ public class ACARSMapEarthService extends GoogleEarthService {
 					flights.add(info);
 				}
 			}
+			
+			// Load the user data
+			GetUserData uddao = new GetUserData(_con);
+			UserDataMap udmap = uddao.get(userIDs);
+			
+			// Add into the pilot map
+			GetPilot pdao = new GetPilot(_con);
+			for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
+				String tableName = i.next();
+				if (UserDataMap.isPilotTable(tableName))
+					pilots.putAll(pdao.getByID(userIDs, tableName));
+			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 			return SC_INTERNAL_SERVER_ERROR;
+		}
+		
+		// Create the flights and routes folders
+		Map<String, Element> folders = new LinkedHashMap<String, Element>();
+		folders.put("positions", XMLUtils.createElement("Folder", "name", "Aircraft"));
+		folders.put("progress", XMLUtils.createElement("Folder", "name", "Flight Progress"));
+		folders.put("plans", XMLUtils.createElement("Folder", "name", "Flight Plans"));
+		folders.put("airports", XMLUtils.createElement("Folder", "name", "Airports"));
+		
+		// Convert the flight data to KML
+		int colorOfs = -1;
+		Collection<Airport> airports = new TreeSet<Airport>();
+		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
+			FlightInfo info = i.next();
+			Pilot usr = pilots.get(new Integer(info.getPilotID()));
+			
+			// Get the flight name and increment the line color 
+			String name = "Flight " + info.getID();
+			colorOfs++;
+			if (colorOfs >= COLORS.length)
+				colorOfs = 0;
+			
+			// Save the airports
+			airports.add(info.getAirportD());
+			airports.add(info.getAirportA());
+			
+			// Add the position
+			String usrName = (usr == null) ? info.getFlightCode() : usr.getName() + " (" + usr.getPilotCode() + ")";
+			folders.get("positions").addContent(createAircraft(usrName, info.getPosition()));
+			
+			// Add the flight progress
+			if (info.hasRouteData()) {
+				Element fpe = createProgress(info.getRouteData(), COLORS[colorOfs]);
+				KMLUtils.setVisibility(fpe, false);
+				XMLUtils.setChildText(fpe, "name", usrName);
+				folders.get("progress").addContent(fpe);
+			}
+
+			// Create the flight route entry
+			if (info.hasPlanData()) {
+				Element fre = createFlightRoute(name, info.getPlanData(), true);
+				KMLUtils.setVisibility(fre, false);
+				XMLUtils.setChildText(fre, "name", usrName);
+				folders.get("plans.").addContent(fre);
+			}
+		}
+		
+		// Render the airports
+		Element afe = folders.get("airports");
+		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
+			Airport a = i.next();
+			Element ae = createAirport(a, a.toString());
+			KMLUtils.setVisibility(ae, false);
+			afe.addContent(ae);
 		}
 		
 		// Build the XML document
@@ -99,50 +170,11 @@ public class ACARSMapEarthService extends GoogleEarthService {
 		Element de = new Element("Document");
 		ke.addContent(de);
 		
-		// Create the flights and routes folders
-		Element fe = XMLUtils.createElement("Folder", "name", "Flights"); 
-		Element fre = XMLUtils.createElement("Folder", "name", "Flight Routes");
-		de.addContent(fe);
-		de.addContent(fre);
-		
-		// Convert the flight data to KML
-		int colorOfs = -1;
-		for (Iterator<FlightInfo> i = flights.iterator(); i.hasNext(); ) {
-			FlightInfo info = i.next();
-			String name = "Flight " + info.getID();
-			
-			// Increment the line color
-			colorOfs++;
-			if (colorOfs >= COLORS.length)
-				colorOfs = 0;
-
-			// Create the flight route entry
-			if (info.hasPlanData()) {
-				fre.addContent(createFlightRoute(name, info.getPlanData(), true));
-				info.getPlanData().clear();
-			}
-			
-			// Create the flight data entry
-			if (info.hasRouteData()) {
-				Collection<Element> fData = createFlight(info, false, COLORS[colorOfs]);
-				Element ffe = new Element("Folder");
-				ffe.addContent(XMLUtils.createElement("name", name));
-				ffe.addContent(XMLUtils.createElement("visibility", "0"));
-				ffe.addContent(fData);
-				fe.addContent(ffe);
-			}
+		// Add the folders to the document
+		for (Iterator<Element> i = folders.values().iterator(); i.hasNext(); ) {
+			Element fe = i.next();
+			de.addContent(fe);
 		}
-		
-		// Create the network link entry
-		Element nle = new Element("NetworkLink");
-		nle.addContent(XMLUtils.createElement("name", SystemData.get("airline.name") + " ACARS Live Map"));
-		Element nlu = new Element("Url");
-		nlu.addContent(XMLUtils.createElement("href", ctx.getRequest().getRequestURL().toString()));
-		nlu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
-		nlu.addContent(XMLUtils.createElement("refreshInterval", "30"));
-		nlu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
-		nle.addContent(nlu);
-		de.addContent(nle);
 		
 		// Write the XML
 		try {
