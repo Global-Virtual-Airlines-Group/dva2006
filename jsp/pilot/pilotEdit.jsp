@@ -99,7 +99,7 @@ return true;
 </tr>
 
 <!-- Pilot Data -->
-<c:if test="${access.canChangeRoles}">
+<c:if test="${access.canChangeStatus}">
 <tr>
  <td class="label">First / Last Name</td>
  <td colspan="${cspan}" class="data"><el:text name="firstName" className="pri bld req" idx="*" size="14" max="24" value="${pilot.firstName}" />&nbsp;
