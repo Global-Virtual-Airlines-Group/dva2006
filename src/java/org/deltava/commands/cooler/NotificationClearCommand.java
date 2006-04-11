@@ -50,10 +50,24 @@ public class NotificationClearCommand extends AbstractCommand {
 			if (!access.getCanResync())
 				throw securityException("Cannot clear notifications");
 			
-			// Get the write DAO and clear the notifications
-			SetCoolerNotification wdao = new SetCoolerNotification(con);
-			wdao.clear(threadID);
+			// Create the status update bean
+			ThreadUpdate upd = new ThreadUpdate(mt.getID());
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setMessage("Message Notifications cleared");
+
+			// Start a transaction
+			ctx.startTX();
+			
+			// Get the write DAO sand clear the notifications
+			SetCoolerMessage wdao = new SetCoolerMessage(con);
+			SetCoolerNotification nwdao = new SetCoolerNotification(con);
+			nwdao.clear(threadID);
+			wdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
