@@ -590,7 +590,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	}
 
 	/**
-	 * Update this Person's Instant Messaging handle.
+	 * Update this Person's Instant Messaging handle. If the handle is empty, it will be cleared.
 	 * @param service the messaging service
 	 * @param handle the new handle
 	 * @throws NullPointerException if service is null
@@ -598,8 +598,11 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getIMServices()
 	 */
 	public void setIMHandle(String service, String handle) {
+		String svc = service.toUpperCase();
 		if ((handle != null) && (!StringUtils.isEmpty(handle.trim())))
-			_imHandles.put(service.toUpperCase(), handle);
+			_imHandles.put(svc, handle);
+		else if (_imHandles.containsKey(svc))
+			_imHandles.remove(svc);
 	}
 
 	/**
