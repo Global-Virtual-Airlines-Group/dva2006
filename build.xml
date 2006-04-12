@@ -179,10 +179,10 @@
 		 	destfile="${java.io.tmpdir}/build/dva2006_jsp.jar" />
 		 		 
 		<!-- Force all JSPs to load on startup -->
-		<replace file="${jspc.webXMLInc}" token="&lt;/servlet-class&gt;">
+		<!-- <replace file="${jspc.webXMLInc}" token="&lt;/servlet-class&gt;">
 			<replacevalue><![CDATA[</servlet-class>
         <load-on-startup>2</load-on-startup>]]></replacevalue>
-		</replace>
+		</replace> -->
 			
 		<!-- Merge the precompile definitions into web.xml -->
 		<loadfile property="webXmlFragment" srcFile="${jspc.webXMLInc}" />
@@ -407,13 +407,28 @@
 			</tarfileset>
 		</tar>
 		
-		<!-- Compress the TAR -->
+		<!-- Package the ACARS server source -->
+		<tar destfile="${java.io.tmpdir}/src/golgotha_acars.tar" longfile="fail">
+			<tarfileset uid="500" group="gva" dir="${basedir}/../DVA ACARS">
+				<include name="src/java/**/*.java" />
+				<include name="sql/**" />
+			</tarfileset>
+		</tar>
+		
+		<!-- Compress the TARs -->
 		<gzip src="${java.io.tmpdir}/src/golgotha.tar" destfile="${java.io.tmpdir}/src/golgotha.tar.gz" />
+		<gzip src="${java.io.tmpdir}/src/golgotha_acars.tar" 
+			destfile="${java.io.tmpdir}/src/golgotha_acars.tar.gz" />
 		<delete file="${java.io.tmpdir}/src/golgotha.tar" />
+		<delete file="${java.io.tmpdir}/src/golgotha_acars.tar" />
 			
 		<!-- Upload to the web site -->
 		<loadproperties srcFile="data/build_deploy.properties" />
 		<scp todir="${golgotha.ssh.user}@${golgotha.ssh.server}:${golgotha.ssh.path}" verbose="yes"
-				trust="yes" password="${golgotha.ssh.pwd}" file="${java.io.tmpdir}/src/golgotha.tar.gz" />
+				trust="yes" password="${golgotha.ssh.pwd}">
+			<fileset dir="${java.io.tmpdir}/src">
+				<include name="*.tar.gz" />
+			</fileset>
+		</scp>
 	</target>
 </project>
