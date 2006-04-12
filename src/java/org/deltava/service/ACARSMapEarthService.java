@@ -42,6 +42,7 @@ public class ACARSMapEarthService extends GoogleEarthService {
 		// Get the ACARS flights currently in progress
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
 		Collection<Integer> ids = acarsPool.getFlightIDs();
+		Map<Integer, RouteEntry> positions = CollectionUtils.createMap(acarsPool.getMapEntries(), "ID");
 
 		// Load the flight information
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
@@ -52,12 +53,16 @@ public class ACARSMapEarthService extends GoogleEarthService {
 			// Loop through the flights
 			Collection<Integer> userIDs = new HashSet<Integer>();
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-				int flightID = i.next().intValue();
-				FlightInfo info = dao.getInfo(flightID);
+				Integer flightID = i.next();
+				FlightInfo info = dao.getInfo(flightID.intValue());
 				if (info != null) {
 					userIDs.add(new Integer(info.getPilotID()));
-					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID, info.getArchived());
+					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
 					info.setRouteData(routeData);
+					if (positions.containsKey(flightID))
+						info.setPosition(positions.get(flightID));
+					
+					// Add the flight data
 					flights.add(info);
 				}
 			}
