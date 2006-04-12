@@ -133,3 +133,17 @@ else
  echo "Courier (IMAP Server) is DOWN - no pid"
  /usr/local/sbin/imapctl start
 fi
+
+if [ -f "/var/run/ts2.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/ts2.pid`" ]
+  then
+    echo "TeamSpeak (Voice Server) is alive"
+  else
+    echo "TeamSpeak (Voice Server) is DOWN"
+    /usr/local/sbin/ts2ctl start
+  fi
+else
+ echo "TeamSpeak (Voice Server) is DOWN - no pid"
+ /usr/local/sbin/ts2ctl start
+fi
