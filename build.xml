@@ -412,6 +412,7 @@
 			<tarfileset uid="500" group="gva" dir="${basedir}/../DVA ACARS">
 				<include name="src/java/**/*.java" />
 				<include name="sql/**" />
+				<include name="*" />
 			</tarfileset>
 		</tar>
 		
@@ -428,6 +429,10 @@
 				trust="yes" password="${golgotha.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/src">
 				<include name="*.tar.gz" />
+				<modified seldirs="true" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="../.local_data/src.cache.txt" />
+				</modified>
 			</fileset>
 		</scp>
 	</target>
