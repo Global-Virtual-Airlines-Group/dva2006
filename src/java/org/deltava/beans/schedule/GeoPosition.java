@@ -55,7 +55,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @return The degrees component of the position
 	 */
 	public static int getDegrees(double latlon) {
-		int deg = new Double(Math.floor(latlon)).intValue();
+		int deg = new Double(StrictMath.floor(latlon)).intValue();
 		return (deg < 0) ? ++deg : deg; // Increment by 1 if we're below 0 since Math.floor(-11.0001) ==
 													  // -12.00
 	}
@@ -67,8 +67,8 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public static int getMinutes(double latlon) {
 		latlon = Math.abs(latlon); // Strip out sign since minutes are always positive
-		latlon -= Math.floor(latlon); // Strip out degrees
-		return new Double(Math.floor(latlon * 60)).intValue(); // multiply by 60 so we get minutes
+		latlon -= StrictMath.floor(latlon); // Strip out degrees
+		return new Double(StrictMath.floor(latlon * 60)).intValue(); // multiply by 60 so we get minutes
 	}
 
 	/**
@@ -78,9 +78,9 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public static int getSeconds(double latlon) {
 		latlon = Math.abs(latlon); // Strip out sign since seconds are always positive
-		latlon -= Math.floor(latlon); // Strip out degrees
+		latlon -= StrictMath.floor(latlon); // Strip out degrees
 		latlon *= 60; // multiply by 60 so we get minutes
-		latlon -= Math.floor(latlon); // Strip out minutes
+		latlon -= StrictMath.floor(latlon); // Strip out minutes
 		return new Double(latlon * 60).intValue();
 	}
 
@@ -194,12 +194,12 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 		double lngDiff = Math.toRadians(Math.abs(getLongitude() - gp2.getLongitude()));
 
 		// Do the math - this makes my head hurt
-		double p1 = Math.sin(lat1) * Math.sin(lat2);
-		double p2 = Math.cos(lat1) * Math.cos(lat2) * Math.cos(lngDiff);
+		double p1 = StrictMath.sin(lat1) * StrictMath.sin(lat2);
+		double p2 = StrictMath.cos(lat1) * StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
 		double distD = Math.toDegrees(Math.acos(p1 + p2));
 
 		// Convert to miles and return
-		return new Long(Math.round(distD * DEGREE_MILES)).intValue();
+		return new Long(StrictMath.round(distD * DEGREE_MILES)).intValue();
 	}
 
 	/**
@@ -222,10 +222,11 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 		double lngDiff = lon2 - lon1;
 
 		// Do the math - this makes my head hurt
-		double p1 = Math.cos(lat2) * Math.cos(lngDiff);
-		double p2 = Math.cos(lat2) * Math.sin(lngDiff);
-		double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + p1) * (Math.cos(lat1) + p1) + (p2 * p2)));
-		double lon3 = lon1 + Math.atan2(p2, Math.cos(lat1) + p1);
+		double p1 = StrictMath.cos(lat2) * StrictMath.cos(lngDiff);
+		double p2 = StrictMath.cos(lat2) * StrictMath.sin(lngDiff);
+		double lat3 = StrictMath.atan2(StrictMath.sin(lat1) + StrictMath.sin(lat2), 
+				StrictMath.sqrt((StrictMath.cos(lat1) + p1) * (StrictMath.cos(lat1) + p1) + (p2 * p2)));
+		double lon3 = lon1 + StrictMath.atan2(p2, StrictMath.cos(lat1) + p1);
 
 		// Convert the latitude/longitude pair to a geoPosition
 		return new GeoPosition(Math.toDegrees(lat3), Math.toDegrees(lon3));
