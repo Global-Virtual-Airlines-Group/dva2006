@@ -100,6 +100,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		ade.addContent(XMLUtils.createElement("visibility", "1"));
 		Element ads = new Element("Style");
 		ads.addContent(KMLUtils.createIcon(2, 0, 1)); // airplane icon
+		ads.addContent(XMLUtils.createElement("scale", "0.55"));
 		ade.addContent(ads);
 		Element adp = new Element("Point");
 		adp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(a)));
@@ -121,6 +122,13 @@ public abstract class GoogleEarthService extends WebDataService {
 		ae.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 		ae.addContent(XMLUtils.createElement("name", name));
 		ae.addContent(XMLUtils.createElement("visibility", "1"));
+		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getAltitude(), "#,##0"));
+		buf.append(" ft, ");
+		buf.append(StringUtils.format(entry.getGroundSpeed(), "#,##0"));
+		buf.append(" kts");
+		ae.addContent(XMLUtils.createElement("Snippet", buf.toString()));
+		
+		// Build the icon
 		Element ads = new Element("Style");
 		Element ais = KMLUtils.createIcon(2, 0, 0); // airplane icon
 		ais.addContent(XMLUtils.createElement("scale", "0.70"));
@@ -251,7 +259,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		// Create route line
 		Element rle = new Element("Placemark");
 		rle.addContent(XMLUtils.createElement("name", "Flight Route"));
-		rle.addContent(XMLUtils.createElement("visibility", "1"));
+		rle.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 		Element rls = new Element("Style");
 		Element rlce = XMLUtils.createElement("LineStyle", "color", GoogleEarthColor.make(224, 192, 192, 48).toString());
 		rlce.addContent(XMLUtils.createElement("width", "2"));
@@ -259,6 +267,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		rle.addContent(rls);
 		Element rlse = new Element("LineString");
 		rlse.addContent(XMLUtils.createElement("tessellate", "1"));
+		rlse.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 
 		// Loop through the points
 		Random rnd = new Random();
@@ -271,7 +280,7 @@ public abstract class GoogleEarthService extends WebDataService {
 			Element pe = new Element("Placemark");
 			pe.addContent(XMLUtils.createElement("name", wp.getCode()));
 			pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
-			pe.addContent(XMLUtils.createElement("visibility", "0"));
+			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 			Element pp = new Element("Point");
 			pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 10)));
 			pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
