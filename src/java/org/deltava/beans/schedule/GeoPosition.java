@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.GeoLocation;
@@ -25,7 +25,24 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Creates a new GeoPosition object with a particular latitude and longitude
+	 * Creates a new GeoPosition object with a particular latitude and longitude.
+	 * @param lat the latitude in degrees (and some fraction thereof)
+	 * @param lon the longitude in degrees (and some fraction thereof)
+	 * @param altitude the altitude in feet above mean sea level
+	 * @throws IllegalArgumentException if latitude or longitude fail validation
+	 * @see GeoPosition#setLatitude(double)
+	 * @see GeoPosition#setLongitude(double)
+	 * @see GeoPosition#setAltitude(int)
+	 */
+	public GeoPosition(double lat, double lon, int altitude) {
+		super();
+		setLatitude(lat);
+		setLongitude(lon);
+		setAltitude(altitude);
+	}
+	
+	/**
+	 * Creates a new GeoPosition object with a particular latitude and longitude.
 	 * @param lat The latitude in degrees (and some fraction thereof)
 	 * @param lon The longitude in degrees (and some fraction thereof)
 	 * @throws IllegalArgumentException if latitude or longitude fail validation
@@ -33,9 +50,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 * @see GeoPosition#setLongitude(double)
 	 */
 	public GeoPosition(double lat, double lon) {
-		super();
-		setLatitude(lat);
-		setLongitude(lon);
+		this(lat, lon, 0);
 	}
 	
 	/**
@@ -106,6 +121,14 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public int getAltitude() {
 		return _alt;
+	}
+	
+	/**
+	 * Updates the altitude of this position.
+	 * @param alt the altitude in feet above mean sea level, or 0 if undefined
+	 */
+	public void setAltitude(int alt) {
+		_alt = alt;
 	}
 
 	/**
