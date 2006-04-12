@@ -8,7 +8,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.jdom.*;
 
 import org.deltava.util.XMLUtils;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to generate a link to the Google Earth live ACARS map.
@@ -40,20 +39,32 @@ public class ACARSMapEarthLinkService extends WebService {
 		// Format the URL
 		StringBuilder buf = new StringBuilder(ctx.getRequest().getRequestURL());
 		buf.setLength(buf.lastIndexOf("/") + 1);
-		buf.append("acars_map_earth.ws?showRoute=");
-		buf.append(showRoute);
 
-		// Create the network link entry
+		// Create the progress network link entry
 		Element nle = new Element("NetworkLink");
-		nle.addContent(XMLUtils.createElement("name", SystemData.get("airline.name") + " ACARS Live Map"));
+		nle.addContent(XMLUtils.createElement("name", "ACARS Live Map"));
 		Element nlu = new Element("Url");
-		nlu.addContent(XMLUtils.createElement("href", buf.toString()));
+		nlu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eprog.ws"));
 		nlu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
 		nlu.addContent(XMLUtils.createElement("refreshInterval", "30"));
 		nlu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
 		nlu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
 		nle.addContent(nlu);
 		de.addContent(nle);
+		
+		// Create the flight plan network link entry
+		if (showRoute) {
+			Element nple = new Element("NetworkLink");
+			nple.addContent(XMLUtils.createElement("name", "ACARS Flight Plans"));
+			Element plu = new Element("Url");
+			plu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eplan.ws"));
+			plu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
+			plu.addContent(XMLUtils.createElement("refreshInterval", "360"));
+			plu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
+			plu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
+			nple.addContent(plu);
+			de.addContent(nple);
+		}
 
 		// Write the XML
 		try {

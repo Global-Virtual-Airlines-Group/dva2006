@@ -12,7 +12,6 @@ import org.jdom.*;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.*;
 
@@ -40,9 +39,6 @@ public class ACARSMapEarthService extends GoogleEarthService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Check if we display the flight plan
-		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
-
 		// Get the ACARS flights currently in progress
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
 		Collection<Integer> ids = acarsPool.getFlightIDs();
@@ -52,7 +48,6 @@ public class ACARSMapEarthService extends GoogleEarthService {
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			GetACARSData dao = new GetACARSData(_con);
-			GetNavData navdao = new GetNavData(_con);
 			
 			// Loop through the flights
 			Collection<Integer> userIDs = new HashSet<Integer>();
@@ -63,32 +58,6 @@ public class ACARSMapEarthService extends GoogleEarthService {
 					userIDs.add(new Integer(info.getPilotID()));
 					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID, info.getArchived());
 					info.setRouteData(routeData);
-					
-					// Load the flight plan
-					if (showRoute) {
-						List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
-						NavigationDataMap navaids = navdao.getByID(routeEntries);
-						GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
-						int distance = lastWaypoint.distanceTo(info.getAirportA());
-
-						// Filter out navaids and put them in the correct order
-						Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
-						for (Iterator<String> ri = routeEntries.iterator(); ri.hasNext();) {
-							String navCode = ri.next();
-							NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
-							if (wPoint != null) {
-								if (lastWaypoint.distanceTo(wPoint) < distance) {
-									routeInfo.add(wPoint);
-									lastWaypoint.setLatitude(wPoint.getLatitude());
-									lastWaypoint.setLongitude(wPoint.getLongitude());
-								}
-							}
-						}
-
-						info.setPlanData(routeInfo);
-					}
-					
-					// Add the flight information
 					flights.add(info);
 				}
 			}
@@ -113,7 +82,6 @@ public class ACARSMapEarthService extends GoogleEarthService {
 		Map<String, Element> folders = new LinkedHashMap<String, Element>();
 		folders.put("positions", XMLUtils.createElement("Folder", "name", "Aircraft"));
 		folders.put("progress", XMLUtils.createElement("Folder", "name", "Flight Progress"));
-		folders.put("plans", XMLUtils.createElement("Folder", "name", "Flight Plans"));
 		folders.put("airports", XMLUtils.createElement("Folder", "name", "Airports"));
 		
 		// Convert the flight data to KML
@@ -123,8 +91,7 @@ public class ACARSMapEarthService extends GoogleEarthService {
 			FlightInfo info = i.next();
 			Pilot usr = pilots.get(new Integer(info.getPilotID()));
 			
-			// Get the flight name and increment the line color 
-			String name = "Flight " + info.getID();
+			// Increment the line color 
 			colorOfs++;
 			if (colorOfs >= COLORS.length)
 				colorOfs = 0;
@@ -133,24 +100,15 @@ public class ACARSMapEarthService extends GoogleEarthService {
 			airports.add(info.getAirportD());
 			airports.add(info.getAirportA());
 			
-			// Add the position
-			String usrName = (usr == null) ? info.getFlightCode() : usr.getName() + " (" + usr.getPilotCode() + ")";
-			folders.get("positions").addContent(createAircraft(usrName, info.getPosition()));
-			
-			// Add the flight progress
+			// Add the position and flight progress
 			if (info.hasRouteData()) {
+				String usrName = (usr == null) ? info.getFlightCode() : usr.getName() + " (" + usr.getPilotCode() + ")";
+				folders.get("positions").addContent(createAircraft(usrName, info.getPosition()));
+
 				Element fpe = createProgress(info.getRouteData(), COLORS[colorOfs]);
 				KMLUtils.setVisibility(fpe, false);
 				XMLUtils.setChildText(fpe, "name", usrName);
 				folders.get("progress").addContent(fpe);
-			}
-
-			// Create the flight route entry
-			if (info.hasPlanData()) {
-				Element fre = createFlightRoute(name, info.getPlanData(), true);
-				KMLUtils.setVisibility(fre, false);
-				XMLUtils.setChildText(fre, "name", usrName);
-				folders.get("plans.").addContent(fre);
 			}
 		}
 		
@@ -175,6 +133,9 @@ public class ACARSMapEarthService extends GoogleEarthService {
 			Element fe = i.next();
 			de.addContent(fe);
 		}
+		
+		// Add the NetworkLinkControl entry
+		//ke.addContent(XMLUtils.createElement("NetworkLinkControl", "minRefreshPeriod", "30"));
 		
 		// Write the XML
 		try {
