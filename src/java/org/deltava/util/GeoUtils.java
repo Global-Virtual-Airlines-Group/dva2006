@@ -1,10 +1,9 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.GeospaceLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 /**
@@ -98,5 +97,60 @@ public class GeoUtils {
 		buf.append(',');
 		buf.append(StringUtils.format(loc.getAltitude() * 0.3048, "#####0"));
 		return buf.toString();
+	}
+	
+	/**
+	 * &quot;Normalizes&quot; an angle by ensuring it is between 0 and 360.
+	 * @param degrees the angle in degrees
+	 * @return the normalized angle
+	 */
+	public static double normalize(double degrees) {
+		int amt = (degrees < 0) ? 360 : -360;
+		while ((degrees < 0) || (degrees > 360))
+			degrees += amt;
+		
+		return degrees;
+	}
+	
+	/**
+	 * &quot;Normalizes&quot; a geographic location by ensuring that the latitude is between -90 and 90 degrees,
+	 * and the longitude is between -180 and 180 degrees.
+	 * @param lat the latitude
+	 * @param lng the longitude
+	 * @return the normalized location
+	 */
+	public static GeoLocation normalize(double lat, double lng) {
+		 
+		// Normalize latitude
+		int amt = (lat < -90) ? 90 : -90;
+		while ((lat < -90) || (lat > 90))
+			lat += amt;
+		
+		// Normalize longitude
+		amt = (lng < -180) ? 180 : -180;
+		while ((lng < -180) || (lng > 180))
+			lng += amt;
+		
+		return new GeoPosition(lat, lng);
+	}
+	
+	/**
+	 * Determines the coordinates of a second point on a particular heading from the first. This converts the polar
+	 * coordinates provided into cartesian coordinates, and then adds them to the original point.
+	 * @param p1 the original point
+	 * @param distance the distance in miles
+	 * @param angle the heading in degrees
+	 * @return a normalized GeoPosition
+	 */
+	public static GeoLocation bearingPoint(GeoLocation p1, double distance, double angle) {
+		
+		// Convert the miles to degrees of latitude, and the angle to radians
+		distance /= GeoLocation.DEGREE_MILES;
+		angle = StrictMath.toRadians(angle);
+	
+		// These are coordinates RELATIVE to the origin
+		double lat2 = distance * StrictMath.cos(angle);
+		double lng2 = distance * StrictMath.sin(angle);
+		return normalize(p1.getLatitude() + lat2, p1.getLongitude() + lng2);
 	}
 }
