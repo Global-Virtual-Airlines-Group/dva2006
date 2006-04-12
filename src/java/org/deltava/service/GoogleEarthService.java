@@ -6,8 +6,9 @@ import java.util.*;
 import org.jdom.Element;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
-import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.*;
 
@@ -105,7 +106,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		Element adp = new Element("Point");
 		adp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(a)));
 		ade.addContent(adp);
-		ade.addContent(KMLUtils.createLookAt(a, a.getAltitude() + 1000, -1));
+		ade.addContent(KMLUtils.createLookAt(a, a.getAltitude() + 3500, 1, 10));
 		return ade;
 	}
 	
@@ -122,6 +123,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		ae.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 		ae.addContent(XMLUtils.createElement("name", name));
 		ae.addContent(XMLUtils.createElement("visibility", "1"));
+		ae.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() * 2 + 2000, entry.getHeading() - 140, 15));
 		StringBuilder buf = new StringBuilder(StringUtils.format(entry.getAltitude(), "#,##0"));
 		buf.append(" ft, ");
 		buf.append(StringUtils.format(entry.getGroundSpeed(), "#,##0"));
@@ -131,14 +133,13 @@ public abstract class GoogleEarthService extends WebDataService {
 		// Build the icon
 		Element ads = new Element("Style");
 		Element ais = KMLUtils.createIcon(2, 0, 0); // airplane icon
-		ais.addContent(XMLUtils.createElement("scale", "0.70"));
+		ais.addContent(XMLUtils.createElement("scale", "0.60"));
 		ais.addContent(XMLUtils.createElement("heading", StringUtils.format(entry.getHeading(), "##0.00")));
 		ads.addContent(ais);
 		ae.addContent(ads);
 
 		// Create the actual point
 		Element pe = new Element("Point");
-		pe.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() + 1500, entry.getHeading()));
 		if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
 			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 			pe.addContent(XMLUtils.createElement("altitudeMode", "clampedToGround"));
@@ -172,7 +173,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		Element lce = XMLUtils.createElement("LineStyle", "color", routeColor.toString());
 		lce.addContent(XMLUtils.createElement("width", "3"));
 		ls.addContent(lce);
-		ls.addContent(XMLUtils.createElement("PolyStyle", "color", routeColor.dim(3).toString()));
+		ls.addContent(XMLUtils.createElement("PolyStyle", "color", routeColor.dim(2.5f).toString()));
 		le.addContent(ls);
 		Element lse = new Element("LineString");
 		lse.addContent(XMLUtils.createElement("extrude", "1"));
@@ -214,6 +215,8 @@ public abstract class GoogleEarthService extends WebDataService {
 			pe.addContent(XMLUtils.createElement("name", "Route Point #" + String.valueOf(++pos)));
 			pe.addContent(XMLUtils.createElement("description", entry.getInfoBox(), true));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
+			pe.addContent(XMLUtils.createElement("Snippet", StringUtils.format(entry, false, GeoLocation.ALL)));
+			pe.addContent(KMLUtils.createLookAt(entry, entry.getAltitude() * 2 + 2000, entry.getHeading() - 140, 15));
 			Element ps = new Element("Style");
 			Element pis = KMLUtils.createIcon(2, 0, 0); // info icon
 			pis.addContent(XMLUtils.createElement("scale", "0.70"));
@@ -234,7 +237,6 @@ public abstract class GoogleEarthService extends WebDataService {
 			}
 
 			pe.addContent(pp);
-			pe.addContent(KMLUtils.createLookAt(entry, entry.getAltitude(), entry.getHeading()));
 			fe.addContent(pe);
 		}
 
@@ -268,6 +270,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		Element rlse = new Element("LineString");
 		rlse.addContent(XMLUtils.createElement("tessellate", "1"));
 		rlse.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
+		fe.addContent(rle);
 
 		// Loop through the points
 		Random rnd = new Random();
@@ -280,12 +283,13 @@ public abstract class GoogleEarthService extends WebDataService {
 			Element pe = new Element("Placemark");
 			pe.addContent(XMLUtils.createElement("name", wp.getCode()));
 			pe.addContent(XMLUtils.createElement("description", wp.getInfoBox(), true));
+			pe.addContent(XMLUtils.createElement("Snippet", wp.getTypeName()));
 			pe.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
+			pe.addContent(KMLUtils.createLookAt(new GeoPosition(wp), 4500, rnd.nextInt(360), 10));
 			Element pp = new Element("Point");
 			pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format3D(wp, 10)));
 			pp.addContent(XMLUtils.createElement("altitudeMode", "relativeToGround"));
 			pe.addContent(pp);
-			pe.addContent(KMLUtils.createLookAt(wp, 4500, rnd.nextInt(360)));
 			
 			// Format route point
 			pbuf.append(GeoUtils.format3D(wp, 0));
@@ -321,7 +325,6 @@ public abstract class GoogleEarthService extends WebDataService {
 		// Save the coordinates
 		rlse.addContent(XMLUtils.createElement("coordinates", pbuf.toString()));
 		rle.addContent(rlse);
-		fe.addContent(rle);
 		
 		// Return the element
 		return fe;

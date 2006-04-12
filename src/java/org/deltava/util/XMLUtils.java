@@ -71,9 +71,11 @@ public class XMLUtils {
 	 */
 	public static void setChildText(Element e, String ceName, String value) {
 		Element ce = e.getChild(ceName);
-		if (ce == null)
-			e.addContent(createElement(ceName, value));
-		else
+		if (ce == null) {
+			ce = createElement(ceName, value);
+			ce.setNamespace(e.getNamespace());
+			e.addContent(ce);
+		} else
 			ce.setText(value);
 	}
 	

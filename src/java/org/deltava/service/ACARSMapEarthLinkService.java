@@ -65,6 +65,16 @@ public class ACARSMapEarthLinkService extends WebService {
 			nple.addContent(plu);
 			de.addContent(nple);
 		}
+		
+		// Create FIR boundary network link entry
+		Element fle = new Element("NetworkLink");
+		fle.addContent(XMLUtils.createElement("name", "FIR Boundaries"));
+		Element flu = new Element("Url");
+		flu.addContent(XMLUtils.createElement("href", buf.toString() + "servinfo/firs.kmz"));
+		flu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
+		flu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
+		fle.addContent(flu);
+		de.addContent(fle);
 
 		// Write the XML
 		try {
