@@ -39,6 +39,9 @@ xmlreq.onreadystatechange = function() {
 		map.addOverlay(mrk);
 	} // for
 	
+	// Enable the Google Earth button depending on if we have any aircraft
+	enableElement('EarthButton', (ac.length > 0));
+	
 	// Focus on the map
 	isLoading.innerHTML = '';
 	return true;
