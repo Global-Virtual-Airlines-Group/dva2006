@@ -42,6 +42,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private boolean _hasPIREP;
    private boolean _archived;
    
+   private RouteEntry _lastPosition;
    private SortedSet<RouteEntry> _routeData;
    private Collection<NavigationDataBean> _planData;
    
@@ -204,7 +205,7 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @see FlightInfo#setPositionCount(int)
     */
    public int getPositionCount() {
-	   return _positionCount;
+	   return hasRouteData() ? _routeData.size() : _positionCount;
    }
    
    /**
@@ -212,6 +213,9 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     * @return the latest PositionEntry, or NULL if no route data
     */
    public RouteEntry getPosition() {
+	   if (_lastPosition != null)
+		   return _lastPosition;
+	   
 	   return hasRouteData() ? _routeData.last() : null;
    }
    
@@ -414,6 +418,14 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
     */
    public void setPositionCount(int posCount) {
 	   _positionCount = posCount;
+   }
+   
+   /**
+    * Sets the current position of the flight. This is used to override the progress data.
+    * @param pos the current position
+    */
+   public void setPosition(RouteEntry pos) {
+	   _lastPosition = pos;
    }
    
    /**
