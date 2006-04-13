@@ -79,7 +79,7 @@ return true;
 function showEarth()
 {
 var f = document.forms[0];
-self.location = '/acars_map_earth.ws?showRoute=' + f.showRoute.checked;
+self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>

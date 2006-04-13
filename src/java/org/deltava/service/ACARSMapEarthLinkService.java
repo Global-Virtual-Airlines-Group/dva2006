@@ -25,9 +25,6 @@ public class ACARSMapEarthLinkService extends WebService {
 	 * @throws ServiceException if an error occurs
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
-		
-		// Check if we display the flight plan
-		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
 
 		// Build the XML document
 		Document doc = new Document();
@@ -35,7 +32,7 @@ public class ACARSMapEarthLinkService extends WebService {
 		doc.setRootElement(ke);
 		Element de = XMLUtils.createElement("Document", "visibility", "1");
 		ke.addContent(de);
-		
+
 		// Format the URL
 		StringBuilder buf = new StringBuilder(ctx.getRequest().getRequestURL());
 		buf.setLength(buf.lastIndexOf("/") + 1);
@@ -51,21 +48,19 @@ public class ACARSMapEarthLinkService extends WebService {
 		nlu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
 		nle.addContent(nlu);
 		de.addContent(nle);
-		
+
 		// Create the flight plan network link entry
-		if (showRoute) {
-			Element nple = new Element("NetworkLink");
-			nple.addContent(XMLUtils.createElement("name", "ACARS Flight Plans"));
-			Element plu = new Element("Url");
-			plu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eplan.ws"));
-			plu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
-			plu.addContent(XMLUtils.createElement("refreshInterval", "360"));
-			plu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
-			plu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
-			nple.addContent(plu);
-			de.addContent(nple);
-		}
-		
+		Element nple = new Element("NetworkLink");
+		nple.addContent(XMLUtils.createElement("name", "ACARS Flight Plans"));
+		Element plu = new Element("Url");
+		plu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eplan.ws"));
+		plu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
+		plu.addContent(XMLUtils.createElement("refreshInterval", "360"));
+		plu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
+		plu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
+		nple.addContent(plu);
+		de.addContent(nple);
+
 		// Create FIR boundary network link entry
 		Element fle = new Element("NetworkLink");
 		fle.addContent(XMLUtils.createElement("name", "FIR Boundaries"));
