@@ -329,36 +329,37 @@
 			<keystore>/etc/jcs.notams.cer</keystore>
 		</pacot>
 	</config>
-	
+
 	<online>
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
 			<network>IVAO</network>
+			<network>FPI</network>
 		</list>
-		
+
 		<list name="highlightCodes" attr="code">
 			<code>DAL</code>
 			<code>DVA</code>
 		</list>
-		
+
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
 		</vatsim>
-		
+
 		<ivao>
 			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
 			<url>http://www.ivao.aero/</url>
 		</ivao>
-		
+
 		<fpi>
-			<status_url>http://www.deltava.org/fpi-data.txt</status_url>
+			<status_url>http://fsd.flightproject.de/status.txt</status_url>
 			<banner>fpi.png</banner>
 			<url>http://www.flightproject.net/</url>
 		</fpi>
-		
+
 		<default_network>VATSIM</default_network>
 		<events_assigned_by>Andrew Dalrymple</events_assigned_by>
 	</online>
