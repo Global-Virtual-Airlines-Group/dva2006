@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <script language="JavaScript" type="text/javascript">
 function setAirportD(combo)
 {
@@ -40,7 +41,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -88,6 +89,9 @@ return true;
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
+<c:if test="${innovataLink}">
+<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
+</c:if>
 </el:form>
 <br />
 <content:copyright />
