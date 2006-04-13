@@ -39,17 +39,7 @@ if (eqOK || adOK) {
 alert('Please select at least an Aircraft type or departure Airport.');
 return false;
 }
-<c:if test="${innovataLink}">
-<content:sysdata var="innovata_x" name="schedule.innovata.width" />
-<content:sysdata var="innovata_y" name="schedule.innovata.height" />
-<content:sysdata var="innovata_url" name="schedule.innovata.url" />
-function innovataSearch()
-{
-var flags = 'height=${innovata_y},width=${innovata_x},menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('${innovata_url}', 'innovataSearch', flags);
-return true;
-}
-</c:if>
+
 function buildValidate(form)
 {
 if (!checkSubmit()) return false;
@@ -78,7 +68,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void updateOrigin(document.forms[0].airportD)">
+<body onload="updateOrigin(document.forms[0].airportD); initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jsp" %> 
 <%@ include file="/jsp/main/sideMenu.jsp" %>
@@ -127,12 +117,7 @@ return true;
 </el:table>
 </el:form>
 <c:if test="${innovataLink}">
-<content:airline /> uses flight schedule data graciously provided by <a rel="external" href="http://www.innovata-llc.com/">Innovata LLC</a>. 
-In return for their assistance to this virtual airline, they've asked us to provide a link to their 
-schedule search service for our members.<br />
-<br />
-<span class="mid"><el:img caption="InnnoVata Schedule Search" src="innovata_schedule.png" border="0" /></span><br />
-<br />
+<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
 </c:if>
 <c:if test="${!empty fafResults}">
 <el:form method="post" action="buildAssign.do" validate="return buildValidate(this)">
