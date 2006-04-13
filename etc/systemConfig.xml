@@ -386,7 +386,19 @@
 		<auth>org.deltava.security.MirrorAuthenticator</auth>
 		<baseDN>ou=dva,o=sce</baseDN>
 	</security>
-	
+
+	<!-- Innovata schedule link data -->
+	<schedule>
+		<innovata>
+			<enabled type="Boolean">true</enabled>
+			<popup>
+				<height type="Integer">600</height>
+				<width type="Integer">600</width>
+				<url>http://quicktrip.innosked.com/</url>
+			</popup>
+		</innovata>
+	</schedule>
+
 	<cache>
 		<stats type="Integer">30</stats>
 		<channels type="Integer">10</channels>
