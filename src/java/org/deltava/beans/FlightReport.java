@@ -77,6 +77,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    public static final int ATTR_CHECKRIDE = 0x80;
    
    /**
+    * Flight flown as a Charter flight.
+    */
+   public static final int ATTR_CHARTER = 0x100;
+   
+   /**
     * Attribute mask for VATSIM/IVAO/FPI online flights.
     */
    public static final int ATTR_ONLINE_MASK = 0x0E;
