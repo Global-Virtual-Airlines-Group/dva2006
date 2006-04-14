@@ -26,11 +26,6 @@
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
 </content:authUser>
 </tr>
-<c:if test="${acarsEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
-</tr>
-</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
 </tr>
