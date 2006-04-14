@@ -1,12 +1,10 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
-
-import java.io.Serializable;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A bean to store network user information.
@@ -15,7 +13,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public abstract class NetworkUser implements Comparable, Serializable, ViewEntry, MapEntry {
+public abstract class NetworkUser implements java.io.Serializable, Comparable, ViewEntry, MapEntry {
 
     public static final int PILOT = 0;
     public static final int ATC = 1;
@@ -131,10 +129,7 @@ public abstract class NetworkUser implements Comparable, Serializable, ViewEntry
 	 * @see NetworkUser#getPosition()
 	 */
 	public void setPosition(double lat, double lon) {
-		if ((lat < -290) && (lat >= -420))
-			lat += 360;
-		
-		_position = new GeoPosition(lat, lon);
+		_position = new GeoPosition(GeoUtils.normalize(lat, lon));
 	}
 
 	/**
