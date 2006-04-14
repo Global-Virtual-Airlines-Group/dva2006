@@ -1,8 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
-<content:sysdata var="innovata_x" name="schedule.innovata.width" />
-<content:sysdata var="innovata_y" name="schedule.innovata.height" />
-<content:sysdata var="innovata_url" name="schedule.innovata.url" />
+<content:sysdata var="innovata_x" name="schedule.innovata.popup.width" />
+<content:sysdata var="innovata_y" name="schedule.innovata.popup.height" />
+<content:sysdata var="innovata_url" name="schedule.innovata.popup.url" />
 <script language="JavaScript" type="text/javascript">
 function innovataSearch()
 {
@@ -11,9 +11,17 @@ var w = window.open('${innovata_url}', 'innovataSearch', flags);
 return true;
 }
 </script>
-<content:airline /> uses flight schedule data graciously provided by <a rel="external" href="http://www.innovata-llc.com/">Innovata LLC</a>. 
-In return for their assistance to this virtual airline, they've asked us to provide a link to their 
-schedule search service for our members.<br />
+<center><div style="width: 600px; border: 1px solid; padding: 12px;">
+<content:airline /> uses flight schedule data graciously provided by <a rel="external" href="http://www.innovata-llc.com/">Innovata, LLC</a>, who 
+provide timetable services for major airlines and travel vendors. In return for their assistance to this virtual 
+airline, they've asked us to provide a link to their schedule search service for our members. Please say thank you 
+by using Innovata, LLC to search for your next plane trip.<br />
 <br />
-<span class="mid"><el:img caption="InnnoVata Schedule Search" src="innovata_schedule.png" border="0" /></span><br />
+<span class="small"><i>Please be aware that the <content:airline /> Flight Schedule is the only authorized source for 
+flight information. Flights found via the Innovata, LLC schedule search that are not present in the <content:airline /> 
+Flight Schedule may not be approved!</i></span><br />
+<br />
+<span class="mid"><a href="javascript:void innovataSearch()"><el:img caption="InnnoVata Schedule Search" src="innovata_schedule.png" border="0" /></a></span><br />
+<br />
+</div></center>
 <br />
