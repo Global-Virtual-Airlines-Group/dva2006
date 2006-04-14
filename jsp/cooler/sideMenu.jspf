@@ -69,13 +69,20 @@
  <td><el:cmd url="pilotsearch">PILOT SEARCH</el:cmd></td>
 </tr>
 </content:filter>
+<tr class="MenuItem">
+ <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
+</tr>
+<tr class="MenuHeader"><td>ACARS</td></tr>
 <c:if test="${acarsEnabled}">
 <tr class="MenuItem">
  <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:link url="/acars_map_earth.ws">GOOGLE EARTH</el:link></td>
+</tr>
 </c:if>
 <tr class="MenuItem">
- <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
+ <td><el:cmd url="acarsprsearch">ACARS FLIGHTS</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>STATISTICS</td></tr>
 <tr class="MenuItem">

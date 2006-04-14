@@ -47,11 +47,6 @@
 <tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
 </tr>
-<c:if test="${acarsEnabled}">
-<tr class="MenuItem">
- <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
-</tr>
-</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="users">LOGGED IN USERS</el:cmd></td>
 </tr>
@@ -96,6 +91,15 @@
 <tr class="MenuItem">
  <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
 </tr>
+<tr class="MenuHeader"><td>ACARS</td></tr>
+<c:if test="${acarsEnabled}">
+<tr class="MenuItem">
+ <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
+</tr>
+<tr class="MenuItem">
+ <td><el:link url="/acars_map_earth.ws">GOOGLE EARTH</el:link></td>
+</tr>
+</c:if>
 <tr class="MenuItem">
  <td><el:cmd url="acarsprsearch">ACARS FLIGHTS</el:cmd></td>
 </tr>
