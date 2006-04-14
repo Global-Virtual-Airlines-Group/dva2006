@@ -53,7 +53,8 @@
 <c:set var="post" value="${posts[channel.lastThreadID]}" scope="request" />
 <c:set var="author" value="${authors[post.authorID]}" scope="request" />
  <td class="right"><span class="small">${author.rank}</span> <span class="pri bld small">${author.name}</span>
- <span class="small">(${author.pilotCode}) at <fmt:date date="${post.createdOn}" /></span><br />
+ <span class="small"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
+ <fmt:date date="${post.createdOn}" /></span><br />
  in <el:cmd url="thread" linkID="0x${post.threadID}" className="bld">${post.subject}</el:cmd></td>
 </c:if>
 <c:if test="${channel.lastThreadID == 0}">
