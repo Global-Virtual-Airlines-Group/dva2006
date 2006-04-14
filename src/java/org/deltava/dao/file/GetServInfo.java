@@ -237,6 +237,7 @@ public class GetServInfo extends DAO {
 										info.add(c);
 									} catch (Exception e) {
 										log.warn("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.warn(iData);
 									}
 									break;
 
