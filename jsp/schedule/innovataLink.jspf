@@ -12,14 +12,14 @@ return true;
 }
 </script>
 <center><div style="width: 600px; border: 1px solid; padding: 12px;">
-<content:airline /> uses flight schedule data graciously provided by <a rel="external" href="http://www.innovata-llc.com/">Innovata, LLC</a>, who 
-provide timetable services for major airlines and travel vendors. In return for their assistance to this virtual 
-airline, they've asked us to provide a link to their schedule search service for our members. Please say thank you 
-by using Innovata, LLC to search for your next plane trip.<br />
+<content:airline /> Flight schedule data courtesy of <a rel="external" href="http://www.innovata-llc.com/">Innovata, LLC</a>, a 
+custom timetable service provider to major airlines and travel vendors. Innovata asked <content:airline /> to 
+provide a link to their	worldwide flight schedule search service should our members wish to use it when 
+planning their travel.<br />
 <br />
 <span class="small"><i>Please be aware that the <content:airline /> Flight Schedule is the only authorized source for 
-flight information. Flights found via the Innovata, LLC schedule search that are not present in the <content:airline /> 
-Flight Schedule may not be approved!</i></span><br />
+flight information. Flight Reports for flights found elsewhere, including the Innovata, LLC schedule 
+search above, may not be approved!</i></span><br />
 <br />
 <span class="mid"><a href="javascript:void innovataSearch()"><el:img caption="InnnoVata Schedule Search" src="innovata_schedule.png" border="0" /></a></span><br />
 <br />
