@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -117,6 +117,80 @@ public class GetFlightReportRecognition extends GetFlightReports {
 			rs.close();
 			_ps.close();
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Determines the ratio of in-schedule to out-of-schedule flight legs. This counts all non-draft and non-rejected Flight Reports
+	 * when calculating the ratio.
+	 * @param pilotID the Pilot's database ID
+	 * @return the ratio of scheduled to non-scheduled flights, or zero if no flights flown
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public double getScheduledRatio(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(ID), SUM(IF((ATTR & ?) > 0, 1, 0)) FROM PIREPS WHERE (PILOT_ID=?) AND "
+					+ "(STATUS <> ?) AND (STATUS <> ?)");
+			_ps.setInt(1, FlightReport.ATTR_ROUTEWARN);
+			_ps.setInt(2, pilotID);
+			_ps.setInt(3, FlightReport.REJECTED);
+			_ps.setInt(4, FlightReport.DRAFT);
+			
+			// Execute the query - return zero if no flights flown
+			ResultSet rs = _ps.executeQuery();
+			if (!rs.next()) {
+				rs.close();
+				_ps.close();
+				return 0;
+			}
+			
+			// Calculate the numbers
+			int totalFlights = rs.getInt(1);
+			int invalidFlights = rs.getInt(2);
+			
+			// Clean up and return ratio
+			rs.close();
+			_ps.close();
+			return (totalFlights - invalidFlights) * 1.0 / invalidFlights;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Determines the ratio of total valid to Charter flight legs.
+	 * @param pilotID the Pilot's database ID
+	 * @return the ratio of valid to charter flights, or zero if no flights flown
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public double getCharterRatio(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT SUM(IF((ATTR & ?) > 0, 0, 1)), SUM(IF((ATTR & ?) > 0, 1, 0)) FROM PIREPS WHERE "
+					+ "(PILOT_ID=?) AND (STATUS <> ?) AND (STATUS <> ?)");
+			_ps.setInt(1, FlightReport.ATTR_ROUTEWARN | FlightReport.ATTR_CHARTER);
+			_ps.setInt(2, FlightReport.ATTR_CHARTER);
+			_ps.setInt(3, pilotID);
+			_ps.setInt(4, FlightReport.REJECTED);
+			_ps.setInt(5, FlightReport.DRAFT);
+			
+			// Execute the query - return zero if no flights flown
+			ResultSet rs = _ps.executeQuery();
+			if (!rs.next()) {
+				rs.close();
+				_ps.close();
+				return 0;
+			}
+			
+			// Calculate the numbers
+			int validFlights = rs.getInt(1);
+			int charterFlights = rs.getInt(2);
+
+			// Clean up and return ratio
+			rs.close();
+			_ps.close();
+			return validFlights * 1.0 / charterFlights;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

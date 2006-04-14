@@ -81,6 +81,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight is a Charter operation.
+     * @param fr the Flight Report
+     * @return TRUE if the ATTR_CHARTER attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_CHARTER
+     */
+    public static boolean isCharter(FlightReport fr) {
+    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_CHARTER);
+    }
+    
+    /**
      * Returns if the Flight was flown using a rated equipment type.
      * @param fr the Flight Report
      * @return TRUE if the NOTRATED attribute is not present, otherwise FALSE
