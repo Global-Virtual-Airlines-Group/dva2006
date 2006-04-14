@@ -139,6 +139,13 @@
 		<function-signature>boolean isCheckRide(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for Charter Flight -->
+	<function>
+		<name>isCharter</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isCharter(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Online Flight Report -->
 	<function>
 		<name>isOnline</name>
