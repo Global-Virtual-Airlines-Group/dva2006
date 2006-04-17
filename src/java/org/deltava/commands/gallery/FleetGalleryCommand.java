@@ -1,21 +1,26 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.gallery.Image;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.security.command.GalleryAccessControl;
+
+import org.deltava.util.*;
 
 /**
- * Command to display the Fleet Gallery.
+ * A Web Site Command to display the Fleet Gallery.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class FleetGalleryCommand extends AbstractCommand {
 
     /**
@@ -24,18 +29,52 @@ public class FleetGalleryCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
     public void execute(CommandContext ctx) throws CommandException {
+    	
+    	// Determining if we're opening the admin view
+    	boolean doAdmin = Boolean.valueOf((String) ctx.getCmdParameter(ID, null)).booleanValue();
 
-        List<Object> results = null;
+        List<ComboAlias> results = null;
         try {
             Connection con = ctx.getConnection();
 
             // Get the fleet gallery
             GetGallery dao = new GetGallery(con);
-            results = new ArrayList<Object>(dao.getFleetGallery());
+            results = new ArrayList<ComboAlias>(dao.getFleetGallery());
+            
+			// Get all the Author IDs
+			Set<Integer> authorIDs = new HashSet<Integer>();
+			for (Iterator i = results.iterator(); i.hasNext();) {
+				Image img = (Image) i.next();
+				authorIDs.add(new Integer(img.getAuthorID()));
+			}
+
+			// Load the Image Authors
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
+            
+			// Save the list of months
+            if (doAdmin)
+            	ctx.setAttribute("months", dao.getMonths(), REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {
             ctx.release();
+        }
+        
+        // Get command results
+        CommandResult result = ctx.getResult();
+        if (doAdmin) {
+    		ctx.setAttribute("sortOptions", GalleryCommand.SORT_OPTS, REQUEST);
+
+    		// Calculate access control for new Images
+    		GalleryAccessControl access = new GalleryAccessControl(ctx, null);
+    		access.validate();
+    		ctx.setAttribute("access", access, REQUEST);
+
+    		// Forward to the JSP
+    		result.setURL("/jsp/gallery/imageList.jsp");
+    		result.setSuccess(true);
+    		return;
         }
         
         // Build the description array
@@ -55,7 +94,6 @@ public class FleetGalleryCommand extends AbstractCommand {
         ctx.setAttribute("fleetGalleryDesc", buf.toString(), REQUEST);
         
         // Redirect to the display page
-        CommandResult result = ctx.getResult();
         result.setURL("/jsp/gallery/fleet.jsp");
         result.setSuccess(true);
     }
