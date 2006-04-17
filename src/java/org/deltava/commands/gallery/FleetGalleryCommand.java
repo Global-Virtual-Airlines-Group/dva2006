@@ -21,7 +21,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class FleetGalleryCommand extends AbstractCommand {
+public class FleetGalleryCommand extends AbstractViewCommand {
 
     /**
      * Executes the command.
@@ -70,6 +70,10 @@ public class FleetGalleryCommand extends AbstractCommand {
     		GalleryAccessControl access = new GalleryAccessControl(ctx, null);
     		access.validate();
     		ctx.setAttribute("access", access, REQUEST);
+    		
+    		// Initialize the view context
+    		ViewContext vctx = initView(ctx);
+    		vctx.setResults(results);
 
     		// Forward to the JSP
     		result.setURL("/jsp/gallery/imageList.jsp");
