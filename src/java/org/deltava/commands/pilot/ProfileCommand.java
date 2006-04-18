@@ -509,11 +509,14 @@ public class ProfileCommand extends AbstractFormCommand {
 				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
 				for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
 					Server srv = i.next();
-					if (usr != null) {
+					if (usr != null)
 						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
-						ts2wdao.addToServer(usr, srv.getID());
-					}
+					else
+						i.remove();
 				}
+				
+				// Add to the servers
+				ts2wdao.write(usr, addServers, p.getRoles());
 			} else if (!StringUtils.isEmpty(p.getPilotCode())) {
 				log.info("Removed " + p.getPilotCode() + " from TeamSpeak servers");
 				SetTS2Data ts2wdao = new SetTS2Data(con);
@@ -603,8 +606,8 @@ public class ProfileCommand extends AbstractFormCommand {
 				ctx.setAttribute("emailCfg", emailCfg, REQUEST);
 
 			// Get the staff profile (if any)
-			GetStaff dao2 = new GetStaff(con);
-			Staff s = dao2.get(ctx.getID());
+			GetStaff stdao = new GetStaff(con);
+			Staff s = stdao.get(ctx.getID());
 			if (s != null)
 				ctx.setAttribute("staff", s, REQUEST);
 
@@ -622,8 +625,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("status", Pilot.STATUS[p.getStatus()], REQUEST);
 
 			// Get the Online Hours/Legs if not already loaded
-			GetFlightReports dao3 = new GetFlightReports(con);
-			dao3.getOnlineTotals(p);
+			GetFlightReports frdao = new GetFlightReports(con);
+			frdao.getOnlineTotals(p);
 
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -631,8 +634,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("m_access", m_access, REQUEST);
 
 			// Get all equipment type profiles
-			GetEquipmentType dao4 = new GetEquipmentType(con);
-			ctx.setAttribute("eqTypes", dao4.getActive(), REQUEST);
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
 
 			// Get Pilot Examinations
 			GetExam exdao = new GetExam(con);
@@ -703,6 +706,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			GetTS2Data ts2dao = new GetTS2Data(con);
 			ctx.setAttribute("ts2Servers", ts2dao.getServers(p.getRoles()), REQUEST);
+			ctx.setAttribute("ts2Clients", CollectionUtils.createMap(ts2dao.getUsers(p.getPilotCode()), "serverID"), REQUEST);
 
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);

@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.Date;
@@ -19,13 +19,15 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	
 	private String _userID;
 	private String _pwd;
-	
 	private int _serverID;
+	
 	private boolean _serverAdmin;
+	private boolean _serverOperator;
+	private boolean _autoVoice;
 	
 	private Date _createdOn;
 	private Date _lastOnline;
-
+	
 	/**
 	 * Creates a new TeamSpeak 2 user.
 	 * @param userID the user ID
@@ -93,9 +95,33 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	 * Returns wether the user is a Server Administrator.
 	 * @return TRUE if the user is an Administrator, otherwise FALSE
 	 * @see Client#setServerAdmin(boolean)
+	 * @see Client#getServerOperator()
+	 * @see Client#getAutoVoice()
 	 */
 	public boolean getServerAdmin() {
 		return _serverAdmin;
+	}
+	
+	/**
+	 * Returns wether the user is a Server Operator.
+	 * @return TRUE if the user is an Operator, otherwise FALSE
+	 * @see Client#setServerOperator(boolean)
+	 * @see Client#getServerAdmin()
+	 * @see Client#getAutoVoice()
+	 */
+	public boolean getServerOperator() {
+		return _serverOperator;
+	}
+	
+	/**
+	 * Returns wether the user has automatic voice permissions.
+	 * @return TRUE if the user has voice permissions, otherwise FALSE
+	 * @see Client#setAutoVoice(boolean)
+	 * @see Client#getServerAdmin()
+	 * @see Client#getServerOperator()
+	 */
+	public boolean getAutoVoice() {
+		return _autoVoice;
 	}
 	
 	/**
@@ -150,12 +176,36 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	}
 	
 	/**
-	 * Updates wether the user is a Server Administrator. 
+	 * Updates wether the user is a Server Administrator.
 	 * @param isAdmin TRUE if the user is an administrator, otherwise FALSE
 	 * @see Client#getServerAdmin()
+	 * @see Client#setServerOperator(boolean)
+	 * @see Client#setAutoVoice(boolean)
 	 */
 	public void setServerAdmin(boolean isAdmin) {
 		_serverAdmin = isAdmin;
+	}
+	
+	/**
+	 * Updates wether the user is a Server Operator.
+	 * @param isOperator TRUE if the user is an operator, otherwise FALSE
+	 * @see Client#getServerOperator()
+	 * @see Client#setServerAdmin(boolean)
+	 * @see Client#setAutoVoice(boolean)
+	 */
+	public void setServerOperator(boolean isOperator) {
+		_serverOperator = isOperator;
+	}
+	
+	/**
+	 * Updates wether the user automatically receives voice permissions.
+	 * @param autoVoice TRUE if automatic voice enabled, otherwise FALSE
+	 * @see Client#getAutoVoice()
+	 * @see Client#setServerAdmin(boolean)
+	 * @see Client#setServerOperator(boolean)
+	 */
+	public void setAutoVoice(boolean autoVoice) {
+		_autoVoice = autoVoice;
 	}
 	
 	/**

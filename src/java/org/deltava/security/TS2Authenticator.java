@@ -1,14 +1,14 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
-import java.text.*;
 import java.util.*;
 import java.io.IOException;
 
 import org.deltava.beans.*;
-import org.deltava.beans.ts2.Server;
+import org.deltava.beans.ts2.*;
 
+import org.deltava.dao.*;
 import org.deltava.jdbc.*;
 
 import org.deltava.util.*;
@@ -27,7 +27,6 @@ import org.apache.log4j.Logger;
 public class TS2Authenticator implements Authenticator {
 
 	private static final Logger log = Logger.getLogger(TS2Authenticator.class);
-	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
 
 	private ConnectionPool _pool;
 	private Properties _props;
@@ -227,7 +226,7 @@ public class TS2Authenticator implements Authenticator {
 		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
 		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
 			Server srv = i.next();
-			if (!RoleUtils.hasAccess(usr.getRoles(), srv.getRoles()))
+			if (!RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
 				i.remove();
 		}
 		
@@ -238,42 +237,23 @@ public class TS2Authenticator implements Authenticator {
 		// Log addition
 		log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
 		
-		// Build the SQL query
-		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
-		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
-		sqlBuf.append(".ts2_clients (i_client_server_id, b_client_privilege_serveradmin, s_client_name, s_client_password, " +
-				"dt_client_created) VALUES (?, ?, ?, ");
-		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?), ?)");
-
-		Connection c = null;
+		// Build a client entry
+		Client c = new Client(p.getPilotCode());
+		c.setPassword(pwd);
+		c.setCreatedOn(new java.util.Date());
+		
+		Connection con = null;
 		try {
-			c = _pool.getConnection();
+			con = _pool.getConnection();
 			
-			// Prepare the statement
-			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
-			ps.setInt(2, 0);
-			ps.setString(3, p.getPilotCode());
-			ps.setString(4, pwd);
-			synchronized (_df) {
-				ps.setString(5, _df.format(new java.util.Date()));
-			}
-			
-			// Add to the servers
-			for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
-				Server srv = i.next();
-				ps.setInt(1, srv.getID());
-				ps.addBatch();
-			}
-			
-			// Execute the update and clean up
-			ps.executeBatch();
-			ps.close();
+			// Get the DAO and update
+			SetTS2Data wdao = new SetTS2Data(con);
+			wdao.write(c, srvs, p.getRoles());
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(c);
+			_pool.release(con);
 		}
 	}
 

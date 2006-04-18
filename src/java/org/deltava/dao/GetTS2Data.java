@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -263,7 +263,7 @@ public class GetTS2Data extends DAO {
 	 * Helper method to parse User result sets.
 	 */
 	private List<Client> executeUsers() throws SQLException {
-		List<Client> results = new ArrayList<Client>();
+		Map<Integer, Client> results = new HashMap<Integer, Client>();
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
@@ -278,13 +278,32 @@ public class GetTS2Data extends DAO {
 			
 			// Add to cache and results
 			_cache.add(usr);
-			results.add(usr);
+			results.put(new Integer(usr.getID()), usr);
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+		
+		// Load client privileges
+		StringBuilder buf = new StringBuilder("SELECT * FROM teamspeak.ts2_channel_privileges WHERE (i_cp_client_id IN (");
+		buf.append(StringUtils.listConcat(results.keySet(), ","));
+		buf.append("))");
+		prepareStatementWithoutLimits(buf.toString());
+		rs = _ps.executeQuery();
+		while (rs.next()) {
+			Client c = results.get(new Integer(rs.getInt(4)));
+			if (c != null) {
+				c.setServerAdmin(rs.getInt(5) == -1);
+				c.setServerOperator(rs.getInt(6) == -1);
+				c.setAutoVoice(rs.getInt(7) == -1);
+			}
 		}
 		
 		// Clean up and return
 		rs.close();
 		_ps.close();
-		return results;
+		return new ArrayList<Client>(results.values());
 	}
 	
 	private List<Server> executeServers() throws SQLException {
@@ -317,13 +336,35 @@ public class GetTS2Data extends DAO {
 		rs = _ps.executeQuery();
 		while (rs.next()) {
 			Server srv = results.get(new Integer(rs.getInt(1)));
-			if (srv != null)
-				srv.addRole(rs.getString(2));
+			if (srv != null) {
+				String role = rs.getString(2);
+				srv.addRole(Server.ACCESS, role);
+				if (rs.getBoolean(3))
+					srv.addRole(Server.ADMIN, role);
+				
+				if (rs.getBoolean(4))
+					srv.addRole(Server.OPERATOR, role);
+				
+				if (rs.getBoolean(5))
+					srv.addRole(Server.VOICE, role);
+			}
 		}
 		
-		// Clean up and return
+		// Clean up
 		rs.close();
 		_ps.close();
+		
+		// Load servers
+		prepareStatementWithoutLimits("SELECT * FROM teamspeak.ts2_channels ORDER BY s_channel_name");
+		Collection<Channel> channels = executeChannels();
+		for (Iterator<Channel> i = channels.iterator(); i.hasNext(); ) {
+			Channel c = i.next();
+			Server srv = results.get(new Integer(c.getServerID()));
+			if (srv != null)
+				srv.addChannel(c);
+		}
+		
+		// Return
 		return new ArrayList<Server>(results.values());
 	}
 }

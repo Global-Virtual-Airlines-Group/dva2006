@@ -38,8 +38,8 @@ return true;
 <content:region id="main">
 <el:form method="post" action="ts2server.do" op="save" linkID="${fn:dbID(server)}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
-<tr class="title">
- <td class="caps" colspan="2">TEAMSPEAK 2 VIRTUAL SERVER</td>
+<tr class="title caps">
+ <td colspan="2">TEAMSPEAK 2 VIRTUAL SERVER</td>
 </tr>
 <tr>
  <td class="label">Server Name</td>
@@ -66,13 +66,28 @@ return true;
  <td class="data"><el:text name="desc" idx="*" size="64" max="80" value="${server.description}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Security Roles</td>
- <td class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles}" options="${roles}" /></td>
-</tr>
-<tr>
  <td class="label" valign="top">Server Options</td>
  <td class="data"><el:box name="active" idx="*" value="true" className="sec" checked="${server.active}" label="Server is Active" /><br />
 <el:box name="isACARS" idx="*" value="true" checked="${server.ACARSOnly}" label="Virtual Server is accessible by logged in ACARS users only" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">SECURITY ROLES</td>
+</tr>
+<tr>
+ <td class="label" valign="top">Server Access</td>
+ <td class="data"><el:check name="accessRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['access']}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Voice Access</td>
+ <td class="data"><el:check name="voxRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['voice']}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Server Administration</td>
+ <td class="data"><el:check name="adminRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['admin']}" options="${roles}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Channel Operation</td>
+ <td class="data"><el:check name="opRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['op']}" options="${roles}" /></td>
 </tr>
 </el:table>
  
