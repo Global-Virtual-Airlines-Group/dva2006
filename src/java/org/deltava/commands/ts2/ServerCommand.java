@@ -26,7 +26,8 @@ public class ServerCommand extends AbstractFormCommand {
 	
 	private static final Logger log = Logger.getLogger(ServerCommand.class);
 	
-	private static final Collection<String> DEFAULT_ROLES = Arrays.asList(new String[] {"Pilot"});
+	private static final Collection<String> HR_ROLES = Arrays.asList(new String[] {"HR"});
+	private static final Collection<String> PILOT_ROLES = Arrays.asList(new String[] {"Pilot"});
 
 	/**
 	 * Callback method called when saving the profile.
@@ -87,7 +88,10 @@ public class ServerCommand extends AbstractFormCommand {
 			srv.setPort(Integer.parseInt(ctx.getParameter("port")));
 			srv.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			srv.setACARSOnly(Boolean.valueOf(ctx.getParameter("isACARS")).booleanValue());
-			srv.setRoles(CollectionUtils.loadList(ctx.getRequest().getParameterValues("securityRoles"), DEFAULT_ROLES));
+			srv.setRoles(Server.ACCESS, CollectionUtils.loadList(ctx.getRequest().getParameterValues("accessRoles"), PILOT_ROLES));
+			srv.setRoles(Server.VOICE, CollectionUtils.loadList(ctx.getRequest().getParameterValues("voxRoles"), PILOT_ROLES));
+			srv.setRoles(Server.ADMIN, CollectionUtils.loadList(ctx.getRequest().getParameterValues("adminRoles"), HR_ROLES));
+			srv.setRoles(Server.OPERATOR, CollectionUtils.loadList(ctx.getRequest().getParameterValues("opRoles"), HR_ROLES));
 			
 			// Build messages collection
 			Collection<String> msgs = new ArrayList<String>();
@@ -99,11 +103,14 @@ public class ServerCommand extends AbstractFormCommand {
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.write(srv);
 			
+			// Get the access roles
+			Collection<String> accessRoles = srv.getRoles().get(Server.ACCESS);
+			
 			// Determine what users to remove from the server
 			Collection<String> removeIDs = new HashSet<String>();
 			for (Iterator<Pilot> i = srvUsers.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if (!RoleUtils.hasAccess(p.getRoles(), srv.getRoles())) {
+				if ((!RoleUtils.hasAccess(p.getRoles(), accessRoles)) || (p.getStatus() != Pilot.ACTIVE)) {
 					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					removeIDs.add(p.getPilotCode());
@@ -116,11 +123,11 @@ public class ServerCommand extends AbstractFormCommand {
 			// Determine what users to add to the server
 			for (Iterator<Pilot> i = otherPilots.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if (RoleUtils.hasAccess(p.getRoles(), srv.getRoles())) {
+				if ((RoleUtils.hasAccess(p.getRoles(), accessRoles)) && (p.getStatus() == Pilot.ACTIVE)) {
 					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					Client usr = otherPilots.getClient(p.getPilotCode());
-					wdao.addToServer(usr, srv.getID());
+					wdao.addToServer(usr, srv, p.getRoles());
 				}
 			}
 			

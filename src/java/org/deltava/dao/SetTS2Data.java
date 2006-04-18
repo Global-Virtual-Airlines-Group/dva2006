@@ -7,6 +7,8 @@ import java.util.*;
 
 import org.deltava.beans.ts2.*;
 
+import org.deltava.util.RoleUtils;
+
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
  * @author Luke
@@ -100,20 +102,13 @@ public class SetTS2Data extends DAO {
 	 * Writes a new TeamSpeak user record to the database. <i>This is generally used to copy existing User records to
 	 * additional TeamSpeak servers when user roles change.</i>
 	 * @param usr the User bean
-	 * @param ids a Collection of TeamSpeak server database IDs
-	 * @param doClear TRUE if existing entries should be deleted, otherwise FALSE
+	 * @param servers a Collection of TeamSpeak server beans
+	 * @param roles a Collection of role names
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void resync(Client usr, Collection<Integer> ids, boolean doClear) throws DAOException {
+	public void write(Client usr, Collection<Server> servers, Collection<String> roles) throws DAOException {
 		try {
 			startTransaction();
-
-			// Clean out the existing entries
-			if (doClear) {
-				prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_clients WHERE (i_client_id=?)");
-				_ps.setInt(1, usr.getID());
-				executeUpdate(0);
-			}
 
 			// Prepare the statement
 			prepareStatement("REPLACE INTO teamspeak.ts2_clients (i_client_id, i_client_server_id, b_client_privilege_serveradmin, "
@@ -126,13 +121,34 @@ public class SetTS2Data extends DAO {
 			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(usr.getLastOnline()));
 
 			// Write one entry per server
-			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
-				Integer srvID = i.next();
-				_ps.setInt(2, srvID.intValue());
+			for (Iterator<Server> i = servers.iterator(); i.hasNext();) {
+				Server srv = i.next();
+				_ps.setInt(2, srv.getID());
 				_ps.addBatch();
 			}
 
-			// Write the entries and commit the transaction
+			// Write the entries
+			_ps.executeBatch();
+			_ps.close();
+			
+			// Write the client/channel privileges
+			prepareStatement("REPLACE INTO teamspeak.ts2_channel_privileges (i_cp_server_id, i_cp_channel_id, "
+					+ "i_cp_client_id, b_cp_flag_admin, b_cp_flag_autoop, b_cp_flag_autovoice) VALUES (?, ?, ?, ?, ?, ?)");
+			for (Iterator<Server> i = servers.iterator(); i.hasNext();) {
+				Server srv = i.next();
+				_ps.setInt(1, srv.getID());
+				_ps.setInt(3, usr.getID());
+				for (Iterator<Channel> ci = srv.getChannels().iterator(); ci.hasNext(); ) {
+					Channel c = ci.next();
+					_ps.setInt(2, c.getID());
+					_ps.setInt(4, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.ADMIN)) ? -1 : 0);
+					_ps.setInt(5, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.OPERATOR)) ? -1 : 0);
+					_ps.setInt(6, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.VOICE)) ? -1 : 0);
+					_ps.addBatch();
+				}
+			}
+			
+			// Write the entries and commit
 			_ps.executeBatch();
 			_ps.close();
 			commitTransaction();
@@ -145,13 +161,14 @@ public class SetTS2Data extends DAO {
 	/**
 	 * Copies an existing TeamSpeak 2 client to a new server.
 	 * @param usr the existing User bean
-	 * @param serverID the new server database ID
+	 * @param srv the server bean
+	 * @param roles a Collection of role names
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void addToServer(Client usr, int serverID) throws DAOException {
-		Collection<Integer> ids = new HashSet<Integer>();
-		ids.add(new Integer(serverID));
-		resync(usr, ids, false);
+	public void addToServer(Client usr, Server srv, Collection<String> roles) throws DAOException {
+		Collection<Server> servers = new HashSet<Server>();
+		servers.add(srv);
+		write(usr, servers, roles);
 	}
 
 	/**
@@ -243,7 +260,7 @@ public class SetTS2Data extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Creates/updates a TeamSpeak server entry.
 	 * @param srv the Server bean
@@ -287,11 +304,18 @@ public class SetTS2Data extends DAO {
 				executeUpdate(0);
 			}
 
+			// Get all of the roles
+			Collection<String> allRoles = srv.getRoles().get(Server.ACCESS);
+
 			// Write the server roles
-			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name) VALUES (?, ?)");
+			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name, b_server_admin, "
+					+ "b_channel_admin) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, srv.getID());
-			for (Iterator<String> i = srv.getRoles().iterator(); i.hasNext();) {
-				_ps.setString(2, i.next());
+			for (Iterator<String> i = allRoles.iterator(); i.hasNext();) {
+				String role = i.next();
+				_ps.setString(2, role);
+				_ps.setBoolean(3, srv.getRoles().get(Server.ADMIN).contains(role));
+				_ps.setBoolean(4, srv.getRoles().get(Server.OPERATOR).contains(role));
 				_ps.addBatch();
 			}
 
