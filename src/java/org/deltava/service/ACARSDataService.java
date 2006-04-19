@@ -70,7 +70,7 @@ public class ACARSDataService extends WebDataService {
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getAirSpeed(), "##0"));
 			ctx.print(",");
-			ctx.print(StringUtils.format(entry.getGroundSpeed(), "#,##0"));
+			ctx.print(StringUtils.format(entry.getGroundSpeed(), "##0"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getVerticalSpeed(), "##0"));
 			ctx.print(",");
@@ -88,7 +88,7 @@ public class ACARSDataService extends WebDataService {
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getWindHeading(), "000"));
 			ctx.print(",");
-			ctx.print(String.valueOf(entry.getFuelFlow()));
+			ctx.print(StringUtils.format(entry.getFuelFlow(), "###0"));
 			ctx.print(",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_NAV) ? "NAV," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
