@@ -18,7 +18,7 @@ if (!checkSubmit()) return false;
 if (!validateCombo(form.airline, 'Airline')) return false;
 if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
 if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
-if (!validateCombo(form.eq, 'Equipment Type')) return false;
+if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
 if (!validateNumber(form.timeD, 5, 'Departure Time')) return false;
 if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
@@ -58,7 +58,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
- <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="< EQUIPMENT >" /></td>
+ <td class="data"><el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${entry.equipmentType}" firstEntry="< EQUIPMENT >" /></td>
 </tr>
 <tr>
  <td class="label">Departing From</td>
