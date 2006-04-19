@@ -183,7 +183,7 @@ public class ServerCommand extends AbstractFormCommand {
 		
 		// Get security roles
 		@SuppressWarnings("unchecked")
-		Collection<String> roles = (Collection<String>) SystemData.getObject("security.roles");
+		Collection<String> roles = new TreeSet<String>((Collection<String>) SystemData.getObject("security.roles"));
 		roles.add("Pilot");
 		ctx.setAttribute("roles", roles, REQUEST);
 
