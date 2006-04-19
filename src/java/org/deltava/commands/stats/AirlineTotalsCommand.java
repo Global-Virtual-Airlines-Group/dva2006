@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -67,6 +67,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     _tableStatus.addAll(dao2.execute("common"));
                     _tableStatus.addAll(dao2.execute("acars"));
                     _tableStatus.addAll(dao2.execute("postfix"));
+                    _tableStatus.addAll(dao2.execute("teamspeak"));
                     _tableStatus.addAll(dao2.execute(SystemData.get("airline.db").toLowerCase()));
                 } catch (DAOException de) {
                     throw new CommandException(de);
