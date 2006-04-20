@@ -1,7 +1,7 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
-import java.util.Date;
+import java.util.*;
 
 import org.deltava.beans.DatabaseBean;
 
@@ -28,6 +28,8 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	private Date _createdOn;
 	private Date _lastOnline;
 	
+	private Collection<Integer> _channelIDs;
+	
 	/**
 	 * Creates a new TeamSpeak 2 user.
 	 * @param userID the user ID
@@ -38,6 +40,7 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 		super();
 		setUserID(userID);
 		_createdOn = new Date();
+		_channelIDs = new HashSet<Integer>();
 	}
 	
 	/**
@@ -141,6 +144,16 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	public Date getLastOnline() {
 		return _lastOnline;
 	}
+
+	/**
+	 * Returns all Channels associated with this Client.
+	 * @return a Collection of Channel database IDs
+	 * @see Client#addChannelID(int)
+	 * @see Client#addChannels(Server)
+	 */
+	public Collection<Integer> getChannelIDs() {
+		return _channelIDs;
+	}
 	
 	/**
 	 * Updates the TeamSpeak user ID.
@@ -149,7 +162,7 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	 * @see Client#setUserID(String)
 	 */
 	public void setUserID(String id) {
-		_userID = id.toUpperCase();
+		_userID = id.trim().toUpperCase();
 	}
 	
 	/**
@@ -230,6 +243,29 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 			throw new IllegalArgumentException("Last Online cannot be before Created");
 		
 		_lastOnline = dt;
+	}
+	
+	/**
+	 * Adds a channel ID to this Client.
+	 * @param id the channel database ID
+	 * @see Client#addChannels(Server)
+	 * @see Client#getChannelIDs()
+	 */
+	public void addChannelID(int id) {
+		_channelIDs.add(new Integer(id));
+	}
+	
+	/**
+	 * Adds all Channels linked to a particular TeamSpeak 2 virtual server to this client.
+	 * @param srv the Server bean
+	 * @see Client#addChannelID(int)
+	 * @see Client#getChannelIDs()
+	 */
+	public void addChannels(Server srv) {
+		for (Iterator<Channel> i = srv.getChannels().iterator(); i.hasNext(); ) {
+			Channel ch = i.next();
+			_channelIDs.add(new Integer(ch.getID()));
+		}
 	}
 	
 	/**

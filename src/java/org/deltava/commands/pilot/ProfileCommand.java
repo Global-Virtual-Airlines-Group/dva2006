@@ -489,12 +489,14 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Update teamspeak data
-			if (p.getStatus() == Pilot.ACTIVE) {
+			if ((p.getStatus() == Pilot.ACTIVE) && (!StringUtils.isEmpty(p.getPilotCode()))) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				Collection<Server> srvs = ts2dao.getServers(p.getPilotCode());
+				Collection<Server> srvs = ts2dao.getServers(p.getID());
 				Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
-				List<Client> usrs = ts2dao.getUsers(p.getPilotCode());
-				Client usr = usrs.isEmpty() ? null : usrs.get(0);
+				List<Client> usrs = ts2dao.getUsers(p.getID());
+				
+				// Get the TS2 password
+				String pwd = usrs.isEmpty() ? "$dummy" : usrs.get(0).getPassword();
 
 				// Determine what TeamSpeak servers to remove us from
 				SetTS2Data ts2wdao = new SetTS2Data(con);
@@ -502,25 +504,38 @@ public class ProfileCommand extends AbstractFormCommand {
 				for (Iterator<Server> i = rmvServers.iterator(); i.hasNext();) {
 					Server srv = i.next();
 					log.info("Removed " + p.getPilotCode() + " from TeamSpeak server " + srv.getName());
-					ts2wdao.removeUsers(srv, Arrays.asList(new String[] { p.getPilotCode() }));
+					Collection<Integer> ids = new HashSet<Integer>();
+					ids.add(new Integer(p.getID()));
+					ts2wdao.removeUsers(srv, ids);
 				}
 
 				// Determine what servers to add us to
 				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
-				for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
-					Server srv = i.next();
-					if (usr != null)
+				if (!addServers.isEmpty()) {
+					Collection<Client> ts2usrs = new HashSet<Client>();
+					for (Iterator<Server> i = addServers.iterator(); i.hasNext(); ) {
+						Server srv = i.next();
 						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
-					else
-						i.remove();
+						
+						// Build the client record
+						Client c = new Client(p.getPilotCode());
+						c.setPassword(pwd);
+						c.setID(p.getID());
+						c.addChannels(srv);
+						c.setServerID(srv.getID());
+						c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.VOICE)));
+						c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.OPERATOR)));
+						c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.ADMIN)));
+						ts2usrs.add(c);
+					}
+					
+					// Add to the servers
+					ts2wdao.write(ts2usrs);
 				}
-				
-				// Add to the servers
-				ts2wdao.write(usr, addServers, p.getRoles());
 			} else if (!StringUtils.isEmpty(p.getPilotCode())) {
 				log.info("Removed " + p.getPilotCode() + " from TeamSpeak servers");
 				SetTS2Data ts2wdao = new SetTS2Data(con);
-				ts2wdao.delete(p.getPilotCode());
+				ts2wdao.delete(p.getID());
 			}
 
 			// Write the Pilot profile
@@ -704,9 +719,11 @@ public class ProfileCommand extends AbstractFormCommand {
 			prdao.getOnlineTotals(p);
 
 			// Get TeamSpeak2 data
-			GetTS2Data ts2dao = new GetTS2Data(con);
-			ctx.setAttribute("ts2Servers", ts2dao.getServers(p.getRoles()), REQUEST);
-			ctx.setAttribute("ts2Clients", CollectionUtils.createMap(ts2dao.getUsers(p.getPilotCode()), "serverID"), REQUEST);
+			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
+				GetTS2Data ts2dao = new GetTS2Data(con);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
+				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
+			}
 
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);
