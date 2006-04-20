@@ -97,7 +97,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					// Clear TS2 credentials
 					if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 						if (!StringUtils.isEmpty(p.getPilotCode()))
-							ts2wdao.delete(p.getPilotCode());
+							ts2wdao.delete(p.getID());
 					}
 
 					// Send notification message

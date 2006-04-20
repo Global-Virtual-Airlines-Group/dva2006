@@ -86,17 +86,15 @@ public class GetTS2Data extends DAO {
 	}
 
 	/**
-	 * Returns an individual TeamSpeak 2 user profile.
-	 * @param id the user ID
-	 * @return the User profile, or null if not found
+	 * Returns an individual's TeamSpeak 2 user profiles.
+	 * @param id the user's database ID
+	 * @return a Collection of User profiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Client> getUsers(String id) throws DAOException {
+	public List<Client> getUsers(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (s_client_name=?)");
-			_ps.setString(1, id);
-
-			// Execute the query and return
+			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_id=?)");
+			_ps.setInt(1, id);
 			return executeUsers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -123,7 +121,7 @@ public class GetTS2Data extends DAO {
 	 * @return a Collection of User profiles
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Client> getUsers(int serverID) throws DAOException {
+	public Collection<Client> getUsersByServer(int serverID) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) ORDER BY s_client_name");
 			_ps.setInt(1, serverID);
@@ -151,20 +149,17 @@ public class GetTS2Data extends DAO {
 
 	/**
 	 * Returns all TeamSpeak 2 virtual servrs a user has access to.
-	 * @param pilotCode the pilot code
+	 * @param id the pilot's database ID
 	 * @return a Collection of Server beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Server> getServers(String pilotCode) throws DAOException {
-		if (StringUtils.isEmpty(pilotCode))
-			return Collections.emptySet();
-
+	public Collection<Server> getServers(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT s.i_server_id, s.s_server_name, s.s_server_welcomemessage, "
 					+ "s.i_server_maxusers, s.i_server_udpport, s.s_server_password, s.b_server_active, s.dt_server_created, "
 					+ "s.s_server_description, b_server_no_acars FROM teamspeak.ts2_servers s, teamspeak.ts2_clients c "
-					+ "WHERE (c.s_client_name=?) AND (s.i_server_id=c.i_client_server_id)");
-			_ps.setString(1, pilotCode);
+					+ "WHERE (c.i_client_id=?) AND (s.i_server_id=c.i_client_server_id)");
+			_ps.setInt(1, id);
 			return executeServers();
 		} catch (SQLException se) {
 			throw new DAOException(se);

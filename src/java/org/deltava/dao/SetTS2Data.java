@@ -7,7 +7,7 @@ import java.util.*;
 
 import org.deltava.beans.ts2.*;
 
-import org.deltava.util.RoleUtils;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A Data Access Object to write TeamSpeak 2 configuration data.
@@ -101,12 +101,17 @@ public class SetTS2Data extends DAO {
 	/**
 	 * Writes a new TeamSpeak user record to the database. <i>This is generally used to copy existing User records to
 	 * additional TeamSpeak servers when user roles change.</i>
-	 * @param usr the User bean
-	 * @param servers a Collection of TeamSpeak server beans
-	 * @param roles a Collection of role names
+	 * @param usrs a Collection of Client beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(Client usr, Collection<Server> servers, Collection<String> roles) throws DAOException {
+	public void write(Collection<Client> usrs) throws DAOException {
+		
+		// Exit if empty
+		if (CollectionUtils.isEmpty(usrs))
+			return;
+		
+		// Get the first entry
+		Client usr = usrs.iterator().next();
 		try {
 			startTransaction();
 
@@ -121,29 +126,33 @@ public class SetTS2Data extends DAO {
 			_ps.setString(7, (usr.getLastOnline() == null) ? null : _df.format(usr.getLastOnline()));
 
 			// Write one entry per server
-			for (Iterator<Server> i = servers.iterator(); i.hasNext();) {
-				Server srv = i.next();
-				_ps.setInt(2, srv.getID());
+			for (Iterator<Client> i = usrs.iterator(); i.hasNext();) {
+				Client c = i.next();
+				_ps.setInt(2, c.getServerID());
 				_ps.addBatch();
 			}
-
+			
 			// Write the entries
 			_ps.executeBatch();
 			_ps.close();
 			
+			// Clean out the privileges
+			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_channel_privileges where (i_cp_client_id=?)");
+			_ps.setInt(1, usr.getID());
+			
 			// Write the client/channel privileges
 			prepareStatement("REPLACE INTO teamspeak.ts2_channel_privileges (i_cp_server_id, i_cp_channel_id, "
 					+ "i_cp_client_id, b_cp_flag_admin, b_cp_flag_autoop, b_cp_flag_autovoice) VALUES (?, ?, ?, ?, ?, ?)");
-			for (Iterator<Server> i = servers.iterator(); i.hasNext();) {
-				Server srv = i.next();
-				_ps.setInt(1, srv.getID());
+			for (Iterator<Client> i = usrs.iterator(); i.hasNext();) {
+				Client c = i.next();
+				_ps.setInt(1, c.getServerID());
 				_ps.setInt(3, usr.getID());
-				for (Iterator<Channel> ci = srv.getChannels().iterator(); ci.hasNext(); ) {
-					Channel c = ci.next();
-					_ps.setInt(2, c.getID());
-					_ps.setInt(4, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.ADMIN)) ? -1 : 0);
-					_ps.setInt(5, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.OPERATOR)) ? -1 : 0);
-					_ps.setInt(6, RoleUtils.hasAccess(roles, srv.getRoles().get(Server.VOICE)) ? -1 : 0);
+				for (Iterator<Integer> ci = c.getChannelIDs().iterator(); ci.hasNext(); ) {
+					Integer id = ci.next();
+					_ps.setInt(2, id.intValue());
+					_ps.setInt(4, c.getServerAdmin() ? -1 : 0);
+					_ps.setInt(5, c.getServerOperator() ? -1 : 0);
+					_ps.setInt(6, c.getAutoVoice() ? -1 : 0);
 					_ps.addBatch();
 				}
 			}
@@ -156,19 +165,6 @@ public class SetTS2Data extends DAO {
 			rollbackTransaction();
 			throw new DAOException(se);
 		}
-	}
-
-	/**
-	 * Copies an existing TeamSpeak 2 client to a new server.
-	 * @param usr the existing User bean
-	 * @param srv the server bean
-	 * @param roles a Collection of role names
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void addToServer(Client usr, Server srv, Collection<String> roles) throws DAOException {
-		Collection<Server> servers = new HashSet<Server>();
-		servers.add(srv);
-		write(usr, servers, roles);
 	}
 
 	/**
@@ -215,13 +211,13 @@ public class SetTS2Data extends DAO {
 
 	/**
 	 * Deletes TeamSpeak 2 credentials for a Pilot.
-	 * @param pilotCode the Pilot code
+	 * @param id the Pilot's database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void delete(String pilotCode) throws DAOException {
+	public void delete(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_clients WHERE (UCASE(s_client_name)=?)");
-			_ps.setString(1, pilotCode.toUpperCase());
+			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_clients WHERE (i_client_id=?)");
+			_ps.setInt(1, id);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -232,20 +228,20 @@ public class SetTS2Data extends DAO {
 	 * Removes a number of users from a TeamSpeak server. This should typically be called when updating a server's
 	 * roles.
 	 * @param srv the Server bean
-	 * @param pilotCodes a Collection of TeamSpeak User IDs
+	 * @param pilotIDs a Collection of database IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void removeUsers(Server srv, Collection<String> pilotCodes) throws DAOException {
-		if (pilotCodes.isEmpty() || (srv.getID() == 0))
+	public void removeUsers(Server srv, Collection<Integer> pilotIDs) throws DAOException {
+		if (pilotIDs.isEmpty() || (srv.getID() == 0))
 			return;
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM teamspeak.ts2_clients WHERE (i_client_server_id=?) AND (");
-		for (Iterator<String> i = pilotCodes.iterator(); i.hasNext();) {
-			String code = i.next();
-			sqlBuf.append("(s_client_name=\'");
-			sqlBuf.append(code);
-			sqlBuf.append("\')");
+		for (Iterator<Integer> i = pilotIDs.iterator(); i.hasNext();) {
+			Integer id = i.next();
+			sqlBuf.append("(i_client_id=");
+			sqlBuf.append(id.intValue());
+			sqlBuf.append(')');
 			if (i.hasNext())
 				sqlBuf.append(" OR ");
 		}

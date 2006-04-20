@@ -219,28 +219,36 @@ public class TS2Authenticator implements Authenticator {
 		if (p.getNoVoice()) {
 			log.warn("Cannot add " + usr.getName() + " - Voice disabled");
 			return;
+		} else if (StringUtils.isEmpty(p.getPilotCode())) {
+			log.warn("Cannot add " + usr.getName() + " - no pilot code");
+			return;
 		}
 		
 		// Get the servers that this person may access
+		Collection<Client> usrs = new HashSet<Client>();
 		@SuppressWarnings("unchecked")
 		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
 		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
 			Server srv = i.next();
-			if (!RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
-				i.remove();
+			if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS))) {
+				Client c = new Client(p.getPilotCode());
+				c.setPassword(pwd);
+				c.addChannels(srv);
+				c.setID(usr.getID());
+				c.setServerID(srv.getID());
+				c.setAutoVoice(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.VOICE)));
+				c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.OPERATOR)));
+				c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ADMIN)));
+				usrs.add(c);
+			}
 		}
 		
 		// If no accessible servers, abort
-		if (srvs.isEmpty())
+		if (usrs.isEmpty())
 			return;
 		
 		// Log addition
 		log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
-		
-		// Build a client entry
-		Client c = new Client(p.getPilotCode());
-		c.setPassword(pwd);
-		c.setCreatedOn(new java.util.Date());
 		
 		Connection con = null;
 		try {
@@ -248,13 +256,16 @@ public class TS2Authenticator implements Authenticator {
 			
 			// Get the DAO and update
 			SetTS2Data wdao = new SetTS2Data(con);
-			wdao.write(c, srvs, p.getRoles());
+			wdao.write(usrs);
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			_pool.release(con);
 		}
+		
+		// Encrypt the password
+		updatePassword(usr, pwd);
 	}
 
 	/**
