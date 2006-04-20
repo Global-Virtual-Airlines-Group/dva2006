@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Schedule - ${empty entry ? 'New Entry' : 'Flight ' + entry.flightCode}</title>
+<title><content:airline /> Schedule - ${empty entry ? 'New Entry' : entry.flightCode}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -64,13 +64,13 @@ return true;
  <td class="label">Departing From</td>
  <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
- at <el:text name="timeD" idx="*" size="4" max="5" value="" /></td>
+ at <el:text name="timeD" idx="*" size="4" max="5" value="" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Arriving At</td>
  <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" />
- at <el:text name="timeA" idx="*" size="4" max="5" value="" /></td>
+ at <el:text name="timeA" idx="*" size="4" max="5" value="" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
