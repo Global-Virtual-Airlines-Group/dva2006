@@ -58,7 +58,7 @@ public class ServerCommand extends AbstractFormCommand {
 			// Get client records for the server
 			GetPilot pdao = new GetPilot(con);
 			ClientPilotMap srvUsers = new ClientPilotMap();
-			Collection<Client> usrs = dao.getUsers(srv.getID());
+			Collection<Client> usrs = dao.getUsersByServer(srv.getID());
 			for (Iterator<Client> i = usrs.iterator(); i.hasNext(); ) {
 				Client usr = i.next();
 				if (usr.getUserID().startsWith(SystemData.get("airline.code"))) {
@@ -107,13 +107,13 @@ public class ServerCommand extends AbstractFormCommand {
 			Collection<String> accessRoles = srv.getRoles().get(Server.ACCESS);
 			
 			// Determine what users to remove from the server
-			Collection<String> removeIDs = new HashSet<String>();
+			Collection<Integer> removeIDs = new HashSet<Integer>();
 			for (Iterator<Pilot> i = srvUsers.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if ((!RoleUtils.hasAccess(p.getRoles(), accessRoles)) || (p.getStatus() != Pilot.ACTIVE)) {
+				if ((!RoleUtils.hasAccess(p.getRoles(), accessRoles)) || (p.getStatus() != Pilot.ACTIVE) || (p.getNoVoice())) {
 					msgs.add("Removed " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
 					log.warn("Removing " + p.getName() + " " + p.getPilotCode() + " from TS2 Server " + srv.getName());
-					removeIDs.add(p.getPilotCode());
+					removeIDs.add(new Integer(p.getID()));
 				}
 			}
 			
@@ -121,17 +121,29 @@ public class ServerCommand extends AbstractFormCommand {
 			wdao.removeUsers(srv, removeIDs);
 			
 			// Determine what users to add to the server
+			Collection<Client> addUsrs = new HashSet<Client>();
 			for (Iterator<Pilot> i = otherPilots.getPilots().iterator(); i.hasNext(); ) {
 				Pilot p = i.next();
-				if ((RoleUtils.hasAccess(p.getRoles(), accessRoles)) && (p.getStatus() == Pilot.ACTIVE)) {
+				if ((RoleUtils.hasAccess(p.getRoles(), accessRoles)) && (p.getStatus() == Pilot.ACTIVE) && (!p.getNoVoice())) {
 					msgs.add("Added " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					log.warn("Adding " + p.getName() + " " + p.getPilotCode() + " to TS2 Server " + srv.getName());
 					Client usr = otherPilots.getClient(p.getPilotCode());
-					wdao.addToServer(usr, srv, p.getRoles());
+					
+					// Build the new client record
+					Client c = new Client(p.getPilotCode());
+					c.setID(p.getID());
+					c.setPassword((usr == null) ? "dummy" : usr.getPassword());
+					c.addChannels(srv);
+					c.setServerID(srv.getID());
+					c.setAutoVoice(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.VOICE)));
+					c.setServerOperator(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.OPERATOR)));
+					c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.ADMIN)));
+					addUsrs.add(c);
 				}
 			}
 			
-			// Commit transaction
+			// If we have clients to add, write them and commit
+			wdao.write(addUsrs);
 			ctx.commitTX();
 			
 			// Reload the system model
