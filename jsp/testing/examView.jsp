@@ -42,7 +42,7 @@
 <c:if test="${!empty exam.scoredOn}">
 <tr>
  <td class="label">Scored on</td>
- <td class="data"><fmt:date fmt="d" date="${exam.scoredOn}" /> by ${scorer.name}</td>
+ <td class="data"><fmt:date date="${exam.scoredOn}" /> by ${scorer.name}</td>
 </tr>
 </c:if>
 
