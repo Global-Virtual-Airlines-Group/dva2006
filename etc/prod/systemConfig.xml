@@ -99,8 +99,7 @@
 	</time>
 	
 	<!-- pilot ranks -->
-	<list name="ranks" attr="rank">
-		<rank>Trainee</rank>
+	<list name="ranks" attr="rank" unique="true">
 		<rank>First Officer</rank>
 		<rank>Captain</rank>
 		<rank>Senior Captain</rank>
