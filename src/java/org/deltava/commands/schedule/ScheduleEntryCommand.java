@@ -4,7 +4,9 @@ package org.deltava.commands.schedule;
 import java.text.*;
 import java.sql.Connection;
 
+import org.deltava.beans.DateTime;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -83,16 +85,11 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
-			if (id == null) {
-				wdao.write(entry, false);
-				ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
-			} else {
-				wdao.write(entry, true);
-				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
-			}
-
-			// Set status attribute
+			wdao.write(entry, (id != null));
+			
+			// Set status attributes
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
+			ctx.setAttribute((id == null) ? "isCreate" : "isUpdate", Boolean.TRUE, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
