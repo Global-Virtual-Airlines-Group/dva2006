@@ -48,10 +48,12 @@ public class ExamCommand extends AbstractCommand {
          if (!access.getCanRead())
             throw securityException("Cannot view Examination " + ctx.getID());
          
-         // Get the Pilot
+         // Get the Pilot and the scorer
          GetPilot pdao = new GetPilot(con);
          Pilot p = pdao.get(ex.getPilotID());
          ctx.setAttribute("pilot", p, REQUEST);
+         if (ex.getScorerID() != 0)
+        	 ctx.setAttribute("scorer", pdao.get(ex.getScorerID()), REQUEST);
          
          // Display answers only if we have the necessary role
          int activeExamID = dao.getActiveExam(ctx.getUser().getID());
