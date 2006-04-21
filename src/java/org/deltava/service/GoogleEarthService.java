@@ -37,7 +37,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		}
 		
 		public static GoogleEarthColor make(int red, int green, int blue) {
-			return new GoogleEarthColor(red, green, blue, 80);
+			return new GoogleEarthColor(red, green, blue, 128);
 		}
 		
 		private GoogleEarthColor(int red, int green, int blue, int alpha) {
