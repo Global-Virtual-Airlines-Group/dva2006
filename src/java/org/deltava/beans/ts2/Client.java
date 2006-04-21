@@ -282,6 +282,9 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	 * @return the user ID
 	 */
 	public Object cacheKey() {
-		return _userID;
+		StringBuilder buf = new StringBuilder(String.valueOf(getID()));
+		buf.append('-');
+		buf.append(String.valueOf(_serverID));
+		return buf.toString();
 	}
 }

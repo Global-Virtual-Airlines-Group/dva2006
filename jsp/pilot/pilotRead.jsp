@@ -124,12 +124,13 @@
  <td colspan="${cspan}" class="data">${pilot.name} has access to the following TeamSpeak 2 Virtual Servers:<br />
 <br />
 <c:forEach var="ts2Client" items="${ts2Clients}">
+<c:if test="${ts2Client.serverID != 0}">
 <c:set var="ts2Server" value="${ts2Servers[ts2Client.serverID]}" scope="request" />
 <span class="sec bld">${ts2Server.name}</span> (Port ${ts2Server.port}) - ${ts2Server.description}
 <c:if test="${ts2Client.autoVoice}"> <span class="ter small bld">AUTO-VOICE</span></c:if>
 <c:if test="${ts2Client.serverOperator}"> <span class="sec small bld">SERVER OPERATOR</span></c:if>
 <c:if test="${ts2Client.serverAdmin}"> <span class="pri small bld">SERVER ADMINISTRATOR</span></c:if><br />
-</c:forEach></td>
+</c:if></c:forEach></td>
 </tr>
 </content:filter></c:if>
 

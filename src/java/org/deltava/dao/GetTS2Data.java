@@ -259,7 +259,8 @@ public class GetTS2Data extends DAO {
 	 * Helper method to parse User result sets.
 	 */
 	private List<Client> executeUsers() throws SQLException {
-		Map<Integer, Client> results = new HashMap<Integer, Client>();
+		Map<String, Client> results = new HashMap<String, Client>();
+		Collection<Integer> userIDs = new HashSet<Integer>();
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
@@ -274,7 +275,8 @@ public class GetTS2Data extends DAO {
 
 			// Add to cache and results
 			_cache.add(usr);
-			results.put(new Integer(usr.getID()), usr);
+			userIDs.add(new Integer(usr.getID()));
+			results.put(usr.cacheKey().toString(), usr);
 		}
 
 		// Clean up
@@ -286,18 +288,24 @@ public class GetTS2Data extends DAO {
 			StringBuilder buf = new StringBuilder("SELECT * FROM teamspeak.ts2_channel_privileges WHERE (i_cp_client_id ");
 			if (results.size() == 1) {
 				buf.append(" = ");
-				buf.append(StringUtils.listConcat(results.keySet(), ""));
+				buf.append(StringUtils.listConcat(userIDs, ""));
 				buf.append(')');
 			} else {
 				buf.append(" IN (");
-				buf.append(StringUtils.listConcat(results.keySet(), ","));
+				buf.append(StringUtils.listConcat(userIDs, ","));
 				buf.append("))");
 			}
 			
 			prepareStatementWithoutLimits(buf.toString());
 			rs = _ps.executeQuery();
 			while (rs.next()) {
-				Client c = results.get(new Integer(rs.getInt(4)));
+				// Build the key
+				StringBuilder keyBuf = new StringBuilder(String.valueOf(rs.getInt(4)));
+				keyBuf.append('-');
+				keyBuf.append(String.valueOf(rs.getInt(2)));
+				
+				// Get the client record
+				Client c = results.get(keyBuf.toString());
 				if (c != null) {
 					c.setServerAdmin(rs.getInt(5) == -1);
 					c.setServerOperator(rs.getInt(6) == -1);
