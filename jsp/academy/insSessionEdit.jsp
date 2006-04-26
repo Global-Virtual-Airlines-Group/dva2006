@@ -69,14 +69,13 @@ return true;
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data sec"><el:combo name="status" idx="*" size="1" className="req" options="${statuses}" value="${session.status}" firstEntry="-" /></td>
+ <td class="data sec"><el:combo name="status" idx="*" size="1" className="req" options="${statuses}" value="${session.statusName}" firstEntry="-" /></td>
 </tr>
-<c:if test="${!empty session}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noShow" idx="*" value="true" checked="${session.noShow}" label="Pilot did not attend Instruction Session" /></td>
+ <td class="data"><c:if test="${!empty session}"><el:box name="noShow" idx="*" value="true" checked="${session.noShow}" label="Pilot did not attend Instruction Session" /><br /></c:if>
+<el:box name="noSend" idx="*" value="true" label="Don't send notification e-mail" /></td>
 </tr>
-</c:if>
 <tr>
  <td class="label" valign="top">Remarks</td>
  <td class="data"><el:textbox name="remarks" idx="*" width="120" height="6">${session.remarks}</el:textbox></td>
