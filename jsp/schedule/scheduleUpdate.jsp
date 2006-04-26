@@ -65,7 +65,7 @@ ${error}<br />
 The <content:airline /> Flight Schedule has been updated. Flight ${scheduleEntry.flightCode} has been
 ${isCreate ? 'added into' : 'updated in'} the database.<br />
 <br />
-To review this schedule entry, <el:cmd url="sched" linkID="${scheduleEntry.flightCode}" className="sec bld">click here</el:cmd>.<br />
+To review this schedule entry, <el:cmd url="sched" op="edit" linkID="${scheduleEntry.flightCode}" className="sec bld">click here</el:cmd>.<br />
 </c:when>
 </c:choose>
 <c:if test="${isAirport}">
