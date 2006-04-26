@@ -143,13 +143,9 @@ public abstract class LibraryEntry implements java.io.Serializable, Comparable, 
     * Updates the size of this resource.
     * @param size the size of the file in bytes
     * @throws IllegalArgumentException if size is negative
-    * @throws IllegalStateException if the file exists
     * @see LibraryEntry#getSize()
     */
    public void setSize(long size) {
-      if (_fileSize != 0)
-         throw new IllegalStateException("File Size already set");
-      
       if (size < 0)
          throw new IllegalArgumentException("Invalid File Size - " + size);
       
