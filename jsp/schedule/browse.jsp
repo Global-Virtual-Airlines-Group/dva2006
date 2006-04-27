@@ -77,8 +77,8 @@ return true;
  <td class="sec bld">${entry.equipmentType}</td>
  <td class="small">${entry.airportD.name} (<fmt:airport airport="${entry.airportD}" />) to
  ${entry.airportA.name} (<fmt:airport airport="${entry.airportA}" />)</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.timeD}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.timeA}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportD.TZ}" date="${entry.dateTimeD.UTC}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
  <td class="sec"><fmt:int value="${entry.distance}" /> miles</td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
 </tr>
