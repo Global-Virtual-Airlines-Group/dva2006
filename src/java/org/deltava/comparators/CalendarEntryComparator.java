@@ -15,10 +15,14 @@ import org.deltava.beans.CalendarEntry;
 public class CalendarEntryComparator implements Comparator<CalendarEntry> {
 
 	/**
-	 * Compares two Calendar entries by comparing their dates.
+	 * Compares two Calendar entries by comparing their dates. If both beans are of the same class
+	 * and implement comparable, their native ordering will be used.
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(CalendarEntry e1, CalendarEntry e2) {
+		if ((e1 instanceof Comparable) && (e2.getClass() == e1.getClass()))
+			return ((Comparable<CalendarEntry>) e1).compareTo(e2);
+		
 		return e1.getDate().compareTo(e2.getDate());
 	}
 }

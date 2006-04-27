@@ -251,7 +251,8 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	 */
 	public int compareTo(Object o) {
 		InstructionSession is2 = (InstructionSession) o;
-		return _startTime.compareTo(is2._startTime);
+		int tmpResult = _startTime.compareTo(is2._startTime);
+		return (tmpResult == 0) ? super.compareTo(is2) : tmpResult;
 	}
 
 	/**

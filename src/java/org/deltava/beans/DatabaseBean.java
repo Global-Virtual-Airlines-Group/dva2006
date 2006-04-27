@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import org.deltava.util.cache.Cacheable;
@@ -9,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public abstract class DatabaseBean implements java.io.Serializable, Cacheable {
+public abstract class DatabaseBean implements java.io.Serializable, Cacheable, Comparable {
 
     private int _id;
     
@@ -51,11 +52,21 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable {
     
     /**
      * Tests for equality by comparing the class and database ID.
-     * @param db2 the object to compare with
+     * @param o the object to compare with
      * @return TRUE if the objects have the same class and database ID
      */
-    public boolean equals(DatabaseBean db2) {
-        return (_id == db2.getID()) && (getClass() == db2.getClass()); 
+    public boolean equals(Object o) {
+    	DatabaseBean db2 = (DatabaseBean) o;
+        return (compareTo(o) == 0) && (getClass() == db2.getClass()); 
+    }
+    
+    /**
+     * Compares two database beans by comparing their IDs.
+     * @see Comparable#compareTo(Object)
+     */
+    public int compareTo(Object o) {
+    	DatabaseBean db2 = (DatabaseBean) o;
+    	return new Integer(_id).compareTo(new Integer(db2._id));
     }
     
     /**
