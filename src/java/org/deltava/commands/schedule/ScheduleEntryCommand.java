@@ -2,10 +2,11 @@
 package org.deltava.commands.schedule;
 
 import java.text.*;
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.DateTime;
 import org.deltava.beans.schedule.*;
+import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -86,7 +87,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
 			wdao.write(entry, (id != null));
-			
+
 			// Set status attributes
 			ctx.setAttribute("scheduleEntry", entry, REQUEST);
 			ctx.setAttribute((id == null) ? "isCreate" : "isUpdate", Boolean.TRUE, REQUEST);
@@ -114,22 +115,36 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		ScheduleEntry id = FlightCodeParser.parse(fCode);
 
-		try {
+		if (id != null) {
+			ScheduleEntry entry = null;
+			
 			// Get the Schedule entry
-			if (id != null) {
+			try {
 				Connection con = ctx.getConnection();
 				GetSchedule dao = new GetSchedule(con);
-				ScheduleEntry entry = dao.get(id);
+				entry = dao.get(id);
 				if (entry == null)
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
 
 				// Save the entry in the request
 				ctx.setAttribute("entry", entry, REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
 			}
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
+			
+			// Load Airports
+			Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+			airports.addAll(SystemData.getAirports().values());
+			for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
+				Airport a = i.next();
+				if (!a.getAirlineCodes().contains(entry.getAirline().getCode()))
+					i.remove();
+			}
+			
+			// Save airports in the request
+			ctx.setAttribute("airports", airports, REQUEST);
 		}
 
 		// Forward to the JSP
