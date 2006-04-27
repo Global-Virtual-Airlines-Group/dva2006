@@ -3,6 +3,7 @@
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Schedule - ${empty entry ? 'New Entry' : entry.flightCode}</title>
@@ -62,15 +63,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing From</td>
- <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
- <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
- at <el:text name="timeD" idx="*" size="4" max="5" value="" /> <span class="small">(Format: HH:mm)</span></td>
+ <td class="data"><el:combo name="airportD" size="1" options="${airports}" value="${entry.airportD}" onChange="void changeAirport(this)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
+ at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">Arriving At</td>
- <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" onChange="void changeAirport(this)" />
- <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" />
- at <el:text name="timeA" idx="*" size="4" max="5" value="" /> <span class="small">(Format: HH:mm)</span></td>
+ <td class="data"><el:combo name="airportA" size="1" options="${airports}" value="${entry.airportA}" onChange="void changeAirport(this)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" value="${entry.airportA.ICAO}" onBlur="void setAirport(document.forms[0].airportA, this.value)" />
+ at <el:text name="timeA" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeA, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
