@@ -51,7 +51,7 @@ public class GetExam extends DAO {
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ) FROM EXAMQUESTIONS EQ LEFT JOIN "
 					+ "EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) "
-					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID ORDER BY EQ.QUESTION_NO");
+					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
