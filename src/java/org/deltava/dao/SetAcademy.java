@@ -271,7 +271,7 @@ public class SetAcademy extends DAO {
 	public void write(InstructionSession s) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
-					+ "STATUS, NOSHOW, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+					+ "STATUS, NOSHOW, REMARKS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getCourseID());
 			_ps.setInt(2, s.getInstructorID());
 			_ps.setTimestamp(3, createTimestamp(s.getStartTime()));
@@ -279,6 +279,7 @@ public class SetAcademy extends DAO {
 			_ps.setInt(5, s.getStatus());
 			_ps.setBoolean(6, s.getNoShow());
 			_ps.setString(7, s.getRemarks());
+			_ps.setInt(8, s.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
