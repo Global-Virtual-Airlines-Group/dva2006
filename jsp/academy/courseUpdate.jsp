@@ -44,7 +44,7 @@ You have withdrawn from the <content:airline /> Flight Academy course <span clas
 <!-- Flight Academy Course Completed -->
 <div class="updateHdr">Flight Academy Course Completed</div>
 <br />
-<span class="pri bld">${pilot.name} has successfully completed the <content:airline /> Flight Academy 
+${pilot.name} has successfully completed the <content:airline /> Flight Academy 
 course <span class="pri bld">${course.name}</span>, and has been awarded the <b>${course.name}</b> 
 Certification. An e-mail message has been sent to ${pilot.rank} ${pilot.lastName}.<br />
 <br />
