@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -70,11 +70,13 @@ public class FlightBoardCommand extends AbstractCommand {
 				urlcon.disconnect();
 
 				// Get network status
-				urlcon = getURL(status.getDataURL());
+				NetworkDataURL nd = status.getDataURL(true);
+				urlcon = getURL(nd.getURL());
 				GetServInfo idao = new GetServInfo(urlcon);
-				idao.setBufferSize(32768);
+				idao.setBufferSize(40960);
 				info = idao.getInfo(networkName);
 				urlcon.disconnect();
+				nd.logUsage(true);
 
 				// Get the DAO and execute, and highlight our pilots
 				GetPilotOnline dao = new GetPilotOnline(con);

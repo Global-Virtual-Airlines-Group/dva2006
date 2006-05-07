@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -6,16 +6,16 @@ import java.util.*;
 import org.deltava.util.cache.Cacheable;
 
 /**
- * A bean to store VATSIM-specific ServInfo properties.
+ * A bean to store VATSIM/IVAO-specific ServInfo properties.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class NetworkStatus implements java.io.Serializable, Cacheable {
+public class NetworkStatus implements java.io.Serializable, Cacheable, Comparable {
 
 	private String _networkName;
-	private Set<String> _dataURLs;
+	private List<NetworkDataURL> _dataURLs;
 	private String _msg;
 	private boolean _isCached;
 
@@ -28,7 +28,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	public NetworkStatus(String networkName) {
 		super();
 		_networkName = networkName.trim();
-		_dataURLs = new HashSet<String>();
+		_dataURLs = new ArrayList<NetworkDataURL>();
 	}
 
 	/**
@@ -58,25 +58,34 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	}
 
 	/**
-	 * Returns a random data location URL.
+	 * Returns a data location URL.
+	 * @param isRandom TRUE if a random location should be specified, otherwise the most reliable
 	 * @return the URL
 	 * @see NetworkStatus#getURLs()
 	 * @see NetworkStatus#addURL(String)
 	 */
-	public String getDataURL() {
-		Random r = new Random();
-		int idx = r.nextInt(_dataURLs.size());
-		return getURLs().get(idx);
+	@SuppressWarnings("unchecked")
+	public NetworkDataURL getDataURL(boolean isRandom) {
+		
+		if (isRandom) {
+			Random r = new Random();
+			int idx = r.nextInt(_dataURLs.size());
+			return _dataURLs.get(idx);
+		}
+	
+		// Resort the collection and return
+		Collections.sort(_dataURLs);
+		return _dataURLs.get(0);
 	}
-
+	
 	/**
 	 * Returns all data location URLs.
 	 * @return a List of URLs.
-	 * @see NetworkStatus#getDataURL()
+	 * @see NetworkStatus#getDataURL(boolean)
 	 * @see NetworkStatus#addURL(String)
 	 */
-	public List<String> getURLs() {
-		return new ArrayList<String>(_dataURLs);
+	public List<NetworkDataURL> getURLs() {
+		return new ArrayList<NetworkDataURL>(_dataURLs);
 	}
 
 	/**
@@ -97,15 +106,31 @@ public class NetworkStatus implements java.io.Serializable, Cacheable {
 	}
 
 	/**
-	 * Adds a data location URL.
+	 * Adds a data location URL. This checks to ensure that each URL is unique per network.
 	 * @param url the URL
-	 * @see NetworkStatus#getDataURL()
+	 * @see NetworkStatus#getDataURL(boolean)
 	 * @see NetworkStatus#getURLs()
 	 */
 	public void addURL(String url) {
-		_dataURLs.add(url);
+		for (Iterator<NetworkDataURL> i = _dataURLs.iterator(); i.hasNext(); ) {
+			NetworkDataURL nd = i.next();
+			if (nd.getURL().equals(url))
+				return;
+		}
+		
+		// Add the URL if it's not unique
+		_dataURLs.add(new NetworkDataURL(url));
 	}
 
+	/**
+	 * Compares two networks by comparing their network names.
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object o) {
+		NetworkStatus ns2 = (NetworkStatus) o;
+		return _networkName.compareTo(ns2.getName());
+	}
+	
 	/**
 	 * Returns the network name's hash code.
 	 */

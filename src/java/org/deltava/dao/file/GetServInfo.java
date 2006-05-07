@@ -39,7 +39,7 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static Cache _netCache = new ExpiringCache(3, 21600); // 6 hours
+	private static Cache _netCache = new ExpiringCache(3, 43200); // 12 hours
 	private static ExpiringCache _infoCache = new ExpiringCache(3, 180);
 	
 	private boolean _useCache = true;
@@ -109,6 +109,19 @@ public class GetServInfo extends DAO {
 	 */
 	public void setUseCache(boolean useCache) {
 		_useCache = useCache;
+	}
+	
+	/**
+	 * Returns cached network status data, if present.
+	 * @param netName the network name
+	 * @return a NetworkStatus bean, or null if not cached
+	 */
+	public static synchronized NetworkStatus getCachedInfo(String netName) {
+		NetworkStatus status =  (NetworkStatus) _netCache.get(netName);
+		if (status != null)
+			status.setCached();
+		
+		return status;
 	}
 
 	/**

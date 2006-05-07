@@ -68,9 +68,13 @@ public class ServInfoDataService extends WebDataService {
 				con.disconnect();
 
 				// Get network info
-				con = getURL(status.getDataURL());
+				NetworkDataURL nd = status.getDataURL(true); 
+				con = getURL(nd.getURL());
 				GetServInfo idao = new GetServInfo(con);
+				idao.setBufferSize(32768);
 				NetworkInfo info = idao.getInfo(NETWORKS[x]);
+				con.disconnect();
+				nd.logUsage(true);
 
 				// Mash the VATSIM/IVAO user data together
 				users.addAll(combineUsers(info, pilots));
