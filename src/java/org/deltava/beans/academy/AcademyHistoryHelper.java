@@ -86,7 +86,17 @@ public class AcademyHistoryHelper {
 	 */
 	public boolean hasPassed(String certName) {
 		Course c = _courses.get(certName);
-		return (c == null) ? false : (c.getStatus() == Course.COMPLETE);
+		return (c != null) && (c.getStatus() == Course.COMPLETE);
+	}
+	
+	/**
+	 * Returns wether a Pilot has started a particular course.
+	 * @param certName the Certification name
+	 * @return TRUE if a course entry exists and was not pased, otherwise FALSE
+	 */
+	public boolean isPending(String certName) {
+		Course c = _courses.get(certName);
+		return (c != null) && (c.getStatus() != Course.COMPLETE);
 	}
 	
 	/**
@@ -169,7 +179,7 @@ public class AcademyHistoryHelper {
 		Certification cert = _certs.get(certName);
 		for (Iterator<String> i = cert.getExamNames().iterator(); i.hasNext(); ) {
 			String examName = i.next();
-			if (!hasPassed(examName)) {
+			if (!passedExam(examName)) {
 				log(certName +  " not complete, " + examName + " not passed");
 				return false;
 			}
@@ -226,8 +236,8 @@ public class AcademyHistoryHelper {
 		}
 		
 		// If we've already passed it or are taking it, then no
-		if (hasPassed(c.getName())) {
-			log("Already passed " + c.getName());
+		if (hasPassed(c.getName()) || isPending(c.getName())) {
+			log("Already passed/enrolled in " + c.getName());
 			return false;
 		}
 		
