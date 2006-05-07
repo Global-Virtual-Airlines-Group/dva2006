@@ -37,12 +37,12 @@ mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` teamspeak | 
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
 
 # Dump Water Cooler
 echo 'Writing Water Cooler'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES | gzip -9 > cooler.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES | gzip -9 > cooler.sql.gz
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
