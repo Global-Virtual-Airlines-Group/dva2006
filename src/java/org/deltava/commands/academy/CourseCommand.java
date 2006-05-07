@@ -41,6 +41,7 @@ public class CourseCommand extends AbstractCommand {
 			GetExam exdao = new GetExam(con);
 			GetAcademyCertifications cdao = new GetAcademyCertifications(con);
 			AcademyHistoryHelper helper = new AcademyHistoryHelper(dao.getByPilot(c.getPilotID()), cdao.getAll());
+			helper.setDebug(ctx.isSuperUser());
 			helper.addExams(exdao.getExams(c.getPilotID()));
 			ctx.setAttribute("isComplete", Boolean.valueOf(helper.hasCompleted(c.getName())), REQUEST);
 			
