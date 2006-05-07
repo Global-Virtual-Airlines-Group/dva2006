@@ -145,7 +145,7 @@ return ${access.canComment || access.canUpdateProgress};
  <el:cmdbutton ID="ReturnButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="RETURN" />
 </c:if>
 <c:if test="${access.canApprove && isComplete}">
- <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="completed" label="AWARD CERTIFICATION" />
+ <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
