@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.sql.Connection;
@@ -36,6 +36,7 @@ public class PilotRecognitionCommand extends AbstractCommand {
 			ctx.setAttribute("promotions", dao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
 			ctx.setAttribute("rankChanges", dao.getByType(StatusUpdate.INTPROMOTION), REQUEST);
 			ctx.setAttribute("ratingChanges", dao.getByType(StatusUpdate.RATING_ADD), REQUEST);
+			ctx.setAttribute("academyCerts", dao.getByType(StatusUpdate.CERT_ADD), REQUEST);
 			
 			// Get pilot recognition
 			ctx.setAttribute("recognition", dao.getByType(StatusUpdate.RECOGNITION), REQUEST);

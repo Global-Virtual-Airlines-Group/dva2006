@@ -30,8 +30,8 @@ following accomplishments:<br />
 <el:table className="view" space="default" pad="default">
 <!-- Table Header Row -->
 <tr class="title caps">
- <td width="10%">DATE</td>
- <td width="30%">PILOT NAME</td>
+ <td width="12%">DATE</td>
+ <td width="18%">PILOT NAME</td>
  <td>&nbsp;</td>
 </tr>
 
@@ -87,6 +87,20 @@ following accomplishments:<br />
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
  <td class="bld"><el:cmd url="profile" linkID="0x${promotion.ID}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
  <td class="left">${promotion.description}</td>
+</tr>
+</c:forEach>
+</c:if>
+
+<c:if test="${!empty academyCerts}">
+<!-- Flight Academy Certifications -->
+<tr class="title caps">
+ <td colspan="3" class="left">PILOTS OBTAINING FLIGHT ACADEMY RATINGS</td>
+</tr>
+<c:forEach var="cert" items="${academyCerts}">
+<tr>
+ <td class="pri bld"><fmt:date fmt="d" date="${cert.createdOn}" /></td>
+ <td class="bld"><el:cmd url="profile" linkID="0x${cert.ID}">${cert.firstName} ${cert.lastName}</el:cmd></td>
+ <td class="left">${cert.description}</td>
 </tr>
 </c:forEach>
 </c:if>
