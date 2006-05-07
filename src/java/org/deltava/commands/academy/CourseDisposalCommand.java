@@ -3,7 +3,7 @@ package org.deltava.commands.academy;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -36,7 +36,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
 		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
 		if (opCode < 0)
-			throw new CommandException("Invalid Operation - " + opName);
+			throw new CommandException("Invalid Operation - " + opName, false);
 
 		// Initialize the Message Context
 		MessageContext mctx = new MessageContext();
@@ -54,6 +54,10 @@ public class CourseDisposalCommand extends AbstractCommand {
 			
 			// Get the Message Template DAO
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			
+			// Create the status update bean
+			StatusUpdate upd = new StatusUpdate(c.getPilotID(), StatusUpdate.ACADEMY);
+			upd.setAuthorID(ctx.getUser().getID());
 
 			// Check our access
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
@@ -61,17 +65,22 @@ public class CourseDisposalCommand extends AbstractCommand {
 			boolean canExec = false;
 			switch (opCode) {
 				case Course.STARTED :
+					upd.setDescription("Re-enrolled in " + c.getName());
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
 					canExec = access.getCanRestart() || access.getCanStart();
 					break;
 					
 				case Course.ABANDONED :
+					upd.setDescription("Withdrew from " + c.getName());
 					canExec = access.getCanCancel();
 					mctx.setTemplate(mtdao.get("COURSECANCEL"));
 					ctx.setAttribute("isAbandoned", Boolean.TRUE, REQUEST);
 					break;
 					
 				case Course.COMPLETE :
+					upd.setType(StatusUpdate.CERT_ADD);
+					upd.setDescription("Obtained " + c.getName() + " Flight Academy certification");
+					
 					// Get our exams and init the academy helper
 					GetExam exdao = new GetExam(con);
 					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
@@ -97,14 +106,25 @@ public class CourseDisposalCommand extends AbstractCommand {
 			} else
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 			
+			// Start a transaction
+			ctx.startTX();
+			
 			// Get the DAO and update the course 
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.setStatus(c.getID(), opCode);
+			
+			// Write the Status Update
+			SetStatusUpdate uwdao = new SetStatusUpdate(con);
+			uwdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
 			
 			// Save the course
 			ctx.setAttribute("course", c, REQUEST);
 			mctx.addData("course", c);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

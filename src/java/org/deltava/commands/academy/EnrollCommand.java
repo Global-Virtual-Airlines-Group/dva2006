@@ -4,7 +4,9 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.StatusUpdate;
 import org.deltava.beans.academy.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -44,6 +46,11 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			if (!_academyHistory.canTake(cert))
 				throw securityException("Cannot enroll in " + cert.getName());
 			
+			// Create the status entry
+			StatusUpdate upd = new StatusUpdate(ctx.getUser().getID(), StatusUpdate.ACADEMY);
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription("Requested enrollment in " + cert.getName());
+			
 			// Convert the Certification into a Course bean
 			c = new Course(cert.getName(), ctx.getUser().getID());
 			c.setStatus(Course.PENDING);
@@ -56,13 +63,26 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			}
 
 			// Figure out if we have passed any stage 1 certs; if so, then immediately start
-			if (_academyHistory.hasAny(1))
+			if (_academyHistory.hasAny(1)) {
 				c.setStatus(Course.STARTED);
+				upd.setDescription("Enrolled in " + cert.getName());
+			}
+			
+			// Start a transaction
+			ctx.startTX();
 				
 			// Get the write DAO and save the course
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.write(c);
+			
+			// Write the status update
+			SetStatusUpdate uwdao = new SetStatusUpdate(con);
+			uwdao.write(upd);
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

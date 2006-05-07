@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -24,10 +24,12 @@ public class StatusUpdate extends DatabaseBean implements Comparable {
 	public static final int EXTPROMOTION = 9;
 	public static final int AIRLINE_TX = 10;
 	public static final int INACTIVITY = 11;
+	public static final int ACADEMY = 12;
+	public static final int CERT_ADD = 13;
 	
 	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition",
 			"Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", "Promotion", "Airline Transfer",
-			"Inactivity Notice"};
+			"Inactivity Notice", "Academy Update", "Pilot Certification"};
 
 	private String _firstName;
 	private String _lastName;
