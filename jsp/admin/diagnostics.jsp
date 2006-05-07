@@ -270,7 +270,7 @@ KEEPALIVE=${con.socket.keepAlive}</td>
 <tr class="title">
  <td width="30%">THREAD NAME</td>
  <td width="15%">THREAD STATUS</td>
- <td wdith="10%">EXECUTION COUNT</td>
+ <td width="10%">EXECUTION COUNT</td>
  <td>CURRENTLY EXECUTING</td>
 </tr>
 
