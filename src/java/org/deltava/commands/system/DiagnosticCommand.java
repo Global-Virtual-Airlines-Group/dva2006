@@ -1,19 +1,23 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 
 import org.deltava.beans.acars.*;
+import org.deltava.beans.servinfo.*;
 import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
 
 import org.deltava.dao.DAO;
+import org.deltava.dao.file.GetServInfo;
+
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.taskman.TaskScheduler;
 
 import org.deltava.taglib.googlemap.InsertGoogleAPITag;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -60,6 +64,20 @@ public class DiagnosticCommand extends AbstractCommand {
 			// Save the ACARS statistics in the request
 			ctx.setAttribute("acarsStats", ServerStats.getInstance(), REQUEST);
 			ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
+		}
+		
+		// TODO Get ServInfo statistics
+		List networks = (List) SystemData.getObject("online.networks");
+		if (!CollectionUtils.isEmpty(networks)) {
+			Collection<NetworkStatus> netInfo = new TreeSet<NetworkStatus>();
+			for (Iterator i = networks.iterator(); i.hasNext(); ) {
+				String networkName = (String) i.next();
+				NetworkStatus status = GetServInfo.getCachedInfo(networkName);
+				if (status != null)
+					netInfo.add(status);
+			}
+			
+			ctx.setAttribute("servInfoStatus", netInfo, REQUEST);
 		}
 		
 		// Run the GC

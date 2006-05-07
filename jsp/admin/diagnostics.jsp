@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> System Diagnostics</title>
@@ -58,8 +59,8 @@
 <tr>
  <td class="label">JVM Memory</td>
  <td class="data"><fmt:int value="${totalMemory}" /> bytes in use, <fmt:int value="${maxMemory}" />
- bytes maximum. <c:choose><c:when test="${pctMemory > 85}"><span class="error bld"></c:when>
-<c:when test="${pctMemory > 65}"><span class="warn bld"></c:when>
+ bytes maximum. <c:choose><c:when test="${pctMemory > 90}"><span class="error bld"></c:when>
+<c:when test="${pctMemory > 80}"><span class="warn bld"></c:when>
 <c:otherwise><span class="bld"></c:otherwise></c:choose>(<fmt:dec value="${pctMemory}" />% used)</span></td>
 </tr>
 <tr>
@@ -141,6 +142,42 @@
 </view:row>
 </c:forEach>
 </el:table>
+
+<c:if test="${!empty servInfoStatus}">
+<!-- ServInfo network status information -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="6" class="left">ONLINE NETWORK STATUS DATA SOURCES</td>
+</tr>
+
+<!-- ServInfo Title Bar -->
+<tr class="title caps">
+ <td width="45%">DATA SOURCE URL</td>
+ <td width="15%">LAST USE</td>
+ <td width="10%">SUCCESS</td>
+ <td width="10%">FAILURES</td>
+ <td width="10%">TOTAL USAGE</td>
+ <td>PERCENTAGE</td>
+</tr>
+
+<c:forEach var="netStatus" items="${servInfoStatus}">
+<!-- ${netStatus.name} -->
+<tr class="title caps">
+ <td colspan="6" class="left">${netStatus.name} - ${fn:sizeof(netStatus.URLs)} SOURCES</td>
+</tr>
+<c:forEach var="source" items="${netStatus.URLs}">
+<tr>
+ <td class="pri bld">${source.URL}</td>
+ <td class="sec"><fmt:date date="${source.lastUse}" default="NEVER" /></td>
+ <td><fmt:int value="${source.success}" /></td>
+ <td><fmt:int value="${source.failures}" /></td>
+ <td><fmt:int value="${source.success + source.failures}" /></td>
+ <td><fmt:int value="${source.successPercentage}" />%</td>
+</tr>
+</c:forEach>
+</c:forEach>
+</el:table>
+</c:if>
 
 <!-- Scheduled Task Pool Data Table -->
 <el:table className="view" space="default" pad="default">
