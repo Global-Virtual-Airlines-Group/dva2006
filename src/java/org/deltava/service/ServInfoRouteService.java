@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.net.*;
@@ -54,6 +54,7 @@ public class ServInfoRouteService extends WebService {
 
 		// Get VATSIM/IVAO data
 		NetworkInfo info = null;
+		NetworkDataURL nd = null;
 		try {
 			// Connect to info URL
 			HttpURLConnection urlcon = getURL(SystemData.get("online." + networkName.toLowerCase() + ".status_url"));
@@ -64,12 +65,15 @@ public class ServInfoRouteService extends WebService {
 			urlcon.disconnect();
 
 			// Get network status
-			urlcon = getURL(status.getDataURL());
+			nd = status.getDataURL(false); 
+			urlcon = getURL(nd.getURL());
 			GetServInfo idao = new GetServInfo(urlcon);
 			idao.setBufferSize(32768);
 			info = idao.getInfo(networkName);
 			urlcon.disconnect();
+			nd.logUsage(true);
 		} catch (Exception e) {
+			nd.logUsage(false);
 			log.error("Error loading " + networkName + " data");
 			log.error(e.getMessage(), e);
 			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
