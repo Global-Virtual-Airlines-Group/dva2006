@@ -60,7 +60,7 @@
 <c:choose>
 <c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
-<view:table className="view" space="default" pad="default" cmd="acarsloc">
+<view:table className="view" space="default" pad="default" cmd="acarslogf">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="8%">ID</td>
