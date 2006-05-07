@@ -20,6 +20,16 @@ public class CommandException extends ControllerException {
     public CommandException(String msg) {
         super(msg);
     }
+    
+    /**
+     * Creates a new CommandException with an error message, and controls stack dumping.
+     * @param msg
+     * @param dumpStack
+     */
+    public CommandException(String msg, boolean dumpStack) {
+    	this(msg);
+    	setLogStackDump(dumpStack);
+    }
 
     /**
      * Create a new CommandException with an error message and underlying cause.

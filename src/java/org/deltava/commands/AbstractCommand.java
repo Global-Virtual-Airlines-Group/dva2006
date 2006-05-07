@@ -54,8 +54,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected CommandException securityException(String msg) {
-		CommandException ce = new CommandException("Security Error - " + msg);
-		ce.setLogStackDump(false);
+		CommandException ce = new CommandException("Security Error - " + msg, false);
 		ce.setForwardURL("/jsp/error/securityViolation.jsp");
 		ce.setWarning(true);
 		return ce;
@@ -67,9 +66,7 @@ public abstract class AbstractCommand implements Command {
 	 * @return a CommandException
 	 */
 	protected CommandException notFoundException(String msg) {
-		CommandException ce = new CommandException(msg);
-		ce.setLogStackDump(false);
-		return ce;
+		return new CommandException(msg, false);
 	}
 
 	/**
