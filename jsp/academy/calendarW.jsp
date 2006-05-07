@@ -46,7 +46,7 @@ return true;
 </el:table>
 <div class="mid">
 <calendar:week date="cDate" startDate="${startDate}" entries="${sessions}" topBarClass="dayHdr" 
-	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
+	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="academycalendar">
 <calendar:entry name="session">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
