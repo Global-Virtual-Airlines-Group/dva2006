@@ -61,7 +61,8 @@
  <td class="data"><fmt:int value="${totalMemory}" /> bytes in use, <fmt:int value="${maxMemory}" />
  bytes maximum. <c:choose><c:when test="${pctMemory > 90}"><span class="error bld"></c:when>
 <c:when test="${pctMemory > 80}"><span class="warn bld"></c:when>
-<c:otherwise><span class="bld"></c:otherwise></c:choose>(<fmt:dec value="${pctMemory}" />% used)</span></td>
+<c:otherwise><span class="bld"></c:otherwise></c:choose>(<fmt:dec value="${pctMemory}" />% used)</span> 
+Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 <tr>
  <td class="label">Local Time Zone</td>
