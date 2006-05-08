@@ -212,7 +212,7 @@ public final class StringUtils {
 	public static String formatHex(long value) {
 		return "0x" + Long.toHexString(value);
 	}
-
+	
 	/**
 	 * Returns the index of a value within an array of Strings.
 	 * @param values the array of Strings
@@ -220,13 +220,24 @@ public final class StringUtils {
 	 * @return the offset of the value in the array, or -1 if not found
 	 */
 	public static int arrayIndexOf(String[] values, String value) {
+		return arrayIndexOf(values, value, -1);
+	}
+
+	/**
+	 * Returns the index of a value within an array of Strings.
+	 * @param values the array of Strings
+	 * @param value the String to search for
+	 * @param defaultValue the default value to return if not found 
+	 * @return the offset of the value in the array, or defaultValue if not found
+	 */
+	public static int arrayIndexOf(String[] values, String value, int defaultValue) {
 		if ((values == null) || (value == null))
 			return -1;
 		for (int x = 0; x < values.length; x++)
 			if (value.equals(values[x]))
 				return x;
 
-		return -1;
+		return defaultValue;
 	}
 
 	/**
