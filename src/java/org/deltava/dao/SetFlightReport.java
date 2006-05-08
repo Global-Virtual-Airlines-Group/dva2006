@@ -57,53 +57,6 @@ public class SetFlightReport extends DAO {
 	}
 
 	/**
-	 * Marks a Flight Report as submitted. The SQL statement is written in such a way that the Flight Report must
-	 * already be in DRAFT status in order to be submitted, to prevent double-submissions.
-	 * @param fr the Flight Report bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void submit(FlightReport fr) throws DAOException {
-		try {
-			// Since we are writing to multiple tables, this is designed as a transaction
-			startTransaction();
-
-			// Update the flight report fields
-			update(fr, SystemData.get("airline.db"));
-			executeUpdate(1);
-
-			// Update the status
-			prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, SUBMITTED=?, ATTR=? WHERE (ID=?)");
-			_ps.setInt(1, FlightReport.SUBMITTED);
-			_ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-			_ps.setInt(3, fr.getAttributes());
-			_ps.setInt(4, fr.getID());
-
-			// Clear the promotion equipment types
-			prepareStatementWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)");
-			_ps.setInt(1, fr.getID());
-			executeUpdate(0);
-
-			// Update the promotion equipment types
-			prepareStatement("INSERT INTO PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
-			_ps.setInt(1, fr.getID());
-			for (Iterator i = fr.getCaptEQType().iterator(); i.hasNext();) {
-				_ps.setString(2, (String) i.next());
-				_ps.addBatch();
-			}
-
-			// Update the database
-			_ps.executeBatch();
-			_ps.close();
-
-			// Commit the transaction
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-
-	/**
 	 * Disposes of a Flight Report, by setting its status to Approved, Rejected or Held.
 	 * @param usr the Person updating the Flight Report
 	 * @param pirep the Flight Report
@@ -150,7 +103,7 @@ public class SetFlightReport extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
-		sqlBuf.append(db.toLowerCase());
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS (PILOT_ID, RANK, STATUS, DATE, AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, EQTYPE, "
 				+ "FSVERSION, ATTR, DISTANCE, FLIGHT_TIME, REMARKS, SUBMITTED, EVENT_ID, ASSIGN_ID) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
@@ -184,7 +137,7 @@ public class SetFlightReport extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
-		sqlBuf.append(db.toLowerCase());
+		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
 				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, REMARKS=?, DISPOSAL_ID=?, "
 				+ "SUBMITTED=?, DISPOSED=?, ASSIGN_ID=? WHERE (ID=?)");
@@ -239,12 +192,14 @@ public class SetFlightReport extends DAO {
 	/**
 	 * Helper method to write a Flight Report's core data to the database.
 	 */
-	private void writeCore(FlightReport fr, String db) throws SQLException {
+	private void writeCore(FlightReport fr, String dbName) throws SQLException {
+		dbName = formatDBName(dbName);
+		
 		// Initialize the prepared statement
 		if (fr.getID() == 0) {
-			insert(fr, db);
+			insert(fr, dbName);
 		} else {
-			update(fr, db);
+			update(fr, dbName);
 		}
 
 		// Write the PIREP data into the database; if we are writing a new PIREP get the database ID
@@ -254,12 +209,12 @@ public class SetFlightReport extends DAO {
 
 		// Write the comments into the database
 		if (!StringUtils.isEmpty(fr.getComments())) {
-			prepareStatement("REPLACE INTO " + db.toLowerCase() + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+			prepareStatement("REPLACE INTO " + dbName + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
 			_ps.setInt(1, fr.getID());
 			_ps.setString(2, fr.getComments());
 			executeUpdate(1);
 		} else {
-			prepareStatement("DELETE FROM " + db.toLowerCase() + ".PIREP_COMMENT WHERE (ID=?)");
+			prepareStatement("DELETE FROM " + dbName + ".PIREP_COMMENT WHERE (ID=?)");
 			_ps.setInt(1, fr.getID());
 			executeUpdate(0);
 		}
