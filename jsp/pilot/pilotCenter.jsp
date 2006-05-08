@@ -539,6 +539,13 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
  <td class="data">You can view and edit <content:airline /> Online Help entries.</td>
 </tr>
 </content:filter>
+<content:filter roles="HR">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
+ <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride
+scoring delays, Water Cooler participation rates and Flight Report logging.</td>
+</tr>
+</content:filter>
 <content:filter roles="Admin">
 <tr>
  <td class="mid"><el:cmd className="bld" url="diag">Diagnostics</el:cmd></td>
