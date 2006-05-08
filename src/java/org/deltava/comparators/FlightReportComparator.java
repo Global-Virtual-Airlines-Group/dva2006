@@ -1,14 +1,16 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.FlightReport;
 import org.deltava.beans.schedule.Airport;
 
 /**
- * A class to sort Flight Reports.
+ * A comparator to sort Flight Reports.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class FlightReportComparator<T extends FlightReport> extends AbstractComparator<T> {
 
     public static final int DATE = 0;
@@ -35,7 +37,7 @@ public class FlightReportComparator<T extends FlightReport> extends AbstractComp
     }
 
     /**
-     * Creates a new FlightReport comparator with a particular comparison type code.
+     * Creates a new FlightReport comparator with a particular comparison type name.
      * @param typeName The criteria type name by which to compare
      * @throws IllegalArgumentException if the type name is invalid
      * @see AbstractComparator#setComparisonType(String)
@@ -46,9 +48,9 @@ public class FlightReportComparator<T extends FlightReport> extends AbstractComp
     }
 
     /**
-     * Compares two equipment programs by the designated criteria
-     * @throws ClassCastException if either object is not an EquipmentType
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+     * Compares two Flight Reports by the designated criterial.
+     * @throws ClassCastException if either object is not a FlightReport bean
+     * @see java.util.Comparator#compare(Object, Object)
      */
     protected int compareImpl(T f1, T f2) {
 

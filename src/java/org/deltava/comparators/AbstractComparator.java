@@ -1,11 +1,13 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
 
+import org.deltava.util.StringUtils;
+
 /**
  * Implements common comparator functions.
  * NOTE: Most comparators in this package <b>impose orderings that are inconsistent with equals</b>.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -19,17 +21,17 @@ public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Se
     protected boolean _reverseSort = false;
     
     /**
-     * The criteria by which to compare objects
+     * The criteria by which to compare objects.
      */
     protected int _comparisonType;
     
     /**
-     * Text descriptions of the different comparison types
+     * Text descriptions of the different comparison types.
      */
     protected String[] _typeNames;
     
     /**
-     * Create a new comparator with a given set of type names
+     * Create a new comparator with a given set of type names.
      * @param typeNames An array of type names
      * @throws NullPointerException if typeNames is null
      */
@@ -53,7 +55,7 @@ public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Se
     protected abstract int compareImpl(T o1, T o2);
     
     /**
-     * Sets the comparison type
+     * Sets the comparison type.
      * @param type The comparison type.
      * @throws IllegalArgumentException if the type is negative or > typeNames.length
      * @see AbstractComparator#getComparisonType()
@@ -66,20 +68,17 @@ public abstract class AbstractComparator<T> implements Comparator<T>, java.io.Se
     }
     
     /**
-     * Sets the comparison type
+     * Sets the comparison type.
      * @param type The comparison type, contained within _typeNames
      * @throws IllegalArgumentException if the type is not found in _typeNames
      * @see AbstractComparator#getTypeNames()
      */
     public void setComparisonType(String type) {
-        for (int x = 0; x < _typeNames.length; x++) {
-            if (_typeNames[x].equals(type)) {
-                setComparisonType(x);
-                return;
-            }
-        }
-        
-        throw new IllegalArgumentException("Invalid comparison type - " + type);
+    	int typeCode = StringUtils.arrayIndexOf(_typeNames, type);
+    	if (typeCode == -1)
+    		throw new IllegalArgumentException("Invalid comparison type - " + type);
+    	
+    	_comparisonType = typeCode;
     }
 
     /**
