@@ -74,6 +74,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Update the status of the PIREP
 			pirep.setStatus(FlightReport.SUBMITTED);
+			pirep.setSubmittedOn(new Date());
 
 			// Check the schedule database and check the route pair
 			GetSchedule sdao = new GetSchedule(con);
@@ -94,7 +95,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Get the DAO and write the PIREP to the database
 			SetFlightReport fwdao = new SetFlightReport(con);
-			fwdao.submit(pirep);
+			fwdao.write(pirep);
 			
 			// Save the pirep in the request
 			ctx.setAttribute("pirep", pirep, REQUEST);
