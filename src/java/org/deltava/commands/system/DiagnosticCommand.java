@@ -66,7 +66,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
 		}
 		
-		// TODO Get ServInfo statistics
+		// Get ServInfo statistics
 		List networks = (List) SystemData.getObject("online.networks");
 		if (!CollectionUtils.isEmpty(networks)) {
 			Collection<NetworkStatus> netInfo = new TreeSet<NetworkStatus>();
@@ -89,7 +89,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
 		ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
 		ctx.setAttribute("freeMemory", new Long(rt.freeMemory()), REQUEST);
-		ctx.setAttribute("pctMemory", new Double(Math.round(rt.totalMemory() * 100.0 / rt.maxMemory())), REQUEST);
+		ctx.setAttribute("pctMemory", new Double(100 - (Math.round(rt.freeMemory() * 100.0 / rt.totalMemory()))), REQUEST);
 
 		// Get time zone info
 		TimeZone tz = TimeZone.getDefault();
