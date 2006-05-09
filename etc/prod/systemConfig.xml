@@ -8,7 +8,7 @@
 		<url>www.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
 		<code>DVA</code>
-		<db>DVA</db>
+		<db>dva</db>
 		<voice>
 			<url>rw.deltava.org/DAL</url>
 			<ts2>
@@ -188,6 +188,7 @@
 		<equipment>A330-200</equipment>
 		<equipment>A330-300</equipment>
 		<equipment>A340-300</equipment>
+		<equipment>A340-600</equipment>
 		<equipment>ATR-72</equipment>
 		<equipment>B1900</equipment>
 		<equipment>BAE-146</equipment>
