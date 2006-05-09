@@ -26,18 +26,18 @@ import org.deltava.util.system.SystemData;
 public class DashboardCommand extends AbstractCommand {
 	
 	private static final String[] PIREP_GROUP_NAMES = {"Equipment Type", "Pilot", "Approver", "Flight Date", "Day of Week"};
-	private static final String[] PIREP_GSQL = {"EQTYPE", "PILOT_ID", "DISPOSAL_ID", "DATE", "DATE_FORMAT('%W', DATE)"};
+	private static final String[] PIREP_GSQL = {"EQTYPE", "PILOT_ID", "DISPOSAL_ID", "DATE", "DATE_FORMAT(DATE, '%W')"};
 	
 	private static final String[] EXAM_GROUP_NAMES = {"Exam Name", "Pilot", "Scorer", "Exam Date", "Day of Week"};
 	private static final String[] EXAM_GSQL = {"NAME", "PILOT_ID", "GRADED_BY", "CREATED_ON",
-		"DATE_FORMAT('%W', CREATED_ON)"};
+		"DATE_FORMAT(CREATED_ON, '%W')"};
 	
 	private static final String[] CRIDE_GROUP_NAMES = {"Equipment Program", "Aircraft", "Pilot", "Scorer", "Date", "Day of Week"};
 	private static final String[] CRIDE_GSQL = {"EQTYPE", "ACTYPE", "PILOT_ID", "GRADED_BY", "CREATED", 
-		"DATE_FORMAT('%W', CREATED)"};
+		"DATE_FORMAT(CREATED, '%W')"};
 	
 	private static final String[] COOLER_GROUP_NAMES = {"Date", "Day of Week"};
-	private static final String[] COOLER_GSQL = {"CREATED", "DATE_FORMAT('%W', CREATED)"};
+	private static final String[] COOLER_GSQL = {"CREATED", "DATE_FORMAT(CREATED, '%W')"};
 
 	/**
 	 * Execute the command.
@@ -45,9 +45,14 @@ public class DashboardCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get the sort type
+		String sortType = ctx.getParameter("sortType");
+		if (sortType == null)
+			sortType = "Category";
 
 		// Create the comparator and the result map
-		PerformanceComparator<PerformanceMetrics> cmp = new PerformanceComparator<PerformanceMetrics>(ctx.getParameter("sortType"));
+		PerformanceComparator<PerformanceMetrics> cmp = new PerformanceComparator<PerformanceMetrics>(sortType);
 		Map<String, Collection<PerformanceMetrics>> results = new HashMap<String, Collection<PerformanceMetrics>>();
 		
 		// Get start and end dates
@@ -71,6 +76,7 @@ public class DashboardCommand extends AbstractCommand {
 				UserDataMap udmap = uddao.get(getUserIDs(metrics));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
 				updatePilotNames(pilots, metrics);
+				Collections.sort(metrics, cmp);
 			}
 				
 			// Load exam grading statistics
@@ -82,6 +88,7 @@ public class DashboardCommand extends AbstractCommand {
 				UserDataMap udmap = uddao.get(getUserIDs(metrics));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
 				updatePilotNames(pilots, metrics);
+				Collections.sort(metrics, cmp);
 			}
 			
 			// Load Checkride grading statistics
@@ -93,6 +100,7 @@ public class DashboardCommand extends AbstractCommand {
 				UserDataMap udmap = uddao.get(getUserIDs(metrics));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
 				updatePilotNames(pilots, metrics);
+				Collections.sort(metrics, cmp);
 			}
 			
 			// Load Flight Report statistics
@@ -104,6 +112,7 @@ public class DashboardCommand extends AbstractCommand {
 				UserDataMap udmap = uddao.get(getUserIDs(metrics));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
 				updatePilotNames(pilots, metrics);
+				Collections.sort(metrics, cmp);
 			}
 			
 			// Load ACARS Flight Report statistics
@@ -115,13 +124,14 @@ public class DashboardCommand extends AbstractCommand {
 				UserDataMap udmap = uddao.get(getUserIDs(metrics));
 				Map<Integer, Pilot> pilots = pdao.getByID(udmap.getByTable(SystemData.get("airline.db") + ".PILOTS"), "PILOTS");
 				updatePilotNames(pilots, metrics);
+				Collections.sort(metrics, cmp);
 			}
 
 			// Load Water Cooler statistics
 			dao.setCategorySQL(COOLER_GSQL[StringUtils.arrayIndexOf(COOLER_GROUP_NAMES, ctx.getParameter("coolerGroup"), 0)]);
-			metrics = dao.getCoolerPosts(startDays, endDays);
-			Collections.sort(metrics, cmp);
-			results.put("coolerStats", metrics);
+			//metrics = dao.getCoolerPosts(startDays, endDays);
+			//Collections.sort(metrics, cmp);
+			//results.put("coolerStats", metrics);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -132,10 +142,10 @@ public class DashboardCommand extends AbstractCommand {
 		ctx.setAttribute("sortOptions", ComboUtils.fromArray(cmp.getTypeNames()), REQUEST);
 		
 		// Save group options
-		ctx.setAttribute("pirepGroupOptions", ComboUtils.fromArray(PIREP_GROUP_NAMES, PIREP_GSQL), REQUEST);
-		ctx.setAttribute("examGroupOptions", ComboUtils.fromArray(EXAM_GROUP_NAMES, EXAM_GSQL), REQUEST);
-		ctx.setAttribute("rideGroupOptions", ComboUtils.fromArray(CRIDE_GROUP_NAMES, CRIDE_GSQL), REQUEST);
-		ctx.setAttribute("coolerGroupOptions", ComboUtils.fromArray(COOLER_GROUP_NAMES, COOLER_GSQL), REQUEST);
+		ctx.setAttribute("pirepGroupOptions", ComboUtils.fromArray(PIREP_GROUP_NAMES), REQUEST);
+		ctx.setAttribute("examGroupOptions", ComboUtils.fromArray(EXAM_GROUP_NAMES), REQUEST);
+		ctx.setAttribute("rideGroupOptions", ComboUtils.fromArray(CRIDE_GROUP_NAMES), REQUEST);
+		ctx.setAttribute("coolerGroupOptions", ComboUtils.fromArray(COOLER_GROUP_NAMES), REQUEST);
 		
 		// Save start/end dates
 		ctx.setAttribute("startDays", new Integer(startDays), REQUEST);

@@ -172,8 +172,8 @@ public class GetPerformance extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(_categorySQL);
-		sqlBuf.append(" AS CATNAME, AVG(FLIGHT_TIME) AS AV, MAX(FLIGHT_TIME) AS MX, MIN(FLIGHT_TIME) AS "
-				+ "MN, COUNT(*) AS CNT FROM PIREPS WHERE (STATUS=?) AND (DATE >= DATE_SUB(CURDATE(), "
+		sqlBuf.append(" AS CATNAME, AVG(FLIGHT_TIME) AS AV, MIN(FLIGHT_TIME) AS MN, MAX(FLIGHT_TIME) AS "
+				+ "MX, COUNT(*) AS CNT FROM PIREPS WHERE (STATUS=?) AND (DATE >= DATE_SUB(CURDATE(), "
 				+ "INTERVAL ? DAY)) AND (DATE <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND ((ATTR & ?) > 0) "
 				+ "GROUP BY CATNAME ORDER BY CATNAME");
 		
@@ -201,8 +201,8 @@ public class GetPerformance extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ");
 		sqlBuf.append(_categorySQL);
-		sqlBuf.append(" AS CATNAME, AVG(FLIGHT_TIME) AS AV, MAX(FLIGHT_TIME) AS MX, MIN(FLIGHT_TIME) AS "
-				+ "MN, COUNT(*) AS CNT FROM PIREPS WHERE (STATUS=?) AND (DATE >= DATE_SUB(CURDATE(), "
+		sqlBuf.append(" AS CATNAME, AVG(FLIGHT_TIME) AS AV, MIN(FLIGHT_TIME) AS MN, MAX(FLIGHT_TIME) AS "
+				+ "MX, COUNT(*) AS CNT FROM PIREPS WHERE (STATUS=?) AND (DATE >= DATE_SUB(CURDATE(), "
 				+ "INTERVAL ? DAY)) AND (DATE <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY CATNAME "
 				+ "ORDER BY CATNAME");
 
