@@ -31,8 +31,10 @@ return true;
 <el:form action="dashboard.do" method="post" validate="return true">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="3" class="left">STATISTICS DASHBOARD</td>
- <td colspan="3" class="right"> SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /></td>
+ <td colspan="2" class="left">STATISTICS DASHBOARD</td>
+ <td colspan="2">SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortOptions}" value="${param.sortType}" onChange="void updateSort()" /></td>
+ <td colspan="2" class="right">FROM <el:text name="startDays" idx="*" size="2" max="3" value="${startDays}" /> TO
+ <el:text name="endDays" idx="*" size="2" max="3" value="${endDays}" /> DAYS AGO</td>
 </tr>
 <c:set var="pirepApproval" value="${results['pirepApproval']}" scope="request" />
 <c:if test="${!empty pirepApproval}">
@@ -102,7 +104,7 @@ return true;
  <td><fmt:dec value="${metric.average}" /> hours</td>
  <td><fmt:dec value="${metric.maximum}" /> hours</td>
  <td><fmt:dec value="${metric.minimum}" /> hours</td>
- <td><fmt:int value="${metric.count}" /> exams</td>
+ <td><fmt:int value="${metric.count}" /> rides</td>
 </tr>
 </c:forEach>
 </c:if>
@@ -112,9 +114,48 @@ return true;
 <tr class="title caps">
  <td colspan="6" class="left">FLIGHT REPORT STATISTICS</td>
 </tr>
-
+<tr class="title">
+ <td width="15%" class="caps">${param.frGroup}</td>
+ <td width="25%">ORDER BY <el:combo name="frGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.frGroup}" onChange="void updateSort()" /></td>
+ <td width="15%">AVERAGE</td>
+ <td width="15%">MAXIMUM</td>
+ <td width="15%">MINIMUM</td>
+ <td width="15%">TOTAL</td>
+</tr>
+<c:forEach var="metric" items="${frStats}">
+<tr>
+ <td colspan="2" class="pri bld">${metric.name}</td>
+ <td><fmt:dec value="${metric.average}" /> hours</td>
+ <td><fmt:dec value="${metric.maximum}" /> hours</td>
+ <td><fmt:dec value="${metric.minimum}" /> hours</td>
+ <td><fmt:int value="${metric.count}" /> flights</td>
+</tr>
+</c:forEach>
 </c:if>
-
+<c:set var="afrStats" value="${results['acarsStats']}" scope="request" />
+<c:if test="${!empty afrStats}">
+<!-- ACARS Flight Report Statistics -->
+<tr class="title caps">
+ <td colspan="6" class="left">ACARS FLIGHT REPORT STATISTICS</td>
+</tr>
+<tr class="title">
+ <td width="15%" class="caps">${param.afrGroup}</td>
+ <td width="25%">ORDER BY <el:combo name="afrGroup" size="1" idx="*" options="${pirepGroupOptions}" value="${param.afrGroup}" onChange="void updateSort()" /></td>
+ <td width="15%">AVERAGE</td>
+ <td width="15%">MAXIMUM</td>
+ <td width="15%">MINIMUM</td>
+ <td width="15%">TOTAL</td>
+</tr>
+<c:forEach var="metric" items="${afrStats}">
+<tr>
+ <td colspan="2" class="pri bld">${metric.name}</td>
+ <td><fmt:dec value="${metric.average}" /> hours</td>
+ <td><fmt:dec value="${metric.maximum}" /> hours</td>
+ <td><fmt:dec value="${metric.minimum}" /> hours</td>
+ <td><fmt:int value="${metric.count}" /> flights</td>
+</tr>
+</c:forEach>
+</c:if>
 </el:table>
 </el:form>
 <br />
