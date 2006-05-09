@@ -232,7 +232,7 @@ public final class StringUtils {
 	 */
 	public static int arrayIndexOf(String[] values, String value, int defaultValue) {
 		if ((values == null) || (value == null))
-			return -1;
+			return defaultValue;
 		for (int x = 0; x < values.length; x++)
 			if (value.equals(values[x]))
 				return x;
