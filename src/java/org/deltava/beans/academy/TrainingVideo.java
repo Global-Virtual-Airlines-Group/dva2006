@@ -1,0 +1,57 @@
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.academy;
+
+import java.util.*;
+
+import org.deltava.beans.fleet.Video;
+
+/**
+ * A bean to store Flight Academy training video metadata.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class TrainingVideo extends Video {
+	
+	private Collection<String> _certs = new HashSet<String>();
+
+	/**
+	 * Creates a new Training Video bean.
+	 * @param fName the file name
+	 */
+	public TrainingVideo(String fName) {
+		super(fName);
+	}
+
+	/**
+	 * Returns the Flight Academy certifications associated with this video.
+	 * @return a Collection of Certification names
+	 * @see TrainingVideo#addCertification(String)
+	 * @see TrainingVideo#setCertifications(Collection)
+	 */
+	public Collection<String> getCertifications() {
+		return _certs;
+	}
+	
+	/**
+	 * Adds a Flight Academy certification to this Training Video.
+	 * @param certName the Certification name
+	 * @see TrainingVideo#setCertifications(Collection)
+	 * @see TrainingVideo#getCertifications()
+	 */
+	public void addCertification(String certName) {
+		_certs.add(certName);
+	}
+	
+	/**
+	 * Resets and updates the list of Flight Academy certifications associated with this video.
+	 * @param certNames a Collection of Certification names
+	 * @see TrainingVideo#addCertification(String)
+	 * @see TrainingVideo#getCertifications()
+	 */
+	public void setCertifications(Collection<String> certNames) {
+		_certs.clear();
+		_certs.addAll(certNames);
+	}
+}

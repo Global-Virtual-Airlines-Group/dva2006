@@ -24,7 +24,7 @@
 				<category>Fuel Planners</category>
 			</list>
 		</files>
-		
+
 		<!-- Do we have newsletters? -->
 		<newsletters>
 			<enabled type="Boolean">true</enabled>
@@ -425,6 +425,7 @@
 		<img>img</img>
 		<library>d:\library</library>
 		<userfiles>d:\library\userfiles</userfiles>
+		<video>d:\library\videos</video>
 		<httplog>d:\log</httplog>
 	</path>
 	

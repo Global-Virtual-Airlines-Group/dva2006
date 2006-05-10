@@ -125,8 +125,29 @@ public class GetLibrary extends DAO {
 			_ps.setString(1, fName);
 
 			// Get results - if empty return null
-			List results = loadFiles();
-			return results.isEmpty() ? null : (FileEntry) results.get(0);
+			List<FileEntry> results = loadFiles(false);
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns metadata about a specifc video <i>in the current database</i>.
+	 * @param fName the filename
+	 * @return a FileEntry, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Video getVideo(String fName) throws DAOException {
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
+					+ "(V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME");
+			_ps.setString(1, fName);
+			
+			// Get results - if empty return null
+			List results = loadFiles(true);
+			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -147,20 +168,23 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".FILES F LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME ORDER BY F.NAME");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			return loadFiles();
+			return loadFiles(false);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
 	/**
-	 * Helper method to load from the File Library table.
+	 * Helper method to load from the File/Video Library tables.
 	 */
-	private List<FileEntry> loadFiles() throws SQLException {
+	private List<FileEntry> loadFiles(boolean isVideo) throws SQLException {
+		
+		// Determine the path
+		String path = SystemData.get(isVideo ? "path.video" : "path.userfiles");
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
@@ -169,8 +193,8 @@ public class GetLibrary extends DAO {
 		// Iterate through the result set
 		List<FileEntry> results = new ArrayList<FileEntry>();
 		while (rs.next()) {
-			File f = new File(SystemData.get("path.userfiles"), rs.getString(1));
-			FileEntry entry = new FileEntry(f.getPath());
+			File f = new File(path, rs.getString(1));
+			FileEntry entry = isVideo ? new Video(f.getPath()) : new FileEntry(f.getPath());
 			entry.setName(rs.getString(2));
 			entry.setCategory(rs.getString(3));
 			entry.setSecurity(rs.getInt(5));

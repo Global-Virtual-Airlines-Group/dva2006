@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -22,7 +22,7 @@ import org.deltava.util.URLParser;
 import org.deltava.util.system.SystemData;
 
 /**
- * A servlet to serve Fleet/Document/File Library files.
+ * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -34,13 +34,13 @@ public class LibraryServlet extends GenericServlet {
 	private static final int BUFFER_SIZE = 102400;
 
 	private class NotFoundException extends ControllerException {
-		
+
 		public NotFoundException(String msg) {
 			super(msg);
 			setWarning(true);
 		}
 	}
-	
+
 	/**
 	 * Returns the servlet description.
 	 * @return name, author and copyright info for this servlet
@@ -80,6 +80,8 @@ public class LibraryServlet extends GenericServlet {
 						entry = rdao.getManual(url.getFileName(), aInfo.getDB());
 					} else if ("newsletter".equals(url.getLastPath())) {
 						entry = rdao.getNewsletter(url.getFileName(), aInfo.getDB());
+					} else if ("video".equals(url.getLastPath())) {
+						entry = rdao.getVideo(url.getLastPath());
 					}
 				}
 			} else {
