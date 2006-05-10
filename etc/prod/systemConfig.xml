@@ -442,6 +442,7 @@
 		<files>/home/www/userfiles</files>
 		<httplog>/var/log/www</httplog>
 		<newsletter>/home/www/nws</newsletter>
+		<video>/home/www/videos</video>
 	</path>
 	
 	<smtp>
