@@ -42,7 +42,12 @@
 </c:if>
 <tr>
  <td class="label">Course Name</td>
+<c:if test="${viewCourse}">
  <td class="data"><el:cmd url="course" linkID="0x${session.courseID}" className="bld">${session.name}</el:cmd></td>
+</c:if>
+<c:if test="${!viewCourse}">
+ <td class="data bld">${session.name}</td>
+</c:if>
 </tr>
 <tr>
  <td class="label">Start/End Times</td>
