@@ -146,11 +146,13 @@ public class GetServInfo extends DAO {
 			String sData = br.readLine();
 			while (sData != null) {
 				StringTokenizer tk = new StringTokenizer(sData, "=");
-				String param = tk.nextToken();
-				if (("url0".equals(param)) && (tk.countTokens() > 0)) {
-					status.addURL(tk.nextToken());
-				} else if (("msg0".equals(param)) && (tk.countTokens() > 0)) {
-					status.setMessage(tk.nextToken());
+				if (tk.countTokens() > 1) {
+					String param = tk.nextToken();
+					if (("url0".equals(param)) && (tk.countTokens() > 0)) {
+						status.addURL(tk.nextToken());
+					} else if (("msg0".equals(param)) && (tk.countTokens() > 0)) {
+						status.setMessage(tk.nextToken());
+					}
 				}
 
 				// Read next line
