@@ -1,0 +1,57 @@
+#!/bin/sh
+# Tomcat upgrade script
+# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+
+# Check the version argument is preset
+if [ "$1" == "" ]
+then
+ echo "tomcat_upgrade <version> ..."
+ exit 1
+fi
+
+# Check that the version exists
+if [ ! -d "/usr/local/apache-tomcat-$1" ]
+then
+ echo "Cannot find /usr/local/apache-tomcat-$1"
+ exit 2
+fi
+
+# Go to the directory
+cd /usr/local/apache-tomcat-$1
+
+# Clean out default webapps
+echo "Cleaning default installation"
+rm -Rd webapps
+rm temp/*
+rm LICENSE
+rm NOTICE
+rm RELEASE-NOTES
+rm RUNNING.txt
+
+# Nuke bad stuff in bin
+echo "Removing Windows-specific files"
+rm bin/*.exe
+rm bin/*.bat
+
+# Copy over the work directory
+echo "Copying work directory"
+cp -R /usr/local/tomcat/work/* work
+
+# Copy over common libraries
+echo "Copying libraries"
+cp -u /usr/local/tomcat/common/lib/* common/lib
+
+# Copy over configuration files
+echo "Copying Tomcat configuration"
+rm conf/server-minimal.xml
+cp /usr/local/tomcat/conf/server.xml conf
+cp /usr/local/tomcat/conf/tomcat-users.xml conf
+
+# Change permissions
+echo "Changing file permissions"
+chown -R www:www *
+chown -R www:gva common/lib
+
+# Switch to /usr/local
+cd /usr/local
+echo "Tomcat Upgrade complete"
