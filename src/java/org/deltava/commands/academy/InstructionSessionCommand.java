@@ -11,8 +11,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.command.CourseAccessControl;
-import org.deltava.security.command.InstructionAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -235,6 +234,15 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			InstructionAccessControl access = new InstructionAccessControl(ctx, s);
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
+			
+			// Get access to the course
+			AccessControl cAccess = new CourseAccessControl(ctx, c);
+			try {
+				cAccess.validate();
+				ctx.setAttribute("viewCourse", Boolean.TRUE, REQUEST);
+			} catch (AccessControlException ace) {
+				ctx.setAttribute("viewCourse", Boolean.FALSE, REQUEST);
+			}
 			
 			// Save in the request
 			ctx.setAttribute("session", s, REQUEST);
