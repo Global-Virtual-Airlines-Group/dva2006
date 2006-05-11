@@ -112,7 +112,7 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="label">Equipment Ratings</td>
+ <td class="label" valign="top">Equipment Ratings</td>
  <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${newRatings}" options="${allEQ}" /></td>
 </tr>
 </c:if>
