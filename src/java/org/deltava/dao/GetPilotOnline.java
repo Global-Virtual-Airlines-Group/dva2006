@@ -1,10 +1,13 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.Pilot;
+import static org.deltava.beans.OnlineNetwork.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load Pilot data for Online Network operations.
@@ -14,6 +17,8 @@ import org.deltava.beans.Pilot;
  */
 
 public class GetPilotOnline extends PilotReadDAO {
+	
+	private static final String[] NETWORKS = { VATSIM, IVAO };
 
 	/**
 	 * Initializes the Data Access Object.
@@ -31,6 +36,10 @@ public class GetPilotOnline extends PilotReadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, Integer> getIDs(String network) throws DAOException {
+		
+		// This only supports VATSIM/IVAO
+		if (StringUtils.arrayIndexOf(NETWORKS, network) == -1)
+			return Collections.emptyMap();
 		
 		try {
 			// Prepare the statement
