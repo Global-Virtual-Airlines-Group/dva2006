@@ -70,7 +70,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			GetFlightReports frdao = new GetFlightReports(con);
 			List<FlightReport> results = frdao.getByPilot(p.getID(), "DATE DESC");
-			for (Iterator<FlightReport> i = results.iterator(); i.hasNext(); ) {
+			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
 					ctx.setAttribute("lastFlight", results.get(0), REQUEST);
@@ -109,7 +109,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("isFO", Boolean.TRUE, REQUEST);
 				ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
 			}
-			
+
 			// Get Exam profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			Map<String, ExamProfile> exams = CollectionUtils.createMap(epdao.getExamProfiles(false), "name");
@@ -128,7 +128,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 						ExamProfile ep = exams.get(eq.getExamName(Ranks.RANK_FO));
 						if ((ep != null) && (_testHistory.canWrite(ep)))
 							needFOExamEQ.add(eq);
-						
+
 						i.remove();
 					}
 				}
@@ -147,13 +147,18 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				if (!_testHistory.canWrite(ep))
 					i.remove();
 			}
-			
+
 			// See if we are enrolled in a Flight Academy course
-			GetAcademyCourses fadao = new GetAcademyCourses(con);
-			List<Course> courses = new ArrayList<Course>(fadao.getByPilot(ctx.getUser().getID()));
-			ctx.setAttribute("courses", courses, REQUEST);
-			if (!courses.isEmpty())
-				ctx.setAttribute("course", courses.get(courses.size() - 1), REQUEST);
+			if (SystemData.getBoolean("academy.enabled")) {
+				GetAcademyCourses fadao = new GetAcademyCourses(con);
+				List<Course> courses = new ArrayList<Course>(fadao.getByPilot(ctx.getUser().getID()));
+				ctx.setAttribute("courses", courses, REQUEST);
+				if (!courses.isEmpty()) {
+					Course c = courses.get(courses.size() - 1);
+					if (c.getStatus() == Course.STARTED)
+						ctx.setAttribute("course", c, REQUEST);
+				}
+			}
 
 			// Save the examinations
 			ctx.setAttribute("availableExams", allExams, REQUEST);
