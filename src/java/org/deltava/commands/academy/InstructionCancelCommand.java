@@ -38,7 +38,7 @@ public class InstructionCancelCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the session data
-			GetAcademyCourses dao = new GetAcademyCourses(con);
+			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			InstructionSession s = dao.getSession(ctx.getID());
 			if (s == null)
 				throw notFoundException("Invalid Instruction Session - " + ctx.getID());

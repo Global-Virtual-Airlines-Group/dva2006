@@ -287,6 +287,33 @@ public class SetAcademy extends DAO {
 	}
 	
 	/**
+	 * Writes an Instruction flight entry to the database.
+	 * @param flight the InstructionFlight bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(InstructionFlight flight) throws DAOException {
+		try {
+			// Prepare the statement
+			prepareStatement("REPLACE INTO INSLOG (ID, INSTRUCTOR_ID, COURSE, EQTYPE, STARTDATE, "
+					+ "FLIGHT_TIME, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, flight.getID());
+			_ps.setInt(2, flight.getInstructorID());
+			_ps.setInt(3, flight.getCourseID());
+			_ps.setString(4, flight.getEquipmentType());
+			_ps.setTimestamp(5, createTimestamp(flight.getDate()));
+			_ps.setFloat(6, flight.getLength() / 10.0f);
+			_ps.setString(7, flight.getComments());
+			executeUpdate(1);
+			
+			// Update the ID
+			if (flight.getID() == 0)
+				flight.setID(getNewID());
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to write exam names.
 	 */
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
