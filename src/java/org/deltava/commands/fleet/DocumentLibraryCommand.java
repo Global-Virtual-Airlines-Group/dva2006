@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.fleet.*;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
@@ -59,8 +60,12 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 			}
 			
 			// Load the user's Flight Academy courses
-			GetAcademyCourses cdao = new GetAcademyCourses(con);
-			access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
+			if (SystemData.getBoolean("academy.enabled")) {
+				GetAcademyCourses cdao = new GetAcademyCourses(con);
+				access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
+			} else {
+				access = new ManualAccessControl(ctx, new HashSet<Course>());
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
