@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -25,61 +25,62 @@ import org.deltava.util.system.SystemData;
  */
 
 public class UserLibraryCommand extends AbstractViewCommand {
-   
-   private static final Logger log = Logger.getLogger(UserLibraryCommand.class); 
+
+	private static final Logger log = Logger.getLogger(UserLibraryCommand.class);
 
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
-   public void execute(CommandContext ctx) throws CommandException {
-      
-      // Get the view start/end
-      ViewContext vc = initView(ctx);
+	public void execute(CommandContext ctx) throws CommandException {
 
-      Collection<FileEntry> results = null;
-      try {
-         Connection con = ctx.getConnection();
-         
-         // Get the DAO and the library
-         GetLibrary dao = new GetLibrary(con);
-         dao.setQueryStart(vc.getStart());
-         dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
-         results = dao.getFiles(SystemData.get("airline.db"));
-         
-         // Get the authors
-         Set<Integer> authors = new HashSet<Integer>();
-         for (Iterator<FileEntry> i = results.iterator(); i.hasNext(); ) {
-            FileEntry e = i.next();
-            authors.add(new Integer(e.getAuthorID()));
-         }
-         
-         // Get the author data
-         GetUserData uddao = new GetUserData(con);
-         UserDataMap udmap = uddao.get(authors);
-         ctx.setAttribute("userData", udmap, REQUEST);
-         
+		// Get the view start/end
+		ViewContext vc = initView(ctx);
+
+		Collection<FileEntry> results = null;
+		try {
+			Connection con = ctx.getConnection();
+
+			// Get the DAO and the library
+			GetLibrary dao = new GetLibrary(con);
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(Math.round(vc.getCount() * 1.25f));
+			results = dao.getFiles(SystemData.get("airline.db"));
+
+			// Get the authors
+			Set<Integer> authors = new HashSet<Integer>();
+			for (Iterator<FileEntry> i = results.iterator(); i.hasNext();) {
+				FileEntry e = i.next();
+				authors.add(new Integer(e.getAuthorID()));
+			}
+
+			// Get the author data
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udmap = uddao.get(authors);
+			ctx.setAttribute("userData", udmap, REQUEST);
+
 			// Get the author profiles
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> it = udmap.getTableNames().iterator(); it.hasNext(); ) {
-			   String tableName = it.next();
-			   if (UserDataMap.isPilotTable(tableName))
-			      pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
+			for (Iterator<String> it = udmap.getTableNames().iterator(); it.hasNext();) {
+				String tableName = it.next();
+				if (UserDataMap.isPilotTable(tableName))
+					pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
 			}
-			
+
 			ctx.setAttribute("authors", pilots, REQUEST);
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
-      
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+
 		// Calculate access for adding content
 		FileEntryAccessControl access = new FileEntryAccessControl(ctx, null);
+		access.validate();
 		ctx.setAttribute("access", access, REQUEST);
-		
+
 		// Create access map
 		Map<String, FileEntryAccessControl> accessMap = new HashMap<String, FileEntryAccessControl>();
 
@@ -99,7 +100,7 @@ public class UserLibraryCommand extends AbstractViewCommand {
 				i.remove();
 			}
 		}
-		
+
 		// Save the results in the request
 		ctx.setAttribute("files", results, REQUEST);
 		ctx.setAttribute("accessMap", accessMap, REQUEST);
@@ -108,5 +109,5 @@ public class UserLibraryCommand extends AbstractViewCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/fleet/userLibrary.jsp");
 		result.setSuccess(true);
-   }
+	}
 }
