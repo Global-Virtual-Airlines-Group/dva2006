@@ -31,8 +31,8 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the Calendar
-			GetAcademyCourses dao = new GetAcademyCourses(con);
-			Collection<InstructionSession> sessions = dao.getCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
+			GetAcademyCalendar dao = new GetAcademyCalendar(con);
+			Collection<InstructionSession> sessions = dao.getSessionCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
 			ctx.setAttribute("sessions", sessions, REQUEST);
 			
 			// Get the Pilot IDs from the sessions

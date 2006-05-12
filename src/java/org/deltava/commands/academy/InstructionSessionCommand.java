@@ -46,9 +46,10 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			Course c = null;
 			InstructionSession s = null;
 			GetAcademyCourses dao = new GetAcademyCourses(con);
+			GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 			if (!isNew) {
 				// Get the Instruction Session
-				s = dao.getSession(ctx.getID());
+				s = cdao.getSession(ctx.getID());
 				if (s == null)
 					throw notFoundException("Invalid Session - " + ctx.getID());
 				
@@ -137,9 +138,10 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			
 			Course c = null;
 			GetAcademyCourses dao = new GetAcademyCourses(con);
+			GetAcademyCalendar cdao = new GetAcademyCalendar(con);
 			if (!isNew) {
 				// Get the Instruction Session
-				InstructionSession s = dao.getSession(ctx.getID());
+				InstructionSession s = cdao.getSession(ctx.getID());
 				if (s == null)
 					throw notFoundException("Invalid Session - " + ctx.getID());
 
@@ -212,7 +214,8 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			
 			// Get the Instruction Session
 			GetAcademyCourses dao = new GetAcademyCourses(con);
-			InstructionSession s = dao.getSession(ctx.getID());
+			GetAcademyCalendar cdao = new GetAcademyCalendar(con);
+			InstructionSession s = cdao.getSession(ctx.getID());
 			if (s == null)
 				throw notFoundException("Invalid Session - " + ctx.getID());
 			
