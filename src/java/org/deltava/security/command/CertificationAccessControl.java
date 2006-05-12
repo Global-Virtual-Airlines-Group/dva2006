@@ -15,6 +15,9 @@ public class CertificationAccessControl extends AccessControl {
 	private boolean _canCreate;
 	private boolean _canEdit;
 	private boolean _canDelete;
+	
+	private boolean _canCreateVideo;
+	private boolean _canEditVideo;
 
 	/**
 	 * Creates the Access Controller.
@@ -37,7 +40,9 @@ public class CertificationAccessControl extends AccessControl {
 			throw new AccessControlException("Not Authorized");
 		
 		_canCreate = isHR;
+		_canCreateVideo = isHR;
 		_canEdit = isHR;
+		_canEditVideo = isHR;
 		_canDelete = _ctx.isUserInRole("Admin");
 	}
 	
@@ -58,10 +63,26 @@ public class CertificationAccessControl extends AccessControl {
 	}
 	
 	/**
-	 * Returns if the user can delete a Certification profile.
+	 * Returns if the user can delete a Certification profile or training video.
 	 * @return TRUE if the profile can be deleted, otherwise FALSE
 	 */
 	public boolean getCanDelete() {
 		return _canDelete;
+	}
+	
+	/**
+	 * Returns if the user can create a Flight Academy training video.
+	 * @return TRUE if a video can be created, otherwise FALSE
+	 */
+	public boolean getCanCreateVideo() {
+		return _canCreateVideo;
+	}
+	
+	/**
+	 * Returns if the user can edit a Flight Academy training video.
+	 * @return TRUE if a video can be edited, otherwise FALSE
+	 */
+	public boolean getCanEditVideo() {
+		return _canEditVideo;
 	}
 }
