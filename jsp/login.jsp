@@ -46,8 +46,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="void setFocus()">
 <content:page>
-<%@include file="/jsp/main/header.jsp" %> 
-<%@include file="/jsp/main/sideMenu.jsp" %>
+<%@include file="/jsp/main/header.jspf" %> 
+<%@include file="/jsp/main/sideMenu.jspf" %>
 <content:getCookie name="dva_fname" default="${param.firstName}" var="fname" />
 <content:getCookie name="dva_lname" default="${param.lastName}" var="lname" />
 

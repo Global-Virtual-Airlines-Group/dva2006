@@ -13,8 +13,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="infoEmail" name="airline.mail.hr" />
 
 <!-- Main Body Frame -->

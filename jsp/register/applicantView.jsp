@@ -35,8 +35,8 @@ return ${access.canApprove};
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="ranks" name="ranks" />
 
 <!-- Main Body Frame -->
@@ -204,8 +204,8 @@ return ${access.canApprove};
  <td class="data"><a rel="external" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
 do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
-<c:if test="${!empty soundexUsers}"><%@ include file="/jsp/register/appSoundexMatch.jsp" %></c:if>
-<c:if test="${!empty netmaskUsers}"><%@ include file="/jsp/register/appNetmaskMatch.jsp" %></c:if>
+<c:if test="${!empty soundexUsers}"><%@ include file="/jsp/register/appSoundexMatch.jspf" %></c:if>
+<c:if test="${!empty netmaskUsers}"><%@ include file="/jsp/register/appNetmaskMatch.jspf" %></c:if>
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->
 <tr class="title">
