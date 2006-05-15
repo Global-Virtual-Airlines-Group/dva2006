@@ -17,6 +17,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="ourDomain" name="airline.domain" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -34,6 +35,13 @@ placed in the aircraft stage on program that best matches your skills</span>.<br
 To help us determine this, you'll be asked to take a short <fmt:int value="${questionnaire.size}" />-question 
 questionnaire. It should take just a few minutes to complete, and based upon the results we will 
 be able to place you in the right program for you.<br />
+<br />
+In order to complete the membership process at <content:airline />, we must have a valid e-mail 
+address on file for you. An e-mail message has been sent to you with a URL to click to validate 
+your e-mail address. <span class="error bld">It is critical that your e-mail provider is able to 
+receive e-mail messages from the domain <i>${ourDomain}</i> without any filtering. If you do not 
+respond to the automated e-mail verification message, your application to <content:airline /> 
+cannot be approved!</span><br />
 <br />
 <el:table className="bar" space="default" pad="default">
 <tr>

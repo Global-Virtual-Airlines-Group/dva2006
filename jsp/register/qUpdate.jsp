@@ -15,6 +15,7 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="infoEmail" name="airline.mail.hr" />
+<content:sysdata var="ourDomain" name="airline.domain" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -32,6 +33,10 @@ complete the membership process at <content:airline />, we must have a valid e-m
 for you. When you first registered, an e-mail message should have been sent to you with a URL to click
 to validate your address. If you have not received this e-mail message, please feel free to contact
 us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br />
+<br />
+<span class="error bld">It is critical that your e-mail provider is able to receive e-mail messages 
+from the domain <i>${ourDomain}</i> without any filtering. If you do not respond to the automated 
+e-mail verification message, your application to <content:airline /> cannot be approved!</span><br />
 </c:if>
 <br />
 Your questionnaire will be reviewed within the next 48 to 96 hours, and we will contact you again at
