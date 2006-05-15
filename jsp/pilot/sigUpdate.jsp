@@ -25,8 +25,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="sigX" name="cooler.sig_max.x" />
 <content:sysdata var="sigY" name="cooler.sig_max.y" />
 <content:sysdata var="sigSize" name="cooler.sig_max.size" />

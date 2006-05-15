@@ -38,8 +38,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="ranks" name="ranks" />
 <content:sysdata var="allEQ" name="eqtypes" />
 

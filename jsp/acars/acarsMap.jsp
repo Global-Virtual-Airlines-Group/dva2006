@@ -87,8 +87,8 @@ return true;
 <content:copyright visible="false" />
 <body onunload="GUnload()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 

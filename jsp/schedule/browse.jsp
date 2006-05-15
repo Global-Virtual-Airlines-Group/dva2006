@@ -43,8 +43,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:filter roles="Schedule"><c:set var="isSchedule" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->

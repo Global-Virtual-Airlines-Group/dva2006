@@ -70,8 +70,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="updateOrigin(document.forms[0].airportD); initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -116,9 +116,6 @@ return true;
 </tr>
 </el:table>
 </el:form>
-<c:if test="${innovataLink}">
-<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
-</c:if>
 <c:if test="${!empty fafResults}">
 <el:form method="post" action="buildAssign.do" validate="return buildValidate(this)">
 <el:table className="view" space="default" pad="default">
@@ -201,6 +198,9 @@ return true;
  <td class="mid">No Flights matching your Search Criteria were found.</td>
 </tr>
 </el:table>
+</c:if>
+<c:if test="${innovataLink}">
+<%@ include file="/jsp/schedule/innovataLink.jspf" %> 
 </c:if>
 <content:copyright />
 </content:region>

@@ -75,8 +75,8 @@ return true;
 <content:copyright visible="false" />
 <body onload="changeAirport(document.forms[0].homeAirport); disableSigBoxes()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="ranks" name="ranks" />
