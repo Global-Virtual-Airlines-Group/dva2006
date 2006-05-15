@@ -11,7 +11,7 @@ import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.CertificationAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -35,7 +35,13 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 
 		// Get the view start/end
 		ViewContext vc = initView(ctx);
+		
+		// Calculate access for adding content
+		CertificationAccessControl access = new CertificationAccessControl(ctx);
+		access.validate();
+		ctx.setAttribute("access", access, REQUEST);
 
+		TrainingVideoAccessControl vAccess = null;
 		Collection<TrainingVideo> results = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -56,17 +62,37 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 	         // Get the author data
 	         GetPilot pdao = new GetPilot(con);
 	         ctx.setAttribute("authors", pdao.getByID(IDs, SystemData.get("airline.db") + " .PILOTS"), REQUEST);
+	         
+	         // Populate flight academy courses
+	         GetAcademyCourses cdao = new GetAcademyCourses(con);
+	         vAccess = new TrainingVideoAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
 		
-		// Calculate access for adding content
-		CertificationAccessControl access = new CertificationAccessControl(ctx);
-		access.validate();
-		ctx.setAttribute("access", access, REQUEST);
+		// Validate our access to the results
+		for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext();) {
+			TrainingVideo video = i.next();
+			vAccess.updateContext(video);
+			vAccess.validate();
+			// Check that the resource exists
+			if (video.getSize() == 0) {
+				log.warn(video.getFullName() + " not found in file system!");
+				if (!access.getCanEditVideo())
+					i.remove();
+			} else if (!vAccess.getCanRead()) {
+				i.remove();
+			}
+		}
 
+		// Save the results in the request
+		ctx.setAttribute("files", results, REQUEST);
 
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/academy/videoLibrary.jsp");
+		result.setSuccess(true);
 	}
 }

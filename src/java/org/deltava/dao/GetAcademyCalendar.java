@@ -64,6 +64,41 @@ public class GetAcademyCalendar extends DAO {
 		}
 	}
 	
+	/**
+	 * Returns all Flight Academy Instruction log entries.
+	 * @param courseID the database ID of the Course
+	 * @return a Collection of InstructionFlight beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<InstructionFlight> getFlights(int courseID) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.* FROM INSLOG I, COURSES C WHERE (C.ID=I.COURSE) ");
+		if (courseID != 0)
+			sqlBuf.append("AND (C.ID=?) ");
+
+		sqlBuf.append("ORDER BY I.DATE");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			if (courseID != 0)
+				_ps.setInt(1, courseID);
+
+			// Execute the query
+			return executeFlightCalendar();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads the Flight Academy Instruction Flight calendar. 
+	 * @param startDate the start date/time
+	 * @param days the number of days to display
+	 * @param pilotID the database ID of the instructor/student pilot, or zero if all selected
+	 * @return a Collection of InstructionFlight beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public Collection<InstructionFlight> getFlightCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
