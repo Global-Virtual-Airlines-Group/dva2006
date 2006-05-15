@@ -23,8 +23,8 @@
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="partnerName" name="airline.partner.name" />
 <content:sysdata var="partnerURL" name="airline.partner.url" />

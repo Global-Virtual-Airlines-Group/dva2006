@@ -23,8 +23,8 @@
 <content:copyright visible="false" />
 <body onload="void enableElement('eq', false); void enableElement('rnk', false);" onunload="GUnload()">
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="ranks" name="ranks" />
 

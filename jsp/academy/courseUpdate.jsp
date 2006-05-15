@@ -14,8 +14,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jsp" %> 
-<%@ include file="/jsp/main/sideMenu.jsp" %>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -89,6 +89,11 @@ and an e-mail message has been sent to the Pilot.<br />
 <br />
 A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can 
 be assigned while one is currently pending.<br />
+</c:if>
+<c:if test="${flightUpdate}">
+<div class="updateHdr">Instruction Flight Log Updated</div>
+<br />
+
 </c:if>
 <br />
 To return to the <content:airline /> Flight Academy, <el:cmd url="academy" className="sec bld">Click Here</el:cmd>.<br />
