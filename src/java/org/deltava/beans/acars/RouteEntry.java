@@ -594,6 +594,10 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		// Add afterburner if deployed
 		if (isFlagSet(ACARSFlags.FLAG_AFTERBURNER))
 			buf.append("<b><i>AFTERBURNER</i></b><br />");
+		
+		// Add pushback flag if pushing back
+		if (isFlagSet(ACARSFlags.FLAG_PUSHBACK))
+			buf.append("<b><i>PUSHBACK</i></b><br />");
 
 		// Add Autopilot flags if set
 		if (isFlagSet(ACARSFlags.FLAG_AP_ANY)) {
