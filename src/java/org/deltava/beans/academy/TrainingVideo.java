@@ -23,6 +23,21 @@ public class TrainingVideo extends Video {
 	public TrainingVideo(String fName) {
 		super(fName);
 	}
+	
+	/**
+	 * Expands a generic video into a Training Video.
+	 * @param v the existing Video bean
+	 */
+	public TrainingVideo(Video v) {
+		super(v.getName());
+		setName(v.getName());
+		setSecurity(v.getSecurity());
+		setSize(v.getSize());
+		setAuthorID(v.getAuthorID());
+		setCategory(v.getCategory());
+		setDescription(v.getDescription());
+		setDownloadCount(v.getDownloadCount());
+	}
 
 	/**
 	 * Returns the Flight Academy certifications associated with this video.

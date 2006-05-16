@@ -158,6 +158,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					if (c.getStatus() == Course.STARTED)
 						ctx.setAttribute("course", c, REQUEST);
 				}
+				
+				// Check if we have instruction flights
+				GetAcademyCalendar facdao = new GetAcademyCalendar(con);
+				facdao.setQueryMax(1);
+				boolean hasFlights = facdao.getFlightCalendar(null, 0, ctx.getUser().getID()).isEmpty();
+				ctx.setAttribute("academyInsFlights", Boolean.valueOf(hasFlights || ctx.isUserInRole("HR")), REQUEST);
 			}
 
 			// Save the examinations
