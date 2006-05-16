@@ -89,7 +89,7 @@ public class GetACARSData extends DAO {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
-			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, FLAGS FROM acars.");
+			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, AOA, GFORCE, FLAGS FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 	   
@@ -118,7 +118,9 @@ public class GetACARSData extends DAO {
 				entry.setWindHeading(rs.getInt(15));
 				entry.setWindSpeed(rs.getInt(16));
 				entry.setFuelFlow(rs.getInt(17));
-				entry.setFlags(rs.getInt(18));
+				entry.setAOA(rs.getDouble(18));
+				entry.setG(rs.getDouble(19));
+				entry.setFlags(rs.getInt(20));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && (!includeOnGround)) {

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -53,7 +53,7 @@ public class ACARSDataService extends WebDataService {
 
 		// Write the CSV header
 		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-		ctx.println("WindSpeed,WindHdg,FuelFlow,NAV,HDG,APR,ALT,AT");
+		ctx.println("WindSpeed,WindHdg,FuelFlow,Gs,AOA,NAV,HDG,APR,ALT,AT");
 
 		// Format the ACARS data
 		for (Iterator i = routeData.iterator(); i.hasNext();) {
@@ -89,6 +89,10 @@ public class ACARSDataService extends WebDataService {
 			ctx.print(StringUtils.format(entry.getWindHeading(), "000"));
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getFuelFlow(), "###0"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getG(), "#0.000"));
+			ctx.print(",");
+			ctx.print(StringUtils.format(entry.getAOA(), "##0.000"));
 			ctx.print(",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_NAV) ? "NAV," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
