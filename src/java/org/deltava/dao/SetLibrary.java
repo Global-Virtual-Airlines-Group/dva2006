@@ -52,7 +52,6 @@ public class SetLibrary extends DAO {
 	public void write(Manual m, boolean isNew) throws DAOException {
 		try {
 			startTransaction();
-			
 			if (isNew) {
 				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES "
 						+ "(?, ?, ?, ?, ?, ?)");
@@ -193,6 +192,37 @@ public class SetLibrary extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Writes a Video Library entry to the database. This handles INSERT and UPDATE operations.
+	 * @param v the Library entry
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(Video v) throws DAOException {
+		try {
+			if (v.getDownloadCount() == 0) {
+				prepareStatement("REPLACE INTO VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, "
+						+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			} else {
+				prepareStatement("UPDATE VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, "
+						+ "BODY=? WHERE (FILENAME=?)");
+			}
+			
+			// Update the prepared statement
+			_ps.setString(1, v.getName());
+			_ps.setLong(2, v.getSize());
+			_ps.setInt(3, v.getSecurity());
+			_ps.setInt(4, v.getAuthorID());
+			_ps.setString(5, v.getCategory());
+			_ps.setString(6, v.getDescription());
+			_ps.setString(7, v.getFileName());
+
+			// Update the database
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Deletes a Library Entry from the database.
@@ -210,6 +240,8 @@ public class SetLibrary extends DAO {
 			sqlBuf.append("DOCS");
 		} else if (entry instanceof FileEntry) {
 			sqlBuf.append("FILES");
+		} else if (entry instanceof Video) {
+			sqlBuf.append("VIDEOS");
 		} else {
 			throw new IllegalArgumentException("Unknown library entry type - " + entry.getClass().getName());
 		}

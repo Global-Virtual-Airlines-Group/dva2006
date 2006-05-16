@@ -54,6 +54,14 @@ public class CourseCommand extends AbstractCommand {
 			CourseAccessControl access = new CourseAccessControl(ctx, c);
 			access.validate();
 			
+			// Get Pilot IDs from comments
+			Collection<Integer> IDs = new HashSet<Integer>();
+			IDs.add(new Integer(c.getPilotID()));
+			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
+				CourseComment cc = i.next();
+				IDs.add(new Integer(cc.getAuthorID()));
+			}
+			
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
 				GetDocuments ddao = new GetDocuments(con);
@@ -72,14 +80,17 @@ public class CourseCommand extends AbstractCommand {
 				
 				// Save examination status
 				ctx.setAttribute("exams", exams, REQUEST);
-			}
-			
-			// Get Pilot IDs for comments
-			Collection<Integer> IDs = new HashSet<Integer>();
-			IDs.add(new Integer(c.getPilotID()));
-			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
-				CourseComment cc = i.next();
-				IDs.add(new Integer(cc.getAuthorID()));
+				
+				// Get instruction flight log
+				GetAcademyCalendar fdao = new GetAcademyCalendar(con);
+				Collection<InstructionFlight> flights = fdao.getFlights(c.getID());
+				ctx.setAttribute("flights", flights, REQUEST);
+				
+				// Get Pilot IDs from flights
+				for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
+					InstructionFlight flight = i.next();
+					IDs.add(new Integer(flight.getInstructorID()));
+				}
 			}
 			
 			// Load Pilot Information

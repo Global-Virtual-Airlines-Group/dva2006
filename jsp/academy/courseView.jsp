@@ -47,7 +47,7 @@ return ${access.canComment || access.canUpdateProgress};
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
-<c:set var="cspan" value="${(!empty exams) ? 6 : 1}" scope="request" />
+<c:set var="cspan" value="${(!empty exams) || (!empty flights) ? 6 : 1}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -107,7 +107,27 @@ return ${access.canComment || access.canUpdateProgress};
 </td>
 </view:row>
 </c:forEach>
-
+<c:if test="${!empty flights}">
+<!-- Instruction Flights -->
+<tr class="title caps">
+ <td colspan="${cspan + 1}">INSTRUCTION FLIGHT LOG - <fmt:int value="${fn:sizeof(flights)}" /> FLIGHTS</td>
+</tr>
+<tr class="title mid caps">
+ <td colspan="3">COMMENTS</td>
+ <td colspan="2">INSTRUCTOR</td>
+ <td width="10%">EQUIPMENT</td>
+ <td>LENGTH</td>
+</tr>
+<c:forEach var="flight" items="${flights}">
+<c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
+<tr>
+ <td class="left small">${flight.comments}</td>
+ <td class="pri bld"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+ <td class="sec small">${flight.equipmentType}</td>
+ <td><fmt:dec fmt="#0.0" value="${flight.length / 10}" /> hours</td>
+</tr>
+</c:forEach>
+</c:if>
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
