@@ -1,0 +1,70 @@
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.commands.ts2;
+
+import java.util.*;
+import java.sql.Connection;
+
+import org.deltava.beans.ts2.*;
+
+import org.deltava.commands.*;
+import org.deltava.dao.*;
+
+import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Site Command to display active TeamSpeak 2 servers.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class ActiveServersCommand extends AbstractCommand {
+
+	/**
+	 * Executes the Command.
+	 * @param ctx the Command Context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Check if TS2 enabled
+		if (!SystemData.getBoolean("airline.voice.ts2.enabled"))
+			throw notFoundException("TeamSpeak 2 support disabled");
+		
+		Map<String, Client> clients = null;
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get our credentials
+			GetTS2Data dao = new GetTS2Data(con);
+			clients = CollectionUtils.createMap(dao.getUsers(ctx.getUser().getID()), "serverID");
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Get the servers
+		Collection srvs = (Collection) SystemData.getObject("ts2servers");
+		
+		// Check our access
+		Collection<Server> servers = new ArrayList<Server>();
+		for (Iterator i = srvs.iterator(); i.hasNext(); ) {
+			Server srv = (Server) i.next();
+			if (RoleUtils.hasAccess(ctx.getRoles(), srv.getRoles().get(Server.ACCESS))) {
+				if (clients.containsKey(new Integer(srv.getID())))
+					servers.add(srv);
+			}
+		}
+		
+		// Save the server/credential list
+		ctx.setAttribute("ts2servers", servers, REQUEST);
+		ctx.setAttribute("clientInfo", clients, REQUEST);
+		
+		// Forwrd to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/ts2/activeServers.jsp");
+		result.setSuccess(true);
+	}
+}
