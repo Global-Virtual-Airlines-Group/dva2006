@@ -384,6 +384,13 @@ training course.</td>
 the requirements, necessary examinations and prerequisites for each <content:airline /> Flight Academy 
 pilot Certification.</td>
 </tr>
+<c:if test="${academyInsFlights}">
+<tr>
+ <td class="mid"><el:cmd url="inslogbook" className="bld">Instruction Logbook</el:cmd></td>
+ <td class="data">You can view instruction flight log books for the <content:airline /> Flight 
+Academy.</td>
+</tr>
+</c:if>
 <c:if test="${empty course}">
 <tr>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>

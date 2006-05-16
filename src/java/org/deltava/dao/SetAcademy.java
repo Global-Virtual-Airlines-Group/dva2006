@@ -264,6 +264,39 @@ public class SetAcademy extends DAO {
 	}
 	
 	/**
+	 * Writes all Flight Academy certifications associated with a particular Video.
+	 * @param video the Video bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void writeCertifications(TrainingVideo video) throws DAOException {
+		try {
+			startTransaction();
+			
+			// Clean out the certifications
+			prepareStatementWithoutLimits("DELETE FROM CERTVIDEOS WHERE (FILENAME=?)");
+			_ps.setString(1, video.getFileName());
+			executeUpdate(0);
+			
+			// Add the certifications
+			prepareStatementWithoutLimits("INSERT INTO CERTVIDEOS (CERTNAME, FILENAME) VALUES (?, ?)");
+			_ps.setString(2, video.getFileName());
+			for (Iterator<String> i = video.getCertifications().iterator(); i.hasNext(); ) {
+				_ps.setString(1, i.next());
+				_ps.addBatch();
+			}
+			
+			// Execute the batch transaction and commit
+			_ps.executeBatch();
+			_ps.close();
+			_ps = null;
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Writes an Instruction Calendar entry.
 	 * @param s the InstructionSession bean
 	 * @throws DAOException if a JDBC error occurs

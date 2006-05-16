@@ -99,4 +99,31 @@ public class GetAcademyVideos extends GetLibrary {
 		_ps.close();
 		return new ArrayList<TrainingVideo>(results.values());
 	}
+	
+	/**
+	 * Retrieves all Flight Academy certifications associated with a particular video.
+	 * @param fName the video file name
+	 * @return a Collection of certification names
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getCertifications(String fName) throws DAOException {
+		
+		Collection<String> results = new ArrayList<String>();
+		try {
+			prepareStatementWithoutLimits("SELECT CERTNAME FROM CERTVIDEOS WHERE (FILENAME=?)");
+			_ps.setString(1, fName);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(rs.getString(1));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }

@@ -93,8 +93,8 @@ public class GetAcademyCalendar extends DAO {
 	
 	/**
 	 * Loads the Flight Academy Instruction Flight calendar. 
-	 * @param startDate the start date/time
-	 * @param days the number of days to display
+	 * @param startDate the start date/time, or null if all values should be displayed
+	 * @param days the number of days to display (ignored if startDate is null)
 	 * @param pilotID the database ID of the instructor/student pilot, or zero if all selected
 	 * @return a Collection of InstructionFlight beans
 	 * @throws DAOException if a JDBC error occurs
@@ -102,21 +102,26 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlightCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.* FROM INSLOG I, COURSES C WHERE (C.ID=I.COURSE) "
-				+ "AND (I.STARTTIME >=?) AND (I.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.* FROM INSLOG I, COURSES C WHERE (C.ID=I.COURSE) ");
+		if (startDate != null)
+			sqlBuf.append("AND (I.STARTTIME >=?) AND (I.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND ((C.PILOT_ID=?) OR (I.INSTRUCTOR_ID=?)) ");
 
 		sqlBuf.append("ORDER BY I.DATE");
 		
+		int param = 0;
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setTimestamp(1, createTimestamp(startDate));
-			_ps.setTimestamp(2, createTimestamp(startDate));
-			_ps.setInt(3, days);
+			if (startDate != null) {
+				_ps.setTimestamp(++param, createTimestamp(startDate));
+				_ps.setTimestamp(++param, createTimestamp(startDate));
+				_ps.setInt(++param, days);
+			}
+			
 			if (pilotID != 0) {
-				_ps.setInt(4, pilotID);
-				_ps.setInt(5, pilotID);
+				_ps.setInt(++param, pilotID);
+				_ps.setInt(++param, pilotID);
 			}
 			
 			// Execute the query

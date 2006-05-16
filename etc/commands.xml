@@ -158,6 +158,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="ts2vox">
+		<name>TeamSpeak 2 Server Board</name>
+		<class>org.deltava.commands.ts2.ActiveServersCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 
 	<!-- News/NOTAM Commands -->
 	<command id="news">
@@ -1421,6 +1427,31 @@
 		<class>org.deltava.commands.academy.CourseCheckRideCommand</class>
 		<roles>Instructor,HR</roles>
 	</command>
+	
+	<command id="insflight">
+		<name>Flight Academy Instruction Flight</name>
+		<class>org.deltava.commands.academy.InstructionFlightCommand</class>
+		<roles>Instructor,HR</roles>
+	</command>
+
+	<command id="inslogbook">
+		<name>Flight Academy Instruction Logbook</name>
+		<class>org.deltava.commands.academy.InstructionLogbookCommand</class>
+		<roles>Instructor,HR</roles>
+	</command>
+
+	<command id="tvideolibrary">
+		<name>Training Video Library</name>
+		<class>org.deltava.commands.academy.VideoLibraryCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="tvideo">
+		<name>Training Video Edit</name>
+		<class>org.deltava.commands.academy.VideoCommand</class>
+		<class>Instructor,HR</class>
+	</command>
+
 
 	<!-- Blog commands -->
 	<command id="blog">
