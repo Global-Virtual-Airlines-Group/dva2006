@@ -29,6 +29,8 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private int _aSpeed;
 	private int _gSpeed;
 	private int _vSpeed;
+	private double _aoa;
+	private double _gForce;
 	private double _n1;
 	private double _n2;
 	private double _mach;
@@ -81,6 +83,24 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public int getHeading() {
 		return _hdg;
+	}
+	
+	/**
+	 * Returns the aircraft's Angle of Attack.
+	 * @return the angle of attack in degrees
+	 * @see RouteEntry#setAOA(double)
+	 */
+	public double getAOA() {
+		return _aoa;
+	}
+	
+	/**
+	 * Returns the G forces acting on the aircraft.
+	 * @return the force in Gs
+	 * @see RouteEntry#setG(double)
+	 */
+	public double getG() {
+		return _gForce;
 	}
 	
 	/**
@@ -280,6 +300,24 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	}
 	
 	/**
+	 * Updates the aircraft's Angle of Attack.
+	 * @param aoa the angle of attack in degrees
+	 * @see RouteEntry#setAOA(double)
+	 */
+	public void setAOA(double aoa) {
+		_aoa = aoa;
+	}
+	
+	/**
+	 * Updates the G forces acting on the aircraft.
+	 * @param gForce the force in Gs
+	 * @see RouteEntry#getG()
+	 */
+	public void setG(double gForce) {
+		_gForce = gForce;
+	}
+	
+	/**
 	 * Updates the aircraft's pitch angle.
 	 * @param p the pitch in degrees
 	 * @throws IllegalArgumentException if p is < -90 or > 90
@@ -468,6 +506,9 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if ((Math.abs(_bank) > 40) || (Math.abs(_pitch) > 40))
 			return true;
 		
+		if (Math.abs(1 - _gForce) >= 0.25)
+			return true;
+		
 		return false;
 	}
 
@@ -519,6 +560,12 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append("Bank: ");
 			buf.append(StringUtils.format(_bank, "#0.0"));
 			buf.append("<sup>o</sup><br />");
+		}
+		
+		if (Math.abs(1 - _gForce) >= 0.1) {
+			buf.append("Acceleration: ");
+			buf.append(StringUtils.format(_gForce, "#0.000"));
+			buf.append("G<br />");
 		}
 		
 		buf.append("Speed: ");

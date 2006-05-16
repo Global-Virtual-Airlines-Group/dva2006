@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 /**
@@ -15,6 +15,7 @@ public interface ACARSFlags {
 	public static final int FLAG_SLEW = 0x0002;
 	public static final int FLAG_PARKED = 0x0004;
 	public static final int FLAG_ONGROUND = 0x0008;
+	public static final int FLAG_PUSHBACK = 0x8000;
 	
 	public static final int FLAG_SPARMED = 0x0010;
 	public static final int FLAG_GEARDOWN = 0x0020;
