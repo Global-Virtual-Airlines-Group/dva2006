@@ -69,7 +69,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			flight.setInstructorID(StringUtils.parseHex(ctx.getParameter("instructor")));
 			flight.setComments(ctx.getParameter("comments"));
 			flight.setEquipmentType(ctx.getParameter("eqType"));
-			flight.setDate(parseDateTime(ctx, "flight"));
+			flight.setDate(parseDateTime(ctx, "flight", "MM/dd/yyyy", "HH:mm"));
 			
 			// Get the flight time
 			try {
@@ -112,6 +112,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the log bean
+			InstructionAccessControl access = null;
 			InstructionFlight flight = null;
 			Course c = null;
 			if (!isNew) {
@@ -127,10 +128,10 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Course ID - " + flight.getCourseID());
 				
 				// Check our Access
-				InstructionAccessControl access = new InstructionAccessControl(ctx, flight);
+				access = new InstructionAccessControl(ctx, flight);
 				access.validate();
-				if (!access.getCanUpdateProgress())
-					throw securityException("Cannot create/edit flight log");
+				if (!access.getCanEdit())
+					throw securityException("Cannot edit flight log");
 			} else {
 				GetAcademyCourses dao = new GetAcademyCourses(con);
 				c = dao.get(StringUtils.parseHex(ctx.getParameter("courseID")));
@@ -141,10 +142,10 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				flight = new InstructionFlight(ctx.getUser().getID(), c.getID());
 				
 				// Check our Access
-				InstructionAccessControl access = new InstructionAccessControl(ctx, flight);
+				access = new InstructionAccessControl(ctx, flight);
 				access.validate();
-				if (!access.getCanUpdateProgress())
-					throw securityException("Cannot create/edit flight log");
+				if (!access.getCanCreate())
+					throw securityException("Cannot create flight log");
 			}
 			
 			// Make sure we are updating our own entry

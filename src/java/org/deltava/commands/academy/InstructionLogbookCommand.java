@@ -4,10 +4,13 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.academy.InstructionFlight;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display Instruction logbooks.
@@ -30,7 +33,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 
 		// Get the user ID to check
 		int id = ctx.getID();
-		if ((id == 0) || (!ctx.isUserInRole("HR")))
+		if ((id == 0) && (!ctx.isUserInRole("HR")))
 			id = ctx.getUser().getID();
 
 		try {
@@ -43,7 +46,7 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			Collection<InstructionFlight> flights = dao.getFlightCalendar(null, 0, id); 
 			vc.setResults(flights);
 			
-			// Load the Pilot IDs
+			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
 				InstructionFlight flight = i.next();
@@ -51,9 +54,15 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 				IDs.add(new Integer(flight.getPilotID()));
 			}
 			
-			// Load the Pilot IDs
-			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			// Load the Pilot beans
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			Map<Integer, Pilot> pilots = pdao.getByID(IDs, "PILOTS"); 
+			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("ins", pilots.get(new Integer(ctx.getID())), REQUEST);
+			
+			// Load the instructor list if displaying all pilots
+			if (ctx.getID() == 0)
+				ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
