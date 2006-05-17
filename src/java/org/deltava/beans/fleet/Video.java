@@ -12,10 +12,10 @@ import org.deltava.util.StringUtils;
 
 public class Video extends FileEntry {
 	
-	public static final int WMF = 0;
+	public static final int WMV = 0;
 	public static final int AVI = 1;
 	
-	public static final String[] TYPES = {"WMF", "AVI" };
+	public static final String[] TYPES = {"WMV", "AVI" };
 	
 	private int _type;
 
@@ -33,9 +33,19 @@ public class Video extends FileEntry {
 	/**
 	 * Returns the video type.
 	 * @return the type code
+	 * @see Video#getTypeName()
 	 */
 	public int getType() {
 		return _type;
+	}
+	
+	/**
+	 * Returns the video type name.
+	 * @return the type name
+	 * @see Video#getType()
+	 */
+	public String getTypeName() {
+		return TYPES[_type];
 	}
 	
 	/**

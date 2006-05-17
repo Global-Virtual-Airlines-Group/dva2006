@@ -35,7 +35,7 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 
 		// Get the view start/end
 		ViewContext vc = initView(ctx);
-		
+
 		// Calculate access for adding content
 		CertificationAccessControl access = new CertificationAccessControl(ctx);
 		access.validate();
@@ -45,33 +45,33 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 		Collection<TrainingVideo> results = null;
 		try {
 			Connection con = ctx.getConnection();
-			
-	         // Get the DAO and the library
-	         GetAcademyVideos dao = new GetAcademyVideos(con);
-	         dao.setQueryStart(vc.getStart());
-	         dao.setQueryMax(Math.round(vc.getCount() * 1.5f));
-	         results = dao.getVideos();
-	         
-	         // Get the authors
-	         Set<Integer> IDs = new HashSet<Integer>();
-	         for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext(); ) {
-	        	 TrainingVideo e = i.next();
-	            IDs.add(new Integer(e.getAuthorID()));
-	         }
 
-	         // Get the author data
-	         GetPilot pdao = new GetPilot(con);
-	         ctx.setAttribute("authors", pdao.getByID(IDs, SystemData.get("airline.db") + " .PILOTS"), REQUEST);
-	         
-	         // Populate flight academy courses
-	         GetAcademyCourses cdao = new GetAcademyCourses(con);
-	         vAccess = new TrainingVideoAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
+			// Get the DAO and the library
+			GetAcademyVideos dao = new GetAcademyVideos(con);
+			dao.setQueryStart(vc.getStart());
+			dao.setQueryMax(Math.round(vc.getCount() * 1.5f));
+			results = dao.getVideos();
+
+			// Get the authors
+			Set<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext();) {
+				TrainingVideo e = i.next();
+				IDs.add(new Integer(e.getAuthorID()));
+			}
+
+			// Get the author data
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("authors", pdao.getByID(IDs, SystemData.get("airline.db") + " .PILOTS"), REQUEST);
+
+			// Populate flight academy courses
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			vAccess = new TrainingVideoAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Validate our access to the results
 		for (Iterator<TrainingVideo> i = results.iterator(); i.hasNext();) {
 			TrainingVideo video = i.next();
@@ -87,8 +87,8 @@ public class VideoLibraryCommand extends AbstractViewCommand {
 			}
 		}
 
-		// Save the results in the request
-		ctx.setAttribute("files", results, REQUEST);
+		// Save the results in the view context
+		vc.setResults(results);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
