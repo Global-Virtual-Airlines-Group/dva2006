@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -24,13 +24,16 @@ import org.deltava.util.*;
 public class ImageServlet extends BasicAuthServlet {
 
 	private static final Logger log = Logger.getLogger(ImageServlet.class);
-	private static final String IMG_REALM = "\"Approach Charts\"";
+	
+	private static final String CHART_REALM = "\"Approach Charts\"";
+	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
 	private static final int IMG_CHART = 0;
 	private static final int IMG_GALLERY = 1;
 	private static final int IMG_SIG = 2;
+	private static final int IMG_EXAM = 3;
 
-	private static final String[] IMG_TYPES = { "charts", "gallery", "sig" };
+	private static final String[] IMG_TYPES = { "charts", "gallery", "sig", "exam_rsrc" };
 
 	/**
 	 * Returns the servlet description.
@@ -70,14 +73,14 @@ public class ImageServlet extends BasicAuthServlet {
 		}
 
 		// If we're loading a chart, make sure we are authenticated
-		if (imgType == IMG_CHART) {
+		if ((imgType == IMG_CHART) || (imgType == IMG_EXAM)) {
 			Pilot usr = (Pilot) req.getUserPrincipal();
 			if (usr == null)
 				usr = authenticate(req);
 
 			// Check if we need to be authenticated
 			if (usr == null) {
-				challenge(rsp, IMG_REALM);
+				challenge(rsp, (imgType == IMG_CHART) ? CHART_REALM : EXAM_REALM);
 				return;
 			}
 		}
@@ -118,8 +121,12 @@ public class ImageServlet extends BasicAuthServlet {
 					dbName = url.getLastPath();
 					imgBuffer = dao.getSignatureImage(imgID, dbName);
 					break;
+					
+				case IMG_EXAM:
+					// TODO Implement exam question images
 
 				default:
+					log.warn("Unknown image type - " + req.getRequestURI());
 			}
 		} catch (ControllerException ce) {
 			if (ce.isWarning()) {
