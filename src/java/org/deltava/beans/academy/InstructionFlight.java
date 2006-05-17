@@ -12,10 +12,12 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionFlight extends DatabaseBean implements CalendarEntry {
+public class InstructionFlight extends DatabaseBean implements CalendarEntry, Instruction {
 
 	private int _instructorID;
+	private int _pilotID;
 	private int _courseID;
+	private String _courseName;
 	private Date _startDate;
 	private String _eqType;
 	private int _length;
@@ -61,12 +63,33 @@ public class InstructionFlight extends DatabaseBean implements CalendarEntry {
 	}
 	
 	/**
+	 * Returns the name of the Flight Academy course associated with this flight.
+	 * @return the Course's name
+	 * @see InstructionFlight#setCourseName(String)
+	 * @see InstructionFlight#getCourseID()
+	 */
+	public String getCourseName() {
+		return _courseName;
+	}
+	
+	/**
 	 * Returns the database ID of the Instructor Pilot associated with this flight.
 	 * @return the Pilot's database ID
 	 * @see InstructionFlight#setInstructorID(int)
+	 * @see InstructionFlight#getPilotID()
 	 */
 	public int getInstructorID() {
 		return _instructorID;
+	}
+	
+	/**
+	 * Returns the database ID of the student associated with this flight.
+	 * @return the Pilot's database ID
+	 * @see InstructionFlight#setPilotID(int)
+	 * @see InstructionFlight#getInstructorID()
+	 */
+	public int getPilotID() {
+		return _pilotID;
 	}
 
 	/**
@@ -113,10 +136,33 @@ public class InstructionFlight extends DatabaseBean implements CalendarEntry {
 	 * @param id the Pilot's database ID
 	 * @throws IllegalArgumentException if id is zero or negative
 	 * @see InstructionFlight#getInstructorID()
+	 * @see InstructionFlight#setPilotID(int)
 	 */
 	public void setInstructorID(int id) {
 		validateID(_instructorID, id);
 		_instructorID = id;
+	}
+	
+	/**
+	 * Updates the Student Pilot associated with this flight.
+	 * @param id the Pilot's database ID
+	 * @throws IllegalArgumentException if id is zero or negative
+	 * @see InstructionFlight#getPilotID()
+	 * @see InstructionFlight#setInstructorID(int)
+	 */
+	public void setPilotID(int id) {
+		validateID(_pilotID, id);
+		_pilotID = id;
+	}
+	
+	/**
+	 * Updates the the Flight Academy course associated with this flight.
+	 * @param name the Course's name
+	 * @see InstructionFlight#getCourseName()
+	 * @see InstructionFlight#setCourseID(int)
+	 */
+	public void setCourseName(String name) {
+		_courseName = name;
 	}
 
 	/**

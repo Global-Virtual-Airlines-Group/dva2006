@@ -35,7 +35,8 @@ disableButton('ReturnButton');
 disableButton('ApproveButton');
 disableButton('DeleteButton');
 disableButton('SchedButton');
-disableButton('Progress Button');
+disableButton('ProgressButton');
+disableButton('FlightLogButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment || access.canUpdateProgress};
 }
@@ -175,6 +176,7 @@ return ${access.canComment || access.canUpdateProgress};
  <el:cmdbutton ID="RideButton" url="courseride" linkID="0x${course.ID}" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canSchedule}">
+ <el:cmdbutton ID="FlightLogButton" url="insflight" linkID="0&amp;courseID=${course.ID}" op="edit" label="LOG FLIGHT" />
  <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
 </c:if>
 <c:if test="${access.canDelete}">
