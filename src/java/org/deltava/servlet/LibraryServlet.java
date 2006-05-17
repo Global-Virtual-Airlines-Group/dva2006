@@ -131,6 +131,10 @@ public class LibraryServlet extends GenericServlet {
 		rsp.setContentLength((int) entry.file().length());
 		if ("pdf".equals(url.getExtension())) {
 			rsp.setContentType("application/pdf");
+		} else if ("avi".equals(url.getExtension())) {
+			rsp.setContentType("video/avi");
+		} else if ("wmv".equals(url.getExtension())) {
+			rsp.setContentType("video/x-ms-wmv");
 		} else {
 			rsp.setContentType("application/octet-stream");
 		}
