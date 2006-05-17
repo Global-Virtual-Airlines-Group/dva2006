@@ -77,7 +77,7 @@ public class GetAcademyCalendar extends DAO {
 		if (courseID != 0)
 			sqlBuf.append("AND (C.ID=?) ");
 
-		sqlBuf.append("ORDER BY I.DATE");
+		sqlBuf.append("ORDER BY I.STARTDATE");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -102,13 +102,14 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlightCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.* FROM INSLOG I, COURSES C WHERE (C.ID=I.COURSE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C WHERE "
+				+ "(C.ID=I.COURSE) ");
 		if (startDate != null)
 			sqlBuf.append("AND (I.STARTTIME >=?) AND (I.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND ((C.PILOT_ID=?) OR (I.INSTRUCTOR_ID=?)) ");
 
-		sqlBuf.append("ORDER BY I.DATE");
+		sqlBuf.append("ORDER BY I.STARTDATE");
 		
 		int param = 0;
 		try {
@@ -206,6 +207,7 @@ public class GetAcademyCalendar extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasCourseInfo = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the results
 		List<InstructionFlight> results = new ArrayList<InstructionFlight>();
@@ -216,6 +218,10 @@ public class GetAcademyCalendar extends DAO {
 			entry.setDate(rs.getTimestamp(5));
 			entry.setLength(Math.round(rs.getFloat(6) * 10));
 			entry.setComments(rs.getString(7));
+			if (hasCourseInfo) {
+				entry.setCourseName(rs.getString(8));
+				entry.setPilotID(rs.getInt(9));
+			}
 			
 			// Add to results
 			results.add(entry);

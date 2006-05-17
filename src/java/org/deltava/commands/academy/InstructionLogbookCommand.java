@@ -1,7 +1,10 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
+import java.util.*;
 import java.sql.Connection;
+
+import org.deltava.beans.academy.InstructionFlight;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -37,7 +40,20 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			vc.setResults(dao.getFlightCalendar(null, 0, id));
+			Collection<InstructionFlight> flights = dao.getFlightCalendar(null, 0, id); 
+			vc.setResults(flights);
+			
+			// Load the Pilot IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
+				InstructionFlight flight = i.next();
+				IDs.add(new Integer(flight.getInstructorID()));
+				IDs.add(new Integer(flight.getPilotID()));
+			}
+			
+			// Load the Pilot IDs
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

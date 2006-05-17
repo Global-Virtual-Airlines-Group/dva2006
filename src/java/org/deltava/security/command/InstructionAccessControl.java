@@ -14,19 +14,21 @@ import org.deltava.security.SecurityContext;
 
 public class InstructionAccessControl extends AccessControl {
 	
-	private InstructionSession _is;
+	private Instruction _i;
 	
+	private boolean _canCreate;
 	private boolean _canCancel;
 	private boolean _canEdit;
+	private boolean _canDelete;
 
 	/**
 	 * Initializes the Access Controller.
 	 * @param ctx the security context
-	 * @param s the InstructionSession bean
+	 * @param i the Instruction bean
 	 */
-	public InstructionAccessControl(SecurityContext ctx, InstructionSession s) {
+	public InstructionAccessControl(SecurityContext ctx, Instruction i) {
 		super(ctx);
-		_is = s;
+		_i = i;
 	}
 
 	/**
@@ -34,16 +36,31 @@ public class InstructionAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
-		if ((_is == null) || (!_ctx.isAuthenticated()))
-			return;
 		
 		// Check roles
 		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isOurs = (_ctx.getUser().getID() == _is.getPilotID()) || (_ctx.getUser().getID() == _is.getInstructorID());
-		
+		boolean isOurs = (_ctx.getUser().getID() == _i.getPilotID()) || (_ctx.getUser().getID() == _i.getInstructorID());
+
+		// Set create rights
+		_canCreate = isHR || _ctx.isUserInRole("Instructor");
+		if ((_i == null) || (!_ctx.isAuthenticated()))
+			return;
+
 		// Set access rights
-		_canCancel = (isOurs || isHR) && (_is.getStatus() == InstructionSession.SCHEDULED);
-		_canEdit = isHR || (_ctx.getUser().getID() == _is.getInstructorID());
+		_canEdit = isHR || (_ctx.getUser().getID() == _i.getInstructorID());
+		_canDelete = isHR;
+		if ((_i instanceof InstructionSession) && (isOurs || isHR)) {
+			InstructionSession is = (InstructionSession) _i;
+			_canCancel = (is.getStatus() == InstructionSession.SCHEDULED);
+		}
+	}
+	
+	/**
+	 * Returns if the user can create a new Instruction <i>Flight Report</i>.
+	 * @return TRUE if the user can create a new flight report, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
 	}
 
 	/**
@@ -60,5 +77,13 @@ public class InstructionAccessControl extends AccessControl {
 	 */
 	public boolean getCanEdit() {
 		return _canEdit;
+	}
+
+	/**
+	 * Returns if the user can delete the Instruction Session.
+	 * @return TRUE if the user can delete the session, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
 	}
 }

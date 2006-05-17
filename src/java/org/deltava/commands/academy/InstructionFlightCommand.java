@@ -10,9 +10,10 @@ import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.CourseAccessControl;
+import org.deltava.security.command.InstructionAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to log Flight Academy instruction flights.
@@ -22,6 +23,24 @@ import org.deltava.util.StringUtils;
  */
 
 public class InstructionFlightCommand extends AbstractFormCommand {
+	
+	private static Collection<String> _flightTimes;
+	
+	/**
+	 * Initialize the command.
+	 * @param id the Command ID
+	 * @param cmdName the name of the Command
+	 */
+	public void init(String id, String cmdName) throws CommandException {
+		super.init(id, cmdName);
+		
+		// Initialize flight times
+		if (_flightTimes == null) {
+			_flightTimes = new LinkedHashSet<String>();
+			for (int x = 2; x < 168; x++)
+				_flightTimes.add(String.valueOf(x / 10.0d));
+		}
+	}
 
 	/**
 	 * Method called when saving the form.
@@ -62,7 +81,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			}
 			
 			// Update the calendar
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyFlight wdao = new SetAcademyFlight(con);
 			wdao.write(flight);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -106,6 +125,12 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				c = dao.get(flight.getCourseID());
 				if (c == null)
 					throw notFoundException("Invalid Course ID - " + flight.getCourseID());
+				
+				// Check our Access
+				InstructionAccessControl access = new InstructionAccessControl(ctx, flight);
+				access.validate();
+				if (!access.getCanUpdateProgress())
+					throw securityException("Cannot create/edit flight log");
 			} else {
 				GetAcademyCourses dao = new GetAcademyCourses(con);
 				c = dao.get(StringUtils.parseHex(ctx.getParameter("courseID")));
@@ -114,13 +139,13 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				
 				// Populate the flight bean
 				flight = new InstructionFlight(ctx.getUser().getID(), c.getID());
+				
+				// Check our Access
+				InstructionAccessControl access = new InstructionAccessControl(ctx, flight);
+				access.validate();
+				if (!access.getCanUpdateProgress())
+					throw securityException("Cannot create/edit flight log");
 			}
-			
-			// Check our Access
-			CourseAccessControl access = new CourseAccessControl(ctx, c);
-			access.validate();
-			if (!access.getCanUpdateProgress())
-				throw securityException("Cannot create/edit flight log");
 			
 			// Make sure we are updating our own entry
 			if (!ctx.isUserInRole("HR")) {
@@ -137,7 +162,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			
 			// Load instructor lists
 			if (ctx.isUserInRole("HR")) {
-				ctx.setAttribute("instructors", pdao.getByRole("Instructor", "PILOTS"), REQUEST);	
+				ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);	
 			} else {
 				Collection<Person> instructors = new HashSet<Person>();
 				instructors.add(ctx.getUser());
@@ -153,6 +178,9 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set list options
+		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -183,7 +211,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Course ID - " + flight.getCourseID());
 			
 			// Check our access
-			CourseAccessControl access = new CourseAccessControl(ctx, c);
+			InstructionAccessControl access = new InstructionAccessControl(ctx, flight);
 			access.validate();
 			ctx.setAttribute("access", access, REQUEST);
 
