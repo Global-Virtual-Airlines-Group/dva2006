@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><c:if test="${empty flight}">New </c:if><content:airline /> Flight Academy Instruction Flight</title>
@@ -66,7 +67,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flown on</td>
- <td class="data"><el:text name="</td>
+ <td class="data"><el:text name="flightDate" idx="*" size="9" max="10" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" /></td>
 </tr>
 <c:set var="tmpH" value="${empty flight ? '' : flight.length / 10}" scope="request" />
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="request" />
