@@ -13,6 +13,14 @@
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
+<script language="javascript" type="text/javascript">
+function sort(combo)
+{
+var sortType = combo.options[combo.selectedIndex].value;
+self.location = '/inslogbook.do?id=0x<fmt:hex value="${param.id}" />';
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,6 +30,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="inslogbook.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="inslogbook">
 <tr class="title">
  <td colspan="6" class="caps left">PILOT LOGBOOK<c:if test="${!empty pilot}"> FOR ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</c:if></td>
@@ -34,7 +43,14 @@
  <td width="15%">STUDENT</td>
  <td width="15%">INSTRUCTOR</td>
  <td width="10%">DURATION</td>
- <td>COMMENTS</td>
+ <td class="left" width="10%">COMMENTS</td>
+<content:filter roles="HR">
+ <td class="right"><el:cmd url="inslogbook">ALL</el:cmd> | INSTRUCTOR 
+<el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" /></td>
+</content:filter>
+<content:filter roles="!HR">
+ <td>${ins.name}</td>
+</content:filter>
 </tr>
 
 <!-- Table Flight Report Data -->
@@ -47,13 +63,15 @@
  <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${ins.ID}" className="sec">${ins.name}</el:cmd></td>
  <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
- <td class="small left">${pirep.comments}</td>
+ <td class="small left" colspan="2">${pirep.comments}</td>
 </view:row>
 </c:forEach>
 <tr class="title">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar></td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
