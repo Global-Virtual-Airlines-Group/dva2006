@@ -142,6 +142,23 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     }
     
     /**
+     * Returns the entry for a particular network user, if online.
+     * @param networkID the user's network ID
+     * @return a NetworkUser bean, or null if not found
+     */
+    public NetworkUser get(int networkID) {
+    	Collection<NetworkUser> allUsers = new LinkedHashSet<NetworkUser>(_controllers.values());
+    	allUsers.addAll(_pilots.values());
+    	for (Iterator<NetworkUser> i = allUsers.iterator(); i.hasNext(); ) {
+    		NetworkUser usr = i.next();
+    		if (usr.getID() == networkID)
+    			return usr;
+    	}
+    	
+    	return null;
+    }
+    
+    /**
      * Assigns Pilot IDs to online Pilots and Controllers that have user accounts.
      * @param idMap a Map of Integers, keyed by network ID with the database ID as the value.
      */
