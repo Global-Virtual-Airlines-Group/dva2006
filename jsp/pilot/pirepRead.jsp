@@ -178,7 +178,7 @@ return true;
 </tr>
 <c:if test="${!empty pirep.remarks}">
 <tr>
- <td class="label">Pilot Comments</td>
+ <td class="label" valign="top">Pilot Comments</td>
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
@@ -216,7 +216,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 </el:table>
 
-<!-- PIREP Button Bar -->
+<!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td>
