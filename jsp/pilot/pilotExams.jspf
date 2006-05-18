@@ -1,6 +1,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
-<c:if test="${!empty exams}">
+<c:if test="${(!empty exams) || forceExams}">
 <!-- Pilot Examination History -->
 <tr class="title caps">
  <td colspan="${cspan + 1}">EXAMINATIONS AND CHECK RIDES</td>
@@ -49,4 +49,9 @@
  <td><fmt:date fmt="d" date="${exam.date}" /></td>
 </tr>
 </c:forEach>
+<c:if test="${empty exams}">
+<tr>
+ <td colspan="7" class="pri bld">This Pilot has not taken any Examinations or Check Rides.</td>
+</tr>
+</c:if>
 </c:if>
