@@ -139,7 +139,9 @@ public class InstructionFlight extends DatabaseBean implements CalendarEntry, In
 	 * @see InstructionFlight#setPilotID(int)
 	 */
 	public void setInstructorID(int id) {
-		validateID(_instructorID, id);
+        if (id < 1)
+            throw new IllegalArgumentException("Database ID cannot be zero or negative");
+        
 		_instructorID = id;
 	}
 	

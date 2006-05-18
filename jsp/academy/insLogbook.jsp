@@ -33,7 +33,7 @@ return true;
 <el:form action="inslogbook.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="inslogbook">
 <tr class="title">
- <td colspan="6" class="caps left">PILOT LOGBOOK<c:if test="${!empty pilot}"> FOR ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</c:if></td>
+ <td colspan="7" class="caps left">PILOT LOGBOOK<c:if test="${!empty pilot}"> FOR ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</c:if></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -44,9 +44,7 @@ return true;
  <td width="15%">INSTRUCTOR</td>
  <td width="10%">DURATION</td>
  <td class="left" width="10%">COMMENTS</td>
-<content:filter roles="HR">
- <td class="right"><el:cmd url="inslogbook">ALL</el:cmd> | INSTRUCTOR 
-<el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" /></td>
+<content:filter roles="HR">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void sort(this)" /></td>
 </content:filter>
 <content:filter roles="!HR">
  <td>${ins.name}</td>
@@ -67,7 +65,7 @@ return true;
 </view:row>
 </c:forEach>
 <tr class="title">
- <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar></td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

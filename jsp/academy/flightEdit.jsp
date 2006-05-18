@@ -13,6 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<content:js name="datePicker" />
 <content:js name="hourCalc" />
 <script language="javascript" type="text/javascript">
 function validate(form)
@@ -20,6 +21,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.instructor, 'Instructor Pilot')) return false;
+if (!validateText(form.flightDate, 10, 'Flight Date')) return false;
 if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
 
 setSubmit();
@@ -59,7 +61,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Instructor</td>
- <td class="data"><el:combo name="instructor" size="1" idx="*" options="${instructors}" value="${ins.name}" firstEntry="< INSTRUCTOR >" /></td>
+ <td class="data"><el:combo name="instructor" size="1" idx="*" options="${instructors}" value="${ins.name}" className="req" firstEntry="< INSTRUCTOR >" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -67,9 +69,10 @@ return true;
 </tr>
 <tr>
  <td class="label">Flown on</td>
- <td class="data"><el:text name="flightDate" idx="*" size="9" max="10" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" /></td>
+ <td class="data"><el:text name="logDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" />
+ <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].logDate')" /></td>
 </tr>
-<c:set var="tmpH" value="${empty flight ? '' : flight.length / 10}" scope="request" />
+<c:set var="tmpH" value="${empty flight ? '' : (flight.length / 10)}" scope="request" />
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>
@@ -82,12 +85,14 @@ return true;
  <td class="data"><el:textbox idx="*" name="comments" width="100" height="5">${flight.comments}</el:textbox></td>
 </tr>
 </el:table>
+
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE FLIGHT REPORT" /></td>
 </tr>
 </el:table>
+<c:if test="${empty flight}"><el:text name="courseID" type="hidden" value="${fn:hex(course.ID)}" /></c:if>
 </el:form>
 <br />
 <content:copyright />

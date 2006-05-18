@@ -4,12 +4,13 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.InstructionFlight;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.ComboUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -20,6 +21,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class InstructionLogbookCommand extends AbstractViewCommand {
+	
+	private static final ComboAlias ALL = ComboUtils.fromString("All Instructors", "0x0");
 
 	/**
 	 * Executes the command.
@@ -61,8 +64,11 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			ctx.setAttribute("ins", pilots.get(new Integer(ctx.getID())), REQUEST);
 			
 			// Load the instructor list if displaying all pilots
-			if (ctx.getID() == 0)
-				ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+			if (ctx.getID() == 0) {
+				List<ComboAlias> insList = new ArrayList<ComboAlias>(pdao.getByRole("Instructor", SystemData.get("airline.db")));
+				insList.add(0, ALL);
+				ctx.setAttribute("instructors", insList, REQUEST);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
