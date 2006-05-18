@@ -493,12 +493,14 @@
 			<y type="Integer">780</y>
 			<size type="Integer">327680</size>
 		</img_max>
-		
+
 		<sig_max>
 			<x type="Integer">520</x>
 			<y type="Integer">160</y>
 			<size type="Integer">65520</size>
 		</sig_max>
+
+		<maxreports type="Integer">6</maxreports>
 	</cooler>
 	
 	<users>

@@ -118,8 +118,9 @@ public class ThreadCommand extends AbstractCommand {
 				updateIDs.add(new Integer(upd.getAuthorID()));
 			}
 
-			// Get the location of all the Pilots posting in the thread
+			// Get the location of all the Pilots reporting/updating/posting in the thread
 			uddao.setQueryMax(0);
+			updateIDs.addAll(thread.getReportIDs());
 			UserDataMap udm = uddao.getByThread(thread.getID());
 			udm.putAll(uddao.get(updateIDs));
 			

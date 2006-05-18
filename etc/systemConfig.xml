@@ -479,6 +479,8 @@
 			<y type="Integer">160</y>
 			<size type="Integer">65520</size>
 		</sig_max>
+		
+		<maxreports type="Integer">2</maxreports>
 	</cooler>
 	
 	<users>
