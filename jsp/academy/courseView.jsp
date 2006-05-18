@@ -84,9 +84,8 @@ return ${access.canComment || access.canUpdateProgress};
  <td colspan="${cspan}" class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
 </tr>
 </c:if>
-<c:if test="${!empty exams}">
+<c:set var="forceExams" value="${true}" scope="request" />
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
-</c:if>
 
 <!-- Course Progress -->
 <tr class="title caps">
@@ -114,16 +113,18 @@ return ${access.canComment || access.canUpdateProgress};
  <td colspan="${cspan + 1}">INSTRUCTION FLIGHT LOG - <fmt:int value="${fn:sizeof(flights)}" /> FLIGHTS</td>
 </tr>
 <tr class="title mid caps">
- <td colspan="3">COMMENTS</td>
+ <td>DATE</td>
+ <td colspan="2">COMMENTS</td>
  <td colspan="2">INSTRUCTOR</td>
  <td width="10%">EQUIPMENT</td>
  <td>LENGTH</td>
 </tr>
 <c:forEach var="flight" items="${flights}">
 <c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
-<tr>
- <td class="left small">${flight.comments}</td>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+<tr class="mid">
+ <td><fmt:date date="${flight.date}" fmt="d" default="-" /></td>
+ <td class="left small" colspan="3">${flight.comments}</td>
+ <td class="pri bld" colspan="2"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
  <td class="sec small">${flight.equipmentType}</td>
  <td><fmt:dec fmt="#0.0" value="${flight.length / 10}" /> hours</td>
 </tr>
