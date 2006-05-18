@@ -215,7 +215,7 @@ public class GetAcademyCalendar extends DAO {
 			InstructionFlight entry = new InstructionFlight(rs.getInt(2), rs.getInt(3));
 			entry.setID(rs.getInt(1));
 			entry.setEquipmentType(rs.getString(4));
-			entry.setDate(rs.getTimestamp(5));
+			entry.setDate(expandDate(rs.getDate(5)));
 			entry.setLength(Math.round(rs.getFloat(6) * 10));
 			entry.setComments(rs.getString(7));
 			if (hasCourseInfo) {

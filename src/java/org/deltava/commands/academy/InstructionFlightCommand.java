@@ -4,7 +4,7 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
@@ -62,14 +62,14 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				if (flight == null)
 					throw notFoundException("Invalid Flight Log ID - " + ctx.getID());
 			} else {
-				flight = new InstructionFlight(1, StringUtils.parse(ctx.getParameter("courseID"), 0));
+				flight = new InstructionFlight(1, StringUtils.parseHex(ctx.getParameter("courseID")));
 			}
 			
 			// Update fields from the request
 			flight.setInstructorID(StringUtils.parseHex(ctx.getParameter("instructor")));
 			flight.setComments(ctx.getParameter("comments"));
 			flight.setEquipmentType(ctx.getParameter("eqType"));
-			flight.setDate(parseDateTime(ctx, "flight", "MM/dd/yyyy", "HH:mm"));
+			flight.setDate(parseDateTime(ctx, "log", "MM/dd/yyyy", "HH:mm"));
 			
 			// Get the flight time
 			try {
@@ -132,6 +132,9 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				access.validate();
 				if (!access.getCanEdit())
 					throw securityException("Cannot edit flight log");
+				
+				// Save the flight bean
+				ctx.setAttribute("flight", flight, REQUEST);
 			} else {
 				GetAcademyCourses dao = new GetAcademyCourses(con);
 				c = dao.get(StringUtils.parseHex(ctx.getParameter("courseID")));
@@ -163,15 +166,16 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			
 			// Load instructor lists
 			if (ctx.isUserInRole("HR")) {
-				ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);	
+				List<Pilot> insList = pdao.getByRole("Instructor", SystemData.get("airline.db"));
+				insList.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
+				ctx.setAttribute("instructors", insList, REQUEST);	
 			} else {
 				Collection<Person> instructors = new HashSet<Person>();
 				instructors.add(ctx.getUser());
 				ctx.setAttribute("instructors", instructors, REQUEST);
 			}
 			
-			// Save flight/course data
-			ctx.setAttribute("flight", flight, REQUEST);
+			// Save course/access data
 			ctx.setAttribute("course", c, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
 		} catch (DAOException de) {
