@@ -35,7 +35,7 @@ public class ContentOverrideCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Content Warning flag cleared");
+			upd.setMessage("Content Warnings/Reports cleared");
 			
 			// Start a transaction
 			ctx.startTX();
@@ -43,6 +43,7 @@ public class ContentOverrideCommand extends AbstractCommand {
 			// Clean out the thread and log the status
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.clearWarning(mt.getID());
+			wdao.clearReport(mt.getID());
 			wdao.write(upd);
 			
 			// Commit the transaction

@@ -622,6 +622,12 @@
 		<roles>Moderator</roles>
 	</command>
 
+	<command id="threadreport">
+		<name>Report Water Cooler Thread</name>
+		<class>org.deltava.commands.cooler.ContentReportCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="clearcontentwarn">
 		<name>Clear Water Cooler Content Warning</name>
 		<class>org.deltava.commands.cooler.ContentOverrideCommand</class>

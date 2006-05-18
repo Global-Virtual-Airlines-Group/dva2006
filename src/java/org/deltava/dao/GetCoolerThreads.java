@@ -36,7 +36,7 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
 						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
 						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.CHANNEL=?)");
 		if (!showImgs)
@@ -59,7 +59,7 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getScreenShots() throws DAOException {
 		try {
-			prepareStatement("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+			prepareStatement("SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
 					+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
 					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE "
 					+ "(T.IMAGE_ID <> 0) GROUP BY T.ID ORDER BY SD DESC");
@@ -80,7 +80,7 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
 						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
 						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.AUTHOR=?)");
 		if (!showImgs)
@@ -104,11 +104,28 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
-			prepareStatement("SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
+			prepareStatement("SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
 					+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T, "
 					+ "common.COOLER_NOTIFY N LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (N.USER_ID=?) "
 					+ "AND (T.ID=N.THREAD_ID) GROUP BY T.ID ORDER BY SD DESC");
 			_ps.setInt(1, userID);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Get all Water Cooler threads where users have reported content.
+	 * @return a List of MessageThread beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<MessageThread> getReported() throws DAOException {
+		try {
+			prepareStatement("SELECT T.*, COUNT(R.AUTHOR_ID) AS RC, IF(T.STICKY, IF(DATE_ADD(T.STICKY, " +
+					"INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
+					+ "common.COOLER_THREADS T, common.COOLER_REPORTS R LEFT JOIN common.COOLER_POLLS O ON "
+					+ "(T.ID=O.ID) WHERE (T.ID=N.THREAD_ID) GROUP BY T.ID HAVING (RC > 0) ORDER BY SD DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -125,7 +142,7 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
 						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
 						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
 		if (!showImgs)
@@ -154,7 +171,7 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
 						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
 						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
 		if (!showImgs)
@@ -245,6 +262,19 @@ public class GetCoolerThreads extends DAO {
 				t.addUpdate(upd);
 			}
 			
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// Fetch the thread reports
+			prepareStatementWithoutLimits("SELECT AUTHOR_ID FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)");
+			_ps.setInt(1, id);
+
+			// Execute the query
+			rs = _ps.executeQuery();
+			while (rs.next())
+				t.addReportID(rs.getInt(1));
+
 			// Clean up
 			rs.close();
 			_ps.close();
@@ -344,10 +374,11 @@ public class GetCoolerThreads extends DAO {
 			t.setAuthorID(rs.getInt(11));
 			t.setLastUpdatedOn(rs.getTimestamp(12));
 			t.setLastUpdateID(rs.getInt(13));
-			t.setPoll(rs.getInt(15) > 0);
+			t.setReportCount(rs.getInt(14));
+			t.setPoll(rs.getInt(16) > 0);
 
 			// Clean out sticky if less than SD column
-			java.util.Date sd = rs.getTimestamp(14);
+			java.util.Date sd = rs.getTimestamp(15);
 			if ((t.getStickyUntil() != null) && (sd.after(t.getStickyUntil())))
 				t.setStickyUntil(null);
 
