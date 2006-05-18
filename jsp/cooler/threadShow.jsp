@@ -199,7 +199,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </el:showaddr></td>
  <td class="postDate" colspan="${canEdit ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator">
- from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error">CONTENT 
+ from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT 
 WARNING</span></c:if>
 </content:filter>
 <c:if test="${canEdit}">
@@ -261,8 +261,8 @@ WARNING</span></c:if>
 <c:if test="${imgAccess.canDelete}">
  <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
 </c:if>
-<content:filter roles="Moderator"><c:if test="${contentWarn}">
- <el:cmdbutton ID="UnfilterButton" label="CLEAR CONTENT WARNING" url="clearcontentwarn" linkID="0x${thread.ID}" />
+<content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
+ <el:cmdbutton ID="UnfilterButton" label="CLEAR WARNINGS" url="clearcontentwarn" linkID="0x${thread.ID}" />
 </c:if></content:filter>
 <c:if test="${access.canResync && !noResync}">
  <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
@@ -312,10 +312,11 @@ notification each time a reply is posted in this Thread.
 </c:if>
 
 <!-- Button Bar -->
-<c:if test="${access.canReply}">
+<c:if test="${access.canReply || access.canReport}">
 <tr class="buttons mid title">
- <td colspan="3"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
+ <td colspan="3"><c:if test="${access.canReply}"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
+&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></c:if>
+<c:if test="${access.canReport}"> <el:cmdbutton url="threadreport" linkID="0x${thread.ID}" label="WARN MODERATORS" /></c:if></td>
 </tr>
 </c:if>
 </el:table>

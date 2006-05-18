@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -310,6 +310,23 @@ public class SetCoolerMessage extends DAO {
 	}
 	
 	/**
+	 * Writes a content warning report for a particular Water Cooler discussion thread.
+	 * @param mt the MessageThread bean
+	 * @param id the user's database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void report(MessageThread mt, int id) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO common.COOLER_REPORTS (THREAD_ID, AUTHOR_ID) VALUES (?, ?)");
+			_ps.setInt(1, mt.getID());
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Writes a vote in a Water Cooler discussion poll.
 	 * @param vote the PollVote bean
 	 * @throws DAOException if a JDBC error occurs
@@ -336,6 +353,21 @@ public class SetCoolerMessage extends DAO {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET CONTENTWARN=? WHERE (THREAD_ID=?)");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, threadID);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Clears content reports from a Water Cooler discussion thread.
+	 * @param threadID the thread ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearReport(int threadID) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)");
+			_ps.setInt(1, threadID);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

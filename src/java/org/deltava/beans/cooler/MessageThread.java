@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -21,6 +21,9 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	private int _imgID;
 	private int _authorID;
 	private int _lastUpdateID;
+	
+	private int _reportCount;
+	private Collection<Integer> _reportIDs;
 
 	private boolean _hidden;
 	private boolean _locked;
@@ -87,6 +90,15 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 */
 	public Date getLastUpdatedOn() {
 		return _lastUpdatedOn;
+	}
+	
+	/**
+	 * Returns the number of times this post has been reported for content.
+	 * @return the number of reports, or -1 if no further reports can be made
+	 * @see MessageThread#setReportCount(int)
+	 */
+	public int getReportCount() {
+		return (_reportIDs == null) ? _reportCount : _reportIDs.size();
 	}
 
 	/**
@@ -192,6 +204,15 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	}
 	
 	/**
+	 * Returns the database IDs of all users reporting this thread for content.
+	 * @return a Collection of database IDs
+	 * @see MessageThread#getReportCount()
+	 */
+	public Collection<Integer> getReportIDs() {
+		return (_reportIDs == null) ? new HashSet<Integer>() : _reportIDs;
+	}
+	
+	/**
 	 * Returns wether a Pilot has voted in a particular Water Cooler poll.
 	 * @param pilotID the Pilot's database ID
 	 * @return TRUE if the Pilot has voted, otherwise FALSE
@@ -256,7 +277,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	}
 
 	/**
-	 * Updates the date/time this threa will be a &quot;sticky&quot; until.
+	 * Updates the date/time this thread will be a &quot;sticky&quot; until.
 	 * @param dt the date/time
 	 * @see MessageThread#getStickyUntil()
 	 */
@@ -267,8 +288,22 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 			_stickyUntil = dt;
 	}
 
+	/**
+	 * Updates wether the thread will be sticky in the current channel only.
+	 * @param isSticky TRUE if the thread is stick in the current channel, otherwise FALSE
+	 * @see MessageThread#getStickyInChannelOnly()
+	 */
 	public void setStickyInChannelOnly(boolean isSticky) {
 		_stickyChannel = isSticky;
+	}
+	
+	/**
+	 * Updates the thread's content report count.
+	 * @param count the number of times it has been reported, or -1 if no reports allowed
+	 * @see MessageThread#getReportCount()
+	 */
+	public void setReportCount(int count) {
+		_reportCount = count;
 	}
 
 	/**
@@ -371,6 +406,16 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 			_updates = new TreeSet<ThreadUpdate>();
 		
 		_updates.add(upd);
+	}
+	
+	/**
+	 * Adds a database ID to the list of users reporting a thread for content.
+	 * @param id the database ID
+	 * @see MessageThread#getReportCount()
+	 * @see MessageThread#getReportIDs()
+	 */
+	public void addReportID(int id) {
+		_reportIDs.add(new Integer(id));
 	}
 
 	/**
