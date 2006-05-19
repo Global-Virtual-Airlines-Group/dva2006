@@ -103,7 +103,7 @@ TR.MenuItem {
 	font-weight: bold;
 	font-size: 10pt;
 	background-color: #0000A1;
-	width: 800px;
+	width: 100%;
 	color: #ffffff;
 	text-transform: uppercase;
 }
