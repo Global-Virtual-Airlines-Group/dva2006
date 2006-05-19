@@ -89,6 +89,7 @@ in order to log into the site.<br />
 <el:text name="jsOK" type="hidden" value="" />
 <el:text name="screenX" type="hidden" value="1024" />
 <el:text name="screenY" type="hidden" value="768" />
+<el:text name="redirectTo" type="hidden" value="${referTo}" />
 </el:form>
 </content:region>
 </content:page>

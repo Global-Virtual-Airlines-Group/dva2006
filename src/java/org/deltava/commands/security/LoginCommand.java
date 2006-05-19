@@ -1,6 +1,8 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.Connection;
 
 import javax.servlet.http.*;
@@ -15,6 +17,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.security.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -39,6 +42,18 @@ public class LoginCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/login.jsp");
 
+		// Determine where we are referring from, if on the site return back there
+		String referer = ctx.getRequest().getHeader("Referer");
+		if (!StringUtils.isEmpty(referer)) {
+			try {
+				URL url = new URL(referer);
+				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
+					ctx.setAttribute("referTo", referer, REQUEST);
+			} catch (MalformedURLException mue) {
+				log.warn("Invalid HTTP referer - " + referer);
+			}
+		}
+
 		// Get the names
 		String fName = ctx.getParameter("firstName");
 		String lName = ctx.getParameter("lastName");
@@ -48,7 +63,7 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
-		
+
 		// Check that JavaScript is working properly
 		boolean jsOK = Boolean.valueOf(ctx.getParameter("jsOK")).booleanValue();
 		if (!jsOK) {
@@ -74,41 +89,42 @@ public class LoginCommand extends AbstractCommand {
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;
 			if (p.getStatus() == Pilot.ON_LEAVE) {
-			   log.info("Returning " + p.getName() + " from Leave");
-			   returnToActive = true;
-			   p.setStatus(Pilot.ACTIVE);
+				log.info("Returning " + p.getName() + " from Leave");
+				returnToActive = true;
+				p.setStatus(Pilot.ACTIVE);
 			} else if (p.getStatus() != Pilot.ACTIVE) {
-			   log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
-			   throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
+				log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
+				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
 			}
 
 			// Log the pilot in
 			p.login(ctx.getRequest().getRemoteHost());
-			
+
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));
 			cData.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 			ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
-			
+
 			// Save screen resolution
 			try {
-			   cData.setScreenSize(Integer.parseInt(ctx.getParameter("screenX")), Integer.parseInt(ctx.getParameter("screenY")));
+				cData.setScreenSize(Integer.parseInt(ctx.getParameter("screenX")), Integer.parseInt(ctx
+						.getParameter("screenY")));
 			} catch (NumberFormatException nfe) {
-			   cData.setScreenSize(1024, 768);
+				cData.setScreenSize(1024, 768);
 			}
-			
+
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
 			AddressValidation av = avdao.get(p.getID());
-			
+
 			// Start the transaction
 			ctx.startTX();
 
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p);
-			
+
 			// Mark as returned from leave
 			if (returnToActive) {
 				SetStatusUpdate sudao = new SetStatusUpdate(con);
@@ -117,23 +133,26 @@ public class LoginCommand extends AbstractCommand {
 				upd.setDescription("Returned from Leave of Absence");
 				sudao.write(upd);
 			}
-			
+
 			// Clear the inactivity interval (if any)
 			SetInactivity idao = new SetInactivity(con);
 			idao.delete(p.getID());
-			
+
 			// Create the session and stuff in the pilot data
 			HttpSession s = ctx.getRequest().getSession(true);
 			s.setAttribute(CommandContext.USER_ATTR_NAME, p);
 			s.setAttribute(CommandContext.SCREENX_ATTR_NAME, new Integer(cData.getScreenX()));
 			s.setAttribute(CommandContext.SCREENY_ATTR_NAME, new Integer(cData.getScreenY()));
+
+			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
 				log.info("Invalidated e-mail address for " + p.getName());
 				s.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE);
-				ctx.setAttribute("next_url", "pilotcenter.do", SESSION);
-			} else {
-				ctx.setAttribute("next_url", "home.do", SESSION);			
-			}
+				s.setAttribute("next_url", "pilotcenter.do");
+			} else if (!StringUtils.isEmpty(ctx.getParameter("redirectTo")))
+				s.setAttribute("next_url", ctx.getParameter("redirectTo"));
+			else
+				s.setAttribute("next_url", "home.do");
 
 			// Add the user to the User pool
 			UserPool.add(p, s.getId());
@@ -171,7 +190,7 @@ public class LoginCommand extends AbstractCommand {
 			Cookie fnc = new Cookie("dva_fname", "");
 			fnc.setMaxAge(0);
 			ctx.getResponse().addCookie(fnc);
-			
+
 			Cookie lnc = new Cookie("dva_lname", "");
 			lnc.setMaxAge(0);
 			ctx.getResponse().addCookie(lnc);
