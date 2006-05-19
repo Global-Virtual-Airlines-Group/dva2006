@@ -415,6 +415,9 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 * @see MessageThread#getReportIDs()
 	 */
 	public void addReportID(int id) {
+		if (_reportIDs == null)
+			_reportIDs = new HashSet<Integer>();
+		
 		_reportIDs.add(new Integer(id));
 	}
 

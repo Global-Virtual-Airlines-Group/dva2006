@@ -90,7 +90,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canUnlock = channelAccess && isClosed && isModerator;
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
         _canDelete = _ctx.isUserInRole("Admin");
-        _canReport = _canReply && (!isClosed) && (_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
+        _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
         
         // Check if we can update the thread - ie. we have written the last reply and we can edit
         if (_canReply && (!_mt.getPosts().isEmpty())) {
