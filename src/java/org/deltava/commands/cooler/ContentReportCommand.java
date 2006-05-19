@@ -55,7 +55,7 @@ public class ContentReportCommand extends AbstractCommand {
 			// Add a content warning entry
 			ThreadUpdate upd = new ThreadUpdate(mt.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Discussion Thread reported");
+			upd.setMessage("Discussion Thread reported for potential inappropriate content");
 			
 			// Start a transaction
 			ctx.startTX();
@@ -68,9 +68,16 @@ public class ContentReportCommand extends AbstractCommand {
 			wdao.report(mt, ctx.getUser().getID());
 			
 			// If we hit the limit for warnings, lock the thread
+			mt.addReportID(ctx.getUser().getID());
 			int maxWarns = SystemData.getInt("cooler.maxreports", 4);
 			if (mt.getReportCount() == maxWarns) {
 				wdao.moderateThread(mt.getID(), true, true);
+				
+				// Mark the thread as locked
+				ThreadUpdate upd2 = new ThreadUpdate(mt.getID());
+				upd.setAuthorID(ctx.getUser().getID());
+				upd.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
+				wdao.write(upd2);
 				isLocked = true;
 			}
 			
