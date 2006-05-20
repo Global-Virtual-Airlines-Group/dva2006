@@ -167,13 +167,17 @@ public class GetStatistics extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(1, FlightReport.ATTR_ACARS);
+			_ps.setInt(2, FlightReport.OK);
 
 			// Execute the query
 			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
 			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3)));
+			while (rs.next()) {
+				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
+				entry.setACARSLegs(rs.getInt(7));
+				results.add(entry);
+			}
 
 			// Clean up and return
 			rs.close();
@@ -322,9 +326,9 @@ public class GetStatistics extends DAO {
 	private StringBuilder getSQL(String groupBy) {
 		StringBuilder buf = new StringBuilder("SELECT ");
 		buf.append(groupBy);
-		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) ");
-		buf.append("AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES FROM PIREPS F WHERE ");
-		buf.append("(F.STATUS=?) GROUP BY LABEL ORDER BY ");
+		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
+				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
+				+ "AS ACARSLEGS FROM PIREPS F WHERE (F.STATUS=?) GROUP BY LABEL ORDER BY ");
 		return buf;
 	}
 
@@ -334,10 +338,10 @@ public class GetStatistics extends DAO {
 	private StringBuilder getPilotJoinSQL(String groupBy) {
 		StringBuilder buf = new StringBuilder("SELECT ");
 		buf.append(groupBy);
-		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ");
-		buf.append("ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) ");
-		buf.append("AS AVGMILES FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND (F.STATUS=?) GROUP BY ");
-		buf.append("LABEL ORDER BY ");
+		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
+			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) "
+			+ "AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS FROM PILOTS P, PIREPS F WHERE "
+			+ "(P.ID=F.PILOT_ID) AND (F.STATUS=?) GROUP BY LABEL ORDER BY ");
 		return buf;
 	}
 }

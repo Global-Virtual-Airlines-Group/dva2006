@@ -1,6 +1,5 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
-
-import java.io.Serializable;
 
 /**
  * A bean to store airline statistics entries.
@@ -9,11 +8,12 @@ import java.io.Serializable;
  * @since 1.0
  */
 
-public class FlightStatsEntry implements Serializable, Comparable {
+public class FlightStatsEntry implements java.io.Serializable, Comparable {
 
 	private Comparable _label;
 	
 	private int _legs;
+	private int _acarsLegs;
 	private double _hours;
 	private int _miles;
 	
@@ -46,6 +46,14 @@ public class FlightStatsEntry implements Serializable, Comparable {
 	 */
 	public int getLegs() {
 		return _legs;
+	}
+
+	/**
+	 * Returns the number of ACARS legs linked to this entry.
+	 * @return the number of legs using ACARS
+	 */
+	public int getACARSLegs() {
+		return _acarsLegs;
 	}
 	
 	/**
@@ -81,7 +89,23 @@ public class FlightStatsEntry implements Serializable, Comparable {
 	 * @see FlightStatsEntry#getMiles()
 	 */
 	public double getAvgMiles() {
-		return (_legs == 0) ? 0 : _miles / _legs;
+		return (_legs == 0) ? 0 : _miles * 1.0 / _legs;
+	}
+	
+	/**
+	 * Returns the percentage of flights logged using ACARS.
+	 * @return the percentage of ACARS flights
+	 */
+	public double getACARSPercent() {
+		return (_legs == 0) ? 0 : _acarsLegs * 1.0 / _legs;
+	}
+	
+	/**
+	 * Updates the number of ACARS legs linked to this entry.
+	 * @param legs the number of legs logged using ACARS
+	 */
+	public void setACARSLegs(int legs) {
+		_acarsLegs = legs;
 	}
 	
 	/**
