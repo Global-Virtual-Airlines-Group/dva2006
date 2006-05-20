@@ -32,8 +32,8 @@ return true;
 <el:form action="flightstats.do" method="post" validate="return true">
 <view:table className="view" pad="default" space="default" cmd="flightstats">
 <tr class="title">
- <td colspan="2" class="left">FLIGHT STATISTICS</td>
- <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
+ <td colspan="3" class="left caps"><content:airline /> FLIGHT STATISTICS</td>
+ <td colspan="4" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
 </tr>
 
@@ -41,11 +41,11 @@ return true;
 <tr class="title caps">
  <td width="5%">#</td>
  <td width="25%">ENTRY</td>
- <td width="15%">FLIGHT HOURS</td>
- <td width="10%">FLIGHT LEGS</td>
- <td width="15%">MILES FLOWN</td>
- <td width="15%">AVERAGE HOURS</td>
- <td>AVERAGE MILES</td>
+ <td width="8%">HOURS</td>
+ <td width="8%">LEGS</td>
+ <td width="12%">ACARS</td>
+ <td width="12%">MILES FLOWN</td>
+ <td>AVERAGE</td>
 </tr>
 
 <!-- Table Statistics Data -->
@@ -53,13 +53,15 @@ return true;
 <c:forEach var="stat" items="${viewContext.results}">
 <view:row entry="${stat}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
- <td class="sec bld">${entryNumber}</td>
+ <td class="sec bld small">${entryNumber}</td>
  <td class="pri bld">${stat.label}</td>
  <td class="bld"><fmt:dec value="${stat.hours}" /></td>
  <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
- <td class="bld"><fmt:int value="${stat.miles}" /></td>
- <td class="sec bld"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /></td>
- <td class="bld"><fmt:int value="${stat.avgMiles}" /></td>
+ <td class="sec bld"><fmt:int value="${stat.ACARSLegs}" /> (
+<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
+ <td class="bld small"><fmt:int value="${stat.miles}" /></td>
+ <td class="bld small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> Hours, 
+<fmt:int value="${stat.avgMiles}" /> Miles</td>
 </view:row>
 </c:forEach>
 
