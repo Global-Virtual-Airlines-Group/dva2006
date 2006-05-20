@@ -119,11 +119,11 @@ This Flight Report has been succesfully deleted from the database.<br />
 </c:if>
 
 <c:if test="${isApprove || isReject || isHold}">
-To return to the submitted Flight Report queue, <el:cmd url="pirepqueue">Click Here</el:cmd>.<br />
+To return to the submitted Flight Report queue, <el:cmd url="pirepqueue" className="bld">Click Here</el:cmd>.<br />
 <br />
 </c:if>
 <c:if test="${!isDeleted}">
-To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}">Click Here</el:cmd>.<br />
+To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
