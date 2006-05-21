@@ -44,7 +44,7 @@ public class LoginCommand extends AbstractCommand {
 
 		// Determine where we are referring from, if on the site return back there
 		String referer = ctx.getRequest().getHeader("Referer");
-		if (!StringUtils.isEmpty(referer)) {
+		if (!StringUtils.isEmpty(referer) && (!referer.contains("login"))) {
 			try {
 				URL url = new URL(referer);
 				if (SystemData.get("airline.url").equalsIgnoreCase(url.getHost()))
