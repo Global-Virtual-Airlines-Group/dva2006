@@ -53,7 +53,8 @@ public class GetAcademyCalendar extends DAO {
 	public InstructionFlight getFlight(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT * FROM INSLOG WHERE (ID=?)");
+			prepareStatement("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C WHERE "
+					+ "(I.COURSE=C.ID) AND (I.ID=?)");
 			_ps.setInt(1, id);
 			
 			// Execute the query, if empty return null
