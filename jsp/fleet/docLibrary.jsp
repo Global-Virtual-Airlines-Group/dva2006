@@ -15,7 +15,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -59,7 +59,7 @@
 
 <!-- Download Acrobat -->
 <tr valign="middle">
- <td><a href="http://www.adobe.com/products/acrobat/readstep2.html"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="5">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
 Acrobat Reader 5</span> or newer in order to be viewed. If you are having difficulties viewing our 
 manuals, please click on the link to the left to download the latest version of Adobe Acrobat Reader.<br /> 
