@@ -2,6 +2,7 @@
 package org.deltava.service;
 
 import java.util.*;
+import java.util.zip.*;
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -139,15 +140,20 @@ public class ACARSMapEarthService extends GoogleEarthService {
 			de.addContent(fe);
 		}
 		
-		// Add the NetworkLinkControl entry
-		//ke.addContent(XMLUtils.createElement("NetworkLinkControl", "minRefreshPeriod", "30"));
-		
-		// Write the XML
+		// Write the XML in ZIP format
 		try {
-			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kml");
-			ctx.getResponse().setContentType("application/vnd.google-earth.kml+xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
-			ctx.commit();
+			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acarsMap.kmz");
+			ctx.getResponse().setContentType("application/vnd.google-earth.kmz kmz");
+
+			// Create the ZIP output stream
+			ZipOutputStream zout = new ZipOutputStream(ctx.getResponse().getOutputStream());
+			zout.putNextEntry(new ZipEntry("acarsMap.kml"));
+			zout.write(XMLUtils.format(doc, "ISO-8859-1").getBytes("ISO-8859-1"));
+			zout.closeEntry();
+			zout.close();
+
+			// Flush the buffer
+			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
 			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
