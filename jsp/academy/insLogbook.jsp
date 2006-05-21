@@ -17,7 +17,7 @@
 function sort(combo)
 {
 var sortType = combo.options[combo.selectedIndex].value;
-self.location = '/inslogbook.do?id=0x<fmt:hex value="${param.id}" />';
+self.location = '/inslogbook.do?id=' + sortType;
 return true;
 }
 </script>
@@ -40,11 +40,11 @@ return true;
 <tr class="title">
  <td width="10%">DATE</td>
  <td width="15%">COURSE</td>
- <td width="15%">STUDENT</td>
- <td width="15%">INSTRUCTOR</td>
- <td width="10%">DURATION</td>
+ <td width="14%">STUDENT</td>
+ <td width="14%">INSTRUCTOR</td>
+ <td width="9%">DURATION</td>
  <td class="left" width="10%">COMMENTS</td>
-<content:filter roles="HR">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void sort(this)" /></td>
+<content:filter roles="HR"><td class="right">INSTRUCTOR <el:combo name="id" idx="*" size="1" options="${instructors}" value="${ins}" onChange="void sort(this)" /></td>
 </content:filter>
 <content:filter roles="!HR">
  <td>${ins.name}</td>
@@ -56,11 +56,11 @@ return true;
 <c:set var="pilot" value="${pilots[pirep.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[pirep.instructorID]}" scope="request" />
 <view:row entry="${pirep}">
- <td class="title"><fmt:date date="${pirep.date}" fmt="d" default="-" /></td>
- <td class="pri"><el:cmd url="course" linkID="0x${pirep.courseID}">${pirep.courseName}</el:cmd></td>
+ <td><el:cmd url="insflight" linkID="0x${pirep.ID}"><fmt:date date="${pirep.date}" fmt="d" default="-" /></el:cmd></td>
+ <td class="pri small"><el:cmd url="course" linkID="0x${pirep.courseID}">${pirep.courseName}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
- <td><el:cmd url="profile" linkID="0x${ins.ID}" className="sec">${ins.name}</el:cmd></td>
- <td><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
+ <td class="sec"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+ <td class="small"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
  <td class="small left" colspan="2">${pirep.comments}</td>
 </view:row>
 </c:forEach>

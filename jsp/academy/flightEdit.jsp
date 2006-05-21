@@ -72,7 +72,7 @@ return true;
  <td class="data"><el:text name="logDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(flight.date, 'MM/dd/yyyy')}" />
  <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].logDate')" /></td>
 </tr>
-<c:set var="tmpH" value="${empty flight ? '' : (flight.length / 10)}" scope="request" />
+<c:set var="tmpH" value="${empty flight ? '' : (flight.length  / 10)}" scope="request" />
 <c:set var="tmpM" value="${empty flight ? '' : (flight.length % 10) * 6}" scope="request" />
 <tr>
  <td class="label">Logged Time</td>

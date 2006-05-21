@@ -18,6 +18,8 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
+<c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -43,6 +45,10 @@ by ${pilot.name}</td>
  <td class="data">${flight.equipmentType}</td>
 </tr>
 <tr>
+ <td class="label">Instructor</td>
+ <td class="data">${ins.name} (${ins.pilotCode})</td>
+</tr>
+<tr>
  <td class="label">Logged Time</td>
  <td class="data"><fmt:dec value="${flight.length / 10.0}" /> hours</td>
 </tr>
@@ -58,6 +64,7 @@ by ${pilot.name}</td>
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:cmdbutton url="insflight" linkID="0x${flight.ID}" op="edit" label="EDIT FLIGHT REPORT" />
+ <el:cmdbutton url="profile" linkID="0x${pilot.ID}" label="VIEW PILOT PROFILE" /></td>
 </tr>
 </el:table>
 <content:copyright />
