@@ -108,6 +108,12 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 		
 		// Check if we're creating a new entry
 		boolean isNew = (ctx.getID() == 0);
+		
+		// Get the current date/time in the user's local zone
+		Calendar cld = Calendar.getInstance();
+		TZInfo tz = ctx.isAuthenticated() ? ctx.getUser().getTZ() : TZInfo.get(SystemData.get("time.timezone"));
+		cld.setTime(DateTime.convert(cld.getTime(), tz));
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -156,6 +162,10 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				if (flight.getInstructorID() != ctx.getUser().getID())
 					throw securityException("Cannot update other Instructor's flight log");
 			}
+			
+			// Set PIREP date and length
+			cld.setTime(DateTime.convert(flight.getDate(), ctx.getUser().getTZ()));
+			ctx.setAttribute("flightTime", StringUtils.format(flight.getLength() / 10.0, "#0.0"), REQUEST);
 			
 			// Load the Instructor/Course data
 			Collection<Integer> IDs = new HashSet<Integer>();
