@@ -15,7 +15,7 @@
 <content:js name="common" />
 </head>
 <content:copyright visible="false" />
-<body>
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -26,7 +26,7 @@
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="25%">TITLE</td>
- <td width="5%">&nbsp;</td>
+ <td width="7%">&nbsp;</td>
  <td width="10%">SIZE</td>
 <c:choose>
 <c:when test="${access.canCreateVideo}">
@@ -36,7 +36,7 @@
  <td width="10%">&nbsp;</td>
 </c:otherwise>
 </c:choose>
- <td>DESCRIPTION</td>
+ <td>VIDEO DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
@@ -48,11 +48,20 @@
 <c:if test="${!access.canEditVideo}">
  <td class="pri bld"><el:link url="/video/${video.fileName}">${video.name}</el:link></td>
 </c:if>
- <td><el:link url="/video/${video.fileName}"><el:img src="library/video.png" caption="Download PDF Video" x="32" y="32" border="0" /></el:link></td>
+ <td><el:link url="/video/${video.fileName}"><el:img src="library/${video.iconName}.png" caption="Download ${video.typeName} Video" x="32" y="32" border="0" /></el:link></td>
  <td class="sec bld"><fmt:int value="${video.size}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${video.description}" /></td>
 </view:row>
 </c:forEach>
+
+<!-- Download DiVX -->
+<tr valign="middle">
+ <td><a href="http://www.divx.com/divx/play/download/" rel="external"><el:img src="library/divx.png" border="0" caption="Download DivX Player" /></a></td>
+ <td colspan="4">Some videos within the <content:airline /> Video Library require the 
+<span class="pri bld">DiVX Player</span> in order to be viewed. If you are having difficulties viewing 
+our videos, please click on the link to the left to download the latest version of the DiVX Player.<br />
+This is a free download.</td>
+</tr>
 
 <!-- Scroll Bar row -->
 <tr class="title">

@@ -67,6 +67,10 @@ public class CourseCommand extends AbstractCommand {
 				GetDocuments ddao = new GetDocuments(con);
 				ctx.setAttribute("docs", ddao.getByCertification(c.getName()), REQUEST);
 				
+				// Get videos
+				GetAcademyVideos vdao = new GetAcademyVideos(con);
+				ctx.setAttribute("videos", vdao.getVideos(c.getName()), REQUEST);
+				
 				// Show exam status
 				Collection<Test> exams = new TreeSet<Test>();
 				for (Iterator<Test> i = helper.getExams().iterator(); i.hasNext(); ) {

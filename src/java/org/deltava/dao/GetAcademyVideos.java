@@ -32,7 +32,7 @@ public class GetAcademyVideos extends GetLibrary {
 	public Collection<TrainingVideo> getVideos() throws DAOException {
 		try {
 			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) LEFT JOIN VIDEOCERTS VC ON (V.FILENAME=VC.FILENAME) "
+					+ "(V.FILENAME=L.FILENAME) LEFT JOIN CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) "
 					+ "GROUP BY V.NAME ORDER BY V.NAME");
 			return loadVideos();
 		} catch (SQLException se) {
@@ -49,7 +49,7 @@ public class GetAcademyVideos extends GetLibrary {
 	public Collection<TrainingVideo> getVideos(String certName) throws DAOException {
 		try {
 			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) LEFT JOIN VIDEOCERTS VC ON (V.FILENAME=VC.FILENAME) "
+					+ "(V.FILENAME=L.FILENAME) LEFT JOIN CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) "
 					+ "WHERE (VC.CERTNAME=?) GROUP BY V.NAME ORDER BY V.NAME");
 			_ps.setString(1, certName);
 			return loadVideos();

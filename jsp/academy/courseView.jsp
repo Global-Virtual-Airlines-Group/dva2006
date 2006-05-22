@@ -48,53 +48,66 @@ return ${access.canComment || access.canUpdateProgress};
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
-<c:set var="cspan" value="${(!empty exams) || (!empty flights) ? 6 : 1}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="coursecomment.do" linkID="0x${course.ID}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="${cspan + 1}">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="7">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
 </tr>
 <tr>
  <td class="label">Course</td>
- <td colspan="${cspan}" class="data pri bld">${course.name}</td>
+ <td colspan="6" class="data pri bld">${course.name}</td>
 </tr>
 <tr>
  <td class="label">Stage</td>
- <td colspan="${cspan}" class="data bld"><fmt:int value="${course.stage}" /></td>
+ <td colspan="6" class="data bld"><fmt:int value="${course.stage}" /></td>
 </tr>
-<c:if test="${!empty docs}">
-<tr>
- <td class="label" valign="top">Study Documents</td>
- <td colspan="${cspan}" class="data"><c:forEach var="doc" items="${docs}">
-<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
-</c:forEach></td>
-</tr>
-</c:if>
 <tr>
  <td class="label">Course Status</td>
- <td colspan="${cspan}" class="data"><span class="sec bld">${course.statusName}</span>, started on 
+ <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
 <c:if test="${!empty course.endDate}">
 <tr>
  <td class="label">Completed on</td>
- <td colspan="${cspan}" class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
+ <td colspan="6" class="data"><fmt:date fmt="d" date="${course.endDate}" /></td>
 </tr>
 </c:if>
+<c:if test="${(!empty docs) || (!empty videos)}">
+<tr class="title caps">
+ <td colspan="7">FLIGHT ACADEMY TRAINING MATERIALS</td>
+</tr>
+<c:if test="${!empty docs}">
+<tr>
+ <td class="label" valign="top">Study Documents</td>
+ <td colspan="6" class="data"><c:forEach var="doc" items="${docs}">
+<el:link url="/library/${doc.fileName}">${doc.name}</el:link><br />
+</c:forEach></td>
+</tr>
+</c:if>
+<c:if test="${!empty videos}">
+<tr>
+ <td class="label" valign="top">Training Videos</td>
+ <td colspan="6" class="data"><c:forEach var="video" items="${videos}">
+<el:link url="/video/${video.fileName}">${video.name}</el:link><br />
+</c:forEach></td>
+</tr>
+</c:if>
+</c:if>
+<c:set var="cspan" value="${6}" scope="request" />
 <c:set var="forceExams" value="${true}" scope="request" />
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 
 <!-- Course Progress -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
+ <td colspan="7">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
 <view:row entry="${progress}">
  <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" /></td>
- <td colspan="${cspan}" class="data"><fmt:text value="${progress.text}" />
+ <td colspan="6" class="data"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
 <c:if test="${progress.complete}">
@@ -110,7 +123,7 @@ return ${access.canComment || access.canUpdateProgress};
 <c:if test="${!empty flights}">
 <!-- Instruction Flights -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">INSTRUCTION FLIGHT LOG - <fmt:int value="${fn:sizeof(flights)}" /> FLIGHTS</td>
+ <td colspan="7">INSTRUCTION FLIGHT LOG - <fmt:int value="${fn:sizeof(flights)}" /> FLIGHTS</td>
 </tr>
 <tr class="title mid caps">
  <td>DATE</td>
@@ -133,14 +146,14 @@ return ${access.canComment || access.canUpdateProgress};
 <c:if test="${!empty course.comments}">
 <!-- Course Comments -->
 <tr class="title caps">
- <td colspan="${cspan + 1}">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
+ <td colspan="7">DISCUSSION - <fmt:int value="${fn:sizeof(course.comments)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="comment" items="${course.comments}">
 <c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
 <tr>
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
 <fmt:date date="${comment.createdOn}" /></td>
- <td colspan="${cspan}" class="data"><fmt:msg value="${comment.text}" /></td>
+ <td colspan="6" class="data"><fmt:msg value="${comment.text}" /></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -148,7 +161,7 @@ return ${access.canComment || access.canUpdateProgress};
 <!-- New Comment -->
 <tr>
  <td class="label" valign="top">New Comment</td>
- <td colspan="${cspan}" class="data"><el:textbox name="msgText" width="120" height="6" idx="*" /></td>
+ <td colspan="6" class="data"><el:textbox name="msgText" width="120" height="6" idx="*" /></td>
 </tr>
 </c:if>
 </el:table>
