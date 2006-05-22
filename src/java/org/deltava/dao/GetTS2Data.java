@@ -272,6 +272,7 @@ public class GetTS2Data extends DAO {
 			usr.setPassword(rs.getString(5));
 			usr.setCreatedOn(getDate(rs.getString(6)));
 			usr.setLastOnline(getDate(rs.getString(7)));
+			usr.setIsACARS(rs.getBoolean(8));
 
 			// Add to cache and results
 			_cache.add(usr);

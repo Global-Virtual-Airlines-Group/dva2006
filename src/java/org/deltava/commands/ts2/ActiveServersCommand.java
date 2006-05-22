@@ -32,7 +32,7 @@ public class ActiveServersCommand extends AbstractCommand {
 		if (!SystemData.getBoolean("airline.voice.ts2.enabled"))
 			throw notFoundException("TeamSpeak 2 support disabled");
 		
-		Map<String, Client> clients = null;
+		Map<Integer, Client> clients = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -52,10 +52,11 @@ public class ActiveServersCommand extends AbstractCommand {
 		Collection<Server> servers = new ArrayList<Server>();
 		for (Iterator i = srvs.iterator(); i.hasNext(); ) {
 			Server srv = (Server) i.next();
-			if (RoleUtils.hasAccess(ctx.getRoles(), srv.getRoles().get(Server.ACCESS))) {
-				if (clients.containsKey(new Integer(srv.getID())))
-					servers.add(srv);
-			}
+			Client usr = clients.get(new Integer(srv.getID()));
+			
+			// Make sure we can access the server
+			if ((usr != null) && (RoleUtils.hasAccess(ctx.getRoles(), srv.getRoles().get(Server.ACCESS))))
+				servers.add(srv);
 		}
 		
 		// Save the server/credential list

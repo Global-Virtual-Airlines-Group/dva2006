@@ -329,7 +329,10 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		return _active ? null : "warn";
+		if (!_active)
+			return "warn";
+		
+		return _acarsOnly ? "opt2" : null;
 	}
 
 	/**
