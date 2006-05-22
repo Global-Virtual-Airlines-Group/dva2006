@@ -157,7 +157,8 @@ public class Mailer {
          _env.setSubject(_ctx.getSubject());
          
          // Determine the content type
-         _env.setContentType(_ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
+         String contentType = (_ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain") + "; charset=ISO-8859-1"; 
+         _env.setContentType(contentType);
          
          // Get the mailer daemon
          MailerDaemon daemon = (MailerDaemon) SystemData.getObject(SystemData.SMTP_DAEMON);
