@@ -36,6 +36,7 @@ return true;
 <content:sysdata var="fileLibEnabled" name="airline.files.enabled" />
 <content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
+<content:sysdata var="videoEnabled" name="airline.video.enabled" />
 <content:sysdata var="newsletterCats" name="airline.newsletters.categories" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
@@ -396,6 +397,13 @@ Academy.</td>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
  <td class="data">The <content:airline /> Flight Academy Instruction Calendar allows you to schedule a
 training session with a Flight Academy student.</td>
+</tr>
+</c:if>
+<c:if test="${videoEnabled}">
+<tr>
+ <td class="mid"><el:cmd url="tvideolibrary" className="bld">Video Library</el:cmd></td>
+ <td class="data">The <content:airline /> Flight Academy Video Library contains videos for use by Flight 
+Academy students.</td>
 </tr>
 </c:if>
 </content:filter>
