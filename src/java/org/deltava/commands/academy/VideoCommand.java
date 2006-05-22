@@ -76,6 +76,7 @@ public class VideoCommand extends AbstractFormCommand {
 			} else if (isNew) {
 				File f = new File(SystemData.get("path.video"), fName);
 				video = new TrainingVideo(f.getPath());
+				video.setAuthorID(ctx.getUser().getID());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			} else if (v != null) {
 				video = new TrainingVideo(v);
@@ -83,6 +84,7 @@ public class VideoCommand extends AbstractFormCommand {
 			}
 
 			// Populate fields from the request
+			video.setCategory(ctx.getParameter("category"));
 			video.setDescription(ctx.getParameter("desc"));
 			video.setName(ctx.getParameter("title"));
 			video.setCertifications(ctx.getParameters("certNames"));
@@ -171,7 +173,7 @@ public class VideoCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the library entry
-			if (isNew) {
+			if (!isNew) {
 				GetAcademyVideos dao = new GetAcademyVideos(con);
 				Video v = dao.getVideo(fName);
 				if (v == null)

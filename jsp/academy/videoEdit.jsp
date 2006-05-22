@@ -26,7 +26,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.title, 10, 'Video Title')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateFile(form.file, 'avi,wmv', 'Uploaded Video')) return false;
+if (!validateFile(form.file, 'avi,wmv,divx', 'Uploaded Video')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -39,6 +39,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="cats" name="airline.video.categories" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -57,6 +58,10 @@ return true;
 <tr>
  <td class="label">Video Title</td>
  <td class="data"><el:text name="title" className="pri bld req" idx="*" size="48" max="80" value="${video.name}" /></td>
+</tr>
+<tr>
+ <td class="label">Category</td>
+ <td class="data"><el:combo name="category" idx="*" size="1" className="req" options="${cats}" value="${entry.category}" firstEntry="< SELECT >" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Description</td>
