@@ -13,7 +13,7 @@
 			<url>rw.deltava.org/DAL</url>
 			<ts2>
 				<enabled type="Boolean">true</enabled>
-				<url>teamspeak://ts2.deltava.org/pilots</url>
+				<url>teamspeak://ts2.deltava.org</url>
 			</ts2>
 		</voice>
 		
@@ -36,6 +36,14 @@
 				<caategory>777 Program</caategory>
 			</list>
 		</newsletters>
+
+		<!-- Do we have a video library? -->
+		<video>
+			<enabled type="Boolean">true</enabled>
+			<list name="categories" attr="category" unique="true">
+				<category>General</category>
+			</list>
+		</video>
 
 		<!-- Copyright disclaimer -->
 		<copyright>In no way are we affiliated with Delta Air Lines or its affiliates. All images, logos and trademarks remain property of their respective owners.</copyright>
@@ -321,7 +329,6 @@
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
 			<network>IVAO</network>
-			<network>ACARS</network>
 			<network>FPI</network>
 		</list>
 		
@@ -536,8 +543,8 @@
 		<ban_length type="Integer">15</ban_length>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
-			<minimum type="Integer">66</minimum>
-			<latest type="Integer">67</latest>
+			<minimum type="Integer">68</minimum>
+			<latest type="Integer">68</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>
 		
