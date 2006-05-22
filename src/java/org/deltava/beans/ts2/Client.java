@@ -28,6 +28,8 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	private Date _createdOn;
 	private Date _lastOnline;
 	
+	private boolean _isACARS;
+	
 	private Collection<Integer> _channelIDs;
 	
 	/**
@@ -156,6 +158,15 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	}
 	
 	/**
+	 * Returns wether the user is currently logged into ACARS.
+	 * @return TRUE if the user is logged into ACARS, otherwise FALS
+	 * @see Client#setIsACARS(boolean)
+	 */
+	public boolean getIsACARS() {
+		return _isACARS;
+	}
+	
+	/**
 	 * Updates the TeamSpeak user ID.
 	 * @param id the user ID
 	 * @throws NullPointerException if id is null
@@ -208,6 +219,15 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	 */
 	public void setServerOperator(boolean isOperator) {
 		_serverOperator = isOperator;
+	}
+	
+	/**
+	 * Updates wether the user is currently logged into ACARS.
+	 * @param isLoggedIn TRUE if the user is logged in, otherwise FALSE
+	 * @see Client#getIsACARS()
+	 */
+	public void setIsACARS(boolean isLoggedIn) {
+		_isACARS = isLoggedIn;
 	}
 	
 	/**

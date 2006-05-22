@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <!-- Sidebar Navigation Frame -->
@@ -92,6 +93,13 @@
  <td><el:cmd url="lroster">VIEW LOGBOOKS</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>ACARS</td></tr>
+<content:filter roles="Pilot">
+<c:if test="${ts2Enabled}">
+<tr class="MenuItem">
+ <td><el:cmd url="ts2vox">TEAMSPEAK 2</el:cmd></td>
+</tr>
+</c:if>
+</content:filter>
 <c:if test="${acarsEnabled}">
 <tr class="MenuItem">
  <td><el:cmd url="acarsmap">LIVE ACARS MAP</el:cmd></td>
