@@ -14,8 +14,9 @@ public class Video extends FileEntry {
 	
 	public static final int WMV = 0;
 	public static final int AVI = 1;
+	public static final int DIVX = 2;
 	
-	public static final String[] TYPES = {"WMV", "AVI" };
+	public static final String[] TYPES = {"WMV", "AVI", "DIVX" };
 	
 	private int _type;
 
@@ -37,6 +38,14 @@ public class Video extends FileEntry {
 	 */
 	public int getType() {
 		return _type;
+	}
+	
+	/**
+	 * Returns the icon name to display.
+	 * @return the icon name, minus extension
+	 */
+	public String getIconName() {
+		return (_type == DIVX) ? "divx" : "wmp";
 	}
 	
 	/**
