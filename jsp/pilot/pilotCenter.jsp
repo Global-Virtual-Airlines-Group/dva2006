@@ -44,6 +44,7 @@ return true;
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
+<content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -513,6 +514,14 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 
 data file. You may also export entries from the Flight Schedule into a CSV data file.</td>
 </tr>
+<c:if test="${innovataEnabled}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ivimport">Innovata Schedule Download</el:cmd></td>
+ <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world
+ schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
+ schedule data is available on Innovata's servers, it will be downloaded.</td>
+</tr>
+</c:if>
 <tr>
  <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd></td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data

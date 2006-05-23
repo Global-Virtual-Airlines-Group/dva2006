@@ -426,8 +426,11 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>delta.zip</file>
+				<file>dlva1_maydirects.csv</file>
 			</download>
+			
+			<!-- downloaded file cache -->
+			<cache>/home/www/sched_cache</cache>
 		</innovata>
 	</schedule>
 

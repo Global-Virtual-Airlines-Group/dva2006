@@ -1,4 +1,4 @@
-package org.deltava.dao.file;
+package org.deltava.util.ftp;
 
 import junit.framework.TestCase;
 
