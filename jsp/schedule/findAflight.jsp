@@ -3,6 +3,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
@@ -137,7 +138,7 @@ return true;
 
 <!-- Search Results -->
 <c:forEach var="flight" items="${fafResults}">
-<tr>
+<view:row entry="${flight}">
  <td><input type="checkbox" class="check" name="addFA" value="${flight.flightCode}" /></td>
  <td class="pri bld">${flight.flightCode}</td>
  <td class="sec bld">${flight.equipmentType}</td>
@@ -146,7 +147,7 @@ return true;
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
  <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
  <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
-</tr>
+</view:row>
 </c:forEach>
 
 <tr class="title">
@@ -185,7 +186,8 @@ return true;
 </tr>
 </c:forEach>
 <tr class="title">
- <td colspan="5"><el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
+ <td colspan="5"> <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" />&nbsp;
+<el:cmdbutton ID="SaveButton" url="assignsave" label="SAVE FLIGHT ASSIGMENT" />&nbsp;
 <el:cmdbutton ID="ClearButton" url="buildassign" op="reset" label="CLEAR FLIGHT ASSIGNMENT" /></td>
 </tr>
 </el:table>
