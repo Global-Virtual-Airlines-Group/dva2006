@@ -29,7 +29,6 @@ rm *.sql
 # Dump e-mail data
 echo 'Writing e-mail configuration'
 mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` postfix | gzip -9 > postfix.sql.gz
-mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` sqmail | gzip -9 > sqmail.sql.gz
 
 # Dump TeamSpeak data
 echo 'Writing TeamSpeak configuration'
@@ -60,11 +59,11 @@ mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars 
 
 # Dump DVA database
 echo 'Writing DVA database'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS | gzip -9 > dva.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS | gzip -9 > dva.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS | gzip -9 > dva_test.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS SYS_REFERERS | gzip -9 > dva_sys.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | gzip -9 > dva_sched.sql.gz
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva CERTS CERTREQS CERTEXAMS CERTDOCS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR | gzip -9 > dva_academy.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva CERTS CERTREQS CERTEXAMS CERTDOCS CERTVIDEOS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR INSLOG | gzip -9 > dva_academy.sql.gz
 
 # Dump AFV database
 echo 'Writing AFV database'
