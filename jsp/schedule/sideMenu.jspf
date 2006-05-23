@@ -22,6 +22,9 @@
 </content:superUser>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
+</tr>
+<tr class="MenuItem bld pri">
+ <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </content:authUser>
 </tr>
 <tr class="MenuItem">
@@ -31,7 +34,7 @@
  <td><el:cmd url="airports">AIRPORTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
- <td><el:cmd url="charts" linkID="${pagetContext.request.remoteUser.homeAirport}">APPROACH CHARTS</el:cmd></td>
+ <td><el:cmd url="charts" linkID="${pageContext.request.remoteUser.homeAirport}">APPROACH CHARTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
  <td><el:cmd url="routes" op="oceanic">OCEANIC TRACKS</el:cmd></td>
@@ -63,9 +66,6 @@
 </tr>
 <tr class="MenuItem">
  <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
-</tr>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
 </tr>
 </el:table>
 </content:region>

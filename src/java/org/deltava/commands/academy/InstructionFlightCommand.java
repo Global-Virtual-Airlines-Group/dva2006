@@ -164,7 +164,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			}
 			
 			// Set PIREP date and length
-			cld.setTime(DateTime.convert(flight.getDate(), ctx.getUser().getTZ()));
+			cld.setTime(DateTime.convert((flight.getDate() == null) ? new Date() : flight.getDate(), ctx.getUser().getTZ()));
 			ctx.setAttribute("flightTime", StringUtils.format(flight.getLength() / 10.0, "#0.0"), REQUEST);
 			
 			// Load the Instructor/Course data

@@ -426,6 +426,12 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="ivimport">
+		<name>Innovata Schedule Download</name>
+		<class>org.deltava.commands.schedule.InnovataDownloadCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="schedsave">
 		<name>Schedule Save</name>
 		<class>org.deltava.commands.schedule.ScheduleSaveCommand</class>
