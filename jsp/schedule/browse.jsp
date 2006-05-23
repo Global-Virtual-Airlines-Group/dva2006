@@ -71,7 +71,7 @@ return true;
 
 <!-- Table Data Section -->
 <c:forEach var="entry" items="${viewContext.results}">
-<tr>
+<view:row entry="${entry}">
 <c:if test="${!isSchedule}"> <td class="pri bld">${entry.flightCode}</td></c:if>
 <c:if test="${isSchedule}"> <td><el:cmd className="bld" url="sched" op="edit" linkID="${entry.flightCode}">${entry.flightCode}</el:cmd></td></c:if>
  <td class="sec bld">${entry.equipmentType}</td>
@@ -81,12 +81,13 @@ return true;
  <td><fmt:date fmt="t" t="HH:mm" tz="${entry.airportA.TZ}" date="${entry.dateTimeA.UTC}" /></td>
  <td class="sec"><fmt:int value="${entry.distance}" /> miles</td>
  <td><fmt:dec value="${entry.length / 10}" /> hours</td>
-</tr>
+</view:row>
 </c:forEach>
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>
+ <view:legend width="150" labels="Regular Flight,Historic Flight" classes=" ,opt2" /></td>
 </tr>
 </view:table>
 <c:if test="${innovataLink}">

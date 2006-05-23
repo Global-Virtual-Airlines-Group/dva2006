@@ -150,8 +150,5 @@
 <tr class="MenuItem">
  <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
 </tr>
-<tr class="MenuItem">
- <td><el:link url="http://www.gvagroup.org/junit/index.html">JUNIT RESULTS</el:link></td>
-</tr>
 </el:table>
 </content:region>

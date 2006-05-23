@@ -14,7 +14,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class ScheduleEntry extends Flight {
+public class ScheduleEntry extends Flight implements ViewEntry {
 	
 	private static final String[] SST = {"Concorde", "TU-144"};
 
@@ -203,5 +203,13 @@ public class ScheduleEntry extends Flight {
 	 */
 	public void setPurge(boolean purge) {
 		_purge = purge;
+	}
+	
+	/**
+	 * Returns the row CSS class name if displayed in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		return _historic ? "opt2" : null;
 	}
 }
