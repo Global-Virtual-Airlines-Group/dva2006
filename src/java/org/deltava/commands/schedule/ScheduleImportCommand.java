@@ -51,6 +51,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			try {
 				GetPartnerAirlines pdao = new GetPartnerAirlines(ConfigLoader.getStream("/etc/codeshares.txt"));
 				_codeShareInfo = pdao.getPartners();
+				_codeShareInfo.add(PartnerAirline.IGNORE);
 			} catch (Exception e) {
 				log.warn("Cannot load Partner Airline data - " + e.getMessage());
 			}
