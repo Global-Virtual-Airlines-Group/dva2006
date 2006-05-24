@@ -87,10 +87,22 @@ public abstract class ScheduleLoadDAO extends DAO {
 			for (Iterator<PartnerAirline> pi = _partners.iterator(); pi.hasNext(); ) {
 				PartnerAirline pa = pi.next();
 				if (pa.contains(se.getFlightNumber())) {
-					se.setAirline(pa.getAirline());
+					if (PartnerAirline.IGNORE.equals(pa))
+						i.remove();
+					else
+						se.setAirline(pa.getAirline());
+					
 					break;
 				}
 			}
+			
+			// Check that partner airline serves both airports
+			Airline a = se.getAirline();
+			if (!se.getAirportD().getAirlineCodes().contains(a.getCode()))
+				_errors.add(a.getName() + " does not serve " + se.getAirportD());
+
+			if (!se.getAirportA().getAirlineCodes().contains(a.getCode()))
+				_errors.add(a.getName() + " does not serve " + se.getAirportA());
 		}
 	}
 }

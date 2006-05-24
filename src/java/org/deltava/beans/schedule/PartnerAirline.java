@@ -13,7 +13,12 @@ public class PartnerAirline {
 	private Airline _a;
 	private int _start;
 	private int _end;
-	
+
+	/**
+	 * Special entry to ignore/discard imported schedule data.
+	 */
+	public static final PartnerAirline IGNORE = new PartnerAirline(new Airline("IGNORE"), 0, 0);
+
 	/**
 	 * Populates the bean.
 	 * @param a the Airline bean
@@ -35,12 +40,20 @@ public class PartnerAirline {
 	public boolean contains(int flightNumber) {
 		return ((flightNumber >= _start) && (flightNumber <= _end));
 	}
-	
+
 	/**
 	 * Returns the Airline bean.
 	 * @return the Airline
 	 */
 	public Airline getAirline() {
 		return _a;
+	}
+
+	/**
+	 * Compares two Partner Airlines by comparing the airline codes.
+	 */
+	public boolean equals(Object o2) {
+		PartnerAirline pa2 = (PartnerAirline) o2;
+		return _a.equals(pa2._a);
 	}
 }
