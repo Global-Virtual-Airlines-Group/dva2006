@@ -136,7 +136,7 @@ return ${access.canComment || access.canUpdateProgress};
 <c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
 <tr class="mid">
  <td><fmt:date date="${flight.date}" fmt="d" default="-" /></td>
- <td class="left small" colspan="3">${flight.comments}</td>
+ <td class="left small" colspan="2">${flight.comments}</td>
  <td class="pri bld" colspan="2"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
  <td class="sec small">${flight.equipmentType}</td>
  <td><fmt:dec fmt="#0.0" value="${flight.length / 10}" /> hours</td>
