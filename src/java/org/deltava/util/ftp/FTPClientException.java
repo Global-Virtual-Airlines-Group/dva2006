@@ -13,10 +13,18 @@ import org.deltava.dao.DAOException;
 public class FTPClientException extends DAOException {
 
 	/**
-	 * Creates a new FTP exception.
+	 * Creates a new FTP exception from another exception.
 	 * @param t the root exception
 	 */
 	FTPClientException(Throwable t) {
 		super(t);
+	}
+	
+	/**
+	 * Creates a new FTP exception with a message.
+	 * @param msg the exception message
+	 */
+	FTPClientException(String msg) {
+		super(msg);
 	}
 }

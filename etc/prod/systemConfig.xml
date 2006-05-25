@@ -427,7 +427,7 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>dlva1_maydirects.csv</file>
+				<file>dlva1_maydirects.csv,dlva2_maydirects.csv</file>
 			</download>
 			
 			<!-- downloaded file cache -->
