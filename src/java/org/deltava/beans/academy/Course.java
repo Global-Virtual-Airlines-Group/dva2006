@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -29,9 +29,10 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	
 	private Date _startDate;
 	private Date _endDate;
+	private Date _lastComment;
 	
 	private Map<Integer, CourseProgress> _progress;
-	private Collection<CourseComment> _comments;
+	private SortedSet<CourseComment> _comments;
 
 	/**
 	 * Creates a new Course bean.
@@ -111,6 +112,18 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 */
 	public Date getEndDate() {
 		return _endDate;
+	}
+	
+	/**
+	 * Returns the date of the last comment. <i>This may not be populated</i>.
+	 * @return the date/time of the last comment, or null
+	 * @see Course#setLastComment(Date)
+	 */
+	public Date getLastComment() {
+		if (_comments == null)
+			return _lastComment;
+		
+		return _comments.last().getCreatedOn();
 	}
 	
 	/**
@@ -227,6 +240,15 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 			throw new IllegalArgumentException("Invalid End Date - " + dt);
 		
 		_endDate = dt;
+	}
+	
+	/**
+	 * Updates the date of the last commnet. <i>This may not be populated</i>.
+	 * @param dt the date/time of the last comment
+	 * @see Course#getLastComment()
+	 */
+	public void setLastComment(Date dt) {
+		_lastComment = dt;
 	}
 
 	/**
