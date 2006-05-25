@@ -162,7 +162,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Check if we have instruction flights
 				GetAcademyCalendar facdao = new GetAcademyCalendar(con);
 				facdao.setQueryMax(1);
-				boolean hasFlights = facdao.getFlightCalendar(null, 0, ctx.getUser().getID()).isEmpty();
+				boolean hasFlights = !facdao.getFlightCalendar(null, 0, ctx.getUser().getID()).isEmpty();
 				ctx.setAttribute("academyInsFlights", Boolean.valueOf(hasFlights || ctx.isUserInRole("HR")), REQUEST);
 			}
 
