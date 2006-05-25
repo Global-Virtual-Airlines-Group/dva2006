@@ -46,10 +46,15 @@ public class VideoCommand extends AbstractFormCommand {
 		if (!canExec)
 			throw securityException("Cannot create/edit Training Video");
 		
-		// Get the uploaded file
+		// Get the uploaded file - look for a file
 		FileUpload mFile = ctx.getFile("file");
 		if (isNew && (mFile == null)) {
-			throw notFoundException("No Training Video Uploaded");
+			File f = new File(SystemData.get("path.video"), ctx.getParameter("fileName"));
+			if (f.exists())
+				fName = f.getName();
+			
+			if (fName == null)
+				throw notFoundException("No Training Video Uploaded/Specified");
 		} else if (isNew && (mFile != null)) {
 			fName = mFile.getName();
 		}
@@ -77,6 +82,7 @@ public class VideoCommand extends AbstractFormCommand {
 				File f = new File(SystemData.get("path.video"), fName);
 				video = new TrainingVideo(f.getPath());
 				video.setAuthorID(ctx.getUser().getID());
+				video.setSize(f.length());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);
 			} else if (v != null) {
 				video = new TrainingVideo(v);
@@ -90,7 +96,7 @@ public class VideoCommand extends AbstractFormCommand {
 			video.setCertifications(ctx.getParameters("certNames"));
 			video.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 			if (mFile != null)
-				video.setSize(mFile.getBuffer().length);
+				video.setSize(mFile.getSize());
 
 			// Get the message template
 			if (!noNotify) {

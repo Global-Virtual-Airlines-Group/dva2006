@@ -26,7 +26,11 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.title, 10, 'Video Title')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateFile(form.file, 'avi,wmv,divx', 'Uploaded Video')) return false;
+if ((form.file) && (form.file.value.length > 0)) {
+	if (!validateFile(form.file, 'avi,wmv,divx', 'Uploaded Video')) return false;
+} else if ((form.fileName) && (form.fileName.value.length > 0)) {
+	if (!validateFile(form.file, 'avi,wmv,divx', 'Local Filesystem Video')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
@@ -94,7 +98,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Update File</td>
- <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
+ <td class="data"><span class="bld">UPLOAD</span> <el:file name="file" className="small req" size="96" max="192" />
+<c:if test="${empty entry}"><br />
+<span class="bld">LOCAL</span> <el:text name="fileName" className="small req" size="96" max="192" value="" /></c:if></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
