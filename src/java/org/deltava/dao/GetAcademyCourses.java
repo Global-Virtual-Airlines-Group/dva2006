@@ -105,13 +105,20 @@ public class GetAcademyCourses extends DAO {
 
 	/**
 	 * Returns all active Flight Academy Course profiles.
+	 * @param sortBy the sort column SQL
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getActive() throws DAOException {
+	public Collection<Course> getActive(String sortBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM COURSES C, "
+				+ "CERTS CR LEFT JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
+				+ "AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY ");
+		sqlBuf.append(sortBy);
+		
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
-					+ "AND ((C.STATUS=?) OR (C.STATUS=?)) ORDER BY C.STARTDATE");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Course.STARTED);
 			_ps.setInt(2, Course.PENDING);
 			return execute();
@@ -122,13 +129,19 @@ public class GetAcademyCourses extends DAO {
 	
 	/**
 	 * Returns all Flight Academy Course profiles.
+	 * @param sortBy the sort column SQL
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getAll() throws DAOException {
+	public Collection<Course> getAll(String sortBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM COURSES C, CERTS CR LEFT "
+				+ "JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) GROUP BY C.ID ORDER BY ");
+		sqlBuf.append(sortBy);
+		
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
-					+ "ORDER BY C.STARTDATE");
+			prepareStatement(sqlBuf.toString());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -142,6 +155,7 @@ public class GetAcademyCourses extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 7);
 		
 		// Iterate through the results
 		List<Course> results = new ArrayList<Course>();
@@ -152,6 +166,8 @@ public class GetAcademyCourses extends DAO {
 			c.setStartDate(rs.getTimestamp(5));
 			c.setEndDate(rs.getTimestamp(6));
 			c.setStage(rs.getInt(7));
+			if (hasLastChat)
+				c.setLastComment(rs.getTimestamp(8));
 			
 			// Add to results
 			results.add(c);

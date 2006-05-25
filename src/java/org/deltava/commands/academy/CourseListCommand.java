@@ -11,6 +11,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.ComboUtils;
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display Flight Academy certifications.
@@ -21,6 +22,11 @@ import org.deltava.util.ComboUtils;
 
 public class CourseListCommand extends AbstractViewCommand {
 	
+	// Sort options
+	private static final String[] SORT_CODE = {"C.STARTDATE", "LC DESC", "CR.STAGE"};
+	private static final String[] SORT_OPTIONS = {"Start Date", "Last Comment", "Course Stage"};
+	
+	// Filtering options
 	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] {"All Courses", 
 			"Active Courses"}, new String[] {"all", "active"});
 
@@ -31,9 +37,12 @@ public class CourseListCommand extends AbstractViewCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Load the view context and if we are getting all courses
+        // Get/set start/count parameters
 		ViewContext vc = initView(ctx);
-		boolean isActive = "active".equals(ctx.getCmdParameter(OPERATION, "active"));
+		boolean isActive = "active".equals(ctx.getParameter("filterType"));
+		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
+	           vc.setSortType(SORT_CODE[0]);
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -41,10 +50,10 @@ public class CourseListCommand extends AbstractViewCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Course> courses = isActive? dao.getActive() : dao.getAll();
+			Collection<Course> courses = isActive? dao.getActive(vc.getSortType()) : dao.getAll(vc.getSortType());
 			
-			// Save in the request
-			ctx.setAttribute("courses", courses, REQUEST);
+			// Save in the view context
+			vc.setResults(courses);
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
@@ -64,6 +73,7 @@ public class CourseListCommand extends AbstractViewCommand {
 		
 		// Save sort options
 		ctx.setAttribute("sortOpt", isActive ? "active" : "all", REQUEST);
+        ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_OPTIONS, SORT_CODE), REQUEST);
 		ctx.setAttribute("viewOpts", VIEW_OPTS, REQUEST);
 
 		// Forward to the JSP
