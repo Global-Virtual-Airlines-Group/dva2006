@@ -33,11 +33,12 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO CERTS (NAME, STAGE, PREREQ, ACTIVE) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE) VALUES (?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
-			_ps.setInt(2, c.getStage());
-			_ps.setInt(3, c.getReqs());
-			_ps.setBoolean(4, c.getActive());
+			_ps.setString(2, c.getCode());
+			_ps.setInt(3, c.getStage());
+			_ps.setInt(4, c.getReqs());
+			_ps.setBoolean(5, c.getActive());
 			executeUpdate(1);
 			
 			// Write the exams

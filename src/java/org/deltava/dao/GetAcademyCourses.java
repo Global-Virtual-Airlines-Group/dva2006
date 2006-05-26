@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.academy.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Data Access Object to load Flight Academy course data. 
  * @author Luke
@@ -125,6 +127,70 @@ public class GetAcademyCourses extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Loads all Certifications obtained by a group of Pilots.
+	 * @param ids a Collection of database IDs
+	 * @param dbName the database name
+	 * @return a Map of comma-delimited certifications, indexed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, String> getCertifications(Collection<Integer> ids, String dbName) throws DAOException {
+		if (ids.isEmpty())
+			return Collections.emptyMap();
+		
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.PILOT_ID, CR.ABBR FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".COURSES C, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".CERTS CR WHERE (CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(")) ORDER BY C.PILOT_ID, CR.STAGE");
+		
+		Map<Integer, String> results = new HashMap<Integer, String>();
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, Course.COMPLETE);
+			
+			// Execute the query
+			Map<Integer, Collection<String>> tmpResults = new HashMap<Integer, Collection<String>>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				Integer id = new Integer(rs.getInt(1));
+				Collection<String> certs = tmpResults.get(id);
+				if (certs == null) {
+					certs = new LinkedHashSet<String>();
+					tmpResults.put(id, certs);
+				}
+				
+				// Add the certification
+				certs.add(rs.getString(2));
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+
+			// Convert the results
+			for (Iterator<Integer> i = tmpResults.keySet().iterator(); i.hasNext(); ) {
+				Integer id = new Integer(rs.getInt(1));
+				results.put(id, StringUtils.listConcat(tmpResults.get(id), ","));
+			}
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+		
+		// Return results
+		return results;
 	}
 	
 	/**
