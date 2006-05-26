@@ -31,6 +31,17 @@ public class CalendarUtils {
 	 * @return a Calendar object
 	 */
 	public static Calendar getInstance(Date dt, boolean clearTime) {
+		return getInstance(dt, clearTime, 0);
+	}
+	
+	/**
+	 * Returns a Calendar object initialized to a particular date/time.
+	 * @param dt the date/time, or null if the current date/time
+	 * @param clearTime TRUE if the time portion should be set to midnight, otherwise FALSE
+	 * @param days the number of days to adjust, or zero
+	 * @return a Calendar object
+	 */
+	public static Calendar getInstance(Date dt, boolean clearTime, int days) {
 		Calendar cld = Calendar.getInstance();
 		if (dt != null)
 			cld.setTime(dt);
@@ -43,6 +54,10 @@ public class CalendarUtils {
 			cld.set(Calendar.MILLISECOND, 0);
 		}
 		
+		// Adjust days if required
+		if (days != 0)
+			cld.add(Calendar.DATE, days);
+		
 		return cld;
 	}
 
@@ -50,9 +65,9 @@ public class CalendarUtils {
 	 * Returns a Calendar object initialized to a particular date/time.
 	 * @param dt the date/time, or null if the current date/time
 	 * @return a Calendar object
-	 * @see CalendarUtils#getInstance(Date, boolean)
+	 * @see CalendarUtils#getInstance(Date, boolean, int)
 	 */
 	public static Calendar getInstance(Date dt) {
-		return getInstance(dt, false);
+		return getInstance(dt, false, 0);
 	}
 }
