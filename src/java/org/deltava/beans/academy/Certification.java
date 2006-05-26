@@ -21,6 +21,7 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	public static final String[] REQ_NAMES = {"No Pre-Requisite", "Any Prior Stage Certification", "All Prior Stage Certifications"};
 
 	private String _name;
+	private String _code;
 	private int _stage;
 	private int _preReqs;
 	private int _reqCount;
@@ -46,6 +47,15 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 */
 	public String getName() {
 		return _name;
+	}
+	
+	/**
+	 * Returns the certification code.
+	 * @return the code
+	 * @see Certification#setCode(String)
+	 */
+	public String getCode() {
+		return _code;
 	}
 	
 	/**
@@ -155,6 +165,16 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 			throw new IllegalArgumentException("Invalid Requirement count - " + count);
 			
 		_reqCount = count;
+	}
+	
+	/**
+	 * Updates the Certification code.
+	 * @param code the code
+	 * @throws NullPointerException if code is null
+	 * @see Certification#getCode()
+	 */
+	public void setCode(String code) {
+		_code = code.trim().toUpperCase();
 	}
 	
 	/**

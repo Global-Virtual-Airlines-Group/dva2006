@@ -120,10 +120,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * @see Course#setLastComment(Date)
 	 */
 	public Date getLastComment() {
-		if (_comments == null)
-			return _lastComment;
-		
-		return _comments.last().getCreatedOn();
+		return _comments.isEmpty() ? _lastComment : _comments.last().getCreatedOn();
 	}
 	
 	/**

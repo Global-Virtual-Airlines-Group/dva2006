@@ -104,18 +104,18 @@ public class GetAcademyCertifications extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		ResultSetMetaData rmd = rs.getMetaData();
-		boolean hasReqCount = (rmd.getColumnCount() > 4);
+		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 5);
 		
 		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
 		while (rs.next()) {
 			Certification cert = new Certification(rs.getString(1));
-			cert.setStage(rs.getInt(2));
-			cert.setReqs(rs.getInt(3));
-			cert.setActive(rs.getBoolean(4));
+			cert.setCode(rs.getString(2));
+			cert.setStage(rs.getInt(3));
+			cert.setReqs(rs.getInt(4));
+			cert.setActive(rs.getBoolean(5));
 			if (hasReqCount)
-				cert.setReqCount(rs.getInt(5));
+				cert.setReqCount(rs.getInt(6));
 			
 			results.add(cert);
 		}

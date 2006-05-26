@@ -47,7 +47,6 @@ public class AirlineTotalsCommand extends AbstractCommand {
      */
     public void execute(CommandContext ctx) throws CommandException {
         
-        CommandResult result = ctx.getResult();
         synchronized (this) {
         	AirlineTotals totals = (AirlineTotals) _cache.get(AirlineTotals.class);
         	
@@ -64,11 +63,11 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     
                     // Get the Table Status for our database and common
                     GetTableStatus dao2 = new GetTableStatus(con);
-                    _tableStatus.addAll(dao2.execute("common"));
-                    _tableStatus.addAll(dao2.execute("acars"));
-                    _tableStatus.addAll(dao2.execute("postfix"));
-                    _tableStatus.addAll(dao2.execute("teamspeak"));
-                    _tableStatus.addAll(dao2.execute(SystemData.get("airline.db").toLowerCase()));
+                    _tableStatus.addAll(dao2.getStatus("common"));
+                    _tableStatus.addAll(dao2.getStatus("acars"));
+                    _tableStatus.addAll(dao2.getStatus("postfix"));
+                    _tableStatus.addAll(dao2.getStatus("teamspeak"));
+                    _tableStatus.addAll(dao2.getStatus(SystemData.get("airline.db").toLowerCase()));
                 } catch (DAOException de) {
                     throw new CommandException(de);
                 } finally {
@@ -96,7 +95,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
             ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
         }
         
-        // Forward to the JSP
+        // Forward to the JSP        CommandResult result = ctx.getResult();
+        CommandResult result = ctx.getResult();
         result.setURL("/jsp/stats/airlineTotals.jsp");
         result.setSuccess(true);
     }
