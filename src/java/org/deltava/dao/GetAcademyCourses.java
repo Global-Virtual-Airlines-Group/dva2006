@@ -4,9 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.academy.*;
-
-import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to load Flight Academy course data. 
@@ -136,7 +135,7 @@ public class GetAcademyCourses extends DAO {
 	 * @return a Map of comma-delimited certifications, indexed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map<Integer, String> getCertifications(Collection<Integer> ids, String dbName) throws DAOException {
+	public Map<Integer, Collection<String>> getCertifications(Collection ids, String dbName) throws DAOException {
 		if (ids.isEmpty())
 			return Collections.emptyMap();
 		
@@ -147,8 +146,9 @@ public class GetAcademyCourses extends DAO {
 		sqlBuf.append(".COURSES C, ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".CERTS CR WHERE (CR.NAME=C.CERTNAME) AND (C.STATUS=?) AND (C.PILOT_ID IN (");
-		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-			Integer id = i.next();
+		for (Iterator i = ids.iterator(); i.hasNext(); ) {
+			Object rawID = i.next();
+			Integer id = (rawID instanceof Integer) ? (Integer) rawID : new Integer(((DatabaseBean) rawID).getID());
 			sqlBuf.append(id.toString());
 			if (i.hasNext())
 				sqlBuf.append(',');
@@ -156,20 +156,19 @@ public class GetAcademyCourses extends DAO {
 		
 		sqlBuf.append(")) ORDER BY C.PILOT_ID, CR.STAGE");
 		
-		Map<Integer, String> results = new HashMap<Integer, String>();
+		Map<Integer, Collection<String>> results = new HashMap<Integer, Collection<String>>();
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, Course.COMPLETE);
 			
 			// Execute the query
-			Map<Integer, Collection<String>> tmpResults = new HashMap<Integer, Collection<String>>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				Integer id = new Integer(rs.getInt(1));
-				Collection<String> certs = tmpResults.get(id);
+				Collection<String> certs = results.get(id);
 				if (certs == null) {
 					certs = new LinkedHashSet<String>();
-					tmpResults.put(id, certs);
+					results.put(id, certs);
 				}
 				
 				// Add the certification
@@ -179,12 +178,6 @@ public class GetAcademyCourses extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
-
-			// Convert the results
-			for (Iterator<Integer> i = tmpResults.keySet().iterator(); i.hasNext(); ) {
-				Integer id = new Integer(rs.getInt(1));
-				results.put(id, StringUtils.listConcat(tmpResults.get(id), ","));
-			}
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
