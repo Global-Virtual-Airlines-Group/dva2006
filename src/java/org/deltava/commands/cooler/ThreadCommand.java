@@ -130,17 +130,24 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Get the authors and online totals for each user
 			Map<Integer, Person> users = new HashMap<Integer, Person>();
+			Map<Integer, String> certs = new HashMap<Integer, String>();
 			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
 			GetFlightReports prdao = new GetFlightReports(con);
+			GetTableStatus tsdao = new GetTableStatus(con);
+			GetAcademyCourses acdao = new GetAcademyCourses(con);
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
 				String dbTableName = i.next();
 
-				// Get the pilots/applicants from each table and apply their online totals
+				// Get the pilots/applicants from each table and apply their online totals and certifications
 				if (UserDataMap.isPilotTable(dbTableName)) {
+					boolean hasAcademy = tsdao.getTableNames(dbTableName).contains("CERTS");
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
 					users.putAll(pilots);
+					if (hasAcademy) {
+						// TODO Load certs
+					}
 				} else {
 					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
