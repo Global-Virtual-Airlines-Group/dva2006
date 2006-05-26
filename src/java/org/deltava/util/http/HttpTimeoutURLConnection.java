@@ -8,6 +8,7 @@ import java.net.*;
 import sun.net.www.protocol.http.HttpURLConnection;
 
 /**
+ * An HTTP URL connection that implements a connection timeout.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -59,6 +60,7 @@ public class HttpTimeoutURLConnection extends HttpURLConnection {
 
 			_client = (HttpTimeoutClient) http;
 			_client.setTimeout(_hnd.getTimeout());
+			setReadTimeout(5000);
 		} else {
 			http = new HttpTimeoutClient(url, _hnd.getProxy(), _hnd.getProxyPort());
 		}
