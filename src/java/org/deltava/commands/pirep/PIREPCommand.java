@@ -2,6 +2,7 @@
 package org.deltava.commands.pirep;
 
 import java.util.*;
+import java.text.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -28,6 +29,8 @@ import org.deltava.util.system.SystemData;
 
 public class PIREPCommand extends AbstractFormCommand {
 
+	private static final DateFormat _df = new SimpleDateFormat("yyyy, MM, dd");
+	
 	private static Collection<String> _flightTimes;
 	private static Collection<String> _flightYears;
 
@@ -285,8 +288,16 @@ public class PIREPCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save PIREP date limitations
+		Calendar forwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.maxDays"));
+		Calendar backwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.minDays") * -1);
+		synchronized (_df) {
+			ctx.setAttribute("forwardDateLimit", _df.format(forwardLimit.getTime()), REQUEST);
+			ctx.setAttribute("backwardDateLimit", _df.format(backwardLimit.getTime()), REQUEST);
+		}
 
-		// Save pirepdate combobox values
+		// Save pirep date combobox values
 		ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
 		ctx.setAttribute("pirepMonth", StringUtils.format(cld.get(Calendar.MONTH), "#0"), REQUEST);
 		ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
@@ -303,9 +314,8 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("months", months, REQUEST);
 		ctx.setAttribute("years", _flightYears, REQUEST);
 
-		// Set the access controller and status attribute
+		// Set the access controller
 		ctx.setAttribute("access", ac, REQUEST);
-		ctx.setAttribute("isNew", Boolean.valueOf(isNew), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
