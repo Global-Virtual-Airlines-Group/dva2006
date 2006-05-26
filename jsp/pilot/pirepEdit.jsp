@@ -22,6 +22,7 @@
 <content:js name="airportRefresh" />
 <content:sysdata var="eqTypes" name="eqtypes" />
 <content:sysdata var="networks" name="online.networks" />
+<content:sysdata var="minDays" name="users.pirep.minDays" />
 <script language="javascript" type="text/javascript">
 function validate(form)
 {
@@ -43,6 +44,19 @@ if (parseInt(form.flightLeg.value) > 5) {
 	return false;
 }
 
+// Validate the date
+var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
+var pDate = new Date(pY, f.dateM.selectedIndex + 1,	f.dateD.selectedIndex + 1);
+if (pDate > fwdLimit) {
+	alert('You cannot file a Flight Report for a flight in the future.');
+	f.dateM.focus();
+	return false;
+} else if (pdate < bwdLimit) {
+	alert('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.');
+	f.dateD.focus();
+	return false;
+}
+
 setSubmit();
 disableButton('SaveButton');
 disableButton('CalcButton');
@@ -56,6 +70,10 @@ var f = document.forms[0];
 f.doSubmit.value = 'true';
 return cmdPost(f.action);
 }
+
+// Set PIREP date limitations
+var fwdLimit = new Date(${forwardDateLimit});
+var bwdLimit = new Date(${backwardDateLimit});
 </script>
 </head>
 <content:copyright visible="false" />
