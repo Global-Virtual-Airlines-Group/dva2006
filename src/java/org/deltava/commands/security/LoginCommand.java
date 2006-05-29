@@ -38,9 +38,16 @@ public class LoginCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the command result and set default result URL
+		// Get the command result
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/login.jsp");
+		
+		// If we're already logged in, just redirect to home
+		if (ctx.isAuthenticated()) {
+			result.setURL("home.do");
+			result.setType(CommandResult.REDIRECT);
+			result.setSuccess(true);
+			return;
+		}
 
 		// Determine where we are referring from, if on the site return back there
 		String referer = ctx.getRequest().getHeader("Referer");
@@ -60,6 +67,7 @@ public class LoginCommand extends AbstractCommand {
 
 		// If we've got no firstName parameter, redirect to the login JSP
 		if (fName == null) {
+			result.setURL("/jsp/login.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -160,6 +168,7 @@ public class LoginCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 		} catch (SecurityException se) {
+			result.setURL("/jsp/login.jsp");
 			ctx.release();
 			ctx.setMessage(se.getMessage());
 			return;
