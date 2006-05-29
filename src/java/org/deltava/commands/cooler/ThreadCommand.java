@@ -191,7 +191,7 @@ public class ThreadCommand extends AbstractCommand {
 			}
 			
 			// Save the sticky date
-			if (ac.getCanResync() && (thread.getStickyUntil() != null)) {
+			if (ctx.isUserInRole("Moderator") && (thread.getStickyUntil() != null)) {
 				DateFormat df = new SimpleDateFormat(ctx.getUser().getDateFormat());
 				ctx.setAttribute("stickyDate", df.format(thread.getStickyUntil()), REQUEST);
 			}

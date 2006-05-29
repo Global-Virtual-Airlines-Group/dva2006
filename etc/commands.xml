@@ -652,12 +652,6 @@
 		<roles>Moderator</roles>
 	</command>
 	
-	<command id="threadsync">
-		<name>Resync Water Cooler Thread</name>
-		<class>org.deltava.commands.cooler.ThreadSyncCommand</class>
-		<roles>Moderator</roles>
-	</command>
-
 	<command id="threadstick">
 		<name>Stick Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadStickCommand</class>

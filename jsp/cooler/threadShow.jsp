@@ -17,7 +17,7 @@
 </c:forEach>
 <content:pics />
 <content:js name="common" />
-<c:if test="${access.canResync}"><content:js name="datePicker" /></c:if>
+<content:filter roles="Moderator"><content:js name="datePicker" /></content:filter>
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -44,7 +44,6 @@ disableButton('UnstickButton');
 disableButton('StickButton');
 disableButton('VoteButton');
 disableButton('ImgDeleteButton');
-disableButton('ResyncButton');
 disableButton('DeleteButton');
 disableButton('MoveButton');
 disableButton('EmoticonButton');
@@ -134,6 +133,8 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
  <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld">${pilot.pilotCode}</span><br /></c:if>
  <span class="caps bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
+<c:if test="${!empty pilot.certifications}"><span class="ter bld">
+<fmt:list value="${pilot.certifications}" delim="," /></span><br /></c:if>
 <el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
@@ -243,7 +244,7 @@ WARNING</span></c:if>
 </tr>
 </c:forEach>
 </c:if></content:filter>
-<c:if test="${access.canLock || access.canUnlock || access.canDelete || (access.canResync && !noResync) || access.canUnstick}">
+<c:if test="${access.canLock || access.canUnlock || access.canDelete || access.canUnstick}">
 <!-- Moderator Tools -->
 <tr class="title caps">
  <td colspan="3">MODERATOR TOOLS</td>
@@ -264,9 +265,6 @@ WARNING</span></c:if>
 <content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
  <el:cmdbutton ID="UnfilterButton" label="CLEAR WARNINGS" url="clearcontentwarn" linkID="0x${thread.ID}" />
 </c:if></content:filter>
-<c:if test="${access.canResync && !noResync}">
- <el:cmdbutton ID="ResyncButton" label="RESYNCHRONIZE" url="threadsync" linkID="0x${img.ID}" />
-</c:if>
 <c:if test="${access.canUnstick}">
  <el:cmdbutton ID="UnstickButton" label="UNSTICK" url="unstick" linkID="0x${thread.ID}" />
 </c:if>
@@ -277,11 +275,11 @@ WARNING</span></c:if>
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
  <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" linkID="0x${thread.ID}" />
 </c:if>
-<c:if test="${access.canResync}">
+<content:filter roles="Moderator">
  STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
  <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
  <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
-</c:if>
+</content:filter>
  </td>
 </tr>
 </c:if>
@@ -294,10 +292,9 @@ WARNING</span></c:if>
  <td colspan="3">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
 notification each time a reply is posted in this Thread.
 <el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
-<c:if test="${(!empty notify.IDs) && access.canResync}">
-<el:cmdbutton url="notifyclear" linkID="0x${thread.ID}" label="RESET NOTIFICATIONS" />
-</c:if>
- </td>
+<content:filter roles="Moderator">
+<c:if test="${!empty notify.IDs}"><el:cmdbutton url="notifyclear" linkID="0x${thread.ID}" label="RESET NOTIFICATIONS" /></c:if>
+</content:filter></td>
 </tr>
 </content:filter>
 
