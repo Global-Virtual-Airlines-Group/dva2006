@@ -34,7 +34,7 @@
  <td><el:cmd url="airports">AIRPORTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
- <td><el:cmd url="charts" linkID="${pageContext.request.remoteUser.homeAirport}">APPROACH CHARTS</el:cmd></td>
+ <td><el:cmd url="charts">APPROACH CHARTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
  <td><el:cmd url="routes" op="oceanic">OCEANIC TRACKS</el:cmd></td>
