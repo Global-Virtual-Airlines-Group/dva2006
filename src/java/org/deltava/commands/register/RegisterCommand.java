@@ -117,6 +117,7 @@ public class RegisterCommand extends AbstractCommand {
 		mctxt.addData("applicant", a);
 
 		Examination ex = null;
+		Pilot eMailFrom = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -143,6 +144,9 @@ public class RegisterCommand extends AbstractCommand {
 					return;
 				}
 			}
+			
+			// Get the e-mail originator
+			eMailFrom = pdao.getByName(SystemData.get("registration.from"), SystemData.get("airline.db"));
 
 			// Get the e-mail message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -217,8 +221,7 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Send an e-mail notification to the user
-		EMailAddress srcEMail = SystemData.getBoolean("smtp.testMode") ? a : null;
-		Mailer mailer = new Mailer(srcEMail);
+		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? a : eMailFrom);
 		mailer.setContext(mctxt);
 		mailer.send(a);
 

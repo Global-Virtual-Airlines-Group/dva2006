@@ -481,6 +481,7 @@
 		</list>
 		
 		<auto_reject type="Integer">5</auto_reject>
+		<from>David Keech</from>
 	</registration>
 	
 	<!-- PICS content ratings -->
