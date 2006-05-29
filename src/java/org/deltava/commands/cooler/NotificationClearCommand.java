@@ -47,7 +47,7 @@ public class NotificationClearCommand extends AbstractCommand {
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
 			access.updateContext(mt, c);
 			access.validate();
-			if (!access.getCanResync())
+			if (!access.getCanRead() || !ctx.isUserInRole("Moderator"))
 				throw securityException("Cannot clear notifications");
 			
 			// Create the status update bean

@@ -27,7 +27,6 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canReport;
     private boolean _canLock;
     private boolean _canUnlock;
-    private boolean _canResync;
     private boolean _canUnstick;
     private boolean _canDelete;
     
@@ -82,10 +81,9 @@ public final class CoolerThreadAccessControl extends AccessControl {
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread
-        _canRead = _ctx.isUserInRole("Admin") || (channelAccess && !_mt.getHidden());
+        _canRead = _ctx.isUserInRole("Moderator") || (channelAccess && !_mt.getHidden());
         _canReply = _ctx.isAuthenticated() && _canRead && (isModerator || !isClosed);
         _canVote = _canReply && !_mt.getOptions().isEmpty() && !hasVoted;
-        _canResync = channelAccess && isModerator;
         _canLock = channelAccess && !isClosed && isModerator;
         _canUnlock = channelAccess && isClosed && isModerator;
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
@@ -154,14 +152,6 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanUnlock() {
         return _canUnlock;
-    }
-    
-    /**
-     * Returns if the thread data can be resynchronized.
-     * @return TRUE if the data can be resynchronized, otherwise FALSE
-     */
-    public boolean getCanResync() {
-    	return _canResync;
     }
     
     /**
