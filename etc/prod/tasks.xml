@@ -33,7 +33,7 @@
 	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<interval>86400</interval>
-		<hours>0</hours>
+		<hours>1</hours>
 	</task>
 
 	<task id="acarspurge" enabled="true">
