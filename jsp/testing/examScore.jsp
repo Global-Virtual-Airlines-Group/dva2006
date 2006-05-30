@@ -23,6 +23,14 @@ setSubmit();
 disableButton('ScoreButton');
 return true;
 }
+<c:if test="${hasQImages}">
+function viewImage(id, x, y)
+{
+var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -62,17 +70,25 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
+<c:set var="hasImage" value="${q.size > 0}" scope="request"/>
 <!-- Question #${q.number} -->
 <tr>
- <td class="label" rowspan="2" valign="top">Question #<fmt:int value="${q.number}" /></td>
+ <td class="label" rowspan="${hasImage ? '3' : '2'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}</td>
 </tr>
+<c:if test="${hasImage}">
+<tr>
+ <td class="data small"><span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
+ bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)
+ <el:link className="pri bld" url="javascript:viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+</tr>
+</c:if>
 <tr>
  <td class="data small"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span></td>
 </tr>
-<tr>
 
 <!-- Score / Answer -->
+<tr>
  <td class="mid"><el:box className="small" name="Score${q.number}" value="true" checked="${fn:correct(q)}" label="Correct" /></td>
  <td class="data bld">${q.answer}</td>
 </tr>
@@ -88,11 +104,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canScore}">
-<el:button ID="ScoreButton" type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" />
-</c:if>
- </td>
+ <td><el:button ID="ScoreButton" type="SUBMIT" className="BUTTON" label="SCORE EXAMINATION" /></td>
 </tr>
 </el:table>
 </el:form>

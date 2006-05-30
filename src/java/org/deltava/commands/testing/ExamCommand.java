@@ -80,6 +80,7 @@ public class ExamCommand extends AbstractCommand {
          // Save the exam and access in the request
          ctx.setAttribute("exam", ex, REQUEST);
          ctx.setAttribute("access", access, REQUEST);
+         ctx.setAttribute("hasQImages", Boolean.valueOf(ex.hasImage()), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

@@ -78,8 +78,12 @@ public class ImageServlet extends BasicAuthServlet {
 			if (usr == null)
 				usr = authenticate(req);
 
-			// Check if we need to be authenticated
-			if (usr == null) {
+			// Check if we're coming from a questionnaire
+			String referer = req.getHeader("Referer");
+			boolean fromQ = (referer != null) && referer.contains("/questionnaire.do");
+			
+			// Don't challenge if coming from a questionnaire and unauthenticated
+			if ((usr == null) && ((imgType == IMG_CHART) || !fromQ)) {
 				challenge(rsp, (imgType == IMG_CHART) ? CHART_REALM : EXAM_REALM);
 				return;
 			}
@@ -123,7 +127,8 @@ public class ImageServlet extends BasicAuthServlet {
 					break;
 					
 				case IMG_EXAM:
-					// TODO Implement exam question images
+					imgBuffer = dao.getExamResource(imgID);
+					break;
 
 				default:
 					log.warn("Unknown image type - " + req.getRequestURI());

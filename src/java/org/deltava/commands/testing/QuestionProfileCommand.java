@@ -4,6 +4,7 @@ package org.deltava.commands.testing;
 import java.util.Collection;
 import java.sql.Connection;
 
+import org.deltava.beans.FileUpload;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -61,20 +62,37 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot modify Examination Question Profile");
-
+			
 			// Load the fields from the request
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			Collection<String> examNames = ctx.getParameters("examNames");
 			if (examNames != null)
 			   qp.setExams(examNames);
-
-			// Get the write DAO and save the profile
+			
+			// Start a transaction
+			ctx.startTX();
+			
+			// Save the profile
 			SetExamProfile wdao = new SetExamProfile(con);
 			wdao.write(qp);
+			
+			// Save/delete the image
+			FileUpload imgData = ctx.getFile("imgData");
+			boolean clearImg = Boolean.valueOf(ctx.getParameter("clearImg")).booleanValue();
+			if (clearImg)
+				wdao.clearImage(qp.getID());
+			else if (imgData != null) {
+				qp.load(imgData.getBuffer());
+				wdao.writeImage(qp);
+			}
+
+			// Commit the transaction
+			ctx.commitTX();
 			
 			// Save the question in the request
 			ctx.setAttribute("question", qp, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

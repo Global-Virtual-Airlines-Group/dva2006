@@ -20,6 +20,7 @@ if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
 if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
 if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
+if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -58,6 +59,14 @@ for (var x = 0; x < choices.length; x++) {
 
 return true;
 }
+<c:if test="${question.size > 0}">
+function viewImage(x, y)
+{
+var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var w = window.open('/exam_rsrc/${fn:hex(question.ID)}', 'questionImage', flags);
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -100,7 +109,20 @@ return true;
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
 </tr>
+<c:if test="${question.size > 0}">
+<tr>
+ <td class="label">Image Information</td>
+ <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
+ bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
+ pixels) <el:link className="pri bld small" url="javascript:viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+</tr>
 </c:if>
+</c:if>
+<tr>
+ <td class="label">Upload Image</td>
+ <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
+<el:box name="clearImg" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
+</tr>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="active" className="sec" value="true" checked="${question.active}" label="Question is Available" /></td>

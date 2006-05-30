@@ -85,10 +85,11 @@ public class GetExamProfiles extends DAO {
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM QUESTIONINFO Q "
-					+ "LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND "
-					+ "(E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ "
-					+ "ON (MQ.ID=Q.ID) WHERE (Q.ID=?) GROUP BY Q.ID");
+			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID), QI.TYPE, QI.SIZE, "
+					+ "QI.X, QI.Y FROM QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN "
+					+ "QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND "
+					+ "(E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ ON (MQ.ID=Q.ID) "
+					+ "WHERE (Q.ID=?) GROUP BY Q.ID");
 			_ps.setBoolean(1, false);
 			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
 			_ps.setInt(3, id);
@@ -112,6 +113,14 @@ public class GetExamProfiles extends DAO {
 			qp.setActive(rs.getBoolean(4));
 			qp.setTotalAnswers(rs.getInt(5));
 			qp.setCorrectAnswers(rs.getInt(6));
+			
+			// Load image data
+			if (rs.getInt(9) > 0) {
+				qp.setType(rs.getInt(8));
+				qp.setSize(rs.getInt(9));
+				qp.setWidth(rs.getInt(10));
+				qp.setHeight(rs.getInt(11));
+			}
 
 			// Clean up
 			rs.close();
@@ -171,11 +180,11 @@ public class GetExamProfiles extends DAO {
 		if (!showAll) conditions.add("(QE.EXAM_NAME=?)");
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID) FROM "
-				+ "QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN QE_INFO QE "
-				+ "ON (Q.ID=QE.QUESTION_ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND "
-				+ "(E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ ON "
-				+ "(Q.ID=MQ.ID) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID), QI.TYPE, "
+				+ "QI.SIZE, QI.X, QI.Y FROM QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN "
+				+ "QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN EXAMS E ON "
+				+ "(EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN "
+				+ "QUESTIONMINFO MQ ON (Q.ID=MQ.ID) ");
 
 		// Append conditions
 		if (!conditions.isEmpty()) sqlBuf.append("WHERE ");
@@ -219,6 +228,14 @@ public class GetExamProfiles extends DAO {
 				qp.setActive(rs.getBoolean(4));
 				qp.setTotalAnswers(rs.getInt(5));
 				qp.setCorrectAnswers(rs.getInt(6));
+				
+				// Load image metadata
+				if (rs.getInt(9) > 0) {
+					qp.setType(rs.getInt(8));
+					qp.setSize(rs.getInt(9));
+					qp.setWidth(rs.getInt(10));
+					qp.setHeight(rs.getInt(11));
+				}
 
 				// Add to results
 				results.add(qp);

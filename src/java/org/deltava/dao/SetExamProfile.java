@@ -216,6 +216,32 @@ public class SetExamProfile extends DAO {
    }
    
    /**
+    * Writes a Question Profile image resource to the database.
+    * @param qp the QuestionProfile bean
+    * @throws DAOException if a JDBC error occurs
+    * @throws IllegalArgumentException if the Image bean is not populated
+    */
+   public void writeImage(QuestionProfile qp) throws DAOException {
+	   
+	   // Check that we have data
+	   if (!qp.isLoaded())
+		   throw new IllegalArgumentException("Image Data not loaded");
+	   
+	   try {
+		   prepareStatement("REPLACE INTO QUESTIONIMGS (ID, TYPE, X, Y, SIZE, IMG) VALUES (?, ?, ?, ?, ?, ?)");
+		   _ps.setInt(1, qp.getID());
+		   _ps.setInt(2, qp.getType());
+		   _ps.setInt(3, qp.getWidth());
+		   _ps.setInt(4, qp.getHeight());
+		   _ps.setInt(5, qp.getSize());
+		   _ps.setBinaryStream(6, qp.getInputStream(), qp.getSize());
+		   executeUpdate(1);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+   
+   /**
     * Deletes an Examination Question profile from the database.
     * @param qp the QuestionProfile bean
     * @throws DAOException if a JDBC error occurs
@@ -240,6 +266,21 @@ public class SetExamProfile extends DAO {
 		   prepareStatement("DELETE FROM CR_DESCS WHERE (EQTYPE=?)");
 		   _ps.setString(1, sc.getEquipmentType());
 		   executeUpdate(1);
+	   } catch (SQLException se) {
+		   throw new DAOException(se);
+	   }
+   }
+   
+   /**
+    * Deletes a Question Profile image resource from the database.
+    * @param id the Question Profile database ID
+    * @throws DAOException if a JDBC error occurs
+    */
+   public void clearImage(int id) throws DAOException {
+	   try {
+		   prepareStatement("DELETE FROM QUESTIONIMGS WHERE (ID=?)");
+		   _ps.setInt(1, id);
+		   executeUpdate(0);
 	   } catch (SQLException se) {
 		   throw new DAOException(se);
 	   }
