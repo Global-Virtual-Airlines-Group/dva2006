@@ -53,8 +53,8 @@ return true;
  <td><fmt:int value="${q.totalAnswers}" /></td>
  <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>
 <c:if test="${q.totalAnswers == 0}">-</c:if></td>
- <td width="5%"><c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
-<c:if test="${!fn:isMultiChoice(q)}">&nbsp;</c:if></td>
+ <td width="8%">&nbsp;<c:if test="${fn:isMultiChoice(q)}"><el:img src="testing/multiChoice.png" caption="Multiple Choice" /></c:if>
+<c:if test="${q.size > 0}"><el:img src="testing/image.png" caption="Image Resource" /></c:if></td>
  <td class="left small" colspan="3">${q.question}</td>
 </view:row>
 </c:forEach>

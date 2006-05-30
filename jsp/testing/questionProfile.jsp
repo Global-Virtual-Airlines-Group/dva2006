@@ -13,6 +13,15 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${question.size > 0}">
+<script language="JavaScript" type="text/javascript">
+function viewImage(x, y)
+{
+var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var w = window.open('/exam_rsrc/${fn:hex(question.ID)}', 'questionImage', flags);
+return true;
+}
+</script></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -58,6 +67,14 @@ ${choice}<br />
  <td class="data bld">This Question has never been included in a Pilot Examination</td>
 </c:if>
 </tr>
+<c:if test="${question.size > 0}">
+<tr>
+ <td class="label">Image Information</td>
+ <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
+ bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
+ pixels) <el:link className="pri bld small" url="javascript:viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
 <c:if test="${question.active}">

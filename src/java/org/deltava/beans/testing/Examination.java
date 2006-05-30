@@ -101,13 +101,27 @@ public class Examination extends Test {
 	}
 	
 	/**
-	 * Returns if the examination has any multiple-choice questions.
+	 * Returns if the Examination has any multiple-choice questions.
 	 * @return TRUE if there is at least one multiple-choice question, otherwise FALSE
 	 */
 	public boolean hasMultipleChoice() {
 		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
 			Question q = i.next();
 			if (q instanceof MultipleChoice)
+				return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Returns if the Examination has any questions with images.
+	 * @return TRUE if there is at least one question with an image, otherwise false
+	 */
+	public boolean hasImage() {
+		for (Iterator<Question> i = _questions.values().iterator(); i.hasNext(); ) {
+			Question q = i.next();
+			if (q.getSize() > 0)
 				return true;
 		}
 		
