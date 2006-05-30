@@ -58,7 +58,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Update the applicant from the request
 			a.setFirstName(ctx.getParameter("firstName"));
 			a.setLastName(ctx.getParameter("lastName"));
-			a.setEmail(ctx.getParameter("eMail"));
+			a.setEmail(ctx.getParameter("email"));
 			a.setLocation(ctx.getParameter("location"));
 			a.setIMHandle(InstantMessage.AIM, ctx.getParameter("aimHandle"));
 			a.setIMHandle(InstantMessage.MSN, ctx.getParameter("msnHandle"));
