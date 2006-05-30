@@ -1,7 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.ImageBean;
 
 /**
  * A class to store examination question information.
@@ -10,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class Question extends DatabaseBean implements Comparable {
+public class Question extends ImageBean implements Comparable {
 
 	/**
 	 * The question text.
@@ -19,7 +19,6 @@ public class Question extends DatabaseBean implements Comparable {
     
     private String _correctAnswer;
     private String _userAnswer;
-    
     private int _number;
     private boolean _correct;
     

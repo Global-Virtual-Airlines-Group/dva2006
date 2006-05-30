@@ -67,6 +67,7 @@ public class QuestionnaireCommand extends AbstractCommand {
          ctx.setAttribute("exam", ex, REQUEST);
          ctx.setAttribute("applicant", a, REQUEST);
          ctx.setAttribute("access", access, REQUEST);
+         ctx.setAttribute("hasQImages", Boolean.valueOf(ex.hasImage()), REQUEST);
          
          // Determine the JSP to forward to
          if (access.getCanSubmit()) {

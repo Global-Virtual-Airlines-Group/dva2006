@@ -84,11 +84,19 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getGalleryImage(int id, String dbName) throws DAOException {
-    	
-    	// Build the SQL statement
     	StringBuilder sqlBuf = new StringBuilder("SELECT IMG FROM ");
     	sqlBuf.append(formatDBName(dbName));
     	sqlBuf.append(".GALLERY WHERE (ID=?)");
         return execute(id, sqlBuf.toString());
+    }
+
+    /**
+     * Returns a Testing Center resource image.
+     * @param id the question ID
+     * @return the question image data
+     * @throws DAOException if a JDBC error occurs
+     */
+    public byte[] getExamResource(int id) throws DAOException {
+    	return execute(id, "SELECT IMG FROM QUESTIONIMGS WHERE (ID=?)");
     }
 }
