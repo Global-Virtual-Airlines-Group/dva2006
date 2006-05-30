@@ -10,8 +10,7 @@ import org.deltava.beans.academy.Course;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display Flight Academy certifications.
@@ -27,8 +26,9 @@ public class CourseListCommand extends AbstractViewCommand {
 	private static final String[] SORT_OPTIONS = {"Start Date", "Last Comment", "Course Stage"};
 	
 	// Filtering options
+	private static final String[] VIEW_CODE = {"all", "active", "complete"};
 	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] {"All Courses", 
-			"Active Courses"}, new String[] {"all", "active"});
+			"Active Courses", "Completed Courses"}, VIEW_CODE);
 
 	/**
 	 * Executes the command.
@@ -39,9 +39,8 @@ public class CourseListCommand extends AbstractViewCommand {
 		
         // Get/set start/count parameters
 		ViewContext vc = initView(ctx);
-		boolean isActive = "active".equals(ctx.getParameter("filterType"));
 		if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
-	           vc.setSortType(SORT_CODE[0]);
+			vc.setSortType(SORT_CODE[0]);
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -50,7 +49,24 @@ public class CourseListCommand extends AbstractViewCommand {
 			GetAcademyCourses dao = new GetAcademyCourses(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Course> courses = isActive? dao.getActive(vc.getSortType()) : dao.getAll(vc.getSortType());
+			
+			// Filter by status
+			Collection<Course> courses = null;
+			int filterType = StringUtils.arrayIndexOf(VIEW_CODE, ctx.getParameter("filterType"));
+			ctx.setAttribute("filterOpt", VIEW_CODE[filterType], REQUEST);
+			switch (filterType) {
+				case 0 :
+					courses = dao.getAll(vc.getSortType());
+					break;
+					
+				case 1 :
+					courses = dao.getActive(vc.getSortType());
+					break;
+					
+				case 2:					
+				default:
+					courses = dao.getCompleted(0, vc.getSortType());
+			}
 			
 			// Save in the view context
 			vc.setResults(courses);
@@ -72,7 +88,6 @@ public class CourseListCommand extends AbstractViewCommand {
 		}
 		
 		// Save sort options
-		ctx.setAttribute("sortOpt", isActive ? "active" : "all", REQUEST);
         ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_OPTIONS, SORT_CODE), REQUEST);
 		ctx.setAttribute("viewOpts", VIEW_OPTS, REQUEST);
 

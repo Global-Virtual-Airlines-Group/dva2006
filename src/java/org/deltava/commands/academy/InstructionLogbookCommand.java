@@ -65,15 +65,9 @@ public class InstructionLogbookCommand extends AbstractViewCommand {
 			Pilot ins = pilots.get(new Integer(ctx.getID()));
 			ctx.setAttribute("ins", ins, REQUEST);
 			
-			// Load the instructor list if we can display all pilots
-			List<ComboAlias> insList = new ArrayList<ComboAlias>();
-			if (ctx.isUserInRole("HR")) {
-				insList.add(ALL);
-				insList.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
-			} else if (ins != null)
-				insList.add(ins);
-
-			// Save the instructor list
+			// Load the instructor list
+			List<ComboAlias> insList = new ArrayList<ComboAlias>(pdao.getByRole("Instructor", SystemData.get("airline.db")));
+			insList.add(0, ALL);
 			ctx.setAttribute("instructors", insList, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
