@@ -7,14 +7,9 @@ import org.deltava.beans.FileUpload;
 import org.deltava.beans.gallery.Image;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetGallery;
-import org.deltava.dao.SetGalleryImage;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.GalleryAccessControl;
-
-import org.deltava.util.ImageInfo;
 
 /**
  * A Web Site Command to save Image Gallery images and metadata.
@@ -77,16 +72,7 @@ public class GallerySaveCommand extends AbstractCommand {
 					throw ce;
 				}
 
-				// Get the image properties
-				ImageInfo imgInfo = new ImageInfo(imgData.getBuffer());
-				imgInfo.check();
-				
-				// Save the image dimensions
-				img.setWidth(imgInfo.getWidth());
-				img.setHeight(imgInfo.getHeight());
-				img.setType(imgInfo.getFormat());
-				
-				// Save the image data
+				// Save the image data and load the image properties
 				img.load(imgData.getBuffer());
 			}
 			
