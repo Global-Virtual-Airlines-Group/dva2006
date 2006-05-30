@@ -44,24 +44,29 @@ public class GetPartnerAirlines extends DAO {
 			while (br.ready()) {
 				String data = br.readLine();
 				StringTokenizer tkns = new StringTokenizer(data, ",");
-				if (tkns.countTokens() >= 3) {
+				if ((!data.startsWith(";")) && (tkns.countTokens() >= 4)) {
 					String aCode = tkns.nextToken();
 					Airline a = SystemData.getAirline(aCode);
-					if (a == null)
+					if (PartnerAirline.IGNORE.equals(aCode)) {
+						try {
+							PartnerAirline pa = new PartnerAirline(PartnerAirline.IGNORE.getAirline(),
+									Integer.parseInt(tkns.nextToken()), Integer.parseInt(tkns.nextToken()), tkns.nextToken());
+							results.add(pa);
+						} catch (NumberFormatException nfe) {
+							log.warn("Invalid data at Line " + br.getLineNumber() + " - " + data);
+						}
+					} else if (a == null)
 						log.warn("Unknown Airline code " + aCode + " at Line " + br.getLineNumber());
 					else {
 						try {
 							PartnerAirline pa = new PartnerAirline(a, Integer.parseInt(tkns.nextToken()),
-									Integer.parseInt(tkns.nextToken()));
+									Integer.parseInt(tkns.nextToken()), tkns.nextToken());
 							results.add(pa);
 						} catch (NumberFormatException nfe) {
 							log.warn("Invalid data at Line " + br.getLineNumber() + " - " + data);
 						}
 					}
-				} else {
-					log.warn("Invalid data at Line " + br.getLineNumber() + " - " + data);
 				}
-			
 			}
 			
 			br.close();

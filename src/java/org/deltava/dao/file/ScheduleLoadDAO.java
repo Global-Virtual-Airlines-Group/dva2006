@@ -17,7 +17,7 @@ import org.deltava.util.CollectionUtils;
  */
 
 public abstract class ScheduleLoadDAO extends DAO {
-	
+
 	protected Map<String, Airline> _airlines;
 	protected Map<String, Airport> _airports;
 	protected Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
@@ -30,7 +30,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	protected ScheduleLoadDAO(InputStream is) {
 		super(is);
 	}
-	
+
 	/**
 	 * Initializes the list of airlines.
 	 * @param airlines a Collection of Airline beans
@@ -38,13 +38,13 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
 		_airlines = new HashMap<String, Airline>();
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
 			Airline a = i.next();
-			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext(); )
+			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext();)
 				_airlines.put(ci.next(), a);
 		}
 	}
-	
+
 	/**
 	 * Initalizes the list of airports.
 	 * @param airports a Collection of Airport beans
@@ -53,22 +53,24 @@ public abstract class ScheduleLoadDAO extends DAO {
 	public void setAirports(Collection<Airport> airports) {
 		_airports = CollectionUtils.createMap(airports, "IATA");
 	}
-	
+
 	/**
-	 * Initializes the list of partner airlines.
+	 * Clears and initializes the list of partner airlines.
 	 * @param airlines a Collection of PartnerAirline beans
 	 */
 	public void setPartners(Collection<PartnerAirline> airlines) {
-		if (airlines != null)
+		if (airlines != null) {
+			_partners.clear();
 			_partners.addAll(airlines);
+		}
 	}
-	
+
 	/**
 	 * Returns back the loaded Flight Schedule entries.
 	 * @return a Collection of ScheduleEntry beans
 	 */
 	public abstract Collection<ScheduleEntry> process() throws DAOException;
-	
+
 	/**
 	 * Returns any error messages from the Schedule load.
 	 * @return a Collection of error messages
@@ -76,33 +78,38 @@ public abstract class ScheduleLoadDAO extends DAO {
 	public Collection<String> getErrorMessages() {
 		return _errors;
 	}
-	
+
 	/**
 	 * Applies code share airline information to Schedule entries.
 	 * @param entries a Collection of ScheduleEntry beans
 	 */
 	protected void updateCodeshares(Collection<ScheduleEntry> entries) {
-		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
-			ScheduleEntry se = i.next(); 
-			for (Iterator<PartnerAirline> pi = _partners.iterator(); pi.hasNext(); ) {
+		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext();) {
+			boolean isIgnore = false;
+
+			ScheduleEntry se = i.next();
+			for (Iterator<PartnerAirline> pi = _partners.iterator(); pi.hasNext();) {
 				PartnerAirline pa = pi.next();
 				if (pa.contains(se.getFlightNumber())) {
-					if (PartnerAirline.IGNORE.equals(pa))
+					if (PartnerAirline.IGNORE.equals(pa)) {
+						isIgnore = true;
 						i.remove();
-					else
+					} else
 						se.setAirline(pa.getAirline());
-					
+
 					break;
 				}
 			}
-			
-			// Check that partner airline serves both airports
-			Airline a = se.getAirline();
-			if (!se.getAirportD().getAirlineCodes().contains(a.getCode()))
-				_errors.add(a.getName() + " does not serve " + se.getAirportD());
 
-			if (!se.getAirportA().getAirlineCodes().contains(a.getCode()))
-				_errors.add(a.getName() + " does not serve " + se.getAirportA());
+			// Check that partner airline serves both airports
+			if (!isIgnore) {
+				Airline a = se.getAirline();
+				if (!se.getAirportD().getAirlineCodes().contains(a.getCode()))
+					_errors.add(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
+
+				if (!se.getAirportA().getAirlineCodes().contains(a.getCode()))
+					_errors.add(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
+			}
 		}
 	}
 }

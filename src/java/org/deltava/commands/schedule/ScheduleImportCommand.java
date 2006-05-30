@@ -35,7 +35,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 	protected static final int INNOVATA = 1;
 	protected static final String[] SCHED_TYPES = { "Native", "Innovata LLC" };
 
-	protected static Collection<PartnerAirline> _codeShareInfo;
+	private static Collection<PartnerAirline> _codeShareInfo;
 
 	/**
 	 * Initializes this command.
@@ -56,6 +56,26 @@ public class ScheduleImportCommand extends AbstractCommand {
 				log.warn("Cannot load Partner Airline data - " + e.getMessage());
 			}
 		}
+	}
+	
+	/**
+	 * Loads partner airlines applicable to a particular import file.
+	 * @param fileName the import file name
+	 * @return a Collection of PartnerAirline beans
+	 */
+	protected Collection<PartnerAirline> getPartners(String fileName) {
+		if (_codeShareInfo == null)
+			return Collections.emptySet();
+		
+		// Parse the collection
+		Collection<PartnerAirline> results = new ArrayList<PartnerAirline>();
+		for (Iterator<PartnerAirline> i = _codeShareInfo.iterator(); i.hasNext(); ) {
+			PartnerAirline pa = i.next();
+			if (pa.includesFile(fileName))
+				results.add(pa);
+		}
+		
+		return results;
 	}
 
 	/**
@@ -109,7 +129,7 @@ public class ScheduleImportCommand extends AbstractCommand {
 			// Initialize the DAO
 			dao.setAirlines(SystemData.getAirlines().values());
 			dao.setAirports(SystemData.getAirports().values());
-			dao.setPartners(_codeShareInfo);
+			dao.setPartners(getPartners(csvData.getName()));
 
 			// Load the data
 			entries = dao.process();
