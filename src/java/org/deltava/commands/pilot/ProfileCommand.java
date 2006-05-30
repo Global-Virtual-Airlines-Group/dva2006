@@ -709,7 +709,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get Academy Certifications
 			if (SystemData.getBoolean("academy.enabled")) {
 				GetAcademyCourses fadao = new GetAcademyCourses(con);
-				ctx.setAttribute("courses", fadao.getCompletedByPilot(p.getID()), REQUEST);
+				ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
 			}
 
 			// Get status updates

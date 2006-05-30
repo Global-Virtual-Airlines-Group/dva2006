@@ -97,11 +97,15 @@ return true;
  <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
 </tr>
 <tr>
- <td class="label">Update File</td>
- <td class="data"><span class="bld">UPLOAD</span> <el:file name="file" className="small req" size="96" max="192" />
-<c:if test="${empty entry}"><br />
-<span class="bld">LOCAL</span> <el:text name="fileName" className="small req" size="96" max="192" value="" /></c:if></td>
+ <td class="label">Upload File</td>
+ <td class="data"><el:file name="file" className="small req" size="96" max="192" /></td>
 </tr>
+<c:if test="${empty entry}">
+<tr>
+ <td class="label">Local File</td>
+ <td class="data"><el:text name="fileName" className="small req" size="96" max="192" value="" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
@@ -111,8 +115,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td>&nbsp;
-<c:if test="${access.canEdit || access.canCreate}">
+ <td><c:if test="${access.canEdit || access.canCreate}">
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE VIDEO" />
 </c:if>
  </td>

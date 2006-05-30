@@ -12,11 +12,21 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="common" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
 function setType()
 {
 document.forms[0].submit();
+return true;
+}
+
+function validate(form)
+{
+if (!checkSubmit()) return false;
+enableElement('stCombo', false);
+enableElement('ftCombo', false);
+setSubmit();
 return true;
 }
 </script>
@@ -29,12 +39,12 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="courses.do" method="post" validate="return true">
+<el:form action="courses.do" method="post" validate="return validate(this)">
 <view:table className="view" space="default" pad="default" cmd="courses">
 <tr class="title">
  <td colspan="3" class="left caps"><content:airline /> FLIGHT ACADEMY COURSES</td>
- <td colspan="4" class="right">SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void setType()" />
- FILTER <el:combo name="filterType" size="1" idx="*" options="${viewOpts}" value="${sortOpt}" onChange="void setType()" /></td>
+ <td colspan="4" class="right">SORT BY <el:combo ID="stCombo" name="sortType" idx="*" size="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void setType()" />
+ FILTER <el:combo ID="ftCombo" name="filterType" size="1" idx="*" options="${viewOpts}" value="${filterOpt}" onChange="void setType()" /></td>
 </tr>
 <!-- Table Header Bar -->
 <tr class="title caps">
