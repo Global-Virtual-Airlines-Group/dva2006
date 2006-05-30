@@ -88,16 +88,28 @@ public class GetAcademyCourses extends DAO {
 	
 	/**
 	 * Returns all completed Flight Academy Course profiles for a particular Pilot.
-	 * @param pilotID the Pilot's databae ID
+	 * @param pilotID the Pilot's database ID, or zero if all completed courses should be returned
+	 * @param sortBy the sort column SQL
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getCompletedByPilot(int pilotID) throws DAOException {
+	public Collection<Course> getCompleted(int pilotID, String sortBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.STATUS=?) "
+				+ "AND (CERTNAME=CR.NAME)");
+		if (pilotID != 0)
+			sqlBuf.append(" AND (C.PILOT_ID=?)");
+		
+		sqlBuf.append(" ORDER BY ");
+		sqlBuf.append(sortBy);
+		
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
-					+ "AND (C.PILOT_ID=?) AND (C.STATUS=?) ORDER BY C.STARTDATE");
-			_ps.setInt(1, pilotID);
-			_ps.setInt(2, Course.COMPLETE);
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, Course.COMPLETE);
+			if (pilotID != 0)
+				_ps.setInt(2, pilotID);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
