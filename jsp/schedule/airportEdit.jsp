@@ -15,7 +15,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.name, 8, 'Airport Name')) return false;
+if (!validateText(form.name, 6, 'Airport Name')) return false;
 if (!validateText(form.iata, 3, 'IATA Code')) return false;
 if (!validateText(form.icao, 4, 'ICAO Code')) return false;
 if (!validateCombo(form.tz, 'Time Zone')) return false;
