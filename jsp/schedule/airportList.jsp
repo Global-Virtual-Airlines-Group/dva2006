@@ -21,17 +21,15 @@ self.location = '/airports.do?id=' + combo.options[combo.selectedIndex].value;
 return true;
 }
 
-function editAirport()
+function validate(form)
 {
-var f = document.forms[0];
-var apCode = f.airport.value.toUpperCase();
+var apCode = form.id.value.toUpperCase();
 if (apCode.length < 3) {
-	alert('Please select a valid ICAO or IATA airport code');
-	apCode.focus();
+	alert('Please select a valid ICAO or IATA airport code.');
+	form.id.focus();
 	return false;
 }
 
-self.location = '/airport.do?id=' + apCode + '&op=edit';
 return true;
 }
 </script>
@@ -45,7 +43,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="airports.do" method="get" validate="return false">
+<el:form action="airport.do" method="post" validate="return validate(this)">
 <view:table className="view" pad="default" space="default" cmd="airports">
 
 <!-- Table Header Bar -->
@@ -54,8 +52,8 @@ return true;
  <td width="20%">AIRPORT NAME</td>
  <td width="7%">IATA</td>
  <td width="8%">ICAO</td>
- <td width="15%">EDIT <el:text name="airport" idx="*" size="3" max="4" value="" />
- <el:button ID="EditButton" className="BUTTON" onClick="void editAirport()" label="GO" /></td>
+ <td width="15%">EDIT <el:text name="id" idx="*" size="3" max="4" value="" />
+ <el:button ID="EditButton" type="submit" className="BUTTON" label="GO" /></td>
  <td width="10%">TIME ZONE</td>
  <td class="right">AIRLINE <el:combo name="airline" idx="*" size="1" options="${airlines}" value="${airline}" onChange="void setAirline(this)" /></td>
 </tr>
@@ -76,6 +74,7 @@ return true;
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
+<el:text name="op" type="hidden" value="edit" />
 </el:form>
 <br />
 <content:copyright />
