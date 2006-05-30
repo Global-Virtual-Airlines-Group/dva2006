@@ -1,19 +1,24 @@
-DVC,4083,4932,ASA
-DVC,4933,5912,Comair
-DVC,5913,6057,American Eagle
-DVC,6058,6212,Freedom Airlines
-DVC,6213,6432,Chautauqua Airlines
-DVC,6433,6492,Shuttle America
-KAL,7850,7939,Korean Air
-MX,8000,8149,Aeromexico
-AI,8150,8287,Alitalia
-AF,8288,8659,Air France
-OK,8710,8769,Czech Airlines
-CO,2100,3662,Continental
-NW,6493,7779,Northwest
-CZ,7830,7839,China Southern
-AT,7840,7849,Royal Air Maroc
-AJ,8840,8899,Air Jamaica
-AV,8900,8939,Avianca
-LY,8975,8991,EL AL
-AS,8992,9124,Alaska Airlines
+; Airline code, start flight #, end flight #, filename, description
+CO,2100,3662,dlva1_maydirects.csv,Continental
+DVC,3663,4082,dlva1_maydirects.csv,SkyWest
+DVC,4083,4932,dlva1_maydirects.csv,ASA
+DVC,4933,5912,dlva1_maydirects.csv,Comair
+DVC,5913,6057,dlva1_maydirects.csv,American Eagle
+DVC,6058,6212,dlva1_maydirects.csv,Freedom Airlines
+DVC,6213,6432,dlva1_maydirects.csv,Chautauqua Airlines
+DVC,6433,6492,dlva1_maydirects.csv,Shuttle America
+NW,6493,7779,dlva1_maydirects.csv,Northwest
+SAA,7780,729,dlva1_maydirects.csv,South African Airways
+CZ,7830,7839,dlva1_maydirects.csv,China Southern
+AT,7840,7849,dlva1_maydirects.csv,Royal Air Maroc
+KAL,7850,7939,dlva1_maydirects.csv,Korean Air
+MX,7940,7999,dlva1_maydirects.csv,AeroMexico
+MX,8000,8149,dlva1_maydirects.csv,Aeromexico
+AI,8150,8287,dlva1_maydirects.csv,Alitalia
+IGNORE,8288,8659,dlva1_maydirects.csv,Air France
+OK,8710,8769,dlva1_maydirects.csv,Czech Airlines
+AJ,8840,8899,dlva1_maydirects.csv,Air Jamaica
+AV,8900,8939,dlva1_maydirects.csv,Avianca
+IGNORE,8940,8974,dlva1_maydirects.csv,China Airlines
+LY,8975,8991,dlva1_maydirects.csv,EL AL
+AS,8992,9124,dlva1_maydirects.csv,Alaska Airlines

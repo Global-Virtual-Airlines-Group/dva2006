@@ -34,6 +34,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 		// Get the file name(s) to download and init the cache
 		List<String> fileNames = StringUtils.split(SystemData.get("schedule.innovata.download.file"), ",");
 		FTPCache cache = new FTPCache(SystemData.get("schedule.innovata.cache"));
+		cache.setHost(SystemData.get("schedule.innovata.download.host"));
 		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
 		
 		// Connect to the FTP server and download the files as needed
@@ -61,7 +62,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 				GetSchedule dao = new GetSchedule(is);
 				dao.setAirlines(SystemData.getAirlines().values());
 				dao.setAirports(SystemData.getAirports().values());
-				dao.setPartners(_codeShareInfo);
+				dao.setPartners(getPartners(fileName));
 
 				// Load the schedule data
 				dao.load();

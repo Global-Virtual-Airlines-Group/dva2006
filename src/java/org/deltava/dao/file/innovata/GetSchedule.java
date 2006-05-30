@@ -30,21 +30,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 	private Calendar _effDate;
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
+	private Properties _acTypes;
 	
-	// Innovata Equipment Types
-	private static final String[] IV_EQTYPES = {"310", "319", "320", "321", "332", "333", "340", "343", "346",
-		"732", "733", "734", "735", "737", "738", "739", "744", "747", "752",
-		"753", "757", "762", "763", "764", "767", "772", "777", "77W", "ARJ",
-		"AT5", "AT7", "CR2", "CR7", "CRJ", "D93", "D95", "E70", "EM2", "ER3", "ER4",
-		"ERJ", "M80", "M87", "M88", "M90", "SF3" };
-	
-	// Our equipment types
-	private static final String[] EQTYPES = {"A310", "A319", "A320", "A321", "A330-200", "A330-300", "A340-300", "A340-300", "A346-600",
-		"B737-200", "B737-300", "B737-400", "B737-500", "B737-700", "B737-800", "B737-900", "B747-400", "B747-200", "B757-200",
-		"B757-300", "B757-200", "B767-200", "B767-300", "B767-400", "B767-400", "B777-200", "B777-200", "B777-300", "BAE-146",
-		"ATR-72", "ATR-72", "CRJ-200", "CRJ-700", "CRJ-200", "DC-9-32", "DC-9-50", "ERJ-170", "EMB-120", "ERJ-135", "ERJ-145",
-		"ERJ-145", "MD-88", "MD-88", "MD-88", "MD-90", "SF340"};
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the input stream to read
@@ -73,24 +60,22 @@ public class GetSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Helper method to load an airport bean.
-	 */
-	private Airport getAirport(String code, int line) {
-		Airport a = _airports.get(code.toUpperCase());
-		if (a == null) {
-			log.warn("Unknown Airport at Line " + line + " - " + code);
-			_errors.add("Unknown Airport at Line " + line + " - " + code);
-		}
-
-		return a;
-	}
-	
-	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
 	 * @return a Collection of CSVTokens beans
 	 */
 	public Collection<CSVTokens> load() throws DAOException {
+		
+		// Load aircraft types from disk
+		_acTypes = new Properties();
+		try {
+			_acTypes.load(getClass().getResourceAsStream("/etc/iata_aircraft.properties"));
+		} catch (IOException ie) {
+			DAOException de = new DAOException("Cannot load IATA aircraft codes!");
+			de.setLogStackDump(false);
+			throw de;
+		}
+		
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
@@ -134,11 +119,11 @@ public class GetSchedule extends ScheduleLoadDAO {
 			CSVTokens tkns = i.next();
 			String flightCode = tkns.get(7);
 			UserID flightID = new UserID(flightCode);
-			int eqOfs = StringUtils.arrayIndexOf(IV_EQTYPES, tkns.get(8));
+			String eqType = _acTypes.getProperty(tkns.get(8));
 
 			// Load the Airports
-			Airport airportD = getAirport(tkns.get(3), tkns.getLineNumber());
-			Airport airportA = getAirport(tkns.get(5), tkns.getLineNumber());
+			Airport airportD = _airports.get(tkns.get(3).toUpperCase()); 
+			Airport airportA = _airports.get(tkns.get(5).toUpperCase());
 
 			// Get the effective dates
 			boolean includeFlight = true;
@@ -158,21 +143,24 @@ public class GetSchedule extends ScheduleLoadDAO {
 			if (a == null) {
 				log.warn("Unknown Airline " + flightID.getAirlineCode());
 				_errors.add("Unknown Airline " + flightID.getAirlineCode());
-			} else if (eqOfs == -1) {
+			} else if (eqType == null) {
 				log.warn("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
 				_errors.add("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
 			} else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
-			else if ((airportD == null) || (airportA == null))
-				log.debug("Invalid Airport(s)");
-			else if (!includeFlight)
+			else if (airportD == null) {
+				log.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
+				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
+			} else if (airportA == null) {
+				
+			} else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
 			else {
 				// Build the leg information
 				DailyScheduleEntry se = new DailyScheduleEntry(a, flightID.getUserID(), 1);
 				se.setAirportD(airportD);
 				se.setAirportA(airportA);
-				se.setEquipmentType(EQTYPES[eqOfs]);
+				se.setEquipmentType(eqType);
 				se.setDays(tkns.get(2));
 				try {
 					se.setTimeD(_tf.parse(tkns.get(4)));
