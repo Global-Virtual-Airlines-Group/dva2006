@@ -70,7 +70,7 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="hasImage" value="${q.size > 0}" scope="request"/>
+<c:set var="hasImage" value="${q.size > 0}" scope="request" />
 <!-- Question #${q.number} -->
 <tr>
  <td class="label" rowspan="${hasImage ? '3' : '2'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
@@ -78,9 +78,9 @@ return true;
 </tr>
 <c:if test="${hasImage}">
 <tr>
- <td class="data small"><span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
  bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)
- <el:link className="pri bld" url="javascript:viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+ <el:link className="pri bld" url="javascript:void viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 <tr>

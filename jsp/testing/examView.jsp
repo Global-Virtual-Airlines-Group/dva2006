@@ -13,6 +13,15 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${hasQImages}">
+<script language="JavaScript" type="text/javascript">
+function viewImage(id, x, y)
+{
+var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
+var w = window.open('/exam_rsrc/' + id, 'questionImage', flags);
+return true;
+}
+</script></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -49,17 +58,23 @@
 <!-- Exam Questions -->
 <c:set var="qnum" value="0" scope="request" />
 <c:forEach var="q" items="${exam.questions}">
-<c:set var="qnum" value="${qnum + 1}" scope="request" />
-<!-- Question #${qnum} -->
+<c:set var="hasImage" value="${q.size > 0}" scope="request" />
+<!-- Question #${q.number} -->
 <tr>
- <td class="label">Question #${qnum}</td>
+ <td class="label" rowspan="${hasImage ? '2' : '1'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
  <td class="data">${q.question}
-<c:if test="${showAnswers}"><div class="sec small">${q.correctAnswer}</div></c:if>
- </td>
+<c:if test="${showAnswers}"><div class="sec small">${q.correctAnswer}</div></c:if></td>
 </tr>
+<c:if test="${hasImage}">
 <tr>
+ <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
+ bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)
+ <el:link className="pri bld" url="javascript:void viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
+</tr>
+</c:if>
 
 <!-- Score / Answer -->
+<tr>
 <c:choose>
 <c:when test="${fn:correct(q)}">
  <td class="mid"><el:img caption="Correct" border="0" src="testing/pass.png" /></td>
@@ -89,10 +104,10 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <td><el:cmdbutton url="exam" linkID="0x${exam.ID}" op="edit" label="RESCORE EXAMINATION" /></td>
+ <el:cmdbutton url="exam" linkID="0x${exam.ID}" op="edit" label="RESCORE EXAMINATION" />
 </c:if>
 <c:if test="${access.canDelete}">
- <td><el:cmdbutton url="examdelete" linkID="0x${exam.ID}" label="DELETE EXAMINATION" /></td>
+ <el:cmdbutton url="examdelete" linkID="0x${exam.ID}" label="DELETE EXAMINATION" />
 </c:if>
  </td>
 </tr>
