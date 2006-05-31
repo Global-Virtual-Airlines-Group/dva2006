@@ -62,7 +62,7 @@ public class ThreadDeleteCommand extends AbstractCommand {
 
 			// Get the write DAO and delete the thread
 			SetCoolerMessage twdao = new SetCoolerMessage(con);
-			twdao.deleteThread(mt.getID());
+			twdao.delete(mt.getID());
 
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);

@@ -198,15 +198,21 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <a href="msnim:chat?contact=${pilot.IMHandle['MSN']}"><img border="0" src="http://blockchecker.msnfanatic.com/status/${pilot.IMHandle['MSN']}.gif" alt="My MSN status" /></a>
 </c:if>
 </el:showaddr></td>
- <td class="postDate" colspan="${canEdit ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
+ <td class="postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator">
  from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT 
 WARNING</span></c:if>
 </content:filter>
-<c:if test="${canEdit}">
+<c:choose>
+<c:when test="${canEdit}">
  </td>
  <td class="postEdit"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:cmd>
-</c:if></td>
+</c:when>
+<c:when test="${access.canDelete && (postCount > 1)}">
+ </td>
+ <td class="postEdit"><el:cmd className="pri error small" url="postkill" linkID="0x${thread.ID}" op="0x${fn:hex(msg.ID)}">KILL POST</el:cmd>
+</c:when>
+</c:choose></td>
 </tr>
 <tr>
  <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" filter="${!noFilter && msg.contentWarning}" />
