@@ -205,13 +205,30 @@ public class SetCoolerMessage extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Deletes a Message.
+	 * @param threadID the Message Thread database ID
+	 * @param postID the Post database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void delete(int threadID, int postID) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM common.COOLER_POSTS WHERE (THREAD_ID=?) AND (POST_ID=?)");
+			_ps.setInt(1, threadID);
+			_ps.setInt(2, postID);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Deletes a Message Thread and all associated posts.
 	 * @param id the Message Thread database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteThread(int id) throws DAOException {
+	public void delete(int id) throws DAOException {
 		try {
 			prepareStatement("DELETE FROM common.COOLER_THREADS WHERE (ID=?)");
 			_ps.setInt(1, id);
