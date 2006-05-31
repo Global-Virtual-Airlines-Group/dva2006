@@ -49,8 +49,9 @@ public class GetExam extends DAO {
 			Examination e = results.get(0);
 
 			// Load the questions for this examination
-			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ) FROM EXAMQUESTIONS EQ LEFT JOIN "
-					+ "EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND (EQ.QUESTION_ID=MQ.QUESTION_ID) "
+			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
+					+ "EXAMQUESTIONS EQ LEFT JOIN EXAMQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND "
+					+ "(EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (EQ.QUESTION_ID=QI.ID) "
 					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
@@ -65,6 +66,12 @@ public class GetExam extends DAO {
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
 				q.setCorrect(rs.getBoolean(7));
+				if (rs.getInt(10) > 0) {
+					q.setType(rs.getInt(9));
+					q.setSize(rs.getInt(10));
+					q.setWidth(rs.getInt(11));
+					q.setHeight(rs.getInt(12));
+				}
 
 				// Add question to the examination
 				e.addQuestion(q);
