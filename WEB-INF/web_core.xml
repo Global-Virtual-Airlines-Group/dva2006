@@ -87,17 +87,25 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<servlet-name>cmdController</servlet-name>
 	</filter-mapping>
-	
-	<!-- Filter mappings to Image Server (for charts only) -->
+
+	<!-- Filter mappings to Image Server (for charts/exam resources only) -->
 	<filter-mapping>
 		<filter-name>SecurityCookieFilter</filter-name>
 		<url-pattern>/charts/*</url-pattern>
 	</filter-mapping>
 	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<url-pattern>/exam_rsrc/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/charts/*</url-pattern>
 	</filter-mapping>
-	
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<url-pattern>/exam_rsrc/*</url-pattern>
+	</filter-mapping>
+
 	<!-- Filter mappings to Flight Plans -->
 	<filter-mapping>
 		<filter-name>SecurityCookieFilter</filter-name>

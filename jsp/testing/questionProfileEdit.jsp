@@ -77,7 +77,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qprofile.do" linkID="${fn:dbID(question)}" op="save" method="post" validate="return validate(this)">
+<el:form action="qprofile.do" linkID="${fn:dbID(question)}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
@@ -114,18 +114,18 @@ return true;
  <td class="label">Image Information</td>
  <td class="data"><span class="pri bld">${question.typeName}</span> image, <fmt:int value="${question.size}" />
  bytes <span class="sec">(<fmt:int value="${question.width}" /> x <fmt:int value="${question.height}" />
- pixels) <el:link className="pri bld small" url="javascript:viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
+ pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
 </c:if>
 <tr>
  <td class="label">Upload Image</td>
  <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
-<el:box name="clearImg" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
+<el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="active" className="sec" value="true" checked="${question.active}" label="Question is Available" /></td>
+ <td class="data"><el:box name="active" className="small sec" value="true" checked="${question.active}" label="Question is Available" /></td>
 </tr>
 <c:if test="${empty question || fn:isMultiChoice(question)}">
 <tr class="title caps">
