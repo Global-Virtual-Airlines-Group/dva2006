@@ -9,15 +9,13 @@ import java.io.IOException;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.navdata.*;
-//import org.deltava.beans.schedule.Airport;
-
 import org.deltava.beans.servinfo.*;
 import org.deltava.commands.*;
 
-import org.deltava.dao.GetNavData;
-import org.deltava.dao.GetPilotOnline;
+import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 
+import org.deltava.util.http.HttpTimeoutHandler;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -35,7 +33,7 @@ public class FlightBoardCommand extends AbstractCommand {
 	 * Helper method to open a connection to a particular URL.
 	 */
 	private HttpURLConnection getURL(String dataURL) throws IOException {
-		URL url = new URL(dataURL);
+		URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
 		log.debug("Loading data from " + url.toString());
 		return (HttpURLConnection) url.openConnection();
 	}
@@ -55,7 +53,7 @@ public class FlightBoardCommand extends AbstractCommand {
 		try {
 			NetworkInfo info = null;
 			Connection con = ctx.getConnection();
-			
+
 			// Load via HTTP if not ACARS
 			if (networkName.equals("ACARS")) {
 				ServInfoProvider acarsInfo = (ServInfoProvider) SystemData.getObject(SystemData.ACARS_POOL);
@@ -83,7 +81,7 @@ public class FlightBoardCommand extends AbstractCommand {
 				Map<String, Integer> idMap = dao.getIDs(networkName);
 				info.setPilotIDs(idMap);
 			}
-			
+
 			// Get Online Members and load DAFIF data only if we are uncached
 			if (!info.getCached()) {
 				// Get airports to load from DAFIF data and highlight our airline's code
@@ -91,12 +89,12 @@ public class FlightBoardCommand extends AbstractCommand {
 				Set<String> airportIDs = new HashSet<String>();
 				for (Iterator<Pilot> i = info.getPilots().iterator(); i.hasNext();) {
 					Pilot usr = i.next();
-					for (Iterator ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted()); ) {
+					for (Iterator ci = codes.iterator(); (ci.hasNext() && !usr.isHighlighted());) {
 						String code = (String) ci.next();
 						if (usr.getCallsign().startsWith(code))
 							usr.setHighlighted(true);
 					}
-						
+
 					if (!usr.getAirportD().hasPosition())
 						airportIDs.add(usr.getAirportD().getICAO());
 
