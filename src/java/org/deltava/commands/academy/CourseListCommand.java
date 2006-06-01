@@ -52,7 +52,7 @@ public class CourseListCommand extends AbstractViewCommand {
 			
 			// Filter by status
 			Collection<Course> courses = null;
-			int filterType = StringUtils.arrayIndexOf(VIEW_CODE, ctx.getParameter("filterType"));
+			int filterType = StringUtils.arrayIndexOf(VIEW_CODE, ctx.getParameter("filterType"), 1);
 			ctx.setAttribute("filterOpt", VIEW_CODE[filterType], REQUEST);
 			switch (filterType) {
 				case 0 :
