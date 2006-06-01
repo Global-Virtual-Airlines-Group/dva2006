@@ -210,7 +210,7 @@ WARNING</span></c:if>
 </c:when>
 <c:when test="${access.canDelete && (postCount > 1)}">
  </td>
- <td class="postEdit"><el:cmd className="pri error small" url="postkill" linkID="0x${thread.ID}" op="0x${fn:hex(msg.ID)}">KILL POST</el:cmd>
+ <td class="postEdit"><el:cmd className="pri error small" url="postkill" linkID="0x${thread.ID}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd>
 </c:when>
 </c:choose></td>
 </tr>
