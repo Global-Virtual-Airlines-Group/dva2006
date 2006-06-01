@@ -64,7 +64,7 @@ public class CourseAccessControl extends AccessControl {
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
-		_canApprove = isHR && isStarted && !isMine;
+		_canApprove = (isHR || _ctx.isUserInRole("Examiner")) && isStarted && !isMine;
 		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
 			CourseProgress cp = i.next();
 			_canApprove &= cp.getComplete();

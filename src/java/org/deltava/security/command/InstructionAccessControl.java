@@ -39,15 +39,16 @@ public class InstructionAccessControl extends AccessControl {
 		
 		// Check roles
 		boolean isHR = _ctx.isUserInRole("HR");
+		boolean isExam = _ctx.isUserInRole("Examiner");
 		boolean isOurs = (_ctx.getUser().getID() == _i.getPilotID()) || (_ctx.getUser().getID() == _i.getInstructorID());
 
 		// Set create rights
-		_canCreate = isHR || _ctx.isUserInRole("Instructor");
+		_canCreate = isHR || isExam || _ctx.isUserInRole("Instructor");
 		if ((_i == null) || (!_ctx.isAuthenticated()))
 			return;
 
 		// Set access rights
-		_canEdit = isHR || (_ctx.getUser().getID() == _i.getInstructorID());
+		_canEdit = isHR || isExam || (_ctx.getUser().getID() == _i.getInstructorID());
 		_canDelete = isHR;
 		if ((_i instanceof InstructionSession) && (isOurs || isHR)) {
 			InstructionSession is = (InstructionSession) _i;
