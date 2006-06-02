@@ -27,6 +27,7 @@ public class HttpTimeoutURLConnection extends HttpURLConnection {
 	public HttpTimeoutURLConnection(URL url, HttpTimeoutHandler hnd) throws IOException {
 		super(url, hnd);
 		_hnd = hnd;
+		setConnectTimeout(_hnd.getTimeout());
 	}
 
 	/**
