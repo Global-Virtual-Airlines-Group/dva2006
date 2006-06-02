@@ -77,7 +77,7 @@ public class LibraryServlet extends GenericServlet {
 					if ("fleet".equals(url.getLastPath())) {
 						entry = rdao.getInstaller(url.getFileName(), aInfo.getDB());
 					} else if ("library".equals(url.getLastPath())) {
-						entry = rdao.getManual(url.getFileName(), aInfo.getDB());
+						entry = rdao.getManual(url.getFileName(), aInfo.getDB(), false);
 					} else if ("newsletter".equals(url.getLastPath())) {
 						entry = rdao.getNewsletter(url.getFileName(), aInfo.getDB());
 					} else if ("video".equals(url.getLastPath())) {

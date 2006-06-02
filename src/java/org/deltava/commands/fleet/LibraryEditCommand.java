@@ -63,12 +63,17 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 
 			// Get the DAO and the library entry
 			GetDocuments dao = new GetDocuments(con);
+			GetTableStatus tsdao = new GetTableStatus(con);
 			if ("manual".equals(docType)) {
-				Manual m = dao.getManual(fName, SystemData.get("airline.db"));
+				String db = SystemData.get("airline.db");
+				boolean hasCerts = tsdao.getTableNames(db).contains("CERTS");
 				
-				// Load academy data
-				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
-				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
+				// Load the manual
+				Manual m = dao.getManual(fName, db, hasCerts);
+				if (hasCerts) {
+					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+					ctx.setAttribute("certs", cdao.getAll(), REQUEST);
+				}
 
 				// Save the entry
 				entry = m;

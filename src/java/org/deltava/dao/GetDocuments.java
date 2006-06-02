@@ -31,10 +31,11 @@ public class GetDocuments extends GetLibrary {
 	 * Returns metadata about a specific Manual .
 	 * @param fName the filename
 	 * @param dbName the database name
+	 * @param loadCerts TRUE if Flight Academy data should be loaded, otherwise FALSE
 	 * @return a Manual, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Manual getManual(String fName, String dbName) throws DAOException {
+	public Manual getManual(String fName, String dbName, boolean loadCerts) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -56,7 +57,9 @@ public class GetDocuments extends GetLibrary {
 			
 			// Load the certifications
 			Manual m = results.get(0);
-			m.addCertifications(getCertifications(fName, dbName));
+			if (loadCerts)
+				m.addCertifications(getCertifications(fName, dbName));
+			
 			return m;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -140,10 +143,11 @@ public class GetDocuments extends GetLibrary {
 	 * Returns the contents of the Document Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
 	 * @param dbName the database name
+	 * @param loadCerts TRUE if Flight Academy data should be loaded, otherwise FALSE
 	 * @return a Collection of Manual beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Manual> getManuals(String dbName) throws DAOException {
+	public Collection<Manual> getManuals(String dbName, boolean loadCerts) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -159,7 +163,10 @@ public class GetDocuments extends GetLibrary {
 			Map<String, Manual> docMap = CollectionUtils.createMap(results, "fileName");
 			
 			// Load the certifications for the manual
-			loadCertifications(dbName, docMap);
+			if (loadCerts)
+				loadCertifications(dbName, docMap);
+			
+			// Return results
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

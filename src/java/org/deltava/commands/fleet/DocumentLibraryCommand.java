@@ -43,17 +43,19 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAO
+			// Get the DAOs
 			GetDocuments dao = new GetDocuments(con);
+			GetTableStatus tsdao = new GetTableStatus(con);
 
 			// Get the document libraries from the other airlines
 			Map apps = (Map) SystemData.getObject("apps");
 			for (Iterator i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
+				boolean loadCerts = tsdao.getTableNames(info.getDB()).contains("CERTS");
 				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
-					results.addAll(0, dao.getManuals(info.getDB()));
+					results.addAll(0, dao.getManuals(info.getDB(), loadCerts));
 				} else {
-					Collection<Manual> entries = dao.getManuals(info.getDB());
+					Collection<Manual> entries = dao.getManuals(info.getDB(), loadCerts);
 					appendDB(entries, info.getDB());
 					results.addAll(entries);
 				}
