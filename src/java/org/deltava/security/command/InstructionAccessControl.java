@@ -50,9 +50,10 @@ public class InstructionAccessControl extends AccessControl {
 		// Set access rights
 		_canEdit = isHR || isExam || (_ctx.getUser().getID() == _i.getInstructorID());
 		_canDelete = isHR;
-		if ((_i instanceof InstructionSession) && (isOurs || isHR)) {
+		if (_i instanceof InstructionSession) {
 			InstructionSession is = (InstructionSession) _i;
-			_canCancel = (is.getStatus() == InstructionSession.SCHEDULED);
+			_canEdit |= (_canCreate && (is.getID() == 0));
+			_canCancel = (isOurs || isHR) && (is.getStatus() == InstructionSession.SCHEDULED);
 		}
 	}
 	
