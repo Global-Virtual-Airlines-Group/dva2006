@@ -67,9 +67,13 @@ public class ManualCommand extends LibraryEditCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAO and the Library entry
+			// Get the DAOs
 			GetDocuments dao = new GetDocuments(con);
-			entry = dao.getManual(fName, SystemData.get("airline.db"));
+			GetTableStatus tsdao = new GetTableStatus(con);
+			
+			// Get the Library entry
+			String db = SystemData.get("airline.db");
+			entry = dao.getManual(fName, db, tsdao.getTableNames(db).contains("CERTS"));
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
