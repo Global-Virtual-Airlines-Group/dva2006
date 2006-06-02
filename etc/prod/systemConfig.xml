@@ -428,7 +428,7 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>dlva1_maydirects.csv,dlva2_maydirects.csv</file>
+				<file>deltadirects.csv,airfrancedirects.csv</file>
 			</download>
 			
 			<!-- downloaded file cache -->
@@ -532,11 +532,11 @@
 		
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
-			<minDays type="Integer">45</minDays>
+			<minDays type="Integer">75</minDays>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
 			
-						<!-- Charter flight operations -->
+			<!-- Charter flight operations -->
 			<charter>
 				<min_flights type="Integer">10</min_flights>
 				<valid_ratio type="Double">15.5</valid_ratio>
