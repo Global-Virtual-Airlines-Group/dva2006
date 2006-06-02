@@ -1,24 +1,24 @@
 ; Airline code, start flight #, end flight #, filename, description
-CO,2100,3662,dlva1_maydirects.csv,Continental
-DVC,3663,4082,dlva1_maydirects.csv,SkyWest
-DVC,4083,4932,dlva1_maydirects.csv,ASA
-DVC,4933,5912,dlva1_maydirects.csv,Comair
-DVC,5913,6057,dlva1_maydirects.csv,American Eagle
-DVC,6058,6212,dlva1_maydirects.csv,Freedom Airlines
-DVC,6213,6432,dlva1_maydirects.csv,Chautauqua Airlines
-DVC,6433,6492,dlva1_maydirects.csv,Shuttle America
-NW,6493,7779,dlva1_maydirects.csv,Northwest
-SAA,7780,729,dlva1_maydirects.csv,South African Airways
-CZ,7830,7839,dlva1_maydirects.csv,China Southern
-AT,7840,7849,dlva1_maydirects.csv,Royal Air Maroc
-KAL,7850,7939,dlva1_maydirects.csv,Korean Air
-MX,7940,7999,dlva1_maydirects.csv,AeroMexico
-MX,8000,8149,dlva1_maydirects.csv,Aeromexico
-AI,8150,8287,dlva1_maydirects.csv,Alitalia
-IGNORE,8288,8659,dlva1_maydirects.csv,Air France
-OK,8710,8769,dlva1_maydirects.csv,Czech Airlines
-AJ,8840,8899,dlva1_maydirects.csv,Air Jamaica
-AV,8900,8939,dlva1_maydirects.csv,Avianca
-IGNORE,8940,8974,dlva1_maydirects.csv,China Airlines
-LY,8975,8991,dlva1_maydirects.csv,EL AL
-AS,8992,9124,dlva1_maydirects.csv,Alaska Airlines
+CO,2100,3662,deltadirects.csv,Continental
+DVC,3663,4082,deltadirects.csv,SkyWest
+DVC,4083,4932,deltadirects.csv,ASA
+DVC,4933,5912,deltadirects.csv,Comair
+DVC,5913,6057,deltadirects.csv,American Eagle
+DVC,6058,6212,deltadirects.csv,Freedom Airlines
+DVC,6213,6432,deltadirects.csv,Chautauqua Airlines
+DVC,6433,6492,deltadirects.csv,Shuttle America
+NW,6493,7779,deltadirects.csv,Northwest
+SAA,7780,729,deltadirects.csv,South African Airways
+CZ,7830,7839,deltadirects.csv,China Southern
+AT,7840,7849,deltadirects.csv,Royal Air Maroc
+KAL,7850,7939,deltadirects.csv,Korean Air
+MX,7940,7999,deltadirects.csv,AeroMexico
+MX,8000,8149,deltadirects.csv,Aeromexico
+AI,8150,8287,deltadirects.csv,Alitalia
+IGNORE,8288,8659,deltadirects.csv,Air France
+OK,8710,8769,deltadirects.csv,Czech Airlines
+AJ,8840,8899,deltadirects.csv,Air Jamaica
+AV,8900,8939,deltadirects.csv,Avianca
+IGNORE,8940,8974,deltadirects.csv,China Airlines
+LY,8975,8991,deltadirects.csv,EL AL
+AS,8992,9124,deltadirects.csv,Alaska Airlines
