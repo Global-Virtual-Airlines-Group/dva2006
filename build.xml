@@ -335,6 +335,7 @@
 				<include name="services.xml" />
 				<include name="profanity.txt" />
 				<include name="jcs.notams.cer" />
+				<include name="iata_aircraft.properties" />
 				<include name="codeshares.txt" />
 				<modified seldirs="false" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
