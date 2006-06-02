@@ -321,7 +321,7 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> search(SearchCriteria criteria) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
 				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) "
 				+ "FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) "
 				+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (P.MSGBODY LIKE ?) ");
