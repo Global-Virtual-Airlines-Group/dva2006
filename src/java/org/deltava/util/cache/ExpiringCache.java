@@ -76,6 +76,12 @@ public class ExpiringCache extends Cache {
 		_expiry = expiry * 1000;
 	}
 	
+	/**
+	 * Returns an unexpired entry from the cache.
+	 * @param key the cache key
+	 * @return the cache entry, or null if not present or expired
+	 * @see ExpiringCache#get(Object, boolean)
+	 */
 	public Cacheable get(Object key) {
 		return get(key, false);
 	}
@@ -84,7 +90,8 @@ public class ExpiringCache extends Cache {
 	 * Returns an entry from the cache.
 	 * @param key the cache key
 	 * @param ifExpired TRUE if expired entries can be returned, otherwise FALSE
-	 * @return the cache entry, or null if not present or expired
+	 * @return the cache entry, or null if not present
+	 * @see ExpiringCache#get(Object)
 	 * @see ExpiringCache#isExpired(Object)
 	 */
 	public synchronized Cacheable get(Object key, boolean ifExpired) {
