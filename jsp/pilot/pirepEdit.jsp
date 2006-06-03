@@ -51,7 +51,7 @@ if (pDate > fwdLimit) {
 	alert('You cannot file a Flight Report for a flight in the future.');
 	f.dateM.focus();
 	return false;
-} else if (pdate < bwdLimit) {
+} else if (pDate < bwdLimit) {
 	alert('You cannot file a Flight Report for a flight flown more than ${minDays} days ago.');
 	f.dateD.focus();
 	return false;
