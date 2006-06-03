@@ -66,7 +66,7 @@ public class ExamAccessControl extends AccessControl {
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin");
-        _canScore = _canEdit || (isSubmitted && (_t.getAcademy() ? _ctx.isUserInRole("Examiner") : isExam));
+        _canScore = _canEdit || (isSubmitted && (_t.getAcademy() ? (isHR || _ctx.isUserInRole("Examiner")) : isExam));
         _canViewAnswers = isScored && (isHR || (_t.getAcademy() ? (_ctx.isUserInRole("Examiner") || isINS) : isExam));
         
         // Throw an exception if we cannot view
