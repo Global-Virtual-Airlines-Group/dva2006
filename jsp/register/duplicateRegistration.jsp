@@ -40,11 +40,11 @@ return true;
  <td colspan="2">Duplicate Registration</td>
 </tr>
 <tr>
- <td class="pri bld left" colspan="2">There is another Pilot or Applicants registered at <content:airline /> with 
-your provided name and/or e-mail address. If you are an inactive or retired Pilot wishing to return to active 
-status at <content:airline />, please fill in your details in the space below. These will be sent to our 
-Human Resources department. You should hear back from them within 48-72 hours. Thank you for your 
-interest in <content:airline />!</td>
+ <td class="pri bld left" colspan="2">There is another Pilot or Applicants registered at 
+<span class="pri bld">${airline.name}</span> with your provided name and/or e-mail address. If you are 
+an inactive or retired Pilot wishing to return to active status at <content:airline />, please fill in 
+your details in the space below. These will be sent to our Human Resources department. You should hear 
+back from them within 48-72 hours. Thank you for your interest in <content:airline />!</td>
 </tr>
 <tr>
  <td class="label">First / Last Name</td>
@@ -67,6 +67,7 @@ interest in <content:airline />!</td>
  <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT MESSAGE" /></td>
 </tr>
 </el:table>
+<el:text name="airline" type="hidden" value="${airline.name}" />
 </el:form>
 <br />
 <content:copyright />

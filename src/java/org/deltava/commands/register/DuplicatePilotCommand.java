@@ -1,4 +1,4 @@
-//Copyright 2005, James Brickell & Luke J. Kolin. All Rights Reserved.
+//Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -46,6 +46,7 @@ public class DuplicatePilotCommand extends AbstractCommand {
 		mctxt.addData("lastName", ctx.getParameter("lastName"));
 		mctxt.addData("email", ctx.getParameter("email"));
 		mctxt.addData("msgText", ctx.getParameter("msgText"));
+		mctxt.addData("airlineName", ctx.getParameter("airline"));
 		
 		// Send the message to HR
 		Mailer mailer = new Mailer(Mailer.makeAddress(ctx.getParameter("email")));
