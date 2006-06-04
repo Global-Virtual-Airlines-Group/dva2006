@@ -92,7 +92,10 @@ public class NetworkDataURL implements java.io.Serializable, Comparable {
 	public int compareTo(Object o) {
 		NetworkDataURL nd2 = (NetworkDataURL) o;
 		int tmpResult = new Integer(getSuccessPercentage()).compareTo(new Integer(nd2.getSuccessPercentage()));
-		return (tmpResult == 0) ? new Integer(getFailures()).compareTo(new Integer(nd2.getFailures())) * -1 : tmpResult;
+		if (tmpResult == 0)
+			tmpResult = new Integer(getFailures()).compareTo(new Integer(nd2.getFailures())) * -1;
+		
+		return (tmpResult == 0) ? new Integer(_totalUses).compareTo(new Integer(nd2._totalUses)) * -1 : tmpResult;
 	}
 	
 	/**

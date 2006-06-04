@@ -116,12 +116,28 @@ public class GetServInfo extends DAO {
 	 * @param netName the network name
 	 * @return a NetworkStatus bean, or null if not cached
 	 */
-	public static synchronized NetworkStatus getCachedInfo(String netName) {
+	public static synchronized NetworkStatus getCachedStatus(String netName) {
 		NetworkStatus status =  (NetworkStatus) _netCache.get(netName);
 		if (status != null)
 			status.setCached();
 		
 		return status;
+	}
+	
+	/**
+	 * Returns cached network information data, if present.
+	 * @param netName the network name
+	 * @return a NetworkInfo bean, or null if not cached
+	 */
+	public static synchronized NetworkInfo getCachedInfo(String netName) {
+		NetworkInfo info = (NetworkInfo) _infoCache.get(netName, true);
+		if (info != null) {
+			info.setCached();
+			if (_infoCache.isExpired(netName) && !info.getExpired())
+				info.setExpired();
+		}
+		
+		return info;
 	}
 
 	/**
