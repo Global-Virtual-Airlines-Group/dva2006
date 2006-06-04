@@ -138,7 +138,12 @@ public class RegisterCommand extends AbstractCommand {
 				dupeResults.addAll(adao.checkUnique(a, info.getDB()));
 				if (!dupeResults.isEmpty()) {
 					ctx.release();
+					
+					// Save airline
+					ctx.setAttribute("airline", info, REQUEST);
 					log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
+					
+					// Forward to JSP
 					result.setURL("/jsp/register/duplicateRegistration.jsp");
 					result.setSuccess(true);
 					return;
