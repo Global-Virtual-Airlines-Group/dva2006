@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -20,7 +20,9 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     private String _name;
     private int _version;
     private Date _validDate;
+    
     private boolean _isCached;
+    private boolean _isExpired;
     
     private Map<String, Pilot> _pilots;
     private Map<String, Controller> _controllers;
@@ -48,11 +50,21 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     }
     
     /**
-     * Returns if this data was cached by the DAO
+     * Returns if this data was cached by the DAO.
      * @return TRUE if the data is cached, otherwise FALSE
+     * @see NetworkInfo#setCached()
      */
     public boolean getCached() {
     	return _isCached;
+    }
+    
+    /**
+     * Returns if this date is probably out of date.
+     * @return TRUE if the data is out of date, otherwise FALSE
+     * @see NetworkInfo#setExpired()
+     */
+    public boolean getExpired() {
+    	return _isExpired;
     }
     
     /**
@@ -249,11 +261,19 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     }
     
     /**
-	 * Marks this data as cached.
+	 * Marks this data as cached. <i>This flag cannot be cleared</i>.
 	 * @see NetworkInfo#getCached()
 	 */
     public void setCached() {
     	_isCached = true;
+    }
+    
+    /**
+	 * Marks this data as expired. <i>This flag cannot be cleared</i>.
+	 * @see NetworkInfo#getExpired()
+	 */
+    public void setExpired() {
+    	_isExpired = true;
     }
     
     /**

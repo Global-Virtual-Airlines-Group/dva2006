@@ -64,17 +64,23 @@ public class FlightBoardCommand extends AbstractCommand {
 
 				// Get network status
 				GetServInfo sdao = new GetServInfo(urlcon);
+				sdao.setUseCache(true);
 				NetworkStatus status = sdao.getStatus(networkName);
 				urlcon.disconnect();
 
 				// Get network status
 				NetworkDataURL nd = status.getDataURL(true);
+				log.info("Loading " + networkName + " data from " + nd.getURL());
 				urlcon = getURL(nd.getURL());
 				GetServInfo idao = new GetServInfo(urlcon);
 				idao.setBufferSize(40960);
+				idao.setUseCache(true);
 				info = idao.getInfo(networkName);
 				urlcon.disconnect();
-				nd.logUsage(true);
+				if (!info.getCached()) {
+					nd.logUsage(true);
+					log.info("ServInfo load complete - " + nd);
+				}
 
 				// Get the DAO and execute, and highlight our pilots
 				GetPilotOnline dao = new GetPilotOnline(con);

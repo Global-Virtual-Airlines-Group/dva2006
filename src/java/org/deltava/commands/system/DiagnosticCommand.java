@@ -72,7 +72,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			Collection<NetworkStatus> netInfo = new TreeSet<NetworkStatus>();
 			for (Iterator i = networks.iterator(); i.hasNext(); ) {
 				String networkName = (String) i.next();
-				NetworkStatus status = GetServInfo.getCachedInfo(networkName);
+				NetworkStatus status = GetServInfo.getCachedStatus(networkName);
 				if (status != null)
 					netInfo.add(status);
 			}

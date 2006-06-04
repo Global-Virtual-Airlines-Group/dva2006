@@ -61,6 +61,7 @@ public class ServInfoRouteService extends WebService {
 
 			// Get network status
 			GetServInfo sdao = new GetServInfo(urlcon);
+			sdao.setUseCache(true);
 			NetworkStatus status = sdao.getStatus(networkName);
 			urlcon.disconnect();
 

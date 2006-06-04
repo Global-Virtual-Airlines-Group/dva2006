@@ -65,6 +65,7 @@ public class ServInfoDataService extends WebDataService {
 				HttpURLConnection con = getURL(SystemData.get("online." + NETWORKS[x].toLowerCase() + ".status_url"));
 				GetServInfo sdao = new GetServInfo(con);
 				NetworkStatus status = sdao.getStatus(NETWORKS[x]);
+				sdao.setUseCache(true);
 				con.disconnect();
 
 				// Get network info
