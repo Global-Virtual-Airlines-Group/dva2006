@@ -586,8 +586,8 @@
 		</pool>
 
 		<buffer>
-			<send type="Integer">16384</send>
-			<recv type="Integer">4096</recv>
+			<send type="Integer">20480</send>
+			<recv type="Integer">10240</recv>
 			<nio type="Integer">8192</nio>
 		</buffer>
 
