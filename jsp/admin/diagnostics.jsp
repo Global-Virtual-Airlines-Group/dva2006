@@ -148,31 +148,33 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <!-- ServInfo network status information -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="6" class="left">ONLINE NETWORK STATUS DATA SOURCES</td>
+ <td colspan="7" class="left">ONLINE NETWORK STATUS DATA SOURCES</td>
 </tr>
 
 <!-- ServInfo Title Bar -->
 <tr class="title caps">
- <td width="45%">DATA SOURCE URL</td>
+ <td width="35%">DATA SOURCE URL</td>
  <td width="15%">LAST USE</td>
- <td width="10%">SUCCESS</td>
- <td width="10%">FAILURES</td>
- <td width="10%">TOTAL USAGE</td>
+ <td width="8%">SUCCESS</td>
+ <td width="8%">FAILURES</td>
+ <td width="8%">TOTAL</td>
+ <td width="8%">RECENT</td>
  <td>PERCENTAGE</td>
 </tr>
 
 <c:forEach var="netStatus" items="${servInfoStatus}">
 <!-- ${netStatus.name} -->
 <tr class="title caps">
- <td colspan="6" class="left">${netStatus.name} - ${fn:sizeof(netStatus.URLs)} SOURCES</td>
+ <td colspan="7" class="left">${netStatus.name} - ${fn:sizeof(netStatus.URLs)} SOURCES</td>
 </tr>
 <c:forEach var="source" items="${netStatus.URLs}">
 <tr>
- <td class="pri bld">${source.URL}</td>
- <td class="sec"><fmt:date date="${source.lastUse}" default="NEVER" /></td>
+ <td class="pri bld small">${source.URL}</td>
+ <td class="sec small"><fmt:date date="${source.lastUse}" default="NEVER" /></td>
  <td><fmt:int value="${source.success}" /></td>
  <td><fmt:int value="${source.failures}" /></td>
  <td><fmt:int value="${source.success + source.failures}" /></td>
+ <td><fmt:int value="${source.recentSuccessPercentage}" />%</td>
  <td><fmt:int value="${source.successPercentage}" />%</td>
 </tr>
 </c:forEach>

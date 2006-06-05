@@ -64,9 +64,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable, Comparabl
 	 * @see NetworkStatus#getURLs()
 	 * @see NetworkStatus#addURL(String)
 	 */
-	@SuppressWarnings("unchecked")
 	public NetworkDataURL getDataURL(boolean isRandom) {
-		
 		if (isRandom) {
 			Random r = new Random();
 			int idx = r.nextInt(_dataURLs.size());
@@ -74,18 +72,20 @@ public class NetworkStatus implements java.io.Serializable, Cacheable, Comparabl
 		}
 	
 		// Resort the collection and return
-		Collections.sort(_dataURLs);
-		return _dataURLs.get(_dataURLs.size() - 1);
+		return getURLs().get(_dataURLs.size() - 1);
 	}
 	
 	/**
 	 * Returns all data location URLs.
-	 * @return a List of URLs.
+	 * @return a sorted List of URLs.
 	 * @see NetworkStatus#getDataURL(boolean)
 	 * @see NetworkStatus#addURL(String)
 	 */
+	@SuppressWarnings("unchecked")
 	public List<NetworkDataURL> getURLs() {
-		return new ArrayList<NetworkDataURL>(_dataURLs);
+		List <NetworkDataURL> results = new ArrayList<NetworkDataURL>(_dataURLs);
+		Collections.sort(results);
+		return results;
 	}
 
 	/**
