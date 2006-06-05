@@ -75,7 +75,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable, Comparabl
 	
 		// Resort the collection and return
 		Collections.sort(_dataURLs);
-		return _dataURLs.get(0);
+		return _dataURLs.get(_dataURLs.size() - 1);
 	}
 	
 	/**
