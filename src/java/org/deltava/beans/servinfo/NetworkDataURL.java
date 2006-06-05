@@ -1,7 +1,7 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * A bean to track ServInfo data locations and their reliability.
@@ -11,11 +11,15 @@ import java.util.Date;
  */
 
 public class NetworkDataURL implements java.io.Serializable, Comparable {
+	
+	private static final int MAX_LAST_USES = 8;
 
 	private String _url;
 	private Date _lastUse;
 	private int _totalUses;
 	private int _success;
+	
+	private List<Boolean> _lastUses = new ArrayList<Boolean>();
 	
 	/**
 	 * Creates the URL location bean.
@@ -65,9 +69,37 @@ public class NetworkDataURL implements java.io.Serializable, Comparable {
 	 * @return the completion percentage, from 0-100
 	 * @see NetworkDataURL#getSuccess()
 	 * @see NetworkDataURL#getFailures()
+	 * @see NetworkDataURL#getRecentSuccessPercentage()
 	 */
-	public int getSuccessPercentage() {
+	public synchronized int getSuccessPercentage() {
 		return (_totalUses == 0) ? 100 : (_success * 100) / _totalUses;
+	}
+	
+	/**
+	 * Returns the completion percentage for the last several attempts to this data source URL.
+	 * @return the completion percentage, from 0-100
+	 * @see NetworkDataURL#getSuccessPercentage()
+	 */
+	public synchronized int getRecentSuccessPercentage() {
+		if (_lastUses.isEmpty())
+			return 100;
+		
+		// If we haven't made a call lately, reset the percentage
+		if ((System.currentTimeMillis() - _lastUse.getTime()) > 3600000) {
+			_lastUses.clear();
+			return 100;
+		}
+		
+		// Calculate the percentage
+		int successCount = 0;
+		for (Iterator<Boolean> i = _lastUses.iterator(); i.hasNext(); ) {
+			Boolean b = i.next();
+			if (b.booleanValue())
+				successCount++;
+		}
+		
+		// Return percentage
+		return (successCount * 100) / _lastUses.size();
 	}
 	
 	/**
@@ -76,26 +108,31 @@ public class NetworkDataURL implements java.io.Serializable, Comparable {
 	 * @see NetworkDataURL#getSuccess()
 	 * @see NetworkDataURL#getFailures()
 	 */
-	public void logUsage(boolean isSuccess) {
+	public synchronized void logUsage(boolean isSuccess) {
 		_totalUses++;
 		_lastUse = new Date();
 		if (isSuccess)
 			_success++;
+		
+		// Log to last uses
+		_lastUses.add(Boolean.valueOf(isSuccess));
+		if (_lastUses.size() > MAX_LAST_USES)
+			_lastUses.remove(0);
 	}
 
 	/**
-	 * Compares two beans by comparing their success percentages. If they are equal, the number of failures
-	 * will be compared in <i>inverse</i> order.
+	 * Compares two beans by comparing their recent success percentages. If they are equal, the overall success
+	 * count will be compared.
 	 * @see Comparable#compareTo(Object)
 	 * @see NetworkDataURL#getSuccessPercentage()
 	 */
 	public int compareTo(Object o) {
 		NetworkDataURL nd2 = (NetworkDataURL) o;
-		int tmpResult = new Integer(getSuccessPercentage()).compareTo(new Integer(nd2.getSuccessPercentage()));
+		int tmpResult = new Integer(getRecentSuccessPercentage()).compareTo(new Integer(nd2.getRecentSuccessPercentage()));
 		if (tmpResult == 0)
-			tmpResult = new Integer(getFailures()).compareTo(new Integer(nd2.getFailures())) * -1;
+			tmpResult = new Integer(_success).compareTo(new Integer(nd2._success)) * -1;
 		
-		return (tmpResult == 0) ? new Integer(_totalUses).compareTo(new Integer(nd2._totalUses)) * -1 : tmpResult;
+		return tmpResult;
 	}
 	
 	/**
