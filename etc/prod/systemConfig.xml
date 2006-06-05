@@ -570,8 +570,8 @@
 		<ban_length type="Integer">15</ban_length>
 		<position_interval type="Integer">500</position_interval>
 		<build>
-			<minimum type="Integer">66</minimum>
-			<latest type="Integer">68</latest>
+			<minimum type="Integer">68</minimum>
+			<latest type="Integer">69</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>
 		
