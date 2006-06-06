@@ -183,6 +183,10 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	    return (o2 instanceof Airline) ? (compareTo(o2) == 0) : false;
 	}
 	
+	public int hashCode() {
+		return _code.hashCode();
+	}
+	
 	/**
 	 * Returns the airline code.
 	 */
