@@ -1,0 +1,24 @@
+#!/bin/sh
+# Archive Database backup script
+# (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+
+# Goto backup directory
+cd /home/backup/db
+
+# Dump Navigation Data
+echo 'Writing Navigation Data'
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS CHARTS | gzip -9 > old/navdata.sql.gz
+
+# Dump ACARS position archive
+echo 'Writing ACARS Position Archive'
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | gzip -9 > old/acars_pos.sql.gz
+
+# Dump Image Gallery Data
+echo 'Writing DVA Image Gallery'
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY GALLERYSCORE | gzip -9 > old/dva_gallery.sql.gz
+echo 'Writing AFV Image Gallery'
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY GALLERYSCORE | gzip -9 > old/afv_gallery.sql.gz
+
+# Change file permissions
+chown -R root:gva old/*.sql.gz
+chmod 640 old/*.sql.gz
