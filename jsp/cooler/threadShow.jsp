@@ -67,6 +67,7 @@ return true;
 <c:set var="user" value="${pageContext.request.userPrincipal}" scope="request" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="ccLevels" name="centuryClubLevels" />
+<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -74,8 +75,10 @@ return true;
 <el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="3" class="left"><el:cmd className="title" url="channels">DVA WATER COOLER</el:cmd> | 
-<el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> | ${thread.subject}</td>
+ <td colspan="${access.canReport ? '2' : '3'}" class="left caps"><el:cmd className="title" url="channels"><content:airline />
+ WATER COOLER</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
+ ${thread.subject}</td>
+<c:if test="${access.canReport && (postCount > 1)}"><td class="small caps"><el:cmd url="threadreport" linkID="0x${thread.ID}" />WARN MODERATORS</td></c:if>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
@@ -117,7 +120,6 @@ ${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.vo
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="${0}" scope="request" />
-<c:set var="postCount" value="${fn:sizeof(thread.posts)}" scope="request" />
 <c:set var="contentWarn" value="${false}" scope="request" />
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
@@ -318,8 +320,7 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canReply || access.canReport}">
 <tr class="buttons mid title">
  <td colspan="3"><c:if test="${access.canReply}"><el:button className="BUTTON" ID="SaveButton" label="SAVE RESPONSE" type="submit" />
-&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></c:if>
-<c:if test="${access.canReport}"> <el:cmdbutton url="threadreport" linkID="0x${thread.ID}" label="WARN MODERATORS" /></c:if></td>
+&nbsp;<el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></c:if></td>
 </tr>
 </c:if>
 </el:table>
