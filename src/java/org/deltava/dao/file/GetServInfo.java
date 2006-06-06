@@ -40,7 +40,7 @@ public class GetServInfo extends DAO {
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
 	private static Cache _netCache = new ExpiringCache(3, 43200); // 12 hours
-	private static ExpiringCache _infoCache = new ExpiringCache(3, 180);
+	private static ExpiringCache _infoCache = new ExpiringCache(3, 240); // 4 minutes
 	
 	private boolean _useCache = true;
 
