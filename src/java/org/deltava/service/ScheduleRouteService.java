@@ -37,10 +37,10 @@ public class ScheduleRouteService extends WebDataService {
 		if (a == null)
 			throw new ServiceException(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"));
 		
-		Collection<Airport> airports = null;
+		Collection<ScheduleEntry> flights = null;
 		try {
 			GetSchedule dao = new GetSchedule(_con);
-			airports = dao.getConnectingAirports(a, true);
+			flights = dao.getFlights(a);
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
@@ -51,22 +51,28 @@ public class ScheduleRouteService extends WebDataService {
 		doc.setRootElement(re);
 
 		// Create the routes
-		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-			Airport ap = i.next();
-			Collection<GeoLocation> gc = GeoUtils.greatCircle(a, ap, 60);
-			Element gce = new Element("route");
-			gce.setAttribute("from", a.getICAO());
-			gce.setAttribute("to", ap.getICAO());
-			for (Iterator<GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
-				GeoLocation loc = gci.next();
-				Element pe = new Element("pos");
-				pe.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-				pe.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-				gce.addContent(pe);
+		Collection<Airport> dstAirports = new TreeSet<Airport>();
+		for (Iterator<ScheduleEntry> i = flights.iterator(); i.hasNext(); ) {
+			ScheduleEntry entry = i.next();
+			Airport ap = entry.getAirportA();
+			if (!dstAirports.contains(ap)) {
+				Collection<GeoLocation> gc = GeoUtils.greatCircle(a, ap, 60);
+				Element gce = new Element("route");
+				gce.setAttribute("from", a.getICAO());
+				gce.setAttribute("to", ap.getICAO());
+				gce.setAttribute("airline", entry.getAirline().getCode());
+				for (Iterator<GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
+					GeoLocation loc = gci.next();
+					Element pe = new Element("pos");
+					pe.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
+					pe.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
+					gce.addContent(pe);
+				}
+
+				// Add to the root element
+				re.addContent(gce);
+				dstAirports.add(ap);
 			}
-			
-			// Add to the root element
-			re.addContent(gce);
 		}
 		
 		// Dump the XML to the output stream
