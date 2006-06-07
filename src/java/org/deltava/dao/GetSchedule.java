@@ -197,13 +197,22 @@ public class GetSchedule extends DAO {
 	}
 	
 	/**
-	 * Returns all Airports with at least one flight departing.
+	 * Returns all Airports with for an Airline at least one flight departing.
+	 * @param al the Airline bean or null
 	 * @return a Collection of Airport beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Airport> getOriginAirports() throws DAOException {
+	public Collection<Airport> getOriginAirports(Airline al) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM SCHEDULE");
+		if (al != null)
+			sqlBuf.append(" WHERE (AIRLINE=?)");
+		
 		try {
-			prepareStatement("SELECT DISTINCT AIRPORT_D FROM SCHEDULE");
+			prepareStatement(sqlBuf.toString());
+			if (al != null)
+				_ps.setString(1, al.getCode());
 			
 			// Execute the query
 			Set<Airport> results = new HashSet<Airport>();
