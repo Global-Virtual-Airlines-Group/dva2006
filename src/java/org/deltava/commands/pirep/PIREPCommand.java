@@ -441,8 +441,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if (!(fr instanceof ACARSFlightReport))
-					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD().getPosition(), fr.getAirportA()
-							.getPosition(), 100), REQUEST);
+					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100), REQUEST);
 
 				// Determine if we are crossing the International Date Line
 				double longD = fr.getAirportD().getLongitude();

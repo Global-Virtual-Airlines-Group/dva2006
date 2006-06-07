@@ -273,14 +273,14 @@ public class Pilot extends NetworkUser implements MapEntry {
 			// Check for special situations requiring direct routings
 			if (_position.distanceTo(_airportD) < 200) {
 				_route.add(_airportD);
-				_route.addAll(GeoUtils.greatCircle(_position, _airportA.getPosition(), 200));
+				_route.addAll(GeoUtils.greatCircle(_position, _airportA, 200));
 			} else if (_position.distanceTo(_airportA) < 200) {
-				_route.addAll(GeoUtils.greatCircle(_airportD.getPosition(), _position, 200));
+				_route.addAll(GeoUtils.greatCircle(_airportD, _position, 200));
 				_route.add(_airportA);
 			} else {
-				_route.addAll(GeoUtils.greatCircle(_airportD.getPosition(), _position, 200));
+				_route.addAll(GeoUtils.greatCircle(_airportD, _position, 200));
 				_route.remove(_position); // Remove since greatCircle adds the start/end point 
-				_route.addAll(GeoUtils.greatCircle(_position, _airportA.getPosition(), 200));
+				_route.addAll(GeoUtils.greatCircle(_position, _airportA, 200));
 			}
 		}
 	
