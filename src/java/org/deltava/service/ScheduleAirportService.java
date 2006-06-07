@@ -38,7 +38,7 @@ public class ScheduleAirportService extends WebDataService {
 
 		Collection<Airport> airports = null;
 		try {
-			GetSchedule dao = new GetSchedule(_con);
+			GetScheduleAirport dao = new GetScheduleAirport(_con);
 			airports = dao.getOriginAirports(al);
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());

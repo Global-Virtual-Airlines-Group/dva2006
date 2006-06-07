@@ -1,22 +1,19 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
-import org.deltava.dao.GetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -96,7 +93,7 @@ public class AirportListService extends WebDataService {
          
          // Get the airports from the schedule database
          try {
-            GetSchedule dao = new GetSchedule(_con);
+            GetScheduleAirport dao = new GetScheduleAirport(_con);
             filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest));
          } catch (DAOException de) {
             throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
@@ -126,10 +123,9 @@ public class AirportListService extends WebDataService {
       }
       
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
