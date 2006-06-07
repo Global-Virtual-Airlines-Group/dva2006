@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Schedule - Airlines</title>
@@ -26,7 +27,8 @@
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="30%">AIRLINE NAME</td>
+ <td width="5%">&nbsp;</td>
+ <td width="25%">AIRLINE NAME</td>
  <td width="20%">WEB APPLICATIONS</td>
  <td width="15%">AIRLINE CODE</td>
  <td><el:cmdbutton url="airline" op="edit" label="NEW AIRLINE" /></td>
@@ -35,6 +37,7 @@
 <!-- Table Airline Data -->
 <c:forEach var="airline" items="${airlines}">
 <view:row entry="${airline}">
+ <td><map:legend color="${airline.color}" legend="" /></td>
  <td class="pri bld"><el:cmd url="airline" linkID="${airline.code}" op="edit">${airline.name}</el:cmd></td>
  <td class="sec small"><c:forEach var="appCode" items="${airline.applications}">
 <c:set var="appName" value="${apps[appCode]}" scope="request" />
@@ -51,7 +54,7 @@ ${appName.name}<br /></c:forEach></td>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="4">&nbsp;</td>
+ <td colspan="5">&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />

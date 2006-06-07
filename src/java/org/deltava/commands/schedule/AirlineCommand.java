@@ -1,9 +1,10 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.Map;
+import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.MapEntry;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.commands.*;
@@ -50,6 +51,7 @@ public class AirlineCommand extends AbstractFormCommand {
 			a.setName(ctx.getParameter("name"));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			a.setApps(ctx.getParameters("airlines"));
+			a.setColor(ctx.getParameter("color"));
 			a.setCodes(StringUtils.split(ctx.getParameter("altCodes"), "\n"));
 			
 			// Get the DAO and update the database
@@ -112,6 +114,9 @@ public class AirlineCommand extends AbstractFormCommand {
 				ctx.release();
 			}
 		}
+		
+		// Save airline colors
+		ctx.setAttribute("colors", Arrays.asList(MapEntry.COLORS), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
