@@ -19,6 +19,9 @@
 	<service id="routeplot" class="org.deltava.service.RoutePlotMapService" />
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
 
+	<service id="rmap_airports" class="org.deltava.service.ScheduleAirportService" />
+	<service id="rmap_routes" class="org.deltava.service.ScheduleRouteService" />
+
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 
 	<service id="acars_data" class="org.deltava.service.ACARSDataService" />
