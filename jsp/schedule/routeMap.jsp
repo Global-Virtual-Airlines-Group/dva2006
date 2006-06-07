@@ -5,83 +5,23 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+<map:xhtml>
 <head>
 <title><content:airline /> Interactive Route Map</title>
+<content:sysdata var="imgPath" name="path.img" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
+<content:js name="routeMap" />
 <map:api version="2" />
 <map:vml-ie />
-<content:sysdata var="imgPath" name="path.img" />
-<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
+<content:sysdata var="aCode" name="airline.code" />
+<content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
-function updateAirlines(box)
-{
-var isLoading = getElement('isLoading');
-isLoading.innerHTML = ' - UPDATING...';
-
-// Update the markers
-var markers = airports[box.value];
-for (var x = 0; x < markers.length; x++) {
-	var mrk = markers[x];
-	if (box.checked) {
-		map.addOverlay(mrk);
-		if (!mrk.showRoutes)
-			GEvent.addListener(mrk, 'click', function() { showRoutes('ATL') });
-	} else
-		map.removeOverlay(mrk);
-}
-
-isLoading.innerHTML = '';
-return true;
-}
-
-function showRoutes(iata)
-{
-var isLoading = getElement('isLoading');
-isLoading.innerHTML = ' - LOADING...';
-
-// Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "route_map.ws?iata=" + iata, true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	var isLoading = getElement('isLoading');
-	isLoading.innerHTML = ' - REDRAWING...';
-	routes = new Array();
-	
-	// Parse the XML
-	var xmlDoc = xmlreq.responseXML;
-	var wsdata = xdoc.documentElement;
-	var rts = wsdata.getElementsByTagName("route");
-	for (var r = 0; r < rts.length; x++) {
-		var pos = wsdata.getElementsByTagName("pos");
-		var positions = new Array();
-	
-		// Get the positions
-		for (var i = 0; i < pos.length; i++) {
-			var pe = pos[i];
-			var p = new GLatLng(parseFloat(pe.getAttribute("lat")), parseFloat(pe.getAttribute("lng")));
-			positions.push(p);
-		} // for
-
-		// Draw the line
-		var routeLine = new GPolyline(positions, '#4080AF', 2, 0.8);
-		map.addOverlay(routeLine);
-		routes.push(routeLine);
-	}
-
-	// Focus on the map
-	isLoading.innerHTML = '';
-	return true;
-} // function
-
-return true;
-}
+document.imgPath = '${imgPath}';
 </script>
 </head>
 <content:copyright visible="false" />
@@ -99,12 +39,11 @@ return true;
 <c:set var="alCount" value="${0}" scope="request" />
 <tr>
  <td class="label" valign="top">Airport Legend</td>
- <td class="data small"><c:forEach var="airline" items="${airlines}">
+ <td class="data"><c:forEach var="airline" items="${airlines}">
 <c:set var="alCount" value="${alCount + 1}" scope="request" />
-<c:set var="alColor" value="${airportColors[airline.code]}" scope="request" />
-<map:legend color="${alColor}" legend="${airline.name}" />
-&nbsp;<el:box name="select${airline.code}" value="${airline.code}" label="" onChange="void updateAirlines(this)" />&nbsp;
-<c:if test="${(alCount % 4) == 0)}"><br /></c:if>
+<span style="float:left; width:175px;" class="small"><map:legend color="${airline.color}" legend="" />
+&nbsp;<el:box name="select${airline.code}" value="${airline.code}" label="${airline.name}" onChange="void updateAirports(this)" /></span>
+<c:if test="${(alCount % 5) == 0}"><div style="clear:both;" /></c:if>
 </c:forEach></td>
 </tr>
 <tr>
@@ -127,16 +66,12 @@ map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 
-// Save airports in JS array
-var airports = new Array();
-<c:forEach var="airline" items="${airlines}">
-// ${airline.name}
-<map:markers var="am${airline.code}" color="${airportColors[airline.code]}" items="${airportMap[airline]}" />
-airports['${airline.code}'] = am${airline.code};
-</c:forEach>
-
 // Routes placeholder
 var routes;
+
+// Save airports in JS array
+var airports = new Array();
+updateAirports('${aCode}');
 </script>
 </body>
-</html>
+</map:xhtml>

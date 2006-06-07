@@ -353,7 +353,13 @@
 		<class>org.deltava.commands.schedule.ChartCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="routemap">
+		<name>Schedule Route Map</name>
+		<class>org.deltava.commands.schedule.RouteMapCommand</class>
+		<roles>*</roles>
+	</command>
+
 	<command id="routes">
 		<name>Preferred Routes</name>
 		<class>org.deltava.commands.schedule.RoutesCommand</class>
