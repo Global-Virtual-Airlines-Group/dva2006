@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+<map:xhtml>
 <head>
 <title><content:airline /> ACARS Flight Data - <fmt:int value="${info.ID}" /></title>
 <content:css name="main" browserSpecific="true" />
@@ -151,4 +151,4 @@ addMarkers(map, 'filedMarkers');
 </script>
 </c:if>
 </body>
-</html>
+</map:xhtml>
