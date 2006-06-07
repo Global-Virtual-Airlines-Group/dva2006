@@ -19,7 +19,7 @@ public class GeoUtils {
 	private GeoUtils() {
 	}
 	
-	private static void recurseMidPoint(GeoPosition start, GeoPosition end, List<GeoLocation> results, int distance) {
+	private static void recurseMidPoint(GeoPosition start, GeoLocation end, List<GeoLocation> results, int distance) {
 		GeoPosition mPoint = start.midPoint(end);
 		results.add(results.indexOf(start) + 1, mPoint);
 		if (mPoint.distanceTo(start)  > distance)
@@ -31,12 +31,12 @@ public class GeoUtils {
 	
 	/**
 	 * Creates a Great Circle route between two points.
-	 * @param start the start position
-	 * @param end the end position
+	 * @param start the start location
+	 * @param end the end location
 	 * @param granularity the maxmimum distance between points
 	 * @return a List of GeoPositions describing the Great Circle route
 	 */
-	public static List<GeoLocation> greatCircle(GeoPosition start, GeoPosition end, int granularity) {
+	public static List<GeoLocation> greatCircle(GeoLocation start, GeoLocation end, int granularity) {
 		
 		// Add the start/end points
 		List<GeoLocation> results = new ArrayList<GeoLocation>();
@@ -44,7 +44,7 @@ public class GeoUtils {
 		results.add(end);
 		
 		// Start looping
-		recurseMidPoint(start, end, results, granularity);
+		recurseMidPoint(new GeoPosition(start), end, results, granularity);
 		return results;
 	}
 	
