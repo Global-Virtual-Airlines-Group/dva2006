@@ -56,4 +56,9 @@ public interface MapEntry extends GeoLocation {
     * @return the infobox HTML text, or null if no infobox to be displayed
     */
    public String getInfoBox();
+   
+   /**
+    * All Google Maps icon colors.
+    */
+   public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW}; 
 }

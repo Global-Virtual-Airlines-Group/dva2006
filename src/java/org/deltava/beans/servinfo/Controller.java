@@ -30,7 +30,7 @@ public class Controller extends NetworkUser {
    public static final int DEP = 5;
    public static final int CTR = 6;
    
-   private static final String[] COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
+   private static final String[] FAC_COLORS = {WHITE, PURPLE, BLUE, ORANGE, GREEN, YELLOW, RED};
    
    private int _rating;
    private int _facility;
@@ -152,7 +152,7 @@ public class Controller extends NetworkUser {
      * @see Controller#getFacilityType()
      */
     public String getIconColor() {
-    	return COLORS[_facility];
+    	return FAC_COLORS[_facility];
     }
     
     /**
