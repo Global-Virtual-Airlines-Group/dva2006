@@ -85,7 +85,8 @@ public class GetAirline extends DAO {
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
 		while (rs.next()) {
 			Airline a = new Airline(rs.getString(1), rs.getString(2));
-			a.setActive(rs.getBoolean(3));
+			a.setColor(rs.getString(3));
+			a.setActive(rs.getBoolean(4));
 			results.put(a.getCode(), a);
 		}
 

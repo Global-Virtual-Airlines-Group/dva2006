@@ -17,6 +17,7 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 6, 'Airline Name')) return false;
 if (!validateText(form.code, 2, 'Airline Code')) return false;
+if (!validateCombo(form.color, 'Airline Google Map Color')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -45,6 +46,10 @@ return true;
 <tr>
  <td class="label">Airline Code</td>
  <td class="data"><el:text name="code" idx="*" className="bld req" size="3" max="3" value="${airline.code}" /></td>
+</tr>
+<tr>
+ <td class="label">Map Color</td>
+ <td class="data"><el:combo name="color" idx="*" size="1" className="req" options="${colors}" firstEntry="-" value="${airline.color}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Web Applications</td>
