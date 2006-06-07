@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -102,8 +102,6 @@ public class GetSchedule extends DAO {
 	 * @throws NullPointerException if f is null
 	 */
 	public ScheduleEntry get(Flight f) throws DAOException {
-
-		// Init the prepared statement
 		try {
 			prepareStatement("SELECT * FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
 			_ps.setString(1, f.getAirline().getCode());
@@ -113,6 +111,22 @@ public class GetSchedule extends DAO {
 			// Execute the query, return null if not found
 			List<ScheduleEntry> results = execute();
 			return (results.size() == 0) ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all flights from a particular airport, sorted by Airline and Flight Number.
+	 * @param a the origin Airport bean
+	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleEntry> getFlights(Airport a) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM SCHEDULE WHERE (AIRPORT_D=?) ORDER BY AIRLINE, FLIGHT, LEG");
+			_ps.setString(1, a.getIATA());
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -194,86 +208,6 @@ public class GetSchedule extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-	
-	/**
-	 * Returns all Airports with for an Airline at least one flight departing.
-	 * @param al the Airline bean or null
-	 * @return a Collection of Airport beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Airport> getOriginAirports(Airline al) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT AIRPORT_D FROM SCHEDULE");
-		if (al != null)
-			sqlBuf.append(" WHERE (AIRLINE=?)");
-		
-		try {
-			prepareStatement(sqlBuf.toString());
-			if (al != null)
-				_ps.setString(1, al.getCode());
-			
-			// Execute the query
-			Set<Airport> results = new HashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airport a = SystemData.getAirport(rs.getString(1));
-				if (a != null)
-					results.add(a);
-			}
-			
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Returns Airports with flights departing or arriving at a particular Airport.
-	 * @param a the Airport
-	 * @param from TRUE if returning destination airports for flights originating at a, otherwise FALSE 
-	 * @return a Collection of Airport beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<Airport> getConnectingAirports(Airport a, boolean from) throws DAOException {
-	   
-	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT A.* FROM common.AIRPORTS A, SCHEDULE S WHERE ");
-	   if (from) {
-	      sqlBuf.append("(A.IATA=S.AIRPORT_A) AND (S.AIRPORT_D=?) ORDER BY A.NAME");
-	   } else {
-	      sqlBuf.append("(A.IATA=S.AIRPORT_D) AND (S.AIRPORT_A=?) ORDER BY A.NAME");
-	   }
-	   
-	   try {
-	      prepareStatement(sqlBuf.toString());
-	      _ps.setString(1, a.getIATA());
-	      
-	      // Execute the query
-	      ResultSet rs = _ps.executeQuery();
-	      
-	      // Iterate through the results
-	      Collection<Airport> results = new LinkedHashSet<Airport>();
-	      while (rs.next()) {
-	         Airport ap = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
-	         ap.setTZ(rs.getString(3));
-	         ap.setLocation(rs.getDouble(5), rs.getDouble(6));
-	         
-	         // Add to results
-	         results.add(ap);
-	      }
-	      
-	      // Clean up and return
-	      rs.close();
-	      _ps.close();
-	      return results;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
 	}
 	
 	/**
