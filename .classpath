@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="src/java"/>
 	<classpathentry kind="src" path="src/test"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="lib/bcel-5.1.jar"/>
 	<classpathentry kind="lib" path="lib/hansel-1.0.2.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/servlet-api.jar"/>
@@ -17,5 +16,6 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-3.1.7-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.3.3.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-1.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/bcel-5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
