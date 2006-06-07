@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+<map:xhtml>
 <head>
 <title><content:airline /> ACARS Live Map</title>
 <content:css name="main" browserSpecific="true" />
@@ -150,4 +150,4 @@ document.doRefresh = true;
 reloadData(true);
 </script>
 </body>
-</html>
+</map:xhtml>

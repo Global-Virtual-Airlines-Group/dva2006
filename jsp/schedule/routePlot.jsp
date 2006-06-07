@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xml:lang="en" lang="en">
+<map:xhtml>
 <head>
 <title><content:airline /> Route Plotter</title>
 <content:css name="main" browserSpecific="true" />
@@ -195,4 +195,4 @@ map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 </script>
 </body>
-</html>
+</map:xhtml>
