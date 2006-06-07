@@ -55,7 +55,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          Connection con = ctx.getConnection();
          
          // Get the DAO and source/destination airports
-         GetSchedule dao = new GetSchedule(con);
+         GetScheduleAirport dao = new GetScheduleAirport(con);
          airportsD.addAll(dao.getOriginAirports(null));
          airportsA.addAll(dao.getConnectingAirports(criteria.getAirportD(), true));
          
@@ -64,9 +64,10 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          ctx.setAttribute("dstAP", airportsA, REQUEST);
          
          // Do the search
-         dao.setQueryStart(vc.getStart());
-         dao.setQueryMax(vc.getCount());
-         vc.setResults(dao.search(criteria, "AIRPORT_D, AIRPORT_A"));
+         GetSchedule sdao = new GetSchedule(con);
+         sdao.setQueryStart(vc.getStart());
+         sdao.setQueryMax(vc.getCount());
+         vc.setResults(sdao.search(criteria, "AIRPORT_D, AIRPORT_A"));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
