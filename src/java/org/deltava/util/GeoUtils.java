@@ -38,13 +38,12 @@ public class GeoUtils {
 	 */
 	public static List<GeoLocation> greatCircle(GeoLocation start, GeoLocation end, int granularity) {
 		
-		// Add the start/end points
+		// Add the start point
+		GeoPosition gpStart = new GeoPosition(start);
 		List<GeoLocation> results = new ArrayList<GeoLocation>();
-		results.add(start);
+		results.add(gpStart);
+		recurseMidPoint(gpStart, end, results, granularity);
 		results.add(end);
-		
-		// Start looping
-		recurseMidPoint(new GeoPosition(start), end, results, granularity);
 		return results;
 	}
 	
