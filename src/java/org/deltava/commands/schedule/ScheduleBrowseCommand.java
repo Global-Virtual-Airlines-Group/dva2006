@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -56,7 +56,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
          
          // Get the DAO and source/destination airports
          GetSchedule dao = new GetSchedule(con);
-         airportsD.addAll(dao.getOriginAirports());
+         airportsD.addAll(dao.getOriginAirports(null));
          airportsA.addAll(dao.getConnectingAirports(criteria.getAirportD(), true));
          
          // Save airports
