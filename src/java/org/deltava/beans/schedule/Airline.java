@@ -4,6 +4,9 @@ package org.deltava.beans.schedule;
 import java.util.*;
 
 import org.deltava.beans.ComboAlias;
+import static org.deltava.beans.MapEntry.COLORS;
+
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -17,6 +20,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 
 	private String _code;
 	private String _name;
+	private String _color;
 	private boolean _active = true;
 	
 	private Collection<String> _apps = new TreeSet<String>();
@@ -94,6 +98,16 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	}
 	
 	/**
+	 * The color to use then displaying this Airline's destinations or routes in a Google Map.
+	 * @return the color name
+	 * @see Airline#setColor(String)
+	 * @see org.deltava.beans.MapEntry#COLORS
+	 */
+	public String getColor() {
+		return _color;
+	}
+	
+	/**
 	 * Updates the airline's activity flag.
 	 * @param active TRUE if the airline is enabled, otherwise FALSE
 	 * @see Airline#getActive()
@@ -126,13 +140,27 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	}
 	
 	/**
-	 * Adds an alternate airline code to this Airline
+	 * Adds an alternate airline code to this Airline.
 	 * @param code the airline code
 	 * @throws NullPointerException if code is null
 	 * @see Airline#getCodes()
 	 */
 	public void addCode(String code) {
 		_codes.add(code.trim().toUpperCase());
+	}
+	
+	/**
+	 * Updates the color used when displaying this Airline's routes and destinations in a Google Map.
+	 * @param color the color code
+	 * @throws IllegalArgumentException if not a valid Google Map color
+	 * @see Airline#getColor()
+	 * @see org.deltava.beans.MapEntry#COLORS
+	 */
+	public void setColor(String color) {
+		if (StringUtils.arrayIndexOf(COLORS, color) == -1)
+			throw new IllegalArgumentException("Invalid Google Map color - " + color);
+		
+		_color = color;
 	}
 	
 	/**

@@ -33,10 +33,11 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, ACTIVE) VALUES (?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRLINES (CODE, NAME, COLOR, ACTIVE) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, al.getCode());
 			_ps.setString(2, al.getName());
-			_ps.setBoolean(3, al.getActive());
+			_ps.setString(3, al.getColor());
+			_ps.setBoolean(4, al.getActive());
 			executeUpdate(1);
 			
 			// Write the alternate codes
@@ -82,10 +83,11 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			
 			// Write the airline data
-			prepareStatement("UPDATE common.AIRLINES SET NAME=?, ACTIVE=? WHERE (CODE=?)");
+			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=? WHERE (CODE=?)");
 			_ps.setString(1, al.getName());
-			_ps.setBoolean(2, al.getActive());
-			_ps.setString(3, al.getCode());
+			_ps.setString(2, al.getColor());
+			_ps.setBoolean(3, al.getActive());
+			_ps.setString(4, al.getCode());
 			executeUpdate(1);
 			
 			// Clear the alternate code data
