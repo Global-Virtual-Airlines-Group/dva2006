@@ -48,13 +48,13 @@ public class InstructionAccessControl extends AccessControl {
 			return;
 
 		// Set access rights
-		_canEdit = isHR || isExam || (_ctx.getUser().getID() == _i.getInstructorID());
 		_canDelete = isHR;
 		if (_i instanceof InstructionSession) {
 			InstructionSession is = (InstructionSession) _i;
-			_canEdit |= (_canCreate && (is.getID() == 0));
+			_canEdit |= _canCreate;
 			_canCancel = (isOurs || isHR) && (is.getStatus() == InstructionSession.SCHEDULED);
-		}
+		} else
+			_canEdit = isHR || isExam || (_ctx.getUser().getID() == _i.getInstructorID());	
 	}
 	
 	/**
