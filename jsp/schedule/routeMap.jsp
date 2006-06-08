@@ -42,7 +42,7 @@ document.imgPath = '${imgPath}';
  <td class="data"><c:forEach var="airline" items="${airlines}">
 <c:set var="alCount" value="${alCount + 1}" scope="request" />
 <span style="float:left; width:175px;" class="small"><map:legend color="${airline.color}" legend="" />
-&nbsp;<el:box name="select${airline.code}" value="${airline.code}" label="${airline.name}" onChange="void updateAirports(this)" /></span>
+&nbsp;<el:box ID="${airline.code}" name="select${airline.code}" value="${airline.code}" label="${airline.name}" onChange="void updateAirports(this)" /></span>
 <c:if test="${(alCount % 5) == 0}"><div style="clear:both;" /></c:if>
 </c:forEach></td>
 </tr>
