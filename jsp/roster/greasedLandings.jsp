@@ -23,6 +23,13 @@ setSubmit();
 disableButton('SearchButton');
 return true;
 }
+
+function update()
+{
+var f = document.forms[0];
+f.submit();
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -41,9 +48,9 @@ smoothest landings, and the greaser pilots who made them:<br />
 <!-- Table top Header bar -->
 <tr class="title">
  <td class="left caps" colspan="3"><content:airline /> GREASED LANDING CLUB</td>
- <td colspan="2"><el:box name="doStaff" idx="*" value="true" label="Staff Members Only" checked="${isStaff}" /></td>
- <td class="right" colspan="2"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
-FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void document.forms[0].submit()" /> 
+ <td class="right" colspan="4"><el:text name="viewCount" idx="*" size="1" max="2" value="${viewCount}" /> 
+FLIGHTS WITHIN <el:combo name="days" idx="*" size="1" options="${dateFilter}" value="${param.days}" onChange="void update()" /> 
+IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.eqType}" onChange="void update()" />
 <el:button ID="SearchButton" type="submit" className="BUTTON" label="GO" /></td>
 </tr>
 
@@ -60,7 +67,7 @@ FLIGHTS WITHIN THE LAST <el:combo name="days" idx="*" size="1" options="${dateFi
 
 <!-- Table Flight Report Data -->
 <c:set var="entryNumber" value="0" scope="request" />
-<c:forEach var="pirep" items="${pireps}">
+<c:forEach var="pirep" items="${viewContext.results}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
 <tr>
  <td class="sec bld">${entryNumber}</td>
