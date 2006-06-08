@@ -14,7 +14,7 @@ import org.deltava.beans.system.TransferRequest;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.PilotAccessControl;
+import org.deltava.security.command.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -73,7 +73,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
-					ctx.setAttribute("lastFlight", results.get(0), REQUEST);
+					ctx.setAttribute("lastFlight", fr, REQUEST);
 					break;
 				}
 			}
@@ -137,7 +137,10 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("eqSwitch", activeEQ, REQUEST);
 				ctx.setAttribute("eqSwitchFOExam", needFOExamEQ, REQUEST);
 			} else {
+				TransferAccessControl txAccess = new TransferAccessControl(ctx, txreq);
+				txAccess.validate();
 				ctx.setAttribute("txreq", txreq, REQUEST);
+				ctx.setAttribute("txAccess", txAccess, REQUEST);
 			}
 
 			// See if we can write any examinations
@@ -158,7 +161,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					if (c.getStatus() == Course.STARTED)
 						ctx.setAttribute("course", c, REQUEST);
 				}
-				
+
 				// Check if we have instruction flights
 				GetAcademyCalendar facdao = new GetAcademyCalendar(con);
 				facdao.setQueryMax(1);

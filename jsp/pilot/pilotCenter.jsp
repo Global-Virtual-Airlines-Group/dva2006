@@ -313,14 +313,18 @@ of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight legs in the
 <tr>
  <td class="mid bld">Switch Equipment Programs</td>
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested a change of Equipment 
-Program to the <span class="bld">${txreq.equipmentType}</span> program.</td>
+Program to the <span class="bld">${txreq.equipmentType}</span> program.
+<c:if test="${txaccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" linkID="0x${txreq.ID}">CLICK HERE</el:cmd> 
+to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
 <c:if test="${(!empty txreq) && txreq.ratingOnly}">
 <tr>
  <td class="mid bld">Request Additional Rating</td>
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type
- ratings in the <span class="bld">${txreq.equipmentType}</span> program.</td>
+ ratings in the <span class="bld">${txreq.equipmentType}</span> program.
+<c:if test="${txaccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" linkID="0x${txreq.ID}">CLICK HERE</el:cmd> 
+to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
 <tr>

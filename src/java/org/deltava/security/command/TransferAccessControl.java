@@ -39,16 +39,18 @@ public class TransferAccessControl extends AccessControl {
       validateContext();
       
       // Set role status
+      boolean isMine = (_ctx.isAuthenticated() && (_ctx.getUser().getID() == _treq.getID()));
       boolean hrExam = _ctx.isUserInRole("HR") || _ctx.isUserInRole("Examination");
       boolean hrPIREP = _ctx.isUserInRole("HR") || _ctx.isUserInRole("PIREP");
-      if (!hrExam && !hrPIREP)
+      if (!hrExam && !hrPIREP && !isMine)
          throw new AccessControlException("Cannot view Transfer Request");
 
       // Set access rights
-      _canApprove = (_treq.getStatus() == TransferRequest.OK) && hrPIREP;
-      _canAssignRide = (_treq.getStatus() == TransferRequest.PENDING) && hrExam;
+      int status = _treq.getStatus();
+      _canApprove = (status == TransferRequest.OK) && hrPIREP;
+      _canAssignRide = (status == TransferRequest.PENDING) && hrExam;
       _canReject = hrPIREP || hrExam;
-      _canDelete = _ctx.isUserInRole("Admin");
+      _canDelete = _ctx.isUserInRole("Admin") || (isMine && ((status == TransferRequest.NEW) || (status == TransferRequest.PENDING)));
    }
 
    /**
