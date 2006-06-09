@@ -141,7 +141,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		try {
 			prepareStatement("SELECT P.EQTYPE, COUNT(P.ID) AS CNT FROM PIREPS P, ACARS_PIREPS APR LEFT JOIN "
 					+ "acars.FLIGHTS F ON (APR.ACARS_ID=F.ID) LEFT JOIN acars.CONS C ON (F.CON_ID=C.ID) WHERE (P.ID=APR.ID) "
-					+ "AND (PR.STATUS=?) AND (C.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) GROUP BY P.EQTYPE "
+					+ "AND (P.STATUS=?) AND (C.CLIENT_BUILD >= ?) AND (APR.LANDING_VSPEED < 0) GROUP BY P.EQTYPE "
 					+ "HAVING (CNT >= ?) ORDER BY CNT DESC");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, clientBuild);
