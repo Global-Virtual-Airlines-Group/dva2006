@@ -30,12 +30,14 @@ return true;
 
 function toggleNavaids()
 {
+var btn = getElement('ToggleButton');
 if (!showAll) {
-	for (x = 0; x < navaids.length; x++)
-		map.addOverlay(navaids[x]);
+	addMarkers(map, 'navaids');
+	btn.value = 'HIDE SURROUNDING NAVAIDS';
 } else {
 	map.clearOverlays();
-	map.addOverlay(gmP);
+	addMarkers(map, 'nav');
+	btn.value = 'SHOW SURROUNDING NAVAIDS';
 }
 
 showAll = !(showAll);
@@ -99,14 +101,14 @@ ${navaid.frequency}</span></c:if></td>
 </c:if>
 <tr>
  <td class="label">Legend</td>
- <td class="data"><map:legend color="red" legend="Selected Navigation Aid" />
+ <td class="data"><map:legend color="red" legend="${navaid.code}" />
  <map:legend color="blue" legend="VOR" /> <map:legend color="orange" legend="NDB" />
  <map:legend color="green" legend="Airport" /> <map:legend color="white" legend="Intersection" />
- <el:button onClick="void toggleNavaids()" className="BUTTON" label="SHOW ALL" /></td>
+ <el:button ID="ToggleButton" onClick="void toggleNavaids()" className="BUTTON" label="SHOW SURROUNDING NAVAIDS" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Map</td>
- <td class="data"><map:div ID="googleMap" x="620" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
 </tr>
 </c:if>
 <c:if test="${empty navaid}">
@@ -145,18 +147,14 @@ ${navaid.frequency}</span></c:if></td>
 <map:point var="navP" point="${navaid}" />
 <map:markers var="nav" items="${results}" color="red" />
 <map:markers var="navaids" items="${navaids}" />
+var showAll = false;
 
 // Build the map
-var map = new GMap2(getElement("googleMap"));
-map.addControl(new GSmallZoomControl());
+var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(navP, getDefaultZoom(90));
-
-// Add the navaid markers
-for (var x = 0; x < navaids.length; x++)
-	map.addOverlay(nav[x]);
-	
-var showAll = false;
+addMarkers(map, 'nav');
 </script>
 </c:if>
 </body>
