@@ -62,7 +62,7 @@ public class ScheduleSaveCommand extends AbstractCommand {
 			// Save the schedule entries
 			for (Iterator i = entries.iterator(); i.hasNext(); ) {
 				ScheduleEntry se = (ScheduleEntry) i.next();
-				se.setPurge(canPurge);
+				se.setCanPurge(canPurge);
 				se.setHistoric(isHistoric);
 				dao.write(se, false);
 			}

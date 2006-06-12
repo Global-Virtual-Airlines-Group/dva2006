@@ -54,9 +54,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 
 		// Calculate flight time in seconds, and then divide by 3600 and multiply by 10
 		long lengthS = _timeA.difference(_timeD);
-
-		// If the length is negative (and we're not using an SST), then add 86400
-		if ((lengthS < 0) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1))
+		if (lengthS < 0)
 			lengthS += 86400;
 
 		return (int) (lengthS / 360);
@@ -126,7 +124,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	/**
 	 * Returns if this flight can be purged from the schedule database before an automated import
 	 * @return TRUE if the flight can be automatically purged from the database, otherwise FALSE
-	 * @see ScheduleEntry#setPurge(boolean)
+	 * @see ScheduleEntry#setCanPurge(boolean)
 	 */
 	public boolean getCanPurge() {
 		return _purge;
@@ -163,7 +161,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 */
 	public void setTimeA(Date dt) {
 		TZInfo tz = (getAirportA() == null) ? TZInfo.local() : getAirportA().getTZ();
-		if (dt.before(_timeD.getDate())) {
+		if ((_timeD != null) && (dt.before(_timeD.getDate())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
 			Calendar cld = CalendarUtils.getInstance(dt);
 			cld.add(Calendar.DATE, 1);
 			_timeA = new DateTime(cld.getTime(), tz);
@@ -201,7 +199,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 * @see ScheduleEntry#getCanPurge()
 	 * @see ScheduleEntry#getHistoric()
 	 */
-	public void setPurge(boolean purge) {
+	public void setCanPurge(boolean purge) {
 		_purge = purge;
 	}
 	
