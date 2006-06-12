@@ -33,6 +33,10 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 		// Create the messaging context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("user", ctx.getUser());
+		
+		// Get command results
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REDIRECT);
 
 		Examination ex = null;
 		try {
@@ -49,6 +53,20 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			boolean examsLocked = _academyHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
+			
+			// Check if we already have an exam open
+			GetExam exdao = new GetExam(con);
+			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
+			if (activeExamID != 0) {
+				ex = exdao.getExam(activeExamID);
+				if ((ex != null) && (ex.getStatus() == Test.NEW)) {
+					result.setURL("exam", null, ex.getID());
+					result.setSuccess(true);
+					return;
+				}
+
+				throw securityException("Already have Examination pending");
+			}
 			
 			// Check if we can take the exam
             if (!_academyHistory.canWrite(ep))
@@ -110,8 +128,6 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 		mailer.send(ctx.getUser());
 
 		// Forward to the Examination Command
-		CommandResult result = ctx.getResult();
-		result.setType(CommandResult.REDIRECT);
 		result.setURL("exam", null, ex.getID());
 		result.setSuccess(true);
 	}
