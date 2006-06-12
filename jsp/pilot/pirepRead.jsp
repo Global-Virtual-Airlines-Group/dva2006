@@ -272,8 +272,8 @@ getACARSData();
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
 </c:if>
 // Build the map
-var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
-map.addControl(new GSmallZoomControl());
+var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 
