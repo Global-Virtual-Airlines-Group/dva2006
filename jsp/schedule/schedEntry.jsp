@@ -50,7 +50,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this)" firstEntry="< AIRLINE >" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="< AIRLINE >" /></td>
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
