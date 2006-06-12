@@ -432,6 +432,12 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="usvcairports">
+		<name>Unserviced Airports</name>
+		<class>org.deltava.commands.schedule.UnservicedAirportsCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="ivimport">
 		<name>Innovata Schedule Download</name>
 		<class>org.deltava.commands.schedule.InnovataDownloadCommand</class>

@@ -27,11 +27,11 @@ xmlreq.send(null);
 return true;
 }
 
-function changeAirline(aCombo)
+function changeAirline(aCombo, useSched)
 {
 var f = document.forms[0];
-updateAirports(f.airportD, 'airline=' + getValue(aCombo), false, getValue(f.airportD));
-updateAirports(f.airportA, 'airline=' + getValue(aCombo), false, getValue(f.airportA));
+updateAirports(f.airportD, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportD));
+updateAirports(f.airportA, 'useSched=' + useSched + '&airline=' + getValue(aCombo), false, getValue(f.airportA));
 return true;
 }
 
@@ -46,7 +46,7 @@ return true;
 
 function changeAirport(combo)
 {
-var text = document.getElementById(combo.name + 'Code');
+var text = getElement(combo.name + 'Code');
 if (text) text.value = combo.options[combo.selectedIndex].value.toUpperCase();
 return true;
 }

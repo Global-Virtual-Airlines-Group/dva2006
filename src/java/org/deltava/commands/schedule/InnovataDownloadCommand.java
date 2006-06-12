@@ -4,8 +4,7 @@ package org.deltava.commands.schedule;
 import java.io.*;
 import java.util.*;
 
-import org.deltava.beans.schedule.ScheduleEntry;
-
+import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.DAOException;
@@ -40,6 +39,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 		// Connect to the FTP server and download the files as needed
 		try {
 			Collection<String> msgs = new ArrayList<String>();
+			Collection<String> codes = new HashSet<String>();
 			Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 			
 			// Download the files
@@ -66,7 +66,16 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 
 				// Load the schedule data
 				dao.load();
-				entries.addAll(dao.process());
+				Collection<ScheduleEntry> schedEntries = dao.process();
+				for (Iterator<ScheduleEntry> si = schedEntries.iterator(); si.hasNext(); ) {
+					ScheduleEntry entry = si.next();
+					if (codes.contains(entry.getFlightCode()))
+						msgs.add("Duplicate flight in " + fileName + " - " + entry.getFlightCode());
+					
+					codes.add(entry.getFlightCode());
+					entries.add(entry);
+				}
+				
 				msgs.addAll(dao.getErrorMessages());
 			}
 			
