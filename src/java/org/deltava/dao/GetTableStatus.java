@@ -83,6 +83,7 @@ public class GetTableStatus extends DAO {
      * @return a Collection of table names
      * @throws DAOException if a JDBC error occurs
      */
+    @SuppressWarnings("unchecked")
     public Collection<String> getTableNames(String dbName) throws DAOException {
     	
     	// Check the cache
