@@ -85,7 +85,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 						// Load historic/purgeable attributes
 						entry.setHistoric(Boolean.valueOf(tkns.nextToken()).booleanValue());
-						entry.setPurge(Boolean.valueOf(tkns.nextToken()).booleanValue());
+						entry.setCanPurge(Boolean.valueOf(tkns.nextToken()).booleanValue());
 
 						// Add to results
 						results.add(entry);

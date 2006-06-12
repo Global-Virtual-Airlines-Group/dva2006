@@ -70,7 +70,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setEquipmentType(ctx.getParameter("eqType"));
 			entry.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-			entry.setPurge(Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue());
+			entry.setCanPurge(Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue());
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 
 			// Parse date/times
