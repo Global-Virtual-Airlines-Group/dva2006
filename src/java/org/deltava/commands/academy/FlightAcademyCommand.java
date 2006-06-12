@@ -28,35 +28,39 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Initialize the Academy History Helper and save if we are in a course
 			initHistory(ctx.getUser(), con);
 			ctx.setAttribute("course", _academyHistory.getCurrentCourse(), REQUEST);
-			
+
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			Collection<ExamProfile> allExams = epdao.getExamProfiles(true);
 
+			// Check if we have an examination open
+			GetExam exdao = new GetExam(con);
+			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
+
 			// Remove all examinations that we have passed or require a higher stage than us
-			_academyHistory.setDebug(ctx.isSuperUser());
-			for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
-				ExamProfile ep = i.next();
-				if (!_academyHistory.canWrite(ep))
-					i.remove();
+			if (activeExamID != 0) {
+				allExams.clear();
+				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
+			} else {
+				_academyHistory.setDebug(ctx.isSuperUser());
+				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
+					ExamProfile ep = i.next();
+					if (!_academyHistory.canWrite(ep))
+						i.remove();
+				}
 			}
-			
+
 			// Remove all of the certs that we cannot take
-			for (Iterator<Certification> i = _allCerts.iterator(); i.hasNext(); ) {
+			for (Iterator<Certification> i = _allCerts.iterator(); i.hasNext();) {
 				Certification cert = i.next();
 				if (!_academyHistory.canTake(cert))
 					i.remove();
 			}
-			
-			// Check if we have an examination open
-			GetExam exdao = new GetExam(con);
-			int activeExamID = exdao.getActiveExam(ctx.getUser().getID());
-			ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
-			
+
 			// Save the exams and certifications available
 			ctx.setAttribute("exams", allExams, REQUEST);
 			ctx.setAttribute("certs", _allCerts, REQUEST);
@@ -66,10 +70,10 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save pilot name
 		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/academy/flightAcademy.jsp");
