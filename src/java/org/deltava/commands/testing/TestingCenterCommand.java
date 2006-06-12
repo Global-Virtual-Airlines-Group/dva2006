@@ -4,12 +4,15 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -20,6 +23,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class TestingCenterCommand extends AbstractTestHistoryCommand {
+
+	private static final Logger log = Logger.getLogger(TestingCenterCommand.class);
 
 	/**
 	 * Executes the command.
@@ -44,31 +49,35 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
 			List<ExamProfile> allExams = epdao.getExamProfiles();
-			
+
+			// Check if we have an examination open
+			GetExam exdao = new GetExam(con);
+			int activeExamID = exdao.getActiveExam(usr.getID());
+
 			// Check if we have a Transfer Request open
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(usr.getID());
 			if (txreq != null) {
+				log.warn("Pending Transfer Request - no Examinations available for " + usr.getName());
 				allExams.clear();
 				ctx.setAttribute("txreq", txreq, REQUEST);
-			}
-
-			// Remove all examinations that we have passed or require a higher stage than us
-			_testHistory.setDebug(ctx.isSuperUser());
-			for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
-				ExamProfile ep = i.next();
-				if (!_testHistory.canWrite(ep))
-					i.remove();
+			} else if (activeExamID != 0) {
+				log.warn("Pending Examination - no Examinations available for " + usr.getName());
+				allExams.clear();
+				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
+			} else {
+				// Remove all examinations that we have passed or require a higher stage than us
+				_testHistory.setDebug(ctx.isSuperUser());
+				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
+					ExamProfile ep = i.next();
+					if (!_testHistory.canWrite(ep))
+						i.remove();
+				}
 			}
 
 			// Save the remaining exam profiles in the request
 			ctx.setAttribute("exams", _testHistory.getExams(), REQUEST);
 			ctx.setAttribute("availableExams", allExams, REQUEST);
-
-			// Check if we have an examination open
-			GetExam exdao = new GetExam(con);
-			int activeExamID = exdao.getActiveExam(usr.getID());
-			ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
