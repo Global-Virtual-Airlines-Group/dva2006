@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -8,9 +8,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -46,12 +44,6 @@ public class FindFlightCommand extends AbstractCommand {
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("hours", HOURS, REQUEST);
 		
-		// Get the airports
-		Map<String, Airport> allAirports = SystemData.getAirports();
-		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
-		airports.addAll(allAirports.values());
-		ctx.setAttribute("airports", airports, REQUEST);
-
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/findAflight.jsp");
@@ -87,6 +79,11 @@ public class FindFlightCommand extends AbstractCommand {
 		if (opName.equals("search")) {
 			try {
 				Connection con = ctx.getConnection();
+				
+				// Get the airports
+				Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+				GetScheduleAirport adao = new GetScheduleAirport(con);
+				airports.addAll(adao.getOriginAirports(a));
 
 				// Get the DAO and execute
 				GetSchedule dao = new GetSchedule(con);
@@ -95,6 +92,7 @@ public class FindFlightCommand extends AbstractCommand {
 				// Save results in the session - since other commands may reference these
 				ctx.setAttribute("fafResults", dao.search(criteria, sortType), SESSION);
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
+				ctx.setAttribute("airports", airports, REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

@@ -527,6 +527,12 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
 </tr>
 </c:if>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="usvcairports">Unserviced Airports</el:cmd></td>
+ <td class="data">As the <content:airline /> Flight Schedule is updated, certain airports may no longer
+ be served by a particular Airline. This will display Airports with no corresponding flights in the
+ Flight Schedule so that their servicing Airlines may be updated.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd></td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data
 database.</td>
