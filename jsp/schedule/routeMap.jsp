@@ -38,17 +38,12 @@ document.imgPath = '${imgPath}';
 </tr>
 <c:set var="alCount" value="${0}" scope="request" />
 <tr>
- <td class="label" valign="top">Airport Legend</td>
- <td class="data"><c:forEach var="airline" items="${airlines}">
-<c:set var="alCount" value="${alCount + 1}" scope="request" />
-<span style="float:left; width:175px;" class="small"><map:legend color="${airline.color}" legend="" />
-&nbsp;<el:box ID="${airline.code}" name="select${airline.code}" value="${airline.code}" label="${airline.name}" onChange="void updateAirports(this)" /></span>
-<c:if test="${(alCount % 5) == 0}"><div style="clear:both;" /></c:if>
-</c:forEach></td>
+ <td class="label">Airline</td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="-" onChange="void updateAirports(this)" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="650" y="575" /></td>
 </tr>
 </el:table>
 </el:form>
