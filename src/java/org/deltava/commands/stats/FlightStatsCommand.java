@@ -30,7 +30,7 @@ public class FlightStatsCommand extends AbstractViewCommand {
 	// Group by options
 	private static final String[] GROUP_NAMES = { "Pilot Name", "Flight Date", "Equipment Type", "Month", "Week" };
 	private static final String[] GROUP_CODE = { "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE",
-			"DATE_FORMAT(F.DATE, '%M %x')", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)" };
+			"$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)" };
 	private static final List GROUP_OPTIONS = ComboUtils.fromArray(GROUP_NAMES, GROUP_CODE);
 
 	/**
@@ -49,6 +49,8 @@ public class FlightStatsCommand extends AbstractViewCommand {
 		String labelType = ctx.getParameter("groupType");
 		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
 			labelType = GROUP_CODE[0];
+		else if (GROUP_CODE[3].equals(labelType))
+			labelType = "DATE_FORMAT(F.DATE, '%M %x')";
 		
 		try {
 			Connection con = ctx.getConnection();
