@@ -75,10 +75,10 @@ return true;
 <el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
- <td colspan="${access.canReport ? '2' : '3'}" class="left caps"><el:cmd className="title" url="channels"><content:airline />
+ <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
  WATER COOLER</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
- ${thread.subject}</td>
-<c:if test="${access.canReport && (postCount > 1)}"><td width="10%" class="small caps mid"><el:cmd url="threadreport" linkID="0x${thread.ID}">WARN MODERATORS</el:cmd></td></c:if>
+ ${thread.subject}<c:if test="${access.canReport && (postCount > 1)}">
+ ( <el:cmd url="threadreport" linkID="0x${thread.ID}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
