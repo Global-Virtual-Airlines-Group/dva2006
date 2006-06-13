@@ -418,7 +418,7 @@
 	<!-- Innovata schedule link data -->
 	<schedule>
 		<innovata>
-			<enabled type="Boolean">false</enabled>
+			<enabled type="Boolean">true</enabled>
 			<popup>
 				<height type="Integer">600</height>
 				<width type="Integer">600</width>
