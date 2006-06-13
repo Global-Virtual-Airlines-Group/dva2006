@@ -64,14 +64,14 @@ INPUT, TEXTAREA {
 	background: #F0F4F8;
 }
 
-*.postEdit :link, *.postEdit :visited {
+*.postInfo :link, *.postInfo :visited, *.postInfo :hover {
 	font-size: 8pt;
 	color: #0000A1;
 	font-weight: bold;
 	font-family: Tahoma, Verdana;
 }
 
-*.postInfo :link, *.postInfo :visited {
+*.postEdit :link, *.postEdit :visited, *.postEdit :hover {
 	font-size: 9pt;
 	color: #0000A1;
 	font-weight: bold;
