@@ -148,6 +148,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 */
 	public void setTimeD(Date dt) {
 		TZInfo tz = (getAirportD() == null) ? TZInfo.local() : getAirportD().getTZ();
+		_length = 0; // reset length
 		_timeD = new DateTime(dt, tz);
 	}
 
@@ -161,6 +162,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	 */
 	public void setTimeA(Date dt) {
 		TZInfo tz = (getAirportA() == null) ? TZInfo.local() : getAirportA().getTZ();
+		_length = 0; // reset length
 		if ((_timeD != null) && (dt.before(_timeD.getDate())) && (StringUtils.arrayIndexOf(SST, getEquipmentType()) == -1)) {
 			Calendar cld = CalendarUtils.getInstance(dt);
 			cld.add(Calendar.DATE, 1);
