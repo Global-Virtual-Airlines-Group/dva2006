@@ -114,8 +114,9 @@ public class TestInnovataScheduleLoad extends TestCase {
 		}
 	}
 	
-	public void testLoadSingleFlight() {
+	public void testLoadSingleFlight() throws DAOException {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5037.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -125,8 +126,9 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testMultiLegStartsInFuture() {
+	public void testMultiLegStartsInFuture() throws DAOException {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl110.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -136,8 +138,9 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testLegsInPast() {
+	public void testLegsInPast() throws DAOException {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl263.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -147,8 +150,9 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testDuplicatePair() {
+	public void testDuplicatePair() throws DAOException {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5597.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -158,8 +162,9 @@ public class TestInnovataScheduleLoad extends TestCase {
 		log.info("Loaded " + entries.size() + " entries");
 	}
 	
-	public void testMultiStageMultiDay() {
+	public void testMultiStageMultiDay() throws DAOException {
 		GetSchedule dao = new GetSchedule(loadTestData("iv_dl5029.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -170,6 +175,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		
 		// Try second flight
 		dao = new GetSchedule(loadTestData("iv_dl5328.csv", "04/04/2006"));
+		dao.initAircraft();
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setEffectiveDate(_effDate);
@@ -186,7 +192,7 @@ public class TestInnovataScheduleLoad extends TestCase {
 		dao.setAirlines(_alMap.values());
 		dao.setAirports(_apMap.values());
 		dao.setBufferSize(32768);
-		dao.setEffectiveDate(_effDate);
+		dao.setEffectiveDate(_df.parse("06/14/2006"));
 		dao.load();
 		Collection<ScheduleEntry> entries = dao.process();
 		

@@ -31,7 +31,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private Calendar _effDate;
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
 	private Properties _acTypes;
-	
+
 	/**
 	 * Initializes the Data Access Object.
 	 * @param is the input stream to read
@@ -46,7 +46,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * @param tokens the tokens
 	 */
 	public GetSchedule(Collection<CSVTokens> tokens) {
-		super(null);
+		this((InputStream) null);
 		_data.addAll(tokens);
 	}
 
@@ -60,30 +60,37 @@ public class GetSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Loads the schedule entries from the Input stream.
+	 * Initializes the aircraft codes.
 	 * @throws DAOException if an I/O error occurs
-	 * @return a Collection of CSVTokens beans
 	 */
-	public Collection<CSVTokens> load() throws DAOException {
-		
+	public void initAircraft() throws DAOException {
+
 		// Load aircraft types from disk
 		_acTypes = new Properties();
 		try {
-			_acTypes.load(getClass().getResourceAsStream("/etc/iata_aircraft.properties"));
+			_acTypes.load(ConfigLoader.getStream("/etc/iata_aircraft.properties"));
 		} catch (IOException ie) {
 			DAOException de = new DAOException("Cannot load IATA aircraft codes!");
 			de.setLogStackDump(false);
 			throw de;
 		}
-		
+	}
+
+	/**
+	 * Loads the schedule entries from the Input stream.
+	 * @throws DAOException if an I/O error occurs
+	 * @return a Collection of CSVTokens beans
+	 */
+	public Collection<CSVTokens> load() throws DAOException {
+		initAircraft();
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
-			
+
 			// Skip the first line
 			if (br.ready())
 				br.readLine();
-				
+
 			while (br.ready()) {
 				String data = br.readLine();
 				CSVTokens tkns = new CSVTokens(data, br.getLineNumber());
@@ -102,7 +109,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 			log.error("Error at line " + br.getLineNumber() + " - " + ie.getMessage(), ie);
 			throw new DAOException(ie);
 		}
-		
+
 		return _data;
 	}
 
@@ -122,7 +129,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 			String eqType = _acTypes.getProperty(tkns.get(8));
 
 			// Load the Airports
-			Airport airportD = _airports.get(tkns.get(3).toUpperCase()); 
+			Airport airportD = _airports.get(tkns.get(3).toUpperCase());
 			Airport airportA = _airports.get(tkns.get(5).toUpperCase());
 
 			// Get the effective dates
@@ -149,10 +156,13 @@ public class GetSchedule extends ScheduleLoadDAO {
 			} else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
 			else if (airportD == null) {
-				log.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
-				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
+				log
+						.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for "
+								+ flightCode);
+				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for "
+						+ flightCode);
 			} else if (airportA == null) {
-				
+
 			} else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
 			else {
@@ -175,7 +185,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 					log.warn("Error parsing time - " + pe.getMessage());
 					_errors.add("Error parsing time - " + pe.getMessage());
 				}
-				
+
 				// Get the multi-leg info
 				int stops = Integer.parseInt(tkns.get(10));
 				boolean isExistML = legs.containsKey(flightCode);
@@ -189,7 +199,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 					} else if (ee == null) {
 						log.debug("Loading " + flightCode + " Leg " + (ml.getLegs() + 1));
 						ml.addEntry(se);
-						
+
 						// Load airports only if we haven't had a multi-leg info entry yet
 						if (!ml.isAirportListLoaded()) {
 							ml.addAirport(airportD.getIATA());
@@ -203,7 +213,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						log.debug("Loading multi-stage info for " + flightID);
 						if (se.getLength() > 12)
 							se.setLength(se.getLength() - 5);
-						
+
 						ml.setAirports(airportD, airportA, tkns.get(11));
 						ml.setMainEntry(se);
 					}
@@ -224,21 +234,22 @@ public class GetSchedule extends ScheduleLoadDAO {
 				log.warn(inf.getFlightCode() + " empty");
 				invalidFlights++;
 			} else if (inf.getEntries().size() > (inf.getDepartsFrom().size())) {
-				log.warn(inf.getFlightCode() + " stops=" + inf.getDepartsFrom() + ", entries=" + inf.getEntries().size());
+				log.warn(inf.getFlightCode() + " stops=" + inf.getDepartsFrom() + ", entries="
+						+ inf.getEntries().size());
 				invalidFlights++;
 			} else {
 				// Trim out nulls
 				Collection<ScheduleEntry> entries = inf.getEntries();
-				for (Iterator<ScheduleEntry> ei = entries.iterator(); ei.hasNext(); ) {
+				for (Iterator<ScheduleEntry> ei = entries.iterator(); ei.hasNext();) {
 					ScheduleEntry se = ei.next();
 					if (se == null)
 						ei.remove();
 				}
-				
+
 				results.addAll(entries);
 			}
 		}
-		
+
 		// Update the codeshare airlines
 		updateCodeshares(results);
 		return results;
