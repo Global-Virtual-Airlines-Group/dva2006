@@ -133,7 +133,7 @@ you may not enroll in any other Flight Academy courses.</td>
 <tr class="title caps">
  <td class="left" colspan="5">EXAMINATIONS</td>
 </tr>
-<c:if test="${examActive != 0}">
+<c:if test="${examActive > 0}">
  <td class="left" colspan="4">You currently are in the process of taking a Pilot Examination.
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
  <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
