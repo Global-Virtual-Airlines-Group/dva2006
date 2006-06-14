@@ -66,10 +66,18 @@ disableButton('SaveButton');
 disableButton('ClearButton');
 return true;
 }
+
+function updateAirline(combo)
+{
+var f = document.forms[0];
+updateAirports(f.airportD, 'useSched=true&airline=' + getValue(combo), false, getValue(f.airportD));
+updateAirports(f.airportA, 'useSched=true&dst=true&airline=' + getValue(combo), false, getValue(f.airportA));
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="updateOrigin(document.forms[0].airportD); initLinks()">
+<body onload="void initLinks()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -83,7 +91,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${fafCriteria.airline}" onChange="void changeAirline(this, true)" /></td>
+ <td class="data"><el:combo name="airline" size="1" idx="*" firstEntry="-" options="${airlines}" value="${fafCriteria.airline}" onChange="void updateAirline(this)" /></td>
  <td class="label">Equipment</td>
  <td class="data"><el:combo name="eqType" size="1" idx="*" firstEntry="-" options="${allEQ}" value="${fafCriteria.equipmentType}" /></td>
 </tr>
@@ -98,7 +106,7 @@ return true;
  <td class="label">Departing from</td>
  <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="void updateOrigin(this)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${emptyList}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
