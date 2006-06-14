@@ -43,24 +43,12 @@ public class GetScheduleAirport extends DAO {
 			if (al != null)
 				_ps.setString(1, al.getCode());
 
-			// Execute the query
-			Collection<Airport> results = new HashSet<Airport>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				Airport a = SystemData.getAirport(rs.getString(1));
-				if (a != null)
-					results.add(a);
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Returns Airports with flights departing or arriving at a particular Airport.
 	 * @param a the Airport bean
@@ -80,22 +68,7 @@ public class GetScheduleAirport extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, a.getIATA());
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			Collection<Airport> results = new LinkedHashSet<Airport>();
-			while (rs.next()) {
-				Airport ap = SystemData.getAirport(rs.getString(1));
-				if (ap != null)
-					results.add(ap);
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -122,24 +95,31 @@ public class GetScheduleAirport extends DAO {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, al.getCode());
 			_ps.setString(2, a.getIATA());
-			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			Collection<Airport> results = new LinkedHashSet<Airport>();
-			while (rs.next()) {
-				Airport ap = SystemData.getAirport(rs.getString(1));
-				if (ap != null)
-					results.add(ap);
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to parse Airport result sets.
+	 */
+	public List<Airport> execute() throws SQLException {
+		
+		// Do the query
+		Collection<Airport> results = new LinkedHashSet<Airport>();
+		ResultSet rs = _ps.executeQuery();
+		
+		// Iterate through the results
+		while (rs.next()) {
+			Airport ap = SystemData.getAirport(rs.getString(1));
+			if (ap != null)
+				results.add(ap);
+		}
+		
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return new ArrayList<Airport>(results);
 	}
 }
