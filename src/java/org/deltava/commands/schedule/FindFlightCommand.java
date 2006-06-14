@@ -93,8 +93,10 @@ public class FindFlightCommand extends AbstractCommand {
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 				
 				// Save destination airport list
-				GetScheduleAirport adao = new GetScheduleAirport(con);
-				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true), REQUEST);
+				if (criteria.getAirportD() != null) {
+					GetScheduleAirport adao = new GetScheduleAirport(con);
+					ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true), REQUEST);
+				}
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
