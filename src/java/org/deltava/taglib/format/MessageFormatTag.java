@@ -1,7 +1,7 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.net.URL;
+import java.net.*;
 import java.util.StringTokenizer;
 
 import javax.servlet.jsp.*;
@@ -88,15 +88,19 @@ public class MessageFormatTag extends TagSupport {
 			while (tkns.hasMoreTokens()) {
 				String token = tkns.nextToken();
 				if (token.startsWith("http://") || token.startsWith("https://")) {
-					URL url = new URL(token); 
-					out.print("<a href=\"");
-					out.print(token);
-					if (!SystemData.get("airline.url").equals(url.getHost()))
-						out.print("\" rel=\"external");
+					try {
+						URL url = new URL(token); 
+						out.print("<a href=\"");
+						out.print(token);
+						if (!SystemData.get("airline.url").equals(url.getHost()))
+							out.print("\" rel=\"external");
 					
-					out.print("\">");
-					out.print(StringUtils.stripInlineHTML(token));
-					out.print("</a>");
+						out.print("\">");
+						out.print(StringUtils.stripInlineHTML(token));
+						out.print("</a>");
+					} catch (MalformedURLException mue) {
+						out.print(token);
+					}
 				} else if ((token.charAt(0) == ':') && (token.length() > 2)
 						&& (token.charAt(token.length() - 1) == ':')) {
 					int iCode = StringUtils.arrayIndexOf(Emoticons.ICON_NAMES, token.substring(1, token.length() - 1));
