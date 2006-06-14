@@ -64,15 +64,16 @@ INPUT, TEXTAREA {
 	background: #F0F4F8;
 }
 
-*.postInfo :link, *.postInfo :visited, *.postInfo :hover {
+*.postInfo :link, *.postInfo :visited, *.postInfo A:hover {
 	font-size: 8pt;
 	color: #0000A1;
 	font-weight: bold;
+	text-decoration: none;
 	font-family: Tahoma, Verdana;
 }
 
 *.postEdit :link, *.postEdit :visited, *.postEdit :hover {
-	font-size: 9pt;
+	font-size: 8pt;
 	color: #0000A1;
 	font-weight: bold;
 	text-decoration: none;
