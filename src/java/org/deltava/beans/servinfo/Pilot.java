@@ -3,14 +3,10 @@ package org.deltava.beans.servinfo;
 
 import java.util.*;
 
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
-
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.GeoPosition;
 
-import org.deltava.util.GeoUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A bean to store online pilot information.
@@ -260,7 +256,7 @@ public class Pilot extends NetworkUser implements MapEntry {
 	 * less than 200 miles from the destination, we calculate Great Circle from the origin to the current
 	 * position, then direct to the destination. 
 	 * @return a List of GeoLocations
-	 * @see GeoUtils#greatCircle(GeoPosition, GeoPosition, int)
+	 * @see GeoUtils#greatCircle(GeoLocation, GeoLocation, int)
 	 */
 	public Collection<GeoLocation> getRoute() {
 		// If we have already generated the route, return it
