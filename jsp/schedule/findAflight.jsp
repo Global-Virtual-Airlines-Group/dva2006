@@ -87,7 +87,7 @@ return true;
 <el:form method="post" action="findflight.do" op="search" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> SCHEDULE SEARCH</td>
+ <td colspan="4"><content:airline /> SCHEDULE SEARCH<span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label">Airline</td>
@@ -152,8 +152,8 @@ return true;
  <td class="sec bld">${flight.equipmentType}</td>
  <td class="small">${flight.airportD.name} (<fmt:airport airport="${flight.airportD}" />) to
  ${flight.airportA.name} (<fmt:airport airport="${flight.airportA}" />)</td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.timeD}" /></td>
- <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.timeA}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportD.TZ}" date="${flight.dateTimeD.UTC}" /></td>
+ <td><fmt:date fmt="t" t="HH:mm" tz="${flight.airportA.TZ}" date="${flight.dateTimeA.UTC}" /></td>
  <td class="sec"><fmt:int value="${flight.distance}" /> miles</td>
 </view:row>
 </c:forEach>
