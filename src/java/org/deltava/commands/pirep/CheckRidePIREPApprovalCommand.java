@@ -40,7 +40,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 		// Get the checkride approval
 		boolean crApproved = Boolean.valueOf(ctx.getParameter("crApprove")).booleanValue();
-
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -50,27 +49,28 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			FlightReport fr = rdao.get(ctx.getID());
 			if (fr == null)
 				throw notFoundException("Flight Report Not Found");
-
-			// Check our access level
-			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
-			access.validate();
-			if (!access.getCanApprove())
-				throw securityException("Cannot approve Flight Report");
-
+			
 			// Get the DAO and the CheckRide
 			GetExam crdao = new GetExam(con);
 			CheckRide cr = crdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT),
 					fr.getEquipmentType(), Test.SUBMITTED);
 
-			// Get the Transfer Request
-			GetTransferRequest txdao = new GetTransferRequest(con);
-			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
-
-			// Check our access level
+			// Check our access levels
+			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
+			access.validate();
 			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
 			crAccess.validate();
 			if (!crAccess.getCanScore())
 				throw securityException("Cannot score Check Ride");
+			
+			// Validate that we can approve the flight Report, OR its Academy and we can approve the checkride
+			boolean canApprove = access.getCanApprove() || (cr.getAcademy() && crAccess.getCanScore());
+			if (!canApprove)
+				throw securityException("Cannot approve Flight Report");
+
+			// Get the Transfer Request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
 
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
