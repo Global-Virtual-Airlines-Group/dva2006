@@ -55,7 +55,12 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     private List<AssignmentInfo> _assignments;
     private Set<String> _eqTypes;
     
-    // TODO JavaDoc
+    /**
+     * Creates a new Online Event.
+     * @param name the event name
+     * @throws NullPointerException if name is null
+     * @see Event#getName()
+     */
     public Event(String name) {
         super();
         setName(name);
@@ -99,6 +104,12 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	return (d2 == null) ? true : d.before(d2);
     }
     
+    /**
+     * Returns the status of this Online Event.
+     * @return the status code
+     * @see Event#setStatus(int)
+     * @see Event#getStatusName()
+     */
     public int getStatus() {
         // If the event was canceled, then return that, otherwise calculate the status
         if (_status == Event.CANCELED)
@@ -115,6 +126,12 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         }
     }
     
+    /**
+     * Returns the status of this Online Event.
+     * @return the status name
+     * @see Event#getStatus()
+     * @see Event#setStatus(int)
+     */
     public String getStatusName() {
     	return STATUS[getStatus()];
     }
@@ -192,26 +209,59 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	return _canSignup;
     }
 
+    /**
+     * Returns the Charts available for this Online Event.
+     * @return a Collection of Chart beans
+     * @see Event#addChart(Chart)
+     * 	@see Event#addCharts(Collection)
+     */
     public Collection<Chart> getCharts() {
         return _charts;
     }
     
+    /**
+     * Returns the Flight Plans available for this Online Event.
+     * @return a Collection of FlightPlan beans
+     * @see Event#addPlan(FlightPlan)
+     */
     public Collection<FlightPlan> getPlans() {
         return _plans;
     }
-    
+
+    /**
+     * Returns the available equipment types for this Online Event.
+     * @return a Collection of equipment names
+     * @see Event#addEquipmentType(String)
+     */
     public Set<String> getEquipmentTypes() {
        return _eqTypes;
     }
     
+    /**
+     * Returns the signups for this Online Event.
+     * @return a Collection of Signup beans
+     * @see Event#addSignup(Signup)
+     * @see Event#isSignedUp(int)
+     */
     public Collection<Signup> getSignups() {
         return _signups;
     }
     
+    /**
+     * Returns the Routes available for this Online Event.
+     * @return a Collection of Route beans
+     * @see Event#addRoute(Route)
+     * @see Event#getRoute(String)
+     */
     public Collection<Route> getRoutes() {
     	return _routes;
     }
     
+    /**
+     * Returns the Airports available for this Online Event, from the available Routes. 
+     * @return a Collection of Airport beans
+     * @see Event#getRoutes()
+     */
     public Collection<Airport> getAirports() {
     	Set<Airport> results = new HashSet<Airport>();
     	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
@@ -223,9 +273,16 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	return results;
     }
     
+    /**
+     * Returns a particular Route pair.
+     * @param routePair a hyphen-separated pair of IATA codes
+     * @return a Route bean, or null if route pair not found
+     * @see Event#getRoutes()
+     * @see Event#addRoute(Route)
+     */
     public Route getRoute(String routePair) {
-    	for (Iterator i = _routes.iterator(); i.hasNext(); ) {
-    		Route r = (Route) i.next();
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
     		if (routePair.equals(r.getComboAlias()))
     			return r;
     	}
@@ -233,9 +290,17 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	return null;
     }
     
+    /**
+     * Returns a Signup for a particular Pilot.
+     * @param pilotID the pilot's database ID
+     * @return a Signup bean, or null if not found
+     * @see Event#getSignups()
+     * @see Event#addSignup(Signup)
+     * @see Event#isSignedUp(int)
+     */
     public Signup getSignup(int pilotID) {
-    	for (Iterator i = _signups.iterator(); i.hasNext(); ) {
-    		Signup s = (Signup) i.next();
+    	for (Iterator<Signup> i = _signups.iterator(); i.hasNext(); ) {
+    		Signup s = i.next();
     		if (s.getPilotID() == pilotID)
     			return s;
     	}
@@ -243,23 +308,26 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	return null;
     }
     
-    public List<AssignmentInfo> getAssignments() {
+    /**
+     * Returns all Flight Assignments for this Online Event.
+     * @return a Collection of AssignmentInfo beans
+     * @see Event#addAssignment(AssignmentInfo)
+     */
+    public Collection<AssignmentInfo> getAssignments() {
         return _assignments;
     }
     
-    public boolean isAssigned(int pilotID) {
-       for (Iterator i = _assignments.iterator(); i.hasNext(); ) {
-          AssignmentInfo ai = (AssignmentInfo) i.next();
-          if (ai.getPilotID() == pilotID)
-             return true;
-       }
-       
-       return false;
-    }
-    
+    /**
+     * Returns wether a Pilot is signed up for this Online Event.
+     * @param pilotID the Pilot's database ID
+     * @return TRUE if the Pilot has signed up, otherwise FALSE
+     * @see Event#getSignups()
+     * @see Event#getSignup(int)
+     * @see Event#addSignup(Signup)
+     */
     public boolean isSignedUp(int pilotID) {
-       for (Iterator i = _signups.iterator(); i.hasNext(); ) {
-          Signup s = (Signup) i.next();
+       for (Iterator<Signup> i = _signups.iterator(); i.hasNext(); ) {
+          Signup s = i.next();
           if (s.getPilotID() == pilotID)
              return true;
        }
@@ -267,6 +335,11 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
        return false;
     }
     
+    /**
+     * Updates the briefing for this Online Event.
+     * @param briefing the briefing text
+     * @see Event#getBriefing()
+     */
     public void setBriefing(String briefing) {
         _briefing = briefing;
     }
@@ -281,16 +354,38 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     	_name = name.trim();
     }
     
+    /**
+     * Adds an available equipment type for this event.
+     * @param eqType the equipment code
+     * @see Event#getEquipmentTypes()
+     */
     public void addEquipmentType(String eqType) {
        _eqTypes.add(eqType);
     }
     
+    /**
+     * Updates this start time of this Online Event. If no signup deadline is currently set, it will default
+     * to one hour before the start time.
+     * @param dt the start date/time
+     * @see Event#getStartTime()
+     * @see Event#setEndTime(Date)
+     * @see Event#setSignupDeadline(Date)
+     */
     public void setStartTime(Date dt) {
         _startTime = dt;
         if (dt != null)
         	_signupDeadline = new Date(dt.getTime() - 60000);
     }
     
+    /**
+     * Updates the end time for this Online Event.
+     * @param dt the end date/time
+     * @throws IllegalArgumentException if dt is before the start time
+     * @throws NullPointerException if the start time is null
+     * @see Event#getEndTime()
+     * @see Event#setStartTime(Date)
+     * @see Event#setSignupDeadline(Date)
+     */
     public void setEndTime(Date dt) {
         if ((dt != null) && (dt.before(_startTime)))
             throw new IllegalArgumentException("End Time cannot be before Start Time");
@@ -298,6 +393,15 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         _endTime = dt;
     }
     
+    /**
+     * Updates the signup deadline for this Online Event.
+     * @param dt the signup deadline date/time
+     * @throws IllegalArgumentException if dt is before the start time
+     * @throws NullPointerException if the start time is null
+     * @see Event#getSignupDeadline()
+     * @see Event#setStartTime(Date)
+     * @see Event#setEndTime(Date)
+     */
     public void setSignupDeadline(Date dt) {
         if ((dt != null) && (dt.after(_startTime)))
             throw new IllegalArgumentException("Signup Deadline cannot be after Start Time");
@@ -305,6 +409,14 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         _signupDeadline = dt;
     }
     
+    /**
+     * Updates the Network used for this Online Event.
+     * @param id the network id code
+     * @throws IllegalArgumentException if id is negative or invalid
+     * @see Event#setNetwork(String)
+     * @see Event#getNetwork()
+     * @see Event#getNetworkName()
+     */
     public void setNetwork(int id) {
         if ((id < 0) || (id >= NETWORKS.length))
             throw new IllegalArgumentException("Invalid Network ID - " + id);
@@ -312,38 +424,94 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         _network = id;
     }
     
+    /**
+     * Updates the Network used for this Online Event.
+     * @param networkName the network name
+     * @throws IllegalArgumentException if networkName is invalid
+     * @see Event#setNetwork(int)
+     * @see Event#getNetworkName()
+     * @see Event#getNetwork()
+     */
     public void setNetwork(String networkName) {
     	setNetwork(StringUtils.arrayIndexOf(NETWORKS, networkName));
     }
 
+    /**
+     * Updates the status of this Online Event.
+     * @param status the status code, if not CANCELED then OPEN
+     * @see Event#getStatus()
+     * @see Event#getStatusName()
+     * @see Event#OPEN
+     * @see Event#CANCELED
+     */
     public void setStatus(int status) {
         _status = (status == Event.CANCELED) ? Event.CANCELED : Event.OPEN;
     }
     
+    /**
+     * Updates the signup available flag for this Online Event.
+     * @param doSignup TRUE if signups are enabled, otherwise FALSE
+     * @see Event#getCanSignup()
+     */
     public void setCanSignup(boolean doSignup) {
     	_canSignup = doSignup;
     }
     
+    /**
+     * Adds a Flight Plan to this Online Event.
+     * @param fp a FlightPlan bean
+     * @see Event#getPlans()
+     */
     public void addPlan(FlightPlan fp) {
         _plans.add(fp);
     }
     
+    /**
+     * Adds a Signup to this Online Event.
+     * @param s a Signup bean
+     * @see Event#getSignups()
+     * @see Event#getSignup(int)
+     * @see Event#isSignedUp(int)
+     */
     public void addSignup(Signup s) {
         _signups.add(s);
     }
     
+    /**
+     * Adds a Flight Route to this Online Event.
+     * @param r a Route bean
+     * @see Event#getRoutes()
+     * @see Event#getRoute(String)
+     */
     public void addRoute(Route r) {
     	_routes.add(r);
     }
     
+    /**
+     * Adds a Flight Assignment to this Online Event.
+     * @param ai an AssignmentInfo bean
+     * @see Event#getAssignments()
+     */
     public void addAssignment(AssignmentInfo ai) {
         _assignments.add(ai);
     }
     
+    /**
+     * Adds an available Chart to this Online Event.
+     * @param c the Chart bean
+     * @see Event#addCharts(Collection)
+     * @see Event#getCharts()
+     */
     public void addChart(Chart c) {
         _charts.add(c);
     }
     
+    /**
+     * Adds a number of Charts to this Online Event.
+     * @param charts a Collection of Chart beans
+     * @see Event#addChart(Chart)
+     * @see Event#getCharts()
+     */
     public void addCharts(Collection<Chart> charts) {
     	_charts.addAll(charts);
     }
