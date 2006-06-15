@@ -424,7 +424,7 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (crAccess.getCanScore())
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
 
-						// Determine if we can score the exam
+						// FIXME Allow Examiner to score the PIREP even if they otherwise couldn't
 						boolean canScoreCR = ac.getCanApprove() && crAccess.getCanScore()
 								&& (cr.getStatus() == Test.SUBMITTED);
 						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
