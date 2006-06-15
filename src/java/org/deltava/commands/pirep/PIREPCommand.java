@@ -424,9 +424,9 @@ public class PIREPCommand extends AbstractFormCommand {
 						if (crAccess.getCanScore())
 							ctx.setAttribute("crPassFail", crApprove, REQUEST);
 
-						// FIXME Allow Examiner to score the PIREP even if they otherwise couldn't
-						boolean canScoreCR = ac.getCanApprove() && crAccess.getCanScore()
-								&& (cr.getStatus() == Test.SUBMITTED);
+						// Allow Examiner to score the PIREP even if they otherwise couldn't
+						boolean canScoreCR = crAccess.getCanScore() && (cr.getStatus() == Test.SUBMITTED);
+						canScoreCR &= (ac.getCanApprove() || cr.getAcademy());
 						ctx.setAttribute("scoreCR", Boolean.valueOf(canScoreCR), REQUEST);
 					} catch (AccessControlException ace) {
 						// nothing
