@@ -66,7 +66,7 @@ var routes;
 
 // Save airports in JS array
 var airports = new Array();
-updateAirports('${aCode}');
+updateAirports(document.forms[0].airline);
 </script>
 </body>
 </map:xhtml>
