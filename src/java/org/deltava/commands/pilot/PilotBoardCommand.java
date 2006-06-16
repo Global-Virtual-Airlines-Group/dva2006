@@ -22,11 +22,11 @@ import org.deltava.util.system.SystemData;
 
 public class PilotBoardCommand extends AbstractCommand {
    
-   private class SpecialLocation implements GeoLocation, MapEntry {
+   private class SpecialLocation implements MapEntry {
       
       private GeoPosition _gPos;
       
-      public SpecialLocation(double lat, double lon) {
+      SpecialLocation(double lat, double lon) {
          super();
          _gPos = new GeoPosition(lat, lon);
       }
