@@ -8,7 +8,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
-import org.deltava.beans.GeoLocation;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
@@ -23,7 +23,10 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ScheduleRouteService extends WebDataService {
-
+	
+	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(Arrays.asList(MapEntry.COLORS),
+			Arrays.asList(MapEntry.LINECOLORS));
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -61,6 +64,7 @@ public class ScheduleRouteService extends WebDataService {
 				gce.setAttribute("from", a.getICAO());
 				gce.setAttribute("to", ap.getICAO());
 				gce.setAttribute("airline", entry.getAirline().getCode());
+				gce.setAttribute("color", LCOLORS.get(entry.getAirline().getColor()));
 				for (Iterator<GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
 					GeoLocation loc = gci.next();
 					Element pe = new Element("pos");
