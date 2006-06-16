@@ -58,6 +58,19 @@ public class ScheduleAirportService extends WebDataService {
 			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.00000"));
 			e.setAttribute("color", al.getColor());
+			
+			// Add Airlines
+			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
+				Airline aal = SystemData.getAirline(ai.next());
+				if (aal != null) {
+					Element ae = new Element("airline");
+					ae.setAttribute("name", aal.getName());
+					ae.setAttribute("code", aal.getCode());
+					e.addContent(ae);
+				}
+			}
+			
+			// Add to results
 			re.addContent(e);
 		}
 		
