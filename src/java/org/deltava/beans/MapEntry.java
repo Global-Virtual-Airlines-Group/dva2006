@@ -60,5 +60,12 @@ public interface MapEntry extends GeoLocation {
    /**
     * All Google Maps icon colors.
     */
-   public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW}; 
+   public static final String[] COLORS = {BLUE, GREEN, ORANGE, PURPLE, RED, WHITE, YELLOW};
+   
+   /**
+    * Google Maps line colors.
+    * @see org.deltava.util.color.GoogleMapsColor#GoogleMapsColor(String)
+    */
+   public static final String[] LINECOLORS = {"89-89-255", "98-217-98", "242-196-12", "236-82-236", "255-64-80",
+	   "255-255-255", "242-242-97"};
 }
