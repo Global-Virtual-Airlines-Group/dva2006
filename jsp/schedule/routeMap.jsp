@@ -20,9 +20,6 @@
 <content:sysdata var="aCode" name="airline.code" />
 <content:getCookie name="acarsMapZoomLevel" default="5" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
-<script language="JavaScript" type="text/javascript">
-document.imgPath = '${imgPath}';
-</script>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -34,12 +31,13 @@ document.imgPath = '${imgPath}';
 <el:form action="routemap.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2"><content:airline /> INTERACTIVE ROUTE MAP<span id="isLoading" /></td>
+ <td colspan="2"><content:airline /> INTERACTIVE ROUTE MAP <span id="isLoading" /></td>
 </tr>
 <c:set var="alCount" value="${0}" scope="request" />
 <tr>
  <td class="label">Airline</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="-" onChange="void updateAirports(this)" /></td>
+ <td class="data"><el:combo ID="airlineCode" name="airline" idx="*" size="1" options="${airlines}" value="${aCode}" firstEntry="-" onChange="void updateAirports(this)" />
+ <el:box ID="showInfo" name="showInfo" idx="*" value="true" className="small" label="Show Airport Information" checked="true" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -53,6 +51,7 @@ document.imgPath = '${imgPath}';
 </content:page>
 <script language="JavaScript" type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
+document.imgPath = '${imgPath}';
 
 // Create the map
 var map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
@@ -66,7 +65,7 @@ var routes;
 
 // Save airports in JS array
 var airports = new Array();
-updateAirports(document.forms[0].airline);
+updateAirports(getElement('airlineCode'));
 </script>
 </body>
 </map:xhtml>
