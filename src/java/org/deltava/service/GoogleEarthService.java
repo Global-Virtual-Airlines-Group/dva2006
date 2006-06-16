@@ -11,6 +11,7 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
 
 import org.deltava.util.*;
+import org.deltava.util.color.GoogleEarthColor;
 
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
@@ -21,70 +22,9 @@ import org.deltava.util.*;
 
 public abstract class GoogleEarthService extends WebDataService {
 
-	protected static final GoogleEarthColor[] COLORS = {GoogleEarthColor.make(208, 184, 0), GoogleEarthColor.make(0, 205, 0),
-		GoogleEarthColor.make(240, 48, 48), GoogleEarthColor.make(80, 192, 240), GoogleEarthColor.make(240, 16, 240),
-		GoogleEarthColor.make(0, 240, 240), GoogleEarthColor.make(240, 240, 64) };
-	
-	protected static class GoogleEarthColor {
-
-		private int _blue;
-		private int _green;
-		private int _red;
-		private int _alpha;
-		
-		public static GoogleEarthColor make(int red, int green, int blue, int alpha) {
-			return new GoogleEarthColor(red, green, blue, alpha);
-		}
-		
-		public static GoogleEarthColor make(int red, int green, int blue) {
-			return new GoogleEarthColor(red, green, blue, 128);
-		}
-		
-		private GoogleEarthColor(int red, int green, int blue, int alpha) {
-			super();
-			_red = (red > 255) ? 255 : red;
-			_green = (green > 255) ? 255: green;
-			_blue = (blue > 255) ? 255 : blue;
-			_alpha = (alpha > 255) ? 255 : alpha;
-		}
-
-		public int getRed() {
-			return _red;
-		}
-		
-		public int getGreen() {
-			return _green;
-		}
-		
-		public int getBlue() {
-			return _blue;
-		}
-		
-		public int getAlpha() {
-			return _alpha;
-		}
-		
-		/**
-		 * Helper method to generate a hex string without 0x and two characters long.
-		 */
-		private String formatHex(int value) {
-			String tmp = StringUtils.formatHex(value).substring(2);
-			return (tmp.length() == 1) ? "0" + tmp : tmp;
-		}
-		
-		public String toString() {
-			StringBuilder buf = new StringBuilder(formatHex(_alpha));
-			buf.append(formatHex(_blue));
-			buf.append(formatHex(_green));
-			buf.append(formatHex(_red));
-			return buf.toString();
-		}
-		
-		public GoogleEarthColor dim(float factor) {
-			return new GoogleEarthColor(Math.round(_red / factor), Math.round(_green / factor),
-					Math.round(_blue / factor), Math.round(_alpha / factor));
-		}
-	}
+	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0),
+		new GoogleEarthColor(240, 48, 48), new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240),
+		new GoogleEarthColor(0, 240, 240), new GoogleEarthColor(240, 240, 64) };
 	
 	/**
 	 * Helper method to generate an airport Placemark element.
@@ -263,7 +203,7 @@ public abstract class GoogleEarthService extends WebDataService {
 		rle.addContent(XMLUtils.createElement("name", "Flight Route"));
 		rle.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 		Element rls = new Element("Style");
-		Element rlce = XMLUtils.createElement("LineStyle", "color", GoogleEarthColor.make(224, 192, 192, 48).toString());
+		Element rlce = XMLUtils.createElement("LineStyle", "color", new GoogleEarthColor(224, 192, 192, 48).toString());
 		rlce.addContent(XMLUtils.createElement("width", "2"));
 		rls.addContent(rlce);
 		rle.addContent(rls);
