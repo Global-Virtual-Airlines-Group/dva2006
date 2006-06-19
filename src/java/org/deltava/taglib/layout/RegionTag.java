@@ -99,7 +99,7 @@ public class RegionTag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (ContentHelper.isIE6(pageContext)) {
+			if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext)) {
 				if (!_parent.isRowOpen()) {
 					out.print("<tr>");
 					_parent.setRowOpen(true);
@@ -138,7 +138,7 @@ public class RegionTag extends TagSupport {
 
 		JspWriter out = pageContext.getOut();
 		try {
-			if (ContentHelper.isIE6(pageContext)) {
+			if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext)) {
 				out.print("</td>");
 				if (_closeRow) {
 					out.print("</tr>");
