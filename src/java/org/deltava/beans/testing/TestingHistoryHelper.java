@@ -311,8 +311,8 @@ public class TestingHistoryHelper {
 		if ((eq.getStage() > getMaxCheckRideStage()) && (!isCaptainInStage(eq.getStage() - 1)))
 			return false;
 
-		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)))
+		// Check if we've passed the FO/CAPT exam for that program
+		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)) && !hasPassed(eq.getExamName(Ranks.RANK_C)))
 			return false;
 
 		// Make sure we're not already in that program
