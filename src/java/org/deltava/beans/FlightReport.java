@@ -82,6 +82,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    public static final int ATTR_CHARTER = 0x100;
    
    /**
+    * Flight flown using Historic equipment.
+    */
+   public static final int ATTR_HISTORIC = 0x200;
+   
+   /**
     * Attribute mask for VATSIM/IVAO/FPI online flights.
     */
    public static final int ATTR_ONLINE_MASK = 0x0E;

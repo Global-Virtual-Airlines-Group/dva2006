@@ -160,6 +160,9 @@ return true;
 <c:if test="${fn:isCharter(pirep)}">
 <div class="pri bld caps">Flight operated as a <content:airline /> Charter</div>
 </c:if>
+<c:if test="${fn:isHistoric(pirep)}">
+<div class="ter bld caps">Flight operated as part of the <content:airline /> Historic program</div>
+</c:if>
 <c:if test="${fn:isPromoLeg(pirep)}">
 <div class="ter bld caps">Flight Leg counts towards promotion to Captain in the <fmt:list value="${pirep.captEQType}" delim=", " /></div>
 </c:if>
@@ -231,7 +234,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" post="true" label="REJECT FLIGHT" />
-<c:if test="${fn:isACARS(pirep)}"><content:filter roles="HR">
+<c:if test="${fn:isACARS(pirep) && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR">
  <el:cmdbutton url="crflag" linkID="0x${pirep.ID}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
