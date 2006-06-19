@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib;
 
 import java.util.*;
@@ -53,12 +53,21 @@ public class ContentHelper {
 	}
 	
     /**
-     * Detects if the browser is Microsoft Internet Explorer.
-     * @return TRUE if the browser is Internet Explorer, otherwise FALSE
+     * Detects if the browser is Microsoft Internet Explorer 7 or below.
+     * @return TRUE if the browser is Internet Explorer 7, otherwise FALSE
      * @see org.deltava.servlet.filter.BrowserTypeFilter
      */
-    public static boolean isIE(PageContext ctx) {
-        return (ctx.getRequest().getAttribute("browser$ie") != null);
+    public static boolean isIE7(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("browser$ie7") != null);
+    }
+    
+    /**
+     * Detects if the browser is Microsoft Internet Explorer 6 or below.
+     * @return TRUE if the browser is Internet Explorer 5 or 6, otherwise FALSE
+     * @see org.deltava.servlet.filter.BrowserTypeFilter
+     */
+    public static boolean isIE6(PageContext ctx) {
+    	return (ctx.getRequest().getAttribute("browser$ie") != null);
     }
     
     /**

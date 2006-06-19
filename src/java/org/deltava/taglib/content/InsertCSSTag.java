@@ -25,6 +25,7 @@ public class InsertCSSTag extends InsertContentTag {
 	private String _host;
 	private String _scheme;
 	private boolean _browserSpecific;
+	private String _ie7suffix;
 
 	/**
 	 * Sets wether to include a brower-specific Cascading Style Sheet.
@@ -49,6 +50,14 @@ public class InsertCSSTag extends InsertContentTag {
 	 */
 	public void setScheme(String name) {
 		_scheme = name;
+	}
+	
+	/**
+	 * Overrides the file suffix to use for Internet Explorer 7.
+	 * @param suffix the suffix
+	 */
+	public void setIe7suffix(String suffix) {
+		_ie7suffix = suffix;
 	}
 
 	/**
@@ -91,11 +100,13 @@ public class InsertCSSTag extends InsertContentTag {
 
 		// Append browser-specific extension
 		if (_browserSpecific) {
-			if (ContentHelper.isFirefox(pageContext)) {
-				buf.append("_ff");
-			} else if (ContentHelper.isIE(pageContext)) {
-				buf.append("_ie");
-			}
+			buf.append('_');
+			if (ContentHelper.isFirefox(pageContext))
+				buf.append("ff");
+			else if (ContentHelper.isIE7(pageContext) && (_ie7suffix != null))
+				buf.append(_ie7suffix);
+			else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
+				buf.append("ie");
 		}
 
 		buf.append(".css");
@@ -136,5 +147,6 @@ public class InsertCSSTag extends InsertContentTag {
 		super.release();
 		_scheme = null;
 		_host = null;
+		_ie7suffix = null;
 	}
 }
