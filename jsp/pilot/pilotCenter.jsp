@@ -378,11 +378,16 @@ training session with a Flight Academy instructor to meet online for test flight
 situations where a virtual Flight Instructor can asisst you in your development.</td>
 </tr>
 </c:if>
-<content:filter roles="HR,Instructor">
+<content:filter roles="HR,Instructor,Examiner">
 <tr>
  <td class="mid"><el:cmd url="courses" className="bld">Active Courses</el:cmd></td>
  <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy 
 training course.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="academyridequeue" className="bld">Submitted Check Rides</el:cmd></td>
+ <td class="data">You can view submitted <content:airline /> Flight Academy Check Rides that are
+ awaiting scoring by a Flight Academy Examiner.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd url="certs" className="bld">Certification Profiles</el:cmd></td>

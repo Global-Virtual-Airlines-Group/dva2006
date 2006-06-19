@@ -1,10 +1,11 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.List;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.ComboAlias;
+import org.deltava.beans.academy.Course;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -50,6 +51,18 @@ public class CheckRideCommand extends AbstractCommand {
          access.validate();
          if (!access.getCanRead())
             throw securityException("Cannot view Check Ride");
+         
+         // Load Flight Academy data
+         if (cr.getAcademy()) {
+        	 Collection<Integer> ids = new HashSet<Integer>();
+        	 ids.add(new Integer(cr.getID()));
+        	 
+        	 // Get the DAO and the course
+        	 GetAcademyCourses acdao = new GetAcademyCourses(con);
+        	 List<Course> courses = new ArrayList<Course>(acdao.getByCheckRide(ids));
+        	 if (!courses.isEmpty())
+        		 ctx.setAttribute("course", courses.get(0), REQUEST);
+         }
          
          // Load the pilot data
          GetPilot pdao = new GetPilot(con);

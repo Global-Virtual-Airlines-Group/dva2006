@@ -16,7 +16,9 @@ public class CheckRide extends Test {
 	
 	private String _eqType;
 	private String _acType;
+	
 	private int _acarsID;
+	private int _courseID;
 
     /**
      * Creates a new Check Ride/Video.
@@ -34,6 +36,15 @@ public class CheckRide extends Test {
      */
     public int getFlightID() {
        return _acarsID;
+    }
+    
+    /**
+     * Returns the Flight Academy Course this CheckRide is associated with.
+     * @return the Course's database ID, or zero if no Course
+     * @see CheckRide#setCourseID(int)
+     */
+    public int getCourseID() {
+    	return _courseID;
     }
     
     /**
@@ -82,7 +93,7 @@ public class CheckRide extends Test {
     }
     
     /**
-     * Sets the ACARS Flight ID for this check ride.
+     * Sets the ACARS Flight ID for this Check Ride.
      * @param id the ACARS Flight ID
      * @throws IllegalArgumentException if id is negative
      * @see CheckRide#getFlightID()
@@ -92,6 +103,23 @@ public class CheckRide extends Test {
           validateID(_acarsID, id);
        
        _acarsID = id;
+    }
+
+    /**
+     * Updates the Flight Academy Course ID for this Check Ride.
+     * @param id the Flight Academy Course database ID
+     * @throws IllegalStateException if this is not a Flight Academy Check Ride
+     * @throws IllegalArgumentException if id is negative
+     * @see CheckRide#getCourseID()
+     * @see Test#getAcademy()
+     */
+    public void setCourseID(int id) {
+    	if (!getAcademy() && (id != 0))
+    		throw new IllegalStateException("Not a Flight Academy Check Ride");
+    	else if (id != 0)
+    		validateID(_courseID, id);
+    	
+    	_courseID = id;
     }
     
     /**

@@ -48,9 +48,8 @@ public class ExamAccessControl extends AccessControl {
 
         // Set access variables
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
-        boolean isExam = _ctx.isUserInRole("Examination");
+        boolean isExam = _t.getAcademy() ? _ctx.isUserInRole("Examiner") : _ctx.isUserInRole("Examination");
         boolean isHR = _ctx.isUserInRole("HR");
-        boolean isINS = _ctx.isUserInRole("Instructor");
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
@@ -66,8 +65,8 @@ public class ExamAccessControl extends AccessControl {
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin");
-        _canScore = _canEdit || (isSubmitted && (_t.getAcademy() ? (isHR || _ctx.isUserInRole("Examiner")) : isExam));
-        _canViewAnswers = isScored && (isHR || (_t.getAcademy() ? (_ctx.isUserInRole("Examiner") || isINS) : isExam));
+        _canScore = _canEdit || (isSubmitted && isExam);
+        _canViewAnswers = isScored && (isHR || isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
         
         // Throw an exception if we cannot view
         if (!_canRead)

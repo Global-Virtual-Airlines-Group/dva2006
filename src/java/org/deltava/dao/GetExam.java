@@ -8,6 +8,7 @@ import org.deltava.beans.testing.*;
 import org.deltava.comparators.TestComparator;
 
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
@@ -118,11 +119,15 @@ public class GetExam extends DAO {
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
-					+ "AND (CR.ID=?)");
-			_ps.setInt(1, id);
+			if (SystemData.getBoolean("academy.enabled"))
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ID=?)");
+			else
+				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+						+ "AND (CR.ID=?)");	
 
 			// Execute the query
+			_ps.setInt(1, id);
 			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
 		} catch (SQLException se) {
@@ -139,11 +144,15 @@ public class GetExam extends DAO {
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE "
-					+ "(CR.EQTYPE=EQ.EQTYPE) AND (ACARS_ID=?)");
-			_ps.setInt(1, acarsID);
-
+			if (SystemData.getBoolean("academy.enabled"))
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ACARS_ID=?)");
+			else
+				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE "
+						+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.ACARS_ID=?)");
+			
 			// Execute the query
+			_ps.setInt(1, acarsID);
 			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
 		} catch (SQLException se) {
@@ -194,9 +203,40 @@ public class GetExam extends DAO {
 	 */
 	public Collection<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
-					+ " AND (CR.PILOT_ID=?) ORDER BY CREATED");
+			if (SystemData.getBoolean("academy.enabled"))
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) "
+						+ "ORDER BY CR.CREATED");
+			else
+				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+					+ " AND (CR.PILOT_ID=?) ORDER BY CR.CREATED");
 			_ps.setInt(1, pilotID);
+			return executeCheckride();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all submitted Check Rides.
+	 * @param isAcademy TRUE if listing Flight Academy Check Rides, otherwise FALSE
+	 * @return a Collection of CheckRide beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<CheckRide> getCheckRideQueue(boolean isAcademy) throws DAOException {
+		try {
+			if (isAcademy) {
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+						+ "COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) "
+						+ "AND (CR.ACADEMY=?) ORDER BY CR.CREATED");
+			} else {
+				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+						+ " AND (CR.STATUS=?) AND (CR.ACADEMY=?) ORDER BY CR.CREATED");
+			}
+			
+			// Execute the query
+			_ps.setInt(1, Test.SUBMITTED);
+			_ps.setBoolean(2, isAcademy);
 			return executeCheckride();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -217,15 +257,18 @@ public class GetExam extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query
-			List<Test> results = new ArrayList<Test>();
-			results.addAll(execute());
+			List<Test> results = new ArrayList<Test>(execute());
 
-			// Load videos
-			prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
-					+ "AND (CR.PILOT_ID=?)");
-			_ps.setInt(1, id);
-
+			// Load Check Rides
+			if (SystemData.getBoolean("academy.enabled"))
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?)");
+			else
+				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
+						+ "AND (CR.PILOT_ID=?)");
+			
 			// Execute the query
+			_ps.setInt(1, id);
 			results.addAll(executeCheckride());
 
 			// Sort the results to merge them in by date
@@ -336,6 +379,7 @@ public class GetExam extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasAcademy = (rs.getMetaData().getColumnCount() > 15);
 
 		// Iterate through the results
 		List<CheckRide> results = new ArrayList<CheckRide>();
@@ -355,6 +399,8 @@ public class GetExam extends DAO {
 			cr.setAircraftType(rs.getString(13));
 			cr.setAcademy(rs.getBoolean(14));
 			cr.setStage(rs.getInt(15));
+			if (hasAcademy)
+				cr.setCourseID(rs.getInt(16));
 
 			// Add to results
 			results.add(cr);

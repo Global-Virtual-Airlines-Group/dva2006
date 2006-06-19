@@ -50,8 +50,15 @@ return true;
 <c:if test="${checkRide.flightID != 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> 
-<el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" />
+ <el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+</tr>
+</c:if>
+<c:if test="${!empty course}">
+<tr>
+ <td class="label">Flight Academy Course</td>
+ <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
+ <el:cmdbutton url="course" linkID="0x${course.ID}" label="VIEW COURSE" /></td>
 </tr>
 </c:if>
 <tr>

@@ -174,6 +174,8 @@ public class SetExam extends DAO {
 	 */
 	public void write(String dbName, CheckRide cr) throws DAOException {
 		try {
+			startTransaction();
+			
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
 				prepareStatement("INSERT INTO " + formatDBName(dbName) + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
@@ -210,6 +212,36 @@ public class SetExam extends DAO {
 			// Update the database ID
 			if (cr.getID() == 0)
 				cr.setID(getNewID());
+			
+			// Write the Flight Academy data
+			if (cr.getCourseID() != 0)
+				linkCheckRide(cr);
+
+			// Commit the transaction
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Links a CheckRide to a Flight Academy course.
+	 * @param cr the CheckRide bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void linkCheckRide(CheckRide cr) throws DAOException {
+		try {
+			if (cr.getCourseID() == 0)
+				prepareStatement("DELETE FROM COURSERIDES WHERE (CHECKRIDE=?)");
+			else {
+				prepareStatement("REPLACE INTO COURSERIDES (CHECKRIDE, COURSE) VALUES (?, ?)");
+				_ps.setInt(2, cr.getID());
+			}
+			
+			// Execute the statement
+			_ps.setInt(1, cr.getID());
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
