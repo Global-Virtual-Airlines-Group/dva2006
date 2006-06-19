@@ -168,7 +168,9 @@ public class GetStatistics extends DAO {
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ACARS);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(3, FlightReport.ATTR_HISTORIC);
+			_ps.setInt(4, FlightReport.OK);
 
 			// Execute the query
 			List<FlightStatsEntry> results = new ArrayList<FlightStatsEntry>();
@@ -176,6 +178,8 @@ public class GetStatistics extends DAO {
 			while (rs.next()) {
 				FlightStatsEntry entry = new FlightStatsEntry(rs.getString(1), rs.getInt(2), rs.getDouble(4), rs.getInt(3));
 				entry.setACARSLegs(rs.getInt(7));
+				entry.setOnlineLegs(rs.getInt(8));
+				entry.setHistoricLegs(rs.getInt(9));
 				results.add(entry);
 			}
 
@@ -328,7 +332,8 @@ public class GetStatistics extends DAO {
 		buf.append(groupBy);
 		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, ROUND(SUM(F.FLIGHT_TIME), 1) "
 				+ "AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(DISTANCE) AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) "
-				+ "AS ACARSLEGS FROM PIREPS F WHERE (F.STATUS=?) GROUP BY LABEL ORDER BY ");
+				+ "AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM "
+				+ "PIREPS F WHERE (F.STATUS=?) GROUP BY LABEL ORDER BY ");
 		return buf;
 	}
 
@@ -339,9 +344,10 @@ public class GetStatistics extends DAO {
 		StringBuilder buf = new StringBuilder("SELECT ");
 		buf.append(groupBy);
 		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
-			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) "
-			+ "AS AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS FROM PILOTS P, PIREPS F WHERE "
-			+ "(P.ID=F.PILOT_ID) AND (F.STATUS=?) GROUP BY LABEL ORDER BY ");
+			+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
+			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
+			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND "
+			+ "(F.STATUS=?) GROUP BY LABEL ORDER BY ");
 		return buf;
 	}
 }

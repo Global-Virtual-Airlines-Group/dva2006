@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.List;
@@ -22,16 +22,16 @@ import org.deltava.util.StringUtils;
 public class FlightStatsCommand extends AbstractViewCommand {
 
 	// Sort by options
-	private static final String[] SORT_NAMES = { "Flight Legs", "Miles Flown", "Flight Hours", "Avg. Hours",
-			"Avg. Miles" };
-	private static final String[] SORT_CODE = { "LEGS", "MILES", "HOURS", "AVGHOURS", "AVGMILES" };
-	private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
+	private static final String[] SORT_CODE = {"LEGS", "MILES", "HOURS", "AVGHOURS", "AVGMILES", "F.DATE", "ACARSLEGS",
+		"OLEGS", "HISTLEGS"};
+	private static final List SORT_OPTIONS = ComboUtils.fromArray(new String[] {"Flight Legs", "Miles Flown", "Flight Hours", 
+			"Avg. Hours", "Avg. Miles", "Flight Date", "ACARS Legs", "Online Legs", "Historic Legs"}, SORT_CODE);
 
 	// Group by options
-	private static final String[] GROUP_NAMES = { "Pilot Name", "Flight Date", "Equipment Type", "Month", "Week" };
 	private static final String[] GROUP_CODE = { "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE",
 			"$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)" };
-	private static final List GROUP_OPTIONS = ComboUtils.fromArray(GROUP_NAMES, GROUP_CODE);
+	private static final List GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Flight Date", "Equipment Type", 
+			"Month", "Week" }, GROUP_CODE);
 
 	/**
 	 * Execute the command.

@@ -14,6 +14,8 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	
 	private int _legs;
 	private int _acarsLegs;
+	private int _onlineLegs;
+	private int _historicLegs;
 	private double _hours;
 	private int _miles;
 	
@@ -51,9 +53,28 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	/**
 	 * Returns the number of ACARS legs linked to this entry.
 	 * @return the number of legs using ACARS
+	 * @see FlightStatsEntry#setACARSLegs(int)
 	 */
 	public int getACARSLegs() {
 		return _acarsLegs;
+	}
+	
+	/**
+	 * Returns the number of Historic legs linked to this entry.
+	 * @return the number of legs using historic equipment
+	 * @see FlightStatsEntry#setHistoricLegs(int)
+	 */
+	public int getHistoricLegs() {
+		return _historicLegs;
+	}
+	
+	/**
+	 * Returns the number of Online legs linked to this entry. 
+	 * @return the number of legs flown online
+	 * @see FlightStatsEntry#setOnlineLegs(int)
+	 */
+	public int getOnlineLegs() {
+		return _onlineLegs;
 	}
 	
 	/**
@@ -95,6 +116,8 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	/**
 	 * Returns the percentage of flights logged using ACARS.
 	 * @return the percentage of ACARS flights
+	 * @see FlightStatsEntry#setACARSLegs(int)
+	 * @see FlightStatsEntry#getACARSLegs()
 	 */
 	public double getACARSPercent() {
 		return (_legs == 0) ? 0 : _acarsLegs * 1.0 / _legs;
@@ -103,9 +126,28 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	/**
 	 * Updates the number of ACARS legs linked to this entry.
 	 * @param legs the number of legs logged using ACARS
+	 * @see FlightStatsEntry#getACARSLegs()
 	 */
 	public void setACARSLegs(int legs) {
 		_acarsLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of Historic legs linked to this entry.
+	 * @param legs the number of legs flown using Historic equipment
+	 * @see FlightStatsEntry#getHistoricLegs()
+	 */
+	public void setHistoricLegs(int legs) {
+		_historicLegs = legs;
+	}
+	
+	/**
+	 * Updates the number of Online legs linked to this entry.
+	 * @param legs the number of legs flown online
+	 * @see FlightStatsEntry#getOnlineLegs()
+	 */
+	public void setOnlineLegs(int legs) {
+		_onlineLegs = legs;
 	}
 	
 	/**

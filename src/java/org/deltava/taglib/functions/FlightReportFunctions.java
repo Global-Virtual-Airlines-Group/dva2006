@@ -81,6 +81,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight is a Historic flight.
+     * @param fr the Flight Report
+     * @return TRUE if the ATTR_HISTORIC attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_HISTORIC
+     */
+    public static boolean isHistoric(FlightReport fr) {
+    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_HISTORIC);
+    }
+    
+    /**
      * Returns if this Flight is a Charter operation.
      * @param fr the Flight Report
      * @return TRUE if the ATTR_CHARTER attribute is present, otherwise FALSE

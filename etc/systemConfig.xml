@@ -197,6 +197,7 @@
 		<equipment>B720</equipment>
 		<equipment>B707-120</equipment>
 		<equipment>B707-320</equipment>
+		<equipment>B727-100</equipment>
 		<equipment>B727-200</equipment>
 		<equipment>B737-200</equipment>
 		<equipment>B737-300</equipment>
@@ -250,12 +251,52 @@
 		<equipment>ERJ-145</equipment>
 		<equipment>ERJ-170</equipment>
 		<equipment>L-1011</equipment>
-		<equipment>L-10A</equipment>
+		<equipment>L-10</equipment>
 		<equipment>L-100</equipment>
 		<equipment>MD-11</equipment>
 		<equipment>MD-88</equipment>
 		<equipment>MD-90</equipment>
 		<equipment>S340</equipment>
+	</list>
+
+	<!-- historic equipment types -->
+	<list name="eqtypes.historic" attr="equipment" sorted="true">
+		<equipment>A310</equipment>
+		<equipment>B720</equipment>
+		<equipment>B707-120</equipment>
+		<equipment>B707-320</equipment>
+		<equipment>B727-100</equipment>
+		<equipment>B727-200</equipment>
+		<equipment>B737-200</equipment>
+		<equipment>B747-100</equipment>
+		<equipment>Caravelle</equipment>
+		<equipment>Comet</equipment>
+		<equipment>Concorde</equipment>
+		<equipment>Constellation</equipment>
+		<equipment>CV-880</equipment>
+		<equipment>CV-990</equipment>
+		<equipment>DC-10-10</equipment>
+		<equipment>DC-10-30</equipment>
+		<equipment>DC-10-40</equipment>
+		<equipment>DC-3</equipment>
+		<equipment>DC-6</equipment>
+		<equipment>DC-7</equipment>
+		<equipment>DC-8-11</equipment>
+		<equipment>DC-8-21</equipment>
+		<equipment>DC-8-33</equipment>
+		<equipment>DC-8-42</equipment>
+		<equipment>DC-8-51</equipment>
+		<equipment>DC-8-61</equipment>
+		<equipment>DC-8-62</equipment>
+		<equipment>DC-8-71</equipment>
+		<equipment>DC-8-72</equipment>
+		<equipment>DC-9-14</equipment>
+		<equipment>DC-9-32</equipment>
+		<equipment>DC-9-50</equipment>
+		<equipment>L-1011</equipment>
+		<equipment>L-10</equipment>
+		<equipment>L-100</equipment>
+		<equipment>MD-11</equipment>
 	</list>
 	
 	<!-- JDBC data source configuration -->
