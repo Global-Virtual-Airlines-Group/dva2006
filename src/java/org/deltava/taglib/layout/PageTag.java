@@ -51,7 +51,7 @@ public class PageTag extends TagSupport {
 	 */
 	public int doStartTag() throws JspException {
 		// Do nothing for non-IE6
-		if (!ContentHelper.isIE6(pageContext))
+		if (!ContentHelper.isIE6(pageContext) && !ContentHelper.isIE7(pageContext))
 			return EVAL_BODY_INCLUDE;
 
 		// Render a table for IE
@@ -72,7 +72,7 @@ public class PageTag extends TagSupport {
 	 * @throws JspException if an error occurs
 	 */
 	public int doEndTag() throws JspException {
-		if (ContentHelper.isIE6(pageContext)) {
+		if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext)) {
 			JspWriter out = pageContext.getOut();
 			try {
 				if (_rowOpen)
