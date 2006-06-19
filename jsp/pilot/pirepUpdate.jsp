@@ -17,6 +17,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="academyEnabled" name="academy.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -118,10 +119,13 @@ This Flight Report has been succesfully deleted from the database.<br />
 <br />
 </c:if>
 
-<c:if test="${isApprove || isReject || isHold}">
-To return to the submitted Flight Report queue, <el:cmd url="pirepqueue" className="bld">Click Here</el:cmd>.<br />
+<content:filter roles="PIREP"><c:if test="${isApprove || isReject || isHold}">
+To return to the <content:airline /> submitted Flight Report queue, <el:cmd url="pirepqueue" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-</c:if>
+</c:if></content:filter>
+<content:filter roles="Examiner,HR"><c:if test="${academyEnabled}">
+To return to the <content:airline /> Flight Academy Check Ride queue, <el:cmd url="academyridequeue" className="sec bld">Click Here</el:cmd>.<br />
+</c:if></content:filter>
 <c:if test="${!isDeleted}">
 To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>

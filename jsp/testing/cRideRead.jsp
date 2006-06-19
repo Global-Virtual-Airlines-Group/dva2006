@@ -41,6 +41,13 @@
 <el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
+<c:if test="${!empty course}">
+<tr>
+ <td class="label">Flight Academy Course</td>
+ <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
+ <el:cmdbutton url="course" linkID="0x${course.ID}" label="VIEW COURSE" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Assigned on</td>
  <td class="data"><fmt:date fmt="d" date="${checkRide.date}" /></td>

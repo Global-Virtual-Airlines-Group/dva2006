@@ -109,6 +109,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			cr.setStage(c.getStage());
 			cr.setEquipmentType(SystemData.get("academy.eqType"));
 			cr.setAircraftType(ctx.getParameter("acType"));
+			cr.setCourseID(c.getID());
 			
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -120,7 +121,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Write the checkride to the database
 			SetExam exwdao = new SetExam(con);
 			exwdao.write(cr);
-
+			
 			// Save the checkride in the request
 			ctx.setAttribute("checkRide", cr, REQUEST);
 		} catch (DAOException de) {

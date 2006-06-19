@@ -23,6 +23,11 @@
 			<type>java.lang.Boolean</type>
 		</attribute>
 		<attribute>
+			<name>ie7suffix</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>host</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -130,7 +135,25 @@
 		<attribute>
 			<name>ie</name>
 			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>ie6</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>ie7</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Boolean</type>
+		</attribute>
+		<attribute>
+			<name>mozilla</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
 			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
