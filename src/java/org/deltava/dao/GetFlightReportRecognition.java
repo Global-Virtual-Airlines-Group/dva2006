@@ -107,7 +107,7 @@ public class GetFlightReportRecognition extends GetFlightReports {
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
 				+ "PILOTS P LEFT JOIN PIREPS PR ON (PR.PILOT_ID=P.ID) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) "
 				+ "LEFT JOIN ACARS_PIREPS APR ON (PR.ID=APR.ID) LEFT JOIN acars.FLIGHTS F ON (F.ID=APR.ACARS_ID) "
-				+ "LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (P.EQTYPE=?) AND (C.CLIENT_BUILD >= ?) AND "
+				+ "LEFT JOIN acars.CONS C ON (C.ID=F.CON_ID) WHERE (PR.EQTYPE=?) AND (C.CLIENT_BUILD >= ?) AND "
 				+ "(PR.STATUS=?) AND (APR.LANDING_VSPEED < 0)");
 
 		// Append number of days
