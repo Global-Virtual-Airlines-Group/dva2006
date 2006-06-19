@@ -70,6 +70,35 @@ public class GetAcademyCourses extends DAO {
 	}
 	
 	/**
+	 * Returns all Flight Academy Course profiles for particular Check Rides.
+	 * @param ids a Collection of Check Ride database IDs
+	 * @return a Collection of Course beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Course> getByCheckRide(Collection<Integer> ids) throws DAOException {
+		if (ids.isEmpty())
+			return Collections.emptyList();
+		
+		// Build SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR, COURSERIDES CRR "
+				+ "WHERE (C.CERTNAME=CR.NAME) AND (CRR.COURSE=C.ID) AND (CRR.CHECKRIDE IN (");
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append("))");
+		try {
+			prepareStatement(sqlBuf.toString());
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all Flight Academy Course profiles for a particular Pilot.
 	 * @param pilotID the Pilot's databae ID
 	 * @return a Collection of Course beans
@@ -117,23 +146,23 @@ public class GetAcademyCourses extends DAO {
 	}
 
 	/**
-	 * Returns all active Flight Academy Course profiles.
+	 * Returns all Flight Academy Course profiles with a particular status.
 	 * @param sortBy the sort column SQL
+	 * @param status the Course status code
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Course> getActive(String sortBy) throws DAOException {
+	public Collection<Course> getByStatus(String sortBy, int status) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM COURSES C, "
 				+ "CERTS CR LEFT JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) "
-				+ "AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY ");
+				+ "AND (C.STATUS=?) GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, Course.STARTED);
-			_ps.setInt(2, Course.PENDING);
+			_ps.setInt(1, status);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

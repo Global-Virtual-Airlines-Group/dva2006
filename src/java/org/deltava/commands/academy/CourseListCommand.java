@@ -22,13 +22,14 @@ import org.deltava.util.*;
 public class CourseListCommand extends AbstractViewCommand {
 	
 	// Sort options
-	private static final String[] SORT_CODE = {"C.STARTDATE", "LC DESC", "CR.STAGE"};
-	private static final String[] SORT_OPTIONS = {"Start Date", "Last Comment", "Course Stage"};
+	private static final String[] SORT_CODE = {"C.STARTDATE", "C.STARTDATE DESC", "LC DESC", "CR.STAGE"};
+	private static final List<ComboAlias> SORT_OPTS = ComboUtils.fromArray(new String [] {"Earliest Enrollment", 
+			"Latest Enrollment", "Last Comment", "Course Stage"}, SORT_CODE);
 	
 	// Filtering options
-	private static final String[] VIEW_CODE = {"all", "active", "complete"};
+	private static final String[] VIEW_CODE = {"all", "active", "pending", "complete"};
 	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] {"All Courses", 
-			"Active Courses", "Completed Courses"}, VIEW_CODE);
+			"Active Courses", "Pending Enrollments", "Completed Courses"}, VIEW_CODE);
 
 	/**
 	 * Executes the command.
@@ -60,10 +61,14 @@ public class CourseListCommand extends AbstractViewCommand {
 					break;
 					
 				case 1 :
-					courses = dao.getActive(vc.getSortType());
+					courses = dao.getByStatus(vc.getSortType(), Course.STARTED);
 					break;
 					
-				case 2:					
+				case 2:
+					courses = dao.getByStatus(vc.getSortType(), Course.PENDING);
+					break;
+					
+				case 3:					
 				default:
 					courses = dao.getCompleted(0, vc.getSortType());
 			}
@@ -88,7 +93,7 @@ public class CourseListCommand extends AbstractViewCommand {
 		}
 		
 		// Save sort options
-        ctx.setAttribute("sortTypes", ComboUtils.fromArray(SORT_OPTIONS, SORT_CODE), REQUEST);
+        ctx.setAttribute("sortTypes", SORT_OPTS, REQUEST);
 		ctx.setAttribute("viewOpts", VIEW_OPTS, REQUEST);
 
 		// Forward to the JSP

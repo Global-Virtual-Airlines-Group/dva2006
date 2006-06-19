@@ -36,7 +36,7 @@ public class CertificationAccessControl extends AccessControl {
 
 		// Calculate roles - abort if we cannot read
 		boolean isHR = _ctx.isUserInRole("HR");
-		if (!isHR && !_ctx.isUserInRole("Instructor"))
+		if (!isHR && !_ctx.isUserInRole("Instructor") && !_ctx.isUserInRole("Examiner"))
 			throw new AccessControlException("Not Authorized");
 		
 		_canCreate = isHR;
