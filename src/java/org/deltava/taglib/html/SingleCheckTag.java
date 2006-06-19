@@ -65,7 +65,7 @@ public class SingleCheckTag extends FormElementTag {
 	 * @param jsEvent the JavaScript event code
 	 */
 	public void setOnChange(String jsEvent) {
-		_data.setAttribute(ContentHelper.isIE(pageContext) ? "onclick" : "onchange", jsEvent);
+		_data.setAttribute(ContentHelper.isIE6(pageContext) ? "onclick" : "onchange", jsEvent);
 	}
 
 	/**
