@@ -13,7 +13,8 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="2" />
+<content:sysdata var="imgPath" name="path.img" />
+<map:api version="2" current="true" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function updateLocation()
@@ -32,12 +33,77 @@ map.addOverlay(usrLocation);
 return true;
 }
 
+function geoLocate(addr)
+{
+if (addr.value.length < 3) return false;
+
+// Do the lookup
+var isLoading = getElement('isLoading');
+isLoading.innerHTML = ' - SEARCHING...';
+disableButton('SearchButton');
+geoCoder.getLocations(addr.value, showResponse);
+return true;
+}
+
+function showResponse(response)
+{
+var f = document.forms[0];
+var isLoading = getElement('isLoading');
+isLoading.innerHTML = '';
+enableElement('SearchButton', true);
+
+// Check for failure
+if ((!response) || (response.Status.code != 200)) {
+	alert('Cannot find "' + f.geoAddr.value + '"!');
+	return false;
+}
+
+// Get the placemark
+var pm = response.Placemark[0];
+var p = point = new GLatLng(pm.Point.coordinates[1], pm.Point.coordinates[0]);
+var lbl = '<span class="small"><b>' + pm.address + '<\/b><br /><br /><a href="javascript:void setLatLon(null, new GPoint('
+	+ p.lng() + ',' +  p.lat() + '));">SET LOCATION</a></span>';
+var mrk = googleMarker('${imgPath}', 'white', p, lbl);
+GEvent.addListener(mrk, 'infowindowclose', function() { map.removeOverlay(mrk); });
+map.addOverlay(mrk);
+map.setCenter(p, 14);
+return true;
+}
+
+function setLatLon(overlay, geoPosition)
+{
+var f = document.forms[0];
+
+// Update Latitude
+var isSouth = (geoPosition.y < 0);
+f.latD.value = Math.abs((isSouth) ? Math.ceil(geoPosition.y) : Math.floor(geoPosition.y));
+var latF = Math.abs(geoPosition.y) - parseInt(f.latD.value);
+f.latM.value = Math.floor(latF * 60);
+f.latS.value = Math.floor((latF % (1/60)) * 3600);
+f.latDir.selectedIndex = (isSouth) ? 1 : 0;
+
+// Update Longitude
+var isWest = (geoPosition.x < 0);
+f.lonD.value = Math.abs((isWest) ? Math.ceil(geoPosition.x) : Math.floor(geoPosition.x));
+var lonF = Math.abs(geoPosition.x) - parseInt(f.lonD.value);
+f.lonM.value = Math.floor(lonF * 60);
+f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
+f.lonDir.selectedIndex = (isWest) ? 1 : 0;
+
+map.removeOverlay(usrLocation);
+usrLocation = googleMarker('${imgPath}','blue',geoPosition,labelText);
+map.addOverlay(usrLocation);
+map.closeInfoWindow();
+return true;
+}
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('SearchButton');
 disableButton('DeleteButton');
 return true;
 }
@@ -48,14 +114,13 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="imgPath" name="path.img" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="geolocate.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">PILOT LOCATION</td>
+ <td colspan="2">PILOT LOCATION <span id="isLoading" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Map</td>
@@ -79,6 +144,13 @@ randomize your location within a 3 mile circle each time the Pilot Location Boar
 <el:text name="lonM" idx="*" size="2" max="2" value="${lonM}" onBlur="void updateLocation()" /> minutes 
 <el:text name="lonS" idx="*" size="2" max="2" value="${lonS}" onBlur="void updateLocation()" /> seconds 
 <el:combo name="lonDir" idx="*" size="1" options="${lonDir}" value="${lonEW}" onChange="void updateLocation()" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Zoom to</td>
+ <td class="data"><el:text name="geoAddr" idx="*" size="64" max="96" value="" />
+ <el:button ID="SearchButton" className="BUTTON" onClick="void geoLocate(document.forms[0].geoAddr)" label="SEARCH" /><br />
+<span class="small">You can type in a location or address to zoom to. <i>To protect your privacy, no
+ address data will be sent to <content:airline />.</i></span></td>
 </tr>
 </el:table>
 
@@ -104,6 +176,7 @@ var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
+var geoCoder = new GClientGeocoder();
 
 // Add user's location
 var usrLocation;
@@ -114,31 +187,7 @@ addMarkers(map, 'usrLocation');
 </c:if>
 
 // Set onClick event for the map
-GEvent.addListener(map, 'click', function setLatLon(overlay, geoPosition)
-{
-var f = document.forms[0];
-
-// Update Latitude
-var isSouth = (geoPosition.y < 0);
-f.latD.value = Math.abs((isSouth) ? Math.ceil(geoPosition.y) : Math.floor(geoPosition.y));
-var latF = Math.abs(geoPosition.y) - parseInt(f.latD.value);
-f.latM.value = Math.floor(latF * 60);
-f.latS.value = Math.floor((latF % (1/60)) * 3600);
-f.latDir.selectedIndex = (isSouth) ? 1 : 0;
-
-// Update Longitude
-var isWest = (geoPosition.x < 0);
-f.lonD.value = Math.abs((isWest) ? Math.ceil(geoPosition.x) : Math.floor(geoPosition.x));
-var lonF = Math.abs(geoPosition.x) - parseInt(f.lonD.value);
-f.lonM.value = Math.floor(lonF * 60);
-f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
-f.lonDir.selectedIndex = (isWest) ? 1 : 0;
-
-map.removeOverlay(usrLocation);
-usrLocation = googleMarker('${imgPath}','blue',geoPosition,labelText);
-map.addOverlay(usrLocation);
-return true;
-} );
+GEvent.addListener(map, 'click', setLatLon);
 </script>
 </body>
 </map:xhtml>
