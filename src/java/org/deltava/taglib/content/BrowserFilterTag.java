@@ -15,15 +15,37 @@ import org.deltava.taglib.ContentHelper;
 
 public class BrowserFilterTag extends TagSupport {
 
-	private boolean _showIE;
+	private boolean _showIE6;
+	private boolean _showIE7;
 	private boolean _showMoz;
 	
 	/**
-	 * Marks this content as visible to Internet Explorer users.
+	 * Marks this content as visible to all Internet Explorer users.
 	 * @param showIE TRUE if the content should be shown to IE users, otherwise FALSE
+	 * @see BrowserFilterTag#setIe6(boolean)
+	 * @see BrowserFilterTag#setIe7(boolean)
 	 */
 	public void setIe(boolean showIE) {
-		_showIE = showIE; 
+		_showIE6 = showIE;
+		_showIE7 = showIE;
+	}
+	
+	/**
+	 * Marks this content as visible to Internet Explorer 5 and 6 users.
+	 * @param showIE TRUE if the content should be shown to IE5/IE6 users, otherwise FALSE
+	 * @see BrowserFilterTag#setIe7(boolean)
+	 */
+	public void setIe6(boolean showIE) {
+		_showIE6 = showIE;
+	}
+
+	/**
+	 * Marks this content as visible to Internet Explorer 7 users.
+	 * @param showIE TRUE if the content should be shown to IE7 users, otherwise FALSE
+	 * @see BrowserFilterTag#setIe7(boolean)
+	 */
+	public void setIe7(boolean showIE) {
+		_showIE7 = showIE;
 	}
 	
 	/**
@@ -40,7 +62,9 @@ public class BrowserFilterTag extends TagSupport {
 	 * @throws JspException never
 	 */
 	public int doStartTag() throws JspException {
-		if (ContentHelper.isIE(pageContext) && _showIE)
+		if (ContentHelper.isIE6(pageContext) && _showIE6)
+			return EVAL_BODY_INCLUDE;
+		if (ContentHelper.isIE7(pageContext) && _showIE7)
 			return EVAL_BODY_INCLUDE;
 		else if (ContentHelper.isFirefox(pageContext) && _showMoz)
 			return EVAL_BODY_INCLUDE;
@@ -62,8 +86,9 @@ public class BrowserFilterTag extends TagSupport {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
-		_showIE = false;
-		_showMoz = false;
 		super.release();
+		_showIE6 = false;
+		_showIE7 = false;
+		_showMoz = false;
 	}
 }

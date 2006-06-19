@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -21,9 +21,12 @@ public class BrowserTypeFilter implements Filter {
 
     private static final int UNKNOWN = -1;
     private static final int MOZILLA = 0;
-    private static final int MSIE = 1;
+    private static final int MSIE6 = 1;
+    private static final int MSIE7 = 2;
 
+    private String _defaultCode;
     private static final String[] MOZILLA_IDENT = { "Firefox", "Gecko" };
+    private static final String[] MSIE7_IDENT = { "MSIE 7.0" };
     private static final String[] MSIE_IDENT = { "MSIE" };
 
     /**
@@ -31,6 +34,7 @@ public class BrowserTypeFilter implements Filter {
      * @param cfg the Filter Configuration
      */
     public void init(FilterConfig cfg) throws ServletException {
+        _defaultCode = cfg.getInitParameter("default");
         log.info("Started");
     }
 
@@ -44,17 +48,18 @@ public class BrowserTypeFilter implements Filter {
      */
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
-        // Get the browser's name
-        HttpServletRequest hreq = (HttpServletRequest) req;
-        String userAgent = hreq.getHeader("User-Agent");
-
         // Set request attributes based on the browser type
-        switch (getBrowserType(userAgent)) {
+        HttpServletRequest hreq = (HttpServletRequest) req;
+        switch (getBrowserType(hreq.getHeader("User-Agent"))) {
             case MOZILLA:
                 req.setAttribute("browser$mozilla", Boolean.TRUE);
                 break;
 
-            case MSIE:
+            case MSIE7:
+            	req.setAttribute("browser$ie7", Boolean.TRUE);
+            	break;
+                
+            case MSIE6:
             default:
                 req.setAttribute("browser$ie", Boolean.TRUE);
         }
@@ -74,22 +79,27 @@ public class BrowserTypeFilter implements Filter {
      * Helper method to search the ident strings and return the browser type.
      */
     private int getBrowserType(String userAgent) {
-       if (userAgent == null)
-          return UNKNOWN;
+       if ((userAgent == null) && (_defaultCode != null))
+          userAgent = _defaultCode;
 
-        // Check for Gecko/Firefox
-        for (int x = 0; x < MOZILLA_IDENT.length; x++) {
-            if (userAgent.indexOf(MOZILLA_IDENT[x]) != -1)
-                return MOZILLA;
-        }
+       // Check for Gecko/Firefox
+       for (int x = 0; x < MOZILLA_IDENT.length; x++) {
+           if (userAgent.indexOf(MOZILLA_IDENT[x]) != -1)
+               return MOZILLA;
+       }
 
-        // Check for Internet Explorer
-        for (int x = 0; x < MSIE_IDENT.length; x++) {
-            if (userAgent.indexOf(MSIE_IDENT[x]) != -1)
-                return MSIE;
-        }
+       // Check for Internet Explorer 7
+       for (int x = 0; x < MSIE7_IDENT.length; x++) {
+           if (userAgent.indexOf(MSIE7_IDENT[x]) != -1)
+               return MSIE7;
+       }
 
-        // If we got this far, no clue on the browser
-        return UNKNOWN;
+       // Check for Internet Explorer 5/6
+       for (int x = 0; x < MSIE_IDENT.length; x++) {
+           if (userAgent.indexOf(MSIE_IDENT[x]) != -1)
+               return MSIE6;
+       }
+
+       return UNKNOWN;
     }
 }

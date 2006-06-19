@@ -46,7 +46,7 @@ public class InsertXHTMLTag extends TagSupport {
 		_data.setAttribute("lang", "en");
 		
 		// Set IE-specific attribute
-		if (ContentHelper.isIE(pageContext))
+		if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
 			_data.setAttribute("xmlns:v", "urn:schemas-microsoft-com:vml");
 		
 		// Render the tag
