@@ -46,9 +46,6 @@
 </tr>
 </c:if>
 <tr class="MenuItem">
- <td><el:cmd url="routemap">ROUTE MAP</el:cmd></td>
-</tr>
-<tr class="MenuItem">
  <td><el:cmd url="flightboard">WHO IS ONLINE</el:cmd></td>
 </tr>
 <tr class="MenuItem">
