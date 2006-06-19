@@ -13,7 +13,7 @@
 <content:css name="cooler" />
 <content:css name="form" />
 <c:forEach var="domain" items="${userDomains}">
-<content:css host="www.${domain}" name="signature" browserSpecific="true" />
+<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ff" />
 </c:forEach>
 <content:pics />
 <content:js name="common" />
