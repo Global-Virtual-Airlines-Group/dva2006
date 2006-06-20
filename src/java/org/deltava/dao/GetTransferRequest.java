@@ -75,8 +75,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getAll(String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM TXREQUESTS TX, "
-				+ "PILOTS P LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM (TXREQUESTS TX, "
+				+ "PILOTS P) LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.CREATED");
 		
 		try {

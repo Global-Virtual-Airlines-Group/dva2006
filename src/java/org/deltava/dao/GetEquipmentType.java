@@ -80,9 +80,9 @@ public class GetEquipmentType extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
 				+ "P.EMAIL, R.RATING_TYPE, R.RATED_EQ FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".EQTYPES EQ, ");
+		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(".EQTYPES EQ LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".EQRATINGS R ON (EQ.EQTYPE=R.EQTYPE) WHERE (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) "
 				+ "ORDER BY EQ.STAGE, EQ.EQTYPE");

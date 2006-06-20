@@ -52,11 +52,11 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -92,13 +92,13 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREPS PR, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
+		sqlBuf.append(".ACARS_PIREPS APR) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
 				+ "AND (APR.ACARS_ID=?)");
@@ -132,7 +132,7 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* "
-				+ "FROM PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN "
+				+ "FROM (PILOTS P, PIREPS PR) LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN "
 				+ "ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (");
 		for (Iterator<Integer> i = status.iterator(); i.hasNext();) {
 			Integer st = i.next();
@@ -188,11 +188,11 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -218,11 +218,11 @@ public class GetFlightReports extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM (");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PIREPS PR LEFT JOIN ");
+		sqlBuf.append(".PIREPS PR) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
