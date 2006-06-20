@@ -112,9 +112,9 @@ return true;
 <c:forEach var="comment" items="${issue.comments}">
 <c:set var="author" value="${pilots[comment.createdBy]}" scope="request" />
 <tr valign="top">
- <td class="label">${author.name} ${author.pilotCode}<br />
- <fmt:date date="${comment.createdOn}" /></td>
- <td class="data">${comment.comments}</td>
+ <td class="label" valign="top">${author.name} ${author.pilotCode}<br />
+<fmt:date date="${comment.createdOn}" /></td>
+ <td class="data" valign="top"><fmt:msg value="${comment.comments}" /></td>
 </tr>
 </c:forEach>
 </c:if>
