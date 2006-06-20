@@ -29,6 +29,7 @@ rm *.sql
 # Dump e-mail data
 echo 'Writing e-mail configuration'
 mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` postfix | gzip -9 > postfix.sql.gz
+mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` sqmail | gzip -9 > sqmail.sql.gz
 
 # Dump TeamSpeak data
 echo 'Writing TeamSpeak configuration'
