@@ -32,7 +32,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public final List<FlightReport> getByEvent(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-					+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE "
+					+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE "
 					+ "(PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) AND (PR.EVENT_ID=?)");
 			_ps.setInt(1, id);
 			return execute();
@@ -50,7 +50,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	public final List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
-				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (PR.ID=APR.ID) "
+				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) "
 				+ "AND (PR.PILOT_ID=P.ID) AND (PR.DATE=DATE(?))");
 			_ps.setTimestamp(1, createTimestamp(dt));
 			return execute();
@@ -70,7 +70,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 
 		// Build the statement
 		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
-				+ "PILOTS P, PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE "
+				+ "PILOTS P, PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE "
 				+ "(PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) AND (P.ID=?)");
 		if (orderBy != null) {
 			buf.append(" ORDER BY PR.");

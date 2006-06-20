@@ -120,7 +120,7 @@ public class GetExam extends DAO {
 		try {
 			setQueryMax(1);
 			if (SystemData.getBoolean("academy.enabled"))
-				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ID=?)");
 			else
 				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "
@@ -145,7 +145,7 @@ public class GetExam extends DAO {
 		try {
 			setQueryMax(1);
 			if (SystemData.getBoolean("academy.enabled"))
-				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ACARS_ID=?)");
 			else
 				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE "
@@ -204,7 +204,7 @@ public class GetExam extends DAO {
 	public Collection<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
 			if (SystemData.getBoolean("academy.enabled"))
-				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) "
 						+ "ORDER BY CR.CREATED");
 			else
@@ -226,7 +226,7 @@ public class GetExam extends DAO {
 	public Collection<CheckRide> getCheckRideQueue(boolean isAcademy) throws DAOException {
 		try {
 			if (isAcademy) {
-				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) "
 						+ "AND (CR.ACADEMY=?) ORDER BY CR.CREATED");
 			} else {
@@ -261,7 +261,7 @@ public class GetExam extends DAO {
 
 			// Load Check Rides
 			if (SystemData.getBoolean("academy.enabled"))
-				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM CHECKRIDES CR, EQTYPES EQ LEFT JOIN "
+				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?)");
 			else
 				prepareStatement("SELECT CR.*, EQ.STAGE FROM CHECKRIDES CR, EQTYPES EQ WHERE (CR.EQTYPE=EQ.EQTYPE) "

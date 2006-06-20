@@ -126,7 +126,7 @@ public class GetUserData extends DAO {
     */
    public UserDataMap getByThread(int threadID) throws DAOException {
       try {
-         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
+         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.AIRLINEINFO AI, common.USERDATA UD "
                + "LEFT JOIN common.COOLER_POSTS P ON (P.AUTHOR_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND "
                + "(P.THREAD_ID=?)");
          _ps.setInt(1, threadID);
@@ -144,7 +144,7 @@ public class GetUserData extends DAO {
     */
    public UserDataMap getByEvent(int eventID) throws DAOException {
       try {
-         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
+         prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.AIRLINEINFO AI, common.USERDATA UD "
                + "LEFT JOIN common.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?)");
          _ps.setInt(1, eventID);
          return new UserDataMap(execute());
