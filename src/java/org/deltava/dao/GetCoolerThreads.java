@@ -105,8 +105,8 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
 			prepareStatement("SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-					+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T, "
-					+ "common.COOLER_NOTIFY N LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (N.USER_ID=?) "
+					+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_NOTIFY N, "
+					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (N.USER_ID=?) "
 					+ "AND (T.ID=N.THREAD_ID) GROUP BY T.ID ORDER BY SD DESC");
 			_ps.setInt(1, userID);
 			return execute();
@@ -124,7 +124,7 @@ public class GetCoolerThreads extends DAO {
 		try {
 			prepareStatement("SELECT T.*, COUNT(R.AUTHOR_ID) AS RC, IF(T.STICKY, IF(DATE_ADD(T.STICKY, " +
 					"INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
-					+ "common.COOLER_THREADS T, common.COOLER_REPORTS R LEFT JOIN common.COOLER_POLLS O ON "
+					+ "common.COOLER_REPORTS R, common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON "
 					+ "(T.ID=O.ID) WHERE (T.ID=N.THREAD_ID) GROUP BY T.ID HAVING (RC > 0) ORDER BY SD DESC");
 			return execute();
 		} catch (SQLException se) {
