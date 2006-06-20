@@ -34,7 +34,7 @@ public abstract class DAO {
 	/**
 	 * The query timeout, in seconds.
 	 */
-	protected int _queryTimeout = 45;
+	protected int _queryTimeout = 45000;
 
 	/**
 	 * A prepared statement that can be used to perform SQL queries.
@@ -105,7 +105,7 @@ public abstract class DAO {
 		if (timeout < 1)
 			throw new IllegalArgumentException("Query Timeout cannot be zero or negative");
 
-		_queryTimeout = timeout;
+		_queryTimeout = (timeout * 1000);
 	}
 
 	/**
