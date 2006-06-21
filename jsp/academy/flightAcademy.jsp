@@ -138,7 +138,7 @@ you may not enroll in any other Flight Academy courses.</td>
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
  <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
 </c:if>
-<c:if test="${examActive == 0}">
+<c:if test="${empty examActive}">
  <td class="left" colspan="5">Please select a written examination from the list below. Make sure that
  you are prepared to take the exam before clicking on &quot;New Examination.&quot;<br />
 <br />
