@@ -13,7 +13,7 @@
 <content:css name="cooler" />
 <content:css name="form" />
 <c:forEach var="domain" items="${userDomains}">
-<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ff" />
+<content:css host="www.${domain}" name="signature" browserSpecific="true" ie7suffix="ie7" />
 </c:forEach>
 <content:pics />
 <content:js name="common" />
@@ -229,7 +229,7 @@ WARNING</span></c:if>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
 <el:table className="${pilotLoc.airlineCode}_defaultSig" pad="0"><tr>
- <td valign="bottom" style="background-image: url(http://www.${pilotLoc.domain}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
+ <td valign="bottom" class="sig" style="background-image: url(http://www.${pilotLoc.domain}/${imgPath}/sig/${fn:lower(pilot.equipmentType)}.png);">
  <div class="${pilotLoc.airlineCode}_defaultSigText"><h2>${pilot.name}</h2><span class="pri bld ${pilotLoc.airlineCode}_defaultSig caps">${pilot.rank}, ${pilot.equipmentType}</span></div>
  </td>
 </tr></el:table>
