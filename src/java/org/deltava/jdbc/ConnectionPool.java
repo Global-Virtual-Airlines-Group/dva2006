@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.util.*;
 
 /**
- * A class that implements a user-configurable JDBC Connection Pool.
+ * A user-configurable JDBC Connection Pool.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -17,7 +17,7 @@ import org.deltava.util.*;
  * @see ConnectionMonitor
  */
 
-public class ConnectionPool implements Recycler {
+public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(ConnectionPool.class);
 
@@ -32,12 +32,12 @@ public class ConnectionPool implements Recycler {
 
 	private ConnectionMonitor _monitor;
 	private SortedSet<ConnectionPoolEntry> _cons;
+	private Thread _monitorThread;
 
 	private Properties _props;
 	private boolean _autoCommit = true;
 	
 	public class ConnectionPoolFullException extends ConnectionPoolException {
-		
 		public ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
 			setForwardURL("/jsp/error/poolFull.jsp");
@@ -50,21 +50,20 @@ public class ConnectionPool implements Recycler {
 	 */
 	public ConnectionPool(int maxSize) {
 		super();
-		DriverManager.setLoginTimeout(4);
+		DriverManager.setLoginTimeout(5);
 		_props = new Properties();
 		_poolMaxSize = maxSize;
 		_monitor = new ConnectionMonitor(3);
 	}
 
-	private void checkConnected() throws IllegalStateException {
-		if (_cons == null)
-			throw new IllegalStateException("Pool not connected");
-
-		// Check that connection monitor is still alive
-		if ((_monitor != null) && (!_monitor.isAlive())) {
-			log.warn("Connection Monitor not running!");
-			_monitor.start();
-		}
+	/**
+	 * Start the Connection Monitor thread.
+	 */
+	private void startMonitor() {
+		_monitorThread = new Thread(_monitor, ConnectionMonitor.NAME);
+		_monitorThread.setDaemon(true);
+		_monitorThread.setUncaughtExceptionHandler(this);
+		_monitorThread.start();
 	}
 
 	/**
@@ -191,7 +190,8 @@ public class ConnectionPool implements Recycler {
 	 * @throws ConnectionPoolException if the connection pool is entirely in use
 	 */
 	public synchronized Connection getConnection(boolean isSystem) throws ConnectionPoolException {
-		checkConnected();
+		if (_cons == null)
+			throw new IllegalStateException("Pool not connected");
 
 		// Loop through the connection pool, if we find one not in use then get it
 		int sysConSize = 0;
@@ -245,7 +245,6 @@ public class ConnectionPool implements Recycler {
 	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
 	 */
 	public synchronized long release(Connection c) {
-		checkConnected();
 		if (c == null)
 			return 0;
 
@@ -326,8 +325,7 @@ public class ConnectionPool implements Recycler {
 			throw new ConnectionPoolException(se);
 		}
 
-		// Start the Connection Monitor
-		_monitor.start();
+		startMonitor();
 	}
 
 	/**
@@ -335,7 +333,7 @@ public class ConnectionPool implements Recycler {
 	 */
 	public synchronized void close() {
 		// Shut down the monitor
-		ThreadUtils.kill(_monitor, 500);
+		ThreadUtils.kill(_monitorThread, 500);
 
 		// Disconnect the regular connections
 		if (_cons == null)
@@ -352,9 +350,8 @@ public class ConnectionPool implements Recycler {
 				log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
 			} finally {
 				_monitor.removeConnection(cpe);
+				log.info("Closed JDBC Connection " + cpe);
 			}
-
-			log.info("Closed JDBC Connection " + cpe);
 		}
 
 		_cons = null;
@@ -380,5 +377,10 @@ public class ConnectionPool implements Recycler {
 	 */
 	public long getTotalRequests() {
 		return _totalRequests;
+	}
+	
+	public void uncaughtException(Thread t, Throwable e) {
+		if (t == _monitorThread)
+			startMonitor();
 	}
 }

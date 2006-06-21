@@ -43,14 +43,16 @@ public class TestConnectionMonitor extends TestCase {
     }
     
     public void testThreadExecution() throws Exception {
+    	Thread t = new Thread(_cm);
+    	t.setDaemon(true);
         assertEquals(0, _cm.size());
-        assertFalse(_cm.isAlive());
-        assertTrue(_cm.isDaemon());
+        assertFalse(t.isAlive());
+        assertTrue(t.isDaemon());
         
-        _cm.start();
-        assertTrue(_cm.isAlive());
+        t.start();
+        assertTrue(t.isAlive());
         
-        _cm.interrupt();
-        _cm.join(2000);
+        t.interrupt();
+        t.join(2000);
     }
 }

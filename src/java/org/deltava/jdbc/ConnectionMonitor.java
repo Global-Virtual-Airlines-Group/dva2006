@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
@@ -13,14 +13,19 @@ import org.apache.log4j.Logger;
  * @since 1.0
  */
 
-class ConnectionMonitor extends Thread {
+class ConnectionMonitor implements Runnable {
 
    private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
+   
+   /**
+    * Thread name.
+    */
+   static final String NAME = "JDBC Connection Monitor";
 
    private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
    private Set<ConnectionPoolEntry> _pool = new TreeSet<ConnectionPoolEntry>();
-   private long _sleepTime = 180000; // 3 minute default
+   private long _sleepTime = 60000; // 1 minute default
    private long _poolCheckCount;
 
    /**
@@ -29,8 +34,7 @@ class ConnectionMonitor extends Thread {
     * @see Thread#setDaemon(boolean)
     */
    ConnectionMonitor(int interval) {
-      super("JDBC Pool Monitor");
-      setDaemon(true);
+      super();
       _sleepTime = interval * 60000; // Convert minutes into ms
    }
 
@@ -74,8 +78,8 @@ class ConnectionMonitor extends Thread {
       log.debug("Checking Connection Pool");
       
       // Loop through the entries
-      for (Iterator i = _pool.iterator(); i.hasNext();) {
-         ConnectionPoolEntry cpe = (ConnectionPoolEntry) i.next();
+      for (Iterator<ConnectionPoolEntry> i = _pool.iterator(); i.hasNext();) {
+         ConnectionPoolEntry cpe = i.next();
 
          // Check if the entry has timed out
          if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
@@ -95,7 +99,7 @@ class ConnectionMonitor extends Thread {
                if (_sqlStatus.contains(se.getSQLState())) {
                   log.warn("Transient SQL Error - " + se.getSQLState());
                } else {
-                  log.warn("Uknown SQL Error code - " + se.getSQLState());
+                  log.warn("Unknown SQL Error code - " + se.getSQLState());
                }
             } catch (Exception e) {
                log.error("Error reconnecting " + cpe, e); 
@@ -112,14 +116,14 @@ class ConnectionMonitor extends Thread {
       log.info("Starting");
 
       // Check loop
-      while (!isInterrupted()) {
+      while (!Thread.currentThread().isInterrupted()) {
          checkPool();
 
          try {
             Thread.sleep(_sleepTime);
          } catch (InterruptedException ie) {
             log.debug("Interrupted while sleeping");
-            interrupt();
+            Thread.currentThread().interrupt();
          }
       }
 
