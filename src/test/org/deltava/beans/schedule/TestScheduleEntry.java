@@ -14,6 +14,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 
    private ScheduleEntry _e;
    private Airport _atl;
+   private Airport _bhm;
    private Airport _jfk;
    private Airport _nrt;
    private Airport _cdg;
@@ -26,12 +27,16 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
       super.setUp();
 
       TZInfo.init("US/Eastern", null, null);
+      TZInfo.init("US/Central", null, null);
       TZInfo.init("Asia/Tokyo", null, null);
       TZInfo.init("Europe/Paris", null, null);
 
       _atl = new Airport("ATL", "KATL", "Atlanta GA");
       _atl.setLocation(34.6404, -84.4269);
       _atl.setTZ("US/Eastern");
+      _bhm = new Airport("BHM", "KBHM", "Birmingham AL");
+      _bhm.setLocation(33.5629, -86.7535);
+      _bhm.setTZ("US/Central");
       _jfk = new Airport("JFK", "KJFK", "New York-Kennedy NY");
       _jfk.setLocation(40.6397, -73.7789);
       _jfk.setTZ("US/Eastern");
@@ -153,10 +158,24 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	   _e.setTimeD(df.parse("17:00"));
 	   _e.setTimeA(df.parse("14:45"));
 	   assertEquals(37, _e.getLength());
+   }
+   
+   public void testNegativeTime() throws ParseException {
+	   _e.setAirportD(_atl);
+	   _e.setAirportA(_bhm);
+	   _e.setEquipmentType("MD-88");
 	   
-	   _e.setEquipmentType("B747-400");
-	   _e.setTimeA(df.parse("14:45"));
-	   assertEquals(277, _e.getLength());
+	   DateFormat df = new SimpleDateFormat("HH:mm");
+	   _e.setTimeD(df.parse("16:50"));
+	   _e.setTimeA(df.parse("16:44"));
+	   assertEquals(9, _e.getLength());
+	   
+	   // Trans-Atlantic
+	   _e.setAirportA(_cdg);
+	   _e.setEquipmentType("B767-300");
+	   _e.setTimeD(df.parse("17:40"));
+	   _e.setTimeA(df.parse("08:15"));
+	   assertEquals(85, _e.getLength());
    }
 
    public void testComparator() {
