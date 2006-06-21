@@ -5,7 +5,6 @@ put ldif.txt.gz
 put create_tables.tar.gz
 put acars.sql.gz
 put afv.sql.gz
-put afv_academy.sql.gz
 put afv_sched.sql.gz
 put afv_sys.sql.gz
 put afv_test.sql.gz
@@ -29,7 +28,7 @@ lcd /home/backup/svn
 put svn_top.gz
 
 cd /cfg
-lcd /usr/local/apache2/conf
+lcd /usr/local/apache22/conf
 put httpd.conf
 
 lcd /home/backup/cfg
