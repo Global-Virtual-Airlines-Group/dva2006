@@ -58,7 +58,7 @@ public class RegionTag extends TagSupport {
 	public void setRows(int rowCount) {
 		if (rowCount < 0)
 			throw new IllegalArgumentException("Invalid row count - " + rowCount);
-		else if (ContentHelper.isIE6(pageContext))
+		else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
 			_attrs.put("rowspan", String.valueOf(rowCount));
 	}
 
@@ -71,7 +71,7 @@ public class RegionTag extends TagSupport {
 	public void setCols(int colCount) {
 		if (colCount < 0)
 			throw new IllegalArgumentException("Invalid column count - " + colCount);
-		else if (ContentHelper.isIE6(pageContext))
+		else if (ContentHelper.isIE6(pageContext) || ContentHelper.isIE7(pageContext))
 			_attrs.put("colspan", String.valueOf(colCount));
 	}
 
