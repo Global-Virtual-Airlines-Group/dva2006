@@ -147,7 +147,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setFSVersion(ctx.getParameter("fsVersion"));
 			
 			// Check for historic aircraft
-			List historicEQ = (List) SystemData.getObject("eqTypes.historic");
+			List historicEQ = (List) SystemData.getObject("eqtypes.historic");
 			fr.setAttribute(FlightReport.ATTR_HISTORIC, historicEQ.contains(fr.getEquipmentType()));
 
 			// Figure out what network the flight was flown on
