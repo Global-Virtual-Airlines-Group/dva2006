@@ -1300,6 +1300,12 @@
 
 
 	<!-- ACARS log/data commands -->
+	<command id="acarsversion">
+		<name>ACARS Client Version</name>
+		<class>org.deltava.commands.acars.ClientVersionCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="acarsinfo">
 		<name>ACARS Flight Info</name>
 		<class>org.deltava.commands.acars.FlightInfoCommand</class>

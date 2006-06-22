@@ -561,6 +561,17 @@ database.</td>
  <td class="mid"><el:cmd className="bld" url="acarslogm">Text Message Log</el:cmd></td>
  <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
 </tr>
+<content:filter roles="Admin">
+<content:sysdata var="minBuild" name="acars.build.minimum" />
+<content:sysdata var="latestBuild" name="acars.build.latest" />
+<tr>
+ <td class="mid"><el:cmd className="bld" url="acarsversion">ACARS Client Versions</el:cmd></td>
+ <td class="data">You can control which versions of the <content:airline /> ACARS client are allowed to 
+connect to the ACARS Server, as well as inform users of a new ACARS Client version. <i>The latest ACARS 
+build is Build <fmt:int value="${latestBuild}" />, and the minimum build required to connect to the 
+server is Build <fmt:int value="${minBuild}" />.</i></td>
+</tr>
+</content:filter>
 </content:filter>
 </c:if>
 <content:filter roles="HR,Developer">
