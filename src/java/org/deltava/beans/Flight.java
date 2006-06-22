@@ -150,12 +150,12 @@ public abstract class Flight extends DatabaseBean implements Comparable {
     /**
      * Sets the Flight leg for this flight
      * @param leg the Flight leg
-     * @throws IllegalArgumentException if the flight leg is negative or > 6
+     * @throws IllegalArgumentException if the flight leg is negative or > 8
      * @see Flight#getLeg()
      */
     public void setLeg(int leg) {
-        if ((leg < 0) || (leg > 6))
-            throw new IllegalArgumentException("Flight Leg cannot be < 0 || > 6");
+        if ((leg < 0) || (leg > 8))
+            throw new IllegalArgumentException("Flight Leg cannot be < 0 || > 8");
 
         _leg = leg;
     }
