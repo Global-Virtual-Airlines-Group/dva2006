@@ -21,9 +21,7 @@ if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
 if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
 if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateNumber(form.timeD, 5, 'Departure Time')) return false;
 if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
-if (!validateNumber(form.timeA, 5, 'Arrival Time')) return false;
 
 setSubmit();
 disableButton('SaveButton');
