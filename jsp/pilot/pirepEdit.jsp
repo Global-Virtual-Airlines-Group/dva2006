@@ -38,13 +38,14 @@ if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
 if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return false;
 
 // Validate flight leg
-if (parseInt(form.flightLeg.value) > 5) {
-	alert('The Flight Leg must be less than 5.');
+if (parseInt(form.flightLeg.value) > 8) {
+	alert('The Flight Leg must be less than 8.');
 	form.flightLeg.focus();
 	return false;
 }
 
 // Validate the date
+<c:if test="${!empty pirep}"><content:filter roles="!PIREP">
 var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 var pDate = new Date(pY, f.dateM.selectedIndex + 1,	f.dateD.selectedIndex + 1);
 if (pDate > fwdLimit) {
@@ -56,6 +57,7 @@ if (pDate > fwdLimit) {
 	f.dateD.focus();
 	return false;
 }
+</content:filter></c:if>
 
 setSubmit();
 disableButton('SaveButton');
