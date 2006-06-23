@@ -46,6 +46,7 @@ public class ClientVersionCommand extends AbstractCommand {
 		}
 		
 		// Return to success page
+		ctx.setMessage("Client Versions updated");
 		result.setURL("/jsp/acars/clientVersion.jsp");
 		result.setSuccess(true);
 	}
