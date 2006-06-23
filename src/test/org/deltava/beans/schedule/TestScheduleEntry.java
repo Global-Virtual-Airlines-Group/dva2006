@@ -80,7 +80,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 
    public void testValidation() {
       validateInput("leg", new Integer(-1), IllegalArgumentException.class);
-      validateInput("leg", new Integer(7), IllegalArgumentException.class);
+      validateInput("leg", new Integer(9), IllegalArgumentException.class);
       validateInput("flightNumber", new Integer(-1), IllegalArgumentException.class);
       validateInput("ID", new Integer(1), UnsupportedOperationException.class);
       validateInput("length", new Integer(-1), IllegalArgumentException.class);
