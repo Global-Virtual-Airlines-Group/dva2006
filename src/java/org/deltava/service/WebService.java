@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 /**
@@ -34,5 +34,30 @@ public abstract class WebService {
     */
    public boolean isLogged() {
 	   return true;
+   }
+   
+   /**
+    * Creates a ServiceException. This method allows subclasses outside the default package to create a new
+    * ServiceException, which has a package-private constructor.
+    * @param code the HTTP code
+    * @param msg the error message
+    * @return ServiceException the newly-created ServiceException
+    * @see ServiceException#ServiceException(int, String)
+    */
+   protected ServiceException error(int code, String msg) {
+	   return new ServiceException(code, msg);
+   }
+
+   /**
+    * Creates a ServiceException. This method allows subclasses outside the default package to create a new
+    * ServiceException, which has a package-private constructor.
+    * @param code the HTTP code
+    * @param msg the error message
+    * @param t the root exception
+    * @return ServiceException the newly-created ServiceException
+    * @see ServiceException#ServiceException(int, String, Throwable)
+    */
+   protected ServiceException error(int code, String msg, Throwable t) {
+	   return new ServiceException(code, msg, t);
    }
 }

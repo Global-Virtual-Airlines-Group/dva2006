@@ -1,5 +1,5 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
@@ -13,6 +13,9 @@ import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebDataService;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -84,7 +87,7 @@ public class AirportListService extends WebDataService {
 					GetScheduleAirport dao = new GetScheduleAirport(_con);
 					filter = new AirportListFilter(dao.getOriginAirports(a));
 				} catch (DAOException de) {
-					throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+					throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 				}
 			} else {
 				if ("all".equals(ctx.getParameter("airline"))) {
@@ -98,14 +101,14 @@ public class AirportListService extends WebDataService {
 			boolean isDest = Boolean.valueOf(ctx.getParameter("dst")).booleanValue();
 			Airport a = SystemData.getAirport(ctx.getParameter("code").toUpperCase());
 			if (a == null)
-				throw new ServiceException(SC_BAD_REQUEST, "Invalid Airport");
+				throw error(SC_BAD_REQUEST, "Invalid Airport");
 
 			// Get the airports from the schedule database
 			try {
 				GetScheduleAirport dao = new GetScheduleAirport(_con);
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest));
 			} catch (DAOException de) {
-				throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+				throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 			}
 		}
 
@@ -137,7 +140,7 @@ public class AirportListService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code

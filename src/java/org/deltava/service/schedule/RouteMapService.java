@@ -1,19 +1,18 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
-package org.deltava.service;
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+package org.deltava.service.schedule;
 
 import java.io.IOException;
 import java.util.*;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 
-import org.deltava.dao.GetNavRoute;
-import org.deltava.dao.DAOException;
-
+import org.deltava.dao.*;
+import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
@@ -38,7 +37,7 @@ public class RouteMapService extends WebDataService {
 			GetNavRoute dao = new GetNavRoute(_con);
 			routePoints = dao.getRouteWaypoints(ctx.getParameter("route"));
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Convert to an XML document
@@ -50,11 +49,11 @@ public class RouteMapService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

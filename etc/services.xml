@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <services name="default">
-	<service id="cooler_rss" class="org.deltava.service.CoolerSyndicationService" />
-	<service id="event_rss" class="org.deltava.service.EventSyndicationService" />
-	<service id="notams_rss" class="org.deltava.service.NoticeSyndicationService" />
-	<service id="news_rss" class="org.deltava.service.NewsSyndicationService" />
-	<service id="blog_rss" class="org.deltava.service.BlogSyndicationService" />
+	<!-- RSS Feeds -->
+	<service id="cooler_rss" class="org.deltava.service.rss.CoolerSyndicationService" />
+	<service id="event_rss" class="org.deltava.service.rss.EventSyndicationService" />
+	<service id="notams_rss" class="org.deltava.service.rss.NoticeSyndicationService" />
+	<service id="news_rss" class="org.deltava.service.rss.NewsSyndicationService" />
+	<service id="blog_rss" class="org.deltava.service.rss.BlogSyndicationService" />
 
+	<!-- Fleet Library Services -->
 	<service id="fleet_info" class="org.deltava.service.FleetInfoService" />
 	<service id="fleet_sysinf" class="org.deltava.service.SystemInfoService" />
 	<service id="fleetlib" class="org.deltava.service.InstallerInfoService" />
 
-	<service id="airports" class="org.deltava.service.AirportListService" />
-	<service id="schedule" class="org.deltava.service.ScheduleSearchService" />
+	<!-- Flight Schedule Services -->
+	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
+	<service id="schedule" class="org.deltava.service.schedule.SearchService" />
+	<service id="next_flight" class="org.deltava.service.schedule.AvailableFlightService" />
+	<service id="next_leg" class="org.deltava.service.schedule.AvailableFlightLegService" />
+	<service id="route" class="org.deltava.service.schedule.RouteMapService" />
+	<service id="routeplot" class="org.deltava.service.schedule.RoutePlotMapService" />
+	<service id="rmap_airports" class="org.deltava.service.schedule.ServicedAirportService" />
+	<service id="rmap_routes" class="org.deltava.service.schedule.RouteService" />
 
-	<service id="servinfo" class="org.deltava.service.ServInfoDataService" />
-	<service id="si_route" class="org.deltava.service.ServInfoRouteService" />
-	<service id="route" class="org.deltava.service.RouteMapService" />
-	<service id="routeplot" class="org.deltava.service.RoutePlotMapService" />
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
-
-	<service id="rmap_airports" class="org.deltava.service.ScheduleAirportService" />
-	<service id="rmap_routes" class="org.deltava.service.ScheduleRouteService" />
 
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 
-	<service id="acars_data" class="org.deltava.service.ACARSDataService" />
-	<service id="acars_map" class="org.deltava.service.ACARSMapService" />
-	<service id="acars_progress" class="org.deltava.service.ACARSMapProgressService" />
-	<service id="acars_pirep" class="org.deltava.service.ACARSFlightDataService" />
-	<service id="acars_earth" class="org.deltava.service.ACARSEarthService" />
-	
+	<!-- ACARS/Google Maps Services -->
+	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />
+	<service id="acars_map" class="org.deltava.service.acars.MapService" />
+	<service id="acars_progress" class="org.deltava.service.acars.MapProgressService" />
+	<service id="acars_pirep" class="org.deltava.service.acars.MapFlightDataService" />
+	<service id="acars_earth" class="org.deltava.service.acars.FlightDataEarthService" />
+
 	<!-- The names of ACARSMapEarthServices are hardcoded in ACARSMapEarthLinkService -->
-	<service id="acars_map_earth" class="org.deltava.service.ACARSMapEarthLinkService" />
-	<service id="acars_map_eprog" class="org.deltava.service.ACARSMapEarthService" />
-	<service id="acars_map_eplan" class="org.deltava.service.ACARSMapEarthPlanService" />
+	<service id="acars_map_earth" class="org.deltava.service.acars.EarthMapLinkService" />
+	<service id="acars_map_eprog" class="org.deltava.service.acars.EarthMapService" />
+	<service id="acars_map_eplan" class="org.deltava.service.acars.EarthMapPlanService" />
+
+	<!-- ServInfo Services -->
+	<service id="servinfo" class="org.deltava.service.servinfo.DataService" />
+	<service id="si_route" class="org.deltava.service.servinfo.MapRouteService" />
 </services>

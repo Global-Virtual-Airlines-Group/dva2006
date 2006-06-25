@@ -1,11 +1,11 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.util.*;
 import java.util.zip.*;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
@@ -16,6 +16,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
+import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
@@ -25,9 +26,9 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class ACARSEarthService extends GoogleEarthService {
+public class FlightDataEarthService extends GoogleEarthService {
 	
-	private static final Logger log = Logger.getLogger(ACARSEarthService.class);
+	private static final Logger log = Logger.getLogger(FlightDataEarthService.class);
 	
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.
@@ -97,7 +98,7 @@ public class ACARSEarthService extends GoogleEarthService {
 				}
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Build the XML document
@@ -155,10 +156,10 @@ public class ACARSEarthService extends GoogleEarthService {
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 }

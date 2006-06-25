@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
@@ -10,7 +10,9 @@ import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
+
 import org.deltava.dao.*;
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -22,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ScheduleRouteService extends WebDataService {
+public class RouteService extends WebDataService {
 	
 	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(Arrays.asList(MapEntry.COLORS),
 			Arrays.asList(MapEntry.LINECOLORS));
@@ -38,14 +40,14 @@ public class ScheduleRouteService extends WebDataService {
 		// Get the airport
 		Airport a = SystemData.getAirport(ctx.getParameter("icao"));
 		if (a == null)
-			throw new ServiceException(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"));
+			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("icao"));
 		
 		Collection<ScheduleEntry> flights = null;
 		try {
 			GetSchedule dao = new GetSchedule(_con);
 			flights = dao.getFlights(a);
 		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 		
 		// Generate the XML document
@@ -85,7 +87,7 @@ public class ScheduleRouteService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 		
 		// Return success code

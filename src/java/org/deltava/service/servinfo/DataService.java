@@ -1,13 +1,12 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.servinfo;
 
 import java.io.*;
 import java.net.*;
 import java.util.*;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import java.text.*;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
@@ -16,10 +15,10 @@ import org.deltava.beans.OnlineNetwork;
 import org.deltava.beans.TZInfo;
 import org.deltava.beans.servinfo.*;
 
-import org.deltava.dao.GetPilotOnline;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 
+import org.deltava.service.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -29,9 +28,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ServInfoDataService extends WebDataService {
+public class DataService extends WebDataService {
 
-	private static final Logger log = Logger.getLogger(ServInfoDataService.class);
+	private static final Logger log = Logger.getLogger(DataService.class);
 
 	// Date formatter for validity date
 	private static final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmmss");
@@ -54,7 +53,7 @@ public class ServInfoDataService extends WebDataService {
 			for (int x = 0; x < NETWORKS.length; x++)
 				pilots.putAll(dao.getIDs(NETWORKS[x]));
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Load network data (this will use the cached copy if still valid)
@@ -81,7 +80,7 @@ public class ServInfoDataService extends WebDataService {
 				users.addAll(combineUsers(info, pilots));
 			}
 		} catch (Exception e) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 
 		// Get the current date/time in UTC
@@ -123,11 +122,11 @@ public class ServInfoDataService extends WebDataService {
 			ctx.getResponse().setContentType("text/plain");
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return result code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

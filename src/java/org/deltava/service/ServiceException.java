@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 /**
@@ -11,12 +11,13 @@ package org.deltava.service;
 public class ServiceException extends Exception {
    
    private int _httpCode;
+   private boolean _logStackDump;
 
    /**
-    * 
-    * @param code
-    * @param msg
-    * @param t
+    * Creates a new Web Service Exception from an existing exception.
+    * @param code the HTTP result code
+    * @param msg the exception message
+    * @param t the existing exception
     */
    ServiceException(int code, String msg, Throwable t) {
       super(msg, t);
@@ -24,14 +25,32 @@ public class ServiceException extends Exception {
    }
 
    /**
-    * 
-    * @param code
-    * @param msg
+    * Creates a new Web Service Exception.
+    * @param code the HTTP result code
+    * @param msg the exception message
     */
    ServiceException(int code, String msg) {
       super(msg);
       _httpCode = code;
    }
+   
+	/**
+	 * Returns wether the handling class should log this Exception's stack trace.
+	 * @return TRUE if the stack trace should be logged, otherwise FALSE
+	 * @see ServiceException#setLogStackDump(boolean)
+	 */
+	public boolean getLogStackDump() {
+		return _logStackDump;
+	}
+   
+	/**
+	 * Updates wether the handling class should log this Exception's stack trace.
+	 * @param doLog TRUE if the stack trace should be logged, otherwise FALSE
+	 * @see ServiceException#getLogStackDump()
+	 */
+	public void setLogStackDump(boolean doLog) {
+		_logStackDump = doLog;
+	}
    
    /**
     * Returns the HTTP result code.

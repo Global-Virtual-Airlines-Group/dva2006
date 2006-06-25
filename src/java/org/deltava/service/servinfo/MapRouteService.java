@@ -1,11 +1,11 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.servinfo;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
@@ -15,6 +15,8 @@ import org.deltava.beans.GeoLocation;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.file.GetServInfo;
+
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -26,9 +28,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ServInfoRouteService extends WebService {
+public class MapRouteService extends WebService {
 
-	private static final Logger log = Logger.getLogger(ServInfoRouteService.class);
+	private static final Logger log = Logger.getLogger(MapRouteService.class);
 
 	/**
 	 * Helper method to open a connection to a particular URL.
@@ -77,7 +79,7 @@ public class ServInfoRouteService extends WebService {
 			nd.logUsage(false);
 			log.error("Error loading " + networkName + " data");
 			log.error(e.getMessage(), e);
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
 		}
 
 		// Get the Pilot
@@ -103,11 +105,11 @@ public class ServInfoRouteService extends WebService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

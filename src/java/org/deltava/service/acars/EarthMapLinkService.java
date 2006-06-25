@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.io.IOException;
 
@@ -7,6 +7,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
+import org.deltava.service.*;
 import org.deltava.util.XMLUtils;
 
 /**
@@ -16,7 +17,7 @@ import org.deltava.util.XMLUtils;
  * @since 1.0
  */
 
-public class ACARSMapEarthLinkService extends WebService {
+public class EarthMapLinkService extends WebService {
 
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.
@@ -78,7 +79,7 @@ public class ACARSMapEarthLinkService extends WebService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code

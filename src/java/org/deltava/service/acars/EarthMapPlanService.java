@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.util.*;
 import java.util.zip.*;
@@ -16,6 +16,7 @@ import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.dao.*;
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -27,9 +28,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ACARSMapEarthPlanService extends GoogleEarthService {
+public class EarthMapPlanService extends GoogleEarthService {
 	
-	private static final Logger log = Logger.getLogger(ACARSMapEarthPlanService.class);
+	private static final Logger log = Logger.getLogger(EarthMapPlanService.class);
 
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.
@@ -116,7 +117,7 @@ public class ACARSMapEarthPlanService extends GoogleEarthService {
 			// Flush the buffer
 			ctx.getResponse().flushBuffer();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code

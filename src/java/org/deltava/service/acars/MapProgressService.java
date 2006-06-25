@@ -1,10 +1,10 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.io.IOException;
 import java.util.*;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
@@ -12,6 +12,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.acars.FlightInfo;
 
 import org.deltava.dao.*;
+import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
@@ -21,7 +22,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class ACARSMapProgressService extends WebDataService {
+public class MapProgressService extends WebDataService {
 
 	/**
 	 * Executes the Web Service.
@@ -32,12 +33,9 @@ public class ACARSMapProgressService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Flight ID
-		int id = 0;
-		try {
-			id = Integer.parseInt(ctx.getParameter("id"));
-		} catch (NumberFormatException nfe) {
-			return HttpServletResponse.SC_NOT_FOUND;
-		}
+		int id = StringUtils.parse(ctx.getParameter("id"), 0);
+		if (id < 1)
+			return SC_NOT_FOUND;
 		
 		// Determine if we show the route
 		boolean doRoute = Boolean.valueOf(ctx.getParameter("route")).booleanValue();
@@ -59,7 +57,7 @@ public class ACARSMapProgressService extends WebDataService {
 				routeWaypoints = new HashSet<MapEntry>(); 
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 		
 		// Generate the XML document
@@ -98,11 +96,11 @@ public class ACARSMapProgressService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

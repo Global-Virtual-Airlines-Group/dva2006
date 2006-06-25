@@ -1,17 +1,17 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.service;
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
 import org.deltava.beans.schedule.*;
 
-import org.deltava.dao.GetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ScheduleSearchService extends WebDataService {
+public class SearchService extends WebDataService {
    
    /**
     * Executes the Web Service, returning a list of flights.
@@ -35,13 +35,13 @@ public class ScheduleSearchService extends WebDataService {
 	   
       // Populate the search criteria from the request
       Airline a = SystemData.getAirline(ctx.getParameter("airline"));
-      ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, parse(ctx.getParameter("flightNumber")),
-              parse(ctx.getParameter("flightLeg")));
+      ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(a, StringUtils.parse(ctx.getParameter("flightNumber"), 0),
+              StringUtils.parse(ctx.getParameter("flightLeg"), 0));
       criteria.setEquipmentType(ctx.getParameter("eqType"));
       criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
-      criteria.setDistance(parse(ctx.getParameter("distance")));
-      criteria.setMaxResults(parse(ctx.getParameter("maxResults")));
+      criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
+      criteria.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
       if ((criteria.getMaxResults() == 0) || (criteria.getMaxResults() > 50))
           criteria.setMaxResults(30);
 
@@ -52,7 +52,7 @@ public class ScheduleSearchService extends WebDataService {
          dao.setQueryMax(criteria.getMaxResults());
          results = dao.search(criteria, "FLIGHT");
       } catch (DAOException de) {
-         throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+         throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
       }
       
       // Generate the XML document
@@ -99,11 +99,11 @@ public class ScheduleSearchService extends WebDataService {
          ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
          ctx.commit();
       } catch (IOException ie) {
-         throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+         throw error(SC_CONFLICT, "I/O Error");
       }
 
       // Write result code
-      return HttpServletResponse.SC_OK;
+      return SC_OK;
 	}
 
 	/**
@@ -113,17 +113,4 @@ public class ScheduleSearchService extends WebDataService {
 	public final boolean isSecure() {
 		return true;
 	}
-	
-   /**
-    * Helper method to parse a numeric request parameter.
-    */
-   private int parse(String param) {
-       if ("".equals(param))
-           return 0;
-       try {
-           return Integer.parseInt(param);
-       } catch (NumberFormatException nfe) {
-           return 0;
-       }
-   }
 }

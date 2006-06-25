@@ -1,5 +1,5 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
@@ -11,6 +11,7 @@ import org.jdom.*;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.*;
+import org.deltava.service.*;
 import org.deltava.util.*;
 
 /**
@@ -75,7 +76,7 @@ public class RoutePlotMapService extends RouteMapService {
 				tRoutes.addAll(stars);
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Convert the points into a List
@@ -109,7 +110,7 @@ public class RoutePlotMapService extends RouteMapService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
