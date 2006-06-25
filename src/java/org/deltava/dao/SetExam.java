@@ -236,7 +236,7 @@ public class SetExam extends DAO {
 				prepareStatement("DELETE FROM COURSERIDES WHERE (CHECKRIDE=?)");
 			else {
 				prepareStatement("REPLACE INTO COURSERIDES (CHECKRIDE, COURSE) VALUES (?, ?)");
-				_ps.setInt(2, cr.getID());
+				_ps.setInt(2, cr.getCourseID());
 			}
 			
 			// Execute the statement
