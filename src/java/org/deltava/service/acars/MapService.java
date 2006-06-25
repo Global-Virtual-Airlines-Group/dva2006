@@ -1,15 +1,17 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.util.*;
 import java.io.IOException;
-import javax.servlet.http.HttpServletResponse;
+
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 
+import org.deltava.service.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -20,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ACARSMapService extends WebService {
+public class MapService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -69,11 +71,11 @@ public class ACARSMapService extends WebService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

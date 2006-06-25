@@ -16,6 +16,7 @@ public class TestServiceException extends TestCase {
         } catch (ServiceException se) {
             assertEquals("MSG", se.getMessage());
             assertEquals(1, se.getCode());
+            assertFalse(se.getLogStackDump());
         }
     }
     
@@ -28,6 +29,14 @@ public class TestServiceException extends TestCase {
             assertEquals("MSG", se.getMessage());
             assertEquals(e, se.getCause());
             assertEquals(1, se.getCode());
+            assertFalse(se.getLogStackDump());
         }
+    }
+    
+    public void testLogStackDump() {
+    	ServiceException se = new ServiceException(1, "MSG");
+    	assertFalse(se.getLogStackDump());
+    	se.setLogStackDump(true);
+    	assertTrue(se.getLogStackDump());
     }
 }

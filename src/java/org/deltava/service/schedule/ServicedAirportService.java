@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.schedule;
 
 import java.util.*;
 import java.io.IOException;
@@ -11,6 +11,9 @@ import org.jdom.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
+import org.deltava.service.ServiceContext;
+import org.deltava.service.ServiceException;
+import org.deltava.service.WebDataService;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -21,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ScheduleAirportService extends WebDataService {
+public class ServicedAirportService extends WebDataService {
 
 	/**
 	 * Executes the Web Service.
@@ -34,14 +37,14 @@ public class ScheduleAirportService extends WebDataService {
 		// Get the airline
 		Airline al = SystemData.getAirline(ctx.getParameter("airline"));
 		if (al == null)
-			throw new ServiceException(SC_NOT_FOUND, "Unknown Airline - " + ctx.getParameter("airline"));
+			throw error(SC_NOT_FOUND, "Unknown Airline - " + ctx.getParameter("airline"));
 
 		Collection<Airport> airports = null;
 		try {
 			GetScheduleAirport dao = new GetScheduleAirport(_con);
 			airports = dao.getOriginAirports(al);
 		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 		
 		// Generate the XML document
@@ -80,7 +83,7 @@ public class ScheduleAirportService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code

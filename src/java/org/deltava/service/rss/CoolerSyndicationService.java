@@ -1,13 +1,11 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.service;
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service.rss;
 
 import java.util.*;
-
-import java.net.URL;
-import java.net.MalformedURLException;
+import java.net.*;
 import java.io.IOException;
 
-import javax.servlet.http.*;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
@@ -15,9 +13,8 @@ import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.dao.*;
-
-import org.deltava.security.command.CoolerChannelAccessControl;
-import org.deltava.security.command.CoolerThreadAccessControl;
+import org.deltava.security.command.*;
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -50,12 +47,12 @@ public class CoolerSyndicationService extends WebDataService {
 			if (channel != null) {
 				Channel c = cdao.get(channel);
 				if (c == null)
-					throw new ServiceException(HttpServletResponse.SC_NOT_FOUND, "Invalid Channel");
+					throw error(SC_NOT_FOUND, "Invalid Channel");
 
 				// Validate our access to the channel
 				CoolerChannelAccessControl c_access = new CoolerChannelAccessControl(ctx, c);
 				if (!c_access.getCanAccess())
-					throw new ServiceException(HttpServletResponse.SC_FORBIDDEN, "Cannot access channel");
+					throw error(SC_FORBIDDEN, "Cannot access channel");
 			} else {
 				channel = Channel.ALL.getName();
 			}
@@ -83,7 +80,7 @@ public class CoolerSyndicationService extends WebDataService {
 					i.remove();
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Generate the data element
@@ -129,10 +126,10 @@ public class CoolerSyndicationService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 }
