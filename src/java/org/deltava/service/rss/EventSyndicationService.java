@@ -1,19 +1,19 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.service;
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service.rss;
 
-import java.io.IOException;
 import java.net.*;
 import java.util.*;
+import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
 import org.deltava.beans.event.Event;
 import org.deltava.beans.system.VersionInfo;
 
-import org.deltava.dao.GetEvent;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.service.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -41,7 +41,7 @@ public class EventSyndicationService extends WebDataService {
 			dao.setQueryMax(getCount(ctx, 5));
 			entries = dao.getEvents();
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 		
 		// Generate the data element
@@ -87,10 +87,10 @@ public class EventSyndicationService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 		
 		// Return result code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 }

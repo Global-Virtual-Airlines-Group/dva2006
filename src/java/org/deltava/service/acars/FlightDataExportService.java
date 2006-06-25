@@ -1,15 +1,15 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.service;
+package org.deltava.service.acars;
 
 import java.util.*;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.acars.*;
 
-import org.deltava.dao.GetACARSData;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;
 
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class ACARSDataService extends WebDataService {
+public class FlightDataExportService extends WebDataService {
 
 	/**
 	 * Executes the Web Service, writing ACARS Flight data in CSV format.
@@ -31,12 +31,9 @@ public class ACARSDataService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the ACARS Flight ID
-		int id = 0;
-		try {
-			id = Integer.parseInt(ctx.getParameter("id"));
-		} catch (NumberFormatException nfe) {
-			throw new ServiceException(HttpServletResponse.SC_BAD_REQUEST, "Invalid ID");
-		}
+		int id = StringUtils.parse(ctx.getParameter("id"), 0);
+		if (id < 1)
+			throw error(SC_BAD_REQUEST, "Invalid ID");
 
 		// Get the ACARS data
 		List<RouteEntry> routeData = null; 
@@ -48,7 +45,7 @@ public class ACARSDataService extends WebDataService {
 			else 
 				routeData = Collections.emptyList();
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
 
 		// Write the CSV header
@@ -113,11 +110,11 @@ public class ACARSDataService extends WebDataService {
 			ctx.getResponse().setHeader("Content-disposition", "attachment; filename=acars" + id + ".csv");
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw error(SC_CONFLICT, "I/O Error");
 		}
 
 		// Write success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**
