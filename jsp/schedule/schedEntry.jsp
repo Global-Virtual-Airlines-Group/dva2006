@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
@@ -28,6 +29,69 @@ disableButton('SaveButton');
 disableButton('DeleteButton');
 return true;
 }
+<c:if test="${empty entry}">
+function getAvailableFlight()
+{
+var f = document.forms[0];
+disableButton('LegSearchButton');
+disableButton('FlightSearchButton');
+
+// Get start/end ranges
+var startF = f.rangeStart.value;
+var endF = f.rangeEnd.value;
+
+// Create the XMLHTTP request
+var xmlreq = getXMLHttpRequest();
+xmlreq.open("GET", "next_flight.ws?start=" + startF + "&end=" + endF, true);
+xmlreq.onreadystatechange = function () {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var e = xmlDoc.documentElement;
+
+	// Update the flight number and leg
+	var f = document.forms[0];
+	f.flightNumber.value = e.getAttribute("number");
+	f.flightLeg.value = e.getAttribute("leg");
+
+	// Enable the buttons
+	enableElement('LegSearchButton', true);
+	enableElement('FlightSearchButton', true);
+	return true;
+}
+
+xmlreq.send(null);
+return true;
+}
+
+function getAvailableLeg()
+{
+var f = document.forms[0];
+disableButton('LegSearchButton');
+disableButton('FlightSearchButton');
+
+// Create the XMLHTTP Request
+var xmlreq = getXMLHttpRequest();
+xmlreq.open("GET", "next_leg.ws?flight=" + f.flightNumber.value, true);
+xmlreq.onreadystatechange = function () {
+	if (xmlreq.readyState != 4) return false;
+	var xmlDoc = xmlreq.responseXML;
+	var e = xmlDoc.documentElement;
+
+	// Update the flight number and leg
+	var f = document.forms[0];
+	f.flightNumber.value = e.getAttribute("number");
+	f.flightLeg.value = e.getAttribute("leg");
+
+	// Enable the button
+	enableElement('LegSearchButton', true);
+	enableElement('FlightSearchButton', true);
+	return true;
+}
+
+xmlreq.send(null);
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -51,9 +115,16 @@ return true;
  <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${entry.airline}" onChange="void changeAirline(this, false)" firstEntry="< AIRLINE >" /></td>
 </tr>
 <tr>
- <td class="label">Flight Number / Leg</td>
+ <td class="label" valign="top">Flight Number / Leg</td>
  <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" value="${entry.flightNumber}" />
- <el:text name="flightLeg" idx="*" size="1" max="1" value="${empty entry ? '1' : entry.leg}" /></td>
+ <el:text name="flightLeg" idx="*" size="1" max="1" value="${empty entry ? '1' : entry.leg}" />
+<c:if test="${empty entry}">
+<hr />
+<span class="small">You can search for an available flight number between 
+<el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
+<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />
+<el:button ID="FlightSearchButton" className="BUTTON" onClick="void getAvailableFlight()" label="SEARCH" /><br />
+You can search for the next available Flight Leg. <el:button ID="LegSearchButton" className="BUTTON" onClick="void getAvailableLeg()" label="SEARCH" /></c:if></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
