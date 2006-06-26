@@ -16,6 +16,8 @@ public interface ACARSFlags {
 	public static final int FLAG_PARKED = 0x0004;
 	public static final int FLAG_ONGROUND = 0x0008;
 	public static final int FLAG_PUSHBACK = 0x8000;
+	public static final int FLAG_STALL = 0x10000;
+	public static final int FLAG_OVERSPEED = 0x20000;
 	
 	public static final int FLAG_SPARMED = 0x0010;
 	public static final int FLAG_GEARDOWN = 0x0020;
