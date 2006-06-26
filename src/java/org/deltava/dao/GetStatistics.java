@@ -147,6 +147,96 @@ public class GetStatistics extends DAO {
 		// Return totals
 		return result;
 	}
+	
+	/**
+	 * Returns membership data by percentiles.
+	 * @param splitInto the number of segments to divide into
+	 * @return a Map of percentile and joining date.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, java.util.Date> getMembershipQuantiles(int splitInto) throws DAOException {
+		
+		// Build the percentiles to divide into
+		Collection<Float> keys = new ArrayList<Float>();
+		float portion = (100.0f / splitInto);
+		for (int x = 1; x <= splitInto; x++)
+			keys.add(new Float(x * portion));
+		
+		try {
+			// Get total Active Pilots
+			prepareStatementWithoutLimits("SELECT COUNT(*) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
+			
+			// Execute the Query
+			ResultSet rs = _ps.executeQuery();
+			int totalSize = (rs.next()) ? rs.getInt(1) : 0;
+			rs.close();
+			_ps.close();
+			if (totalSize == 0)
+				return Collections.emptyMap();
+			
+			// Build the quantiles
+			setQueryMax(1);
+			Map<Integer, java.util.Date> results = new LinkedHashMap<Integer, java.util.Date>();
+			for (Iterator<Float> i = keys.iterator(); i.hasNext(); ) {
+				float key = i.next().floatValue();
+				if (key > 99.0f)
+					key = 99.0f;
+					
+				// Prepare the statement
+				setQueryStart(Math.round(totalSize * key / 100));
+				prepareStatement("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED");
+				_ps.setInt(1, Pilot.ACTIVE);
+				_ps.setInt(2, Pilot.ON_LEAVE);
+
+				// Execute the Query
+				rs = _ps.executeQuery();
+				if (rs.next())
+					results.put(new Integer(Math.round(key)), rs.getDate(1));
+				
+				// Clean up
+				rs.close();
+				_ps.close();
+			}
+			
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns membership Join date statistics. 
+	 * @return a Collection of MembershipTotals beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<MembershipTotals> getJoinStats() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 AS MEMAGE, "
+					+ "DATE_SUB(CURDATE(), INTERVAL ROUND(DATEDIFF(CURDATE(), CREATED) / 30 + 1) * 30 DAY) AS MEMDT, "
+					+ "COUNT(ID) FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) GROUP BY MEMAGE ORDER BY MEMAGE DESC");
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
+
+			// Execute the Query
+			ResultSet rs = _ps.executeQuery();
+			Collection<MembershipTotals> results = new ArrayList<MembershipTotals>();
+			while (rs.next()) {
+				MembershipTotals mt = new MembershipTotals(rs.getDate(2));
+				mt.setID(rs.getInt(1));
+				mt.setCount(rs.getInt(3));
+				results.add(mt);
+			}
+				
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Retrieves aggregated approved Flight Report statistics.

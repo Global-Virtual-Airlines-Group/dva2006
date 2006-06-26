@@ -334,6 +334,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="memberstats">
+		<name>Membership Statistics</name>
+		<class>org.deltava.commands.stats.MembershipStatsCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="fleetstats">
 		<name>Fleet Installer Statistics</name>
 		<class>org.deltava.commands.stats.InstallerStatsCommand</class>
