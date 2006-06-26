@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -7,12 +7,9 @@ import java.sql.Connection;
 import org.deltava.beans.testing.Test;
 
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
-import org.deltava.dao.GetExam;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
-
-import org.deltava.security.command.ExamAccessControl;
+import org.deltava.security.command.*;
 
 /**
  * A Web Site Command to display Pilot Examinations awaiting scoring.
@@ -43,15 +40,15 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			List results = dao.getSubmitted();
 
 			// Check our access level, remove those exams we cannot score and build a list of Pilot IDs
-			Set<Integer> pilotIDs = new HashSet<Integer>();
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator i = results.iterator(); i.hasNext();) {
 				Test t = (Test) i.next();
 				ExamAccessControl access = new ExamAccessControl(ctx, t);
-				access.validate();
-				if (!access.getCanRead()) {
-					i.remove();
-				} else {
+				try {
+					access.validate();
 					pilotIDs.add(new Integer(t.getPilotID()));
+				} catch (AccessControlException ace) {
+					i.remove();
 				}
 			}
 			
