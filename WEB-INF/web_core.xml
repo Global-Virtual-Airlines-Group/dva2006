@@ -17,6 +17,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<filter>
 		<filter-name>BrowserTypeFilter</filter-name>
 		<filter-class>org.deltava.servlet.filter.BrowserTypeFilter</filter-class>
+		<init-param>
+			<param-name>default</param-name>
+			<param-value>MSIE 6.0</param-value>
+		</init-param>
 	</filter>
 	
 	<!-- Servlet Security Cookie/Wrapper Filters -->
