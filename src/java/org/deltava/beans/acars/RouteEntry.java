@@ -509,7 +509,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if (Math.abs(1 - _gForce) >= 0.25)
 			return true;
 		
-		return false;
+		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));
 	}
 
 	/**
@@ -572,7 +572,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		buf.append(StringUtils.format(_aSpeed, "##0"));
 		buf.append(" kts (GS: ");
 		buf.append(StringUtils.format(_gSpeed, "#,##0"));
-		buf.append(" kts)<br />Heading: ");
+		buf.append(" kts)");
+		if (_mach > 0.6) {
+			buf.append(" <i>Mach ");
+			buf.append(StringUtils.format(_mach, "0.00"));
+			buf.append("</i>");
+		}
+		
+		buf.append("<br />Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
 		buf.append(" degrees<br />Veritical Speed: ");
 		buf.append(StringUtils.format(_vSpeed, "###0"));
