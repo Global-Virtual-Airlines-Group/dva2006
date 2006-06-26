@@ -35,7 +35,9 @@ public class FlightBoardCommand extends AbstractCommand {
 	private HttpURLConnection getURL(String dataURL) throws IOException {
 		URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
 		log.debug("Loading data from " + url.toString());
-		return (HttpURLConnection) url.openConnection();
+		HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
+		urlCon.setReadTimeout(5000);
+		return urlCon;
 	}
 
 	/**

@@ -34,6 +34,7 @@ public class HttpTimeoutHandler extends Handler {
 	 */
 	protected URLConnection openConnection(URL u) throws IOException {
 		_con = new HttpTimeoutURLConnection(u, this);
+		_con.setReadTimeout(_timeOut);
 		return _con;
 	}
 	
