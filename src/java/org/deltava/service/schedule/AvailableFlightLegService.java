@@ -7,11 +7,13 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
+import org.deltava.beans.schedule.Airline;
+
 import org.deltava.dao.*;
-import org.deltava.service.ServiceContext;
-import org.deltava.service.ServiceException;
-import org.deltava.service.WebDataService;
+import org.deltava.service.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to return the next available Leg number for a Flight
@@ -31,11 +33,14 @@ public class AvailableFlightLegService extends WebDataService {
 
 		// Get the Flight Number
 		int flight = StringUtils.parse(ctx.getParameter("flight"), 0);
+		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		if (a == null)
+			a = SystemData.getAirline(SystemData.get("airline.code"));
 		
 		int leg = 0;
 		try {
 			GetScheduleInfo dao = new GetScheduleInfo(_con);
-			leg = dao.getNextLeg(flight);
+			leg = dao.getNextLeg(a, flight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
@@ -46,6 +51,7 @@ public class AvailableFlightLegService extends WebDataService {
 		doc.setRootElement(re);
 
 		// Save the flight number
+		re.setAttribute("airline", a.getCode());
 		re.setAttribute("number", String.valueOf(flight));
 		re.setAttribute("leg", String.valueOf(leg));
 
