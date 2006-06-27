@@ -62,6 +62,7 @@ public abstract class AccessControlTestCase extends TestCase {
 		_request = new HttpServletRequestSimulator();
 		_user = new AccessControlUser("Test", "User");
 		_user.setID(123);
+		_user.setPilotCode("DVA123");
 		_ctxt = new AccessControlContext(_user, _request);
 	}
 	
