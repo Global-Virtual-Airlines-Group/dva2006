@@ -85,3 +85,4 @@ fi
 # Change file permissions
 chown -R root:gva *
 chmod 640 *
+chmod 750 old
