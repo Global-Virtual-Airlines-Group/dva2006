@@ -35,6 +35,7 @@ put svn_1xxx.gz
 put svn_15xx.gz
 put svn_20xx.gz
 put svn_25xx.gz
+put svn_30xx.gz
 put svn_top.gz
 
 cd /cfg
