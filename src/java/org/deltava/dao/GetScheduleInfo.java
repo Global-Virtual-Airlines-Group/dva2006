@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.schedule.Airline;
+
 /**
  * A Data Access Object to extract Flight Schedule data.
  * @author Luke
@@ -23,15 +25,16 @@ public class GetScheduleInfo extends DAO {
 
 	/**
 	 * Returns all flight numbers in a particular range. 
+	 * @param a the Airline bean
 	 * @param start the start of the range, or zero if none specified
 	 * @param end the end of the range, or zero if none specified
 	 * @return a Collection of Integers with flight numbers
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Integer> getFlightNumbers(int start, int end) throws DAOException {
+	public Collection<Integer> getFlightNumbers(Airline a, int start, int end) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT FLIGHT FROM SCHEDULE");
+		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT FLIGHT FROM SCHEDULE WHERE (AIRLINE=?)");
 		Collection<String> params = new ArrayList<String>();
 		if (start > 0)
 			params.add("(FLIGHT > ?)");
@@ -40,12 +43,10 @@ public class GetScheduleInfo extends DAO {
 		
 		// Add parameters
 		if (!params.isEmpty()) {
-			sqlBuf.append(" WHERE ");
 			for (Iterator<String> i = params.iterator(); i.hasNext(); ) {
 				String p = i.next();
+				sqlBuf.append(" AND ");
 				sqlBuf.append(p);
-				if (i.hasNext())
-					sqlBuf.append(" AND ");
 			}
 		}
 		
@@ -53,10 +54,11 @@ public class GetScheduleInfo extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, a.getCode());
 			if (start > 0)
-				_ps.setInt(1, start);
+				_ps.setInt(2, start);
 			if (end > 0)
-				_ps.setInt(2, end);
+				_ps.setInt(3, end);
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -74,19 +76,21 @@ public class GetScheduleInfo extends DAO {
 	}
 	
 	/**
-	 * Returns the next available Leg number for a Flight. 
+	 * Returns the next available Leg number for a Flight.
+	 * @param a the Airline bean 
 	 * @param flightNumber the flight number
 	 * @return the next available leg number
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws IllegalArgumentException if flightNumber is zero or negative
 	 */
-	public int getNextLeg(int flightNumber) throws DAOException {
+	public int getNextLeg(Airline a, int flightNumber) throws DAOException {
 		if (flightNumber < 1)
 			throw new IllegalArgumentException("Invalid Flight Number -  " + flightNumber);
 		
 		try {
-			prepareStatement("SELECT MAX(LEG) FROM SCHEDULE WHERE (FLIGHT=?)");
-			_ps.setInt(1, flightNumber);
+			prepareStatement("SELECT MAX(LEG) FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?)");
+			_ps.setString(1, a.getCode());
+			_ps.setInt(2, flightNumber);
 			
 			// Do the query
 			ResultSet rs = _ps.executeQuery();

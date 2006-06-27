@@ -33,8 +33,8 @@ return true;
 function getAvailableFlight()
 {
 var f = document.forms[0];
-disableButton('LegSearchButton');
-disableButton('FlightSearchButton');
+if (!validateCombo(f.airline, 'Airline')) return false;
+var aCode = f.airline[f.airline.selectedIndex].value;
 
 // Get start/end ranges
 var startF = f.rangeStart.value;
@@ -42,7 +42,7 @@ var endF = f.rangeEnd.value;
 
 // Create the XMLHTTP request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "next_flight.ws?start=" + startF + "&end=" + endF, true);
+xmlreq.open("GET", "next_flight.ws?start=" + startF + "&end=" + endF + "&airline=" + aCode, true);
 xmlreq.onreadystatechange = function () {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -59,6 +59,8 @@ xmlreq.onreadystatechange = function () {
 	return true;
 }
 
+disableButton('LegSearchButton');
+disableButton('FlightSearchButton');
 xmlreq.send(null);
 return true;
 }
@@ -66,12 +68,12 @@ return true;
 function getAvailableLeg()
 {
 var f = document.forms[0];
-disableButton('LegSearchButton');
-disableButton('FlightSearchButton');
+if (!validateCombo(f.airline, 'Airline')) return false;
+var aCode = f.airline[f.airline.selectedIndex].value;
 
 // Create the XMLHTTP Request
 var xmlreq = getXMLHttpRequest();
-xmlreq.open("GET", "next_leg.ws?flight=" + f.flightNumber.value, true);
+xmlreq.open("GET", "next_leg.ws?flight=" + f.flightNumber.value + "&airline=" + aCode, true);
 xmlreq.onreadystatechange = function () {
 	if (xmlreq.readyState != 4) return false;
 	var xmlDoc = xmlreq.responseXML;
@@ -88,6 +90,8 @@ xmlreq.onreadystatechange = function () {
 	return true;
 }
 
+disableButton('LegSearchButton');
+disableButton('FlightSearchButton');
 xmlreq.send(null);
 return true;
 }

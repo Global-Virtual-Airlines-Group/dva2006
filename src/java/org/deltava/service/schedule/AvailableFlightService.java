@@ -8,11 +8,13 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
+import org.deltava.beans.schedule.Airline;
+
 import org.deltava.dao.*;
-import org.deltava.service.ServiceContext;
-import org.deltava.service.ServiceException;
-import org.deltava.service.WebDataService;
+import org.deltava.service.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to return the next available Flight Number in the Flight Schedule.
@@ -34,11 +36,14 @@ public class AvailableFlightService extends WebDataService {
 		// Get start/end ranges
 		int startFlight = StringUtils.parse(ctx.getParameter("start"), 0);
 		int endFlight = StringUtils.parse(ctx.getParameter("end"), 0);
+		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
+		if (a == null)
+			a = SystemData.getAirline(SystemData.get("airline.code"));
 		
 		Collection<Integer> flights = null;
 		try {
 			GetScheduleInfo dao = new GetScheduleInfo(_con);
-			flights = dao.getFlightNumbers(startFlight, endFlight);
+			flights = dao.getFlightNumbers(a, startFlight, endFlight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		}
@@ -59,6 +64,7 @@ public class AvailableFlightService extends WebDataService {
 		doc.setRootElement(re);
 		
 		// Save the flight number
+		re.setAttribute("airline", a.getCode());
 		re.setAttribute("number", String.valueOf(flightNumber));
 		re.setAttribute("leg", "1");
 		
