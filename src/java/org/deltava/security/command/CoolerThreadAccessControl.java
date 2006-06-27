@@ -6,7 +6,6 @@ import java.util.List;
 import org.deltava.beans.cooler.*;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.util.RoleUtils;
 
 /**
  * An Access Controller for Water Cooler Threads.
@@ -19,6 +18,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
 
     private MessageThread _mt;
     private Channel _c;
+    private CoolerChannelAccessControl _cac;
     
     private boolean _canRead;
     private boolean _canReply;
@@ -49,6 +49,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     public void updateContext(MessageThread t, Channel c) {
         _mt = t;
         _c = c;
+        _cac = new CoolerChannelAccessControl(_ctx, _c);
     }
     
     /**
@@ -60,6 +61,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public void updateContxt(SecurityContext ctx) {
        _ctx = ctx;
+       _cac = new CoolerChannelAccessControl(ctx, _c);
     }
 
     /**
@@ -73,11 +75,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
         if (_mt == null)
             throw new IllegalStateException("Mesage Thread not set");
         
+        // Validate our channel access
+        _cac.validate(); 
+        boolean channelAccess = _cac.getCanAccess();
+        
         // Get the roles and role state - we assume it's OK if channel is null
         boolean isOurs = (_ctx.getUser() != null) && (_mt.getAuthorID() == _ctx.getUser().getID());
         boolean isModerator = _ctx.isUserInRole("Moderator");
         boolean isClosed = _mt.getLocked() || _mt.getHidden();
-        boolean channelAccess = (_c != null) ? RoleUtils.hasAccess(_ctx.getRoles(), _c.getRoles()) : true;
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread

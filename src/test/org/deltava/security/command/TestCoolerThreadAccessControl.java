@@ -1,9 +1,6 @@
 // Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.security.command;
 
-import junit.framework.Test;
-import org.hansel.CoverageDecorator;
-
 import org.deltava.beans.cooler.Channel;
 import org.deltava.beans.cooler.MessageThread;
 
@@ -14,14 +11,11 @@ public class TestCoolerThreadAccessControl extends AccessControlTestCase {
    
    private CoolerThreadAccessControl _ac;
    
-   public static Test suite() {
-      return new CoverageDecorator(TestCoolerThreadAccessControl.class, 
-            new Class[] { AccessControl.class, CoolerThreadAccessControl.class } );
-  }
-   
    protected void setUp() throws Exception {
       super.setUp();
       _c = new Channel("Channel");
+      _c.addAirline("DVA");
+      _c.addRole("Dummy");
       _mt = new MessageThread("Thread Subject");
       _ac = new CoolerThreadAccessControl(_ctxt);
    }
