@@ -14,6 +14,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<content:js name="airportRefresh" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <script language="JavaScript" type="text/javascript">
 function setAirportD(combo)
@@ -55,7 +56,8 @@ return true;
 <!-- Table Header Bars -->
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
- <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" /> TO
+ <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
 </tr>
