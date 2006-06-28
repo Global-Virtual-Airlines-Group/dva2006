@@ -69,6 +69,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			GetFlightReports frdao = new GetFlightReports(con);
+			frdao.setQueryMax(10);
 			List<FlightReport> results = frdao.getByPilot(p.getID(), "DATE DESC");
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
