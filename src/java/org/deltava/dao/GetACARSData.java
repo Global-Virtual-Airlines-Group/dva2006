@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -89,7 +89,8 @@ public class GetACARSData extends DAO {
 	   
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
-			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, AOA, GFORCE, FLAGS FROM acars.");
+			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE "
+			   + "FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
 	   
@@ -121,6 +122,7 @@ public class GetACARSData extends DAO {
 				entry.setAOA(rs.getDouble(18));
 				entry.setG(rs.getDouble(19));
 				entry.setFlags(rs.getInt(20));
+				entry.setFrameRate(rs.getInt(21));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && (!includeOnGround)) {
