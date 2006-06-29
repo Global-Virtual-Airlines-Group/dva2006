@@ -50,7 +50,7 @@ public class FlightDataExportService extends WebDataService {
 
 		// Write the CSV header
 		ctx.print("Date/Time,Latitude,Longitude,Altitude,Heading,Air Speed,Ground Speed,Vertical Speed,N1,N2,Bank,Pitch,Flaps,");
-		ctx.println("WindSpeed,WindHdg,FuelFlow,Gs,AOA,NAV,HDG,APR,ALT,AT");
+		ctx.println("WindSpeed,WindHdg,FuelFlow,Gs,AOA,NAV,HDG,APR,ALT,AT,FrameRate,WARN");
 
 		// Format the ACARS data
 		for (Iterator i = routeData.iterator(); i.hasNext();) {
@@ -95,13 +95,20 @@ public class FlightDataExportService extends WebDataService {
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_APR) ? "APR," : ",");
 			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_ALT) ? "ALT," : ",");
-			if (entry.isFlagSet(ACARSFlags.FLAG_AT_IAS)) {
-				ctx.println("IAS");
-			} else if (entry.isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
-				ctx.println("MACH");
-			} else {
+			if (entry.isFlagSet(ACARSFlags.FLAG_AT_IAS))
+				ctx.print("IAS");
+			else if (entry.isFlagSet(ACARSFlags.FLAG_AT_MACH))
+				ctx.print("MACH");
+			
+			ctx.print(",");
+			ctx.print(String.valueOf(entry.getFrameRate()));
+			ctx.print(",");
+			if (entry.isFlagSet(ACARSFlags.FLAG_STALL))
+				ctx.println("STALL");
+			else if (entry.isFlagSet(ACARSFlags.FLAG_OVERSPEED))
+				ctx.println("OVERSPEED");
+			else
 				ctx.println("");
-			}
 		}
 
 		// Write the response

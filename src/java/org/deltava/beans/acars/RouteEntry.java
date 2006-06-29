@@ -39,6 +39,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private int _fuelFlow;
 	private int _flaps;
 	private int _flags;
+	private int _frameRate;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT , FLAG_AP_GPS};
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS" };
@@ -128,6 +129,15 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public int getFuelFlow() {
 		return _fuelFlow;
+	}
+	
+	/**
+	 * Returns the Flight Simulator frame rate.
+	 * @return the number of rendered frames per second
+	 * @see RouteEntry#setFrameRate(int)
+	 */
+	public int getFrameRate() {
+		return _frameRate;
 	}
 
 	/**
@@ -433,6 +443,15 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		
 		_fuelFlow = flow;
 	}
+	
+	/**
+	 * Updates the Flight Simulator frame rate.
+	 * @param rate the rendered frames per second
+	 * @see RouteEntry#getFrameRate()
+	 */
+	public void setFrameRate(int rate) {
+		_frameRate = rate;
+	}
 
 	/**
 	 * Updates the aircraft's flap detent position.
@@ -626,12 +645,15 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append("Autothrottle: MACH<br />");
 		}
 		
-		buf.append("</span>");
-		
-		// Add Pause/slew flags
+		// Add Pause/Stall/Overspeed flags
 		if (isFlagSet(ACARSFlags.FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
+		if (isFlagSet(ACARSFlags.FLAG_STALL))
+			buf.append("<span class=\"warn bld\">STALL</span><br />");
+		if (isFlagSet(ACARSFlags.FLAG_OVERSPEED))
+			buf.append("<span class=\"warn bld\">OVERSPEED</span><br />");
 
+		buf.append("</span>");
 		return buf.toString();
 	}
 }
