@@ -66,23 +66,29 @@
  <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
  <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
-<c:if test="${(pirep.time2X > 0) || (pirep.time4X > 0)}">
+<c:if test="${(pirep.times[0] > 120) || (pirep.times[2] > 0) || (pirep.times[4] > 0)}">
+<c:if test="${pirep.times[0] > 120}">
+<tr>
+ <td class="label">Time (Paused)</td>
+ <td class="data"><fmt:int value="${pirep.times[0] / 60}" /> minutes <fmt:int value="${pirep.times[0] % 60}" /> seconds</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Flight Time (1X)</td>
- <td class="data"><fmt:int value="${pirep.time1X / 60}" /> minutes</td>
+ <td class="data"><fmt:int value="${pirep.times[1] / 60}" /> minutes <fmt:int value="${pirep.times[1] % 60}" /> seconds</td>
 </tr>
-</c:if>
-<c:if test="${pirep.time2X > 0}">
+<c:if test="${pirep.times[2] > 0}">
 <tr>
  <td class="label">Flight Time (2X)</td>
- <td class="data bld"><fmt:int value="${pirep.time2X / 60}" /> minutes</td>
+ <td class="data bld"><fmt:int value="${pirep.times[2] / 60}" /> minutes <fmt:int value="${pirep.times[2] % 60}" /> seconds</td>
 </tr>
 </c:if>
-<c:if test="${pirep.time4X > 0}">
+<c:if test="${pirep.times[4] > 0}">
 <tr>
  <td class="label">Flight Time (4X)</td>
- <td class="data bld"><fmt:int value="${pirep.time4X / 60}" /> minutes</td>
+ <td class="data bld"><fmt:int value="${pirep.times[4] / 60}" /> minutes <fmt:int value="${pirep.times[4] % 60}" /> seconds</td>
 </tr>
+</c:if>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
 <tr>

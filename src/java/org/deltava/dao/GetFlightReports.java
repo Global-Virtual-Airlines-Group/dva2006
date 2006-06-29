@@ -512,9 +512,10 @@ public class GetFlightReports extends DAO {
 				ap.setEndTime(rs.getTimestamp(44));
 				ap.setGateWeight(rs.getInt(45));
 				ap.setGateFuel(rs.getInt(46));
-				ap.setTime1X(rs.getInt(47));
-				ap.setTime2X(rs.getInt(48));
-				ap.setTime4X(rs.getInt(49));
+				ap.setTime(0, rs.getInt(47));
+				ap.setTime(1, rs.getInt(48));
+				ap.setTime(2, rs.getInt(49));
+				ap.setTime(4, rs.getInt(50));
 			}
 
 			// Add the flight report to the results
