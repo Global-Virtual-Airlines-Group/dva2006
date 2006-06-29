@@ -50,7 +50,7 @@ public class TransferAccessControl extends AccessControl {
       _canApprove = (status == TransferRequest.OK) && hrPIREP;
       _canAssignRide = (status == TransferRequest.PENDING) && hrExam;
       _canReject = hrPIREP || hrExam;
-      _canDelete = _ctx.isUserInRole("Admin") || (isMine && ((status == TransferRequest.NEW) || (status == TransferRequest.PENDING)));
+      _canDelete = _ctx.isUserInRole("Admin") || (isMine && (status != TransferRequest.ASSIGNED));
    }
 
    /**
