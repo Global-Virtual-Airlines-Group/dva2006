@@ -262,12 +262,11 @@ public class SetFlightReport extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf
-				.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
+		sqlBuf.append(".ACARS_PIREPS (ID, ACARS_ID, START_TIME, TAXI_TIME, TAXI_WEIGHT, TAXI_FUEL, "
 						+ "TAKEOFF_TIME, TAKEOFF_DISTANCE, TAKEOFF_SPEED, TAKEOFF_N1, TAKEOFF_WEIGHT, "
 						+ "TAKEOFF_FUEL, LANDING_TIME, LANDING_DISTANCE, LANDING_SPEED, LANDING_VSPEED, "
 						+ "LANDING_N1, LANDING_WEIGHT, LANDING_FUEL, END_TIME, GATE_WEIGHT, GATE_FUEL, "
-						+ "TIME_1X, TIME_2X, TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "TIME_0X, TIME_1X, TIME_2X, TIME_4X) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			// Since we are writing to multiple tables, this is designd as a transaction
@@ -301,9 +300,10 @@ public class SetFlightReport extends DAO {
 			_ps.setTimestamp(20, createTimestamp(afr.getEndTime()));
 			_ps.setInt(21, afr.getGateWeight());
 			_ps.setInt(22, afr.getGateFuel());
-			_ps.setInt(23, afr.getTime1X());
-			_ps.setInt(24, afr.getTime2X());
-			_ps.setInt(25, afr.getTime4X());
+			_ps.setInt(23, afr.getTime(0));
+			_ps.setInt(24, afr.getTime(1));
+			_ps.setInt(25, afr.getTime(2));
+			_ps.setInt(26, afr.getTime(4));
 
 			// Write to the database
 			executeUpdate(1);
