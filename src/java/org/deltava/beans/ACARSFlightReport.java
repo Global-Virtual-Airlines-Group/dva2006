@@ -1,8 +1,7 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import org.deltava.beans.schedule.Airline;
 
@@ -12,6 +11,7 @@ import org.deltava.beans.schedule.Airline;
  * @version 1.0
  * @since 1.0
  */
+
 public class ACARSFlightReport extends FlightReport {
 
     private Map<String, Date> _stateChangeTimes;
@@ -35,9 +35,7 @@ public class ACARSFlightReport extends FlightReport {
     private int _gateWeight;
     private int _gateFuel;
     
-    private int _time1X;
-    private int _time2X;
-    private int _time4X;
+    private Map<Integer, Integer> _time;
     
     /**
      * Creates a new ACARS Flight Report object with a given flight.
@@ -54,6 +52,7 @@ public class ACARSFlightReport extends FlightReport {
     public ACARSFlightReport(Airline a, int flightNumber, int leg) {
         super(a, flightNumber, leg);
         _stateChangeTimes = new HashMap<String, Date>();
+        _time = new HashMap<Integer, Integer>();
     }
     
     /**
@@ -272,36 +271,24 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
-     * Returns the amount of time flown with no time acceleration.
-     * @return the amount of time in seconds
-     * @see ACARSFlightReport#setTime1X(int)
-     * @see ACARSFlightReport#getTime2X()
-     * @see ACARSFlightReport#getTime4X()
+     * Returns the amount of time at a given time acceleration rate.
+     * @param rate the acceleration rate
+     * @return the amount of time in seconds at that acceleration rate
+     * @see ACARSFlightReport#setTime(int, int)
+     * @see ACARSFlightReport#getTimes()
      */
-    public int getTime1X() {
-       return _time1X;
+    public int getTime(int rate) {
+    	Integer key = new Integer(rate);
+    	return _time.containsKey(key) ? _time.get(key).intValue() : 0;
     }
     
     /**
-     * Returns the amount of time flown with 2X time acceleration.
-     * @return the amount of time in seconds
-     * @see ACARSFlightReport#setTime2X(int)
-     * @see ACARSFlightReport#getTime1X()
-     * @see ACARSFlightReport#getTime4X()
+     * Returns a Map of times and acceleration rates.
+     * @return a sorted Map of times, keyed by acceleration rate
+     * @see ACARSFlightReport#getTime(int)
      */
-    public int getTime2X() {
-       return _time2X;
-    }
-    
-    /**
-     * Returns the amount of time flown with 4X time acceleration.
-     * @return the amount of time in seconds
-     * @see ACARSFlightReport#setTime4X(int)
-     * @see ACARSFlightReport#getTime1X()
-     * @see ACARSFlightReport#getTime2X()
-     */
-    public int getTime4X() {
-       return _time4X;
+    public Map<Integer, Integer> getTimes() {
+    	return new TreeMap<Integer, Integer>(_time);
     }
     
     /**
@@ -311,12 +298,10 @@ public class ACARSFlightReport extends FlightReport {
      * the proper multiplication before submitting the data. 
      * @return the length of the flight <i>in hours multiplied by ten</i>
      * @see FlightReport#getLength()
-     * @see ACARSFlightReport#setTime1X(int)
-     * @see ACARSFlightReport#setTime2X(int)
-     * @see ACARSFlightReport#setTime4X(int)
+     * @see ACARSFlightReport#getTime(int)
      */
     public final int getLength() {
-    	return (super.getLength() != 0) ? super.getLength() : (_time1X + _time2X + _time4X) / 360;
+    	return (super.getLength() != 0) ? super.getLength() : (getTime(1) + getTime(2) + getTime(4)) / 360;
     }
     
     /**
@@ -554,47 +539,18 @@ public class ACARSFlightReport extends FlightReport {
     }
     
     /**
-     * Updates the amount of time flown with no time acceleration.
+     * Updates the amount of time at a particular time acceleration rate.
+     * @param rate the acceleration rate
      * @param secs the amount of time in seconds
      * @throws IllegalArgumentException if secs is negative
-     * @see ACARSFlightReport#getTime1X()
-     * @see ACARSFlightReport#setTime2X(int)
-     * @see ACARSFlightReport#setTime4X(int)
+     * @see ACARSFlightReport#getTime(int)
      */
-    public void setTime1X(int secs) {
-       if (secs < 0)
-          throw new IllegalArgumentException("1X Time cannot be negative");
-       
-       _time1X = secs;
-    }
-    
-    /**
-     * Updates the amount of time flown with 2X time acceleration.
-     * @param secs the amount of time in seconds
-     * @throws IllegalArgumentException if secs is negative
-     * @see ACARSFlightReport#getTime2X()
-     * @see ACARSFlightReport#setTime1X(int)
-     * @see ACARSFlightReport#setTime4X(int)
-     */
-    public void setTime2X(int secs) {
-       if (secs < 0)
-          throw new IllegalArgumentException("2X Time cannot be negative");
-       
-       _time2X = secs;       
-    }
-    
-    /**
-     * Updates the amount of time flown with 4X time acceleration.
-     * @param secs the amount of time in seconds
-     * @throws IllegalArgumentException if secs is negative
-     * @see ACARSFlightReport#getTime4X()
-     * @see ACARSFlightReport#setTime1X(int)
-     * @see ACARSFlightReport#setTime2X(int)
-     */
-    public void setTime4X(int secs) {
-       if (secs < 0)
-          throw new IllegalArgumentException("4X Time cannot be negative");
-       
-       _time4X = secs;
+    public void setTime(int rate, int secs) {
+    	if (secs < 0)
+    		throw new IllegalArgumentException("Time cannot be negative - " + secs);
+    	else if ((rate < 0) || (rate == 3) || (rate > 4))
+    		throw new IllegalArgumentException("Rate must be 0, 1 2 or 4 - " + rate);
+    	
+    	_time.put(new Integer(rate), new Integer(secs));
     }
 }
