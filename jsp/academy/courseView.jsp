@@ -120,6 +120,27 @@ return ${access.canComment || access.canUpdateProgress};
 </td>
 </view:row>
 </c:forEach>
+<c:if test="${!empty sessions}">
+<!-- Instruction Sessions -->
+<tr class="title caps">
+ <td colspan="7">INSTRUCTION SESSION LOG - <fmt:int value="${fn:sizeof(sessions)}" /> SESSIONS</td>
+</tr>
+<tr class="title mid caps">
+ <td>DATE</td>
+ <td colspan="3">COMMENTS</td>
+ <td>STATUS</td>
+ <td colspan="2">INSTRUCTOR</td>
+</tr>
+<c:forEach var="session" items="${sessions}">
+<c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
+<tr class="mid">
+ <td><fmt:date date="${session.date}" fmt="d" default="-" /></td>
+ <td class="left small" colspan="3">${session.comments}</td>
+ <td class="sec small">${session.statusName}</td>
+ <td class="pri bld" colspan="2"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+</tr>
+</c:forEach>
+</c:if>
 <c:if test="${!empty flights}">
 <!-- Instruction Flights -->
 <tr class="title caps">
