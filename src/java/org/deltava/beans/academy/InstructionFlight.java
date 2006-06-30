@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionFlight extends DatabaseBean implements CalendarEntry, Instruction {
+public class InstructionFlight extends DatabaseBean implements Instruction {
 
 	private int _instructorID;
 	private int _pilotID;

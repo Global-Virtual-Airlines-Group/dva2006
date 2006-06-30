@@ -65,7 +65,7 @@
 </c:if>
 <tr>
  <td class="label" valign="top">Remarks</td>
- <td class="data"><fmt:msg value="${session.remarks}" /></td>
+ <td class="data"><fmt:msg value="${session.comments}" /></td>
 </tr>
 </el:table>
 

@@ -87,13 +87,17 @@ public class CourseCommand extends AbstractCommand {
 				
 				// Get instruction flight log
 				GetAcademyCalendar fdao = new GetAcademyCalendar(con);
-				Collection<InstructionFlight> flights = fdao.getFlights(c.getID());
+				Collection<? extends Instruction> flights = fdao.getFlights(c.getID());
+				Collection<? extends Instruction> sessions = fdao.getSessions(c.getID());
+				ctx.setAttribute("sessions", sessions, REQUEST);
 				ctx.setAttribute("flights", flights, REQUEST);
 				
 				// Get Pilot IDs from flights
-				for (Iterator<InstructionFlight> i = flights.iterator(); i.hasNext(); ) {
-					InstructionFlight flight = i.next();
-					IDs.add(new Integer(flight.getInstructorID()));
+				Collection<Instruction> insC = new ArrayList<Instruction>(flights);
+				insC.addAll(sessions);
+				for (Iterator<? extends Instruction> i = insC.iterator(); i.hasNext(); ) {
+					Instruction ins = i.next();
+					IDs.add(new Integer(ins.getInstructorID()));
 				}
 			}
 			

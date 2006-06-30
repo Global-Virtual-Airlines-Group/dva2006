@@ -74,11 +74,11 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlights(int courseID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.* FROM INSLOG I, COURSES C WHERE (C.ID=I.COURSE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM INSLOG ");
 		if (courseID != 0)
-			sqlBuf.append("AND (C.ID=?) ");
+			sqlBuf.append("WHERE (COURSE=?) ");
 
-		sqlBuf.append("ORDER BY I.STARTDATE");
+		sqlBuf.append("ORDER BY STARTDATE");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -87,6 +87,33 @@ public class GetAcademyCalendar extends DAO {
 
 			// Execute the query
 			return executeFlightCalendar();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Instruction Sessions for a particular Flight Academy Course.
+	 * @param courseID the database ID of the Course
+	 * @return a Collection of InstructionSession beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<InstructionSession> getSessions(int courseID) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM INSCALENDAR I, COURSES C "
+				+ "WHERE (C.ID=I.COURSE) ");
+		if (courseID != 0)
+			sqlBuf.append("AND (I.COURSE=?) ");
+
+		sqlBuf.append("ORDER BY I.STARTTIME");
+
+		try {
+			prepareStatement(sqlBuf.toString());
+			if (courseID != 0)
+				_ps.setInt(1, courseID);
+
+			return executeCalendar();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -189,7 +216,7 @@ public class GetAcademyCalendar extends DAO {
 			s.setEndTime(rs.getTimestamp(7));
 			s.setStatus(rs.getInt(8));
 			s.setNoShow(rs.getBoolean(9));
-			s.setRemarks(rs.getString(10));
+			s.setComments(rs.getString(10));
 			
 			// Add to results
 			results.add(s);
