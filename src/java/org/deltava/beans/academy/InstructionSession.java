@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionSession extends DatabaseBean implements Comparable, ViewEntry, CalendarEntry, Instruction {
+public class InstructionSession extends DatabaseBean implements Comparable, ViewEntry, Instruction {
 	
 	public static final int SCHEDULED = 0;
 	public static final int CANCELED = 1;
@@ -137,9 +137,9 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	/**
 	 * Returns any remarks about the Session.
 	 * @return the remarks
-	 * @see InstructionSession#setRemarks(String)
+	 * @see InstructionSession#setComments(String)
 	 */
-	public String getRemarks() {
+	public String getComments() {
 		return _remarks;
 	}
 	
@@ -239,9 +239,9 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	/**
 	 * Updates the remarks for this Session.
 	 * @param txt the remarks
-	 * @see InstructionSession#getRemarks()
+	 * @see InstructionSession#getComments()
 	 */
-	public void setRemarks(String txt) {
+	public void setComments(String txt) {
 		_remarks = txt;
 	}
 

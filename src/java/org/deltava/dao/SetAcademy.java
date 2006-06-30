@@ -312,7 +312,7 @@ public class SetAcademy extends DAO {
 			_ps.setTimestamp(4, createTimestamp(s.getEndTime()));
 			_ps.setInt(5, s.getStatus());
 			_ps.setBoolean(6, s.getNoShow());
-			_ps.setString(7, s.getRemarks());
+			_ps.setString(7, s.getComments());
 			_ps.setInt(8, s.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {

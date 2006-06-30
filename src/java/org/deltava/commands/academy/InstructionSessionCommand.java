@@ -83,7 +83,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			s.setEndTime(parseDateTime(ctx, "end", SystemData.get("time.date_format"), "HH:mm"));
 			s.setStatus(StringUtils.arrayIndexOf(InstructionSession.STATUS_NAMES, ctx.getParameter("status")));
 			s.setNoShow(Boolean.valueOf(ctx.getParameter("noShow")).booleanValue());
-			s.setRemarks(ctx.getParameter("remarks"));
+			s.setComments(ctx.getParameter("remarks"));
 			
 			// Load the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
