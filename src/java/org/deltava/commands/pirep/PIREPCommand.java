@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 public class PIREPCommand extends AbstractFormCommand {
 
 	private static final DateFormat _df = new SimpleDateFormat("yyyy, MM, dd");
-	
+
 	private static Collection<String> _flightTimes;
 	private static Collection<String> _flightYears;
 
@@ -145,7 +145,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setEquipmentType(ctx.getParameter("eq"));
 			fr.setRemarks(ctx.getParameter("remarks"));
 			fr.setFSVersion(ctx.getParameter("fsVersion"));
-			
+
 			// Check for historic aircraft
 			List historicEQ = (List) SystemData.getObject("eqtypes.historic");
 			fr.setAttribute(FlightReport.ATTR_HISTORIC, historicEQ.contains(fr.getEquipmentType()));
@@ -182,15 +182,17 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Validate the date
-			Calendar forwardLimit = Calendar.getInstance();
-			Calendar backwardLimit = Calendar.getInstance();
-			forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
-			backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
-			if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime()))) {
-				CommandException ce = new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
-						+ backwardLimit.getTime() + " - " + forwardLimit.getTime());
-				ce.setLogStackDump(false);
-				throw ce;
+			if (!ctx.isUserInRole("PIREP")) {
+				Calendar forwardLimit = Calendar.getInstance();
+				Calendar backwardLimit = Calendar.getInstance();
+				forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
+				backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
+				if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime()))) {
+					CommandException ce = new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
+							+ backwardLimit.getTime() + " - " + forwardLimit.getTime());
+					ce.setLogStackDump(false);
+					throw ce;
+				}
 			}
 
 			// Get the DAO and write the updateed PIREP to the database
@@ -292,7 +294,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save PIREP date limitations
 		Calendar forwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.maxDays"));
 		Calendar backwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.minDays") * -1);
@@ -445,7 +447,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if (!(fr instanceof ACARSFlightReport))
-					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100), REQUEST);
+					ctx
+							.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100),
+									REQUEST);
 
 				// Determine if we are crossing the International Date Line
 				double longD = fr.getAirportD().getLongitude();
