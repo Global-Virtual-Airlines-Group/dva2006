@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -69,7 +69,7 @@ public class ScheduleExportCommand extends AbstractCommand {
       try {
          // Write the header
          PrintWriter out = ctx.getResponse().getWriter();
-         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(new Date(), "mm/dd/yyyy HH:mm:ss"));
+         out.println("; " + aCode + " Flight Schedule - exported on " + StringUtils.format(new Date(), "MM/dd/yyyy HH:mm:ss"));
          out.println("AIRLINE,NUMBER,LEG,EQTYPE,FROM,DTIME,TO,ATIME,DISTANCE,HISTORIC,PURGE");
 
          // Loop through the results
