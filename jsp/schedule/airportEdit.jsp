@@ -19,6 +19,12 @@ if (!validateText(form.name, 6, 'Airport Name')) return false;
 if (!validateText(form.iata, 3, 'IATA Code')) return false;
 if (!validateText(form.icao, 4, 'ICAO Code')) return false;
 if (!validateCombo(form.tz, 'Time Zone')) return false;
+if (!validateNumber(form.latD, 'Latitude Degrees')) return false;
+if (!validateNumber(form.latM, 'Latitude Minutes')) return false;
+if (!validateNumber(form.latS, 'Latitude Seconds')) return false;
+if (!validateNumber(form.lonD, 'Longitude Degrees')) return false;
+if (!validateNumber(form.lonM, 'Longitude Minutes')) return false;
+if (!validateNumber(form.lonS, 'Longitude Seconds')) return false;
 
 setSubmit();
 disableButton('SaveButton');
