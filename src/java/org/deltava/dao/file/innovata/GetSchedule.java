@@ -180,7 +180,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 
 					se.setTimeA(_tf.parse(timeA));
 					Calendar ft = CalendarUtils.getInstance(_ftf.parse(tkns.get(12)));
-					se.setLength((ft.get(Calendar.HOUR) * 10) + (ft.get(Calendar.MINUTE) / 6));
+					se.setLength((ft.get(Calendar.HOUR_OF_DAY) * 10) + (ft.get(Calendar.MINUTE) / 6));
 				} catch (ParseException pe) {
 					log.warn("Error parsing time - " + pe.getMessage());
 					_errors.add("Error parsing time - " + pe.getMessage());
