@@ -24,11 +24,15 @@ import org.deltava.util.*;
 public class GetSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetSchedule.class);
+	private static final DateFormat _ddf = new SimpleDateFormat("dd-MMM");
 	private static final DateFormat _df = new SimpleDateFormat("dd-MMM-yyyy");
 	private static final DateFormat _tf = new SimpleDateFormat("HHmm");
 	private static final DateFormat _ftf = new SimpleDateFormat("HH:mm");
 
 	private Calendar _effDate;
+	private Calendar _defaultStartDate;
+	private Calendar _defaultEndDate;
+	
 	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
 	private Properties _acTypes;
 
@@ -39,6 +43,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 	public GetSchedule(InputStream is) {
 		super(is);
 		_effDate = CalendarUtils.getInstance(null);
+		_defaultStartDate = CalendarUtils.getInstance(_effDate.getTime(), true, - 90);
+		_defaultEndDate = CalendarUtils.getInstance(_effDate.getTime(), true, 7);
 	}
 
 	/**
@@ -100,6 +106,12 @@ public class GetSchedule extends ScheduleLoadDAO {
 					if (tkns.size() > 2)
 						log.warn("Skipping line " + br.getLineNumber() + " - size = " + tkns.size());
 				} else {
+					// Add default start/end dates
+					if (StringUtils.isEmpty(tkns.get(0)))
+						tkns.set(0, _ddf.format(_defaultStartDate.getTime()));
+					if (StringUtils.isEmpty(tkns.get(1)))
+						tkns.set(1, _ddf.format(_defaultEndDate.getTime()));
+					
 					_data.add(tkns);
 				}
 			}

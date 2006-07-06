@@ -45,6 +45,10 @@ class CSVTokens implements Comparable {
 	public String get(int ofs) {
 		return _tkns.get(ofs);
 	}
+	
+	public void set(int ofs, String value) {
+		_tkns.set(ofs, value);
+	}
 
 	public List<String> getAll() {
 		return _tkns;
@@ -56,11 +60,15 @@ class CSVTokens implements Comparable {
 	
 	public int compareTo(Object o2) {
 		CSVTokens t2 = (CSVTokens) o2;
-		int tmpResult = _tkns.get(7).compareTo(t2.get(7));
+		int tmpResult = _tkns.get(7).compareTo(t2.get(7)); // flight number
 		if (tmpResult == 0)
-			tmpResult = (_tkns.get(10).compareTo(t2.get(10)) * -1);
+			tmpResult = (_tkns.get(10).compareTo(t2.get(10)) * -1); // stops
+		if (tmpResult == 0)
+			tmpResult = _tkns.get(4).compareTo(t2.get(4)); // departure time
+		if (tmpResult == 0)
+			tmpResult = _tkns.get(0).compareTo(t2.get(0)); // start date
 		
-		return (tmpResult == 0) ? _tkns.get(4).compareTo(t2.get(4)) : tmpResult; 
+		return (tmpResult == 0) ? _tkns.get(1).compareTo(t2.get(1)) : tmpResult; // end date 
 	}
 	
 	public String toString() {
