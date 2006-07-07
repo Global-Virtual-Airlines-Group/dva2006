@@ -198,7 +198,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="640" y="570" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </c:if>
 <c:if test="${!googleMap}">
  <td class="label" valign="top">Route Map</td>
