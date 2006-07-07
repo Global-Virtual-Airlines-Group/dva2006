@@ -138,10 +138,17 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("eqSwitch", activeEQ, REQUEST);
 				ctx.setAttribute("eqSwitchFOExam", needFOExamEQ, REQUEST);
 			} else {
+				// Check our access
 				TransferAccessControl txAccess = new TransferAccessControl(ctx, txreq);
 				txAccess.validate();
 				ctx.setAttribute("txreq", txreq, REQUEST);
 				ctx.setAttribute("txAccess", txAccess, REQUEST);
+				
+				// Load the checkride if any
+				if (txreq.getCheckRideID() != 0) {
+					GetExam exdao = new GetExam(con);
+					ctx.setAttribute("checkRide", exdao.getCheckRide(txreq.getCheckRideID()), REQUEST);
+				}
 			}
 
 			// See if we can write any examinations
