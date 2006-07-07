@@ -36,7 +36,7 @@
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="700" y="650" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="650" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Equipment Programs</td>

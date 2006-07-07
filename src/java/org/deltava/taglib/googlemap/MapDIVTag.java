@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -8,6 +8,8 @@ import org.deltava.commands.CommandContext;
 
 import org.deltava.taglib.ContentHelper;
 import org.deltava.taglib.html.ElementTag;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP Tag to insert a DIV element to store a Google Map.
@@ -19,6 +21,8 @@ import org.deltava.taglib.html.ElementTag;
 public class MapDIVTag extends ElementTag {
    
    private int _mapX;
+   private int _mapWidth;
+   
    private int _mapY;
    private boolean _fixedSize;
    
@@ -39,11 +43,20 @@ public class MapDIVTag extends ElementTag {
    }
    
    /**
-    * Sets the default map width at 1024x768.
-    * @param x the width in pixels
+    * Sets the default map width.
+    * @param width the width in pixels at 1024x768, or a percentage of the parent element
+    * @throws IllegalArgumentException if width is non-numeric
     */
-   public void setX(int x) {
-      _mapX = x;
+   public void setX(String width) {
+	   if ((width != null) && (width.endsWith("%"))) {
+		   _mapWidth = StringUtils.parse(width.substring(0, width.length() - 1), 100);
+		   if ((_mapWidth < 1) || (_mapWidth > 100))
+			   _mapWidth = 100;
+	   } else {
+		   _mapX = StringUtils.parse(width, 0);
+		   if (_mapX == 0)
+			   throw new IllegalArgumentException("Invalid map DIV width - " + width);
+	   }
    }
    
    /**
@@ -60,6 +73,8 @@ public class MapDIVTag extends ElementTag {
    public void release() {
       super.release();
       _fixedSize = false;
+      _mapX = 0;
+      _mapWidth = 0;
    }
    
    /**
@@ -87,8 +102,11 @@ public class MapDIVTag extends ElementTag {
          _mapY *= (screenY / 768.0);
       }
       
-      // Save the screen size as a style
-      _data.setAttribute("style", "height:" + _mapY + "px; width:" + _mapX + "px");
+      // Save the DIV size as a style
+      if (_mapWidth > 0)
+    	  _data.setAttribute("style", "height:" + _mapY + "px; width:" + _mapWidth + "%");
+      else
+    	  _data.setAttribute("style", "height:" + _mapY + "px; width:" + _mapX + "px");
       
       // Skip Body
       return SKIP_BODY;

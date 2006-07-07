@@ -167,7 +167,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="580" /></td>
 </tr>
 <tr>
  <td class="label">Flight Route</td>
