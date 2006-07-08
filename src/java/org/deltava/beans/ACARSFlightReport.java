@@ -288,7 +288,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTime(int)
      */
     public Map<Integer, Integer> getTimes() {
-    	return new TreeMap<Integer, Integer>(_time);
+    	return new HashMap<Integer, Integer>(_time);
     }
     
     /**
