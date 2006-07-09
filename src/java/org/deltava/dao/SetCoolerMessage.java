@@ -116,6 +116,21 @@ public class SetCoolerMessage extends DAO {
 				_ps.close();
 				_ps = null;
 			}
+			
+			// If we have linked images, write them to the database
+			if (!t.getImageURLs().isEmpty()) {
+				prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, URL) VALUES (?, ?)");
+				_ps.setInt(1, t.getID());
+				for (Iterator<String> i = t.getImageURLs().iterator(); i.hasNext(); ) {
+					String url = i.next();
+					_ps.setString(2, url);
+					_ps.addBatch();
+				}
+				
+				_ps.executeBatch();
+				_ps.close();
+				_ps = null;
+			}
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);

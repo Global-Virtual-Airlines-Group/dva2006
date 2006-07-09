@@ -86,37 +86,8 @@ return true;
  <td colspan="3" class="mid">This Discussion Thread is Stuck until <fmt:date fmt="d" date="${thread.stickyUntil}" /></td>
 </tr>
 </c:if>
-<c:if test="${!empty img}">
-<!-- Attached Image -->
-<tr class="mid">
- <td colspan="3"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
-</tr>
-<c:if test="${(!empty img.votes) || imgAccess.canVote}">
-<tr>
- <td class="label">Image Feedback</td>
- <td class="data" colspan="2"><c:if test="${!empty img.votes}"><span class="pri bld">${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></span></c:if>
- <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
-<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
-</td>
-</tr>
-</c:if>
-</c:if>
-<c:if test="${thread.poll}">
-<!-- Pilot Poll -->
-<tr>
- <td class="label" valign="top">Poll Results<br />(${fn:sizeof(thread.votes)} VOTES)</td>
- <td class="data" colspan="2"><c:forEach var="opt" items="${thread.options}">
-<span style="width:250px;"><c:if test="${opt.votes > 0}"><el:img y="12" x="${(opt.votes / maxVotes) * 250}" caption="${opt.name}" src="cooler/bar_blue.png" /></c:if></span>
-${opt.name}<c:choose><c:when test="${opt.votes == 1}"> (<fmt:int value="${opt.votes}" /> vote)</c:when>
-<c:when test="${opt.votes > 1}"> (<fmt:int value="${opt.votes}" /> votes)</c:when></c:choose><br /></c:forEach></td>
-</tr>
-<c:if test="${access.canVote}">
-<tr>
- <td class="label" valign="top">Your Choice</td>
- <td class="data" colspan="2"><el:check name="pollVote" type="radio" idx="*" cols="1" options="${thread.options}" /></td>
-</tr>
-</c:if>
-</c:if>
+<%@ include file="/jsp/cooler/threadImg.jspf" %>
+<%@ include file="/jsp/cooler/threadPoll.jspf" %>
 
 <!-- Thread Posts -->
 <c:set var="postIdx" value="${0}" scope="request" />
