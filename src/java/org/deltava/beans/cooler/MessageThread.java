@@ -38,6 +38,8 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 
 	private SortedSet<Message> _posts;
 	private SortedSet<ThreadUpdate> _updates;
+	
+	private Collection<String> _imgURLs;
 
 	private Collection<PollOption> _pollOptions;
 	private Collection<PollVote> _pollVotes;
@@ -201,6 +203,15 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 */
 	public Collection<PollVote> getVotes() {
 		return (_pollVotes == null) ? new HashSet<PollVote>() : _pollVotes;
+	}
+	
+	/**
+	 * Returns all linked Image URLs for this Message Thread.
+	 * @return a Collection of URLs
+	 * @see MessageThread#addImageURL(String)
+	 */
+	public Collection<String> getImageURLs() {
+		return (_imgURLs == null) ? new HashSet<String>() : _imgURLs;
 	}
 	
 	/**
@@ -433,6 +444,18 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 			_pollOptions = new LinkedHashSet<PollOption>(opts);
 		else
 			_pollOptions.addAll(opts);
+	}
+	
+	/**
+	 * Adds a URL to the list of linked Image URLs for this Message Thread.
+	 * @param url the image URL
+	 * @see MessageThread#getImageURLs()
+	 */
+	public void addImageURL(String url) {
+		if (_imgURLs == null)
+			_imgURLs = new LinkedHashSet<String>();
+		
+		_imgURLs.add(url);
 	}
 	
 	/**
