@@ -1,5 +1,4 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
@@ -17,12 +16,15 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
-if (!validateText(form.msgText, 5, 'text of your Message')) return false;
-if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
+if (!document.linkImage) {
+	if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
+	if (!validateText(form.msgText, 5, 'text of your Message')) return false;
+	if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
+}
 
 setSubmit();
 disableButton('EmoticonButton');
+disableButton('LinkButton');
 disableButton('SaveButton');
 return true;
 }
@@ -39,6 +41,23 @@ function enablePoll()
 var f = document.forms[0];
 if (!f.hasPoll) return false;
 f.pollOptions.disabled = !f.hasPoll.checked;
+return true;
+}
+
+function linkImage()
+{
+var f = document.forms[0];
+if (!validateText(f.imgURL, 12, 'URL of your Linked Image')) return false;
+if ((f.img) && (f.img.value.length > 0)) {
+	alert('You cannot Link an Image and Upload an Image at the same time.');
+	f.img.focus();
+	return false;
+}
+
+// Do the POST
+document.linkImage = true;
+f.addImage.value = 'true';
+f.submit();
 return true;
 }
 </script>
@@ -79,6 +98,7 @@ return true;
  <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="1" />&nbsp;
 <el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
+<c:if test="${empty sessionScope.imageURLs}">
 <tr>
  <td class="label">Upload Image</td>
  <td class="data"><el:file name="img" className="small" idx="*" size="64" max="144" onChange="void toggleImgOptions(this)" />
@@ -86,6 +106,17 @@ return true;
 <c:if test="${imgBadDim}"><div class="error bld">Your attached image was too large (<fmt:int value="${imgX}" />
  by <fmt:int value="${imgY}" /> pixels).</div></c:if>
 <c:if test="${imgInvalid}"><div class="error bld">Your attached image is in an unknown format.</div></c:if></td>
+</tr>
+</c:if>
+<tr>
+ <td class="label" valign="top">Link Image(s)</td>
+ <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
+ <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" />
+<c:if test="${!empty sessionScope.imageURLs}"><br />
+<c:forEach var="imgURL" items="${sessionScope.imageURLs}">
+<el:link target="_new" url="${imgURL}">${imgURL}</el:link><br />
+</c:forEach></c:if>
+<c:if test="${!empty system_message}"><span class="small error bld">${system_message}</span></c:if></td>
 </tr>
 
 <content:filter roles="PIREP,HR,Moderator">
@@ -120,6 +151,7 @@ return true;
  </td>
 </tr>
 </el:table>
+<el:text name="addImage" type="hidden" value="" />
 </el:form>
 <content:copyright />
 </content:region>

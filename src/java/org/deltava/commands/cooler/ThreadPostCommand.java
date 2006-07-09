@@ -4,7 +4,8 @@ package org.deltava.commands.cooler;
 import java.awt.Dimension;
 
 import java.util.*;
-import java.text.*;
+import java.net.*;
+import java.io.IOException;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -18,6 +19,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.CoolerChannelAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.http.HttpTimeoutHandler;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -28,10 +30,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ThreadPostCommand extends AbstractCommand {
-
-	/* private static final Logger log = Logger.getLogger(ThreadPostCommand.class); */
-
-	private static final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
 
 	private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
 	private static final String[] IMG_ALIASES = { "0", "1" };
@@ -95,6 +93,43 @@ public class ThreadPostCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Check if we are adding a linked Image and returning back
+			boolean addImage = Boolean.valueOf(ctx.getParameter("addImage")).booleanValue();
+			if (addImage) {
+				@SuppressWarnings("unchecked")
+				Collection<String> imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
+				if (imgURLs == null) {
+					imgURLs = new LinkedHashSet<String>();
+					ctx.setAttribute("imageURLs", imgURLs, SESSION);
+				}
+				
+				// Validate the image
+				try {
+					URL url = new URL(null, ctx.getParameter("imgURL"), new HttpTimeoutHandler(1750));
+					HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
+					urlcon.setRequestMethod("HEAD");
+					urlcon.connect();
+					
+					// Validate the result code
+					int resultCode = urlcon.getResponseCode();
+					if (resultCode == HttpURLConnection.HTTP_OK)
+						imgURLs.add(url.toString());
+					else
+						ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
+					
+					urlcon.disconnect();
+				} catch (MalformedURLException mue) {
+					ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
+				} catch (IOException ie) {
+					ctx.setMessage("I/O Error - " + ie.getMessage());
+				}
+				
+				// Redirect back to the page
+				result.setURL("/jsp/cooler/threadCreate.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
 			// Check if we are loading an image. If so, check the image size
 			FileUpload img = ctx.getFile("img");
@@ -143,9 +178,11 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Parse the sticky date
 			if (!StringUtils.isEmpty(ctx.getParameter("stickyDate"))) {
 				try {
-					mt.setStickyUntil(_df.parse(ctx.getParameter("stickyDate")));
-				} catch (ParseException pe) {
-					throw new CommandException(pe);
+					mt.setStickyUntil(StringUtils.parseDate(ctx.getParameter("stickyDate"), "MM/dd/yyyy"));
+				} catch (IllegalArgumentException iae) {
+					CommandException ce = new CommandException(iae);
+					ce.setLogStackDump(false);
+					throw ce;
 				}
 			}
 
@@ -156,7 +193,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				for (Iterator<String> i = opts.iterator(); i.hasNext();)
 					mt.addOption(new PollOption(1, i.next()));
 			}
-
+			
 			// Create the first post in the thread
 			Message msg = new Message(p.getID());
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
@@ -164,6 +201,13 @@ public class ThreadPostCommand extends AbstractCommand {
 			msg.setBody(ctx.getParameter("msgText"));
 			msg.setContentWarning(ProfanityFilter.flag(msg.getBody()));
 			mt.addPost(msg);
+			
+			// Load linked images
+			Collection imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
+			if (imgURLs != null) {
+				for (Iterator i = imgURLs.iterator(); i.hasNext(); )
+					mt.addImageURL((String) i.next());
+			}
 
 			// Start the transaction
 			ctx.startTX();
@@ -207,6 +251,9 @@ public class ThreadPostCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Remove image URLs
+		ctx.getRequest().getSession().removeAttribute("imageURLs");
 
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
