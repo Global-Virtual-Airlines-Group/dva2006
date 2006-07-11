@@ -42,7 +42,7 @@ mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common
 
 # Dump Water Cooler
 echo 'Writing Water Cooler'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES | gzip -9 > cooler.sql.gz
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | gzip -9 > cooler.sql.gz
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
