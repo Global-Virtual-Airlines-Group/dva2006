@@ -127,8 +127,8 @@ public class TaskScheduler extends Thread {
 
 			// Sleep until the next invocation
 			long interval = (System.currentTimeMillis() - now);
-			if (interval < 1000)
-				ThreadUtils.sleep(1000 - interval);
+			if (interval < 60000)
+				ThreadUtils.sleep(60000 - interval);
 		}
 
 		log.info("Stopping");
