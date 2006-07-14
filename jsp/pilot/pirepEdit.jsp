@@ -109,7 +109,7 @@ var bwdLimit = new Date(${backwardDateLimit});
 </tr>
 <tr>
  <td class="label">Airline Name</td>
- <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, true)" className="req" firstEntry="< AIRLINE >" /></td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, false)" className="req" firstEntry="< AIRLINE >" /></td>
 </tr>
 <tr>
  <td class="label">Flight Number / Leg</td>
