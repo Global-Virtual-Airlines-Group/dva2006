@@ -278,19 +278,6 @@ public class GetCoolerThreads extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
-			
-			// Fetch linked image URLs
-			prepareStatementWithoutLimits("SELECT URL FROM common.COOLER_IMGURLS WHERE (ID=?)");
-			_ps.setInt(1, id);
-			
-			// Execute the query
-			rs = _ps.executeQuery();
-			while (rs.next())
-				t.addImageURL(rs.getString(1));
-			
-			// CLean up
-			rs.close();
-			_ps.close();
 			return t;
 		} catch (SQLException se) {
 			throw new DAOException(se);
