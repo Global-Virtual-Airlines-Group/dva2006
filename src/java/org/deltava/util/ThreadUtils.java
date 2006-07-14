@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import org.apache.log4j.Logger;
@@ -44,14 +44,28 @@ public class ThreadUtils {
 	}
 	
 	/**
-	 * Causes a thread to sleep, swallowing exceptions
+	 * Causes a thread to sleep, swallowing exceptions.
 	 * @param sleepTime the duration to sleep for in milliseconds
 	 */
 	public static void sleep(long sleepTime) {
 		try {
 			Thread.sleep(sleepTime);
 		} catch (InterruptedException ie) {
+			Thread.currentThread().interrupt();
 			log.warn("Thread [" + Thread.currentThread().getName() + "] interrupted");
+		}
+	}
+
+	/**
+	 * Waits for a running Thread to complete.
+	 * @param t the Thread
+	 * @param maxTime the maximum number of milliseconds to wait
+	 */
+	public static void waitFor(Thread t, long maxTime) {
+		int timeElapsed = 0;
+		while (isAlive(t) && (timeElapsed < maxTime)) {
+			sleep(150);
+			timeElapsed += 150;
 		}
 	}
 }
