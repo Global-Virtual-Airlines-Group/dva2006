@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.cooler.*;
 
 /**
+ * A Data Access Object to load Water Cooler poll data.
  * @author Luke
  * @version 1.0
  * @since 1.0
