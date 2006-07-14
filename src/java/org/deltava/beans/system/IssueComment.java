@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
@@ -11,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class IssueComment extends DatabaseBean implements Comparable {
+public class IssueComment extends DatabaseBean {
 	
 	private int _createdBy;
 	private int _issueID;
