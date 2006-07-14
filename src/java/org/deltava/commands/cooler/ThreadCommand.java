@@ -109,6 +109,11 @@ public class ThreadCommand extends AbstractCommand {
 				GalleryAccessControl imgAccess = new GalleryAccessControl(ctx, img);
 				imgAccess.validate();
 				ctx.setAttribute("imgAccess", imgAccess, REQUEST);
+			} else {
+				GetCoolerLinks ldao = new GetCoolerLinks(con);
+				Collection<String> imgURLs = ldao.getURLs(thread.getID());
+				for (Iterator<String> li = imgURLs.iterator(); li.hasNext(); )
+					thread.addImageURL(li.next());
 			}
 			
 			// Get the locations of the pilots writing updates
