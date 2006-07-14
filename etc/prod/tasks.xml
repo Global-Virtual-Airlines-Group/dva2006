@@ -119,4 +119,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- Water Cooler Image Link validation -->
+	<task id="imgurlvalidate" enabled="true">
+		<class>org.deltava.tasks.ImageLinkTestTask</class>
+		<time>
+			<min>45</min>
+			<hour>15</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>
