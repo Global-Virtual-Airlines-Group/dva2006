@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -30,11 +31,12 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	public static final int AREA_EXAMS = 3;
 	public static final int AREA_ACARS = 4;
 	public static final int AREA_SERVER = 5;
+	public static final int AREA_SCHEDULE = 6;
 	
 	/**
 	 * Area Names
 	 */
-	public static final String[] AREA = {"Web Site", "Fleet Library", "Manuals", "Examinations", "ACARS", "Server Admin"};
+	public static final String[] AREA = {"Web Site", "Fleet Library", "Manuals", "Examinations", "ACARS", "Server Admin", "Schedule"};
 	
 	public static final int STATUS_OPEN = 0;
 	public static final int STATUS_FIXED = 1;
