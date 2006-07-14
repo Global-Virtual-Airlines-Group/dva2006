@@ -1,9 +1,11 @@
-//Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
 
 import org.apache.log4j.Logger;
+
+import org.deltava.util.*;
 
 /**
  * A class to support scheduled tasks.
@@ -12,22 +14,30 @@ import org.apache.log4j.Logger;
  * @since 1.0
  */
 
-public abstract class Task implements java.io.Serializable {
+public abstract class Task implements Runnable {
+	
+	/**
+	 * Time interval options.
+	 */
+	public static final String[] TIME_OPTS = {"min", "hour", "mday", "month", "wday"};
+	private static final int[] TIME_FIELDS = {Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH,
+		Calendar.MONTH, Calendar.DAY_OF_WEEK};
+	
+	private static final String ALL_TIMES = "*";
+	private static final Integer ANY = new Integer(-1);
 
     protected final Logger log;
     
     private String _id;
     private String _name;
     
+    private long _lastRunTime;
+    private Date _lastStartTime;
+    
     private boolean _enabled;
     private int _runCount;
     
-    private Set<Integer> _runHours = new HashSet<Integer>();
-    
-    private Calendar _startTime = Calendar.getInstance();
-    private Calendar _nextStartTime = Calendar.getInstance();
-    private long _lastRunTime;
-    private int _interval;
+    private Map<String, Collection<Integer>> _runTimes = new HashMap<String, Collection<Integer>>();
     
     /**
      * Creates a new Scheduled Task with a given class name.
@@ -73,39 +83,13 @@ public abstract class Task implements java.io.Serializable {
     }
     
     /**
-     * Returns the next execution time for this Task.
-     * @return the date/time this Task is scheduled for execution
-     */
-    public Date getNextStartTime() {
-       return _nextStartTime.getTime(); 
-    }
-    
-    /**
      * Returns the when this Task was last started on.
      * @return the date/time the Task was last started, or null if the Task has never been executed
      */
     public Date getStartTime() {
-        return _startTime.getTime();
+        return _lastStartTime;
     }
 
-    /**
-     * Returns wether a Task is eligible to run during a particular hour
-     * @param hour the hour of the day (0-23)
-     * @return TRUE if the Task can run this hour, otherwise FALSE
-     * @see Task#setRunHours(int[])
-     */
-    public boolean isRunHour(int hour) {
-    	return _runHours.isEmpty() || _runHours.contains(new Integer(hour));
-    }
-    
-    /**
-     * Returns the interval between executions of this Task.
-     * @return the interval in seconds
-     */
-    public int getInterval() {
-       return _interval;
-    }
-    
     /**
      * Returns if the Task is allowed to be executed.
      * @return TRUE if the Task can be executed, otherwise FALSE
@@ -113,6 +97,44 @@ public abstract class Task implements java.io.Serializable {
      */
     public boolean getEnabled() {
        return _enabled;
+    }
+    
+    /**
+     * Returns wether the Scheduled Task can be executed at the present time.
+     * @return TRUE if the Task can be executed, otherwise FALSE
+     * @see Task#isRunnable(Calendar)
+     * @see Task#setRunTimes(String, String)
+     */
+    public boolean isRunnable() {
+    	return isRunnable(CalendarUtils.getInstance(null));
+    }
+    
+    /**
+     * Determines wether this Scheduled Task is runnable at a particular date/time. <i>This is package private
+     * for unit testing purposes.</i>
+     * @param dt the date/time to execute the task at
+     * @return TRUE if the Task can be executed, otherwise FALSE
+     * @see Task#isRunnable()
+     * @see Task#setRunTimes(String, String)
+     */
+    boolean isRunnable(Calendar dt) {
+    	if ((!_enabled) || _runTimes.isEmpty())
+    		return false;
+    	
+    	// Check the time options
+    	for (int x = 0; x < TIME_OPTS.length; x++) {
+    		Collection<Integer> runTimes = _runTimes.get(TIME_OPTS[x]);
+    		int timeField = dt.get(TIME_FIELDS[x]);
+    		if (log.isDebugEnabled())
+    			log.debug(TIME_OPTS[x] + ", now = " + timeField + ", allowed = " + runTimes);
+    		
+    		// Make sure we qualify to run
+    		if ((runTimes != null) && (!runTimes.contains(ANY)) && (!runTimes.contains(new Integer(timeField))))
+    			return false;
+    	}
+    	
+    	// If we made it this far, we're eligible to run
+    	return true;
     }
     
     /**
@@ -125,13 +147,35 @@ public abstract class Task implements java.io.Serializable {
     }
     
     /**
-     * Sets the hours of the day this Task may run in.
-     * @param hours an array of hours
-     * @see Task#isRunHour(int)
+     * Sets the time of the day this Task may run in.
+     * @param intervalType the time interval Type
+     * @param values a comma-delimited set of numbers
+     * @see Task#TIME_OPTS
+     * @see Task#isRunnable()
      */
-    public void setRunHours(int[] hours) {
-    	for (int x = 0; x < hours.length; x++)
-    		_runHours.add(new Integer(hours[x]));
+    public void setRunTimes(String intervalType, String values) {
+    	if (StringUtils.arrayIndexOf(TIME_OPTS, intervalType) == -1)
+    		throw new IllegalArgumentException("Invalid Time interval type - " + intervalType);
+    	
+    	// Get the interval Collection
+    	Collection<Integer> intervals = _runTimes.get(intervalType);
+    	if (intervals == null) {
+    		intervals = new HashSet<Integer>();
+    		_runTimes.put(intervalType, intervals);
+    	} else
+    		intervals.clear();
+    	
+    	// Split the values
+    	if (ALL_TIMES.equals(values))
+    		intervals.add(ANY);
+    	else {
+    		for (Iterator<String> i = StringUtils.split(values, ",").iterator(); i.hasNext(); ) {
+    			String value = i.next();
+    			int v = StringUtils.parse(value, -1);
+    			if (v != -1)
+    				intervals.add(new Integer(v));
+    		}
+    	}
     }
     
     /**
@@ -144,40 +188,25 @@ public abstract class Task implements java.io.Serializable {
     }
     
     /**
-     * Updates the execution interval for this Task.
-     * @param interval the interval in seconds
-     * @throws IllegalArgumentException if interval is negative
-     */
-    public void setInterval(int interval) {
-       if (interval < 0)
-          throw new IllegalArgumentException("Invalid execution interval - " + interval);
-       
-       _interval = interval;
-    }
-    
-    /**
      * Overrides the last execution time for this Task.
      * @param dt the date/time this Task last executed
      * @see Task#getStartTime()
-     * @see Task#getNextStartTime()
      */
     public void setStartTime(Date dt) {
-       if (dt != null) {
-          _startTime.setTime(dt);
-          _nextStartTime.setTimeInMillis(dt.getTime() + (_interval * 1000));
-       }
+       if (dt != null)
+          _lastStartTime = dt;
     }
     
     /**
      * Executes the Task. This logs execution start/stop times and calls each Task implementation's
      * {@link Task#execute()} method.
      */
-    public void start() {
+    public void run() {
         setStartTime(new Date());
         _runCount++;
-        log.info(_name + " starting - next run time = " + _nextStartTime.getTime());
+        log.info(_name + " starting ");
         execute();
-        _lastRunTime = (System.currentTimeMillis() - _startTime.getTimeInMillis());
+        _lastRunTime = (System.currentTimeMillis() - _lastStartTime.getTime());
     }
     
     /**

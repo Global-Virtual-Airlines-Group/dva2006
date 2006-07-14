@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.Date;
@@ -15,9 +15,7 @@ public class TaskInfo implements java.io.Serializable, Comparable {
    private String _id;
    private String _name;
    private String _className;
-   private int _interval;
    private Date _lastStart;
-   private Date _nextStart;
    private long _lastRunTime;
    private int _runCount;
    private boolean _enabled;
@@ -30,9 +28,7 @@ public class TaskInfo implements java.io.Serializable, Comparable {
       _id = t.getID();
       _name = t.getName();
       _className = t.getClass().getName();
-      _interval = t.getInterval();
       _lastStart = t.getStartTime();
-      _nextStart = t.getNextStartTime();
       _lastRunTime = t.getLastRunTime();
       _runCount = t.getRunCount();
       _enabled = t.getEnabled();
@@ -63,30 +59,12 @@ public class TaskInfo implements java.io.Serializable, Comparable {
    }
    
    /**
-    * Returns the interval between executions of this Task.
-    * @return the interval in seconds
-    * @see Task#getInterval()
-    */
-   public int getInterval() {
-      return _interval;
-   }
-   
-   /**
     * Returns the Task's last execution date.
     * @return the date/time the Task was last run, or null if never
     * @see Task#getStartTime()
     */
    public Date getLastStartTime() {
       return _lastStart;
-   }
-   
-   /**
-    * Returns the Task's next execution date.
-    * @return the date/time the Task is scheduled to be executed
-    * @see Task#getNextStartTime()
-    */
-   public Date getNextStartTime() {
-     return _nextStart; 
    }
    
    /**
@@ -120,6 +98,6 @@ public class TaskInfo implements java.io.Serializable, Comparable {
     */
    public int compareTo(Object o2) {
       TaskInfo ti2 = (TaskInfo) o2;
-      return _nextStart.compareTo(ti2.getNextStartTime());
+      return _lastStart.compareTo(ti2.getLastStartTime());
    }
 }

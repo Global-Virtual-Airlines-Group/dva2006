@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.io.*;
@@ -12,11 +12,12 @@ import org.jdom.input.*;
 import org.deltava.util.ConfigLoader;
 
 /**
- * A utility class to load Scheduled Tasks.
+ * A utility class to load Scheduled Tasks from an XML configuration file.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class TaskFactory {
    
    private static final Logger log = Logger.getLogger(TaskFactory.class);
@@ -54,12 +55,11 @@ public class TaskFactory {
           throw new IOException("Empty XML Document");
 
       // Parse through the tasks
-      Set<Task> results = new HashSet<Task>();
+      Collection<Task> results = new HashSet<Task>();
       for (Iterator i = root.getChildren("task").iterator(); i.hasNext(); ) {
          Element e = (Element) i.next();
          String id = e.getAttributeValue("id");
          String className = e.getChildTextTrim("class");
-         String hours = e.getChildTextTrim("hours");
          
          // Instantiate the task and set the interval
          try {
@@ -69,25 +69,17 @@ public class TaskFactory {
             t.setID(id);
             t.setEnabled(Boolean.valueOf(e.getAttributeValue("enabled")).booleanValue());
             log.debug(id + " enabled = " + t.getEnabled());
-            try {
-               t.setInterval(Integer.parseInt(e.getChildTextTrim("interval")));
-            } catch (NumberFormatException nfe) {
-               t.setInterval(3600);
-            }
             
-            // Set the hours
-            if (hours != null) {
-            	StringTokenizer tkns = new StringTokenizer(hours, ",");
-            	int hrs[] = new int[tkns.countTokens()];
-            	for (int x = 0; x < hrs.length; x++) {
-            		try {
-            			hrs[x] = Integer.parseInt(tkns.nextToken());
-            		} catch (NumberFormatException nfe) {
-            			hrs[x] = -1;
-            		}
+            // Load the time
+            Element te = e.getChild("time");
+            if (te != null) {
+            	for (Iterator ti = te.getChildren().iterator(); ti.hasNext(); ) {
+            		Element tte = (Element) i.next();
+            		t.setRunTimes(tte.getName(), tte.getTextNormalize());
             	}
-            		
-            	t.setRunHours(hrs);
+            } else { 
+            	log.warn("No time specified for " + c.getName());
+            	t.setEnabled(false);
             }
             
             // Add to results
