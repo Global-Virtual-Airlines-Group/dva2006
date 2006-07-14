@@ -1,62 +1,122 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tasks name="default">
-	<task id="inactivity" enabled="true">
+	<!-- Purge/Notify Inactive Users -->
+	<task id="inactivity" enabled="false">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
-		<interval>86400</interval>
-		<hours>3</hours>
+		<time>
+			<min>0</min>
+			<hour>3</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Download NAT Track data -->
 	<task id="nat" enabled="true">
 		<class>org.deltava.tasks.NATDownloadTask</class>
-		<interval>86400</interval>
-		<hours>0</hours>
+		<time>
+			<min>0</min>
+			<hour>20</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Download PACOT Track data -->
 	<task id="pacot" enabled="true">
 		<class>org.deltava.tasks.PACOTDownloadTask</class>
-		<interval>86400</interval>
-		<hours>3</hours>
+		<time>
+			<min>1</min>
+			<hour>20</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Purge old Draft Flight Reports -->
 	<task id="draftpurge" enabled="false">
 		<class>org.deltava.tasks.DraftPIREPPurgeTask</class>
-		<interval>86400</interval>
-		<hours>8</hours>
+		<time>
+			<min>0</min>
+			<hour>8</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
-	<task id="assignpurge" enabled="true">
+	<!-- Purge old Flight Assignments -->
+	<task id="assignpurge" enabled="false">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
-		<interval>86400</interval>
-		<hours>3</hours>
+		<time>
+			<min>0</min>
+			<hour>12</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
-	<task id="httpstats" enabled="true">
+	<!-- Update HTTP server statistics -->
+	<task id="httpstats" enabled="false">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
-		<interval>86400</interval>
-		<hours>1</hours>
+		<time>
+			<min>30</min>
+			<hour>1</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
-	<task id="acarspurge" enabled="true">
+	<!-- Purge unfinished ACARS flight entries -->
+	<task id="acarspurge" enabled="false">
 		<class>org.deltava.tasks.ACARSDataPurgeTask</class>
-		<interval>43200</interval>
-		<hours>2,14</hours>
+		<time>
+			<min>30</min>
+			<hour>2,14</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Purge Command statistics -->
 	<task id="cmdlogpurge" enabled="true">
 		<class>org.deltava.tasks.CommandLogPurgeTask</class>
-		<interval>86400</interval>
-		<hours>6</hours>
+		<time>
+			<min>0</min>
+			<hour>6</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Purge SELCAL code reservations -->
 	<task id="selcalpurge" enabled="true">
 		<class>org.deltava.tasks.SELCALPurgeTask</class>
-		<interval>86400</interval>
-		<hours>7</hours>
+		<time>
+			<min>0</min>
+			<hour>7</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 
+	<!-- Create Online Event Flight Assignments -->
 	<task id="eventassign" enabled="true">
 		<class>org.deltava.tasks.EventAssignTask</class>
-		<interval>1800</interval>
-		<hours>0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23</hours>
+		<time>
+			<min>0,30</min>
+			<hour>*</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
 	</task>
 </tasks>
