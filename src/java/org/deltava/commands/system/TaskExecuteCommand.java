@@ -39,7 +39,7 @@ public class TaskExecuteCommand extends AbstractCommand {
 			}
 
 			// Execute the task
-			t.start();
+			t.run();
 		} catch (RuntimeException rte) {
 			Throwable tc = rte.getCause();
 			if (tc != null)
