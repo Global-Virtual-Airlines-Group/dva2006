@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.crypt;
 
 import java.io.InputStream;
@@ -103,5 +104,46 @@ public class MessageDigester {
      */
     public void reset() {
        _md.reset();
+    }
+    
+    /**
+     * Converts a message digest into a hexadecimal String.
+     * @param hash the message digest
+     * @return the hexadecimal representation of the message digest
+     */
+    public static String convert(byte[] hash) {
+    	if (hash == null)
+    		return null;
+    	
+    	StringBuilder buf = new StringBuilder(hash.length << 1);
+    	for (int x = 0; x < hash.length; x++) {
+    		int b = hash[x];
+    		if (b < 0)
+    			b += 256;
+    		
+    		if (b < 0x10)
+    			buf.append('0');
+    			
+    		buf.append(Integer.toHexString(b).toLowerCase());
+    	}
+    	
+    	return buf.toString();
+    }
+    
+    /**
+     * Converts a hexadecimal String into a byte array.
+     * @param hash the hexadecimal message digest
+     * @return the message digest
+     */
+    public static byte[] parse(String hash) { 
+    	if ((hash == null) || ((hash.length() & 0x1) == 1))
+    		throw new IllegalArgumentException("Invalid Hash - " + hash);
+    	
+    	byte[] results = new byte[hash.length() >> 1];
+    	for (int x = 0; x < hash.length(); x += 2) {
+    		results[x >> 1] = (byte) Integer.parseInt(hash.substring(x, x + 2), 16);
+    	}
+    	
+    	return results;
     }
 }
