@@ -37,15 +37,21 @@ public class GetCoolerThreads extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
 				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
-						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.CHANNEL=?)");
+						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) "
+						+ "AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
+						+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID)");
+		if (channelName != null)
+			sqlBuf.append(" WHERE (T.CHANNEL=?)");
+		sqlBuf.append(" GROUP BY T.ID");
 		if (!showImgs)
-			sqlBuf.append(" AND (T.IMAGE_ID=0)");
-		sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
+			sqlBuf.append(" HAVING (IMGID > 0)");
+		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, channelName);
+			if (channelName != null)
+				_ps.setString(1, channelName);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -60,9 +66,10 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getScreenShots() throws DAOException {
 		try {
 			prepareStatement("SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-					+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
-					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE "
-					+ "(T.IMAGE_ID <> 0) GROUP BY T.ID ORDER BY SD DESC");
+					+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), IF(T.IMAGE_ID=0, COUNT(I.URL), "
+					+ "T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON "
+					+ "(T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) GROUP BY T.ID HAVING (IMGID > 0) "
+					+ "ORDER BY SD DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -80,12 +87,13 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
-						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (T.AUTHOR=?)");
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
+						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) "
+						+ "AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
+						+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (T.AUTHOR=?) GROUP BY T.ID");
 		if (!showImgs)
-			sqlBuf.append(" AND (T.IMAGE_ID=0)");
-		sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
+			sqlBuf.append(" HAVING (IMGID > 0)");
+		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -105,9 +113,10 @@ public class GetCoolerThreads extends DAO {
 	public List<MessageThread> getByNotification(int userID) throws DAOException {
 		try {
 			prepareStatement("SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
-					+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_NOTIFY N, "
-					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (N.USER_ID=?) "
-					+ "AND (T.ID=N.THREAD_ID) GROUP BY T.ID ORDER BY SD DESC");
+					+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID "
+					+ "FROM common.COOLER_NOTIFY N, common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON "
+					+ "(T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (N.USER_ID=?) AND "
+					+ "(T.ID=N.THREAD_ID) GROUP BY T.ID ORDER BY SD DESC");
 			_ps.setInt(1, userID);
 			return execute();
 		} catch (SQLException se) {
@@ -122,36 +131,12 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getReported() throws DAOException {
 		try {
-			prepareStatement("SELECT T.*, COUNT(R.AUTHOR_ID) AS RC, IF(T.STICKY, IF(DATE_ADD(T.STICKY, " +
-					"INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM "
-					+ "common.COOLER_REPORTS R, common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON "
-					+ "(T.ID=O.ID) WHERE (T.ID=N.THREAD_ID) GROUP BY T.ID HAVING (RC > 0) ORDER BY SD DESC");
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Get all Water Cooler threads.
-	 * @param showImgs TRUE if screen shot threads should be included, otherwise FALSE
-	 * @return a List of MessageThreads
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<MessageThread> getAll(boolean showImgs) throws DAOException {
-
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
-						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
-		if (!showImgs)
-			sqlBuf.append(" WHERE (T.IMAGE_ID=0)");
-
-		sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
-
-		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatement("SELECT T.*, COUNT(R.AUTHOR_ID) AS RC, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
+					+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID),"
+					+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_REPORTS R, "
+					+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN "
+					+ "common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (T.ID=N.THREAD_ID) GROUP BY T.ID HAVING "
+					+ "(RC > 0) ORDER BY SD DESC");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -167,17 +152,17 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public List<MessageThread> getSince(java.util.Date sd, boolean showImgs) throws DAOException {
 		if (sd == null)
-			return getAll(showImgs);
+			return getByChannel(null, showImgs);
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), "
-						+ "T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) FROM common.COOLER_THREADS T "
-						+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID)");
+				"SELECT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, "
+						+ "T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) "
+						+ "AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
+						+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) GROUP BY T.ID HAVING (SD > ?)");
 		if (!showImgs)
-			sqlBuf.append("WHERE (T.IMAGE_ID=0) ");
-
-		sqlBuf.append("GROUP BY T.ID HAVING (SD > ?) ORDER BY SD DESC");
+			sqlBuf.append(" AND (IMGID > 0)");
+		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -322,9 +307,10 @@ public class GetCoolerThreads extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT DISTINCT T.*, 0, IF(T.STICKY, IF(DATE_ADD(T.STICKY, "
-				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID) "
-				+ "FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) "
-				+ "LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) WHERE (P.MSGBODY LIKE ?) ");
+				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
+				+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
+				+ "common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
+				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (P.MSGBODY LIKE ?) ");
 		if (!Channel.ALL.equals(criteria.getChannel()))
 			sqlBuf.append("AND (T.CHANNEL=?) ");
 		if (criteria.getSearchSubject())
@@ -360,11 +346,12 @@ public class GetCoolerThreads extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasImgCount = (rs.getMetaData().getColumnCount() > 16);
 		while (rs.next()) {
 			MessageThread t = new MessageThread(rs.getString(2));
 			t.setID(rs.getInt(1));
 			t.setChannel(rs.getString(3));
-			t.setImage(rs.getInt(4));
+			t.setImage(rs.getInt(hasImgCount ? 17 : 4));
 			t.setStickyUntil(expandDate(rs.getDate(5)));
 			t.setHidden(rs.getBoolean(6));
 			t.setLocked(rs.getBoolean(7));
