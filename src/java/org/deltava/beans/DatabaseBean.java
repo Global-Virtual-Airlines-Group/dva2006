@@ -76,4 +76,11 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
     public Object cacheKey() {
         return new Integer(getID());
     }
+    
+    /**
+     * Returns the hash code of the database ID.
+     */
+    public int hashCode() {
+    	return cacheKey().hashCode();
+    }
 }
