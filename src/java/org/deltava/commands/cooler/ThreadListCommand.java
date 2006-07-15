@@ -86,7 +86,7 @@ public void execute(CommandContext ctx) throws CommandException {
         	 threads = tdao.getScreenShots();
          } else {
         	 ctx.setAttribute("channelName", Channel.ALL.getComboName(), REQUEST);
-        	 threads = tdao.getAll(showImgThreads);
+        	 threads = tdao.getByChannel(null, showImgThreads);
          }
          
          // Validate our access to each thread
