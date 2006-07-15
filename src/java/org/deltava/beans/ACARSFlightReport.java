@@ -35,7 +35,7 @@ public class ACARSFlightReport extends FlightReport {
     private int _gateWeight;
     private int _gateFuel;
     
-    private Map<Integer, Integer> _time;
+    private Map<Long, Integer> _time;
     
     /**
      * Creates a new ACARS Flight Report object with a given flight.
@@ -52,7 +52,7 @@ public class ACARSFlightReport extends FlightReport {
     public ACARSFlightReport(Airline a, int flightNumber, int leg) {
         super(a, flightNumber, leg);
         _stateChangeTimes = new HashMap<String, Date>();
-        _time = new HashMap<Integer, Integer>();
+        _time = new HashMap<Long, Integer>();
     }
     
     /**
@@ -278,8 +278,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTimes()
      */
     public int getTime(int rate) {
-    	Integer key = new Integer(rate);
-    	return _time.containsKey(key) ? _time.get(key).intValue() : 0;
+    	Integer time = _time.get(new Integer(rate));
+    	return (time == null) ? 0 : time.intValue();
     }
     
     /**
@@ -287,8 +287,8 @@ public class ACARSFlightReport extends FlightReport {
      * @return a sorted Map of times, keyed by acceleration rate
      * @see ACARSFlightReport#getTime(int)
      */
-    public Map<Integer, Integer> getTimes() {
-    	return new HashMap<Integer, Integer>(_time);
+    public Map<Long, Integer> getTimes() {
+    	return new TreeMap<Long, Integer>(_time);
     }
     
     /**
@@ -551,6 +551,6 @@ public class ACARSFlightReport extends FlightReport {
     	else if ((rate < 0) || (rate == 3) || (rate > 4))
     		throw new IllegalArgumentException("Rate must be 0, 1 2 or 4 - " + rate);
     	
-    	_time.put(new Integer(rate), new Integer(secs));
+    	_time.put(new Long(rate), new Integer(secs));
     }
 }
