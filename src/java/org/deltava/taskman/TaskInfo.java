@@ -1,7 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
-import java.util.Date;
+import java.util.*;
 
 /**
  * A bean to store information about a scheduled task. 
@@ -19,9 +19,12 @@ public class TaskInfo implements java.io.Serializable, Comparable {
    private long _lastRunTime;
    private int _runCount;
    private boolean _enabled;
+   
+   private Map<String, Collection<Integer>> _runTimes;
 
    /**
-    * 
+    * Initializes the Task Information bean.
+    * @param t the Task to display information about
     */
    public TaskInfo(Task t) {
       super();
@@ -32,6 +35,16 @@ public class TaskInfo implements java.io.Serializable, Comparable {
       _lastRunTime = t.getLastRunTime();
       _runCount = t.getRunCount();
       _enabled = t.getEnabled();
+      
+      // Process run times
+      Map<String, Collection<Integer>> runTimes = t.getRunTimes();
+      _runTimes = new LinkedHashMap<String, Collection<Integer>>();
+      for (Iterator<String> i = runTimes.keySet().iterator(); i.hasNext(); ) {
+    	  String intervalType = i.next();
+    	  Collection<Integer> intervals = runTimes.get(intervalType);
+    	  if ((intervals != null) && (!intervals.contains(Task.ANY)))
+    		  _runTimes.put(intervalType, intervals);
+      }
    }
 
    /**
@@ -56,6 +69,15 @@ public class TaskInfo implements java.io.Serializable, Comparable {
     */
    public String getClassName() {
       return _className;
+   }
+   
+   /**
+    * Returns the times this Task is eligible to be run.
+    * @return a Map of interval types and values
+    * @see Task#setRunTimes(String, String)
+    */
+   public Map<String, Collection<Integer>> getRunTimes() {
+	   return _runTimes;
    }
    
    /**

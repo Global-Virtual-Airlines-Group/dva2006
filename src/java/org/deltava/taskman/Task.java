@@ -23,8 +23,11 @@ public abstract class Task implements Runnable {
 	private static final int[] TIME_FIELDS = {Calendar.MINUTE, Calendar.HOUR_OF_DAY, Calendar.DAY_OF_MONTH,
 		Calendar.MONTH, Calendar.DAY_OF_WEEK};
 	
+	/**
+	 * Wildcard for &quot;All Intervals&quot;
+	 */
+	static final Integer ANY = new Integer(-1);
 	private static final String ALL_TIMES = "*";
-	private static final Integer ANY = new Integer(-1);
 
     protected final Logger log;
     
@@ -100,6 +103,15 @@ public abstract class Task implements Runnable {
     }
     
     /**
+     * Returns the times this Task is eligible to be run. 
+     * @return a Map of interval types and values
+     * @see Task#setRunTimes(String, String)
+     */
+    Map<String, Collection<Integer>> getRunTimes() {
+    	return new LinkedHashMap<String, Collection<Integer>>(_runTimes);
+    }
+    
+    /**
      * Returns wether the Scheduled Task can be executed at the present time.
      * @return TRUE if the Task can be executed, otherwise FALSE
      * @see Task#isRunnable(Calendar)
@@ -152,6 +164,7 @@ public abstract class Task implements Runnable {
      * @param values a comma-delimited set of numbers
      * @see Task#TIME_OPTS
      * @see Task#isRunnable()
+     * @see Task#getRunTimes()
      */
     public void setRunTimes(String intervalType, String values) {
     	if (StringUtils.arrayIndexOf(TIME_OPTS, intervalType) == -1)
