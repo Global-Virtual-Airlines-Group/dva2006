@@ -60,7 +60,7 @@ public class CoolerSyndicationService extends WebDataService {
 			// Get the cooler threads
 			GetCoolerThreads tdao = new GetCoolerThreads(_con);
 			tdao.setQueryMax(getCount(ctx, 50));
-			threads = Channel.ALL.equals(channel) ? tdao.getAll(true) : tdao.getByChannel(channel, true);
+			threads = Channel.ALL.equals(channel) ? tdao.getByChannel(null, true) : tdao.getByChannel(channel, true);
 
 			// Filter out threads based on our access
 			CoolerThreadAccessControl tac = new CoolerThreadAccessControl(ctx);
