@@ -1,0 +1,42 @@
+<!-- Scheduled Task Pool Data Table -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="6" class="left">SCHEDULED TASK INFORMATION</td>
+</tr>
+
+<c:if test="${!empty taskInfo}">
+<!-- Scheduled Task Data Title Bar -->
+<tr class="title caps">
+ <td width="20%">TASK NAME</td>
+ <td width="25%">CLASS NAME</td>
+ <td width="25%">EXECUTE AT</td>
+ <td width="5%">RUN COUNT</td>
+ <td width="15%">LAST RUN</td>
+ <td>RUN TIME</td>
+</tr>
+
+<!-- ScheduledTask Data -->
+<c:forEach var="task" items="${taskInfo}">
+<view:row entry="task">
+ <td class="pri bld"><el:cmd url="taskexec" linkID="${task.ID}">${task.name}</el:cmd></td>
+ <td class="small">${task.className}</td>
+ <td class="small">${task.runTimes}</td>
+<c:if test="${task.enabled}">
+ <td class="small"><fmt:int value="${task.runCount}" /></td>
+ <td class="small"><fmt:date fmt="dt" date="${task.lastStartTime}" /></td>
+ <td class="small"><fmt:int value="${task.lastRunTime}" /> ms</td>
+</c:if>
+<c:if test="${!task.enabled}">
+ <td colspan="3" class="sec bld">TASK DISABLED</td>
+</c:if>
+</view:row>
+</c:forEach>
+</c:if>
+
+<c:if test="${empty taskInfo}">
+<!-- Scheduled Task Data not available -->
+<tr>
+ <td class="pri bld" colspan="6">SCHEDULED TASK DATA IS NOT AVAILABLE</td>
+</tr>
+</c:if>
+</el:table>

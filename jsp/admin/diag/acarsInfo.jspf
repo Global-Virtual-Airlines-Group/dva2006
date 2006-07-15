@@ -1,0 +1,126 @@
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
+</tr>
+
+<!-- Table Header Bar-->
+<tr class="title">
+ <td width="10%">ID</td>
+ <td width="18%">USER</td>
+ <td width="10%">FLIGHT ID</td> 
+ <td width="27%">REMOTE ADDRESS</td>
+ <td width="15%">MESSAGES</td>
+ <td>BYTES</td>
+</tr>
+
+<!-- Table Connection Data -->
+<c:forEach var="con" items="${acarsPool}">
+<tr>
+ <td class="priB"><fmt:hex value="${con.ID}" /></td>
+ <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
+ <td class="sec bld">${(con.flightID == 0) ? 'N/A' : con.flightInfo.flightCode}</td>
+ <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
+ <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
+ <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
+</tr>
+<tr>
+ <td colspan="4" class="small">Socket: <fmt:int value="${con.socket.sendBufferSize}" /> bytes 
+out, <fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. NODELAY=${con.socket.tcpNoDelay}, 
+KEEPALIVE=${con.socket.keepAlive}</td>
+ <td colspan="2" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
+<fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> per message, 
+<fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> avg. bytes</td>
+</tr>
+</c:forEach>
+</el:table>
+
+<c:if test="${!empty acarsBans}">
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="7">ACARS BLOCKED USERS</td>
+</tr>
+
+<!-- Table Header Data -->
+<tr class="title">
+ <td width="35%">REMOTE ADDRESS</td>
+ <td width="25%">PILOT NAME</td>
+ <td width="10%">PILOT CODE</td>
+ <td width="15%">RANK</td>
+ <td>EXPIRATION DATE</td>
+</tr>
+
+<!-- Table Ban Data -->
+<c:forEach var="ban" items="${acarsBans}">
+<tr>
+ <td class="small">${ban.remoteHost} (${ban.remoteAddr})</td>
+<c:if test="${!empty ban.userData}">
+ <td><el:profile className="bld" location="${ban.userData}">${ban.user.name}</el:profile></td>
+ <td class="pri bld">${ban.user.pilotCode}</td>
+ <td>${ban.user.rank}, ${ban.user.equipmentType}</td>
+</c:if> 
+<c:if test="${empty ban.userData}">
+ <td colspan="3" class="bld">ANONYMOUS USER</td>
+</c:if>
+ <td><fmt:date date="${ban.expiryDate}" /></td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
+
+<c:if test="${!empty workers}">
+<!-- ACARS Server Worker threads -->
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="4">ACARS WORKER THREAD INFORMATION</td>
+</tr>
+
+<!-- Table Header Bar-->
+<tr class="title">
+ <td width="30%">THREAD NAME</td>
+ <td width="15%">THREAD STATUS</td>
+ <td width="10%">EXECUTION COUNT</td>
+ <td>CURRENTLY EXECUTING</td>
+</tr>
+
+<!-- Table Thread Data -->
+<c:forEach var="worker" items="${workers}">
+<view:row entry="${worker}">
+ <td class="pri bld">${worker}</td>
+ <td class="sec">${worker.statusName}</td>
+ <td><fmt:int value="${worker.executionCount}" /></td>
+ <td class="left">${worker.message}</td>
+</view:row>
+</c:forEach>
+</el:table>
+</c:if>
+
+<c:if test="${!empty acarsCmdStats}">
+<!-- ACARS Server Command Statistics -->
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="6">ACARS SERVER STATISTICS</td>
+</tr>
+
+<!-- Command Statistics Header -->
+<tr class="title">
+ <td width="30%">COMMAND NAME</td>
+ <td width="10%">INVOCATIONS</td>
+ <td width="15%">AVERAGE TIME</td>
+ <td width="15%">TOTAL TIME</td>
+ <td width="15%">MAXIMUM TIME</td>
+ <td>MINIMUM TIME</td>
+</tr>
+
+<!-- Command Statistics Data -->
+<c:forEach var="cmdStat" items="${acarsCmdStats}">
+<tr>
+ <td class="pri bld">${cmdStat.name}</td>
+ <td><fmt:int value="${cmdStat.count}" /></td>
+ <td class="bld"><fmt:int value="${cmdStat.totalTime / cmdStat.count}" /> ms</td>
+ <td><fmt:int value="${cmdStat.totalTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.maxTime}" /> ms</td>
+ <td><fmt:int value="${cmdStat.minTime}" /> ms</td>
+</tr>
+</c:forEach>
+</el:table>
+</c:if>
