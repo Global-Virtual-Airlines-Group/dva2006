@@ -74,7 +74,7 @@ public class TaskFactory {
             Element te = e.getChild("time");
             if (te != null) {
             	for (Iterator ti = te.getChildren().iterator(); ti.hasNext(); ) {
-            		Element tte = (Element) i.next();
+            		Element tte = (Element) ti.next();
             		t.setRunTimes(tte.getName(), tte.getTextNormalize());
             	}
             } else { 
