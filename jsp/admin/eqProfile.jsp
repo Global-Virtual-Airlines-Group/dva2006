@@ -26,8 +26,8 @@ if (!validateCombo(form.eqType, 'Equipment Type')) return false;
 if (!validateCombo(form.cp, 'Chief Pilot')) return false;
 if (!validateNumber(form.stage, 1, 'Equipment Stage')) return false;
 if (!validateNumber(form.captLegs, 0, 'Flight Legs for promotion')) return false;
-if (!validateCheckbox(form.ranks, 2, 'Ranks')) return false;
-if (!validateCheckbox(form.pRatings, 1, 'Primary Rating')) return false;
+if (!validateCheckBox(form.ranks, 2, 'Ranks')) return false;
+if (!validateCheckBox(form.pRatings, 1, 'Primary Rating')) return false;
 
 setSubmit();
 disableButton('SaveButton');
