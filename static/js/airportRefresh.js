@@ -72,5 +72,5 @@ for (x = 0; x < combo.options.length; x++) {
 	}
 }
 
-return true;
+return false;
 }
