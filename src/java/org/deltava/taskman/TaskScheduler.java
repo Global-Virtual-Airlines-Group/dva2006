@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class TaskScheduler extends Thread {
+public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(TaskScheduler.class);
 
@@ -114,6 +114,7 @@ public class TaskScheduler extends Thread {
 					// Spawn the thread
 					Thread tt = new Thread(t, t.getName());
 					tt.setDaemon(true);
+					tt.setUncaughtExceptionHandler(this);
 					tt.start();
 					ThreadUtils.waitFor(tt, 52000);
 					
@@ -156,5 +157,14 @@ public class TaskScheduler extends Thread {
 		}
 
 		return results;
+	}
+	
+	/**
+	 * Uncaught Exception handler for task threads.
+	 * @param t the Thread
+	 * @param e the Exception
+	 */
+	public void uncaughtException(Thread t, Throwable e) {
+		log.error("Uncaught Exception in " + t.getName(), e);
 	}
 }
