@@ -7,6 +7,7 @@ import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
 import org.deltava.beans.system.*;
+import org.deltava.beans.schedule.Airline;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -98,8 +99,13 @@ public class EventAssignTask extends DatabaseTask {
 						ai.setEventID(e.getID());
 						ai.setStatus(AssignmentInfo.RESERVED);
 						
+						// Get the airline
+						Airline a = SystemData.getAirline(usrData.getAirlineCode());
+						if (a == null)
+							a = SystemData.getAirline(SystemData.get("airline.code"));
+						
 						// Create an Assignment Leg
-						AssignmentLeg leg = new AssignmentLeg(SystemData.getAirline(usrData.getAirlineCode()), usr.getPilotNumber(),1);
+						AssignmentLeg leg = new AssignmentLeg(a, usr.getPilotNumber(), 1);
 						leg.setEquipmentType(s.getEquipmentType());
 						leg.setAirportD(s.getAirportD());
 						leg.setAirportA(s.getAirportA());
