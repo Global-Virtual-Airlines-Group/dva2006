@@ -75,6 +75,7 @@ public class TransferDeleteCommand extends AbstractCommand {
 			// Write status attributes to the request
 			ctx.setAttribute("pilot", usr, REQUEST);
 			ctx.setAttribute("txreq", txreq, REQUEST);
+			ctx.setAttribute("isOwn", Boolean.valueOf(txreq.getID() == ctx.getUser().getID()), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
