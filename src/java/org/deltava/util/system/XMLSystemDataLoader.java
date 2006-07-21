@@ -123,7 +123,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
         if (isSorted) {
         	className = "java.util.TreeSet";
         } else if (isUnique) {
-        	className = "java.util.HashSet";
+        	className = "java.util.LinkedHashSet";
         }
         
         // If we're a sorted set, return a TreeSet instead of a HashSet
