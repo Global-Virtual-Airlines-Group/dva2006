@@ -105,13 +105,14 @@ return ${access.canComment || access.canUpdateProgress};
  <td colspan="7">COURSE PROGRESS - <fmt:int value="${fn:sizeof(course.progress)}" /> ENTRIES</td>
 </tr>
 <c:forEach var="progress" items="${course.progress}">
+<c:set var="lastUpd" value="${pilots[progress.authorID]}" scope="request" />
 <view:row entry="${progress}">
  <td class="label" valign="top">Entry #<fmt:int value="${progress.ID}" /></td>
  <td colspan="6" class="data"><fmt:text value="${progress.text}" />
 <c:if test="${progress.complete || access.canUpdateProgress}">
 <br /><hr />
 <c:if test="${progress.complete}">
-<span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /></span>
+<span class="pri bld">COMPLETED ON <fmt:date fmt="d" date="${progress.completedOn}" /> (${lastUpd.name})</span>
 </c:if>
 <c:if test="${access.canUpdateProgress}">
 <el:box name="progress${progress.ID}" idx="*" value="true" checked="${progress.complete}" label="Completed" />
