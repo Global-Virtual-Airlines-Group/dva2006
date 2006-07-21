@@ -308,6 +308,24 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="resources">
+		<name>Web Resources</name>
+		<class>org.deltava.commands.fleet.ResourceListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="gotoresource">
+		<name>Web Resource Jump</name>
+		<class>org.deltava.commands.fleet.ResourceJumpCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="resource">
+		<name>Web Resource</name>
+		<class>org.deltava.commands.fleet.ResourceCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 
 	<!-- Statistics commands -->
 	<command id="airlinestats">
