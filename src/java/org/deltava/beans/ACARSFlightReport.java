@@ -278,7 +278,7 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTimes()
      */
     public int getTime(int rate) {
-    	Integer time = _time.get(new Integer(rate));
+    	Integer time = _time.get(new Long(rate));
     	return (time == null) ? 0 : time.intValue();
     }
     
