@@ -913,7 +913,7 @@
 	<command id="txreqdelete">
 		<name>Delete Transfer Request</name>
 		<class>org.deltava.commands.admin.TransferDeleteCommand</class>
-		<roles>Admin</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="txairline">
