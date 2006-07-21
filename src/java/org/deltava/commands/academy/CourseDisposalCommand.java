@@ -1,6 +1,7 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -42,7 +43,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 
-		Pilot usr = null;
+		Collection<Person> usrs = new HashSet<Person>();
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -101,10 +102,13 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Get the Pilot
 			if (ctx.getUser().getID() != c.getPilotID()) {
 				GetPilot pdao = new GetPilot(con);
-				usr = pdao.get(c.getPilotID());
+				Pilot usr = pdao.get(c.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
-			} else
+				usrs.add(usr);
+			} else {
+				
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+			}
 			
 			// Start a transaction
 			ctx.startTX();
@@ -112,6 +116,25 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// Get the DAO and update the course 
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.setStatus(c.getID(), opCode);
+			
+			// If we're canceling, cancel all Instruction Sessions
+			if (opCode == Course.ABANDONED) {
+				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
+				
+				// Cancel the sessions
+				Collection<Integer> IDs = new HashSet<Integer>();
+				Collection<InstructionSession> sessions = cdao.getSessions(c.getID());
+				for (Iterator<InstructionSession> i = sessions.iterator(); i.hasNext(); ) {
+					InstructionSession is = i.next();
+					IDs.add(new Integer(is.getInstructorID()));
+					is.setStatus(InstructionSession.CANCELED);
+					wdao.write(is);
+				}
+				
+				// Load the pilots
+				GetPilot pdao = new GetPilot(con);
+				usrs.addAll(pdao.getByID(IDs, "PILOTS").values());
+			}
 			
 			// Write the Status Update
 			SetStatusUpdate uwdao = new SetStatusUpdate(con);
@@ -133,7 +156,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 		// Send a notification message
 		Mailer mailer = new Mailer(ctx.getUser());
 		mailer.setContext(mctx);
-		mailer.send(usr);
+		mailer.send(usrs);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
