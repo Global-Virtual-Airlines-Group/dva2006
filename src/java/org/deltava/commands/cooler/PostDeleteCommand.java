@@ -69,6 +69,9 @@ public class PostDeleteCommand extends AbstractCommand {
 	         if (!hasPost)
 	        	 throw notFoundException("Invalid Message Post - " + postID);
 	         
+	         // Start the transaction
+	         ctx.startTX();
+	         
 	         // If we only have one post, nuke the thread
 	         SetCoolerMessage wdao = new SetCoolerMessage(con);
 	         if (posts.size() == 1) {
@@ -79,10 +82,15 @@ public class PostDeleteCommand extends AbstractCommand {
 	        	 result.setURL("/jsp/cooler/threadUpdate.jsp");
 	         } else {
 	        	 wdao.delete(threadID, postID);
+	        	 wdao.synchThread(thread);
 	        	 result.setURL("thread", null, threadID);
 	        	 result.setType(CommandResult.REDIRECT);
 	         }
+	         
+	         // Commit the transaction
+	         ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
