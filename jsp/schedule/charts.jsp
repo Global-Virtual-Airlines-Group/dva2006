@@ -12,12 +12,22 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="airportRefresh" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
-function setAirport(combo)
+function updateAirport(combo)
 {
 var ac = combo.options[combo.selectedIndex].value;
 self.location = '/charts.do?id=' + ac.toUpperCase();
+return true;
+}
+
+function setAirportCode(code)
+{
+var f = document.forms[0];
+if (setAirport(f.airport, code))
+	updateAirport(f.airport);
+
 return true;
 }
 </script>
@@ -37,7 +47,8 @@ return true;
 <tr class="title">
  <td width="30%">CHART NAME</td>
  <td width="30%">CHART TYPE</td>
- <td class="right">SELECT AIRPORT <el:combo name="airport" onChange="void setAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" /></td>
+ <td class="right">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" />
+ <el:text name="airportDCode" idx="*" size="2" max="3" value="${airport.IATA}" onBlur="void setAirportCode(this.value)" /></td>
 </tr>
 
 <!-- Table Pilot Data -->

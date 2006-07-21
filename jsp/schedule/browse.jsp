@@ -24,6 +24,15 @@ self.location = '/browse.do?airportD=' + ad;
 return true;
 }
 
+function setAirportDCode(code)
+{
+var f = document.forms[0];
+if (setAirport(f.airportD, code))
+	setAirportD(f.airportD);
+
+return true;
+}
+
 function setAirportA(combo)
 {
 var f = document.forms[0];
@@ -57,7 +66,7 @@ return true;
 <tr class="title">
  <td class="left caps" colspan="2"><content:airline /> SCHEDULE</td>
  <td class="right" colspan="5">FROM <el:combo name="airportD" idx="*" size="1" className="small" options="${airports}" value="${airportD}" onChange="void setAirportD(this)" />
- <el:text name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /> TO
+ <el:text name="airportDCode" idx="*" size="2" max="3" value="${airportD.IATA}" onBlur="void setAirportDCode(this.value)" /> TO
  <el:combo name="airportA" idx="*" size="1" className="small" firstEntry="ALL" options="${dstAP}" value="${airportA}" onChange="void setAirportA(this)" />
 <c:if test="${isSchedule}"><el:cmdbutton url="sched" op="edit" label="NEW SCHEDULE ENTRY" /></c:if></td>
 </tr>
