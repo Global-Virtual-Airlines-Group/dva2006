@@ -72,7 +72,12 @@ You are not able to request a transfer into or additional ratings in any <conten
 </c:if>
 <c:if test="${isApprove || isReject || isDelete}">
 <br />
-To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests">click here</el:cmd>.<br />
+<c:if test="${!isDelete || !isOwn}">
+To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
+<c:if test="${isDelete && isOwn}">
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
 </c:if>
 <br />
 <content:copyright />
