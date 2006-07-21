@@ -59,6 +59,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 				CertificationRequirement req = i.next();
 				CourseProgress cp = new CourseProgress(0, req.getID());
 				cp.setText(req.getText());
+				cp.setAuthorID(ctx.getUser().getID());
 				c.addProgress(cp);
 			}
 

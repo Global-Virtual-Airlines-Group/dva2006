@@ -62,6 +62,12 @@ public class CourseCommand extends AbstractCommand {
 				IDs.add(new Integer(cc.getAuthorID()));
 			}
 			
+			// Get Pilot IDs from progress
+			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
+				CourseProgress cp = i.next();
+				IDs.add(new Integer(cp.getAuthorID()));
+			}
+			
 			// Load documents/exams if its our course
 			if (access.getCanComment()) {
 				GetDocuments ddao = new GetDocuments(con);

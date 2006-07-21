@@ -204,13 +204,14 @@ public class SetAcademy extends DAO {
 	 */
 	public void updateProgress(CourseProgress cp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO COURSEPROGRESS (ID, SEQ, REQENTRY, COMPLETE, COMPLETED) "
-					+ "VALUES (?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, COMPLETE, COMPLETED) "
+					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, cp.getCourseID());
 			_ps.setInt(2, cp.getID());
-			_ps.setString(3, cp.getText());
-			_ps.setBoolean(4, cp.getComplete());
-			_ps.setTimestamp(5, createTimestamp(cp.getCompletedOn()));
+			_ps.setInt(3, cp.getAuthorID());
+			_ps.setString(4, cp.getText());
+			_ps.setBoolean(5, cp.getComplete());
+			_ps.setTimestamp(6, createTimestamp(cp.getCompletedOn()));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

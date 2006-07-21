@@ -17,6 +17,7 @@ import org.deltava.beans.ViewEntry;
 public class CourseProgress extends CertificationRequirement implements ViewEntry {
 	
 	private int _courseID;
+	private int _authorID;
 	private boolean _complete;
 	private Date _completedOn;
 
@@ -59,6 +60,15 @@ public class CourseProgress extends CertificationRequirement implements ViewEntr
 	}
 	
 	/**
+	 * Returns the Author of this Progress entry.
+	 * @return the database ID of the last Updater of this entry
+	 * @see CourseProgress#setAuthorID(int)
+	 */
+	public int getAuthorID() {
+		return _authorID;
+	}
+	
+	/**
 	 * Updates the Course ID for this Progress entry.
 	 * @param id the database ID of the Course
 	 * @throws IllegalArgumentException if id is negative
@@ -69,6 +79,19 @@ public class CourseProgress extends CertificationRequirement implements ViewEntr
 			DatabaseBean.validateID(_courseID, id);
 		
 		_courseID = id;
+	}
+	
+	/**
+	 * Updates the last Updated of this Progress entry.
+	 * @param id the database ID of the user updating this entry
+	 * @throws IllegalArgumentException if id is negative
+	 * @see CourseProgress#setAuthorID(int)
+	 */
+	public void setAuthorID(int id) {
+		if (id < 0)
+			throw new IllegalArgumentException("Invalid Author ID - " + id);
+		
+		_authorID = id;
 	}
 
 	/**

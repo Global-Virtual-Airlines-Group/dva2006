@@ -46,6 +46,9 @@ public class CourseProgressCommand extends AbstractCommand {
 			if (!access.getCanUpdateProgress())
 				throw securityException("Cannot update progress");
 			
+			// Start a transaction
+			ctx.startTX();
+			
 			// Loop through the progress entries
 			SetAcademy wdao = new SetAcademy(con);
 			for (Iterator<CourseProgress> i = c.getProgress().iterator(); i.hasNext(); ) {
@@ -53,17 +56,18 @@ public class CourseProgressCommand extends AbstractCommand {
 			
 				// Get the status
 				boolean isComplete = Boolean.valueOf(ctx.getParameter("progress" + cp.getID())).booleanValue();
-				if ((isComplete) && (!cp.getComplete())) {
-					cp.setComplete(true);
-					cp.setCompletedOn(new Date());
-					wdao.updateProgress(cp);
-				} else if (!isComplete) {
-					cp.setComplete(false);
-					cp.setCompletedOn(null);
+				if (isComplete != cp.getComplete()) {
+					cp.setAuthorID(ctx.getUser().getID());
+					cp.setComplete(isComplete);
+					cp.setCompletedOn(isComplete ? new Date() : null);
 					wdao.updateProgress(cp);
 				}
 			}
+			
+			// Commit transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

@@ -315,9 +315,10 @@ public class GetAcademyCourses extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			CourseProgress cp = new CourseProgress(c.getID(), rs.getInt(2));
-			cp.setText(rs.getString(3));
-			cp.setComplete(rs.getBoolean(4));
-			cp.setCompletedOn(rs.getTimestamp(5));
+			cp.setAuthorID(rs.getInt(3));
+			cp.setText(rs.getString(4));
+			cp.setComplete(rs.getBoolean(5));
+			cp.setCompletedOn(rs.getTimestamp(6));
 			c.addProgress(cp);
 		}
 		
