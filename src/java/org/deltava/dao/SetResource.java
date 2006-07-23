@@ -29,8 +29,8 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO RESOURCES (ID, URL, DESC, CREATEDON, AUTHOR, UPDATEDBY, HITCOUNT, ISPUBLIC) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO RESOURCES (ID, URL, REMARKS, CREATEDON, AUTHOR, UPDATEDBY, " +
+					"HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getURL());
 			_ps.setString(3, r.getDescription());
