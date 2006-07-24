@@ -39,7 +39,7 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	private SortedSet<Message> _posts;
 	private SortedSet<ThreadUpdate> _updates;
 	
-	private Collection<String> _imgURLs;
+	private Collection<LinkedImage> _imgURLs;
 
 	private Collection<PollOption> _pollOptions;
 	private Collection<PollVote> _pollVotes;
@@ -207,11 +207,11 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	
 	/**
 	 * Returns all linked Image URLs for this Message Thread.
-	 * @return a Collection of URLs
-	 * @see MessageThread#addImageURL(String)
+	 * @return a Collection of LinkedImages
+	 * @see MessageThread#addImageURL(String, String)
 	 */
-	public Collection<String> getImageURLs() {
-		return (_imgURLs == null) ? new HashSet<String>() : _imgURLs;
+	public Collection<LinkedImage> getImageURLs() {
+		return (_imgURLs == null) ? new HashSet<LinkedImage>() : _imgURLs;
 	}
 	
 	/**
@@ -449,13 +449,27 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	/**
 	 * Adds a URL to the list of linked Image URLs for this Message Thread.
 	 * @param url the image URL
+	 * @param desc the image description
+	 * @see MessageThread#addImageURL(LinkedImage)
 	 * @see MessageThread#getImageURLs()
 	 */
-	public void addImageURL(String url) {
+	public void addImageURL(String url, String desc) {
+		LinkedImage img = new LinkedImage(_imgURLs.size() + 1, url);
+		img.setDescription(desc);
+		addImageURL(img);
+	}
+
+	/**
+	 * Adds a URL to the list of linked Image URLs for this Message Thread.
+	 * @param img the LinkedImage bean
+	 * @see MessageThread#addImageURL(String, String)
+	 * @see MessageThread#getImageURLs()
+	 */
+	public void addImageURL(LinkedImage img) {
 		if (_imgURLs == null)
-			_imgURLs = new LinkedHashSet<String>();
-		
-		_imgURLs.add(url);
+			_imgURLs = new LinkedHashSet<LinkedImage>();
+
+		_imgURLs.add(img);
 	}
 	
 	/**

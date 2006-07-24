@@ -7,6 +7,8 @@ import java.io.IOException;
 
 import org.deltava.dao.*;
 
+import org.deltava.beans.cooler.LinkedImage;
+
 import org.deltava.taskman.DatabaseTask;
 import org.deltava.util.http.HttpTimeoutHandler;
 
@@ -41,13 +43,13 @@ public class ImageLinkTestTask extends DatabaseTask {
 				Integer id = i.next();
 				
 				// Get the images
-				Collection<String> urls = dao.getURLs(id.intValue());
-				for (Iterator<String> ui = urls.iterator(); ui.hasNext(); ) {
-					String imgURL = ui.next();
+				Collection<LinkedImage> urls = dao.getURLs(id.intValue());
+				for (Iterator<LinkedImage> ui = urls.iterator(); ui.hasNext(); ) {
+					LinkedImage img = ui.next();
 					boolean isOK = true;
 					
 					try {
-						URL url = new URL(null, imgURL, new HttpTimeoutHandler(1950));
+						URL url = new URL(null, img.getURL(), new HttpTimeoutHandler(1950));
 						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 						urlcon.setRequestMethod("HEAD");
 						urlcon.connect();
@@ -60,15 +62,15 @@ public class ImageLinkTestTask extends DatabaseTask {
 						}
 					} catch (MalformedURLException mue) {
 						isOK = false;
-						log.warn("Invalid URL - " + imgURL);
+						log.warn("Invalid URL - " + img);
 					} catch (IOException ie) {
 						isOK = false;
-						log.warn("Error validating " + imgURL + " - " + ie.getMessage());
+						log.warn("Error validating " + img + " - " + ie.getMessage());
 					}
 					
 					// If it's invalid, nuke it
 					if (!isOK)
-						wdao.delete(id.intValue(), imgURL);
+						wdao.delete(id.intValue(), img.getURL());
 				}
 			}
 		} catch (DAOException de) {
