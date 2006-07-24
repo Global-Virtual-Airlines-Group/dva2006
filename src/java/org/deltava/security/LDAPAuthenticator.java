@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -54,9 +54,7 @@ public class LDAPAuthenticator implements Authenticator {
 			DirContext ctxt = new InitialDirContext(_env);
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error validating context - " + ne.getMessage());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error validating context - " + ne.getMessage(), ne);
 		}
 	}
 
@@ -80,9 +78,7 @@ public class LDAPAuthenticator implements Authenticator {
 			log.info(usr.getName() + " authenticated");
 		} catch (NamingException ne) {
 			log.warn(usr.getDN() + " Authentication FAILURE - " + ne.getMessage());
-			SecurityException se = new SecurityException("Authentication failure for " + usr.getDN());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Authentication failure for " + usr.getDN(), ne);
 		}
 	}
 
@@ -115,9 +111,7 @@ public class LDAPAuthenticator implements Authenticator {
 			ctxt.modifyAttributes(usr.getDN(), new ModificationItem[] { mod });
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error updating LDAP password");
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error updating password - " + ne.getMessage(), ne);
 		}
 	}
 
@@ -148,9 +142,7 @@ public class LDAPAuthenticator implements Authenticator {
 			ctxt.bind(usr.getDN(), null, attrs);
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error adding User " + usr.getDN());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error adding User " + usr.getDN() + " - " + ne.getMessage(), ne);
 		}
 	}
 
@@ -161,8 +153,6 @@ public class LDAPAuthenticator implements Authenticator {
      * @throws SecurityException if an error occurs
      */
 	public boolean contains(Person usr) throws SecurityException {
-
-		// Bind to the directory
 		try {
 			DirContext ctxt = new InitialDirContext(_env);
 			
@@ -178,9 +168,7 @@ public class LDAPAuthenticator implements Authenticator {
 		} catch (NameNotFoundException nfe) {
 			return false;
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error searching for User " + usr.getDN());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error searching for User " + usr.getDN(), ne);
 		}
 	}
 
@@ -200,9 +188,7 @@ public class LDAPAuthenticator implements Authenticator {
 			ctxt.unbind(usr.getDN());
 			ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error removing User " + usr.getDN());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error removing User " + usr.getDN() + " - " + ne.getMessage(), ne);
 		}
 	}
 	
@@ -213,8 +199,6 @@ public class LDAPAuthenticator implements Authenticator {
     * @throws SecurityException if an error occurs
     */
 	public void rename(Person usr, String newName) throws SecurityException {
-
-		// Do nothing if we are not doing a case-sensitive change
 		if (usr.getDN().equalsIgnoreCase(newName))
 		   return;
 		
@@ -228,9 +212,7 @@ public class LDAPAuthenticator implements Authenticator {
 		   ctxt.rename(usr.getDN(), newName);
 		   ctxt.close();
 		} catch (NamingException ne) {
-			SecurityException se = new SecurityException("Error renaming User " + usr.getDN());
-			se.initCause(ne);
-			throw se;
+			throw new SecurityException("Error renaming User " + usr.getDN(), ne);
 		}
 	}
 }
