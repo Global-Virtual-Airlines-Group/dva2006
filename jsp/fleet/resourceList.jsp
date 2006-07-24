@@ -31,6 +31,7 @@
  <td width="10%">CREATED ON</td>
  <td width="5%">HITS</td>
  <td class="left">DESCRIPTION</td>
+ <td width="10%"><el:cmd url="resource" op="edit" label="NEW RESOURCE" /></td>
 </tr>
 
 <!-- Table Data Section -->
@@ -41,7 +42,7 @@
  <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="bld">${pilot.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
  <td class="small"><fmt:int value="${resource.hits}" /></td>
- <td class="small left"><fmt:text value="${resource.description}" /></td>
+ <td class="small left" colspan="2"><fmt:text value="${resource.description}" /></td>
 </view:row>
 </c:forEach>
 
@@ -54,7 +55,7 @@
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 <content:copyright />
