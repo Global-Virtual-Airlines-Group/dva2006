@@ -66,13 +66,15 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 				throw ce;
 			}
 			
+			// Determine if we can jump to SC
+			GetStatusUpdate sudao = new GetStatusUpdate(con);
+			boolean isSC = sudao.isSeniorCaptain(usr.getID());
+			usr.setRank(isSC ? Ranks.RANK_SC : Ranks.RANK_C);
+			
 			// Create the status update bean
 			StatusUpdate upd = new StatusUpdate(usr.getID(), StatusUpdate.INTPROMOTION);
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setDescription("Promoted to Captain, " + usr.getEquipmentType());
-			
-			// Update the Pilot
-			usr.setRank(Ranks.RANK_C);
+			upd.setDescription("Promoted to " + usr.getRank() + ", " + usr.getEquipmentType());
 			
 			// Start a transaction
 			ctx.startTX();
@@ -82,8 +84,8 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			pwdao.write(usr);
 			
 			// Write the Status Update
-			SetStatusUpdate sudao = new SetStatusUpdate(con);
-			sudao.write(upd);
+			SetStatusUpdate wdao = new SetStatusUpdate(con);
+			wdao.write(upd);
 			
 			// Commit
 			ctx.commitTX();
