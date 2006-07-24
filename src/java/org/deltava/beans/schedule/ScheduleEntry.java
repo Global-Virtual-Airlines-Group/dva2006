@@ -217,4 +217,11 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	public String getRowClassName() {
 		return _historic ? "opt2" : null;
 	}
+	
+	/**
+	 * Returns the hash code of the flight code.
+	 */
+	public int hashCode() {
+		return getFlightCode().hashCode();
+	}
 }
