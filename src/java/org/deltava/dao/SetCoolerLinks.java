@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.cooler.MessageThread;
+import org.deltava.beans.cooler.*;
 
 /**
  * A Data Access Object to write and update Water Cooler image URLs.
@@ -33,11 +33,13 @@ public class SetCoolerLinks extends DAO {
 			return;
 		
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, URL) VALUES (?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, DESC) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, t.getID());
-			for (Iterator<String> i = t.getImageURLs().iterator(); i.hasNext(); ) {
-				String url = i.next();
-				_ps.setString(2, url);
+			for (Iterator<LinkedImage> i = t.getImageURLs().iterator(); i.hasNext(); ) {
+				LinkedImage img = i.next();
+				_ps.setInt(2, img.getID());
+				_ps.setString(3, img.getURL());
+				_ps.setString(4, img.getDescription());
 				_ps.addBatch();
 			}
 

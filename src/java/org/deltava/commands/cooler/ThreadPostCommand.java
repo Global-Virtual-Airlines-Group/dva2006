@@ -98,9 +98,9 @@ public class ThreadPostCommand extends AbstractCommand {
 			boolean addImage = Boolean.valueOf(ctx.getParameter("addImage")).booleanValue();
 			if (addImage) {
 				@SuppressWarnings("unchecked")
-				Collection<String> imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
+				Collection<LinkedImage> imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
 				if (imgURLs == null) {
-					imgURLs = new LinkedHashSet<String>();
+					imgURLs = new LinkedHashSet<LinkedImage>();
 					ctx.setAttribute("imageURLs", imgURLs, SESSION);
 				}
 				
@@ -113,9 +113,11 @@ public class ThreadPostCommand extends AbstractCommand {
 					
 					// Validate the result code
 					int resultCode = urlcon.getResponseCode();
-					if (resultCode == HttpURLConnection.HTTP_OK)
-						imgURLs.add(url.toString());
-					else
+					if (resultCode == HttpURLConnection.HTTP_OK) {
+						LinkedImage img = new LinkedImage(imgURLs.size() + 1, url.toString());
+						img.setDescription(ctx.getParameter("desc"));
+						imgURLs.add(img);
+					} else
 						ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
 					
 					urlcon.disconnect();
@@ -206,7 +208,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			Collection imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
 			if (imgURLs != null) {
 				for (Iterator i = imgURLs.iterator(); i.hasNext(); )
-					mt.addImageURL((String) i.next());
+					mt.addImageURL((LinkedImage) i.next());
 			}
 
 			// Start the transaction
