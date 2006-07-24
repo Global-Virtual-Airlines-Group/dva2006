@@ -173,6 +173,11 @@ contributions from our community that will enhance your flight simulation experi
  newsletters (<fmt:list value="${newsletterCats}" delim=", " />) here.</td>
 </tr>
 </c:if>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="resources">Web Resources</el:cmd></td>
+ <td class="data">Our Web Resources contain links to a number of online sites that can assist you in
+ all manner of flight planning and other ways.</td>
+</tr>
 <content:filter roles="Fleet">
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>
