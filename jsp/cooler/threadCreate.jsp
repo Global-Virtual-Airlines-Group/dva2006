@@ -111,10 +111,11 @@ return true;
 <tr>
  <td class="label" valign="top">Link Image(s)</td>
  <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
- <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" />
+ <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" /><br />
+<el:text name="desc" idx="*" size="64" max="192" value="" />
 <c:if test="${!empty sessionScope.imageURLs}"><br />
-<c:forEach var="imgURL" items="${sessionScope.imageURLs}">
-<el:link target="_new" url="${imgURL}">${imgURL}</el:link><br />
+<c:forEach var="imgLink" items="${sessionScope.imageURLs}">
+<el:link target="_new" url="${imgLink.URL}">${imgLink.URL}</el:link> - ${imgLink.description}<br />
 </c:forEach></c:if>
 <c:if test="${!empty system_message}"><span class="small error bld">${system_message}</span></c:if></td>
 </tr>
