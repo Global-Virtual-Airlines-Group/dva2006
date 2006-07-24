@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -36,6 +36,32 @@ public class GetStatusUpdate extends DAO {
 					+ "WHERE (SU.PILOT_ID=?) AND (P.ID=SU.AUTHOR_ID) ORDER BY SU.CREATED DESC");
 			_ps.setInt(1, id);
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns if a particular Pilot has been promoted to Senior Captain.
+	 * @param id the Pilot's database ID
+	 * @return TRUE if the Pilot has a StatusUpdate entry promoting to Senior Captain, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 * @see StatusUpdate#SR_CAPTAIN
+	 */
+	public boolean isSeniorCaptain(int id) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(*) FROM STATUS_UPDATES WHERE (PILOT_ID=?) AND (TYPE=?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, StatusUpdate.SR_CAPTAIN);
+			
+			// Execute the Query
+			ResultSet rs = _ps.executeQuery();
+			boolean isSC = rs.next() ? (rs.getInt(1) > 0) : false;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return isSC;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

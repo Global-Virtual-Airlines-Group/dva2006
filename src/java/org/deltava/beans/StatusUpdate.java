@@ -26,10 +26,11 @@ public class StatusUpdate extends DatabaseBean implements Comparable {
 	public static final int INACTIVITY = 11;
 	public static final int ACADEMY = 12;
 	public static final int CERT_ADD = 13;
+	public static final int SR_CAPTAIN = 14;
 	
 	public static final String[] TYPES = {"Comment", "Promotion", "Rank Change", "Added Rating", "Pilot Recognition",
 			"Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", "Promotion", "Airline Transfer",
-			"Inactivity Notice", "Academy Update", "Pilot Certification"};
+			"Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain"};
 
 	private String _firstName;
 	private String _lastName;
