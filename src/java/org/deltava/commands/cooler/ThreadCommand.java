@@ -111,8 +111,8 @@ public class ThreadCommand extends AbstractCommand {
 				ctx.setAttribute("imgAccess", imgAccess, REQUEST);
 			} else {
 				GetCoolerLinks ldao = new GetCoolerLinks(con);
-				Collection<String> imgURLs = ldao.getURLs(thread.getID());
-				for (Iterator<String> li = imgURLs.iterator(); li.hasNext(); )
+				Collection<LinkedImage> imgURLs = ldao.getURLs(thread.getID());
+				for (Iterator<LinkedImage> li = imgURLs.iterator(); li.hasNext(); )
 					thread.addImageURL(li.next());
 			}
 			

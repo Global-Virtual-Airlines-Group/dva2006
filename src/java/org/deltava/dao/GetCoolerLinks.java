@@ -4,6 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.cooler.LinkedImage;
+
 /**
  * A Data Access Object to load Water Cooler image links
  * @author Luke
@@ -51,16 +53,19 @@ public class GetCoolerLinks extends DAO {
 	 * @return a Collection of URLs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<String> getURLs(int id) throws DAOException {
+	public Collection<LinkedImage> getURLs(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT URL FROM common.COOLER_IMGURLS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT SEQ, URL, DESC FROM common.COOLER_IMGURLS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			
 			// Execute the query
-			Collection<String> results = new LinkedHashSet<String>();
+			Collection<LinkedImage> results = new TreeSet<LinkedImage>();
 			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(rs.getString(1));
+			while (rs.next()) {
+				LinkedImage img = new LinkedImage(rs.getInt(1), rs.getString(2));
+				img.setDescription(rs.getString(3));
+				results.add(img);
+			}
 			
 			// Clean up and return
 			rs.close();
