@@ -216,7 +216,7 @@ return true;
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
 <img alt="Water Cooler Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
 <el:box name="removeCoolerImg" value="true" label="Remove Water Cooler Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
-<el:box name="useDefaultSig" value="true" label="Use default Signature Image" onChange="void disableSigBoxes()" /></td>
+<el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void disableSigBoxes()" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Update Signature Image</td>
