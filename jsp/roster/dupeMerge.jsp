@@ -23,7 +23,7 @@
 The following Pilots' Examinations, Check Rides and Flight Reports have been merged under ${pilot.name}:<br />
 <br />
 <c:forEach var="usr" items="${oldPilots}">
-<el:cmd url="profile" linkID="0x${usr.ID}" className="bld">${user.name}</el:cmd> <c:if test="${!empty usr.pilotCode}">
+<el:cmd url="profile" linkID="0x${usr.ID}" className="bld">${usr.name}</el:cmd> <c:if test="${!empty usr.pilotCode}">
 <span class="sec bld">${usr.pilotCode}</span> </c:if>(${usr.rank}, ${usr.equipmentType})<br />
 </c:forEach>
 <br />
