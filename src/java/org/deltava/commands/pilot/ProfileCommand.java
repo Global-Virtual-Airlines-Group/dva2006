@@ -205,16 +205,26 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Load the ratings from the new equipment type
 					newRatings.addAll(eq2.getPrimaryRatings());
 					newRatings.addAll(eq2.getSecondaryRatings());
+					
+					// Check if we're going to Senior Captain for the first time
+					GetStatusUpdate sudao = new GetStatusUpdate(con);
+					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && sudao.isSeniorCaptain(p.getID())); 
 
 					// Write the status update
 					if (rcmp.compare() > 0) {
-						int promoType = eqChange ? StatusUpdate.EXTPROMOTION : StatusUpdate.INTPROMOTION;
+						int promoType = StatusUpdate.INTPROMOTION;
+						if (newSC)
+							promoType = StatusUpdate.SR_CAPTAIN;
+						else if (eqChange)
+							promoType = StatusUpdate.EXTPROMOTION;
+						
+						// Build the status update
 						StatusUpdate upd = new StatusUpdate(p.getID(), promoType);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
 					} else {
-						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RANK_CHANGE);
+						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN : StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
