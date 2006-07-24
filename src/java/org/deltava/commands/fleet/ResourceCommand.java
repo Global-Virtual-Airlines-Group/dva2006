@@ -27,7 +27,7 @@ public class ResourceCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 		
 		// Check our access
-		boolean isNew = (ctx.getID() != 0);
+		boolean isNew = (ctx.getID() == 0);
 		if ((!isNew) && (ctx.getRoles().size() <= 1))
 			throw securityException("Cannot edit Web Resource");
 
@@ -83,7 +83,7 @@ public class ResourceCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		
 		// Check if we can edit
-		boolean isNew = (ctx.getID() != 0);
+		boolean isNew = (ctx.getID() == 0);
 		if ((!isNew) && (ctx.getRoles().size() <= 1))
 			throw securityException("Cannot edit Web Resource");
 		
