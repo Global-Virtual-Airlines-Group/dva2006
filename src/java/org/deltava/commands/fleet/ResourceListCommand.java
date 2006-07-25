@@ -8,6 +8,9 @@ import org.deltava.beans.fleet.Resource;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.security.command.ResourceAccessControl;
+
 import org.deltava.util.*;
 
 /**
@@ -46,12 +49,23 @@ public class ResourceListCommand extends AbstractViewCommand {
 			Collection<Resource> results = viewAll ? dao.getAll(vc.getSortType()) : dao.getAll(vc.getSortType(), ctx.getUser().getID());
 			vc.setResults(results);
 			
-			// Load author IDs
+			// Create access Map
+			Map<Integer, ResourceAccessControl> accessMap = new HashMap<Integer, ResourceAccessControl>();
+			
+			// Load author IDs and get access
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<Resource> i = results.iterator(); i.hasNext(); ) {
 				Resource r = i.next();
 				IDs.add(new Integer(r.getAuthorID()));
+				
+				// Calculate access
+				ResourceAccessControl access = new ResourceAccessControl(ctx, r);
+				access.validate();
+				accessMap.put(new Integer(r.getID()), access);
 			}
+			
+			// Save the access map
+			ctx.setAttribute("accessMap", accessMap, REQUEST);
 			
 			// Load the Author profiles
 			GetPilot pdao = new GetPilot(con);
@@ -61,6 +75,11 @@ public class ResourceListCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save our Access
+		ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 		
 		// Save sort options
 		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
