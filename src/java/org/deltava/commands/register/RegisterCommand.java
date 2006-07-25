@@ -34,9 +34,9 @@ public class RegisterCommand extends AbstractCommand {
 	private static final Logger log = Logger.getLogger(RegisterCommand.class);
 
 	// Package-private since ApplicantCommand uses these
-	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET };
+	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
 	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Fleet Notifications" };
+			"Send Library Notifications", "Send Flight Approval Notifications"};
 
 	/**
 	 * Executes the command.
