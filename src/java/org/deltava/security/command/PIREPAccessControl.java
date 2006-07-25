@@ -90,7 +90,7 @@ public final class PIREPAccessControl extends AccessControl {
 	 * @see FlightReport#getLength()
 	 */
 	public boolean getCanSubmit() {
-		return _canSubmit && (_pirep.getLength() > 0);
+		return _canSubmit && (_pirep != null) && (_pirep.getLength() > 0);
 	}
 	
 	/**
