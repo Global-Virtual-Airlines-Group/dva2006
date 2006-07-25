@@ -31,15 +31,15 @@
  <td width="10%">CREATED ON</td>
  <td width="5%">HITS</td>
  <td class="left">DESCRIPTION</td>
- <td width="10%"><el:cmd url="resource" op="edit" label="NEW RESOURCE" /></td>
+ <td width="15%"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="resource" items="${viewContext.results}">
 <c:set var="author" value="${pilots[resource.authorID]}" scope="request" />
 <view:row entry="${resource}">
- <td><el:cmd url="resourcejump" linkID="0x${resource.ID}" className="pri bld small">${resource.URL}</el:cmd></td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="gotoresource" linkID="0x${resource.ID}" className="pri bld small">${resource.URL}</el:cmd></td>
+ <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
  <td class="small"><fmt:int value="${resource.hits}" /></td>
  <td class="small left" colspan="2"><fmt:text value="${resource.description}" /></td>
@@ -48,7 +48,7 @@
 
 <!-- Disclaimer bar -->
 <tr>
- <td colspan="5">All Web Resources listed above are links to external Web Sites. No guarantees are made
+ <td colspan="6">All Web Resources listed above are links to external Web Sites. No guarantees are made
  by <content:airline /> regarding the fitness or appropriateness of content contained within these external
  sites. To report inappropriate content, please contact <el:link url="mailto:${hrEmail}">${hrEmail}</el:link>.</td>
 </tr>
