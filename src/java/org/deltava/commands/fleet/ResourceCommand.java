@@ -9,6 +9,7 @@ import org.deltava.beans.fleet.Resource;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.ResourceAccessControl;
 
 /**
  * A Web Site Command to display/edit a Web Resource.
@@ -20,24 +21,18 @@ import org.deltava.dao.*;
 public class ResourceCommand extends AbstractFormCommand {
 
 	/**
-     * Method called when saving the form.
-     * @param ctx the Command Context
-     * @throws CommandException if an unhandled error occurs
-     */
+	 * Method called when saving the form.
+	 * @param ctx the Command Context
+	 * @throws CommandException if an unhandled error occurs
+	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
-		
-		// Check our access
-		boolean isNew = (ctx.getID() == 0);
-		if ((!isNew) && (ctx.getRoles().size() <= 1))
-			throw securityException("Cannot edit Web Resource");
-
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the DAO and the resource
 			GetResources dao = new GetResources(con);
 			Resource r = null;
-			if (isNew) {
+			if (ctx.getID() == 0) {
 				r = new Resource(ctx.getParameter("url"));
 				r.setAuthorID(ctx.getUser().getID());
 				r.setCreatedOn(new Date());
@@ -47,13 +42,16 @@ public class ResourceCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
 			}
 			
+			// Check our access
+			ResourceAccessControl ac = new ResourceAccessControl(ctx, r);
+			ac.validate();
+			if (!ac.getCanEdit())
+				throw securityException("Cannot edit Web Resource");
+
 			// Check if we are doing a delete
 			SetResource wdao = new SetResource(con);
 			boolean doDelete = Boolean.valueOf(ctx.getParameter("doDelete")).booleanValue();
 			if (doDelete) {
-				if (!ctx.isUserInRole("HR"))
-					throw securityException("Cannot delete Web Resource");
-				
 				wdao.delete(r.getID());
 			} else {
 				r.setURL(ctx.getParameter("url"));
@@ -76,43 +74,48 @@ public class ResourceCommand extends AbstractFormCommand {
 	}
 
 	/**
-     * Method called when editing the form.
-     * @param ctx the Command Context
-     * @throws CommandException if an unhandled error occurs
-     */
+	 * Method called when editing the form.
+	 * @param ctx the Command Context
+	 * @throws CommandException if an unhandled error occurs
+	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		
-		// Check if we can edit
-		boolean isNew = (ctx.getID() == 0);
-		if ((!isNew) && (ctx.getRoles().size() <= 1))
-			throw securityException("Cannot edit Web Resource");
-		
-		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the resource
-			if (!isNew) {
+		if (ctx.getID() != 0) {
+			try {
+				Connection con = ctx.getConnection();
+
+				// Get the DAO and the resource
 				GetResources dao = new GetResources(con);
 				Resource r = dao.get(ctx.getID());
 				if (r == null)
 					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
-				
+
+				// Check our access
+				ResourceAccessControl ac = new ResourceAccessControl(ctx, r);
+				ac.validate();
+				if (!ac.getCanEdit())
+					throw securityException("Cannot edit Web Resource");
+
 				// Load the author IDs
 				Collection<Integer> IDs = new HashSet<Integer>();
 				IDs.add(new Integer(r.getAuthorID()));
 				IDs.add(new Integer(r.getLastUpdateID()));
-				
+
 				// Save the User names
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
-				
+
 				// Save the resource in the request
 				ctx.setAttribute("resource", r, REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
 			}
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
+		} else {
+			ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
+			ac.validate();
+			if (!ac.getCanCreate())
+				throw securityException("Cannot create Web Resource");
 		}
 
 		// Forward to the JSP
@@ -122,10 +125,10 @@ public class ResourceCommand extends AbstractFormCommand {
 	}
 
 	/**
-     * Method called when reading the form. <i>NOT IMPLEMENTED</i>
-     * @param ctx the Command Context
-     * @throws UnsupportedOperationException always
-     */
+	 * Method called when reading the form. <i>NOT IMPLEMENTED</i>
+	 * @param ctx the Command Context
+	 * @throws UnsupportedOperationException always
+	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
 		throw new UnsupportedOperationException();
 	}
