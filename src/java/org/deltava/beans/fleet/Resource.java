@@ -4,7 +4,7 @@ package org.deltava.beans.fleet;
 import java.net.*;
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Web resource data.
@@ -13,7 +13,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class Resource extends DatabaseBean {
+public class Resource extends DatabaseBean implements ViewEntry {
 	
 	private String _url;
 	private int _authorID;
@@ -182,5 +182,13 @@ public class Resource extends DatabaseBean {
 	 */
 	public String toString() {
 		return _url;
+	}
+	
+	/**
+	 * Returns the row CSS class name if displayed in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		return _public ? null : "opt2";
 	}
 }
