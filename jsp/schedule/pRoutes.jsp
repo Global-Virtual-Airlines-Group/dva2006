@@ -16,7 +16,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
-<map:api version="2" />
+<map:api version="2" current="true" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
@@ -51,11 +51,12 @@ function showMap(route)
 {
 // Get the map DIV
 var mapdiv = getElement('mapTable');
-if (mapdiv.className == 'hidden') {
+if (mapdiv.className == 'hidden')
 	mapdiv.className = 'visible';
 
-	// Create the map
-	map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+// Create the map
+if (!map) {
+	map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
 	map.addControl(new GLargeMapControl());
 	map.addControl(new GMapTypeControl());
 	map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
@@ -63,7 +64,7 @@ if (mapdiv.className == 'hidden') {
 }
 
 // Generate an XMLHTTP request
-var isLoading = getElement("isLoading");
+var isLoading = getElement('isLoading');
 if (isLoading)
 	isLoading.innerHTML = " - LOADING...";
 
@@ -161,7 +162,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="650" y="550" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /></td>
 </tr>
 </el:table>
 </div>
