@@ -376,18 +376,19 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setNotifyOption(Person.FLEET, rs.getBoolean(18));
 			a.setNotifyOption(Person.EVENT, rs.getBoolean(19));
 			a.setNotifyOption(Person.NEWS, rs.getBoolean(20));
-			a.setEmailAccess(rs.getInt(21));
-			a.setCreatedOn(rs.getTimestamp(22));
-			// skip 23
-			a.setRegisterHostName(rs.getString(24));
-			a.setDateFormat(rs.getString(25));
-			a.setTimeFormat(rs.getString(26));
-			a.setNumberFormat(rs.getString(27));
-			a.setAirportCodeType(rs.getInt(28));
-			a.setTZ(TZInfo.get(rs.getString(29)));
-			a.setUIScheme(rs.getString(30));
-			a.setComments(rs.getString(31));
-			a.setRegisterAddress(rs.getString(32));
+			a.setNotifyOption(Person.PIREP, rs.getBoolean(21));
+			a.setEmailAccess(rs.getInt(22));
+			a.setCreatedOn(rs.getTimestamp(23));
+			// skip 24
+			a.setRegisterHostName(rs.getString(25));
+			a.setDateFormat(rs.getString(26));
+			a.setTimeFormat(rs.getString(27));
+			a.setNumberFormat(rs.getString(28));
+			a.setAirportCodeType(rs.getInt(29));
+			a.setTZ(TZInfo.get(rs.getString(30)));
+			a.setUIScheme(rs.getString(31));
+			a.setComments(rs.getString(32));
+			a.setRegisterAddress(rs.getString(33));
 
 			// Add to results and cache
 			results.add(a);

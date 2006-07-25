@@ -275,39 +275,40 @@ abstract class PilotReadDAO extends PilotDAO {
 			p.setNotifyOption(Person.FLEET, rs.getBoolean(22));
 			p.setNotifyOption(Person.EVENT, rs.getBoolean(23));
 			p.setNotifyOption(Person.NEWS, rs.getBoolean(24));
-			p.setEmailAccess(rs.getInt(25));
-			p.setShowSignatures(rs.getBoolean(26));
-			p.setShowSSThreads(rs.getBoolean(27));
-			p.setHasDefaultSignature(rs.getBoolean(28));
-			p.setUIScheme(rs.getString(29));
-			p.setLoginHost(rs.getString(30));
-			p.setDateFormat(rs.getString(31));
-			p.setTimeFormat(rs.getString(32));
-			p.setNumberFormat(rs.getString(33));
-			p.setAirportCodeType(rs.getInt(34));
-			p.setMapType(rs.getInt(35));
-			p.setNoExams(rs.getBoolean(36));
-			p.setNoVoice(rs.getBoolean(37));
-			p.setACARSRestriction(rs.getInt(38));
-			p.setLDAPName(rs.getString(39));
-			p.setMotto(rs.getString(40));
+			p.setNotifyOption(Person.PIREP, rs.getBoolean(25));
+			p.setEmailAccess(rs.getInt(26));
+			p.setShowSignatures(rs.getBoolean(27));
+			p.setShowSSThreads(rs.getBoolean(28));
+			p.setHasDefaultSignature(rs.getBoolean(29));
+			p.setUIScheme(rs.getString(30));
+			p.setLoginHost(rs.getString(31));
+			p.setDateFormat(rs.getString(32));
+			p.setTimeFormat(rs.getString(33));
+			p.setNumberFormat(rs.getString(34));
+			p.setAirportCodeType(rs.getInt(35));
+			p.setMapType(rs.getInt(36));
+			p.setNoExams(rs.getBoolean(37));
+			p.setNoVoice(rs.getBoolean(38));
+			p.setACARSRestriction(rs.getInt(39));
+			p.setLDAPName(rs.getString(40));
+			p.setMotto(rs.getString(41));
 
-			// Check if this result set has a column 41-44, which is the PIREP totals
-			if (columnCount > 43) {
-				p.setLegs(rs.getInt(41));
-				p.setMiles(rs.getLong(42));
-				p.setHours(rs.getDouble(43));
-				p.setLastFlight(expandDate(rs.getDate(44)));
+			// Check if this result set has a column 42-45, which is the PIREP totals
+			if (columnCount > 44) {
+				p.setLegs(rs.getInt(42));
+				p.setMiles(rs.getLong(43));
+				p.setHours(rs.getDouble(44));
+				p.setLastFlight(expandDate(rs.getDate(45)));
 			}
 
-			// Check if this result set has a column 45, which is the signature ID
-			if (columnCount > 44)
-				p.setHasSignature((rs.getInt(45) != 0));
+			// Check if this result set has a column 46, which is the signature ID
+			if (columnCount > 45)
+				p.setHasSignature((rs.getInt(46) != 0));
 
-			// CHeck if this result set has columns 46/47, which are online legs/hours
-			if (columnCount > 46) {
-				p.setOnlineLegs(rs.getInt(46));
-				p.setOnlineHours(rs.getDouble(47));
+			// CHeck if this result set has columns 47/48, which are online legs/hours
+			if (columnCount > 47) {
+				p.setOnlineLegs(rs.getInt(47));
+				p.setOnlineHours(rs.getDouble(48));
 			}
 
 			// Add the pilot
