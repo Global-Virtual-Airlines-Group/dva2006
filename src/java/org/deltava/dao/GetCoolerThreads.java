@@ -43,8 +43,8 @@ public class GetCoolerThreads extends DAO {
 		if (channelName != null)
 			sqlBuf.append(" WHERE (T.CHANNEL=?)");
 		sqlBuf.append(" GROUP BY T.ID");
-		if (showImgs)
-			sqlBuf.append(" HAVING (IMGID > 0)");
+		if (!showImgs)
+			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
@@ -92,7 +92,7 @@ public class GetCoolerThreads extends DAO {
 						+ "AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
 						+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (T.AUTHOR=?) GROUP BY T.ID");
 		if (!showImgs)
-			sqlBuf.append(" HAVING (IMGID > 0)");
+			sqlBuf.append(" HAVING (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
@@ -161,7 +161,7 @@ public class GetCoolerThreads extends DAO {
 						+ "AS IMGID FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
 						+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) GROUP BY T.ID HAVING (SD > ?)");
 		if (showImgs)
-			sqlBuf.append(" AND (IMGID > 0)");
+			sqlBuf.append(" AND (IMGID=0)");
 		sqlBuf.append(" ORDER BY SD DESC");
 
 		try {
