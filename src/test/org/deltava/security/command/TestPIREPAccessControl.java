@@ -20,6 +20,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
    protected void setUp() throws Exception {
       super.setUp();
       _fr = new FlightReport(new Airline("DVA"), 123, 1);
+      _fr.setLength(10);
       _ac = new PIREPAccessControl(_ctxt, _fr);
    }
 
@@ -39,6 +40,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.SUBMITTED);
       _ac.validate();
@@ -48,6 +50,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertTrue(_ac.getCanHold());
       assertTrue(_ac.getCanApprove());
       assertTrue(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.HOLD);
       _ac.validate();
@@ -57,6 +60,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertTrue(_ac.getCanApprove());
       assertTrue(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
 
       _fr.setStatus(FlightReport.OK);
       _ac.validate();
@@ -66,6 +70,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.REJECTED);
       _ac.validate();
@@ -75,6 +80,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
    }
    
    public void testHRAccess() throws Exception {
@@ -87,6 +93,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.SUBMITTED);
       _ac.validate();
@@ -96,6 +103,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertTrue(_ac.getCanHold());
       assertTrue(_ac.getCanApprove());
       assertTrue(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.HOLD);
       _ac.validate();
@@ -105,6 +113,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertTrue(_ac.getCanApprove());
       assertTrue(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
 
       _fr.setStatus(FlightReport.OK);
       _ac.validate();
@@ -114,6 +123,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertTrue(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
 
       _fr.setStatus(FlightReport.REJECTED);
       _ac.validate();
@@ -123,6 +133,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertTrue(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertTrue(_ac.getCanDispose());
    }
    
    public void testOurAccess() throws Exception {
@@ -138,6 +149,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
       
       _fr.setStatus(FlightReport.SUBMITTED);
       _ac.validate();
@@ -149,6 +161,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
    }
    
    public void testAnonymousAccess() throws Exception {
@@ -162,9 +175,12 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
    }
    
    public void testNullFlightReport() throws Exception {
+	   _ctxt.getRoles().remove("Pilot");
+	   assertFalse(_ctxt.isUserInRole("Pilot"));
       _ac = new PIREPAccessControl(_ctxt, null);
       _ac.validate();
       
@@ -175,6 +191,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
 
       _user.addRole("Pilot");
       _ac.validate();
@@ -186,6 +203,7 @@ public class TestPIREPAccessControl extends AccessControlTestCase {
       assertFalse(_ac.getCanHold());
       assertFalse(_ac.getCanApprove());
       assertFalse(_ac.getCanReject());
+      assertFalse(_ac.getCanDispose());
    }
    
    public void testContextValidation() {
