@@ -67,19 +67,19 @@ public class SetApplicant extends PilotWriteDAO {
 
 				prepareStatement("INSERT INTO APPLICANTS (STATUS, FIRSTNAME, LASTNAME, EMAIL, LOCATION, IMHANDLE, "
 						+ "MSNHANDLE, VATSIM_ID, IVAO_ID, LEGACY_HOURS, LEGACY_URL, LEGACY_OK, HOME_AIRPORT, FLEET_NOTIFY, "
-						+ "EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, DFORMAT, TFORMAT, "
-						+ "NFORMAT, AIRPORTCODE, TZ, UISCHEME, COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-						+ "?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)");
-				_ps.setInt(28, a.getID());
+						+ "EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, CREATED, REGHOSTNAME, REGADDR, "
+						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, TZ, UISCHEME, COMMENTS, ID) VALUES (?, ?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, INET_ATON(?), ?, ?, ?, ?, ?, ?, ?, ?)");
+				_ps.setInt(29, a.getID());
 			} else {
 				prepareStatement("UPDATE APPLICANTS SET STATUS=?, FIRSTNAME=?, LASTNAME=?, EMAIL=?, LOCATION=?, "
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
-						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, SHOW_EMAIL=?, CREATED=?, "
-						+ "REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, "
-						+ "TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=? WHERE (ID=?)");
-				_ps.setString(28, a.getEquipmentType());
-				_ps.setString(29, a.getRank());
-				_ps.setInt(30, a.getID());
+						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
+						+ "CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, "
+						+ "AIRPORTCODE=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=? WHERE (ID=?)");
+				_ps.setString(29, a.getEquipmentType());
+				_ps.setString(30, a.getRank());
+				_ps.setInt(31, a.getID());
 			}
 
 			// Set the fields
@@ -99,17 +99,18 @@ public class SetApplicant extends PilotWriteDAO {
 			_ps.setBoolean(14, a.getNotifyOption(Person.FLEET));
 			_ps.setBoolean(15, a.getNotifyOption(Person.EVENT));
 			_ps.setBoolean(16, a.getNotifyOption(Person.NEWS));
-			_ps.setInt(17, a.getEmailAccess());
-			_ps.setTimestamp(18, createTimestamp(a.getCreatedOn()));
-			_ps.setString(19, a.getRegisterHostName());
-			_ps.setString(20, a.getRegisterAddress());
-			_ps.setString(21, a.getDateFormat());
-			_ps.setString(22, a.getTimeFormat());
-			_ps.setString(23, a.getNumberFormat());
-			_ps.setInt(24, a.getAirportCodeType());
-			_ps.setString(25, a.getTZ().getID());
-			_ps.setString(26, a.getUIScheme());
-			_ps.setString(27, a.getComments());
+			_ps.setBoolean(17, a.getNotifyOption(Person.PIREP));
+			_ps.setInt(18, a.getEmailAccess());
+			_ps.setTimestamp(19, createTimestamp(a.getCreatedOn()));
+			_ps.setString(20, a.getRegisterHostName());
+			_ps.setString(21, a.getRegisterAddress());
+			_ps.setString(22, a.getDateFormat());
+			_ps.setString(23, a.getTimeFormat());
+			_ps.setString(24, a.getNumberFormat());
+			_ps.setInt(25, a.getAirportCodeType());
+			_ps.setString(26, a.getTZ().getID());
+			_ps.setString(27, a.getUIScheme());
+			_ps.setString(28, a.getComments());
 
 			// Update the database and commit
 			executeUpdate(1);

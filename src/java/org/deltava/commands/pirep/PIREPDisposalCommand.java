@@ -180,9 +180,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		}
 
 		// Send a notification message
-		Mailer mailer = new Mailer(ctx.getUser());
-		mailer.setContext(mctx);
-		mailer.send(p);
+		if ((opCode != FlightReport.OK) || (p.getNotifyOption(Person.PIREP))) {
+			Mailer mailer = new Mailer(ctx.getUser());
+			mailer.setContext(mctx);
+			mailer.send(p);
+		}
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

@@ -36,8 +36,14 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Notify when new Water Cooler entries are created.
+	 * @deprecated
 	 */
 	public static final String COOLER = "WCTHREADS";
+	
+	/**
+	 * Notify when Flight Reports Approved.
+	 */
+	public static final String PIREP = "PIREP";
 
 	/**
 	 * Hide e-mail address from all non-staff users.

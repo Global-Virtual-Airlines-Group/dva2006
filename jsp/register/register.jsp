@@ -106,7 +106,7 @@ currently registed with this e-mail address.</div></c:if>
 </tr>
 <tr>
  <td class="label" valign="top">E-Mail Notifications</td>
- <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="3" separator="<div style=\"clear:both;\" />" options="${notifyOptions}" /></td>
+ <td class="data"><el:check name="notifyOption" idx="*" className="small" width="215" cols="2" separator="<div style=\"clear:both;\" />" options="${notifyOptions}" /></td>
 </tr>
 
 <!-- Pilot Preferences -->

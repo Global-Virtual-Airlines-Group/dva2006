@@ -39,9 +39,9 @@ public class SetPilotTransfer extends SetPilot {
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PILOTS (FIRSTNAME, LASTNAME, STATUS, LDAP_DN, EMAIL, LOCATION, IMHANDLE, MSNHANDLE, "
 						+ "LEGACY_HOURS, HOME_AIRPORT, EQTYPE, RANK, VATSIM_ID, IVAO_ID, CREATED, LOGINS, LAST_LOGIN, "
-						+ "LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, NEWS_NOTIFY, SHOW_EMAIL, UISCHEME, LOGINHOSTNAME, "
-						+ "DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
-						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "LAST_LOGOFF, TZ, FILE_NOTIFY, EVENT_NOTIFY, NEWS_NOTIFY, PIREP_NOTIFY, SHOW_EMAIL, UISCHEME, "
+						+ "LOGINHOSTNAME, DFORMAT, TFORMAT, NFORMAT, AIRPORTCODE, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+						+ "?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			startTransaction();
@@ -70,14 +70,15 @@ public class SetPilotTransfer extends SetPilot {
 			_ps.setBoolean(20, p.getNotifyOption(Person.FLEET));
 			_ps.setBoolean(21, p.getNotifyOption(Person.EVENT));
 			_ps.setBoolean(22, p.getNotifyOption(Person.NEWS));
-			_ps.setInt(23, p.getEmailAccess());
-			_ps.setString(24, p.getUIScheme());
-			_ps.setString(25, p.getLoginHost());
-			_ps.setString(26, p.getDateFormat());
-			_ps.setString(27, p.getTimeFormat());
-			_ps.setString(28, p.getNumberFormat());
-			_ps.setInt(29, p.getAirportCodeType());
-			_ps.setInt(30, id);
+			_ps.setBoolean(23, p.getNotifyOption(Person.PIREP));
+			_ps.setInt(24, p.getEmailAccess());
+			_ps.setString(25, p.getUIScheme());
+			_ps.setString(26, p.getLoginHost());
+			_ps.setString(27, p.getDateFormat());
+			_ps.setString(28, p.getTimeFormat());
+			_ps.setString(29, p.getNumberFormat());
+			_ps.setInt(30, p.getAirportCodeType());
+			_ps.setInt(31, id);
 			executeUpdate(1);
 
 			// Write the ratings - don't bother writing roles

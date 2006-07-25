@@ -38,9 +38,9 @@ public class ProfileCommand extends AbstractFormCommand {
 	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only",
 			"Show address to Authenticated Users", "Show address to All Visitors" };
 
-	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.COOLER };
+	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
 	private static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Fleet Notifications", "Send Water Cooler Notifications" };
+			"Send Library Notifications", "Send Flight Approval Notifications" };
 	
 	/**
 	 * Callback method called when saving the profile.
