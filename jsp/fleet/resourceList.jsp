@@ -10,6 +10,7 @@
 <head>
 <title><content:airline /> Web Resources</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
@@ -71,14 +72,14 @@ return true;
 
 <!-- Disclaimer bar -->
 <tr>
- <td colspan="5">All Web Resources listed above are links to external Web Sites. No guarantees are made
+ <td colspan="6">All Web Resources listed above are links to external Web Sites. No guarantees are made
  by <content:airline /> regarding the fitness or appropriateness of content contained within these external
  sites. To report inappropriate content, please contact <el:link url="mailto:${hrEmail}">${hrEmail}</el:link>.</td>
 </tr>
 
 <!-- Scroll Bar row -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
 </el:form>
