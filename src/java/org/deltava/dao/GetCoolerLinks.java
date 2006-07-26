@@ -55,7 +55,7 @@ public class GetCoolerLinks extends DAO {
 	 */
 	public Collection<LinkedImage> getURLs(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT SEQ, URL, DESC FROM common.COOLER_IMGURLS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT SEQ, URL, COMMENTS FROM common.COOLER_IMGURLS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			
 			// Execute the query

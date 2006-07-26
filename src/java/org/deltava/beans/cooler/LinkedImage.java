@@ -79,6 +79,13 @@ public class LinkedImage extends DatabaseBean {
 	}
 	
 	/**
+	 * Tests for equality by comparing the URLs.
+	 */
+	public boolean equals(Object o) {
+		return (o instanceof LinkedImage) ? _url.equals(o.toString()) : false;
+	}
+	
+	/**
 	 * Returns the URL.
 	 */
 	public String toString() {

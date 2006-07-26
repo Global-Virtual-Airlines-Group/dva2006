@@ -12,6 +12,8 @@ import org.deltava.beans.cooler.LinkedImage;
 import org.deltava.taskman.DatabaseTask;
 import org.deltava.util.http.HttpTimeoutHandler;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
@@ -20,12 +22,15 @@ import org.deltava.util.http.HttpTimeoutHandler;
  */
 
 public class ImageLinkTestTask extends DatabaseTask {
+	
+	private Collection _mimeTypes;
 
 	/**
 	 * Initializes the task.
 	 */
 	public ImageLinkTestTask() {
 		super("Image URL Test", ImageLinkTestTask.class);
+		_mimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
 	}
 
 	/**
@@ -59,7 +64,15 @@ public class ImageLinkTestTask extends DatabaseTask {
 						if (resultCode != HttpURLConnection.HTTP_OK) {
 							log.warn("Invalid Image HTTP result code - " + resultCode);
 							isOK = false;
+						} else {
+							String cType = urlcon.getHeaderField("Content-Type");
+							if (!_mimeTypes.contains(cType)) {
+								log.warn("Invalid MIME type for " + img + " - " + cType);
+								isOK = false;
+							}
 						}
+						
+						urlcon.disconnect();
 					} catch (MalformedURLException mue) {
 						isOK = false;
 						log.warn("Invalid URL - " + img);
