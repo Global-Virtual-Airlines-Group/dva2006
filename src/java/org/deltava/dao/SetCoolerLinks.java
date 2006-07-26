@@ -33,7 +33,7 @@ public class SetCoolerLinks extends DAO {
 			return;
 		
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, DESC) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, t.getID());
 			for (Iterator<LinkedImage> i = t.getImageURLs().iterator(); i.hasNext(); ) {
 				LinkedImage img = i.next();
