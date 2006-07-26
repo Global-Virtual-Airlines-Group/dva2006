@@ -37,10 +37,8 @@ public class ResourceAccessControl extends AccessControl {
 
 		// Check create access
 		_canCreate = _ctx.isUserInRole("Pilot");
-		if (_r == null) {
-			_canEdit = _canCreate;
+		if (_r == null)
 			return;
-		}
 
 		// Validate edit/delete rights
 		boolean isMine = (_r.getAuthorID() == _ctx.getUser().getID());
