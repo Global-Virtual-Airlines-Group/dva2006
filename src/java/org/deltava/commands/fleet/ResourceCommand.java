@@ -45,7 +45,8 @@ public class ResourceCommand extends AbstractFormCommand {
 			// Check our access
 			ResourceAccessControl ac = new ResourceAccessControl(ctx, r);
 			ac.validate();
-			if (!ac.getCanEdit())
+			boolean canSave = (r.getID() == 0) ? ac.getCanCreate() : ac.getCanEdit();
+			if (!canSave)
 				throw securityException("Cannot edit Web Resource");
 
 			// Check if we are doing a delete
@@ -57,7 +58,7 @@ public class ResourceCommand extends AbstractFormCommand {
 				r.setURL(ctx.getParameter("url"));
 				r.setDescription(ctx.getParameter("desc"));
 				r.setLastUpdateID(ctx.getUser().getID());
-				r.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+				r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 				wdao.write(r);
 			}
 		} catch (DAOException de) {
@@ -111,12 +112,16 @@ public class ResourceCommand extends AbstractFormCommand {
 			} finally {
 				ctx.release();
 			}
-		} else {
-			ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
-			ac.validate();
-			if (!ac.getCanCreate())
-				throw securityException("Cannot create Web Resource");
 		}
+		
+		// Check our Access
+		ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
+		ac.validate();
+		if (!ac.getCanCreate())
+			throw securityException("Cannot create Web Resource");
+		
+		// Save access
+		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

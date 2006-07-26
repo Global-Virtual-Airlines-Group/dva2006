@@ -62,11 +62,13 @@ return true;
  <td class="label" valign="top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="120" height="6">${resource.description}</el:textbox></td>
 </tr>
+<c:if test="${access.canEdit}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isPublic" idx="*" value="true" checked="${resource.public}" label="This is a public Web Resource" /><br />
  <el:box name="doDelete" idx="*" value="true" label="Delete this Web Resource" /></td>
 </tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->

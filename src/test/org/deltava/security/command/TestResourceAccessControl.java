@@ -64,7 +64,7 @@ public class TestResourceAccessControl extends AccessControlTestCase {
 		_ac.validate();
 		
 		assertTrue(_ac.getCanCreate());
-		assertTrue(_ac.getCanEdit());
+		assertFalse(_ac.getCanEdit());
 		assertFalse(_ac.getCanDelete());
 		
 		// Validate non-create access
