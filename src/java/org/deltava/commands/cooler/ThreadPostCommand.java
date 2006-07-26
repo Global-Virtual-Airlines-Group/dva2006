@@ -23,7 +23,7 @@ import org.deltava.util.http.HttpTimeoutHandler;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to handler new Water Cooler message threads.
+ * A Web Site Command to handle new Water Cooler message threads.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -31,12 +31,25 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadPostCommand extends AbstractCommand {
 
+	private static Collection _imgMimeTypes;
+
 	private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
 	private static final String[] IMG_ALIASES = { "0", "1" };
 
 	/*
 	 * private static final int IMG_REJECT = 0; private static final int IMG_RESIZE = 1;
 	 */
+
+	/**
+	 * Initializes this command.
+	 * @param cmdName the name of the command
+	 * @throws CommandException if the command name is null
+	 * @throws IllegalStateException if the command has already been initialized
+	 */
+	public void init(String id, String cmdName) throws CommandException {
+		super.init(id, cmdName);
+		_imgMimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+	}
 
 	/**
 	 * Executes the command.
@@ -93,7 +106,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-			
+
 			// Check if we are adding a linked Image and returning back
 			boolean addImage = Boolean.valueOf(ctx.getParameter("addImage")).booleanValue();
 			if (addImage) {
@@ -103,30 +116,35 @@ public class ThreadPostCommand extends AbstractCommand {
 					imgURLs = new LinkedHashSet<LinkedImage>();
 					ctx.setAttribute("imageURLs", imgURLs, SESSION);
 				}
-				
+
 				// Validate the image
 				try {
 					URL url = new URL(null, ctx.getParameter("imgURL"), new HttpTimeoutHandler(1750));
 					HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 					urlcon.setRequestMethod("HEAD");
 					urlcon.connect();
-					
+
 					// Validate the result code
 					int resultCode = urlcon.getResponseCode();
 					if (resultCode == HttpURLConnection.HTTP_OK) {
-						LinkedImage img = new LinkedImage(imgURLs.size() + 1, url.toString());
-						img.setDescription(ctx.getParameter("desc"));
-						imgURLs.add(img);
+						String cType = urlcon.getHeaderField("Content-Type");
+						if (!_imgMimeTypes.contains(cType))
+							ctx.setMessage("Invalid MIME type for " + url + " - " + cType);
+						else {
+							LinkedImage img = new LinkedImage(imgURLs.size() + 1, url.toString());
+							img.setDescription(ctx.getParameter("desc"));
+							imgURLs.add(img);
+						}
 					} else
 						ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
-					
+
 					urlcon.disconnect();
 				} catch (MalformedURLException mue) {
 					ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 				} catch (IOException ie) {
 					ctx.setMessage("I/O Error - " + ie.getMessage());
 				}
-				
+
 				// Redirect back to the page
 				result.setURL("/jsp/cooler/threadCreate.jsp");
 				result.setSuccess(true);
@@ -165,13 +183,13 @@ public class ThreadPostCommand extends AbstractCommand {
 				// Resize the image - DISABLED
 				/*
 				 * if (badDim) { ImageScaler scaler = new ImageScaler(img.getBuffer());
-				 * scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight()));
-				 *  // Replace the FileUpload data try { img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
+				 * scaler.setImageSize(getNewImageSize(imgInfo.getWidth(), imgInfo.getHeight())); // Replace the
+				 * FileUpload data try { img.load(new ByteArrayInputStream(scaler.scale("jpeg")));
 				 * ctx.setAttribute("imgResized", Boolean.TRUE, REQUEST); } catch (IOException ie) { log.warn("Error
 				 * scaling image - " + ie.getMessage(), ie); img = null; } }
 				 */
 			}
-			
+
 			// Create the new thread bean
 			MessageThread mt = new MessageThread(ProfanityFilter.filter(ctx.getParameter("subject")));
 			mt.setChannel(cName);
@@ -195,7 +213,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				for (Iterator<String> i = opts.iterator(); i.hasNext();)
 					mt.addOption(new PollOption(1, i.next()));
 			}
-			
+
 			// Create the first post in the thread
 			Message msg = new Message(p.getID());
 			msg.setRemoteAddr(ctx.getRequest().getRemoteAddr());
@@ -203,11 +221,11 @@ public class ThreadPostCommand extends AbstractCommand {
 			msg.setBody(ctx.getParameter("msgText"));
 			msg.setContentWarning(ProfanityFilter.flag(msg.getBody()));
 			mt.addPost(msg);
-			
+
 			// Load linked images
 			Collection imgURLs = (Collection) ctx.getRequest().getSession().getAttribute("imageURLs");
 			if (imgURLs != null) {
-				for (Iterator i = imgURLs.iterator(); i.hasNext(); )
+				for (Iterator i = imgURLs.iterator(); i.hasNext();)
 					mt.addImageURL((LinkedImage) i.next());
 			}
 
@@ -233,7 +251,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			// Get the write DAO and write to the database
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.write(mt);
-			
+
 			// Write any image links
 			SetCoolerLinks lwdao = new SetCoolerLinks(con);
 			lwdao.write(mt);
@@ -257,7 +275,7 @@ public class ThreadPostCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Remove image URLs
 		ctx.getRequest().getSession().removeAttribute("imageURLs");
 

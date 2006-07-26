@@ -533,6 +533,15 @@
 			<y type="Integer">160</y>
 			<size type="Integer">65520</size>
 		</sig_max>
+
+		<imgurls>
+			<max type="Integer">10</max>
+			<list name="mime_types" attr="type">
+				<type>image/gif</type>
+				<type>image/jpeg</type>
+				<type>image/png</type>
+			</list>
+		</imgurls>
 		
 		<maxreports type="Integer">2</maxreports>
 	</cooler>

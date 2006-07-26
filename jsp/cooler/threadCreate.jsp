@@ -48,6 +48,7 @@ function linkImage()
 {
 var f = document.forms[0];
 if (!validateText(f.imgURL, 12, 'URL of your Linked Image')) return false;
+if (!validateText(f.desc, 8, 'Description of your Linked Image')) return false;
 if ((f.img) && (f.img.value.length > 0)) {
 	alert('You cannot Link an Image and Upload an Image at the same time.');
 	f.img.focus();
@@ -108,18 +109,26 @@ return true;
 <c:if test="${imgInvalid}"><div class="error bld">Your attached image is in an unknown format.</div></c:if></td>
 </tr>
 </c:if>
-<tr>
- <td class="label" valign="top">Link Image(s)</td>
- <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
- <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" /><br />
-<el:text name="desc" idx="*" size="64" max="192" value="" />
-<c:if test="${!empty sessionScope.imageURLs}"><br />
-<c:forEach var="imgLink" items="${sessionScope.imageURLs}">
-<el:link target="_new" url="${imgLink.URL}">${imgLink.URL}</el:link> - ${imgLink.description}<br />
-</c:forEach></c:if>
-<c:if test="${!empty system_message}"><span class="small error bld">${system_message}</span></c:if></td>
+<tr class="title caps">
+ <td colspan="2">LINKED IMAGES</td>
 </tr>
-
+<tr>
+ <td class="label" valign="top">New Image URL</td>
+ <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
+<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td></td>
+</tr>
+<tr>
+ <td class="label">Description</td>
+ <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="" /> <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" /></td>
+</tr>
+<c:if test="${!empty sessionScope.imageURLs}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><c:forEach var="imgLink" items="${sessionScope.imageURLs}">
+<el:link target="_new" url="${imgLink.URL}">${imgLink.URL}</el:link> - ${imgLink.description}<br />
+</c:forEach></td>
+</tr>
+</c:if>
 <content:filter roles="PIREP,HR,Moderator">
 <!-- Pilot Poll -->
 <tr class="title caps">
