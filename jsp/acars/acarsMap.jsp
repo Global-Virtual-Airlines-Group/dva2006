@@ -78,7 +78,6 @@ return true;
 
 function showEarth()
 {
-var f = document.forms[0];
 self.location = '/acars_map_earth.ws';
 return true;
 }
@@ -140,6 +139,7 @@ map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+map.enableDoubleClickZoom();
 
 // Placeholder for route
 var routeData;
