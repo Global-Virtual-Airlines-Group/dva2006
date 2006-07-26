@@ -59,8 +59,8 @@ if (!map) {
 	map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
 	map.addControl(new GLargeMapControl());
 	map.addControl(new GMapTypeControl());
-	map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 	map.setCenter(new GLatLng(38.88, -93.25), 4);
+	map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 }
 
 // Generate an XMLHTTP request
@@ -73,7 +73,7 @@ xmlreq.open("GET", "route.ws?route=" + escape(route), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	map.clearOverlays();
-	
+
 	// Draw the markers
 	var positions = new Array();
 	var xmlDoc = xmlreq.responseXML;
@@ -85,20 +85,21 @@ xmlreq.onreadystatechange = function() {
 		positions.push(p);
 		map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
 	} // for
-	
+
 	// Draw the route
 	map.addOverlay(new GPolyline(positions, '#4080AF', 2, 0.8));
-	
+
 	// Get the midpoint and center the map
 	var mps = xmlDoc.documentElement.getElementsByTagName("midpoint");
 	var mpp = mps[0];
 	var mp = new GLatLng(parseFloat(mpp.getAttribute("lat")), parseFloat(mpp.getAttribute("lng")));
-	map.centerAndZoom(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
-	
+	map.setCenter(mp, getDefaultZoom(parseInt(mpp.getAttribute("distance"))));
+
 	// Focus on the map
+	var isLoading = getElement('isLoading');
 	if (isLoading)
 		isLoading.innerHTML = "";
-		
+
 	return true;
 }
 
