@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tasks name="default">
 	<!-- Purge/Notify Inactive Users -->
-	<task id="inactivity" enabled="false">
+	<task id="inactivity" enabled="true">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
 		<time>
 			<min>0</min>
@@ -49,7 +49,7 @@
 	</task>
 
 	<!-- Purge old Flight Assignments -->
-	<task id="assignpurge" enabled="false">
+	<task id="assignpurge" enabled="true">
 		<class>org.deltava.tasks.AssignmentPurgeTask</class>
 		<time>
 			<min>0</min>
@@ -61,7 +61,7 @@
 	</task>
 
 	<!-- Update HTTP server statistics -->
-	<task id="httpstats" enabled="false">
+	<task id="httpstats" enabled="true">
 		<class>org.deltava.tasks.HTTPLogStatisticsTask</class>
 		<time>
 			<min>30</min>
@@ -73,7 +73,7 @@
 	</task>
 
 	<!-- Purge unfinished ACARS flight entries -->
-	<task id="acarspurge" enabled="false">
+	<task id="acarspurge" enabled="true">
 		<class>org.deltava.tasks.ACARSDataPurgeTask</class>
 		<time>
 			<min>30</min>
