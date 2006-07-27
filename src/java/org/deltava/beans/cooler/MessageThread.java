@@ -262,7 +262,6 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setAuthorID(int id) {
-		validateID(_authorID, id);
 		_authorID = id;
 	}
 
@@ -275,7 +274,6 @@ public class MessageThread extends DatabaseBean implements Comparable, ViewEntry
 	 * @see DatabaseBean#validateID(int, int)
 	 */
 	public void setLastUpdateID(int id) {
-		validateID(_lastUpdateID, id);
 		_lastUpdateID = id;
 	}
 
