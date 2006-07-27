@@ -237,11 +237,11 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS WHERE (STATUS != ?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR " + "(EMAIL=?))");
+		sqlBuf.append(".APPLICANTS WHERE (STATUS=?) AND (((FIRSTNAME=?) AND (LASTNAME=?)) OR " + "(EMAIL=?))");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setInt(1, Applicant.REJECTED);
+			_ps.setInt(1, Applicant.PENDING);
 			_ps.setString(2, p.getFirstName());
 			_ps.setString(3, p.getLastName());
 			_ps.setString(4, p.getEmail());

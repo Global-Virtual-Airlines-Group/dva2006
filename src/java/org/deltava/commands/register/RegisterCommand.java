@@ -79,13 +79,17 @@ public class RegisterCommand extends AbstractCommand {
 		a.setLegacyURL(ctx.getParameter("legacyURL"));
 		a.setHomeAirport(ctx.getParameter("homeAirport"));
 		a.setEmailAccess(Person.AUTH_EMAIL);
-		a.setDateFormat(ctx.getParameter("df"));
-		a.setTimeFormat(ctx.getParameter("tf"));
-		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setAirportCodeType(ctx.getParameter("airportCodeType"));
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
 		a.setComments(ctx.getParameter("comments"));
+		try {
+			a.setDateFormat(ctx.getParameter("df"));
+			a.setTimeFormat(ctx.getParameter("tf"));
+			a.setNumberFormat(ctx.getParameter("nf"));
+		} catch (IllegalArgumentException iae) {
+			log.error("Error setting date/number format - " + iae.getMessage());
+		}
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
