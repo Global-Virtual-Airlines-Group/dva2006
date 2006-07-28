@@ -4,8 +4,7 @@
 <tr class="mid">
 <c:set var="imgNum" value="${0}" scope="request" />
 <td colspan="3"><c:forEach var="imgLink" items="${thread.imageURLs}">
-<c:set var="imgNum" value="${imgNum + 1}" scope="request" />
-<img src="${imgLink}" alt="Linked Image #${imgNum}" border="0" /><br />
+<img src="${imgLink.URL}" alt="${imgLink.description}" border="0" /><hr />
 </c:forEach></td>
 </tr>
 </c:when>
