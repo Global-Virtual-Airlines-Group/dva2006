@@ -59,7 +59,7 @@
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
 <c:if test="${!empty courses}">
-</tr>
+<tr>
  <td class="label">Flight Academy Certifications</td>
  <td colspan="${cspan}" class="data"><fmt:list value="${courses}" delim=", " /></td>
 </tr>
