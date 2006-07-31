@@ -24,6 +24,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	
 	private String _certName;
 	private int _pilotID;
+	private int _instructorID;
 	private int _status;
 	private int _stage;
 	
@@ -62,9 +63,19 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * Returns the database ID of the Pilot taking the course.
 	 * @return the database ID
 	 * @see Course#setPilotID(int)
+	 * @see Course#getInstructorID()
 	 */
 	public int getPilotID() {
 		return _pilotID;
+	}
+	
+	/**
+	 * Returns the database ID of the assigned Instructor.
+	 * @return the Instructor's database ID
+	 * @see Course#setInstructorID(int)
+	 */
+	public int getInstructorID() {
+		return _instructorID;
 	}
 	
 	/**
@@ -174,10 +185,25 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 * @param id the database ID
 	 * @throws IllegalArgumentException if id is zero or negative or changes
 	 * @see Course#getPilotID()
+	 * @see Course#setInstructorID(int)
 	 */
 	public void setPilotID(int id) {
 		validateID(_pilotID, id);
 		_pilotID = id;
+	}
+	
+	/**
+	 * Updates the database ID of the assigned Instructor.
+	 * @param id the database ID
+	 * @throws IllegalArgumentException if id is negative
+	 * @see Course#getInstructorID()
+	 * @see Course#setPilotID(int)
+	 */
+	public void setInstructorID(int id) {
+		if (id < 0)
+			throw new IllegalArgumentException("Invalid Database ID - " + id);
+		
+		_instructorID = id;
 	}
 	
 	/**
