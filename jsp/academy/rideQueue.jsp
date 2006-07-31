@@ -44,7 +44,7 @@
 <tr>
  <td><el:cmd url="checkride" linkID="0x${ride.ID}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
  <td><el:cmdbutton url="crview" linkID="0x${ride.flightID}" label="SCORE" /></td>
- <td><el:cmd url="profile" linkID="0x${piot.ID}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd></td>
  <td><el:cmd url="course" linkID="0x${course.ID}">${course.name}</el:cmd></td>
  <td class="sec">${ride.equipmentType}</td>
  <td class="small left">${ride.comments}</td>
