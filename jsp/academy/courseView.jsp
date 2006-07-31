@@ -48,6 +48,7 @@ return ${access.canComment || access.canUpdateProgress};
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
+<c:set var="ins" value="${pilots[course.instructorID]}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -69,6 +70,18 @@ return ${access.canComment || access.canUpdateProgress};
  <td colspan="6" class="data"><span class="sec bld">${course.statusName}</span>, started on 
 <fmt:date fmt="d" date="${course.startDate}" /></td>
 </tr>
+<c:if test="${access.canAssign}">
+<tr>
+ <td class="label">Instructor</td>
+ <td colspan="6" class="data"><el:combo name="instructor" idx="*" size="1" options="${instructors}" value="${instructor}" firstEntry="-" /></td>
+</tr>
+</c:if>
+<c:if test="${(!access.canAssign) && (!empty ins)}">
+<tr>
+ <td class="label">Instructor</td>
+ <td colspan="6" class="data"><span class="pri bld">${ins.name}</span> (${ins.pilotCode})</td>
+</tr>
+</c:if>
 <c:if test="${!empty course.endDate}">
 <tr>
  <td class="label">Completed on</td>
@@ -203,6 +216,9 @@ return ${access.canComment || access.canUpdateProgress};
 </c:if>
 <c:if test="${access.canApprove && isComplete}">
  <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
+</c:if>
+<c:if test="${access.canAssign}">
+ <el:cmdbutton ID="AssignButton" url="courseassign" post="true" linkID="0x${course.ID}" label="ASSIGN INSTRUCTOR" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />

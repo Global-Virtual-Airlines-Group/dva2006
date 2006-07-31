@@ -22,6 +22,7 @@ public class CourseAccessControl extends AccessControl {
 	private boolean _canRestart;
 	private boolean _canStart;
 	private boolean _canApprove;
+	private boolean _canAssign;
 	private boolean _canUpdateProgress;
 	private boolean _canSchedule;
 	private boolean _canDelete;
@@ -62,6 +63,7 @@ public class CourseAccessControl extends AccessControl {
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
+		_canAssign = (isStarted || isPending) && (isHR || isINS || isExam);
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
@@ -118,6 +120,14 @@ public class CourseAccessControl extends AccessControl {
 	 */
 	public boolean getCanSchedule() {
 		return _canSchedule;
+	}
+	
+	/**
+	 * Returns if the user can assign an Instructor to this Course.
+	 * @return TRUE if an Instructor can be assigned, otherwise FALSE
+	 */
+	public boolean getCanAssign() {
+		return _canAssign;
 	}
 	
 	/**

@@ -12,6 +12,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CourseAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to display a Fleet Academy course.
  * @author Luke
@@ -57,6 +59,7 @@ public class CourseCommand extends AbstractCommand {
 			// Get Pilot IDs from comments
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
+			IDs.add(new Integer(c.getInstructorID()));
 			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
 				CourseComment cc = i.next();
 				IDs.add(new Integer(cc.getAuthorID()));
@@ -110,6 +113,12 @@ public class CourseCommand extends AbstractCommand {
 			// Load Pilot Information
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
+			
+			// If we can reassign, load instructors
+			if (access.getCanAssign()) {
+				GetPilotDirectory prdao = new GetPilotDirectory(con);
+				ctx.setAttribute("instructors", prdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+			}
 			
 			// Save the course and the access controller
 			ctx.setAttribute("course", c, REQUEST);
