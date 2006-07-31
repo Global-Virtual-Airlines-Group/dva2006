@@ -117,19 +117,21 @@ public class SetAcademy extends DAO {
 			
 			// Prepare the statement
 			if (c.getID() == 0) {
-				prepareStatement("INSERT INTO COURSES (CERTNAME, PILOT_ID, STATUS, STARTDATE) VALUES (?, ?, ?, ?)");
+				prepareStatement("INSERT INTO COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE) "
+						+ "VALUES (?, ?, ?, ?, ?)");
 			} else {
-				prepareStatement("UPDATE COURSES SET CERTNAME=?, PILOT_ID=?, STATUS=?, STARTDATE=?, ENDDATE=? "
-						+ "WHERE (ID=?)");
-				_ps.setTimestamp(5, createTimestamp(c.getEndDate()));
-				_ps.setInt(6, c.getID());
+				prepareStatement("UPDATE COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
+						+ "STARTDATE=?, ENDDATE=? WHERE (ID=?)");
+				_ps.setTimestamp(6, createTimestamp(c.getEndDate()));
+				_ps.setInt(7, c.getID());
 			}
 			
 			// Set parameters and execute
 			_ps.setString(1, c.getName());
 			_ps.setInt(2, c.getPilotID());
-			_ps.setInt(3, c.getStatus());
-			_ps.setTimestamp(4, createTimestamp(c.getStartDate()));
+			_ps.setInt(3, c.getInstructorID());
+			_ps.setInt(4, c.getStatus());
+			_ps.setTimestamp(5, createTimestamp(c.getStartDate()));
 			executeUpdate(1);
 			
 			// Get the new database ID or clear course progress

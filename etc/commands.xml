@@ -1446,6 +1446,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="courseassign">
+		<name>Course Instructor Assignment</name>
+		<class>org.deltava.commands.academy.CourseAssignCommand</class>
+		<roles>HR,Instructor,Examiner</roles>
+	</command>
+
 	<command id="coursedelete">
 		<name>Delete Academy Course</name>
 		<class>org.deltava.commands.academy.CourseDeleteCommand</class>
