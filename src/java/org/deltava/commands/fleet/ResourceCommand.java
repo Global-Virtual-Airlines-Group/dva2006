@@ -80,13 +80,15 @@ public class ResourceCommand extends AbstractFormCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
+		
+		Resource r = null;
 		if (ctx.getID() != 0) {
 			try {
 				Connection con = ctx.getConnection();
 
 				// Get the DAO and the resource
 				GetResources dao = new GetResources(con);
-				Resource r = dao.get(ctx.getID());
+				r = dao.get(ctx.getID());
 				if (r == null)
 					throw notFoundException("Invalid Web Resource ID - " + ctx.getID());
 
@@ -105,8 +107,6 @@ public class ResourceCommand extends AbstractFormCommand {
 				GetPilot pdao = new GetPilot(con);
 				ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 
-				// Save the resource in the request
-				ctx.setAttribute("resource", r, REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -115,12 +115,13 @@ public class ResourceCommand extends AbstractFormCommand {
 		}
 		
 		// Check our Access
-		ResourceAccessControl ac = new ResourceAccessControl(ctx, null);
+		ResourceAccessControl ac = new ResourceAccessControl(ctx, r);
 		ac.validate();
 		if (!ac.getCanCreate())
 			throw securityException("Cannot create Web Resource");
 		
-		// Save access
+		// Save the resource in the request
+		ctx.setAttribute("resource", r, REQUEST);
 		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
