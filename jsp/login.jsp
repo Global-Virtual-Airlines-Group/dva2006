@@ -91,6 +91,8 @@ in order to log into the site.<br />
 <el:text name="screenY" type="hidden" value="768" />
 <el:text name="redirectTo" type="hidden" value="${referTo}" />
 </el:form>
+<br />
+<content:copyright />
 </content:region>
 </content:page>
 </body>
