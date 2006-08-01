@@ -24,6 +24,8 @@ if (!checkSubmit()) return false;
 var act = form.action;
 if (act.indexOf('courseprogress.do') != -1) {
 
+} else if (act.indexOf('courseassign.do') != -1) {
+
 } else {
 	if (!validateText(form.msgText, 5, 'Course Comments')) return false;
 }
@@ -73,7 +75,7 @@ return ${access.canComment || access.canUpdateProgress};
 <c:if test="${access.canAssign}">
 <tr>
  <td class="label">Instructor</td>
- <td colspan="6" class="data"><el:combo name="instructor" idx="*" size="1" options="${instructors}" value="${instructor}" firstEntry="-" /></td>
+ <td colspan="6" class="data"><el:combo name="instructor" idx="*" size="1" options="${instructors}" value="${ins}" firstEntry="-" /></td>
 </tr>
 </c:if>
 <c:if test="${(!access.canAssign) && (!empty ins)}">
