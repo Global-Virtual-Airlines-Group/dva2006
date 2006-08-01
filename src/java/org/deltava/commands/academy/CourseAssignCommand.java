@@ -4,7 +4,7 @@ package org.deltava.commands.academy;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.academy.Course;
+import org.deltava.beans.academy.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -46,15 +46,15 @@ public class CourseAssignCommand extends AbstractCommand {
 				throw securityException("Cannot assign Instructor");
 			
 			// Parse the instructor ID
-			String insID = ctx.getParameter("instructor");
-			int id = insID.startsWith("0x") ? StringUtils.parseHex(insID) : 0;
+			int id = StringUtils.parse(ctx.getParameter("instructor"), 0);
 			
 			// Get the instructor
+			Pilot ins = null;
 			if (id != 0) {
 				GetPilot pdao = new GetPilot(con);
-				Pilot ins = pdao.get(id);
+				ins = pdao.get(id);
 				if (ins == null)
-					throw notFoundException("Invalid Pilot ID - " + insID);
+					throw notFoundException("Invalid Pilot ID - " + ctx.getParameter("instructor"));
 				else if (!ins.isInRole("Instructor"))
 					throw securityException(ins.getName() + " not an Instructor");
 			}
@@ -62,10 +62,23 @@ public class CourseAssignCommand extends AbstractCommand {
 			// Update the course
 			c.setInstructorID(id);
 			
+			// Create a comment
+			CourseComment cc = new CourseComment(c.getID(), ctx.getUser().getID());
+			cc.setCreatedOn(new java.util.Date());
+			cc.setText((ins == null) ? "Cleared assigned Instructor" : "Assigned " + ins.getName() + " as Instructor");
+			
+			// Start a transaction
+			ctx.startTX();
+			
 			// Save the course
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.write(c);
+			wdao.comment(cc);
+			
+			// Commit the transaction
+			ctx.commitTX();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -74,7 +87,7 @@ public class CourseAssignCommand extends AbstractCommand {
 		// Forward back to the Course
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REDIRECT);
-		result.setURL("course.do", null, c.getID());
+		result.setURL("course", null, c.getID());
 		result.setSuccess(true);
 	}
 }
