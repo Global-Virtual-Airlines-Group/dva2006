@@ -54,27 +54,39 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				throw notFoundException("Invalid User - " + ctx.getID());
 
 			// Validate our access
-			for (Iterator i = src.iterator(); i.hasNext();) {
-				Pilot p = (Pilot) i.next();
+			Collection<String> pilotIDs = new HashSet<String>();
+			pilotIDs.add(usr.getPilotCode());
+			for (Iterator<Pilot> i = src.iterator(); i.hasNext();) {
+				Pilot p = i.next();
 				PilotAccessControl access = new PilotAccessControl(ctx, p);
 				access.validate();
 				if (!access.getCanChangeStatus())
 					i.remove();
+				else if (!StringUtils.isEmpty(p.getPilotCode()))
+					pilotIDs.add(p.getPilotCode());
 			}
 
 			// Check that we can merge any pilots
 			if (src.isEmpty())
 				throw securityException("Cannot merge Pilots");
+			
+			// Ensure that we are merging into the right pilot code
+			UserID newID = new UserID(ctx.getParameter("code"));
+			if (!pilotIDs.contains(newID.toString()))
+				throw securityException("Invalid Pilot Code - " + newID);
 
 			// Start a JDBC transaction
 			ctx.startTX();
 			
 			// Get the roles
-			Collection<String> newRoles = new HashSet<String>(usr.getRoles()); 
+			Collection<String> newRoles = new HashSet<String>(usr.getRoles());
+			
+			// Get the write DAOs
+			SetPilot pwdao = new SetPilot(con);
+			SetPilotMerge mgdao = new SetPilotMerge(con);
 
 			// Iterate through the Pilots, combining the roles
 			Collection<StatusUpdate> sUpdates = new ArrayList<StatusUpdate>();
-			SetPilotMerge mgdao = new SetPilotMerge(con);
 			for (Iterator<Pilot> i = src.iterator(); i.hasNext();) {
 				Pilot p = i.next();
 				newRoles.addAll(p.getRoles());
@@ -89,15 +101,21 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					// Migrate the data
 					mgdao.merge(p, usr);
 				}
+				
+				// If this pilot has the destination pilot code, swap with usr
+				if (p.getPilotNumber() == newID.getUserID()) {
+					p.setPilotNumber(usr.getPilotNumber());
+					pwdao.write(p);
+				}
 			}
 			
 			// Update the roles and status
 			boolean updatePassword = (usr.getStatus() != Pilot.ACTIVE);
 			usr.addRoles(newRoles);
 			usr.setStatus(Pilot.ACTIVE);
+			usr.setPilotNumber(newID.getUserID());
 			
 			// Write the pilot profile
-			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(usr);
 
 			// Write status updates
@@ -112,8 +130,10 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 				if (auth.contains(usr)) {
 					auth.updatePassword(usr, newPwd);
+					ctx.setAttribute("updatePwd", Boolean.TRUE, REQUEST);
 				} else {
 					auth.addUser(usr, newPwd);
+					ctx.setAttribute("addUser", Boolean.TRUE, REQUEST);
 				}
 			
 				// Get the message template
@@ -123,6 +143,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 				// Send a notification message
 				Mailer mailer = new Mailer(ctx.getUser());
 				mailer.setContext(mctxt);
+				mailer.setCC(ctx.getUser());
 				mailer.send(usr);
 			}
 
