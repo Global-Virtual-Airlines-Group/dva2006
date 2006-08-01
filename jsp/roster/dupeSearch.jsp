@@ -121,7 +121,8 @@ return false;
 <!-- Table Legend Bar -->
 <tr class="title">
  <td colspan="6"><view:legend width="100" labels="Active,Inactive,Retired,On Leave" classes=" ,opt2,opt3,warn" />
- MERGE INTO <el:combo name="id" idx="*" size="1" firstEntry="-" options="${results}" /> 
+ MERGE INTO <el:combo name="id" idx="*" size="1" firstEntry="-" options="${results}" /> WITH
+ PILOT CODE <el:combo name="code" idx="*" size="1" firstEntry="-" options="${pilotCodes}" />
  <el:cmdbutton url="dupemerge" post="true" label="MERGE" /></td>
 </tr>
 </c:otherwise>
