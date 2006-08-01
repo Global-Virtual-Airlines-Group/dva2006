@@ -27,9 +27,9 @@ public class CourseListCommand extends AbstractViewCommand {
 			"Latest Enrollment", "Last Comment", "Course Stage"}, SORT_CODE);
 	
 	// Filtering options
-	private static final String[] VIEW_CODE = {"all", "active", "pending", "complete"};
+	private static final String[] VIEW_CODE = {"all", "active", "pending", "complete", "unassigned"};
 	private static final List<ComboAlias> VIEW_OPTS = ComboUtils.fromArray(new String[] {"All Courses", 
-			"Active Courses", "Pending Enrollments", "Completed Courses"}, VIEW_CODE);
+			"Active Courses", "Pending Enrollments", "Completed Courses", "Unassigned Courses"}, VIEW_CODE);
 
 	/**
 	 * Executes the command.
@@ -68,6 +68,11 @@ public class CourseListCommand extends AbstractViewCommand {
 					courses = dao.getByStatus(vc.getSortType(), Course.PENDING);
 					break;
 					
+				case 4: // Unassigned, which is started+pending
+					courses = dao.getByStatus(vc.getSortType(), Course.STARTED);
+					courses.addAll(dao.getByStatus(vc.getSortType(), Course.PENDING));
+					break;
+					
 				case 3:					
 				default:
 					courses = dao.getCompleted(0, vc.getSortType());
@@ -76,11 +81,14 @@ public class CourseListCommand extends AbstractViewCommand {
 			// Save in the view context
 			vc.setResults(courses);
 			
-			// Get the Pilot IDs
+			// Get the Pilot IDs - filter out assigned courses since we're iterating anyways
 			Collection<Integer> IDs = new HashSet<Integer>();
 			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
 				Course c = i.next();
-				IDs.add(new Integer(c.getPilotID()));
+				if ((filterType == 4) && (c.getInstructorID() == 0))
+					i.remove();
+				else
+					IDs.add(new Integer(c.getPilotID()));
 			}
 			
 			// Load the Pilot profiles
