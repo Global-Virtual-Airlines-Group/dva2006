@@ -27,6 +27,10 @@ The following Pilots' Examinations, Check Rides and Flight Reports have been mer
 <span class="sec bld">${usr.pilotCode}</span> </c:if>(${usr.rank}, ${usr.equipmentType})<br />
 </c:forEach>
 <br />
+<c:if test="${updatePwd}">${pilot.name}'s password has been successfully reset.<br />
+<br /></c:if>
+<c:if test="${addUser}">${pilot.name} has been added into the primary User Authenticator.<br />
+<br /></c:if>
 To view ${pilot.name}'s Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
