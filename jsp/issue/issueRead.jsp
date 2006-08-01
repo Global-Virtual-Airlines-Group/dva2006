@@ -39,6 +39,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="versions" name="issue_track.versions" />
+<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -52,8 +53,7 @@ return true;
 <!-- Issue Data -->
 <tr>
  <td class="label">Reported by</td>
- <td class="data">${pilots[issue.createdBy].name} (${pilots[issue.createdBy].pilotCode}) on
- <fmt:date date="${issue.createdOn}" /></td>
+ <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
 <tr>
  <td class="label">Assigned To</td>
@@ -96,7 +96,7 @@ return true;
 </c:if>
 <c:if test="${!empty issue.comments}">
 <c:forEach var="comment" items="${issue.comments}">
-<c:set var="author" value="${pilots[comment.createdBy]}" scope="request" />
+<c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
 <tr>
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /></td>

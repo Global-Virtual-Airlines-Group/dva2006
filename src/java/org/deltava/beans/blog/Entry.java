@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class Entry extends DatabaseBean implements Comparable, CalendarEntry {
+public class Entry extends DatabaseBean implements AuthoredBean, CalendarEntry {
 
 	private int _authorID; 
 	private Date _date;

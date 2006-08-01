@@ -1,9 +1,7 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.gallery;
 
-import java.io.Serializable;
-
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 
 /**
  * A class to score user voting for Image Gallery Images.
@@ -13,7 +11,7 @@ import org.deltava.beans.Person;
  * @since 1.0
  */
 
-public class Vote implements Serializable {
+public class Vote implements AuthoredBean {
 
     private int _imgID;
     private int _userID;
@@ -28,14 +26,14 @@ public class Vote implements Serializable {
      * @throws IllegalArgumentException if imgID is negative
      * @throws IllegalArgumentException if score < 0 or score > 10
      * @see Image#getID()
-     * @see Vote#setUserID(Person)
+     * @see Vote#setUser(Person)
      * @see Vote#setScore(int)
      * @see Vote#setImageID(int)
      */
     public Vote(Person p, int score, int imgID) {
         setImageID(imgID);
         setScore(score);
-        setUserID(p);
+        setUser(p);
     }
     
     /**
@@ -47,13 +45,13 @@ public class Vote implements Serializable {
      * @throws IllegalArgumentException if imgID is negative
      * @throws IllegalArgumentException if score < 0 or score > 10
      * @see Image#getID()
-     * @see Vote#setUserID(int)
+     * @see Vote#setAuthorID(int)
      * @see Vote#setScore(int)
      * @see Vote#setImageID(int)
      */
     public Vote(int personID, int score, int imgID) {
         super();
-        setUserID(personID);
+        setAuthorID(personID);
         setImageID(imgID);
         setScore(score);
     }
@@ -73,10 +71,10 @@ public class Vote implements Serializable {
      * Returns the database ID of the Person casting this vote.
  	 * @return The primary key of the entry in the <b>PILOTS</b> table in the database that corresponds
  	 * to the person casting this vote.
- 	 * @see Vote#setUserID(int)
+ 	 * @see Vote#setAuthorID(int)
  	 * @see Person#getID()
      */
-    public int getUserID() {
+    public int getAuthorID() {
         return _userID;
     }
     
@@ -120,10 +118,10 @@ public class Vote implements Serializable {
      * @param id The primary key of the image in the <b>PILOTS</b> table in the database that corresponds
   	  * to this Person who cast this vote.
   	  * @throws IllegalArgumentException if the database ID is zero or negative
-  	  * @see Vote#getUserID()
+  	  * @see Vote#getAuthorID()
   	  * @see Person#getID()
      */
-    public void setUserID(int id) {
+    public void setAuthorID(int id) {
         DatabaseBean.validateID(_userID, id);
         _userID = id;
     }
@@ -132,11 +130,11 @@ public class Vote implements Serializable {
      * Updates the user ID for this image. <i>This will typically be called by a DAO</i>
      * @param p the Person object who cast this vote
      * @throws NullPointerException if p is null
-     * @see Vote#setUserID(int)
-     * @see Vote#getUserID()
+     * @see Vote#setAuthorID(int)
+     * @see Vote#getAuthorID()
      * @see Person#getID()
      */
-    public void setUserID(Person p) {
-        setUserID(p.getID());
+    public void setUser(Person p) {
+        setAuthorID(p.getID());
     }
 }

@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -146,7 +146,7 @@ public class GetIssue extends DAO {
 		while (rs.next()) {
 			IssueComment ic = new IssueComment(rs.getInt(1), rs.getString(4));
 			ic.setIssueID(i.getID());
-			ic.setCreatedBy(rs.getInt(2));
+			ic.setAuthorID(rs.getInt(2));
 			ic.setCreatedOn(rs.getTimestamp(3));
 			
 			// add to Issue
@@ -167,7 +167,7 @@ public class GetIssue extends DAO {
 		List<Issue> results = new ArrayList<Issue>();
 		while (rs.next()) {
 			Issue i = new Issue(rs.getInt(1), rs.getString(6));
-			i.setCreatedBy(rs.getInt(2));
+			i.setAuthorID(rs.getInt(2));
 			i.setAssignedTo(rs.getInt(3));
 			i.setCreatedOn(rs.getTimestamp(4));
 			i.setResolvedOn(rs.getTimestamp(5));

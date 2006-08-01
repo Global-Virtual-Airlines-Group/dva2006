@@ -55,7 +55,7 @@ public final class IssueAccessControl extends AccessControl {
 		// Determine state variables
 		int userID = _ctx.getUser().getID();
 		boolean isOpen = (_i.getStatus() == Issue.STATUS_OPEN);
-		boolean isMine = ((_i.getCreatedBy() == userID) || (_i.getAssignedTo() == userID));
+		boolean isMine = ((_i.getAuthorID() == userID) || (_i.getAssignedTo() == userID));
 		boolean isDev = _ctx.isUserInRole("Developer");
 		
 		// Set access control variables
