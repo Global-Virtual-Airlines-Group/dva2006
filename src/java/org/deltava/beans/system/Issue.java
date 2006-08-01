@@ -3,8 +3,7 @@ package org.deltava.beans.system;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A bean for tracking Web Site/Fleet issues.
@@ -13,7 +12,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class Issue extends DatabaseBean implements Comparable, ViewEntry {
+public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	public static final int PRIORITY_LOW = 0;
 	public static final int PRIORITY_MEDIUM = 1;
@@ -261,10 +260,10 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	/**
 	 * The database ID of the Person creating this issue.
 	 * @return the database ID
-	 * @see Issue#setCreatedBy(int)
+	 * @see Issue#setAuthorID(int)
 	 * @see org.deltava.beans.DatabaseBean#getID()
 	 */
-	public int getCreatedBy() {
+	public int getAuthorID() {
 		return _createdBy;
 	}
 	
@@ -388,9 +387,9 @@ public class Issue extends DatabaseBean implements Comparable, ViewEntry {
 	 * Updates the database ID of this Issue's author.
 	 * @param id the database ID
 	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see Issue#getCreatedBy()
+	 * @see Issue#getAuthorID()
 	 */
-	public void setCreatedBy(int id) {
+	public void setAuthorID(int id) {
 		validateID(_createdBy, id);
 		_createdBy = id;
 	}

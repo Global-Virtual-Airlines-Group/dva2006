@@ -1,10 +1,9 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A bean to track Flight Academy Course requirements. Each Certification has a number of
@@ -14,7 +13,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class CourseProgress extends CertificationRequirement implements ViewEntry {
+public class CourseProgress extends CertificationRequirement implements AuthoredBean, ViewEntry {
 	
 	private int _courseID;
 	private int _authorID;

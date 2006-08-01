@@ -10,7 +10,7 @@ import java.util.Date;
  * @since 1.0
  */
 
-public class StatusUpdate extends DatabaseBean implements Comparable {
+public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	
 	public static final int COMMENT = 0;
 	public static final int INTPROMOTION = 1;

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -85,7 +85,7 @@ public class SetGalleryImage extends DAO {
 		try {
 			prepareStatement("INSERT INTO GALLERYSCORE (IMG_ID, PILOT_ID, SCORE) VALUES (?, ?, ?)");
 			_ps.setInt(1, v.getImageID());
-			_ps.setInt(2, v.getUserID());
+			_ps.setInt(2, v.getAuthorID());
 			_ps.setInt(3, v.getScore());
 
 			// Add the vote

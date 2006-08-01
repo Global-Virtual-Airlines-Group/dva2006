@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.Iterator;
@@ -11,7 +12,6 @@ import org.deltava.beans.system.IssueComment;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
 
 public class SetIssue extends DAO {
@@ -33,7 +33,7 @@ public class SetIssue extends DAO {
         
         // Populate the prepared statement
         _ps.setInt(1, i.getID());
-        _ps.setInt(2, i.getCreatedBy());
+        _ps.setInt(2, i.getAuthorID());
         _ps.setInt(3, i.getAssignedTo());
         _ps.setTimestamp(4, createTimestamp(i.getCreatedOn()));
         _ps.setTimestamp(5, (i.getStatus() == Issue.STATUS_OPEN) ? null : createTimestamp(i.getResolvedOn()));
@@ -115,7 +115,7 @@ public class SetIssue extends DAO {
     		
     		_ps.setInt(1, ic.getID());
     		_ps.setInt(2, ic.getIssueID());
-            _ps.setInt(3, ic.getCreatedBy());
+            _ps.setInt(3, ic.getAuthorID());
             _ps.setTimestamp(4, createTimestamp(ic.getCreatedOn()));
             _ps.setString(5, ic.getComments());
 

@@ -3,8 +3,7 @@ package org.deltava.beans.cooler;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
 
 /**
  * A class to store Water Cooler message threads.
@@ -13,7 +12,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class MessageThread extends DatabaseBean implements Comparable, ViewEntry {
+public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEntry {
 
 	private String _subject;
 	private String _channel;

@@ -156,7 +156,7 @@ public class Image extends ImageBean implements ComboAlias {
     	if (_votes == null)
     		_votes = new HashMap<Integer, Vote>();
     	
-        _votes.put(new Integer(v.getUserID()), v);
+        _votes.put(new Integer(v.getAuthorID()), v);
     }
     
     /**

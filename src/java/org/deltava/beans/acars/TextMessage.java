@@ -1,9 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store saved ACARS text messages.
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class TextMessage implements java.io.Serializable, Comparable, ACARSLogEntry {
+public class TextMessage implements java.io.Serializable, Comparable, AuthoredBean, ACARSLogEntry {
 
    private long _id;
    private long _conID;

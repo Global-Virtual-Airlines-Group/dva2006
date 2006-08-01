@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -9,7 +10,7 @@ import java.util.Date;
  * @since 1.0
  */
 
-public class News extends DatabaseBean implements Comparable {
+public class News extends DatabaseBean implements AuthoredBean {
 
     private Date _date;
     private String _subject;

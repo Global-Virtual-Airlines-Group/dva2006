@@ -1,7 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store information about File Library entries.
@@ -10,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class FileEntry extends LibraryEntry {
+public class FileEntry extends LibraryEntry implements AuthoredBean {
    
    private int _authorID;
    private String _category;
