@@ -80,6 +80,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="statuscomment">
+		<name>Pilot Status Comment</name>
+		<class>org.deltava.commands.pilot.StatusCommentCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="cookiecheck">
 		<name>Cookie Acceptance Test</name>
 		<class>org.deltava.commands.security.CookieCheckCommand</class>

@@ -183,7 +183,7 @@ Applicant profile for ${pilot.name}.</td>
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td>
-<el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="VIEW LOG BOOK" />
+<el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="LOG BOOK" />
 <c:if test="${access.canEdit}">
  <el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
@@ -195,6 +195,9 @@ Applicant profile for ${pilot.name}.</td>
 </c:if>
 <content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
+</content:filter>
+<content:filter roles="HR">
+ <el:cmdbutton url="statuscomment" linkID="0x${pilot.ID}" label="COMMENT" />
 </content:filter>
 <c:if test="${access.canSuspend}">
  <el:cmdbutton url="suspend" linkID="0x${pilot.ID}" label="SUSPEND" />
