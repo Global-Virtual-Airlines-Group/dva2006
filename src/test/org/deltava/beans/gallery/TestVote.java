@@ -29,7 +29,7 @@ public class TestVote extends AbstractBeanTestCase {
         setBean(_v);
         checkProperty("score", new Integer(5));
         assertEquals(1, _v.getImageID());
-        assertEquals(2, _v.getUserID());
+        assertEquals(2, _v.getAuthorID());
     }
     
     public void testPerson() {
@@ -37,7 +37,7 @@ public class TestVote extends AbstractBeanTestCase {
         p.setID(123);
         
         _v = new Vote(p, 0, 1);
-        assertEquals(123, _v.getUserID());
+        assertEquals(123, _v.getAuthorID());
         try {
             _v = new Vote(null, 0, 1);
             fail("NullPointerException expected");
@@ -49,8 +49,7 @@ public class TestVote extends AbstractBeanTestCase {
         setBean(_v);
         validateInput("score", new Integer(-1), IllegalArgumentException.class);
         validateInput("score", new Integer(11), IllegalArgumentException.class);
-        validateInput("userID", new Integer(0), IllegalArgumentException.class);
+        validateInput("authorID", new Integer(0), IllegalArgumentException.class);
         validateInput("imageID", new Integer(0), IllegalArgumentException.class);
     }
 }
-

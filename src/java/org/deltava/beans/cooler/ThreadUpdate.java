@@ -3,7 +3,7 @@ package org.deltava.beans.cooler;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store Water Cooler thread history entries.
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class ThreadUpdate extends DatabaseBean implements Comparable {
+public class ThreadUpdate extends DatabaseBean implements AuthoredBean {
 
 	private Date _date;
 	private int _authorID;

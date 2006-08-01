@@ -1,9 +1,9 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean to store comments between Instructors and Students. 
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class CourseComment extends DatabaseBean implements Comparable {
+public class CourseComment extends DatabaseBean implements AuthoredBean {
 	
 	private int _authorID;
 	private Date _createdOn;

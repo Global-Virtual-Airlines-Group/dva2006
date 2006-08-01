@@ -3,7 +3,7 @@ package org.deltava.beans.cooler;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A class to store Water Cooler posts.
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class Message extends DatabaseBean implements Comparable {
+public class Message extends DatabaseBean implements AuthoredBean {
     
     private int _threadID;
     private int _authorID;
@@ -24,14 +24,14 @@ public class Message extends DatabaseBean implements Comparable {
     private String _remoteAddr;
     
     /**
-     * Create a new message object from a particular author
+     * Create a new message object from a particular author.
      * @param authorID the database ID for the author
+     * @throws IllegalArgumentException if authorID is zero or negative
      * @see Message#getAuthorID()
      */
     public Message(int authorID) {
         super();
-        validateID(_authorID, authorID);
-        _authorID = authorID;
+        setAuthorID(authorID);
         _createdOn = new Date();
     }
     
@@ -155,6 +155,17 @@ public class Message extends DatabaseBean implements Comparable {
      */
     public void setContentWarning(boolean isWarn) {
     	_contentWarning = isWarn;
+    }
+    
+    /**
+     * Updates the author of this Message.
+     * @param id the author's database ID
+     * @throws IllegalArgumentException if id is zero or negative
+     * @see Message#getAuthorID()
+     */
+    public void setAuthorID(int id) {
+    	validateID(_authorID, id);
+    	_authorID = id;
     }
     
     /**

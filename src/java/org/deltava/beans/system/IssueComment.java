@@ -3,7 +3,7 @@ package org.deltava.beans.system;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
 
 /**
  * A bean for storing web site issue comments.
@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class IssueComment extends DatabaseBean {
+public class IssueComment extends DatabaseBean implements AuthoredBean {
 	
 	private int _createdBy;
 	private int _issueID;
@@ -51,10 +51,10 @@ public class IssueComment extends DatabaseBean {
 	/**
 	 * Returns the database ID of the comment author.
 	 * @return the database ID
-	 * @see IssueComment#setCreatedBy(int)
+	 * @see IssueComment#setAuthorID(int)
 	 * @see org.deltava.beans.Person#getID()
 	 */
-	public int getCreatedBy() {
+	public int getAuthorID() {
 		return _createdBy;
 	}
 	
@@ -102,11 +102,11 @@ public class IssueComment extends DatabaseBean {
 	 * Updates the database ID of this comment's author.
 	 * @param id the database ID
 	 * @throws IllegalArgumentException if id is zero or negative
-	 * @see IssueComment#getCreatedBy()
+	 * @see IssueComment#getAuthorID()
 	 * @see DatabaseBean#validateID(int, int)
 	 * @see org.deltava.beans.Person#getID()
 	 */
-	public void setCreatedBy(int id) {
+	public void setAuthorID(int id) {
 		validateID(_createdBy, id);
 		_createdBy = id;
 	}

@@ -13,7 +13,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class Resource extends DatabaseBean implements ViewEntry {
+public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	
 	private String _url;
 	private int _authorID;

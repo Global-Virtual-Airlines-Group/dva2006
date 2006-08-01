@@ -45,7 +45,7 @@ public class IssueCommentCommand extends AbstractCommand {
          // Create the Issue comment bean
          IssueComment ic = new IssueComment(ctx.getParameter("comment"));
          ic.setIssueID(i.getID());
-         ic.setCreatedBy(ctx.getUser().getID());
+         ic.setAuthorID(ctx.getUser().getID());
 
          // Initialize the write DAO and write the comment
          SetIssue wdao = new SetIssue(con);
@@ -68,12 +68,12 @@ public class IssueCommentCommand extends AbstractCommand {
             if (sendAll) {
             	for (Iterator ci = i.getComments().iterator(); ci.hasNext(); ) {
             		IssueComment c = (IssueComment) ci.next();
-            		pilotIDs.add(new Integer(c.getCreatedBy()));
+            		pilotIDs.add(new Integer(c.getAuthorID()));
             	}
             }
 
             // Get the Issue creator and assignee, and remove the current user
-            pilotIDs.add(new Integer(i.getCreatedBy()));
+            pilotIDs.add(new Integer(i.getAuthorID()));
             pilotIDs.add(new Integer(i.getAssignedTo()));
             pilotIDs.remove(new Integer(ctx.getUser().getID()));
 

@@ -255,19 +255,20 @@ public class GetAcademyCourses extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 7);
+		boolean hasLastChat = (rs.getMetaData().getColumnCount() > 8);
 		
 		// Iterate through the results
 		List<Course> results = new ArrayList<Course>();
 		while (rs.next()) {
 			Course c = new Course(rs.getString(2), rs.getInt(3));
 			c.setID(rs.getInt(1));
-			c.setStatus(rs.getInt(4));
-			c.setStartDate(rs.getTimestamp(5));
-			c.setEndDate(rs.getTimestamp(6));
-			c.setStage(rs.getInt(7));
+			c.setInstructorID(rs.getInt(4));
+			c.setStatus(rs.getInt(5));
+			c.setStartDate(rs.getTimestamp(6));
+			c.setEndDate(rs.getTimestamp(7));
+			c.setStage(rs.getInt(8));
 			if (hasLastChat)
-				c.setLastComment(rs.getTimestamp(8));
+				c.setLastComment(rs.getTimestamp(9));
 			
 			// Add to results
 			results.add(c);

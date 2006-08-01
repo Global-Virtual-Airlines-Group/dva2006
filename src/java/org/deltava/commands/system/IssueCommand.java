@@ -51,7 +51,7 @@ public class IssueCommand extends AbstractFormCommand {
 				// Instantiate a new bean
 				i = new Issue(ctx.getParameter("subject"));
 				i.setStatus(Issue.STATUS_OPEN);
-				i.setCreatedBy(ctx.getUser().getID());
+				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(new Date());
 
 				// Assign to default user
@@ -290,13 +290,13 @@ public class IssueCommand extends AbstractFormCommand {
 		Set<Integer> results = new HashSet<Integer>();
 
 		// Add Creator / Assignee
-		results.add(new Integer(i.getCreatedBy()));
+		results.add(new Integer(i.getAuthorID()));
 		results.add(new Integer(i.getAssignedTo()));
 
 		// Add comment authors
 		for (Iterator<IssueComment> ici = i.getComments().iterator(); ici.hasNext();) {
 			IssueComment ic = ici.next();
-			results.add(new Integer(ic.getCreatedBy()));
+			results.add(new Integer(ic.getAuthorID()));
 		}
 
 		return results;

@@ -8,136 +8,140 @@ import org.deltava.beans.system.Issue;
 
 public class TestIssueAccessControl extends AccessControlTestCase {
 
-   private IssueAccessControl _ac;
-   private Issue _i;
-   
-   public static Test suite() {
-      return new CoverageDecorator(TestIssueAccessControl.class, new Class[] { AccessControl.class,
-            IssueAccessControl.class });
-   }
+	private IssueAccessControl _ac;
+	private Issue _i;
 
-   protected void setUp() throws Exception {
-      super.setUp();
-      _i = new Issue(1, "Issue");
-      _ac = new IssueAccessControl(_ctxt, _i);
-   }
+	public static Test suite() {
+		return new CoverageDecorator(TestIssueAccessControl.class, new Class[] { AccessControl.class,
+				IssueAccessControl.class });
+	}
 
-   protected void tearDown() throws Exception {
-      _ac = null;
-      _i = null;
-      super.tearDown();
-   }
+	protected void setUp() throws Exception {
+		super.setUp();
+		_i = new Issue(1, "Issue");
+		_ac = new IssueAccessControl(_ctxt, _i);
+	}
 
-   public void testAccess() throws Exception {
-      assertEquals(Issue.STATUS_OPEN, _i.getStatus());
-      _ac.validate();
+	protected void tearDown() throws Exception {
+		_ac = null;
+		_i = null;
+		super.tearDown();
+	}
 
-      assertFalse(_ac.getCanCreate());
-      assertFalse(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
+	public void testAccess() throws Exception {
+		_user.removeRole("Pilot");
+		assertFalse(_ctxt.isUserInRole("Pilot"));
+		assertEquals(Issue.STATUS_OPEN, _i.getStatus());
+		_ac.validate();
 
-      _user.addRole("Pilot");
-      assertFalse(_i.getAssignedTo() == _user.getID());
-      assertFalse(_i.getCreatedBy() == _user.getID());
-      _ac.validate();
-      
-      assertTrue(_ac.getCanCreate());
-      assertTrue(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-   }
-   
-   public void testAssignedToAccess() throws Exception {
-      assertEquals(Issue.STATUS_OPEN, _i.getStatus());
-      assertFalse(_i.getCreatedBy() == _user.getID());
-      _i.setAssignedTo(_user.getID());
-      _user.addRole("Pilot");
-      _ac.validate();
-      
-      assertTrue(_ac.getCanCreate());
-      assertTrue(_ac.getCanComment());
-      assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-   }
-   
-   public void testCreatedByAccess() throws Exception {
-      assertEquals(Issue.STATUS_OPEN, _i.getStatus());
-      assertFalse(_i.getAssignedTo() == _user.getID());
-      _i.setCreatedBy(_user.getID());
-      _user.addRole("Pilot");
-      _ac.validate();
+		assertFalse(_ac.getCanCreate());
+		assertFalse(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
 
-      assertTrue(_ac.getCanCreate());
-      assertTrue(_ac.getCanComment());
-      assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-      
-      _i.setStatus(Issue.STATUS_FIXED);
-      _ac.validate();
-      assertTrue(_ac.getCanCreate());
-      assertFalse(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-   }
-   
-   public void testResolutionAccess() throws Exception {
-      assertEquals(Issue.STATUS_OPEN, _i.getStatus());
-      assertFalse(_i.getAssignedTo() == _user.getID());
-      assertFalse(_i.getCreatedBy() == _user.getID());
-      _user.addRole("Pilot");
-      _user.addRole("Developer");
-      _ac.validate();
-      
-      assertTrue(_ac.getCanCreate());
-      assertTrue(_ac.getCanComment());
-      assertTrue(_ac.getCanEdit());
-      assertTrue(_ac.getCanReassign());
-      assertTrue(_ac.getCanResolve());
+		_user.addRole("Pilot");
+		assertFalse(_i.getAssignedTo() == _user.getID());
+		assertFalse(_i.getAuthorID() == _user.getID());
+		_ac.validate();
 
-      _i.setStatus(Issue.STATUS_WORKAROUND);
-      _ac.validate();
-      
-      assertTrue(_ac.getCanCreate());
-      assertTrue(_ac.getCanComment());
-      assertTrue(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertTrue(_ac.getCanResolve());
-   }
-   
-   public void testAnonymousAccess() throws Exception {
-      _ctxt.logoff();
-      _ac.validate();
-      
-      assertFalse(_ac.getCanCreate());
-      assertFalse(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-   }
-   
-   public void testNullIssue() throws Exception {
-      _ac = new IssueAccessControl(_ctxt, null);
-      _ac.validate();
-      
-      assertFalse(_ac.getCanCreate());
-      assertFalse(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-      
-      _user.addRole("Pilot");
-      _ac.validate();
-      
-      assertTrue(_ac.getCanCreate());
-      assertFalse(_ac.getCanComment());
-      assertFalse(_ac.getCanEdit());
-      assertFalse(_ac.getCanReassign());
-      assertFalse(_ac.getCanResolve());
-   }
+		assertTrue(_ac.getCanCreate());
+		assertTrue(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+	}
+
+	public void testAssignedToAccess() throws Exception {
+		assertEquals(Issue.STATUS_OPEN, _i.getStatus());
+		assertFalse(_i.getAuthorID() == _user.getID());
+		_i.setAssignedTo(_user.getID());
+		_user.addRole("Pilot");
+		_ac.validate();
+
+		assertTrue(_ac.getCanCreate());
+		assertTrue(_ac.getCanComment());
+		assertTrue(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+	}
+
+	public void testCreatedByAccess() throws Exception {
+		assertEquals(Issue.STATUS_OPEN, _i.getStatus());
+		assertFalse(_i.getAssignedTo() == _user.getID());
+		_i.setAuthorID(_user.getID());
+		_user.addRole("Pilot");
+		_ac.validate();
+
+		assertTrue(_ac.getCanCreate());
+		assertTrue(_ac.getCanComment());
+		assertTrue(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+
+		_i.setStatus(Issue.STATUS_FIXED);
+		_ac.validate();
+		assertTrue(_ac.getCanCreate());
+		assertFalse(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+	}
+
+	public void testResolutionAccess() throws Exception {
+		assertEquals(Issue.STATUS_OPEN, _i.getStatus());
+		assertFalse(_i.getAssignedTo() == _user.getID());
+		assertFalse(_i.getAuthorID() == _user.getID());
+		_user.addRole("Pilot");
+		_user.addRole("Developer");
+		_ac.validate();
+
+		assertTrue(_ac.getCanCreate());
+		assertTrue(_ac.getCanComment());
+		assertTrue(_ac.getCanEdit());
+		assertTrue(_ac.getCanReassign());
+		assertTrue(_ac.getCanResolve());
+
+		_i.setStatus(Issue.STATUS_WORKAROUND);
+		_ac.validate();
+
+		assertTrue(_ac.getCanCreate());
+		assertTrue(_ac.getCanComment());
+		assertTrue(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertTrue(_ac.getCanResolve());
+	}
+
+	public void testAnonymousAccess() throws Exception {
+		_ctxt.logoff();
+		_ac.validate();
+
+		assertFalse(_ac.getCanCreate());
+		assertFalse(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+	}
+
+	public void testNullIssue() throws Exception {
+		_user.removeRole("Pilot");
+		assertFalse(_ctxt.isUserInRole("Pilot"));
+		_ac = new IssueAccessControl(_ctxt, null);
+		_ac.validate();
+
+		assertFalse(_ac.getCanCreate());
+		assertFalse(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+
+		_user.addRole("Pilot");
+		_ac.validate();
+
+		assertTrue(_ac.getCanCreate());
+		assertFalse(_ac.getCanComment());
+		assertFalse(_ac.getCanEdit());
+		assertFalse(_ac.getCanReassign());
+		assertFalse(_ac.getCanResolve());
+	}
 }
