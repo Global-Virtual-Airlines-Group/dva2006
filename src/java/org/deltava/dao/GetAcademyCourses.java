@@ -100,7 +100,7 @@ public class GetAcademyCourses extends DAO {
 	
 	/**
 	 * Returns all Flight Academy Course profiles for a particular Pilot.
-	 * @param pilotID the Pilot's databae ID
+	 * @param pilotID the Pilot's database ID
 	 * @return a Collection of Course beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
@@ -109,6 +109,26 @@ public class GetAcademyCourses extends DAO {
 			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
 					+ "AND (C.PILOT_ID=?) ORDER BY C.STARTDATE");
 			_ps.setInt(1, pilotID);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all active or pending Flight Academy Course profiles for a particular Instructor.
+	 * @param instructorID the Instructor's database ID
+	 * @param sortBy the sort column SQL
+	 * @return a Collection of Course beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Course> getByInstructor(int instructorID, String sortBy) throws DAOException {
+		try {
+			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
+					+ "AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) ORDER BY " + sortBy);
+			_ps.setInt(1, instructorID);
+			_ps.setInt(2, Course.PENDING);
+			_ps.setInt(3, Course.STARTED);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

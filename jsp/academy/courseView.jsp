@@ -57,11 +57,12 @@ return ${access.canComment || access.canUpdateProgress};
 <el:form action="coursecomment.do" linkID="0x${course.ID}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
- <td colspan="7">FLIGHT ACADEMY COURSE - ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
+ <td colspan="7">FLIGHT ACADEMY COURSE - ${course.name}</td>
 </tr>
 <tr>
- <td class="label">Course</td>
- <td colspan="6" class="data pri bld">${course.name}</td>
+ <td class="label">Pilot</td>
+ <td colspan="6" class="data">${pilot.rank} <span class="pri bld">${pilot.name}</span> (${pilot.pilotCode})
+ - <el:cmd url="logbook" linkID="0x${pilot.ID}">View Log Book</el:cmd></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
