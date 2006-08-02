@@ -1,10 +1,12 @@
 package org.deltava.security;
 
+import junit.framework.TestCase;
+
 import org.deltava.beans.Person;
 
 import org.apache.log4j.PropertyConfigurator;
 
-public class TestFileAuthenticator extends AuthenticatorTestCase {
+public class TestFileAuthenticator extends TestCase {
 
     private Authenticator _auth;
     

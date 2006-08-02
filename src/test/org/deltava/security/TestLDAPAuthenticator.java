@@ -1,10 +1,12 @@
 package org.deltava.security;
 
+import junit.framework.TestCase;
+
 import org.deltava.beans.Person;
 
 import org.apache.log4j.PropertyConfigurator;
 
-public class TestLDAPAuthenticator extends AuthenticatorTestCase {
+public class TestLDAPAuthenticator extends TestCase {
 
     private LDAPAuthenticator _auth;
     private Person _usr;
