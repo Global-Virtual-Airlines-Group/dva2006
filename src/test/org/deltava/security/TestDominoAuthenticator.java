@@ -1,10 +1,12 @@
 package org.deltava.security;
 
+import junit.framework.TestCase;
+
 import org.deltava.beans.Person;
 
 import org.apache.log4j.PropertyConfigurator;
 
-public class TestDominoAuthenticator extends AuthenticatorTestCase {
+public class TestDominoAuthenticator extends TestCase {
 
     private DominoAuthenticator _auth;
     private Person _usr;
