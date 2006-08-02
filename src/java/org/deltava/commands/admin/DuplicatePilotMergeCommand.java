@@ -86,6 +86,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			SetPilotMerge mgdao = new SetPilotMerge(con);
 
 			// Iterate through the Pilots, combining the roles
+			Collection<String> oldNames = new LinkedHashSet<String>();
 			Collection<StatusUpdate> sUpdates = new ArrayList<StatusUpdate>();
 			for (Iterator<Pilot> i = src.iterator(); i.hasNext();) {
 				Pilot p = i.next();
@@ -100,14 +101,27 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 
 					// Migrate the data
 					mgdao.merge(p, usr);
+					oldNames.add(p.getName());
 				}
 				
 				// If this pilot has the destination pilot code, swap with usr
 				if (p.getPilotNumber() == newID.getUserID()) {
+					if (p.getStatus() == Pilot.ACTIVE)
+						p.setStatus(Pilot.RETIRED);
+					
 					p.setPilotNumber(usr.getPilotNumber());
+					pwdao.write(p);
+				} else if (p.getStatus() == Pilot.ACTIVE) {
+					p.setStatus(Pilot.RETIRED);
 					pwdao.write(p);
 				}
 			}
+			
+			// Create a status update listing source users
+			StatusUpdate su = new StatusUpdate(usr.getID(), StatusUpdate.STATUS_CHANGE);
+			su.setAuthorID(ctx.getUser().getID());
+			su.setDescription(StringUtils.listConcat(oldNames, ", ") + " merged");
+			sUpdates.add(su);
 			
 			// Update the roles and status
 			boolean updatePassword = (usr.getStatus() != Pilot.ACTIVE);
