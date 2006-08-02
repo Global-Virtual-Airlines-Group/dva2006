@@ -11,6 +11,7 @@ xmlreq.onreadystatechange = function() {
 	
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
+	if (!xmlDoc) return false;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
 	map.clearOverlays();
 	for (var i = 0; i < ac.length; i++) {
