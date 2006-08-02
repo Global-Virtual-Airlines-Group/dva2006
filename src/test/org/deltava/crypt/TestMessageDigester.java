@@ -128,4 +128,10 @@ public class TestMessageDigester extends TestCase {
     		// empty
     	}
     }
+    
+    public void testApacheSHA() {
+    	_md = new MessageDigester("SHA-1");
+    	byte[] tData = _md.digest("password".getBytes());
+    	assertEquals("W6ph5Mm5Pz8GgiULbPgzG37mj9g=", Base64.encode(tData));
+    }
 }
