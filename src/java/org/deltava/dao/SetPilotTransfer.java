@@ -29,7 +29,7 @@ public class SetPilotTransfer extends SetPilot {
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void transfer(Person p, String dbName, Collection ratings) throws DAOException {
+	public void transfer(Person p, String dbName, Collection<String> ratings) throws DAOException {
 
 		// Get the database ID
 		int id = (p instanceof Applicant) ? ((Applicant) p).getPilotID() : p.getID();
