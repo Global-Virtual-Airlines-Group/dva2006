@@ -268,6 +268,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles,
 					new HashSet<String>()) : p.getRoles();
 			newRoles.add("Pilot");
+			
+			// Update LDAP name
+			if (p_access.getCanChangeRoles())
+				p.setLDAPName(ctx.getParameter("uid"));
 
 			// Update the Pilot's Security Roles
 			if ((p_access.getCanChangeRoles()) && CollectionUtils.hasDelta(newRoles, p.getRoles())) {
