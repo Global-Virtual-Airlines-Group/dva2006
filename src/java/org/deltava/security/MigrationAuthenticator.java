@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -13,6 +13,8 @@ import org.deltava.beans.Person;
  */
 
 public class MigrationAuthenticator extends MultiAuthenticator {
+	
+	private Authenticator dst;
 
 	/**
 	 * Loads the Authenticator.
@@ -28,6 +30,13 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 */
 	public void init(String propsFile) throws SecurityException {
 		init(propsFile, "migration");
+		
+		// Migration authenticators can only have one destination, so trim things out
+		dst = _dst.iterator().next();
+		if (_dst.size() > 1) {
+			_dst.clear();
+			_dst.add(dst);
+		}
 	}
 
 	/**
@@ -43,12 +52,12 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 
 		// Figure out which authenticator to use
-		Authenticator auth = _dst.contains(usr) ? _dst : _src;
+		Authenticator auth = dst.contains(usr) ? dst : _src;
 		auth.authenticate(usr, pwd);
 
 		// If we got this far, and we're not in the destination directory, then add us
 		if (auth == _src)
-			_dst.addUser(usr, pwd);
+			dst.addUser(usr, pwd);
 	}
 
 	/**
@@ -68,10 +77,10 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs, or the user is not in the Destination directory
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-		if (_dst.contains(usr)) {
-			_dst.updatePassword(usr, pwd);
+		if (dst.contains(usr)) {
+			dst.updatePassword(usr, pwd);
 		} else {
-			_dst.addUser(usr, pwd);
+			dst.addUser(usr, pwd);
 		}
 	}
 	
@@ -82,7 +91,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
-		_dst.addUser(usr, pwd);
+		dst.addUser(usr, pwd);
 	}
 
 	/**
@@ -92,8 +101,8 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs or the user does not exist
 	 */
 	public void removeUser(Person usr) throws SecurityException {
-		if (_dst.contains(usr)) {
-			_dst.removeUser(usr);
+		if (dst.contains(usr)) {
+			dst.removeUser(usr);
 		} else if (_src.contains(usr)) {
 			_src.removeUser(usr);
 		} else {
@@ -108,6 +117,6 @@ public class MigrationAuthenticator extends MultiAuthenticator {
     * @throws SecurityException if an error occurs
     */
 	public void rename(Person usr, String newName) throws SecurityException {
-		_dst.rename(usr, newName);
+		dst.rename(usr, newName);
 	}
 }

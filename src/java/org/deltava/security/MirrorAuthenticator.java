@@ -1,5 +1,7 @@
-// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
+
+import java.util.*;
 
 import org.deltava.beans.Person;
 
@@ -64,11 +66,14 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		_src.updatePassword(usr, pwd);
-		_dst.updatePassword(usr, pwd);
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+			Authenticator dst = i.next();
+			dst.updatePassword(usr, pwd);
+		}
 	}
 
 	/**
-	 * Adds the user to both authenticators. If this operation fails, no guarantee of transaction
+	 * Adds the user to all authenticators. If this operation fails, no guarantee of transaction
 	 * atomicity is given.
 	 * @param usr the User bean
 	 * @param pwd the user's password
@@ -77,19 +82,30 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
 		_src.addUser(usr, pwd);
-		_dst.addUser(usr, pwd);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.deltava.security.Authenticator#rename(java.lang.String, java.lang.String)
-	 */
-	public void rename(Person usr, String newName) throws SecurityException {
-		_src.rename(usr, newName);
-		_dst.rename(usr, newName);
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+			Authenticator dst = i.next();
+			dst.addUser(usr, pwd);
+		}
 	}
 
 	/**
-	 * Removes the user from both authenticators.
+	 * Renames the user in all authenticators. If this operation fails, no guarantee of transaction
+	 * atomicity is given.
+	 * @param usr the user bean
+	 * @param newName the new directory name
+	 * @see org.deltava.security.Authenticator#rename(Person, java.lang.String)
+	 */
+	public void rename(Person usr, String newName) throws SecurityException {
+		_src.rename(usr, newName);
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+			Authenticator dst = i.next();
+			dst.rename(usr, newName);
+		}
+	}
+
+	/**
+	 * Removes the user from all  authenticators. If this operation fails, no guarantee of transaction
+	 * atomicity is given.
 	 * @param usr the user bean
 	 * @see Authenticator#removeUser(Person)
 	 */
@@ -97,7 +113,11 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		if (_src.contains(usr))
 			_src.removeUser(usr);
 		
-		if (_dst.contains(usr))
-			_dst.removeUser(usr);
+		// Remove from destinations
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+			Authenticator dst = i.next();
+			if (dst.contains(usr))
+				dst.removeUser(usr);
+		}
 	}
 }
