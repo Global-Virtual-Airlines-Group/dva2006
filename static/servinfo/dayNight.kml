@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<GroundOverlay>
+  <name>Real-Time Day and Night Earth</name>
+  <Icon>
+    <href>http://www.fourmilab.ch/cgi-bin/EarthImage?di=570C7CAD1831F738A14E55993BB164CE9C6C2F386F146947FC1BD844FBE487F6ABE60631001647D5BAD6A67950ECE8CE4A4DD0F413BC8820BDAC5ACA7F89E1BC0AC47AC2B73ED84B65778B279586</href>
+    <refreshMode>onInterval</refreshMode>
+    <refreshInverval>604</refreshInverval>
+  </Icon>
+  <color>82ffffff</color>
+  <LatLonBox>
+    <north>88.29558769196579</north>
+    <south>-86.95308635693809</south>
+    <east>180.2090061061992</east>
+    <west>-179.7909938938009</west>
+  </LatLonBox>
+</GroundOverlay>
+</kml>

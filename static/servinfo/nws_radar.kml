@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://earth.google.com/kml/2.0">
+<Document>
+  <name>NWS Radar Images</name>
+  <open>1</open>
+  <Folder>
+    <name>National Weather Service</name>
+    <open>1</open>
+    <ScreenOverlay>
+      <name>National Weather Service</name>
+      <description>National Weather Service Doppler Radar RIDGE Imagery  http://radar.weather.gov</description>
+      <Icon>
+        <href>http://www.srh.noaa.gov/ridge/graphics/nws_google.gif</href>
+      </Icon>
+      <overlayXY x="1" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="1" y="1" xunits="fraction" yunits="fraction"/>
+      <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+      <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+    <ScreenOverlay>
+      <name>NOAA</name>
+      <description>National Oceanic and Atomospheric Administration  http://www.noaa.gov</description>
+      <Icon>
+        <href>http://www.srh.noaa.gov/ridge/graphics/noaa_google.gif</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+      <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+    <ScreenOverlay>
+      <name>Radar Legend</name>
+      <description>National Weather Service Doppler Radar RIDGE Imagery  http://radar.weather.gov</description>
+      <Icon>
+        <href>http://www.srh.noaa.gov/ridge/graphics/kml_radarlegend.gif</href>
+      </Icon>
+      <overlayXY x="0" y="1" xunits="fraction" yunits="fraction"/>
+      <screenXY x="0.5" y="0.98" xunits="fraction" yunits="fraction"/>
+      <rotationXY x="0" y="0" xunits="fraction" yunits="fraction"/>
+      <size x="0" y="0" xunits="fraction" yunits="fraction"/>
+    </ScreenOverlay>
+  </Folder>
+  <Folder>
+    <name>LATEST_RADARONLY</name>
+    <open>1</open>
+    <GroundOverlay>
+      <name>Mosaic</name>
+      <color>bcffffff</color>
+      <Icon>
+        <href>http://www.srh.noaa.gov/ridge/Conus/RadarImg/latest_radaronly.gif</href>
+        <refreshMode>onInterval</refreshMode>
+        <refreshInterval>120</refreshInterval>
+      </Icon>
+      <LatLonBox id="khLatLonBox620">
+        <north>50.40662636730104</north>
+        <south>21.652538062803</south>
+        <east>-66.517937876818</east>
+        <west>-127.6203755238754</west>
+      </LatLonBox>
+    </GroundOverlay>
+  </Folder>
+</Document>
+</kml>
