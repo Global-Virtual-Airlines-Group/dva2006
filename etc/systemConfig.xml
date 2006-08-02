@@ -582,11 +582,13 @@
 		<enabled type="Boolean">true</enabled>
 		<debug type="Boolean">true</debug>
 		<daemon>org.deltava.acars.TomcatDaemon</daemon>
-		
+
+		<!-- Live map settings -->
 		<livemap>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">15000</reload>
+			<radar>http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi?</radar>
 		</livemap>
 		
 		<list name="block" attr="addr">

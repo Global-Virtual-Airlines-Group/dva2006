@@ -606,17 +606,19 @@
 	<acars>
 		<enabled type="Boolean">true</enabled>
 		<daemon>org.deltava.acars.TomcatDaemon</daemon>
-		
+
+		<!-- Live Map settings -->		
 		<livemap>
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">20000</reload>
+			<radar>http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi?</radar>
 		</livemap>
-		
+
 		<list name="block" attr="addr">
 			<addr>127.0.0.1</addr>
 		</list>
-		
+
 		<port type="Integer">15527</port>
 		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">120</timeout>
