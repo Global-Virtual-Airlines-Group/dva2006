@@ -113,6 +113,7 @@ public class SetPilot extends PilotWriteDAO {
 			// Update the roles/ratings
 			writeRoles(p.getID(), p.getRoles(), db);
 			writeRatings(p.getID(), p.getRatings(), db, true);
+			writeAlias(p.getID(), p.getLDAPName());
 
 			// Commit the changes and update the cache
 			commitTransaction();
