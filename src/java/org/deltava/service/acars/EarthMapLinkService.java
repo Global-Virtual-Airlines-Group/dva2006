@@ -38,39 +38,18 @@ public class EarthMapLinkService extends WebService {
 		StringBuilder buf = new StringBuilder(ctx.getRequest().getRequestURL());
 		buf.setLength(buf.lastIndexOf("/") + 1);
 
-		// Create the progress network link entry
-		Element nle = new Element("NetworkLink");
-		nle.addContent(XMLUtils.createElement("name", "ACARS Live Map"));
-		Element nlu = new Element("Url");
-		nlu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eprog.ws"));
-		nlu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
-		nlu.addContent(XMLUtils.createElement("refreshInterval", "30"));
-		nlu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
-		nlu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
-		nle.addContent(nlu);
-		de.addContent(nle);
+		// Create the progress/flight plan network link entries
+		de.addContent(createLink("ACARS Live Map", buf.toString() + "acars_map_eprog.ws", 30));
+		de.addContent(createLink("ACARS Flight Plans", buf.toString() + "acars_map_eplan.ws", 360));
+		
+		// Create the NWS radar/cloud cover/daynight/METAR network link entries
+		de.addContent(createLink("US Radar Image", buf.toString() + "servinfo/nws_radar.kml", 0));
+		de.addContent(createLink("Cloud Cover", buf.toString() + "servinfo/clouds.kml", 0));
+		de.addContent(createLink("Day/Night", buf.toString() + "servinfo/dayNight.kml", 0));
 
-		// Create the flight plan network link entry
-		Element nple = new Element("NetworkLink");
-		nple.addContent(XMLUtils.createElement("name", "ACARS Flight Plans"));
-		Element plu = new Element("Url");
-		plu.addContent(XMLUtils.createElement("href", buf.toString() + "acars_map_eplan.ws"));
-		plu.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
-		plu.addContent(XMLUtils.createElement("refreshInterval", "360"));
-		plu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
-		plu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
-		nple.addContent(plu);
-		de.addContent(nple);
-
-		// Create FIR boundary network link entry
-		Element fle = new Element("NetworkLink");
-		fle.addContent(XMLUtils.createElement("name", "FIR Boundaries"));
-		Element flu = new Element("Url");
-		flu.addContent(XMLUtils.createElement("href", buf.toString() + "servinfo/firs.kmz"));
-		flu.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
-		flu.addContent(XMLUtils.createElement("refreshVisibility", "0"));
-		fle.addContent(flu);
-		de.addContent(fle);
+		// Create FIR boundary/DAFIF network link entries
+		de.addContent(createLink("FIR Boundaries", buf.toString() + "servinfo/firs.kmz", 86400));
+		de.addContent(createLink("DAFIF Data", buf.toString() + "servinfo/dafif.kmz", 0));
 
 		// Write the XML
 		try {
@@ -84,5 +63,24 @@ public class EarthMapLinkService extends WebService {
 
 		// Return success code
 		return SC_OK;
+	}
+	
+	/**
+	 * Helper method to generate the Url element.
+	 */
+	private Element createLink(String name, String url, int refreshSeconds) {
+		Element le = new Element("NetworkLink");
+		le.addContent(XMLUtils.createElement("name", name));
+		Element e = new Element("Url");
+		e.addContent(XMLUtils.createElement("href", url));
+		if (refreshSeconds > 0) {
+			e.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
+			e.addContent(XMLUtils.createElement("refreshInterval", String.valueOf(refreshSeconds)));
+			e.addContent(XMLUtils.createElement("viewRefreshMode", "never"));
+			e.addContent(XMLUtils.createElement("refreshVisibility", "0"));
+		}
+		
+		le.addContent(e);
+		return le;
 	}
 }
