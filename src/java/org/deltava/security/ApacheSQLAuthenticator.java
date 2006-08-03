@@ -1,7 +1,9 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
+import java.io.IOException;
 import java.sql.*;
+import java.util.Properties;
 
 import org.apache.log4j.Logger;
 
@@ -11,6 +13,7 @@ import org.deltava.crypt.MessageDigester;
 import org.deltava.jdbc.ConnectionPool;
 
 import org.deltava.util.Base64;
+import org.deltava.util.ConfigLoader;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -21,11 +24,12 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ApacheAuthenticator implements Authenticator {
+public class ApacheSQLAuthenticator implements Authenticator {
 
-	private static final Logger log = Logger.getLogger(ApacheAuthenticator.class);
+	private static final Logger log = Logger.getLogger(ApacheSQLAuthenticator.class);
 
 	private ConnectionPool _pool;
+	private Properties _props;
 
 	/**
 	 * Initialize the authenticator.
@@ -34,6 +38,14 @@ public class ApacheAuthenticator implements Authenticator {
 	 */
 	public void init(String propsFile) throws SecurityException {
 		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		
+		_props = new Properties();
+		try {
+			_props.load(ConfigLoader.getStream(propsFile));
+		} catch (IOException ie) {
+			log.error("Error loading " + propsFile + " - " + ie.getMessage());
+			throw new SecurityException(ie.getMessage());
+		}
 	}
 
 	/**
@@ -46,13 +58,18 @@ public class ApacheAuthenticator implements Authenticator {
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes())); 
+		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" WHERE (ID=?) AND (PWD=?)");
 		
 		boolean isOK = false;
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
-			PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM common.AUTH WHERE (ID=?) AND (PWD=?)");
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
 			
@@ -81,10 +98,16 @@ public class ApacheAuthenticator implements Authenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" WHERE (ID=?)");
+		
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
-			PreparedStatement ps = con.prepareStatement("SELECT COUNT(*) FROM common.AUTH WHERE (ID=?)");
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 
 			// Execute the query
@@ -111,6 +134,11 @@ public class ApacheAuthenticator implements Authenticator {
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		log.debug("Updating password for " + usr.getDN() + " in Directory");
 		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
+		
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
 		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes())); 
@@ -118,7 +146,7 @@ public class ApacheAuthenticator implements Authenticator {
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
-			PreparedStatement ps = con.prepareStatement("REPLACE INTO common.AUTH(ID, PWD) VALUES (?, ?)");
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
 			
@@ -141,6 +169,11 @@ public class ApacheAuthenticator implements Authenticator {
 	public void addUser(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
+		
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
 		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes())); 
@@ -148,7 +181,7 @@ public class ApacheAuthenticator implements Authenticator {
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
-			PreparedStatement ps = con.prepareStatement("INSERT INTO common.AUTH(ID, PWD) VALUES (?, ?)");
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
 			
@@ -190,10 +223,15 @@ public class ApacheAuthenticator implements Authenticator {
 	public void removeUser(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getName() + " from Directory");
 		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" WHERE (ID=?)");
+		
 		Connection con = null;
 		try {
 			con = _pool.getConnection(false);
-			PreparedStatement ps = con.prepareStatement("DELETE FROM common.AUTH WHERE (ID=?)");
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 
 			// Execute the update and clean up
