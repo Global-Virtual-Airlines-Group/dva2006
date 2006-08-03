@@ -180,13 +180,13 @@ public class GetEvent extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query and return null if nothing found
-			List results = execute();
+			List<Event> results = execute();
 			if (results.isEmpty())
 				return null;
 
 			// Get the first event and populate it
 			setQueryMax(0);
-			Event e = (Event) results.get(0);
+			Event e = results.get(0);
 			loadFlightPlans(e);
 			loadEQTypes(e);
 			

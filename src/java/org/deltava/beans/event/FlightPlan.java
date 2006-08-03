@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import org.deltava.beans.DatabaseBlobBean;
@@ -152,5 +153,27 @@ public class FlightPlan extends DatabaseBlobBean {
         
         // If we got this far, it's an unknown type
         throw new IllegalArgumentException("Invalid Flight Plan Type - " + type);
+    }
+    
+    /**
+     * Returns the hash code of the ID and filename.
+     */
+    public int hashCode() {
+    	StringBuilder buf = new StringBuilder(String.valueOf(getID()));
+    	buf.append(getFileName());
+    	return buf.toString().hashCode();
+    }
+    
+    /**
+     * Compares two flight plans by comparing their database ID and file names. 
+     */
+    public int compareTo(Object o) {
+    	FlightPlan fp2 = (FlightPlan) o;
+    	int tmpResult = super.compareTo(fp2);
+    	return (tmpResult == 0) ? getFileName().compareTo(fp2.getFileName()) : tmpResult;
+    }
+    
+    public boolean equals(Object o) {
+    	return (o instanceof FlightPlan) ? (compareTo(o) == 0) : false;
     }
 }

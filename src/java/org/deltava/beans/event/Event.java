@@ -48,7 +48,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     private boolean _canSignup;
     
     private Set<Chart> _charts;
-    private Set<FlightPlan> _plans;
+    private Collection<FlightPlan> _plans;
     
     private Set<Signup> _signups;
     private Set<Route> _routes;
@@ -65,7 +65,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
         super();
         setName(name);
         _charts = new TreeSet<Chart>();
-        _plans = new LinkedHashSet<FlightPlan>();
+        _plans = new ArrayList<FlightPlan>();
         _signups = new LinkedHashSet<Signup>();
         _assignments = new ArrayList<AssignmentInfo>();
         _eqTypes = new TreeSet<String>();

@@ -38,7 +38,7 @@ public class EventCommand extends AbstractCommand {
 
 			// Get the DAO and all future events
 			GetEvent edao = new GetEvent(con);
-			List results = edao.getFutureEvents();
+			List<Event> results = edao.getFutureEvents();
 			ctx.setAttribute("futureEvents", results, REQUEST);
 			
 			// If no event scheduled, then display a status page
@@ -63,7 +63,7 @@ public class EventCommand extends AbstractCommand {
 				}
 
 				// Get the ID of the next event
-				Event e = (Event) results.get(0);
+				Event e = results.get(0);
 				eventID = e.getID();
 			}
 
