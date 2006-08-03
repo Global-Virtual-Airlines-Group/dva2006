@@ -2,7 +2,7 @@ package org.deltava.security;
 
 import org.deltava.SQLTestCase;
 
-public class TestApacheAuthenticator extends SQLTestCase {
+public class TestApacheSQLAuthenticator extends SQLTestCase {
 	
 	private Authenticator _auth;
 
@@ -10,7 +10,7 @@ public class TestApacheAuthenticator extends SQLTestCase {
 		super.setUp();
 		
 		// Create the authenticator
-		_auth = new ApacheAuthenticator();
+		_auth = new ApacheSQLAuthenticator();
 		assertNotNull(_auth);
 		
 		// Add a dummy Airline record
