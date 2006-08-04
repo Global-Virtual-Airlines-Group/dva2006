@@ -124,8 +124,9 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Collection<Course> getByInstructor(int instructorID, String sortBy) throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
-					+ "AND (C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) ORDER BY " + sortBy);
+			prepareStatement("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM  CERTS CR, COURSES C "
+					+ "LEFT JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) AND "
+					+ "(C.INSTRUCTOR_ID=?) AND ((C.STATUS=?) OR (C.STATUS=?)) GROUP BY C.ID ORDER BY " + sortBy);
 			_ps.setInt(1, instructorID);
 			_ps.setInt(2, Course.PENDING);
 			_ps.setInt(3, Course.STARTED);
@@ -145,12 +146,13 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getCompleted(int pilotID, String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.STATUS=?) "
-				+ "AND (CERTNAME=CR.NAME)");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM CERTS CR, "
+				+ "COURSES C LEFT JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.STATUS=?) AND "
+				+ "(C.CERTNAME=CR.NAME)");
 		if (pilotID != 0)
 			sqlBuf.append(" AND (C.PILOT_ID=?)");
 		
-		sqlBuf.append(" ORDER BY ");
+		sqlBuf.append(" GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
 		try {
