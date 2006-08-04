@@ -7,11 +7,11 @@ cd /home/backup/db
 mv *.gz old
 
 # Dump LDIF data
-ldapctl stop
-slapcat -l ldif.txt -f /usr/local/etc/openldap/slapd.conf
-gzip -9 -f ldif.txt
-sleep 0.5
-ldapctl start
+# ldapctl stop
+# slapcat -l ldif.txt -f /usr/local/etc/openldap/slapd.conf
+# gzip -9 -f ldif.txt
+# sleep 0.5
+# ldapctl start
 
 # Dump core table
 echo 'Writing mySQL configuration'
@@ -37,7 +37,7 @@ mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` teamspeak | 
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE USERDATA OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE USERDATA AUTH OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
 
 # Dump Water Cooler
