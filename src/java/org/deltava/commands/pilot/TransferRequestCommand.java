@@ -67,15 +67,21 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Check if we have a pending transfer request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest txreq = txdao.get(ctx.getUser().getID());
+			if (txreq != null)
+				throw securityException("Pending Equipment Transfer request");
 
 			// Check if we can transfer into that program
 			int ofs = activeEQ.indexOf(new EquipmentType(eqType));
 			if (ofs == -1)
 				throw securityException("Cannot request transfer to " + eqType);
-
+			
 			// Populate the transfer request
 			EquipmentType eq = activeEQ.get(ofs);
-			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
+			txreq = new TransferRequest(p.getID(), eqType);
 			txreq.setStatus(_testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
 			if (eq.getStage() > 1)
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
