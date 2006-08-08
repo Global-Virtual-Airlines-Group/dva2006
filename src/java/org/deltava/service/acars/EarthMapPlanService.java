@@ -75,10 +75,8 @@ public class EarthMapPlanService extends GoogleEarthService {
 					}
 
 					info.setPlanData(routeInfo);
+					flights.add(info);
 				}
-				
-				// Add the flight information
-				flights.add(info);
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
