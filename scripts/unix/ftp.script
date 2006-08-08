@@ -1,13 +1,14 @@
 bin
 lcd /home/backup/db
 put mysql.sql.gz
-put ldif.txt.gz
 put create_tables.tar.gz
 put acars.sql.gz
+put acars_pos_inc.sql.gz
 put afv.sql.gz
 put afv_sched.sql.gz
 put afv_sys.sql.gz
 put afv_test.sql.gz
+put afv_gallery_inc.sql.gz
 put common.sql.gz
 put cooler.sql.gz
 put dva.sql.gz
@@ -15,6 +16,7 @@ put dva_academy.sql.gz
 put dva_sched.sql.gz
 put dva_sys.sql.gz
 put dva_test.sql.gz
+put dva_gallery_inc.sql.gz
 put events.sql.gz
 put postfix.sql.gz
 put sqmail.sql.gz
@@ -32,11 +34,11 @@ lcd /usr/local/apache22/conf
 put httpd.conf
 
 lcd /home/backup/cfg
-put ldap.tar.gz
 put authlib.tar.gz
 put tomcat.tar.gz
 put postfix.tar.gz
 put imapd.tar.gz
 put mysql.tar.gz
+put ts2.tar.gz
 
 bye
