@@ -170,7 +170,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
+		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
 		
