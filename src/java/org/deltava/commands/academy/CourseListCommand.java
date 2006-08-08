@@ -82,9 +82,8 @@ public class CourseListCommand extends AbstractViewCommand {
 					courses = dao.getByStatus(vc.getSortType(), Course.PENDING);
 					break;
 
-				case 4: // Unassigned, which is started+pending
-					courses = dao.getByStatus(vc.getSortType(), Course.STARTED);
-					courses.addAll(dao.getByStatus(vc.getSortType(), Course.PENDING));
+				case 4: // Unassigned
+					courses = dao.getByInstructor(0, vc.getSortType());
 					break;
 
 				case 5:
@@ -102,14 +101,11 @@ public class CourseListCommand extends AbstractViewCommand {
 			// Save in the view context
 			vc.setResults(courses);
 
-			// Get the Pilot IDs - filter out assigned courses since we're iterating anyways
+			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<Course> i = courses.iterator(); i.hasNext();) {
+			for (Iterator<Course> i = courses.iterator(); i.hasNext(); ) {
 				Course c = i.next();
-				if ((filterType == 4) && (c.getInstructorID() != 0))
-					i.remove();
-				else
-					IDs.add(new Integer(c.getPilotID()));
+				IDs.add(new Integer(c.getPilotID()));
 			}
 
 			// Load the Pilot profiles
