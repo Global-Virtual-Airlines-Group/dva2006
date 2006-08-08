@@ -37,7 +37,7 @@ mysqldump -C -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` teamspeak | 
 
 # Dump Common data/Water Cooler/Events
 echo 'Writing Common data'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE USERDATA AUTH OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE USERDATA AUTH AUTH_ALIAS OCEANIC ISSUES ISSUE_COMMENTS SYSINFODATA | gzip -9 > common.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | gzip -9 > events.sql.gz
 
 # Dump Water Cooler
@@ -52,6 +52,9 @@ then
   
   echo 'Writing ACARS Position Archive'
   mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | gzip -9 > acars_pos.sql.gz
+else
+  echo 'Writing Incremental ACARS Positions'
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(REPORT_TIME, INTERVAL 8 DAY)" acars POSITION_ARCHIVE | gzip -9 > acars_pos_inc.sql.gz
 fi
 
 # Dump ACARS data
@@ -60,7 +63,7 @@ mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars 
 
 # Dump DVA database
 echo 'Writing DVA database'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS | gzip -9 > dva.sql.gz
+mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | gzip -9 > dva.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS | gzip -9 > dva_test.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS SYS_REFERERS | gzip -9 > dva_sys.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | gzip -9 > dva_sched.sql.gz
@@ -68,7 +71,7 @@ mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva CE
 
 # Dump AFV database
 echo 'Writing AFV database'
-mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES | gzip -9 > afv.sql.gz
+mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | gzip -9 > afv.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv APPLICANTS APPEXAMS APPQUESTIONS CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS | gzip -9 > afv_test.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_TASKS SYS_REFERERS | gzip -9 > afv_sys.sql.gz
 mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv SCHEDULE ROUTES SELCAL | gzip -9 > afv_sched.sql.gz
@@ -77,9 +80,14 @@ mysqldump -C -n -t -K -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv SC
 if [ "$1" = "full" ]
 then
   echo 'Writing DVA Image Gallery'
-  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY GALLERYSCORE | gzip -9 > dva_gallery.sql.gz
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY | gzip -9 > dva_gallery.sql.gz
   echo 'Writing AFV Image Gallery'
-  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY GALLERYSCORE | gzip -9 > afv_gallery.sql.gz
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY | gzip -9 > afv_gallery.sql.gz
+else  
+  echo 'Writing Incremental DVA Image Gallery'
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(DATE, INTERVAL 8 DAY)" dva GALLERY | gzip -9 > dva_gallery_inc.sql.gz
+  echo 'Writing Incremental AFV Image Gallery'
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(DATE, INTERVAL 8 DAY)" afv GALLERY | gzip -9 > afv_gallery_inc.sql.gz
 fi
 
 # Change file permissions
