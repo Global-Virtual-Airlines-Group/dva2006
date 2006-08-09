@@ -11,12 +11,20 @@
 <title><content:airline /> Web Resource</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
+<content:js name="common" />
 <content:pics />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
+if (!validateText(form.url, 12, 'Resource URL')) return false;
+if (!validateText(form.desc, 8, 'Resource Description')) return false;
+if (!validateCombo(form.category, 'Resource Category')) return false;
 
+// Prepend a protocol to the URL
+var url = form.url;
+if (url.value.indexOf('://') == -1)
+	url.value = 'http://' + url.value;
 
 setSubmit();
 disableButton('SaveButton');
@@ -29,6 +37,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="cats" name="airline.resources.categories" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -39,7 +48,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Resource URL</td>
- <td class="data"><el:text name="url" size="80" max="255" idx="*" className="small" value="${resource.URL}" /></td>
+ <td class="data"><el:text name="url" size="80" max="255" idx="*" className="small req" value="${resource.URL}" /></td>
+</tr>
+<tr>
+ <td class="label">Category</td>
+ <td class="data"><el:combo name="category" idx="*" size="1" className="req" firstEntry="-" value="${resource.category}" options="${cats}" /></td>
 </tr>
 <c:if test="${!empty resource}">
 <c:set var="author" value="${pilots[resource.authorID]}" scope="request" />
@@ -60,7 +73,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="6">${resource.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="120" height="6" className="req">${resource.description}</el:textbox></td>
 </tr>
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>

@@ -37,6 +37,9 @@ public class ResourceListCommand extends AbstractViewCommand {
         if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
         	vc.setSortType(SORT_CODES[0]);
         
+        // Get the category
+        String catName = ctx.getParameter("cat");
+        
         // Check if we can see all resources
         boolean viewAll = (ctx.getRoles().size() > 1);
 		try {
@@ -46,7 +49,7 @@ public class ResourceListCommand extends AbstractViewCommand {
 			GetResources dao = new GetResources(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Resource> results = viewAll ? dao.getAll(vc.getSortType()) : dao.getAll(vc.getSortType(), ctx.getUser().getID());
+			Collection<Resource> results = viewAll ? dao.getAll(catName, vc.getSortType()) : dao.getAll(catName, ctx.getUser().getID(), vc.getSortType());
 			vc.setResults(results);
 			
 			// Create access Map
