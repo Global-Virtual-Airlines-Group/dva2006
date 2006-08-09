@@ -37,6 +37,7 @@ return true;
 <content:sysdata var="ts2enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="videoEnabled" name="airline.video.enabled" />
+<content:sysdata var="resourceEnabled" name="airline.resources.enabled" />
 <content:sysdata var="newsletterCats" name="airline.newsletters.categories" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
 <content:sysdata var="selcalMax" name="users.selcal.max" />
@@ -173,11 +174,13 @@ contributions from our community that will enhance your flight simulation experi
  newsletters (<fmt:list value="${newsletterCats}" delim=", " />) here.</td>
 </tr>
 </c:if>
+<c:if test="${resourceEnabled}">
 <tr>
  <td class="mid"><el:cmd className="bld" url="resources">Web Resources</el:cmd></td>
  <td class="data">Our Web Resources contain links to a number of online sites that can assist you in
  all manner of flight planning and other ways.</td>
 </tr>
+</c:if>
 <content:filter roles="Fleet">
 <tr>
  <td class="mid"><el:cmd className="bld" url="fleetlibrary" op="admin">Fleet Library Administration</el:cmd></td>
@@ -219,7 +222,7 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
  <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
  'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
- can have our automated system randomly assign flights for you to fly.</td>
+ can have our automated system <el:cmd url="findflight">randomly select flights</el:cmd> for you to fly.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="pri bld" url="charts" linkID="${pilot.homeAirport}">Approach Charts</el:cmd></td>

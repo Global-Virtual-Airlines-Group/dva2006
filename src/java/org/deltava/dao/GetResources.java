@@ -14,7 +14,7 @@ import org.deltava.beans.fleet.Resource;
  */
 
 public class GetResources extends DAO {
-
+	
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -22,7 +22,7 @@ public class GetResources extends DAO {
 	public GetResources(Connection c) {
 		super(c);
 	}
-
+	
 	/**
 	 * Returns a Web Resource.
 	 * @param id the database ID
@@ -45,13 +45,26 @@ public class GetResources extends DAO {
 	
 	/**
 	 * Returns all Web Resources.
+	 * @param catName the category name, or null
 	 * @param orderBy the sorting SQL fragment
 	 * @return a Collection of Resource beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Resource> getAll(String orderBy) throws DAOException {
+	public Collection<Resource> getAll(String catName, String orderBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES ");
+		if (catName != null)
+			sqlBuf.append("WHERE (CATEGORY=?) ");
+		
+		sqlBuf.append("ORDER BY ");
+		sqlBuf.append(orderBy);
+		
 		try {
-			prepareStatement("SELECT * FROM RESOURCES ORDER BY " + orderBy);
+			prepareStatement(sqlBuf.toString());
+			if (catName != null)
+				_ps.setString(1, catName);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -60,16 +73,29 @@ public class GetResources extends DAO {
 	
 	/**
 	 * Returns Web Resources available to a particular user.
-	 * @param orderBy the sorting SQL fragment
+	 * @param catName the category name, or null
 	 * @param id the user's database ID
+	 * @param orderBy the sorting SQL fragment
 	 * @return a Collection of Resource beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Resource> getAll(String orderBy, int id) throws DAOException {
+	public Collection<Resource> getAll(String catName, int id, String orderBy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM RESOURCES WHERE ((ISPUBLIC=?) OR (AUTHOR=?)) ");
+		if (catName != null)
+			sqlBuf.append("AND (CATEGORY=?) ");
+		
+		sqlBuf.append("ORDER BY ");
+		sqlBuf.append(orderBy);
+		
 		try {
-			prepareStatement("SELECT * FROM RESOURCES WHERE (ISPUBLIC=?) OR (AUTHOR=?) ORDER BY " + orderBy);
+			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, id);
+			if (catName != null)
+				_ps.setString(3, catName);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -89,10 +115,11 @@ public class GetResources extends DAO {
 			r.setID(rs.getInt(1));
 			r.setDescription(rs.getString(3));
 			r.setCreatedOn(expandDate(rs.getDate(4)));
-			r.setAuthorID(rs.getInt(5));
-			r.setLastUpdateID(rs.getInt(6));
-			r.setHits(rs.getInt(7));
-			r.setPublic(rs.getBoolean(8));
+			r.setCategory(rs.getString(5));
+			r.setAuthorID(rs.getInt(6));
+			r.setLastUpdateID(rs.getInt(7));
+			r.setHits(rs.getInt(8));
+			r.setPublic(rs.getBoolean(9));
 			
 			// Add to results
 			results.add(r);
