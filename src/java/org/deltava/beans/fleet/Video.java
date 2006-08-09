@@ -63,7 +63,7 @@ public class Video extends FileEntry {
 	 * @throws IllegalArgumentException if fName has an unknown extension
 	 */
 	public void setType(String fName) {
-		if (fName.indexOf('.') == 1)
+		if (fName.indexOf('.') == -1)
 			throw new IllegalArgumentException("Invalid file name - " + fName);
 		
 		String ext = fName.substring(fName.lastIndexOf('.') + 1).toUpperCase();

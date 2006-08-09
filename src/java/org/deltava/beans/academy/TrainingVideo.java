@@ -29,7 +29,7 @@ public class TrainingVideo extends Video {
 	 * @param v the existing Video bean
 	 */
 	public TrainingVideo(Video v) {
-		super(v.getName());
+		super(v.getFileName());
 		setName(v.getName());
 		setSecurity(v.getSecurity());
 		setSize(v.getSize());
