@@ -16,6 +16,7 @@ import org.deltava.beans.*;
 public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	
 	private String _url;
+	private String _category;
 	private int _authorID;
 	private int _lastUpdateID;
 	
@@ -42,6 +43,15 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 */
 	public String getURL() {
 		return _url;
+	}
+	
+	/**
+	 * Returns the Resource category.
+	 * @return the category
+	 * @see Resource#setCategory(String)
+	 */
+	public String getCategory() {
+		return _category;
 	}
 	
 	/**
@@ -121,6 +131,15 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 */
 	public void setDescription(String desc) {
 		_desc = desc;
+	}
+	
+	/**
+	 * Updates the category of this Resource.
+	 * @param cat the category
+	 * @see Resource#getCategory()
+	 */
+	public void setCategory(String cat) {
+		_category = cat;
 	}
 	
 	/**

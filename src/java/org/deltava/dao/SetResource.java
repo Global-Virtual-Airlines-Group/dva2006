@@ -29,16 +29,17 @@ public class SetResource extends DAO {
 	 */
 	public void write(Resource r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO RESOURCES (ID, URL, REMARKS, CREATEDON, AUTHOR, UPDATEDBY, " +
-					"HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO RESOURCES (ID, URL, REMARKS, CATEGORY, CREATEDON, AUTHOR, UPDATEDBY, " +
+					"HITCOUNT, ISPUBLIC) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getURL());
 			_ps.setString(3, r.getDescription());
-			_ps.setDate(4, new java.sql.Date(r.getCreatedOn().getTime()));
-			_ps.setInt(5, r.getAuthorID());
-			_ps.setInt(6, r.getLastUpdateID());
-			_ps.setInt(7, r.getHits());
-			_ps.setBoolean(8, r.getPublic());
+			_ps.setString(4, r.getCategory());
+			_ps.setDate(5, new java.sql.Date(r.getCreatedOn().getTime()));
+			_ps.setInt(6, r.getAuthorID());
+			_ps.setInt(7, r.getLastUpdateID());
+			_ps.setInt(8, r.getHits());
+			_ps.setBoolean(9, r.getPublic());
 			executeUpdate(1);
 			
 			// Get new database ID

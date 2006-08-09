@@ -45,6 +45,17 @@
 			</list>
 		</video>
 
+		<!-- Do we have web resources? -->
+		<resources>
+			<enabled type="Boolean">true</enabled>
+			<list name="categories" attr="category" unique="true">
+				<category>Routes</category>
+				<category>Charts</category>
+				<category>Flight Planners</category>
+				<category>Online Networks</category>
+			</list>
+		</resources>
+
 		<!-- Copyright disclaimer -->
 		<copyright>In no way are we affiliated with Delta Air Lines or its affiliates. All images, logos and trademarks remain property of their respective owners.</copyright>
 		
