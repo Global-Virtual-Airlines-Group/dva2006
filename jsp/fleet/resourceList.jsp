@@ -33,15 +33,10 @@ return true;
 <content:region id="main">
 <el:form action="resources.do" method="post" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="resources">
-<tr class="title caps">
- <td class="left" colspan="2"><content:airline /> WEB RESOURCES</td>
-<c:if test="${access.canCreate}">
- <td><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></td>
-</c:if>
-<c:if test="${!access.canCreate}">
- <td>&nbsp;</td>
-</c:if>
- <td class="right" colspan="3">CATEGORY <el:combo name="cat" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${param.cat}" onChange="void sort()" />
+<tr class="title">
+ <td class="left caps" colspan="3"><content:airline /> WEB RESOURCES</td>
+ <td class="right" colspan="3"><c:if test="${access.canCreate}"><el:cmdbutton url="resource" op="edit" label="NEW RESOURCE" /></c:if>
+ CATEGORY <el:combo name="cat" idx="*" size="1" options="${cats}" firstEntry="ALL" value="${param.cat}" onChange="void sort()" />
  SORT BY <el:combo name="sortType" idx="*" size="1" options="${sortOptions}" value="${viewContext.sortType}" onChange="void sort()" /></td>
 </tr>
 
@@ -62,19 +57,19 @@ return true;
 <c:if test="${rAccess.canEdit}">
  <td><el:cmdbutton url="resource" linkID="0x${resource.ID}" op="edit" label="EDIT" /></td>
 </c:if>
+ <td class="small"><fmt:int value="${resource.hits}" /></td>
  <td colspan="${rAccess.canEdit ? '2' : '3'}"><el:cmd url="gotoresource" linkID="0x${resource.ID}" className="pri bld">${resource.URL}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
- <td class="small"><fmt:int value="${resource.hits}" /></td>
 </view:row>
 <view:row entry="${resource}">
- <td colspan="5" class="small"><fmt:text value="${resource.description}" /></td>
+ <td colspan="6" class="small"><fmt:text value="${resource.description}" /></td>
 </view:row>
 </c:forEach>
 
 <!-- Disclaimer bar -->
 <tr>
- <td colspan="6">All Web Resources listed above are links to external Web Sites. No guarantees are made
+ <td colspan="6" class="small">All Web Resources listed above are links to external Web Sites. No guarantees are made
  by <content:airline /> regarding the fitness or appropriateness of content contained within these external
  sites. To report inappropriate content, please contact <el:link url="mailto:${hrEmail}">${hrEmail}</el:link>.</td>
 </tr>
