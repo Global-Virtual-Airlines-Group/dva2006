@@ -67,7 +67,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		return _src.contains(usr) || _dst.contains(usr);
+		return _src.contains(usr) || dst.contains(usr);
 	}
 
 	/**
