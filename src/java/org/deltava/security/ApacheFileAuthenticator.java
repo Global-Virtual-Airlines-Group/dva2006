@@ -194,7 +194,12 @@ public class ApacheFileAuthenticator implements Authenticator {
 	}
 	
 	private String getID(Person usr) {
-		boolean useLDAP = (usr instanceof Pilot) && Boolean.valueOf(_props.getProperty("apachefile.alias")).booleanValue();
+		boolean useAlias = Boolean.valueOf(_props.getProperty("apachefile.alias")).booleanValue();
+		if ((useAlias) && (usr instanceof Applicant))
+			return null;
+		
+		// Determine wether we use the LDAP name
+		boolean useLDAP = (usr instanceof Pilot) && useAlias; 
 		return useLDAP ? ((Pilot) usr).getLDAPName() : usr.getDN();
 	}
 	
