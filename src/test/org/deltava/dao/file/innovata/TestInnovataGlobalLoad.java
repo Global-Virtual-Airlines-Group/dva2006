@@ -9,8 +9,10 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.*;
 
-import org.deltava.beans.schedule.Airline;
-import org.deltava.dao.GetAirline;
+import org.deltava.beans.schedule.*;
+
+import org.deltava.dao.*;
+import org.deltava.dao.file.innovata.GetFullSchedule;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -20,7 +22,9 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private static Logger log;
 
 	private Connection _c;
+	
 	private Collection<String> _aCodes = new HashSet<String>();
+	private Collection<Airline> _airlines;
 	
 	private static final List<String> CODES = Arrays.asList(new String[] {"AF", "DL"});
 
@@ -46,8 +50,8 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 		// Load Airlines
 		GetAirline adao = new GetAirline(_c);
-		Collection<Airline> airlines = adao.getActive().values();
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
+		_airlines = adao.getActive().values();
+		for (Iterator<Airline> i = _airlines.iterator(); i.hasNext();) {
 			Airline a = i.next();
 			_aCodes.addAll(a.getCodes());
 		}
@@ -169,5 +173,29 @@ public class TestInnovataGlobalLoad extends TestCase {
 		ps.close();
 		lr.close();
 		out.close();
+	}
+	
+	public void testLoadDAO() throws Exception {
+		
+		File f = new File("data/Aug01.csv");
+		assertTrue(f.exists());
+		
+		// Load Airports
+		GetAirport apdao = new GetAirport(_c);
+		Collection<Airport> airports = apdao.getAll().values();
+		assertNotNull(airports);
+		assertFalse(airports.isEmpty());
+		
+		// Get the DAO
+		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
+		dao.setEffectiveDate(new java.util.Date());
+		dao.setPrimaryCodes(Arrays.asList(new String[] {"DL", "AF"}));
+		dao.setAirlines(_airlines);
+		dao.setAirports(airports);
+		
+		// Load the legs
+		dao.load();
+		Collection<ScheduleEntry> entries = dao.process();
+		assertNotNull(entries);
 	}
 }
