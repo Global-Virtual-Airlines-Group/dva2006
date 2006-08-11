@@ -29,7 +29,7 @@ public class TestingHistoryHelper {
 
 	private SortedSet<Test> _tests = new TreeSet<Test>();
 	private Collection<FlightReport> _pireps;
-	private Collection<EquipmentType> _allEQ;
+	private Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
 
 	/**
 	 * Initializes the helper.
@@ -65,7 +65,7 @@ public class TestingHistoryHelper {
 	 * @param eqTypes a Collection of EquipmentType beans
 	 */
 	public void setEquipmentTypes(Collection<EquipmentType> eqTypes) {
-		_allEQ = new TreeSet<EquipmentType>(eqTypes);
+		_allEQ.addAll(eqTypes);
 	}
 
 	/**
