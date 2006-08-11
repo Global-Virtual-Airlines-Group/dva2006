@@ -49,13 +49,13 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public GetFullSchedule(Collection<CSVTokens> tokens) {
 		this((InputStream) null);
-		for (Iterator<CSVTokens> i = tokens.iterator(); i.hasNext(); ) {
+		for (Iterator<CSVTokens> i = tokens.iterator(); i.hasNext();) {
 			CSVTokens tkn = i.next();
 			if (include(tkn))
 				_data.add(tkn);
 		}
 	}
-	
+
 	/**
 	 * Initializes the list of airlines.
 	 * @param airlines a Collection of Airline beans
@@ -63,12 +63,12 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
 		super.setAirlines(airlines);
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
 			Airline a = i.next();
 			_aCodes.addAll(a.getCodes());
 		}
 	}
-	
+
 	/**
 	 * Sets primary airline codes.
 	 * @param codes the primary airline codes
@@ -77,20 +77,20 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		_mlCodes.clear();
 		_mlCodes.addAll(codes);
 	}
-	
+
 	private boolean include(CSVTokens entries) {
-		
+
 		// Check the date
 		try {
 			long sd = _df.parse(entries.get(5)).getTime();
 			long ed = _df.parse(entries.get(6)).getTime();
-			if ((_effDate < sd) || (_effDate >=ed))
+			if ((_effDate < sd) || (_effDate >= ed))
 				return false;
 		} catch (ParseException pe) {
 			log.warn("Invalid start/end date - " + pe.getMessage());
 			return false;
 		}
-		
+
 		// Check codeshare operation
 		boolean isCS = "1".equals(entries.get(48));
 		if (!isCS)
@@ -99,10 +99,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		// Check the airline
 		String code = entries.get(0).toUpperCase();
 		boolean isMainLine = _mlCodes.contains(code);
-		boolean isCodeShare = false; 
+		boolean isCodeShare = false;
 		if (_aCodes.contains(code) && !isMainLine && !_mlCodes.contains(code) && !_mlCodes.contains(entries.get(3))) {
 			String csInfo = entries.get(50);
-			for (Iterator<String> i = _mlCodes.iterator(); i.hasNext() && !isCodeShare; ) {
+			for (Iterator<String> i = _mlCodes.iterator(); i.hasNext() && !isCodeShare;) {
 				String mlCode = i.next();
 				isCodeShare |= (csInfo.indexOf(mlCode) != -1);
 			}
@@ -118,7 +118,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	 */
 	public void setEffectiveDate(Date dt) {
 		if (dt != null)
-			_effDate =dt.getTime();
+			_effDate = dt.getTime();
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				else if (include(tkns))
 					_data.add(tkns);
 			}
-			
+
 			br.close();
 		} catch (IOException ie) {
 			log.error("Error at line " + br.getLineNumber() + " - " + ie.getMessage(), ie);
@@ -169,24 +169,24 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		return _data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deltava.dao.file.ScheduleLoadDAO#process()
+	/**
+	 * Loads the Schedule Entries.
+	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if an I/O error occurs
 	 */
-	@Override
 	public Collection<ScheduleEntry> process() throws DAOException {
-		
-		Collection<ScheduleEntry> results = new LinkedHashSet<ScheduleEntry>();
-		for (Iterator<CSVTokens> i = _data.iterator(); i.hasNext(); ) {
+
+		Map<String, DailyScheduleEntry> results = new HashMap<String, DailyScheduleEntry>();
+		for (Iterator<CSVTokens> i = _data.iterator(); i.hasNext();) {
 			CSVTokens entries = i.next();
-			
+
 			// Load the Airports
 			Airport airportD = _airports.get(entries.get(14).toUpperCase());
 			Airport airportA = _airports.get(entries.get(22).toUpperCase());
-			
+
 			// Look up the equipment type
 			String eqType = _acTypes.getProperty(entries.get(27));
-			
+
 			// Validate the data
 			Airline a = _airlines.get(entries.get(0));
 			if (eqType == null) {
@@ -199,13 +199,22 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 			}
-				
+
+			// Count the number of days this leg operates
+			StringBuilder dayBuf = new StringBuilder();
+			for (int x = 7; x < 14; x++) {
+				if ("1".equals(entries.get(x)))
+					dayBuf.append(String.valueOf(x - 6));
+			}
+
 			// Build the Schedule Entry
-			ScheduleEntry entry = new ScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer.parseInt(entries.get(46)));
+			DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer
+					.parseInt(entries.get(46)));
 			entry.setAirportD(airportD);
 			entry.setAirportA(airportA);
 			entry.setEquipmentType(eqType);
 			entry.setLength(Integer.parseInt(entries.get(42)) / 6);
+			entry.setDays(dayBuf.toString());
 			try {
 				entry.setTimeD(_tf.parse(entries.get(18)));
 				entry.setTimeA(_tf.parse(entries.get(23)));
@@ -213,8 +222,13 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				log.warn("Error parsing time - " + pe.getMessage());
 				_errors.add("Error parsing time - " + pe.getMessage());
 			}
+			
+			// Check if we have an entry
+			DailyScheduleEntry e2 = results.get(entry.toString());
+			if ((e2 == null) || (e2.getDays() < entry.getDays()))
+				results.put(entry.toString(), entry);
 		}
-		
-		return results;
+
+		return new TreeSet<ScheduleEntry>(results.values());
 	}
 }
