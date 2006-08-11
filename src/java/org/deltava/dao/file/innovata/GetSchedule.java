@@ -15,7 +15,7 @@ import org.deltava.dao.file.*;
 import org.deltava.util.*;
 
 /**
- * A Data Access Object to load CSV-format schedules from Innovata LLC.
+ * A Data Access Object to load CSV-format direct flight schedules from Innovata LLC.
  * @author Luke
  * @version 1.0
  * @since 1.0
