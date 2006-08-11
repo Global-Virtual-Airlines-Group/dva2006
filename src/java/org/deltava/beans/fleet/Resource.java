@@ -150,6 +150,7 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * @see Resource#setLastUpdateID(int)
 	 */
 	public void setAuthorID(int id) {
+		validateID(_authorID, id);
 		_authorID = id;
 	}
 
@@ -161,7 +162,6 @@ public class Resource extends DatabaseBean implements ViewEntry, AuthoredBean {
 	 * @see Resource#setAuthorID(int)
 	 */
 	public void setLastUpdateID(int id) {
-		validateID(_lastUpdateID, id);
 		_lastUpdateID = id;
 	}
 	
