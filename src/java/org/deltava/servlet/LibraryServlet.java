@@ -74,23 +74,21 @@ public class LibraryServlet extends GenericServlet {
 			if (!"usrlibrary".equals(url.getLastPath())) {
 				for (Iterator i = airlines.values().iterator(); (entry == null) && i.hasNext();) {
 					AirlineInformation aInfo = (AirlineInformation) i.next();
-					if ("fleet".equals(url.getLastPath())) {
+					if ("fleet".equals(url.getLastPath()))
 						entry = rdao.getInstaller(url.getFileName(), aInfo.getDB());
-					} else if ("library".equals(url.getLastPath())) {
+					else if ("library".equals(url.getLastPath()))
 						entry = rdao.getManual(url.getFileName(), aInfo.getDB(), false);
-					} else if ("newsletter".equals(url.getLastPath())) {
+					else if ("newsletter".equals(url.getLastPath()))
 						entry = rdao.getNewsletter(url.getFileName(), aInfo.getDB());
-					} else if ("video".equals(url.getLastPath())) {
-						entry = rdao.getVideo(url.getLastPath());
-					}
+					else if ("video".equals(url.getLastPath()))
+						entry = rdao.getVideo(url.getFileName());
 				}
-			} else {
+			} else
 				entry = rdao.getFile(url.getFileName());
-			}
 
 			// Check if the file exists
 			if (entry == null)
-				throw new NotFoundException("Cannot find file");
+				throw new NotFoundException("Cannot find file - " + url.getFileName());
 			else if (!entry.file().exists())
 				throw new NotFoundException("Cannot find " + entry.file().getAbsolutePath());
 
@@ -106,11 +104,10 @@ public class LibraryServlet extends GenericServlet {
 			}
 		} catch (ControllerException ce) {
 			String msg = "Error downloading " + url.getFileName() + " - " + ce.getMessage();
-			if (ce.isWarning()) {
+			if (ce.isWarning())
 				log.warn(msg);
-			} else {
+			else
 				log.error(msg, ce.getLogStackDump() ? ce : null);
-			}
 
 			entry = null;
 			rsp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -129,15 +126,14 @@ public class LibraryServlet extends GenericServlet {
 		rsp.setBufferSize(BUFFER_SIZE);
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength((int) entry.file().length());
-		if ("pdf".equals(url.getExtension())) {
+		if ("pdf".equals(url.getExtension()))
 			rsp.setContentType("application/pdf");
-		} else if ("avi".equals(url.getExtension())) {
+		else if ("avi".equals(url.getExtension()))
 			rsp.setContentType("video/avi");
-		} else if ("wmv".equals(url.getExtension())) {
+		else if ("wmv".equals(url.getExtension()))
 			rsp.setContentType("video/x-ms-wmv");
-		} else {
+		else
 			rsp.setContentType("application/octet-stream");
-		}
 
 		// Stream the file
 		long startTime = System.currentTimeMillis();
