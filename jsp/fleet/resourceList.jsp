@@ -28,6 +28,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="hrEmail" name="airline.mail.hr" />
+<content:sysdata var="cats" name="airline.resources.categories" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
