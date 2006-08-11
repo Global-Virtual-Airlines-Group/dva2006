@@ -39,6 +39,8 @@ public class ResourceListCommand extends AbstractViewCommand {
         
         // Get the category
         String catName = ctx.getParameter("cat");
+        if ("ALL".equals(catName))
+        	catName = null;
         
         // Check if we can see all resources
         boolean viewAll = (ctx.getRoles().size() > 1);
