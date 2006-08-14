@@ -4,6 +4,9 @@ package org.deltava.commands.admin;
 import java.util.*;
 import java.sql.Connection;
 
+import javax.activation.*;
+import javax.mail.util.ByteArrayDataSource;
+
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.EMailAddress;
 
@@ -118,8 +121,12 @@ public class MassMailingCommand extends AbstractCommand {
 		
 		// Add an attachment if we have one
 		FileUpload file = ctx.getFile("fAttach");
-		if (file != null)
-			mailer.setAttachment(new MemoryDataSource(file.getName(), file.getBuffer()));
+		if (file != null) {
+			FileTypeMap typeMap = FileTypeMap.getDefaultFileTypeMap();
+			ByteArrayDataSource src = new ByteArrayDataSource(file.getBuffer(), typeMap.getContentType(file.getName()));
+			src.setName(file.getName());
+			mailer.setAttachment(src);
+		}
 		
 		// Send the message
 		mailer.send(pilots);
