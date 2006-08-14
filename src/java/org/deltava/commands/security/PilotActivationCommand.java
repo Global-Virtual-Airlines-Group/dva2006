@@ -3,8 +3,7 @@ package org.deltava.commands.security;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -22,6 +21,7 @@ import org.deltava.util.system.SystemData;
  * @version 1.0
  * @since 1.0
  */
+
 public class PilotActivationCommand extends AbstractCommand {
 
 	/**
@@ -56,11 +56,13 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Get the equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			ctx.setAttribute("eqType", eqdao.get(p.getEquipmentType()), REQUEST);
+			EquipmentType eq = eqdao.get(p.getEquipmentType());
+			ctx.setAttribute("eqType", eq, REQUEST);
 
 			// Save the pilot in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			mctx.addData("pilot", p);
+			mctx.addData("eqType", eq);
 
 			// If we're doing a GET, redirect to the JSP
 			if (ctx.getParameter("eMail") == null) {
