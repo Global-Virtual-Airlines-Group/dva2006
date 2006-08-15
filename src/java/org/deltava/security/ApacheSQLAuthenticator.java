@@ -1,19 +1,19 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
-import java.io.IOException;
 import java.sql.*;
 import java.util.Properties;
+import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 
 import org.deltava.crypt.MessageDigester;
-import org.deltava.jdbc.ConnectionPool;
 
-import org.deltava.util.Base64;
-import org.deltava.util.ConfigLoader;
+import org.deltava.jdbc.*;
+
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -38,7 +38,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	 */
 	public void init(String propsFile) throws SecurityException {
 		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-		
+
 		_props = new Properties();
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
@@ -59,36 +59,49 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
 		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
-		
+
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PWD FROM ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
-		sqlBuf.append(" WHERE (ID=?) AND (PWD=?)");
-		
+		sqlBuf.append(" WHERE (ID=?)");
+
 		boolean isOK = false;
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
-			ps.setString(2, pwdHash);
-			
+
 			// Execute the Query
 			ResultSet rs = ps.executeQuery();
-			isOK = rs.next() ? (rs.getInt(1) == 1) : false;
-			
-			// Clean up and return
+			String goodPwd = rs.next() ? rs.getString(1) : null;
+
+			// Clean up
 			rs.close();
 			ps.close();
-		} catch (Exception e) {
-			throw new SecurityException(e);
+
+			// If we got nothing, throw an exception
+			isOK = pwdHash.equals(goodPwd);
+			if (goodPwd == null) {
+				SecurityException se = new SecurityException("Unknown User ID - " + usr.getName() + " (" + usr.getID() + ")");
+				log.warn(se.getMessage());
+				throw se;
+			}
+		} catch (ConnectionPoolException cpe) {
+			throw new SecurityException(cpe);
+		} catch (SQLException se) {
+			throw new SecurityException(se);
 		} finally {
 			_pool.release(con);
 		}
 
 		// Fail if we're not authenticated
-		if (!isOK)
-			throw new SecurityException("Cannot authenticate " + usr.getDN() + " - Invalid Credentials");
+		if (!isOK) {
+			SecurityException se = new SecurityException("Cannot authenticate " + usr.getName() + " (" + usr.getID()
+					+ ") - Invalid Credentials");
+			log.warn(se.getMessage());
+			throw se;
+		}
 	}
 
 	/**
@@ -98,12 +111,12 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
-		
+
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
@@ -133,15 +146,15 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		log.debug("Updating password for " + usr.getDN() + " in Directory");
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
-		
+
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes())); 
+		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
 
 		Connection con = null;
 		try {
@@ -149,7 +162,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
-			
+
 			// Execute the update and clean up
 			ps.executeUpdate();
 			ps.close();
@@ -168,29 +181,32 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
-		
+
+		// Get the ID
+		int id = (usr instanceof Applicant) ? ((Applicant) usr).getPilotID() : usr.getID();
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
-		
+
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
-		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes())); 
+		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
 
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
-			ps.setInt(1, usr.getID());
+			ps.setInt(1, id);
 			ps.setString(2, pwdHash);
-			
+
 			// Write the row
 			ps.executeUpdate();
 			ps.close();
-			
+
 			// If we have an alias, then update it
-			if ((usr instanceof Pilot) && (((Pilot)usr).getLDAPName() != null)) {
+			if ((usr instanceof Pilot) && (((Pilot) usr).getLDAPName() != null)) {
 				ps = con.prepareStatement("INSERT INTO common.AUTH_ALIAS (ID, USERID) VALUES (?, ?)");
 				ps.setInt(1, usr.getID());
 				ps.setString(2, ((Pilot) usr).getLDAPName());
@@ -205,11 +221,12 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	}
 
 	/**
-	    * Renames a user in the Directory. Since the Apache Authenticator relies upon database IDs, this is not implemented.
-	    * @param usr the user bean
-	    * @param newName the new fully-qualified directory 
-	    * @throws SecurityException if an error occurs
-	    */
+	 * Renames a user in the Directory. Since the Apache Authenticator relies upon database IDs, this is not
+	 * implemented.
+	 * @param usr the user bean
+	 * @param newName the new fully-qualified directory
+	 * @throws SecurityException if an error occurs
+	 */
 	public void rename(Person usr, String newName) throws SecurityException {
 		if (!contains(usr))
 			throw new SecurityException(usr.getID() + " not found");
@@ -222,12 +239,12 @@ public class ApacheSQLAuthenticator implements Authenticator {
 	 */
 	public void removeUser(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getName() + " from Directory");
-		
+
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
 		sqlBuf.append(" WHERE (ID=?)");
-		
+
 		Connection con = null;
 		try {
 			con = _pool.getConnection(false);
