@@ -15,8 +15,8 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.fName, 3, 'First Name')) return false;
-if (!validateText(form.lName, 3, 'Last Name')) return false;
+if (!validateText(form.fName, 2, 'First Name')) return false;
+if (!validateText(form.lName, 2, 'Last Name')) return false;
 <content:filter roles="!HR">
 if (!validateText(form.eMail, 10, 'E-Mail Address')) return false;
 </content:filter>
@@ -64,6 +64,7 @@ return true;
 </tr>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
