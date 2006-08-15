@@ -167,12 +167,12 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			SetInactivity idao = new SetInactivity(con);
 			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days"), false);
 			
+			// Commit the transactions
+			ctx.commitTX();
+			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			auth.addUser(a, a.getPassword());
-			
-			// Commit the transactions
-			ctx.commitTX();
 			
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
