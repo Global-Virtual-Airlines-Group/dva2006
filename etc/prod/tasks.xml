@@ -17,7 +17,7 @@
 		<class>org.deltava.tasks.NATDownloadTask</class>
 		<time>
 			<min>0</min>
-			<hour>20</hour>
+			<hour>16</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>
