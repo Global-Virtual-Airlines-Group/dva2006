@@ -1,14 +1,15 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
+import java.util.Date;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetRoute;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to display Oceanic Route data.
@@ -26,12 +27,16 @@ public class RouteCommand extends AbstractCommand {
      */
 	public void execute(CommandContext ctx) throws CommandException {
 		
+		// Get the date/type
+		int routeType = StringUtils.parse((String) ctx.getCmdParameter(OPERATION, "0"), 0);
+		Date vd = StringUtils.parseDate((String) ctx.getCmdParameter(ID, null), "MMddyyyy");
+		
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the route
 			GetRoute dao = new GetRoute(con);
-			ctx.setAttribute("route", dao.get(ctx.getID()), REQUEST);
+			ctx.setAttribute("route", dao.get(routeType, vd), REQUEST);
 			
 			// Get our access level
 			ScheduleAccessControl access = new ScheduleAccessControl(ctx);

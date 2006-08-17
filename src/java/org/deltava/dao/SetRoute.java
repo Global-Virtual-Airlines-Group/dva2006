@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,14 +32,12 @@ public class SetRoute extends DAO {
 	public int purgeDomestic() throws DAOException {
 		try {
 			prepareStatement("DELETE FROM ROUTES");
-			int rowsDeleted = _ps.executeUpdate();
-			_ps.close();
-			return rowsDeleted;
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Purges the Oceanic Routes table.
 	 * @param sd the start date for the purge operation; purge all records before this date
@@ -57,29 +55,30 @@ public class SetRoute extends DAO {
 			}
 
 			// Purge the table
-			int rowsDeleted = _ps.executeUpdate();
-			_ps.close();
-			return rowsDeleted;
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Deletes an entry from the Oceanic Routes table.
-	 * @param id the database ID of the OceanicRoute
+	 * @param routeType the route type code
+	 * @param vd the validity date of the route
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void deleteOceanic(int id) throws DAOException {
+	public void deleteOceanic(int routeType, Date vd) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM common.OCEANIC WHERE (ID=?)");
-			_ps.setInt(1, id);
+			setQueryMax(1);
+			prepareStatement("DELETE FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
+			_ps.setInt(1, routeType);
+			_ps.setTimestamp(2, createTimestamp(vd));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Writes a domestic Preferred Route into the database.
 	 * @param pr the PreferredRoute bean

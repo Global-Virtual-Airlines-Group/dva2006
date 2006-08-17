@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -120,15 +121,17 @@ public class GetRoute extends DAO {
 
     /**
      * Returns a specific Oceanic Route.
-     * @param id the database ID
+     * @param routeType the route Type code
+     * @param vd the validity date
      * @return the OceanicRoute
      * @throws DAOException if a JDBC error occurs
      */
-    public OceanicRoute get(int id) throws DAOException {
+    public OceanicRoute get(int routeType, java.util.Date vd) throws DAOException {
     	try {
-    		// Init the prepared statement
-    		prepareStatement("SELECT * FROM common.OCEANIC WHERE (ID=?)");
-    		_ps.setInt(1, id);
+    		setQueryMax(1);
+    		prepareStatement("SELECT * FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
+    		_ps.setInt(1, routeType);
+    		_ps.setTimestamp(2, createTimestamp(vd));
     		
     		// Get the results and return the first element
     		List results = execute();

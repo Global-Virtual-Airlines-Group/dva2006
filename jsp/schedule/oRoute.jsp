@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Oceanic Route for <fmt:date fmt="d" date="${route.date}" /></title>
@@ -38,7 +39,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="routedelete" linkID="0x${route.ID}" op="oceanic" label="DELETE TRACK DATA" />
+<el:cmdbutton url="routedelete" op="${route.type}" linkID="${fn:dateFmt(route.date, 'MMddyyyy')}" label="DELETE TRACK DATA" />
 </c:if>
  </td>
 </tr>

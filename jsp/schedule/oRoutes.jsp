@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Oceanic Routes</title>
@@ -14,6 +15,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${access.canDelete && (!empty viewContext.results)}">
 <content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
 function validate(this)
@@ -26,6 +28,7 @@ disableButton('PurgeButton');
 return true;
 }
 </script>
+</c:if>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -37,12 +40,10 @@ return true;
 <content:region id="main">
 <el:form action="routes.do" method="post" validate="return validate(this)">
 <view:table className="view" pad="default" space="default" cmd="routes">
-
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="15%">DATE</td>
- <td width="10%">&nbsp;</td>
- <td width="10%">&nbsp;</td>
+ <td width="15%">&nbsp;</td>
  <td width="10%">TYPE</td>
  <td>DESCRIPTION</td>
 </tr>
@@ -51,11 +52,9 @@ return true;
 <c:forEach var="route" items="${viewContext.results}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${route.date}" /></td>
- <td><el:cmdbutton url="route" linkID="0x${route.ID}" label="DOWNLOAD" op="download" /></td>
- <td><el:cmdbutton url="route" linkID="0x${route.ID}" label="VIEW" op="read" /></td> 
+ <td><el:cmdbutton url="route" op="${route.type}" linkID="fn:dateFmt(route.date, 'MMddyyyy')}" label="VIEW ROUTE" /></td>
  <td class="sec bld">${route.typeName}</td>
- <td class="left">${route.typeName} routes for <fmt:date fmt="d" date="${route.date}" />, courtesy of
- ${route.source}</td>
+ <td class="left">${route.typeName} routes for <fmt:date fmt="d" date="${route.date}" />, courtesy of ${route.source}</td>
 </tr>
 </c:forEach>
 
