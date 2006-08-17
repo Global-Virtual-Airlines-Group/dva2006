@@ -37,6 +37,9 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 		// Init the message context
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
+		
+		// Check if the message should be sent
+		boolean noSend = Boolean.valueOf(ctx.getParameter("noSend")).booleanValue();
 
 		Pilot usr = null;
 		boolean isNew = (ctx.getID() == 0);
@@ -89,6 +92,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctx.setTemplate(mtdao.get("INSESSION"));
 			mctx.addData("session", s);
+			noSend |= (s.getStatus() == InstructionSession.COMPLETE); 
 			
 			// Load the Pilot to send to
 			GetPilot pdao = new GetPilot(con);
@@ -106,7 +110,6 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 		}
 		
 		// Determine if we send the message
-		boolean noSend = Boolean.valueOf(ctx.getParameter("noSend")).booleanValue();
 		if (!noSend) {
 			ctx.setAttribute("emailSent", Boolean.TRUE, REQUEST);
 			Mailer mailer = new Mailer(ctx.getUser());
