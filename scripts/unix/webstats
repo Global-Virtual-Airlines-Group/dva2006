@@ -1,0 +1,8 @@
+#!/bin/sh
+# AWStats Update/Generate Script
+# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+
+/usr/local/awstats/awstats.pl -config=deltava.org -update
+/usr/local/awstats/awstats.pl -config=afva.net -update
+/usr/local/awstats/tools/awstats_buildstaticpages.pl -config=deltava.org -dir=/home/www/deltava.org/www/stats
+/usr/local/awstats/tools/awstats_buildstaticpages.pl -config=afva.net -dir=/home/www/afva.net/www/stats
