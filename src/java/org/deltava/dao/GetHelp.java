@@ -11,7 +11,6 @@ import org.deltava.beans.system.HelpEntry;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * @see SetSystemData#write(HelpEntry)
  */
 
 public class GetHelp extends DAO {
@@ -64,7 +63,7 @@ public class GetHelp extends DAO {
 	 */
 	public Collection<HelpEntry> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM HELP ORDER BY IDs");
+			prepareStatement("SELECT * FROM HELP ORDER BY ID");
 			
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
