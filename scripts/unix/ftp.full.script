@@ -42,6 +42,7 @@ put httpd.conf
 
 lcd /home/backup/cfg
 put authlib.tar.gz
+put awstats.tar.gz
 put tomcat.tar.gz
 put postfix.tar.gz
 put imapd.tar.gz

@@ -1,12 +1,13 @@
 #!/bin/sh
 # Configuration backup script
-# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
 
 # Copy configuration files
 tar vcfz authlib.tar.gz /usr/local/etc/authlib
+tar vcfz awstats.tar.gz /usr/local/etc/awstats
 tar vcfz tomcat.tar.gz /usr/local/tomcat/conf /usr/local/tomcat/bin
 tar vcfz postfix.tar.gz /etc/postfix
 tar vcfz imapd.tar.gz /usr/lib/courier-imap/etc
