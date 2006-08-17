@@ -58,16 +58,6 @@ public abstract class DAO {
 	}
 
 	/**
-	 * Converts a null date/time into a default value.
-	 * @param dt the date/time
-	 * @param defaultValue the 32-bit timestamp to use if dt is null
-	 */
-	protected void convertDate(java.util.Date dt, long defaultValue) {
-		if (dt == null)
-			dt = new Date(defaultValue);
-	}
-
-	/**
 	 * Converts a date-only JDBC value into a full timestamp. Since the server may be several hours ahead or behind most
 	 * web users, a default time of 12 noon is applied (instead of the default midnight value) to prevent spurious date
 	 * adjustments.
@@ -220,13 +210,10 @@ public abstract class DAO {
 	 */
 	protected int getNewID() throws SQLException {
 
-		int threadID = 0;
-
 		// Get the new thread ID
 		Statement s = _c.createStatement();
 		ResultSet rs = s.executeQuery("SELECT LAST_INSERT_ID()");
-		if (rs.next())
-			threadID = rs.getInt(1);
+		int threadID = rs.next() ? rs.getInt(1) : 0;
 
 		// Clean up and return
 		rs.close();
