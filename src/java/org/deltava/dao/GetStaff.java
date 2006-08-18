@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,10 +12,11 @@ import org.deltava.beans.Staff;
  * @version 1.0
  * @since 1.0
  */
+
 public class GetStaff extends DAO {
 
     /**
-     * Creates the DAO using a JDBC connection.
+     * Initializes the Data Access Object. 
      * @param c the JDBC connection to use
      */
     public GetStaff(Connection c) {
@@ -29,8 +31,9 @@ public class GetStaff extends DAO {
      */
     public Staff get(int id) throws DAOException {
         try {
-            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, S.*  FROM STAFF S, " +
-                    "PILOTS P WHERE (S.ID = P.ID) AND (S.ID=?)");
+        	setQueryMax(1);
+            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P WHERE " +
+                    "(S.ID=P.ID) AND (S.ID=?)");
             _ps.setInt(1, id);
             
             // Execute the query and get the result; if none return null
@@ -40,10 +43,11 @@ public class GetStaff extends DAO {
             
             // Create the staff object
             Staff s = new Staff(rs.getString(1), rs.getString(2));
-            s.setID(rs.getInt(3));
-            s.setTitle(rs.getString(4));
-            s.setSortOrder(rs.getInt(5));
-            s.setBody(rs.getString(6));
+            s.setEMail(rs.getString(3));
+            s.setID(rs.getInt(4));
+            s.setTitle(rs.getString(5));
+            s.setSortOrder(rs.getInt(6));
+            s.setBody(rs.getString(7));
             
             // Clean up and return
             rs.close();
@@ -61,8 +65,8 @@ public class GetStaff extends DAO {
      */
     public Collection<Staff> getStaff() throws DAOException {
         try {
-            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.*  FROM STAFF S, PILOTS P "
-            	+ "WHERE (S.ID = P.ID) ORDER BY S.SORT_ORDER, P.LASTNAME");
+            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P WHERE "
+            	+ "(S.ID=P.ID) ORDER BY S.SORT_ORDER, P.LASTNAME");
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
