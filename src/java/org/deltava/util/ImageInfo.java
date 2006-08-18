@@ -211,7 +211,7 @@ public class ImageInfo {
 	 * The FORMAT_xyz int constants can be used as index values for
 	 * this array.
 	 */
-	public static final String[] FORMAT_NAMES = {"JPEG", "GIF", "PNG", "BMP", "PCX", "IFF", "RAS", "PBM", "PGM", "PPM", "PSD", "SWF"};
+	public static final String[] FORMAT_NAMES = {"JPG", "GIF", "PNG", "BMP", "PCX", "IFF", "RAS", "PBM", "PGM", "PPM", "PSD", "SWF"};
 
 	/**
 	 * The names of the MIME types for all supported file formats.
