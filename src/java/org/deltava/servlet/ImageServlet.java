@@ -92,7 +92,11 @@ public class ImageServlet extends BasicAuthServlet {
 		// Get the image ID
 		int imgID = 0;
 		try {
-			imgID = StringUtils.parseHex(url.getName());
+			String name = url.getName();
+			if (name.indexOf('.') != -1)
+				name = name.substring(0, name.indexOf('.'));
+			
+			imgID = StringUtils.parseHex(name);
 		} catch (Exception e) {
 			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
 			rsp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -107,27 +111,32 @@ public class ImageServlet extends BasicAuthServlet {
 		Connection c = null;
 		try {
 			c = jdbcPool.getConnection();
-			String dbName = null;
 
 			// Get the retrieve image DAO and execute the right method
 			GetImage dao = new GetImage(c);
 			switch (imgType) {
 				case IMG_CHART:
 					imgBuffer = dao.getChart(imgID);
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 300);
 					break;
 
 				case IMG_GALLERY:
-					dbName = url.getLastPath();
-					imgBuffer = dao.getGalleryImage(imgID, dbName);
+					imgBuffer = dao.getGalleryImage(imgID, url.getLastPath());
+					rsp.setHeader("Cache-Control", "public");
+					rsp.setIntHeader("max-age", 300);
 					break;
 
 				case IMG_SIG:
-					dbName = url.getLastPath();
-					imgBuffer = dao.getSignatureImage(imgID, dbName);
+					imgBuffer = dao.getSignatureImage(imgID, url.getLastPath());
+					rsp.setHeader("Cache-Control", "public");
+					rsp.setIntHeader("max-age", 300);
 					break;
 					
 				case IMG_EXAM:
 					imgBuffer = dao.getExamResource(imgID);
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 60);
 					break;
 
 				default:
@@ -162,7 +171,7 @@ public class ImageServlet extends BasicAuthServlet {
 		rsp.setContentType(info.getMimeType());
 		rsp.setContentLength(imgBuffer.length);
 		rsp.setBufferSize((imgBuffer.length > 65520) ? 65520 : imgBuffer.length);
-
+		
 		// Dump the data to the output stream
 		try {
 			OutputStream out = rsp.getOutputStream();

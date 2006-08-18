@@ -26,7 +26,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	}
 
 	/**
-	 * Gets a Pilot based on the directory name. <i>This populates ratings. </i>
+	 * Gets a Pilot based on the directory name. <i>This populates roles/ratings.</i>
 	 * @param directoryName the JNDI directory name to search for (eg. cn=Luke Kolin,ou=DVA,o=SCE)
 	 * @return the Pilot object, or null if the pilot code was not found
 	 * @throws DAOException if a JDBC error occurs
@@ -34,7 +34,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	public final Pilot getFromDirectory(String directoryName) throws DAOException {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
 					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (UPPER(P.LDAP_DN)=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setString(2, directoryName.toUpperCase());
@@ -79,7 +79,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
 					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.PILOT_ID=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, Integer.parseInt(code.toString()));
