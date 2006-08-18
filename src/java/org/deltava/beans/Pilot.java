@@ -34,6 +34,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	/**
 	 * ACARS restriction codes.
 	 */
+	public static final int ACARS_ONLY = 4;
 	public static final int ACARS_BLOCK = 3;
 	public static final int ACARS_NOMSGS = 2;
 	public static final int ACARS_RESTRICT = 1;
@@ -43,7 +44,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * Valid ACARS restrictions.
 	 */
 	public static final String[] RESTRICT = { "Unlimited Usage", "Restricted Messaging", "Flight Reports Only",
-			"Blocked" };
+			"Blocked", "ACARS Only" };
 
 	/**
 	 * Valid route mapping types.
@@ -76,14 +77,13 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
 	private boolean _showSigs;
 	private boolean _showSSThreads;
-	private boolean _hasSignature;
 	private boolean _showDefaultSignature;
 	private boolean _noExams;
 	private boolean _noVoice;
 
 	private int _ACARSRestrict;
-
 	private int _mapType;
+	private String _sigExt;
 
 	private static final DecimalFormat _df = new DecimalFormat("##000");
 
@@ -337,12 +337,22 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	/**
 	 * Queries if the Pilot has a signature image.
 	 * @return TRUE if the pilot has an image, otherwise FALSE
-	 * @see Pilot#setHasSignature(boolean)
+	 * @see Pilot#setSignatureExtension(String)
 	 * @see Pilot#getHasDefaultSignature()
 	 * @see Pilot#setHasDefaultSignature(boolean)
 	 */
 	public boolean getHasSignature() {
-		return _hasSignature;
+		return (_sigExt != null);
+	}
+	
+	/**
+	 * Returns the extension of the Signature Image.
+	 * @return the extension
+	 * @see Pilot#setSignatureExtension(String)
+	 * @see Pilot#getHasSignature()
+	 */
+	public String getSignatureExtension() {
+		return _sigExt;
 	}
 
 	/**
@@ -350,7 +360,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * @return TRUE if the default image should be shown, otherwise FALSE
 	 * @see Pilot#setHasDefaultSignature(boolean)
 	 * @see Pilot#getHasSignature()
-	 * @see Pilot#setHasSignature(boolean)
+	 * @see Pilot#setSignatureExtension(String)
 	 */
 	public boolean getHasDefaultSignature() {
 		return _showDefaultSignature;
@@ -439,14 +449,14 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
 	/**
 	 * Sets if this Pilot has a signature image available. <i>This method will clear the default signature flag</i>.
-	 * @param hasSig TRUE if a signature image is available, otherwise FALSE
+	 * @param ext the Signature extension, or null
 	 * @see Pilot#getHasSignature()
 	 * @see Pilot#getHasDefaultSignature()
 	 * @see Pilot#setHasDefaultSignature(boolean)
 	 */
-	public void setHasSignature(boolean hasSig) {
-		_hasSignature = hasSig;
-		if (hasSig)
+	public void setSignatureExtension(String ext) {
+		_sigExt = StringUtils.isEmpty(ext) ? null : ext.toLowerCase();
+		if (getHasSignature())
 			_showDefaultSignature = false;
 	}
 
@@ -456,10 +466,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * @param hasSig TRUE if the default signature should be used, otherwise FALSE
 	 * @see Pilot#getHasDefaultSignature()
 	 * @see Pilot#getHasSignature()
-	 * @see Pilot#setHasSignature(boolean)
+	 * @see Pilot#setSignatureExtension(String)
 	 */
 	public void setHasDefaultSignature(boolean hasSig) {
-		if (!_hasSignature)
+		if (!getHasSignature())
 			_showDefaultSignature = hasSig;
 	}
 
@@ -789,7 +799,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 		p2.setUIScheme(getUIScheme());
 		p2.addRoles(getRoles());
 		p2.addRatings(getRatings());
-		p2.setHasSignature(getHasSignature());
+		p2.setSignatureExtension(getSignatureExtension());
 		p2.setHours(getHours());
 		p2.setLastFlight(getLastFlight());
 		p2.setLegs(getLegs());

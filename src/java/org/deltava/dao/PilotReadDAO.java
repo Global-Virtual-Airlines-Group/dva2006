@@ -49,7 +49,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-					+ "MAX(F.DATE), S.ID FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
 					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, id);
@@ -85,7 +85,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PILOTS P LEFT JOIN ");
 		sqlBuf.append(dbName);
@@ -162,7 +162,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 		// Init the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.ID FROM ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE), S.EXT FROM ");
 		sqlBuf.append(dbName);
 		sqlBuf.append('.');
 		sqlBuf.append(tableName);
@@ -301,9 +301,9 @@ abstract class PilotReadDAO extends PilotDAO {
 				p.setLastFlight(expandDate(rs.getDate(45)));
 			}
 
-			// Check if this result set has a column 46, which is the signature ID
+			// Check if this result set has a column 46, which is the signature extension
 			if (columnCount > 45)
-				p.setHasSignature((rs.getInt(46) != 0));
+				p.setSignatureExtension(rs.getString(46));
 
 			// CHeck if this result set has columns 47/48, which are online legs/hours
 			if (columnCount > 47) {

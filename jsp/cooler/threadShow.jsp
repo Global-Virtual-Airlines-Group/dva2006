@@ -195,7 +195,7 @@ WARNING</span></c:if>
 <c:when test="${pilot.hasSignature}">
 <!-- Signature Image for ${pilot.name} -->
 <br />
-<img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />" alt="${pilot.name} (${pilot.pilotCode})" /><br />
+<img src="/sig/${pilotLoc.DB}/0x<fmt:hex value="${pilot.ID}" />.${pilot.signatureExtension}" alt="${pilot.name} (${pilot.pilotCode})" /><br />
 </c:when>
 <c:when test="${pilot.hasDefaultSignature}">
 <!-- Default Signature Image -->
