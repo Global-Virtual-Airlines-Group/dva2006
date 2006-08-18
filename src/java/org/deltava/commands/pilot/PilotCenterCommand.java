@@ -58,6 +58,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			p = pdao.get(ctx.getUser().getID());
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
+			ctx.setAttribute("manualPIREP", Boolean.valueOf(p.getACARSRestriction() != Pilot.ACARS_ONLY), REQUEST);
 
 			// Save the pilot location
 			ctx.setAttribute("geoLocation", pdao.getLocation(p.getID()), REQUEST);

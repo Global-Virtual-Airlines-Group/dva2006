@@ -242,13 +242,14 @@ public class PIREPCommand extends AbstractFormCommand {
 		try {
 			Connection con = ctx.getConnection();
 			Set<Airline> airlines = new TreeSet<Airline>();
+			Pilot usr = (Pilot) ctx.getUser();
 
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
 			if (isNew) {
 				ac = new PIREPAccessControl(ctx, null);
 				ac.validate();
-				if (!ac.getCanCreate())
+				if (!ac.getCanCreate() || (usr.getACARSRestriction() == Pilot.ACARS_ONLY))
 					throw securityException("Cannot create new PIREP");
 
 				// Save the user object

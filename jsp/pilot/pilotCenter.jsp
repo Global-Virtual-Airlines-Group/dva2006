@@ -125,14 +125,13 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" linkID="0x${pilot.ID}">Flight Reports</el:cmd>&nbsp;
- <el:cmd className="bld" url="logbook" op="log" linkID="0x${pilot.ID}">Log Book</el:cmd><br />
- <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></td>
- <td class="data">You have flown <fmt:int value="${pilot.legs}" /> flights, for 
- a total of <fmt:dec value="${pilot.hours}" /> hours and 
- <fmt:int value="${pilot.miles}" fmt="#,###,###" /> miles.<br />
- <span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and
- <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged 
- online.<br />
+ <el:cmd className="bld" url="logbook" op="log" linkID="0x${pilot.ID}">Log Book</el:cmd>
+<c:if test="${manualPIREP}"><br />
+<el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
+ <td class="data">You have flown <fmt:int value="${pilot.legs}" /> flights, for a total of
+ <fmt:dec value="${pilot.hours}" /> hours and <fmt:int value="${pilot.miles}" fmt="#,###,###" /> miles.<br />
+<span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and
+ <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br />
 <c:if test="${!empty lastFlight}">
 <br />
  Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
