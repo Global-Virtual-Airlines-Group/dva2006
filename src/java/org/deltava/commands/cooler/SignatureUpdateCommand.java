@@ -87,7 +87,7 @@ public class SignatureUpdateCommand extends AbstractCommand {
             // Write the signature image to the database
             SetSignatureImage wdao = new SetSignatureImage(con);
             p.load(imgData.getBuffer());
-            wdao.write(p);
+            wdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName());
          
             // Set status variable for the result JSP
             ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
