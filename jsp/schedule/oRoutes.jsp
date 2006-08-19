@@ -52,7 +52,7 @@ return true;
 <c:forEach var="route" items="${viewContext.results}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${route.date}" /></td>
- <td><el:cmdbutton url="route" op="${route.type}" linkID="fn:dateFmt(route.date, 'MMddyyyy')}" label="VIEW ROUTE" /></td>
+ <td><el:cmdbutton url="route" op="${route.type}" linkID="${fn:dateFmt(route.date, 'MMddyyyy')}" label="VIEW ROUTE" /></td>
  <td class="sec bld">${route.typeName}</td>
  <td class="left">${route.typeName} routes for <fmt:date fmt="d" date="${route.date}" />, courtesy of ${route.source}</td>
 </tr>
