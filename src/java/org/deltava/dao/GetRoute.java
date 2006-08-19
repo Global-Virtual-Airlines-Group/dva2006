@@ -151,11 +151,10 @@ public class GetRoute extends DAO {
         
         // Iterate through the results
         while (rs.next()) {
-            OceanicRoute or = new OceanicRoute(rs.getInt(2));
-            or.setID(rs.getInt(1));
-            or.setDate(rs.getTimestamp(3));
-            or.setSource(rs.getString(4));
-            or.setRoute(rs.getString(5));
+            OceanicRoute or = new OceanicRoute(rs.getInt(1));
+            or.setDate(expandDate(rs.getDate(2)));
+            or.setSource(rs.getString(3));
+            or.setRoute(rs.getString(4));
             
             // Add to results
             results.add(or);

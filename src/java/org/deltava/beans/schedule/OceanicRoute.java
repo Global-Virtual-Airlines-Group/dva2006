@@ -1,8 +1,7 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
-
-import org.deltava.beans.DatabaseBean;
 
 /**
  * A bean to store Oceanic Track (NAT/PACOT) information.
@@ -11,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class OceanicRoute extends DatabaseBean implements Comparable {
+public class OceanicRoute implements java.io.Serializable, Comparable {
 
     /**
      * Route type for North Atlantic Track (NAT) data.
