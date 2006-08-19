@@ -333,7 +333,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				// Update the image if it's OK
 				if (imgOK) {
 					p.load(imgData.getBuffer());
-					sigdao.write(p);
+					sigdao.write(p, info.getWidth(), info.getHeight(), info.getFormatName());
 					ctx.setAttribute("sigUpdated", Boolean.TRUE, REQUEST);
 					log.info("Signature Updated");
 				}
