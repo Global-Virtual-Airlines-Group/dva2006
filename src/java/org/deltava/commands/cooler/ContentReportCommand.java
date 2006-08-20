@@ -75,8 +75,8 @@ public class ContentReportCommand extends AbstractCommand {
 				
 				// Mark the thread as locked
 				ThreadUpdate upd2 = new ThreadUpdate(mt.getID());
-				upd.setAuthorID(ctx.getUser().getID());
-				upd.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
+				upd2.setAuthorID(ctx.getUser().getID());
+				upd2.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
 				wdao.write(upd2);
 				isLocked = true;
 			}
