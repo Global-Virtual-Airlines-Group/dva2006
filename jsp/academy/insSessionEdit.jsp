@@ -78,7 +78,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Remarks</td>
- <td class="data"><el:textbox name="remarks" idx="*" width="120" height="6">${session.comments}</el:textbox></td>
+ <td class="data"><el:textbox name="remarks" idx="*" width="90%" height="6">${session.comments}</el:textbox></td>
 </tr>
 </el:table>
 

@@ -96,7 +96,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="1" />&nbsp;
+ <td class="data"><el:box name="updateNotify" idx="*" label="Send e-mail when responses are posted" value="true" />&nbsp;
 <el:button ID="EmoticonButton" className="BUTTON" onClick="void openEmoticons()" label="EMOTICONS" /></td>
 </tr>
 <c:if test="${empty sessionScope.imageURLs}">
@@ -149,7 +149,7 @@ return true;
  <td colspan="2">NEW MESSAGE TEXT</td>
 </tr>
 <tr>
- <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="125" className="req" height="8">${param.msgText}</el:textbox></td>
+ <td class="mid" colspan="2"><el:textbox name="msgText" idx="*" width="90%" className="req" height="8">${param.msgText}</el:textbox></td>
 </tr>
 
 <!-- Button Bar -->

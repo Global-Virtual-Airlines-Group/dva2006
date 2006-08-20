@@ -18,7 +18,7 @@
  <td><content:airline /> ONLINE HELP</td>
 </tr>
 <tr>
- <td><el:textbox name="body" className="small" width="140" height="8" readOnly="true">${help.body}</el:textbox></td>
+ <td><el:textbox name="body" className="small" width="80%" height="8" readOnly="true">${help.body}</el:textbox></td>
 </tr>
 </el:table>
 </el:form>

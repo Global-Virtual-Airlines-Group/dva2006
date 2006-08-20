@@ -57,7 +57,7 @@ back from them within 48-72 hours. Thank you for your interest in <content:airli
 </tr>
 <tr>
  <td class="label" valign="top">Other Information</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="150" className="req" height="7"></el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="90%" className="req" height="7"></el:textbox></td>
 </tr>
 </el:table>
 
