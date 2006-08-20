@@ -257,7 +257,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			lwdao.write(mt);
 
 			// Create a notification entry if we requested on
-			if ("1".equals(ctx.getParameter("updateNotify"))) {
+			if (Boolean.valueOf(ctx.getParameter("updateNotify")).booleanValue()) {
 				SetCoolerNotification nwdao = new SetCoolerNotification(con);
 				nwdao.add(mt.getID(), ctx.getUser().getID());
 				ctx.setAttribute("isNotify", Boolean.TRUE, REQUEST);
