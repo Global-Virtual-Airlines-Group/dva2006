@@ -56,9 +56,12 @@ public class ResourceCommand extends AbstractFormCommand {
 				wdao.delete(r.getID());
 			} else {
 				r.setURL(ctx.getParameter("url"));
+				r.setCategory(ctx.getParameter("category"));
 				r.setDescription(ctx.getParameter("desc"));
 				r.setLastUpdateID(ctx.getUser().getID());
 				r.setPublic(ac.getCanEdit() && Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+				
+				// Save the resource
 				wdao.write(r);
 			}
 		} catch (DAOException de) {
