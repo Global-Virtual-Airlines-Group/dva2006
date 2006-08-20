@@ -27,7 +27,8 @@ public abstract class AbstractFormTagTestCase extends AbstractTagTestCase {
             assertEvalPage(feTag.doEndTag());
             fail("JspException expected");
         } catch (JspException je) {
-            Throwable t = je.getCause();
+            Throwable t = je.getRootCause();
+            assertNotNull(t);
             assertEquals(IllegalStateException.class, t.getClass());
             assertEquals("Form Element must contain NAME", t.getMessage());
         }
@@ -39,7 +40,8 @@ public abstract class AbstractFormTagTestCase extends AbstractTagTestCase {
             assertEvalPage(feTag.doEndTag());
             fail("JspException expected");
         } catch (JspException je) {
-            Throwable t = je.getCause();
+            Throwable t = je.getRootCause();
+            assertNotNull(t);
             assertEquals(IllegalStateException.class, t.getClass());
             assertTrue(t.getMessage().endsWith(" must be contained within a FORM tag"));
         }

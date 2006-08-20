@@ -1,9 +1,12 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
 
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A class for supporting JSP tags that generate HTML input elements.
@@ -61,7 +64,7 @@ public abstract class FormElementTag extends ElementTag {
      * @see ElementTag#setNumericAttr(String, int, int)
      */
     public void setIdx(String index) {
-        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : Integer.parseInt(index), 1);
+        setNumericAttr("tabindex", ("*".equals(index)) ? getFormIndexCount() : StringUtils.parse(index, 0), 1);
     }
     
     /**
