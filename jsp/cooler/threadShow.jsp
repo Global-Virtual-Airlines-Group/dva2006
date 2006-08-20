@@ -283,7 +283,7 @@ notification each time a reply is posted in this Thread.
  <td colspan="3">${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
 </tr>
 <tr class="mid">
- <td colspan="3"><el:textbox name="msgText" width="125" height="8">${lastPost.body}</el:textbox></td>
+ <td colspan="3"><el:textbox name="msgText" width="90%" height="8">${lastPost.body}</el:textbox></td>
 </tr>
 </c:if>
 

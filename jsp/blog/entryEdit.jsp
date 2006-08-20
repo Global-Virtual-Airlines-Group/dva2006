@@ -55,7 +55,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Entry Text</td>
- <td class="data"><el:textbox name="body" idx="*" width="120" height="15" className="req">${entry.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" idx="*" width="90%" height="15" className="req">${entry.body}</el:textbox></td>
 </tr>
 </el:table>
 

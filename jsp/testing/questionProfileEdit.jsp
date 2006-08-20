@@ -139,7 +139,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Answer Choices</td>
- <td class="data"><el:textbox name="answerChoices" idx="*" width="120" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
+ <td class="data"><el:textbox name="answerChoices" idx="*" width="90%" height="5" onBlur="void updateAnswerCombo()">${qChoices}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">Correct Answer</td>

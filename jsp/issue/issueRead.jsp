@@ -109,7 +109,7 @@ return true;
 <!-- New Comment -->
 <tr>
  <td class="label" valign="top">New Comment</td>
- <td><el:textbox name="comment" width="120" height="6" idx="*" className="req"></el:textbox></td>
+ <td><el:textbox name="comment" width="80%" height="6" idx="*" className="req"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

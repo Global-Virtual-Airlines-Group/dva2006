@@ -199,7 +199,7 @@ return ${access.canComment || access.canUpdateProgress};
 <!-- New Comment -->
 <tr>
  <td class="label" valign="top">New Comment</td>
- <td colspan="6" class="data"><el:textbox name="msgText" width="120" height="6" idx="*" /></td>
+ <td colspan="6" class="data"><el:textbox name="msgText" width="80%" height="6" idx="*" /></td>
 </tr>
 </c:if>
 </el:table>

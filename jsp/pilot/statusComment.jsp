@@ -39,7 +39,7 @@ return true;
  <td colspan="${cspan + 1}" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>
 </tr>
 <tr>
- <td colspan="${cspan + 1}"><el:textbox name="comment" idx="*" width="120" height="5" className="req" /></td>
+ <td colspan="${cspan + 1}"><el:textbox name="comment" idx="*" width="80%" height="5" className="req" /></td>
 </tr>
 </el:table>
 

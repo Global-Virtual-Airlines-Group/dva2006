@@ -73,7 +73,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="6" className="req">${resource.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" height="6" className="req">${resource.description}</el:textbox></td>
 </tr>
 <c:if test="${access.canEdit || (empty resource && access.canCreate)}">
 <tr>

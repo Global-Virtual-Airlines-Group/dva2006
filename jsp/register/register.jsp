@@ -157,7 +157,7 @@ currently registed with this e-mail address.</div></c:if>
  <td class="data"><span class="small">Plase provide any comments or additional information that you feel would assist
 in processing your application.</span></td>
 </tr>
- <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </el:table>
 

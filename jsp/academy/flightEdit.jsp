@@ -82,7 +82,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Remarks</td>
- <td class="data"><el:textbox idx="*" name="comments" width="100" height="5">${flight.comments}</el:textbox></td>
+ <td class="data"><el:textbox idx="*" name="comments" width="80%" height="5">${flight.comments}</el:textbox></td>
 </tr>
 </el:table>
 

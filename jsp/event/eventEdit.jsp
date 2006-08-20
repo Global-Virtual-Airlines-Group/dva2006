@@ -107,7 +107,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Flight Briefing</td>
- <td class="data"><el:textbox name="briefing" idx="*" width="120" className="req" height="15">${event.briefing}</el:textbox></td>
+ <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="15">${event.briefing}</el:textbox></td>
 </tr>
 <tr>
  <td class="label" valign="top">Equipment Types</td>

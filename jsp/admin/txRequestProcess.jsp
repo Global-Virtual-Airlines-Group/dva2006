@@ -126,7 +126,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

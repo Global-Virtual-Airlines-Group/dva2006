@@ -83,7 +83,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" className="req" height="3">${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" className="req" height="3">${entry.description}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">Installer Security</td>

@@ -12,7 +12,7 @@
 <c:when test="${!empty img}">
 <!-- Attached Image -->
 <tr class="mid">
- <td colspan="3"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />" /></td>
+ <td colspan="3"><img width="${img.width}" height="${img.height}" alt="${thread.subject}" src="/gallery/${imgDB}/0x<fmt:hex value="${thread.image}" />.${fn:lower(img.typeName)}" /></td>
 </tr>
 <c:if test="${(!empty img.votes) || imgAccess.canVote}">
 <tr>
