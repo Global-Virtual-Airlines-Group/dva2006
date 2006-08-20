@@ -157,7 +157,7 @@ var bwdLimit = new Date(${backwardDateLimit});
 </c:if>
 <tr>
  <td class="label" valign="top">Remarks</td>
- <td class="data"><el:textbox idx="*" name="remarks" width="100" height="5">${pirep.remarks}</el:textbox></td>
+ <td class="data"><el:textbox idx="*" name="remarks" width="80%" height="5">${pirep.remarks}</el:textbox></td>
 </tr>
 </el:table>
 

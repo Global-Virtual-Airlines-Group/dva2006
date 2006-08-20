@@ -16,7 +16,12 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateCombo(form.crType, 'Aircraft Type')) return false;
 if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
-if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+
+// Validate comments
+var hasScript = ((form.doScript) && (form.doScript.value == 'true'));
+if (!hasScript) {
+	if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+}
 
 setSubmit();
 disableButton('ProfileButton');
@@ -49,7 +54,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="120" height="4"></el:textbox></td>
+ <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

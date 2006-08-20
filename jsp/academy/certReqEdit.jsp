@@ -45,7 +45,7 @@ return true;
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
  <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="120" height="5">${req.text}</el:textbox></td>
+ <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5">${req.text}</el:textbox></td>
 </tr>
 </c:forEach>
 
@@ -54,25 +54,25 @@ return true;
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
  <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="120" height="5" /></td>
+ <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
 <c:set var="reqNum" value="${reqNum + 1}" scope="request" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
  <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="120" height="5" /></td>
+ <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
 <c:set var="reqNum" value="${reqNum + 1}" scope="request" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
  <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="120" height="5" /></td>
+ <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
 <c:set var="reqNum" value="${reqNum + 1}" scope="request" />
 <!-- Requirement #<fmt:int value="${reqNum}" /> -->
 <tr>
  <td class="label" valign="top">Requirement #<fmt:int value="${reqNum}" /></td>
- <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="120" height="5" /></td>
+ <td class="data"><el:textbox name="reqText${reqNum}" idx="*" width="80%" height="5" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

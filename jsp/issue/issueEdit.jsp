@@ -90,7 +90,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Issue Description</td>
- <td class="data"><el:textbox name="desc" width="120" height="5" idx="7" className="req">${issue.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" width="80%" height="5" idx="7" className="req">${issue.description}</el:textbox></td>
 </tr>
 <c:if test="${empty issue}">
 <tr>

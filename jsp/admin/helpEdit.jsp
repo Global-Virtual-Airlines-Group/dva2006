@@ -41,7 +41,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Help Entry Text</td>
- <td class="data"><el:textbox name="body" idx="*" className="small req" width="140" height="8">${help.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" idx="*" className="small req" width="80%" height="8">${help.body}</el:textbox></td>
 </tr>
 <tr class="title">
  <td colspan="2"><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE HELP ENTRY" /></td>

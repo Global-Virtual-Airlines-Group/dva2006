@@ -52,7 +52,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Message Text</td>
- <td class="data"><el:textbox name="body" className="req" idx="*" width="120" height="15">${param.body}</el:textbox></td>
+ <td class="data"><el:textbox name="body" className="req" idx="*" width="80%" height="15">${param.body}</el:textbox></td>
 </tr>
 </el:table>
 

@@ -92,7 +92,7 @@ return true;
 <!-- Answer# ${qnum} -->
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
- <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="120" height="2">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="80%" height="2">${q.answer}</el:textbox></td>
 </tr>
 </c:forEach>
 </el:table>

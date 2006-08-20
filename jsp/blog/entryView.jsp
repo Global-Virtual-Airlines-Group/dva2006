@@ -82,7 +82,7 @@ return ${access.canComment};
 </content:authUser>
 <tr>
  <td class="label" valign="top">Comments</td>
- <td class="data"><el:textbox name="body" idx="*" width="120" height="7" className="req" /></td>
+ <td class="data"><el:textbox name="body" idx="*" width="80%" height="7" className="req" /></td>
 </tr>
 </c:if>
 </el:table>

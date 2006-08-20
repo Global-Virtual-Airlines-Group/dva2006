@@ -51,7 +51,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Script Text</td>
- <td class="data"><el:textbox name="msgText" idx="*" width="120" height="10" className="req">${script.description}</el:textbox></td>
+ <td class="data"><el:textbox name="msgText" idx="*" width="90%" height="10" className="req">${script.description}</el:textbox></td>
 </tr>
 </el:table>
 

@@ -66,7 +66,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:textbox name="desc" idx="*" width="120" height="3" className="req" >${entry.description}</el:textbox></td>
+ <td class="data"><el:textbox name="desc" idx="*" width="80%" height="3" className="req" >${entry.description}</el:textbox></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
