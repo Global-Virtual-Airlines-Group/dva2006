@@ -1,7 +1,9 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to generate HTML textbox elements.
@@ -52,10 +54,13 @@ public class TextboxTag extends FormElementTag {
     
     /**
      * Sets the width of the textbox. This does nothing if a negative, zero or non-numeric value is passed.
-     * @param width the width of the textbox in columns
+     * @param width the width of the textbox in columns, or as a percentage
      */
-    public void setWidth(int width) {
-        setNumericAttr("cols", width, 0);
+    public void setWidth(String width) {
+    	if ((width != null) && (width.endsWith("%"))) {
+    		_data.setAttribute("style", "width:" + width + ";");
+    	} else
+    		setNumericAttr("cols", StringUtils.parse(width, 0), 0);	
     }
     
     /**
