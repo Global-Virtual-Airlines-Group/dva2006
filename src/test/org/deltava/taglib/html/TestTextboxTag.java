@@ -23,7 +23,7 @@ public class TestTextboxTag extends AbstractFormTagTestCase {
         _tag.setName("BODY");
         _tag.setIdx("1");
         _tag.setHeight(5);
-        _tag.setWidth(100);
+        _tag.setWidth("100");
         
         assertEvalBody(_tag.doStartTag());
         assertEvalPage(_tag.doEndTag());
@@ -36,6 +36,25 @@ public class TestTextboxTag extends AbstractFormTagTestCase {
         assertAttr("5", "rows");
         assertAttr("1", "tabindex");
         assertAttr("BODY", "name");
+    }
+    
+    public void testStyleWidth() throws Exception {
+        _tag.setName("BODY");
+        _tag.setIdx("*");
+        _tag.setHeight(5);
+        _tag.setWidth("90%");
+
+        assertEvalBody(_tag.doStartTag());
+        assertEvalPage(_tag.doEndTag());
+        
+        parseOutput();
+        assertEquals("textarea", getElementName());
+        assertEquals(4, getAttrCount());
+
+        assertAttr("5", "rows");
+        assertAttr("1", "tabindex");
+        assertAttr("BODY", "name");
+        assertAttr("width:90%;", "style");
     }
     
     public void testBooleanProperties() throws Exception {
