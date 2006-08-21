@@ -87,7 +87,7 @@ public class EventReleaseCommand extends AbstractCommand {
 		
 		// Forward back to the event
 		CommandResult result = ctx.getResult();
-		result.setURL("event.do", null, ctx.getID());
+		result.setURL("event", null, ctx.getID());
 		result.setSuccess(true);
 	}
 }
