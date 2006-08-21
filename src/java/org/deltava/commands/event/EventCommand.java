@@ -107,8 +107,21 @@ public class EventCommand extends AbstractCommand {
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();
-				pireps.addAll(frdao.getByEvent(e.getID(), tableName));
+				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName); 
 				pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
+				
+				// Load pilots who may have logged the flight but not signed up
+				Collection<Integer> newIDs = new HashSet<Integer>();
+				for (Iterator<FlightReport> fi =flights.iterator(); fi.hasNext(); ) {
+					FlightReport fr = fi.next();
+					int pilotID = fr.getDatabaseID(FlightReport.DBID_PILOT);
+					if (!udm.contains(pilotID))
+						newIDs.add(new Integer(pilotID));
+				}
+				
+				// Load additional pilots
+				if (!newIDs.isEmpty())
+					pilots.putAll(pdao.getByID(newIDs, tableName));
 			}
 			
 			// Save the pilots and flight reports
