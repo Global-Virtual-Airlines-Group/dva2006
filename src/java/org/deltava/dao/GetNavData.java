@@ -119,21 +119,24 @@ public class GetNavData extends DAO {
 			return results;
 
 		// Build the SQL Statement
+		Collection<String> orderedIDs = new LinkedHashSet<String>(ids);
 		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.NAVDATA WHERE CODE IN (");
-		for (Iterator<String> i = ids.iterator(); i.hasNext();) {
-			String code = i.next().toUpperCase();
-			sqlBuf.append('\'');
-			sqlBuf.append(code);
-			sqlBuf.append("\',");
+		for (Iterator<String> i = orderedIDs.iterator(); i.hasNext();) {
+			i.next();
+			sqlBuf.append('?');
+			if (i.hasNext())
+			sqlBuf.append(',');
 		}
-
-		// Only execute the prepared statement if we haven't gotten anything from the cache
-		if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-			sqlBuf.setLength(sqlBuf.length() - 1);
 
 		sqlBuf.append(')');
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
+			int ofs = 0;
+			for (Iterator<String> i = orderedIDs.iterator(); i.hasNext(); ) {
+				String id = i.next().toUpperCase();
+				_ps.setString(++ofs, id);
+			}
+			
 			results = new NavigationDataMap(execute());
 		} catch (SQLException se) {
 			throw new DAOException(se);
