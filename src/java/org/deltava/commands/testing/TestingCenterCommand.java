@@ -42,6 +42,7 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 
 			// Initialize the Testing History
 			initTestHistory(usr, con);
+			_testHistory.setDebug(ctx.isSuperUser());
 			boolean examsLocked = _testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
@@ -67,7 +68,6 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
 			} else {
 				// Remove all examinations that we have passed or require a higher stage than us
-				_testHistory.setDebug(ctx.isSuperUser());
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 					ExamProfile ep = i.next();
 					if (!_testHistory.canWrite(ep))

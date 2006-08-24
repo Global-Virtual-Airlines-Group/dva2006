@@ -97,6 +97,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Initialize the testing history helper and check for test lockout
 			initTestHistory(p, con);
+			_testHistory.setDebug(ctx.isSuperUser());
 			ctx.setAttribute("examLockout", Boolean.valueOf(_testHistory.isLockedOut(SystemData
 					.getInt("testing.lockout"))), REQUEST);
 
