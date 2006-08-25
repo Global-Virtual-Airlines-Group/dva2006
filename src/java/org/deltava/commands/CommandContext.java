@@ -129,7 +129,8 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      * @return TRUE if superuser mode is on, otherwise FALSE
      */
     public boolean isSuperUser() {
-    	return (_req.getAttribute(SU_ATTR_NAME) instanceof Person);
+    	HttpSession s = _req.getSession(false);
+    	return (s == null) ? false : (s.getAttribute(SU_ATTR_NAME) instanceof Person);
     }
     
     /**
