@@ -235,6 +235,7 @@
 		<equipment>Constellation</equipment>
 		<equipment>CRJ-200</equipment>
 		<equipment>CRJ-700</equipment>
+		<equipment>CRJ-900</equipment>
 		<equipment>CV-880</equipment>
 		<equipment>CV-990</equipment>
 		<equipment>DC-10-10</equipment>
@@ -460,6 +461,10 @@
 				<width type="Integer">600</width>
 				<url>http://quicktrip.innosked.com/</url>
 			</popup>
+			<list name="primary_codes" attr="code">
+				<code>AF</code>
+				<code>DL</code>
+			</list>
 
 			<!-- FTP download data -->
 			<download>
