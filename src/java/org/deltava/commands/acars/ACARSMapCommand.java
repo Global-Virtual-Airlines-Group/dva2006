@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import javax.servlet.http.*;
@@ -33,12 +33,14 @@ public class ACARSMapCommand extends AbstractCommand {
       try {
          gp = new GeoPosition(Double.parseDouble(lat), Double.parseDouble(lng));
       } catch (Exception e) {
-         gp = new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), 
-        		 SystemData.getDouble("acars.livemap.lng", -85));
+         gp = new GeoPosition(SystemData.getDouble("acars.livemap.lat", 40), SystemData.getDouble("acars.livemap.lng", -85));
       }
       
       // Save the map center
       ctx.setAttribute("mapCenter", gp, REQUEST);
+      
+      // Set the cache
+      ctx.getCache().setMaxAge(120);
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
