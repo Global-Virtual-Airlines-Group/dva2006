@@ -15,8 +15,10 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateNumber(form.minBuild, 1, 'Minimum Build')) return false;
-if (!validateNumber(form.latestBuild, parseInt(form.minBuild.value), 'Latest Build')) return false;
+if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
+<c:forEach var="ver" items="${versions}">
+if (!validateNumber(form.min_${ver.key}_Build, 1, 'Minimum ${ver.version} Build')) return false;
+</c:forEach>
 
 setSubmit();
 disableButton('SaveButton');
@@ -29,7 +31,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="minBuild" name="acars.build.minimum" />
 <content:sysdata var="latestBuild" name="acars.build.latest" />
 
 <!-- Main Body Frame -->
@@ -39,10 +40,12 @@ return true;
 <tr class="title caps">
  <td colspan="4"><content:airline /> ACARS CLIENT VERSION CONTROL</td>
 </tr>
+<c:forEach var="ver" items="${versions}">
 <tr>
- <td class="label">Minimum Build</td>
- <td class="data"><el:text className="pri bld req" name="minBuild" idx="*" size="3" max="4" value="${minBuild}" /></td>
+ <td class="label">Minimum ${ver.version} Build</td>
+ <td class="data"><el:text className="pri bld req" name="min_${ver.key}_build" idx="*" size="3" max="4" value="${ver.minBuild}" /></td>
 </tr>
+</c:forEach>
 <tr>
  <td class="label">Latest Build</td>
  <td class="data"><el:text className="req" name="latestBuild" idx="*" size="3" max="4" value="${latestBuild}" /></td>
