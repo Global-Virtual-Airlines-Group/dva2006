@@ -324,7 +324,7 @@
 		<attribute>
 			<name>name</name>
 			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
+			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
 			<name>idx</name>
