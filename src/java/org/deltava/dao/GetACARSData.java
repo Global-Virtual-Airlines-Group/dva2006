@@ -125,7 +125,7 @@ public class GetACARSData extends DAO {
 				entry.setFrameRate(rs.getInt(21));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
-				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && (!includeOnGround)) {
+				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && !entry.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN) && !includeOnGround) {
 					results.add(new GeoPosition(entry));
 				} else {
 					results.add(entry);

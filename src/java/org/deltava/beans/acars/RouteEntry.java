@@ -2,7 +2,6 @@
 package org.deltava.beans.acars;
 
 import java.util.Date;
-import java.io.Serializable;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
@@ -16,7 +15,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLocation, Serializable, MapEntry, ACARSFlags {
+public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLocation, MapEntry, ACARSFlags {
 
 	private Date _date;
 	private GeoPosition _gpos;
@@ -541,11 +540,16 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	}
 
 	/**
-	 * Return the default Google Maps icon color.
-	 * @return MapEntry#White
+	 * Return the Google Maps icon color.
+	 * @return MapEntry#YELLOW
 	 */
 	public String getIconColor() {
-		return isWarning() ? RED : YELLOW;
+		if (isFlagSet(FLAG_TOUCHDOWN))
+			return PURPLE;
+		else if (isWarning())
+			return RED;
+		
+		return YELLOW;
 	}
 
 	/**
