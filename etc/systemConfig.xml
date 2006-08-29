@@ -618,13 +618,18 @@
 		<ban_length type="Integer">15</ban_length>
 		<position_interval type="Integer">2500</position_interval>
 		<build>
-			<minimum type="Integer">68</minimum>
-			<latest type="Integer">68</latest>
+			<map name="minimum">
+				<v1_2>71</v1_2>
+				<v1_9>72</v1_9>
+				<v2_0>1</v2_0>
+			</map>
+
+			<latest type="Integer">71</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>
 		
 		<pool>
-			<size type="Integer">100</size>
+			<size type="Integer">20</size>
 			<multiple type="Boolean">true</multiple>
 			<threads>
 				<logic type="Integer">2</logic>

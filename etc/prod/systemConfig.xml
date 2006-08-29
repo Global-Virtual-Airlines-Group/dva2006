@@ -638,7 +638,13 @@
 		<ban_length type="Integer">15</ban_length>
 		<position_interval type="Integer">500</position_interval>
 		<build>
-			<minimum type="Integer">71</minimum>
+		<build>
+			<map name="minimum">
+				<v1_2>71</v1_2>
+				<v1_9>72</v1_9>
+				<v2_0>1</v2_0>
+			</map>
+
 			<latest type="Integer">71</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>

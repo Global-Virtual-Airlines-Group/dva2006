@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 
 public class ClientVersionCommand extends AbstractCommand {
 	
-	class VersionKey implements Comparable {
+	public class VersionKey implements Comparable {
 		
 		private String _version;
 		private String _key;
@@ -44,7 +44,8 @@ public class ClientVersionCommand extends AbstractCommand {
 		
 		public int compareTo(Object o) {
 			VersionKey v2 = (VersionKey) o;
-			return new Double(_version).compareTo(new Double(v2._version));
+			Double v1 = new Double(_version.substring(1));
+			return v1.compareTo(new Double(v2._version.substring(1)));
 		}
 	}
 
@@ -70,7 +71,7 @@ public class ClientVersionCommand extends AbstractCommand {
 		
 		// Get Command results
 		CommandResult result = ctx.getResult();
-		if (ctx.getParameter("minBuild") == null) {
+		if (ctx.getParameter("latestBuild") == null) {
 			ctx.setAttribute("versions", versions, REQUEST);
 			
 			// Redirect to the JSP
@@ -85,7 +86,7 @@ public class ClientVersionCommand extends AbstractCommand {
 			for (Iterator<VersionKey> i = versions.iterator(); i.hasNext(); ) {
 				VersionKey ver = i.next();
 				String paramName = "min_" + ver.getKey() + "_build";
-				builds.put(ver.getKey(), new Integer(ctx.getParameter(paramName)));
+				builds.put(ver.getKey(), new Integer(ctx.getParameter(paramName)).toString());
 			}
 		} catch (NumberFormatException nfe) {
 			ctx.setMessage(nfe.getMessage());
@@ -93,7 +94,8 @@ public class ClientVersionCommand extends AbstractCommand {
 		
 		// Return to success page
 		ctx.setMessage("Client Versions updated");
-		result.setURL("/jsp/acars/clientVersion.jsp");
+		result.setType(CommandResult.REDIRECT);
+		result.setURL("acarsversion.do");
 		result.setSuccess(true);
 	}
 }
