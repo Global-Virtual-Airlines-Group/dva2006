@@ -12,7 +12,7 @@ public interface ACARSFlags {
    
 	// Database Flags
 	public static final int FLAG_PAUSED = 0x0001;
-	public static final int FLAG_SLEW = 0x0002;
+	public static final int FLAG_TOUCHDOWN = 0x0002;
 	public static final int FLAG_PARKED = 0x0004;
 	public static final int FLAG_ONGROUND = 0x0008;
 	public static final int FLAG_PUSHBACK = 0x8000;
