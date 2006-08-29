@@ -571,7 +571,6 @@ database.</td>
  <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
 </tr>
 <content:filter roles="Admin">
-<content:sysdata var="minBuild" name="acars.build.minimum" />
 <content:sysdata var="latestBuild" name="acars.build.latest" />
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarsversion">ACARS Client Versions</el:cmd></td>
