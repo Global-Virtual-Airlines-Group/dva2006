@@ -16,10 +16,23 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
+document.linkImage |= ((form.imgURL) && (form.imgURL.value.length > 1));
+
 if (!document.linkImage) {
 	if (!validateText(form.subject, 8, 'Title of your Thread')) return false;
 	if (!validateText(form.msgText, 5, 'text of your Message')) return false;
 	if (!validateFile(form.img, 'gif,jpg,png', 'Attached Image')) return false;
+} else {
+	if (!validateText(form.imgURL, 12, 'URL of your Linked Image')) return false;
+	if (!validateText(form.desc, 8, 'Description of your Linked Image')) return false;
+	form.addImage.value = 'true';
+}
+
+// Check for multiple image posting methods
+if ((f.img) && (f.img.value.length > 0)) {
+	alert('You cannot Link an Image and Upload an Image at the same time.');
+	f.img.focus();
+	return false;
 }
 
 setSubmit();
@@ -46,19 +59,8 @@ return true;
 
 function linkImage()
 {
-var f = document.forms[0];
-if (!validateText(f.imgURL, 12, 'URL of your Linked Image')) return false;
-if (!validateText(f.desc, 8, 'Description of your Linked Image')) return false;
-if ((f.img) && (f.img.value.length > 0)) {
-	alert('You cannot Link an Image and Upload an Image at the same time.');
-	f.img.focus();
-	return false;
-}
-
-// Do the POST
 document.linkImage = true;
-f.addImage.value = 'true';
-f.submit();
+document.forms[0].submit();
 return true;
 }
 </script>
