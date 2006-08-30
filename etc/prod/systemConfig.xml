@@ -51,6 +51,7 @@
 			<list name="categories" attr="category" unique="true">
 				<category>Routes</category>
 				<category>Charts</category>
+				<category>Aircraft</category>
 				<category>Flight Planners</category>
 				<category>Online Networks</category>
 			</list>
