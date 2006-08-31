@@ -29,7 +29,7 @@ if (!document.linkImage) {
 }
 
 // Check for multiple image posting methods
-if ((f.img) && (f.img.value.length > 0)) {
+if (document.linkImage && (f.img) && (f.img.value.length > 0)) {
 	alert('You cannot Link an Image and Upload an Image at the same time.');
 	f.img.focus();
 	return false;

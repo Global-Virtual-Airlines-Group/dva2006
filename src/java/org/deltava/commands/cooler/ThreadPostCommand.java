@@ -189,6 +189,13 @@ public class ThreadPostCommand extends AbstractCommand {
 				 * scaling image - " + ie.getMessage(), ie); img = null; } }
 				 */
 			}
+			
+			// If we have no subject, redirect back
+			if (StringUtils.isEmpty(ctx.getParameter("subject"))) {
+				result.setURL("/jsp/cooler/threadCreate.jsp");
+				result.setSuccess(true);
+				return;
+			}
 
 			// Create the new thread bean
 			MessageThread mt = new MessageThread(ProfanityFilter.filter(ctx.getParameter("subject")));
