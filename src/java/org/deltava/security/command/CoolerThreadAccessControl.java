@@ -100,6 +100,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         	List<Message> posts = _mt.getPosts();
         	Message msg = posts.get(posts.size() - 1);
         	_canEdit = (msg.getAuthorID() == _ctx.getUser().getID());
+        	_canDelete |= (isOurs && (posts.size() == 1));
         }
     }
     
