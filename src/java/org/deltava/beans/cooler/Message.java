@@ -5,6 +5,8 @@ import java.util.Date;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A class to store Water Cooler posts.
  * @author Luke
@@ -113,7 +115,7 @@ public class Message extends DatabaseBean implements AuthoredBean {
      * @param body the new content of the message
      */
     public void setBody(String body) {
-        _msgBody = body;
+        _msgBody = StringUtils.isEmpty(body) ? null : body;
     }
   
     /**
