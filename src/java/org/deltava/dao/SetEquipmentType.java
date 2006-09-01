@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -35,7 +35,7 @@ public class SetEquipmentType extends DAO {
 		try {
 			startTransaction();
 			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, EXAM_FO, EXAM_CAPT, ACTIVE, " +
-					"SO_LEGS, SO_HOURS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					"SO_LEGS, SO_HOURS, C_LEGS, C_HOURS, C_LEGS_ACARS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
@@ -46,12 +46,15 @@ public class SetEquipmentType extends DAO {
 			_ps.setBoolean(7, eq.getActive());
 			_ps.setInt(8, eq.getPromotionLegs(Ranks.RANK_SO));
 			_ps.setDouble(9, eq.getPromotionHours(Ranks.RANK_SO));
+			_ps.setInt(10, eq.getPromotionLegs(Ranks.RANK_C));
+			_ps.setDouble(11, eq.getPromotionHours(Ranks.RANK_C));
+			_ps.setBoolean(12, eq.getACARSPromotionLegs());
 			
 			// Update the equipment profile
 			executeUpdate(1);
 			
 			// Write the ratings and commit
-			writeRatings(eq, false);
+			writeRatings(eq);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -68,7 +71,7 @@ public class SetEquipmentType extends DAO {
 		try {
 			startTransaction();
 			prepareStatement("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, EXAM_FO=?, EXAM_CAPT=?, ACTIVE=?, " +
-					"SO_LEGS=?, SO_HOURS=? WHERE (EQTYPE=?)");
+					"SO_LEGS=?, SO_HOURS=?, C_LEGS=?, C_HOURS=?, C_LEGS_ACARS=? WHERE (EQTYPE=?)");
 			
 			_ps.setInt(1, eq.getCPID());
 			_ps.setInt(2, eq.getStage());
@@ -78,13 +81,16 @@ public class SetEquipmentType extends DAO {
 			_ps.setBoolean(6, eq.getActive());
 			_ps.setInt(7, eq.getPromotionLegs(Ranks.RANK_SO));
 			_ps.setDouble(8, eq.getPromotionHours(Ranks.RANK_SO));
-			_ps.setString(9, eq.getName());
+			_ps.setInt(9, eq.getPromotionLegs(Ranks.RANK_C));
+			_ps.setDouble(10, eq.getPromotionHours(Ranks.RANK_C));
+			_ps.setBoolean(11, eq.getACARSPromotionLegs());
+			_ps.setString(12, eq.getName());
 			
 			// Update the equipment profile
 			executeUpdate(1);
 			
 			// Write the ratings and commit
-			writeRatings(eq, true);
+			writeRatings(eq);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -109,7 +115,7 @@ public class SetEquipmentType extends DAO {
 			_ps.setString(2, oldName);
 
 			// Update the pilot profiles and commit
-			executeUpdate(1);
+			executeUpdate(0);
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -120,14 +126,7 @@ public class SetEquipmentType extends DAO {
 	/**
 	 * Helper method to update primary/secondary ratings.
 	 */
-	private void writeRatings(EquipmentType eq, boolean clean) throws SQLException {
-		
-		// Clean out existing ratings if necessary
-		if (clean) {
-			prepareStatementWithoutLimits("DELETE FROM EQRATINGS WHERE (EQTYPE=?)");
-			_ps.setString(1, eq.getName());
-			executeUpdate(1);
-		}
+	private void writeRatings(EquipmentType eq) throws SQLException {
 		
 		// Prepare the statement
 		prepareStatementWithoutLimits("INSERT INTO EQRATINGS (EQTYPE, RATING_TYPE, RATED_EQ) VALUES (?, ?, ?)");

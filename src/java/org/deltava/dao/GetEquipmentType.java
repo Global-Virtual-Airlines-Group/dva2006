@@ -212,8 +212,9 @@ public class GetEquipmentType extends DAO {
 				eq.setPromotionHours(Ranks.RANK_SO, rs.getInt(9));
 				eq.setPromotionLegs(Ranks.RANK_C, rs.getInt(10));
 				eq.setPromotionHours(Ranks.RANK_C, rs.getInt(11));
-				eq.setCPName(rs.getString(12));
-				eq.setCPEmail(rs.getString(13));
+				eq.setACARSPromotionLegs(rs.getBoolean(12));
+				eq.setCPName(rs.getString(13));
+				eq.setCPEmail(rs.getString(14));
 
 				// Add to the results
 				results.add(eq);

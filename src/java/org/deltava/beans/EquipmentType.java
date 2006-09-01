@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -19,6 +19,7 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     private String _name;
     private int _stage = 1;
     private boolean _active = true;
+    private boolean _acarsPromotion;
     
     private String _cpName;
     private String _cpEmail;
@@ -157,11 +158,22 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
     
     /**
-     * Does this equipment type have a Second Officer rank?. <i>Used by Aviation Français Virtuel</i>
-     * @return If this program has a Second Officer rank
+     * Does this equipment type have a Second Officer rank?
+     * @return TRUE if this program has a Second Officer rank, otherwise FALSE
+     * @see EquipmentType#getRanks()
+     * @see EquipmentType#addRank(String)
      */
     public boolean hasSO() {
         return _ranks.contains(Ranks.RANK_SO);
+    }
+    
+    /**
+     * Returns wether flights counting towards promotion must be logged using ACARS.
+     * @return TRUE if promotion legs must be logged using ACARS, otherwise FALSE
+     * @see EquipmentType#setACARSPromotionLegs(boolean)
+     */
+    public boolean getACARSPromotionLegs() {
+    	return _acarsPromotion;
     }
     
     /**
@@ -244,6 +256,15 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
      */
     public void setActive(boolean active) {
         _active = active;
+    }
+    
+    /**
+     * Updates wether flights counting towards promotion must be logged using ACARS.
+     * @param useACARS TRUE if flights must be logged using ACARS, otherwise FALSE
+     * @see EquipmentType#setACARSPromotionLegs(boolean)
+     */
+    public void setACARSPromotionLegs(boolean useACARS) {
+    	_acarsPromotion = useACARS;
     }
     
     /**
