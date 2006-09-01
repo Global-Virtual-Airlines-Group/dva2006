@@ -33,7 +33,7 @@
 <!-- Table data -->
 <c:forEach var="template" items="${templates}">
 <view:row entry="${template}">
- <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}">${template.name}</el:cmd></td>
+ <td><el:cmd url="msgtemplate" className="pri bld" linkID="${template.name}" op="edit">${template.name}</el:cmd></td>
  <td class="sec bld">${template.isHTML ? 'HTML' : '&nbsp;'}</td>
  <td class="sec">${template.subject}</td>
  <td class="left">${template.description}</td>
@@ -44,7 +44,7 @@
 <tr class="title">
  <td colspan="4">&nbsp;
 <c:if test="${access.canCreate}">
-<el:cmdbutton url="msgtemplate" op="new" label="NEW MESSAGE TEMPLATE" />
+<el:cmdbutton url="msgtemplate" op="edit" label="NEW MESSAGE TEMPLATE" />
 </c:if>
  </td>
 </tr>
