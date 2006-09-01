@@ -2,16 +2,9 @@ package org.deltava.beans;
 
 import java.util.*;
 
-import junit.framework.Test;
-import org.hansel.CoverageDecorator;
-
 public class TestEquipmentType extends AbstractBeanTestCase {
 
     private EquipmentType _eq;
-    
-    public static Test suite() {
-        return new CoverageDecorator(TestEquipmentType.class, new Class[] { EquipmentType.class } );
-    }
     
     protected void setUp() throws Exception {
         super.setUp();
@@ -32,6 +25,7 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         checkProperty("CPName", "CPNAME");
         checkProperty("CPEmail", "root@localhost");
         checkProperty("stage", new Integer(5));
+        checkProperty("ACARSPromotionLegs", Boolean.TRUE);
         _eq.setActive(false);
         assertFalse(_eq.getActive());
     }

@@ -18,14 +18,14 @@ import org.deltava.security.command.EquipmentAccessControl;
  * @since 1.0
  */
 
-public class EquipmentCommand extends AbstractCommand {
+public class EquipmentCommand extends AbstractFormCommand {
 
-    /**
-     * Executes the command.
-     * @param ctx the Command context
-     * @throws CommandException if an error (typically database) occurs
-     */
-	public void execute(CommandContext ctx) throws CommandException {
+	/**
+	 * Callback method called when editing the profile.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	protected void execEdit(CommandContext ctx) throws CommandException {
 
 		// Get the equipment type
 		String eqType = (String) ctx.getCmdParameter(Command.ID, null);
@@ -66,5 +66,74 @@ public class EquipmentCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/admin/eqProfile.jsp");
 		result.setSuccess(true);
+	}
+	
+	/**
+	 * Callback method called when saving the profile.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
+	protected void execSave(CommandContext ctx) throws CommandException {
+
+		// Get the equipment type
+		String eqType = (String) ctx.getCmdParameter(Command.ID, null);
+		boolean isNew = (eqType == null);
+
+		// Check our access
+		EquipmentAccessControl access = new EquipmentAccessControl(ctx);
+		access.validate();
+		if (!access.getCanEdit())
+			throw securityException("Cannot modify Equipment Profile");
+
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the existing equipment type profile
+			GetEquipmentType rdao = new GetEquipmentType(con);
+			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType);
+			
+			// Update the equipment type profile from the request
+			eq.setCPID(Integer.parseInt(ctx.getParameter("cp")));
+			eq.setStage(Integer.parseInt(ctx.getParameter("stage")));
+			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
+			eq.setRanks(ctx.getParameters("ranks"));
+			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
+
+			// Update examination names
+			eq.setExamName(Ranks.RANK_FO, ctx.getParameter("examFO"));
+			eq.setExamName(Ranks.RANK_C, ctx.getParameter("examC"));
+			
+			// Get the DAO and write the equipment type to the database
+			SetEquipmentType wdao = new SetEquipmentType(con);
+			if (isNew) {
+				wdao.create(eq);
+				ctx.setAttribute("isCreated", Boolean.TRUE, REQUEST);
+			} else {
+				wdao.update(eq);
+			}
+			
+			// Save the equipment program in the request
+			ctx.setAttribute("eqType", eq, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Redirect to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REQREDIRECT);
+		result.setURL("/jsp/admin/eqUpdate.jsp");
+		result.setSuccess(true);
+	}
+	
+	/**
+	 * Callback method called when reading the profile. <i>NOT IMPLEMENTED</i>
+	 * @param ctx the Command context
+	 * @throws UnsupportedOperationException always
+	 */
+	protected void execRead(CommandContext ctx) throws CommandException {
+		throw new UnsupportedOperationException();
 	}
 }

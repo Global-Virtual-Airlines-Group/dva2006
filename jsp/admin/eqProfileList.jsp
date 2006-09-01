@@ -37,7 +37,7 @@
 <c:forEach var="eqType" items="${eqTypes}">
 <c:set var="chiefPilot" value="${chiefPilots[eqType.CPID]}" scope="request" />
 <view:row entry="${eqType}">
- <td class="pri bld"><el:cmd url="eqedit" linkID="${eqType.name}">${eqType.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
  <td><el:cmd url="profile" linkID="0x${chiefPilot.ID}">${chiefPilot.name}</el:cmd></td>
  <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
@@ -53,7 +53,7 @@
 <!-- Button Bar -->
 <tr class="title">
  <td colspan="6">&nbsp;
-<content:filter roles="HR"><el:cmdbutton url="eqedit" label="NEW EQUIPMENT TYPE" /></content:filter>
+<content:filter roles="HR"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></content:filter>
  </td>
 </tr>
 </view:table>
