@@ -38,7 +38,7 @@ return true;
 <tr class="title">
  <td colspan="${cspan + 1}" class="left caps">NEW STATUS COMMENT FOR ${pilot.name}</td>
 </tr>
-<tr>
+<tr class="mid">
  <td colspan="${cspan + 1}"><el:textbox name="comment" idx="*" width="80%" height="5" className="req" /></td>
 </tr>
 </el:table>
@@ -46,7 +46,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" label="SAVE COMMENT" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE COMMENT" /></td>
 </tr>
 </el:table>
 </el:form>
