@@ -42,7 +42,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="msgtemplatesave.do" linkID="${empty template ? null : template.name}" validate="return validate(this)">
+<el:form method="post" action="msgtemplate.do" linkID="${empty template ? null : template.name}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Template Title Bar -->
 <tr class="title caps">
