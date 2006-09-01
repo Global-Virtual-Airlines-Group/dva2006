@@ -32,7 +32,7 @@ This <content:airline /> ${library} Library entry has been successfully ${fileAd
 The <content:airline /> ${library} Library entry "${entry.name}" has been deleted from the database.<br />
 </c:if>
 <br />
-To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd}">Click Here</el:cmd>.<br />
+To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd}" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
