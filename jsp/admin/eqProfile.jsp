@@ -42,10 +42,11 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="ranks" name="ranks" />
 <content:sysdata var="allEQ" name="eqtypes" />
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="eqsave.do" linkID="${eqType.name}" validate="return validate(this)">
+<el:form method="post" action="eqtype.do" linkID="${eqType.name}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Equipment Profile Title Bar -->
 <tr class="title caps">
@@ -94,6 +95,12 @@ return true;
  <td class="label">Captain's Examination</td>
  <td class="data"><el:combo name="examC" idx="*" size="1" firstEntry="" options="${exams}" value="${fn:examC(eqType)}" /></td>
 </tr>
+<c:if test="${acarsEnabled}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="acarsPromote" idx="*" value="true" className="bld" checked="${eqType.ACARSPromotionLegs}" label="Require ACARS usage on Flights for Promotion" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data small"><el:box name="active" idx="*" value="true" className="sec" checked="${eqType.active}" label="Equipment Program is Active" /></td>

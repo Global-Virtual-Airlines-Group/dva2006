@@ -65,11 +65,21 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 
 			// Check if this flight was flown with an equipment type in our primary ratings
-			Collection<String> pTypes = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
-			if (pTypes.contains(pilot.getEquipmentType())) {
-				ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
-				pirep.setCaptEQType(pTypes);
+			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
+			if (pTypeNames.contains(pilot.getEquipmentType())) {
+				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
+					String pName = i.next();
+					EquipmentType peq = eqdao.get(pName);
+					if ((peq == null) || (peq.getACARSPromotionLegs()))
+						i.remove();
+				}
+				
+				// Add programs if we still have any that do not require ACARS legs
+				if (!pTypeNames.isEmpty()) {
+					ctx.setAttribute("captEQ", Boolean.TRUE, REQUEST);
+					ctx.setAttribute("promoteLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
+					pirep.setCaptEQType(pTypeNames);
+				}
 			}
 
 			// Update the status of the PIREP
