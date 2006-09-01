@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:set var="entryType" value="${isNews ? 'System News' : 'NOTAM'}" scope="request" />
 <c:set var="opName" value="${isCreate ? 'created' : 'updated'}" scope="request" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
