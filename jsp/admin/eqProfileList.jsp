@@ -35,13 +35,13 @@
 
 <!-- Table data -->
 <c:forEach var="eqType" items="${eqTypes}">
-<c:set var="chiefPilot" value="${chiefPilots[eqType.CPID]}" scope="request" />
+<c:set var="pilotCount" value="${eqTypeStats[eqType.name]}" scope="request" />
 <view:row entry="${eqType}">
  <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
- <td><el:cmd url="profile" linkID="0x${chiefPilot.ID}">${chiefPilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" linkID="0x${eqType.CPID}">${eqType.CPName}</el:cmd></td>
  <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
- <td><fmt:int value="${eqTypeStats[eqType.name]}" /></td>
+ <td><fmt:int value="${empty pilotCount ? 0 : pilotCount}" /></td>
  <td class="left small"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>
 <c:if test="${!empty eqType.secondaryRatings}">
 <br />SECONDARY: <fmt:list value="${eqType.secondaryRatings}" delim=", " />
@@ -52,8 +52,8 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="6">&nbsp;
-<content:filter roles="HR"><el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></content:filter>
+ <td colspan="6"><view:legend width="90" classes=" ,opt2" labels="Active,Inactive" />
+<content:filter roles="HR">&nbsp;<el:cmdbutton url="eqtype" op="edit" label="NEW EQUIPMENT TYPE" /></content:filter>
  </td>
 </tr>
 </view:table>

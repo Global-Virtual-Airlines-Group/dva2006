@@ -1,14 +1,10 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.sql.Connection;
-import java.util.List;
 
-import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.CollectionUtils;
 
 /**
  * A Web Site command to display Equipment Type profiles.
@@ -37,11 +33,6 @@ public class EquipmentProfilesCommand extends AbstractCommand {
 			GetEquipmentType dao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", dao.getAll(), REQUEST);
 			ctx.setAttribute("eqTypeStats", dao.getPilotCounts(), REQUEST);
-			
-			// Get all of the Chief Pilots
-			GetPilot pdao = new GetPilot(con);
-			List<Pilot> pilots = pdao.getPilotsByRank(Ranks.RANK_CP);
-			ctx.setAttribute("chiefPilots", CollectionUtils.createMap(pilots, "ID"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
