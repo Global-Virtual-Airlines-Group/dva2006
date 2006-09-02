@@ -276,13 +276,15 @@ within the next 24 to 72 hours. You are also eligible for equipment transfers an
 higher stage equipment type programs.</td></c:when>
 <c:when test="${promoteLegs < fn:promoLegs(eqType, 'Captain')}">
  <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" />
- Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the 
-rank of Captain in the ${eqType.name} program.</td></c:when>
+ Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if>required for promotion to the rank of 
+Captain in the ${eqType.name} program.</td></c:when>
 <c:when test="${promoteLegs >= fn:promoLegs(eqType, 'Captain')}">
  <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight Legs
- in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> required for promotion to the rank of
- Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span>
- examination in order to be eligible for promotion to Captain</i>.</td></c:when>
+ in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+<c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of 
+Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span> 
+examination in order to be eligible for promotion to Captain</i>.</td></c:when>
 </c:choose>
 </tr>
 </c:if>
