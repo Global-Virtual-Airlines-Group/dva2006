@@ -128,6 +128,11 @@ public class SetEquipmentType extends DAO {
 	 */
 	private void writeRatings(EquipmentType eq) throws SQLException {
 		
+		// Clean out ratings
+		prepareStatementWithoutLimits("DELETE FROM EQRATINGS WHERE (EQTYPE=?)");
+		_ps.setString(1, eq.getName());
+		executeUpdate(0);
+		
 		// Prepare the statement
 		prepareStatementWithoutLimits("INSERT INTO EQRATINGS (EQTYPE, RATING_TYPE, RATED_EQ) VALUES (?, ?, ?)");
 		_ps.setString(1, eq.getName());
