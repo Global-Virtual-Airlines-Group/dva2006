@@ -64,9 +64,8 @@ and turnaround time) as <fmt:dec value="${avgTime / 10}" /> hours.</span> This m
 Flight Report being approved.<br />
 </c:if>
 <br />
-To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}">Click Here</el:cmd><br />
+To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
-
 <c:if test="${isApprove}">
 <div class="updateHdr">Flight Report Approved</div>
 <br />
