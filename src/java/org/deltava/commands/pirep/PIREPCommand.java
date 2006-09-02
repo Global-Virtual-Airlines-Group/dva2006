@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 
 public class PIREPCommand extends AbstractFormCommand {
 
-	private static final DateFormat _df = new SimpleDateFormat("yyyy, MM, dd");
+	private static final DateFormat _df = new SimpleDateFormat("yyyy, M, d");
 
 	private static Collection<String> _flightTimes;
 	private static Collection<String> _flightYears;
