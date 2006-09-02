@@ -15,7 +15,7 @@
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
-if (!checkSubmit()) return false;
+if ((!form) || (!checkSubmit())) return false;
 document.linkImage |= ((form.imgURL) && (form.imgURL.value.length > 1));
 
 if (!document.linkImage) {
@@ -29,9 +29,9 @@ if (!document.linkImage) {
 }
 
 // Check for multiple image posting methods
-if (document.linkImage && (f.img) && (f.img.value.length > 0)) {
+if (document.linkImage && (form.img) && (form.img.value.length > 0)) {
 	alert('You cannot Link an Image and Upload an Image at the same time.');
-	f.img.focus();
+	form.img.focus();
 	return false;
 }
 
@@ -57,10 +57,14 @@ f.pollOptions.disabled = !f.hasPoll.checked;
 return true;
 }
 
-function linkImage()
+function submitImage()
 {
-document.linkImage = true;
-document.forms[0].submit();
+var f = document.forms[0];
+if (validate(f)) {
+	document.linkImage = true;
+	f.submit();
+}
+
 return true;
 }
 </script>
@@ -121,7 +125,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="" /> <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void linkImage()" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="" /> <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void submitImage()" /></td>
 </tr>
 <c:if test="${!empty sessionScope.imageURLs}">
 <tr>
