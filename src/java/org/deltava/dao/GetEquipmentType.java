@@ -221,14 +221,14 @@ public class GetEquipmentType extends DAO {
 			}
 
 			// The last two columns are the additional rating info
-			switch (rs.getInt(14)) {
+			switch (rs.getInt(15)) {
 				case EquipmentType.PRIMARY_RATING:
-					eq.addPrimaryRating(rs.getString(15));
+					eq.addPrimaryRating(rs.getString(16));
 					break;
 
 				default:
 				case EquipmentType.SECONDARY_RATING:
-					eq.addSecondaryRating(rs.getString(15));
+					eq.addSecondaryRating(rs.getString(16));
 					break;
 			}
 		}
