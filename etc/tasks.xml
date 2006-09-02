@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <tasks name="default">
 	<!-- Purge/Notify Inactive Users -->
-	<task id="inactivity" enabled="true">
+	<task id="inactivity" enabled="false">
 		<class>org.deltava.tasks.InactivityUpdateTask</class>
 		<time>
 			<min>0</min>
