@@ -288,6 +288,7 @@
 		<equipment>B727-100</equipment>
 		<equipment>B727-200</equipment>
 		<equipment>B737-200</equipment>
+		<equipment>B737-300</equipment>
 		<equipment>B747-100</equipment>
 		<equipment>Caravelle</equipment>
 		<equipment>Comet</equipment>
@@ -339,7 +340,7 @@
 		</map>
 		
 		<pool_size type="Integer">3</pool_size>
-		<pool_max_size type="Integer">6</pool_max_size>
+		<pool_max_size type="Integer">7</pool_max_size>
 		<max_reqs type="Integer">0</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 	</jdbc>
@@ -399,7 +400,6 @@
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
 			<network>IVAO</network>
-			<network>FPI</network>
 		</list>
 
 		<list name="highlightCodes" attr="code">
