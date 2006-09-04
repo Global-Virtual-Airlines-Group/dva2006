@@ -79,6 +79,11 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// Build the full name
+		StringBuilder fullName = new StringBuilder(fName.trim());
+		fullName.append(' ');
+		fullName.append(lName.trim());
 
 		Pilot p = null;
 		try {
@@ -86,9 +91,11 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the Pilot's Directory Name
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			p = dao.getByName(fName + " " + lName, SystemData.get("airline.db"));
-			if (p == null)
-				throw new SecurityException("Unknown User Name");
+			p = dao.getByName(fullName.toString(), SystemData.get("airline.db"));
+			if (p == null) {
+				log.warn("Unknown User Name - \"" + fullName + "\"");
+				throw new SecurityException("Unknown User Name - \"" + fullName + "\""); 
+			}
 
 			// Get the authenticator and try to authenticate
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
