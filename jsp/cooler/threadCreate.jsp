@@ -121,7 +121,7 @@ return true;
 <tr>
  <td class="label" valign="top">New Image URL</td>
  <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="" />
-<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td></td>
+<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td>
 </tr>
 <tr>
  <td class="label">Description</td>
