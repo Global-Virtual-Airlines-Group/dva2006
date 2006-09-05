@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> E-Mail Address Validation</title>
@@ -15,7 +16,8 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.code, 10, 'E-Mail Validation Code')) return false;
+var act = form.action;
+if ((act.indexOf('resendvalidate.do') == -1) && (!validateText(form.code, 10, 'E-Mail Validation Code'))) return false;
 if (!validateEMail(form.email, 'E-Mail Address')) return false;
 
 setSubmit();
@@ -33,27 +35,41 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="emailupd.do" linkID="0x${p.ID}" method="post" op="${empty addr ? 'save' : 'validate'}" validate="return validate(this)">
+<el:form action="validate.do" linkID="${fn:dbID(person)}" method="post" op="${empty addr ? 'save' : 'validate'}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
+<c:choose>
+<c:when test="${validationFailure}">
+<tr class="title caps">
+ <td colspan="2">E-Mail Address Validation Failure</td>
+</tr>
+<tr>
+ <td class="pri bld left" colspan="2">You have supplied an incorrect e-mail address validation code. Your 
+e-mail address threfore cannot be validated. Please type in the validation code you received within the 
+e-mail message, into the space provided below.</td>
+</tr>
+</c:when>
+<c:otherwise>
 <tr class="title caps">
  <td colspan="2">INVALID E-MAIL ADDRESS</td>
 </tr>
 <tr>
-<c:if test="${empty addr}">
+<c:if test="${empty addr || (!addr.isValid)}">
  <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
 membership here at <content:airline /> is providing a valid e-mail address. Please provide your e-mail address 
 in the space provided below.</td>
 </c:if>
-<c:if test="${!empty addr}">
+<c:if test="${!empty addr && (addr.isValid)}">
  <td colspan="2" class="pri bld left">Your e-mail address is currently marked as invalid. One condition for 
 membership here at <content:airline /> is providing a valid e-mail address. You should have received an e-mail 
 message in your mailbox at ${addr.address} with a validation code. Please provide the validation code in the 
 space below.</td>
 </c:if>
 </tr>
+</c:otherwise>
+</c:choose>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data"><el:text name="email" idx="*" size="40" max="80" className="req" value="${addr.address}" /></td>
+ <td class="data"><el:text name="email" idx="*" size="40" max="80" className="req" value="${addr.isValid ? addr.address : ''}" /></td>
 </tr>
 <c:if test="${!empty addr}">
 <tr>
@@ -75,7 +91,7 @@ space below.</td>
 <!-- Button Bar -->
 <tr class="title mid">
  <td colspan="2"><el:button type="submit" ID="SubmitButton" className="BUTTON" label="VALIDATE ADDRESS" /> 
-<el:cmdbutton ID="ResendButton" url="resendvalidate" label="RESEND VALIDATION E-MAIL" /></td>
+<el:cmdbutton ID="ResendButton" url="resendvalidate" post="true" label="RESEND VALIDATION E-MAIL" /></td>
 </tr>
 </el:table>
 </el:form>

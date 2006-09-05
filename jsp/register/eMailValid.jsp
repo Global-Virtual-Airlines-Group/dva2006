@@ -20,7 +20,7 @@
 <c:if test="${!isCancel}">
 <div class="updateHdr">E-Mail Address Validated</div>
 <br />
-Your e-mail address (${pilot.email}) has been successfuly verified. This address will be used 
+Your e-mail address (${person.email}) has been successfuly verified. This address will be used 
 for all <content:airline />-related correspondence in the future.<br />
 <c:if test="${isApplicant}">
 <br />
@@ -32,11 +32,11 @@ process here at <content:airline />.<br />
 <div class="updateHdr">E-Mail Address Validation Canceled</div>
 <br />
 <c:if test="${forceAccept}">
-E-Mail Address validation for ${pilot.name} has been overriden, and the new e-mail address of ${addr.address} 
+E-Mail Address validation for ${person.name} has been overriden, and the new e-mail address of ${addr.address} 
 will be used for all <content:airline />-related correspondence in the future.<br />
 </c:if>
 <c:if test="${!forceAccept}">
-E-Mail Address validation for ${pilot.name} has been canceled. The original e-mail address of ${pilot.email} 
+E-Mail Address validation for ${person.name} has been canceled. The original e-mail address of ${pilot.email} 
 will continue to be used for all <content:airline />-related correspondence in the future.<br />
 </c:if>
 </c:if>

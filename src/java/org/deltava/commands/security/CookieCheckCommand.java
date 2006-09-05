@@ -1,12 +1,12 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 
 import org.deltava.commands.*;
 
 /**
- * A web site command to ensure that session cookies are set correctly.
+ * A Web Site Command to ensure that session cookies are set correctly.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -14,34 +14,41 @@ import org.deltava.commands.*;
 
 public class CookieCheckCommand extends AbstractCommand {
 
-    /**
-     * Execute the command.
-     * @param ctx the Command context
-     * @throws CommandException if an unhandled error occrurs.
-     */
-    public void execute(CommandContext ctx) throws CommandException {
-        
-        // Get the comamnd result
-        CommandResult result = ctx.getResult();
-        
-        // Check if our session cookie is OK
-        boolean isOK = (ctx.getRequest().isRequestedSessionIdFromCookie() &&
-                ctx.getRequest().isRequestedSessionIdValid());
-        
-        // If we're not OK, redirect to the warning JSP
-        if (!isOK) {
-            result.setURL("/jsp/error/cookieCheck.jsp");
-            return;
-        }
-        
-        // Get the next resource to go to
-        HttpSession s = ctx.getSession();
-        String nextURL = (String) s.getAttribute("next_url");
-        s.removeAttribute("next_url");
-        
-        // Redirect to the next URL
-        result.setURL(nextURL);
-        result.setType(CommandResult.REDIRECT);
-        result.setSuccess(true);
-    }
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occrurs.
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
+
+		// Get the comamnd result
+		CommandResult result = ctx.getResult();
+
+		// Check if our session cookie is OK
+		HttpServletRequest req = ctx.getRequest();
+		boolean isOK = (req.isRequestedSessionIdFromCookie() && req.isRequestedSessionIdValid());
+
+		// If we're not OK, redirect to the warning JSP
+		if (!isOK) {
+			result.setURL("/jsp/error/cookieCheck.jsp");
+			return;
+		}
+
+		// Get the next resource to go to
+		HttpSession s = ctx.getSession();
+		String nextURL = (String) s.getAttribute("next_url");
+		s.removeAttribute("next_url");
+
+		// Check for invalid address bean
+		if (s.getAttribute("addr") != null) {
+			ctx.setAttribute("addr", s.getAttribute("addr"), REQUEST);
+			s.removeAttribute("attr");
+			result.setType(CommandResult.REQREDIRECT);
+		} else
+			result.setType(CommandResult.REDIRECT);
+
+		// Redirect to the next URL
+		result.setURL(nextURL);
+		result.setSuccess(true);
+	}
 }

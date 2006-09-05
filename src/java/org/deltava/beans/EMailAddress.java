@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
@@ -10,7 +10,15 @@ package org.deltava.beans;
 
 public interface EMailAddress {
 	
+	/**
+	 * Invalid e-mail address constant.
+	 */
 	public static final String INVALID_ADDR = "-";
+	
+	/**
+	 * E-mail address validation regular expression.
+	 */
+	public static final String VALID_ADDR_REGEXP = "^[\\w](([_\\.\\-\\+]?[\\w]+)*)@([\\w]+)(([\\.-]?[\\w]+)*)\\.([A-Za-z]{2,})$";
 
    /**
     * Returns the message recipient's name.

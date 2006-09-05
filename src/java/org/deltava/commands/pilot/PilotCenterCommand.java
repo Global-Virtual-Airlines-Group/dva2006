@@ -44,7 +44,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		boolean invalidAddr = (attrValue == null) ? false : attrValue.booleanValue();
 		if (invalidAddr) {
 			result.setType(CommandResult.REDIRECT);
-			result.setURL("emailupd.do");
+			result.setURL("validate.do");
 			result.setSuccess(true);
 			return;
 		}
