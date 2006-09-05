@@ -81,12 +81,12 @@ public class EventCommand extends AbstractCommand {
 				ctx.setAttribute("user", ctx.getUser(), REQUEST);
 
 			// Set access on the signups
-			List<SignupAccessControl> sAccessList = new ArrayList<SignupAccessControl>();
+			Map<Integer, SignupAccessControl> sAccessMap = new HashMap<Integer, SignupAccessControl>();
 			for (Iterator<Signup> i = e.getSignups().iterator(); i.hasNext(); ) {
 				Signup s = i.next();
 				SignupAccessControl sAccess = new SignupAccessControl(ctx, e, s);
 				sAccess.validate();
-				sAccessList.add(sAccess);
+				sAccessMap.put(new Integer(s.getPilotID()), sAccess);
 			}
 			
 			// Get the DAO and load the Charts
@@ -131,7 +131,7 @@ public class EventCommand extends AbstractCommand {
 			// Save event info in the request
 			ctx.setAttribute("event", e, REQUEST);
 			ctx.setAttribute("access", eAccess, REQUEST);
-			ctx.setAttribute("sAccess", sAccessList, REQUEST);
+			ctx.setAttribute("saAccess", sAccessMap, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

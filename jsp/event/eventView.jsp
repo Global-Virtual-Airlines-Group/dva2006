@@ -160,7 +160,7 @@ return true;
 <c:set var="idx" value="${idx + 1}" scope="request" />
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="request" />
-<c:set var="sa" value="${fn:get(sAccess, idx)}" scope="request" />
+<c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
  <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="${fn:hex(pilot.ID)}" label="RELEASE" /></td>
