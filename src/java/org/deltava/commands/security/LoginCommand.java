@@ -162,8 +162,9 @@ public class LoginCommand extends AbstractCommand {
 			// Determine where we are referring from, if on the site return back there
 			if (av != null) {
 				log.info("Invalidated e-mail address for " + p.getName());
+				s.setAttribute("addr", av);
 				s.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE);
-				s.setAttribute("next_url", "pilotcenter.do");
+				s.setAttribute("next_url", "validate.do");
 			} else if (!StringUtils.isEmpty(ctx.getParameter("redirectTo")))
 				s.setAttribute("next_url", ctx.getParameter("redirectTo"));
 			else
@@ -175,8 +176,8 @@ public class LoginCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 		} catch (SecurityException se) {
-			result.setURL("/jsp/login.jsp");
 			ctx.release();
+			result.setURL("/jsp/login.jsp");
 			ctx.setMessage(se.getMessage());
 			return;
 		} catch (DAOException de) {
