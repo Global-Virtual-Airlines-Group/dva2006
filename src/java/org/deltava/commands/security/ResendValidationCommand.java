@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -9,6 +9,10 @@ import org.deltava.beans.system.AddressValidation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
+
+import org.deltava.security.AddressValidationHelper;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Web Site Command to resend an e-mail validation message.
@@ -49,6 +53,15 @@ public class ResendValidationCommand extends AbstractCommand {
 			} else {
 				mctxt.addData("addrValid", av);
 				result.setURL("/jsp/register/eMailValidate.jsp");
+				
+				// If we're providing a different e-mail address, use that one
+				String email = ctx.getParameter("email");
+				if (!StringUtils.isEmpty(email) && (!email.equals(av.getAddress()))) {
+					av.setAddress(email);
+					av.setHash(AddressValidationHelper.calculateHashCode(email));
+					SetAddressValidation avwdao = new SetAddressValidation(con);
+					avwdao.write(av);
+				}
 				
 				// Create the address
 				EMailAddress addr = Mailer.makeAddress(av.getAddress(), ctx.getUser().getName()); 

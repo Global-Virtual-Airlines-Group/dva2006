@@ -35,7 +35,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 
 		// Save the plot in the request
-		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+		ctx.setAttribute("person", ctx.getUser(), REQUEST);
 
 		// Get the address
 		String addr = ctx.getParameter("email");

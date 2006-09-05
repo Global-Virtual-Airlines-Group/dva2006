@@ -30,11 +30,11 @@ public class ValidateEmailCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-
+		
 		// If no e-mail address provided, go direct to the JSP
 		String addr = ctx.getParameter("email");
 		if (addr == null) {
-			result.setURL("/jsp/register/eMailInvalid.jsp");
+			result.setURL("/jsp/register/eMailValidate.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -49,12 +49,12 @@ public class ValidateEmailCommand extends AbstractCommand {
 			av = avdao.getAddress(addr);
 			if (av == null) {
 				ctx.release();
-				ctx.setAttribute("invalidInfo", Boolean.TRUE, REQUEST);
+				ctx.setMessage("The specified e-mail address does not exist.");
 				ctx.setAttribute("addr", addr, REQUEST);
 				ctx.setAttribute("code", AddressValidationHelper.formatHash(ctx.getParameter("code")), REQUEST);
 				
 				// Forward to the JSP
-				result.setURL("/jsp/register/eMailInvalid.jsp");
+				result.setURL("/jsp/register/eMailValidate.jsp");
 				result.setSuccess(true);
 				return;
 			}
@@ -99,7 +99,8 @@ public class ValidateEmailCommand extends AbstractCommand {
 		String code = AddressValidationHelper.formatHash(ctx.getParameter("code"));
 		if (!av.getHash().equals(code)) {
 			ctx.setAttribute("person", p, REQUEST);
-			result.setURL("/jsp/register/eMailInvalid.jsp");
+			ctx.setAttribute("validationFailure", Boolean.TRUE, REQUEST);
+			result.setURL("/jsp/register/eMailValidate.jsp");
 			result.setSuccess(true);
 			return;
 		}

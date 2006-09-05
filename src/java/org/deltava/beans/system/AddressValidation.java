@@ -1,7 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import org.deltava.beans.DatabaseBean;
+import org.deltava.beans.*;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A bean to store E-Mail Address validation data.
@@ -43,6 +45,14 @@ public class AddressValidation extends DatabaseBean {
     */
    public String getHash() {
       return _hash;
+   }
+   
+   /**
+    * Returns wether the address is valid or not.
+    * @return TRUE if the address is valid, otherwise FALSE
+    */
+   public boolean getIsValid() {
+	   return !StringUtils.isEmpty(_addr) && !EMailAddress.INVALID_ADDR.equals(_addr);
    }
    
    /**
