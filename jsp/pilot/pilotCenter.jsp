@@ -58,8 +58,8 @@ return true;
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" linkID="0x${pilot.ID}" op="edit">Edit My Profile</el:cmd></td>
- <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}. Your
- pilot code is <span class="pri bld">${pilot.pilotCode}</span>.<br />
+ <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
+<c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:int value="${pilot.loginCount}" />
  times.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
