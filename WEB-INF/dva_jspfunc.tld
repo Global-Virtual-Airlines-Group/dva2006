@@ -347,4 +347,11 @@
 		<function-class>org.deltava.taglib.functions.NavDataFunctions</function-class>
 		<function-signature>boolean isVOR(org.deltava.beans.navdata.NavigationDataBean)</function-signature>
 	</function>
+	
+	<!-- Check if an e-mail address is valid -->
+	<function>
+		<name>isEMailValid</name>
+		<function-class>org.deltava.taglib.functions.PersonFunctions</function-class>
+		<function-signature>boolean isEMailValid(java.lang.String)</function-signature>
+	</function>
 </taglib>
