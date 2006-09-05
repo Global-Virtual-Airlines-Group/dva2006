@@ -403,6 +403,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Update e-mail address
 			if (isEMailUpdate && ctx.isUserInRole("HR")) {
 				p.setEmail(newEMail);
+				SetAddressValidation avwdao = new SetAddressValidation(con);
+				avwdao.delete(p.getID());
 			} else if (isEMailUpdate) {
 				AddressValidation av = new AddressValidation(p.getID(), newEMail);
 				AddressValidationHelper.calculateHashCode(av);
