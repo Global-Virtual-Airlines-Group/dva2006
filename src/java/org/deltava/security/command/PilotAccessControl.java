@@ -28,6 +28,7 @@ public final class PilotAccessControl extends AccessControl {
 	private boolean _canChangeSignature;
 	private boolean _canChangeStaffProfile;
 	private boolean _canChangeMailProfile;
+	private boolean _canViewExams;
 	private boolean _canTransfer;
 	private boolean _canSuspend;
 	private boolean _canActivate;
@@ -65,6 +66,7 @@ public final class PilotAccessControl extends AccessControl {
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewEmail = (_p.getEmailAccess() == Person.HIDE_EMAIL) ? (_canEdit) : true;
 		_canPromote = (isPIREP || isHR);
+		_canViewExams = _isOurs || _canPromote || _ctx.isUserInRole("Instructor");
 		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
 		_canChangeStatus = isHR;
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
@@ -114,6 +116,14 @@ public final class PilotAccessControl extends AccessControl {
 	 */
 	public boolean getCanViewEmail() {
 		return _canViewEmail;
+	}
+	
+	/**
+	 * Returns if the Pilot's examination history can be viewed.
+	 * @return TRUE if the exams can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewExams() {
+		return _canViewExams;
 	}
 
 	/**

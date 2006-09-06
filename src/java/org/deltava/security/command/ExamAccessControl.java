@@ -61,7 +61,7 @@ public class ExamAccessControl extends AccessControl {
         }
 
         // Set access
-        _canRead = isOurs || isExam || isHR;
+        _canRead = isOurs || isExam || isHR || _ctx.isUserInRole("Instructor");
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && !isOurs;
         _canDelete = _ctx.isUserInRole("Admin");

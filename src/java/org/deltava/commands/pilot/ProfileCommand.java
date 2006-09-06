@@ -711,7 +711,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			access.validate();
 
 			// Check if we can view examinations
-			if (access.getCanPromote() || access.getIsOurs()) {
+			if (access.getCanViewExams()) {
 				GetExam exdao = new GetExam(con);
 				ctx.setAttribute("exams", exdao.getExams(p.getID()), REQUEST);
 			}
