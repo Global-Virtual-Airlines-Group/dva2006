@@ -47,7 +47,7 @@ public class SignupAccessControl extends AccessControl {
       
       // Calculate state variables
       boolean isMine = (_su.getPilotID() == _ctx.getUser().getID());
-      boolean isEventOK = (_ev.getStatus() == Event.ACTIVE) || (_ev.getStatus() == Event.CLOSED);
+      boolean isEventOK = (_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED);
       
       // Set access rights
       _canRelease = (isMine || _ctx.isUserInRole("Event")) && isEventOK; 
