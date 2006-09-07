@@ -27,9 +27,9 @@ if (!checkSubmit()) return false;
 if (!validateText(form.title, 10, 'Video Title')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
 if ((form.file) && (form.file.value.length > 0)) {
-	if (!validateFile(form.file, 'avi,wmv,divx', 'Uploaded Video')) return false;
+	if (!validateFile(form.file, 'avi,wmv,divx,mp3', 'Uploaded Video')) return false;
 } else if ((form.fileName) && (form.fileName.value.length > 0)) {
-	if (!validateFile(form.file, 'avi,wmv,divx', 'Local Filesystem Video')) return false;
+	if (!validateFile(form.file, 'avi,wmv,divx,mp3', 'Local Filesystem Video')) return false;
 }
 
 setSubmit();

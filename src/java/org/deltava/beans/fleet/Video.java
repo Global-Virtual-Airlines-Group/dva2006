@@ -15,8 +15,9 @@ public class Video extends FileEntry {
 	public static final int WMV = 0;
 	public static final int AVI = 1;
 	public static final int DIVX = 2;
+	public static final int MP3 = 3;
 	
-	public static final String[] TYPES = {"WMV", "AVI", "DIVX" };
+	public static final String[] TYPES = {"WMV", "AVI", "DIVX", "MP3" };
 	
 	private int _type;
 
