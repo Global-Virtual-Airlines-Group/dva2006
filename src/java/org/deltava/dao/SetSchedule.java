@@ -76,29 +76,31 @@ public class SetSchedule extends DAO {
 	/**
 	 * Updates an existing Airline in the Schedule.
 	 * @param al the Airline bean
+	 * @param oldCode the old airline code
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(Airline al) throws DAOException {
+	public void update(Airline al, String oldCode) throws DAOException {
 		try {
 			startTransaction();
 			
-			// Write the airline data
-			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=? WHERE (CODE=?)");
-			_ps.setString(1, al.getName());
-			_ps.setString(2, al.getColor());
-			_ps.setBoolean(3, al.getActive());
-			_ps.setString(4, al.getCode());
-			executeUpdate(1);
-			
 			// Clear the alternate code data
 			prepareStatementWithoutLimits("DELETE FROM common.AIRLINE_CODES WHERE (CODE=?)");
-			_ps.setString(1, al.getCode());
+			_ps.setString(1, oldCode);
 			executeUpdate(0);
 			
 			// Clear the webapp data
 			prepareStatementWithoutLimits("DELETE FROM common.APP_AIRLINES WHERE (CODE=?)");
-			_ps.setString(1, al.getCode());
+			_ps.setString(1, oldCode);
 			executeUpdate(0);
+			
+			// Write the airline data
+			prepareStatement("UPDATE common.AIRLINES SET NAME=?, COLOR=?, ACTIVE=?, CODE=? WHERE (CODE=?)");
+			_ps.setString(1, al.getName());
+			_ps.setString(2, al.getColor());
+			_ps.setBoolean(3, al.getActive());
+			_ps.setString(4, al.getCode());
+			_ps.setString(5, oldCode);
+			executeUpdate(1);
 			
 			// Write the alternate codes
 			prepareStatement("INSERT INTO common.AIRLINE_CODES (CODE, ALTCODE) VALUES (?, ?)");
