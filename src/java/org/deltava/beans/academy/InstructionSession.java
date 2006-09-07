@@ -161,7 +161,9 @@ public class InstructionSession extends DatabaseBean implements Comparable, View
 	 * @see InstructionSession#setPilotID(int)
 	 */
 	public void setInstructorID(int id) {
-		validateID(_instructorID, id);
+		if (id < 1)
+            throw new IllegalArgumentException("Instructor ID cannot be zero or negative");
+		
 		_instructorID = id;
 	}
 	
