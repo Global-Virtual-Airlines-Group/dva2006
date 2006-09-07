@@ -67,6 +67,7 @@ public class TrainingVideo extends Video {
 	 */
 	public void setCertifications(Collection<String> certNames) {
 		_certs.clear();
-		_certs.addAll(certNames);
+		if (certNames != null)
+			_certs.addAll(certNames);
 	}
 }
