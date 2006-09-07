@@ -50,7 +50,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 			if (av == null) {
 				ctx.release();
 				ctx.setMessage("The specified e-mail address does not exist.");
-				ctx.setAttribute("addr", addr, REQUEST);
+				ctx.setAttribute("addr", av, REQUEST);
 				ctx.setAttribute("code", AddressValidationHelper.formatHash(ctx.getParameter("code")), REQUEST);
 				
 				// Forward to the JSP
@@ -99,6 +99,7 @@ public class ValidateEmailCommand extends AbstractCommand {
 		String code = AddressValidationHelper.formatHash(ctx.getParameter("code"));
 		if (!av.getHash().equals(code)) {
 			ctx.setAttribute("person", p, REQUEST);
+			ctx.setAttribute("addr", av, REQUEST);
 			ctx.setAttribute("validationFailure", Boolean.TRUE, REQUEST);
 			result.setURL("/jsp/register/eMailValidate.jsp");
 			result.setSuccess(true);
