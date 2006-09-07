@@ -43,12 +43,14 @@ public class AirlineCommand extends AbstractFormCommand {
 				a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Invalid Airline - " + aCode);
+				
+				a.setCode(ctx.getParameter("code"));
+				a.setName(ctx.getParameter("name"));
 			} else {
-				a = new Airline(ctx.getParameter("code")); 
+				a = new Airline(ctx.getParameter("code"), ctx.getParameter("name")); 
 			}
 			
 			// Update the airline from the request
-			a.setName(ctx.getParameter("name"));
 			a.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			a.setApps(ctx.getParameters("airlines"));
 			a.setColor(ctx.getParameter("color"));
@@ -60,7 +62,7 @@ public class AirlineCommand extends AbstractFormCommand {
 				wdao.create(a);
 				ctx.setAttribute("airlineCreate", Boolean.TRUE, REQUEST);
 			} else {
-				wdao.update(a);
+				wdao.update(a, aCode);
 				ctx.setAttribute("airlineUpdate", Boolean.TRUE, REQUEST);
 			}
 			

@@ -46,7 +46,7 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	 */
 	public Airline(String code, String name) {
 		super();
-		_code = code.trim().toUpperCase();
+		setCode(code);
 		_name = name.trim();
 		_codes.add(_code);
 	}
@@ -147,6 +147,16 @@ public class Airline implements java.io.Serializable, ComboAlias, Comparable, Ca
 	 */
 	public void addCode(String code) {
 		_codes.add(code.trim().toUpperCase());
+	}
+	
+	/**
+	 * Updates the Airline's primary code.
+	 * @param code the airline code
+	 * @throws NullPointerException if code is null
+	 * @see Airline#getCode()
+	 */
+	public void setCode(String code) {
+		_code = code.trim().toUpperCase();
 	}
 	
 	/**
