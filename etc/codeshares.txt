@@ -12,9 +12,9 @@ SAA,7780,729,deltadirects.csv,South African Airways
 CZ,7830,7839,deltadirects.csv,China Southern
 AT,7840,7849,deltadirects.csv,Royal Air Maroc
 KAL,7850,7939,deltadirects.csv,Korean Air
-MX,7940,7999,deltadirects.csv,AeroMexico
-MX,8000,8149,deltadirects.csv,Aeromexico
-AI,8150,8287,deltadirects.csv,Alitalia
+AM,7940,7999,deltadirects.csv,AeroMexico
+AM,8000,8149,deltadirects.csv,Aeromexico
+AZ,8150,8287,deltadirects.csv,Alitalia
 IGNORE,8288,8659,deltadirects.csv,Air France
 OK,8710,8769,deltadirects.csv,Czech Airlines
 AJ,8840,8899,deltadirects.csv,Air Jamaica
@@ -26,12 +26,12 @@ AS,8992,9124,deltadirects.csv,Alaska Airlines
 ; Air France codeshares
 CZ,104,105,airfrancedirects.csv,China Southern
 CES,114,115,airfrancedirects.csv,China Eastern
-KAL,261,262,airfrancedirects.csv,Korean Air Lines
+KE,261,262,airfrancedirects.csv,Korean Air Lines
 JAL,271,271,airfrancedirects.csv,Japan Air Lines
 JAL,280,280,airfrancedirects.csv,Japan Air Lines
 JAL,295,296,airfrancedirects.csv,Japan Air Lines
-MX,432,432,airfrancedirects.csv,AeroMexico
-MX,437,437,airfrancedirects.csv,AeroMexico
+AM,432,432,airfrancedirects.csv,AeroMexico
+AM,437,437,airfrancedirects.csv,AeroMexico
 IGNORE,563,564,airfrancedirects.csv,Middle East Airlines (IGNORE)
 IGNORE,568,569,airfrancedirects.csv,Middle East Airlines (IGNORE)
 IGNORE,867,867,airfrancedirects.csv,Delta Virtual Airlines
@@ -81,11 +81,11 @@ OK,6300,6331,airfrancedirects.csv,Czech Air Lines
 JAL,8014,8024,airfrancedirects.csv,Japan Air Lines
 IGNORE,8028,8054,airfrancedirects.csv,TAM (IGNORE)
 IGNORE,8084,8085,airfrancedirects.csv,Air Tahiti Nui (IGNORE)
-QFA,8087,8098,airfrancedirects.csv,Quantas
-MX,8100,8149,airfrancedirects.csv,AeroMexico
+QF,8087,8098,airfrancedirects.csv,Quantas
+AM,8100,8149,airfrancedirects.csv,AeroMexico
 IGNORE,8185,8185,airfrancedirects.csv,Delta Virtual Airlines
 IGNORE,8192,8199,airfrancedirects.csv,TACA (IGNORE)
 KLM,8223,8449,airfrancedirects.csv,KLM Royal Dutch Airlines
 IGNORE,8450,9197,airfrancedirects.csv,Delta Virtual Airlines
 CO,9300,9497,airfrancedirects.csv,Continental
-AI,9600,9999,airfrancedirects.csv,Alitalia
+AZ,9600,9999,airfrancedirects.csv,Alitalia
