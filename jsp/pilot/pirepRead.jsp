@@ -234,7 +234,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </c:if>
 <c:if test="${access.canReject}">
  <el:cmdbutton url="dispose" linkID="0x${pirep.ID}" op="reject" post="true" label="REJECT FLIGHT" />
-<c:if test="${fn:isACARS(pirep) && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR">
+<c:if test="${fn:isACARS(pirep) && (!fn:isCheckFlight(pirep))}"><content:filter roles="HR,PIREP">
  <el:cmdbutton url="crflag" linkID="0x${pirep.ID}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
@@ -261,7 +261,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <map:point var="mapC" point="${mapCenter}" />
 <c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
+<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" />
 </c:if>
 <c:if test="${empty mapRoute && fn:isACARS(pirep)}">
 var gRoute;
@@ -272,7 +272,7 @@ getACARSData();
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.75" />
+<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.65" />
 </c:if>
 // Build the map
 var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
