@@ -987,7 +987,7 @@
 	<command id="crflag">
 		<name>Naked Check Ride Flag</name>
 		<class>org.deltava.commands.testing.CheckRideFlagCommand</class>
-		<roles>HR</roles>
+		<roles>HR,PIREP</roles>
 	</command>
 
 	<command id="exam">

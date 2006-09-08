@@ -36,11 +36,8 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			FlightReport fr = frdao.get(ctx.getID());
 			if (fr == null)
 				throw notFoundException("Invalid Flight Report - " + ctx.getID());
-			else if (!(fr instanceof ACARSFlightReport)) {
-				CommandException ce = new CommandException("Flight Report does not use ACARS");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			else if (!(fr instanceof ACARSFlightReport))
+				throw notFoundException("Flight Report does not use ACARS");
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
