@@ -44,6 +44,10 @@ return true;
  <td class="data"><el:text name="name" className="pri bld req" idx="*" size="32" max="32" value="${cert.name}" /></td>
 </tr>
 <tr>
+ <td class="label">Code</td>
+ <td class="data"><el:text name="code" className="bld req" idx="*" size="4" max="8" value="${cert.code}" /></td>
+</tr>
+<tr>
  <td class="label">Stage</td>
  <td class="data"><el:text className="bld req" name="stage" idx="*" size="1" max="1" value="${cert.stage}" /></td>
 </tr>
