@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -195,7 +195,8 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 */
 	public void setExams(Collection<String> exams) {
 		_examNames.clear();
-		_examNames.addAll(exams);
+		if (exams != null)
+			_examNames.addAll(exams);
 	}
 	
 	/**
