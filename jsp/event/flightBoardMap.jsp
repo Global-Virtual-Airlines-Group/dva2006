@@ -77,7 +77,7 @@ return true;
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td width="40%" class="left">ONLINE PILOTS - ${netInfo.name} - VALID AS OF 
- <fmt:date date="${netInfo.validDate}" /></td>
+ <fmt:date date="${netInfo.validDate}" t="HH:mm" /></td>
  <td width="25%" class="mid"><el:cmd url="flightboard" linkID="${network}">FLIGHT BOARD</el:cmd></td>
  <td class="right">SELECT NETWORK <el:combo name="networkName" size="1" idx="1" onChange="void setNetwork(this)" options="${networks}" value="${network}" /></td>
 </tr>
@@ -88,13 +88,16 @@ return true;
  <map:legend color="white" className="small" legend="${netInfo.name} Pilot" /></td>
 </tr>
 <tr>
- <td colspan="3"><map:div ID="googleMap" x="840" y="630" /></td>
+ <td colspan="3"><map:div ID="googleMap" x="100%" y="600" /></td>
 </tr>
+<c:if test="${netInfo.cached}">
 <tr class="title mid caps">
- <td colspan="3">&nbsp;<c:if test="${netInfo.cached}">USING CACHED DATA</c:if></td>
+ <td colspan="3">USING CACHED DATA</td>
 </tr>
+</c:if>
 </el:table>
 </el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
@@ -106,7 +109,6 @@ map.addControl(new GMapTypeControl());
 
 // Mark each pilot's position in hashmap
 var positions = new Array();
-
 <c:forEach var="pilot" items="${netInfo.pilots}">
 <map:marker var="gPosition" point="${pilot}" />
 GEvent.addListener(gPosition, 'click', function() { showRoute('${pilot.callsign}'); });
@@ -119,6 +121,9 @@ var selectedRoute;
 
 // Center the map and add positions
 map.setCenter(new GLatLng(38.88, -93.25), 4);
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+map.setMapType(G_SATELLITE_TYPE);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>
