@@ -35,6 +35,7 @@ public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 		GetAcademyCertifications crdao = new GetAcademyCertifications(c);
 		_allCerts = crdao.getAll();
 		_academyHistory = new AcademyHistoryHelper(cdao.getByPilot(p.getID()), _allCerts);
+		_academyHistory.setAllowInactive(p.isInRole("Instructor"));
 		
 		// Get the Pilot's examinations and check rides
 		GetExam exdao = new GetExam(c);
