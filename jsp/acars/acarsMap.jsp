@@ -161,6 +161,7 @@ map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 map.enableDoubleClickZoom();
+map.enableContinuousZoom();
 
 // Placeholder for route
 var routeData;
