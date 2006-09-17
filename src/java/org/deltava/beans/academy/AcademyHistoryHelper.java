@@ -20,6 +20,7 @@ public class AcademyHistoryHelper {
 	private static final Logger log = Logger.getLogger(AcademyHistoryHelper.class);
 	
 	private boolean _debugLog;
+	private boolean _allowInactive;
 	
 	private Map<Object, Certification> _certs = new HashMap<Object, Certification>();
 	private Map<Object, Course> _courses = new HashMap<Object, Course>();
@@ -47,6 +48,14 @@ public class AcademyHistoryHelper {
 	 */
 	public void setDebug(boolean isDebug) {
 		_debugLog = isDebug;
+	}
+	
+	/**
+	 * Toggles wether the user can enroll in Inactive Courses.
+	 * @param doInactive TRUE if the usre can enroll in Inactive Courses, otherwise FALSE
+	 */
+	public void setAllowInactive(boolean doInactive) {
+		_allowInactive = doInactive;
 	}
 	
 	/**
@@ -229,8 +238,8 @@ public class AcademyHistoryHelper {
 	 */
 	public boolean canTake(Certification c) {
 		
-		// If it's inactive, no
-		if (!c.getActive()) {
+		// If it's inactive, and we're not an instructor no
+		if (!c.getActive() && !_allowInactive) {
 			log(c.getName() + " inactive");
 			return false;
 		}
