@@ -13,7 +13,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp("data/satnet-data.txt");
-		SystemData.init("org.deltava.util.system.TagTestSystemDataLoader");
+		SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
 		SystemData.add("airports", new HashMap());
 		_dao = new GetServInfo(_con);
 	}

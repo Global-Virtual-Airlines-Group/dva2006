@@ -12,7 +12,7 @@ public class TestFTPDownload extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
-		SystemData.init("org.deltava.util.system.XMLSystemDataLoader");
+		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 	}
 
 	public void testDownload() throws Exception {

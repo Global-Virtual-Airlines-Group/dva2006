@@ -19,7 +19,7 @@ public class TestCoolerChannelAccessControl extends AccessControlTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		SystemData.init(MockSystemDataLoader.class.getName());
+		SystemData.init(MockSystemDataLoader.class.getName(), true);
 		_c = new Channel("Name");
 		_c.addAirline("DVA");
 		_ac = new CoolerChannelAccessControl(_ctxt, _c);
