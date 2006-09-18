@@ -2,9 +2,7 @@
 package org.deltava.commands.event;
 
 import java.util.*;
-import java.net.*;
 import java.sql.Connection;
-import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -15,11 +13,12 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 
-import org.deltava.util.http.HttpTimeoutHandler;
+import org.deltava.util.ThreadUtils;
+import org.deltava.util.servinfo.ServInfoLoader;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Command to display the "who is online" page.
+ * A Web Site Command to display the "who is online" page.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -30,17 +29,6 @@ public class FlightBoardCommand extends AbstractCommand {
 	private static final Logger log = Logger.getLogger(FlightBoardCommand.class);
 
 	/**
-	 * Helper method to open a connection to a particular URL.
-	 */
-	private HttpURLConnection getURL(String dataURL) throws IOException {
-		URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
-		log.debug("Loading data from " + url.toString());
-		HttpURLConnection urlCon = (HttpURLConnection) url.openConnection();
-		urlCon.setReadTimeout(5000);
-		return urlCon;
-	}
-
-	/**
 	 * Executes the command.
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
@@ -48,47 +36,57 @@ public class FlightBoardCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get the network name and wether we display a map
-		String networkName = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
+		String network = (String) ctx.getCmdParameter(ID, SystemData.get("online.default_network"));
 		boolean showMap = "map".equals(ctx.getCmdParameter(OPERATION, "false"));
+		
+		// Get the network info from the cache
+		NetworkInfo info = GetServInfo.getCachedInfo(network);
+		ServInfoLoader loader = new ServInfoLoader(SystemData.get("online." + network.toLowerCase() + ".status_url"), network);
 
-		// Get VATSIM/IVAO/ACARS members
-		try {
-			NetworkInfo info = null;
-			Connection con = ctx.getConnection();
-
-			// Load via HTTP if not ACARS
-			if (networkName.equals("ACARS")) {
-				ServInfoProvider acarsInfo = (ServInfoProvider) SystemData.getObject(SystemData.ACARS_POOL);
-				info = acarsInfo.getNetworkInfo();
-			} else {
-				// Connect to info URL
-				HttpURLConnection urlcon = getURL(SystemData.get("online." + networkName.toLowerCase() + ".status_url"));
-
-				// Get network status
-				GetServInfo sdao = new GetServInfo(urlcon);
-				sdao.setUseCache(true);
-				NetworkStatus status = sdao.getStatus(networkName);
-				urlcon.disconnect();
-
-				// Get network status
-				NetworkDataURL nd = status.getDataURL(true);
-				log.info("Loading " + networkName + " data from " + nd.getURL());
-				urlcon = getURL(nd.getURL());
-				GetServInfo idao = new GetServInfo(urlcon);
-				idao.setBufferSize(40960);
-				idao.setUseCache(true);
-				info = idao.getInfo(networkName);
-				urlcon.disconnect();
-				if (!info.getCached()) {
-					nd.logUsage(true);
-					log.info("ServInfo load complete - " + nd);
-				}
-
-				// Get the DAO and execute, and highlight our pilots
-				GetPilotOnline dao = new GetPilotOnline(con);
-				Map<String, Integer> idMap = dao.getIDs(networkName);
-				info.setPilotIDs(idMap);
+		// Check if we're already loading
+		if (info == null) {
+			log.info("Loading " + network + " data in main thread");
+			Thread t = null;
+			synchronized (ServInfoLoader.class) {
+				t = new Thread(loader, network + " ServInfo Loader");
+				t.setDaemon(true);
+				t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
+				ServInfoLoader.addLoader(network, t);
 			}
+			
+			// Wait for the thread to exit
+			int totalTime = 0;
+			while (ThreadUtils.isAlive(t) && (totalTime < 10000)) {
+				totalTime += 250;
+				ThreadUtils.sleep(250);
+			}
+			
+			// If the thread hasn't died, then kill it
+			if (totalTime >= 10000) {
+				ThreadUtils.kill(t, 1000);
+				info = new NetworkInfo(network);
+			} else
+				info = loader.getInfo();
+		} else if (info.getExpired()) {
+			synchronized (ServInfoLoader.class) {
+				if (!ServInfoLoader.isLoading(network)) {
+					log.info("Spawning new ServInfo load thread");
+					Thread t = new Thread(loader, network + " ServInfo Loader");
+					t.setDaemon(true);
+					t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
+					ServInfoLoader.addLoader(network, t);
+				} else
+					log.warn("Already loading " + network + " information");
+			}
+		}
+
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and execute, and highlight our pilots
+			GetPilotOnline dao = new GetPilotOnline(con);
+			Map<String, Integer> idMap = dao.getIDs(network);
+			info.setPilotIDs(idMap);
 
 			// Get Online Members and load DAFIF data only if we are uncached
 			if (!info.getCached()) {
@@ -137,6 +135,8 @@ public class FlightBoardCommand extends AbstractCommand {
 
 			// Save the network information in the request
 			ctx.setAttribute("netInfo", info, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
 		} catch (Exception e) {
 			throw new CommandException(e);
 		} finally {
@@ -144,9 +144,8 @@ public class FlightBoardCommand extends AbstractCommand {
 		}
 
 		// Load the network names and save in the request
-		List networkNames = (List) SystemData.getObject("online.networks");
-		ctx.setAttribute("networks", networkNames, REQUEST);
-		ctx.setAttribute("network", networkName, REQUEST);
+		ctx.setAttribute("networks", SystemData.getObject("online.networks"), REQUEST);
+		ctx.setAttribute("network", network, REQUEST);
 
 		// Forward to the display JSP
 		CommandResult result = ctx.getResult();

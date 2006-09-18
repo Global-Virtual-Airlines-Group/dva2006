@@ -198,7 +198,7 @@ public class GetServInfo extends DAO {
 		}
 		
 		try {
-			BufferedReader br = getReader();
+			LineNumberReader br = getReader();
 			info = new NetworkInfo(networkName);
 
 			// Initialize date formatter
@@ -267,9 +267,10 @@ public class GetServInfo extends DAO {
 										c.setFacilityType(Integer.parseInt(si.get(SITokens.FACILITY)));
 										info.add(c);
 									} catch (Exception e) {
-										log.warn("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
-										log.warn(iData);
+										log.info("Error parsing data for " + si.get(SITokens.CALLSIGN) + " - " + e.getMessage());
+										log.info(iData);
 									}
+									
 									break;
 
 								default:
