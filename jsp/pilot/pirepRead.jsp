@@ -279,6 +279,9 @@ var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
+map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
 
 <c:if test="${!empty mapRoute}">
 // Add the route and markers
