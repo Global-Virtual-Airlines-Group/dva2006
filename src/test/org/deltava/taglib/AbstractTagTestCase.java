@@ -50,7 +50,7 @@ public class AbstractTagTestCase extends TestCase {
    protected void setUp() throws Exception {
       super.setUp();
 
-      SystemData.init("org.deltava.util.system.TagTestSystemDataLoader");
+      SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
 
       _rootReq = new HttpServletRequestSimulatorHelper();
       _req = new CustomRequestWrapper(_rootReq);

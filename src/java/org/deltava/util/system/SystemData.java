@@ -1,24 +1,24 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
-import java.io.Serializable;
+import java.util.concurrent.locks.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 
 /**
- * A singleton object containing all of the configuration data for the application.
+ * A singleton object containing all of the configuration data for the application. This object is internally synchronized
+ * to allow thread-safe read and write access to the configuration data.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class SystemData implements Serializable {
+public final class SystemData implements Serializable {
 
 	private static final Logger log = Logger.getLogger(SystemData.class);
 
@@ -33,7 +33,11 @@ public class SystemData implements Serializable {
 	static final String LOADER_NAME = "$LOADERCLASS$";
 
 	private static SystemDataLoader _loader;
-	private static Map<String, Object> _properties = new HashMap<String, Object>();
+	private static final Map<String, Object> _properties = new HashMap<String, Object>();
+	
+    private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+    private static final Lock r = rwl.readLock();
+    private static final Lock w = rwl.writeLock();
 
 	// This is a singleton
 	private SystemData() {
@@ -43,8 +47,9 @@ public class SystemData implements Serializable {
 	/**
 	 * Initializes SystemData object.
 	 * @param loaderClassName the data loader class name
+	 * @param clearData TRUE if existing data should be cleared, otherwise FALSE
 	 */
-	public final static synchronized void init(String loaderClassName) {
+	public static void init(String loaderClassName, boolean clearData) {
 
 		// Get the data loader class
 		try {
@@ -57,33 +62,29 @@ public class SystemData implements Serializable {
 		}
 		
 		// Reset the properties
-		if (_properties != null) {
-		   _properties.clear();
-		   _properties = null;
-		}
+		w.lock();
+		if (clearData)
+			_properties.clear();
 
 		try {
-			_properties = _loader.load();
+			_properties.putAll(_loader.load());
 		} catch (IOException ie) {
 			Throwable ce = ie.getCause();
-			if (ce == null) {
+			if (ce == null)
 				log.error("Error loading System Data - " + ie.getMessage());
-			} else {
+			else
 				log.error("Error loading System Data - " + ce.getMessage());
-			}
-
-			_properties = new HashMap<String, Object>();
+		} finally {
+			_properties.put(SystemData.LOADER_NAME, _loader.getClass().getName());
+			w.unlock();
 		}
-
-		// Save the loader name and return
-		_properties.put(SystemData.LOADER_NAME, _loader.getClass().getName());
 	}
 
 	/**
 	 * Initializes the System data with the default loader.
 	 */
-	public final static synchronized void init() {
-		init("DEFAULT");
+	public static void init() {
+		init("DEFAULT", true);
 	}
 
 	/**
@@ -92,7 +93,12 @@ public class SystemData implements Serializable {
 	 * @return the property
 	 */
 	public static Object getObject(String propertyName) {
-		return _properties.get(propertyName);
+		r.lock();
+		try {
+			return _properties.get(propertyName);
+		} finally {
+			r.unlock();
+		}
 	}
 
 	/**
@@ -161,23 +167,14 @@ public class SystemData implements Serializable {
 	 * Adds a property.
 	 * @param pName the property name
 	 * @param value the property value
-	 * @see SystemData#addAll(Map)
 	 */
-	public static synchronized void add(String pName, Object value) {
+	public static void add(String pName, Object value) {
 		log.debug("Adding value " + pName);
-		_properties.put(pName, value);
-	}
-
-	/**
-	 * Adds a number of properties.
-	 * @param data a Map of property names/values
-	 * @see SystemData#add(String, Object)
-	 */
-	public static synchronized void addAll(Map data) {
-		for (Iterator i = data.keySet().iterator(); i.hasNext();) {
-			String pName = (String) i.next();
-			log.debug("Adding value " + pName);
-			_properties.put(pName, data.get(pName));
+		w.lock();
+		try {
+			_properties.put(pName, value);
+		} finally {
+			w.unlock();
 		}
 	}
 
@@ -195,7 +192,7 @@ public class SystemData implements Serializable {
 		if (!_properties.containsKey("airports"))
 			throw new IllegalStateException("Airports not Loaded");
 
-		Map airports = (Map) _properties.get("airports");
+		Map airports = (Map) getObject("airports");
 		return (Airport) airports.get(airportCode.toUpperCase());
 	}
 	
@@ -206,7 +203,7 @@ public class SystemData implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Map<String, Airport> getAirports() {
-		return (Map) _properties.get("airports");
+		return (Map) getObject("airports");
 	}
 	
 	/**
@@ -224,7 +221,7 @@ public class SystemData implements Serializable {
 			throw new IllegalStateException("Airlines not Loaded");
 
 		// Search based on primary code
-		Map airlines = (Map) _properties.get("airlines");
+		Map airlines = (Map) getObject("airlines");
 		Airline a = (Airline) airlines.get(airlineCode.trim().toUpperCase());
 		if (a != null)
 			return a;
@@ -244,8 +241,8 @@ public class SystemData implements Serializable {
 	 * @return a Collection of Airline beans
 	 */
 	public static Map<String, Airline> getAirlines() {
-		String code = (String) _properties.get("airline.code");
-		Map airlines = (Map) _properties.get("airlines");
+		String code = (String) getObject("airline.code");
+		Map airlines = (Map) getObject("airlines");
 		Map<String, Airline> results = new LinkedHashMap<String, Airline>();
 		for (Iterator i = airlines.values().iterator(); i.hasNext(); ) {
 			Airline a = (Airline) i.next();
@@ -269,7 +266,7 @@ public class SystemData implements Serializable {
 	   if (!_properties.containsKey("apps"))
 			throw new IllegalStateException("Applications not Loaded");
 	   
-	   Map apps = (Map) _properties.get("apps");
+	   Map apps = (Map) getObject("apps");
 	   return (AirlineInformation) apps.get(airlineCode.trim().toUpperCase());
 	}
 }

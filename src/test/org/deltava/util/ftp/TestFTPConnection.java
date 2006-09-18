@@ -15,7 +15,7 @@ public class TestFTPConnection extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		PropertyConfigurator.configure("data/log4j.test.properties");
-		SystemData.init("org.deltava.util.system.XMLSystemDataLoader");
+		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 		assertNotNull(SystemData.get("schedule.innovata.download.host"));
 		assertNotNull(SystemData.get("schedule.innovata.download.user"));
 		assertNotNull(SystemData.get("schedule.innovata.download.pwd"));
