@@ -255,31 +255,4 @@ public class GetSystemData extends DAO {
 	   // Return as a map
 	   return CollectionUtils.createMap(results, "name");
 	}
-	
-	/**
-	 * Retrieves referrer counts for the home page.
-	 * @return a Map of referers and hit counts, keyed by referrer domain
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map<String, Long> getReferers() throws DAOException {
-		try {
-			prepareStatement("SELECT HOSTNAME, COUNT(HITS) AS C FROM SYS_REFERERS GROUP BY "
-					+ "HOSTNAME ORDER BY C DESC");
-			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			
-			// Iterate through the results
-			Map<String, Long> results = new LinkedHashMap<String, Long>();
-			while (rs.next())
-				results.put(rs.getString(1), new Long(rs.getLong(2)));
-			
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
 }
