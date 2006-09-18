@@ -27,14 +27,14 @@ public class TestInnovataGlobalLoad extends TestCase {
 	private Collection<String> _aCodes = new HashSet<String>();
 	private Collection<Airline> _airlines;
 
-	private static final List<String> CODES = Arrays.asList(new String[] { "AF", "DL", "JM", "AZ", "KL" });
+	private static final List<String> CODES = Arrays.asList(new String[] { "AF", "DL", "JM", "KL", "AM" }); // BD
 
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		log = Logger.getLogger(TestInnovataGlobalLoad.class);
-		SystemData.init("org.deltava.util.system.XMLSystemDataLoader");
+		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 		SystemData.add("jdbc.url", "jdbc:mysql://localhost/common");
 		SystemData.add("jdbc.user", "root");
 		SystemData.add("jdbc.pwd", "14072");
@@ -108,10 +108,9 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 			// Check the airline
 			String code = entries.get(0).toUpperCase();
-			boolean isMainLine = isOK && CODES.contains(code);
+			boolean isMainLine = CODES.contains(code);
 			boolean isCodeShare = false;
-			if (isOK && _aCodes.contains(code) && !isMainLine && !CODES.contains(code)
-					&& !CODES.contains(entries.get(3))) {
+			if (isOK && _aCodes.contains(code) && !isMainLine && !CODES.contains(entries.get(3))) {
 				String csInfo = entries.get(50);
 				for (Iterator<String> i = CODES.iterator(); i.hasNext() && !isCodeShare;) {
 					String mlCode = i.next();
@@ -120,7 +119,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 			}
 
 			// Add the entry
-			if ((isMainLine || isCodeShare) && !isCS) {
+			if (isOK && (isMainLine || isCodeShare) && !isCS) {
 				neededCodes.add(code);
 				out.println(data);
 				rowCount++;

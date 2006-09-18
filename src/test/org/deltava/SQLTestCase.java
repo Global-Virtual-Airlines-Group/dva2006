@@ -23,7 +23,7 @@ public abstract class SQLTestCase extends TestCase {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 
 		// Load SystemData object
-		SystemData.init("org.deltava.util.system.XMLSystemDataLoader");
+		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 
 		// Init the connection Pool
 		_jdbcPool = new ConnectionPool(1);
