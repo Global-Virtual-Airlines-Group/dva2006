@@ -626,11 +626,6 @@ roles.</td>
 and database usage times here.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="referers">Home Page Referers</el:cmd></td>
- <td class="data">You can view statistics about <content:airline /> home page hits, based upon the 
-referring site.</td>
-</tr>
-<tr>
  <td class="mid"><el:cmd className="bld" url="systemlog">Application Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Application Log database.</td>
 </tr>
