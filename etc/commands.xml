@@ -1266,12 +1266,6 @@
 		<roles>Admin</roles>
 	</command>
 
-	<command id="referers">
-		<name>View HTTP Referers</name>
-		<class>org.deltava.commands.system.RefererStatsCommand</class>
-		<roles>Admin</roles>
-	</command>
-
 	<command id="systemlogpurge">
 		<name>Purge System Log</name>
 		<class>org.deltava.commands.system.LogPurgeCommand</class>

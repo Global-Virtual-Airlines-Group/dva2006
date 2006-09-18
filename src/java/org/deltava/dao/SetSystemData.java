@@ -103,24 +103,6 @@ public class SetSystemData extends DAO {
 	}
 	
 	/**
-	 * Logs a hit referred from an external web page.
-	 * @param url the referring URL
-	 * @param hostName the external host name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void logReferer(String url, String hostName) throws DAOException {
-		try {
-			prepareStatementWithoutLimits("INSERT INTO SYS_REFERERS (URL, HOSTNAME, DATE, HITS) VALUES "
-					+ "(LCASE(?), LCASE(?), CURDATE(), 1) ON DUPLICATE KEY UPDATE HITS=HITS+1");
-			_ps.setString(1, url);
-			_ps.setString(2, hostName);
-			executeUpdate(1);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Writes an Online Help Entry to the database.
 	 * @param entry the HelpEntry bean
 	 * @throws DAOException if a JDBC error occurs
