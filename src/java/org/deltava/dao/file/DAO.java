@@ -29,7 +29,7 @@ public abstract class DAO {
         	_is = c.getInputStream();
         } catch (IOException ie) {
         	DAOException de = new DAOException(ie);
-        	de.setLogStackDump(false);
+        	de.setWarning(true);
         	throw de;
         }
     }
@@ -60,7 +60,7 @@ public abstract class DAO {
      * @return a BufferedReader
      * @throws IOException if a network error occurs
      */
-    protected BufferedReader getReader() throws IOException {
-        return new BufferedReader(new InputStreamReader(_is), _size);
+    protected LineNumberReader getReader() throws IOException {
+        return new LineNumberReader(new InputStreamReader(_is), _size);
     }
 }
