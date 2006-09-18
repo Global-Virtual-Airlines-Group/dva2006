@@ -59,9 +59,10 @@ public class IMAPMailboxCommand extends AbstractCommand {
                throw securityException("Cannot create IMAP mailbox");
             
 			// Pre-populate the mailbox address
-            String mbAddr = usr.getFirstName().toLowerCase() + "@" + SystemData.get("airline.domain");
+            String fName = usr.getFirstName().toLowerCase(); 
+            String mbAddr = fName + "@" + SystemData.get("airline.domain");
             if (!edao.isAvailable(mbAddr))
-               mbAddr = mbAddr + usr.getLastName().substring(0, 1).toLowerCase() + "@" + SystemData.get("airline.domain");
+               mbAddr = fName + usr.getLastName().substring(0, 1).toLowerCase() + "@" + SystemData.get("airline.domain");
             
             // Start a transaction
             ctx.startTX();
