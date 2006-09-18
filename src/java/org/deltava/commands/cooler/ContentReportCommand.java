@@ -1,12 +1,17 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
+import java.util.Collection;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
 
@@ -20,6 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ContentReportCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(ContentReportCommand.class);
 
 	/**
      * Executes the command.
@@ -27,9 +34,14 @@ public class ContentReportCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Initialize the Message Context
+		MessageContext mctx = new MessageContext();
+		mctx.addData("user", ctx.getUser());
 
 		boolean isLocked = false;
 		MessageThread mt = null;
+		Collection<Pilot> moderators = null;
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -71,6 +83,7 @@ public class ContentReportCommand extends AbstractCommand {
 			mt.addReportID(ctx.getUser().getID());
 			int maxWarns = SystemData.getInt("cooler.maxreports", 4);
 			if (mt.getReportCount() == maxWarns) {
+				log.warn("Locking Thread \"" + mt.getSubject() + "\" after " + maxWarns + " Contentn Warnings");
 				wdao.moderateThread(mt.getID(), true, true);
 				
 				// Mark the thread as locked
@@ -79,6 +92,15 @@ public class ContentReportCommand extends AbstractCommand {
 				upd2.setMessage("Discussion Thread automatically locked/hidden after " + maxWarns + " content reports");
 				wdao.write(upd2);
 				isLocked = true;
+			} else if (mt.getReportCount() == 1) {
+				// Get the notification message
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctx.setTemplate(mtdao.get("CONTENTWARN"));
+				mctx.addData("thread", mt);
+
+				// Get the moderators
+				GetPilotDirectory pdao = new GetPilotDirectory(con);
+				moderators = pdao.getByRole("Moderator", SystemData.get("airline.db"));
 			}
 			
 			// Commit the transaction
@@ -88,6 +110,14 @@ public class ContentReportCommand extends AbstractCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Notify Moderators on first warning
+		if (moderators != null) {
+			log.warn("Sending Content Warning notification to moderators");
+			Mailer mailer = new Mailer(ctx.getUser());
+			mailer.setContext(mctx);
+			mailer.send(moderators);
 		}
 
 		// Forward to the JSP
