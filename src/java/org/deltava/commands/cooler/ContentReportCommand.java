@@ -97,6 +97,7 @@ public class ContentReportCommand extends AbstractCommand {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctx.setTemplate(mtdao.get("CONTENTWARN"));
 				mctx.addData("thread", mt);
+				mctx.addData("maxWarns", new Integer(maxWarns));
 
 				// Get the moderators
 				GetPilotDirectory pdao = new GetPilotDirectory(con);
