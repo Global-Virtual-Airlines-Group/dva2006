@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -140,7 +140,7 @@ public class CommandServlet extends GenericServlet {
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());
 		if (cmd == null) {
-			RequestDispatcher rd = req.getRequestDispatcher("/jsp/error/error.jsp");
+			RequestDispatcher rd = req.getRequestDispatcher(ERR_PAGE);
 			req.setAttribute("servlet_error", "Command not found");
 			log.warn("Command not found - " + req.getRequestURI());
 			rd.forward(req, rsp);
