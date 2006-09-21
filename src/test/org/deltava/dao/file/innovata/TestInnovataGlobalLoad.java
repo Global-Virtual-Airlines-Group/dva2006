@@ -71,7 +71,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 	 */
 	public void testLoadCSV() throws IOException, SQLException, ParseException {
 
-		File f = new File("c:\\temp\\universoft - aug 01.zip");
+		File f = new File("c:\\temp\\deltava.zip");
 		assertTrue(f.exists());
 		ZipFile zip = new ZipFile(f);
 		assertTrue(zip.entries().hasMoreElements());
@@ -86,6 +86,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		Collection<String> neededCodes = new LinkedHashSet<String>();
 		long now = System.currentTimeMillis();
 		LineNumberReader lr = new LineNumberReader(new InputStreamReader(zip.getInputStream(ze)), 40960);
+		lr.readLine();
 		while (lr.ready()) {
 			String data = lr.readLine();
 			StringTokenizer tkns = new StringTokenizer(data, ",");
@@ -160,5 +161,6 @@ public class TestInnovataGlobalLoad extends TestCase {
 		dao.load();
 		Collection<ScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
+		log.info("Loaded " + entries.size() + " entries");
 	}
 }
