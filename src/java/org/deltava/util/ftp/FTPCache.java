@@ -3,6 +3,7 @@ package org.deltava.util.ftp;
 
 import java.io.*;
 import java.util.Date;
+import java.util.zip.*;
 
 import org.apache.log4j.Logger;
 
@@ -104,6 +105,18 @@ public class FTPCache {
 		// If we have no input stream, abort
 		if (is == null)
 			throw new FTPClientException("Cannot download " + fileName);
+
+		// If the file name ends with .zip, then wrap in a ZIP stream
+		if (fileName.toLowerCase().endsWith(".zip")) {
+			ZipInputStream zis = new ZipInputStream(is);
+			try {
+				ZipEntry entry = zis.getNextEntry();
+				log.info("Detected ZIP File - Returning " + entry.getName());
+				return zis;
+			} catch (IOException ie) {
+				throw new FTPClientException("Error opening ZIP file - " + ie.getMessage());
+			}
+		}
 
 		// Return the stream
 		return is;

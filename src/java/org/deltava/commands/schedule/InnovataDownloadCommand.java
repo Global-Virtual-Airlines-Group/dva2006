@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.file.innovata.GetSchedule;
+import org.deltava.dao.file.innovata.GetFullSchedule;
 
 import org.deltava.util.*;
 import org.deltava.util.ftp.*;
@@ -49,7 +49,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 				String fileName = i.next();
 				is = cache.getFile(fileName);
 				
-				// Get download infor
+				// Get download information
 				FTPDownloadData ftpInfo = cache.getDownloadInfo();
 				isCached |= ftpInfo.isCached();
 				if (ftpInfo.isCached()) {
@@ -59,10 +59,10 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 				}
 				
 				// Initialize the DAO
-				GetSchedule dao = new GetSchedule(is);
+				GetFullSchedule dao = new GetFullSchedule(is);
 				dao.setAirlines(SystemData.getAirlines().values());
 				dao.setAirports(SystemData.getAirports().values());
-				dao.setPartners(getPartners(fileName));
+				// dao.setPartners(getPartners(fileName));
 
 				// Load the schedule data
 				dao.load();
