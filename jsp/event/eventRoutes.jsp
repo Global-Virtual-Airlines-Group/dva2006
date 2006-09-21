@@ -70,7 +70,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="3"><el:text name="route" idx="*" size="80" max="255" value="" /></td>
+ <td class="data" colspan="3"><el:text name="route" idx="*" size="110" max="640" value="" /></td>
 </tr>
 </el:table>
 
