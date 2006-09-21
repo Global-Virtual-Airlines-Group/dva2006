@@ -132,7 +132,7 @@ to a specific set of equipment.</span><br />
 </tr>
 <tr>
  <td class="label">Flight Routing</td>
- <td class="data"><el:text name="route" idx="*" size="110" max="255" value="" className="req" /></td>
+ <td class="data"><el:text name="route" idx="*" size="110" max="640" value="" className="req" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty event}">
