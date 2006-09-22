@@ -102,14 +102,29 @@ public abstract class ScheduleLoadDAO extends DAO {
 			}
 
 			// Check that partner airline serves both airports
-			if (!isIgnore) {
-				Airline a = se.getAirline();
-				if (!se.getAirportD().getAirlineCodes().contains(a.getCode()))
-					_errors.add(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
-
-				if (!se.getAirportA().getAirlineCodes().contains(a.getCode()))
-					_errors.add(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
-			}
+			if (!isIgnore)
+				validateAirports(se);
 		}
+	}
+	
+	/**
+	 * Ensures that both airports in a schedule entry are served by the Airline.
+	 * @param se the ScheduleEntry to validate
+	 */
+	protected boolean validateAirports(ScheduleEntry se) {
+		boolean isOK = true;
+		
+		Airline a = se.getAirline();
+		if (!se.getAirportD().getAirlineCodes().contains(a.getCode())) {
+			_errors.add(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
+			isOK = false;
+		}
+
+		if (!se.getAirportA().getAirlineCodes().contains(a.getCode())) {
+			_errors.add(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
+			isOK = false;
+		}
+		
+		return isOK;
 	}
 }

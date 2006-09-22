@@ -241,8 +241,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 				// Check if we have an entry
 				DailyScheduleEntry e2 = results.get(entry.toString());
-				if ((e2 == null) || (e2.getDays() < entry.getDays()))
-					results.put(entry.toString(), entry);
+				if ((e2 == null) || (e2.getDays() < entry.getDays())) {
+					if (validateAirports(entry))
+						results.put(entry.toString(), entry);
+				}
 			}
 		}
 
