@@ -231,10 +231,12 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * @see Airport#addAirlineCode(String)
 	 * @see Airport#getAirlineCodes()
 	 */
-	public void setAirlines(Collection airlines) {
+	public void setAirlines(Collection<String> airlines) {
 		_aCodes.clear();
-		for (Iterator i = airlines.iterator(); i.hasNext(); )
-		   addAirlineCode((String) i.next());
+		if (airlines != null) {
+			for (Iterator<String> i = airlines.iterator(); i.hasNext(); )
+				addAirlineCode(i.next());
+		}
 	}
 
 	/**
