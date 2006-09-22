@@ -28,6 +28,7 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get the file name(s) to download and init the cache
@@ -60,9 +61,9 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 				
 				// Initialize the DAO
 				GetFullSchedule dao = new GetFullSchedule(is);
+				dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 				dao.setAirlines(SystemData.getAirlines().values());
 				dao.setAirports(SystemData.getAirports().values());
-				// dao.setPartners(getPartners(fileName));
 
 				// Load the schedule data
 				dao.load();

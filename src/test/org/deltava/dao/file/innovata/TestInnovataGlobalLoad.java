@@ -34,10 +34,15 @@ public class TestInnovataGlobalLoad extends TestCase {
 	protected void setUp() throws Exception {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		log = Logger.getLogger(TestInnovataGlobalLoad.class);
+		
+		// Load JDBC properties
+		Properties dbp = new Properties();
+		dbp.load(new FileInputStream("data/jdbc.properties"));
+		
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
-		SystemData.add("jdbc.url", "jdbc:mysql://localhost/common");
-		SystemData.add("jdbc.user", "root");
-		SystemData.add("jdbc.pwd", "14072");
+		SystemData.add("jdbc.url", dbp.getProperty("url"));
+		SystemData.add("jdbc.user", dbp.getProperty("user"));
+		SystemData.add("jdbc.pwd", dbp.getProperty("password"));
 
 		// Load JDBC properties
 		Properties p = new Properties();
@@ -50,6 +55,10 @@ public class TestInnovataGlobalLoad extends TestCase {
 		_c = DriverManager.getConnection(SystemData.get("jdbc.url"), p);
 		assertNotNull(_c);
 		log.info("Connected to database");
+		
+		// Load Time zones
+		GetTimeZone tzdao = new GetTimeZone(_c);
+		tzdao.initAll();
 
 		// Load Airlines
 		GetAirline adao = new GetAirline(_c);
@@ -141,7 +150,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	public void testLoadDAO() throws Exception {
 
-		File f = new File("data/Aug01.csv");
+		File f = new File("c:/temp/Aug01.csv");
 		assertTrue(f.exists());
 
 		// Load Airports
