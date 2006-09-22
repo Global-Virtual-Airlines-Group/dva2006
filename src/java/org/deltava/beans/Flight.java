@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.text.DecimalFormat;
@@ -106,7 +107,7 @@ public abstract class Flight extends DatabaseBean implements Comparable {
     }
 
     /**
-     * Returns the Arrival Airport object for this flight
+     * Returns the Arrival Airport object for this flight.
      * @return the Arrival Airport object
      * @see Flight#setAirportA(Airport)
      * @see Airport
@@ -116,7 +117,7 @@ public abstract class Flight extends DatabaseBean implements Comparable {
     }
 
     /**
-     * Returns the Departure Airport object for this flight
+     * Returns the Departure Airport object for this flight.
      * @return the Departure Airport object
      * @see Flight#setAirportD(Airport)
      * @see Airport
@@ -127,11 +128,11 @@ public abstract class Flight extends DatabaseBean implements Comparable {
 
     /**
      * Set the Airline for this flight.
-     * @param aCode the Airline
+     * @param a the Airline
      * @see Flight#getAirline()
      */
-    public void setAirline(Airline aCode) {
-        _airline= aCode;
+    public void setAirline(Airline a) {
+        _airline= a;
     }
 
     /**

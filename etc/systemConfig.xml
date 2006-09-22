@@ -461,9 +461,12 @@
 				<width type="Integer">600</width>
 				<url>http://quicktrip.innosked.com/</url>
 			</popup>
-			<list name="primary_codes" attr="code">
+			<list name="primary_codes" attr="code" unique="true">
 				<code>AF</code>
 				<code>DL</code>
+				<code>JM</code>
+				<code>KL</code>
+				<code>AM</code>
 			</list>
 
 			<!-- FTP download data -->
@@ -471,7 +474,7 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>deltadirects.csv,airfrancedirects.csv</file>
+				<file>deltava.zip</file>
 			</download>
 			
 			<!-- downloaded file cache -->
