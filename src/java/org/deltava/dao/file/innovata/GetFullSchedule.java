@@ -24,14 +24,16 @@ import org.deltava.util.ConfigLoader;
 public class GetFullSchedule extends ScheduleLoadDAO {
 
 	private static final Logger log = Logger.getLogger(GetFullSchedule.class);
-	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
+	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private static final DateFormat _tf = new SimpleDateFormat("HH:mm");
+
+	private static final List<String> GROUND_EQ = Arrays.asList(new String[] {"TRN", "BUS", "LMO"});
 
 	private long _effDate;
 
-	private Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
-	private Collection<String> _aCodes = new HashSet<String>();
-	private Collection<String> _mlCodes = new HashSet<String>();
+	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
+	private final Collection<String> _aCodes = new HashSet<String>();
+	private final Collection<String> _mlCodes = new HashSet<String>();
 	private Properties _acTypes;
 
 	/**
@@ -82,8 +84,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 		// Check the date
 		try {
-			long sd = _df.parse(entries.get(5)).getTime();
-			long ed = _df.parse(entries.get(6)).getTime();
+			long sd = _df.parse(entries.get(5) + " 00:00").getTime();
+			long ed = _df.parse(entries.get(6) + " 23:59").getTime();
 			if ((_effDate < sd) || (_effDate >= ed))
 				return false;
 		} catch (ParseException pe) {
@@ -93,7 +95,11 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 
 		// Check codeshare operation
 		boolean isCS = "1".equals(entries.get(48));
-		if (!isCS)
+		if (isCS)
+			return false;
+
+		// Check for Train/Bus
+		if (GROUND_EQ.contains(entries.get(27)))
 			return false;
 
 		// Check the airline
@@ -148,6 +154,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
+			br.readLine(); // Skip first line
 
 			while (br.ready()) {
 				String data = br.readLine();
@@ -188,16 +195,24 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			String eqType = _acTypes.getProperty(entries.get(27));
 
 			// Validate the data
+			boolean isOK = true;
 			Airline a = _airlines.get(entries.get(0));
 			if (eqType == null) {
+				isOK = false;
 				log.warn("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
 				_errors.add("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
 			} else if (airportD == null) {
+				isOK = false;
 				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
 			} else if (airportA == null) {
+				isOK = false;
 				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
+			} else if (a == null) {
+				isOK = false;
+				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
+				_errors.add("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
 			}
 
 			// Count the number of days this leg operates
@@ -208,25 +223,27 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			}
 
 			// Build the Schedule Entry
-			DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer
-					.parseInt(entries.get(46)));
-			entry.setAirportD(airportD);
-			entry.setAirportA(airportA);
-			entry.setEquipmentType(eqType);
-			entry.setLength(Integer.parseInt(entries.get(42)) / 6);
-			entry.setDays(dayBuf.toString());
-			try {
-				entry.setTimeD(_tf.parse(entries.get(18)));
-				entry.setTimeA(_tf.parse(entries.get(23)));
-			} catch (ParseException pe) {
-				log.warn("Error parsing time - " + pe.getMessage());
-				_errors.add("Error parsing time - " + pe.getMessage());
+			if (isOK) {
+				DailyScheduleEntry entry = new DailyScheduleEntry(a, Integer.parseInt(entries.get(1)), Integer
+						.parseInt(entries.get(46)));
+				entry.setAirportD(airportD);
+				entry.setAirportA(airportA);
+				entry.setEquipmentType(eqType);
+				entry.setLength(Integer.parseInt(entries.get(42)) / 6);
+				entry.setDays(dayBuf.toString());
+				try {
+					entry.setTimeD(_tf.parse(entries.get(18)));
+					entry.setTimeA(_tf.parse(entries.get(23)));
+				} catch (ParseException pe) {
+					log.warn("Error parsing time - " + pe.getMessage());
+					_errors.add("Error parsing time - " + pe.getMessage());
+				}
+
+				// Check if we have an entry
+				DailyScheduleEntry e2 = results.get(entry.toString());
+				if ((e2 == null) || (e2.getDays() < entry.getDays()))
+					results.put(entry.toString(), entry);
 			}
-			
-			// Check if we have an entry
-			DailyScheduleEntry e2 = results.get(entry.toString());
-			if ((e2 == null) || (e2.getDays() < entry.getDays()))
-				results.put(entry.toString(), entry);
 		}
 
 		return new TreeSet<ScheduleEntry>(results.values());

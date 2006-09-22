@@ -485,7 +485,7 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>deltadirects.csv,airfrancedirects.csv</file>
+				<file>deltava.zip</file>
 			</download>
 			
 			<!-- downloaded file cache -->
