@@ -54,7 +54,7 @@ return ${access.canApprove};
  <td class="label">Applicant Status</td>
  <td class="data sec bld caps">${statusName}</td>
 </tr>
-<c:if test="${!fn:pending(questionnaire)}">
+<c:if test="${(!empty questionnaire) && (!fn:pending(questionnaire))}">
 <tr>
  <td class="label">Questionnaire Score</td>
  <td class="data"><fmt:int value="${questionnaire.score}" /> / <fmt:int value="${questionnaire.size}" /> 
