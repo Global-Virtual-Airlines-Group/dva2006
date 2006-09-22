@@ -27,7 +27,7 @@ The <content:airline /> Flight Academy <span class="pri bld">${cert.name}</span>
 has been updated.<br />
 </c:if>
 <c:if test="${isNew}">To update the list of requirements for this Flight Academy certification, 
-<el:cmd url="certreqs" linkID="${cert.name}" className="sec bld">Click Here</el:cmd>.<br />
+<el:cmd url="certreqs" linkID="${cert.name}" op="edit" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isDelete}">
 <!-- Flight Academy Certification Deleted -->
