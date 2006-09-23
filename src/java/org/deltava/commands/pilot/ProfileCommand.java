@@ -41,7 +41,7 @@ public class ProfileCommand extends AbstractFormCommand {
 	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
 	private static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
 			"Send Library Notifications", "Send Flight Approval Notifications" };
-	
+
 	/**
 	 * Callback method called when saving the profile.
 	 * @param ctx the Command context
@@ -87,13 +87,9 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setAirportCodeType(ctx.getParameter("airportCodeType"));
 			p.setMapType(ctx.getParameter("mapType"));
 			p.setUIScheme(ctx.getParameter("uiScheme"));
-			try {
-				p.setDateFormat(ctx.getParameter("df"));
-				p.setTimeFormat(ctx.getParameter("tf"));
-				p.setNumberFormat(ctx.getParameter("nf"));
-			} catch (IllegalArgumentException iae) {
-				log.error("Error setting date/number format - " + iae.getMessage());
-			}
+			p.setDateFormat(ctx.getParameter("df"));
+			p.setTimeFormat(ctx.getParameter("tf"));
+			p.setNumberFormat(ctx.getParameter("nf"));
 
 			// Get Water Cooler option checkboxes
 			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
@@ -205,10 +201,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Load the ratings from the new equipment type
 					newRatings.addAll(eq2.getPrimaryRatings());
 					newRatings.addAll(eq2.getSecondaryRatings());
-					
+
 					// Check if we're going to Senior Captain for the first time
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
-					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && sudao.isSeniorCaptain(p.getID())); 
+					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && sudao.isSeniorCaptain(p.getID()));
 
 					// Write the status update
 					if (rcmp.compare() > 0) {
@@ -217,14 +213,15 @@ public class ProfileCommand extends AbstractFormCommand {
 							promoType = StatusUpdate.SR_CAPTAIN;
 						else if (eqChange)
 							promoType = StatusUpdate.EXTPROMOTION;
-						
+
 						// Build the status update
 						StatusUpdate upd = new StatusUpdate(p.getID(), promoType);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Promoted to " + newRank + ", " + newEQ);
 						updates.add(upd);
 					} else {
-						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN : StatusUpdate.RANK_CHANGE);
+						StatusUpdate upd = new StatusUpdate(p.getID(), newSC ? StatusUpdate.SR_CAPTAIN
+								: StatusUpdate.RANK_CHANGE);
 						upd.setAuthorID(ctx.getUser().getID());
 						upd.setDescription("Rank Changed to " + newRank + ", " + newEQ);
 						updates.add(upd);
@@ -268,7 +265,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			Collection<String> newRoles = p_access.getCanChangeRoles() ? CollectionUtils.loadList(roles,
 					new HashSet<String>()) : p.getRoles();
 			newRoles.add("Pilot");
-			
+
 			// Update LDAP name
 			if (p_access.getCanChangeRoles())
 				p.setLDAPName(ctx.getParameter("uid"));
@@ -399,7 +396,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			boolean isEMailUpdate = !p.getEmail().equals(newEMail);
 			if (StringUtils.isEmpty(newEMail))
 				isEMailUpdate = false;
-			
+
 			// Update e-mail address
 			if (isEMailUpdate && ctx.isUserInRole("HR")) {
 				p.setEmail(newEMail);
@@ -510,7 +507,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				Collection<Server> srvs = ts2dao.getServers(p.getID());
 				Collection<Server> newSrvs = ts2dao.getServers(p.getRoles());
 				List<Client> usrs = ts2dao.getUsers(p.getID());
-				
+
 				// Get the TS2 password
 				String pwd = usrs.isEmpty() ? "$dummy" : usrs.get(0).getPassword();
 
@@ -529,10 +526,10 @@ public class ProfileCommand extends AbstractFormCommand {
 				Collection<Server> addServers = CollectionUtils.getDelta(newSrvs, srvs);
 				if (!addServers.isEmpty()) {
 					Collection<Client> ts2usrs = new HashSet<Client>();
-					for (Iterator<Server> i = addServers.iterator(); i.hasNext(); ) {
+					for (Iterator<Server> i = addServers.iterator(); i.hasNext();) {
 						Server srv = i.next();
 						log.info("Added " + p.getPilotCode() + " to TeamSpeak server " + srv.getName());
-						
+
 						// Build the client record
 						Client c = new Client(p.getPilotCode());
 						c.setPassword(pwd);
@@ -544,7 +541,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						c.setServerAdmin(RoleUtils.hasAccess(p.getRoles(), srv.getRoles().get(Server.ADMIN)));
 						ts2usrs.add(c);
 					}
-					
+
 					// Add to the servers
 					ts2wdao.write(ts2usrs);
 				}
@@ -721,7 +718,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				GetApplicant adao = new GetApplicant(con);
 				ctx.setAttribute("applicant", adao.getByPilotID(p.getID()), REQUEST);
 			}
-			
+
 			// Get Academy Certifications
 			if (SystemData.getBoolean("academy.enabled")) {
 				GetAcademyCourses fadao = new GetAcademyCourses(con);
@@ -739,7 +736,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"),
+						REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
 
