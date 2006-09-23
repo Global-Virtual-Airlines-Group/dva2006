@@ -367,9 +367,10 @@ be eligible to take written examinations once you have completed 5 flights.</spa
 <c:if test="${pilot.legs < academyFlights}">
  <td class="mid bld">Flight Academy</td>
 </c:if>
- <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. You 
-can continue your professional training here and obtain a number of special ratings demonstrating your 
-skill as a Pilot.<c:if test="${!empty courses}"><br />
+ <td class="data">The <content:airline /> Flight Academy is our official Pilot training program. 
+The Academy is available to assist all members regardless of experience, skill level or ratings. 
+The spectrum of training spans from formal flight instruction to informal mentoring to address 
+specific issues like online flying, VOR tracking, ATC procedures, improved landings.<c:if test="${!empty courses}"><br />
 <br />
 You have completed or are enrolled in the following <content:airline /> Flight Academy courses: 
 <fmt:list value="${courses}" delim=", " />.</c:if>
