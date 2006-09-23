@@ -41,6 +41,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		public ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
 			setForwardURL("/jsp/error/poolFull.jsp");
+			setLogStackDump(false);
 		}
 	}
 
