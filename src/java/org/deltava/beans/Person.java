@@ -2,9 +2,7 @@
 package org.deltava.beans;
 
 import java.util.*;
-
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
+import java.text.*;
 import java.security.Principal;
 
 import org.deltava.beans.schedule.Airport;
@@ -61,7 +59,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private String _email;
 	private int _emailAccess;
 
-	private Map<String, String> _imHandles = new TreeMap<String, String>();
+	private final Map<String, String> _imHandles = new TreeMap<String, String>();
 
 	private String _eqType;
 	private String _rank;
@@ -78,8 +76,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	private int _loginCount;
 	private String _loginHost;
 
-	protected Map<String, String> _networkIDs = new HashMap<String, String>();
-	protected Map<String, Boolean> _notifyOptions = new HashMap<String, Boolean>();
+	protected final Map<String, String> _networkIDs = new HashMap<String, String>();
+	protected final Map<String, Boolean> _notifyOptions = new HashMap<String, Boolean>();
 
 	private double _legacyHours;
 
@@ -679,34 +677,45 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	/**
 	 * Updates the Person's preferred date format.
 	 * @param pattern the date format pattern
-	 * @throws IllegalArgumentException if the pattern is invalid
 	 * @see Person#getDateFormat()
 	 */
 	public void setDateFormat(String pattern) {
-		SimpleDateFormat df = new SimpleDateFormat(pattern); // Validate the pattern
-		_dFormat = df.toPattern();
+		try {
+			DateFormat df = new SimpleDateFormat(pattern);
+			if (!pattern.equals(df.format(new Date())))
+				_dFormat = pattern;
+		} catch (Exception e) {
+			//empty
+		}
 	}
 
 	/**
 	 * Updates the Person's preferred time format.
 	 * @param pattern the time format pattern
-	 * @throws IllegalArgumentException if the pattern is invalid
 	 * @see Person#getTimeFormat()
 	 */
 	public void setTimeFormat(String pattern) {
-		SimpleDateFormat df = new SimpleDateFormat(pattern); // Validate the pattern
-		_tFormat = df.toPattern();
+		try {
+			DateFormat df = new SimpleDateFormat(pattern);
+			if (!pattern.equals(df.format(new Date())))
+				_tFormat = pattern;
+		} catch (Exception e) {
+			//empty
+		}
 	}
 
 	/**
 	 * Updates the Person's preferred number format.
 	 * @param pattern the number format pattern
-	 * @throws IllegalArgumentException if the pattern is invalid
 	 * @see Person#getNumberFormat()
 	 */
 	public void setNumberFormat(String pattern) {
-		DecimalFormat nf = new DecimalFormat(pattern); // Validate pattern
-		_nFormat = nf.toPattern();
+		try {
+			DecimalFormat nf = new DecimalFormat(pattern);
+			_nFormat = nf.toPattern();
+		} catch (Exception e) {
+			// empty
+		}
 	}
 
 	/**

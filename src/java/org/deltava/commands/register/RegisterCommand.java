@@ -36,7 +36,7 @@ public class RegisterCommand extends AbstractCommand {
 	// Package-private since ApplicantCommand uses these
 	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
 	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Library Notifications", "Send Flight Approval Notifications"};
+			"Send Library Notifications", "Send Flight Approval Notifications" };
 
 	/**
 	 * Executes the command.
@@ -67,8 +67,8 @@ public class RegisterCommand extends AbstractCommand {
 		}
 
 		// Load the data from the request
-		Applicant a = new Applicant(StringUtils.properCase(ctx.getParameter("firstName")),
-		      StringUtils.properCase(ctx.getParameter("lastName")));
+		Applicant a = new Applicant(StringUtils.properCase(ctx.getParameter("firstName")), StringUtils.properCase(ctx
+				.getParameter("lastName")));
 		a.setStatus(Applicant.PENDING);
 		a.setEmail(ctx.getParameter("email"));
 		a.setLocation(ctx.getParameter("location"));
@@ -83,13 +83,9 @@ public class RegisterCommand extends AbstractCommand {
 		a.setTZ(TZInfo.get(ctx.getParameter("tz")));
 		a.setUIScheme(ctx.getParameter("uiScheme"));
 		a.setComments(ctx.getParameter("comments"));
-		try {
-			a.setDateFormat(ctx.getParameter("df"));
-			a.setTimeFormat(ctx.getParameter("tf"));
-			a.setNumberFormat(ctx.getParameter("nf"));
-		} catch (IllegalArgumentException iae) {
-			log.error("Error setting date/number format - " + iae.getMessage());
-		}
+		a.setDateFormat(ctx.getParameter("df"));
+		a.setTimeFormat(ctx.getParameter("tf"));
+		a.setNumberFormat(ctx.getParameter("nf"));
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
@@ -142,18 +138,18 @@ public class RegisterCommand extends AbstractCommand {
 				dupeResults.addAll(adao.checkUnique(a, info.getDB()));
 				if (!dupeResults.isEmpty()) {
 					ctx.release();
-					
+
 					// Save airline
 					ctx.setAttribute("airline", info, REQUEST);
 					log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
-					
+
 					// Forward to JSP
 					result.setURL("/jsp/register/duplicateRegistration.jsp");
 					result.setSuccess(true);
 					return;
 				}
 			}
-			
+
 			// Get the e-mail originator
 			eMailFrom = pdao.getByName(SystemData.get("registration.from"), SystemData.get("airline.db"));
 
@@ -202,7 +198,7 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Add the questions to the exam
 			int qNum = 0;
-			for (Iterator i = qPool.iterator(); i.hasNext(); ) {
+			for (Iterator i = qPool.iterator(); i.hasNext();) {
 				QuestionProfile qp = (QuestionProfile) i.next();
 				Question q = new Question(qp);
 				q.setNumber(++qNum);
