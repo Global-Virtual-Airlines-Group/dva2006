@@ -34,6 +34,7 @@
 				<category>Mad Dog Program</category>
 				<category>Flight Academy</category>
 				<category>Triple 7 Program</category>
+				<category>Heritage Aircraft</category>
 			</list>
 		</newsletters>
 
@@ -419,12 +420,6 @@
 			<banner>ivao.png</banner>
 			<url>http://www.ivao.aero/</url>
 		</ivao>
-
-		<fpi>
-			<status_url>http://fsd.flightproject.de/status.txt</status_url>
-			<banner>fpi.png</banner>
-			<url>http://www.flightproject.net/</url>
-		</fpi>
 
 		<default_network>VATSIM</default_network>
 		<events_assigned_by>Andrew Vane</events_assigned_by>
