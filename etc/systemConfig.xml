@@ -383,7 +383,6 @@
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
 			<network>IVAO</network>
-			<network>FPI</network>
 		</list>
 		
 		<list name="highlightCodes" attr="code">
@@ -404,14 +403,8 @@
 			<url>http://www.ivao.aero/</url>
 		</ivao>
 
-		<fpi>
-			<status_url>http://fsd.flightproject.de/status.txt</status_url>
-			<banner>fpi.png</banner>
-			<url>http://www.flightproject.net/</url>
-		</fpi>
-
 		<default_network>VATSIM</default_network>
-		<events_assigned_by>Andrew Dalrymple</events_assigned_by>
+		<events_assigned_by>Andrew Vane</events_assigned_by>
 	</online>
 	
 	<security>
