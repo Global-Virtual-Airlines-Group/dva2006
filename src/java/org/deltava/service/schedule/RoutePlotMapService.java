@@ -8,6 +8,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
+import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 
 import org.deltava.dao.*;
@@ -57,8 +58,19 @@ public class RoutePlotMapService extends RouteMapService {
 			}
 
 			// Add the route waypoints
-			if (!StringUtils.isEmpty(ctx.getParameter("route")))
-				routePoints.addAll(dao.getRouteWaypoints(ctx.getParameter("route")));
+			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
+				GeoLocation lastLoc = CollectionUtils.getLast(routePoints);
+				Collection<String> wPoints = StringUtils.split(ctx.getParameter("route"), " ");
+				NavigationDataMap ndmap = dao.getByID(wPoints);
+				for (Iterator<String> i = wPoints.iterator(); i.hasNext(); ) {
+					String wp = i.next();
+					NavigationDataBean point = ndmap.get(wp, lastLoc);
+					if (point != null) {
+						routePoints.add(point);
+						lastLoc = point;
+					}
+				}
+			}
 
 			// Check if we have a STAR
 			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {

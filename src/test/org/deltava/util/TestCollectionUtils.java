@@ -75,8 +75,6 @@ public class TestCollectionUtils extends TestCase {
       String[] entries = {"1", "2", "3"};
       Collection<String> toList = CollectionUtils.loadList(entries, null);
       assertEquals(entries.length, toList.size());
-      
-      assertNull(CollectionUtils.loadList(null, null));
       assertEquals(toList, CollectionUtils.loadList(null, toList));
    }
    
@@ -108,5 +106,12 @@ public class TestCollectionUtils extends TestCase {
 	   assertEquals(1, CollectionUtils.hasMatches(c1, c2));
 	   c1.remove("A");
 	   assertEquals(0, CollectionUtils.hasMatches(c1, c2));
+   }
+   
+   public void testGetLast() {
+	   Set<String> s1 = new LinkedHashSet<String>();
+	   s1.add("A");
+	   s1.add("B");
+	   assertEquals("B", CollectionUtils.getLast(s1));
    }
 }
