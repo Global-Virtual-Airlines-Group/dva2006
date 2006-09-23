@@ -25,6 +25,21 @@ public class CollectionUtils {
 	public static boolean isEmpty(Collection c) {
 		return ((c == null) || (c.isEmpty()));
 	}
+	
+	/**
+	 * Returns the last object in a Collection, using its natural iteration order.
+	 * @param c the Collection
+	 * @return the last entry, or null if the collection is empty
+	 */
+	public static <T> T getLast(Collection<T> c) {
+		if (isEmpty(c))
+			return null;
+		
+		// Reverse the set
+		List<T> l = new ArrayList<T>(c);
+		Collections.reverse(l);
+		return l.get(0);
+	}
 
 	/**
 	 * Determines which elements are contained within only one Collection.
