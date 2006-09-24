@@ -17,6 +17,7 @@ import org.deltava.security.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
+import org.deltava.util.servinfo.ServInfoLoader;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -182,6 +183,20 @@ public class SystemBootstrap implements ServletContextListener {
 			log.error("Error retrieving data - " + ex.getMessage(), ex);
 		} finally {
 			_jdbcPool.release(c);
+		}
+		
+		// Get online network information
+		List networks = (List) SystemData.getObject("online.networks");
+		for (Iterator i = networks.iterator(); i.hasNext(); ) {
+			String network = (String) i.next();
+			log.info("Loading " + network + " data");
+			
+			// Load the data
+			ServInfoLoader loader = new ServInfoLoader(SystemData.get("online." + network.toLowerCase() + ".status_url"), network);
+			Thread t = new Thread(loader, network + " ServInfo Loader");
+			t.setDaemon(true);
+			t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
+			ServInfoLoader.addLoader(network, t);
 		}
 
 		// Start the ACARS server
