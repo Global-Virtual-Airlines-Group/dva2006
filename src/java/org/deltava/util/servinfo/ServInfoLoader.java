@@ -59,18 +59,19 @@ public class ServInfoLoader implements Runnable {
 	 */
 	public static synchronized final boolean isLoading(String network) {
 		LoaderThread loader = LOADERS.get(network.toUpperCase());
-		boolean isLoading = ThreadUtils.isAlive(loader.getThread());
+		boolean isLoading = (loader != null) && ThreadUtils.isAlive(loader.getThread());
 		
 		// Check the threads and kill the ones that are misbehaving
 		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext(); ) {
 			String networkName = i.next();
-			LoaderThread lt = LOADERS.get(network);
+			LoaderThread lt = LOADERS.get(networkName);
 			Thread t = lt.getThread();
 			if (ThreadUtils.isAlive(t) && (lt.getRunTime() > 25000)) {
 				log.warn("Killing ServInfo loader thread for " + networkName);
 				t.interrupt();
 				ThreadUtils.kill(t, 1500);
-			} else if (!ThreadUtils.isAlive(lt.getThread()))
+				i.remove();
+			} else if (!ThreadUtils.isAlive(t))
 				i.remove();
 		}
 		
@@ -85,7 +86,7 @@ public class ServInfoLoader implements Runnable {
 	 * @throws NullPointerException if network or loaderThread are null
 	 */
 	public static final synchronized void addLoader(String network, Thread loaderThread) {
-		if (LOADERS.containsKey(network.toUpperCase()))
+		if (isLoading(network))
 			throw new IllegalArgumentException(network + " data already being loaded!");
 		
 		LOADERS.put(network.toUpperCase(), new LoaderThread(loaderThread));

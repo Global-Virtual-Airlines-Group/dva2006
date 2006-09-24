@@ -44,7 +44,7 @@ public class FlightBoardCommand extends AbstractCommand {
 		ServInfoLoader loader = new ServInfoLoader(SystemData.get("online." + network.toLowerCase() + ".status_url"), network);
 
 		// Check if we're already loading
-		if (info == null) {
+		if ((info == null) && (!ServInfoLoader.isLoading(network))) {
 			log.info("Loading " + network + " data in main thread");
 			Thread t = null;
 			synchronized (ServInfoLoader.class) {
@@ -67,6 +67,8 @@ public class FlightBoardCommand extends AbstractCommand {
 				info = new NetworkInfo(network);
 			} else
 				info = loader.getInfo();
+		} else if (info == null) {
+			info = new NetworkInfo(network);
 		} else if (info.getExpired()) {
 			synchronized (ServInfoLoader.class) {
 				if (!ServInfoLoader.isLoading(network)) {
