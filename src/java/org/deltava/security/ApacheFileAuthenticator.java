@@ -106,7 +106,8 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @return TRUE if the user exists, otherwise FALSE
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		return _pwdInfo.containsKey(getID(usr));
+		String userID = getID(usr);
+		return (userID != null) && _pwdInfo.containsKey(userID);
 	}
 
 	/**
@@ -185,7 +186,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 
 		// Get the ID to delete
 		String userID = getID(usr);
-		if (!_pwdInfo.containsKey(userID))
+		if ((userID == null) || (!_pwdInfo.containsKey(userID)))
 			return;
 
 		// Remove the ID and update the
