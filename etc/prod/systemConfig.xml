@@ -341,7 +341,7 @@
 		</map>
 		
 		<pool_size type="Integer">3</pool_size>
-		<pool_max_size type="Integer">7</pool_max_size>
+		<pool_max_size type="Integer">10</pool_max_size>
 		<max_reqs type="Integer">0</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
 	</jdbc>
