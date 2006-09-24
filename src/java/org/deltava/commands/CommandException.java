@@ -1,4 +1,4 @@
-// Copyright (c) 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import org.deltava.servlet.ControllerException;
@@ -57,5 +57,6 @@ public class CommandException extends ControllerException {
      */
     public CommandException(ControllerException ce) {
        this((ce.getCause() == null) ? ce : ce.getCause());
+       setLogStackDump(ce.getLogStackDump());
     }
 }
