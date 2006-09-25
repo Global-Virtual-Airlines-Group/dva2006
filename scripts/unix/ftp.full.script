@@ -20,6 +20,7 @@ put teamspeak.sql.gz
 
 lcd /home/backup/db/old
 put acars.sql.gz
+put acars_pos.sql.gz
 put afv_gallery.sql.gz
 put dva_gallery.sql.gz
 put navdata.sql.gz
