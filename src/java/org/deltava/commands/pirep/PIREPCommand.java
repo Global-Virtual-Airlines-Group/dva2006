@@ -58,7 +58,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Initialize flight times
 		if (_flightTimes == null) {
 			_flightTimes = new LinkedHashSet<String>();
-			for (int x = 2; x < 168; x++)
+			for (int x = 2; x < 185; x++)
 				_flightTimes.add(String.valueOf(x / 10.0d));
 		}
 
