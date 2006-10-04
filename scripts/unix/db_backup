@@ -6,13 +6,6 @@
 cd /home/backup/db
 mv *.gz old
 
-# Dump LDIF data
-# ldapctl stop
-# slapcat -l ldif.txt -f /usr/local/etc/openldap/slapd.conf
-# gzip -9 -f ldif.txt
-# sleep 0.5
-# ldapctl start
-
 # Dump core table
 echo 'Writing mySQL configuration'
 mysqldump -C -h mysql.deltava.org mysql `cat /usr/local/etc/sqlbackup` | gzip -9 > mysql.sql.gz
@@ -91,6 +84,6 @@ else
 fi
 
 # Change file permissions
-chown -R root:gva *
+chown -R backup:gva *
 chmod 640 *
 chmod 750 old
