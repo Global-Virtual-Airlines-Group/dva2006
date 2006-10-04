@@ -77,5 +77,5 @@ mv /tmp/svn.revision /home/backup/svn/svn.revision_base
 rm /tmp/svn.revision_base
 
 # Change file permissions
-chown -R root:gva *
+chown -R backup:gva *.gz
 chmod 640 *
