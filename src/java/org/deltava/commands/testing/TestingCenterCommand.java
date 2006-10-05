@@ -59,11 +59,11 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(usr.getID());
 			if (txreq != null) {
-				log.warn("Pending Transfer Request - no Examinations available for " + usr.getName());
+				log.info("Pending Transfer Request - no Examinations available for " + usr.getName());
 				allExams.clear();
 				ctx.setAttribute("txreq", txreq, REQUEST);
 			} else if (activeExamID != 0) {
-				log.warn("Pending Examination - no Examinations available for " + usr.getName());
+				log.info("Pending Examination - no Examinations available for " + usr.getName());
 				allExams.clear();
 				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
 			} else {
