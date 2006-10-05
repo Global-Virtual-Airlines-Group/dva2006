@@ -15,7 +15,6 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
-<content:sysdata var="airlines" name="airlines" mapValues="true" sort="true" />
 <content:sysdata var="allEQ" name="eqtypes" sort="true" />
 <content:sysdata var="innovataLink" name="schedule.innovata.enabled" />
 <script language="JavaScript" type="text/javascript">

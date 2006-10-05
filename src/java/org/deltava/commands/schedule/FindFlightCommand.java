@@ -49,6 +49,17 @@ public class FindFlightCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
+		// Get Airlines
+		Collection<Airline> airlines = new LinkedHashSet<Airline>(SystemData.getAirlines().values());
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
+			Airline al = i.next();
+			if (!al.getActive())
+				i.remove();
+		}
+		
+		// Save airlines
+		ctx.setAttribute("airlines", airlines, REQUEST);
+		
 		// Get the result JSP and redirect if we're not posting
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/findAflight.jsp");
