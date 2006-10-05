@@ -250,11 +250,9 @@ WARNING</span></c:if>
 <c:if test="${access.canDelete}">
  <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" linkID="0x${thread.ID}" />
 </c:if>
-<c:if test="${access.canLock}">
+<content:filter roles="Moderator">
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
  <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" linkID="0x${thread.ID}" />
-</c:if>
-<content:filter roles="Moderator">
  STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
  <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
  <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
