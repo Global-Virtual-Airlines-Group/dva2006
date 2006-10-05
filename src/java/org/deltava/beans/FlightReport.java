@@ -29,12 +29,12 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    /**
     * Valid Flight Simulator version strings
     */
-   public static final String FSVERSION[] = { "Unknown", "FS98", "FS2000", "FS2002", "FS2004" };
+   public static final String FSVERSION[] = { "Unknown", "FS98", "FS2000", "FS2002", "FS2004", "FS X" };
 
    /**
     * Valid Flight Simulator version values
     */
-   public static final int FSVERSION_CODE[] = { 0, 98, 2000, 2002, 2004 };
+   public static final int FSVERSION_CODE[] = { 0, 98, 2000, 2002, 2004, 2006 };
    
    /**
     * Flight flown without Equipment Type Rating.
