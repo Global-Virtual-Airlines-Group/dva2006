@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -18,7 +19,7 @@ public class DateTime implements java.io.Serializable, Comparable {
 	private TZInfo _tz = TZInfo.local();
 	private boolean _showZone = true;
 	
-	private SimpleDateFormat _df = new SimpleDateFormat("EEEE MMMM dd yyyy HH:mm:ss");
+	private final SimpleDateFormat _df = new SimpleDateFormat("EEEE MMMM dd yyyy HH:mm:ss");
 
 	/**
 	 * Creates a DateTime given a Java date/time, defaulting to the JVM's time zone
@@ -160,6 +161,9 @@ public class DateTime implements java.io.Serializable, Comparable {
 	 * @throws NullPointerException if the Time Zone is null
 	 */
 	public void convertTo(TZInfo tz2) {
+		if (tz2 == null)
+			return;
+		
 		// Convert to UTC and move into the new zone
 		long utc = _tz.getUTC(_dt.getTimeInMillis());
 		_dt.setTimeInMillis(utc + tz2.getTimeZone().getOffset(utc));
