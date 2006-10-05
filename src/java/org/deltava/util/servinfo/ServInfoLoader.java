@@ -109,6 +109,9 @@ public class ServInfoLoader implements Runnable {
 	 * Helper method to open a connection to a particular URL.
 	 */
 	private HttpURLConnection getURL(String dataURL) {
+		if (dataURL == null)
+			return null;
+		
 		try {
 			URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
 			return (HttpURLConnection) url.openConnection();
