@@ -101,6 +101,10 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 		// Check for Train/Bus
 		if (GROUND_EQ.contains(entries.get(27)))
 			return false;
+		
+		// Check for multiple legs
+		if (!"0".equals(entries.get(36)))
+			return false;
 
 		// Check the airline
 		String code = entries.get(0).toUpperCase();

@@ -24,10 +24,10 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	private Connection _c;
 
-	private Collection<String> _aCodes = new HashSet<String>();
+	private final Collection<String> _aCodes = new HashSet<String>();
 	private Collection<Airline> _airlines;
 
-	private static final List<String> CODES = Arrays.asList(new String[] { "AF", "DL", "JM", "KL", "AM" }); // BD
+	private static final List<String> CODES = Arrays.asList(new String[] { "AF", "DL", "JM", "KL", "AM" });
 
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -35,10 +35,15 @@ public class TestInnovataGlobalLoad extends TestCase {
 		PropertyConfigurator.configure("data/log4j.test.properties");
 		log = Logger.getLogger(TestInnovataGlobalLoad.class);
 		
-		// Load JDBC properties
+		// Check for local JDBC properties
 		Properties dbp = new Properties();
-		dbp.load(new FileInputStream("data/jdbc.properties"));
+		File f = new File("c:\\temp\\jdbc.properties");
+		if (f.exists())
+			dbp.load(new FileInputStream(f));
+		else
+			dbp.load(new FileInputStream("data/jdbc.properties"));
 		
+		// Set SystemData properties
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
 		SystemData.add("jdbc.url", dbp.getProperty("url"));
 		SystemData.add("jdbc.user", dbp.getProperty("user"));
@@ -80,15 +85,22 @@ public class TestInnovataGlobalLoad extends TestCase {
 	 */
 	public void testLoadCSV() throws IOException, SQLException, ParseException {
 
-		File f = new File("c:\\temp\\deltava.zip");
+		// Build the file name
+		java.util.Date d = new java.util.Date();
+		File f = new File("c:\\temp\\deltava - " + StringUtils.format(d, "MMM yy") + ".zip");
 		assertTrue(f.exists());
 		ZipFile zip = new ZipFile(f);
 		assertTrue(zip.entries().hasMoreElements());
 		ZipEntry ze = zip.entries().nextElement();
 		assertNotNull(ze);
 
-		// Write output file
-		PrintWriter out = new PrintWriter("c:\\temp\\Aug01.csv");
+		// Get output file
+		File of = new File("c:\\temp\\" + StringUtils.format(d, "MMMyy") + ".csv");
+		if (of.exists())
+			return;
+		
+		// Create the output file
+		PrintWriter out = new PrintWriter(of);
 
 		// Load the File
 		int rowCount = 0;
@@ -150,7 +162,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 
 	public void testLoadDAO() throws Exception {
 
-		File f = new File("c:/temp/Aug01.csv");
+		File f = new File("c:/temp/" + StringUtils.format(new java.util.Date(), "MMMyy") + ".csv");
 		assertTrue(f.exists());
 
 		// Load Airports
@@ -162,7 +174,7 @@ public class TestInnovataGlobalLoad extends TestCase {
 		// Get the DAO
 		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
 		dao.setEffectiveDate(new java.util.Date());
-		dao.setPrimaryCodes(Arrays.asList(new String[] { "DL", "AF" }));
+		dao.setPrimaryCodes(CODES);
 		dao.setAirlines(_airlines);
 		dao.setAirports(airports);
 
@@ -171,5 +183,14 @@ public class TestInnovataGlobalLoad extends TestCase {
 		Collection<ScheduleEntry> entries = dao.process();
 		assertNotNull(entries);
 		log.info("Loaded " + entries.size() + " entries");
+		
+		// Save the legs
+		SetSchedule wdao = new SetSchedule(_c);
+		wdao.purge(false);
+		for (Iterator<ScheduleEntry> i = entries.iterator(); i.hasNext(); ) {
+			ScheduleEntry se = i.next();
+			se.setCanPurge(true);
+			wdao.write(se, true);
+		}
 	}
 }
