@@ -45,7 +45,7 @@ return true;
 <content:region id="main">
 <el:form method="post" action="issuecomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
-<!-- PIREP Title Bar -->
+<!-- Title Bar -->
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
 </tr>
