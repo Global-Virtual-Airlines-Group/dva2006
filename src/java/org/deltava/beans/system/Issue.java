@@ -480,16 +480,11 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public void setSubject(String subj) {
 	  _subject = subj.trim();
 	}
-	
+
 	/**
-	 * Compares two Issues by comparing their database ID.
-	 * @see Comparable#compareTo(Object)
+	 * Returns the CSS row class name if displayed in a view table.
+	 * @return the CSS class name
 	 */
-	public int compareTo(Object o2) {
-		Issue i2 = (Issue) o2;
-		return new Integer(getID()).compareTo(new Integer(i2.getID()));
-	}
-	
 	public String getRowClassName() {
 		final String[] ROW_CLASSES = {"opt1", null, "opt2", "warn", "err", "opt3"};
 		return ROW_CLASSES[_status];
