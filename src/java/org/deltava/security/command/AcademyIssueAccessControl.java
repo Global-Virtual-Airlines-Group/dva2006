@@ -14,7 +14,7 @@ import org.deltava.security.SecurityContext;
  * @since 1.0
  */
 
-public class AcademyIssueControl extends AccessControl {
+public class AcademyIssueAccessControl extends AccessControl {
 	
 	private Issue _i;
 	private boolean _hasCourse;
@@ -22,7 +22,6 @@ public class AcademyIssueControl extends AccessControl {
 	private boolean _canCreate;
 	private boolean _canComment;
 	private boolean _canUpdateStatus;
-	private boolean _canDelete;
 
 	/**
 	 * Initializes the Access Controller.
@@ -30,7 +29,7 @@ public class AcademyIssueControl extends AccessControl {
 	 * @param i the Issue bean
 	 * @param hasCourse TRUE if the user has an existing Flight Academy Course, otherwise FALSE
 	 */
-	public AcademyIssueControl(SecurityContext ctx, Issue i, boolean hasCourse) {
+	public AcademyIssueAccessControl(SecurityContext ctx, Issue i, boolean hasCourse) {
 		super(ctx);
 		_i = i;
 		_hasCourse = hasCourse;
@@ -57,9 +56,12 @@ public class AcademyIssueControl extends AccessControl {
 
 		// Calculate access rights
 		boolean isMine = (_i.getAuthorID() == p.getID());
-		_canComment = isMine || isAdmin;
+		boolean isOpen = (_i.getStatus() == Issue.OPEN);
+		if (!_i.getPublic() && !isMine && !isAdmin)
+			throw new AccessControlException("Not Authorized");
+		
+		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isAdmin;
 		_canUpdateStatus = isAdmin;
-		_canDelete = _ctx.isUserInRole("Admin");
 	}
 	
 	/**
@@ -84,13 +86,5 @@ public class AcademyIssueControl extends AccessControl {
 	 */
 	public boolean getCanUpdateStatus() {
 		return _canUpdateStatus;
-	}
-	
-	/**
-	 * Returns wether this Issue can be deleted.
-	 * @return TRUE if the Issue can be deleted, otherwise FALSE
-	 */
-	public boolean getCanDelete() {
-		return _canDelete;
 	}
 }
