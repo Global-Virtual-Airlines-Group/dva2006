@@ -1503,7 +1503,25 @@
 	<command id="tvideo">
 		<name>Training Video Edit</name>
 		<class>org.deltava.commands.academy.VideoCommand</class>
-		<class>Instructor,HR</class>
+		<roles>Instructor,HR</roles>
+	</command>
+
+	<command id="academyissues">
+		<name>Flight Academy Help Desk</name>
+		<class>org.deltava.commands.academy.IssueListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="academyissue">
+		<name>Flight Academy Issue</name>
+		<class>org.deltava.commands.academy.IssueCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="academyissuecomment">
+		<name>Flight Academy Issue Comment</name>
+		<class>org.deltava.commands.academy.IssueCommentCommand</class>
+		<roles>Pilot</roles>
 	</command>
 
 

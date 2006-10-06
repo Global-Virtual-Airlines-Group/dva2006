@@ -4,11 +4,11 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.academy.Issue;
+import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.AcademyIssueControl;
+import org.deltava.security.command.AcademyIssueAccessControl;
 
 /**
  * A Web Site Command to display Flight Academy Issues.
@@ -41,18 +41,31 @@ public class IssueListCommand extends AbstractViewCommand {
 			Collection<Issue> results = isActive ? idao.getActive() : idao.getAll();
 			vc.setResults(results);
 			
-			// Get the course list
+			// Get Author IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
+				Issue is = i.next();
+				IDs.add(new Integer(is.getAuthorID()));
+				IDs.add(new Integer(is.getLastCommentAuthorID()));
+			}
 			
+			// Get the course list
+			GetAcademyCourses cdao = new GetAcademyCourses(con);
+			Collection<Course> myCourses = cdao.getByPilot(ctx.getUser().getID());
+			
+			// Set creation access control
+			AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, null, !myCourses.isEmpty());
+			ac.validate();
+			ctx.setAttribute("access", ac, REQUEST);
+
+			// Load Pilot IDs
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Set creation access control
-		AcademyIssueControl ac = new AcademyIssueControl(ctx, null, false);
-		ac.validate();
-		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

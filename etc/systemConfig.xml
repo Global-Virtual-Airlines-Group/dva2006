@@ -656,5 +656,7 @@
 		<enabled type="Boolean">true</enabled>
 		<minFlights type="Integer">10</minFlights>
 		<eqType>EMB-120</eqType>
+
+		<assignto type="Integer">2253</assignto>
 	</academy>
 </config>
