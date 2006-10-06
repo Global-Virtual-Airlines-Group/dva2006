@@ -30,19 +30,25 @@ public class SetAcademyIssue extends DAO {
 	public void write(Issue i) throws DAOException {
 		try {
 			if (i.getID() == 0) {
-				prepareStatement("INSERT INTO ACADEMY_ISSUES (AUTHOR, CREATED_ON, STATUS, SUBJECT, BODY) VALUES "
-						+ "(?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO ACADEMY_ISSUES (AUTHOR, ASSIGNEDTO, CREATED_ON, STATUS, ISPUBLIC, "
+						+ "SUBJECT, BODY) VALUES (?, ?, ?, ?, ?, ?, ?)");
 				_ps.setInt(1, i.getAuthorID());
-				_ps.setTimestamp(2, createTimestamp(i.getCreatedOn()));
-				_ps.setInt(3, i.getStatus());
-				_ps.setString(4, i.getSubject());
-				_ps.setString(5, i.getBody());
+				_ps.setInt(2, i.getAssignedTo());
+				_ps.setTimestamp(3, createTimestamp(i.getCreatedOn()));
+				_ps.setInt(4, i.getStatus());
+				_ps.setBoolean(5, i.getPublic());
+				_ps.setString(6, i.getSubject());
+				_ps.setString(7, i.getBody());
 			} else {
-				prepareStatement("UPDATE ACADEMY_ISSUES SET STATUS=?, SUBJECT=?, BODY=? WHERE (ID=?)");
+				prepareStatement("UPDATE ACADEMY_ISSUES SET STATUS=?, ASSIGNEDTO=?, RESOLVED_ON=?, ISPUBLIC=?, "
+						+ "SUBJECT=?, BODY=? WHERE (ID=?)");
 				_ps.setInt(1, i.getStatus());
-				_ps.setString(2, i.getSubject());
-				_ps.setString(3, i.getBody());
-				_ps.setInt(4, i.getID());
+				_ps.setInt(2, i.getAssignedTo());
+				_ps.setTimestamp(3, createTimestamp(i.getResolvedOn()));
+				_ps.setBoolean(4, i.getPublic());
+				_ps.setString(5, i.getSubject());
+				_ps.setString(6, i.getBody());
+				_ps.setInt(7, i.getID());
 			}
 			
 			// Update the issue
