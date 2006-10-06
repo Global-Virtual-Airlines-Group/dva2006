@@ -5,6 +5,8 @@
 <content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="newsletterEnabled" name="airline.newsletters.enabled" />
 <content:sysdata var="newsletter" name="airline.newsletters.name" />
+<content:sysdata var="academyEnabled" name="academy.enabled" />
+<content:sysdata var="academyFlights" name="academy.minFlights" />
 <!-- Sidebar Navigation Frame -->
 <content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -56,6 +58,11 @@
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
+<c:if test="${((!empty user) && (user.legs > academyFlights))}">
+<tr class="MenuItem">
+ <td><el:cmd url="academy">FLIGHT ACADEMY</el:cmd></td>
+</tr>
+</c:if>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
