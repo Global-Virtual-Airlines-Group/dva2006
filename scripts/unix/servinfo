@@ -1,0 +1,50 @@
+#!/bin/bash
+# ServInfo download script
+# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+
+# Set the file to download to
+if [ -z "$2" ]; then
+ echo "servinfo <network> <file> ..."
+ exit 1
+fi
+
+# Get the status URL
+if [ "IVAO" == "$1" ]; then
+ StatusURL="http://www.ivao.aero/whazzup/status.txt"
+ network="ivao"
+else
+ StatusURL="http://usa-s1.vatsim.net/data/status.txt"
+ network="vatsim"
+fi
+
+# Check if we're already downloading
+if [ -f "/tmp/$network.isactive" ]; then
+ echo "Already downloading $network data!"
+else
+ touch /tmp/$network.isactive
+fi
+
+# Get the status file and active URLs
+wget $StatusURL -q -O /tmp/$network.status
+cat /tmp/$network.status | grep url0= | grep -v ";url0=" > /tmp/$network.active
+cut -d "=" -f 2 /tmp/$network.active > /tmp/$network.urls
+
+# Generate a random URL to load
+UpperBound=$(cat /tmp/$network.urls | wc -l)
+RandomLine=$((1 + ($UpperBound * $RANDOM) / (32767 + 1) ))
+
+# Use sed to grab the random line and get rid of the trailing newline
+MyURL=$(sed -n "$RandomLine{p;q;}" "/tmp/$network.urls")
+URLSize=$(echo -n "$MyURL" | wc -c | sed "s/ //g")
+URLSize=`expr $URLSize "-" 1`
+MyURL=$(echo -n "$MyURL" | cut -b 0-${URLSize})
+
+# Clean up temp files
+rm /tmp/$network.status
+rm /tmp/$network.active
+rm /tmp/$network.urls
+
+# Get the info file
+wget $MyURL -q -O $2
+rm /tmp/$network.isactive
+exit 0
