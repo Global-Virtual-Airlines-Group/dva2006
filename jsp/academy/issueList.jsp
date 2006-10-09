@@ -24,15 +24,18 @@
 <content:region id="main">
 <view:table className="view" space="default" pad="default" cmd="academyissues">
 <tr class="title">
- <td colspan="4" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
+ <td colspan="2" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
+ <td colspan="2"><c:if test="${access.canCreate}"><el:cmd url="academyissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
+<cl:cmd url="myacademyissues">MY ISSUES</el:cmd> | <el:cmd url="academyissues">ALL ISSUES</el:cmd> 
+| <el:cmd url="academyissues" op="active">ACTIVE ISSUES</el:cmd></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="50%">SUBJECT</td>
+ <td width="40%">SUBJECT</td>
  <td width="15%">STARTED BY</td>
  <td width="5%">COMMENTS</td>
- <td class="left"><c:if test="${access.canCreate}"><el:cmd url="academyissue" op="edit">NEW ISSUE</el:cmd> | </c:if>LAST COMMENT BY</td>
+ <td class="left">LAST COMMENT BY</td>
 </tr>
 
 <!-- Table View data -->

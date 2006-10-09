@@ -79,12 +79,18 @@ public class GetAcademyIssues extends DAO {
 		}
 	}
 	
+	/**
+	 * Returns all Flight Academy Issues for a Pilot.
+	 * @param id the Pilot's database ID
+	 * @return a Collection of Issue beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public Collection<Issue> getByPilot(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, COUNT(IC.ID), (SELECT AUTHOR FROM ACADEMY_ISSUECOMMENTS IC WHERE "
 					+ "(I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM ACADEMY_ISSUES I LEFT JOIN "
 					+ "ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) WHERE (I.ISPUBLIC=?) OR (I.AUTHOR=?) OR (I.ASSIGNEDTO=?) "
-					+ "GROUP BY I.ID ORDER BY I.CREATED_ON");
+					+ "GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, id);
 			return execute();
