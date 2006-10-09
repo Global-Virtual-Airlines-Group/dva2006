@@ -415,12 +415,20 @@
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
+			<local>
+				<status>/var/cache/servinfo/vatsim.status</status>
+				<info>/var/cache/servinfo/vatsim.info</info>
+			</local>
 		</vatsim>
 
 		<ivao>
 			<status_url>http://www.ivao.aero/whazzup/status.txt</status_url>
 			<banner>ivao.png</banner>
 			<url>http://www.ivao.aero/</url>
+			<local>
+				<status>/var/cache/servinfo/ivao.status</status>
+				<info>/var/cache/servinfo/ivao.info</info>
+			</local>
 		</ivao>
 
 		<default_network>VATSIM</default_network>

@@ -41,7 +41,7 @@ public class FlightBoardCommand extends AbstractCommand {
 		
 		// Get the network info from the cache
 		NetworkInfo info = GetServInfo.getCachedInfo(network);
-		ServInfoLoader loader = new ServInfoLoader(SystemData.get("online." + network.toLowerCase() + ".status_url"), network);
+		ServInfoLoader loader = new ServInfoLoader(network);
 
 		// Check if we're already loading
 		if ((info == null) && (!ServInfoLoader.isLoading(network))) {

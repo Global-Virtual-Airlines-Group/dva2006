@@ -10,10 +10,9 @@ import org.apache.log4j.Logger;
 import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.file.GetServInfo;
+import org.deltava.dao.file.*;
 
 import org.deltava.util.ThreadUtils;
-import org.deltava.util.http.HttpTimeoutHandler;
 
 /**
  * A worker thread to asynchronously load ServInfo data.
@@ -23,34 +22,33 @@ import org.deltava.util.http.HttpTimeoutHandler;
  */
 
 public class ServInfoLoader implements Runnable {
-	
+
 	private static final Logger log = Logger.getLogger(ServInfoLoader.class);
 	private static final Map<String, LoaderThread> LOADERS = new LinkedHashMap<String, LoaderThread>();
 
-	private String _url;
 	private String _network;
 	private NetworkInfo _info;
-	
+
 	private static class LoaderThread {
-		
+
 		private long _startTime;
 		private Thread _loader;
-		
+
 		LoaderThread(Thread t) {
 			super();
 			_loader = t;
 			_startTime = System.currentTimeMillis();
 		}
-		
+
 		public Thread getThread() {
 			return _loader;
 		}
-		
+
 		public long getRunTime() {
 			return System.currentTimeMillis() - _startTime;
 		}
 	}
-	
+
 	/**
 	 * Determines if a particular network's data is being loaded.
 	 * @param network the network name
@@ -60,9 +58,9 @@ public class ServInfoLoader implements Runnable {
 	public static synchronized final boolean isLoading(String network) {
 		LoaderThread loader = LOADERS.get(network.toUpperCase());
 		boolean isLoading = (loader != null) && ThreadUtils.isAlive(loader.getThread());
-		
+
 		// Check the threads and kill the ones that are misbehaving
-		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext();) {
 			String networkName = i.next();
 			LoaderThread lt = LOADERS.get(networkName);
 			Thread t = lt.getThread();
@@ -74,13 +72,13 @@ public class ServInfoLoader implements Runnable {
 			} else if (!ThreadUtils.isAlive(t))
 				i.remove();
 		}
-		
+
 		return isLoading;
 	}
-	
+
 	/**
-	 * Adds a network information loader thread. The loader thread will be started automatically if it is
-	 * not already running.
+	 * Adds a network information loader thread. The loader thread will be started automatically if it is not already
+	 * running.
 	 * @param network the network name
 	 * @param loaderThread the loader thread
 	 * @throws NullPointerException if network or loaderThread are null
@@ -88,41 +86,31 @@ public class ServInfoLoader implements Runnable {
 	public static final synchronized void addLoader(String network, Thread loaderThread) {
 		if (isLoading(network))
 			throw new IllegalArgumentException(network + " data already being loaded!");
-		
+
 		LOADERS.put(network.toUpperCase(), new LoaderThread(loaderThread));
 		if (!loaderThread.isAlive())
 			loaderThread.start();
 	}
-	
+
 	/**
 	 * Initializes the worker.
-	 * @param url the network status URL
-	 * @param networkName the network name 
+	 * @param networkName the network name
 	 */
-	public ServInfoLoader(String url, String networkName) {
+	public ServInfoLoader(String networkName) {
 		super();
-		_url = url;
 		_network = networkName;
 	}
-	
+
 	/**
-	 * Helper method to open a connection to a particular URL.
+	 * Helper method to disconnect HTTP connections only.
 	 */
-	private HttpURLConnection getURL(String dataURL) {
-		if (dataURL == null)
-			return null;
-		
-		try {
-			URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
-			return (HttpURLConnection) url.openConnection();
-		} catch (IOException ie) {
-			log.error("Error getting HTTP connection " + ie.getMessage(), ie);
-			return null;
-		}
+	private void disconnect(URLConnection con) {
+		if (con instanceof HttpURLConnection)
+			((HttpURLConnection) con).disconnect();
 	}
-	
+
 	/**
-	 * Returns the retrieved network traffic information. 
+	 * Returns the retrieved network traffic information.
 	 * @return the NetworkInfo bean
 	 */
 	public NetworkInfo getInfo() {
@@ -135,8 +123,8 @@ public class ServInfoLoader implements Runnable {
 	 */
 	public void run() {
 
-		// Get the URL connection
-		HttpURLConnection con = getURL(_url);
+		// Get a connection to the network info
+		URLConnection con = ConnectionFactory.getStatus(_network);
 		if (con == null)
 			return;
 
@@ -149,25 +137,26 @@ public class ServInfoLoader implements Runnable {
 			if (status.getCached())
 				log.info("Using cached " + _network + " network status");
 		} catch (DAOException de) {
-			log.error("Error loading " + _network.toUpperCase() + " status - " + de.getMessage(), de.getLogStackDump() ? de : null);
+			log.error("Error loading " + _network.toUpperCase() + " status - " + de.getMessage(),
+					de.getLogStackDump() ? de : null);
 		} finally {
-			con.disconnect();
+			disconnect(con);
 		}
-		
+
 		// If we received nothing, abort
 		if (status == null)
 			return;
 
 		// Get network status
-		NetworkDataURL nd = status.getDataURL(false);
-		con = getURL(nd.getURL());
+		NetworkDataURL nd = ConnectionFactory.getInfo(status);
+		con = ConnectionFactory.getURL(nd.getURL());
 		if (con == null)
 			return;
-		
+
 		// Get the network info
 		try {
 			GetServInfo idao = new GetServInfo(con);
-			idao.setUseCache(true);
+			idao.setUseCache(nd != status.getLocal());
 			idao.setBufferSize(30720);
 			_info = idao.getInfo(_network);
 			if (_info.getCached())
@@ -187,9 +176,9 @@ public class ServInfoLoader implements Runnable {
 				log.error("Error loading " + _network.toUpperCase() + " info - " + de.getMessage(), de);
 			}
 		} finally {
-			con.disconnect();
+			disconnect(con);
 		}
-		
+
 		// Log status info
 		log.info("ServInfo load complete - " + nd);
 	}

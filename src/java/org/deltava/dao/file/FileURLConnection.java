@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -34,7 +34,7 @@ public class FileURLConnection extends URLConnection {
 		if (!connected) {
 			_stream = getClass().getResourceAsStream(_fileName);
 			if (_stream == null)
-					_stream = new FileInputStream((_fileName.charAt(0) == '/') ? _fileName.substring(1) : _fileName);
+				_stream = new FileInputStream((_fileName.charAt(0) == '/') ? _fileName.substring(1) : _fileName);
 		}
 
 		connected = true;
@@ -54,7 +54,7 @@ public class FileURLConnection extends URLConnection {
 	}
 
 	/**
-	 * Retrieves an output stream to the file resource. <i>NOT SUPPORTED </i>
+	 * Retrieves an output stream to the file resource. <i>NOT SUPPORTED</i>
 	 * @throws UnknownServiceException always
 	 */
 	public final OutputStream getOutputStream() throws IOException {

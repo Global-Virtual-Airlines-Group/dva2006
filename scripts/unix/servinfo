@@ -4,7 +4,7 @@
 
 # Set the file to download to
 if [ -z "$2" ]; then
- echo "servinfo <network> <file> ..."
+ echo "servinfo <network> <path> ..."
  exit 1
 fi
 
@@ -25,8 +25,8 @@ else
 fi
 
 # Get the status file and active URLs
-wget $StatusURL -q -O /tmp/$network.status
-cat /tmp/$network.status | grep url0= | grep -v ";url0=" > /tmp/$network.active
+wget $StatusURL -q -O $2/$network.status
+cat $2/$network.status | grep url0= | grep -v ";url0=" > /tmp/$network.active
 cut -d "=" -f 2 /tmp/$network.active > /tmp/$network.urls
 
 # Generate a random URL to load
@@ -40,11 +40,10 @@ URLSize=`expr $URLSize "-" 1`
 MyURL=$(echo -n "$MyURL" | cut -b 0-${URLSize})
 
 # Clean up temp files
-rm /tmp/$network.status
 rm /tmp/$network.active
 rm /tmp/$network.urls
 
 # Get the info file
-wget $MyURL -q -O $2
+wget $MyURL -q -O $2/$network.info
 rm /tmp/$network.isactive
 exit 0

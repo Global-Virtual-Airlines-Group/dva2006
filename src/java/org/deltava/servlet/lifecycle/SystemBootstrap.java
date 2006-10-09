@@ -192,7 +192,7 @@ public class SystemBootstrap implements ServletContextListener {
 			log.info("Loading " + network + " data");
 			
 			// Load the data
-			ServInfoLoader loader = new ServInfoLoader(SystemData.get("online." + network.toLowerCase() + ".status_url"), network);
+			ServInfoLoader loader = new ServInfoLoader(network);
 			Thread t = new Thread(loader, network + " ServInfo Loader");
 			t.setDaemon(true);
 			t.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority() - 1));
