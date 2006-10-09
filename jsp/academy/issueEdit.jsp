@@ -90,7 +90,7 @@ return true;
 </el:table>
 
 <!-- Button Bar -->
-<c:if test="${access.canEdit}">
+<c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE ISSUE" /></td>

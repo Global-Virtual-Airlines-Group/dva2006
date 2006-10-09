@@ -52,6 +52,7 @@ public class IssueCommand extends AbstractFormCommand {
 
 				// Update subject
 				i.setSubject(ctx.getParameter("subject"));
+				i.setStatus(ctx.getParameter("status"));
 			} else {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
 				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
@@ -66,6 +67,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i = new Issue(ctx.getParameter("subject"));
 				i.setAuthorID(ctx.getUser().getID());
 				i.setCreatedOn(new Date());
+				i.setStatus(Issue.OPEN);
 				
 				// Set default assignee
 				GetPilot pdao = new GetPilot(con);
@@ -74,7 +76,6 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 			
 			// Update fields from the request
-			i.setStatus(ctx.getParameter("status"));
 			i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			i.setBody(ctx.getParameter("body"));
 			
@@ -126,8 +127,9 @@ public class IssueCommand extends AbstractFormCommand {
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
 				
-				// Save issue
+				// Save issue and access control
 				ctx.setAttribute("issue", i, REQUEST);
+				ctx.setAttribute("access", ac, REQUEST);
 				
 				// Load Pilot IDs
 				ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
@@ -140,6 +142,9 @@ public class IssueCommand extends AbstractFormCommand {
 				ac.validate();
 				if (!ac.getCanCreate())
 					throw securityException("Cannot Create Issue");
+				
+				// Save access control
+				ctx.setAttribute("access", ac, REQUEST);
 			}
 			
 			// Get Assignees

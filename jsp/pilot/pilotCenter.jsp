@@ -382,6 +382,14 @@ Flight Academy course.</c:if>
 <i>You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
 <fmt:int value="${academyFlights}" /> Flight legs.</i></c:if></td>
 </tr>
+<c:if test="${pilot.legs >= academyFlights}">
+<tr>
+ <td class="mid"><el:cmd className="bld" url="academyissues">Help Desk</el:cmd></td>
+ <td class="data">The <content:airline /> Flight Academy Help Desk lets pilots and Flight Academy
+ students communicate with our Instructors and Staff to quickly and easily resolve any issues, or
+ answer questions about the Flight Academy.</td>
+</tr>
+</c:if>
 <c:if test="${!empty course}">
 <tr>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
