@@ -190,54 +190,77 @@
 	</target>
 	
 	<target name="deploy" depends="compile,acars,jspc">
-		<!-- Load the server properties -->
-		<property name="path.webapp" value="/dva2006" />
-		<property name="path.http" value="/dva2006" />
 		<loadproperties srcFile="data/build_deploy.properties" />
-		
-		<!-- Upload the root data to the app server -->
-		<echo message="Uploading WEB-INF configuration data" />
-		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 	remotedir="${path.webapp}/WEB-INF" action="send" depends="yes" verbose="yes">
+
+		<!-- Upload the web configuration -->
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF"
+				verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 	    	<fileset dir="WEB-INF">
 	    		<include name="*.tld" />
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
+				</modified>
 			</fileset>
-			<fileset file="${java.io.tmpdir}/build/web.xml" />
-		</ftp>
-		
-		<!-- Upload the libraries to the app server -->
-		<echo message="Uploading Library Jars" />
-		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 remotedir="${path.webapp}/WEB-INF/lib" action="send" depends="yes" verbose="yes">
-			<fileset dir="lib/deploy">
-				<include name="mysql*.jar" />
-				<include name="log4j*.jar" />
+			<fileset file="${java.io.tmpdir}/build/web.xml">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
+				</modified>
 			</fileset>
-			<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
-		</ftp>
+		</scp>
 		
-		<echo message="Uploading common Library Jars" />
-		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 remotedir="${webapp.ftp.path.common}" action="send" depends="yes" verbose="yes">
-			<fileset dir="lib/deploy">
-				<exclude name="mysql*.jar" />
+		<!-- Upload the common JAR files to the app server -->
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path.common}"
+			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			<fileset dir="lib/deploy" includes="*.jar">
 				<exclude name="log4j*.jar" />
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
+				</modified>
 			</fileset>
-		</ftp>
+		</scp>
+
+		<!-- Upload the JAR files to the app server -->
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib"
+			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
+				</modified>
+			</fileset>
+			<fileset dir="lib/deploy">
+				<include name="log4j*.jar" />
+				<modified seldirs="false" algorithm="digest">
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
+				</modified>
+			</fileset>
+		</scp>
 		
-		<!-- Upload configuration files to the app server -->
-		<echo message="Uploading Configuration files" />
-		<ftp server="${webapp.ftp.server}" userid="${webapp.ftp.user}" password="${webapp.ftp.pwd}"
-		 	remotedir="${path.webapp}/WEB-INF/classes/etc" action="send" depends="yes" verbose="yes">
-			<fileset dir="etc" includes="*.*" />
-		</ftp>
+		<!-- Upload the config file to the app server -->
+		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/classes/etc"
+			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
+			<fileset dir="etc" includes="*.*">
+				<modified seldirs="false" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
+				</modified>
+			</fileset>
+		</scp>
 		
 		<!-- Upload static content to the HTTP server -->
-		<echo message="Uploading static content to HTTP server" />
-		<ftp server="${http.ftp.server}" userid="${http.ftp.user}" password="${http.ftp.pwd}"
-		 	remotedir="${path.http}" action="send" depends="yes" verbose="yes">
-			<fileset dir="static" includes="**/*" />
-		</ftp>
+		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}"
+			verbose="yes" trust="yes" password="${http.dev.pwd}">
+			<fileset dir="static">
+				<modified seldirs="true" algorithm="digest">
+						<param name="algorithm.algorithm" value="MD5" />
+						<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
+				</modified>
+			</fileset>
+		</scp>
 	</target>
 	
 	<!-- Clean out compiled data -->
