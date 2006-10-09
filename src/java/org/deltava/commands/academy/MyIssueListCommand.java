@@ -11,13 +11,12 @@ import org.deltava.dao.*;
 import org.deltava.security.command.AcademyIssueAccessControl;
 
 /**
- * A Web Site Command to display Flight Academy Issues.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class IssueListCommand extends AbstractViewCommand {
+public class MyIssueListCommand extends AbstractViewCommand {
 
 	/**
 	 * Executes the command.
@@ -25,9 +24,6 @@ public class IssueListCommand extends AbstractViewCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		// Determine if we want active or all issues
-		boolean isActive = "active".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// Get the view start/end
 		ViewContext vc = initView(ctx);
@@ -38,7 +34,7 @@ public class IssueListCommand extends AbstractViewCommand {
 			GetAcademyIssues idao = new GetAcademyIssues(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = isActive ? idao.getActive() : idao.getAll();
+			Collection<Issue> results = idao.getByPilot(ctx.getUser().getID());
 			vc.setResults(results);
 			
 			// Get Author IDs
@@ -49,7 +45,7 @@ public class IssueListCommand extends AbstractViewCommand {
 				IDs.add(new Integer(is.getAssignedTo()));
 				IDs.add(new Integer(is.getLastCommentAuthorID()));
 			}
-			
+
 			// Get the course list
 			GetAcademyCourses cdao = new GetAcademyCourses(con);
 			cdao.setQueryMax(1);

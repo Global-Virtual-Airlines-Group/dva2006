@@ -55,6 +55,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setStatus(ctx.getParameter("status"));
 			} else {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
+				cdao.setQueryMax(1);
 				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
 
 				// Check access
@@ -135,6 +136,7 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
 			} else {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
+				cdao.setQueryMax(1);
 				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
 				
 				// Check access
