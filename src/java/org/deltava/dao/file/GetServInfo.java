@@ -157,8 +157,7 @@ public class GetServInfo extends DAO {
 
 		try {
 			BufferedReader br = getReader();
-			status = new NetworkStatus(netName);
-
+			status = new NetworkStatus(netName, SystemData.get("online." + netName.toLowerCase() + ".local.info"));
 			String sData = br.readLine();
 			while (sData != null) {
 				StringTokenizer tk = new StringTokenizer(sData, "=");

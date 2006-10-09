@@ -15,20 +15,34 @@ import org.deltava.util.cache.Cacheable;
 public class NetworkStatus implements java.io.Serializable, Cacheable, Comparable {
 
 	private String _networkName;
-	private List<NetworkDataURL> _dataURLs;
+	private final List<NetworkDataURL> _dataURLs = new ArrayList<NetworkDataURL>();
+	private NetworkDataURL _local;
 	private String _msg;
 	private boolean _isCached;
 
 	/**
 	 * Initializes the bean.
 	 * @param networkName the network name
+	 * @param localInfo the local information file or null
 	 * @throws NullPointerException if network name is null
+	 * @see NetworkStatus#NetworkStatus(String)
 	 * @see NetworkStatus#getName()
+	 * @see NetworkStatus#getLocal()
 	 */
-	public NetworkStatus(String networkName) {
+	public NetworkStatus(String networkName, String localInfo) {
 		super();
 		_networkName = networkName.trim();
-		_dataURLs = new ArrayList<NetworkDataURL>();
+		_local = (localInfo == null) ? null : new NetworkDataURL(localInfo);
+	}
+	
+	/**
+	 * Initializes the bean.
+	 * @param networkName the network name
+	 * @throws NullPointerException if network name is null
+	 * @see NetworkStatus#NetworkStatus(String, String)
+	 */
+	public NetworkStatus(String networkName) {
+		this(networkName, null);
 	}
 
 	/**
@@ -43,9 +57,18 @@ public class NetworkStatus implements java.io.Serializable, Cacheable, Comparabl
 	 * Returns the network name.
 	 * @return the network name
 	 * @see NetworkStatus#NetworkStatus(String)
+	 * @see NetworkStatus#NetworkStatus(String, String)
 	 */
 	public String getName() {
 		return _networkName;
+	}
+	
+	/**
+	 * Returns the URL to the local status file.
+	 * @return the local status URL bean
+	 */
+	public NetworkDataURL getLocal() {
+		return _local;
 	}
 
 	/**
@@ -83,7 +106,7 @@ public class NetworkStatus implements java.io.Serializable, Cacheable, Comparabl
 	 */
 	@SuppressWarnings("unchecked")
 	public List<NetworkDataURL> getURLs() {
-		List <NetworkDataURL> results = new ArrayList<NetworkDataURL>(_dataURLs);
+		List<NetworkDataURL> results = new ArrayList<NetworkDataURL>(_dataURLs);
 		Collections.sort(results);
 		return results;
 	}
