@@ -25,15 +25,16 @@
 <view:table className="view" space="default" pad="default" cmd="academyissues">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
- <td colspan="2"><c:if test="${access.canCreate}"><el:cmd url="academyissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
-<cl:cmd url="myacademyissues">MY ISSUES</el:cmd> | <el:cmd url="academyissues">ALL ISSUES</el:cmd> 
+ <td colspan="3"><c:if test="${access.canCreate}"><el:cmd url="academyissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
+<el:cmd url="myacademyissues">MY ISSUES</el:cmd> | <el:cmd url="academyissues">ALL ISSUES</el:cmd> 
 | <el:cmd url="academyissues" op="active">ACTIVE ISSUES</el:cmd></td>
 </tr>
 
 <!-- Table Header Bar -->
 <tr class="title caps">
- <td width="40%">SUBJECT</td>
- <td width="15%">STARTED BY</td>
+ <td width="35%">SUBJECT</td>
+ <td width="12%">STARTED BY</td>
+ <td width="12%">ASSIGNED TO</td>
  <td width="5%">COMMENTS</td>
  <td class="left">LAST COMMENT BY</td>
 </tr>
@@ -42,16 +43,18 @@
 <c:forEach var="issue" items="${viewContext.results}">
 <c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
 <c:set var="cAuthor" value="${pilots[issue.lastCommentAuthorID]}" scope="request" />
+<c:set var="assignedTo" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td><el:cmd url="academyissue" linkID="0x${issue.ID}">${issue.subject}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${author.ID}" className="pri bld">${author.name}</el:cmd></td>
- <td><fmt:int value="${issue.commentCount}" /></td>
+ <td><el:cmd url="profile" linkID="0x${assignedTo.ID}" className="bld">${assignedTo.name}</el:cmd></td>
 <c:choose>
 <c:when test="${!empty cAuthor}">
+ <td><fmt:int value="${issue.commentCount}" /></td>
  <td class="right"><fmt:date date="${issue.lastComment}" /> by <span class="pri bld">${cAuthor.name}</span></td>
 </c:when>
 <c:otherwise>
- <td class="small right">No Comments have been made regarding this Issue</td>
+ <td colspan="2" class="small right">No Comments have been made regarding this Issue</td>
 </c:otherwise>
 </c:choose>
 </view:row>
@@ -59,8 +62,8 @@
 
 <!-- Bottom Bar -->
 <tr class="title caps">
- <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
-<view:legend width="70" labels="Public,Private" classes="opt1, " /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
+<view:legend width="95" labels="Open,Resolved" classes="opt1, " /></td>
 </tr>
 </view:table>
 <content:copyright />

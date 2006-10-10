@@ -38,6 +38,7 @@ public class IssueCommand extends AbstractFormCommand {
 			
 			// Get the Issue
 			Issue i = null;
+			AcademyIssueAccessControl ac = null;
 			if (!isNew) {
 				GetAcademyIssues idao = new GetAcademyIssues(con);
 				i = idao.getIssue(ctx.getID());
@@ -45,7 +46,7 @@ public class IssueCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Issue - " + ctx.getID());
 				
 				// Check access
-				AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, i, false);
+				ac = new AcademyIssueAccessControl(ctx, i, false);
 				ac.validate();
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
@@ -53,13 +54,17 @@ public class IssueCommand extends AbstractFormCommand {
 				// Update subject
 				i.setSubject(ctx.getParameter("subject"));
 				i.setStatus(ctx.getParameter("status"));
+				if ((i.getStatus() != Issue.OPEN) && (i.getResolvedOn() == null))
+					i.setResolvedOn(new Date());
+				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
+					i.setResolvedOn(null);
 			} else {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
 				cdao.setQueryMax(1);
 				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
 
 				// Check access
-				AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, null, !courses.isEmpty());
+				ac = new AcademyIssueAccessControl(ctx, null, !courses.isEmpty());
 				ac.validate();
 				if (!ac.getCanCreate())
 					throw securityException("Cannot Create Issue");
@@ -77,8 +82,9 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 			
 			// Update fields from the request
-			i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			i.setBody(ctx.getParameter("body"));
+			if (ac.getCanUpdateStatus())
+				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			
 			// Save the issue
 			SetAcademyIssue iwdao = new SetAcademyIssue(con);

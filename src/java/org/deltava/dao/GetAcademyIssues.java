@@ -70,9 +70,10 @@ public class GetAcademyIssues extends DAO {
 	 */
 	public Collection<Issue> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT I.*, COUNT(IC.ID), (SELECT AUTHOR FROM ACADEMY_ISSUECOMMENTS IC WHERE "
-					+ "(I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM ACADEMY_ISSUES I LEFT JOIN "
-					+ "ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON");
+			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
+					+ "ACADEMY_ISSUECOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+					+ "FROM ACADEMY_ISSUES I LEFT JOIN ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID "
+					+ "ORDER BY I.CREATED_ON");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -87,12 +88,13 @@ public class GetAcademyIssues extends DAO {
 	 */
 	public Collection<Issue> getByPilot(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT I.*, COUNT(IC.ID), (SELECT AUTHOR FROM ACADEMY_ISSUECOMMENTS IC WHERE "
-					+ "(I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM ACADEMY_ISSUES I LEFT JOIN "
-					+ "ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) WHERE (I.ISPUBLIC=?) OR (I.AUTHOR=?) OR (I.ASSIGNEDTO=?) "
-					+ "GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
+			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
+					+ "ACADEMY_ISSUECOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+					+ "FROM ACADEMY_ISSUES I LEFT JOIN ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) WHERE (I.ISPUBLIC=?) "
+					+ "OR (I.AUTHOR=?) OR (I.ASSIGNEDTO=?) GROUP BY I.ID ORDER BY I.STATUS, I.CREATED_ON");
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, id);
+			_ps.setInt(3, id);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -106,9 +108,10 @@ public class GetAcademyIssues extends DAO {
 	 */
 	public Collection<Issue> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT I.*, COUNT(IC.ID), (SELECT AUTHOR FROM ACADEMY_ISSUECOMMENTS IC WHERE "
-					+ "(I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM ACADEMY_ISSUES I LEFT JOIN "
-					+ "ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY I.ID ORDER BY I.CREATED_ON");
+			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
+					+ "ACADEMY_ISSUECOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+					+ "FROM ACADEMY_ISSUES I LEFT JOIN ACADEMY_ISSUECOMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) "
+					+ "GROUP BY I.ID ORDER BY I.CREATED_ON");
 			_ps.setInt(1, Issue.OPEN);
 			return execute();
 		} catch (SQLException se) {
@@ -123,7 +126,7 @@ public class GetAcademyIssues extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasCount = (rs.getMetaData().getColumnCount() > 10);
+		boolean hasCount = (rs.getMetaData().getColumnCount() > 11);
 		
 		// Load results
 		List<Issue> results = new ArrayList<Issue>();
@@ -139,7 +142,8 @@ public class GetAcademyIssues extends DAO {
 			i.setBody(rs.getString(9));
 			if (hasCount) {
 				i.setCommentCount(rs.getInt(10));
-				i.setLastCommentAuthorID(rs.getInt(11));
+				i.setLastComment(rs.getTimestamp(11));
+				i.setLastCommentAuthorID(rs.getInt(12));
 			}
 			
 			// Add to results
