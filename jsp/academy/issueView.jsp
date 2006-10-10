@@ -27,7 +27,6 @@ disableButton('CommentButton');</c:if>
 return ${access.canComment};
 }
 </script>
-</script>
 </head>
 <content:copyright visible="false" />
 <body onload="void initLinks()">
@@ -103,7 +102,7 @@ return ${access.canComment};
 <tr>
  <td>
 <c:if test="${access.canUpdateStatus}">
- <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" linkID="0x${issue.ID}" />
+ <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="academyissue" op="edit" linkID="0x${issue.ID}" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />

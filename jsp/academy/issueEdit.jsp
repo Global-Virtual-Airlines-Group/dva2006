@@ -48,6 +48,7 @@ return true;
  <td class="label">Reported by</td>
  <td class="data"><b>${author.name}</b> (${author.pilotCode}) on <fmt:date date="${issue.createdOn}" /></td>
 </tr>
+<c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">Issue Status</td>
  <td class="data"><el:combo name="status" className="bld" size="1" idx="1" options="${statuses}" value="${issue.statusName}" /></td>
@@ -57,6 +58,7 @@ return true;
  <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${assignees}" value="${issue.assignedTo}" /></td>
 </tr>
 </c:if>
+</c:if>
 <tr>
  <td class="label">Issue Title</td>
  <td class="data"><el:text name="subject" className="pri bld req" size="64" max="128" idx="2" value="${issue.subject}" /></td>
@@ -65,6 +67,12 @@ return true;
  <td class="label" valign="top">Issue Description</td>
  <td class="data"><el:textbox name="body" width="80%" height="5" idx="7" className="req">${issue.body}</el:textbox></td>
 </tr>
+<c:if test="${access.canUpdateStatus}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /></td>
+</tr>
+</c:if>
 
 <c:if test="${!empty issue}">
 <!-- Issue Comments -->

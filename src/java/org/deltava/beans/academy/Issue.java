@@ -168,7 +168,7 @@ public class Issue extends DatabaseBean implements ViewEntry {
 	 * @see IssueComment
 	 */
 	public Collection<IssueComment> getComments() {
-		return _comments;
+		return (_comments == null) ? new HashSet<IssueComment>() : _comments;
 	}
 
 	/**
