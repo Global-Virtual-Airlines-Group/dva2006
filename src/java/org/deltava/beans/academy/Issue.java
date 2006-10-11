@@ -16,9 +16,10 @@ import org.deltava.util.StringUtils;
 public class Issue extends DatabaseBean implements ViewEntry {
 	
 	public static final int OPEN = 0;
-	public static final int CLOSED = 1;
+	public static final int ASSIGNED = 1;
+	public static final int CLOSED = 2;
 	
-	public static final String[] STATUS_NAMES = {"Open", "Closed"};
+	public static final String[] STATUS_NAMES = {"Open", "Assigned", "Closed"};
 	
 	private int _authorID;
 	private int _assigneeID;
@@ -326,7 +327,7 @@ public class Issue extends DatabaseBean implements ViewEntry {
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		final String[] ROW_CLASSES = {null, "opt1"};
+		final String[] ROW_CLASSES = {null, "opt2", "opt1"};
 		return ROW_CLASSES[_status];
 	}
 }
