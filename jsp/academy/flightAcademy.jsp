@@ -117,7 +117,7 @@ return true;
  <td class="left" colspan="3">The <content:airline /> Flight Academy Help Desk lets pilots and Flight Academy
  students communicate with our Instructors and Staff to quickly and easily resolve any issues, or
  answer questions about the Flight Academy.</td>
- <td colspan="2"><el:cmdbutton url="academyissues" label="HELP DESK" /></td>
+ <td colspan="2"><el:cmdbutton url="myacademyissues" label="HELP DESK" /></td>
 </tr>
 
 <!-- New Course Section -->
