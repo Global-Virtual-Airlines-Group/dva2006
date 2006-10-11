@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.AcademyIssueAccessControl;
 
-import org.deltava.util.ComboUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -54,6 +54,7 @@ public class IssueCommand extends AbstractFormCommand {
 				// Update subject
 				i.setSubject(ctx.getParameter("subject"));
 				i.setStatus(ctx.getParameter("status"));
+				i.setAssignedTo(StringUtils.parse(ctx.getParameter("assignedTo"), 0));
 				if ((i.getStatus() != Issue.OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(new Date());
 				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
