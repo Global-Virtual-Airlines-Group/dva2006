@@ -1509,7 +1509,7 @@
 	<command id="academyissues">
 		<name>Flight Academy Help Desk</name>
 		<class>org.deltava.commands.academy.IssueListCommand</class>
-		<roles>Pilot</roles>
+		<roles>Instructor,Examiner,HR</roles>
 	</command>
 
 	<command id="myacademyissues">
