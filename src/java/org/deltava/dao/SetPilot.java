@@ -64,8 +64,8 @@ public class SetPilot extends PilotWriteDAO {
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
 				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, RANK=?, "
-				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, FIRSTNAME=?, "
-				+ "LASTNAME=? WHERE (ID=?)");
+				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, "
+				+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -102,12 +102,13 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(26, p.getStatus());
 			_ps.setBoolean(27, p.getNoExams());
 			_ps.setBoolean(28, p.getNoVoice());
-			_ps.setInt(29, p.getACARSRestriction());
-			_ps.setString(30, p.getLDAPName());
-			_ps.setString(31, p.getMotto());
-			_ps.setString(32, p.getFirstName());
-			_ps.setString(33, p.getLastName());
-			_ps.setInt(34, p.getID());
+			_ps.setBoolean(29, p.getNoCooler());
+			_ps.setInt(30, p.getACARSRestriction());
+			_ps.setString(31, p.getLDAPName());
+			_ps.setString(32, p.getMotto());
+			_ps.setString(33, p.getFirstName());
+			_ps.setString(34, p.getLastName());
+			_ps.setInt(35, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings

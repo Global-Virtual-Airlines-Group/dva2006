@@ -110,6 +110,7 @@ return true;
  <td class="label" valign="top">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${status}" /><br />
+<el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable Water Cooler posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /></td>
 </tr>

@@ -41,6 +41,9 @@ public class CoolerChannelAccessControl extends AccessControl {
     public void validate() {
        validateContext();
        
+       // Get the user
+       Pilot usr = (Pilot) _ctx.getUser();
+       
         // Validate that we can access the channel
         _canAccess = true;
         if (_c != null) {
@@ -49,14 +52,16 @@ public class CoolerChannelAccessControl extends AccessControl {
         		return;
         	
         	// Get the pilot code; if none use the default
-        	Pilot usr = (Pilot) _ctx.getUser();
         	UserID id = new UserID(usr.getPilotCode());
         	String airlineCode = StringUtils.isEmpty(usr.getPilotCode()) ? SystemData.get("airline.code") : id.getAirlineCode();
         	_canAccess &= (_c.getAirlines().contains(airlineCode.toUpperCase()));
         }
         
+        // Check if we're locked out
+        boolean isLocked = ((usr != null) && usr.getNoCooler());
+        
         // Set state objects
-        _canPost = _canAccess && _ctx.isAuthenticated();
+        _canPost = !isLocked && _canAccess && _ctx.isAuthenticated();
         _canEdit = _ctx.isUserInRole("Admin");
         _canRead = (_c != null) && _canEdit;
     }
