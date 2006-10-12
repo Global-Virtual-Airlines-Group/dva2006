@@ -7,7 +7,7 @@ import java.util.*;
 import org.deltava.beans.Flight;
 import org.deltava.beans.schedule.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -18,7 +18,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetSchedule extends DAO {
-    
+
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -29,51 +29,52 @@ public class GetSchedule extends DAO {
 
 	/**
 	 * Searches the Schedule database for flights matching particular criteria.
-	 * @param criteria the search criteria. Null properties are ignored 
+	 * @param criteria the search criteria. Null properties are ignored
 	 * @param sortBy orderBy column
 	 * @return a List of Flights
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<ScheduleEntry> search(Flight criteria, String sortBy) throws DAOException {
-		
+	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria, String sortBy) throws DAOException {
+
 		// Build the where clause
 		Collection<String> conditions = new LinkedHashSet<String>();
-		if (criteria.getAirline() != null) conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
-		if (criteria.getEquipmentType() != null) conditions.add("EQTYPE=\'" + criteria.getEquipmentType() + "\'");
-		if (criteria.getFlightNumber() != 0) conditions.add("FLIGHT=" + criteria.getFlightNumber());
-		if (criteria.getLeg() != 0) conditions.add("LEG=" + criteria.getLeg());
-		if (criteria.getAirportD() != null) conditions.add("AIRPORT_D=\'" + criteria.getAirportD().getIATA() + "\'"); 
-		if (criteria.getAirportA() != null) conditions.add("AIRPORT_A=\'" + criteria.getAirportA().getIATA() + "\'");
-		
+		if (criteria.getAirline() != null)
+			conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
+		if (criteria.getFlightNumber() != 0)
+			conditions.add("FLIGHT=" + criteria.getFlightNumber());
+		if (criteria.getLeg() != 0)
+			conditions.add("LEG=" + criteria.getLeg());
+		if (criteria.getAirportD() != null)
+			conditions.add("AIRPORT_D=\'" + criteria.getAirportD().getIATA() + "\'");
+		if (criteria.getAirportA() != null)
+			conditions.add("AIRPORT_A=\'" + criteria.getAirportA().getIATA() + "\'");
+
 		// Set distance criteria +/- 150 miles
 		if (criteria.getDistance() != 0) {
 			conditions.add("DISTANCE >= " + String.valueOf(criteria.getDistance() - 150));
 			conditions.add("DISTANCE <= " + String.valueOf(criteria.getDistance() + 150));
 		}
-		
+
 		// Set flight time criteria +/- 1 hour
 		if (criteria.getLength() != 0) {
 			conditions.add("FLIGHT_TIME >= " + String.valueOf((criteria.getLength() / 10.0) - 1));
 			conditions.add("FLIGHT_TIME <= " + String.valueOf((criteria.getLength() / 10.0) + 1));
 		}
-		
+
 		// Set departure/arrival time criteria +/- 2 hours
-		if (criteria instanceof ScheduleSearchCriteria) {
-			ScheduleSearchCriteria ssc = (ScheduleSearchCriteria) criteria;
-			if (ssc.getHourD() != -1) {
-				conditions.add("TIME_D >= \'" + StringUtils.format(ssc.getHourD() - 1, "00") + ":00\'");
-				conditions.add("TIME_D <= \'" + StringUtils.format(ssc.getHourD() + 1, "00") + ":00\'");
-			}
-			
-			if (ssc.getHourA() != -1) {
-				conditions.add("TIME_A >= \'" + StringUtils.format(ssc.getHourA() - 1, "00") + ":00\'");
-				conditions.add("TIME_A <= \'" + StringUtils.format(ssc.getHourA() + 1, "00") + ":00\'");
-			}
+		if (criteria.getHourD() != -1) {
+			conditions.add("TIME_D >= \'" + StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
+			conditions.add("TIME_D <= \'" + StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
 		}
-		
+
+		if (criteria.getHourA() != -1) {
+			conditions.add("TIME_A >= \'" + StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
+			conditions.add("TIME_A <= \'" + StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
+		}
+
 		// Build the query string
 		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
-		for (Iterator<String> i = conditions.iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
 			buf.append('(');
 			buf.append(i.next());
 			buf.append(')');
@@ -81,10 +82,25 @@ public class GetSchedule extends DAO {
 				buf.append(" AND ");
 		}
 		
+		// Build the equipment type query
+		if (!CollectionUtils.isEmpty(criteria.getEquipmentTypes())) {
+			buf.append(" AND (");
+			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
+				String eqType = i.next();
+				buf.append("(EQTYPE=\"");
+				buf.append(eqType);
+				buf.append("\")");
+				if (i.hasNext())
+					buf.append(" OR ");
+			}
+			
+			 buf.append(')');
+		}
+
 		// Add sort column
 		buf.append(" ORDER BY ");
 		buf.append(sortBy);
-		
+
 		// Prepare the satement and execute the query
 		try {
 			prepareStatement(buf.toString());
@@ -93,7 +109,7 @@ public class GetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Return a particular flight from the Schedule database.
 	 * @param f the Flight to return, using the airline code, flight number and leg
@@ -107,7 +123,7 @@ public class GetSchedule extends DAO {
 			_ps.setString(1, f.getAirline().getCode());
 			_ps.setInt(2, f.getFlightNumber());
 			_ps.setInt(3, f.getLeg());
-			
+
 			// Execute the query, return null if not found
 			List<ScheduleEntry> results = execute();
 			return (results.size() == 0) ? null : results.get(0);
@@ -115,7 +131,7 @@ public class GetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all flights from a particular airport, sorted by Airline and Flight Number.
 	 * @param a the origin Airport bean
@@ -131,7 +147,7 @@ public class GetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Return a particular flight from the Schedule database.
 	 * @param aCode the Airline Code
@@ -143,7 +159,7 @@ public class GetSchedule extends DAO {
 	public ScheduleEntry get(String aCode, int flightNumber, int leg) throws DAOException {
 		return get(new ScheduleEntry(new Airline(aCode), flightNumber, leg));
 	}
-	
+
 	/**
 	 * Returns the average flight time for all flights in the Schedule database between two airports.
 	 * @param airportD the origin airport IATA code
@@ -153,54 +169,18 @@ public class GetSchedule extends DAO {
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
 	public int getFlightTime(String airportD, String airportA) throws DAOException {
-	   
-	   // Init the prepared statement
-	   try {
-	      prepareStatement("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM SCHEDULE WHERE (AIRPORT_D=?) "
-	    		  + "AND (AIRPORT_A=?)");
-	      _ps.setString(1, airportD.toUpperCase());
-	      _ps.setString(2, airportA.toUpperCase());
-	      
-	      // Execute the Query
-	      ResultSet rs = _ps.executeQuery();
-	      int result = rs.next() ? rs.getInt(1) : 0;
-	      
-	      // Clean up and return
-	      rs.close();
-	      _ps.close();
-	      return result;
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
-	}
-	
-	/**
-	 * Exports the entire Flight Schedule.
-	 * @return a Collection of ScheduleEntry beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Collection<ScheduleEntry> export() throws DAOException {
-	   try {
-	      prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
-	      return execute();
-	   } catch (SQLException se) {
-	      throw new DAOException(se);
-	   }
-	}
-	
-	/**
-	 * Returns the size of the Flight Schedule.
-	 * @return the number of legs
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public int getFlightCount() throws DAOException {
+
+		// Init the prepared statement
 		try {
-			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
-			
-			// Execute the query
+			prepareStatement("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM SCHEDULE WHERE (AIRPORT_D=?) "
+					+ "AND (AIRPORT_A=?)");
+			_ps.setString(1, airportD.toUpperCase());
+			_ps.setString(2, airportA.toUpperCase());
+
+			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
 			int result = rs.next() ? rs.getInt(1) : 0;
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -209,12 +189,48 @@ public class GetSchedule extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
+	/**
+	 * Exports the entire Flight Schedule.
+	 * @return a Collection of ScheduleEntry beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<ScheduleEntry> export() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM SCHEDULE ORDER BY AIRLINE, FLIGHT, LEG");
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns the size of the Flight Schedule.
+	 * @return the number of legs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getFlightCount() throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(*) FROM SCHEDULE");
+
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = rs.next() ? rs.getInt(1) : 0;
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
 	/**
 	 * Helper method to query the database.
 	 */
 	private List<ScheduleEntry> execute() throws SQLException {
-		
+
 		// Execute the query
 		List<ScheduleEntry> results = new ArrayList<ScheduleEntry>();
 		ResultSet rs = _ps.executeQuery();
@@ -231,7 +247,7 @@ public class GetSchedule extends DAO {
 			// Add to results
 			results.add(entry);
 		}
-		
+
 		// Clean up and return
 		rs.close();
 		_ps.close();
