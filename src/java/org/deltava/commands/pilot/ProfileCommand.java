@@ -120,6 +120,19 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
+				
+				// Check Water Cooler access
+				boolean coolerPostsLocked = Boolean.valueOf(ctx.getParameter("noCooler")).booleanValue();
+				if (coolerPostsLocked != p.getNoCooler()) {
+					p.setNoCooler(coolerPostsLocked);
+					
+					// Write the status update entry
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+					upd.setAuthorID(ctx.getUser().getID());
+					upd.setDescription(coolerPostsLocked ? "Water Cooler posts locked out" : "Water Cooler posts enabled");
+					updates.add(upd);
+					log.warn(p.getName() + " " + upd.getDescription());
+				}
 
 				// Check Testing Center access
 				boolean examsLocked = Boolean.valueOf(ctx.getParameter("noExams")).booleanValue();

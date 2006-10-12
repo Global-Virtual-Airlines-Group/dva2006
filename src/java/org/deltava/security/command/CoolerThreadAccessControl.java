@@ -3,6 +3,7 @@ package org.deltava.security.command;
 
 import java.util.List;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 
 import org.deltava.security.SecurityContext;
@@ -79,10 +80,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _cac.validate(); 
         boolean channelAccess = _cac.getCanAccess();
         
+        // Get the user
+        Pilot usr = (Pilot) _ctx.getUser();
+        boolean isLockedOut = ((usr != null) && usr.getNoCooler());
+        
         // Get the roles and role state - we assume it's OK if channel is null
         boolean isOurs = (_ctx.getUser() != null) && (_mt.getAuthorID() == _ctx.getUser().getID());
         boolean isModerator = _ctx.isUserInRole("Moderator");
-        boolean isClosed = _mt.getLocked() || _mt.getHidden();
+        boolean isClosed = _mt.getLocked() || _mt.getHidden() || isLockedOut;
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread
