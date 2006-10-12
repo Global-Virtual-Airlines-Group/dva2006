@@ -80,6 +80,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private boolean _showDefaultSignature;
 	private boolean _noExams;
 	private boolean _noVoice;
+	private boolean _noCooler;
 
 	private int _ACARSRestrict;
 	private int _mapType;
@@ -195,6 +196,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public boolean getNoVoice() {
 		return _noVoice;
+	}
+	
+	/**
+	 * Returns wether the Pilot has been locked out of the Water Cooler.
+	 * @return TRUE if the Pilot has been locked out of the Water Cooler, otherwise FALSE
+	 * @see Pilot#setNoCooler(boolean)
+	 */
+	public boolean getNoCooler() {
+		return _noCooler;
 	}
 
 	/**
@@ -436,6 +446,15 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public void setNoVoice(boolean noVoice) {
 		_noVoice = noVoice;
+	}
+	
+	/**
+	 * Updates wether the Pilot is locked out from the Water Cooler.
+	 * @param noCooler TRUE if the Pilot cannot access the Water Cooler, otherwise FALSE
+	 * @see Pilot#getNoCooler()
+	 */
+	public void setNoCooler(boolean noCooler) {
+		_noCooler = noCooler;
 	}
 
 	/**
