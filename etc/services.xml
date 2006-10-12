@@ -14,7 +14,6 @@
 
 	<!-- Flight Schedule Services -->
 	<service id="airports" class="org.deltava.service.schedule.AirportListService" />
-	<service id="schedule" class="org.deltava.service.schedule.SearchService" />
 	<service id="next_flight" class="org.deltava.service.schedule.AvailableFlightService" />
 	<service id="next_leg" class="org.deltava.service.schedule.AvailableFlightLegService" />
 	<service id="route" class="org.deltava.service.schedule.RouteMapService" />
