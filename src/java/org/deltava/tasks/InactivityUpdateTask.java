@@ -14,7 +14,6 @@ import org.deltava.mail.*;
 
 import org.deltava.taskman.DatabaseTask;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -95,10 +94,8 @@ public class InactivityUpdateTask extends DatabaseTask {
 					pwdao.write(p);
 					
 					// Clear TS2 credentials
-					if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
-						if (!StringUtils.isEmpty(p.getPilotCode()))
-							ts2wdao.delete(p.getID());
-					}
+					if (SystemData.getBoolean("airline.voice.ts2.enabled"))
+						ts2wdao.delete(p.getID());
 
 					// Send notification message
 					mailer.setContext(mctxt);
