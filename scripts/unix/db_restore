@@ -24,7 +24,6 @@ zcat /home/backup/db/events.sql.gz | /usr/local/mysql5/bin/mysql --socket=/var/r
 
 echo 'Restoring Postfix/Teampseak Data'
 zcat /home/backup/db/postfix.sql.gz | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# postfix
-zcat /home/backup/db/sqmail.sql.gz | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# sqmail
 zcat /home/backup/db/teamspeak.sql.gz | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# teamspeak
 
 echo 'Restoring DVA data'

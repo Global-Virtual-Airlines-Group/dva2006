@@ -47,7 +47,7 @@ then
   mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | gzip -9 > acars_pos.sql.gz
 else
   echo 'Writing Incremental ACARS Positions'
-  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(REPORT_TIME, INTERVAL 8 DAY)" acars POSITION_ARCHIVE | gzip -9 > acars_pos_inc.sql.gz
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="WEEK(CURDATE(), 5) = WEEK(REPORT_TIME, 5)" acars POSITION_ARCHIVE | gzip -9 > acars_pos_inc.sql.gz
 fi
 
 # Dump ACARS data
@@ -78,9 +78,9 @@ then
   mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY | gzip -9 > afv_gallery.sql.gz
 else  
   echo 'Writing Incremental DVA Image Gallery'
-  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(DATE, INTERVAL 8 DAY)" dva GALLERY | gzip -9 > dva_gallery_inc.sql.gz
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="WEEK(CURDATE(), 5) = WEEK(DATE, 5)" dva GALLERY | gzip -9 > dva_gallery_inc.sql.gz
   echo 'Writing Incremental AFV Image Gallery'
-  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="CURDATE() < DATE_ADD(DATE, INTERVAL 8 DAY)" afv GALLERY | gzip -9 > afv_gallery_inc.sql.gz
+  mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="WEEK(CURDATE(), 5) = WEEK(DATE, 5)" afv GALLERY | gzip -9 > afv_gallery_inc.sql.gz
 fi
 
 # Change file permissions
