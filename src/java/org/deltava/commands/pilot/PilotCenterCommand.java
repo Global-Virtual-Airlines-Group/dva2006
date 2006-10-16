@@ -7,8 +7,8 @@ import java.sql.Connection;
 import javax.servlet.http.HttpSession;
 
 import org.deltava.beans.*;
+import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.Course;
-import org.deltava.beans.testing.ExamProfile;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -96,15 +96,13 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
 
 			// Initialize the testing history helper and check for test lockout
-			initTestHistory(p, con);
-			_testHistory.setDebug(ctx.isSuperUser());
-			ctx.setAttribute("examLockout", Boolean.valueOf(_testHistory.isLockedOut(SystemData
-					.getInt("testing.lockout"))), REQUEST);
+			TestingHistoryHelper testHistory = initTestHistory(p, con);
+			testHistory.setDebug(ctx.isSuperUser());
+			ctx.setAttribute("examLockout", Boolean.valueOf(testHistory.isLockedOut(SystemData.getInt("testing.lockout"))), REQUEST);
 
 			// Save the pilot's equipment program and check if we can get promoted to Captain
-			ctx.setAttribute("eqType", _testHistory.getEquipmentType(), REQUEST);
-			ctx.setAttribute("captPromote", Boolean.valueOf(_testHistory.canPromote(_testHistory.getEquipmentType())),
-					REQUEST);
+			ctx.setAttribute("eqType", testHistory.getEquipmentType(), REQUEST);
+			ctx.setAttribute("captPromote", Boolean.valueOf(testHistory.canPromote(testHistory.getEquipmentType())), REQUEST);
 
 			// Count how many legs completed towards Promtion
 			if (Ranks.RANK_FO.equals(p.getRank())) {
@@ -127,9 +125,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				Collection<EquipmentType> needFOExamEQ = new TreeSet<EquipmentType>();
 				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = i.next();
-					if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq)) {
+					if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq)) {
 						ExamProfile ep = exams.get(eq.getExamName(Ranks.RANK_FO));
-						if ((ep != null) && (_testHistory.canWrite(ep)))
+						if ((ep != null) && (testHistory.canWrite(ep)))
 							needFOExamEQ.add(eq);
 
 						i.remove();
@@ -157,7 +155,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			Collection<ExamProfile> allExams = exams.values();
 			for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
-				if (!_testHistory.canWrite(ep))
+				if (!testHistory.canWrite(ep))
 					i.remove();
 			}
 

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.Pilot;
 import org.deltava.beans.EquipmentType;
 import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -42,16 +43,16 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			Connection con = ctx.getConnection();
 
 			// Initialize the testing history helper
-			initTestHistory(p, con);
+			TestingHistoryHelper testHistory = initTestHistory(p, con);
 
 			// Get the active Equipment Profiles and determine what we can switch to
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			List<EquipmentType> activeEQ = new ArrayList<EquipmentType>(eqdao.getActive());
 			for (Iterator i = activeEQ.iterator(); i.hasNext();) {
 				EquipmentType eq = (EquipmentType) i.next();
-				if (!_testHistory.canSwitchTo(eq) && !_testHistory.canRequestCheckRide(eq))
+				if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq))
 					i.remove();
-				else if (isRating && !_testHistory.canRequestRatings(eq))
+				else if (isRating && !testHistory.canRequestRatings(eq))
 					i.remove();
 			}
 
@@ -82,7 +83,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			// Populate the transfer request
 			EquipmentType eq = activeEQ.get(ofs);
 			txreq = new TransferRequest(p.getID(), eqType);
-			txreq.setStatus(_testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
+			txreq.setStatus(testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
 			if (eq.getStage() > 1)
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
 

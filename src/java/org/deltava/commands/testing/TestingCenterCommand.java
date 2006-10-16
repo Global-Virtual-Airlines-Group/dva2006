@@ -41,9 +41,9 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 			Connection con = ctx.getConnection();
 
 			// Initialize the Testing History
-			initTestHistory(usr, con);
-			_testHistory.setDebug(ctx.isSuperUser());
-			boolean examsLocked = _testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
+			TestingHistoryHelper testHistory = initTestHistory(usr, con);
+			testHistory.setDebug(ctx.isSuperUser());
+			boolean examsLocked = testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
 
@@ -70,13 +70,13 @@ public class TestingCenterCommand extends AbstractTestHistoryCommand {
 				// Remove all examinations that we have passed or require a higher stage than us
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 					ExamProfile ep = i.next();
-					if (!_testHistory.canWrite(ep))
+					if (!testHistory.canWrite(ep))
 						i.remove();
 				}
 			}
 
 			// Save the remaining exam profiles in the request
-			ctx.setAttribute("exams", _testHistory.getExams(), REQUEST);
+			ctx.setAttribute("exams", testHistory.getExams(), REQUEST);
 			ctx.setAttribute("availableExams", allExams, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
