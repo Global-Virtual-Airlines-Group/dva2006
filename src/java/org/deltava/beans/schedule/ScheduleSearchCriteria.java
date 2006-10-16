@@ -156,11 +156,10 @@ public class ScheduleSearchCriteria extends Flight {
 
 	/**
 	 * Returns the equipment type.
-	 * @throws UnsupportedOperationException always
+	 * @return the first equipment type
 	 */
-	@Deprecated
 	public final String getEquipmentType() {
-		throw new UnsupportedOperationException();
+		return (_eqTypes.isEmpty()) ? null : _eqTypes.iterator().next();
 	}
 
 	/**
