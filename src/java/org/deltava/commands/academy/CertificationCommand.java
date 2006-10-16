@@ -64,6 +64,7 @@ public class CertificationCommand extends AbstractFormCommand {
 			cert.setStage(Integer.parseInt(ctx.getParameter("stage")));
 			cert.setReqs(StringUtils.arrayIndexOf(Certification.REQ_NAMES, ctx.getParameter("preReqs")));
 			cert.setActive(Boolean.valueOf(ctx.getParameter("isActive")).booleanValue());
+			cert.setAutoEnroll(Boolean.valueOf(ctx.getParameter("autoEnroll")).booleanValue());
 			
 			// Load the examination names
 			Collection<String> eNames = ctx.getParameters("reqExams");

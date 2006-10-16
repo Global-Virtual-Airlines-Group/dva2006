@@ -25,7 +25,9 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	private int _stage;
 	private int _preReqs;
 	private int _reqCount;
+	
 	private boolean _active;
+	private boolean _autoEnroll;
 	
 	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
 	private final Collection<String> _examNames = new HashSet<String>();
@@ -65,6 +67,15 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 */
 	public boolean getActive() {
 		return _active;
+	}
+	
+	/**
+	 * Returnes wether students are automatically enrolled in this Course.
+	 * @return TRUE if students are automatically enrolled, otherwise FALSE
+	 * @see Certification#setAutoEnroll(boolean)
+	 */
+	public boolean getAutoEnroll() {
+		return _autoEnroll;
 	}
 	
 	/**
@@ -219,6 +230,15 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	 */
 	public void setActive(boolean isActive) {
 		_active = isActive;
+	}
+	
+	/**
+	 * Updates wether students are automatically enrolled in this Course.
+	 * @param autoEnroll TRUE if students are automatically enrolled, otherwise FALSE
+	 * @see Certification#getAutoEnroll()
+	 */
+	public void setAutoEnroll(boolean autoEnroll) {
+		_autoEnroll = autoEnroll;
 	}
 
 	/**
