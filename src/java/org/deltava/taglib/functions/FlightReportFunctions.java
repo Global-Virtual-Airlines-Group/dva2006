@@ -101,6 +101,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight is a Flight Academy Training Flight.
+     * @param fr the Flight Report
+     * @return TRUE if the ATTR_ACADEMY attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_ACADEMY
+     */
+    public static boolean isAcademy(FlightReport fr) {
+    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_ACADEMY);
+    }
+    
+    /**
      * Returns if the Flight was flown using a rated equipment type.
      * @param fr the Flight Report
      * @return TRUE if the NOTRATED attribute is not present, otherwise FALSE
