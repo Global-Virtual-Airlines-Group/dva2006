@@ -104,7 +104,7 @@ public class GetAcademyCertifications extends DAO {
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 5);
+		boolean hasReqCount = (rs.getMetaData().getColumnCount() > 6);
 		
 		// Iterate through the results
 		List<Certification> results = new ArrayList<Certification>();
@@ -114,8 +114,9 @@ public class GetAcademyCertifications extends DAO {
 			cert.setStage(rs.getInt(3));
 			cert.setReqs(rs.getInt(4));
 			cert.setActive(rs.getBoolean(5));
+			cert.setAutoEnroll(rs.getBoolean(6));
 			if (hasReqCount)
-				cert.setReqCount(rs.getInt(6));
+				cert.setReqCount(rs.getInt(7));
 			
 			results.add(cert);
 		}

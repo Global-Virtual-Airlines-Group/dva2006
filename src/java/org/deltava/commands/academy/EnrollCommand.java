@@ -64,7 +64,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			}
 
 			// Figure out if we have passed any stage 1 certs; if so, then immediately start
-			if (academyHistory.hasAny(1)) {
+			if (academyHistory.hasAny(1) && cert.getAutoEnroll()) {
 				c.setStatus(Course.STARTED);
 				upd.setDescription("Enrolled in " + cert.getName());
 			}

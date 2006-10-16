@@ -50,7 +50,8 @@
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data bld"><c:if test="${cert.active}"><span class="ter">CERTIFICATION IS AVAILABLE</span></c:if>
-<c:if test="${!cert.active}"><span class="warn">CERTIFICATION IS NOT AVAILABLE</span></c:if></td>
+<c:if test="${!cert.active}"><span class="warn">CERTIFICATION IS NOT AVAILABLE</span></c:if>
+<c:if test="${cert.autoEnroll}"><br /><span class="bld">AUTOMATICALLY ENROLL STUDENTS IN COURSE</span></c:if></td>
 </tr>
 
 <!-- Certification Requirements -->
