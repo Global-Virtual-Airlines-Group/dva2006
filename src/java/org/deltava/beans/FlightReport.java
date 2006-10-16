@@ -87,6 +87,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    public static final int ATTR_HISTORIC = 0x200;
    
    /**
+    * Flight Academy Training Flight.
+    */
+   public static final int ATTR_ACADEMY = 0x400; 
+   
+   /**
     * Attribute mask for VATSIM/IVAO/FPI online flights.
     */
    public static final int ATTR_ONLINE_MASK = 0x0E;
@@ -111,10 +116,10 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
    private String _lastName;
    private String _rank;
 
-   private Set<String> _captEQType = new TreeSet<String>();
+   private final Set<String> _captEQType = new TreeSet<String>();
 
    // Stores Integers pointing to other database IDs, see PIREPConstants
-   private Map<String, Integer> _dbIds = new HashMap<String, Integer>();
+   private final Map<String, Integer> _dbIds = new HashMap<String, Integer>();
 
    /**
     * Creates a new Flight Report object with a given flight.
