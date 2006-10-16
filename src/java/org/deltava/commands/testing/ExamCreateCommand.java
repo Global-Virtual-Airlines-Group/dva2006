@@ -50,8 +50,8 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 				throw notFoundException("Invalid Examination - " + examName);
 
             // Initialize the testing history helper
-            initTestHistory(ctx.getUser(), con);
-			boolean examsLocked = _testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
+            TestingHistoryHelper testHistory = initTestHistory(ctx.getUser(), con);
+			boolean examsLocked = testHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
 			
@@ -70,7 +70,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Check if we can take the exam
-            if (!_testHistory.canWrite(ep))
+            if (!testHistory.canWrite(ep))
 				throw securityException("Cannot take " + examName);
             
             // Check if we have a pending Transfer Request

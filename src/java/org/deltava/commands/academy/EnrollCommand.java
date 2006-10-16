@@ -34,7 +34,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			Connection con = ctx.getConnection();
 			
 			// Init the history
-			initHistory(ctx.getUser(), con);
+			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
 			
 			// Get the DAO and the certification
 			GetAcademyCertifications dao = new GetAcademyCertifications(con);
@@ -43,7 +43,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 				throw notFoundException("Unknown Certification - " + name);
 			
 			// Make sure we can take the test
-			if (!_academyHistory.canTake(cert))
+			if (!academyHistory.canTake(cert))
 				throw securityException("Cannot enroll in " + cert.getName());
 			
 			// Create the status entry
@@ -64,7 +64,7 @@ public class EnrollCommand extends AbstractAcademyHistoryCommand {
 			}
 
 			// Figure out if we have passed any stage 1 certs; if so, then immediately start
-			if (_academyHistory.hasAny(1)) {
+			if (academyHistory.hasAny(1)) {
 				c.setStatus(Course.STARTED);
 				upd.setDescription("Enrolled in " + cert.getName());
 			}

@@ -4,11 +4,13 @@ package org.deltava.commands.academy;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.academy.AcademyHistoryHelper;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -49,8 +51,8 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 				throw notFoundException("Invalid Examination - " + examName);
 			
 			// Load the test history
-			initHistory(ctx.getUser(), con);
-			boolean examsLocked = _academyHistory.isLockedOut(SystemData.getInt("testing.lockout"));
+			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
+			boolean examsLocked = academyHistory.isLockedOut(SystemData.getInt("testing.lockout"));
 			if (examsLocked)
 				throw securityException("Testing Center locked out");
 			
@@ -69,7 +71,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 			}
 			
 			// Check if we can take the exam
-            if (!_academyHistory.canWrite(ep))
+            if (!academyHistory.canWrite(ep))
 				throw securityException("Cannot take " + examName);
 
 			// Get the Message template

@@ -4,6 +4,7 @@ package org.deltava.commands.pilot;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -42,7 +43,7 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 				throw securityException("Cannot promote " + usr.getName());
 			
 			// Init the test history
-			initTestHistory(usr, con);
+			TestingHistoryHelper testHistory = initTestHistory(usr, con);
 			
 			// Make sure we are a First Officer
 			if (!Ranks.RANK_FO.equals(usr.getRank())) {
@@ -52,15 +53,15 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			}
 			
 			// Make sure we have passed the examination
-			EquipmentType eq = _testHistory.getEquipmentType();
-			if (!_testHistory.hasPassed(eq.getExamName(Ranks.RANK_C))) {
+			EquipmentType eq = testHistory.getEquipmentType();
+			if (!testHistory.hasPassed(eq.getExamName(Ranks.RANK_C))) {
 				CommandException ce = new CommandException(usr.getName() + " has not passed Captain's exam");
 				ce.setLogStackDump(false);
 				throw ce;
 			}
 			
 			// Make sure we have the legs
-			if (_testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C)) {
+			if (testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C)) {
 				CommandException ce = new CommandException(usr.getName() + " has insufficient flight legs");
 				ce.setLogStackDump(false);
 				throw ce;

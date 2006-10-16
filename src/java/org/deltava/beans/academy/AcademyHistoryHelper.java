@@ -22,9 +22,9 @@ public class AcademyHistoryHelper {
 	private boolean _debugLog;
 	private boolean _allowInactive;
 	
-	private Map<Object, Certification> _certs = new HashMap<Object, Certification>();
-	private Map<Object, Course> _courses = new HashMap<Object, Course>();
-	private SortedSet<Test> _tests = new TreeSet<Test>();
+	private final Map<Object, Certification> _certs = new HashMap<Object, Certification>();
+	private final Map<Object, Course> _courses = new HashMap<Object, Course>();
+	private final SortedSet<Test> _tests = new TreeSet<Test>();
 
 	/**
 	 * Initializes the helper.
@@ -65,6 +65,15 @@ public class AcademyHistoryHelper {
 	 */
 	public Collection<Test> getExams() {
 		return _tests;
+	}
+	
+	/**
+	 * Returns all Certifications. This method is useful when we use this class and do not wish to call the
+	 * {@link org.deltava.dao.GetAcademyCertifications} DAO a second time.
+	 * @return a Collection of Certification beans
+	 */
+	public Collection<Certification> getCertifications() {
+		return _certs.values();
 	}
 	
 	/**
@@ -268,7 +277,7 @@ public class AcademyHistoryHelper {
 				break;
 				
 			case Certification.REQ_ALLPRIOR :
-				if (!hasAll(c.getStage())) {
+				if (!hasAll(c.getStage() - 1)) {
 					log("Missing Stage " + c.getStage() + " cert for " + c.getName());
 					return false;
 				}

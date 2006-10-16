@@ -19,26 +19,24 @@ import org.deltava.dao.*;
 
 public abstract class AbstractAcademyHistoryCommand extends AbstractCommand {
 	
-	protected AcademyHistoryHelper _academyHistory;
-	protected Collection<Certification> _allCerts;
-
 	/**
 	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
 	 * @param p the Pilot bean
 	 * @param c the JDBC connection to use
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected final void initHistory(Person p, Connection c) throws DAOException {
+	protected final AcademyHistoryHelper initHistory(Person p, Connection c) throws DAOException {
 		
 		// Load all certifications and the Pilot's courses
 		GetAcademyCourses cdao = new GetAcademyCourses(c);
 		GetAcademyCertifications crdao = new GetAcademyCertifications(c);
-		_allCerts = crdao.getAll();
-		_academyHistory = new AcademyHistoryHelper(cdao.getByPilot(p.getID()), _allCerts);
-		_academyHistory.setAllowInactive(p.isInRole("Instructor"));
+		Collection<Certification> allCerts = crdao.getAll();
+		AcademyHistoryHelper helper = new AcademyHistoryHelper(cdao.getByPilot(p.getID()), allCerts);
+		helper.setAllowInactive(p.isInRole("Instructor"));
 		
 		// Get the Pilot's examinations and check rides
 		GetExam exdao = new GetExam(c);
-		_academyHistory.addExams(exdao.getExams(p.getID()));
+		helper.addExams(exdao.getExams(p.getID()));
+		return helper;
 	}
 }

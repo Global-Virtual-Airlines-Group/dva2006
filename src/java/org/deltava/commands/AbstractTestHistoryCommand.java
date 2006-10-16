@@ -21,15 +21,13 @@ import org.deltava.util.StringUtils;
 
 public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
-	protected TestingHistoryHelper _testHistory;
-
 	/**
 	 * Populates the Testing History Helper by calling the proper DAOs in the right order.
 	 * @param p the Pilot bean
 	 * @param c the JDBC connection to use
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	protected final void initTestHistory(Person p, Connection c) throws DAOException {
+	protected final TestingHistoryHelper initTestHistory(Person p, Connection c) throws DAOException {
 
 		// Load the PIREP beans
 		GetFlightReports frdao = new GetFlightReports(c);
@@ -47,13 +45,13 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's examinations and check rides, and initialize the helper
 		GetExam exdao = new GetExam(c);
-		_testHistory = new TestingHistoryHelper((Pilot) p, eq, exdao.getExams(p.getID()), pireps);
-		_testHistory.setEquipmentTypes(eqdao.getAll());
+		TestingHistoryHelper helper = new TestingHistoryHelper((Pilot) p, eq, exdao.getExams(p.getID()), pireps);
+		helper.setEquipmentTypes(eqdao.getAll());
 
 		// Create a dummy FO exam for the hired in program
 		if (ieq != null) {
 			String foExam = ieq.getExamName(Ranks.RANK_FO);
-			if (!StringUtils.isEmpty(foExam) && !_testHistory.hasPassed(foExam)) {
+			if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(foExam)) {
 				Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
 				ex.setSize(1);
 				ex.setScore(1);
@@ -61,8 +59,10 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 				ex.setStatus(Test.SCORED);
 				ex.setDate(p.getCreatedOn());
 				ex.setScoredOn(p.getCreatedOn());
-				_testHistory.addExam(ex);
+				helper.addExam(ex);
 			}
 		}
+		
+		return helper;
 	}
 }

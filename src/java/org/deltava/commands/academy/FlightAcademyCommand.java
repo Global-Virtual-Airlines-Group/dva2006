@@ -30,8 +30,8 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 			Connection con = ctx.getConnection();
 
 			// Initialize the Academy History Helper and save if we are in a course
-			initHistory(ctx.getUser(), con);
-			ctx.setAttribute("course", _academyHistory.getCurrentCourse(), REQUEST);
+			AcademyHistoryHelper academyHistory = initHistory(ctx.getUser(), con);
+			ctx.setAttribute("course", academyHistory.getCurrentCourse(), REQUEST);
 
 			// Get all Examination Profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
@@ -46,25 +46,26 @@ public class FlightAcademyCommand extends AbstractAcademyHistoryCommand {
 				allExams.clear();
 				ctx.setAttribute("examActive", new Integer(activeExamID), REQUEST);
 			} else {
-				_academyHistory.setDebug(ctx.isSuperUser());
+				academyHistory.setDebug(ctx.isSuperUser());
 				for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
 					ExamProfile ep = i.next();
-					if (!_academyHistory.canWrite(ep))
+					if (!academyHistory.canWrite(ep))
 						i.remove();
 				}
 			}
 
 			// Remove all of the certs that we cannot take
-			for (Iterator<Certification> i = _allCerts.iterator(); i.hasNext();) {
+			Collection<Certification> allCerts = new ArrayList<Certification>(academyHistory.getCertifications());
+			for (Iterator<Certification> i = allCerts.iterator(); i.hasNext();) {
 				Certification cert = i.next();
-				if (!_academyHistory.canTake(cert))
+				if (!academyHistory.canTake(cert))
 					i.remove();
 			}
 
 			// Save the exams and certifications available
 			ctx.setAttribute("exams", allExams, REQUEST);
-			ctx.setAttribute("certs", _allCerts, REQUEST);
-			ctx.setAttribute("courses", _academyHistory.getCourses(), REQUEST);
+			ctx.setAttribute("certs", allCerts, REQUEST);
+			ctx.setAttribute("courses", academyHistory.getCourses(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
