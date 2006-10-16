@@ -34,7 +34,7 @@ public class FileURLConnection extends URLConnection {
 		if (!connected) {
 			_stream = getClass().getResourceAsStream(_fileName);
 			if (_stream == null)
-				_stream = new FileInputStream((_fileName.charAt(0) == '/') ? _fileName.substring(1) : _fileName);
+				_stream = new FileInputStream(_fileName);
 		}
 
 		connected = true;
