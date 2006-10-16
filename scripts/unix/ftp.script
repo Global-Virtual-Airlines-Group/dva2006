@@ -1,26 +1,26 @@
 bin
 lcd /home/backup/db
-put mysql.sql.gz
-put create_tables.tar.gz
-put acars.sql.gz
-put acars_pos_inc.sql.gz
-put afv.sql.gz
-put afv_sched.sql.gz
-put afv_sys.sql.gz
-put afv_test.sql.gz
-put afv_gallery_inc.sql.gz
-put common.sql.gz
-put cooler.sql.gz
-put dva.sql.gz
-put dva_academy.sql.gz
-put dva_sched.sql.gz
-put dva_sys.sql.gz
-put dva_test.sql.gz
-put dva_gallery_inc.sql.gz
-put events.sql.gz
-put postfix.sql.gz
-put sqmail.sql.gz
-put teamspeak.sql.gz
+put mysql.sql.bz2
+put create_tables.tar.bz2
+put acars.sql.bz2
+put acars_pos_inc.sql.bz2
+put afv.sql.bz2
+put afv_sched.sql.bz2
+put afv_sys.sql.bz2
+put afv_test.sql.bz2
+put afv_gallery_inc.sql.bz2
+put common.sql.bz2
+put cooler.sql.bz2
+put dva.sql.bz2
+put dva_academy.sql.bz2
+put dva_sched.sql.bz2
+put dva_sys.sql.bz2
+put dva_test.sql.bz2
+put dva_gallery_inc.sql.bz2
+put events.sql.bz2
+put postfix.sql.bz2
+put sqmail.sql.bz2
+put teamspeak.sql.bz2
 
 cd /svn
 lcd /etc/svn
@@ -41,5 +41,6 @@ put postfix.tar.gz
 put imapd.tar.gz
 put mysql.tar.gz
 put ts2.tar.gz
+put crontabs.tar.gz
 
 bye
