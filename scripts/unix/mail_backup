@@ -1,0 +1,13 @@
+#!/bin/sh
+# Maildir backup script
+# (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+
+# Goto backup directory
+cd /home/backup/mail
+
+# Backup maildirs
+tar cfj mailbox.tar.bz2 /home/mail
+
+# Update permissions
+chmod 640 *.tar.bz2
+chown backup:root *.tar.bz2
