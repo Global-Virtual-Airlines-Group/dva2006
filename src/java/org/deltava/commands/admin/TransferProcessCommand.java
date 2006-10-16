@@ -53,7 +53,7 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("pilot", usr, REQUEST);
 
 			// Init the testing history
-			initTestHistory(usr, con);
+			TestingHistoryHelper testHistory = initTestHistory(usr, con);
 
 			// Get the requested equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -70,7 +70,7 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Check if the user has passed the Captain's examination
-			boolean hasCaptExam = _testHistory.hasPassed(newEQ.getExamName(Ranks.RANK_C));
+			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamName(Ranks.RANK_C));
 
 			// Check how many legs the user has completed
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
