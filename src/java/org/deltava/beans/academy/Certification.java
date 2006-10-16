@@ -27,8 +27,8 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 	private int _reqCount;
 	private boolean _active;
 	
-	private Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
-	private Collection<String> _examNames = new HashSet<String>();
+	private final Collection<CertificationRequirement> _reqs = new TreeSet<CertificationRequirement>();
+	private final Collection<String> _examNames = new HashSet<String>();
 	
 	/**
 	 * Creates a new Certification bean.
@@ -241,7 +241,10 @@ public class Certification implements java.io.Serializable, ViewEntry, Comparabl
 		if ((reqCode < 0) || (reqCode >= REQ_NAMES.length))
 			throw new IllegalArgumentException("Invalid Requirement code - " + reqCode);
 		
-		_preReqs = reqCode;
+		if (_stage > 1)
+			_preReqs = reqCode;
+		else
+			_preReqs = Certification.REQ_ANY;
 	}
 	
 	/**
