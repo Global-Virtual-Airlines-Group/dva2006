@@ -20,13 +20,22 @@ fi
 # Check if we're already downloading
 if [ -f "/tmp/$network.isactive" ]; then
  echo "Already downloading $network data!"
+ exit 2
 else
- touch /tmp/$network.isactive
+ echo active > /tmp/$network.isactive
 fi
 
 # Get the status file and active URLs
-wget $StatusURL -q -N --read-timeout=15 -O $2/$network.status
-cat $2/$network.status | grep url0= | grep -v ";url0=" > /tmp/$network.active
+wget $StatusURL -q -N --timeout=15 --tries=3 -O $2/$network.status.tmp
+if [ -s "$2/$network.status.tmp" ]; then
+ mv -f $2/$network.status.tmp $2/$network.status
+else
+ echo "Invalid $network status data!"
+ rm $2/$network.status.tmp
+fi
+
+# Parse status file
+cat $2/$network.status | grep url0= | grep -v ";url0=" | grep -v "gzurl" > /tmp/$network.active
 cut -d "=" -f 2 /tmp/$network.active > /tmp/$network.urls
 
 # Generate a random URL to load
@@ -44,6 +53,13 @@ rm /tmp/$network.active
 rm /tmp/$network.urls
 
 # Get the info file
-wget $MyURL -N --read-timeout=20 -q -O $2/$network.info
+wget $MyURL -N --timeout=15 --tries=3 -q -O $2/$network.info.tmp
+if [ -s "$2/$network.info.tmp" ]; then
+ mv -f $2/$network.info.tmp $2/$network.info
+else
+ echo "Invalid $network traffic data!"
+ rm $2/$network.info.tmp
+fi
+
 rm /tmp/$network.isactive
 exit 0
