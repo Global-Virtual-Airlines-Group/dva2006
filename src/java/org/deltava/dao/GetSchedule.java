@@ -84,7 +84,9 @@ public class GetSchedule extends DAO {
 		
 		// Build the equipment type query
 		if (!CollectionUtils.isEmpty(criteria.getEquipmentTypes())) {
-			buf.append(" AND (");
+			if (!conditions.isEmpty())
+				buf.append(" AND (");
+			
 			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
 				String eqType = i.next();
 				buf.append("(EQTYPE=\"");
@@ -93,8 +95,9 @@ public class GetSchedule extends DAO {
 				if (i.hasNext())
 					buf.append(" OR ");
 			}
-			
-			 buf.append(')');
+
+			if (!conditions.isEmpty())
+				buf.append(')');
 		}
 
 		// Add sort column
