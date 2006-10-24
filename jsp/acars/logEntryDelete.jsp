@@ -27,7 +27,7 @@
 The ACARS log entry for Flight ID <fmt:int value="${info.ID}" /> has been successfully removed from 
 the database. All Position reports for this Flight have also been removed.<br />
 <br />
-To return to the list of empty ACARS Flight Log entries, <el:cmd url="acarsempty" linkID="info" className="sec bld">Click here</el:cmd>.<br />
+To return to the list of empty ACARS Flight Log entries, <el:cmd url="acarsempty" linkID="info" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${pirep}">
 <div class="updateHdr">Cannot remove ACARS Flight Log Entry</div>
@@ -35,7 +35,7 @@ To return to the list of empty ACARS Flight Log entries, <el:cmd url="acarsempty
 This ACARS Flight has an associated Flight Report, and therefore cannot be removed from the ACARS 
 log database.<br />
 <br />
-To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click here</el:cmd>.<br />
+To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${conDelete}">
 <div class="updateHdr">ACARS Connection Log Entry Removed</div>
@@ -51,10 +51,17 @@ associated Flight Information entries and therefore cannot be removed from the A
 The Flight Information log entries must be removed first.<br />
 </c:if>
 <br />
-To return to the list of empty ACARS Connection Log entries, <el:cmd url="acarsempty" linkID="con" className="sec bld">Click here</el:cmd>.<br />
+To return to the list of empty ACARS Connection Log entries, <el:cmd url="acarsempty" linkID="con" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${!empty info && !infoDelete}">
-To view this flight's ACARS log entry, <el:cmd url="acarsinfo" linkID="0x${info.ID}" className="sec bld">Click here</el:cmd>.<br />
+To view this flight's ACARS log entry, <el:cmd url="acarsinfo" linkID="0x${info.ID}" className="sec bld">Click Here</el:cmd>.<br />
+</c:if>
+<c:if test="${errorDelete}">
+<div class="updateHdr">ACARS Client Error Log Entry Removed</div>
+<br />
+The ACARS Client Error log entry has been successfully removed from the database.<br />
+<br />
+To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserrors" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
