@@ -169,6 +169,9 @@ return true;
 <c:if test="${!empty event}">
 <div class="pri bld caps">Flight Leg part of the ${event.name} Online Event</div>
 </c:if>
+<c:if test="${fn:isAcademy(pirep)}">
+<div class="pri bld caps">Flight Leg part of the <content:airline /> Flight Academy</div>
+</c:if>
  </td>
 </tr>
 <tr>
