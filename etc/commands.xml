@@ -1194,18 +1194,6 @@
 		<roles>Admin</roles>
 	</command>
 
-	<command id="helplist">
-		<name>Online Help Entries</name>
-		<class>org.deltava.commands.system.HelpListCommand</class>
-		<roles>HR,Developer</roles>
-	</command>
-
-	<command id="help">
-		<name>Online Help</name>
-		<class>org.deltava.commands.system.HelpEntryCommand</class>
-		<roles>*</roles>
-	</command>
-
 	<command id="taskexec">
 		<name>Scheduled Task Execute</name>
 		<class>org.deltava.commands.system.TaskExecuteCommand</class>
@@ -1308,6 +1296,62 @@
 		<name>TeamSpeak Virtual Server</name>	
 		<class>org.deltava.commands.ts2.ServerCommand</class>
 		<roles>Admin</roles>
+	</command>
+
+
+	<!-- Help Desk commands -->
+	<command id="helplist">
+		<name>Online Help Entries</name>
+		<class>org.deltava.commands.help.HelpListCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="help">
+		<name>Online Help</name>
+		<class>org.deltava.commands.help.HelpEntryCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="helpdesk">
+		<name>Help Desk</name>
+		<class>org.deltava.commands.help.HelpDeskCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<comamnd id="faq">
+		<name>Frequently Asked Questions</name>
+		<class>org.deltava.commands.help.FAQCommand</class>
+		<roles>*</roles>
+	</comamnd>
+
+	<command id="hdissues">
+		<name>Help Desk Issue List</name>
+		<class>org.deltava.commands.help.IssueListCommand</class>
+		<roles>Instructor,Examiner,HR</roles>
+	</command>
+
+	<command id="myhdissues">
+		<name>My Help Desk Issues</name>
+		<class>org.deltava.commands.help.MyIssueListCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="hdissue">
+		<name>Help Desk Issue</name>
+		<class>org.deltava.commands.help.IssueCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="hdcomment">
+		<name>Help Desk Issue Comment</name>
+		<class>org.deltava.commands.help.IssueCommentCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="hdupdate">
+		<name>Help Desk Issue Update</name>
+		<class>org.deltava.commands.help.IssueUpdateCommand</class>
+		<roles>HR</roles>
 	</command>
 
 
@@ -1522,30 +1566,6 @@
 		<name>Training Video Edit</name>
 		<class>org.deltava.commands.academy.VideoCommand</class>
 		<roles>Instructor,HR</roles>
-	</command>
-
-	<command id="academyissues">
-		<name>Flight Academy Help Desk</name>
-		<class>org.deltava.commands.academy.IssueListCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
-	</command>
-
-	<command id="myacademyissues">
-		<name>Flight Academy My Help Desk</name>
-		<class>org.deltava.commands.academy.MyIssueListCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
-	<command id="academyissue">
-		<name>Flight Academy Issue</name>
-		<class>org.deltava.commands.academy.IssueCommand</class>
-		<roles>Pilot</roles>
-	</command>
-
-	<command id="academyissuecomment">
-		<name>Flight Academy Issue Comment</name>
-		<class>org.deltava.commands.academy.IssueCommentCommand</class>
-		<roles>Pilot</roles>
 	</command>
 
 

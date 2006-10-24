@@ -25,10 +25,10 @@
 <view:table className="view" space="default" pad="default" cmd="academyissues">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
- <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="academyissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
+ <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="hdissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
 <el:cmd url="myacademyissues">MY ISSUES</el:cmd>
-<content:filter roles="Instructor,Examiner,HR"> | <el:cmd url="academyissues">ALL ISSUES</el:cmd> 
-| <el:cmd url="academyissues" op="active">ACTIVE ISSUES</el:cmd></content:filter></td>
+<content:filter roles="Instructor,Examiner,HR"> | <el:cmd url="hdyissues">ALL ISSUES</el:cmd> 
+| <el:cmd url="hdissues" op="active">ACTIVE ISSUES</el:cmd></content:filter></td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -48,7 +48,7 @@
 <c:set var="assignedTo" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td><el:cmd url="academyissue" linkID="0x${issue.ID}">${issue.subject}</el:cmd></td>
+ <td><el:cmd url="hdissue" linkID="0x${issue.ID}">${issue.subject}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${author.ID}" className="pri bld">${author.name}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${assignedTo.ID}" className="bld">${assignedTo.name}</el:cmd></td>
 <c:choose>
@@ -66,7 +66,7 @@
 <!-- Bottom Bar -->
 <tr class="title caps">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
-<view:legend width="95" labels="Open,Resolved" classes=" ,opt1" /></td>
+<view:legend width="95" labels="Open,Resolved,FAQ Entry" classes=" ,opt1,opt3" /></td>
 </tr>
 </view:table>
 <content:copyright />

@@ -1,5 +1,5 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.system;
+package org.deltava.commands.help;
 
 import java.sql.Connection;
 
@@ -40,7 +40,7 @@ public class HelpListCommand extends AbstractViewCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/admin/helpList.jsp");
+		result.setURL("/jsp/admin/onlineHelpList.jsp");
 		result.setSuccess(true);
 	}
 }

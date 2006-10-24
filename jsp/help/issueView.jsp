@@ -17,15 +17,47 @@
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
-<c:if test="${access.canComment}">
+<c:if test="${access.canComment || access.canUpdateStatus}">
 if (!checkSubmit()) return false;
-if (!validateText(form.body, 10, 'Issue Comments')) return false;
+
+// Get form action
+var act = form.action;
+if (act.indexOf('hdcomment.do') != -1) {
+	if (!validateText(form.body, 10, 'Issue Comments')) return false;
+} else if ((form.isFAQ) && (form.isFAQ.checked) && (form.faqIDs)) {
+	var isChecked = 0;
+	for (x = 0; x < f.faqIDs.length; x++)
+		isChecked += ((f.faqIDs[x].checked) ? 1 : 0);
+
+	if (isChecked == 0) {
+		alert('A FAQ Answer comment must be selected.');
+		return false;
+	} else if (isChecked > 1) {
+		alert('Only one FAQ Answer comment may be selected.');
+		return false;
+	}
+}
 
 setSubmit();
 disableButton('EditButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment};
 }
+<c:if test="${access.canUpdateContent}">
+function updateAnswerBoxes()
+{
+var f = document.forms[0];
+if ((f.isFAQ) && (f.faqIDs)) {
+	for (x = 0; x < f.faqIDs.length; x++) {
+		f.faqIDs[x].disabled = !f.isFAQ.checked;
+		if (!f.isFAQ.checked)
+			f.faqIDs[x].checked = false;
+	}
+}
+
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -37,7 +69,7 @@ return ${access.canComment};
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="academyissuecomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
+<el:form method="post" action="hdcomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -52,17 +84,17 @@ return ${access.canComment};
  <td class="label">Assigned To</td>
  <td class="data bld">${pilots[issue.assignedTo].name} (${pilots[issue.assignedTo].pilotCode})</td>
 </tr>
-<c:if test="${!empty issue.resolvedOn}">
-<tr>
- <td class="label">Resolved On</td>
- <td class="data bld"><fmt:date date="${issue.resolvedOn}" /></td>
-</tr>
-</c:if>
 <tr>
  <td class="label">Issue Status</td>
  <td class="data"><span class="sec bld">${issue.statusName}</span>
 <c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
+<c:if test="${access.canUpdateContent}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isFAQ" idx="*" value="true" checked="${issue.FAQ}" onChange="void updateAnswerBoxes()" className="sec bld" label="This Issue is part of the FAQ" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label" valign="top">Issue Description</td>
  <td class="data"><fmt:msg value="${issue.body}" /></td>
@@ -82,7 +114,9 @@ return ${access.canComment};
 <c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
 <tr>
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
- <fmt:date date="${comment.createdOn}" /></td>
+ <fmt:date date="${comment.createdOn}" /><c:if test="${access.canUpdateContent}"><br />
+<el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
+<el:box name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
  <td class="data" valign="top"><fmt:msg value="${comment.body}" /></td>
 </tr>
 </c:forEach>
@@ -102,12 +136,15 @@ return ${access.canComment};
 <tr>
  <td>
 <c:if test="${access.canUpdateStatus}">
- <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="academyissue" op="edit" linkID="0x${issue.ID}" />
+<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="hdissue" op="edit" linkID="0x${issue.ID}" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
 </c:if>
- </td>
+<c:if test="${access.canUpdateContent}">
+ <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" linkID="0x${issue.ID}" />
+</c:if>
+</td>
 </tr>
 </el:table>
 </el:form>

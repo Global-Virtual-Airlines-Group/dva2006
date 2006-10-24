@@ -1,13 +1,13 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.academy;
+package org.deltava.commands.help;
 
 import java.sql.Connection;
 
-import org.deltava.beans.academy.*;
+import org.deltava.beans.help.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.AcademyIssueAccessControl;
+import org.deltava.security.command.HelpDeskAccessControl;
 
 /**
  * A Web Site Command to save Flight Academy Issue comments.
@@ -29,13 +29,13 @@ public class IssueCommentCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the Issue
-			GetAcademyIssues dao = new GetAcademyIssues(con);
+			GetHelp dao = new GetHelp(con);
 			Issue i = dao.getIssue(ctx.getID());
 			if (i == null)
 				throw notFoundException("Invalid Issue - " + ctx.getID());
 			
 			// Check our Access
-			AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, i, false);
+			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
 			ac.validate();
 			if (!ac.getCanComment())
 				throw securityException("Cannot comment on Issue " + i.getID());
@@ -46,7 +46,7 @@ public class IssueCommentCommand extends AbstractCommand {
 			ic.setBody(ctx.getParameter("body"));
 			
 			// Save the comment
-			SetAcademyIssue iwdao = new SetAcademyIssue(con);
+			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(ic);
 		} catch (DAOException de) {
 			throw new CommandException(de);

@@ -1,14 +1,14 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.academy;
+package org.deltava.commands.help;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.academy.*;
+import org.deltava.beans.help.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.AcademyIssueAccessControl;
+import org.deltava.security.command.HelpDeskAccessControl;
 
 /**
  * A Web Site Command to display Flight Academy Issues.
@@ -35,7 +35,7 @@ public class IssueListCommand extends AbstractViewCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and the issue list
-			GetAcademyIssues idao = new GetAcademyIssues(con);
+			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
 			Collection<Issue> results = isActive ? idao.getActive() : idao.getAll();
@@ -50,13 +50,8 @@ public class IssueListCommand extends AbstractViewCommand {
 				IDs.add(new Integer(is.getLastCommentAuthorID()));
 			}
 			
-			// Get the course list
-			GetAcademyCourses cdao = new GetAcademyCourses(con);
-			cdao.setQueryMax(1);
-			Collection<Course> myCourses = cdao.getByPilot(ctx.getUser().getID());
-			
 			// Set creation access control
-			AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, null, !myCourses.isEmpty());
+			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
 			ac.validate();
 			ctx.setAttribute("access", ac, REQUEST);
 
@@ -71,7 +66,7 @@ public class IssueListCommand extends AbstractViewCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/academy/issueList.jsp");
+		result.setURL("/jsp/help/issueList.jsp");
 		result.setSuccess(true);
 	}
 }

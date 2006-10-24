@@ -97,7 +97,7 @@ return true;
  the materials needed to successfully complete written examinations, in addition to being a
  valuable resource for learning more about all aspects of our operations. Before you take
  a written examination, please make sure you've gone through the Document Library and read
- the manuals for your aircraft type. All documents require Adobe Acrobat Reader 5.0 or above.</td>
+ the manuals for your aircraft type. All documents require Adobe Acrobat Reader 6.0 or above.</td>
  <td colspan="2"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
 </tr>
 

@@ -384,10 +384,9 @@ Flight Academy course.</c:if>
 </tr>
 <c:if test="${pilot.legs >= academyFlights}">
 <tr>
- <td class="mid"><el:cmd className="bld" url="myacademyissues">Help Desk</el:cmd></td>
- <td class="data">The <content:airline /> Flight Academy Help Desk lets pilots and Flight Academy
- students communicate with our Instructors and Staff to quickly and easily resolve any issues, or
- answer questions about the Flight Academy.</td>
+ <td class="mid"><el:cmd className="bld" url="helpdesk">Help Desk</el:cmd></td>
+ <td class="data">The <content:airline /> Help Desk lets pilots and communicate with our Instructors 
+ and Staff to quickly and easily resolve any issues, or answer questions about <content:airline />.</td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
