@@ -19,8 +19,10 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
 if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
-if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
 if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
+if ((f.isMultiChoice) && (f.isMultiChoice.checked)) {
+	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
@@ -70,7 +72,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="updateAnswerCombo()">
+<body onload="updateAnswerCombo(); toggleAnswerBox()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
