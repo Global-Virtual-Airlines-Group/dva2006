@@ -88,7 +88,7 @@
 <c:if test="${!empty pirep.remarks}">
 <%@include file="/jsp/pilot/pirepACARS.jspf" %>
 <tr>
- <td class="label">Comments</td>
+ <td class="label" valign="top">Comments</td>
  <td class="data"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>

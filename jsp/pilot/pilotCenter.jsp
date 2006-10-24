@@ -564,7 +564,7 @@ database.</td>
 </tr>
 </content:filter>
 <c:if test="${acarsEnabled}">
-<content:filter roles="HR">
+<content:filter roles="HR,Developer">
 <!-- ACARS Logging Section -->
 <tr class="title caps">
  <td colspan="2">ACARS SERVER DATA</td>
@@ -578,9 +578,15 @@ database.</td>
  <td class="data">You can view flight information from the <content:airline /> ACARS server flight log.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="acarserrors">Client Error Log</el:cmd></td>
+ <td class="data">You can view error log submissions from <content:airline /> ACARS 2.0 clients.</td>
+</tr>
+<content:filter roles="HR">
+<tr>
  <td class="mid"><el:cmd className="bld" url="acarslogm">Text Message Log</el:cmd></td>
  <td class="data">You can view the <content:airline /> ACARS server text message log.</td>
 </tr>
+</content:filter>
 <content:filter roles="Admin">
 <content:sysdata var="latestBuild" name="acars.build.latest" />
 <tr>

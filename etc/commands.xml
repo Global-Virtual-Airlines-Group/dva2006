@@ -1366,6 +1366,24 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="acarserrors">
+		<name>ACARS Error Reports</name>
+		<class>org.deltava.commands.acars.ErrorLogCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="acarserror">
+		<name>ACARS Error Report</name>
+		<class>org.deltava.commands.acars.ErrorLogEntryCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
+	<command id="acarserrordelete">
+		<name>ACARS Error Report Delete</name>
+		<class>org.deltava.commands.acars.ErrorLogDeleteCommand</class>
+		<roles>HR,Developer</roles>
+	</command>
+
 
 	<!-- Flight Academy Commands -->
 	<command id="academy">
