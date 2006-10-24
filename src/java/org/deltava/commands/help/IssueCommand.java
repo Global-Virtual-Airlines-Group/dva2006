@@ -1,23 +1,23 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.academy;
+package org.deltava.commands.help;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
-import org.deltava.beans.academy.*;
+import org.deltava.beans.help.*;
 
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.AcademyIssueAccessControl;
+import org.deltava.security.command.HelpDeskAccessControl;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to handle Fleet Academy Issues.
+ * A Web Site Command to handle Help Desk Issues.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -38,15 +38,15 @@ public class IssueCommand extends AbstractFormCommand {
 			
 			// Get the Issue
 			Issue i = null;
-			AcademyIssueAccessControl ac = null;
+			HelpDeskAccessControl ac = null;
 			if (!isNew) {
-				GetAcademyIssues idao = new GetAcademyIssues(con);
+				GetHelp idao = new GetHelp(con);
 				i = idao.getIssue(ctx.getID());
 				if (i == null)
 					throw notFoundException("Invalid Issue - " + ctx.getID());
 				
 				// Check access
-				ac = new AcademyIssueAccessControl(ctx, i, false);
+				ac = new HelpDeskAccessControl(ctx, i);
 				ac.validate();
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
@@ -60,12 +60,8 @@ public class IssueCommand extends AbstractFormCommand {
 				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
 					i.setResolvedOn(null);
 			} else {
-				GetAcademyCourses cdao = new GetAcademyCourses(con);
-				cdao.setQueryMax(1);
-				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
-
 				// Check access
-				ac = new AcademyIssueAccessControl(ctx, null, !courses.isEmpty());
+				ac = new HelpDeskAccessControl(ctx, null);
 				ac.validate();
 				if (!ac.getCanCreate())
 					throw securityException("Cannot Create Issue");
@@ -88,7 +84,7 @@ public class IssueCommand extends AbstractFormCommand {
 				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
 			
 			// Save the issue
-			SetAcademyIssue iwdao = new SetAcademyIssue(con);
+			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(i);
 			 
 			// Save issue in the request
@@ -124,13 +120,13 @@ public class IssueCommand extends AbstractFormCommand {
 			
 			if (!isNew) {
 				//	Get the Issue
-				GetAcademyIssues idao = new GetAcademyIssues(con);
+				GetHelp idao = new GetHelp(con);
 				Issue i = idao.getIssue(ctx.getID());
 				if (i == null)
 					throw notFoundException("Invalid Issue - " + ctx.getID());
 
 				// Check access
-				AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, i, false);
+				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
 				ac.validate();
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
@@ -142,12 +138,8 @@ public class IssueCommand extends AbstractFormCommand {
 				// Load Pilot IDs
 				ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
 			} else {
-				GetAcademyCourses cdao = new GetAcademyCourses(con);
-				cdao.setQueryMax(1);
-				Collection<Course> courses = cdao.getByPilot(ctx.getUser().getID());
-				
 				// Check access
-				AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, null, !courses.isEmpty());
+				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
 				ac.validate();
 				if (!ac.getCanCreate())
 					throw securityException("Cannot Create Issue");
@@ -173,7 +165,7 @@ public class IssueCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/academy/issueEdit.jsp");
+		result.setURL("/jsp/help/issueEdit.jsp");
 		result.setSuccess(true);
 	}
 
@@ -188,13 +180,13 @@ public class IssueCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the Issue
-			GetAcademyIssues idao = new GetAcademyIssues(con);
+			GetHelp idao = new GetHelp(con);
 			Issue i = idao.getIssue(ctx.getID());
 			if (i == null)
 				throw notFoundException("Invalid Issue - " + ctx.getID());
 			
 			// Calculate access rights
-			AcademyIssueAccessControl ac = new AcademyIssueAccessControl(ctx, i, false);
+			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
 			ac.validate();
 			
 			// Save in request
@@ -212,7 +204,7 @@ public class IssueCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/academy/issueView.jsp");
+		result.setURL("/jsp/help/issueView.jsp");
 		result.setSuccess(true);
 	}
 	
