@@ -1,5 +1,5 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.system;
+package org.deltava.beans.help;
 
 /**
  * A class for storing Online Help entries.
@@ -8,7 +8,7 @@ package org.deltava.beans.system;
  * @since 1.0
  */
 
-public class HelpEntry implements java.io.Serializable, Comparable {
+public class OnlineHelpEntry implements java.io.Serializable, Comparable {
 
     private String _title;
     private String _subject;
@@ -20,7 +20,7 @@ public class HelpEntry implements java.io.Serializable, Comparable {
      * @param body The body content of this Help Entry
      * @throws NullPointerException if the title is null
      */
-    public HelpEntry(String title, String body) {
+    public OnlineHelpEntry(String title, String body) {
         super();
         _title = title.trim().toUpperCase();
         _body = body;
@@ -65,7 +65,7 @@ public class HelpEntry implements java.io.Serializable, Comparable {
      * @see String#compareTo(java.lang.String)
      */
     public int compareTo(Object o2) {
-        HelpEntry he2 = (HelpEntry) o2;
+        OnlineHelpEntry he2 = (OnlineHelpEntry) o2;
         return _title.compareTo(he2.getTitle());
     }
 
@@ -73,6 +73,6 @@ public class HelpEntry implements java.io.Serializable, Comparable {
      * Checks for equality using the title.
      */
     public boolean equals(Object o2) {
-       return (o2 instanceof HelpEntry) ? (compareTo(o2) == 0) : false;
+       return (o2 instanceof OnlineHelpEntry) ? (compareTo(o2) == 0) : false;
     }
 }

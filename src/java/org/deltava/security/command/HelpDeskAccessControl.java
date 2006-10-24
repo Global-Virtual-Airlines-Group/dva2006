@@ -2,37 +2,35 @@
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
-import org.deltava.beans.academy.Issue;
+import org.deltava.beans.help.Issue;
 
 import org.deltava.commands.CommandException;
 import org.deltava.security.SecurityContext;
 
 /**
- * An Access Controller for Flight Academy Issues.
+ * An Access Controller for Help Desk Issues.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class AcademyIssueAccessControl extends AccessControl {
+public class HelpDeskAccessControl extends AccessControl {
 	
 	private Issue _i;
-	private boolean _hasCourse;
 	
 	private boolean _canCreate;
 	private boolean _canComment;
 	private boolean _canUpdateStatus;
+	private boolean _canUpdateContent;
 
 	/**
 	 * Initializes the Access Controller.
 	 * @param ctx the Security Context
 	 * @param i the Issue bean
-	 * @param hasCourse TRUE if the user has an existing Flight Academy Course, otherwise FALSE
 	 */
-	public AcademyIssueAccessControl(SecurityContext ctx, Issue i, boolean hasCourse) {
+	public HelpDeskAccessControl(SecurityContext ctx, Issue i) {
 		super(ctx);
 		_i = i;
-		_hasCourse = hasCourse;
 	}
 
 	/**
@@ -48,13 +46,14 @@ public class AcademyIssueAccessControl extends AccessControl {
 			throw new AccessControlException("Not Authorized");
 		
 		// Calculate creation rights
-		boolean isAdmin = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner") || _ctx.isUserInRole("HR");
-		if (_i == null) {
-			_canCreate = isAdmin || _hasCourse;
+		_canCreate = true;
+		if (_i == null)
 			return;
-		}
 
 		// Calculate access rights
+		boolean isHR = _ctx.isUserInRole("HR");
+		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner");
+		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination");
 		boolean isMine = (_i.getAuthorID() == p.getID());
 		boolean isOpen = (_i.getStatus() == Issue.OPEN);
 		if (!_i.getPublic() && !isMine && !isAdmin)
@@ -62,10 +61,11 @@ public class AcademyIssueAccessControl extends AccessControl {
 		
 		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isAdmin;
 		_canUpdateStatus = isAdmin;
+		_canUpdateContent = isHR;
 	}
 	
 	/**
-	 * Returns wether the user can create a new Flight Academy Issue.
+	 * Returns wether the user can create a new Help Desk Issue.
 	 * @return TRUE if a new Issue can be created, otherwise FALSE
 	 */
 	public boolean getCanCreate() {
@@ -86,5 +86,13 @@ public class AcademyIssueAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdateStatus() {
 		return _canUpdateStatus;
+	}
+	
+	/**
+	 * Returns wether this Issue can have its FAQ status or Comments changed.
+	 * @return TRUE if the content can be modified, otherwise FALSE
+	 */
+	public boolean getCanUpdateContent() {
+		return _canUpdateContent;
 	}
 }
