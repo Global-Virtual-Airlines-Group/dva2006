@@ -1318,11 +1318,11 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<comamnd id="faq">
+	<command id="faq">
 		<name>Frequently Asked Questions</name>
 		<class>org.deltava.commands.help.FAQCommand</class>
 		<roles>*</roles>
-	</comamnd>
+	</command>
 
 	<command id="hdissues">
 		<name>Help Desk Issue List</name>
