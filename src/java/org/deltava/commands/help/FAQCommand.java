@@ -1,10 +1,8 @@
 // Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
-import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.help.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -33,19 +31,7 @@ public class FAQCommand extends AbstractViewCommand {
 			GetHelp dao = new GetHelp(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Issue> results = dao.getFAQ();
-			
-			// Save the commments in a map
-			Map<Integer, IssueComment> comments = new HashMap<Integer, IssueComment>();
-			for (Iterator<Issue> i = results.iterator(); i.hasNext(); ) {
-				Issue is = i.next();
-				if (is.getCommentCount() > 0)
-					comments.put(new Integer(is.getID()), is.getComments().iterator().next());
-			}
-			
-			// Save the issues and the comments
-			vc.setResults(results);
-			ctx.setAttribute("comments", comments, REQUEST);
+			vc.setResults(dao.getFAQ());
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Frequently Asked Questions</title>
@@ -35,7 +36,7 @@
 
 <!-- Table View data -->
 <c:forEach var="issue" items="${viewContext.results}">
-<c:set var="comment" value="${comments[issue.ID]}" scope="request" />
+<c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
 <td>
  <td class="pri bld">${issue.subject}</td>
  <td class="small left"><fmt:msg value="${comment.body}" /></td>
