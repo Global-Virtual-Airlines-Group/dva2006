@@ -84,7 +84,7 @@ public class SetHelp extends DAO {
 	 */
 	public void write(IssueComment ic) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO HELPDESKCOMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)");
+			prepareStatement("INSERT INTO HELPDESK_COMMENTS (ID, AUTHOR, CREATED_ON, BODY) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, ic.getID());
 			_ps.setInt(2, ic.getAuthorID());
 			_ps.setTimestamp(3, createTimestamp(ic.getCreatedOn()));

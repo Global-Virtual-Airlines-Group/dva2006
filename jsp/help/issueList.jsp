@@ -66,7 +66,7 @@
 <!-- Bottom Bar -->
 <tr class="title caps">
  <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn />&nbsp;</view:scrollbar>
-<view:legend width="95" labels="Open,Resolved,FAQ Entry" classes=" ,opt1,opt3" /></td>
+<view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </view:table>
 <content:copyright />

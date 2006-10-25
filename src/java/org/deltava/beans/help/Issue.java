@@ -13,7 +13,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Issue extends DatabaseBean implements ViewEntry {
+public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	
 	public static final int OPEN = 0;
 	public static final int ASSIGNED = 1;

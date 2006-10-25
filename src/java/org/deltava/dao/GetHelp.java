@@ -80,7 +80,7 @@ public class GetHelp extends DAO {
 			Issue i = results.get(0);
 			
 			// Load the comments
-			prepareStatementWithoutLimits("SELECT * FROM HELPDESKCOMMENTS WHERE (ID=?) ORDER BY CREATED_ON");
+			prepareStatementWithoutLimits("SELECT * FROM HELPDESK_COMMENTS WHERE (ID=?) ORDER BY CREATED_ON");
 			_ps.setInt(1, id);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
@@ -108,8 +108,8 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getAll() throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
-					+ "HELPDESKCOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-					+ "HELPDESK I LEFT JOIN HELPDESKCOMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON");
+					+ "HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+					+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) GROUP BY I.ID ORDER BY I.CREATED_ON");
 			return executeIssue();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -126,9 +126,9 @@ public class GetHelp extends DAO {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR "
-				+ "FROM HELPDESKCOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
-				+ "FROM HELPDESK I LEFT JOIN HELPDESKCOMMENTS IC ON (I.ID=IC.ID) WHERE (I.AUTHOR=?) OR "
-				+ "OR (I.ASSIGNEDTO=?) ");
+				+ "FROM HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC "
+				+ "FROM HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.AUTHOR=?) OR "
+				+ "(I.ASSIGNEDTO=?) ");
 		if (showPublic)
 			sqlBuf.append("OR (I.ISPUBLIC=?) ");
 		
@@ -155,8 +155,8 @@ public class GetHelp extends DAO {
 	public Collection<Issue> getActive() throws DAOException {
 		try {
 			prepareStatement("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR FROM "
-					+ "HELPDESKCOMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
-					+ "HELPDESK I LEFT JOIN HELPDESKCOMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY "
+					+ "HELPDESK_COMMENTS IC WHERE (I.ID=IC.ID) ORDER BY IC.CREATED_ON DESC LIMIT 1) AS LC FROM "
+					+ "HELPDESK I LEFT JOIN HELPDESK_COMMENTS IC ON (I.ID=IC.ID) WHERE (I.STATUS=?) GROUP BY "
 					+ "I.ID ORDER BY I.CREATED_ON");
 			_ps.setInt(1, Issue.OPEN);
 			return executeIssue();

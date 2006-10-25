@@ -23,11 +23,11 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:table className="view" space="default" pad="default">
-<tr class="title caps left">
- <td colspan="x"><content:airline /> HELP DESK</td>
+<tr class="title caps">
+ <td class="left" colspan="6"><content:airline /> HELP DESK</td>
 </tr>
 <tr class="left">
- <td colspan="x">Welcome to the <content:airline /> Help Desk. This is designed as your single point of 
+ <td colspan="6">Welcome to the <content:airline /> Help Desk. This is designed as your single point of 
 contact for questions and answers regarding our virtual airline community. We have collection a number 
 of sources of information to allow you to discover more about our airline. If you still have questions, 
 please feel free to <el:cmd url="hdissue" op="edit" className="sec bld">ask a new Question</el:cmd> and 
@@ -36,59 +36,79 @@ one of our volunteer staff will answer it soon.</td>
 
 <!-- Document Library -->
 <tr>
- <td class="left" colspan="x">The <content:airline /> Document Library is a valuable resource for learning
+ <td class="left" colspan="4">The <content:airline /> Document Library is a valuable resource for learning
  more about all aspects of our operations. All documents require Adobe Acrobat Reader 6.0 or above.</td>
- <td colspan="y"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
+ <td colspan="2"><el:cmdbutton url="doclibrary" label="DOCUMENT LIBRARY" /></td>
 </tr>
 
 <!-- Frequently Asked Questions -->
 <tr>
- <td class="left" colspan="x">This is a collection of most frequently asked questions about
+ <td class="left" colspan="4">This is a collection of most frequently asked questions about
  <content:airline />.</td>
- <td colspan="y"><el:cmdbutton url="faq" label="FREQUENTLY ASKED QUESTIONS" /></td>
+ <td colspan="2"><el:cmdbutton url="faq" label="FREQUENTLY ASKED QUESTIONS" /></td>
 </tr>
 
 <!-- My Issues -->
-<tr class="title left caps">
- <td colspan="x">MY ISSUES</td>
+<tr class="title caps">
+ <td class="left" colspan="6">MY ISSUES</td>
 </tr>
 <c:choose>
-<c:when test="${!empty myIssues}">
+<c:when test="${empty myIssues}">
 <tr>
- <td colspan="x"><span class="pri bld left">You do not currently have any Help Desk Issues.</span>
- <el:cmd url="hdissue" op="edit" className="sec bld">Click Here</el:cmd> to create a new Issue.</td>
+ <td colspan="6"><span class="pri bld left">You do not currently have any Help Desk Issues.</span>
+<c:if test="${access.canCreate}"> <el:cmd url="hdissue" op="edit" className="sec bld">Click Here</el:cmd>
+ to create a new Issue.</c:if></td>
 </tr>
 </c:when>
 <c:otherwise>
 <tr class="title">
  <td width="5%">#</td>
- <td width="30%">TITLE</td>
+ <td>TITLE</td>
  <td width="10%">STATUS</td>
+ <td width="30%">CREATED BY</td>
+ <td width="15%">ASSIGNED TO</td>
+ <td width="5%">COMMENTS</td>
 </tr>
 <c:forEach var="issue" items="${myIssues}">
+<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
-
-
+ <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
+ <td class="pri bld">${issue.subject}</td>
+ <td class="sec bld small">${issue.statusName}</td>
+ <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd> on
+ <fmt:date date="${issue.createdOn}" /></td>
+ <td><el:cmd url="profile" linkID="0x${assignee.ID}" className="sec bld">${assignee.name}</el:cmd></td>
+ <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>
-</c:otherwise>
-</c:choose>
 
-<c:if test="${!emtpy activeIssues}">
+<c:if test="${!empty activeIssues}">
 <!-- All Active Issues -->
-<tr class="title left caps">
- <td colspan="x">ACTIVE ISSUES</td>
+<tr class="title caps">
+ <td colspan="6" class="left">ACTIVE ISSUES</td>
 </tr>
-
-
 <c:forEach var="issue" items="${activeIssues}">
+<c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
+<c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
-
-
-
+ <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
+ <td class="pri bld"><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld">${issue.subject}</el:cmd></td>
+ <td class="sec bld small">${issue.statusName}</td>
+ <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd> on
+ <fmt:date date="${issue.createdOn}" /></td>
+ <td class="sec bld"><el:cmd url="profile" linkID="0x${assignee.ID}" className="sec bld">${assignee.name}</el:cmd></td>
+ <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>
 </c:if>
+
+<!-- Legend Bar -->
+<tr class="title">
+ <td colspan="6"><view:legend width="95" labels="Open,Assigned,Resolved" classes=" ,opt2,opt1" /></td>
+</tr>
+</c:otherwise>
+</c:choose>
 </el:table>
 <br />
 <content:copyright />

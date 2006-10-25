@@ -34,10 +34,15 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="academyissue.do" op="save" linkID="${fn:dbID(issue)}" validate="return validate(this)">
+<el:form method="post" action="hdissue.do" op="save" linkID="${fn:dbID(issue)}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
+<c:if test="${!empty issue}">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
+</c:if>
+<c:if test="${empty issue}">
+ <td class="caps" colspan="2">NEW <content:airline /> HELP DESK ISSUE</td>
+</c:if>
 </tr>
 
 <!-- Issue Data -->
@@ -101,7 +106,7 @@ return true;
 <c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE ISSUE" /></td>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" /></td>
 </tr>
 </el:table>
 </c:if>

@@ -101,9 +101,9 @@ public class IssueCommand extends AbstractFormCommand {
 		result.setType(CommandResult.REDIRECT);
 		result.setSuccess(true);
 		if (isNew)
-			result.setURL("academyissues.do");
+			result.setURL("hdissues.do");
 		else
-			result.setURL("academyissue", null, ctx.getID());
+			result.setURL("hdissue", null, ctx.getID());
 	}
 
 	/**
