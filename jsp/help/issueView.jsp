@@ -89,7 +89,7 @@ return true;
  <td class="data"><span class="sec bld">${issue.statusName}</span>
 <c:if test="${!empty issue.resolvedOn}"> on <fmt:date date="${issue.resolvedOn}" /></c:if></td>
 </tr>
-<c:if test="${access.canUpdateContent}">
+<c:if test="${access.canUpdateContent && (fn:sizeof(issue.comments) > 1)}">
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="isFAQ" idx="*" value="true" checked="${issue.FAQ}" onChange="void updateAnswerBoxes()" className="sec bld" label="This Issue is part of the FAQ" /></td>
