@@ -63,6 +63,9 @@
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
+</tr>
 </content:filter>
 <content:filter roles="HR,PIREP,Examination">
 <tr class="MenuItem">

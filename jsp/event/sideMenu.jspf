@@ -76,6 +76,9 @@
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
+</tr>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
