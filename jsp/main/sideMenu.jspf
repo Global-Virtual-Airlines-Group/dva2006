@@ -63,6 +63,9 @@
  <td><el:cmd url="academy">FLIGHT ACADEMY</el:cmd></td>
 </tr>
 </c:if>
+<tr class="MenuItem">
+ <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
+</tr>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
@@ -71,11 +74,11 @@
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>OUR PEOPLE</td></tr>
-<c:if test="${empty pageContext.request.userPrincipal}">
+<content:authUser anonymous="true">
 <tr class="MenuItem bld pri">
  <td><el:cmd url="register">JOIN US</el:cmd></td>
 </tr>
-</c:if>
+</content:authUser>
 <tr class="MenuItem">
  <td><el:cmd url="roster">PILOT ROSTER</el:cmd></td>
 </tr>
