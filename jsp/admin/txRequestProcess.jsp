@@ -16,10 +16,17 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateCombo(form.crType, 'Aircraft Type')) return false;
-if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
-if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false;
-if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+
+// Validate response
+var act = form.action;
+if (act.indexOf('txreqdelete.do') != -1) {
+	if (!validateText(form.rejectComments, 1, 'Rejection Comments')) return false;
+} else {
+	if (!validateCombo(form.crType, 'Aircraft Type')) return false;
+	if (!validateCombo(form.eqType, 'Equimpment Program')) return false;
+	if (!validateCombo(form.rank, 'Rank in the new Equipment Program')) return false;
+	if (!validateText(form.comments, 25, 'Check Ride Comments')) return false;
+}
 
 setSubmit();
 disableButton('ProfileButton');
@@ -131,6 +138,12 @@ return true;
 <tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="useScript" idx="*" value="true" label="Append Check Ride script to comments" /></td>
+</tr>
+</c:if>
+<c:if test="${access.canReject}">
+<tr>
+ <td class="label" valign="top">Rejection Commnents</td>
+ <td class="data"><el:textbox name="rejectComments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </c:if>
 </el:table>
