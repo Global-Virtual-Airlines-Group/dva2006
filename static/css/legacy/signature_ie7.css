@@ -1,12 +1,12 @@
 /* Cascading Style Sheet for Water Cooler Signatures. (C) 2005, 2006 Global Virtual Airlines Group. */
 TABLE.DVA_defaultSig {
 	width: 400px;
-	height: 135px;
+	height: 132px;
 	background-repeat: no-repeat;
 	padding: 0px;
-	background-color: #000066;
-	border-style: solid;
-	border-width: 30px 0px 22px 0px;
+	background-color: Navy;
+	border-width: 25px 0px 25px 0px;
+	border: solid Navy;
 }
 
 DIV.DVA_defaultSigText {
@@ -15,7 +15,7 @@ DIV.DVA_defaultSigText {
 	text-align: center;
 	font-size: 10pt;
 	position: relative;
-	top: -48px;
+	top: -107px;
 }
 
 *.DVA_defaultSigText H2 {
@@ -30,5 +30,5 @@ SPAN.DVA_defaultSig {
 	color: #6699FF;
 	font-size: 10pt;
 	position:relative;
-	top: 68px;
+	top: 65px;
 }
