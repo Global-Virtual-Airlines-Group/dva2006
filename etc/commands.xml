@@ -1327,7 +1327,7 @@
 	<command id="hdissues">
 		<name>Help Desk Issue List</name>
 		<class>org.deltava.commands.help.IssueListCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="myhdissues">
