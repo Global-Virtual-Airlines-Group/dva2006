@@ -74,7 +74,7 @@ one of our volunteer staff will answer it soon.</td>
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td class="pri bld">${issue.subject}</td>
+ <td class="pri bld"><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
  <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd> on
  <fmt:date date="${issue.createdOn}" /></td>
@@ -105,7 +105,7 @@ one of our volunteer staff will answer it soon.</td>
 
 <!-- Legend Bar -->
 <tr class="title">
- <td colspan="6"><view:legend width="95" labels="Open,Assigned,Resolved" classes=" ,opt2,opt1" /></td>
+ <td colspan="6"><view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </c:otherwise>
 </c:choose>
