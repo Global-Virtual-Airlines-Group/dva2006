@@ -94,7 +94,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @see Issue#setPublic(boolean)
 	 */
 	public boolean getPublic() {
-		return _public;
+		return _public || _faq;
 	}
 	
 	/**
@@ -234,9 +234,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	 * @see Issue#setAuthorID(int)
 	 */
 	public void setAssignedTo(int id) {
-		if (id != 0)
-			validateID(_assigneeID, id);
-		
+		validateID(0, id);
 		_assigneeID = id;
 	}
 	
