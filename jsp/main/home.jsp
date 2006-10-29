@@ -81,7 +81,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:forEach var="entry" items="${latestNews}">
 <tr>
  <td class="priB" width="20%"><fmt:date fmt="d" date="${entry.date}" /></td>
- <td class="pri bld mid">${entry.subject}</td>
+ <td class="pri bld mid"><fmt:text value="${entry.subject}" /></td>
  <td class="secB" width="20%">${entry.authorName}</td>
 </tr>
 <tr>
@@ -153,7 +153,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:forEach var="event" items="${futureEvents}">
 <c:set var="eRoute" value="${fn:first(event.routes)}" scope="request" />
 <tr>
- <td class="pri bld"><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="event" linkID="0x${event.ID}"><fmt:text value="${event.name}" /></el:cmd></td>
  <td class="sec bld">${event.networkName}</td>
  <td class="small bld"><fmt:date t="HH:mm" date="${event.startTime}" /> - <fmt:date t="HH:mm" date="${event.endTime}" /></td>
 <c:if test="${empty eRoute}">

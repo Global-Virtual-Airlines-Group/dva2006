@@ -47,24 +47,25 @@ return true;
 <calendar:entry name="event">
 <el:cmd url="event" linkID="0x${event.ID}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.networkName}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
-- <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /><br />
-<c:forEach var="route" items="${event.routes}">${route.airportD.name} - ${route.airportA.name}<br /></c:forEach>
+- <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
+<c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}</div></c:forEach>
 <c:set var="eventSize" value="${fn:sizeof(event.signups)}" scope="request" />
 <c:if test="${!event.canSignup}">
-<span class="warn bld">SIGNUPS NOT AVAILABLE</span>
+<span class="small warn bld">SIGNUPS NOT AVAILABLE</span>
 </c:if>
 <c:if test="${(eventSize == 0) && event.canSignup}">
-<span class="bld">NO SIGNUPS YET</span>
+<span class="small bld">NO SIGNUPS YET</span>
 </c:if>
 <c:if test="${eventSize > 0}">
-<div class="ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></div>
+<div class="small ter bld"><fmt:int value="${eventSize}" /> Participant<c:if test="${eventSize > 1}">s</c:if></div>
 <c:set var="eventSignups" value="${fn:subset(event.signups, 15)}" scope="request" />
+<span class="small">
 <c:forEach var="signup" items="${eventSignups}">
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
 ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /></c:if>
 </c:forEach>
-</c:if>
 </span>
+</c:if>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>
