@@ -48,7 +48,7 @@
 <c:set var="assignedTo" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td><el:cmd url="hdissue" linkID="0x${issue.ID}">${issue.subject}</el:cmd></td>
+ <td><el:cmd url="hdissue" linkID="0x${issue.ID}"><fmt:text value="${issue.subject}" /></el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${author.ID}" className="pri bld">${author.name}</el:cmd></td>
  <td><el:cmd url="profile" linkID="0x${assignedTo.ID}" className="bld">${assignedTo.name}</el:cmd></td>
 <c:choose>
