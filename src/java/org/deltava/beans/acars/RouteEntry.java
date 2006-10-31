@@ -40,7 +40,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private int _flags;
 	private int _frameRate;
 
-	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT , FLAG_AP_GPS};
+	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS };
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS" };
 
 	/**
@@ -66,14 +66,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public int getAltitude() {
 		return _alt;
 	}
-	
+
 	/**
 	 * Returns the aircraft altitude above <i>ground level</i>.
 	 * @return the altitude in feet AGL
 	 * @see RouteEntry#setRadarAltitude(int)
 	 */
 	public int getRadarAltitude() {
-	   return _radarAlt;
+		return _radarAlt;
 	}
 
 	/**
@@ -84,7 +84,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public int getHeading() {
 		return _hdg;
 	}
-	
+
 	/**
 	 * Returns the aircraft's Angle of Attack.
 	 * @return the angle of attack in degrees
@@ -93,7 +93,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public double getAOA() {
 		return _aoa;
 	}
-	
+
 	/**
 	 * Returns the G forces acting on the aircraft.
 	 * @return the force in Gs
@@ -102,7 +102,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public double getG() {
 		return _gForce;
 	}
-	
+
 	/**
 	 * Returns the aircraft's pitch angle.
 	 * @return the pitch in degrees
@@ -111,7 +111,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public double getPitch() {
 		return _pitch;
 	}
-	
+
 	/**
 	 * Returns the aircraft's bank angle.
 	 * @return the bank in degrees
@@ -120,7 +120,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public double getBank() {
 		return _bank;
 	}
-	
+
 	/**
 	 * Returns the aircraft's fuel flow for all engines.
 	 * @return the flow in pounds per hour
@@ -129,7 +129,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public int getFuelFlow() {
 		return _fuelFlow;
 	}
-	
+
 	/**
 	 * Returns the Flight Simulator frame rate.
 	 * @return the number of rendered frames per second
@@ -176,14 +176,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public GeoPosition getPosition() {
 		return _gpos;
 	}
-	
+
 	/**
-	 * Returns the aircraft's Mach number. 
+	 * Returns the aircraft's Mach number.
 	 * @return the Mach number
 	 * @see RouteEntry#setMach(double)
 	 */
 	public double getMach() {
-	   return _mach;
+		return _mach;
 	}
 
 	public final double getLatitude() {
@@ -193,9 +193,9 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public final double getLongitude() {
 		return _gpos.getLongitude();
 	}
-	
+
 	public final int getHemisphere() {
-	   return _gpos.getHemisphere();
+		return _gpos.getHemisphere();
 	}
 
 	/**
@@ -205,7 +205,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public int getWindSpeed() {
 		return _wSpeed;
 	}
-	
+
 	/**
 	 * Returns the ambient wind heading.
 	 * @return the wind heading in degrees
@@ -213,7 +213,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public int getWindHeading() {
 		return _wHdg;
 	}
-	
+
 	/**
 	 * Returns the aircraft's airspeed.
 	 * @return the airspeed in knots
@@ -284,7 +284,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 		_alt = alt;
 	}
-	
+
 	/**
 	 * Updates the aircraft's altitude above <i>ground level</i>.
 	 * @param alt the altitude in feet AGL
@@ -292,7 +292,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#setAltitude(int)
 	 */
 	public void setRadarAltitude(int alt) {
-	   _radarAlt = (alt < 0) ? 0 : alt;
+		_radarAlt = (alt < 0) ? 0 : alt;
 	}
 
 	/**
@@ -307,7 +307,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 		_hdg = hdg;
 	}
-	
+
 	/**
 	 * Updates the aircraft's Angle of Attack.
 	 * @param aoa the angle of attack in degrees
@@ -316,7 +316,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setAOA(double aoa) {
 		_aoa = aoa;
 	}
-	
+
 	/**
 	 * Updates the G forces acting on the aircraft.
 	 * @param gForce the force in Gs
@@ -325,7 +325,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setG(double gForce) {
 		_gForce = gForce;
 	}
-	
+
 	/**
 	 * Updates the aircraft's pitch angle.
 	 * @param p the pitch in degrees
@@ -335,10 +335,10 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setPitch(double p) {
 		if ((p < -90) || (p > 90))
 			throw new IllegalArgumentException("Pitch angle cannot be < -90 or > 90 degrees");
-		
+
 		_pitch = p;
 	}
-	
+
 	/**
 	 * Updates the aircraft's bank angle.
 	 * @param b the bank in degrees
@@ -348,7 +348,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setBank(double b) {
 		if ((b < -170) || (b > 170))
 			throw new IllegalArgumentException("Bank angle cannot be < -170 or > 170 degrees");
-		
+
 		_bank = b;
 	}
 
@@ -372,9 +372,6 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#getGroundSpeed()
 	 */
 	public void setGroundSpeed(int speed) {
-		if ((speed < -5) || (speed > 1500))
-			throw new IllegalArgumentException("Ground speed cannot be < -5 or > 1600 - " + speed);
-
 		_gSpeed = speed;
 	}
 
@@ -390,7 +387,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 		_vSpeed = speed;
 	}
-	
+
 	/**
 	 * Updates the aircraft's Mach number.
 	 * @param mach the Mach number
@@ -398,10 +395,10 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#getMach()
 	 */
 	public void setMach(double mach) {
-	   if ((mach < 0) || (mach > 5.0))
-	      throw new IllegalArgumentException("Invalid Mach Number - " + mach);
-	   
-	   _mach = mach;
+		if ((mach < 0) || (mach > 5.0))
+			throw new IllegalArgumentException("Invalid Mach Number - " + mach);
+
+		_mach = mach;
 	}
 
 	/**
@@ -429,7 +426,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 		_n2 = nn2;
 	}
-	
+
 	/**
 	 * Updates the aircraft's total fuel flow.
 	 * @param flow the flow in pounds per hour
@@ -439,10 +436,10 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setFuelFlow(int flow) {
 		if ((flow < 0) || (flow > 120000))
 			throw new IllegalArgumentException("Fuel Flow cannot be negative or > 120000 - " + flow);
-		
+
 		_fuelFlow = flow;
 	}
-	
+
 	/**
 	 * Updates the Flight Simulator frame rate.
 	 * @param rate the rendered frames per second
@@ -487,7 +484,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public void setFlags(int flags) {
 		_flags = flags;
 	}
-	
+
 	/**
 	 * Sets the ambient wind speed.
 	 * @param speed the speed in knots
@@ -498,7 +495,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if (speed >= 0)
 			_wSpeed = speed;
 	}
-	
+
 	/**
 	 * Sets the ambient wind heading.
 	 * @param hdg the heading in degrees
@@ -509,7 +506,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if ((hdg >= 0) && (hdg < 360))
 			_wHdg = hdg;
 	}
-	
+
 	/**
 	 * Marks this route entry as having a notable flight parameter.
 	 * @return TRUE if the entry should be noted, otherwise FALSE
@@ -517,16 +514,16 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public boolean isWarning() {
 		if ((_alt < 10000) && (_aSpeed > 250))
 			return true;
-		
+
 		if ((_radarAlt < 1500) && (_vSpeed < -1500))
 			return true;
-		
+
 		if ((Math.abs(_bank) > 45) || (Math.abs(_pitch) > 35))
 			return true;
-		
+
 		if (Math.abs(1 - _gForce) >= 0.25)
 			return true;
-		
+
 		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));
 	}
 
@@ -548,7 +545,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			return PURPLE;
 		else if (isWarning())
 			return RED;
-		
+
 		return YELLOW;
 	}
 
@@ -563,11 +560,11 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		buf.append(StringUtils.format(_alt, "#,000"));
 		buf.append(" feet");
 		if ((_radarAlt > 0) && (_radarAlt < 2500)) {
-		   buf.append(" (");
-		   buf.append(StringUtils.format(_radarAlt, "#,000"));
-		   buf.append(" feet AGL)");
+			buf.append(" (");
+			buf.append(StringUtils.format(_radarAlt, "#,000"));
+			buf.append(" feet AGL)");
 		}
-		
+
 		buf.append("<br />");
 		if ((_pitch < -1) || (_pitch > 5)) {
 			buf.append("Pitch: ");
@@ -578,19 +575,19 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			else
 				buf.append("<br />");
 		}
-		
+
 		if (Math.abs(_bank) > 3) {
 			buf.append("Bank: ");
 			buf.append(StringUtils.format(_bank, "#0.0"));
 			buf.append("<sup>o</sup><br />");
 		}
-		
+
 		if (Math.abs(1 - _gForce) >= 0.1) {
 			buf.append("Acceleration: ");
 			buf.append(StringUtils.format(_gForce, "#0.000"));
 			buf.append("G<br />");
 		}
-		
+
 		buf.append("Speed: ");
 		buf.append(StringUtils.format(_aSpeed, "##0"));
 		buf.append(" kts (GS: ");
@@ -601,7 +598,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append(StringUtils.format(_mach, "0.00"));
 			buf.append("</i>");
 		}
-		
+
 		buf.append("<br />Heading: ");
 		buf.append(StringUtils.format(_hdg, "000"));
 		buf.append(" degrees<br />Veritical Speed: ");
@@ -620,11 +617,11 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append(String.valueOf(_flaps));
 			buf.append("<sup>o</sup><br />");
 		}
-		
+
 		// Add afterburner if deployed
 		if (isFlagSet(ACARSFlags.FLAG_AFTERBURNER))
 			buf.append("<b><i>AFTERBURNER</i></b><br />");
-		
+
 		// Add pushback flag if pushing back
 		if (isFlagSet(ACARSFlags.FLAG_PUSHBACK))
 			buf.append("<b><i>PUSHBACK</i></b><br />");
@@ -648,7 +645,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		} else if (isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
 			buf.append("Autothrottle: MACH<br />");
 		}
-		
+
 		// Add Pause/Stall/Overspeed flags
 		if (isFlagSet(ACARSFlags.FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
