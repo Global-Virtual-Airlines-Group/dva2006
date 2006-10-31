@@ -14,28 +14,33 @@
 <c:if test="${empty pirep}">
 <title>New <content:airline /> Flight Report</title>
 </c:if>
+<c:set var="isAssign" value="{(fn:AssignID(pirep) == 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="hourCalc" />
+<c:if test="${isAssign}">
 <content:js name="airportRefresh" />
+</c:if>
 <content:sysdata var="eqTypes" name="eqtypes" />
 <content:sysdata var="networks" name="online.networks" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
-<script language="javascript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateCombo(form.airline, 'Airline')) return false;
 if (!validateNumber(form.flightNumber, 1, 'Flight Number')) return false;
 if (!validateNumber(form.flightLeg, 1, 'Flight Leg')) return false;
 if (!validateCombo(form.eq, 'Equipment Type')) return false;
-if (!validateCombo(form.airportD, 'Departure Airport')) return false;
-if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
 if (!validateCombo(form.flightTime, 'Logged Hours')) return false;
 if (!validateCheckBox(form.network, 1, 'Online Network')) return false;
 if (!validateCheckBox(form.fsVersion, 1, 'Flight Simulator Version')) return false;
+if (!validateCombo(form.airline, 'Airline')) return false;
+<c:if test="${isAssign}">
+if (!validateCombo(form.airportD, 'Departure Airport')) return false;
+if (!validateCombo(form.airportA, 'Arrival Airport')) return false;
+</c:if>
 
 // Validate flight leg
 if (parseInt(form.flightLeg.value) > 8) {
@@ -120,6 +125,8 @@ var bwdLimit = new Date(${backwardDateLimit});
  <td class="label">Equipment Type</td>
  <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="< EQUIPMENT >" /></td>
 </tr>
+<c:choose>
+<c:when test="${isAssign}">
 <tr>
  <td class="label">Departed from</td>
  <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
@@ -130,6 +137,18 @@ var bwdLimit = new Date(${backwardDateLimit});
  <td class="data"><el:combo name="airportA" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
  <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
+</c:when>
+<c:otherwise>
+<tr>
+ <td class="label">Departed from</td>
+ <td class="data"><el:combo name="airportD" size="1" firstEntry="${pirep.airportD}" options="${emptyList}" /></td>
+</tr>
+<tr>
+ <td class="label">Arrived at</td>
+ <td class="data"><el:combo name="airportA" size="1" firstEntry="${pirep.airportA}" options="${emptyList}" /></td>
+</tr>
+</c:otherwise>
+</c:choose>
 <tr>
  <td class="label">Flown on</td>
  <td class="data"><el:combo name="dateM" idx="*" size="1" options="${months}" className="req" onChange="setDaysInMonth(this)" />

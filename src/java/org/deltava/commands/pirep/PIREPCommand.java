@@ -31,8 +31,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 	private static final DateFormat _df = new SimpleDateFormat("yyyy, M, d");
 
-	private static Collection<String> _flightTimes;
-	private static Collection<String> _flightYears;
+	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
+	private static final Collection<String> _flightYears = new LinkedHashSet<String>();
 
 	// Flight Simulator versions
 	private static final List fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
@@ -56,16 +56,14 @@ public class PIREPCommand extends AbstractFormCommand {
 		super.init(id, cmdName);
 
 		// Initialize flight times
-		if (_flightTimes == null) {
-			_flightTimes = new LinkedHashSet<String>();
+		if (_flightTimes.isEmpty()) {
 			for (int x = 2; x < 185; x++)
 				_flightTimes.add(String.valueOf(x / 10.0d));
 		}
 
 		// Initialize flight years
-		if (_flightYears == null) {
+		if (_flightYears.isEmpty()) {
 			Calendar c = Calendar.getInstance();
-			_flightYears = new LinkedHashSet<String>();
 			_flightYears.add(String.valueOf(c.get(Calendar.YEAR)));
 
 			// If we're in January/February, add the previous year
@@ -92,8 +90,9 @@ public class PIREPCommand extends AbstractFormCommand {
 			GetFlightReports rdao = new GetFlightReports(con);
 			fr = rdao.get(ctx.getID());
 
-			// Check if we are creating a new flight report
+			// Check if we are creating a new flight report or editing one with an assignment
 			boolean doCreate = (fr == null);
+			boolean isAssignment = !doCreate && (fr.getDatabaseID(FlightReport.DBID_ASSIGN) != 0);
 
 			// Create the access controller
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
@@ -105,9 +104,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (!hasAccess)
 				throw securityException("Not Authorized");
 
-			// Get the airports
-			Airport aa = SystemData.getAirport(ctx.getParameter("airportA"));
-			Airport ad = SystemData.getAirport(ctx.getParameter("airportD"));
+			// Get the airline/airports - don't allow updates if an assignment
+			Airline a = isAssignment ? fr.getAirline() : SystemData.getAirline(ctx.getParameter("airline"));
+			Airport aa = isAssignment ? fr.getAirportA() : SystemData.getAirport(ctx.getParameter("airportA"));
+			Airport ad = isAssignment ? fr.getAirportD() : SystemData.getAirport(ctx.getParameter("airportD"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
@@ -115,7 +115,6 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr = (FlightReport) draftFlights.get(0);
 
 			// Create a new PIREP bean if we're creating one, otherwise update the flight code
-			Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 			if (fr == null) {
 				try {
 					fr = new FlightReport(a, Integer.parseInt(ctx.getParameter("flightNumber")), Integer.parseInt(ctx
@@ -241,7 +240,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		PIREPAccessControl ac = null;
 		try {
 			Connection con = ctx.getConnection();
-			Set<Airline> airlines = new TreeSet<Airline>();
+			Collection<Airline> airlines = new TreeSet<Airline>();
 			Pilot usr = (Pilot) ctx.getUser();
 
 			// Get the DAO and load the flight report
@@ -282,11 +281,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("flightTime", StringUtils.format(fr.getLength() / 10.0, "#0.0"), REQUEST);
 
 				// Get the active airlines
-				for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
-					Airline a = i.next();
-					if (a.getActive() || (fr.getAirline().equals(a)))
-						airlines.add(a);
-				}
+				if (fr.getDatabaseID(FlightReport.DBID_ASSIGN) == 0) {
+					for (Iterator<Airline> i = allAirlines.values().iterator(); i.hasNext();) {
+						Airline a = i.next();
+						if (a.getActive() || (fr.getAirline().equals(a)))
+							airlines.add(a);
+					}
+				} else
+					airlines.add(fr.getAirline());
 			}
 
 			ctx.setAttribute("airlines", airlines, REQUEST);

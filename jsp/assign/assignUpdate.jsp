@@ -67,7 +67,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 </c:otherwise>
 </c:choose>
 <br />
-To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter">Click Here.</el:cmd><br />
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
