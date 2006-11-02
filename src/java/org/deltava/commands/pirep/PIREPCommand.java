@@ -108,6 +108,8 @@ public class PIREPCommand extends AbstractFormCommand {
 			Airline a = isAssignment ? fr.getAirline() : SystemData.getAirline(ctx.getParameter("airline"));
 			Airport aa = isAssignment ? fr.getAirportA() : SystemData.getAirport(ctx.getParameter("airportA"));
 			Airport ad = isAssignment ? fr.getAirportD() : SystemData.getAirport(ctx.getParameter("airportD"));
+			if (a == null)
+				a = SystemData.getAirline(SystemData.get("airline.code"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
