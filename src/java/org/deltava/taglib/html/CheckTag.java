@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -22,7 +22,11 @@ public class CheckTag extends FormElementTag {
 	private int _cols;
 
 	private Collection _options;
-	private Object _firstEntry;
+	
+	/**
+	 * An additional entry prepended to the list of options 
+	 */
+	protected Object _firstEntry;
 
 	private String _itemSeparator;
 
