@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,12 +33,9 @@ public class GetTimeZone extends DAO {
     public void initAll() throws DAOException {
         try {
             prepareStatementWithoutLimits("SELECT CODE, NAME, ABBR FROM common.TZ");
-            _ps.setQueryTimeout(5);
             
             // Execute the query
             ResultSet rs = _ps.executeQuery();
-            
-            // Iterate through the results; the class will cache its instances
             while (rs.next()) {
             	String id = rs.getString(1);
                 TZInfo.init(id, rs.getString(2), rs.getString(3));
