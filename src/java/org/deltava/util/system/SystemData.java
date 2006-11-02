@@ -29,8 +29,8 @@ public final class SystemData implements Serializable {
 	public static final String ACARS_DAEMON = "acars.daemon";
 	public static final String SMTP_DAEMON = "smtp.daemonthread";
 
-	static final String CFG_NAME = "$CONFIGNAME$";
-	static final String LOADER_NAME = "$LOADERCLASS$";
+	public static final String CFG_NAME = "$CONFIGNAME$";
+	public static final String LOADER_NAME = "$LOADERCLASS$";
 
 	private static SystemDataLoader _loader;
 	private static final Map<String, Object> _properties = new HashMap<String, Object>();
@@ -82,9 +82,23 @@ public final class SystemData implements Serializable {
 
 	/**
 	 * Initializes the System data with the default loader.
+	 * @see SystemData#init(String, boolean)
 	 */
 	public static void init() {
 		init("DEFAULT", true);
+	}
+	
+	/**
+	 * Returns the property names.
+	 * @return a Collection of names
+	 */
+	public static Collection<String> getNames() {
+		r.lock();
+		try {
+			return Collections.unmodifiableCollection(_properties.keySet());
+		} finally {
+			r.unlock();
+		}
 	}
 
 	/**
