@@ -1163,7 +1163,13 @@
 		<class>org.deltava.commands.system.DiagnosticCommand</class>
 		<roles>Admin</roles>
 	</command>
-	
+
+	<command id="sysdatareload">
+		<name>System Data Reload</name>
+		<class>org.deltava.commands.system.SystemDataReloadCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 	<command id="su">
 		<name>Switch User</name>
 		<class>org.deltava.commands.system.UserSwitchCommand</class>

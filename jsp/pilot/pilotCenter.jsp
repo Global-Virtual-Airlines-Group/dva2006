@@ -630,6 +630,12 @@ scoring delays, Water Cooler participation rates and Flight Report logging.</td>
  <td class="data">You can view information about the application server and Java Virtual Machine.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="sysdatareload">System Configuration Reload</el:cmd></td>
+ <td class="data">If you have made changes to the system configuration file or airports database in
+ another web application and want to load these changes without restarting this web application, you
+ can reload the system configuration.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="securityroles">Security Roles</el:cmd></td>
  <td class="data">You can view all <content:airline /> Pilots who have one or more web application security
 roles.</td>
