@@ -14,13 +14,13 @@
 <c:if test="${empty pirep}">
 <title>New <content:airline /> Flight Report</title>
 </c:if>
-<c:set var="isAssign" value="{(fn:AssignID(pirep) == 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
+<c:set var="isAssign" value="{(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="hourCalc" />
-<c:if test="${isAssign}">
+<c:if test="${!isAssign}">
 <content:js name="airportRefresh" />
 </c:if>
 <content:sysdata var="eqTypes" name="eqtypes" />
