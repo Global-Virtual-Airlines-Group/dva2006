@@ -6,6 +6,7 @@ import java.util.*;
 import javax.servlet.jsp.JspException;
 
 import org.deltava.beans.ComboAlias;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A JSP tag to support the generation of HTML multi-option checkboxes and radio buttons.
@@ -17,14 +18,13 @@ import org.deltava.beans.ComboAlias;
 public class CheckTag extends FormElementTag {
 
 	private String _labelClassName;
-
 	private int _width;
 	private int _cols;
 
 	private Collection _options;
-	
+
 	/**
-	 * An additional entry prepended to the list of options 
+	 * An additional entry prepended to the list of options
 	 */
 	protected Object _firstEntry;
 
@@ -92,7 +92,7 @@ public class CheckTag extends FormElementTag {
 
 		_out.print('>');
 	}
-	
+
 	/**
 	 * Helper method to check if an option value is selected.
 	 */
@@ -103,7 +103,8 @@ public class CheckTag extends FormElementTag {
 			return ca.getComboAlias().equals(vAlias) || ca.getComboName().equals(vAlias);
 		} else if (optValue instanceof ComboAlias) {
 			ComboAlias ca = (ComboAlias) optValue;
-			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(String.valueOf(setValue)));
+			return (ca.getComboName().equals(String.valueOf(setValue)) || ca.getComboAlias().equals(
+					String.valueOf(setValue)));
 		} else {
 			return String.valueOf(optValue).equals(String.valueOf(setValue));
 		}
@@ -131,7 +132,7 @@ public class CheckTag extends FormElementTag {
 		_out.print(_data.open(false));
 		if (isSelected)
 			_out.print(" checked=\"checked\"");
-		
+
 		// Figure out how to render the choice
 		_out.print(" value=\"");
 		if (isCombo) {
@@ -168,15 +169,17 @@ public class CheckTag extends FormElementTag {
 			}
 
 			// Render the remaining options
-			for (Iterator i = _options.iterator(); i.hasNext();) {
-				Object opt = i.next();
-				renderOption(opt);
+			if (!CollectionUtils.isEmpty(_options)) {
+				for (Iterator i = _options.iterator(); i.hasNext();) {
+					Object opt = i.next();
+					renderOption(opt);
 
-				// Render the separator only after we hit the column count
-				columnCount++;
-				if (i.hasNext() && (columnCount == _cols)) {
-					columnCount = 0;
-					_out.println((_itemSeparator == null) ? "" : _itemSeparator);
+					// Render the separator only after we hit the column count
+					columnCount++;
+					if (i.hasNext() && (columnCount == _cols)) {
+						columnCount = 0;
+						_out.println((_itemSeparator == null) ? "" : _itemSeparator);
+					}
 				}
 			}
 		} catch (Exception e) {
