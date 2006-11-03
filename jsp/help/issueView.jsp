@@ -43,21 +43,6 @@ disableButton('EditButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment};
 }
-<c:if test="${access.canUpdateContent}">
-function updateAnswerBoxes()
-{
-var f = document.forms[0];
-if ((f.isFAQ) && (f.faqIDs)) {
-	for (x = 0; x < f.faqIDs.length; x++) {
-		f.faqIDs[x].disabled = !f.isFAQ.checked;
-		if (!f.isFAQ.checked)
-			f.faqIDs[x].checked = false;
-	}
-}
-
-return true;
-}
-</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -92,7 +77,7 @@ return true;
 <c:if test="${access.canUpdateContent && (fn:sizeof(issue.comments) > 1)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isFAQ" idx="*" value="true" checked="${issue.FAQ}" onChange="void updateAnswerBoxes()" className="sec bld" label="This Issue is part of the FAQ" /></td>
+ <td class="data"><el:box name="isFAQ" idx="*" value="true" checked="${issue.FAQ}" className="sec bld" label="This Issue is part of the FAQ" /></td>
 </tr>
 </c:if>
 <tr>
@@ -116,7 +101,7 @@ return true;
  <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
-<el:box name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
+<el:radio name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
  <td class="data" valign="top"><fmt:msg value="${comment.body}" /></td>
 </tr>
 </c:forEach>
