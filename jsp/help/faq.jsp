@@ -37,7 +37,7 @@
 <!-- Table View data -->
 <c:forEach var="issue" items="${viewContext.results}">
 <c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
-<td>
+<tr>
  <td class="pri bld">${issue.subject}</td>
  <td class="small left"><fmt:msg value="${comment.body}" /></td>
 </tr>
