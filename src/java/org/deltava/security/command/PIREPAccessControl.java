@@ -1,9 +1,8 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.security.SecurityContext;
-
 import org.deltava.beans.FlightReport;
+import org.deltava.security.SecurityContext;
 
 /**
  * An access controller for PIREP operations.
@@ -49,22 +48,27 @@ public final class PIREPAccessControl extends AccessControl {
 		}
 
 		// Set role variables
-		int status = _pirep.getStatus();
-		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isPirep = _ctx.isUserInRole("PIREP");
+		final int status = _pirep.getStatus();
+		final boolean isHR = _ctx.isUserInRole("HR");
+		final boolean isPirep = _ctx.isUserInRole("PIREP");
 		_ourPIREP = _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_PILOT) == _ctx.getUser().getID());
+		
+		// Set status variables
+		final boolean isDraft = (status == FlightReport.DRAFT);
+		final boolean isSubmitted = (status == FlightReport.SUBMITTED);
+		final boolean isRejected = (status == FlightReport.REJECTED);
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
-		_canSubmit = (status == FlightReport.DRAFT) && (_ourPIREP || isPirep || isHR);
-		_canHold = ((isPirep || isHR) && (status == FlightReport.SUBMITTED));
-		_canApprove = ((isPirep || isHR) && ((status == FlightReport.SUBMITTED) || (status == FlightReport.HOLD)) || (isHR && (status == FlightReport.REJECTED)));
-		_canReject = (status != FlightReport.REJECTED) && (_canApprove || (isHR && (status == FlightReport.OK)));
+		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR);
+		_canHold = isSubmitted && (isPirep || isHR);
+		_canApprove = ((isPirep || isHR) && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
+		_canReject = !isRejected && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = (_canSubmit || _canHold || _canApprove || _canReject);
 		
 		// Get the flight assignment ID
-		int assignID = _pirep.getDatabaseID(FlightReport.DBID_ASSIGN);
-		_canDelete = (_ourPIREP && (status == FlightReport.DRAFT)) || (_ctx.isUserInRole("Admin") && (((status == FlightReport.REJECTED)
-				&& (assignID != 0)) || (assignID == 0)));
+		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
+		_canDelete = (_ourPIREP && !isAssigned && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
+				((isRejected && isAssigned) || !isAssigned));
 	}
 
 	/**
