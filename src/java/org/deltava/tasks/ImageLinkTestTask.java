@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ImageLinkTestTask extends DatabaseTask {
-	
+
 	private Collection _mimeTypes;
 
 	/**
@@ -40,49 +40,57 @@ public class ImageLinkTestTask extends DatabaseTask {
 	protected void execute() {
 		try {
 			GetCoolerLinks dao = new GetCoolerLinks(_con);
-			Collection<Integer> ids = dao.getThreads();
-			
+			final Collection<Integer> ids = dao.getThreads();
+			log.info("Validating images in " + ids.size() + " discussion threads");
+
+			// Keep track of invalid hosts
+			final Collection<String> invalidHosts = new HashSet<String>();
+
 			// Loop through the threads
 			SetCoolerLinks wdao = new SetCoolerLinks(_con);
-			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
+			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
-				
+
 				// Get the images
-				Collection<LinkedImage> urls = dao.getURLs(id.intValue());
-				for (Iterator<LinkedImage> ui = urls.iterator(); ui.hasNext(); ) {
+				final Collection<LinkedImage> urls = dao.getURLs(id.intValue());
+				for (Iterator<LinkedImage> ui = urls.iterator(); ui.hasNext();) {
 					LinkedImage img = ui.next();
-					boolean isOK = true;
-					
+					boolean isOK = false;
+
+					URL url = null;
 					try {
-						URL url = new URL(null, img.getURL(), new HttpTimeoutHandler(1950));
+						url = new URL(null, img.getURL(), new HttpTimeoutHandler(1950));
+						if (invalidHosts.contains(url.getHost()))
+							throw new IllegalArgumentException("Bad Host!");
+
 						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 						urlcon.setRequestMethod("HEAD");
 						urlcon.setReadTimeout(1950);
 						urlcon.setConnectTimeout(1950);
 						urlcon.connect();
-						
+
 						// Validate the result code
 						int resultCode = urlcon.getResponseCode();
-						if (resultCode != HttpURLConnection.HTTP_OK) {
+						if (resultCode != HttpURLConnection.HTTP_OK)
 							log.warn("Invalid Image HTTP result code - " + resultCode);
-							isOK = false;
-						} else {
+						else {
 							String cType = urlcon.getHeaderField("Content-Type");
-							if (!_mimeTypes.contains(cType)) {
+							isOK = _mimeTypes.contains(cType);
+							if (!isOK)
 								log.warn("Invalid MIME type for " + img + " - " + cType);
-								isOK = false;
-							}
 						}
-						
+
 						urlcon.disconnect();
+					} catch (IllegalArgumentException iae) {
+						log.warn("Known bad host -" + url.getHost());
 					} catch (MalformedURLException mue) {
-						isOK = false;
 						log.warn("Invalid URL - " + img);
 					} catch (IOException ie) {
-						isOK = false;
 						log.warn("Error validating " + img + " - " + ie.getMessage());
+						if ("Connection timed out".equals(ie.getMessage()))
+							invalidHosts.add(url.getHost());
 					}
-					
+
 					// If it's invalid, nuke it
 					if (!isOK)
 						wdao.delete(id.intValue(), img.getURL());
