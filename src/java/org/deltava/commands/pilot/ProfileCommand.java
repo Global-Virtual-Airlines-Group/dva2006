@@ -180,8 +180,9 @@ public class ProfileCommand extends AbstractFormCommand {
 				p.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
 
 			// Load the ratings from the request and convert to a set to maintain uniqueness
-			Set<String> newRatings = new HashSet<String>(CollectionUtils.loadList(ctx.getRequest().getParameterValues(
-					"ratings"), p.getRatings()));
+			Collection<String> newRatings = ctx.getParameters("ratings");
+			if (newRatings == null)
+				newRatings = new LinkedHashSet<String>(p.getRatings());
 
 			// Determine if we are promoting the pilot
 			String newRank = ctx.getParameter("rank");
@@ -213,8 +214,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					p.setEquipmentType(newEQ);
 
 					// Load the ratings from the new equipment type
-					newRatings.addAll(eq2.getPrimaryRatings());
-					newRatings.addAll(eq2.getSecondaryRatings());
+					newRatings.addAll(eq2.getRatings());
 
 					// Check if we're going to Senior Captain for the first time
 					GetStatusUpdate sudao = new GetStatusUpdate(con);

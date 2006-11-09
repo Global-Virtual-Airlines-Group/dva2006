@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.Collection;
 
 import org.deltava.beans.*;
 import org.deltava.util.system.SystemData;
@@ -179,6 +180,21 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setInt(1, p.getPilotNumber());
 			_ps.setInt(2, p.getID());
 			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Adds equipment ratings to a particular Pilot.
+	 * @param p the Pilot bean
+	 * @param ratings a Collection of ratings
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void addRatings(Pilot p, Collection<String> ratings) throws DAOException {
+		invalidate(p);
+		try {
+			writeRatings(p.getID(), ratings, SystemData.get("airline.db"), false);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

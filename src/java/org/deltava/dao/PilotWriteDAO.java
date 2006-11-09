@@ -74,7 +74,7 @@ public abstract class PilotWriteDAO extends PilotDAO {
 		}
 
 		// Write the ratings to the database
-		prepareStatementWithoutLimits("INSERT INTO " + db.toLowerCase() + ".RATINGS (ID, RATING) VALUES (?, ?)");
+		prepareStatementWithoutLimits("REPLACE INTO " + db.toLowerCase() + ".RATINGS (ID, RATING) VALUES (?, ?)");
 		_ps.setInt(1, id);
 		for (Iterator<String> i = ratings.iterator(); i.hasNext();) {
 			_ps.setString(2, i.next());

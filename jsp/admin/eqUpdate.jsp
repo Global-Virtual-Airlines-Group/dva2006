@@ -4,9 +4,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Equipment Type Updated</title>
+<title>Equipment Program Updated</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 </head>
@@ -26,6 +27,16 @@ updated in the database.<br />
 <c:if test="${isRename}">
 This Equipment Profile has been renamed. It was formerly called the <span class="sec bld">${oldName}</span>
 program, and all Pilots in this program have been updated.<br />
+<br />
+</c:if>
+<c:if test="${!empty updatedPilots}">
+The following <content:airline /> Pilots have had their equipment type ratings updated:<br />
+<br />
+<c:foreach var="pilot" items="${updatedPilots}">
+<c:set var="ratings" value="${updatedRatings[pilot]}" scope="requst" />
+${pilot.rank} <el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd> - 
+added <fmt:list value="${ratings}" delim=", " />.<br />
+</c:forEach>
 <br />
 </c:if>
 To return to the list of Equipment Program profiles, <el:cmd url="eqtypes" className="sec bld">Click Here</el:cmd>.<br />

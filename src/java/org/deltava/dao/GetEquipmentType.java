@@ -184,6 +184,52 @@ public class GetEquipmentType extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the database IDs for all Pilots missing an assigned rating in a particular Equipment type program.
+	 * @param eq the EquipmentType bean
+	 * @return a Collection of database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getPilotsWithMissingRatings(EquipmentType eq) throws DAOException {
+		
+		// Build the SQL statement
+		Collection<String> allRatings = new HashSet<String>(eq.getPrimaryRatings());
+		allRatings.addAll(eq.getSecondaryRatings());
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, COUNT(RATING) AS CNT FROM RATINGS WHERE RATING IN (");
+		for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
+			i.next();
+			sqlBuf.append('?');
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(") GROUP BY ID HAVING (CNT < ?)");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			int x = 0;
+			for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
+				String rating = i.next();
+				_ps.setString(++x, rating);
+			}
+			
+			_ps.setInt(++x, allRatings.size());
+			
+			// Execute the query
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Helper method to iterate through the result set.

@@ -1,15 +1,16 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Ranks;
-import org.deltava.beans.EquipmentType;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.EquipmentAccessControl;
+
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to edit Equipment Type profiles. 
@@ -104,6 +105,14 @@ public class EquipmentCommand extends AbstractFormCommand {
 			eq.setExamName(Ranks.RANK_FO, ctx.getParameter("examFO"));
 			eq.setExamName(Ranks.RANK_C, ctx.getParameter("examC"));
 			
+			// Determine who is missing the ratings
+			GetPilot pdao = new GetPilot(con);
+			Collection<Integer> pilotIDs = rdao.getPilotsWithMissingRatings(eq);
+			Collection<Pilot> pilots = pdao.getByID(pilotIDs, "PILOTS").values();
+			
+			// Start transaction
+			ctx.startTX();
+			
 			// Get the DAO and write the equipment type to the database
 			SetEquipmentType wdao = new SetEquipmentType(con);
 			if (isNew) {
@@ -113,9 +122,46 @@ public class EquipmentCommand extends AbstractFormCommand {
 				wdao.update(eq);
 			}
 			
+			// Update pilot ratings
+			if (!pilots.isEmpty()) {
+				final Collection<String> newRatings = eq.getRatings();
+				Map<Pilot, Collection<String>> updatedRatings = new LinkedHashMap<Pilot, Collection<String>>();
+				Collection<StatusUpdate> updates = new ArrayList<StatusUpdate>();
+				
+				// Add ratings to each pilot
+				SetPilot pwdao = new SetPilot(con);
+				for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
+					Pilot p = i.next();
+					Collection<String> addedRatings = CollectionUtils.getDelta(newRatings, p.getRatings());
+					if (!addedRatings.isEmpty()) {
+						StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.RATING_ADD);
+						upd.setAuthorID(ctx.getUser().getID());
+						upd.setDescription("Added " + StringUtils.listConcat(addedRatings, ", ") + " after Equipment Program update");
+						updates.add(upd);
+					}
+					
+					// Save the pilot
+					p.addRatings(addedRatings);
+					updatedRatings.put(p, addedRatings);
+					pwdao.addRatings(p, addedRatings);
+				}
+				
+				// Write the status updates
+				SetStatusUpdate sudao = new SetStatusUpdate(con);
+				sudao.write(updates);
+				
+				// Save the updated pilots list
+				ctx.setAttribute("updatedPilots", updatedRatings.keySet(), REQUEST);
+				ctx.setAttribute("updatedRatings", updatedRatings, REQUEST);
+			}
+			
+			// Commit the transaction
+			ctx.commitTX();
+			
 			// Save the equipment program in the request
 			ctx.setAttribute("eqType", eq, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -129,11 +175,11 @@ public class EquipmentCommand extends AbstractFormCommand {
 	}
 	
 	/**
-	 * Callback method called when reading the profile. <i>NOT IMPLEMENTED</i>
+	 * Callback method called when reading the profile. <i>Opens in edit mode</i>.
 	 * @param ctx the Command context
-	 * @throws UnsupportedOperationException always
+	 * @see EquipmentCommand#execEdit(CommandContext)
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-		throw new UnsupportedOperationException();
+		execEdit(ctx);
 	}
 }
