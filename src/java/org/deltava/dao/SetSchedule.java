@@ -260,8 +260,8 @@ public class SetSchedule extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(doReplace ? "REPLACE" : "INSERT");
-		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, "
-				+ "FLIGHT_TIME, TIME_D, TIME_A, HISTORIC, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+		sqlBuf.append(" INTO SCHEDULE (AIRLINE, FLIGHT, LEG, AIRPORT_D, AIRPORT_A, DISTANCE, EQTYPE, FLIGHT_TIME, "
+				+ "TIME_D, TIME_A, HISTORIC, CAN_PURGE, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -277,6 +277,7 @@ public class SetSchedule extends DAO {
 			_ps.setTimestamp(10, createTimestamp(entry.getTimeA()));
 			_ps.setBoolean(11, entry.getHistoric());
 			_ps.setBoolean(12, entry.getCanPurge());
+			_ps.setBoolean(13, entry.getAcademy());
 
 			// Update the database
 			executeUpdate(1);
