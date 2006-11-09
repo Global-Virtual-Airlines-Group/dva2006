@@ -1,7 +1,6 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.text.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -13,7 +12,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.ScheduleAccessControl;
 
-import org.deltava.util.FlightCodeParser;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -72,14 +71,14 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 			entry.setCanPurge(Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue());
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
+			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
 
 			// Parse date/times
-			DateFormat df = new SimpleDateFormat("HH:mm");
 			try {
-				entry.setTimeD(df.parse(ctx.getParameter("timeD")));
-				entry.setTimeA(df.parse(ctx.getParameter("timeA")));
-			} catch (ParseException pe) {
-				CommandException ce = new CommandException(pe.getMessage());
+				entry.setTimeD(StringUtils.parseDate(ctx.getParameter("timeD"), "HH:mm"));
+				entry.setTimeA(StringUtils.parseDate(ctx.getParameter("timeA"), "HH:mm"));
+			} catch (IllegalArgumentException iae) {
+				CommandException ce = new CommandException(iae.getMessage());
 				ce.setLogStackDump(false);
 				throw ce;
 			}
@@ -114,7 +113,6 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		ScheduleEntry id = FlightCodeParser.parse(fCode);
-
 		if (id != null) {
 			ScheduleEntry entry = null;
 			

@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -22,6 +22,7 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	private DateTime _timeA;
 	private int _length;
 	private boolean _historic;
+	private boolean _academy;
 	private boolean _purge;
 
 	/**
@@ -122,12 +123,21 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	}
 
 	/**
-	 * Returns if this flight can be purged from the schedule database before an automated import
+	 * Returns if this flight can be purged from the schedule database before an automated import.
 	 * @return TRUE if the flight can be automatically purged from the database, otherwise FALSE
 	 * @see ScheduleEntry#setCanPurge(boolean)
 	 */
 	public boolean getCanPurge() {
 		return _purge;
+	}
+	
+	/**
+	 * Returns if this flight is part of the Flight Academy.
+	 * @return TRUE if the flight is part of the Flight Academy, otherwise FALSE
+	 * @see ScheduleEntry#setAcademy(boolean)
+	 */
+	public boolean getAcademy() {
+		return _academy;
 	}
 
 	/**
@@ -191,8 +201,8 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	}
 
 	/**
-	 * Updates this Schedule entry's "historic flight" flag.
-	 * @param historic the new "historic flight" flag value
+	 * Updates this Schedule entry's &quot;historic flight&quot; flag.
+	 * @param historic the new &quot;historic flight&quot; flag value
 	 * @see ScheduleEntry#getHistoric()
 	 * @see ScheduleEntry#getCanPurge()
 	 */
@@ -201,8 +211,8 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	}
 
 	/**
-	 * Updates this Schedule entry's "no purge" flag. This typically is set on historic flights.
-	 * @param purge the new "no purge" flag value
+	 * Updates this Schedule entry's &quot;no purge&quot; flag. This typically is set on historic flights.
+	 * @param purge the new &quot;no purge&quot; flag value
 	 * @see ScheduleEntry#getCanPurge()
 	 * @see ScheduleEntry#getHistoric()
 	 */
@@ -211,11 +221,25 @@ public class ScheduleEntry extends Flight implements ViewEntry {
 	}
 	
 	/**
+	 * Updates this Schedule entry's &quot;Flight Academy flight&quot; flag.
+	 * @param academy TRUE if the Flight is part of the Academy, otherwise FALSE
+	 * @see ScheduleEntry#getAcademy()
+	 */
+	public void setAcademy(boolean academy) {
+		_academy = academy;
+	}
+	
+	/**
 	 * Returns the row CSS class name if displayed in a view table.
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
-		return _historic ? "opt2" : null;
+		if (_academy)
+			return "opt3";
+		else if (_historic)
+			return "opt2";
+		
+		return null;
 	}
 	
 	/**

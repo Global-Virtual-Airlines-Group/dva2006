@@ -36,40 +36,69 @@ public class GetSchedule extends DAO {
 	 */
 	public List<ScheduleEntry> search(ScheduleSearchCriteria criteria, String sortBy) throws DAOException {
 
-		// Build the where clause
-		Collection<String> conditions = new LinkedHashSet<String>();
-		if (criteria.getAirline() != null)
-			conditions.add("AIRLINE=\'" + criteria.getAirline().getCode() + "\'");
-		if (criteria.getFlightNumber() != 0)
-			conditions.add("FLIGHT=" + criteria.getFlightNumber());
-		if (criteria.getLeg() != 0)
-			conditions.add("LEG=" + criteria.getLeg());
-		if (criteria.getAirportD() != null)
-			conditions.add("AIRPORT_D=\'" + criteria.getAirportD().getIATA() + "\'");
-		if (criteria.getAirportA() != null)
-			conditions.add("AIRPORT_A=\'" + criteria.getAirportA().getIATA() + "\'");
-
+		// Build the conditions
+		final Collection<String> conditions = new LinkedHashSet<String>();
+		final List<String> params = new ArrayList<String>();
+		
+		// Add airline
+		if (criteria.getAirline() != null) {
+			conditions.add("AIRLINE=?");
+			params.add(criteria.getAirline().getCode());
+		}
+			
+		// Add flight number
+		if (criteria.getFlightNumber() != 0) {
+			conditions.add("FLIGHT=?");
+			params.add(String.valueOf(criteria.getFlightNumber()));
+		}
+			
+		// Add leg
+		if (criteria.getLeg() != 0) {
+			conditions.add("LEG=?");
+			params.add(String.valueOf(criteria.getLeg()));
+		}
+		
+		// Add departure airport
+		if (criteria.getAirportD() != null) {
+			conditions.add("AIRPORT_D=?");
+			params.add(criteria.getAirportD().getIATA());
+		}
+		
+		// Add arrival airport
+		if (criteria.getAirportA() != null) {
+			conditions.add("AIRPORT_A=?");
+			params.add(criteria.getAirportA().getIATA());
+		}
+			
 		// Set distance criteria +/- 150 miles
 		if (criteria.getDistance() != 0) {
-			conditions.add("DISTANCE >= " + String.valueOf(criteria.getDistance() - 150));
-			conditions.add("DISTANCE <= " + String.valueOf(criteria.getDistance() + 150));
+			conditions.add("DISTANCE >= ?");
+			conditions.add("DISTANCE <= ?");
+			params.add(String.valueOf(criteria.getDistance() - 150));
+			params.add(String.valueOf(criteria.getDistance() + 150));
 		}
 
 		// Set flight time criteria +/- 1 hour
 		if (criteria.getLength() != 0) {
-			conditions.add("FLIGHT_TIME >= " + String.valueOf((criteria.getLength() / 10.0) - 1));
-			conditions.add("FLIGHT_TIME <= " + String.valueOf((criteria.getLength() / 10.0) + 1));
+			conditions.add("FLIGHT_TIME >= ?");
+			conditions.add("FLIGHT_TIME <= ?");
+			params.add(String.valueOf((criteria.getLength() / 10.0) - 1));
+			params.add(String.valueOf((criteria.getLength() / 10.0) + 1));
 		}
 
 		// Set departure/arrival time criteria +/- 2 hours
 		if (criteria.getHourD() != -1) {
-			conditions.add("TIME_D >= \'" + StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
-			conditions.add("TIME_D <= \'" + StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
+			conditions.add("TIME_D >= ?");
+			conditions.add("TIME_D <= ?");
+			params.add(StringUtils.format(criteria.getHourD() - 1, "00") + ":00\'");
+			params.add(StringUtils.format(criteria.getHourD() + 1, "00") + ":00\'");
 		}
 
 		if (criteria.getHourA() != -1) {
-			conditions.add("TIME_A >= \'" + StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
-			conditions.add("TIME_A <= \'" + StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
+			conditions.add("TIME_A >= ?");
+			conditions.add("TIME_A <= ?");
+			params.add(StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
+			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
 		}
 
 		// Build the query string
@@ -89,9 +118,8 @@ public class GetSchedule extends DAO {
 			
 			for (Iterator<String> i = criteria.getEquipmentTypes().iterator(); i.hasNext(); ) {
 				String eqType = i.next();
-				buf.append("(EQTYPE=\"");
-				buf.append(eqType);
-				buf.append("\")");
+				buf.append("(EQTYPE=?)");
+				params.add(eqType);
 				if (i.hasNext())
 					buf.append(" OR ");
 			}
@@ -101,12 +129,15 @@ public class GetSchedule extends DAO {
 		}
 
 		// Add sort column
-		buf.append(" ORDER BY ");
+		buf.append(" AND (ACADEMY=0) ORDER BY ");
 		buf.append(sortBy);
 
 		// Prepare the satement and execute the query
 		try {
 			prepareStatement(buf.toString());
+			for (int x = 1; x <= params.size(); x++)
+				_ps.setString(x, params.get(x));
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -176,9 +207,10 @@ public class GetSchedule extends DAO {
 		// Init the prepared statement
 		try {
 			prepareStatement("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM SCHEDULE WHERE (AIRPORT_D=?) "
-					+ "AND (AIRPORT_A=?)");
+					+ "AND (AIRPORT_A=?) AND (ACADEMY=?)");
 			_ps.setString(1, airportD.toUpperCase());
 			_ps.setString(2, airportA.toUpperCase());
+			_ps.setBoolean(3, false);
 
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
@@ -246,6 +278,7 @@ public class GetSchedule extends DAO {
 			entry.setTimeD(rs.getTimestamp(9));
 			entry.setTimeA(rs.getTimestamp(10));
 			entry.setHistoric(rs.getBoolean(11));
+			entry.setAcademy(rs.getBoolean(12));
 
 			// Add to results
 			results.add(entry);

@@ -5,6 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.ScheduleEntry;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -81,15 +83,20 @@ public class PIREPSubmitCommand extends AbstractCommand {
 					pirep.setCaptEQType(pTypeNames);
 				}
 			}
+			
+			// Check if it's a Flight Academy flight
+			GetSchedule sdao = new GetSchedule(con);
+			ScheduleEntry sEntry = sdao.get(pirep);
+			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
+			pirep.setAttribute(FlightReport.ATTR_ACADEMY, isAcademy);
 
 			// Update the status of the PIREP
 			pirep.setStatus(FlightReport.SUBMITTED);
 			pirep.setSubmittedOn(new Date());
 
 			// Check the schedule database and check the route pair
-			GetSchedule sdao = new GetSchedule(con);
 			int avgHours = sdao.getFlightTime(pirep.getAirportD().getIATA(), pirep.getAirportA().getIATA());
-			if (avgHours == 0) {
+			if ((avgHours == 0) && (!isAcademy)) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
 			} else {
