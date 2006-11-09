@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.testing.Test;
 import org.deltava.beans.system.*;
 import org.deltava.beans.ts2.*;
 
@@ -706,7 +707,6 @@ public class ProfileCommand extends AbstractFormCommand {
 
 		// Get airport map
 		Map airports = (Map) SystemData.getObject("airports");
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -723,7 +723,19 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Check if we can view examinations
 			if (access.getCanViewExams()) {
 				GetExam exdao = new GetExam(con);
-				ctx.setAttribute("exams", exdao.getExams(p.getID()), REQUEST);
+				Collection<Test> exams = exdao.getExams(p.getID());
+				for (Iterator<Test> i = exams.iterator(); i.hasNext(); ) {
+					Test t = i.next();
+					try {
+						ExamAccessControl ac = new ExamAccessControl(ctx, t);
+						ac.validate();
+					} catch (AccessControlException ace) {
+						i.remove();
+					}
+				}
+				
+				// Save remaining exams
+				ctx.setAttribute("exams", exams, REQUEST);
 			}
 
 			// Check for an applicant profile
@@ -749,8 +761,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"),
-						REQUEST);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
 
