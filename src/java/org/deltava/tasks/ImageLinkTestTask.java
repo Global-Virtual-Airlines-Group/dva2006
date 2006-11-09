@@ -57,6 +57,8 @@ public class ImageLinkTestTask extends DatabaseTask {
 						URL url = new URL(null, img.getURL(), new HttpTimeoutHandler(1950));
 						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 						urlcon.setRequestMethod("HEAD");
+						urlcon.setReadTimeout(1950);
+						urlcon.setConnectTimeout(1950);
 						urlcon.connect();
 						
 						// Validate the result code
