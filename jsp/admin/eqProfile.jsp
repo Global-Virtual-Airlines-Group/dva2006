@@ -95,6 +95,10 @@ return true;
  <td class="label">Captain's Examination</td>
  <td class="data"><el:combo name="examC" idx="*" size="1" firstEntry="" options="${exams}" value="${fn:examC(eqType)}" /></td>
 </tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="updateRatings" idx="*" value="true" label="Update Pilot Ratings" /></td>
+</tr>
 <c:if test="${acarsEnabled}">
 <tr>
  <td class="label">&nbsp;</td>

@@ -25,12 +25,12 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     private String _cpEmail;
     private int _cpID;
 
-    private Collection<String> _ranks = new ArrayList<String>();
-    private Collection<String> _primaryRatings = new TreeSet<String>();
-    private Collection<String> _secondaryRatings = new TreeSet<String>();
+    private final Collection<String> _ranks = new ArrayList<String>();
+    private final Collection<String> _primaryRatings = new TreeSet<String>();
+    private final Collection<String> _secondaryRatings = new TreeSet<String>();
     
-    private Map<String, Integer> _promotionCriteria = new HashMap<String, Integer>();
-    private Map<String, String> _examNames = new HashMap<String, String>();
+    private final Map<String, Integer> _promotionCriteria = new HashMap<String, Integer>();
+    private final Map<String, String> _examNames = new HashMap<String, String>();
     
     /**
      * Create a new EquipmentType object for a given aircraft type
@@ -99,23 +99,39 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
     
     /**
-     * Return the list of aircraft types that are considered "primary ratings"
-     * @return A sorted list of aircraft types
+     * Return the list of aircraft types that are considered "primary ratings".
+     * @return a sorted list of aircraft types
      * @see EquipmentType#addPrimaryRating(String)
      * @see EquipmentType#getSecondaryRatings()
+     * @see EquipmentType#getRatings()
      */
     public Collection<String> getPrimaryRatings() {
         return _primaryRatings;
     }
 
     /**
-     * Return the list of aircraft types that are considered "secondary ratings"
-     * @return A sorted list of aircraft types
+     * Return the list of aircraft types that are considered "secondary ratings".
+     * @return a sorted list of aircraft types
      * @see EquipmentType#addSecondaryRating(String)
      * @see EquipmentType#getPrimaryRatings()
+     * @see EquipmentType#getRatings()
      */
     public Collection<String> getSecondaryRatings() {
         return _secondaryRatings;
+    }
+    
+    /**
+     * Returns all primary and secondary ratings.
+     * @return a sorted list of aircraft types
+     * @see EquipmentType#getPrimaryRatings()
+     * @see EquipmentType#getSecondaryRatings()
+     * @see EquipmentType#addPrimaryRating(String)
+     * @see EquipmentType#addSecondaryRating(String)
+     */
+    public Collection<String> getRatings() {
+    	final Collection<String> results = new TreeSet<String>(_primaryRatings);
+    	results.addAll(_secondaryRatings);
+    	return results;
     }
     
     /**
