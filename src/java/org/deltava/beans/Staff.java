@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
@@ -5,14 +6,15 @@ package org.deltava.beans;
  * @author Luke
  * @version 1.0
  * @since 1.0
- * Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
  */
-public class Staff extends DatabaseBean implements Comparable {
+
+public class Staff extends DatabaseBean {
 
     private String _firstName;
     private String _lastName;
     
     private String _title;
+    private String _area;
     private String _body;
     private String _eMail;
     
@@ -61,6 +63,14 @@ public class Staff extends DatabaseBean implements Comparable {
     public String getTitle() {
         return _title;
     }
+
+    /**
+     * Returns the Staff Member's functional area.
+     * @return the area
+     */
+    public String getArea() {
+    	return _area;
+    }
     
     /**
      * Returns the Staff Member's biograpy.
@@ -83,7 +93,15 @@ public class Staff extends DatabaseBean implements Comparable {
      * @param title the new title
      */
     public void setTitle(String title) {
-        _title = title.trim();
+        _title = title;
+    }
+    
+    /**
+     * Updates the Staff Member's functional area.
+     * @param area the area
+     */
+    public void setArea(String area) {
+    	_area = area;
     }
     
     /**
