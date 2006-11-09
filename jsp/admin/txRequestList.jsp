@@ -30,7 +30,7 @@
  <td width="15%">CURRENT RANK</td>
  <td width="15%">CURRENT PROGRAM</td>
  <td width="15%"><el:cmd url="txrequests" className="title" sort="TX.EQTYPE,TX.STATUS">REQUESTED PROGRAM</el:cmd></td>
- <td><el:cmd url="txrequests" className="title">REQUESTED ON</el:cmd></td>
+ <td><el:cmd url="txrequests" className="title" sort="TX.CREATED DESC">REQUESTED ON</el:cmd></td>
 </tr>
 
 <!-- Table Data -->
