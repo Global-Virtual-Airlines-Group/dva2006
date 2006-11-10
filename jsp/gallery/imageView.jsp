@@ -63,7 +63,7 @@ return true;
 </c:if>
 </tr>
 <tr class="mid">
- <td colspan="2"><img width="${img.width}" height="${img.height}" src="/gallery/${db}/${img.ID}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:int value="${img.size}" /> bytes)" /></td>
+ <td colspan="2"><img width="${img.width}" height="${img.height}" src="/gallery/${db}/0x<fmt:hex value="${thread.image}" />.${fn:lower(img.typeName)}" alt="${fn:escape(img.name)}, ${img.width}x${img.height} (<fmt:int value="${img.size}" /> bytes)" /></td>
 </tr>
 </el:table>
 
