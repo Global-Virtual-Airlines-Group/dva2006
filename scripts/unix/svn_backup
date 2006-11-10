@@ -68,6 +68,16 @@ if [ "`cat /tmp/svn.revision`" -gt "3000" ] ;then
  echo 3000 > /tmp/svn.revision_base
 fi
 
+# If we have more than 3500 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "3500" ] ;then
+ if [ ! -f "/home/backup/svn/svn_35xx.gz" ] ;then
+  echo 'Backing up revisions 300-3499'
+  svnadmin dump /usr/local/svn --incremental --revision 3000:3499 | gzip -9 > svn_35xx.gz
+ fi
+
+ echo 3000 > /tmp/svn.revision_base
+fi
+
 # Back up the last revisions
 echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
 svnadmin dump /usr/local/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | gzip -9 > svn_top.gz
