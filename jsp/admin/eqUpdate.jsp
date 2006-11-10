@@ -32,8 +32,8 @@ program, and all Pilots in this program have been updated.<br />
 <c:if test="${!empty updatedPilots}">
 The following <content:airline /> Pilots have had their equipment type ratings updated:<br />
 <br />
-<c:foreach var="pilot" items="${updatedPilots}">
-<c:set var="ratings" value="${updatedRatings[pilot]}" scope="requst" />
+<c:forEach var="pilot" items="${updatedPilots}">
+<c:set var="ratings" value="${updatedRatings[pilot]}" scope="request" />
 ${pilot.rank} <el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd> - 
 added <fmt:list value="${ratings}" delim=", " />.<br />
 </c:forEach>
