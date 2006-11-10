@@ -136,7 +136,7 @@ public class GetSchedule extends DAO {
 		try {
 			prepareStatement(buf.toString());
 			for (int x = 1; x <= params.size(); x++)
-				_ps.setString(x, params.get(x));
+				_ps.setString(x, params.get(x - 1));
 			
 			return execute();
 		} catch (SQLException se) {
