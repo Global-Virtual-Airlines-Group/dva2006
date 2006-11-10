@@ -123,7 +123,8 @@ public class EquipmentCommand extends AbstractFormCommand {
 			}
 			
 			// Update pilot ratings
-			if (!pilots.isEmpty()) {
+			boolean updatePilots = Boolean.valueOf(ctx.getParameter("updateRatings")).booleanValue();
+			if (updatePilots && (!pilots.isEmpty())) {
 				final Collection<String> newRatings = eq.getRatings();
 				Map<Pilot, Collection<String>> updatedRatings = new LinkedHashMap<Pilot, Collection<String>>();
 				Collection<StatusUpdate> updates = new ArrayList<StatusUpdate>();

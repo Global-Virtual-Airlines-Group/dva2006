@@ -97,17 +97,13 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
+ <td class="data small"><el:box name="active" idx="*" value="true" className="sec" checked="${eqType.active}" label="Equipment Program is Active" />
+<c:if test="${acarsEnabled}"><br />
+<el:box name="acarsPromote" idx="*" value="true" className="bld" checked="${eqType.ACARSPromotionLegs}" label="Require ACARS usage on Flights for Promotion" /></c:if></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
  <td class="data"><el:box name="updateRatings" idx="*" value="true" label="Update Pilot Ratings" /></td>
-</tr>
-<c:if test="${acarsEnabled}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="acarsPromote" idx="*" value="true" className="bld" checked="${eqType.ACARSPromotionLegs}" label="Require ACARS usage on Flights for Promotion" /></td>
-</tr>
-</c:if>
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data small"><el:box name="active" idx="*" value="true" className="sec" checked="${eqType.active}" label="Equipment Program is Active" /></td>
 </tr>
 </el:table>
 
