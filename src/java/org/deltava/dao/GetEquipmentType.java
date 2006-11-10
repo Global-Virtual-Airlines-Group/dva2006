@@ -196,7 +196,8 @@ public class GetEquipmentType extends DAO {
 		// Build the SQL statement
 		Collection<String> allRatings = new HashSet<String>(eq.getPrimaryRatings());
 		allRatings.addAll(eq.getSecondaryRatings());
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, COUNT(RATING) AS CNT FROM RATINGS WHERE RATING IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN RATINGS R "
+				+ " ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
 		for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
 			i.next();
 			sqlBuf.append('?');
@@ -204,11 +205,13 @@ public class GetEquipmentType extends DAO {
 				sqlBuf.append(',');
 		}
 		
-		sqlBuf.append(") GROUP BY ID HAVING (CNT < ?)");
+		sqlBuf.append(") GROUP BY P.ID HAVING (CNT < ?)");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			int x = 0;
+			_ps.setString(1, eq.getName());
+			
+			int x = 1;
 			for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
 				String rating = i.next();
 				_ps.setString(++x, rating);
