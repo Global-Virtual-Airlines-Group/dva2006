@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom.*;
@@ -12,20 +13,18 @@ import java.lang.reflect.Method;
 import org.deltava.util.ConfigLoader;
 
 /**
+ * A SystemData loader that parses an XML file.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class XMLSystemDataLoader implements SystemDataLoader {
 
     private static final Logger log = Logger.getLogger(XMLSystemDataLoader.class);
     private static final String XML_FILENAME = "/etc/systemConfig.xml";
 
     private Map<String, Object> _data;
-
-    XMLSystemDataLoader() {
-        super();
-    }
 
     /**
      * Load XML data from the disk. This uses the class loader to load the default file, etc/systemConfig.xml.
@@ -64,16 +63,6 @@ public class XMLSystemDataLoader implements SystemDataLoader {
 
         // Return the data
         return _data;
-    }
-
-    /**
-     * Save the XML data to disk. <i>NOT IMPLEMENTED </i>
-     * @throws UnsupportedOperationException since this is not implemented
-     */
-    public void save(Map properties) throws IOException {
-        IOException ie = new IOException("Not Supported");
-        ie.initCause(new UnsupportedOperationException("XMLSystemData cannot be saved"));
-        throw ie;
     }
 
     /**

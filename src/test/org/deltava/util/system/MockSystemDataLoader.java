@@ -1,14 +1,9 @@
 package org.deltava.util.system;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class MockSystemDataLoader implements SystemDataLoader {
-    
-    public MockSystemDataLoader() {
-        super();
-    }
     
     public Map<String, Object> load() {
         Map<String, Object> results = new HashMap<String, Object>();
@@ -21,9 +16,5 @@ public class MockSystemDataLoader implements SystemDataLoader {
         results.put("doubleVar", new Double(3.1415926));
         results.put("airline.code", "DVA");
         return results;
-    }
-    
-    public void save(Map data) throws IOException {
-        throw new IOException("Unsupported Operation");
     }
 }

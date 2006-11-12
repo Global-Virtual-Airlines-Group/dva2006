@@ -6,10 +6,6 @@ import java.util.Map;
 
 public class TagTestSystemDataLoader implements SystemDataLoader {
 
-    public TagTestSystemDataLoader() {
-        super();
-    }
-
     public Map<String, Object> load() throws IOException {
         Map<String, Object> results = new HashMap<String, Object>();
         results.put("airline.name", "Airline Name");
@@ -19,9 +15,5 @@ public class TagTestSystemDataLoader implements SystemDataLoader {
         results.put("html.table.spacing", "3");
         results.put("html.table.padding", "4");
         return results;
-    }
-
-    public void save(Map properties) throws IOException {
-        throw new UnsupportedOperationException();
     }
 }
