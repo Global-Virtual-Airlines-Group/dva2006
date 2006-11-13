@@ -29,6 +29,7 @@ if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
 if (!validateFile(form.coolerImg, 'jpg,png,gif', 'Water Cooler Signature Image')) return false;
 if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
+if (!validateCombo(form.staffArea, 'Department Name')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
 if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
 
@@ -182,7 +183,6 @@ return true;
 </tr>
 </c:if>
 
-
 <!-- E-Mail Information -->
 <tr class="title">
  <td colspan="${cspan + 1}">E-MAIL / INSTANT MESSAGING INFORMATION</td>
@@ -275,7 +275,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label">Site Logins</td>
- <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" /></td>
+ <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />
+<c:if test="${pilot.loginCount > 0}">, last on <fmt:date date="${pilot.lastLogin}" /></c:if></td>
 </tr>
 <c:if test="${!empty pilot.lastLogoff}">
 <tr>
