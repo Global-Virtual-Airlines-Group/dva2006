@@ -278,7 +278,8 @@ public class GetSchedule extends DAO {
 			entry.setTimeD(rs.getTimestamp(9));
 			entry.setTimeA(rs.getTimestamp(10));
 			entry.setHistoric(rs.getBoolean(11));
-			entry.setAcademy(rs.getBoolean(12));
+			entry.setCanPurge(rs.getBoolean(12));
+			entry.setAcademy(rs.getBoolean(13));
 
 			// Add to results
 			results.add(entry);
