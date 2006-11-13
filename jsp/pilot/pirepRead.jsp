@@ -143,7 +143,7 @@ return true;
 </c:choose>
 </tr>
 <tr>
- <td class="label">Other Information</td>
+ <td class="label" valign="top">Other Information</td>
  <td class="data"><c:if test="${fn:isOnline(pirep)}">Flight Leg flown online using the ${fn:network(pirep)} network<br /></c:if>
 <c:if test="${fn:isACARS(pirep)}">
 <div class="sec bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
