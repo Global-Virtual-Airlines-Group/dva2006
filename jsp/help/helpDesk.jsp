@@ -82,6 +82,8 @@ one of our volunteer staff will answer it soon.</td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>
+</c:otherwise>
+</c:choose>
 
 <c:if test="${!empty activeIssues}">
 <!-- All Active Issues -->
@@ -103,12 +105,12 @@ one of our volunteer staff will answer it soon.</td>
 </c:forEach>
 </c:if>
 
+<c:if test="${(!empty myIssues) || (!empty activeIssues)}">
 <!-- Legend Bar -->
 <tr class="title">
  <td colspan="6"><view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
-</c:otherwise>
-</c:choose>
+</c:if>
 </el:table>
 <br />
 <content:copyright />
