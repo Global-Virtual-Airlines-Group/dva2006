@@ -38,8 +38,11 @@ public class GetStaff extends DAO {
             
             // Execute the query and get the result; if none return null
             ResultSet rs = _ps.executeQuery();
-            if (!rs.next())
-                return null;
+            if (!rs.next()) {
+            	rs.close();
+            	_ps.close();
+            	return null;
+            }
             
             // Create the staff object
             Staff s = new Staff(rs.getString(1), rs.getString(2));
@@ -48,6 +51,7 @@ public class GetStaff extends DAO {
             s.setTitle(rs.getString(5));
             s.setSortOrder(rs.getInt(6));
             s.setBody(rs.getString(7));
+            s.setArea(rs.getString(8));
             
             // Clean up and return
             rs.close();
@@ -65,14 +69,11 @@ public class GetStaff extends DAO {
      */
     public Collection<Staff> getStaff() throws DAOException {
         try {
-            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P WHERE "
-            	+ "(S.ID=P.ID) ORDER BY S.SORT_ORDER, P.LASTNAME");
+            prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P WHERE (S.ID=P.ID)");
             
             // Execute the query
-            ResultSet rs = _ps.executeQuery();
             Collection<Staff> results = new ArrayList<Staff>();
-            
-            // Iterate through the result set
+            ResultSet rs = _ps.executeQuery();
             while (rs.next()) {
                 Staff s = new Staff(rs.getString(1), rs.getString(2));
                 s.setEMail(rs.getString(3));
@@ -80,6 +81,7 @@ public class GetStaff extends DAO {
                 s.setTitle(rs.getString(5));
                 s.setSortOrder(rs.getInt(6));
                 s.setBody(rs.getString(7));
+                s.setArea(rs.getString(8));
 
                 // Add to the results
                 results.add(s);
