@@ -196,6 +196,7 @@ return true;
  <td colspan="2">FLIGHT ROUTE</td>
 </tr>
 
+<!-- Flight Report data -->
 <c:forEach var="pirep" items="${pireps}">
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
@@ -207,6 +208,11 @@ return true;
  (<fmt:airport airport="${pirep.airportA}" />)</td>
 </view:row>
 </c:forEach>
+
+<!-- Legend Bar -->
+<tr class="title">
+ <td colspan="6"><view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
+</tr>
 </c:if>
 
 <c:if test="${access.canSignup}">

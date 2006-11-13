@@ -109,6 +109,7 @@ public class EventCommand extends AbstractCommand {
 				String tableName = i.next();
 				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName); 
 				pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
+				pireps.addAll(flights);
 				
 				// Load pilots who may have logged the flight but not signed up
 				Collection<Integer> newIDs = new HashSet<Integer>();
