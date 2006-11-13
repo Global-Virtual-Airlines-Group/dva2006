@@ -51,6 +51,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
 			List results = (List) ctx.getSession().getAttribute("fafResults");
 			Collection<String> ids = ctx.getParameters("addFA");
 			if ((ids == null) || (results == null)) {
+				result.setURL("/jsp/schedule/findAflight.jsp");
 				result.setSuccess(true);
 				return;
 			}
