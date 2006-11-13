@@ -129,7 +129,16 @@
 		<rank>Assistant Chief Pilot</rank>
 		<rank>Chief Pilot</rank>
 	</list>
-	
+
+	<!-- Staff functional areas -->
+	<list name="staff.departments" attr="dept" unqiue="true">
+		<dept>Senior Staff</dept>
+		<dept>Online Events</dept>
+		<dept>Information Technology</dept>
+		<dept>Chief Pilots</dept>
+		<dept>Flight Academy</dept>
+	</list>
+
 	<!-- Century Club levels -->
 	<map name="centuryClubLevels">
 		<CC100>Century Club</CC100>
