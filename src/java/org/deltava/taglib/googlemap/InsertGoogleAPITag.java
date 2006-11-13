@@ -82,14 +82,14 @@ public class InsertGoogleAPITag extends TagSupport {
 
 		// Get the API keymap
 		Map apiKeys = (Map) SystemData.getObject("security.key.googleMaps");
-		if (apiKeys == null)
+		if ((apiKeys == null) || (apiKeys.isEmpty()))
 			throw new JspException("Google Maps API keys not defined");
 
 		// Get the API key for this hostname
 		String hostName = pageContext.getRequest().getServerName().toLowerCase();
 		String apiKey = (String) apiKeys.get(hostName);
 		if (apiKey == null)
-			throw new JspException("Cannot find Google Maps API key for " + hostName);
+			apiKey = (String) apiKeys.values().iterator().next();
 
 		// Check if we've already included the content
 		if (ContentHelper.containsContent(pageContext, "JS", GoogleMapEntryTag.API_JS_NAME))
