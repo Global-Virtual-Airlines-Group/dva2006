@@ -1,6 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <c:if test="${access.canChangeStaffProfile && (!empty staff)}">
+<content:sysdata var="staffAreas" name="staff.departments" />
 <!-- Edit Staff Profile -->
 <tr class="title caps">
  <td colspan="${cspan + 1}">STAFF PROFILE</td>
@@ -8,7 +10,7 @@
 <tr>
  <td class="label">Title</td>
  <c:if test="${access.canChangeRoles}">
- <td colspan="${cspan}" class="data"><el:text className="bld req" name="staffTitle" value="${staff.title}" size="48" max="64" /></td>
+ <td colspan="${cspan}" class="data"><el:text className="bld req" name="staffTitle" idx="*" value="${staff.title}" size="48" max="64" /></td>
  </c:if>
  <c:if test="${!access.canChangeRoles}">
  <td colspan="${cspan}" class="data bld">${staff.title}</td>
@@ -16,13 +18,17 @@
 </tr>
 <tr>
  <td class="label" valign="top">Biographical Profile</td>
- <td colspan="${cspan}" class="data"><el:textbox name="staffBody" height="4" width="100" className="req">${staff.body}</el:textbox></td>
+ <td colspan="${cspan}" class="data"><el:textbox name="staffBody" idx="*" height="4" width="100" className="req">${staff.body}</el:textbox></td>
 </tr>
 <c:if test="${access.canChangeRoles}">
 <tr>
+ <td class="label">Department</td>
+ <td class="data"><el:combo name="staffArea" idx="*" size="1" options="${staffAreas}" className="req" firstEntry="-" value="${staff.area}" /></td>
+</tr>
+<tr>
  <td class="label">Sort Order</td>
- <td colspan="${cspan}" class="data"><el:text name="staffSort" value="${staff.sortOrder}" className="req" size="1" max="1" />
- <span class="small"><input type="checkbox" name="removeStaff" value="1" />Remove Staff Profile</span></td>
+ <td colspan="${cspan}" class="data"><el:text name="staffSort" idx="*" value="${staff.sortOrder}" className="req" size="1" max="1" />
+ <span class="small"><input type="checkbox" name="removeStaff" value="true" />Remove Staff Profile</span></td>
 </tr>
 </c:if>
 </c:if>

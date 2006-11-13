@@ -1,3 +1,4 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -28,11 +29,12 @@ public class SetStaff extends DAO {
 	 */
 	public void write(Staff s) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("REPLACE INTO STAFF (ID, TITLE, SORT_ORDER, BIO) VALUES (?, ?, ?, ?)");
+			prepareStatementWithoutLimits("REPLACE INTO STAFF (ID, TITLE, SORT_ORDER, BIO, AREA) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getID());
 			_ps.setString(2, s.getTitle());
 			_ps.setInt(3, s.getSortOrder());
 			_ps.setString(4, s.getBody());
+			_ps.setString(5, s.getArea());
 			
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -49,7 +51,6 @@ public class SetStaff extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM STAFF WHERE (ID=?)");
 			_ps.setInt(1, id);
-			
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
