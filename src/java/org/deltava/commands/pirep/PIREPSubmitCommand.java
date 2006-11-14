@@ -55,16 +55,16 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", pilot, REQUEST);
 
-			// Check if the pilot is rated in the equipment type
-			if (!pilot.getRatings().contains(pirep.getEquipmentType())) {
-				ctx.setAttribute("notRated", Boolean.TRUE, REQUEST);
-				pirep.setAttribute(FlightReport.ATTR_NOTRATED, true);
-			}
-
 			// Get our equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType eq = eqdao.get(ctx.getUser().getEquipmentType());
 			ctx.setAttribute("eqType", eq, REQUEST);
+			
+			// Check if the pilot is rated in the equipment type
+			if (!pilot.getRatings().contains(pirep.getEquipmentType()) && !eq.getRatings().contains(pirep.getEquipmentType())) {
+				ctx.setAttribute("notRated", Boolean.TRUE, REQUEST);
+				pirep.setAttribute(FlightReport.ATTR_NOTRATED, true);
+			}
 
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
