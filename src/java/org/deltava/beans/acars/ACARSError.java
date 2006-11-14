@@ -24,6 +24,7 @@ public class ACARSError extends DatabaseBean {
 	
 	private String _msg;
 	private String _stackDump;
+	private String _stateData;
 
 	/**
 	 * Creates a new error data bean.
@@ -117,6 +118,15 @@ public class ACARSError extends DatabaseBean {
 	public String getStackDump() {
 		return _stackDump;
 	}
+	
+	/**
+	 * Returns the state data.
+	 * @return the state data
+	 * @see ACARSError#setStateData(String)
+	 */
+	public String getStateData() {
+		return _stateData;
+	}
 
 	/**
 	 * Updates the User who logged this error message. 
@@ -199,5 +209,14 @@ public class ACARSError extends DatabaseBean {
 	 */
 	public void setStackDump(String info) {
 		_stackDump = info;
+	}
+	
+	/**
+	 * Updates the state data.
+	 * @param data the state data
+	 * @see ACARSError#getStateData()
+	 */
+	public void setStateData(String data) {
+		_stateData = data;
 	}
 }

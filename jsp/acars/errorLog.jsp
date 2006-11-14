@@ -71,7 +71,12 @@ return true;
  <td class="small bld"><el:cmd url="acarserror" linkID="0x${err.ID}"><fmt:date date="${err.createdOn}" /></el:cmd></td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${err.clientBuild}" /></td>
+<c:if test="${err.FSVersion > 0}">
  <td class="small">FS<fmt:int value="${err.FSVersion}" /></td>
+</c:if>
+<c:if test="${err.FSVersion == 0}">
+ <td class="small">N/A</td>
+</c:if>
  <td class="left">${err.message}</td>
 </view:row>
 </c:forEach>
