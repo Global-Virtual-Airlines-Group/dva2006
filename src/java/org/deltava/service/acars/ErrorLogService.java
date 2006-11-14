@@ -11,8 +11,7 @@ import org.deltava.beans.acars.ACARSError;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Service to log ACARS client errors.
@@ -46,7 +45,8 @@ public class ErrorLogService extends WebDataService {
 		err.setFSUIPCVersion(ctx.getParameter("fsuipcVersion"));
 		err.setRemoteAddr(ctx.getRequest().getRemoteAddr());
 		err.setRemoteHost(ctx.getRequest().getRemoteHost());
-
+		err.setStateData(ctx.getParameter("stateData"));
+		
 		try {
 			SetACARSLog dao = new SetACARSLog(_con);
 			dao.logError(err);
