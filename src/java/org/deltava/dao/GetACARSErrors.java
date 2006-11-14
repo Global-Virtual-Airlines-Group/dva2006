@@ -155,7 +155,8 @@ public class GetACARSErrors extends DAO {
 			err.setFSVersion(rs.getInt(7));
 			err.setFSUIPCVersion(rs.getString(8));
 			err.setStackDump(rs.getString(10));
-			err.setRemoteAddr(rs.getString(11));
+			err.setStateData(rs.getString(11));
+			err.setRemoteAddr(rs.getString(12));
 			
 			// Add to results
 			results.add(err);

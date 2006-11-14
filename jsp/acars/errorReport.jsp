@@ -37,6 +37,7 @@
  <td class="label">Client Build</td>
  <td class="data">Build <fmt:int value="${err.clientBuild}" /></td>
 </tr>
+<c:if test="${err.FSVersion > 0}">
 <tr>
  <td class="label">Flight Simulator</td>
  <td class="data bld">Flight Simulator <fmt:int value="${err.FSVersion}" /></td>
@@ -45,14 +46,29 @@
  <td class="label">FSUIPC Version</td>
  <td class="data">${err.FSUIPCVersion}</td>
 </tr>
+</c:if>
+<c:if test="${err.FSVersion == 0}">
+<tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data bld">NOT RUNNING AT TIME OF ERROR</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Reported from</td>
  <td class="data">${err.remoteAddr} (${err.remoteHost})</td>
 </tr>
+<c:if test="${!empty err.stackDump}">
 <tr>
  <td class="label" valign="top">Error Information</td>
  <td class="data"><fmt:text value="${err.stackDump}" /></td>
 </tr>
+</c:if>
+<c:if test="${!empty err.stateData}">
+<tr>
+ <td class="label" valign="top">State Data</td>
+ <td class="data">${err.stateData}</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
