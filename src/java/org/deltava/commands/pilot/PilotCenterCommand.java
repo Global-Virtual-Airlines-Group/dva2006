@@ -105,11 +105,9 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("captPromote", Boolean.valueOf(testHistory.canPromote(testHistory.getEquipmentType())), REQUEST);
 
 			// Count how many legs completed towards Promtion
-			if (Ranks.RANK_FO.equals(p.getRank())) {
-				int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
-				ctx.setAttribute("isFO", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
-			}
+			int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
+			ctx.setAttribute("isFO", Boolean.valueOf(Ranks.RANK_FO.equals(p.getRank())), REQUEST);
+			ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
 
 			// Get Exam profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
