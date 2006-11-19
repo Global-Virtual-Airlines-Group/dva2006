@@ -131,7 +131,7 @@
 	    	<classpath id="acars.classpath">
 				<pathelement path="${classpath}" />
 	    		<pathelement location="lib/deploy/jdom-1.0.jar" />
-	    		<pathelement location="lib/deploy/log4j-1.2.13.jar" />
+	    		<pathelement location="lib/deploy/log4j-1.2.14.jar" />
 	    		<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
 	    	</classpath>
 		</javac>
