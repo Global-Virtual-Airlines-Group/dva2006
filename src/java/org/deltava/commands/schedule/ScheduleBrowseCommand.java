@@ -1,12 +1,9 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
-import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
-
-import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -46,22 +43,13 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       ctx.setAttribute("airportD", aD, REQUEST);
       ctx.setAttribute("airportA", criteria.getAirportA(), REQUEST);
       
-      // Create the airport comparator and sorted result sets
-      AirportComparator<Airport> ac = new AirportComparator<Airport>(AirportComparator.NAME);
-      Set<Airport> airportsD = new TreeSet<Airport>(ac);
-      Set<Airport> airportsA = new TreeSet<Airport>(ac);
-      
       try {
          Connection con = ctx.getConnection();
          
          // Get the DAO and source/destination airports
          GetScheduleAirport dao = new GetScheduleAirport(con);
-         airportsD.addAll(dao.getOriginAirports(null));
-         airportsA.addAll(dao.getConnectingAirports(criteria.getAirportD(), true));
-         
-         // Save airports
-         ctx.setAttribute("airports", airportsD, REQUEST);
-         ctx.setAttribute("dstAP", airportsA, REQUEST);
+         ctx.setAttribute("airports", dao.getOriginAirports(null), REQUEST);
+         ctx.setAttribute("dstAP", dao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
          
          // Do the search
          GetSchedule sdao = new GetSchedule(con);

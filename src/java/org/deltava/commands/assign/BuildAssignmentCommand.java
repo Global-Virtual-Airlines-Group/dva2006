@@ -101,8 +101,7 @@ public class BuildAssignmentCommand extends AbstractCommand {
 					// Get departure/arrival airports
 					GetScheduleAirport adao = new GetScheduleAirport(con);
 					ctx.setAttribute("airports", adao.getOriginAirports(criteria.getAirline()), REQUEST);
-					if (criteria.getAirportD() != null)
-						ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true), REQUEST);
+					ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 				} catch (DAOException de) {
 					throw new CommandException(de);
 				} finally {
