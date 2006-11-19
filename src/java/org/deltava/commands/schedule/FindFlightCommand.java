@@ -5,7 +5,6 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.schedule.*;
-import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -39,10 +38,11 @@ public class FindFlightCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			
 			// Get the airports
-			Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
 			GetScheduleAirport adao = new GetScheduleAirport(con);
-			airports.addAll(adao.getOriginAirports(a));
+			Collection<Airport> airports = adao.getOriginAirports(a);
 			ctx.setAttribute("airports", airports, REQUEST);
+			if (ctx.getParameter("airline") == null)
+				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -104,10 +104,8 @@ public class FindFlightCommand extends AbstractCommand {
 				ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 				
 				// Save destination airport list
-				if (criteria.getAirportD() != null) {
-					GetScheduleAirport adao = new GetScheduleAirport(con);
-					ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true), REQUEST);
-				}
+				GetScheduleAirport adao = new GetScheduleAirport(con);
+				ctx.setAttribute("airportsA", adao.getConnectingAirports(criteria.getAirportD(), true, null), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
