@@ -126,13 +126,6 @@ public class TestCommandContext extends TestCase {
         assertEquals(p.getRoles(), _ctxt.getRoles());
     }
     
-    public void testResult() {
-        CommandResult result = new CommandResult("error.jsp");
-        assertNotNull(_ctxt.getResult());
-        _ctxt.setResult(result);
-        assertEquals(result, _ctxt.getResult());
-    }
-    
     /* This really is a test just to convince me that finally blocks do get executed even if their preceeding catch block
      		throws another exception. */
     public void testExceptionHandling() {

@@ -2,7 +2,6 @@
 package org.deltava.security;
 
 import java.util.*;
-import java.io.Serializable;
 
 import org.deltava.beans.*;
 
@@ -13,10 +12,10 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class UserPool implements Serializable {
+public class UserPool {
 
-	private static Map<Object, UserSessionWrapper> _users = new TreeMap<Object, UserSessionWrapper>();
-	private static Collection<Integer> _blockedUsers = new HashSet<Integer>();
+	private static final Map<Object, UserSessionWrapper> _users = new TreeMap<Object, UserSessionWrapper>();
+	private static final Collection<Integer> _blockedUsers = new HashSet<Integer>();
 
 	// We're a singleton, alone and lonely
 	private UserPool() {
@@ -111,7 +110,7 @@ public class UserPool implements Serializable {
 	 * @see UserPool#getUsers()
 	 * @see UserPool#getUserNames()
 	 */
-	public static Collection<Pilot> getPilots() {
+	public static synchronized Collection<Pilot> getPilots() {
 		Set<Pilot> results = new HashSet<Pilot>();
 		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
 			UserSessionWrapper uw = i.next();
@@ -123,7 +122,7 @@ public class UserPool implements Serializable {
 	}
 
 	/**
-	 * Returns all logged in Pilots and Applicants.
+	 * Returns all logged in Pilots.
 	 * @return a Collection of Persons
 	 * @see UserPool#getPilots()
 	 * @see UserPool#getUserNames()
@@ -139,12 +138,12 @@ public class UserPool implements Serializable {
 	}
 
 	/**
-	 * Return the names of all logged in Pilots and Applicants.
+	 * Return the names of all logged in Pilots.
 	 * @return a sorted Collection of names
 	 * @see UserPool#getPilots()
 	 * @see UserPool#getUsers()
 	 */
-	public static Collection<String> getUserNames() {
+	public static synchronized Collection<String> getUserNames() {
 		Set<String> result = new TreeSet<String>();
 		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
 			UserSessionWrapper uw = i.next();
@@ -155,18 +154,10 @@ public class UserPool implements Serializable {
 	}
 
 	/**
-	 * Clears the user pool and blocked user list.
-	 */
-	public synchronized static void clear() {
-		_users.clear();
-		_blockedUsers.clear();
-	}
-
-	/**
 	 * Returns the number of logged-in users.
 	 * @return the number of concurrent users
 	 */
-	public static int getSize() {
+	public static synchronized int getSize() {
 		return _users.size();
 	}
 }
