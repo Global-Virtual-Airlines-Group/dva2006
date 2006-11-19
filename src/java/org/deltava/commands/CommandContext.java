@@ -31,6 +31,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     
     public static final String AUTH_COOKIE_NAME = "authToken";
     public static final String USER_ATTR_NAME = "authUser";
+    public static final String USRLISTENER_ATTR_NAME = "userSerializeListener";
     public static final String SU_ATTR_NAME ="superUser";
     public static final String SCREENX_ATTR_NAME = "screenXSize";
     public static final String SCREENY_ATTR_NAME = "screenYSize";
@@ -39,8 +40,8 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;
 
-    private CacheControl _cache;
-    private CommandResult _result;
+    private final CacheControl _cache = new CacheControl();
+    private final CommandResult _result = new CommandResult(null);
     private Connection _con;
 
     /**
@@ -52,8 +53,6 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
         super();
         _req = req;
         _rsp = rsp;
-        _result = new CommandResult(null);
-        _cache = new CacheControl();
     }
 
     /**
@@ -200,7 +199,6 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     /**
      * Returns the Command Result object.
      * @return the results of the command invocation
-     * @see CommandContext#setResult(CommandResult)
      */
     public CommandResult getResult() {
         return _result;
@@ -248,14 +246,6 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      */
     public boolean isUserInRole(String roleName) {
        return _req.isUserInRole(roleName);
-    }
-
-    /**
-     * Updates the results of this command invocation.
-     * @param cr the new Command results
-     */
-    public void setResult(CommandResult cr) {
-        _result = cr;
     }
 
     /**
