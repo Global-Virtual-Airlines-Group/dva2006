@@ -1,7 +1,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- TCP/IP network mask Potential Match list -->
 <tr class="title caps">
- <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${netmaskAddr}.X</td>
+ <td colspan="2"><fmt:int value="${fn:sizeof(netmaskUsers)}" /> USERS REGISTERED FROM ${netmaskAddr}</td>
 </tr>
 
 <c:forEach var="person" items="${netmaskUsers}">

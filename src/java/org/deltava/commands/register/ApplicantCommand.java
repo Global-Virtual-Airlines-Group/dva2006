@@ -1,6 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
+import java.net.*;
 import java.util.*;
 import java.sql.Connection;
 
@@ -254,6 +255,30 @@ public class ApplicantCommand extends AbstractFormCommand {
 	 * Helper method to perform the netmask check.
 	 */
 	private UserDataMap netmaskCheck(Applicant a, Connection c, CommandContext ctx) throws DAOException {
+		
+		// Generate the netmask
+		String netMask = "255.255.255.0";
+		try {
+			InetAddress addr = InetAddress.getByName(a.getRegisterAddress());
+			if (addr.getAddress()[0] < 128)
+				netMask = "255.192.0.0";
+			else if (addr.getAddress()[0] < 192)
+				netMask = "255.255.0.0";
+			
+			// Apply the netmask
+			StringBuilder buf = new StringBuilder();
+			byte[] maskAddr = InetAddress.getByName(netMask).getAddress();
+			for (int x = 0; x < 4; x++) {
+				buf.append(addr.getAddress()[x] & maskAddr[x]);
+				if (x < 3)
+					buf.append('.');
+			}
+
+			ctx.setAttribute("netmaskAddr", buf.toString().replace('0', 'X'), REQUEST);
+		} catch (UnknownHostException uhe) {
+			String mask = a.getRegisterAddress().substring(0, a.getRegisterAddress().lastIndexOf('.')) + ".X";
+			ctx.setAttribute("netmaskAddr", mask, REQUEST);
+		}
 
 		// Initialize the DAO
 		GetApplicant dao = new GetApplicant(c);
@@ -263,7 +288,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		Collection airlines = ((Map) SystemData.getObject("apps")).values();
 		for (Iterator i = airlines.iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
-			netmaskIDs.addAll(dao.checkAddress(a.getRegisterAddress(), "255.255.255.0", info.getDB()));
+			netmaskIDs.addAll(dao.checkAddress(a.getRegisterAddress(), netMask, info.getDB()));
 		}
 		
 		// If nothing found, stop
@@ -281,10 +306,6 @@ public class ApplicantCommand extends AbstractFormCommand {
 			Collection<UserData> IDs = udmap.getByTable(tableName);
 			persons.putAll(dao.getByID(IDs, tableName));
 		}
-		
-		// Generate the netmask
-		String mask = a.getRegisterAddress();
-		ctx.setAttribute("netmaskAddr", mask.substring(0, mask.lastIndexOf('.')), REQUEST);
 		
 		// Save the persons in the request
 		Collection<Person> users = new TreeSet<Person>(new PersonComparator<Person>(PersonComparator.CREATED));
