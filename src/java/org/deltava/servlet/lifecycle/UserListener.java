@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -6,8 +6,7 @@ import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.Person;
+import org.deltava.beans.*;
 import org.deltava.security.UserPool;
 
 import org.deltava.dao.SetPilotLogin;
@@ -34,12 +33,11 @@ public class UserListener implements HttpSessionListener {
 	 * @param e the lifecycle event
 	 */
 	public void sessionCreated(HttpSessionEvent e) {
-		if (log.isDebugEnabled()) {
-			HttpSession s = e.getSession();
-			log.debug("Created Session " + s.getId());
-		}
+		HttpSession s = e.getSession();
+		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, new UserStartupListener());
+		log.info("Created Session " + s.getId());
 	}
-
+	
 	/**
 	 * Called on the termination of an HTTP session.
 	 * @param e the lifecycle event
@@ -48,7 +46,8 @@ public class UserListener implements HttpSessionListener {
 		HttpSession s = e.getSession();
 
 		// Log session destruction
-		log.debug("Destroyed Session " + s.getId());
+		// if (log.isDebugEnabled())
+			log.info("Destroyed Session " + s.getId());
 
 		// Get the user object
 		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
