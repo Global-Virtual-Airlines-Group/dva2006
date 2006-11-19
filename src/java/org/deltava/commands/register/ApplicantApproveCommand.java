@@ -90,7 +90,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Calculate the DN and password
 			a.setDN("cn=" + a.getName() + "," + SystemData.get("security.baseDN"));
-			a.setPassword(PasswordGenerator.generate(8));
+			a.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
 			
 			// Turn off autocommits on the connection
 			ctx.startTX();

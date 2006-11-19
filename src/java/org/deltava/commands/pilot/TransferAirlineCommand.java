@@ -160,18 +160,18 @@ public class TransferAirlineCommand extends AbstractCommand {
 			su2.setAuthorID(newUser.getID());
 			su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
 			sudao.write(aInfo.getDB(), su2);
+			
+			// Commit transaction
+			ctx.commitTX();
 
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			newUser.setPassword(PasswordGenerator.generate(8));
+			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
 			if (auth.contains(newUser)) {
 				auth.updatePassword(newUser, newUser.getPassword());
 			} else {
 				auth.addUser(newUser, newUser.getPassword());
 			}
-
-			// Commit transaction
-			ctx.commitTX();
 
 			// Update the message context
 			mctxt.addData("oldUser", p);

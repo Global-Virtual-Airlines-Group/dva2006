@@ -451,6 +451,12 @@
 			<algorithm>SHA-1</algorithm>
 		</hash>
 
+		<!-- Password settings -->
+		<password>
+			<default type="Integer">8</default>
+			<min type="Integer">5</min>
+		</password>
+
 		<key>
 			<map name="googleMaps">
 				<golgotha.deltava.org>ABQIAAAAWFzTV_nG8JA7h9y7QsKTgRRJS5et9y3wMtdA-gitoKTtRCkjrxQTliO5QvvHxFEb4azcpuZZ39eVjQ</golgotha.deltava.org>

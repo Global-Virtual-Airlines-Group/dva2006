@@ -14,6 +14,7 @@
 <content:js name="common" />
 <content:js name="airportRefresh" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
+<content:sysdata var="minPwd" name="security.password.min" />
 <script language="JavaScript" type="text/javascript">
 var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 var hasSignature = ${pilot.hasSignature};
@@ -39,6 +40,13 @@ if ((form.pwd1) && (form.pwd2)) {
 		alert('The specified passwords must match.');
 		form.pwd1.value = '';
 		form.pwd2.value = '';
+		form.pwd1.focus();
+		return false;
+	}
+
+	// Validate length
+	if (form.pwd1.length < ${minPwd}) {
+		alert('Your new password must be at least ${minPwd} characters long.');
 		form.pwd1.focus();
 		return false;
 	}
