@@ -106,7 +106,7 @@ public class AirportListService extends WebDataService {
 			// Get the airports from the schedule database
 			try {
 				GetScheduleAirport dao = new GetScheduleAirport(_con);
-				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest));
+				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
 			} catch (DAOException de) {
 				throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
 			}

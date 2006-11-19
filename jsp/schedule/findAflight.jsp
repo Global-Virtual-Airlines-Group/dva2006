@@ -25,8 +25,9 @@ if (!checkSubmit()) return false;
 // Check that at least one option was selected
 eqOK = (form.eqType.selectedIndex > 0);
 adOK = (form.airportD.selectedIndex > 0);
+aaOK = (form.airportA.selectedIndex > 0);
 
-if (eqOK || adOK) {
+if (eqOK || adOK || aaOK) {
 	setSubmit();
 	disableButton('SearchButton');
 	disableButton('BuildButton');
@@ -36,10 +37,10 @@ if (eqOK || adOK) {
 	return true;
 }
 
-alert('Please select at least an Aircraft type or departure Airport.');
+alert('Please select at least an Aircraft type or a Departure/Arrival Airport.');
 return false;
 }
-
+<c:if test="${!empty fafResults}">
 function buildValidate(form)
 {
 if (!checkSubmit()) return false;
@@ -65,7 +66,7 @@ disableButton('SaveButton');
 disableButton('ClearButton');
 return true;
 }
-
+</c:if>
 function updateAirline(combo)
 {
 var f = document.forms[0];
@@ -128,8 +129,8 @@ return true;
 <el:form method="post" action="buildAssign.do" validate="return buildValidate(this)">
 <el:table className="view" space="default" pad="default">
 <!-- Search Results Data -->
-<tr class="caps title left">
- <td colspan="7">SEARCH RESULTS</td>
+<tr class="title caps">
+ <td colspan="7" class="left">SEARCH RESULTS</td>
 </tr>
 
 <!-- Search Results Header Bar -->
