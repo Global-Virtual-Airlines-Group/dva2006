@@ -11,8 +11,8 @@
 </tr>
 <tr class="title mid caps">
  <td>DATE</td>
- <td colspan="2">DESCRIPTION</td>
- <td colspan="2">UPDATED BY</td>
+ <td colspan="2"<c:if test="${empty exams}"> width="50%"</c:if>>DESCRIPTION</td>
+ <td colspan="2"<c:if test="${empty exams}"> width="20%"</c:if>>UPDATED BY</td>
  <td colspan="2">UPDATE TYPE</td>
 </tr>
 
