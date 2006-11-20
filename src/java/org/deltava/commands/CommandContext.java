@@ -345,7 +345,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      */
     public Collection<String> getParameters(String pName) {
     	String[] pValues = _req.getParameterValues(pName);
-    	return (pValues == null) ? null : Arrays.asList(pValues);
+    	return (pValues == null) ? null : new ArrayList<String>(Arrays.asList(pValues));
     }
     
     /**
