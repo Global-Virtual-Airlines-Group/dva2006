@@ -1,18 +1,23 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
 
-import junit.framework.Test;
-import org.hansel.CoverageDecorator;
+import org.junit.*;
+import org.hansel.*;
+import org.junit.runner.*;
 
 import org.deltava.beans.schedule.Airline;
 
+@RunWith(CoverageRunner.class)
+@org.junit.runners.Suite.SuiteClasses({ TestACARSFlightReport.class })
+@CoverageRunner.CoverClasses({ ACARSFlightReport.class })
 public class TestACARSFlightReport extends AbstractBeanTestCase {
 
     private ACARSFlightReport _fr;
     
-    public static Test suite() {
-        return new CoverageDecorator(TestACARSFlightReport.class, new Class[] { ACARSFlightReport.class } );
+    public static junit.framework.Test suite() {
+    	return new junit.framework.JUnit4TestAdapter(TestACARSFlightReport.class);
     }
     
     protected void setUp() throws Exception {
@@ -26,7 +31,7 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         super.tearDown();
     }
 
-    public void testProperties() {
+    @Test public void testProperties() {
         assertEquals("DVA", _fr.getAirline().getCode());
         assertEquals(43, _fr.getFlightNumber());
         assertEquals(1, _fr.getLeg());
@@ -58,7 +63,7 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         checkProperty("time4X", new Integer(424));
     }
     
-    public void testTimeCalculation() {
+    @Test public void testTimeCalculation() {
         long ts = System.currentTimeMillis() - 86400000;
         _fr.setStartTime(new Date(ts));
         _fr.setTakeoffTime(new Date(ts + 35000));
@@ -69,7 +74,7 @@ public class TestACARSFlightReport extends AbstractBeanTestCase {
         assertEquals(3565000, _fr.getAirborneTime().getTime());
     }
     
-    public void testValidation() {
+    @Test public void testValidation() {
         validateInput("gateWeight", new Integer(0), IllegalArgumentException.class);
         validateInput("gateFuel", new Integer(-1), IllegalArgumentException.class);
         validateInput("landingWeight", new Integer(-1), IllegalArgumentException.class);
