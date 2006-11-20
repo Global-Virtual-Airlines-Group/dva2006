@@ -23,7 +23,7 @@
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label">Department</td>
- <td class="data"><el:combo name="staffArea" idx="*" size="1" options="${staffAreas}" className="req" firstEntry="-" value="${staff.area}" /></td>
+ <td colspan="${cspan}" class="data"><el:combo name="staffArea" idx="*" size="1" options="${staffAreas}" className="req" firstEntry="-" value="${staff.area}" /></td>
 </tr>
 <tr>
  <td class="label">Sort Order</td>
