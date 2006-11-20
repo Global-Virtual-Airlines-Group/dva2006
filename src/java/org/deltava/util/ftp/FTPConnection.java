@@ -126,6 +126,19 @@ public class FTPConnection {
 			throw new FTPClientException(e);
 		}
 	}
+	
+	/**
+	 * Uploads a file to the remote server.
+	 * @param f the local File
+	 * @throws FTPClientException if an error occurs
+	 */
+	public void put(File f) throws FTPClientException {
+		try {
+			_client.put(new FileInputStream(f), f.getName());
+		} catch (Exception e) {
+			throw new FTPClientException(e);
+		}
+	}
 
 	/**
 	 * Returns wether a particular file exists on the remote server.
