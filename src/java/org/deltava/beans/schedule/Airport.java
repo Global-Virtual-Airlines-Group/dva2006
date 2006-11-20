@@ -37,9 +37,9 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	private String _icao;
 	private String _name;
 	private int _alt;
-	private GeoPosition _position;
+	private final GeoPosition _position = new GeoPosition(0f, 0f);
 	private TZInfo _tz = TZInfo.local();
-	private Set<String> _aCodes = new TreeSet<String>();
+	private final Collection<String> _aCodes = new TreeSet<String>();
 
 	/**
 	 * Create a new Airport object.
@@ -61,7 +61,6 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	public Airport(String name) {
 		super();
 		setName(name);
-		_position = new GeoPosition(0f, 0f);
 	}
 
 	/**
@@ -71,7 +70,8 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * @see GeoPosition#GeoPosition(double, double)
 	 */
 	public void setLocation(double lat, double lng) {
-		_position = new GeoPosition(lat, lng);
+		_position.setLatitude(lat);
+		_position.setLongitude(lng);
 	}
 
 	/**
@@ -194,8 +194,7 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	}
 
 	/**
-	 * Sort the airports by comparing their codes. <i>This assumes that both are set to display the same code, ICAO or
-	 * IATA. </i>
+	 * Sort the airports by comparing their IATA codes.
 	 */
 	public int compareTo(Object o2) {
 		Airport a2 = (Airport) o2;
@@ -218,11 +217,24 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	 * Adds an airline to the list of airlines associated with this Airport.
 	 * @param aCode The airline code
 	 * @throws NullPointerException if aCode is null
+	 * @see Airport#removeAirlineCode(String)
 	 * @see Airport#setAirlines(Collection)
 	 * @see Airline#getCode()
 	 */
 	public void addAirlineCode(String aCode) {
 		_aCodes.add(aCode.trim().toUpperCase());
+	}
+	
+	/**
+	 * Removes an airline from the list of airlines associated with this Airport.
+	 * @param aCode The airline code
+	 * @throws NullPointerException if aCode is null
+	 * @see Airport#addAirlineCode(String)
+	 * @see Airport#setAirlines(Collection)
+	 * @see Airline#getCode()
+	 */
+	public void removeAirlineCode(String aCode) {
+		_aCodes.remove(aCode.trim().toUpperCase());
 	}
 
 	/**

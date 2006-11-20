@@ -9,7 +9,19 @@
 <head>
 <title><content:airline /> Unserviced Airports</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!confirm("Are you sure you wish to continue?")) return false;
+
+setSubmit();
+disableButton('ReloadButton');
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -19,11 +31,16 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<div class="updateHdr"><content:airline /> UNSERVICED AIRPORTS</div>
-<br />
+<el:form method="post" action="usvcairports.do" validate="return validate(this)">
+<el:table className="form" pad="default" space="default">
+<tr class="title caps">
+ <td colspan="2"><content:airline /> UNSERVICED AIRPORTS</td>
+</tr>
+<tr>
+ <td colspan="2" class="left">
 <c:if test="${totalResults == 0}">
-There are no Airports listed for an Airline without at least one corresponding entry in the <content:airline /> 
-Flight Schedule.<br />
+<div class="pri bld">There are no Airports listed for an Airline without at least one corresponding entry in the <content:airline /> 
+Flight Schedule.</div>
 </c:if>
 <c:forEach var="airline" items="${airlines}">
 <c:set var="airports" value="${results[airline]}" scope="request" />
@@ -35,6 +52,22 @@ The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer 
 </c:forEach>
 <hr />
 </c:forEach>
+ </td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="updateDB" idx="*" value="true" label="Update Airports in Database" /></td>
+</tr>
+</el:table>
+
+<!-- Button bar -->
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td><el:button ID="ReloadButton" type="SUBMIT" className="BUTTON" label="UPDATE AIRPORTS" /></td>
+</tr>
+</el:table>
+</el:form>
 <br />
 <content:copyright />
 </content:region>
