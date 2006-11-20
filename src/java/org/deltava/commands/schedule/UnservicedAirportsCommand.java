@@ -60,7 +60,11 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 		// Get the airline list
 		Collection<Airline> airlines = SystemData.getAirlines().values(); 
 		
+		// Determine if we write to the database
+		boolean updateDB = Boolean.valueOf(ctx.getParameter("updateDB")).booleanValue();
+		
 		int totalResults = 0;
+		Collection<Airport> updateAirports = new HashSet<Airport>();
 		Map<Airline, Collection<Airport>> results = new TreeMap<Airline, Collection<Airport>>();
 		try {
 			Connection con = ctx.getConnection();
@@ -75,9 +79,34 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 				if (!extraAirports.isEmpty()) {
 					results.put(a, extraAirports);
 					totalResults += extraAirports.size();
+					for (Iterator<Airport> ai = extraAirports.iterator(); ai.hasNext(); ) {
+						Airport ap = ai.next();
+						ap.removeAirlineCode(a.getCode());
+						updateAirports.add(ap);
+					}
 				}
 			}
-		} catch (DAOException de) { 
+			
+			// Update the database if required
+			if (updateDB) {
+				ctx.startTX();
+				
+				// Get the DAO and update the airports
+				SetSchedule wdao = new SetSchedule(con);
+				for (Iterator<Airport> i = updateAirports.iterator(); i.hasNext(); ) {
+					Airport ap = i.next();
+					wdao.update(ap);
+				}
+				
+				// Commit the transaction
+				ctx.commitTX();
+				
+				// Reload the database
+				GetAirport apdao = new GetAirport(con);
+				SystemData.add("airports", apdao.getAll());
+			}
+		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -87,6 +116,7 @@ public class UnservicedAirportsCommand extends AbstractCommand {
 		ctx.setAttribute("results", results, REQUEST);
 		ctx.setAttribute("airlines", results.keySet(), REQUEST);
 		ctx.setAttribute("totalResults", new Integer(totalResults), REQUEST);
+		ctx.setAttribute("updateDB", Boolean.valueOf(updateDB), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
