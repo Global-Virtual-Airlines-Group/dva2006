@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.ComboAlias;
@@ -12,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements Comparable, ComboAlias, Cacheable {
+public class Chart extends DatabaseBlobBean implements ComboAlias, Cacheable {
 
     public static final int TYPE_UNKNOWN = 0;
     public static final int TYPE_ILS = 1;
@@ -35,11 +36,17 @@ public class Chart extends DatabaseBlobBean implements Comparable, ComboAlias, C
 	public static final int IMG_GIF = 0;
 	public static final int IMG_JPEG = 1;
 	public static final int IMG_PNG = 2;
+	public static final int IMG_PDF = 3;
 	
 	/**
 	 * Image type codes.
 	 */
-	public static final String[] IMG_TYPE = {"gif", "jpg", "png"};
+	public static final String[] IMG_TYPE = {"gif", "jpg", "png", "pdf"};
+	
+	/**
+	 * Adobe Portable Document Format magic number.
+	 */
+	public static final String PDF_MAGIC = "%PDF-";
     
     private int _imgType;
     private int _type;
