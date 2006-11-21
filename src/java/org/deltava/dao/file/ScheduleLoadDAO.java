@@ -6,6 +6,8 @@ import java.io.InputStream;
 
 import org.deltava.beans.schedule.*;
 
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.dao.DAOException;
 import org.deltava.util.CollectionUtils;
 
@@ -20,8 +22,9 @@ public abstract class ScheduleLoadDAO extends DAO {
 
 	protected Map<String, Airline> _airlines;
 	protected Map<String, Airport> _airports;
-	protected Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
-	protected Collection<String> _errors = new ArrayList<String>();
+	protected final Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
+	protected final Collection<String> _errors = new ArrayList<String>();
+	protected final Map<Airline, Collection<Airport>> _invalidAirports = new TreeMap<Airline, Collection<Airport>>();
 
 	/**
 	 * Initializes the Data Access Object.
@@ -78,6 +81,14 @@ public abstract class ScheduleLoadDAO extends DAO {
 	public Collection<String> getErrorMessages() {
 		return _errors;
 	}
+	
+	/**
+	 * Returns the Airports that are not serviced by a particular Airline in the schedule.
+	 * @return a Map of Collections of Airports, keyed by Airline
+	 */
+	public Map<Airline, Collection<Airport>> getInvalidAirports() {
+		return _invalidAirports;
+	}
 
 	/**
 	 * Applies code share airline information to Schedule entries.
@@ -108,6 +119,19 @@ public abstract class ScheduleLoadDAO extends DAO {
 	}
 	
 	/**
+	 * Helper function to return an invalid airport bucket.
+	 */
+	private Collection<Airport> getAirportBucket(Airline al) {
+		Collection<Airport> bucket = _invalidAirports.get(al);
+		if (bucket == null) {
+			bucket = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+			_invalidAirports.put(al, bucket);
+		}
+		
+		return bucket;
+	}
+	
+	/**
 	 * Ensures that both airports in a schedule entry are served by the Airline.
 	 * @param se the ScheduleEntry to validate
 	 */
@@ -117,11 +141,13 @@ public abstract class ScheduleLoadDAO extends DAO {
 		Airline a = se.getAirline();
 		if (!se.getAirportD().getAirlineCodes().contains(a.getCode())) {
 			_errors.add(a.getName() + " does not serve " + se.getAirportD() + " - " + se.getFlightCode());
+			getAirportBucket(a).add(se.getAirportD());
 			isOK = false;
 		}
 
 		if (!se.getAirportA().getAirlineCodes().contains(a.getCode())) {
 			_errors.add(a.getName() + " does not serve " + se.getAirportA() + " - " + se.getFlightCode());
+			getAirportBucket(a).add(se.getAirportA());
 			isOK = false;
 		}
 		
