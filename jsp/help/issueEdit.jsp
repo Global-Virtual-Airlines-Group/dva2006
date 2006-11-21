@@ -19,11 +19,26 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.subject, 10, 'Issue Title')) return false;
 if (!validateText(form.body, 5, 'Issue Description')) return false;
+if ((form.sendIssue) && (form.sendIssue.disabled))
+	form.sendIssue.checked = false;
 
 setSubmit();
 disableButton('SaveButton');
 return true;
 }
+<c:if test="${access.canUpdateStatus}">
+function checkAssignee(combo)
+{
+var f = document.forms[0];
+if ((combo.selectedIndex == document.originalAssignee) || (combo.selectedIndex == 0)) {
+	f.sendIssue.disabled = true;
+} else {
+	f.sendIssue.disabled = false;
+}
+
+return true;
+}
+</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -60,7 +75,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Assigned To</td>
- <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${assignees}" value="${issue.assignedTo}" /></td>
+ <td class="data"><el:combo name="assignedTo" size="1" idx="5" options="${assignees}" value="${issue.assignedTo}" onChange="void checkAssignee(this)" /></td>
 </tr>
 </c:if>
 </c:if>
@@ -75,7 +90,8 @@ return true;
 <c:if test="${access.canUpdateStatus}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /></td>
+ <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /><br />
+<el:box name="sendIssue" idx="*" value="true" label="Send Notification to Assignee" /></td>
 </tr>
 </c:if>
 
@@ -115,5 +131,10 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${access.canUpdateStatus}">
+// Set original assignee
+var f = document.forms[0];
+document.originalAssignee = f.assignedTo.selectedIndex;
+</c:if>
 </body>
 </html>

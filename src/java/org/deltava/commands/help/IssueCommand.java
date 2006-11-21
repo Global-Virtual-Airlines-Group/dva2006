@@ -10,6 +10,7 @@ import org.deltava.beans.help.*;
 import org.deltava.commands.*;
 import org.deltava.comparators.*;
 import org.deltava.dao.*;
+import org.deltava.mail.*;
 
 import org.deltava.security.command.HelpDeskAccessControl;
 
@@ -32,6 +33,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
 
+		boolean sendIssue = false;
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
@@ -50,11 +52,17 @@ public class IssueCommand extends AbstractFormCommand {
 				ac.validate();
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
+				
+				// Determine if we're reassigning
+				int newAssignee = StringUtils.parse(ctx.getParameter("assignedTo"), i.getAssignedTo());
+				if (newAssignee != i.getAssignedTo()) {
+					i.setAssignedTo(newAssignee);
+					sendIssue = Boolean.valueOf(ctx.getParameter("sendIssue")).booleanValue();
+				}
 
 				// Update subject
 				i.setSubject(ctx.getParameter("subject"));
 				i.setStatus(ctx.getParameter("status"));
-				i.setAssignedTo(StringUtils.parse(ctx.getParameter("assignedTo"), 0));
 				if ((i.getStatus() != Issue.OPEN) && (i.getResolvedOn() == null))
 					i.setResolvedOn(new Date());
 				else if ((i.getStatus() == Issue.OPEN) && (i.getResolvedOn() != null))
@@ -82,6 +90,36 @@ public class IssueCommand extends AbstractFormCommand {
 			i.setBody(ctx.getParameter("body"));
 			if (ac.getCanUpdateStatus())
 				i.setPublic(Boolean.valueOf(ctx.getParameter("isPublic")).booleanValue());
+			
+			// Send an issue
+			if (isNew || sendIssue) {
+				MessageContext mctx = new MessageContext();
+				mctx.addData("issue", i);
+				mctx.addData("user", ctx.getUser());
+				
+				// Get the message template
+				GetMessageTemplate mtdao = new GetMessageTemplate(con);
+				mctx.setTemplate(mtdao.get(isNew ? "HDISSUECREATE" : "HDISSUEASSIGN"));
+				
+				// Get the Assignee and copyto
+				GetPilot pdao = new GetPilot(con);
+				Pilot usr = pdao.get(i.getAssignedTo());
+				mctx.addData("assignee", usr);
+
+				// Create the message
+				Mailer mailer = new Mailer(ctx.getUser());
+				mailer.setContext(mctx);
+				Collection<Pilot> ids = pdao.getByID(getPilotIDs(i), "PILOTS").values();
+				for (Iterator<Pilot> cci = ids.iterator(); cci.hasNext(); )
+					mailer.setCC(cci.next());
+				
+				// Send the message
+				mailer.send(usr);
+				
+				// Save user info
+				ctx.setAttribute("assignee", usr, REQUEST);
+				ctx.setAttribute("emailSent", Boolean.TRUE, REQUEST);
+			}
 			
 			// Save the issue
 			SetHelp iwdao = new SetHelp(con);
@@ -153,6 +191,8 @@ public class IssueCommand extends AbstractFormCommand {
 			assignees.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examiner", SystemData.get("airline.db")));
+			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
+			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
 			ctx.setAttribute("assignees", assignees, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
@@ -212,7 +252,7 @@ public class IssueCommand extends AbstractFormCommand {
 	 * Helper method to return all pilot IDs associated with a particular issue.
 	 */
 	private Collection<Integer> getPilotIDs(Issue i) {
-		Set<Integer> results = new HashSet<Integer>();
+		Collection<Integer> results = new HashSet<Integer>();
 
 		// Add Creator
 		results.add(new Integer(i.getAuthorID()));
