@@ -67,19 +67,27 @@ public class ChartCommand extends AbstractFormCommand {
 
 				// Load the image data
 				FileUpload imgData = ctx.getFile("img");
-				if (imgData == null) {
+				if ((imgData == null) || (imgData.getSize() < 10)) {
 					CommandException ce = new CommandException("No Image Data Uploaded");
 					ce.setLogStackDump(false);
 					throw ce;
 				}
-
+				
+				// Check for PDF
+				boolean isPDF = true;
+				byte[] buffer = imgData.getBuffer();
+				for (int x = 0; x < Chart.PDF_MAGIC.length(); x++)
+					isPDF &= (buffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
+				
 				// Get image metadata
-				ImageInfo info = new ImageInfo(imgData.getBuffer());
-				info.check();
-
-				// Set image properties
-				c.setImgType(info.getFormat());
-				c.load(imgData.getBuffer());
+				if (!isPDF) {
+					ImageInfo info = new ImageInfo(buffer);
+					info.check();
+					c.setImgType(info.getFormat());
+				} else
+					c.setImgType(Chart.IMG_PDF);
+				
+				c.load(buffer);
 			}
 
 			// Save the chart in the request
