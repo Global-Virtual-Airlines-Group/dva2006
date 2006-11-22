@@ -4,15 +4,10 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.TZInfo;
-import org.deltava.beans.GeoLocation;
-
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetAirport;
-import org.deltava.dao.SetSchedule;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -25,14 +20,14 @@ import org.deltava.util.system.SystemData;
  */
 
 public class AirportCommand extends AbstractFormCommand {
-   
+
 	/**
 	 * Callback method called when saving the Airport.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
-		
+
 		// Get the command results
 		CommandResult result = ctx.getResult();
 
@@ -43,7 +38,7 @@ public class AirportCommand extends AbstractFormCommand {
 			Airport ap = SystemData.getAirport(ctx.getParameter("iata").toUpperCase());
 			if (ap != null) {
 				ctx.setMessage("Airport already exists - " + ap.getName());
-				
+
 				// Save directions and time zones in request
 				ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 				ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
@@ -66,31 +61,31 @@ public class AirportCommand extends AbstractFormCommand {
 				a = dao.get(aCode);
 				if (a == null)
 					throw notFoundException("Invalid Airport Code - " + aCode);
-				
+
 				// Load airport fields
 				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
 			} else {
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
 			}
-			
+
 			// Update the aiport from the request
 			a.setTZ(ctx.getParameter("tz"));
 			a.setAirlines(ctx.getParameters("airline"));
-			
+
 			// Build the airport latitude/longitude
 			try {
 				int latD = Integer.parseInt(ctx.getParameter("latD"));
 				int latM = Integer.parseInt(ctx.getParameter("latM"));
 				int latS = Integer.parseInt(ctx.getParameter("latS"));
 				if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
-					latD *=  -1;
-				
+					latD *= -1;
+
 				int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 				int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 				int lonS = Integer.parseInt(ctx.getParameter("lonS"));
 				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
-					lonD *=  -1;
+					lonD *= -1;
 
 				// Build the GeoPosition bean and update the airport
 				GeoPosition gp = new GeoPosition();
@@ -100,7 +95,7 @@ public class AirportCommand extends AbstractFormCommand {
 			} catch (NumberFormatException nfe) {
 				throw new CommandException("Error parsing Airport latitude/longitude");
 			}
-			
+
 			// Get the DAO and write the airport
 			SetSchedule wdao = new SetSchedule(con);
 			if (isNew) {
@@ -110,7 +105,7 @@ public class AirportCommand extends AbstractFormCommand {
 				wdao.update(a);
 				ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
 			}
-			
+
 			// Save the airport in the request
 			ctx.setAttribute("airport", a, REQUEST);
 		} catch (DAOException de) {
@@ -118,15 +113,15 @@ public class AirportCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Update the SystemData map
 		Map<String, Airport> airports = SystemData.getAirports();
 		airports.put(a.getIATA(), a);
 		airports.put(a.getICAO(), a);
-		
+
 		// Set status update flag
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);
-		
+
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
@@ -139,40 +134,40 @@ public class AirportCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		
-		// Get the command results
-		CommandResult result = ctx.getResult();
-		
+
 		// Get the Airport code
 		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
-		
-		// Save directions and time zones in request
-		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-		ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
-		ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
 
 		// Validate the airport if we are not creating a new one
 		if (!isNew) {
+			Airport a = null;
 			try {
 				Connection con = ctx.getConnection();
 
 				// Get the DAO and the Airport
 				GetAirport dao = new GetAirport(con);
-				Airport a = dao.get(aCode);
+				a = dao.get(aCode);
 				if (a == null) {
-					ctx.release();
-					ctx.setMessage("Unknown Airport Code - " + aCode);
-					
-					// Forward to the JSP
-					result.setURL("/jsp/schedule/airportEdit.jsp");
-					result.setSuccess(true);
-					return;
+					String icao = dao.getICAO(aCode);
+					if (icao != null) {
+						GetNavData nvdao = new GetNavData(con);
+						GeospaceLocation al = nvdao.getAirport(icao);
+						a = new Airport((aCode.length() == 3) ? aCode : "", icao, "");
+						a.setLocation(al.getLatitude(), al.getLongitude());
+						a.setAltitude(al.getAltitude());
+					}
 				}
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
 
-				// Save the airport in the request
+			// If we have an airport, save it in the request
+			if (a != null) {
 				ctx.setAttribute("airport", a, REQUEST);
-				
+
 				// Convert the geoPosition into degrees, minutes, seconds
 				GeoPosition gp = a.getPosition();
 				ctx.setAttribute("latD", new Integer(Math.abs(GeoPosition.getDegrees(gp.getLatitude()))), REQUEST);
@@ -183,14 +178,16 @@ public class AirportCommand extends AbstractFormCommand {
 				ctx.setAttribute("lonM", new Integer(GeoPosition.getMinutes(gp.getLongitude())), REQUEST);
 				ctx.setAttribute("lonS", new Integer(GeoPosition.getSeconds(gp.getLongitude())), REQUEST);
 				ctx.setAttribute("lonEW", GeoLocation.LON_DIRECTIONS[((gp.getLongitude() < 0) ? 1 : 0)], REQUEST);
-			} catch (DAOException de) {
-				throw new CommandException(de);
-			} finally {
-				ctx.release();
 			}
 		}
 
+		// Save directions and time zones in request
+		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
+		ctx.setAttribute("latDir", Arrays.asList(GeoLocation.LAT_DIRECTIONS), REQUEST);
+		ctx.setAttribute("lonDir", Arrays.asList(GeoLocation.LON_DIRECTIONS), REQUEST);
+
 		// Forward to the JSP
+		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/schedule/airportEdit.jsp");
 		result.setSuccess(true);
 	}

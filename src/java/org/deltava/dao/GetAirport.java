@@ -178,6 +178,35 @@ public class GetAirport extends DAO {
 	}
 	
 	/**
+	 * Returns the ICAO code for a particular airport from the DAFIF database.
+	 * @param iata the IATA code
+	 * @return the ICAO code, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if iata is null
+	 */
+	public String getICAO(String iata) throws DAOException {
+		if (iata.length() == 4)
+			return iata;
+		
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?)");
+			_ps.setString(1, iata.toUpperCase());
+			
+			// Execute the Query
+			ResultSet rs = _ps.executeQuery();
+			String code = rs.next() ? rs.getString(1) : null;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return code;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to load airport altitudes.
 	 */
 	private void loadAltitude(Map<String, Airport> airports) throws SQLException {
@@ -185,21 +214,28 @@ public class GetAirport extends DAO {
 			return;
 		
 		// Convert the airports into a set
-		Set<Airport> apSet = new HashSet<Airport>(airports.values());
+		Collection<Airport> aps = new LinkedHashSet<Airport>(airports.values());
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT CODE, ALTITUDE FROM common.NAVDATA WHERE (ITEMTYPE=?) "
 				+ "AND CODE IN (");
-		for (Iterator i = apSet.iterator(); i.hasNext(); ) {
-			Airport a = (Airport) i.next();
-			sqlBuf.append('\"');
-			sqlBuf.append(a.getICAO());
-			sqlBuf.append(i.hasNext() ? "\"," : "\")");
+		for (Iterator<Airport> i = aps.iterator(); i.hasNext(); ) {
+			sqlBuf.append('?');
+			if (i.hasNext())
+				sqlBuf.append(',');
 		}
 
 		// Prepare the SQL statement
+		sqlBuf.append(')');
 		prepareStatementWithoutLimits(sqlBuf.toString());
+		
+		// Set parameters
+		int pos = 1;
 		_ps.setInt(1, NavigationDataBean.AIRPORT);
+		for (Iterator<Airport> i = aps.iterator(); i.hasNext(); ) {
+			Airport a = i.next();
+			_ps.setString(++pos, a.getICAO());
+		}
 		
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();

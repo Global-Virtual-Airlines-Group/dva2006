@@ -1,5 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
+
+import org.deltava.beans.GeospaceLocation;
 
 import org.deltava.util.StringUtils;
 
@@ -10,7 +12,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class AirportLocation extends NavigationDataBean {
+public class AirportLocation extends NavigationDataBean implements GeospaceLocation {
 
 	private int _altitude;
 
