@@ -304,8 +304,8 @@ addMarkers(map, 'filedMarkers');
 <c:if test="${crossIDL}">
 // Update overlays for Date Line fix and set mapMove event
 updateOverlays();
-GEvent.addListener(map, "moveend", function() { updateOverlays() });
-var crossIDL = true;</c:if>
+GEvent.addListener(map, "moveend", function() { updateOverlays() });</c:if>
+var crossIDL = ${crossIDL};
 </script>
 </c:if>
 </body>
