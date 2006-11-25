@@ -35,7 +35,7 @@ public class UserListener implements HttpSessionListener {
 	public void sessionCreated(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
 		s.setAttribute(CommandContext.USRLISTENER_ATTR_NAME, new UserStartupListener());
-		log.info("Created Session " + s.getId());
+		log.debug("Created Session " + s.getId());
 	}
 	
 	/**
@@ -44,10 +44,7 @@ public class UserListener implements HttpSessionListener {
 	 */
 	public void sessionDestroyed(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-
-		// Log session destruction
-		// if (log.isDebugEnabled())
-			log.info("Destroyed Session " + s.getId());
+		log.debug("Destroyed Session " + s.getId());
 
 		// Get the user object
 		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
