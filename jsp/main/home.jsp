@@ -68,9 +68,12 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td width="10%" class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
  <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </tr>
-<tr>
+<c:if test="${notam.isHTML}">
+ <td colspan="3" class="left">${notam.body}</td>
+</c:if>
+<c:if test="${!notam.isHTML}">
  <td colspan="3" class="left"><fmt:text value="${notam.body}" /></td>
-</tr>
+</c:if>
 </c:forEach>
 </el:table>
 <br />
