@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import java.io.Serializable;
-
+import org.deltava.beans.ViewEntry;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -12,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class MessageTemplate implements Serializable, Comparable, Cacheable {
+public class MessageTemplate implements Comparable, Cacheable, ViewEntry {
 
     private String _name;
     private String _subject;
@@ -146,5 +145,13 @@ public class MessageTemplate implements Serializable, Comparable, Cacheable {
      */
     public Object cacheKey() {
        return _name;
+    }
+    
+    /**
+     * Returns the CSS class name used when displaying in a view table.
+     * @return the CSS class name
+     */
+    public String getRowClassName() {
+    	return _isHTML ? "opt1" : null;
     }
 }
