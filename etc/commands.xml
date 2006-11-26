@@ -474,6 +474,12 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="ivstatus">
+		<name>Innovata Status Display</name>
+		<class>org.deltava.commands.schedule.InnovataStatusCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="schedsave">
 		<name>Schedule Save</name>
 		<class>org.deltava.commands.schedule.ScheduleSaveCommand</class>

@@ -203,14 +203,17 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			Airline a = _airlines.get(entries.get(0));
 			if (eqType == null) {
 				isOK = false;
+				_invalidEQ.add(entries.get(27));
 				log.warn("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
 				_errors.add("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
 			} else if (airportD == null) {
 				isOK = false;
+				_invalidAP.add(entries.get(14));
 				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
 			} else if (airportA == null) {
 				isOK = false;
+				_invalidAP.add(entries.get(22));
 				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 			} else if (a == null) {

@@ -50,6 +50,9 @@
 <tr class="MenuItem">
  <td><el:cmd url="ivimport">INNOVATA DOWNLOAD</el:cmd></td>
 </tr>
+<tr class="MenuItem">
+ <td><el:cmd url="ivstatus">INNOVATA STATUS</el:cmd></td>
+</tr>
 </c:if>
 <tr class="MenuItem">
  <td><el:cmd url="usvcairports">UNSERVICED AIRPORTS</el:cmd></td>

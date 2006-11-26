@@ -8,9 +8,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.DAOException;
-import org.deltava.dao.file.innovata.GetFullSchedule;
+import org.deltava.dao.file.innovata.*;
 
-import org.deltava.util.*;
 import org.deltava.util.ftp.*;
 import org.deltava.util.system.SystemData;
 
@@ -30,56 +29,61 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 	 */
 	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
-		
-		// Get the file name(s) to download and init the cache
-		List<String> fileNames = StringUtils.split(SystemData.get("schedule.innovata.download.file"), ",");
+
+		// Get the file name to download and init the cache
+		String fileName = SystemData.get("schedule.innovata.download.file");
 		FTPCache cache = new FTPCache(SystemData.get("schedule.innovata.cache"));
 		cache.setHost(SystemData.get("schedule.innovata.download.host"));
 		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
-		
+
 		// Connect to the FTP server and download the files as needed
 		try {
 			Collection<String> msgs = new ArrayList<String>();
 			Collection<String> codes = new HashSet<String>();
 			Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 			
-			// Download the files
-			InputStream is = null;
-			boolean isCached = false;
-			for (Iterator<String> i = fileNames.iterator(); i.hasNext(); ) {
-				String fileName = i.next();
-				is = cache.getFile(fileName);
-				
-				// Get download information
-				FTPDownloadData ftpInfo = cache.getDownloadInfo();
-				isCached |= ftpInfo.isCached();
-				if (ftpInfo.isCached()) {
-					msgs.add("Using local copy of " + fileName);
-				} else {
-					msgs.add("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
-				}
-				
-				// Initialize the DAO
-				GetFullSchedule dao = new GetFullSchedule(is);
-				dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
-				dao.setAirlines(SystemData.getAirlines().values());
-				dao.setAirports(SystemData.getAirports().values());
+			// If we haven't specified a file name, get the newest file
+			if (fileName == null)
+				fileName = cache.getNewest("");
 
-				// Load the schedule data
-				dao.load();
-				Collection<ScheduleEntry> schedEntries = dao.process();
-				for (Iterator<ScheduleEntry> si = schedEntries.iterator(); si.hasNext(); ) {
-					ScheduleEntry entry = si.next();
-					if (codes.contains(entry.getFlightCode()))
-						msgs.add("Duplicate flight in " + fileName + " - " + entry.getFlightCode());
-					
-					codes.add(entry.getFlightCode());
-					entries.add(entry);
-				}
-				
-				msgs.addAll(dao.getErrorMessages());
+			// Download the files
+			boolean isCached = false;
+			InputStream is = cache.getFile(fileName);
+
+			// Get download information
+			FTPDownloadData ftpInfo = cache.getDownloadInfo();
+			isCached |= ftpInfo.isCached();
+			if (ftpInfo.isCached()) {
+				msgs.add("Using local copy of " + fileName);
+			} else {
+				msgs.add("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
+			}
+
+			// Initialize the DAO
+			GetFullSchedule dao = new GetFullSchedule(is);
+			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setAirlines(SystemData.getAirlines().values());
+			dao.setAirports(SystemData.getAirports().values());
+
+			// Load the schedule data
+			dao.load();
+			Collection<ScheduleEntry> schedEntries = dao.process();
+			for (Iterator<ScheduleEntry> si = schedEntries.iterator(); si.hasNext();) {
+				ScheduleEntry entry = si.next();
+				if (codes.contains(entry.getFlightCode()))
+					msgs.add("Duplicate flight in " + fileName + " - " + entry.getFlightCode());
+
+				codes.add(entry.getFlightCode());
+				entries.add(entry);
 			}
 			
+			// Save the error messages
+			msgs.addAll(dao.getErrorMessages());
+			
+			// Save the status
+			SetImportStatus swdao = new SetImportStatus(SystemData.get("schedule.innovata.cache"), "import.status.txt");
+			swdao.write(dao.getInvalidAirports(), dao.getInvalidEQ(), msgs);
+
 			// Save the cache status
 			ctx.setAttribute("innovataCache", Boolean.valueOf(isCached), REQUEST);
 

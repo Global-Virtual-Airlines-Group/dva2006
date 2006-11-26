@@ -14,7 +14,7 @@ import org.deltava.dao.DAOException;
 
 public class WriteBuffer {
 	
-	private File _f;
+	protected File _f;
 
    /**
     * Initializes the Data Access Object.
@@ -40,7 +40,6 @@ public class WriteBuffer {
     * @throws DAOException if an I/O error occurs
     */
    public void write(byte[] buffer) throws DAOException {
-      
       try {
          OutputStream out = new FileOutputStream(_f);
          out.write(buffer);
