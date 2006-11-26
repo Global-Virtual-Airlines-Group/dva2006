@@ -3,6 +3,7 @@
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Sidebar Navigation Frame -->
 <content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -76,9 +77,11 @@
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
+<c:if test="${helpDeskEnabled}">
 <tr class="MenuItem">
  <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
 </tr>
+</c:if>
 </content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
