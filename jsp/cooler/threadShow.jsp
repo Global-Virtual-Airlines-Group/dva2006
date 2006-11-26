@@ -147,7 +147,9 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <span class="small"><i>"${pilot.motto}"</i></span><br />
 </c:if>
 <br />
+<c:if test="${pilot.legs > 0}">
 <b><fmt:int fmt="#,##0" value="${pilot.legs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.hours}" /></b> hours total<br />
+</c:if>
 <c:if test="${pilot.onlineLegs > 0}">
 <span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.onlineLegs}" /></b> legs, <b>
 <fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br />
