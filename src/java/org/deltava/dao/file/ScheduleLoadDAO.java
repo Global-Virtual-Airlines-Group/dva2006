@@ -24,7 +24,10 @@ public abstract class ScheduleLoadDAO extends DAO {
 	protected Map<String, Airport> _airports;
 	protected final Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
 	protected final Collection<String> _errors = new ArrayList<String>();
-	protected final Map<Airline, Collection<Airport>> _invalidAirports = new TreeMap<Airline, Collection<Airport>>();
+	
+	protected final Collection<String> _invalidEQ = new TreeSet<String>();
+	protected final Collection<String> _invalidAP = new TreeSet<String>();
+	protected final Map<Airline, Collection<Airport>> _unsvcAirports = new TreeMap<Airline, Collection<Airport>>();
 
 	/**
 	 * Initializes the Data Access Object.
@@ -86,8 +89,24 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * Returns the Airports that are not serviced by a particular Airline in the schedule.
 	 * @return a Map of Collections of Airports, keyed by Airline
 	 */
-	public Map<Airline, Collection<Airport>> getInvalidAirports() {
-		return _invalidAirports;
+	public Map<Airline, Collection<Airport>> getUnservedAirports() {
+		return _unsvcAirports;
+	}
+	
+	/**
+	 * Returns any invalid IATA equipment codes encountered during the import.
+	 * @return a sorted Collection of IATA equipment codes
+	 */
+	public Collection<String> getInvalidEQ() {
+		return _invalidEQ;
+	}
+	
+	/**
+	 * Returns any invalid IATA airport codes encountered during the import.
+	 * @return a sorted Collection of IATA airport codes
+	 */
+	public Collection<String> getInvalidAirports() {
+		return _invalidAP;
 	}
 
 	/**
@@ -122,10 +141,10 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * Helper function to return an invalid airport bucket.
 	 */
 	private Collection<Airport> getAirportBucket(Airline al) {
-		Collection<Airport> bucket = _invalidAirports.get(al);
+		Collection<Airport> bucket = _unsvcAirports.get(al);
 		if (bucket == null) {
 			bucket = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
-			_invalidAirports.put(al, bucket);
+			_unsvcAirports.put(al, bucket);
 		}
 		
 		return bucket;

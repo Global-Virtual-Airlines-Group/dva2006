@@ -34,6 +34,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private Airport getAirport(String code, int line) {
 		Airport a = _airports.get(code.toUpperCase());
 		if (a == null) {
+			_invalidAP.add(code.toUpperCase());
 			_errors.add("Unknown Airport at Line " + line + " - " + code);
 			a = new Airport(code, code, "Unknown - " + code);
 		}

@@ -153,10 +153,14 @@ public class AirportCommand extends AbstractFormCommand {
 					if (icao != null) {
 						GetNavData nvdao = new GetNavData(con);
 						GeospaceLocation al = nvdao.getAirport(icao);
-						a = new Airport((aCode.length() == 3) ? aCode : "", icao, "");
-						a.setLocation(al.getLatitude(), al.getLongitude());
-						a.setAltitude(al.getAltitude());
+						if (al != null) {
+							a = new Airport((aCode.length() == 3) ? aCode : "", icao, "");
+							a.setLocation(al.getLatitude(), al.getLongitude());
+							a.setAltitude(al.getAltitude());
+						}
 					}
+
+					ctx.setAttribute("isNew", Boolean.TRUE, REQUEST);
 				}
 			} catch (DAOException de) {
 				throw new CommandException(de);

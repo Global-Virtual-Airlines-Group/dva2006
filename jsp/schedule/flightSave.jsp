@@ -56,7 +56,8 @@ ${error}<br />
 <tr>
  <td class="label" valign="top">Import Options</td>
  <td class="data"><el:box name="canPurge" idx="*" value="true" label="Mark imported Schedule Entries as Purgeable" /><br />
-<el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /></td>
+<el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /><br />
+<el:box name="updateAirports" idx="*" value="true" label="Update Airport/Airline mappings in database" /></td>
 </tr>
 </el:table>
 

@@ -8,6 +8,7 @@ import java.util.zip.*;
 import org.apache.log4j.Logger;
 
 /**
+ * A utility class to provide cached access to a remote FTP server.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -57,6 +58,22 @@ public class FTPCache {
 	 */
 	public FTPDownloadData getDownloadInfo() {
 		return _fileInfo;
+	}
+	
+	/**
+	 * Returns the newest file on the remote server.
+	 * @param dirName the directory on the server
+	 * @return the file name, or null if no files found
+	 * @throws FTPClientException if an error occurs
+	 * @see FTPConnection#getNewest(String)
+	 */
+	public String getNewest(String dirName) throws FTPClientException {
+
+		// Init the FTPConnection object
+		FTPConnection con = new FTPConnection(_host);
+		con.connect(_user, _pwd);
+		log.info("Connected to " + _host);
+		return con.getNewest(dirName);
 	}
 
 	/**

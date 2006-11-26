@@ -13,18 +13,18 @@ import com.enterprisedt.net.ftp.*;
  */
 
 public class FTPConnection {
-	
+
 	private FTPClient _client;
-	
+
 	class TempInputStream extends FileInputStream {
-		
+
 		private File _f;
-	
+
 		TempInputStream(File f) throws FileNotFoundException {
 			super(f);
 			_f = f;
 		}
-		
+
 		/**
 		 * Deletes the temporary file on close.
 		 */
@@ -43,10 +43,10 @@ public class FTPConnection {
 		_client = new FTPClient();
 		try {
 			_client.setRemoteHost(host);
-		} catch (Exception e) { 			// empty
+		} catch (Exception e) { // empty
 		}
 	}
-	
+
 	/**
 	 * Returns the underlying FTP client object.
 	 * @return the client object
@@ -54,7 +54,7 @@ public class FTPConnection {
 	public FTPClient getClient() {
 		return _client;
 	}
-	
+
 	/**
 	 * Returns if connected to the remote server.
 	 * @return TRUE if connected to the server, otherwise FALSE
@@ -78,7 +78,7 @@ public class FTPConnection {
 			throw new FTPClientException(e);
 		}
 	}
-	
+
 	/**
 	 * Closes the connection. This swallows any exceptions.
 	 */
@@ -86,10 +86,10 @@ public class FTPConnection {
 		try {
 			if (_client.connected())
 				_client.quit();
-		} catch (Exception e) { //empty
+		} catch (Exception e) { // empty
 		}
 	}
-	
+
 	/**
 	 * Downloads a file from the remote server.
 	 * @param fName the remote file name
@@ -101,7 +101,7 @@ public class FTPConnection {
 		try {
 			if (saveToDisk)
 				return new ByteArrayInputStream(_client.get(fName));
-			
+
 			// Create a temp file
 			File tmp = File.createTempFile(fName, "ftp");
 			_client.get(new FileOutputStream(tmp), fName);
@@ -110,7 +110,7 @@ public class FTPConnection {
 			throw new FTPClientException(e);
 		}
 	}
-	
+
 	/**
 	 * Downloads a file from the remote server into a specified location.
 	 * @param fName the remote file name
@@ -126,7 +126,7 @@ public class FTPConnection {
 			throw new FTPClientException(e);
 		}
 	}
-	
+
 	/**
 	 * Uploads a file to the remote server.
 	 * @param f the local File
@@ -158,10 +158,10 @@ public class FTPConnection {
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Returns the last modified date for a particular file on the remote server.
 	 * @param dirName the remote directory name
@@ -180,7 +180,34 @@ public class FTPConnection {
 		} catch (Exception e) {
 			throw new FTPClientException(e);
 		}
-		
+
 		return null;
+	}
+
+	/**
+	 * Returns the name of the newest file on the FTP server.
+	 * @return the file name, or null if not found
+	 * @throws FTPClientException if an error occurs
+	 */
+	public String getNewest(String dirName) throws FTPClientException {
+		try {
+			FTPFile[] files = _client.dirDetails(dirName);
+			if (files == null)
+				return null;
+
+			// Iterate through the files
+			FTPFile latest = null;
+			for (int x = 0; x < files.length; x++) {
+				FTPFile f = files[x];
+				if (!f.isDir() && !f.isLink()) {
+					if ((latest == null) || (f.lastModified().after(latest.lastModified())))
+						latest = f;
+				}
+			}
+
+			return latest.getName();
+		} catch (Exception e) {
+			throw new FTPClientException(e);
+		}
 	}
 }
