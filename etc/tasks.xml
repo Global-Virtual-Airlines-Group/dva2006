@@ -85,7 +85,7 @@
 	</task>
 
 	<!-- Create Online Event Flight Assignments -->
-	<task id="eventassign" enabled="true">
+	<task id="eventassign" enabled="false">
 		<class>org.deltava.tasks.EventAssignTask</class>
 		<time>
 			<min>0,30</min>
@@ -102,6 +102,18 @@
 		<time>
 			<min>45</min>
 			<hour>15</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
+
+	<!-- Innovata Schedule download -->
+	<task id="innovatadl" enabled="true">
+		<class>org.deltava.tasks.ScheduleImportTask</class>
+		<time>
+			<min>0</min>
+			<hour>9</hour>
 			<mday>*</mday>
 			<month>*</month>
 			<wday>*</wday>

@@ -220,6 +220,7 @@ public class GetAirport extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT CODE, ALTITUDE FROM common.NAVDATA WHERE (ITEMTYPE=?) "
 				+ "AND CODE IN (");
 		for (Iterator<Airport> i = aps.iterator(); i.hasNext(); ) {
+			i.next();
 			sqlBuf.append('?');
 			if (i.hasNext())
 				sqlBuf.append(',');

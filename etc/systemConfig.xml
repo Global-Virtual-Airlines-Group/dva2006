@@ -434,7 +434,7 @@
 		<!-- Password settings -->
 		<password>
 			<default type="Integer">8</default>
-			<min type="Integer">5</min		
+			<min type="Integer">5</min>
 		</password>
 
 		<key>
@@ -477,6 +477,8 @@
 				<width type="Integer">600</width>
 				<url>http://quicktrip.innosked.com/</url>
 			</popup>
+
+			<!-- Primary codes on import -->
 			<list name="primary_codes" attr="code" unique="true">
 				<code>AF</code>
 				<code>DL</code>
@@ -490,9 +492,16 @@
 				<host>67.97.212.90</host>
 				<user>deltava</user>
 				<pwd>Ssim#2001</pwd>
-				<file>deltava.zip</file>
+				<!-- <file>deltava.zip</file> get newest -->
 			</download>
-			
+
+			<!-- Automated import -->
+			<import>
+				<purge type="Boolean">true</purge>
+				<markCanPurge type="Boolean">true</markCanPurge>
+				<isHistoric type="Boolean">false</isHistoric>
+			</import>
+
 			<!-- downloaded file cache -->
 			<cache>d:\library\sched_cache</cache>
 		</innovata>
@@ -679,7 +688,11 @@
 		<enabled type="Boolean">true</enabled>
 		<minFlights type="Integer">10</minFlights>
 		<eqType>EMB-120</eqType>
-
-		<assignto type="Integer">2253</assignto>
 	</academy>
+
+	<!-- Help Desk Data -->
+	<helpdesk>
+		<enabled type="Boolean">true</enabled>
+		<assignto type="Integer">2253</assignto>
+	</helpdesk>
 </config>

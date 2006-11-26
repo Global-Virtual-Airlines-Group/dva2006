@@ -45,6 +45,7 @@ return true;
 <content:sysdata var="examLockoutHours" name="testing.lockout" />
 <content:sysdata var="academyEnabled" name="academy.enabled" />
 <content:sysdata var="academyFlights" name="academy.minFlights" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
 
 <!-- Main Body Frame -->
@@ -118,6 +119,18 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <td class="data">You can search the <content:airline /> Pilot Roster based on a Pilot's name or
  E-Mail Address.</td>
 </tr>
+
+<c:if test="${helpDeskEnabled}">
+<!-- Help Desk Section -->
+<tr class="title caps">
+ <td colspan="2"><content:airline /> HELP DESK</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="helpdesk">Help Desk</el:cmd></td>
+ <td class="data">The <content:airline /> Help Desk lets pilots and communicate with our Instructors 
+ and Staff to quickly and easily resolve any issues, or answer questions about <content:airline />.</td>
+</tr>
+</c:if>
 
 <!-- Flight Report Section -->
 <tr class="title caps">
@@ -382,13 +395,6 @@ Flight Academy course.</c:if>
 <i>You cannot enroll in a <content:airline /> Flight Academy course until you have successfully completed 
 <fmt:int value="${academyFlights}" /> Flight legs.</i></c:if></td>
 </tr>
-<c:if test="${pilot.legs >= academyFlights}">
-<tr>
- <td class="mid"><el:cmd className="bld" url="helpdesk">Help Desk</el:cmd></td>
- <td class="data">The <content:airline /> Help Desk lets pilots and communicate with our Instructors 
- and Staff to quickly and easily resolve any issues, or answer questions about <content:airline />.</td>
-</tr>
-</c:if>
 <c:if test="${!empty course}">
 <tr>
  <td class="mid"><el:cmd url="academycalendar" className="bld">Instruction Calendar</el:cmd></td>
@@ -548,6 +554,11 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
  <td class="data"><content:airline /> has partnered with Innovata, LLC to provide instant real-world
  schedule updates which can be downloaded via FTP and imported into the Flight Schedule. If newer
  schedule data is available on Innovata's servers, it will be downloaded.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="ivstatus">Innovata Schedule Download Status</el:cmd></td>
+ <td class="data">You can view a status report from the last Innovata, LLC schedule download, to list
+ new airports or equipment codes that need to be added to the <content:airline /> Flight Schedule.</td>
 </tr>
 </c:if>
 <tr>

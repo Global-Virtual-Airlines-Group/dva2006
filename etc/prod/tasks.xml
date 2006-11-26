@@ -131,4 +131,16 @@
 			<wday>*</wday>
 		</time>
 	</task>
+
+	<!-- Innovata Schedule download -->
+	<task id="innovatadl" enabled="false">
+		<class>org.deltava.tasks.ScheduleImportTask</class>
+		<time>
+			<min>0</min>
+			<hour>9</hour>
+			<mday>*</mday>
+			<month>*</month>
+			<wday>*</wday>
+		</time>
+	</task>
 </tasks>

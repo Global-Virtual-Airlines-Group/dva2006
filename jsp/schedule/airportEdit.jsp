@@ -1,16 +1,24 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
+<map:xhtml>
 <head>
 <title><content:airline /> Schedule - ${airport.IATA}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
+<c:set var="googleMap" value="${isNew && (!empty airport)}" scope="request" />
+<c:if test="${googleMap}">
+<content:js name="googleMaps" />
+<map:api version="2" />
+<map:vml-ie />
+</c:if>
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -33,7 +41,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body>
+<body<c:if test="${googleMap}"> onunload="GUnload()"</c:if>>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
@@ -41,7 +49,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="airport.do" method="post" linkID="${airport.IATA}" op="save" validate="return validate(this)">
+<el:form action="airport.do" method="post" linkID="${isNew ? '' : airport.IATA}" op="save" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">AIRPORT PROFILE</td>
@@ -86,6 +94,31 @@ return true;
  <td class="data error bld">${system_message}</td>
 </tr>
 </c:if>
+<c:if test="${isNew}">
+<tr class="title caps">
+ <td colspan="2">WORLD TIME ZONE MAP</td>
+</tr>
+<tr>
+ <td colspan="2" class="mid"><el:img src="worldzones.png" caption="Time Zone Map" /></td>
+</tr>
+<c:if test="${!empty airport}">
+<tr class="title caps">
+ <td colspan="2">AIRPORT LOCATION</td>
+</tr>
+<tr>
+ <td colspan="2"><map:div ID="googleMap" x="100%" y="550" /></td>
+</tr>
+</c:if>
+<c:if test="${isNew && (!empty param.id)}">
+<c:set var="apCode" value="${empty airport ? param.id : airport.ICAO}" scope="request" />
+<tr class="title caps">
+ <td colspan="2">AIRPORT INFORMATION</td>
+</tr>
+<tr>
+ <td colspan="2" class="mid"><iframe id="airportLookup" width="97%" height="280" scrolling="auto" src="http://www.airrouting.com/scripts/airportLoc.asp?RequestLocation=${apCode}"></iframe></td>
+</tr>
+</c:if>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
@@ -100,5 +133,21 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${googleMap}">
+<script language="JavaScript" type="text/javascript">
+<map:point var="mapC" point="${airport}" />
+<map:marker var="apMarker" point="${airport}" color="green" />
+
+// Build the map
+var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+map.addControl(new GLargeMapControl());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, 6);
+map.setMapType(G_SATELLITE_TYPE);
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+addMarkers(map, 'apMarker');
+</script>
+</c:if>
 </body>
-</html>
+</map:xhtml>

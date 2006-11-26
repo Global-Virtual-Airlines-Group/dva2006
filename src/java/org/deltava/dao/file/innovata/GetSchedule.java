@@ -29,11 +29,11 @@ public class GetSchedule extends ScheduleLoadDAO {
 	private static final DateFormat _tf = new SimpleDateFormat("HHmm");
 	private static final DateFormat _ftf = new SimpleDateFormat("HH:mm");
 
-	private Calendar _effDate;
+	private final Calendar _effDate = CalendarUtils.getInstance(null);
 	private Calendar _defaultStartDate;
 	private Calendar _defaultEndDate;
 	
-	private Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
+	private final Collection<CSVTokens> _data = new TreeSet<CSVTokens>();
 	private Properties _acTypes;
 
 	/**
@@ -42,7 +42,6 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 */
 	public GetSchedule(InputStream is) {
 		super(is);
-		_effDate = CalendarUtils.getInstance(null);
 		_defaultStartDate = CalendarUtils.getInstance(_effDate.getTime(), true, - 90);
 		_defaultEndDate = CalendarUtils.getInstance(_effDate.getTime(), true, 7);
 	}
@@ -163,18 +162,19 @@ public class GetSchedule extends ScheduleLoadDAO {
 				log.warn("Unknown Airline " + flightID.getAirlineCode());
 				_errors.add("Unknown Airline " + flightID.getAirlineCode());
 			} else if (eqType == null) {
+				_invalidEQ.add(tkns.get(8));
 				log.warn("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
 				_errors.add("Unknown equipment code at Line " + tkns.getLineNumber() + " - " + tkns.get(8));
 			} else if (flightID.getUserID() >= 9000)
 				log.debug("Skipping charter " + flightID);
 			else if (airportD == null) {
-				log
-						.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for "
-								+ flightCode);
-				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for "
-						+ flightCode);
+				_invalidAP.add(tkns.get(3));
+				log.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
+				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(3) + " for " + flightCode);
 			} else if (airportA == null) {
-
+				_invalidAP.add(tkns.get(5));
+				log.warn("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(5) + " for " + flightCode);
+				_errors.add("Unknown Airport at Line " + tkns.getLineNumber() + " - " + tkns.get(5) + " for " + flightCode);
 			} else if (!includeFlight)
 				log.debug("Skipping flight (NOT EFFECTIVE) " + flightID);
 			else {
