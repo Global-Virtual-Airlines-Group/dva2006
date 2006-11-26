@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
+<content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Sidebar Navigation Frame -->
 <content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
@@ -63,9 +64,11 @@
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
 </tr>
+<c:if test="${helpDeskEnabled}">
 <tr class="MenuItem">
  <td><el:cmd url="helpdesk">HELP DESK</el:cmd></td>
 </tr>
+</c:if>
 </content:filter>
 <content:filter roles="HR,PIREP,Examination">
 <tr class="MenuItem">
