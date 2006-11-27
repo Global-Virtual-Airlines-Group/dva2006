@@ -33,7 +33,8 @@ public class PIREPCommand extends AbstractFormCommand {
 
 	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
 	private static final Collection<String> _flightYears = new LinkedHashSet<String>();
-	private static final Collection<ComboAlias> _fsVersions = new LinkedHashSet<ComboAlias>();
+	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
+			FlightReport.FSVERSION.length);
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -65,11 +66,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		// If we're in January/February, add the previous year
 		if (c.get(Calendar.MONTH) < 2)
 			_flightYears.add(String.valueOf(c.get(Calendar.YEAR) - 1));
-		
-		// Create FS version combo list
-		for (int x = 1; x < FlightReport.FSVERSION.length; x++) {
-			_fsVersions.add(ComboUtils.fromString(FlightReport.FSVERSION[x], String.valueOf(FlightReport.FSVERSION_CODE[x])));
-		}
 	}
 
 	/**
