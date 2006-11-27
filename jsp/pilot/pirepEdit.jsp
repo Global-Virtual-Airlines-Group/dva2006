@@ -126,7 +126,7 @@ var bwdLimit = new Date(${backwardDateLimit});
  <td class="data"><el:combo name="eq" idx="*" size="1" options="${eqTypes}" value="${pirep.equipmentType}" className="req" firstEntry="< EQUIPMENT >" /></td>
 </tr>
 <c:choose>
-<c:when test="${isAssign}">
+<c:when test="${!isAssign}">
 <tr>
  <td class="label">Departed from</td>
  <td class="data"><el:combo name="airportD" size="1" options="${emptyList}" className="req" onChange="void changeAirport(this)" />
@@ -161,7 +161,7 @@ var bwdLimit = new Date(${backwardDateLimit});
 </tr>
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="FS${pirep.FSVersion}" /></td>
+ <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${pirep.FSVersionCode}" /></td>
 </tr>
 <c:set var="tmpH" value="${empty pirep ? '' : pirep.length / 10}" scope="request" />
 <c:set var="tmpM" value="${empty pirep ? '' : (pirep.length % 10) * 6}" scope="request" />
