@@ -63,4 +63,29 @@ public class GetPilotOnline extends PilotReadDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all Pilots registered with an ID in a particular online network. <i>Flight Totals will not be populated</i>.
+	 * @param networkName the online network name
+	 * @return a List of Pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Pilot> getPilots(String networkName) throws DAOException {
+		if (StringUtils.arrayIndexOf(NETWORKS, networkName) == -1)
+			return Collections.emptyList();
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.* FROM PILOTS P WHERE ((P.STATUS=?) OR (P.STATUS=?)) AND (LENGTH(");
+		sqlBuf.append(networkName);
+		sqlBuf.append("_ID) > 0)");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 }
