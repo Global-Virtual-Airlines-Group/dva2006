@@ -44,6 +44,7 @@ bzcat /home/backup/db/cooler.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var
 
 echo 'Restoring ACARS data'
 bzcat /home/backup/db/acars.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars
+bzcat /home/backup/db/acars_pos_inc.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars
 
 echo 'Restoring Navigation Data'
 bzcat /home/backup/db/old/navdata.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common
