@@ -33,10 +33,7 @@ public class PIREPCommand extends AbstractFormCommand {
 
 	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
 	private static final Collection<String> _flightYears = new LinkedHashSet<String>();
-
-	// Flight Simulator versions
-	private static final List fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
-			FlightReport.FSVERSION.length);
+	private static final Collection<ComboAlias> _fsVersions = new LinkedHashSet<ComboAlias>();
 
 	// Month combolist values
 	private static final List<ComboAlias> months = ComboUtils.fromArray(new String[] { "January", "February", "March",
@@ -54,21 +51,24 @@ public class PIREPCommand extends AbstractFormCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
+		if (!_flightTimes.isEmpty())
+			return;
 
 		// Initialize flight times
-		if (_flightTimes.isEmpty()) {
-			for (int x = 2; x < 185; x++)
-				_flightTimes.add(String.valueOf(x / 10.0d));
-		}
+		for (int x = 2; x < 185; x++)
+			_flightTimes.add(String.valueOf(x / 10.0d));
 
 		// Initialize flight years
-		if (_flightYears.isEmpty()) {
-			Calendar c = Calendar.getInstance();
-			_flightYears.add(String.valueOf(c.get(Calendar.YEAR)));
+		Calendar c = Calendar.getInstance();
+		_flightYears.add(String.valueOf(c.get(Calendar.YEAR)));
 
-			// If we're in January/February, add the previous year
-			if (c.get(Calendar.MONTH) < 2)
-				_flightYears.add(String.valueOf(c.get(Calendar.YEAR) - 1));
+		// If we're in January/February, add the previous year
+		if (c.get(Calendar.MONTH) < 2)
+			_flightYears.add(String.valueOf(c.get(Calendar.YEAR) - 1));
+		
+		// Create FS version combo list
+		for (int x = 1; x < FlightReport.FSVERSION.length; x++) {
+			_fsVersions.add(ComboUtils.fromString(FlightReport.FSVERSION[x], String.valueOf(FlightReport.FSVERSION_CODE[x])));
 		}
 	}
 
@@ -314,10 +314,10 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("pirepDay", StringUtils.format(cld.get(Calendar.DATE), "#0"), REQUEST);
 
 		// Save airport/airline lists in the request
-		ctx.setAttribute("airline", "DVA", REQUEST);
+		ctx.setAttribute("airline", SystemData.get("airline.code"), REQUEST);
 
 		// Save Flight Simulator versions
-		ctx.setAttribute("fsVersions", fsVersions, REQUEST);
+		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
