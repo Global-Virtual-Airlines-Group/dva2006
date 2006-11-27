@@ -2,6 +2,7 @@ bin
 lcd /home/backup/db
 put mysql.sql.bz2
 put create_tables.tar.bz2
+put awstats.tar.bz2
 put acars.sql.bz2
 put acars_pos_inc.sql.bz2
 put afv.sql.bz2
