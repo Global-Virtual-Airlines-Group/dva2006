@@ -21,7 +21,9 @@
 	<service id="rmap_airports" class="org.deltava.service.schedule.ServicedAirportService" />
 	<service id="rmap_routes" class="org.deltava.service.schedule.RouteService" />
 
+	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
+	<service id="onlinepilots" class="org.deltava.service.OnlinePilotService" />
 
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
 
