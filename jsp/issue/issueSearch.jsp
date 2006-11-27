@@ -41,7 +41,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Search String</td>
- <td class="data"><el:text name="searchStr" idx="*" size="24" max="48" className="req" value="${param.searchStr}" /></td>
+ <td class="data"><el:text name="searchStr" idx="*" size="32" max="48" className="req" value="${param.searchStr}" /></td>
+</tr>
+<tr>
+ <td class="label">Issue Status</td>
+ <td class="data"><el:combo name="status" idx="*" size="1" options="${statusOpts}" firstEntry="-" value="${param.status}" /></td>
+</tr>
+<tr>
+ <td class="label">Issue Area</td>
+ <td class="data"><el:combo name="area" idx="*" size="1" options="${areaOpts}" firstEntry="-" value="${param.area}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Results</td>
