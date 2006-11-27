@@ -39,7 +39,10 @@
 <c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
 <tr>
  <td class="pri bld">${issue.subject}</td>
- <td class="small left"><fmt:msg value="${comment.body}" /></td>
+ <td class="left">${issue.body}</td>
+</tr>
+<tr>
+ <td colspan="2" class="left"><fmt:msg value="${comment.body}" /></td>
 </tr>
 </c:forEach>
 
