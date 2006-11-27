@@ -89,14 +89,27 @@ public class GetIssue extends DAO {
 	/**
 	 * Returns all Issues with a particular status code.
 	 * @param status the status code
+	 * @param area the area code, or -1 if none
+	 * @param sortType the SQL sorting fragment
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Issue> getByStatus(int status) throws DAOException {
+	public List<Issue> getByStatus(int status, int area, String sortType) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM "
+				+ "common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?)");
+		if (area >= 0)
+			sqlBuf.append(" AND (I.AREA=?)");
+		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
+		sqlBuf.append(sortType);
+		
 		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
-			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE (I.STATUS=?) GROUP BY I.ID");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, status);
+			if (area >= 0)
+				_ps.setInt(2, area);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -106,26 +119,36 @@ public class GetIssue extends DAO {
 	/**
 	 * Searches all Issues for a particular phrase.
 	 * @param searchStr the search phrase
-	 * @param includeComments TRUE if Issue Comments should be searched
+	 * @param status the status code, or -1 if none
+	 * @param area the area code, or -1 if none
+	 * @param includeComments TRUE if Issue Comments should be searched, otherwise FALSE
 	 * @return a List of Issues
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Issue> search(String searchStr, boolean includeComments) throws DAOException {
+	public List<Issue> search(String searchStr, int status, int area, boolean includeComments) throws DAOException {
 	
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
 				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
-				+ "WHERE (I.DESCRIPTION LIKE ?)");
-		if (includeComments)
-			sqlBuf.append(" OR (IC.COMMENTS LIKE ?)");
+				+ "WHERE ((I.DESCRIPTION LIKE ?)");
+		sqlBuf.append(includeComments ? " OR (IC.COMMENTS LIKE ?))" : ")");
+		if (status >= 0)
+			sqlBuf.append(" AND (I.STATUS=?)");
+		if (area >= 0)
+			sqlBuf.append(" AND (I.AREA=?)");
 			
-		sqlBuf.append("GROUP BY I.ID");
+		sqlBuf.append(" GROUP BY I.ID");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, "%" + searchStr + "%");
+			int pos = 1;
 			if (includeComments)
-				_ps.setString(2, "%" + searchStr + "%");
+				_ps.setString(++pos, "%" + searchStr + "%");
+			if (status >= 0)
+				_ps.setInt(++pos, status);
+			if (area >= 0)
+				_ps.setInt(++pos, area);
 			
 			return execute();
 		} catch (SQLException se) {
