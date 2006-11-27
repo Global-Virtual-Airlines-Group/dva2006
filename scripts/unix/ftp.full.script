@@ -2,6 +2,7 @@ bin
 lcd /home/backup/db
 put mysql.sql.bz2
 put create_tables.tar.bz2
+put awstats.tar.bz2
 put afv.sql.bz2
 put afv_sched.sql.bz2
 put afv_sys.sql.bz2
@@ -21,8 +22,11 @@ put teamspeak.sql.bz2
 lcd /home/backup/db/old
 put acars.sql.bz2
 put acars_pos.sql.bz2
+dele acars_pos_inc.sql.bz2
 put afv_gallery.sql.bz2
 put dva_gallery.sql.bz2
+dele afv_gallery_inc.sql.bz2
+dele dva_gallery_inc.sql.bz2
 put navdata.sql.bz2
 
 cd /svn

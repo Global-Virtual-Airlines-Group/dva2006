@@ -6,6 +6,9 @@
 cd /home/backup/db
 mv *.bz2 old
 
+# Backup AWSTATS tables
+tar cfvj awstats.tar.bz2 /home/awstats
+
 # Dump core table
 echo 'Writing mySQL configuration'
 mysqldump -e -h mysql.deltava.org mysql `cat /usr/local/etc/sqlbackup` | bzip2 -9 > mysql.sql.bz2
@@ -39,13 +42,14 @@ mysqldump -e -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` com
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
 then
-  date +%s > lastbackuptime
-
   echo 'Writing Navigation Data'
   mysqldump -e -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS CHARTS | bzip2 -9 > navdata.sql.bz2
   
   echo 'Writing ACARS Position Archive'
   mysqldump -e -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > acars_pos.sql.bz2
+  
+  echo 'Write last backup time'
+  echo 'SELECT UNIX_TIMESTAMP(NOW())' | mysql -h mysql.deltava.org -N `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
 else
   echo 'Writing Incremental ACARS Positions'
   mysqldump -e -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(REPORT_TIME) > `cat lastbackuptime`" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
