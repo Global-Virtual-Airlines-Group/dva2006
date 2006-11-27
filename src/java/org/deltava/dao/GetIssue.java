@@ -36,14 +36,12 @@ public class GetIssue extends DAO {
 			_ps.setInt(1, id);
 			
 			// Execute the query - return null if nothing found
-			List results = execute();
+			List<Issue> results = execute();
 			if (results.size() == 0)
 				return null;
 			
-			// Populate the bean
-			Issue i = (Issue) results.get(0);
-			
-			// Get comments and return
+			// Populate the bean, get comments and return
+			Issue i = results.get(0);
 			getComments(i);
 			return i;
 		} catch (SQLException se) {
@@ -130,8 +128,8 @@ public class GetIssue extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
 				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
-				+ "WHERE ((I.DESCRIPTION LIKE ?)");
-		sqlBuf.append(includeComments ? " OR (IC.COMMENTS LIKE ?))" : ")");
+				+ "WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
+		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS LIKE) > 0))" : ")");
 		if (status >= 0)
 			sqlBuf.append(" AND (I.STATUS=?)");
 		if (area >= 0)
@@ -141,10 +139,10 @@ public class GetIssue extends DAO {
 		
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, "%" + searchStr + "%");
+			_ps.setString(1, searchStr);
 			int pos = 1;
 			if (includeComments)
-				_ps.setString(++pos, "%" + searchStr + "%");
+				_ps.setString(++pos, searchStr);
 			if (status >= 0)
 				_ps.setInt(++pos, status);
 			if (area >= 0)
