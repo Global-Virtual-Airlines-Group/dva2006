@@ -82,7 +82,7 @@ public class IssueCommand extends AbstractFormCommand {
 				
 				// Set default assignee
 				GetPilot pdao = new GetPilot(con);
-				Pilot p = pdao.getPilotByCode(SystemData.getInt("academy.assignto"), SystemData.get("airline.db"));
+				Pilot p = pdao.getPilotByCode(SystemData.getInt("helpdesk.assignto"), SystemData.get("airline.db"));
 				i.setAssignedTo(p.getID());
 			}
 			
