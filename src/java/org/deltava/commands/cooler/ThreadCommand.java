@@ -210,6 +210,20 @@ public class ThreadCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Mark this thread as read
+		if (ctx.isAuthenticated()) {
+			@SuppressWarnings("unchecked")
+			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(
+					CommandContext.THREADREAD_ATTR_NAME);
+			if (threadIDs == null) {
+				threadIDs = new HashMap<Integer, Date>();
+				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
+			}
+			
+			// Add thread and save
+			threadIDs.put(new Integer(ctx.getID()), new Date());
+		}
 
 		// Save scores choices and if we are editing
 		ctx.setAttribute("doEdit", Boolean.valueOf(doEdit), REQUEST);
