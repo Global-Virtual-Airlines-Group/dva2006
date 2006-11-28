@@ -132,9 +132,11 @@ return true;
 </content:region>
 </content:page>
 <c:if test="${access.canUpdateStatus}">
+<script language="JavaScript" type="text/javascript">
 // Set original assignee
 var f = document.forms[0];
 document.originalAssignee = f.assignedTo.selectedIndex;
+</script>
 </c:if>
 </body>
 </html>
