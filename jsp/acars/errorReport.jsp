@@ -40,7 +40,7 @@
 <c:if test="${err.FSVersion > 0}">
 <tr>
  <td class="label">Flight Simulator</td>
- <td class="data bld">Flight Simulator <fmt:int value="${err.FSVersion}" /></td>
+ <td class="data bld">Flight Simulator ${err.FSVersion}</td>
 </tr>
 <tr>
  <td class="label">FSUIPC Version</td>

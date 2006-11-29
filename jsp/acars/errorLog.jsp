@@ -72,7 +72,7 @@ return true;
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${err.clientBuild}" /></td>
 <c:if test="${err.FSVersion > 0}">
- <td class="small">FS<fmt:int value="${err.FSVersion}" /></td>
+ <td class="small">FS${err.FSVersion}</td>
 </c:if>
 <c:if test="${err.FSVersion == 0}">
  <td class="small">N/A</td>
