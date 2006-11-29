@@ -184,6 +184,17 @@ public class ThreadReplyCommand extends AbstractCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
+			
+			// Mark this thread as read
+			@SuppressWarnings("unchecked")
+			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+			if (threadIDs == null) {
+				threadIDs = new HashMap<Integer, Date>();
+				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
+			}
+
+			// Add thread and save
+			threadIDs.put(new Integer(thread.getID()), new Date());
 
 			// Save thread data
 			mctxt.addData("thread", thread);
