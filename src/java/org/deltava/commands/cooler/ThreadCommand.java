@@ -214,8 +214,7 @@ public class ThreadCommand extends AbstractCommand {
 		// Mark this thread as read
 		if (ctx.isAuthenticated()) {
 			@SuppressWarnings("unchecked")
-			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(
-					CommandContext.THREADREAD_ATTR_NAME);
+			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 			if (threadIDs == null) {
 				threadIDs = new HashMap<Integer, Date>();
 				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);

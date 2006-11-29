@@ -33,11 +33,10 @@ public class ThreadPostCommand extends AbstractCommand {
 
 	private static Collection _imgMimeTypes;
 
-	private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
-	private static final String[] IMG_ALIASES = { "0", "1" };
-
-	/*
-	 * private static final int IMG_REJECT = 0; private static final int IMG_RESIZE = 1;
+	/* private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
+	 * private static final String[] IMG_ALIASES = { "0", "1" };
+	 * private static final int IMG_REJECT = 0; 
+	 * private static final int IMG_RESIZE = 1;
 	 */
 
 	/**
@@ -69,7 +68,7 @@ public class ThreadPostCommand extends AbstractCommand {
 
 		// Get the channel name
 		String cName = (String) ctx.getCmdParameter(Command.ID, "General Discussion");
-		ctx.setAttribute("imgOpts", ComboUtils.fromArray(IMG_OPTIONS, IMG_ALIASES), REQUEST);
+		//ctx.setAttribute("imgOpts", ComboUtils.fromArray(IMG_OPTIONS, IMG_ALIASES), REQUEST);
 
 		try {
 			Connection con = ctx.getConnection();
@@ -189,7 +188,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				 * scaling image - " + ie.getMessage(), ie); img = null; } }
 				 */
 			}
-			
+
 			// If we have no subject, redirect back
 			if (StringUtils.isEmpty(ctx.getParameter("subject"))) {
 				result.setURL("/jsp/cooler/threadCreate.jsp");
@@ -272,6 +271,17 @@ public class ThreadPostCommand extends AbstractCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
+			
+			// Mark this thread as read
+			@SuppressWarnings("unchecked")
+			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+			if (threadIDs == null) {
+				threadIDs = new HashMap<Integer, Date>();
+				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
+			}
+
+			// Add thread and save
+			threadIDs.put(new Integer(mt.getID()), new Date());
 
 			// Save the thread in the request
 			ctx.setAttribute("thread", mt, REQUEST);

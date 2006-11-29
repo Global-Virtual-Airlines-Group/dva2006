@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -33,8 +33,6 @@ public class ThreadListCommand extends AbstractViewCommand {
 
 		// Get the user for the channel list
 		Person p = ctx.getUser();
-
-		// Get the default airline
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 
 		// Check if we want to display image threads
@@ -43,7 +41,6 @@ public class ThreadListCommand extends AbstractViewCommand {
 		// Get/set start/count parameters and channel name
 		ViewContext vc = initView(ctx);
 		String cName = (String) ctx.getCmdParameter(ID, "General Discussion");
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -133,6 +130,12 @@ public class ThreadListCommand extends AbstractViewCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Add the thread map
+		if (ctx.isAuthenticated()) {
+			Map threadViews = (Map) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
+			ctx.setAttribute("threadViews", threadViews, REQUEST);
 		}
 
 		// Forward to JSP
