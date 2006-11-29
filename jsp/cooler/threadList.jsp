@@ -64,7 +64,9 @@ return true;
 <c:set var="author" value="${pilots[thread.authorID]}" scope="request" />
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="request" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="request" />
-<view:row entry="${thread}">
+<c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="request" />
+<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > user.lastLogoff) && ((empty myLastRead) || (myLastRead < thread.lastUpdate))}" scope="request" />
+<view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td class="left">
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" /></c:if>
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
