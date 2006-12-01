@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.Iterator;
 
 import org.deltava.beans.schedule.*;
+import org.deltava.beans.system.AirlineInformation;
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to update the Flight Schedule.
@@ -282,6 +284,75 @@ public class SetSchedule extends DAO {
 			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Creates a new aircraft profile.
+	 * @param a the Aircraft bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void create(Aircraft a) throws DAOException {
+		try {
+			startTransaction();
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, RANGE, IATA) VALUES (?, ?, ?)");
+			_ps.setString(1, a.getName());
+			_ps.setInt(2, a.getRange());
+			_ps.setString(3, StringUtils.listConcat(a.getIATA(), ","));
+			executeUpdate(1);
+			
+			// Add the webapps
+			prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE) VALUES (?, ?)");
+			_ps.setString(1, a.getName());
+			for (Iterator<AirlineInformation> i = a.getApps().iterator(); i.hasNext(); ) {
+				AirlineInformation ai = i.next();
+				_ps.setString(2, ai.getCode());
+				_ps.addBatch();
+			}
+			
+			// Execute and commit
+			_ps.executeBatch();
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Updates the aircraft profile.
+	 * @param a the Aircraft bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void update(Aircraft a) throws DAOException {
+		try {
+			startTransaction();
+			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=? WHERE (NAME=?)");
+			_ps.setInt(1, a.getRange());
+			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setString(3, a.getName());
+			executeUpdate(1);
+
+			// Clean out the webapps
+			prepareStatementWithoutLimits("DELETE FROM common.AIRCRAFT_AIRLINE WHERE (NAME=?)");
+			_ps.setString(1, a.getName());
+			executeUpdate(0);
+			
+			// Add the webapps
+			prepareStatement("INSERT INTO common.AIRCRAFT_AIRLINE (NAME, AIRLINE) VALUES (?, ?)");
+			_ps.setString(1, a.getName());
+			for (Iterator<AirlineInformation> i = a.getApps().iterator(); i.hasNext(); ) {
+				AirlineInformation ai = i.next();
+				_ps.setString(2, ai.getCode());
+				_ps.addBatch();
+			}
+			
+			// Execute and commit
+			_ps.executeBatch();
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
