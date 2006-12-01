@@ -160,6 +160,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="issues" op="Open">ISSUE TRACKER</el:cmd></td>
 </tr>
+<content:filter roles="Developer">
+<tr class="MenuItem">
+ <td><el:cmd url="issues" linkID="0x${user.ID}">MY ISSUES</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuItem">
  <td><el:link url="http://www.gvagroup.org/javadoc/index.html">JAVA API DOCS</el:link></td>
 </tr>
