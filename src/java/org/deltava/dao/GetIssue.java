@@ -129,7 +129,7 @@ public class GetIssue extends DAO {
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
 				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) "
 				+ "WHERE ((LOCATE(?, I.DESCRIPTION) > 0)");
-		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS LIKE) > 0))" : ")");
+		sqlBuf.append(includeComments ? " OR (LOCATE(?, IC.COMMENTS) > 0))" : ")");
 		if (status >= 0)
 			sqlBuf.append(" AND (I.STATUS=?)");
 		if (area >= 0)
