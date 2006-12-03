@@ -64,7 +64,7 @@ public class GetChart extends DAO {
 	public List<Chart> getCharts(String iataCode) throws DAOException {
 		try {
 			// Prepare the statement
-			prepareStatement("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (IATA=?) ORDER BY NAME");
+			prepareStatement("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (IATA=?) ORDER BY NAME");
 			_ps.setString(1, iataCode);
 
 			// Execute the query
@@ -93,7 +93,7 @@ public class GetChart extends DAO {
 	 */
 	public List<Chart> getChartsByEvent(int eventID) throws DAOException {
 		try {
-			prepareStatement("SELECT C.ID, C.NAME, C.IATA, C.TYPE, C.SIZE FROM common.CHARTS C, "
+			prepareStatement("SELECT C.ID, C.NAME, C.IATA, C.TYPE, C.IMGFORMAT, C.SIZE FROM common.CHARTS C, "
 					+ "common.EVENT_CHARTS EC WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
 			_ps.setInt(1, eventID);
 
@@ -113,7 +113,7 @@ public class GetChart extends DAO {
 	public Chart get(int id) throws DAOException {
 		try {
 			// Prepare the statement
-			prepareStatement("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID=?)");
+			prepareStatement("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			_ps.setMaxRows(1);
 
@@ -134,16 +134,15 @@ public class GetChart extends DAO {
 	public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, NAME, IATA, TYPE, SIZE FROM common.CHARTS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(String.valueOf(id));
-			sqlBuf.append(',');
+			if (i.hasNext())
+				sqlBuf.append(',');
 		}
 
 		// Clear off the trailing comma
-		if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
-			sqlBuf.setLength(sqlBuf.length() - 1);
 		sqlBuf.append("))");
 		setQueryMax(IDs.size());
 
@@ -168,7 +167,8 @@ public class GetChart extends DAO {
 			Chart c = new Chart(rs.getString(2), SystemData.getAirport(rs.getString(3)));
 			c.setID(rs.getInt(1));
 			c.setType(rs.getInt(4));
-			c.setSize(rs.getInt(5));
+			c.setImgType(rs.getInt(5));
+			c.setSize(rs.getInt(6));
 			results.add(c);
 		}
 

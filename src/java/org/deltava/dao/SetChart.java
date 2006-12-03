@@ -2,8 +2,11 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.io.IOException;
 
 import org.deltava.beans.schedule.Chart;
+
+import org.deltava.crypt.MessageDigester;
 
 /**
  * A Data Access Object to write Approach Charts.
@@ -34,12 +37,18 @@ public class SetChart extends DAO {
 			throw new DAOException("Chart already exists");
 
 		try {
-			prepareStatement("INSERT INTO CHARTS (IATA, TYPE, NAME, SIZE, IMG) VALUES (?, ?, ?, ?, ?)");
+			// Calculate the MD5 hash
+			MessageDigester md = new MessageDigester("MD5");
+			byte[] md5data = md.digest(c.getInputStream());
+
+			prepareStatement("INSERT INTO common.CHARTS (IATA, TYPE, IMGFORMAT, NAME, SIZE, IMG, HASH) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getAirport().getIATA());
-			_ps.setInt(2, c.getImgType());
-			_ps.setString(3, c.getName());
-			_ps.setInt(4, c.getSize());
-			_ps.setBinaryStream(5, c.getInputStream(), c.getSize());
+			_ps.setInt(2, c.getType());
+			_ps.setInt(3, c.getImgType());
+			_ps.setString(4, c.getName());
+			_ps.setInt(5, c.getSize());
+			_ps.setBinaryStream(6, c.getInputStream(), c.getSize());
+			_ps.setString(7, MessageDigester.convert(md5data));
 
 			// Update the database
 			executeUpdate(1);
@@ -48,6 +57,8 @@ public class SetChart extends DAO {
 			c.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
+		} catch (IOException ie) {
+			throw new DAOException(ie);
 		}
 	}
 
@@ -58,10 +69,11 @@ public class SetChart extends DAO {
 	 */
 	public void update(Chart c) throws DAOException {
 		try {
-			prepareStatement("UPDATE CHARTS SET IATA=?, NAME=? WHERE (ID=?)");
+			prepareStatement("UPDATE common.CHARTS SET IATA=?, NAME=?, TYPE=? WHERE (ID=?)");
 			_ps.setString(1, c.getAirport().getIATA());
 			_ps.setString(2, c.getName());
-			_ps.setInt(3, c.getID());
+			_ps.setInt(3, c.getType());
+			_ps.setInt(4, c.getID());
 
 			// Update the database
 			executeUpdate(1);
@@ -77,7 +89,7 @@ public class SetChart extends DAO {
 	 */
 	public void delete(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM CHARTS WHERE (ID=?)");
+			prepareStatement("DELETE FROM common.CHARTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
