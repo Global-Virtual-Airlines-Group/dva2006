@@ -4,6 +4,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Approach Chart - ${chart.name}</title>
@@ -35,7 +36,7 @@ return true;
  <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void setChart(this)" /></td>
 </tr>
 <tr>
- <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/0x<fmt:hex value="${chart.ID}" />" border="0" /></td>
+ <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fn:hex(chart.ID)}" />.${fn:lower(chart.imgTypeName)}" border="0" /></td>
 </tr>
 </el:table>
 

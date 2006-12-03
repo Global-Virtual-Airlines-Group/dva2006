@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Approach Charts</title>
@@ -52,13 +53,35 @@ return true;
 </tr>
 
 <!-- Table Pilot Data -->
+<c:set var="hasPDF" value="${false}" scope="request" />
 <c:forEach var="chart" items="${charts}">
-<tr>
+<view:row entry="${chart}">
+<c:choose>
+<c:when test="${chart.imgTypeName == 'PDF'}">
+<c:set var="hasPDF" value="${true}" scope="request" />
+ <td><el:link url="/charts/${fn:hex(chart.ID)}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+ <td class="sec">${chart.typeName}</td>
+ <td>Adobe PDF document, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
+</c:when>
+<c:otherwise>
  <td><el:cmd className="bld" url="chart" linkID="0x${chart.ID}">${chart.name}</el:cmd></td>
  <td class="sec">${chart.typeName}</td>
  <td>${chart.imgTypeName} image, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
-</tr>
+</c:otherwise>
+</c:choose>
+</view:row>
 </c:forEach>
+
+<c:if test="${hasPDF}">
+<!-- Download Acrobat -->
+<tr valign="middle">
+ <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
+ <td colspan="2">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 6</span> or newer 
+in order to be viewed. If you are having difficulties viewing our charts, please click on the link to the 
+left to download the latest version of Adobe Acrobat Reader.<br />
+This is a free download.</td>
+</tr>
+</c:if>
 
 <!-- Scroll Bar -->
 <tr class="title">

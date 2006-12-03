@@ -8,6 +8,7 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.schedule.Chart;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.jdbc.*;
@@ -24,7 +25,7 @@ import org.deltava.util.*;
 public class ImageServlet extends BasicAuthServlet {
 
 	private static final Logger log = Logger.getLogger(ImageServlet.class);
-	
+
 	private static final String CHART_REALM = "\"Approach Charts\"";
 	private static final String EXAM_REALM = "\"Pilot Examinations\"";
 
@@ -81,7 +82,7 @@ public class ImageServlet extends BasicAuthServlet {
 			// Check if we're coming from a questionnaire
 			String referer = req.getHeader("Referer");
 			boolean fromQ = (referer != null) && referer.contains("/questionnaire.do");
-			
+
 			// Don't challenge if coming from a questionnaire and unauthenticated
 			if ((usr == null) && ((imgType == IMG_CHART) || !fromQ)) {
 				challenge(rsp, (imgType == IMG_CHART) ? CHART_REALM : EXAM_REALM);
@@ -95,7 +96,7 @@ public class ImageServlet extends BasicAuthServlet {
 			String name = url.getName();
 			if (name.indexOf('.') != -1)
 				name = name.substring(0, name.indexOf('.'));
-			
+
 			imgID = StringUtils.parseHex(name);
 		} catch (Exception e) {
 			log.warn("Error parsing ID " + url.getName() + " - " + e.getClass().getName());
@@ -132,7 +133,7 @@ public class ImageServlet extends BasicAuthServlet {
 					rsp.setHeader("Cache-Control", "public");
 					rsp.setIntHeader("max-age", 300);
 					break;
-					
+
 				case IMG_EXAM:
 					imgBuffer = dao.getExamResource(imgID);
 					rsp.setHeader("Cache-Control", "private");
@@ -159,19 +160,28 @@ public class ImageServlet extends BasicAuthServlet {
 			return;
 		}
 
+		// Check for PDF
+		boolean isPDF = true;
+		for (int x = 0; x < Chart.PDF_MAGIC.length(); x++)
+			isPDF &= (imgBuffer[x] == Chart.PDF_MAGIC.getBytes()[x]);
+
 		// Get the image type
-		ImageInfo info = new ImageInfo(imgBuffer);
-		if (!info.check()) {
-			rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
-			return;
-		}
+		if (!isPDF) {
+			ImageInfo info = new ImageInfo(imgBuffer);
+			if (!info.check()) {
+				rsp.sendError(HttpServletResponse.SC_UNSUPPORTED_MEDIA_TYPE);
+				return;
+			}
+			
+			rsp.setContentType(info.getMimeType());
+		} else
+			rsp.setContentType("application/pdf");
 
 		// Set the content-type and content length
 		rsp.setStatus(HttpServletResponse.SC_OK);
-		rsp.setContentType(info.getMimeType());
 		rsp.setContentLength(imgBuffer.length);
 		rsp.setBufferSize((imgBuffer.length > 65520) ? 65520 : imgBuffer.length);
-		
+
 		// Dump the data to the output stream
 		try {
 			OutputStream out = rsp.getOutputStream();
