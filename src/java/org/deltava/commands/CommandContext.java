@@ -189,7 +189,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
      */
     public void release() {
         ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-        if (pool == null)
+        if ((pool == null) || (_con == null))
             return;
 
         // Return the connection and record the back-end usage
