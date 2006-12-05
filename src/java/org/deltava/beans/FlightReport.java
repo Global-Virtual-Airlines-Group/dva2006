@@ -90,6 +90,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight Academy Training Flight.
 	 */
 	public static final int ATTR_ACADEMY = 0x400;
+	
+	/**
+	 * Flight flown with excessive range for aircraft.
+	 */
+	public static final int ATTR_RANGEWARN = 0x800;
 
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.

@@ -23,7 +23,6 @@
 <c:if test="${!isAssign}">
 <content:js name="airportRefresh" />
 </c:if>
-<content:sysdata var="eqTypes" name="eqtypes" />
 <content:sysdata var="networks" name="online.networks" />
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <script language="JavaScript" type="text/javascript">

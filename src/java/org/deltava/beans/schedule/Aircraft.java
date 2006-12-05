@@ -3,6 +3,7 @@ package org.deltava.beans.schedule;
 
 import java.util.*;
 
+import org.deltava.beans.ViewEntry;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.cache.Cacheable;
@@ -14,10 +15,11 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Aircraft implements Comparable, Cacheable {
+public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	
 	private String _name;
 	private int _maxRange;
+	private boolean _historic;
 	
 	private final Collection<String> _iataCodes = new TreeSet<String>();
 	private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
@@ -58,6 +60,15 @@ public class Aircraft implements Comparable, Cacheable {
 	 */
 	public Collection<String> getIATA() {
 		return new TreeSet<String>(_iataCodes);
+	}
+	
+	/**
+	 * Returns wether this aircraft is a Historic type.
+	 * @return TRUE if this is a Historic type, otherwise FALSE
+	 * @see Aircraft#setHistoric(boolean)
+	 */
+	public boolean getHistoric() {
+		return _historic;
 	}
 	
 	/**
@@ -123,6 +134,15 @@ public class Aircraft implements Comparable, Cacheable {
 	}
 	
 	/**
+	 * Update wether this aircraft is a Historic type.
+	 * @param isHistoric TRUE if a Historic type, otherwise FALSE
+	 * @see Aircraft#getHistoric()
+	 */
+	public void setHistoric(boolean isHistoric) {
+		_historic = isHistoric;
+	}
+	
+	/**
 	 * Links an IATA equipment code to this aircraft.
 	 * @param code the equipment code
 	 * @throws NullPointerException if code is null
@@ -177,5 +197,13 @@ public class Aircraft implements Comparable, Cacheable {
 	 */
 	public Object cacheKey() {
 		return _name;
+	}
+	
+	/**
+	 * Returns the CSS class name to use if displaying in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		return _historic ? "opt1" : null; 
 	}
 }

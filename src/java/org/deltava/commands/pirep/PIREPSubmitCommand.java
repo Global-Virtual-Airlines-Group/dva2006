@@ -5,7 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.schedule.ScheduleEntry;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -93,6 +93,14 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Update the status of the PIREP
 			pirep.setStatus(FlightReport.SUBMITTED);
 			pirep.setSubmittedOn(new Date());
+			
+			// Check the range
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft a = acdao.get(pirep.getEquipmentType());
+			if (pirep.getDistance() > a.getRange()) {
+				pirep.setAttribute(FlightReport.ATTR_RANGEWARN, true);
+				ctx.setAttribute("rangeWarning", Boolean.TRUE, REQUEST);
+			}
 
 			// Check the schedule database and check the route pair
 			int avgHours = sdao.getFlightTime(pirep.getAirportD().getIATA(), pirep.getAirportA().getIATA());

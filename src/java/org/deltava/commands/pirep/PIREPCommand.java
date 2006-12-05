@@ -149,8 +149,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setFSVersion(ctx.getParameter("fsVersion"));
 
 			// Check for historic aircraft
-			List historicEQ = (List) SystemData.getObject("eqtypes.historic");
-			fr.setAttribute(FlightReport.ATTR_HISTORIC, historicEQ.contains(fr.getEquipmentType()));
+			GetAircraft acdao = new GetAircraft(con);
+			Aircraft aInfo = acdao.get(fr.getEquipmentType());
+			fr.setAttribute(FlightReport.ATTR_HISTORIC, (aInfo != null) && (aInfo.getHistoric()));
+			fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
 
 			// Figure out what network the flight was flown on
 			String net = ctx.getParameter("network");
@@ -245,6 +247,10 @@ public class PIREPCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			Collection<Airline> airlines = new TreeSet<Airline>();
 			Pilot usr = (Pilot) ctx.getUser();
+			
+			//	Get aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
 
 			// Get the DAO and load the flight report
 			GetFlightReports dao = new GetFlightReports(con);
@@ -293,7 +299,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				} else
 					airlines.add(fr.getAirline());
 			}
-
+			
 			ctx.setAttribute("airlines", airlines, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

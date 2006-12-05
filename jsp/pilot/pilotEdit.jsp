@@ -90,7 +90,6 @@ return true;
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="ranks" name="ranks" />
 <content:sysdata var="locations" name="locations" />
-<content:sysdata var="allEQ" name="eqtypes" sort="true" />
 <content:sysdata var="airports" name="airports" mapValues="true" sort="true" />
 <content:sysdata var="roles" name="security.roles" />
 <content:sysdata var="schemes" name="html.schemes" />

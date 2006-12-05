@@ -90,6 +90,10 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			// Save the course
 			ctx.setAttribute("course", c, REQUEST);
 			
+			// Get all aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("actypes", acdao.getAircraftTypes(), REQUEST);
+			
 			// If we're new, forward to the JSP
 			if (ctx.getParameter("comments") == null) {
 				ctx.release();

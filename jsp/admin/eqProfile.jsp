@@ -41,7 +41,6 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="ranks" name="ranks" />
-<content:sysdata var="allEQ" name="eqtypes" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->

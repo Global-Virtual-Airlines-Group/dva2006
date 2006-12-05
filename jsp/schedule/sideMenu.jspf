@@ -35,6 +35,9 @@
  <td><el:cmd url="airports">AIRPORTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="aircraftlist">AIRCRAFT</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="charts">APPROACH CHARTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
