@@ -156,6 +156,7 @@ public class IssueCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			
+			HelpDeskAccessControl ac = null;
 			if (!isNew) {
 				//	Get the Issue
 				GetHelp idao = new GetHelp(con);
@@ -164,7 +165,7 @@ public class IssueCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Issue - " + ctx.getID());
 
 				// Check access
-				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, i);
+				ac = new HelpDeskAccessControl(ctx, i);
 				ac.validate();
 				if (!ac.getCanUpdateStatus())
 					throw securityException("Cannot Update Issue");
@@ -177,7 +178,7 @@ public class IssueCommand extends AbstractFormCommand {
 				ctx.setAttribute("pilots", pdao.getByID(getPilotIDs(i), "PILOTS"), REQUEST);
 			} else {
 				// Check access
-				HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
+				ac = new HelpDeskAccessControl(ctx, null);
 				ac.validate();
 				if (!ac.getCanCreate())
 					throw securityException("Cannot Create Issue");
@@ -194,6 +195,14 @@ public class IssueCommand extends AbstractFormCommand {
 			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
 			ctx.setAttribute("assignees", assignees, REQUEST);
+			
+			// Get options for issue conversion
+			if (ac.getCanUpdateStatus() && !isNew) {
+				ctx.setAttribute("devs", pdao.getByRole("Developer", SystemData.get("airline.db")), REQUEST);
+				ctx.setAttribute("areaNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.AREA), REQUEST);
+				ctx.setAttribute("typeNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.TYPE), REQUEST);
+				ctx.setAttribute("priorityNames", ComboUtils.fromArray(org.deltava.beans.system.Issue.PRIORITY), REQUEST);
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
