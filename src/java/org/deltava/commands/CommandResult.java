@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -183,7 +184,7 @@ public class CommandResult implements java.io.Serializable {
 		buf.append(".do");
 		
 		// Add in the operation and ID
-		Map<String, String> params = new HashMap<String, String>();
+		Map<String, String> params = new LinkedHashMap<String, String>();
 		if (id != null) params.put("id", id);
 		if (opName != null) params.put("op", opName);
 		
