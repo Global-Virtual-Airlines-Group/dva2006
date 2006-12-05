@@ -17,13 +17,24 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.subject, 10, 'Issue Title')) return false;
-if (!validateText(form.body, 5, 'Issue Description')) return false;
-if ((form.sendIssue) && (form.sendIssue.disabled))
-	form.sendIssue.checked = false;
+
+// Validate response
+var act = form.action;
+if (act.indexOf('hdissue.do') != -1) {
+	if (!validateText(form.subject, 10, 'Issue Title')) return false;
+	if (!validateText(form.body, 5, 'Issue Description')) return false;
+	if ((form.sendIssue) && (form.sendIssue.disabled))
+		form.sendIssue.checked = false;
+} else {
+	if (!validateCombo(form.assignedTo, 'Development Issue Assignee')) return false;
+	if (!validateCombo(form.area, 'Development Issue Area')) return false;
+	if (!validateCombo(form.type, 'Development Issue Type')) return false;
+	if (!validateCombo(form.priority, 'Development Issue Priority')) return false;
+}
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('ConvertButton');
 return true;
 }
 <c:if test="${access.canUpdateStatus}">
@@ -93,6 +104,25 @@ return true;
  <td class="data"><el:box name="isPublic" idx="*" value="true" label="This Issue is Public" checked="${issue.public}" /><br />
 <el:box name="sendIssue" idx="*" value="true" label="Send Notification to Assignee" /></td>
 </tr>
+<tr class="title">
+ <td colspan="2" class="left caps">CONVERT TO DEVELOPMENT ISSUE</td>
+</tr>
+<tr>
+ <td class="label">Assign To</td>
+ <td class="data"><el:combo name="assignedTo" idx="*" size="1" options="${devs}" firstEntry="-" /></td>
+</tr>
+<tr>
+ <td class="label">Priority</td>
+ <td class="data"><el:combo name="priority" idx="*" size="1" options="${priorityNames}" firstEntry="-" /></td>
+</tr>
+<tr>
+ <td class="label">Issue Area</td>
+ <td class="data"><el:combo name="area" idx="*" size="1" options="${areaNames}" firstEntry="-" /></td>
+</tr>
+<tr>
+ <td class="label">Issue Type</td>
+ <td class="data"><el:combo name="type" idx="*" size="1" options="${typeNames}" firstEntry="-" /></td>
+</tr>
 </c:if>
 
 <c:if test="${!empty issue}">
@@ -122,7 +152,10 @@ return true;
 <c:if test="${access.canUpdateStatus || (empty issue && access.canCreate)}">
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" /></td>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
+<c:if test="${access.canUpdateStatus}">
+ <el:cmdbutton ID="ConvertButton" post="true" url="hdconvert" linkID="0x${issue.ID}" label="CONVERT ISSUE" />
+</c:if></td>
 </tr>
 </el:table>
 </c:if>
