@@ -11,8 +11,6 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CheckrideScriptAccessControl;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Web Site Command to update Check Ride scripts.
  * @author Luke
@@ -112,7 +110,8 @@ public class CheckRideScriptCommand extends AbstractFormCommand {
 				ctx.setAttribute("access", access, REQUEST);
 
 				// Save all equipment types
-				ctx.setAttribute("actypes", SystemData.getObject("eqtypes"), REQUEST);
+				GetAircraft acdao = new GetAircraft(con);
+				ctx.setAttribute("actypes", acdao.getAircraftTypes(), REQUEST);
 			}
 
 			// Load equipment types

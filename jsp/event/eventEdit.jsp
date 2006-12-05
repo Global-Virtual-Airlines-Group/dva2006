@@ -55,7 +55,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/event/header.jspf" %> 
 <%@ include file="/jsp/event/sideMenu.jspf" %>
-<content:sysdata var="allEQ" name="eqtypes" />
 <content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="defaultNetwork" name="online.default_network" />
 <c:set var="network" value="${empty event ? defaultNetwork : event.networkName}" scope="request" />

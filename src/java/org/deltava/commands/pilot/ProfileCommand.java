@@ -679,6 +679,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
+			
+			// Get all equipment types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 
 			// Get Pilot Examinations
 			GetExam exdao = new GetExam(con);

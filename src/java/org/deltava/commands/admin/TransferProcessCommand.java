@@ -87,6 +87,10 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			newRatings.addAll(newEQ.getPrimaryRatings());
 			newRatings.addAll(newEQ.getSecondaryRatings());
 			ctx.setAttribute("newRatings", newRatings, REQUEST);
+			
+			// Get all aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 
 			// Save the transfer request and access controller
 			ctx.setAttribute("txReq", txreq, REQUEST);

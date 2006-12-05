@@ -36,7 +36,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="eqTypes" name="eqtypes" />
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[flight.instructorID]}" scope="request" />
 

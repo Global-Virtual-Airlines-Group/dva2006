@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
+import org.deltava.dao.GetAircraft;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.innovata.*;
 
@@ -60,10 +61,13 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			}
 
 			// Initialize the DAO
+			GetAircraft acdao = new GetAircraft(ctx.getConnection());
 			GetFullSchedule dao = new GetFullSchedule(is);
+			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setAirlines(SystemData.getAirlines().values());
 			dao.setAirports(SystemData.getAirports().values());
+			ctx.release();
 
 			// Load the schedule data
 			dao.load();
@@ -93,6 +97,8 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			ctx.setAttribute("errors", msgs, SESSION);
 		} catch (DAOException de) {
 			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
 
 		// Forward to the JSP

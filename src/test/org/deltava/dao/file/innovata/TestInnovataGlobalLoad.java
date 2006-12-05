@@ -172,8 +172,10 @@ public class TestInnovataGlobalLoad extends TestCase {
 		assertFalse(airports.isEmpty());
 
 		// Get the DAO
+		GetAircraft acdao = new GetAircraft(_c);
 		GetFullSchedule dao = new GetFullSchedule(new FileInputStream(f));
 		dao.setEffectiveDate(new java.util.Date());
+		dao.setAircraft(acdao.getAircraftTypes());
 		dao.setPrimaryCodes(CODES);
 		dao.setAirlines(_airlines);
 		dao.setAirports(airports);

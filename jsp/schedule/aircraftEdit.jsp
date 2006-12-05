@@ -1,6 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
@@ -48,11 +49,15 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">IATA Equipment Code(s)</td>
- <td class="data"><el:textbox name="iataCodes" idx="*" width="30" height="3">${aircraft.IATA}</el:textbox></td>
+ <td class="data"><el:textbox name="iataCodes" idx="*" width="30" height="3">${iataCodes}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Web Applications</td>
- <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${aircrat.apps}" /></td>
+ <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${aircraft.apps}" /></td>
 </tr>
 </el:table>
 

@@ -62,22 +62,21 @@ public class GetAircraft extends DAO {
 	}
 	
 	/**
-	 * Returns all aircraft used by a particular airline.
-	 * @param al the webapp profile bean
+	 * Returns all aircraft used by the current web application.
 	 * @return a Collection of Aircraft beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Aircraft> getAircraftTypes(AirlineInformation al) throws DAOException {
+	public Collection<Aircraft> getAircraftTypes() throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
 					+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
-			_ps.setString(1, al.getCode());
+			_ps.setString(1, SystemData.get("airline.code"));
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Helper method to process result sets.
 	 */
@@ -90,6 +89,7 @@ public class GetAircraft extends DAO {
 			Aircraft a = new Aircraft(rs.getString(1));
 			a.setRange(rs.getInt(2));
 			a.setIATA(StringUtils.split(rs.getString(3), ","));
+			a.setHistoric(rs.getBoolean(4));
 			results.put(a.getName(), a);
 		}
 		

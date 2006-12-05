@@ -12,8 +12,6 @@ import org.deltava.beans.schedule.*;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.ScheduleLoadDAO;
 
-import org.deltava.util.ConfigLoader;
-
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
  * @author Luke
@@ -34,7 +32,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private final Collection<CSVTokens> _data = new ArrayList<CSVTokens>();
 	private final Collection<String> _aCodes = new HashSet<String>();
 	private final Collection<String> _mlCodes = new HashSet<String>();
-	private Properties _acTypes;
 
 	/**
 	 * Initializes the Data Access Object.
@@ -132,29 +129,11 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Initializes the aircraft codes.
-	 * @throws DAOException if an I/O error occurs
-	 */
-	public void initAircraft() throws DAOException {
-
-		// Load aircraft types from disk
-		_acTypes = new Properties();
-		try {
-			_acTypes.load(ConfigLoader.getStream("/etc/iata_aircraft.properties"));
-		} catch (IOException ie) {
-			DAOException de = new DAOException("Cannot load IATA aircraft codes!");
-			de.setLogStackDump(false);
-			throw de;
-		}
-	}
-
-	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
 	 * @return a Collection of CSVTokens beans
 	 */
 	public Collection<CSVTokens> load() throws DAOException {
-		initAircraft();
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
@@ -196,7 +175,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			Airport airportA = _airports.get(entries.get(22).toUpperCase());
 
 			// Look up the equipment type
-			String eqType = _acTypes.getProperty(entries.get(27));
+			String eqType = getEquipmentType(entries.get(27));
 
 			// Validate the data
 			boolean isOK = true;
