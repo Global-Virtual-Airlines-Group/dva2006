@@ -75,25 +75,32 @@ public class AirportCommand extends AbstractFormCommand {
 
 			// Build the airport latitude/longitude
 			try {
+				GeoPosition gp = new GeoPosition();
 				int latD = Integer.parseInt(ctx.getParameter("latD"));
 				int latM = Integer.parseInt(ctx.getParameter("latM"));
 				int latS = Integer.parseInt(ctx.getParameter("latS"));
-				if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
-					latD *= -1;
+				gp.setLatitude(latD, latM, latS);
 
+				// Convert to to southern hemisphere if necessary
+				if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
+					gp.setLatitude(gp.getLatitude() * -1);
+
+				// Parse longitude
 				int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 				int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 				int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
-					lonD *= -1;
-
-				// Build the GeoPosition bean and update the airport
-				GeoPosition gp = new GeoPosition();
-				gp.setLatitude(latD, latM, latS);
 				gp.setLongitude(lonD, lonM, lonS);
+				
+				// Convert to western hemisphere if necessary
+				if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
+					gp.setLongitude(gp.getLongitude() * -1);
+
+				// Update the airport
 				a.setLocation(gp.getLatitude(), gp.getLongitude());
 			} catch (NumberFormatException nfe) {
-				throw new CommandException("Error parsing Airport latitude/longitude");
+				CommandException ce = new CommandException("Error parsing Airport latitude/longitude");
+				ce.setLogStackDump(false);
+				throw ce;
 			}
 
 			// Get the DAO and write the airport

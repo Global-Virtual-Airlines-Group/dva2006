@@ -185,20 +185,6 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	}
 	
 	/**
-	 * Returns the Hemispheres that contain this location.
-	 * @return bit-wise hemisphere constants
-	 * @see GeoLocation#NORTH
-	 * @see GeoLocation#SOUTH
-	 * @see GeoLocation#EAST
-	 * @see GeoLocation#WEST
-	 */
-	public int getHemisphere() {
-	   int results = (_lat >= 0) ? NORTH : SOUTH;
-	   results += (_lon >= 0) ? EAST : WEST;
-	   return results;
-	}
-
-	/**
 	 * Calculates the distance between two GeoPositions.
 	 * @param gp2 the other position
 	 * @return The distance in natuical miles between the two positions, or -1 if gp2 is null

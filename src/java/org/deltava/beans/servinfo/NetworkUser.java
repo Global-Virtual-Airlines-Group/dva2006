@@ -76,15 +76,6 @@ public abstract class NetworkUser implements java.io.Serializable, Comparable, V
     }
     
 	/**
-	 * Returns the hemispheres containing this User.
-	 * @return bit-wise hemisphere constants
-	 * @see GeoPosition#getHemisphere()
-	 */
-	public final int getHemisphere() {
-	   return _position.getHemisphere();
-	}
-	
-	/**
 	 * Returns the User's current latitude.
 	 * @return the latitude in degrees
 	 * @see NetworkUser#getLongitude()
