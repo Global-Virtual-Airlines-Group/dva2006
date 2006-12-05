@@ -194,10 +194,6 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		return _gpos.getLongitude();
 	}
 
-	public final int getHemisphere() {
-		return _gpos.getHemisphere();
-	}
-
 	/**
 	 * Returns the ambient wind speed.
 	 * @return the speed in knots

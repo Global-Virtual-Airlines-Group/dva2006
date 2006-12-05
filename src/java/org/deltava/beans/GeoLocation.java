@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 /**
@@ -44,27 +44,14 @@ public interface GeoLocation {
 	public static final String[] LON_DIRECTIONS = { "East", "West" };
 	
 	/**
-	 * Northern Hemisphere bit constant. Locations on the Equator are considered within the Northern Hemisphere.
+	 * Returns the latitude of this location.
+	 * @return the latitude in degrees
 	 */
-	public static final int NORTH = 0;
-	
-	/**
-	 * Southern Hemisphere bit constant.
-	 */
-	public static final int SOUTH = 1;
-	
-	/**
-	 * Eastern Hemisphere bit constant. Locations on the Greenwich Meridian are considered within the Eastern
-	 * Hemisphere.
-	 */
-	public static final int EAST = 0;
-
-	/**
-	 * Western hemisphere bit constant.
-	 */
-	public static final int WEST = 0;
-	
 	public double getLatitude();
+	
+	/**
+	 * Returns the longitude of this location.
+	 * @return the longitude in degrees
+	 */
 	public double getLongitude();
-	public int getHemisphere();
 }

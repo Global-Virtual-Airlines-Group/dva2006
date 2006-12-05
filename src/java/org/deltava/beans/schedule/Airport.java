@@ -185,15 +185,6 @@ public class Airport implements java.io.Serializable, Comparable, ComboAlias, Ge
 	}
 	
 	/**
-	 * Returns the hemispheres containing this Airport.
-	 * @return bit-wise hemisphere constants
-	 * @see GeoPosition#getHemisphere()
-	 */
-	public final int getHemisphere() {
-	   return _position.getHemisphere();
-	}
-
-	/**
 	 * Sort the airports by comparing their IATA codes.
 	 */
 	public int compareTo(Object o2) {

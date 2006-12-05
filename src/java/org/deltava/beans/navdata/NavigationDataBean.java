@@ -98,15 +98,6 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
    }
    
    /**
-    * Returns the hemispheres containing this Navagation Aid. 
-    * @return bit-wise hemisphere constants
-    * @see GeoPosition#getHemisphere()
-    */
-   public final int getHemisphere() {
-      return _gp.getHemisphere();
-   }
-
-   /**
     * Returns the object's type.
     * @return the object type code
     * @see NavigationDataBean#getTypeName()

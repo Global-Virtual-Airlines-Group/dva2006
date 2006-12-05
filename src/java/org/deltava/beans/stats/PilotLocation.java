@@ -49,15 +49,6 @@ public class PilotLocation implements MapEntry {
 	}
 	
 	/**
-	 * Returns the hemispheres containing this Pilot.
-	 * @return bit-wise hemisphere constants
-	 * @see GeoLocation#getHemisphere()
-	 */
-	public final int getHemisphere() {
-	   return _position.getHemisphere();
-	}
-	
-	/**
 	 * Returns the Pilot.
 	 * @return the Pilot bean
 	 */

@@ -54,20 +54,21 @@ public class PilotLocationCommand extends AbstractCommand {
 				// Build the pilot latitude/longitude
 				GeoPosition loc = null;
 				try {
+					loc = new GeoPosition();
 					int latD = Integer.parseInt(ctx.getParameter("latD"));
 					int latM = Integer.parseInt(ctx.getParameter("latM"));
 					int latS = Integer.parseInt(ctx.getParameter("latS"));
-					latD *= (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 0) ? 1 : -1;
+					loc.setLatitude(latD, latM, latS);
+					if (StringUtils.arrayIndexOf(GeoLocation.LAT_DIRECTIONS, ctx.getParameter("latDir")) == 1)
+						loc.setLatitude(loc.getLatitude() * -1);
 
+					// Update the longitude
 					int lonD = Integer.parseInt(ctx.getParameter("lonD"));
 					int lonM = Integer.parseInt(ctx.getParameter("lonM"));
 					int lonS = Integer.parseInt(ctx.getParameter("lonS"));
-					lonD *= (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 0) ? 1 : -1;
-
-					// Build the GeoPosition bean and update the airport
-					loc = new GeoPosition();
-					loc.setLatitude(latD, latM, latS);
 					loc.setLongitude(lonD, lonM, lonS);
+					if (StringUtils.arrayIndexOf(GeoLocation.LON_DIRECTIONS, ctx.getParameter("lonDir")) == 1)
+						loc.setLongitude(loc.getLongitude() * -1);
 				} catch (NumberFormatException nfe) {
 					CommandException ce = new CommandException("Error parsing Pilot latitude/longitude");
 					ce.setLogStackDump(false);
