@@ -522,6 +522,18 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="aircraftlist">
+		<name>Aircraft List</name>
+		<class>org.deltava.commands.schedule.AircraftListCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="aircraft">
+		<name>Aircraft Profile</name>
+		<class>org.deltava.commands.schedule.AircraftCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 
 	<!-- Online Event Commands -->
 	<command id="flightboard">
@@ -1358,6 +1370,12 @@
 		<name>Help Desk Issue Comment</name>
 		<class>org.deltava.commands.help.IssueCommentCommand</class>
 		<roles>Pilot</roles>
+	</command>
+
+	<command id="hdconvert">
+		<name>Help Desk Issue Convert</name>
+		<class>org.deltava.commands.help.IssueConvertCommand</class>
+		<roles>HR</roles>
 	</command>
 
 	<command id="hdupdate">

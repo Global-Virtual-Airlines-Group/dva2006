@@ -78,9 +78,13 @@ public class NakedCheckRideCommand extends AbstractCommand {
 			if (!access.getCanAssignRide())
 				throw securityException("Cannot assign Check Ride");
 
-			// Get all equipment types
+			// Get all equipment programs
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", eqdao.getAll(), REQUEST);
+			
+			// Get all aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("actypes", acdao.getAircraftTypes(), REQUEST);
 
 			// If we are not doing a POST, then redirect
 			if (ctx.getParameter("eqType") == null) {

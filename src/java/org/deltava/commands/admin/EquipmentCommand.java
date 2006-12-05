@@ -50,6 +50,10 @@ public class EquipmentCommand extends AbstractFormCommand {
 			if (eq != null)
 			   ctx.setAttribute("captLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 			
+			// Get the aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+			
 			// Get the Examination names
 			GetExamProfiles exdao = new GetExamProfiles(con);
 			ctx.setAttribute("exams", exdao.getExamProfiles(false), REQUEST);

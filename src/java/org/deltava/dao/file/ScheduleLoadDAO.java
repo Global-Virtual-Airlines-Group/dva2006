@@ -28,6 +28,8 @@ public abstract class ScheduleLoadDAO extends DAO {
 	protected final Collection<String> _invalidEQ = new TreeSet<String>();
 	protected final Collection<String> _invalidAP = new TreeSet<String>();
 	protected final Map<Airline, Collection<Airport>> _unsvcAirports = new TreeMap<Airline, Collection<Airport>>();
+	
+	private final Map<String, Aircraft> _iataMappings = new HashMap<String, Aircraft>();
 
 	/**
 	 * Initializes the Data Access Object.
@@ -38,9 +40,26 @@ public abstract class ScheduleLoadDAO extends DAO {
 	}
 
 	/**
+	 * Initializes the IATA aircraft code mappings.
+	 * @param acInfo a collection of Aircraft profile beans
+	 * @see ScheduleLoadDAO#setAirlines(Collection)
+	 * @see ScheduleLoadDAO#setAirports(Collection)
+	 */
+	public void setAircraft(Collection<Aircraft> acInfo) {
+		for (Iterator<Aircraft> i = acInfo.iterator(); i.hasNext(); ) {
+			Aircraft a = i.next();
+			for (Iterator<String> ci = a.getIATA().iterator(); ci.hasNext(); ) {
+				String iata = ci.next();
+				_iataMappings.put(iata, a);
+			}
+		}
+	}
+	
+	/**
 	 * Initializes the list of airlines.
 	 * @param airlines a Collection of Airline beans
 	 * @see ScheduleLoadDAO#setAirports(Collection)
+	 * @see ScheduleLoadDAO#setAircraft(Collection)
 	 */
 	public void setAirlines(Collection<Airline> airlines) {
 		_airlines = new HashMap<String, Airline>();
@@ -55,6 +74,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	 * Initalizes the list of airports.
 	 * @param airports a Collection of Airport beans
 	 * @see ScheduleLoadDAO#setAirlines(Collection)
+	 * @see ScheduleLoadDAO#setAircraft(Collection)
 	 */
 	public void setAirports(Collection<Airport> airports) {
 		_airports = CollectionUtils.createMap(airports, "IATA");
@@ -135,6 +155,18 @@ public abstract class ScheduleLoadDAO extends DAO {
 			if (!isIgnore)
 				validateAirports(se);
 		}
+	}
+	
+	/**
+	 * Maps an IATA equipment code to an aircraft type.
+	 * @param iataCode the IATA code
+	 * @return the aircraft type, or null if not found
+	 * @throws NullPointerException if iataCode is null
+	 * @see ScheduleLoadDAO#setAircraft(Collection)
+	 */
+	protected String getEquipmentType(String iataCode) {
+		Aircraft a = _iataMappings.get(iataCode.toUpperCase());
+		return (a == null) ? null : a.getName();
 	}
 	
 	/**

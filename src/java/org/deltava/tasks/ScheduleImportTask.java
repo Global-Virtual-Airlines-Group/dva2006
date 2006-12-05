@@ -46,8 +46,7 @@ public class ScheduleImportTask extends DatabaseTask {
 		String fileName = SystemData.get("schedule.innovata.download.file");
 		FTPCache cache = new FTPCache(SystemData.get("schedule.innovata.cache"));
 		cache.setHost(SystemData.get("schedule.innovata.download.host"));
-		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData
-				.get("schedule.innovata.download.pwd"));
+		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
 
 		// Connect to the FTP server and download the files as needed
 		AirportServiceMap svcMap = new AirportServiceMap();
@@ -63,12 +62,13 @@ public class ScheduleImportTask extends DatabaseTask {
 			if (ftpInfo.isCached())
 				log.info("Using local copy of " + fileName);
 			else
-				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed()
-						+ " bytes/sec");
+				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
 
 			// Initialize the DAO
+			GetAircraft acdao = new GetAircraft(_con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
+			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(SystemData.getAirlines().values());
 			dao.setAirports(SystemData.getAirports().values());
 			dao.setBufferSize(65536);

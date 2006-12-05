@@ -113,36 +113,38 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the flight ID
 		String fCode = (String) ctx.getCmdParameter(ID, null);
 		ScheduleEntry id = FlightCodeParser.parse(fCode);
-		if (id != null) {
-			ScheduleEntry entry = null;
+		
+		// Get the Schedule entry
+		try {
+			Connection con = ctx.getConnection();
 			
-			// Get the Schedule entry
-			try {
-				Connection con = ctx.getConnection();
+			if (id != null) {
 				GetSchedule dao = new GetSchedule(con);
-				entry = dao.get(id);
+				ScheduleEntry entry = dao.get(id);
 				if (entry == null)
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
+				
+				// Load Airports
+				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+				airports.addAll(SystemData.getAirports().values());
+				for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
+					Airport a = i.next();
+					if (!a.getAirlineCodes().contains(entry.getAirline().getCode()))
+						i.remove();
+				}
 
-				// Save the entry in the request
+				// Save the entry and airports in the request
 				ctx.setAttribute("entry", entry, REQUEST);
-			} catch (DAOException de) {
-				throw new CommandException(de);
-			} finally {
-				ctx.release();
+				ctx.setAttribute("airports", airports, REQUEST);
 			}
-			
-			// Load Airports
-			Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
-			airports.addAll(SystemData.getAirports().values());
-			for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-				Airport a = i.next();
-				if (!a.getAirlineCodes().contains(entry.getAirline().getCode()))
-					i.remove();
-			}
-			
-			// Save airports in the request
-			ctx.setAttribute("airports", airports, REQUEST);
+
+			//	Get aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
 
 		// Forward to the JSP

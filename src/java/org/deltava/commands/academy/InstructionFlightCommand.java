@@ -185,6 +185,10 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 				ctx.setAttribute("instructors", instructors, REQUEST);
 			}
 			
+			// Save aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+			
 			// Save course/access data
 			ctx.setAttribute("course", c, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);

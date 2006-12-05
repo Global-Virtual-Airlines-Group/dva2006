@@ -43,7 +43,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="allEQ" name="eqtypes" sort="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">

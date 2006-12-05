@@ -48,6 +48,7 @@ public class AircraftCommand extends AbstractFormCommand {
 			// Update the aircraft from the request
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
+			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);
@@ -96,6 +97,7 @@ public class AircraftCommand extends AbstractFormCommand {
 					throw notFoundException("Unknown Aircraft - " + aCode);
 				
 				ctx.setAttribute("aircraft", a, REQUEST);
+				ctx.setAttribute("iataCodes", StringUtils.listConcat(a.getIATA(), "\n"), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {

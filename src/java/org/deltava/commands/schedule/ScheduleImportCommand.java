@@ -2,6 +2,7 @@
 package org.deltava.commands.schedule;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
@@ -10,6 +11,7 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 
+import org.deltava.dao.GetAircraft;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.GetPartnerAirlines;
 import org.deltava.dao.file.ScheduleLoadDAO;
@@ -127,6 +129,9 @@ public class ScheduleImportCommand extends AbstractCommand {
 			}
 
 			// Initialize the DAO
+			Connection con = ctx.getConnection();
+			GetAircraft acdao = new GetAircraft(con);
+			dao.setAircraft(acdao.getAircraftTypes());
 			dao.setAirlines(SystemData.getAirlines().values());
 			dao.setAirports(SystemData.getAirports().values());
 			dao.setPartners(getPartners(csvData.getName()));
@@ -135,6 +140,8 @@ public class ScheduleImportCommand extends AbstractCommand {
 			entries = dao.process();
 		} catch (DAOException de) {
 			throw new CommandException(de);
+		} finally {
+			ctx.release();
 		}
 
 		// Save the data in the session

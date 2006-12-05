@@ -543,6 +543,11 @@ aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
  <td class="data">You can modify the Airport profiles contained within the <content:airline /> Flight Schedule.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="aircraftlist">Update Aircraft</el:cmd></td>
+ <td class="data">You can update Aircraft profiles contained within the <content:airline /> Flight Schedule.
+ <i>This information is shared between all web applications.</i></td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="schedimport">Import Flight Schedule</el:cmd><br />
 <el:cmd className="bld" url="schedexport">Export Flight Schedule</el:cmd></td>
  <td class="data">You can import entries into the <content:airline /> Flight Schedule database from a CSV 

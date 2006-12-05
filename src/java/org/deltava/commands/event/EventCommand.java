@@ -93,6 +93,10 @@ public class EventCommand extends AbstractCommand {
 			GetChart cdao = new GetChart(con);
 			e.addCharts(cdao.getChartsByEvent(e.getID()));
 			
+			// Get the equipment types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+			
 			// Get the location of all the pilots
 			GetUserData usrdao = new GetUserData(con);
 			UserDataMap udm = usrdao.getByEvent(e.getID());

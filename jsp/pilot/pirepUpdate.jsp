@@ -29,7 +29,7 @@ This <content:airline /> Flight Report has been successfully and saved in the da
 <br />
 <span class="err">Please note that you must <u>SUBMIT</u> a Flight Report if you want the flight 
 hours and flight leg to be counted here at <content:airline />. To Submit this Flight Report for 
-approval,</span> <el:cmd className="sec bld" url="submit" linkID="0x${pirep.ID}">click here</el:cmd>.<br />
+approval,</span> <el:cmd className="sec bld" url="submit" linkID="0x${pirep.ID}">Click Here</el:cmd>.<br />
 </c:if>
 </c:if>
 <c:if test="${isSubmitted}">
@@ -58,10 +58,16 @@ Flight Report being approved.<br />
 <c:if test="${timeWarning}">
 <br />
 <span class="warn bld">Your have logged <fmt:dec value="${pirep.length / 10.0}" /> flight hours for 
-your flight between ${pirep.airportD.name} and ${pirep.airportA.name}. The <content:airline /> 
-flight schedule lists the average duration of flights between these two airports (including delays
-and turnaround time) as <fmt:dec value="${avgTime / 10}" /> hours.</span> This may cause a delay in your
-Flight Report being approved.<br />
+your flight between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" />. 
+The <content:airline /> flight schedule lists the average duration of flights between these two airports 
+(including delays and turnaround time) as <fmt:dec value="${avgTime / 10}" /> hours.</span> This may cause 
+a delay in your Flight Report being approved.<br />
+</c:if>
+<c:if test="${rangeWarning}">
+<br />
+<span class="warn bld">The flight leg between <fmt:airport airport="${pirep.airportD}" /> and <fmt:airport airport="${pirep.airportA}" /> 
+is <fmt:int value="${pirep.distance}" /> miles, and appears to exceed the maximum range of the ${pirep.equipmentType}.</span> 
+This may cause a delay in your Flight Report being approved.<br />
 </c:if>
 <br />
 To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />

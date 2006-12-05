@@ -43,6 +43,10 @@ public class FindFlightCommand extends AbstractCommand {
 			ctx.setAttribute("airports", airports, REQUEST);
 			if (ctx.getParameter("airline") == null)
 				ctx.setAttribute("airportsA", adao.getDestinationAirports(null), REQUEST);
+			
+			// Get the equipment types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

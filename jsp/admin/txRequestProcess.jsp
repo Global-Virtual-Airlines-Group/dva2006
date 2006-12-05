@@ -43,7 +43,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="allEQ" name="eqtypes" sort="true" />
 <c:set var="cmdName" value="${access.canApprove ? 'transfer' : 'crassign'}" scope="request" />
 
 <!-- Main Body Frame -->

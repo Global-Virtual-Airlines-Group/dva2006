@@ -296,10 +296,11 @@ public class SetSchedule extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, RANGE, IATA) VALUES (?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, RANGE, IATA, HISTORIC) VALUES (?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setInt(2, a.getRange());
 			_ps.setString(3, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setBoolean(4, a.getHistoric());
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -328,10 +329,11 @@ public class SetSchedule extends DAO {
 	public void update(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=? WHERE (NAME=?)");
+			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=?, HISTORIC=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ","));
-			_ps.setString(3, a.getName());
+			_ps.setBoolean(3, a.getHistoric());
+			_ps.setString(4, a.getName());
 			executeUpdate(1);
 
 			// Clean out the webapps
