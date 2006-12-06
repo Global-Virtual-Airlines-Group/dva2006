@@ -44,12 +44,14 @@ receive e-mail messages from the domain <i>${ourDomain}</i> without any filterin
 respond to the automated e-mail verification message, your application to <content:airline /> 
 cannot be approved!</span><br />
 <br />
+<c:if test="${!empty questionnaire}">
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="INITIAL QUESTIONNAIRE" /></td>
 </tr>
 </el:table>
 <br />
+</c:if>
 <content:copyright />
 </content:region>
 </content:page>
