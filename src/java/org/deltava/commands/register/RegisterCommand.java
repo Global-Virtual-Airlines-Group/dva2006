@@ -47,7 +47,14 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/register/register.jsp");
+		
+		// Check for spambots
+		if ("...".equals(ctx.getParameter("firstName"))) {
+			log.error("Detected spambot from " + ctx.getRequest().getRemoteHost());
+			result.setURL("/jsp/register/applicantWelcome.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
 		// Save the notification options
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(NOTIFY_NAMES, NOTIFY_ALIASES), REQUEST);
@@ -62,6 +69,7 @@ public class RegisterCommand extends AbstractCommand {
 
 		// If we're just doing a get, then redirect to the JSP
 		if (ctx.getParameter("firstName") == null) {
+			result.setURL("/jsp/register/register.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -123,15 +131,15 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Get the databases
 			GetUserData uddao = new GetUserData(con);
-			Collection airlines = uddao.getAirlines(true).values();
+			Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
 
 			// Get the Pilot/Applicant Read DAOs
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			GetApplicant adao = new GetApplicant(con);
 
 			// Check for unique name
-			for (Iterator i = airlines.iterator(); i.hasNext();) {
-				AirlineInformation info = (AirlineInformation) i.next();
+			for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
+				AirlineInformation info = i.next();
 
 				// Check Pilots & applicants
 				Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB()));
