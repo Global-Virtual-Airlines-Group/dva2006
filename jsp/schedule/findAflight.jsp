@@ -103,9 +103,11 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="void updateOrigin(this)" /></td>
+ <td class="data"><el:combo name="airportD" idx="*" size="1" firstEntry="-" options="${airports}" value="${fafCriteria.airportD}" onChange="changeAirport(this); updateOrigin(this)" />
+ <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportD, this.value)" /></td>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" /></td>
+ <td class="data"><el:combo name="airportA" idx="*" size="1" firstEntry="-" options="${airportsA}" value="${fafCriteria.airportA}" onChange="void changeAirport(this)" />
+ <el:text ID="airportACode" name="airportACode" idx="*" size="3" max="4" onBlur="void setAirport(document.forms[0].airportA, this.value)" /></td>
 </tr>
 <tr>
  <td class="label">Departure Time (+/- 2h)</td>
@@ -214,5 +216,11 @@ return true;
 <content:copyright />
 </content:region>
 </content:page>
+<c:if test="${!empty fafCriteria}">
+<script language="JavaScript" type="text/javascript">
+changeAirport(document.forms[0].airportD);
+changeAirport(document.forms[0].airportA);
+</script>
+</c:if>
 </body>
 </html>
