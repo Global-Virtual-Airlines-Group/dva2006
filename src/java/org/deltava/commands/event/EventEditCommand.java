@@ -12,12 +12,10 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetEvent;
-import org.deltava.dao.GetChart;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.EventAccessControl;
+
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
@@ -45,11 +43,8 @@ public class EventEditCommand extends AbstractCommand {
 		airports.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		
-		// Strip out ACARS as a network name
-		@SuppressWarnings("unchecked")
-		Set<String> netNames = new TreeSet<String>((Collection) SystemData.getObject("online.networks"));
-		netNames.remove("ACARS");
-		ctx.setAttribute("networks", netNames, REQUEST);
+		// Save network names
+		ctx.setAttribute("networks", SystemData.getObject("online.networks"), REQUEST);
 		
 		// Get the event ID - if not found, assume a new event
 		if (ctx.getID() == 0) {
@@ -95,6 +90,10 @@ public class EventEditCommand extends AbstractCommand {
 			
 			// Get the selected charts
 			e.addCharts(cdao.getChartsByEvent(e.getID()));
+			
+			// Get aircraft types
+			GetAircraft acdao = new GetAircraft(con);
+			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			
 			// Save the charts
 			if (!charts.isEmpty()) {
