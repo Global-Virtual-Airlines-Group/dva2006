@@ -258,7 +258,7 @@ public class GetAcademyCourses extends DAO {
 	public Collection<Course> getAll(String sortBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM COURSES C, CERTS CR LEFT "
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.*, CR.STAGE, MAX(CC.CREATED) AS LC FROM CERTS CR, COURSES C LEFT "
 				+ "JOIN COURSECHAT CC ON (C.ID=CC.COURSE_ID) WHERE (C.CERTNAME=CR.NAME) GROUP BY C.ID ORDER BY ");
 		sqlBuf.append(sortBy);
 		
