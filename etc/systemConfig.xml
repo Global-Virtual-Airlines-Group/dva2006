@@ -528,8 +528,8 @@
 		<build>
 			<map name="minimum">
 				<v1_2>71</v1_2>
-				<v1_9>72</v1_9>
-				<v2_0>1</v2_0>
+				<v1_9>74</v1_9>
+				<v2_0>82</v2_0>
 			</map>
 
 			<latest type="Integer">71</latest>
