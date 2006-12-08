@@ -65,7 +65,7 @@ public class ScheduleImportTask extends DatabaseTask {
 				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
 
 			// Initialize the DAO
-			GetAircraft acdao = new GetAircraft(_con);
+			GetAircraft acdao = new GetAircraft(getConnection());
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
@@ -98,8 +98,14 @@ public class ScheduleImportTask extends DatabaseTask {
 			swdao.write(dao.getInvalidAirports(), dao.getInvalidEQ(), dao.getErrorMessages());
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
-			return;
+			entries = null;
+		} finally {
+			release();
 		}
+		
+		// Return if aborted
+		if (entries == null)
+			return;
 
 		// Determine unserviced airports
 		Collection<Airport> updatedAirports = new HashSet<Airport>();
@@ -117,8 +123,8 @@ public class ScheduleImportTask extends DatabaseTask {
 
 		// Save the entries in the database
 		try {
+			SetSchedule dao = new SetSchedule(getConnection());
 			startTX();
-			SetSchedule dao = new SetSchedule(_con);
 			if (doPurge)
 				dao.purge(false);
 
@@ -141,6 +147,8 @@ public class ScheduleImportTask extends DatabaseTask {
 		} catch (DAOException de) {
 			rollbackTX();
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		// Log completion

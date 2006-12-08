@@ -1,7 +1,8 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.assign.*;
@@ -38,14 +39,17 @@ public class AssignmentPurgeTask extends DatabaseTask {
 		log.info("Executing");
 		
 		try {
-		   GetAssignment rdao = new GetAssignment(_con);
-		   List assignments = rdao.getByStatus(AssignmentInfo.RESERVED);
+			Connection con = getConnection();
+			
+			// Get the assignments
+		   GetAssignment rdao = new GetAssignment(con);
+		   List<AssignmentInfo> assignments = rdao.getByStatus(AssignmentInfo.RESERVED);
 		   
 		   // Check the open assignments
-		   GetPilot pdao = new GetPilot(_con);
-		   SetAssignment wdao = new SetAssignment(_con);
-		   for (Iterator i = assignments.iterator(); i.hasNext(); ) {
-		      AssignmentInfo a = (AssignmentInfo) i.next();
+		   GetPilot pdao = new GetPilot(con);
+		   SetAssignment wdao = new SetAssignment(con);
+		   for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext(); ) {
+		      AssignmentInfo a = i.next();
 		      if (cld.getTime().after(a.getAssignDate())) {
 		         Pilot usr = pdao.get(a.getPilotID());
 		         
@@ -63,6 +67,8 @@ public class AssignmentPurgeTask extends DatabaseTask {
 		   }
 		} catch (DAOException de) {
 		   log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		log.info("Completed");

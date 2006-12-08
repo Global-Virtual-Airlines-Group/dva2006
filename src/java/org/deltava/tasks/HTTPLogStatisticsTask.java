@@ -92,9 +92,6 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 		if (parser == null)
 			return;
 
-		// Get the write DAO
-		SetSystemLog dao = new SetSystemLog(_con);
-
 		// Look for logs
 		Collection<File> files = Arrays.asList(logPath.listFiles(new HTTPLogFilter()));
 		for (Iterator<File> i = files.iterator(); i.hasNext();) {
@@ -103,6 +100,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 			if (stats != null) {
 				log.info("Updating statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy"));
 				try {
+					SetSystemLog dao = new SetSystemLog(getConnection());
 					dao.write(stats);
 					
 					// Convert to a GZIP'd file
@@ -127,6 +125,8 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 				} catch (DAOException de) {
 					log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy")
 							+ " - " + de.getMessage(), de);
+				} finally {
+					release();
 				}
 			}
 		}

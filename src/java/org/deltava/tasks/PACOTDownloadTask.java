@@ -69,7 +69,7 @@ public class PACOTDownloadTask extends DatabaseTask {
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database
-			SetRoute wdao = new SetRoute(_con);
+			SetRoute wdao = new SetRoute(getConnection());
 			wdao.write(or);
 		} catch (CertificateException ce) {
 			log.error("Cannot load SSL certificate - " + ce.getMessage());
@@ -77,6 +77,8 @@ public class PACOTDownloadTask extends DatabaseTask {
 			log.error("Error downloading PACOT Tracks - " + ie.getMessage(), ie);
 		} catch (DAOException de) {
 			log.error("Error saving PACOT Data - " + de.getMessage(), de);
+		} finally {
+			release();
 		}
 	}
 }

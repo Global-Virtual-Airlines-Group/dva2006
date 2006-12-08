@@ -3,6 +3,7 @@ package org.deltava.tasks;
 
 import java.util.*;
 import java.text.*;
+import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.StatusUpdate;
@@ -47,20 +48,22 @@ public class InactivityUpdateTask extends DatabaseTask {
 		boolean isTest = SystemData.getBoolean("smtp.testMode");
 
 		try {
+			Connection con = getConnection();
+			
 			// Initialize the DAOs
-			GetInactivity idao = new GetInactivity(_con);
-			SetStatusUpdate sudao = new SetStatusUpdate(_con);
-			SetPilot pwdao = new SetPilot(_con);
-			SetInactivity iwdao = new SetInactivity(_con);
-			SetTS2Data ts2wdao = new SetTS2Data(_con);
+			GetInactivity idao = new GetInactivity(con);
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
+			SetPilot pwdao = new SetPilot(con);
+			SetInactivity iwdao = new SetInactivity(con);
+			SetTS2Data ts2wdao = new SetTS2Data(con);
 
 			// Get the Message templates
-			GetMessageTemplate mtdao = new GetMessageTemplate(_con);
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			MessageTemplate imt = mtdao.get("USERINACTIVE");
 			MessageTemplate nmt = mtdao.get("USERNOTIFY");
 
 			// Figure out who we're operating as
-			GetInactivity dao = new GetInactivity(_con);
+			GetInactivity dao = new GetInactivity(con);
 			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
 			
 			// Initialize the mailer
@@ -142,7 +145,8 @@ public class InactivityUpdateTask extends DatabaseTask {
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
-			throw new RuntimeException(de);
+		} finally {
+			release();
 		}
 
 		// Log completion
