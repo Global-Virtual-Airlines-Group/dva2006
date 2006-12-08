@@ -115,6 +115,12 @@ return true;
  <td class="label">Status</td>
  <td class="data bld sec">${statusMsg} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
+<c:if test="${!empty pirep.submittedOn}">
+<tr>
+ <td class="label">Submitted on</td>
+ <td class="data"><fmt:date date="${pirep.submittedOn}" /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Airline Name</td>
  <td class="data">${pirep.airline.name}</td>
