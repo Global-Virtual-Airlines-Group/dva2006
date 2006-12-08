@@ -42,7 +42,7 @@ public class CookieCheckCommand extends AbstractCommand {
 		// Check for invalid address bean
 		if (s.getAttribute("addr") != null) {
 			ctx.setAttribute("addr", s.getAttribute("addr"), REQUEST);
-			s.removeAttribute("attr");
+			s.removeAttribute("addr");
 			result.setType(CommandResult.REQREDIRECT);
 		} else
 			result.setType(CommandResult.REDIRECT);
