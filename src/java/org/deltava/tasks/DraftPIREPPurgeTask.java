@@ -2,6 +2,7 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.FlightReport;
 
@@ -41,8 +42,10 @@ public class DraftPIREPPurgeTask extends DatabaseTask {
 		log.info("Purging draft Flight Reports before " + cld.getTime());
 
 		try {
+			Connection con = getConnection();
+			
 			// Get the DAO and the Flight Reports - remove based on date
-			GetFlightReports dao = new GetFlightReports(_con);
+			GetFlightReports dao = new GetFlightReports(con);
 			Collection<FlightReport> pireps = dao.getByStatus(Arrays.asList(DRAFT));
 			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
@@ -51,7 +54,7 @@ public class DraftPIREPPurgeTask extends DatabaseTask {
 			}
 
 			// Get the write DAO and purge
-			SetFlightReport wdao = new SetFlightReport(_con);
+			SetFlightReport wdao = new SetFlightReport(con);
 			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				log.info("Deleting flight " + fr.getFlightCode() + " Date=" + fr.getDate());
@@ -59,6 +62,8 @@ public class DraftPIREPPurgeTask extends DatabaseTask {
 			}
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		// Log completion

@@ -3,7 +3,8 @@ package org.deltava.taskman;
 
 import java.sql.*;
 
-import org.deltava.jdbc.TransactionException;
+import org.deltava.jdbc.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A class to support scheduled Tasks that access the database.
@@ -14,8 +15,7 @@ import org.deltava.jdbc.TransactionException;
 
 public abstract class DatabaseTask extends Task {
 
-	protected Connection _con;
-	private boolean _manualCommit = false;
+	private Connection _con;
 	private boolean _oldCommitLevel;
 
 	/**
@@ -27,17 +27,36 @@ public abstract class DatabaseTask extends Task {
 	}
 
 	/**
-	 * Sets the JDBC connection that this Task will use.
-	 * @param c the JDBC connection
+	 * Obtains a connection from the system connection pool.
+	 * @return a JDBC Connection
+	 * @throws ConnectionPoolException if a Connection Pool error occurs
 	 */
-	public void setConnection(Connection c) {
-		_con = c;
-		try {
-			_manualCommit = !c.getAutoCommit();
-		} catch (Exception e) {
-		}
+	protected Connection getConnection() throws ConnectionPoolException {
+		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		if (pool == null)
+			throw new ConnectionPoolException("No Connection Pool defined", false);
+
+		// Check if a connection has already been reserved
+		if (_con != null)
+			throw new IllegalStateException("Connection already reserved");
+
+		_con = pool.getConnection(false);
+		return _con;
 	}
-	
+
+	/**
+	 * Releases the connection used by this task.
+	 */
+	protected void release() {
+		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
+		if ((pool == null) || (_con == null))
+			return;
+
+		// Return the connection and record the back-end usage
+		pool.release(_con);
+		_con = null;
+	}
+
 	/**
 	 * Marks the start of a multi-step database transaction. This turns off the autoCommit property of the JDBC
 	 * connection, if it is already set.
@@ -47,13 +66,11 @@ public abstract class DatabaseTask extends Task {
 	 * @see Connection#setAutoCommit(boolean)
 	 */
 	protected void startTX() throws TransactionException {
-		if (!_manualCommit) {
-			try {
-				_oldCommitLevel = _con.getAutoCommit();
-				_con.setAutoCommit(false);
-			} catch (SQLException se) {
-				throw new TransactionException(se);
-			}
+		try {
+			_oldCommitLevel = _con.getAutoCommit();
+			_con.setAutoCommit(false);
+		} catch (SQLException se) {
+			throw new TransactionException(se);
 		}
 	}
 
@@ -66,13 +83,11 @@ public abstract class DatabaseTask extends Task {
 	 * @see Connection#setAutoCommit(boolean)
 	 */
 	protected void commitTX() throws TransactionException {
-		if (!_manualCommit) {
-			try {
-				_con.commit();
-				_con.setAutoCommit(_oldCommitLevel);
-			} catch (SQLException se) {
-				throw new TransactionException(se);
-			}
+		try {
+			_con.commit();
+			_con.setAutoCommit(_oldCommitLevel);
+		} catch (SQLException se) {
+			throw new TransactionException(se);
 		}
 	}
 
@@ -85,12 +100,10 @@ public abstract class DatabaseTask extends Task {
 	 * @see Connection#setAutoCommit(boolean)
 	 */
 	protected void rollbackTX() {
-		if (!_manualCommit) {
-			try {
-				_con.rollback();
-				_con.setAutoCommit(_oldCommitLevel);
-			} catch (Exception e) {
-			}
+		try {
+			_con.rollback();
+			_con.setAutoCommit(_oldCommitLevel);
+		} catch (Exception e) {
 		}
 	}
 }

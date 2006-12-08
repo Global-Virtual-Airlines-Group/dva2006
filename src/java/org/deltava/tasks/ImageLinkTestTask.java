@@ -39,15 +39,16 @@ public class ImageLinkTestTask extends DatabaseTask {
 	 */
 	protected void execute() {
 		try {
-			GetCoolerLinks dao = new GetCoolerLinks(_con);
+			GetCoolerLinks dao = new GetCoolerLinks(getConnection());
 			final Collection<Integer> ids = dao.getThreads();
 			log.info("Validating images in " + ids.size() + " discussion threads");
+			release();
 
 			// Keep track of invalid hosts
 			final Collection<String> invalidHosts = new HashSet<String>();
 
 			// Loop through the threads
-			SetCoolerLinks wdao = new SetCoolerLinks(_con);
+			
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
 
@@ -82,7 +83,7 @@ public class ImageLinkTestTask extends DatabaseTask {
 
 						urlcon.disconnect();
 					} catch (IllegalArgumentException iae) {
-						log.warn("Known bad host -" + url.getHost());
+						log.warn("Known bad host - " + url.getHost());
 					} catch (MalformedURLException mue) {
 						log.warn("Invalid URL - " + img);
 					} catch (IOException ie) {
@@ -92,12 +93,17 @@ public class ImageLinkTestTask extends DatabaseTask {
 					}
 
 					// If it's invalid, nuke it
-					if (!isOK)
+					if (!isOK) {
+						SetCoolerLinks wdao = new SetCoolerLinks(getConnection());
 						wdao.delete(id.intValue(), img.getURL());
+						release();
+					}
 				}
 			}
 		} catch (DAOException de) {
 			log.error("Error validating images - " + de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		// Log completion
