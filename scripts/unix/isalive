@@ -22,18 +22,18 @@ else
  /usr/local/sbin/namedctl start
 fi
 
-if [ -f "/var/run/mysql.pid" ]
+if [ -f "/var/run/mysql5.pid" ]
 then
-  if [ -d "/proc/`cat /var/run/mysql.pid`" ]
+  if [ -d "/proc/`cat /var/run/mysql5.pid`" ]
   then
-   echo "mySQL (Database Server) is alive"
+   echo "mySQL 5 (Database Server) is alive"
   else
-   echo "mySQL (Database Server) is DOWN"
-   /usr/local/sbin/mysqlctl start
+   echo "mySQL 5 (Database Server) is DOWN"
+   /usr/local/sbin/mysql5ctl start
   fi
 else
- echo "mySQL (Database Server) is DOWN - no pid"
- /usr/local/sbin/mysqlctl start
+ echo "mySQL 5 (Database Server) is DOWN - no pid"
+ /usr/local/sbin/mysql5ctl start
 fi
 
 if [ -f "/var/run/tomcat55.pid" ]

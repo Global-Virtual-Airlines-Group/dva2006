@@ -43,5 +43,6 @@ put imapd.tar.gz
 put mysql.tar.gz
 put ts2.tar.gz
 put crontabs.tar.gz
+put spamassassin.tar.gz
 
 bye
