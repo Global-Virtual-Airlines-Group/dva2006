@@ -65,7 +65,8 @@ return true;
 <c:set var="authorLoc" value="${userData[thread.authorID]}" scope="request" />
 <c:set var="lastPoster" value="${pilots[thread.lastUpdateID]}" scope="request" />
 <c:set var="myLastRead" value="${threadViews[thread.ID]}" scope="request" />
-<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > user.lastLogoff) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="request" />
+<c:set var="cutoffDate" value="${!empty sessionScope.coolerThreadReadOverride ? sessionScope.coolerThreadReadOverride : user.lastLogoff}" scope="request" />
+<c:set var="isThreadNew" value="${(thread.lastUpdatedOn > cutoffDate) && ((empty myLastRead) || (myLastRead < thread.lastUpdatedOn))}" scope="request" />
 <view:row entry="${thread}" className="${isThreadNew ? 'opt1' : null}">
  <td class="left">
 <c:if test="${thread.image != 0}"><el:img caption="Image" x="20" y="20" src="cooler/icon_img.png" /></c:if>
