@@ -37,6 +37,7 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     public static final String SCREENY_ATTR_NAME = "screenYSize";
     public static final String ADDRINVALID_ATTR_NAME = "emailInvalid";
     public static final String THREADREAD_ATTR_NAME = "coolerThreadRead";
+    public static final String THREADREADOV_ATTR_NAME = "coolerThreadReadOverride";
 
     private HttpServletRequest _req;
     private HttpServletResponse _rsp;
