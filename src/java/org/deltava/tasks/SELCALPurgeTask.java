@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import org.deltava.taskman.DatabaseTask;
@@ -32,10 +32,12 @@ public class SELCALPurgeTask extends DatabaseTask {
 		int purgeInterval = SystemData.getInt("users.selcal.inactive", 14);
 		
 		try {
-			SetSELCAL dao = new SetSELCAL(_con);
+			SetSELCAL dao = new SetSELCAL(getConnection());
 			log.info("Freed up " + dao.free(purgeInterval) + " reserved SELCAL codes");
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		log.info("Completed");

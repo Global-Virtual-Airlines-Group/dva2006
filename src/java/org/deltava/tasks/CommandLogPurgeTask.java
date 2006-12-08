@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import org.deltava.taskman.DatabaseTask;
@@ -34,10 +34,12 @@ public class CommandLogPurgeTask extends DatabaseTask {
 		log.info("Executing");
 		
 		try {
-			SetSystemData dao = new SetSystemData(_con);
+			SetSystemData dao = new SetSystemData(getConnection());
 			dao.purge("COMMANDS", "CMDDATE", purgeDays);
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 		
 		log.info("Completed");

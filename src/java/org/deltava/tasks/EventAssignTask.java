@@ -2,6 +2,7 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
@@ -31,10 +32,10 @@ public class EventAssignTask extends DatabaseTask {
 		super("Event Assignment", EventAssignTask.class);
 	}
 	
-	private boolean hasFlightReports(int eventID, UserDataMap udmap) throws DAOException {
+	private boolean hasFlightReports(Connection c, int eventID, UserDataMap udmap) throws DAOException {
 		
 		// Load the flight reports
-		GetFlightReports frdao = new GetFlightReports(_con);
+		GetFlightReports frdao = new GetFlightReports(c);
 		Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
 			String tableName = i.next();
@@ -52,17 +53,19 @@ public class EventAssignTask extends DatabaseTask {
 		// Create the message context
 		MessageContext mctxt = new MessageContext();
 		try {
+			Connection con = getConnection();
+			
 			// Determining who we are operating as
-			GetPilot pdao = new GetPilot(_con);
+			GetPilot pdao = new GetPilot(con);
 			Pilot from = pdao.getByName(SystemData.get("online.events_assigned_by"), SystemData.get("airline.db"));
 			mctxt.addData("user", from);
 			
 			// Get the DAOs
-			GetEvent dao = new GetEvent(_con);
-			GetUserData usrdao = new GetUserData(_con);
+			GetEvent dao = new GetEvent(con);
+			GetUserData usrdao = new GetUserData(con);
 			
 			// Initialize the message template
-			GetMessageTemplate mtdao = new GetMessageTemplate(_con);
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("EVENTASSIGN"));
 			
 			// Get the events to check
@@ -72,12 +75,12 @@ public class EventAssignTask extends DatabaseTask {
 				UserDataMap usrmap = usrdao.getByEvent(e.getID());
 				
 				// Determine if we need to asign flights
-				if ((!e.getSignups().isEmpty()) && (!hasFlightReports(e.getID(), usrmap))) {
+				if ((!e.getSignups().isEmpty()) && (!hasFlightReports(con, e.getID(), usrmap))) {
 					mctxt.addData("event", e);
 					
 					// Get the write DAOs
-					SetFlightReport fwdao = new SetFlightReport(_con);
-					SetAssignment awdao = new SetAssignment(_con);
+					SetFlightReport fwdao = new SetFlightReport(con);
+					SetAssignment awdao = new SetAssignment(con);
 					
 					// Start the transaction
 					startTX();
@@ -150,6 +153,8 @@ public class EventAssignTask extends DatabaseTask {
 		} catch (DAOException de) {
 			rollbackTX();
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		// Log completion

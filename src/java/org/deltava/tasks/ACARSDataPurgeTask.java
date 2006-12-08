@@ -1,7 +1,8 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.deltava.beans.acars.ConnectionEntry;
 
@@ -39,15 +40,15 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 		log.info("Executing");
 		
 		try {
-			// Remove messages
-			SetACARSLog wdao = new SetACARSLog(_con);
-			log.info("Purged " + wdao.purgeMessages(msgPurge) + " text messages");
+			Connection con = getConnection();
 			
-			// Remove flights
+			// Remove messages and flights
+			SetACARSLog wdao = new SetACARSLog(con);
+			log.info("Purged " + wdao.purgeMessages(msgPurge) + " text messages");
 			log.info("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
 			
 			// Get connections
-			GetACARSLog dao = new GetACARSLog(_con);
+			GetACARSLog dao = new GetACARSLog(con);
 			Collection cons = dao.getUnusedConnections(conPurge);
 			
 			// Purge the connections
@@ -67,6 +68,8 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 			log.info("Purged " + purgeCount + " connection entries");
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
+		} finally {
+			release();
 		}
 
 		log.info("Completed");

@@ -24,8 +24,7 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 
 	private static final Logger log = Logger.getLogger(TaskScheduler.class);
 
-	private Map<String, Task> _tasks = new HashMap<String, Task>();
-	private ConnectionPool _pool;
+	private final Map<String, Task> _tasks = new HashMap<String, Task>();
 
 	/**
 	 * Initializes the Task Scheduler.
@@ -69,9 +68,6 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 	public final void run() {
 		log.info("Starting");
 
-		// Get the JDBC Connection pool
-		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-
 		// Sleep for a while when we start
 		ThreadUtils.sleep(10000);
 
@@ -88,8 +84,9 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 				// If the task is running, leave it alone. Only execute when it's supposed to
 				if (t.isRunnable()) {
 					Connection c = null;
+					ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 					try {
-						c = _pool.getConnection(true);
+						c = pool.getConnection(true);
 
 						// Get the DAO and log the execution time
 						SetSystemData dao = new SetSystemData(c);
@@ -97,20 +94,9 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 					} catch (DAOException de) {
 						log.error("Cannot save execution time", de);
 					} finally {
-						_pool.release(c);
+						pool.release(c);
 					}
 
-					// Pass JDBC Connection to database tasks
-					if (t instanceof DatabaseTask) {
-						DatabaseTask dt = (DatabaseTask) t;
-						try {
-							c = _pool.getConnection();
-							dt.setConnection(c);
-						} catch (ConnectionPoolException cpe) {
-							log.error("Error reserving connection - " + cpe.getMessage());
-						}
-					}
-					
 					// Spawn the thread
 					Thread tt = new Thread(t, t.getName());
 					tt.setDaemon(true);
@@ -118,9 +104,6 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 					tt.start();
 					ThreadUtils.waitFor(tt, 52000);
 					
-					// Release the connection (if any)
-					_pool.release(c);
-
 					// Log completion
 					log.info(t.getName() + " completed - " + t.getLastRunTime() + " ms");
 				}
