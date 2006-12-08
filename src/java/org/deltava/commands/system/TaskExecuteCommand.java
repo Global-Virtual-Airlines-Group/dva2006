@@ -33,12 +33,6 @@ public class TaskExecuteCommand extends AbstractCommand {
 			throw notFoundException("Invalid Scheduled Task - " + taskID);
 
 		try {
-			if (t instanceof DatabaseTask) {
-				DatabaseTask dt = (DatabaseTask) t;
-				dt.setConnection(ctx.getConnection());
-			}
-
-			// Execute the task
 			t.run();
 		} catch (RuntimeException rte) {
 			Throwable tc = rte.getCause();
@@ -49,8 +43,6 @@ public class TaskExecuteCommand extends AbstractCommand {
 		} catch (Exception e) {
 			log.error("Scheduled Task threw " + e.getClass().getName() + " - " + e.getMessage());
 			ctx.setAttribute("ex", e, REQUEST);
-		} finally {
-			ctx.release();
 		}
 
 		// Save the task info in the request
