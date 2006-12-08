@@ -77,7 +77,7 @@ return true;
 <c:if test="${err.FSVersion == 0}">
  <td class="small">N/A</td>
 </c:if>
- <td class="left">${err.message}</td>
+ <td class="left"><fmt:text value="${err.message}" /></td>
 </view:row>
 </c:forEach>
 
