@@ -310,11 +310,11 @@ public class GetCoolerThreads extends DAO {
 				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
 				+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
 				+ "common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
-				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (P.MSGBODY LIKE ?) ");
+				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (LOCATE(?, P.MSGBODY) > 0) ");
 		if (!Channel.ALL.equals(criteria.getChannel()))
 			sqlBuf.append("AND (T.CHANNEL=?) ");
 		if (criteria.getSearchSubject())
-			sqlBuf.append("AND (T.SUBJECT LIKE ?) ");
+			sqlBuf.append("AND (LOCATE(?, T.SUBJECT) > 0) ");
 		if (!CollectionUtils.isEmpty(criteria.getIDs())) {
 			sqlBuf.append("AND (T.AUTHOR IN (");
 			sqlBuf.append(StringUtils.listConcat(criteria.getIDs(), ","));
