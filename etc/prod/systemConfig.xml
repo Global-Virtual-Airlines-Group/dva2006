@@ -574,7 +574,7 @@
 		<buffer>
 			<send type="Integer">20480</send>
 			<recv type="Integer">10240</recv>
-			<nio type="Integer">8192</nio>
+			<nio type="Integer">10240</nio>
 		</buffer>
 
 		<list name="login_msgs" attr="msg">
