@@ -33,7 +33,8 @@ public class UnreadClearCommand extends AbstractCommand {
 		
 		// Clear unread marks
 		Map threadIDs = (Map) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
-		threadIDs.clear();
+		if (threadIDs != null)
+			threadIDs.clear();
 		
 		// Determine where we are referring from, if on the site return back there
 		String referer = ctx.getRequest().getHeader("Referer");
