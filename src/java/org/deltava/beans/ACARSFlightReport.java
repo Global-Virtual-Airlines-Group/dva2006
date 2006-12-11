@@ -542,12 +542,12 @@ public class ACARSFlightReport extends FlightReport {
      * Updates the amount of time at a particular time acceleration rate.
      * @param rate the acceleration rate
      * @param secs the amount of time in seconds
-     * @throws IllegalArgumentException if secs is negative
+     * @throws IllegalArgumentException if rate is not 0, 1, 2, 4
      * @see ACARSFlightReport#getTime(int)
      */
     public void setTime(int rate, int secs) {
     	if (secs < 0)
-    		throw new IllegalArgumentException("Time cannot be negative - " + secs);
+    		secs = 0;
     	else if ((rate < 0) || (rate == 3) || (rate > 4))
     		throw new IllegalArgumentException("Rate must be 0, 1 2 or 4 - " + rate);
     	
