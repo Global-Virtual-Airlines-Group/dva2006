@@ -220,7 +220,7 @@ public class TS2Authenticator implements Authenticator {
 			log.warn("Cannot add " + usr.getName() + " - Voice disabled");
 			return;
 		} else if (StringUtils.isEmpty(p.getPilotCode())) {
-			log.warn("Cannot add " + usr.getName() + " - no pilot code");
+			log.info("Cannot add " + usr.getName() + " - no pilot code");
 			return;
 		}
 		
