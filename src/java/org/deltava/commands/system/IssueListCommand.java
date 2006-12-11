@@ -39,10 +39,12 @@ public class IssueListCommand extends AbstractViewCommand {
         if (StringUtils.arrayIndexOf(SORT_CODE, vc.getSortType()) == -1)
            vc.setSortType(SORT_CODE[0]);
         
+        // Get user ID
+        int id = ctx.getID();
+        
         // Get issue status/area
         int issueStatus = StringUtils.arrayIndexOf(Issue.STATUS, (String) ctx.getCmdParameter(OPERATION, null));
         int issueArea = StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"));
-        
         try {
             Connection c = ctx.getConnection();
             
@@ -52,7 +54,9 @@ public class IssueListCommand extends AbstractViewCommand {
             dao.setQueryMax(vc.getCount());
             
             // If we are getting a user's issues, then grab them
-            if (issueStatus != -1)
+            if (id != 0)
+            	vc.setResults(dao.getUserIssues(id));
+            else if (issueStatus != -1)
                 vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
             else
                 vc.setResults(dao.getAll(vc.getSortType()));
