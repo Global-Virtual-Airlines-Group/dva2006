@@ -736,6 +736,12 @@
 		<roles>*</roles>
 	</command>
 
+	<command id="clearunread">
+		<name>Water Cooler Clean Unread Marks</name>
+		<class>org.deltava.commands.cooler.UnreadClearCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="channeladmin">
 		<name>Water Cooler Channel Admin List</name>
 		<class>org.deltava.commands.cooler.ChannelAdminCommand</class>
