@@ -94,6 +94,9 @@ public class EventAssignTask extends DatabaseTask {
 						UserData usrData = (UserData) usrmap.get(s.getPilotID());
 						Pilot usr = pdao.get(usrData);
 						mctxt.addData("pilot", usr);
+						
+						// Log assignment creation
+						log.warn("Assigning Event flight for " + usr.getName());
 
 						// Create a Flight Assignment
 						AssignmentInfo ai = new AssignmentInfo(s.getEquipmentType());
@@ -119,6 +122,7 @@ public class EventAssignTask extends DatabaseTask {
 
 						// Create a Flight Report
 						FlightReport fr = new FlightReport(leg);
+						fr.setRank(usr.getRank());
 						fr.setDatabaseID(FlightReport.DBID_PILOT, s.getPilotID());
 						fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
 						fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
