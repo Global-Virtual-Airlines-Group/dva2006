@@ -20,29 +20,28 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHandler {
+public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(TaskScheduler.class);
 
 	private final Map<String, Task> _tasks = new HashMap<String, Task>();
 
 	/**
-	 * Initializes the Task Scheduler.
-	 * @see TaskScheduler#TaskScheduler(Collection)
-	 */
-	public TaskScheduler() {
-		super("Task Scheduler");
-		setDaemon(true);
-	}
-
-	/**
 	 * Initializes the Task scheduler with a group of Tasks.
 	 * @param tasks a Collection of Tasks
 	 */
 	public TaskScheduler(Collection<Task> tasks) {
-		this();
+		super();
 		for (Iterator<Task> i = tasks.iterator(); i.hasNext();)
 			addTask(i.next());
+	}
+	
+	/**
+	 * Returns the thread name.
+	 * @return the thread name
+	 */
+	public String toString() {
+		return "Task Scheduler";
 	}
 
 	/**
@@ -72,7 +71,7 @@ public class TaskScheduler extends Thread implements Thread.UncaughtExceptionHan
 		ThreadUtils.sleep(10000);
 
 		// Check loop
-		while (!isInterrupted()) {
+		while (!Thread.currentThread().isInterrupted()) {
 			long now = System.currentTimeMillis();
 
 			// Check each task

@@ -42,10 +42,8 @@ public class DiagnosticCommand extends AbstractCommand {
 
 		// Get the Task Scheduler data
 		TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
-		if (tSched != null) {
-			ctx.setAttribute("taskRunning", Boolean.valueOf(tSched.isAlive()), REQUEST);
+		if (tSched != null)
 			ctx.setAttribute("taskInfo", tSched.getTaskInfo(), REQUEST);
-		}
 		
 		// Get servlet scoreboard
 		ctx.setAttribute("scoreBoard", ServletScoreboard.getScoreboard(), REQUEST);
