@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -27,14 +27,12 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class SystemBootstrap implements ServletContextListener {
+public class SystemBootstrap implements ServletContextListener, Thread.UncaughtExceptionHandler {
 
 	private static Logger log;
-	private ConnectionPool _jdbcPool;
-	private TaskScheduler _taskSched;
 
-	private Runnable _acarsServer;
-	private Thread _acarsThread;
+	private ConnectionPool _jdbcPool;
+	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();
 
 	/**
 	 * Initialize the System bootstrap loader, and configure log4j.
@@ -60,19 +58,19 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Initialize system data
 		SystemData.init();
-		
+
 		// Load the profanity filter
 		try {
 			InputStream is = ConfigLoader.getStream("/etc/profanity.txt");
 			LineNumberReader lr = new LineNumberReader(new InputStreamReader(is));
-			
+
 			// Load the content
 			Collection<String> words = new LinkedHashSet<String>();
 			while (lr.ready())
 				words.add(lr.readLine());
-			
+
 			lr.close();
-			
+
 			// Init the profanity filter
 			log.info("Initializing Content Filter");
 			ProfanityFilter.init(words);
@@ -83,7 +81,8 @@ public class SystemBootstrap implements ServletContextListener {
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
-		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData.getObject("jdbc.connectProperties"));
+		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData
+				.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
 		_jdbcPool.setMaxRequests(SystemData.getInt("jdbc.max_reqs", 0));
@@ -101,7 +100,7 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
-		
+
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
 		Authenticator auth = null;
@@ -122,12 +121,13 @@ public class SystemBootstrap implements ServletContextListener {
 		}
 
 		// Start the Task Manager
+		TaskScheduler taskSched = null;
 		try {
-			_taskSched = new TaskScheduler(TaskFactory.load(SystemData.get("config.tasks")));
-			SystemData.add(SystemData.TASK_POOL, _taskSched);
-			_taskSched.start();
+			taskSched = new TaskScheduler(TaskFactory.load(SystemData.get("config.tasks")));
+			SystemData.add(SystemData.TASK_POOL, taskSched);
+			spawnDaemon(taskSched);
 		} catch (IOException ie) {
-			log.error("Error loading Task Scheduler configuration - " + ie.getMessage(), ie);
+			log.error("Cannot load scheduled tasks - " + ie.getMessage(), ie);
 		}
 
 		// Load data from the database
@@ -157,12 +157,14 @@ public class SystemBootstrap implements ServletContextListener {
 			SystemData.add("airports", dao2.getAll());
 
 			// Load last execution date/times for Scheduled Tasks
-			log.info("Loading Scheduled Task execution data");
-			GetSystemData sysdao = new GetSystemData(c);
-			Map<String, TaskLastRun> taskInfo = sysdao.getTaskExecution();
-			for (Iterator<TaskLastRun> i = taskInfo.values().iterator(); i.hasNext();) {
-				TaskLastRun tlr = i.next();
-				_taskSched.setLastRunTime(tlr);
+			if (taskSched != null) {
+				log.info("Loading Scheduled Task execution data");
+				GetSystemData sysdao = new GetSystemData(c);
+				Map<String, TaskLastRun> taskInfo = sysdao.getTaskExecution();
+				for (Iterator<TaskLastRun> i = taskInfo.values().iterator(); i.hasNext();) {
+					TaskLastRun tlr = i.next();
+					taskSched.setLastRunTime(tlr);
+				}
 			}
 
 			// Load TS2 server info if enabled
@@ -170,7 +172,7 @@ public class SystemBootstrap implements ServletContextListener {
 				log.info("Loading TeamSpeak 2 Voice Servers");
 				GetTS2Data ts2dao = new GetTS2Data(c);
 				SystemData.add("ts2servers", ts2dao.getServers());
-				
+
 				// If we have ACARS, clear the flag
 				if (SystemData.getBoolean("acars.enabled")) {
 					SetTS2Data ts2wdao = new SetTS2Data(c);
@@ -184,13 +186,13 @@ public class SystemBootstrap implements ServletContextListener {
 		} finally {
 			_jdbcPool.release(c);
 		}
-		
+
 		// Get online network information
 		List networks = (List) SystemData.getObject("online.networks");
-		for (Iterator i = networks.iterator(); i.hasNext(); ) {
+		for (Iterator i = networks.iterator(); i.hasNext();) {
 			String network = (String) i.next();
 			log.info("Loading " + network + " data");
-			
+
 			// Load the data
 			ServInfoLoader loader = new ServInfoLoader(network);
 			Thread t = new Thread(loader, network + " ServInfo Loader");
@@ -201,28 +203,23 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Start the ACARS server
 		if (SystemData.getBoolean("acars.enabled")) {
+			Runnable acarsServer = null;
 			try {
 				Class acarsSrvC = Class.forName(SystemData.get("acars.daemon"));
-				_acarsServer = (Runnable) acarsSrvC.newInstance();
+				acarsServer = (Runnable) acarsSrvC.newInstance();
 			} catch (ClassNotFoundException cnfe) {
 				log.error("Cannot find ACARS Daemon " + SystemData.get("acars.daemon"));
 			} catch (Exception ex) {
 				log.error("Error Starting ACARS Daemon", ex);
 			}
 
-			// Save the server
-			SystemData.add(SystemData.ACARS_DAEMON, _acarsServer);
-
 			// Start the server
-			_acarsThread = new Thread(_acarsServer, "ACARS Daemon");
-			_acarsThread.setDaemon(true);
-			_acarsThread.start();
+			SystemData.add(SystemData.ACARS_DAEMON, acarsServer);
+			spawnDaemon(acarsServer);
 		}
 
 		// Start the mailer daemon
-		Thread mailerDaemon = new MailerDaemon();
-		SystemData.add(SystemData.SMTP_DAEMON, mailerDaemon);
-		mailerDaemon.start();
+		spawnDaemon(new MailerDaemon());
 	}
 
 	/**
@@ -232,18 +229,19 @@ public class SystemBootstrap implements ServletContextListener {
 	public void contextDestroyed(ServletContextEvent e) {
 
 		// Shut down the extra threads
-		ThreadUtils.kill(_taskSched, 500);
-		ThreadUtils.kill((Thread) SystemData.getObject(SystemData.SMTP_DAEMON), 500);
-		ThreadUtils.kill(_acarsThread, 500);
-		
+		for (Iterator<Thread> i = _daemons.keySet().iterator(); i.hasNext();) {
+			Thread t = i.next();
+			ThreadUtils.kill(t, 1000);
+		}
+
 		// If ACARS is enabled, then clean out the active flags
 		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
 			log.info("Resetting TeamSpeak 2 client activity flags");
-			
+
 			Connection c = null;
 			try {
 				c = _jdbcPool.getConnection(true);
-				
+
 				SetTS2Data ts2wdao = new SetTS2Data(c);
 				ts2wdao.clearActiveFlags();
 			} catch (DAOException de) {
@@ -271,5 +269,38 @@ public class SystemBootstrap implements ServletContextListener {
 
 		// Close the Log4J manager
 		LogManager.shutdown();
+	}
+
+	/**
+	 * Helper method to spawn a system daemon.
+	 * @param sd the daemon to spawn
+	 * @param isLower TRUE if the thread should run with slightly lower priority, otherwise FALSE
+	 */
+	private void spawnDaemon(Runnable sd) {
+		Thread dt = new Thread(sd);
+		dt.setDaemon(true);
+		dt.setUncaughtExceptionHandler(this);
+		_daemons.put(dt, sd);
+		dt.start();
+	}
+
+	/**
+	 * Uncaught system daemon thread exception handler.
+	 * @param t the daemon thred
+	 * @param e the uncaught exception
+	 */
+	public void uncaughtException(Thread t, Throwable e) {
+		Runnable sd = _daemons.get(t);
+		if (sd == null) {
+			log.error("Unknown daemon thread - " + t.getName());
+			return;
+		}
+
+		// Restart the daemon
+		log.error("Restarting " + sd, e);
+		synchronized (_daemons) {
+			_daemons.remove(t);
+			spawnDaemon(sd);
+		}
 	}
 }

@@ -1,7 +1,8 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.util.*;
+import java.util.concurrent.*;
 
 import javax.activation.DataHandler;
 import javax.mail.*;
@@ -19,53 +20,31 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class MailerDaemon extends Thread {
+public class MailerDaemon implements Runnable {
 
 	private static final Logger log = Logger.getLogger(MailerDaemon.class);
 
-	private static Set<SMTPEnvelope> _queue = new LinkedHashSet<SMTPEnvelope>();
+	private static BlockingQueue<SMTPEnvelope> _queue = new PriorityBlockingQueue<SMTPEnvelope>();
 
 	/**
-	 * Creates a new Mailer daemon thread.
+	 * Returns the thread name.
+	 * @return the tread name
 	 */
-	public MailerDaemon() {
-		super("Mailer Daemon");
-		setDaemon(true);
+	public String toString() {
+		return "Mailer Daemon";
 	}
 
 	/**
 	 * Queues an SMTP message for mailing by the daemon.
 	 * @param env the SMTP envelope
 	 */
-	public void push(SMTPEnvelope env) {
-		synchronized (_queue) {
-			_queue.add(env);
-			_queue.notifyAll();
-		}
+	public static void push(SMTPEnvelope env) {
+		_queue.add(env);
 
 		// Log receipients
 		Address[] addr = env.getRecipients();
-		if ((addr != null) && (addr.length > 0))
-			log.info("Queued message for " + addr[0]);
-	}
-
-	/**
-	 * Returns if the Mailer Daemon queue is empty.
-	 * @return TRUE if the queue is empty, otherwise FALSE
-	 */
-	private boolean hasMessages() {
-		synchronized (_queue) {
-			return (_queue.size() > 0);
-		}
-	}
-
-	private SMTPEnvelope getNext() {
-		Iterator<SMTPEnvelope> i = _queue.iterator();
-		SMTPEnvelope env = i.next();
-		if (env != null)
-			i.remove();
-
-		return env;
+		if (log.isDebugEnabled() && (addr != null) && (addr.length > 0))
+			log.debug("Queued message for " + addr[0]);
 	}
 
 	private void send(Session s, SMTPEnvelope env) {
@@ -104,7 +83,7 @@ public class MailerDaemon extends Thread {
 			}
 
 			imsg.setContent(mp);
-			imsg.setSentDate(new Date());
+			imsg.setSentDate(env.getCreatedOn());
 		} catch (MessagingException me) {
 			log.error("Error setting message content - " + me.getMessage(), me);
 		}
@@ -124,36 +103,29 @@ public class MailerDaemon extends Thread {
 	public void run() {
 		log.info("Starting");
 
-		while (!isInterrupted()) {
-			log.debug("Checking Queue");
-
-			// Check if the queue has any information
-			if (hasMessages()) {
-				log.info("Processing Queue - " + _queue.size() + " entries");
+		// Set the SMTP server
+		Properties props = System.getProperties();
+		props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
+		while (!Thread.currentThread().isInterrupted()) {
+			try {
+				SMTPEnvelope env = _queue.take();
 
 				// Generate a session to the STMP server
 				try {
-					Properties props = System.getProperties();
-					props.setProperty("mail.smtp.host", SystemData.get("smtp.server"));
 					Session s = Session.getInstance(props);
 					s.setDebug(SystemData.getBoolean("smtp.testMode"));
 
-					// Loop through the messages
-					while (hasMessages())
-						send(s, getNext());
+					// Loop through the messages if we have them
+					while (env != null) {
+						send(s, env);
+						env = _queue.poll();
+					}
 				} catch (Exception e) {
 					log.error("Error connecting to STMP server " + e.getMessage());
 				}
-			}
-
-			// Wait for something else to get queued
-			try {
-				synchronized (_queue) {
-					_queue.wait();
-				}
 			} catch (InterruptedException ie) {
-				log.debug("Interrupted while waiting");
-				interrupt();
+				log.warn("Interrupted");
+				Thread.currentThread().interrupt();
 			}
 		}
 
