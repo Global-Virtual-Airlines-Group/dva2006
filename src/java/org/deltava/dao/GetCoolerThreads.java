@@ -310,11 +310,15 @@ public class GetCoolerThreads extends DAO {
 				+ "INTERVAL 12 HOUR) < NOW(), T.LASTUPDATE, T.STICKY), T.LASTUPDATE) AS SD, COUNT(O.OPT_ID), "
 				+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_THREADS T LEFT JOIN "
 				+ "common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) LEFT JOIN common.COOLER_POLLS O ON (T.ID=O.ID) "
-				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE (LOCATE(?, P.MSGBODY) > 0) ");
+				+ "LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE ((LOCATE(?, P.MSGBODY) > 0) ");
+		if (criteria.getSearchSubject())
+			sqlBuf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
+		else
+			sqlBuf.append(") ");
+
+		// Add channel/author criteria
 		if (!Channel.ALL.equals(criteria.getChannel()))
 			sqlBuf.append("AND (T.CHANNEL=?) ");
-		if (criteria.getSearchSubject())
-			sqlBuf.append("AND (LOCATE(?, T.SUBJECT) > 0) ");
 		if (!CollectionUtils.isEmpty(criteria.getIDs())) {
 			sqlBuf.append("AND (T.AUTHOR IN (");
 			sqlBuf.append(StringUtils.listConcat(criteria.getIDs(), ","));
@@ -327,11 +331,12 @@ public class GetCoolerThreads extends DAO {
 			prepareStatement(sqlBuf.toString());
 			int psOfs = 0;
 			_ps.setQueryTimeout(25);
-			_ps.setString(++psOfs, "%" + criteria.getSearchTerm() + "%");
+			_ps.setString(++psOfs, criteria.getSearchTerm());
 			if (!Channel.ALL.equals(criteria.getChannel()))
 				_ps.setString(++psOfs, criteria.getChannel());
 			if (criteria.getSearchSubject())
-				_ps.setString(++psOfs, "%" + criteria.getSearchTerm() + "%");
+				_ps.setString(++psOfs, criteria.getSearchTerm());
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
