@@ -54,11 +54,15 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 		HttpSession s = e.getSession();
 		
 		// Get the User
-		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
-		if (p == null)
-			return;
+		try {
+			Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+			if (p == null)
+				return;
 		
-		// Add the user to the User pool
-		UserPool.add(p, s.getId());
+			// Add the user to the User pool
+			UserPool.add(p, s.getId());
+		} catch (IllegalStateException ise) {
+			System.out.println("Attempting to restore invalid Session");
+		}
 	}
 }
