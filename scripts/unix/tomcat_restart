@@ -5,12 +5,10 @@
 # Mark side as down
 touch /var/run/siteDown.flag
 
-# Stop Tomcat and Apache
+# Stop Tomcat
 echo "Shutting down Tomcat"
 /usr/local/tomcat/bin/shutdown.sh
-echo "Shutting down Apache"
-apachectl stop
-sleep 5
+sleep 3
 
 if [ -f "/var/run/tomcat55.pid" ]
 then
@@ -31,9 +29,6 @@ chown www /var/log/tomcat/catalina.out
 # Start Tomcat and Apache
 echo "Restarting Tomcat"
 /usr/local/tomcat/bin/startup.sh
-sleep 0.7
-echo "Restarting Apache"
-apachectl start
 
 # Mark site as up
 rm /var/run/siteDown.flag
