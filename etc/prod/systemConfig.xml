@@ -222,9 +222,9 @@
 			<autoReconnect>true</autoReconnect>
 			<useLocalSessionState>true</useLocalSessionState>
 			<cachePrepStmts>true</cachePrepStmts>
-			<cacheResultSetMetadata>true</cacheResultSetMetadata>
+			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>true</useServerPrepStmts>
+			<useServerPrepStmts>false</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 		</map>
 		
