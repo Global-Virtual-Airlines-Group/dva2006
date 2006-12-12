@@ -5,10 +5,8 @@ import java.util.*;
 import java.text.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
-import org.deltava.beans.system.InactivityPurge;
-import org.deltava.beans.system.MessageTemplate;
+import org.deltava.beans.*;
+import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
@@ -26,7 +24,7 @@ import org.deltava.util.system.SystemData;
 
 public class InactivityUpdateTask extends DatabaseTask {
 
-	private static final DateFormat _df = new SimpleDateFormat("MMMM dd yyyy");
+	private final DateFormat _df = new SimpleDateFormat("MMMM dd yyyy");
 
 	/**
 	 * Initializes the Schedued Task.
@@ -66,9 +64,6 @@ public class InactivityUpdateTask extends DatabaseTask {
 			GetInactivity dao = new GetInactivity(con);
 			Pilot taskBy = dao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
 			
-			// Initialize the mailer
-			Mailer mailer = new Mailer(isTest ? null : taskBy);
-
 			// Get the pilots to deactivate
 			Collection<InactivityPurge> purgeBeans = dao.getPurgeable(true);
 			Map<Integer, Pilot> pilots = dao.getByID(purgeBeans, "PILOTS");
@@ -101,8 +96,9 @@ public class InactivityUpdateTask extends DatabaseTask {
 						ts2wdao.delete(p.getID());
 
 					// Send notification message
+					Mailer mailer = new Mailer(isTest ? null : taskBy);
 					mailer.setContext(mctxt);
-					//mailer.send(p);
+					mailer.send(p);
 				} else {
 					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
 				}
@@ -139,8 +135,9 @@ public class InactivityUpdateTask extends DatabaseTask {
 					iwdao.setInactivity(p.getID(), inactiveDays - notifyDays, true);
 					
 					// Send the message
+					Mailer mailer = new Mailer(isTest ? null : taskBy);
 					mailer.setContext(mctxt);
-					//mailer.send(p);
+					mailer.send(p);
 				}
 			}
 		} catch (DAOException de) {
