@@ -6,6 +6,8 @@ import java.util.Date;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
+import static org.deltava.beans.acars.ACARSFlags.*;
+
 import org.deltava.util.StringUtils;
 
 /**
@@ -15,7 +17,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLocation, MapEntry, ACARSFlags {
+public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLocation, MapEntry {
 
 	private Date _date;
 	private GeoPosition _gpos;
@@ -520,7 +522,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if (Math.abs(1 - _gForce) >= 0.25)
 			return true;
 
-		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));
+		return (isFlagSet(ACARSFlags.FLAG_STALL) || isFlagSet(ACARSFlags.FLAG_OVERSPEED));
 	}
 
 	/**
@@ -534,13 +536,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 	/**
 	 * Return the Google Maps icon color.
-	 * @return MapEntry#YELLOW
 	 */
 	public String getIconColor() {
-		if (isFlagSet(FLAG_TOUCHDOWN))
+		if (isFlagSet(ACARSFlags.FLAG_TOUCHDOWN))
 			return PURPLE;
-		else if (isWarning())
+		else if (isWarning() || isFlagSet(ACARSFlags.FLAG_CRASH))
 			return RED;
+		else if (isFlagSet(ACARSFlags.FLAG_AP_ANY))
+			return WHITE;
 
 		return YELLOW;
 	}
@@ -649,6 +652,8 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 			buf.append("<span class=\"warn bld\">STALL</span><br />");
 		if (isFlagSet(ACARSFlags.FLAG_OVERSPEED))
 			buf.append("<span class=\"warn bld\">OVERSPEED</span><br />");
+		if (isFlagSet(ACARSFlags.FLAG_CRASH))
+			buf.append("<span class=\"error\">AIRCRAFT CRASHED</span><br />");
 
 		buf.append("</span>");
 		return buf.toString();
