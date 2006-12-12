@@ -83,7 +83,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));
 		if ((criteria.getMaxResults() < 1) || (criteria.getMaxResults() > 150))
-			criteria.setMaxResults(100);
+			criteria.setMaxResults(150);
 		
 		// Validate sort criteria
 		String sortType = ctx.getParameter("sortType"); 
