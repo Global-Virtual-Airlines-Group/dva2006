@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
 import java.io.UnsupportedEncodingException;
@@ -17,11 +17,13 @@ import org.deltava.beans.EMailAddress;
  * @since 1.0
  */
 
-class SMTPEnvelope implements java.io.Serializable, Cloneable {
+class SMTPEnvelope implements java.io.Serializable, Cloneable, Comparable {
 
 	private EMailAddress _msgFrom;
-	private Collection<Address> _msgTo = new LinkedHashSet<Address>();
-	private Collection<Address> _copyTo = new LinkedHashSet<Address>();
+	private final Collection<Address> _msgTo = new LinkedHashSet<Address>();
+	private final Collection<Address> _copyTo = new LinkedHashSet<Address>();
+	
+	private Date _createdOn = new Date();
 
 	private String _subject;
 	private String _body;
@@ -54,6 +56,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
 	 */
 	public String getBody() {
 		return _body;
+	}
+	
+	/**
+	 * Returns the creation date.
+	 * @return the date/time the envelope was created
+	 */
+	public Date getCreatedOn() {
+		return _createdOn;
 	}
 
 	/**
@@ -213,6 +223,7 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
 		SMTPEnvelope result = new SMTPEnvelope(_msgFrom);
 		result._msgTo.addAll(_msgTo);
 		result._copyTo.addAll(_copyTo);
+		result._createdOn = new Date(_createdOn.getTime());
 		result.setContentType(_contentType);
 		result.setAttachment(_attach);
 		result.setSubject(_subject);
@@ -231,5 +242,14 @@ class SMTPEnvelope implements java.io.Serializable, Cloneable {
 		// Get the first recipient
 		Address addr = _msgTo.iterator().next();
 		return addr.toString();
+	}
+	
+	/**
+	 * Compares two envelopes by comparing their creation date/times.
+	 * @see Comparable#compareTo(Object)
+	 */
+	public int compareTo(Object o) {
+		SMTPEnvelope e2 = (SMTPEnvelope) o;
+		return _createdOn.compareTo(e2._createdOn);
 	}
 }
