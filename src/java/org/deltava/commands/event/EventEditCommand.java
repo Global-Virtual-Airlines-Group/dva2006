@@ -53,6 +53,18 @@ public class EventEditCommand extends AbstractCommand {
 			if (!access.getCanCreate())
 				throw securityException("Cannot create new Online Event");
 			
+			try {
+				Connection con = ctx.getConnection();
+				
+				// Get aircraft types
+				GetAircraft acdao = new GetAircraft(con);
+				ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
+			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);
 			
