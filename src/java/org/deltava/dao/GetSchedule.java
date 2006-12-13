@@ -127,9 +127,13 @@ public class GetSchedule extends DAO {
 			if (!conditions.isEmpty())
 				buf.append(')');
 		}
+		
+		// Check for academy flights
+		if (!criteria.getIncludeAcademy())
+			buf.append(" AND (ACADEMY=0)");
 
 		// Add sort column
-		buf.append(" AND (ACADEMY=0) ORDER BY ");
+		buf.append(" ORDER BY ");
 		buf.append(sortBy);
 
 		// Prepare the satement and execute the query
