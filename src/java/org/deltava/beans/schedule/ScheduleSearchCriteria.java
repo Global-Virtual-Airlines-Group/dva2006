@@ -30,6 +30,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _distance;
 	private int _length;
 	private int _maxResults;
+	private boolean _includeAcademy;
 
 	private int _hourD = -1;
 	private int _hourA = -1;
@@ -54,6 +55,10 @@ public class ScheduleSearchCriteria extends Flight {
 
 	public final int getDistance() {
 		return _distance;
+	}
+	
+	public boolean getIncludeAcademy() {
+		return _includeAcademy;
 	}
 
 	public Date getTimeD() {
@@ -105,8 +110,8 @@ public class ScheduleSearchCriteria extends Flight {
 	}
 
 	/**
-	 * Sets the
-	 * @param length
+	 * Sets the length of the flight.
+	 * @param length the length in hours multiplied by ten
 	 */
 	public void setLength(int length) {
 		if (length < 0)
@@ -115,6 +120,10 @@ public class ScheduleSearchCriteria extends Flight {
 		_length = length;
 	}
 
+	/**
+	 * Sets the distance of the flight.
+	 * @param distance the distance in miles
+	 */
 	public void setDistance(int distance) {
 		if (distance > 0)
 			_distance = distance;
@@ -169,5 +178,13 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public final void setEquipmentType(String eqType) {
 		addEquipmentType(eqType);
+	}
+	
+	/**
+	 * Includes Flight Academy flights in the search.
+	 * @param doInclude TRUE if Academy flights should be included, otherwise FALSE
+	 */
+	public void setIncludeAcademy(boolean doInclude) {
+		_includeAcademy = doInclude;
 	}
 }
