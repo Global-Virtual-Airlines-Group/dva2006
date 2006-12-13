@@ -75,9 +75,11 @@ public class GetIssue extends DAO {
 		try {
 			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC FROM common.ISSUES I "
 			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) WHERE ((I.AUTHOR=?) OR "
-			      + "(I.ASSIGNEDTO=?)) GROUP BY I.ID");
+			      + "(I.ASSIGNEDTO=?)) AND ((I.STATUS=?) OR (I.STATUS=?)) GROUP BY I.ID ORDER BY I.STATUS, LC DESC");
 			_ps.setInt(1, id);
 			_ps.setInt(2, id);
+			_ps.setInt(3, Issue.STATUS_OPEN);
+			_ps.setInt(4, Issue.STATUS_DEFERRED);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
