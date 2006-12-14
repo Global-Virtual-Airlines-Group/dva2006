@@ -2,13 +2,16 @@
 package org.deltava.commands.schedule;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.schedule.Aircraft;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to handle Aircraft profiles.
@@ -49,6 +52,16 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
+			
+			// Update the web applications
+			a.clearApps();
+			Collection<String> apps = ctx.getParameters("airlines");
+			if (apps != null) {
+				for (Iterator<String> i = apps.iterator(); i.hasNext(); ) {
+					AirlineInformation ai = SystemData.getApp(i.next());
+					a.addApp(ai);
+				}
+			}
 			
 			// Get the DAO and update the database
 			SetSchedule wdao = new SetSchedule(con);

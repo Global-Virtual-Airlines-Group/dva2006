@@ -29,7 +29,7 @@
  <td width="25%">AIRCRAFT NAME</td>
  <td width="17%">IATA CODE</td>
  <td width="28%">WEB APPLICATIONS</td>
- <td><el:cmdbutton url="airline" op="edit" label="NEW AIRCRAFT" /></td>
+ <td><el:cmdbutton url="aircraft" op="edit" label="NEW AIRCRAFT" /></td>
 </tr>
 
 <!-- Table Aircraft Data -->
