@@ -111,6 +111,13 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	}
 	
 	/**
+	 * Clears the web applications used with this aircraft type.
+	 */
+	public void clearApps() {
+		_airlines.clear();
+	}
+	
+	/**
 	 * Updates the aircraft name.
 	 * @param name the name
 	 * @throws NullPointerException if name is null
