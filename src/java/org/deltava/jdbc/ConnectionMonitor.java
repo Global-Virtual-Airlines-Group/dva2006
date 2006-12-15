@@ -6,6 +6,8 @@ import java.sql.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.util.ThreadUtils;
+
 /**
  * A daemon Thread to monitor JDBC connections.
  * @author Luke
@@ -22,16 +24,15 @@ class ConnectionMonitor implements Runnable {
     */
    static final String NAME = "JDBC Connection Monitor";
 
-   private static List _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
+   private static final List<String> _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
-   private Set<ConnectionPoolEntry> _pool = new TreeSet<ConnectionPoolEntry>();
+   private final Collection<ConnectionPoolEntry> _pool = new TreeSet<ConnectionPoolEntry>();
    private long _sleepTime = 60000; // 1 minute default
    private long _poolCheckCount;
 
    /**
-    * Creates a new Connection Monitor. The thread is set as a daemon.
+    * Creates a new Connection Monitor.
     * @param interval the sleep time <i>in minutes </i>
-    * @see Thread#setDaemon(boolean)
     */
    ConnectionMonitor(int interval) {
       super();
@@ -75,10 +76,11 @@ class ConnectionMonitor implements Runnable {
     */
    protected synchronized void checkPool() {
       _poolCheckCount++;
-      log.debug("Checking Connection Pool");
+      if (log.isDebugEnabled())
+    	  log.debug("Checking Connection Pool");
       
       // Loop through the entries
-      for (Iterator<ConnectionPoolEntry> i = _pool.iterator(); i.hasNext();) {
+      for (Iterator<ConnectionPoolEntry> i = _pool.iterator(); i.hasNext(); ) {
          ConnectionPoolEntry cpe = i.next();
 
          // Check if the entry has timed out
@@ -118,13 +120,7 @@ class ConnectionMonitor implements Runnable {
       // Check loop
       while (!Thread.currentThread().isInterrupted()) {
          checkPool();
-
-         try {
-            Thread.sleep(_sleepTime);
-         } catch (InterruptedException ie) {
-            log.debug("Interrupted while sleeping");
-            Thread.currentThread().interrupt();
-         }
+         ThreadUtils.sleep(_sleepTime);
       }
 
       log.info("Stopping");

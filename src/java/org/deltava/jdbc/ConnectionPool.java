@@ -34,7 +34,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	private SortedSet<ConnectionPoolEntry> _cons;
 	private Thread _monitorThread;
 
-	private Properties _props;
+	private final Properties _props = new Properties();
 	private boolean _autoCommit = true;
 	
 	public class ConnectionPoolFullException extends ConnectionPoolException {
@@ -52,7 +52,6 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public ConnectionPool(int maxSize) {
 		super();
 		DriverManager.setLoginTimeout(5);
-		_props = new Properties();
 		_poolMaxSize = maxSize;
 		_monitor = new ConnectionMonitor(3);
 	}
@@ -62,6 +61,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	 */
 	private void startMonitor() {
 		_monitorThread = new Thread(_monitor, ConnectionMonitor.NAME);
+		_monitorThread.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority()));
 		_monitorThread.setDaemon(true);
 		_monitorThread.setUncaughtExceptionHandler(this);
 		_monitorThread.start();
@@ -207,8 +207,8 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 				cpe.free();
 			}
 
-			// If the connection pool entry is not in use, reserve it
-			if (!cpe.inUse() && (cpe.isSystemConnection() == isSystem)) {
+			// If the connection pool entry is not in use, reserve it - system connections can use idle regular connections
+			if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
 				log.debug("Reserving JDBC Connection " + cpe);
 				_totalRequests++;
 				return cpe.reserve();
