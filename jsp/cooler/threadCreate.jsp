@@ -96,8 +96,9 @@ return true;
 <content:filter roles="Moderator,PIREP,HR,Examination">
 <tr>
  <td class="label">Sticky Until</td>
- <td class="data"><el:text name="stickyDate" idx="*" size="10" max="11" value="${param.stickyDate}" />&nbsp;
-<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></td>
+ <td class="data"><el:text name="stickyDate" idx="*" size="10" max="11" value="${param.stickyDate}" />
+<c:if test="${user.dateFormat == 'MM/dd/yyyy'}">
+ <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].stickyDate')" /></c:if></td>
 </tr>
 </content:filter>
 <tr>

@@ -46,6 +46,7 @@ disableButton('VoteButton');
 disableButton('ImgDeleteButton');
 disableButton('DeleteButton');
 disableButton('MoveButton');
+disableButton('CalendarButton');
 disableButton('EmoticonButton');
 return true;
 }
@@ -256,7 +257,9 @@ WARNING</span></c:if>
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
  <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" linkID="0x${thread.ID}" />
  STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
+<c:if test="${user.dateFormat == 'MM/dd/yyyy'}">
  <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
+</c:if>
  <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
 </content:filter>
  </td>
