@@ -7,8 +7,9 @@ xmlreq.open("GET", "acars_map.ws?time=" + d.getTime(), true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	var isLoading = getElement('isLoading');
-	isLoading.innerHTML = ' - REDRAWING...';
-	
+	if (isLoading)
+		isLoading.innerHTML = ' - REDRAWING...';
+
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	if (!xmlDoc) return false;
@@ -44,7 +45,9 @@ xmlreq.onreadystatechange = function() {
 	enableElement('EarthButton', (ac.length > 0));
 	
 	// Focus on the map
-	isLoading.innerHTML = '';
+	if (isLoading)
+		isLoading.innerHTML = '';
+
 	return true;
 } // function
 
