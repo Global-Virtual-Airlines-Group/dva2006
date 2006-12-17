@@ -331,7 +331,7 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=?, HISTORIC=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
-			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
 			_ps.setString(4, a.getName());
 			executeUpdate(1);
