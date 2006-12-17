@@ -109,12 +109,13 @@ public class ScheduleImportTask extends DatabaseTask {
 
 		// Determine unserviced airports
 		Collection<Airport> updatedAirports = new HashSet<Airport>();
-		Collection<Airport> allAirports = SystemData.getAirports().values();
 		synchronized (SystemData.class) {
+			Collection<Airport> allAirports = SystemData.getAirports().values();
 			for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
 				Airport ap = i.next();
-				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), svcMap.getAirlineCodes(ap))) {
-					log.info("Updating airlines for " + ap);
+				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
+				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
+					log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
 					ap.setAirlines(svcMap.getAirlineCodes(ap));
 					updatedAirports.add(ap);
 				}

@@ -180,24 +180,25 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			// Validate the data
 			boolean isOK = true;
 			Airline a = _airlines.get(entries.get(0));
+			String flightCode = entries.get(0) + entries.get(1);
 			if (eqType == null) {
 				isOK = false;
 				_invalidEQ.add(entries.get(27));
-				log.warn("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
+				log.warn("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27) + " (" + flightCode + ")");
 				_errors.add("Unknown equipment code at Line " + entries.getLineNumber() + " - " + entries.get(27));
 			} else if (airportD == null) {
 				isOK = false;
 				_invalidAP.add(entries.get(14));
-				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
+				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14) + " (" + flightCode + ")");
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(14));
 			} else if (airportA == null) {
 				isOK = false;
 				_invalidAP.add(entries.get(22));
-				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
+				log.warn("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22) + " (" + flightCode + ")");
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 			} else if (a == null) {
 				isOK = false;
-				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
+				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + flightCode);
 				_errors.add("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
 			}
 
@@ -228,8 +229,8 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				// Check if we have an entry
 				DailyScheduleEntry e2 = results.get(entry.toString());
 				if ((e2 == null) || (e2.getDays() < entry.getDays())) {
-					if (validateAirports(entry))
-						results.put(entry.toString(), entry);
+					validateAirports(entry);
+					results.put(entry.toString(), entry);
 				}
 			}
 		}
