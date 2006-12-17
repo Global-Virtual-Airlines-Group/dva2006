@@ -51,13 +51,13 @@ ${error}<br />
 </c:if>
 <tr>
  <td class="label">Schedule Purge</td>
- <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge existing Schedule Entries" /></td>
+ <td class="data"><el:box name="doPurge" idx="*" value="true" checked="true" label="Purge existing Schedule Entries" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Import Options</td>
- <td class="data"><el:box name="canPurge" idx="*" value="true" label="Mark imported Schedule Entries as Purgeable" /><br />
+ <td class="data"><el:box name="canPurge" idx="*" value="true" checked="true" label="Mark imported Schedule Entries as Purgeable" /><br />
 <el:box name="isHistoric" idx="*" value="true" label="Mark imported Schedule Entries as Historic Flights" /><br />
-<el:box name="updateAirports" idx="*" value="true" label="Update Airport/Airline mappings in database" /></td>
+<el:box name="updateAirports" idx="*" value="true" checked="true" label="Update Airport/Airline mappings in database" /></td>
 </tr>
 </el:table>
 
