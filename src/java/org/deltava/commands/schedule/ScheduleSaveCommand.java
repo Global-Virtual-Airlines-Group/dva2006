@@ -4,12 +4,13 @@ package org.deltava.commands.schedule;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.schedule.Airport;
-import org.deltava.beans.schedule.AirportServiceMap;
-import org.deltava.beans.schedule.ScheduleEntry;
+import org.apache.log4j.Logger;
+
+import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
@@ -21,6 +22,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class ScheduleSaveCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(ScheduleSaveCommand.class);
 
 	/**
 	 * Executes the command.
@@ -79,11 +82,13 @@ public class ScheduleSaveCommand extends AbstractCommand {
 
 			// Determine unserviced airports
 			if (updateAirports) {
-				Collection<Airport> allAirports = SystemData.getAirports().values();
 				synchronized (SystemData.class) {
+					Collection<Airport> allAirports = SystemData.getAirports().values();
 					for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
 						Airport ap = i.next();
-						if (CollectionUtils.hasDelta(ap.getAirlineCodes(), svcMap.getAirlineCodes(ap))) {
+						Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
+						if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
+							log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
 							ap.setAirlines(svcMap.getAirlineCodes(ap));
 							dao.update(ap);
 						}
