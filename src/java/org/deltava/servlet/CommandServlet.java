@@ -39,10 +39,9 @@ public class CommandServlet extends GenericServlet {
 	private static final int MAX_EXEC_TIME = 20000;
 	private static final String ERR_PAGE = "/jsp/error/error.jsp";
 
-	//private ConnectionPool _jdbcPool;
-	private Map<String, Command> _cmds;
+	private final Map<String, Command> _cmds = new HashMap<String, Command>();
 	
-	private Collection<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
+	private final Collection<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
 	private int _maxCmdLogSize;
 
 	/**
@@ -61,7 +60,7 @@ public class CommandServlet extends GenericServlet {
 	public void init() throws ServletException {
 		log.info("Initializing");
 		try {
-			_cmds = CommandFactory.load(SystemData.get("config.commands"), getServletContext());
+			_cmds.putAll(CommandFactory.load(SystemData.get("config.commands"), getServletContext()));
 		} catch (IOException ie) {
 			throw new ServletException(ie);
 		}
@@ -224,7 +223,11 @@ public class CommandServlet extends GenericServlet {
 			RequestDispatcher rd = req.getRequestDispatcher(errPage);
 			req.setAttribute("servlet_error", e.getMessage());
 			req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
-			rd.forward(req, rsp);
+			try {
+				rd.forward(req, rsp);
+			} catch (Exception fe) {
+				rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
 		} finally {
 			long execTime = System.currentTimeMillis() - startTime;
 			if (execTime < MAX_EXEC_TIME) {
