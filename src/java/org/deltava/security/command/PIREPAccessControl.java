@@ -60,7 +60,7 @@ public final class PIREPAccessControl extends AccessControl {
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
 		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR);
-		_canHold = isSubmitted && (isPirep || isHR);
+		_canHold = (isSubmitted && (isPirep || isHR)) || ((status == FlightReport.OK) && isHR);
 		_canApprove = ((isPirep || isHR) && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = (_canSubmit || _canHold || _canApprove || _canReject);
