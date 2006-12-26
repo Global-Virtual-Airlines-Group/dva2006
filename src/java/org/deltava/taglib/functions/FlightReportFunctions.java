@@ -90,6 +90,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight Report is a Draft.
+     * @param fr the Flight Report
+     * @return TRUE if the Flight is in Draft status, otherwise FALSE
+     * @see FlightReport#DRAFT 
+     */
+    public static boolean isDraft(FlightReport fr) {
+    	return (fr == null) ? false : (fr.getStatus() == FlightReport.DRAFT);
+    }
+    
+    /**
      * Returns if this Flight is a Historic flight.
      * @param fr the Flight Report
      * @return TRUE if the ATTR_HISTORIC attribute is present, otherwise FALSE

@@ -26,7 +26,6 @@
 <br />
 This <content:airline /> Flight Assigment has been successfully saved in the database.<br />
 </c:when>
-
 <c:when test="${isDelete}">
 <div class="updateHdr">Flight Assignment Deleted</div>
 <br />
@@ -38,7 +37,6 @@ This <content:airline /> Flight Assigment has been successfully removed from the
 <fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
 </c:if>
 </c:when>
-
 <c:when test="${isRelease}">
 <div class="updateHdr">Flight Assignment Released</div>
 <br />
@@ -50,7 +48,6 @@ This <content:airline /> Flight Assigment has been successfully released.<br />
 <fmt:int value="${flightsUpdated}" /> Flight Reports were updated in the database.<br />
 </c:if>
 </c:when>
-
 <c:when test="${isReserve}">
 <div class="updateHdr">Flight Assignment Reserved</div>
 <br />
@@ -59,7 +56,6 @@ This <content:airline /> Flight Assigment has been successfully reserved by ${pi
 <fmt:int value="${fn:sizeof(assign.flights)}" /> draft Flight Reports have been pre-populated within
 our database.<br />
 </c:when>
-
 <c:otherwise>
 <div class="updateHdr">Flight Assignment Updated</div>
 <br />
@@ -67,6 +63,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 </c:otherwise>
 </c:choose>
 <br />
+To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" linkID="0x${pilot.ID}">Click Here</el:cmd>.<br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
