@@ -132,6 +132,13 @@
 		<function-signature>boolean isACARS(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for Draft Flight Report -->
+	<function>
+		<name>isDraft</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isDraft(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Microsoft Flight Simulator Flight Report -->
 	<function>
 		<name>isMSFS</name>
