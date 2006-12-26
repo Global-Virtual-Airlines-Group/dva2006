@@ -151,9 +151,8 @@ public class CommandServlet extends GenericServlet {
 		try {
 			// Validate command access
 			if (!RoleUtils.hasAccess(ctxt.getRoles(), cmd.getRoles())) {
-				ControllerException ce = new CommandException("Not Authorized to execute");
+				ControllerException ce = new CommandException("Not Authorized to execute", false);
 				ce.setForwardURL("/jsp/error/securityViolation.jsp");
-				ce.setLogStackDump(false);
 				ce.setWarning(true);
 				throw ce;
 			}
@@ -168,6 +167,14 @@ public class CommandServlet extends GenericServlet {
 			ctxt.setCacheHeaders();
 			CommandResult result = ctxt.getResult();
 			result.complete();
+			
+			// Check for empty result
+			if (result.getURL() == null) {
+				ControllerException ce = new CommandException("Null result URL from " + req.getRequestURI(), false);
+				ce.setForwardURL("/home.do");
+				ce.setWarning(true);
+				throw ce;
+			}
 
 			// Redirect/forward/send status code
 			try {
