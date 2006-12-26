@@ -176,17 +176,19 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_VATSIM
      * @see FlightReport#ATTR_IVAO
      * @see FlightReport#ATTR_FPI
+     * @see FlightReport#ATTR_INTVAS
      */
     public static String network(FlightReport fr) {
-    	if (fr == null) {
+    	if (fr == null)
     		return "Offline";
-    	} else if (fr.hasAttribute(FlightReport.ATTR_VATSIM)) {
+    	else if (fr.hasAttribute(FlightReport.ATTR_VATSIM))
             return OnlineNetwork.VATSIM;
-        } else if (fr.hasAttribute(FlightReport.ATTR_IVAO)) {
+        else if (fr.hasAttribute(FlightReport.ATTR_IVAO))
             return OnlineNetwork.IVAO;
-        } else if (fr.hasAttribute(FlightReport.ATTR_FPI)) {
+        else if (fr.hasAttribute(FlightReport.ATTR_FPI))
             return OnlineNetwork.FPI;
-        }
+        else if (fr.hasAttribute(FlightReport.ATTR_INTVAS))
+        	return OnlineNetwork.INTVAS;
         
         return "Offline";
     }

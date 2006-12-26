@@ -67,9 +67,11 @@ public class FlightBoardCommand extends AbstractCommand {
 				info = new NetworkInfo(network);
 			} else
 				info = loader.getInfo();
-		} else if (info == null) {
+				if (info == null)
+					info = new NetworkInfo(network);
+		} else if (info == null)
 			info = new NetworkInfo(network);
-		} else if (info.getExpired()) {
+		else if (info.getExpired()) {
 			synchronized (ServInfoLoader.class) {
 				if (!ServInfoLoader.isLoading(network)) {
 					log.info("Spawning new ServInfo load thread");

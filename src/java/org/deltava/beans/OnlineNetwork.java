@@ -13,4 +13,5 @@ public interface OnlineNetwork {
 	public static final String VATSIM = "VATSIM";
 	public static final String IVAO = "IVAO";
 	public static final String FPI = "FPI";
+	public static final String INTVAS = "INTVAS";
 }

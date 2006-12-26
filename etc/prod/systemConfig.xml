@@ -289,6 +289,7 @@
 		<list name="networks" attr="network">
 			<network>VATSIM</network>
 			<network>IVAO</network>
+			<network>INTVAS</network>
 		</list>
 
 		<list name="highlightCodes" attr="code">
@@ -316,6 +317,16 @@
 				<info>/var/cache/servinfo/ivao.info</info>
 			</local>
 		</ivao>
+
+		<intvas>
+			<status_url>http://www.intvas.net/whazzup/status.txt</status_url>
+			<banner>intvas.png</banner>
+			<url>http://www.intvas.net/</url>
+			<local>
+				<status>/var/cache/servinfo/intvas.status</status>
+				<info>/var/cache/servinfo/intvas.info</info>
+			</local>
+		</intvas>
 
 		<default_network>VATSIM</default_network>
 		<events_assigned_by>Andrew Vane</events_assigned_by>
@@ -550,7 +561,7 @@
 		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">120</timeout>
 		<ban_length type="Integer">15</ban_length>
-		<position_interval type="Integer">500</position_interval>
+		<position_interval type="Integer">200</position_interval>
 		<build>
 			<map name="minimum">
 				<v1_2>71</v1_2>
