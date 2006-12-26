@@ -60,6 +60,15 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight was logged using Microsoft Flight Simulator.
+     * @param fr the Flight Report
+     * @return TRUE if the Flight was logged using a version of MSFS
+     */
+    public static boolean isMSFS(FlightReport fr) {
+    	return (fr != null) && (fr.getFSVersion() != 100) && (fr.getFSVersion() != 0);
+    }
+    
+    /**
      * Returns if the Flight was flown online.
      * @param fr the Flight Report
      * @return TRUE if the ATTR_ONLINE MASK attribute is present, otherwise FALSE
