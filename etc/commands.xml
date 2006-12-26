@@ -709,7 +709,7 @@
 	<command id="threadkill">
 		<name>Delete Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadDeleteCommand</class>
-		<roles>Admin</roles>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="threadmove">
