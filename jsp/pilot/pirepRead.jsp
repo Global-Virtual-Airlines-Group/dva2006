@@ -143,8 +143,11 @@ return true;
 <c:when test="${pirep.FSVersion == 0}">
  <td class="data sec bld">UNKNOWN</td>
 </c:when>
-<c:otherwise>
+<c:when test="${fn:isMSFS(pirep)}">
  <td class="data sec bld">Microsoft Flight Simulator ${pirep.FSVersion}</td>
+</c:when>
+<c:otherwise>
+ <td class="data sec bld">Laminar Research X-Plane</td>
 </c:otherwise>
 </c:choose>
 </tr>
