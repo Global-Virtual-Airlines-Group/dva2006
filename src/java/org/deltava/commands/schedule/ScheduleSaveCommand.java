@@ -55,9 +55,6 @@ public class ScheduleSaveCommand extends AbstractCommand {
 		boolean isHistoric = Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue();
 		boolean updateAirports = Boolean.valueOf(ctx.getParameter("updateAirports")).booleanValue();
 
-		// Update airport service fields
-		AirportServiceMap svcMap = new AirportServiceMap();
-
 		// Save the entries
 		try {
 			Connection con = ctx.getConnection();
@@ -75,13 +72,14 @@ public class ScheduleSaveCommand extends AbstractCommand {
 				ScheduleEntry se = (ScheduleEntry) i.next();
 				se.setCanPurge(canPurge);
 				se.setHistoric(isHistoric);
-				svcMap.add(se.getAirline(), se.getAirportD());
-				svcMap.add(se.getAirline(), se.getAirportA());
 				dao.write(se, false);
 			}
 
 			// Determine unserviced airports
 			if (updateAirports) {
+				GetScheduleInfo sidao = new GetScheduleInfo(con);
+				AirportServiceMap svcMap = sidao.getRoutePairs();
+				
 				synchronized (SystemData.class) {
 					Collection<Airport> allAirports = SystemData.getAirports().values();
 					for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
