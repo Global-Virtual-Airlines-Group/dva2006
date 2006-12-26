@@ -189,7 +189,7 @@ public class ThreadCommand extends AbstractCommand {
 			if (ac.getCanUnlock() || ac.getCanLock()) {
 				cdao.setQueryMax(0);
 				ctx.setAttribute("channel", c, REQUEST);
-				Collection<Channel> channels = cdao.getChannels(airline, false);
+				Collection<Channel> channels = cdao.getChannels(airline, ctx.isUserInRole("Admin"));
 				channels.remove(Channel.ALL);
 				channels.remove(Channel.SHOTS);
 				ctx.setAttribute("channels", channels, REQUEST);
