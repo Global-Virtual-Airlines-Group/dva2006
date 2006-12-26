@@ -269,12 +269,13 @@
 	</config>
 	
 	<online>
-		<list name="networks" attr="network">
+		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
+			<network>INTVAS</network>
 		</list>
-		
-		<list name="highlightCodes" attr="code">
+
+		<list name="highlightCodes" attr="code" unique="true">
 			<code>DAL</code>
 			<code>DVA</code>
 			<code>DL</code>
@@ -299,6 +300,16 @@
 				<info>d:\library\servinfo\ivao.info</info>
 			</local>
 		</ivao>
+
+		<intvas>
+			<status_url>http://www.intvas.net/whazzup/status.txt</status_url>
+			<banner>intvas.png</banner>
+			<url>http://www.intvas.net/</url>
+			<local>
+				<status>/var/cache/servinfo/intvas.status</status>
+				<info>/var/cache/servinfo/intvas.info</info>
+			</local>
+		</intvas>
 
 		<default_network>VATSIM</default_network>
 		<events_assigned_by>Andrew Vane</events_assigned_by>

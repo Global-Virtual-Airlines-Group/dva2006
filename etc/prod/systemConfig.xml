@@ -286,13 +286,13 @@
 	</config>
 
 	<online>
-		<list name="networks" attr="network">
+		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
 			<network>INTVAS</network>
 		</list>
 
-		<list name="highlightCodes" attr="code">
+		<list name="highlightCodes" attr="code" unique="true">
 			<code>DAL</code>
 			<code>DVA</code>
 			<code>DL</code>
