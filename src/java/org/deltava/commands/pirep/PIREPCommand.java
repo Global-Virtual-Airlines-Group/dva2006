@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
+import org.deltava.beans.assign.*;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
 
@@ -156,13 +157,14 @@ public class PIREPCommand extends AbstractFormCommand {
 
 			// Figure out what network the flight was flown on
 			String net = ctx.getParameter("network");
-			if (OnlineNetwork.VATSIM.equals(net)) {
+			if (OnlineNetwork.VATSIM.equals(net))
 				fr.setAttribute(FlightReport.ATTR_VATSIM, true);
-			} else if (OnlineNetwork.IVAO.equals(net)) {
+			else if (OnlineNetwork.IVAO.equals(net))
 				fr.setAttribute(FlightReport.ATTR_IVAO, true);
-			} else if (OnlineNetwork.FPI.equals(net)) {
+			else if (OnlineNetwork.FPI.equals(net))
 				fr.setAttribute(FlightReport.ATTR_FPI, true);
-			}
+			else if (OnlineNetwork.INTVAS.equals(net))
+				fr.setAttribute(FlightReport.ATTR_INTVAS, true);
 
 			// Get the flight time
 			try {
@@ -377,6 +379,20 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (eventID != 0) {
 				GetEvent evdao = new GetEvent(con);
 				ctx.setAttribute("event", evdao.get(eventID), REQUEST);
+			}
+			
+			// If this PIREP is part of a flight assignment and a draft, load the assignment
+			if ((fr.getStatus() == FlightReport.DRAFT) && (fr.getDatabaseID(FlightReport.DBID_ASSIGN) != 0)) {
+				GetAssignment fadao = new GetAssignment(con);
+				AssignmentInfo assign = fadao.get(fr.getDatabaseID(FlightReport.DBID_ASSIGN));
+				
+				// Check our access
+				AssignmentAccessControl aac = new AssignmentAccessControl(ctx, assign);
+				aac.validate();
+				
+				// Save access and assignment
+				ctx.setAttribute("assignmentInfo", assign, REQUEST);
+				ctx.setAttribute("assignAccess", aac, REQUEST);
 			}
 
 			// Create the access controller and stuff it in the request

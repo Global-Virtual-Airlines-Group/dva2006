@@ -20,11 +20,12 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
 
     public static final int NET_VATSIM = 0;
     public static final int NET_IVAO = 1;
+    public static final int NET_INTVAS = 2;
     
     /**
      * Online Network names.
      */
-    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO};
+    public static final String[] NETWORKS = {OnlineNetwork.VATSIM, OnlineNetwork.IVAO, OnlineNetwork.INTVAS};
     
     public static final int OPEN = 0;
     public static final int CANCELED = 1;
