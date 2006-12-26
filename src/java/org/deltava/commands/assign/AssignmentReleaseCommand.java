@@ -53,6 +53,10 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			SetFlightReport fwdao = new SetFlightReport(con);
 			int flightsDeleted = 0;
 			int flightsUpdated = 0;
+			
+			// Save the pilot
+			GetPilot pdao = new GetPilot(con);
+			ctx.setAttribute("pilot", pdao.get(assign.getPilotID()), REQUEST);
 
 			// Start the database transaction
 			ctx.startTX();

@@ -259,6 +259,9 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="acarsdelete" linkID="0x${pirep.ID}" label="DELETE ACARS DATA" />
 </c:if> 
 </c:if>
+<c:if test="${fn:isDraft(pirep) && (!empty assignmentInfo) && (assignAccess.canRelease)}">
+ <el:cmdbutton url="assignrelease" linkID="0x${assignmentInfo.ID}" label="RELEASE ASSIGNMENT" />
+</c:if>
  <el:cmdbutton url="profile" linkID="0x${pilot.ID}" label="VIEW PROFILE" />
  </td>
 </tr>
