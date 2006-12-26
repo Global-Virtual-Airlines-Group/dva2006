@@ -12,6 +12,9 @@ fi
 if [ "IVAO" == "$1" ]; then
  StatusURL="http://www.ivao.aero/whazzup/status.txt"
  network="ivao"
+elif [ "INTVAS" == "$1" ]; then
+ StatusURL="http://www.intvas.net/whazzup/status.txt"
+ network="intvas"
 else
  StatusURL="http://usa-s1.vatsim.net/data/status.txt"
  network="vatsim"
