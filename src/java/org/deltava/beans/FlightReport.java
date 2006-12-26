@@ -29,12 +29,12 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	/**
 	 * Valid Flight Simulator version strings
 	 */
-	public static final String FSVERSION[] = { "Unknown", "FS98", "FS2000", "FS2002", "FS2004", "FS X" };
+	public static final String FSVERSION[] = { "Unknown", "X-Plane", "FS98", "FS2000", "FS2002", "FS2004", "FS X" };
 
 	/**
 	 * Valid Flight Simulator version values
 	 */
-	public static final int FSVERSION_CODE[] = { 0, 98, 2000, 2002, 2004, 2006 };
+	public static final int FSVERSION_CODE[] = { 0, 100, 98, 2000, 2002, 2004, 2006 };
 
 	/**
 	 * Flight flown without Equipment Type Rating.
@@ -55,6 +55,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight flown on FPI network.
 	 */
 	public static final int ATTR_FPI = 0x08;
+	
+	/**
+	 * Flight flown on INTVAS network.
+	 */
+	public static final int ATTR_INTVAS = 0x1000;
 
 	/**
 	 * Flight logged using ACARS.
@@ -99,7 +104,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.
 	 */
-	public static final int ATTR_ONLINE_MASK = 0x0E;
+	public static final int ATTR_ONLINE_MASK = 0x100E;
 
 	public static final String DBID_PILOT = "$PILOT$";
 	public static final String DBID_DISPOSAL = "$DISPOSALPILOTID$";
@@ -121,7 +126,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	private String _lastName;
 	private String _rank;
 
-	private final Set<String> _captEQType = new TreeSet<String>();
+	private final Collection<String> _captEQType = new TreeSet<String>();
 
 	// Stores Integers pointing to other database IDs, see PIREPConstants
 	private final Map<String, Integer> _dbIds = new HashMap<String, Integer>();
