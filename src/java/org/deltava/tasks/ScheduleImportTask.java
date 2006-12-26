@@ -2,6 +2,7 @@
 package org.deltava.tasks;
 
 import java.util.*;
+import java.sql.Connection;
 import java.io.InputStream;
 
 import org.deltava.beans.schedule.*;
@@ -49,7 +50,6 @@ public class ScheduleImportTask extends DatabaseTask {
 		cache.setCredentials(SystemData.get("schedule.innovata.download.user"), SystemData.get("schedule.innovata.download.pwd"));
 
 		// Connect to the FTP server and download the files as needed
-		AirportServiceMap svcMap = new AirportServiceMap();
 		Collection<ScheduleEntry> entries = new ArrayList<ScheduleEntry>();
 		try {
 			// If we haven't specified a file name, get the newest file
@@ -72,6 +72,7 @@ public class ScheduleImportTask extends DatabaseTask {
 			dao.setAirlines(SystemData.getAirlines().values());
 			dao.setAirports(SystemData.getAirports().values());
 			dao.setBufferSize(65536);
+			release();
 
 			// Load the schedule data
 			dao.load();
@@ -89,8 +90,6 @@ public class ScheduleImportTask extends DatabaseTask {
 				// Update internal counters
 				codes.add(entry.getFlightCode());
 				entries.add(entry);
-				svcMap.add(entry.getAirline(), entry.getAirportD());
-				svcMap.add(entry.getAirline(), entry.getAirportA());
 			}
 
 			// Save error conditions
@@ -107,24 +106,11 @@ public class ScheduleImportTask extends DatabaseTask {
 		if (entries == null)
 			return;
 
-		// Determine unserviced airports
-		Collection<Airport> updatedAirports = new HashSet<Airport>();
-		synchronized (SystemData.class) {
-			Collection<Airport> allAirports = SystemData.getAirports().values();
-			for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
-				Airport ap = i.next();
-				Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
-				if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
-					log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
-					ap.setAirlines(svcMap.getAirlineCodes(ap));
-					updatedAirports.add(ap);
-				}
-			}
-		}
 
 		// Save the entries in the database
 		try {
-			SetSchedule dao = new SetSchedule(getConnection());
+			Connection con = getConnection();
+			SetSchedule dao = new SetSchedule(con);
 			startTX();
 			if (doPurge)
 				dao.purge(false);
@@ -135,12 +121,23 @@ public class ScheduleImportTask extends DatabaseTask {
 				ScheduleEntry se = i.next();
 				dao.write(se, false);
 			}
-
-			// Update unserviced airports
-			log.info("Updating " + updatedAirports.size() + " Airport airline information entries");
-			for (Iterator<Airport> i = updatedAirports.iterator(); i.hasNext();) {
-				Airport ap = i.next();
-				dao.update(ap);
+			
+			// Get route pairs
+			GetScheduleInfo sidao = new GetScheduleInfo(con);
+			AirportServiceMap svcMap = sidao.getRoutePairs();
+			
+			// Determine unserviced airports
+			synchronized (SystemData.class) {
+				Collection<Airport> allAirports = SystemData.getAirports().values();
+				for (Iterator<Airport> i = allAirports.iterator(); i.hasNext();) {
+					Airport ap = i.next();
+					Collection<String> newAirlines = svcMap.getAirlineCodes(ap);
+					if (CollectionUtils.hasDelta(ap.getAirlineCodes(), newAirlines)) {
+						log.info("Updating " + ap.getName() + " new codes = " + newAirlines + ", was " + ap.getAirlineCodes());
+						ap.setAirlines(svcMap.getAirlineCodes(ap));
+						dao.update(ap);
+					}
+				}
 			}
 
 			// Commit the transaction
