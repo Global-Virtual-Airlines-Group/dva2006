@@ -162,7 +162,8 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void viewThread(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?)");
+			setQueryMax(1);
+			prepareStatement("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
