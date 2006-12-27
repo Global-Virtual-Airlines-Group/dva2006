@@ -552,7 +552,10 @@
 			<multiple type="Boolean">true</multiple>
 			<threads>
 				<logic type="Integer">2</logic>
-				<write type="Integer">2</write>
+				<write>
+					<min type="Integer">2</min>
+					<max type="Integer">5</max>
+				</write>
 			</threads>
 		</pool>
 		
