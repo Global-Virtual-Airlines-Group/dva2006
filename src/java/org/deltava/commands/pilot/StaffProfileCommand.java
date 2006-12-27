@@ -9,6 +9,8 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.StaffAccessControl;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to create new Staff Profiles.
  * @author Luke
@@ -65,7 +67,8 @@ public class StaffProfileCommand extends AbstractCommand {
 			s.setID(p.getID());
 			s.setTitle(ctx.getParameter("staffTitle"));
 			s.setBody(ctx.getParameter("staffBody"));
-			s.setSortOrder(Integer.parseInt(ctx.getParameter("staffSort")));
+			s.setSortOrder(StringUtils.parse(ctx.getParameter("staffSort"), 6));
+			s.setArea(ctx.getParameter("staffArea"));
 
 			// Save the Staff Profile
 			SetStaff wdao = new SetStaff(con);
