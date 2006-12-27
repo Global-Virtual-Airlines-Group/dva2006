@@ -163,6 +163,9 @@ return true;
 <c:if test="${fn:routeWarn(pirep)}">
 <div class="warn bld caps">Flight Route not found in <content:airline /> schedule database</div>
 </c:if>
+<c:if test="${fn:rangeWarn(pirep)}">
+<div class="warn bld caps">Flight Distance outside Aircraft Range</div>
+</c:if>
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
