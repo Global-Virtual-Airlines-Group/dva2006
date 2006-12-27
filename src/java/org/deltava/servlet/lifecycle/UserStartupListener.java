@@ -27,7 +27,7 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 	UserStartupListener() {
 		super();
 	}
-	
+
 	/**
 	 * Called before serialization of an HTTP session.
 	 * @param e the lifecycle event
@@ -35,15 +35,19 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 	public void sessionWillPassivate(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
 
-		// Get the User
-		Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
-		if (p == null)
-			return;
-		
-		// Remove the user
-		UserPool.remove(p, s.getId());
-		if (log.isDebugEnabled())
-			log.debug("Serializing Session " + s.getId());
+		try {
+			// Get the User
+			Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
+			if (p == null)
+				return;
+
+			// Remove the user
+			UserPool.remove(p, s.getId());
+			if (log.isDebugEnabled())
+				log.debug("Serializing Session " + s.getId());
+		} catch (IllegalStateException ise) {
+			System.out.println("Attempting to save invalid Session");
+		}
 	}
 
 	/**
@@ -52,13 +56,13 @@ public class UserStartupListener implements java.io.Serializable, HttpSessionAct
 	 */
 	public void sessionDidActivate(HttpSessionEvent e) {
 		HttpSession s = e.getSession();
-		
+
 		// Get the User
 		try {
 			Person p = (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
 			if (p == null)
 				return;
-		
+
 			// Add the user to the User pool
 			UserPool.add(p, s.getId());
 		} catch (IllegalStateException ise) {
