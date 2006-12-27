@@ -150,6 +150,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if the Flight's distance exceeds the parameters in the Schedule database.
+     * @param fr the Flight Report
+     * @return TRUE if the RANGEWARN attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_RANGEWARN
+     */
+    public static boolean rangeWarn(FlightReport fr) {
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_RANGEWARN);
+    }
+    
+    /**
      * Returns if the Flight's duration exceeds the parameters in the Schedule database.
      * @param fr the Flight Report
      * @return TRUE if the TIMEWARN attribute is present, otherwise FALSE

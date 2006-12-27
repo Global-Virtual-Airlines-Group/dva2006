@@ -215,7 +215,14 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean routeWarn(org.deltava.beans.FlightReport)</function-signature>
 	</function>
-	
+
+	<!-- Check for Excessive Range flag -->
+	<function>
+		<name>rangeWarn</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean rangeWarn(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Suspicious Time flag -->
 	<function>
 		<name>timeWarn</name>
