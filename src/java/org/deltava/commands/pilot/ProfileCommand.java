@@ -381,7 +381,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				boolean removeStaffProfile = false;
 				if (p_access.getCanChangeRoles()) {
 					s.setTitle(ctx.getParameter("staffTitle"));
-					s.setSortOrder(Integer.parseInt(ctx.getParameter("staffSort")));
+					s.setSortOrder(StringUtils.parse(ctx.getParameter("staffSort"), 6));
 					s.setArea(ctx.getParameter("staffArea"));
 					removeStaffProfile = Boolean.valueOf(ctx.getParameter("removeStaff")).booleanValue();
 				}

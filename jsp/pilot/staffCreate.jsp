@@ -16,6 +16,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.staffTitle, 10, 'Staff Title')) return false;
+if (!validateCombo(form.staffArea, 'Department Name')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
 if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
 
@@ -30,6 +31,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="staffAreas" name="staff.departments" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -41,15 +43,19 @@ return true;
 </tr>
 <tr>
  <td class="label">Title</td>
- <td class="data"><el:text className="bld" name="staffTitle" value="" size="48" max="64" /></td>
+ <td class="data"><el:text className="bld req" idx="*" name="staffTitle" value="" size="48" max="64" /></td>
 </tr>
 <tr>
- <td class="label">Biographical Profile</td>
- <td class="data"><el:textbox name="staffBody" height="4" width="80%"></el:textbox></td>
+ <td class="label">Department</td>
+ <td class="data"><el:combo name="staffArea" idx="*" size="1" options="${staffAreas}" className="req" firstEntry="-" value="${staff.area}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">Biographical Profile</td>
+ <td class="data"><el:textbox name="staffBody" idx="*" height="4" width="80%"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Sort Order</td>
- <td class="data"><el:text name="staffSort" value="6" size="1" max="1" /></td>
+ <td class="data"><el:text className="req" name="staffSort" idx="*" value="6" size="1" max="1" /></td>
 </tr>
 </el:table>
 
