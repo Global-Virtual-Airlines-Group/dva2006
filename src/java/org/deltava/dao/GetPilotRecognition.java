@@ -1,10 +1,12 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
-import java.util.List;
+import java.util.*;
 
 import org.deltava.beans.*;
+
+import org.deltava.util.cache.*;
 
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
@@ -14,6 +16,8 @@ import org.deltava.beans.*;
  */
 
 public class GetPilotRecognition extends PilotReadDAO {
+	
+	private static final Cache _promoCache = new ExpiringCache(4, 900);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -28,11 +32,9 @@ public class GetPilotRecognition extends PilotReadDAO {
      * @return the Pilot, or null if not found
      * @throws DAOException if a JDBC error occurs
      */
-    public List getCenturyClub() throws DAOException {
-    	
-        // Init the prepared statement
+    public List<Pilot> getCenturyClub() throws DAOException {
         try {
-            prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), " +
+            prepareStatementWithoutLimits("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), " +
                     "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) GROUP BY P.ID " +
                     "HAVING (LEGS >= 100) ORDER BY LEGS DESC");
             _ps.setInt(1, FlightReport.OK);
@@ -43,11 +45,42 @@ public class GetPilotRecognition extends PilotReadDAO {
     }
     
     /**
+     * Returns wether there are Pilots eligible for promotion to Captain in a particular Equipment program.
+     * @param eqType the equipment program, or null for all
+     * @return the number of pilots
+     * @throws DAOException if a JDBC error occurs
+     */
+    public int hasPromotionQueue(String eqType) throws DAOException {
+    	
+    	// Remap "all"
+    	if (eqType == null)
+    		eqType = "ALL";
+    	
+    	// Check the cache
+    	if (_promoCache.contains(eqType))
+    		return ((CacheableInteger) _promoCache.get(eqType)).getValue();
+
+    	// Get the results
+    	Collection<Pilot> results = getPromotionQueue();
+    	if (!"ALL".equals(eqType)) {
+    		for (Iterator<Pilot> i = results.iterator(); i.hasNext(); ) {
+    			Pilot p = i.next();
+    			if (!p.getEquipmentType().equals(eqType))
+    				i.remove();
+    		}
+    	}
+    	
+    	// Save the result
+    	_promoCache.add(new CacheableInteger(eqType, results.size()));
+    	return results.size();
+    }
+    
+    /**
      * Returns Pilots eligible for promotion to Captain.
      * @return a List of Pilots
      * @throws DAOException if a JDBC error occurs
      */
-    public List getPromotionQueue() throws DAOException {
+    public List<Pilot> getPromotionQueue() throws DAOException {
        try {
           prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
                 + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND "

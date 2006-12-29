@@ -154,6 +154,43 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </c:if></td>
 </tr>
 
+<content:filter roles="PIREP">
+<!-- Flight Report Admin Section -->
+<tr>
+ <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. 
+<c:if test="${pirepQueueSize > 15}"><span class="sec bld"></c:if>There are currently
+ <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.<c:if test="${pirepQueueSize > 15}"></span></c:if></td>
+</tr>
+</content:filter>
+<content:filter roles="HR,Examination">
+<!-- Pending Transfer Request / Examination Section -->
+<tr class="title caps">
+ <td colspan="2">PENDING EXAMINATIONS AND TRANSFER REQUESTS</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="txrequests">Equipment Transfer Requests</el:cmd></td>
+ <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once 
+they have met the necessary requirements for a new Equipment Program. You can view these transfer 
+requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
+<br />
+<i>There are <fmt:int value="${txQueueSize}" /> pending Transfer Requests.</i></c:if></td>
+</tr>
+<tr>
+ <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
+ <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements
+for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
+<br />
+<b>There are <fmt:int value="${promoQueueSize}" /> Pilot(s) awaiting promotion to Captain.</b></c:if></td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
+ <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
+<br />
+<b>There are <fmt:int value="${examQueueSize}" /> submitted Examinations awaiting evaluation.</b></c:if></td>
+</tr>
+</content:filter>
+
 <!-- Download Section -->
 <tr class="title caps">
  <td colspan="2">DOWNLOAD LIBRARIES</td>
@@ -444,19 +481,6 @@ Academy students.</td>
 </content:filter>
 </c:if>
 
-<content:filter roles="PIREP">
-<!-- Flight Report Admin Section -->
-<tr class="title caps">
- <td colspan="2">FLIGHT REPORTS</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. 
-<c:if test="${pirepQueueSize > 15}"><span class="sec bld"></c:if>There are currently
- <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.<c:if test="${pirepQueueSize > 15}"></span></c:if></td>
-</tr>
-</content:filter>
-
 <content:filter roles="HR,PIREP,Examination">
 <!-- Human Resources Admin Section -->
 <tr class="title caps">
@@ -465,17 +489,6 @@ Academy students.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="eqroster" linkID="${pilot.equipmentType}">Pilot Roster</el:cmd></td>
  <td class="data">You can view the Pilot Roster divided by Equipment Program.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="txrequests">Equipment Transfer Requests</el:cmd></td>
- <td class="data">Pilots wishing to switch Equipment Programs can submit transfer requests once 
-they have met the necessary requirements for a new Equipment Program. You can view these transfer 
-requests here, assign Check Rides, and complete the Promotion Process.</td>
-</tr>
-<tr>
- <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
- <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements
-for promotion to the rank of Captain in their Equipment Program.</td>
 </tr>
 </content:filter>
 <content:filter roles="HR,PIREP">
@@ -522,10 +535,6 @@ for promotion to the rank of Captain in their Equipment Program.</td>
  <td class="mid"><el:cmd className="bld" url="crscripts">Check Ride Scripts</el:cmd></td>
  <td class="data">Check Ride scripts allow you to save pre-defined check ride descriptions for different 
 aircraft types, for easy reuse when assigning a Check Ride to a pilot.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
- <td class="data">You can view and score submitted Pilot Examinations.</td>
 </tr>
 </content:filter>
 
