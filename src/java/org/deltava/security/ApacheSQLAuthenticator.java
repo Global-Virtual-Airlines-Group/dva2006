@@ -197,6 +197,8 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		Connection con = null;
 		try {
 			con = _pool.getConnection(true);
+			con.setAutoCommit(false);
+			
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, id);
 			ps.setString(2, pwdHash);
@@ -213,6 +215,9 @@ public class ApacheSQLAuthenticator implements Authenticator {
 				ps.executeUpdate();
 				ps.close();
 			}
+			
+			// Commit the transaction
+			con.commit();
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
