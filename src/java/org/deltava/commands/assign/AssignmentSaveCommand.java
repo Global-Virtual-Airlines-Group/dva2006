@@ -70,6 +70,7 @@ public class AssignmentSaveCommand extends AbstractCommand {
       }
       
       // Set attributes and clean up session
+      ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
       ctx.setAttribute("isCreate", Boolean.TRUE, REQUEST);
       ctx.setAttribute("assign", info, REQUEST);
       ctx.getSession().removeAttribute("buildAssign");

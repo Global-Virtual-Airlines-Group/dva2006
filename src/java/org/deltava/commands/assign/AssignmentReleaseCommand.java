@@ -54,10 +54,6 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			int flightsDeleted = 0;
 			int flightsUpdated = 0;
 			
-			// Save the pilot
-			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilot", pdao.get(assign.getPilotID()), REQUEST);
-
 			// Start the database transaction
 			ctx.startTX();
 
@@ -96,6 +92,9 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the pilot
+		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

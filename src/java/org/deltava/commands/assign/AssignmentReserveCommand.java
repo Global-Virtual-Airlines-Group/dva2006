@@ -43,9 +43,9 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 			// Check if we have any other open flight assignments
 			boolean hasOpen = false;
-			List assignments = dao.getByPilot(ctx.getUser().getID());
-			for (Iterator i = assignments.iterator(); i.hasNext() && !hasOpen;) {
-				AssignmentInfo a = (AssignmentInfo) i.next();
+			List<AssignmentInfo> assignments = dao.getByPilot(ctx.getUser().getID());
+			for (Iterator<AssignmentInfo> i = assignments.iterator(); i.hasNext() && !hasOpen;) {
+				AssignmentInfo a = i.next();
 				hasOpen = hasOpen || (a.getStatus() == AssignmentInfo.RESERVED);
 			}
 
@@ -93,14 +93,16 @@ public class AssignmentReserveCommand extends AbstractCommand {
 
 			// Save the assignment in the request
 			ctx.setAttribute("assign", assign, REQUEST);
-			ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
-			ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 		} catch (DAOException de) {
 			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Set status attributes
+		ctx.setAttribute("isReserve", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
 
 		// Forward to the JSP
 		result.setURL("/jsp/assign/assignUpdate.jsp");
