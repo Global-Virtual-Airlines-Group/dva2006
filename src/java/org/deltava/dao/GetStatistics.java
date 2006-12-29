@@ -22,26 +22,6 @@ public class GetStatistics extends DAO {
 	private static final Cache _coolerStatsCache = new ExpiringCache(100, 1800);
 	private static final Cache _cache = new ExpiringCache(2, 1800);
 
-	private class CacheableInteger implements Cacheable {
-
-		private Object _key;
-		private int _value;
-
-		public CacheableInteger(Object cacheKey, int value) {
-			super();
-			_key = cacheKey;
-			_value = value;
-		}
-
-		public Object cacheKey() {
-			return _key;
-		}
-
-		public int getValue() {
-			return _value;
-		}
-	}
-
 	/**
 	 * Initializes the Data Access Object.
 	 * @param c a JDBC connection

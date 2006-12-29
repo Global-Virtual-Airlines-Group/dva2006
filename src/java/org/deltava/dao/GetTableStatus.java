@@ -19,21 +19,7 @@ public class GetTableStatus extends DAO {
 	
 	private static final Cache _cache = new AgingCache(2);
 	
-	private class CacheableSet<E> extends LinkedHashSet<E> implements Cacheable {
-		
-		private Object _key;
-		
-		public CacheableSet(Object key) {
-			super();
-			_key = key;
-		}
-		
-		public Object cacheKey() {
-			return _key;
-		}
-	}
-
-    /**
+	/**
      * Creates the DAO using a JDBC connection.
      * @param c the JDBC connection to use
      */
