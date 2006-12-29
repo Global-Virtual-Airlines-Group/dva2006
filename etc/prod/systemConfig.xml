@@ -443,9 +443,6 @@
 		<server>endor.deltava.org</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">false</testMode>
-		<daemon>
-			<sleep type="Integer">60</sleep>
-		</daemon>
 		<imap>
 			<path>/usr/local/virtual</path>
 			<enabled type="Boolean">true</enabled>
