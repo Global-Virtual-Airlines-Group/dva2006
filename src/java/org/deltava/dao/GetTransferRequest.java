@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -40,6 +40,37 @@ public class GetTransferRequest extends DAO {
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
 			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the number of pending Transfer Requests into a particular equipment program.
+	 * @param eqType the Equipment program name, or null for all
+	 * @return the number of Transfer Requests
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getCount(String eqType) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder buf = new StringBuilder("SELECT COUNT(*) FROM TXREQUESTS");
+		if (eqType != null)
+			buf.append(" WHERE (EQTYPE=?)");
+		
+		try {
+			prepareStatementWithoutLimits(buf.toString());
+			if (eqType != null)
+				_ps.setString(1, eqType);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -299,7 +299,7 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
-
+	
 	/**
 	 * Checks if a Pilot has an Examination open or awaiting scoring.
 	 * @param id the Pilot's database ID

@@ -116,7 +116,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Check if we are trying to switch equipment types
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.get(p.getID());
-			if (txreq == null) {
+			if ((txreq == null) && (p.getLegs() > 0)) {
 				// Get all active equipment programs, and see which we can switch to
 				GetEquipmentType eqdao = new GetEquipmentType(con);
 				Collection<EquipmentType> activeEQ = eqdao.getActive();
@@ -135,7 +135,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				// Save the equipment types we can get promoted to
 				ctx.setAttribute("eqSwitch", activeEQ, REQUEST);
 				ctx.setAttribute("eqSwitchFOExam", needFOExamEQ, REQUEST);
-			} else {
+			} else if (txreq != null) {
 				// Check our access
 				TransferAccessControl txAccess = new TransferAccessControl(ctx, txreq);
 				txAccess.validate();
@@ -155,6 +155,20 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				ExamProfile ep = i.next();
 				if (!testHistory.canWrite(ep))
 					i.remove();
+			}
+			
+			// If we are in the HR/Examination roles, get transfer request and exam counts
+			if (ctx.isUserInRole("HR") || ctx.isUserInRole("Examination")) {
+				String myEQType = ctx.isUserInRole("HR") ? null : p.getEquipmentType();
+				
+				// Get promotion queue size
+				GetPilotRecognition rdao = new GetPilotRecognition(con);
+				ctx.setAttribute("promoQueueSize", new Integer(rdao.hasPromotionQueue(myEQType)), REQUEST);
+				
+				// Get exam/transfer queue sizes
+				GetExam exdao = new GetExam(con);
+				ctx.setAttribute("examQueueSize", new Integer(exdao.getSubmitted().size()), REQUEST);
+				ctx.setAttribute("txQueueSize", new Integer(txdao.getCount(myEQType)), REQUEST);
 			}
 
 			// See if we are enrolled in a Flight Academy course
