@@ -86,7 +86,7 @@ public class GetTableStatus extends DAO {
     		// Iterate through the results
     		results = new CacheableSet<String>(dbName);
     		while (rs.next())
-    			results.add(rs.getString(1));
+    			results.add(rs.getString(1).toUpperCase());
     		
     		// Clean up and save in the cache
     		rs.close();
