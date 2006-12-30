@@ -228,7 +228,7 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
 		
 		// Prepare the statement
-		prepareStatement(sqlBuf.toString());
+		prepareStatementWithoutLimits(sqlBuf.toString());
 		_ps.setString(1, fileName);
 
 		// Execute the Query
