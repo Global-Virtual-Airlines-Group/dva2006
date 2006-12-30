@@ -8,13 +8,14 @@ import org.apache.log4j.Logger;
 import org.deltava.util.*;
 
 /**
- * A class to support scheduled tasks.
+ * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
+ * execution in much the same way.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public abstract class Task implements Runnable {
+public abstract class Task implements Runnable, Comparable {
 	
 	/**
 	 * Time interval options.
@@ -220,6 +221,15 @@ public abstract class Task implements Runnable {
         log.info(_name + " starting ");
         execute();
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.getTime());
+    }
+    
+    /**
+     * Compares two Tasks by comparing their names.
+     * @see Comparable#compareTo(Object)
+     */
+    public int compareTo(Object o2) {
+    	Task t2 = (Task) o2;
+    	return _name.compareTo(t2._name);
     }
     
     /**
