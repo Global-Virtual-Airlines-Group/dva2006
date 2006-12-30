@@ -83,10 +83,12 @@ return true;
 </tr>
 </c:if>
 <content:filter roles="Instructor,HR">
+<c:if test="${!empty certs}">
 <tr>
  <td class="label" valign="top">Flight Academy Certifications</td>
  <td class="data"><el:check name="certNames" width="150" cols="3" className="small" separator="<div style=\"clear:both;\" />" checked="${entry.certifications}" options="${certs}" /></td>
 </tr>
+</c:if>
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
