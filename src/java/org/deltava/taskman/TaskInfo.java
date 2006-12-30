@@ -10,7 +10,7 @@ import java.util.*;
  * @since 1.0
  */
 
-public class TaskInfo implements java.io.Serializable, Comparable {
+public class TaskInfo implements Comparable {
    
    private String _id;
    private String _name;

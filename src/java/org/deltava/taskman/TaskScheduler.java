@@ -132,8 +132,9 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	 * @return a Collection of TaskInfo beans
 	 */
 	public Collection<TaskInfo> getTaskInfo() {
+		Collection<Task> tasks = new TreeSet<Task>(_tasks.values());
 		Collection<TaskInfo> results = new ArrayList<TaskInfo>();
-		for (Iterator<Task> i = _tasks.values().iterator(); i.hasNext();) {
+		for (Iterator<Task> i = tasks.iterator(); i.hasNext();) {
 			Task t = i.next();
 			results.add(new TaskInfo(t));
 		}
