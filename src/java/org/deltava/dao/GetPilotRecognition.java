@@ -57,8 +57,9 @@ public class GetPilotRecognition extends PilotReadDAO {
     		eqType = "ALL";
     	
     	// Check the cache
-    	if (_promoCache.contains(eqType))
-    		return ((CacheableInteger) _promoCache.get(eqType)).getValue();
+    	CacheableInteger result = (CacheableInteger) _promoCache.get(eqType);
+    	if (result != null)
+    		return result.getValue();
 
     	// Get the results
     	Collection<Pilot> results = getPromotionQueue();
