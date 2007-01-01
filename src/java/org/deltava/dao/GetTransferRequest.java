@@ -96,6 +96,25 @@ public class GetTransferRequest extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all Transfer Requests older than a certain age.
+	 * @param minAge the number of days
+	 * @return a Collection of TransferRequest beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TransferRequest> getAged(int minAge) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
+					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND (TX.STATUS=?) "
+					+ "ORDER BY TX.CREATED");
+			_ps.setInt(1, minAge);
+			_ps.setInt(2, TransferRequest.OK);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all Transfer Requests.

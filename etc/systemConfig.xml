@@ -494,6 +494,7 @@
 		</selcal>
 
 		<user_cookie_age type="Integer">30</user_cookie_age>
+		<transfer_max type="Integer">30</transfer_max>
 
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
@@ -530,7 +531,12 @@
 		<list name="block" attr="addr">
 			<addr>127.0.0.1</addr>
 		</list>
-		
+
+		<!-- List of valid protocol revisions -->
+		<map name="protocols">
+			<v1>org.deltava.acars.xml.v1</v1>
+		</map>
+
 		<port type="Integer">15527</port>
 		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">240</timeout>
