@@ -33,7 +33,6 @@ public class PIREPCommand extends AbstractFormCommand {
 	private static final DateFormat _df = new SimpleDateFormat("yyyy, M, d");
 
 	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
-	private static final Collection<String> _flightYears = new LinkedHashSet<String>();
 	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
 			FlightReport.FSVERSION.length);
 
@@ -53,20 +52,12 @@ public class PIREPCommand extends AbstractFormCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
-		if (!_flightTimes.isEmpty())
-			return;
-
-		// Initialize flight times
+		
+		// Init flight times
+		if (_flightTimes.isEmpty()) {
 		for (int x = 2; x < 185; x++)
 			_flightTimes.add(String.valueOf(x / 10.0d));
-
-		// Initialize flight years
-		Calendar c = Calendar.getInstance();
-		_flightYears.add(String.valueOf(c.get(Calendar.YEAR)));
-
-		// If we're in January/February, add the previous year
-		if (c.get(Calendar.MONTH) < 2)
-			_flightYears.add(String.valueOf(c.get(Calendar.YEAR) - 1));
+		}
 	}
 
 	/**
@@ -316,6 +307,14 @@ public class PIREPCommand extends AbstractFormCommand {
 			ctx.setAttribute("forwardDateLimit", _df.format(forwardLimit.getTime()), REQUEST);
 			ctx.setAttribute("backwardDateLimit", _df.format(backwardLimit.getTime()), REQUEST);
 		}
+		
+		// Set flight years
+		Collection<String> years = new LinkedHashSet<String>();
+		years.add(String.valueOf(cld.get(Calendar.YEAR)));
+
+		// If we're in January/February, add the previous year
+		if (cld.get(Calendar.MONTH) < 2)
+			years.add(String.valueOf(cld.get(Calendar.YEAR) - 1));
 
 		// Save pirep date combobox values
 		ctx.setAttribute("pirepYear", StringUtils.format(cld.get(Calendar.YEAR), "0000"), REQUEST);
@@ -332,7 +331,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		ctx.setAttribute("months", months, REQUEST);
-		ctx.setAttribute("years", _flightYears, REQUEST);
+		ctx.setAttribute("years", years, REQUEST);
 
 		// Set the access controller
 		ctx.setAttribute("access", ac, REQUEST);
