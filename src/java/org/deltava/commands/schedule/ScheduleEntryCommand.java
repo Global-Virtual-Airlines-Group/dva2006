@@ -125,7 +125,7 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
 				
 				// Load Airports
-				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 				airports.addAll(SystemData.getAirports().values());
 				for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
 					Airport a = i.next();

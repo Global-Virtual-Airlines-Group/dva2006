@@ -51,7 +51,7 @@ public class TestScheduleLoad extends TestCase {
          lr.close();
          
          // Create an airport set
-         _airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.IATA));
+         _airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.IATA));
          _airports.addAll(_apMap.values());
          log.info("Loaded " + _airports.size() + " airports");
       }

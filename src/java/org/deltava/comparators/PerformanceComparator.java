@@ -10,7 +10,7 @@ import org.deltava.beans.stats.PerformanceMetrics;
  * @since 1.0
  */
 
-public class PerformanceComparator<T extends PerformanceMetrics> extends AbstractComparator<T> {
+public class PerformanceComparator extends AbstractComparator<PerformanceMetrics> {
 
 	public static final int NAME = 0;
 	public static final int AVERAGE = 1;
@@ -47,7 +47,7 @@ public class PerformanceComparator<T extends PerformanceMetrics> extends Abstrac
 	 * @throws ClassCastException if either object is not a PerformanceMetrics bean
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
-	protected int compareImpl(T m1, T m2) {
+	protected int compareImpl(PerformanceMetrics m1, PerformanceMetrics m2) {
 		switch (_comparisonType) {
 			case NAME:
 				return m1.getName().compareTo(m2.getName());

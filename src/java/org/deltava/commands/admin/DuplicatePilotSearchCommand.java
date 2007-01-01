@@ -55,7 +55,7 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 		if ((maxResults < 1) || (maxResults > 99))
 			maxResults = DEFAULT_RESULTS;
 
-		Collection<Pilot> results = new TreeSet<Pilot>(new PilotComparator<Pilot>(PilotComparator.PILOTCODE));
+		Collection<Pilot> results = new TreeSet<Pilot>(new PilotComparator(PilotComparator.PILOTCODE));
 		try {
 			Connection con = ctx.getConnection();
 

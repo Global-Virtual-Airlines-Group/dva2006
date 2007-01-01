@@ -30,7 +30,7 @@ public class StaffRosterCommand extends AbstractCommand {
     public void execute(CommandContext ctx) throws CommandException {
 		
     	// Build the comparator
-    	StaffComparator<Staff> cmp = new StaffComparator<Staff>(StaffComparator.AREA);
+    	StaffComparator cmp = new StaffComparator(StaffComparator.AREA);
     	cmp.setAreas((Collection<String>) SystemData.getObject("staff.departments"));
     	Collection<Staff> results = new TreeSet<Staff>(cmp);
         try {

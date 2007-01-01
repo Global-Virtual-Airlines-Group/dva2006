@@ -14,7 +14,7 @@ import org.deltava.util.CollectionUtils;
  * @since 1.0
  */
 
-public class StaffComparator<T extends Staff> extends AbstractComparator<T> {
+public class StaffComparator extends AbstractComparator<Staff> {
 
 	public static final int SORT = 0;
 	public static final int AREA = 1;
@@ -69,7 +69,7 @@ public class StaffComparator<T extends Staff> extends AbstractComparator<T> {
 	 * @throws ClassCastException if either object is not a Staff
 	 * @see java.util.Comparator#compare(Object, Object)
 	 */
-	protected int compareImpl(T o1, T o2) {
+	protected int compareImpl(Staff o1, Staff o2) {
 		switch (_comparisonType) {
 			case AREA:
 				if (_areas != null) {

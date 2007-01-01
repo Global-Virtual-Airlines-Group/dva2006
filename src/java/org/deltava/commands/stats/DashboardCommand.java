@@ -52,7 +52,7 @@ public class DashboardCommand extends AbstractCommand {
 			sortType = "Category";
 
 		// Create the comparator and the result map
-		PerformanceComparator<PerformanceMetrics> cmp = new PerformanceComparator<PerformanceMetrics>(sortType);
+		PerformanceComparator cmp = new PerformanceComparator(sortType);
 		Map<String, Collection<PerformanceMetrics>> results = new HashMap<String, Collection<PerformanceMetrics>>();
 		
 		// Get start and end dates

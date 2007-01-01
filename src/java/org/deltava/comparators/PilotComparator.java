@@ -11,7 +11,7 @@ import org.deltava.beans.Ranks;
  * @see PersonComparator
  */
 @SuppressWarnings("hiding")
-public class PilotComparator<T extends Pilot> extends PersonComparator<T> {
+public class PilotComparator extends PersonComparator<Pilot> {
 
 	
 	public static final int PILOTCODE = 4;
@@ -71,7 +71,7 @@ public class PilotComparator<T extends Pilot> extends PersonComparator<T> {
      * @throws ClassCastException if either object is not a Pilot
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected int compareImpl(T p1, T p2) {
+    protected int compareImpl(Pilot p1, Pilot p2) {
         
         // If we are using a comparison method that is implemented in the superclass, call it
         if (_comparisonType < PilotComparator.PILOTCODE)

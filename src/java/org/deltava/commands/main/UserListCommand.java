@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -34,7 +34,7 @@ public class UserListCommand extends AbstractCommand {
     		sortOpt = PilotComparator.TYPES[PilotComparator.PILOTCODE];
     	
     	// Initialize the comparator
-    	Set<Pilot> users = new TreeSet<Pilot>(new PilotComparator<Pilot>(sortOpt));
+    	Set<Pilot> users = new TreeSet<Pilot>(new PilotComparator(sortOpt));
 
         // Get and save the users in the request
     	users.addAll(UserPool.getPilots());

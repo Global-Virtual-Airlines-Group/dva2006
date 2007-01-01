@@ -39,7 +39,7 @@ public class EventEditCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 		
 		// Save the airport list
-		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+		Set<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		airports.addAll(SystemData.getAirports().values());
 		ctx.setAttribute("airports", airports, REQUEST);
 		

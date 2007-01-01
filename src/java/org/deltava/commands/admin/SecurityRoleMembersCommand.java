@@ -30,7 +30,7 @@ public class SecurityRoleMembersCommand extends AbstractCommand {
    public void execute(CommandContext ctx) throws CommandException {
 
       // Initialize the comparator and result map
-      PilotComparator<Pilot> cmp = new PilotComparator<Pilot>(PilotComparator.RANK);
+      PilotComparator cmp = new PilotComparator(PilotComparator.RANK);
       
       try {
          Connection con = ctx.getConnection();
