@@ -3,6 +3,7 @@ package org.deltava.jdbc;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 
@@ -25,7 +26,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	// it to be stale and return it anyways
 	static final int MAX_USE_TIME = 150 * 1000;
 	static final int MAX_SYS_CONS = 3;
-	
+
 	private int _poolMaxSize = 1;
 	private int _maxRequests;
 	private long _totalRequests;
@@ -36,7 +37,9 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 
 	private final Properties _props = new Properties();
 	private boolean _autoCommit = true;
-	
+
+	private final Semaphore _lock = new Semaphore(1, true);
+
 	public class ConnectionPoolFullException extends ConnectionPoolException {
 		public ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
@@ -53,7 +56,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		super();
 		DriverManager.setLoginTimeout(5);
 		_poolMaxSize = maxSize;
-		_monitor = new ConnectionMonitor(3);
+		_monitor = new ConnectionMonitor(3, this);
 	}
 
 	/**
@@ -73,7 +76,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	private int getNextID() {
 		if (CollectionUtils.isEmpty(_cons))
 			return 1;
- 
+
 		ConnectionPoolEntry cpe = _cons.last();
 		return cpe.getID() + 1;
 	}
@@ -128,11 +131,10 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public void setProperty(String propertyName, String propertyValue) {
 		_props.setProperty(propertyName, propertyValue);
 	}
-	
+
 	/**
-	 * Sets the maximum number of reservations of a JDBC Connection. After the maximum
-	 * number of reservations have been made, the Connection is closed and another one
-	 * opened in its place.
+	 * Sets the maximum number of reservations of a JDBC Connection. After the maximum number of reservations have been
+	 * made, the Connection is closed and another one opened in its place.
 	 * @param maxReqs the maximum number of reuqests, or 0 to disable
 	 */
 	public void setMaxRequests(int maxReqs) {
@@ -181,7 +183,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public Connection getConnection() throws ConnectionPoolException {
 		return getConnection(false);
 	}
-	
+
 	/**
 	 * Gets a JDBC connection from the connection pool. The size of the connection pool will be increased if the pool is
 	 * full but maxSize has not been reached.
@@ -196,41 +198,51 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 
 		// Loop through the connection pool, if we find one not in use then get it
 		int sysConSize = 0;
-		for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = i.next();
-			if (cpe.isSystemConnection())
-				sysConSize++;
+		synchronized (_cons) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
+				ConnectionPoolEntry cpe = i.next();
+				if (cpe.isSystemConnection())
+					sysConSize++;
 
-			// If the connection pool entry is stale, release it
-			if (cpe.getUseTime() > MAX_USE_TIME) {
-				log.warn("Releasing stale JDBC Connection " + cpe);
-				cpe.free();
-			}
+				// If the connection pool entry is stale, release it
+				if (cpe.getUseTime() > MAX_USE_TIME) {
+					log.warn("Releasing stale JDBC Connection " + cpe);
+					cpe.free();
+				}
 
-			// If the connection pool entry is not in use, reserve it - system connections can use idle regular connections
-			if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
-				log.debug("Reserving JDBC Connection " + cpe);
-				_totalRequests++;
-				return cpe.reserve();
+				// If the connection pool entry is not in use, reserve it - system connections can use idle regular
+				// connections
+				if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
+					log.debug("Reserving JDBC Connection " + cpe);
+					_totalRequests++;
+					return cpe.reserve();
+				}
 			}
 		}
 
-		// If we haven't found a free connection, check if we can grow the pool
-		if (isSystem && (sysConSize >= MAX_SYS_CONS)) {
-			throw new ConnectionPoolFullException();
-		} else if (!isSystem && ((_cons.size() - sysConSize) >= _poolMaxSize)) {
-			throw new ConnectionPoolFullException();
+		// Check if we are not going to add a new connection and if so, wait for the semaphore to expire
+		if ((isSystem && (sysConSize >= MAX_SYS_CONS)) || (_cons.size() >= _poolMaxSize)) {
+			try {
+				log.warn("Waiting 1000ms for ConnectionPool");
+				if (!_lock.tryAcquire(1000, TimeUnit.MILLISECONDS))
+					throw new ConnectionPoolFullException();
+			} catch (InterruptedException ie) {
+				throw new ConnectionPoolException("Thread Interrupted", false);
+			}
 		}
 
 		// Get a new connection and add it to the pool
 		try {
 			ConnectionPoolEntry cpe = createConnection(isSystem, getNextID());
+			_monitor.addConnection(cpe);
 			cpe.setDynamic(true);
-			_cons.add(cpe);
+			synchronized (_cons) {
+				_cons.add(cpe);
+			}
 
 			// Return back the new connection
-			log.info("Reserving JDBC Connection " + cpe);
 			_totalRequests++;
+			log.info("Reserving JDBC Connection " + cpe);
 			return cpe.reserve();
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
@@ -245,7 +257,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	 * @return the number of milliseconds the connection was used for
 	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
 	 */
-	public synchronized long release(Connection c) {
+	public long release(Connection c) {
 		if (c == null)
 			return 0;
 
@@ -261,37 +273,43 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		}
 
 		// Find the connection pool entry and free it
-		for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = i.next();
+		synchronized (_cons) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
+				ConnectionPoolEntry cpe = i.next();
 
-			// If we find the connection, release it
-			if (cpe.equals(c)) {
-				cpe.free();
+				// If we find the connection, release it
+				if (cpe.equals(c)) {
+					cpe.free();
 
-				// If this is a dynamic connection, such it down
-				if (cpe.isDynamic()) {
-					cpe.close();
-					i.remove();
-					log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-				} else {
-					log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-
-					// Check if we need to restart
-					if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
-						log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
+					// If this is a dynamic connection, such it down
+					if (cpe.isDynamic()) {
+						_monitor.removeConnection(cpe);
 						cpe.close();
 						i.remove();
-						
-						// Create the new Connection
-						try {
-							_cons.add(createConnection(cpe.isSystemConnection(), cpe.getID()));
-						} catch (SQLException se) {
-							log.error("Cannot reconnect JDBC Connection " + cpe, se);
+						log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+					} else {
+						log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+
+						// Check if we need to restart
+						if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
+							log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount()
+									+ " reservations");
+							cpe.close();
+							i.remove();
+
+							// Create the new Connection
+							try {
+								_cons.add(createConnection(cpe.isSystemConnection(), cpe.getID()));
+							} catch (SQLException se) {
+								log.error("Cannot reconnect JDBC Connection " + cpe, se);
+							}
 						}
 					}
-				}
 
-				return cpe.getUseTime();
+					// Notify a waiting thread
+					_cons.notify();
+					return cpe.getUseTime();
+				}
 			}
 		}
 
@@ -305,7 +323,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	 * @throws IllegalArgumentException if initialSize is negative or greater than getMaxSize()
 	 * @throws ConnectionPoolException if a JDBC error occurs
 	 */
-	public synchronized void connect(int initialSize) throws ConnectionPoolException {
+	public void connect(int initialSize) throws ConnectionPoolException {
 		if ((initialSize < 0) || (initialSize > _poolMaxSize))
 			throw new IllegalArgumentException("Invalid pool size - " + initialSize);
 
@@ -313,8 +331,8 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		_cons = new TreeSet<ConnectionPoolEntry>();
 		try {
 			for (int x = 0; x < initialSize; x++) {
-				 ConnectionPoolEntry cpe = createConnection(false, x + 1);
-				 _monitor.addConnection(cpe);
+				ConnectionPoolEntry cpe = createConnection(false, x + 1);
+				_monitor.addConnection(cpe);
 				_cons.add(cpe);
 			}
 
@@ -332,7 +350,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	/**
 	 * Disconnects the Connection pool from the JDBC data source.
 	 */
-	public synchronized void close() {
+	public void close() {
 		// Shut down the monitor
 		ThreadUtils.kill(_monitorThread, 500);
 
@@ -340,22 +358,24 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		if (_cons == null)
 			return;
 
-		for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = i.next();
-			if (cpe.inUse())
-				log.warn("Forcibly closing JDBC Connection " + cpe);
+		synchronized (_cons) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
+				ConnectionPoolEntry cpe = i.next();
+				if (cpe.inUse())
+					log.warn("Forcibly closing JDBC Connection " + cpe);
 
-			try {
-				cpe.getConnection().close();
-			} catch (SQLException se) {
-				log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
-			} finally {
-				_monitor.removeConnection(cpe);
-				log.info("Closed JDBC Connection " + cpe);
+				try {
+					cpe.getConnection().close();
+				} catch (SQLException se) {
+					log.warn("Error closing JDBC Connection " + cpe + " - " + se.getMessage());
+				} finally {
+					_monitor.removeConnection(cpe);
+					log.info("Closed JDBC Connection " + cpe);
+				}
 			}
-		}
 
-		_cons = null;
+			_cons = null;
+		}
 	}
 
 	/**
@@ -371,7 +391,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 
 		return results;
 	}
-	
+
 	/**
 	 * Returns the total number of connections handed out by the Connection Pool.
 	 * @return the number of connection reservations
@@ -379,7 +399,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public long getTotalRequests() {
 		return _totalRequests;
 	}
-	
+
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t == _monitorThread)
 			startMonitor();
