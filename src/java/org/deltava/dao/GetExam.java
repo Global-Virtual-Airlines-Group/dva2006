@@ -272,8 +272,7 @@ public class GetExam extends DAO {
 			results.addAll(executeCheckride());
 
 			// Sort the results to merge them in by date
-			TestComparator<Test> tc = new TestComparator<Test>(TestComparator.DATE);
-			Collections.sort(results, tc);
+			Collections.sort(results, new TestComparator(TestComparator.DATE));
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -88,7 +88,7 @@ public class GetRoute extends DAO {
           _ps.setString(1, aCode);
           
           // Iterate through the result set
-          Set<Airport> results = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+          Set<Airport> results = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
           ResultSet rs = _ps.executeQuery();
           while (rs.next()) {
              Airport a = SystemData.getAirport(rs.getString(1));

@@ -87,7 +87,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			}
 			
 			// Get report author IDs
-			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator<Pilot>(PilotComparator.PILOTCODE));
+			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PilotComparator.PILOTCODE));
 			for (Iterator<Integer> i = authorIDs.iterator(); i.hasNext(); ) {
 				Integer id = i.next();
 				Pilot usr = pilots.get(id);

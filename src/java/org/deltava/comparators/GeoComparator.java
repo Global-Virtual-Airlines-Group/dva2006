@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -13,7 +13,7 @@ import org.deltava.beans.schedule.GeoPosition;
  * @since 1.0
  */
 
-public class GeoComparator implements Comparator {
+public class GeoComparator implements Comparator<GeoLocation> {
    
    private GeoPosition _point;
 
@@ -38,11 +38,7 @@ public class GeoComparator implements Comparator {
     * Compares two GeoLocations by comparing their distance from a common point.
     * @see Comparator#compare(Object, Object)
     */
-   public int compare(Object o1, Object o2) {
-      
-      // Convert to GeoLocations
-      GeoLocation l1 = (GeoLocation) o1;
-      GeoLocation l2 = (GeoLocation) o2;
+   public int compare(GeoLocation l1, GeoLocation l2) {
 
       // Get the distances
       int d1 = _point.distanceTo(l1);

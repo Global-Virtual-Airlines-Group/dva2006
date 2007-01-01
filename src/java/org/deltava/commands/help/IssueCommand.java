@@ -188,7 +188,7 @@ public class IssueCommand extends AbstractFormCommand {
 			}
 			
 			// Get Assignees
-			Collection<Pilot> assignees = new TreeSet<Pilot>(new PilotComparator<Pilot>(PersonComparator.LASTNAME));
+			Collection<Pilot> assignees = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
 			assignees.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examiner", SystemData.get("airline.db")));
