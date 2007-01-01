@@ -2,7 +2,9 @@ package org.deltava.jdbc;
 
 import java.io.*;
 import java.sql.*;
+
 import java.util.Properties;
+import java.util.concurrent.Semaphore;
 
 import junit.framework.TestCase;
 
@@ -26,7 +28,7 @@ public class TestConnectionPool extends TestCase {
         _props = null;
         super.tearDown();
     }
-
+    
     public void testProperties() throws ClassNotFoundException {
         assertEquals(-1, _pool.getSize());
         assertEquals(2, _pool.getMaxSize());
@@ -58,6 +60,16 @@ public class TestConnectionPool extends TestCase {
             _pool.connect(3);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) { }
+    }
+    
+    public void testSemaphore() {
+    	Semaphore lock = new Semaphore(1, true);
+    	assertTrue(lock.tryAcquire());
+    	assertFalse(lock.tryAcquire());
+    	lock.release();
+    	assertTrue(lock.tryAcquire());
+    	lock.release();
+    	lock.release();
     }
     
     public void testConnections() throws Exception {

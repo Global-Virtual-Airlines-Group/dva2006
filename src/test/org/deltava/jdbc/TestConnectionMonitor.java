@@ -10,7 +10,7 @@ public class TestConnectionMonitor extends TestCase {
     
     protected void setUp() throws Exception {
         super.setUp();
-        _cm = new ConnectionMonitor(3);
+        _cm = new ConnectionMonitor(3, new ConnectionPool(1));
     }
 
     protected void tearDown() throws Exception {

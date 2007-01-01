@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 import org.deltava.util.ThreadUtils;
 
 /**
- * A daemon Thread to monitor JDBC connections.
+ * A daemon to monitor JDBC connections.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -26,16 +26,19 @@ class ConnectionMonitor implements Runnable {
 
    private static final List<String> _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
-   private final Collection<ConnectionPoolEntry> _pool = new TreeSet<ConnectionPoolEntry>();
+   private ConnectionPool _pool;
+   private final Collection<ConnectionPoolEntry> _entries = new TreeSet<ConnectionPoolEntry>();
    private long _sleepTime = 60000; // 1 minute default
    private long _poolCheckCount;
 
    /**
     * Creates a new Connection Monitor.
     * @param interval the sleep time <i>in minutes </i>
+    * @param pool the ConnectionPool to monitor
     */
-   ConnectionMonitor(int interval) {
+   ConnectionMonitor(int interval, ConnectionPool pool) {
       super();
+      _pool = pool;
       _sleepTime = interval * 60000; // Convert minutes into ms
    }
 
@@ -44,7 +47,7 @@ class ConnectionMonitor implements Runnable {
     * @return the size of the pool
     */
    public int size() {
-      return _pool.size();
+      return _entries.size();
    }
 
    /**
@@ -60,7 +63,7 @@ class ConnectionMonitor implements Runnable {
     * @param cpe a ConnectionPoolEntry object
     */
    public synchronized void addConnection(ConnectionPoolEntry cpe) {
-         _pool.add(cpe);
+         _entries.add(cpe);
    }
 
    /**
@@ -68,7 +71,7 @@ class ConnectionMonitor implements Runnable {
     * @param cpe a ConnectionPoolEntry object
     */
    public synchronized void removeConnection(ConnectionPoolEntry cpe) {
-         _pool.remove(cpe);
+         _entries.remove(cpe);
    }
 
    /**
@@ -80,18 +83,18 @@ class ConnectionMonitor implements Runnable {
     	  log.debug("Checking Connection Pool");
       
       // Loop through the entries
-      for (Iterator<ConnectionPoolEntry> i = _pool.iterator(); i.hasNext(); ) {
+      for (Iterator<ConnectionPoolEntry> i = _entries.iterator(); i.hasNext(); ) {
          ConnectionPoolEntry cpe = i.next();
 
          // Check if the entry has timed out
          if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
             log.warn("Releasing stale Connection " + cpe);
-            cpe.free();
+            _pool.release(cpe.getConnection());
          } else if (cpe.isDynamic() && !cpe.inUse()) {
             log.warn("Releasing stale dyanmic Connection " + cpe);
-            cpe.free();
+            _pool.release(cpe.getConnection());
             i.remove();
-         } else if (!cpe.checkConnection()) {
+         } else if (!cpe.inUse() && !cpe.checkConnection()) {
             log.warn("Reconnecting Connection " + cpe);
             cpe.close();
             
@@ -111,8 +114,7 @@ class ConnectionMonitor implements Runnable {
    }
 
    /**
-    * Thread execution method.
-    * @see Thread#start()
+    * Executes the Thread.
     */
    public void run() {
       log.info("Starting");
