@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.util.StringUtils;
@@ -10,11 +10,10 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Runway extends NavigationDataBean {
+public class Runway extends NavigationFrequencyBean {
 
 	private int _length;
 	private int _heading;
-	private String _freq;
 
 	/**
 	 * Creates a new Runway bean.
@@ -44,15 +43,6 @@ public class Runway extends NavigationDataBean {
 	}
 
 	/**
-	 * Returns the frequency of the runway's ILS.
-	 * @return the frequency
-	 * @see Runway#setFrequency(String)
-	 */
-	public String getFrequency() {
-		return _freq;
-	}
-
-	/**
 	 * Updates the length of the runway.
 	 * @param len the length in feet
 	 * @throws IllegalArgumentException if len is zero, negative or > 25000
@@ -79,15 +69,6 @@ public class Runway extends NavigationDataBean {
 	}
 
 	/**
-	 * Updates the frequency of the runway's ILS.
-	 * @param freq the frequency, or null if no ILS
-	 * @see Runway#getFrequency()
-	 */
-	public void setFrequency(String freq) {
-		_freq = freq;
-	}
-
-	/**
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.YELLOW
 	 */
@@ -108,9 +89,9 @@ public class Runway extends NavigationDataBean {
 		buf.append(StringUtils.format(_length, "#,##0"));
 
 		// Add ILS frequency if found
-		if (_freq != null) {
+		if (getFrequency() != null) {
 			buf.append("<br />ILS Frequency: ");
-			buf.append(_freq);
+			buf.append(getFrequency());
 			buf.append("<br />");
 		}
 
