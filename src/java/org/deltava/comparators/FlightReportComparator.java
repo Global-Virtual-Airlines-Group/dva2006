@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class FlightReportComparator<T extends FlightReport> extends AbstractComparator<T> {
+public class FlightReportComparator extends AbstractComparator<FlightReport> {
 
     public static final int DATE = 0;
     public static final int LENGTH = 1;
@@ -52,7 +52,7 @@ public class FlightReportComparator<T extends FlightReport> extends AbstractComp
      * @throws ClassCastException if either object is not a FlightReport bean
      * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(T f1, T f2) {
+    protected int compareImpl(FlightReport f1, FlightReport f2) {
 
     	int tmpResult;
         Airport aO, aD;

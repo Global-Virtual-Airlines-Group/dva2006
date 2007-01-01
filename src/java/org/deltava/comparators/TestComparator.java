@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.testing.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.testing.*;
  * @since 1.0
  */
 
-public class TestComparator<T extends Test> extends AbstractComparator<T> {
+public class TestComparator extends AbstractComparator<Test> {
 
 	public static final int DATE = 0;
 	public static final int SCORE = 1;
@@ -46,7 +46,7 @@ public class TestComparator<T extends Test> extends AbstractComparator<T> {
      * @throws ClassCastException if either object is not a Test 
      * @see java.util.Comparator#compare(Object, Object)
      */
-	protected int compareImpl(T t1, T t2) {
+	protected int compareImpl(Test t1, Test t2) {
 		switch (_comparisonType) {
 			case DATE:
 				return t1.getDate().compareTo(t2.getDate());

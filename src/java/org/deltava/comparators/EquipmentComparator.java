@@ -1,17 +1,17 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.EquipmentType;
 
 /**
- * A comparator for EquipmentType objects.
- * 
+ * A comparator for EquipmentType beans.
  * @author LKolin
  * @version 1.0
  * @since 1.0
  * @see EquipmentType
  */
 
-public class EquipmentComparator<T extends EquipmentType> extends AbstractComparator<T> {
+public class EquipmentComparator extends AbstractComparator<EquipmentType> {
 
     public static final int STAGE = 0;
     public static final int NAME = 1;
@@ -45,7 +45,7 @@ public class EquipmentComparator<T extends EquipmentType> extends AbstractCompar
      * @throws ClassCastException if either object is not an EquipmentType 
      * @see java.util.Comparator#compare(Object, Object)
      */
-    protected int compareImpl(T et1, T et2) {
+    protected int compareImpl(EquipmentType et1, EquipmentType et2) {
         switch (_comparisonType) {
         	case NAME :
         	    return et1.getName().compareTo(et2.getName());

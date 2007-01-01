@@ -175,7 +175,7 @@ public abstract class ScheduleLoadDAO extends DAO {
 	private Collection<Airport> getAirportBucket(Airline al) {
 		Collection<Airport> bucket = _unsvcAirports.get(al);
 		if (bucket == null) {
-			bucket = new TreeSet<Airport>(new AirportComparator<Airport>(AirportComparator.NAME));
+			bucket = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 			_unsvcAirports.put(al, bucket);
 		}
 		

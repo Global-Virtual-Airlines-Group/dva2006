@@ -1,17 +1,17 @@
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import org.deltava.beans.schedule.Airport;
 
 /**
- * A comparator for Airport objects
- * 
+ * A comparator for Airport beans.
  * @author Luke
  * @version 1.0
  * @since 1.0
  * @see Airport
  */
 
-public class AirportComparator<T extends Airport> extends AbstractComparator<T> {
+public class AirportComparator extends AbstractComparator<Airport> {
 
     public static final int IATA = 0;
     public static final int ICAO = 1;
@@ -48,7 +48,7 @@ public class AirportComparator<T extends Airport> extends AbstractComparator<T> 
      * @throws ClassCastException if either object is not an Airport
      * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
      */
-    protected int compareImpl(T a1, T a2) {
+    protected int compareImpl(Airport a1, Airport a2) {
         switch (_comparisonType) {
         	case ICAO :
         	    return a1.getICAO().compareTo(a2.getICAO());
