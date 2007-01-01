@@ -12,9 +12,9 @@ import java.util.*;
 
 public class CommandStats implements java.io.Serializable {
 
-	private static Map<String, Entry> _stats = new TreeMap<String, Entry>();
+	private static final Map<String, Entry> _stats = new TreeMap<String, Entry>();
 
-	public static class Entry implements Comparable {
+	public static class Entry implements Comparable<CommandStats.Entry> {
 		
 		private String _cmd;
 		private long _count;
@@ -60,12 +60,20 @@ public class CommandStats implements java.io.Serializable {
 				_minTime = execTime;
 		}
 		
-		public int compareTo(Object o2) {
-			Entry e2 = (Entry) o2;
+		public int compareTo(Entry e2) {
 			return _cmd.compareTo(e2._cmd);
 		}
 	}
+
+	// singleton constructor
+	private CommandStats() {
+	}
 	
+	/**
+	 * Logs a command invocation.
+	 * @param cmd the Command class
+	 * @param execTime the execution time in millseconds
+	 */
 	public static synchronized void log(Class cmd, long execTime) {
 		Entry e = _stats.get(cmd.getSimpleName());
 		if (e == null) {
@@ -76,7 +84,11 @@ public class CommandStats implements java.io.Serializable {
 		e.log(execTime);
 	}
 	
-	public static Collection<Entry> getInfo() {
+	/**
+	 * Returns the command statistics.
+	 * @return a Collection of CommandStats.Entry beans
+	 */
+	public static synchronized Collection<Entry> getInfo() {
 		return _stats.values();
 	}
 }
