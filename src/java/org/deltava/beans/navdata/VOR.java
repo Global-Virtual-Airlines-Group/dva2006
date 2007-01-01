@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
@@ -8,10 +8,8 @@ package org.deltava.beans.navdata;
  * @since 1.0
  */
 
-public class VOR extends NavigationDataBean {
+public class VOR extends NavigationFrequencyBean {
    
-   private String _freq;
-
    /**
     * Creates a new VOR object.
     * @param lat the latitude in degrees
@@ -22,41 +20,10 @@ public class VOR extends NavigationDataBean {
    }
    
    /**
-    * Returns the VOR's frequency.
-    * @return the frequency
-    */
-   public String getFrequency() {
-      return _freq;
-   }
-
-   /**
-    * Updates the VOR's frequency.
-    * @param freq the frequency
-    */
-   public void setFrequency(String freq) {
-      _freq = freq;
-   }
-   
-   /**
     * Return the default Google Maps icon color.
     * @return org.deltava.beans.MapEntry.BLUE
     */
    public String getIconColor() {
       return BLUE;
-   }
-   
-   /**
-    * Returns the default Google Maps infobox text.
-    * @return an HTML String
-    */
-   public String getInfoBox() {
-      StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
-      buf.append(getHTMLTitle());
-      buf.append("Frequency: ");
-      buf.append(_freq);
-      buf.append("<br />");
-      buf.append(getHTMLPosition());
-      buf.append("</span>");
-      return buf.toString();
    }
 }

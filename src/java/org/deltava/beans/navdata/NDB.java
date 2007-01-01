@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
@@ -8,9 +8,7 @@ package org.deltava.beans.navdata;
  * @since 1.0
  */
 
-public class NDB extends NavigationDataBean {
-
-	private String _freq;
+public class NDB extends NavigationFrequencyBean {
 
 	/**
 	 * Creates a new NDB object.
@@ -22,41 +20,10 @@ public class NDB extends NavigationDataBean {
 	}
 
 	/**
-	 * Returns the NDB's frequency.
-	 * @return the frequency
-	 */
-	public String getFrequency() {
-		return _freq;
-	}
-
-	/**
-	 * Updates the NDB's frequency.
-	 * @param freq the frequency
-	 */
-	public void setFrequency(String freq) {
-		_freq = freq;
-	}
-
-	/**
 	 * Return the default Google Maps icon color.
 	 * @return org.deltava.beans.MapEntry.ORANGE
 	 */
 	public String getIconColor() {
 		return ORANGE;
-	}
-
-	/**
-	 * Returns the default Google Maps infobox text.
-	 * @return an HTML String
-	 */
-	public String getInfoBox() {
-		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\">");
-		buf.append(getHTMLTitle());
-		buf.append("Frequency: ");
-		buf.append(_freq);
-		buf.append("<br />");
-		buf.append(getHTMLPosition());
-		buf.append("</span>");
-		return buf.toString();
 	}
 }
