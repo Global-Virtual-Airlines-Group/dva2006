@@ -17,7 +17,14 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.name, 4, 'Aircraft Name')) return false;
-if (!validateNumber(form.range, 1, 'Arcraft Range')) return false;
+if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
+if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
+if (!validateText(form.engineType, 4, 'Engine Count')) return false;
+if (!validateNumber(form.cruiseSpeed, 40, 'Cruise Speed')) return false;
+if (!validateNumber(form.fuelFlow, 100, 'Fuel Flow')) return false;
+if (!validateNumber(form.baseFuel, 0, 'Base Fuel Amount')) return false;
+if (!validateNumber(form.taxiFuel, 0, 'Taxi Fuel Amount')) return false;
+if (!validateCheckBox(form.pTanks, 1, 'Primary Fuel Tanks')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -58,6 +65,56 @@ return true;
 <tr>
  <td class="label" valign="top">Web Applications</td>
  <td class="data"><el:check name="airlines" width="180" options="${airlines}" checked="${aircraft.apps}" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">ACARS FUEL PROFILE</td>
+</tr>
+<tr>
+ <td class="label">Engine Information</td>
+ <td class="data"><el:text name="engineCount" idx="*" size="1" max="1" value="${aircraft.engines}" className="bld req" />
+ x <el:text name="engineType" idx="*" size="16" max="32" value="${aircraft.engineType}" className="req" /></td>
+</tr>
+<tr>
+ <td class="label">Cruise Speed</td>
+ <td class="data"><el:text name="cruiseSpeed" idx="*" size="3" max="4" value="${aircraft.cruiseSpeed}" className="req" />
+ knots</td>
+</tr>
+<tr>
+ <td class="label">Fuel Flow</td>
+ <td class="data"><el:text name="fuelFlow" idx="*" size="3" max="5" value="${aircraft.fuelFlow}" className="req" />
+ pounds per engine per hour</td>
+</tr>
+<tr>
+ <td class="label">Base Fuel</td>
+ <td class="data"><el:text name="baseFuel" idx="*" size="3" max="5" value="${aircraft.baseFuel}" className="req" />
+ pounds</td>
+</tr>
+<tr>
+ <td class="label">Taxi Fuel</td>
+ <td class="data"><el:text name="taxiFuel" idx="*" size="3" max="5" value="${aircraft.taxiFuel}" className="req" />
+ pounds</td>
+</tr>
+<tr>
+ <td class="label" valign="top">Primary Tanks</td>
+ <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Primary']}" options="${tankNames}" /></td>
+</tr>
+<tr>
+ <td class="label">Primary Percentage</td>
+ <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Primary']}" className="req" />
+ percent before filling Secondary tanks</td>
+</tr>
+<tr>
+ <td class="label" valign="top">Secondary Tanks</td>
+ <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Secondary']}" options="${tankNames}" /></td>
+</tr>
+<tr>
+ <td class="label">Secondary Percentage</td>
+ <td class="data">Fill to <el:text name="pPct" idx="*" size="2" max="3" value="${aircraft.tankPercent['Secondary']}" className="req" />
+ percent before filling Other tanks</td>
+</tr>
+<tr>
+ <td class="label" valign="top">Other Tanks</td>
+ <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Other']}" options="${tankNames}" /></td>
 </tr>
 </el:table>
 
