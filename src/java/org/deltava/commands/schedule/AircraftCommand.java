@@ -10,7 +10,7 @@ import org.deltava.beans.system.AirlineInformation;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -52,6 +52,17 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
+			a.setEngines((byte) StringUtils.parse(ctx.getParameter("engineCount"), 2));
+			a.setEngineType(ctx.getParameter("engineType"));
+			a.setCruiseSpeed(StringUtils.parse(ctx.getParameter("cruiseSpeed"), 0));
+			a.setFuelFlow(StringUtils.parse(ctx.getParameter("fuelFlow"), 0));
+			a.setBaseFuel(StringUtils.parse(ctx.getParameter("baseFuel"), 0));
+			a.setTaxiFuel(StringUtils.parse(ctx.getParameter("taxiFuel"), 0));
+			a.setTanks(Aircraft.PRIMARY, ctx.getParameters("pTanks"));
+			a.setPct(Aircraft.PRIMARY, StringUtils.parse(ctx.getParameter("pPct"), 100));
+			a.setTanks(Aircraft.SECONDARY, ctx.getParameters("sTanks"));
+			a.setPct(Aircraft.SECONDARY, StringUtils.parse(ctx.getParameter("sPct"), 0));
+			a.setTanks(Aircraft.OTHER, ctx.getParameters("oTanks"));
 			
 			// Update the web applications
 			a.clearApps();
@@ -117,6 +128,9 @@ public class AircraftCommand extends AbstractFormCommand {
 				ctx.release();
 			}
 		}
+		
+		// Save tank names
+		ctx.setAttribute("tankNames", ComboUtils.fromArray(Aircraft.TANK_NAMES), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

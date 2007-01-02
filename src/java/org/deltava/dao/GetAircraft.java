@@ -90,6 +90,17 @@ public class GetAircraft extends DAO {
 			a.setRange(rs.getInt(2));
 			a.setIATA(StringUtils.split(rs.getString(3), ","));
 			a.setHistoric(rs.getBoolean(4));
+			a.setEngines(rs.getByte(5));
+			a.setEngineType(rs.getString(6));
+			a.setCruiseSpeed(rs.getInt(7));
+			a.setFuelFlow(rs.getInt(8));
+			a.setBaseFuel(rs.getInt(9));
+			a.setTaxiFuel(rs.getInt(10));
+			a.setTanks(Aircraft.PRIMARY, rs.getInt(11));
+			a.setPct(Aircraft.PRIMARY, rs.getInt(12));
+			a.setTanks(Aircraft.SECONDARY, rs.getInt(13));
+			a.setPct(Aircraft.SECONDARY, rs.getInt(14));
+			a.setTanks(Aircraft.OTHER, rs.getInt(15));
 			results.put(a.getName(), a);
 		}
 		
