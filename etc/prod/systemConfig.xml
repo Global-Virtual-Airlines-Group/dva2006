@@ -555,8 +555,8 @@
 			<addr>127.0.0.1</addr>
 		</list>
 
-		<!-- List of valid parser/formatter packages -->
-		<map name="parsers">
+		<!-- List of valid protocol revisions -->
+		<map name="protocols">
 			<v1>org.deltava.acars.xml.v1</v1>
 		</map>
 
