@@ -101,14 +101,14 @@
 <el:table className="form" space="default" pad="default">
 <tr>
  <td class="label">Route Map Data</td>
- <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="true" />
-<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="true" /> 
+ <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute')" label="Route" checked="false" />
+<el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers')" label="Flight Data" checked="false" /> 
 <el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute')" label="Flight Plan" checked="true" /> 
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers')" label="Navaid Markers" checked="true" /></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="620" y="530" /></div>
+ <td class="data"><map:div ID="googleMap" x="100%" y="530" /></div>
 </tr>
 </el:table>
 </el:form>
@@ -130,23 +130,20 @@
 <script language="JavaScript" type="text/javascript">
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
-<map:points var="routePoints" items="${mapRoute}" />
-<map:markers var="routeMarkers" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.85" />
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.75" />
+<map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.7" />
 
 // Build the map
-var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
-map.addControl(new GSmallZoomControl());
+var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
 
-// Add the route and markers
-addMarkers(map, 'gRoute');
+// Add the filed route and markers
 addMarkers(map, 'gfRoute');
-addMarkers(map, 'routeMarkers');
 addMarkers(map, 'filedMarkers');
 </script>
 </c:if>
