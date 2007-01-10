@@ -184,7 +184,7 @@ Applicant profile for ${pilot.name}.</td>
 <%@ include file="/jsp/pilot/pilotExams.jspf" %>
 <%@ include file="/jsp/pilot/pilotStatusUpdate.jspf" %>
 </el:table>
-<c:if test="${access.canEdit || access.canChangeStatus}">
+
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
@@ -211,10 +211,9 @@ Applicant profile for ${pilot.name}.</td>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
 </content:filter>
- </td>
+</td>
 </tr>
 </el:table>
-</c:if>
 <content:copyright />
 </content:region>
 </content:page>
