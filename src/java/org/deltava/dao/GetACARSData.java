@@ -88,11 +88,11 @@ public class GetACARSData extends DAO {
 	public List<GeoLocation> getRouteEntries(int flightID, boolean includeOnGround, boolean isArchived) throws DAOException {
 	   
 	   // Build the SQL statement
-	   StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
+	   StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
 			   + "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE "
 			   + "FROM acars.");
 	   sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
-	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME");
+	   sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
 	   
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -104,30 +104,31 @@ public class GetACARSData extends DAO {
 
 			// Iterate through the result set
 			while (rs.next()) {
-				RouteEntry entry = new RouteEntry(rs.getTimestamp(1), rs.getDouble(2), rs.getDouble(3));
-				entry.setAltitude(rs.getInt(4));
-				entry.setRadarAltitude(rs.getInt(5));
-				entry.setHeading(rs.getInt(6));
-				entry.setPitch(rs.getDouble(7));
-				entry.setBank(rs.getDouble(8));
-				entry.setAirSpeed(rs.getInt(9));
-				entry.setGroundSpeed(rs.getInt(10));
-				entry.setVerticalSpeed(rs.getInt(11));
-				entry.setN1(rs.getDouble(12));
-				entry.setN2(rs.getDouble(13));
-				entry.setFlaps(rs.getInt(14));
-				entry.setWindHeading(rs.getInt(15));
-				entry.setWindSpeed(rs.getInt(16));
-				entry.setFuelFlow(rs.getInt(17));
-				entry.setAOA(rs.getDouble(18));
-				entry.setG(rs.getDouble(19));
-				entry.setFlags(rs.getInt(20));
-				entry.setFrameRate(rs.getInt(21));
-
+				java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
+				RouteEntry entry = new RouteEntry(dt, rs.getDouble(3), rs.getDouble(4));
+				entry.setFlags(rs.getInt(21));
+				
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && !entry.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN) && !includeOnGround) {
 					results.add(new GeoPosition(entry));
 				} else {
+					entry.setAltitude(rs.getInt(5));
+					entry.setRadarAltitude(rs.getInt(6));
+					entry.setHeading(rs.getInt(7));
+					entry.setPitch(rs.getDouble(8));
+					entry.setBank(rs.getDouble(9));
+					entry.setAirSpeed(rs.getInt(10));
+					entry.setGroundSpeed(rs.getInt(11));
+					entry.setVerticalSpeed(rs.getInt(12));
+					entry.setN1(rs.getDouble(13));
+					entry.setN2(rs.getDouble(14));
+					entry.setFlaps(rs.getInt(15));
+					entry.setWindHeading(rs.getInt(16));
+					entry.setWindSpeed(rs.getInt(17));
+					entry.setFuelFlow(rs.getInt(18));
+					entry.setAOA(rs.getDouble(19));
+					entry.setG(rs.getDouble(20));
+					entry.setFrameRate(rs.getInt(22));
 					results.add(entry);
 				}
 			}
