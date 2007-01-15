@@ -79,12 +79,13 @@ public class GetACARSErrors extends DAO {
 	 */
 	public ACARSError get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REMOTE_ADDR) FROM acars.ERRORS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 			
 			// Execute the query, get the first result
 			List<ACARSError> results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

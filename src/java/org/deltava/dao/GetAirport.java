@@ -38,14 +38,17 @@ public class GetAirport extends DAO {
 	 */
 	public Airport get(String code) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRPORTS WHERE ((ICAO=?) OR (IATA=?))");
 			_ps.setString(1, code.toUpperCase());
 			_ps.setString(2, code.toUpperCase());
-			_ps.setMaxRows(1);
 
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next())
+			setQueryMax(0);
+			if (!rs.next()) {
+				rs.close();
 				return null;
+			}
 
 			// Create the airport object
 			Airport a = new Airport(rs.getString(1), rs.getString(2), rs.getString(4));
@@ -187,13 +190,14 @@ public class GetAirport extends DAO {
 			return iata;
 		
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?)");
 			_ps.setString(1, iata.toUpperCase());
-			_ps.setMaxRows(1);
 			
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();
 			String code = rs.next() ? rs.getString(1) : null;
+			setQueryMax(0);
 			
 			// Clean up and return
 			rs.close();

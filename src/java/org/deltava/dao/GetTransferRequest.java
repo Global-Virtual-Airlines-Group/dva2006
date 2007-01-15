@@ -32,13 +32,14 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest get(int pilotID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
 					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=?)");
 			_ps.setInt(1, pilotID);
-			_ps.setMaxRows(1);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -84,13 +85,14 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
 					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CHECKRIDE_ID=?)");
 			_ps.setInt(1, checkRideID);
-			_ps.setMaxRows(1);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
