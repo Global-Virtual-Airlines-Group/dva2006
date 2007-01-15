@@ -55,7 +55,7 @@
  <td colspan="${cspan}" class="data pri bld">${pilot.equipmentType}</td>
 </tr>
 <tr>
- <td class="label">Additional Ratings</td>
+ <td class="label" valign="top">Additional Ratings</td>
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
 <c:if test="${!empty courses}">
