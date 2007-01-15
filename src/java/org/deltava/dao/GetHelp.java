@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -33,9 +33,9 @@ public class GetHelp extends DAO {
 	 */
 	public OnlineHelpEntry get(String id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM HELP WHERE (ID=?)");
 			_ps.setString(1, id);
+			_ps.setMaxRows(1);
 
 			// Execute the query, return first result
 			List<OnlineHelpEntry> results = executeHelp();
@@ -67,9 +67,9 @@ public class GetHelp extends DAO {
 	 */
 	public Issue getIssue(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM HELPDESK WHERE (ID=?)");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Do the query and return the first result
 			List<Issue> results = executeIssue();
@@ -207,7 +207,7 @@ public class GetHelp extends DAO {
 				rs.close();
 				_ps.close();
 			}
-			
+
 			return results.values();
 		} catch (SQLException se) {
 			throw new DAOException(se);

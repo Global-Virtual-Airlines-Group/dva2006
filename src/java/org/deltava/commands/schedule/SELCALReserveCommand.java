@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -45,7 +45,6 @@ public class SELCALReserveCommand extends AbstractCommand {
 			SetSELCAL wdao = new SetSELCAL(con);
 			if (isReserve) {
 				int maxCodes = SystemData.getInt("users.selcal.max", 2);
-				dao.setQueryMax(0);
 				Collection<SelectCall> rSC = dao.getReserved(ctx.getUser().getID());
 				if (rSC.size() > maxCodes) {
 					CommandException ce = new CommandException("Cannot reserve more than " + maxCodes + " SELCAL codes");

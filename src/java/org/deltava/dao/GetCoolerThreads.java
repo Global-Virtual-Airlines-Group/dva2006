@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -181,9 +181,9 @@ public class GetCoolerThreads extends DAO {
 	 */
 	public MessageThread getThread(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.COOLER_THREADS WHERE (ID=?)");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Execute the query - if id not found return null
 			ResultSet rs = _ps.executeQuery();

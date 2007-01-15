@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -157,7 +157,6 @@ public class GetStatistics extends DAO {
 				return Collections.emptyMap();
 			
 			// Build the quantiles
-			setQueryMax(1);
 			Map<Integer, java.util.Date> results = new LinkedHashMap<Integer, java.util.Date>();
 			for (Iterator<Float> i = keys.iterator(); i.hasNext(); ) {
 				float key = i.next().floatValue();
@@ -169,6 +168,7 @@ public class GetStatistics extends DAO {
 				prepareStatement("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED");
 				_ps.setInt(1, Pilot.ACTIVE);
 				_ps.setInt(2, Pilot.ON_LEAVE);
+				_ps.setMaxRows(1);
 
 				// Execute the Query
 				rs = _ps.executeQuery();
@@ -373,10 +373,10 @@ public class GetStatistics extends DAO {
 			return result.getValue();
 
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE "
 					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
+			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
