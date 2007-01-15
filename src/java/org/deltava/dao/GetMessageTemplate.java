@@ -43,12 +43,13 @@ public class GetMessageTemplate extends DAO {
 			return result;
 
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?)");
 			_ps.setString(1, name.toUpperCase());
-			_ps.setMaxRows(1);
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List results = execute();
+			setQueryMax(0);
 			if (results.isEmpty()) {
 				log.warn("Cannot load Message Template " + name);
 			} else {

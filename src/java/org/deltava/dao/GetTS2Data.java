@@ -59,12 +59,13 @@ public class GetTS2Data extends DAO {
 	 */
 	public Channel getChannel(String name) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM teamspeak.ts2_channels WHERE (s_channel_name=?)");
 			_ps.setString(1, name);
-			_ps.setMaxRows(1);
 
 			// Execute the query and return
 			List<Channel> results = executeChannels();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -210,14 +211,15 @@ public class GetTS2Data extends DAO {
 	 */
 	public Server getServer(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT i_server_id, s_server_name, s_server_welcomemessage, i_server_maxusers, "
 					+ "i_server_udpport, s_server_password, b_server_active, dt_server_created, s_server_description, "
 					+ "b_server_no_acars FROM teamspeak.ts2_servers WHERE (i_server_id=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 			
 			// Execute the query
 			List<Server> results = executeServers();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -63,12 +63,13 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
+			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
@@ -104,12 +105,13 @@ public class GetFlightReports extends DAO {
 				+ "AND (APR.ACARS_ID=?)");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, acarsID);
-			_ps.setMaxRows(1);
 
 			// Execute the query, if nothing returned then give back null
 			List results = execute();
+			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
@@ -289,12 +291,12 @@ public class GetFlightReports extends DAO {
 	 */
 	public void getOnlineTotals(Pilot p) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT COUNT(PR.FLIGHT_TIME), SUM(PR.FLIGHT_TIME) FROM PIREPS PR WHERE "
 					+ "(PR.PILOT_ID=?) AND (PR.STATUS=?) AND ((PR.ATTR & ?) != 0)");
 			_ps.setInt(1, p.getID());
 			_ps.setInt(2, FlightReport.OK);
 			_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setMaxRows(1);
 
 			// Execute the query - update the pilot if data found
 			ResultSet rs = _ps.executeQuery();
@@ -304,6 +306,7 @@ public class GetFlightReports extends DAO {
 			}
 
 			// Clean up
+			setQueryMax(0);
 			rs.close();
 			_ps.close();
 		} catch (SQLException se) {
@@ -424,14 +427,15 @@ public class GetFlightReports extends DAO {
 	 */
 	public int getCount(int pilotID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.OK);
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			int result = (rs.next()) ? rs.getInt(1) : 0;
+			setQueryMax(0);
 
 			// Clean up and return
 			rs.close();

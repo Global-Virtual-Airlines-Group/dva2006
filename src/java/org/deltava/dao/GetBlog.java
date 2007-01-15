@@ -31,12 +31,13 @@ public class GetBlog extends DAO {
 	 */
 	public Entry get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM BLOG WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 			
 			// Execute the query, return null if empty
 			List<Entry> results = execute();
+			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			

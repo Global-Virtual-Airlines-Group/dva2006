@@ -31,12 +31,13 @@ public class GetResources extends DAO {
 	 */
 	public Resource get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM RESOURCES WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 			
 			// Get first result
 			List<Resource> results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

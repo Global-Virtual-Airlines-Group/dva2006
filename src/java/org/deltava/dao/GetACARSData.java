@@ -153,13 +153,14 @@ public class GetACARSData extends DAO {
 	 */
 	public String getRoute(int flightID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT ROUTE from acars.FLIGHTS WHERE (ID=?)");
 			_ps.setInt(1, flightID);
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			String result = (rs.next()) ? rs.getString(1) : null;
+			setQueryMax(0);
 
 			// Clean up and return
 			rs.close();
@@ -178,13 +179,14 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
 					+ "AND (F.ID=?)");
 			_ps.setInt(1, flightID);
-			_ps.setMaxRows(1);
 
 			// Get the first entry, or null
 			List<FlightInfo> results = executeFlightInfo();
+			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
 			if (info == null)
 				return null;
@@ -215,13 +217,14 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(long conID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
 					+ "AND (C.ID=?) ORDER BY F.CREATED DESC");
 			_ps.setLong(1, conID);
-			_ps.setMaxRows(1);
 
 			// Get the first entry, or null
 			List<FlightInfo> results = executeFlightInfo();
+			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
 
 			// Count the number of position records
@@ -250,15 +253,16 @@ public class GetACARSData extends DAO {
 	 */
 	public ConnectionEntry getConnection(long conID) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
 					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C "
 					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) "
 					+ "LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
 			_ps.setLong(1, conID);
-			_ps.setMaxRows(1);
 
 			// Get the first entry, or null
 			List<ConnectionEntry> results = executeConnectionInfo();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

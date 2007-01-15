@@ -32,12 +32,13 @@ public class GetSELCAL extends DAO {
 	 */
 	public SelectCall get(String code) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM SELCAL WHERE (UPPER(CODE)=?)");
 			_ps.setString(1, code.toUpperCase());
-			_ps.setMaxRows(1);
 			
 			// Return result or null if empty
 			List results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : (SelectCall) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

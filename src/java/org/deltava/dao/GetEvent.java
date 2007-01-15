@@ -175,12 +175,13 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Execute the query and return null if nothing found
 			List<Event> results = execute();
+			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 

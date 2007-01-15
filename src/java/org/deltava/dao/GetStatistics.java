@@ -165,10 +165,10 @@ public class GetStatistics extends DAO {
 					
 				// Prepare the statement
 				setQueryStart(Math.round(totalSize * key / 100));
+				setQueryMax(1);
 				prepareStatement("SELECT CREATED FROM PILOTS WHERE ((STATUS=?) OR (STATUS=?)) ORDER BY CREATED");
 				_ps.setInt(1, Pilot.ACTIVE);
 				_ps.setInt(2, Pilot.ON_LEAVE);
-				_ps.setMaxRows(1);
 
 				// Execute the Query
 				rs = _ps.executeQuery();
@@ -176,6 +176,7 @@ public class GetStatistics extends DAO {
 					results.put(new Integer(Math.round(key)), rs.getDate(1));
 				
 				// Clean up
+				setQueryMax(0);
 				rs.close();
 				_ps.close();
 			}
@@ -373,14 +374,15 @@ public class GetStatistics extends DAO {
 			return result.getValue();
 
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT COUNT(*) FROM common.COOLER_POSTS WHERE "
 					+ "(CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			result = new CacheableInteger(new Integer(days), rs.next() ? rs.getInt(1) : 0);
+			setQueryMax(0);
 
 			// Clean up
 			rs.close();
