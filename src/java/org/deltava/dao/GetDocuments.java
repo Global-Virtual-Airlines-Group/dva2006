@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -46,9 +46,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
 		try {
-			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
+			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List<Manual> results = loadManuals();
@@ -84,9 +84,9 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
 		try {
-			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
+			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List<Newsletter> results = loadNewsletters();

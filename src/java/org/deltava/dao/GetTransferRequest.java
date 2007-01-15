@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,10 +32,10 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest get(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
 					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=?)");
 			_ps.setInt(1, pilotID);
+			_ps.setMaxRows(1);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
@@ -84,10 +84,10 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
 					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CHECKRIDE_ID=?)");
 			_ps.setInt(1, checkRideID);
+			_ps.setMaxRows(1);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.cache.*;
 
 public class GetCoolerChannels extends DAO {
 
-	private static Cache _cache = new ExpiringCache(4, 3600);
+	private static final Cache _cache = new ExpiringCache(5, 3600);
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -64,9 +64,9 @@ public class GetCoolerChannels extends DAO {
 			return c;
 
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?)");
 			_ps.setString(1, channelName);
+			_ps.setMaxRows(1);
 
 			// Execute the query - if nothing is returned, return null
 			ResultSet rs = _ps.executeQuery();

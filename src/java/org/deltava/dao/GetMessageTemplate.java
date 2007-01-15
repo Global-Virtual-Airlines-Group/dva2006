@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -43,9 +43,9 @@ public class GetMessageTemplate extends DAO {
 			return result;
 
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?)");
 			_ps.setString(1, name.toUpperCase());
+			_ps.setMaxRows(1);
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List results = execute();

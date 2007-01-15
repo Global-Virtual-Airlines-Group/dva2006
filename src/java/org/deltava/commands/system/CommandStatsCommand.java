@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -41,7 +41,6 @@ public class CommandStatsCommand extends AbstractCommand {
          
          // Get the DAO and the statistics
          GetSystemData dao = new GetSystemData(con);
-         dao.setQueryMax(0);
          ctx.setAttribute("stats", dao.getCommandStats(sortBy), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
