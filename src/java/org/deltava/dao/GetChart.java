@@ -1,4 +1,4 @@
-//Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+//Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -112,13 +112,13 @@ public class GetChart extends DAO {
 	 */
 	public Chart get(int id) throws DAOException {
 		try {
-			// Prepare the statement
+			setQueryMax(1);
 			prepareStatement("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			List<Chart> results = execute();
+			setQueryMax(0);
 			return (results.isEmpty()) ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

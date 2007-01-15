@@ -31,13 +31,14 @@ public class GetQuestionnaire extends DAO {
 	 */
 	public Examination get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT) FROM APPEXAMS E, "
 					+ "APPQUESTIONS Q WHERE (E.ID=Q.EXAM_ID) AND (E.ID=?) GROUP BY E.ID");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Get the examination
 			List results = execute();
+			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 
@@ -80,13 +81,14 @@ public class GetQuestionnaire extends DAO {
 
 		int examID = 0;
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT ID FROM APPEXAMS WHERE (APP_ID=?)");
 			_ps.setInt(1, applicantID);
-			_ps.setMaxRows(1);
 
 			// Get the ID
 			ResultSet rs = _ps.executeQuery();
 			examID = (rs.next()) ? rs.getInt(1) : 0;
+			setQueryMax(0);
 
 			// Clean up
 			rs.close();

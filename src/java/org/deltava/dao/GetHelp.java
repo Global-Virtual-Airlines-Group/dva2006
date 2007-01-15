@@ -33,12 +33,13 @@ public class GetHelp extends DAO {
 	 */
 	public OnlineHelpEntry get(String id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM HELP WHERE (ID=?)");
 			_ps.setString(1, id);
-			_ps.setMaxRows(1);
 
 			// Execute the query, return first result
 			List<OnlineHelpEntry> results = executeHelp();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -67,12 +68,13 @@ public class GetHelp extends DAO {
 	 */
 	public Issue getIssue(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM HELPDESK WHERE (ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Do the query and return the first result
 			List<Issue> results = executeIssue();
+			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 

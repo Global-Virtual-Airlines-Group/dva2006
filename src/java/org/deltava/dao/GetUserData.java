@@ -105,13 +105,14 @@ public class GetUserData extends DAO {
 	 */
 	public UserData get(int id) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
 					+ "WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?)");
 			_ps.setInt(1, id);
-			_ps.setMaxRows(1);
 
 			// Get the results, if empty return null
 			List results = execute();
+			setQueryMax(0);
 			return results.isEmpty() ? null : (UserData) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

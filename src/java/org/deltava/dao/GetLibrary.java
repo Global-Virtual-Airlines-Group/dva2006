@@ -68,12 +68,13 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List results = loadInstallers();
+			setQueryMax(0);
 			return results.isEmpty() ? null : (Installer) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -99,12 +100,13 @@ public class GetLibrary extends DAO {
 				+ "F.NAME ORDER BY F.NAME");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, code.toUpperCase());
-			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List results = loadInstallers();
+			setQueryMax(0);
 			return results.isEmpty() ? null : (Installer) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -119,13 +121,14 @@ public class GetLibrary extends DAO {
 	 */
 	public FileEntry getFile(String fName) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
 					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
 			_ps.setString(1, fName);
-			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List<FileEntry> results = loadFiles(false);
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -140,13 +143,14 @@ public class GetLibrary extends DAO {
 	 */
 	public Video getVideo(String fName) throws DAOException {
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
 					+ "(V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME");
 			_ps.setString(1, fName);
-			_ps.setMaxRows(1);
 			
 			// Get results - if empty return null
 			List results = loadFiles(true);
+			setQueryMax(0);
 			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
 			throw new DAOException(se);

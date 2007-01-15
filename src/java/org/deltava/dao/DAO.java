@@ -1,8 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.Calendar;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.deltava.util.CalendarUtils;
 
@@ -15,7 +16,7 @@ import org.deltava.util.CalendarUtils;
 
 public abstract class DAO {
 	
-	private static volatile long _queryCount = 0;
+	private static final AtomicLong _queryCount = new AtomicLong();
 
 	/**
 	 * The maximum number of rows to return.
@@ -154,7 +155,7 @@ public abstract class DAO {
 		// Set the query timeout and fetch size
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize(_queryMax > 100 ? 100 : _queryMax);
-		_queryCount++;
+		_queryCount.incrementAndGet();
 	}
 
 	/**
@@ -169,7 +170,7 @@ public abstract class DAO {
 		_ps = _c.prepareStatement(sql);
 		_ps.setQueryTimeout(_queryTimeout);
 		_ps.setFetchSize(100);
-		_queryCount++;
+		_queryCount.incrementAndGet();
 	}
 
 	/**
@@ -289,6 +290,6 @@ public abstract class DAO {
 	 * @return the number of queries
 	 */
 	public final static long getQueryCount() {
-		return _queryCount;
+		return _queryCount.longValue();
 	}
 }

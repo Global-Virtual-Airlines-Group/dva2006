@@ -31,13 +31,14 @@ public class GetStaff extends DAO {
      */
     public Staff get(int id) throws DAOException {
         try {
+        	setQueryMax(1);
             prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, P.EMAIL, S.* FROM STAFF S, PILOTS P WHERE " +
                     "(S.ID=P.ID) AND (S.ID=?)");
             _ps.setInt(1, id);
-			_ps.setMaxRows(1);
             
             // Execute the query and get the result; if none return null
             ResultSet rs = _ps.executeQuery();
+            setQueryMax(0);
             if (!rs.next()) {
             	rs.close();
             	_ps.close();

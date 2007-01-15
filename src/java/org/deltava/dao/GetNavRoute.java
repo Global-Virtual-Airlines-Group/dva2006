@@ -67,13 +67,14 @@ public class GetNavRoute extends GetNavData {
 			return null;
 
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			List results = executeSIDSTAR();
+			setQueryMax(0);
 			result = results.isEmpty() ? null : (TerminalRoute) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -126,12 +127,13 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
 			_ps.setString(1, name.toUpperCase());
-			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
+			setQueryMax(0);
 
 			// Populate the airway bean
 			if (rs.next())

@@ -46,12 +46,13 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (D.FILENAME=?) GROUP BY D.NAME");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List<Manual> results = loadManuals();
+			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			
@@ -84,12 +85,13 @@ public class GetDocuments extends GetLibrary {
 		sqlBuf.append(".DOWNLOADS L ON (N.FILENAME=L.FILENAME) WHERE (N.FILENAME=?) GROUP BY N.NAME");
 
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, fName);
-			_ps.setMaxRows(1);
 
 			// Get results - if empty return null
 			List<Newsletter> results = loadNewsletters();
+			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
