@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -124,7 +124,6 @@ public class ThreadCommand extends AbstractCommand {
 			}
 
 			// Get the location of all the Pilots reporting/updating/posting in the thread
-			uddao.setQueryMax(0);
 			updateIDs.addAll(thread.getReportIDs());
 			UserDataMap udm = uddao.getByThread(thread.getID());
 			udm.putAll(uddao.get(updateIDs));
@@ -187,7 +186,6 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Save all channels in the thread for the move combobox
 			if (ac.getCanUnlock() || ac.getCanLock()) {
-				cdao.setQueryMax(0);
 				ctx.setAttribute("channel", c, REQUEST);
 				Collection<Channel> channels = cdao.getChannels(airline, ctx.isUserInRole("Admin"));
 				channels.remove(Channel.ALL);

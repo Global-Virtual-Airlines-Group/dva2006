@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -31,9 +31,9 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM CERTS WHERE (NAME=?)");
 			_ps.setString(1, name);
+			_ps.setMaxRows(1);
 			
 			// Execute the query
 			List<Certification> results = execute();

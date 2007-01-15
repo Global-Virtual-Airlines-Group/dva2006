@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,9 +32,9 @@ public class GetSELCAL extends DAO {
 	 */
 	public SelectCall get(String code) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM SELCAL WHERE (UPPER(CODE)=?)");
 			_ps.setString(1, code.toUpperCase());
+			_ps.setMaxRows(1);
 			
 			// Return result or null if empty
 			List results = execute();

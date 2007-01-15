@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -32,9 +32,9 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation get(int id) throws DAOException {
 		try {
-		   setQueryMax(1);
 			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID=?)");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Run the query, if empty return null
 			List results = execute();
@@ -62,9 +62,9 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation get(String hashCode) throws DAOException {
 		try {
-		   setQueryMax(1);
 			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (HASH=?)");
 			_ps.setString(1, hashCode);
+			_ps.setMaxRows(1);
 
 			// Run the query, if empty return null
 			List results = execute();
@@ -82,9 +82,9 @@ public class GetAddressValidation extends DAO {
 	 */
 	public AddressValidation getAddress(String eMail) throws DAOException {
 		try {
-		   setQueryMax(1);
 			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (EMAIL=?)");
 			_ps.setString(1, eMail);
+			_ps.setMaxRows(1);
 
 			// Run the query, if empty return null
 			List results = execute();

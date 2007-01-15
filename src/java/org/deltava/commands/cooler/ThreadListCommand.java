@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -55,7 +55,6 @@ public class ThreadListCommand extends AbstractViewCommand {
 			// Get the channel DAO and the list of channels
 			GetCoolerChannels dao = new GetCoolerChannels(con);
 			Channel ch = dao.get(cName);
-			dao.setQueryMax(0);
 			ctx.setAttribute("channel", ch, REQUEST);
 			ctx.setAttribute("channels", dao.getChannels(airline, ctx.getRoles()), REQUEST);
 

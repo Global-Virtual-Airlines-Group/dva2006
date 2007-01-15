@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -175,9 +175,9 @@ public class GetEvent extends DAO {
 	 */
 	public Event get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.EVENTS WHERE (ID=?)");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Execute the query and return null if nothing found
 			List<Event> results = execute();
@@ -185,7 +185,6 @@ public class GetEvent extends DAO {
 				return null;
 
 			// Get the first event and populate it
-			setQueryMax(0);
 			Event e = results.get(0);
 			loadFlightPlans(e);
 			loadEQTypes(e);

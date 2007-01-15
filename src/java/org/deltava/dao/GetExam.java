@@ -35,11 +35,11 @@ public class GetExam extends DAO {
 	 */
 	public Examination getExam(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, EP.ACADEMY "
 					+ "FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.ID=?) AND (E.NAME=EP.NAME) AND "
 					+ "(E.ID=Q.EXAM_ID) GROUP BY E.ID");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Execute the query, return null if nothing
 			List<Examination> results = execute();
@@ -118,7 +118,6 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			if (SystemData.getBoolean("academy.enabled"))
 				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ID=?)");
@@ -128,6 +127,7 @@ public class GetExam extends DAO {
 
 			// Execute the query
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
 		} catch (SQLException se) {
@@ -143,7 +143,6 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
-			setQueryMax(1);
 			if (SystemData.getBoolean("academy.enabled"))
 				prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (CHECKRIDES CR, EQTYPES EQ) LEFT JOIN "
 						+ "COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.ACARS_ID=?)");
@@ -153,6 +152,7 @@ public class GetExam extends DAO {
 			
 			// Execute the query
 			_ps.setInt(1, acarsID);
+			_ps.setMaxRows(1);
 			List results = executeCheckride();
 			return results.isEmpty() ? null : (CheckRide) results.get(0);
 		} catch (SQLException se) {
@@ -181,11 +181,11 @@ public class GetExam extends DAO {
 				+ "AND (CR.STATUS=?)");
 
 		try {
-			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
 			_ps.setInt(3, status);
+			_ps.setMaxRows(1);
 
 			// Execute the query
 			List<CheckRide> results = executeCheckride();
@@ -307,11 +307,11 @@ public class GetExam extends DAO {
 	 */
 	public int getActiveExam(int id) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT ID FROM EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))");
 			_ps.setInt(1, id);
 			_ps.setInt(2, Test.NEW);
 			_ps.setInt(3, Test.SUBMITTED);
+			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();

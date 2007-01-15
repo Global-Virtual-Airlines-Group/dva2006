@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -46,9 +46,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			return a;
 
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
 
 			// Get results, return first or null
 			List results = execute();
@@ -66,9 +66,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?)");
 			_ps.setInt(1, pilotID);
+			_ps.setMaxRows(1);
 
 			// Get results, return first or null
 			List results = execute();
@@ -145,9 +145,9 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?)");
 			_ps.setString(1, directoryName);
+			_ps.setMaxRows(1);
 
 			// Get results, return first or null
 			List results = execute();

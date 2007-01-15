@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -34,9 +34,9 @@ public class GetExamProfiles extends DAO {
 	 */
 	public ExamProfile getExamProfile(String examName) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM EXAMINFO WHERE (NAME=?)");
 			_ps.setString(1, examName);
+			_ps.setMaxRows(1);
 
 			// Execute the query - return null if not found
 			List<ExamProfile> results = execute();
@@ -290,9 +290,9 @@ public class GetExamProfiles extends DAO {
 	 */
 	public CheckRideScript getScript(String eqType) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM CR_DESCS WHERE (EQTYPE=?)");
 			_ps.setString(1, eqType);
+			_ps.setMaxRows(1);
 
 			// Execute the Query - return null if nothing found
 			ResultSet rs = _ps.executeQuery();

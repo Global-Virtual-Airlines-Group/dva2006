@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -61,9 +61,9 @@ public class GetAirline extends DAO {
 	 */
 	public Airline get(String code) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRLINES WHERE (CODE=?)");
 			_ps.setString(1, code.toUpperCase());
+			_ps.setMaxRows(1);
 
 			// Execute the query, if nothing matches return null
 			Map<String, Airline> results = execute();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -90,7 +90,6 @@ public class FlightInfoCommand extends AbstractCommand {
 			}
 
 			// Load the route data
-			dao.setQueryMax(0);
 			List<GeoLocation> positions = dao.getRouteEntries(info.getID(), false, info.getArchived());
 
 			// Calculate and save the map center for the Google Map

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -37,13 +37,11 @@ public class GetAirport extends DAO {
 	 * @throws NullPointerException if code is null
 	 */
 	public Airport get(String code) throws DAOException {
-
-		// Init the prepared statement in such a way that we can search for ICAO or IATA
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRPORTS WHERE ((ICAO=?) OR (IATA=?))");
 			_ps.setString(1, code.toUpperCase());
 			_ps.setString(2, code.toUpperCase());
+			_ps.setMaxRows(1);
 
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next())
@@ -185,13 +183,13 @@ public class GetAirport extends DAO {
 	 * @throws NullPointerException if iata is null
 	 */
 	public String getICAO(String iata) throws DAOException {
-		if (iata.length() == 4)
+		if ((iata == null) || (iata.length() == 4))
 			return iata;
 		
 		try {
-			setQueryMax(1);
 			prepareStatement("SELECT ICAO FROM common.AIRPORT_CODES WHERE (IATA=?)");
 			_ps.setString(1, iata.toUpperCase());
+			_ps.setMaxRows(1);
 			
 			// Execute the Query
 			ResultSet rs = _ps.executeQuery();

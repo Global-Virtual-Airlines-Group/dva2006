@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,35 +15,35 @@ import org.deltava.beans.testing.*;
 
 public class GetQuestionnaire extends DAO {
 
-   /**
-    * Initialize the Data Access Object.
-    * @param c the JDBC connection to use
-    */
-   public GetQuestionnaire(Connection c) {
-      super(c);
-   }
+	/**
+	 * Initialize the Data Access Object.
+	 * @param c the JDBC connection to use
+	 */
+	public GetQuestionnaire(Connection c) {
+		super(c);
+	}
 
-   /**
-    * Retrieves a particular Applicant Questionnaire.
-    * @param id the Questionare database ID
-    * @return an Examination bean, or null if not found
-    * @throws DAOException if a JDBC error occurs
-    */
-   public Examination get(int id) throws DAOException {
-      try {
-         setQueryMax(1);
-         prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT) FROM APPEXAMS E, "
-               + "APPQUESTIONS Q WHERE (E.ID=Q.EXAM_ID) AND (E.ID=?) GROUP BY E.ID");
-         _ps.setInt(1, id);
-         
-         // Get the examination
-         List results = execute();
-         if (results.isEmpty())
-            return null;
-         
-         // Get the exam bean
-         Examination e = (Examination) results.get(0);
-         
+	/**
+	 * Retrieves a particular Applicant Questionnaire.
+	 * @param id the Questionare database ID
+	 * @return an Examination bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Examination get(int id) throws DAOException {
+		try {
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT) FROM APPEXAMS E, "
+					+ "APPQUESTIONS Q WHERE (E.ID=Q.EXAM_ID) AND (E.ID=?) GROUP BY E.ID");
+			_ps.setInt(1, id);
+			_ps.setMaxRows(1);
+
+			// Get the examination
+			List results = execute();
+			if (results.isEmpty())
+				return null;
+
+			// Get the exam bean
+			Examination e = (Examination) results.get(0);
+
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT * FROM APPQUESTIONS WHERE (EXAM_ID=?) ORDER BY QUESTION_NO");
 			_ps.setInt(1, id);
@@ -56,104 +56,103 @@ public class GetQuestionnaire extends DAO {
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
 				q.setCorrect(rs.getBoolean(7));
-				
+
 				// Add question to the examination
 				e.addQuestion(q);
 			}
-         
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
 			return e;
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
-   
-   /**
-    * Retrieves a particular Applicant Questionnaire from an Applicant.
-    * @param applicantID the Applicant database ID
-    * @return an Examination bean, or null if not found
-    * @throws DAOException if a JDBC error occurs
-    */
-   public Examination getByApplicantID(int applicantID) throws DAOException {
-      
-      int examID = 0;
-      try {
-         // Get the questionaire ID for the applicant
-         setQueryMax(1);
-         prepareStatement("SELECT ID FROM APPEXAMS WHERE (APP_ID=?)");
-         _ps.setInt(1, applicantID);
-         
-         // Get the ID
-         ResultSet rs = _ps.executeQuery();
-         examID = (rs.next()) ? rs.getInt(1) : 0;
-         
-         // Clean up
-         rs.close();
-         _ps.close();
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-      
-      // If we got the exam ID, get it, otherwise return null
-      return (examID == 0) ? null : get(examID);
-   }
-   
-   /**
-    * Returns all Submitted Applicant Questionnaires.
-    * @return a List of Examinations
-    * @throws DAOException if a JDBC error occurs
-    */
-   public List<Examination> getPending() throws DAOException {
-      try {
-         prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), A.FIRSTNAME, "
-               + "A.LASTNAME FROM APPEXAMS E, APPQUESTIONS Q, APPLICANTS A WHERE (E.ID=Q.EXAM_ID) AND "
-               + "(E.APP_ID=A.ID) AND (E.STATUS=?) GROUP BY E.ID ORDER BY E.CREATED_ON");
-         _ps.setInt(1, Test.SUBMITTED);
-         return execute();
-      } catch (SQLException se) {
-         throw new DAOException(se);
-      }
-   }
-   
-   /**
-    * Helper method to iterate through the result set.
-    */
-   private List<Examination> execute() throws SQLException {
-      
-      // Execute the Query
-      ResultSet rs = _ps.executeQuery();
-      boolean hasName = (rs.getMetaData().getColumnCount() > 10);
-      
-      // Iterate through the result set
-      List<Examination> results = new ArrayList<Examination>();
-      while (rs.next()) {
-         Examination e = new Examination(Examination.QUESTIONNAIRE_NAME);
-         e.setID(rs.getInt(1));
-         e.setPilotID(rs.getInt(2));
-         e.setStatus(rs.getInt(3));
-         e.setDate(rs.getTimestamp(4));
-         e.setExpiryDate(rs.getTimestamp(5));
-         e.setSubmittedOn(rs.getTimestamp(6));
-         e.setScoredOn(rs.getTimestamp(7));
-         e.setScorerID(rs.getInt(8));
-         e.setSize(rs.getInt(9));
-         e.setScore(rs.getInt(10));
-         
-         // Add name data if present
-         if (hasName) {
-            e.setFirstName(rs.getString(11));
-            e.setLastName(rs.getString(12));
-         }
-         
-         // Add to results
-         results.add(e);
-      }
-      
-      // Clean up and return
-      rs.close();
-      _ps.close();
-      return results;
-   }
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Retrieves a particular Applicant Questionnaire from an Applicant.
+	 * @param applicantID the Applicant database ID
+	 * @return an Examination bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Examination getByApplicantID(int applicantID) throws DAOException {
+
+		int examID = 0;
+		try {
+			prepareStatement("SELECT ID FROM APPEXAMS WHERE (APP_ID=?)");
+			_ps.setInt(1, applicantID);
+			_ps.setMaxRows(1);
+
+			// Get the ID
+			ResultSet rs = _ps.executeQuery();
+			examID = (rs.next()) ? rs.getInt(1) : 0;
+
+			// Clean up
+			rs.close();
+			_ps.close();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+
+		// If we got the exam ID, get it, otherwise return null
+		return (examID == 0) ? null : get(examID);
+	}
+
+	/**
+	 * Returns all Submitted Applicant Questionnaires.
+	 * @return a List of Examinations
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<Examination> getPending() throws DAOException {
+		try {
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), A.FIRSTNAME, "
+					+ "A.LASTNAME FROM APPEXAMS E, APPQUESTIONS Q, APPLICANTS A WHERE (E.ID=Q.EXAM_ID) AND "
+					+ "(E.APP_ID=A.ID) AND (E.STATUS=?) GROUP BY E.ID ORDER BY E.CREATED_ON");
+			_ps.setInt(1, Test.SUBMITTED);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Helper method to iterate through the result set.
+	 */
+	private List<Examination> execute() throws SQLException {
+
+		// Execute the Query
+		ResultSet rs = _ps.executeQuery();
+		boolean hasName = (rs.getMetaData().getColumnCount() > 10);
+
+		// Iterate through the result set
+		List<Examination> results = new ArrayList<Examination>();
+		while (rs.next()) {
+			Examination e = new Examination(Examination.QUESTIONNAIRE_NAME);
+			e.setID(rs.getInt(1));
+			e.setPilotID(rs.getInt(2));
+			e.setStatus(rs.getInt(3));
+			e.setDate(rs.getTimestamp(4));
+			e.setExpiryDate(rs.getTimestamp(5));
+			e.setSubmittedOn(rs.getTimestamp(6));
+			e.setScoredOn(rs.getTimestamp(7));
+			e.setScorerID(rs.getInt(8));
+			e.setSize(rs.getInt(9));
+			e.setScore(rs.getInt(10));
+
+			// Add name data if present
+			if (hasName) {
+				e.setFirstName(rs.getString(11));
+				e.setLastName(rs.getString(12));
+			}
+
+			// Add to results
+			results.add(e);
+		}
+
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
+	}
 }

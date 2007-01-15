@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -67,10 +67,10 @@ public class GetNavRoute extends GetNavData {
 			return null;
 
 		try {
-		   setQueryMax(1);
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
+			_ps.setMaxRows(1);
 
 			// Execute the query
 			List results = executeSIDSTAR();
@@ -94,7 +94,6 @@ public class GetNavRoute extends GetNavData {
 	 * @see TerminalRoute#STAR
 	 */
 	public Collection<TerminalRoute> getRoutes(String code, int type) throws DAOException {
-
 		List<TerminalRoute> results = null;
 		try {
 			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION");
@@ -127,9 +126,9 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		try {
-		   setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
 			_ps.setString(1, name.toUpperCase());
+			_ps.setMaxRows(1);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
@@ -215,7 +214,6 @@ public class GetNavRoute extends GetNavData {
 		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = (String) tkns.get(x);
-			setQueryMax(0);
 
 			// Check for an SID/STAR
 			if (wp.indexOf('.') != -1) {
@@ -226,7 +224,6 @@ public class GetNavRoute extends GetNavData {
 				}
 			} else {
 				Airway aw = getAirway(wp); // Check if we're referencing an airway
-				setQueryMax(0);
 				if (aw != null) {
 					String endPoint = (x < (tkns.size() - 1)) ? (String) tkns.get(x + 1) : "";
 					Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : (String) tkns.get(x - 1), endPoint);

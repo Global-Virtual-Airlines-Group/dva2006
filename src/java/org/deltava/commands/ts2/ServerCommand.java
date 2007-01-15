@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.util.*;
@@ -49,7 +49,6 @@ public class ServerCommand extends AbstractFormCommand {
 				if (srv == null)
 					throw notFoundException("Invalid Server ID - " + ctx.getID());
 				
-				dao.setQueryMax(0);
 				srv.setName(ctx.getParameter("name"));
 			} else {
 				srv = new Server(ctx.getParameter("name"));

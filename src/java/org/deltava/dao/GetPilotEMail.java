@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -55,9 +55,9 @@ public class GetPilotEMail extends DAO {
     */
    public EMailConfiguration getEMailInfo(int id) throws DAOException {
        try {
-           setQueryMax(1);
            prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE (ID=?)");
            _ps.setInt(1, id);
+			_ps.setMaxRows(1);
            
            // Execute the query, return null if not found
            List results = execute();
