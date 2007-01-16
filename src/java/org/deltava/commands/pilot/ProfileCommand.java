@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -121,16 +121,17 @@ public class ProfileCommand extends AbstractFormCommand {
 					updates.add(upd);
 					log.info(p.getName() + " " + upd.getDescription());
 				}
-				
+
 				// Check Water Cooler access
 				boolean coolerPostsLocked = Boolean.valueOf(ctx.getParameter("noCooler")).booleanValue();
 				if (coolerPostsLocked != p.getNoCooler()) {
 					p.setNoCooler(coolerPostsLocked);
-					
+
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription(coolerPostsLocked ? "Water Cooler posts locked out" : "Water Cooler posts enabled");
+					upd.setDescription(coolerPostsLocked ? "Water Cooler posts locked out"
+							: "Water Cooler posts enabled");
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
@@ -422,27 +423,56 @@ public class ProfileCommand extends AbstractFormCommand {
 				AddressValidationHelper.calculateHashCode(av);
 				ctx.setAttribute("addrValid", av, REQUEST);
 
+				// Get the Pilot/Applicant Read DAOs
+				GetPilotDirectory pdao = new GetPilotDirectory(con);
+				GetApplicant adao = new GetApplicant(con);
+
+				// Get the databases
+				GetUserData uddao = new GetUserData(con);
+				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
+
+				// FIXME Make sure the address is unique
+				boolean isOK = true;
+				Pilot p2 = p.cloneExceptID();
+				p2.setEmail(newEMail);
+				for (Iterator<AirlineInformation> i = airlines.iterator(); isOK && i.hasNext();) {
+					AirlineInformation info = i.next();
+
+					// Check Pilots & applicants
+					Collection<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(p2, info.getDB()));
+					dupeResults.addAll(adao.checkUnique(p2, info.getDB()));
+					if (!dupeResults.isEmpty()) {
+						log.warn("Duplicate E-mail addresses " + dupeResults.toString() + " found for " + p.getName());
+						isOK = false;
+					}
+				}
+
 				// Initialize the message context
-				MessageContext mctxt = new MessageContext();
-				mctxt.addData("addrValid", av);
-				mctxt.addData("user", p);
+				if (isOK) {
+					MessageContext mctxt = new MessageContext();
+					mctxt.addData("addrValid", av);
+					mctxt.addData("user", p);
 
-				// Send the validation code via e-mail
-				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				mctxt.setTemplate(mtdao.get("EMAILUPDATE"));
+					// Send the validation code via e-mail
+					GetMessageTemplate mtdao = new GetMessageTemplate(con);
+					mctxt.setTemplate(mtdao.get("EMAILUPDATE"));
 
-				// Send the message
-				Mailer mailer = new Mailer(null);
-				mailer.setContext(mctxt);
-				mailer.send(Mailer.makeAddress(av.getAddress(), p.getName()));
+					// Send the message
+					Mailer mailer = new Mailer(null);
+					mailer.setContext(mctxt);
+					mailer.send(Mailer.makeAddress(av.getAddress(), p.getName()));
 
-				// Set the session flag
-				if (p.getID() == ctx.getUser().getID())
-					ctx.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE, SESSION);
+					// Set the session flag
+					if (p.getID() == ctx.getUser().getID())
+						ctx.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE, SESSION);
 
-				// Save the address validation entry
-				SetAddressValidation avwdao = new SetAddressValidation(con);
-				avwdao.write(av);
+					// Save the address validation entry
+					SetAddressValidation avwdao = new SetAddressValidation(con);
+					avwdao.write(av);
+				} else {
+					ctx.setAttribute("eMailUpdateDupe", Boolean.TRUE, REQUEST);
+					ctx.setAttribute("newEmail", newEMail, REQUEST);
+				}
 			}
 
 			// Update the pilot name
@@ -679,7 +709,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
-			
+
 			// Get all equipment types
 			GetAircraft acdao = new GetAircraft(con);
 			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
@@ -729,7 +759,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			if (access.getCanViewExams()) {
 				GetExam exdao = new GetExam(con);
 				Collection<Test> exams = exdao.getExams(p.getID());
-				for (Iterator<Test> i = exams.iterator(); i.hasNext(); ) {
+				for (Iterator<Test> i = exams.iterator(); i.hasNext();) {
 					Test t = i.next();
 					try {
 						ExamAccessControl ac = new ExamAccessControl(ctx, t);
@@ -738,7 +768,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						i.remove();
 					}
 				}
-				
+
 				// Save remaining exams
 				ctx.setAttribute("exams", exams, REQUEST);
 			}
@@ -766,7 +796,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"),
+						REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
 
