@@ -34,7 +34,7 @@ The Pilot Profile for ${pilot.rank} ${pilot.name} has been successfully updated.
 </c:if>
 <c:if test="${!empty newName}">
 <!-- Pilot Renamed -->
-<li>This Pilot's named has been changed to ${newName}.</li>
+<li>This Pilot's name has been changed to ${newName}.</li>
 </c:if>
 <c:if test="${!empty dupeResults}">
 <!-- Rename Failed; Not Unique -->
@@ -83,6 +83,12 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 <img alt="${pilot.name}" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
 </c:if>
 </ul>
+<c:if test="${eMailUpdateDupe}">
+<!-- Duplicate E-Mail Address -->
+<br />
+<li>The e-mail address for ${pilot.name} cannot be changed to ${newEmail}, since another <content:airline /> pilot has registered 
+using this e-mail address.</li>
+</c:if>
 <c:if test="${!empty addrValid}">
 <!-- E-Mail Address updated -->
 <br />
