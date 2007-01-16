@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -68,6 +68,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
+			fr.setAttribute(FlightReport.ATTR_NOTRATED, false);
 			
 			// Start the transaction
 			ctx.startTX();
