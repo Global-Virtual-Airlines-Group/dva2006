@@ -1,5 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
+
+import java.util.zip.CRC32;
 
 import javax.servlet.http.HttpSession;
 
@@ -49,6 +51,30 @@ public final class AddressValidationHelper {
    }
    
    /**
+    * Calculates the validate hash code for an e-mail address using CRC32, converted to hexadecimal.
+    * @param addr the e-mail address
+    * @return the hash code
+    * @throws NullPointerException if addr is null
+    */
+   public static String calculateCRC32(String addr) {
+	   CRC32 crc = new CRC32();
+	   crc.update(SystemData.get("security.hash.salt").getBytes());
+	   crc.update(addr.getBytes());
+	   
+	   // Return the CRC32
+	   return Long.toHexString(crc.getValue());
+   }
+   
+   /**
+    * Calculates the hash code using CRC32 for an Address Validation bean with a populated e-mail address.
+    * @param av the AddressValidation bean
+    * @throws NullPointerException if av is null
+    */
+   public static void calculateCRC32(AddressValidation av) {
+      av.setHash(calculateCRC32(av.getAddress()));
+   }
+   
+   /**
     * Restores a submitted hashcode even after IE has converted the plus signs to spaces.
     * @param rawHash the raw hash code
     * @return the restored hash code with spaces converted to plus signs
@@ -76,9 +102,7 @@ public final class AddressValidationHelper {
     * @see CommandContext#ADDRINVALID_ATTR_NAME
     */
    public static void clearSessionFlag(HttpSession s) {
-	   if (s == null)
-		   return;
-	   
-	   s.removeAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
+	   if (s != null)
+		   s.removeAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
    }
 }
