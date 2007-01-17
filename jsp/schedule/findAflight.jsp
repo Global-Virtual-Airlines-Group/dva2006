@@ -117,7 +117,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Sort Flights by</td>
- <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" /></td>
+ <td class="data"><el:combo name="sortType" idx="*" size="1" options="${sortTypes}" value="${param.sortType}" />
+ <el:box name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
  <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
 </tr>
