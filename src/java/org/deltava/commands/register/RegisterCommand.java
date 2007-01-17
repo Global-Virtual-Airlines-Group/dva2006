@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -47,7 +47,7 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		
+
 		// Check for spambots
 		if ("...".equals(ctx.getParameter("firstName"))) {
 			log.error("Detected spambot from " + ctx.getRequest().getRemoteHost());
@@ -124,37 +124,43 @@ public class RegisterCommand extends AbstractCommand {
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("applicant", a);
 
+		// Determine if we do a uniqueness check
+		List okAddrs = (List) SystemData.getObject("registration.email.ok");
+		boolean checkAddr = (okAddrs != null) && (!okAddrs.contains(a.getEmail()));
+		if (!checkAddr)
+			log.warn("Skipping address uniqueness checks for " + a.getEmail());
+
 		Examination ex = null;
 		Pilot eMailFrom = null;
 		try {
 			Connection con = ctx.getConnection();
-
-			// Get the databases
-			GetUserData uddao = new GetUserData(con);
-			Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
-
-			// Get the Pilot/Applicant Read DAOs
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
-			GetApplicant adao = new GetApplicant(con);
 
-			// Check for unique name
-			for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
-				AirlineInformation info = i.next();
+			// Do address uniqueness check
+			if (checkAddr) {
+				GetUserData uddao = new GetUserData(con);
+				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
 
-				// Check Pilots & applicants
-				Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB()));
-				dupeResults.addAll(adao.checkUnique(a, info.getDB()));
-				if (!dupeResults.isEmpty()) {
-					ctx.release();
+				// Check for unique name
+				GetApplicant adao = new GetApplicant(con);
+				for (Iterator<AirlineInformation> i = airlines.iterator(); i.hasNext();) {
+					AirlineInformation info = i.next();
 
-					// Save airline
-					ctx.setAttribute("airline", info, REQUEST);
-					log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
+					// Check Pilots & applicants
+					Set<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(a, info.getDB()));
+					dupeResults.addAll(adao.checkUnique(a, info.getDB()));
+					if (!dupeResults.isEmpty()) {
+						ctx.release();
 
-					// Forward to JSP
-					result.setURL("/jsp/register/duplicateRegistration.jsp");
-					result.setSuccess(true);
-					return;
+						// Save airline
+						ctx.setAttribute("airline", info, REQUEST);
+						log.warn("Duplicate IDs " + dupeResults.toString() + " found for " + a.getName());
+
+						// Forward to JSP
+						result.setURL("/jsp/register/duplicateRegistration.jsp");
+						result.setSuccess(true);
+						return;
+					}
 				}
 			}
 
