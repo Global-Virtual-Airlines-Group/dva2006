@@ -95,7 +95,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// See which charts have been selected
 			Collection<String> selectedCharts = ctx.getParameters("charts");
 			if (selectedCharts != null) {
-				Set<Integer> chartIDs = new HashSet<Integer>();
+				Collection<Integer> chartIDs = new HashSet<Integer>();
 				for (Iterator<String> i = selectedCharts.iterator(); i.hasNext(); )
 					chartIDs.add(new Integer(StringUtils.parseHex(i.next())));
 
@@ -117,6 +117,7 @@ public class EventSaveCommand extends AbstractCommand {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);
 				mctxt.setTemplate(mtdao.get("EVENTCREATE"));
 				mctxt.addData("event", e);
+				mctxt.setSubject("Online Event - " + e.getName());
 
 				// Save the start/end/signup dates
 				mctxt.addData("startDateTime", StringUtils.format(e.getStartTime(), "MM/dd/yyyy HH:mm"));
@@ -126,8 +127,6 @@ public class EventSaveCommand extends AbstractCommand {
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
 				Collection<? extends EMailAddress> pilots = pdao.getNotifications(Person.EVENT);
-
-				// Send the e-mail notification
 				if (pilots != null) {
 					Mailer mailer = new Mailer(ctx.getUser());
 					mailer.setContext(mctxt);
