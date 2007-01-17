@@ -1,6 +1,6 @@
+// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.mail;
 
-import java.io.Serializable;
 import java.lang.reflect.*;
 
 import java.util.*;
@@ -19,19 +19,19 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class MessageContext implements Serializable {
+public class MessageContext {
     
     private static final Logger log = Logger.getLogger(MessageContext.class);
 
     private MessageTemplate _mt;
-    private Map<String, Object> _data;
+    private String _subject;
+    private final Map<String, Object> _data = new HashMap<String, Object>();
   
     /**
      * Initializes the Message Context, and sets any pre-defined context elements.
      */
     public MessageContext() {
     	super();
-    	_data = new HashMap<String, Object>();
     	
     	// Initialize predefined variables
     	_data.put("airline", SystemData.get("airline.name"));
@@ -54,13 +54,25 @@ public class MessageContext implements Serializable {
     }
     
     /**
+     * Overrides the subject used in the message, instead of using the Message Template subject.
+     * @param subj the new subject
+     */
+    public void setSubject(String subj) {
+    	_subject = subj;
+    }
+    
+    /**
      * Returns the message subject.
      * @return the subject prepended by the Airline Name
      */
     public String getSubject() {
        StringBuilder buf = new StringBuilder(SystemData.get("airline.name"));
        buf.append(' ');
-       buf.append((_mt == null) ? "" : _mt.getSubject());
+       if (_subject != null)
+    	   buf.append(_subject);
+       else
+    	   buf.append((_mt == null) ? "" : _mt.getSubject());
+       
        return buf.toString();
     }
     
