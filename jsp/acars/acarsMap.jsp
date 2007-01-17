@@ -53,7 +53,7 @@ var myZoom = map.getZoom();
 var myType = (map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
 
 // Save the cookies
-var expiryDate = new Date(2006, 11, 31);
+var expiryDate = new Date(${cookieExpiry});
 document.cookie = 'acarsMapLat=' + myLat + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapLng=' + myLng + '; expires=' + expiryDate.toGMTString();
 document.cookie = 'acarsMapZoomLevel=' + myZoom + '; expires=' + expiryDate.toGMTString();

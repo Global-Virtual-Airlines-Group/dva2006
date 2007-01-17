@@ -1,11 +1,15 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
+import java.util.*;
+
 import javax.servlet.http.*;
+
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
 
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -27,6 +31,10 @@ public class ACARSMapCommand extends AbstractCommand {
 		// Check if we have a map center cookie set
 		String lat = getCookie(ctx.getRequest(), "acarsMapLat");
 		String lng = getCookie(ctx.getRequest(), "acarsMapLng");
+		
+		// Calcualte the settings cookie expiry date
+		Date expiryDate = CalendarUtils.adjust(new Date(), 180);
+		ctx.setAttribute("cookieExpiry", StringUtils.format(expiryDate, "yyyy, MM, dd"), REQUEST);
 
 		// Create the map center
 		GeoPosition gp = null;
