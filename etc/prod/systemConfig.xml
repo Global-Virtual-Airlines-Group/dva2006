@@ -462,6 +462,11 @@
 		
 		<auto_reject type="Integer">5</auto_reject>
 		<from>David Keech</from>
+		<list name="email.ok" attr="addr" unique="true">
+			<addr>luke@sce.net</addr>
+			<addr>luke@deltava.org</addr>
+			<addr>info@deltava.org</addr>
+		</list>
 	</registration>
 	
 	<!-- PICS content ratings -->
