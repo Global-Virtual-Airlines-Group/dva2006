@@ -90,6 +90,11 @@ public class FindFlightCommand extends AbstractCommand {
 		String sortType = ctx.getParameter("sortType"); 
 		if (StringUtils.arrayIndexOf(ScheduleSearchCriteria.SORT_CODES, sortType) == -1)
 			sortType = ScheduleSearchCriteria.SORT_CODES[0];
+		
+		// Check for descending sort
+		boolean isDesc = Boolean.valueOf(ctx.getParameter("sortDesc")).booleanValue();
+		if (isDesc)
+			sortType = sortType + " DESC";
 
 		// Save the search criteria in the session
 		ctx.setAttribute("fafCriteria", criteria, SESSION);
