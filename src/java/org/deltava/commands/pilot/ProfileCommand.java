@@ -421,7 +421,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			} else if (isEMailUpdate) {
 				AddressValidation av = new AddressValidation(p.getID(), newEMail);
 				AddressValidationHelper.calculateHashCode(av);
-				ctx.setAttribute("addrValid", av, REQUEST);
 
 				// Get the Pilot/Applicant Read DAOs
 				GetPilotDirectory pdao = new GetPilotDirectory(con);
@@ -469,6 +468,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Save the address validation entry
 					SetAddressValidation avwdao = new SetAddressValidation(con);
 					avwdao.write(av);
+					ctx.setAttribute("addrValid", av, REQUEST);
 				} else {
 					ctx.setAttribute("eMailUpdateDupe", Boolean.TRUE, REQUEST);
 					ctx.setAttribute("newEmail", newEMail, REQUEST);
