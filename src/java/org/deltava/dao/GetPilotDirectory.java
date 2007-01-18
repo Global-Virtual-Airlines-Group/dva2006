@@ -112,11 +112,43 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			_ps.setString(2, p.getLastName());
 			_ps.setString(3, p.getEmail());
 
-			// Build the result collection
-			Set<Integer> results = new HashSet<Integer>();
-
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
+			Collection<Integer> results = new HashSet<Integer>();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Checks wether a particular e-mail address is unique.
+	 * @param usr the Person to check for
+	 * @param dbName the database to check
+	 * @return a Collection of database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> checkUniqueEMail(Person usr, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS WHERE (ID<>?) AND (EMAIL=?)");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, usr.getID());
+			_ps.setString(2, usr.getEmail());
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			Collection<Integer> results = new HashSet<Integer>();
 			while (rs.next())
 				results.add(new Integer(rs.getInt(1)));
 
