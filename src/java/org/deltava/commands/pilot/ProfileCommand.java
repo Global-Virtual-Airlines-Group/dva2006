@@ -414,23 +414,19 @@ public class ProfileCommand extends AbstractFormCommand {
 				isEMailUpdate = false;
 
 			// Update e-mail address
-			if (isEMailUpdate && ctx.isUserInRole("HR")) {
+			if (isEMailUpdate && ctx.isUserInRole("HR") && (p.getID() != ctx.getUser().getID())) {
 				p.setEmail(newEMail);
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				avwdao.delete(p.getID());
 			} else if (isEMailUpdate) {
 				AddressValidation av = new AddressValidation(p.getID(), newEMail);
-				AddressValidationHelper.calculateHashCode(av);
-
-				// Get the Pilot/Applicant Read DAOs
-				GetPilotDirectory pdao = new GetPilotDirectory(con);
-				GetApplicant adao = new GetApplicant(con);
+				AddressValidationHelper.calculateCRC32(av);
 
 				// Get the databases
 				GetUserData uddao = new GetUserData(con);
 				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
 
-				// FIXME Make sure the address is unique
+				// Make sure the address is unique
 				boolean isOK = true;
 				Pilot p2 = p.cloneExceptID();
 				p2.setEmail(newEMail);
@@ -438,16 +434,17 @@ public class ProfileCommand extends AbstractFormCommand {
 					AirlineInformation info = i.next();
 
 					// Check Pilots & applicants
-					Collection<Integer> dupeResults = new HashSet<Integer>(pdao.checkUnique(p2, info.getDB()));
-					dupeResults.addAll(adao.checkUnique(p2, info.getDB()));
+					Collection<Integer> dupeResults = rdao.checkUniqueEMail(p2, info.getDB());
 					if (!dupeResults.isEmpty()) {
 						log.warn("Duplicate E-mail addresses " + dupeResults.toString() + " found for " + p.getName());
 						isOK = false;
 					}
 				}
-
-				// Initialize the message context
+				
 				if (isOK) {
+					p.setEmail(newEMail);
+				
+					// Initialize the message context
 					MessageContext mctxt = new MessageContext();
 					mctxt.addData("addrValid", av);
 					mctxt.addData("user", p);
@@ -459,7 +456,7 @@ public class ProfileCommand extends AbstractFormCommand {
 					// Send the message
 					Mailer mailer = new Mailer(null);
 					mailer.setContext(mctxt);
-					mailer.send(Mailer.makeAddress(av.getAddress(), p.getName()));
+					mailer.send(Mailer.makeAddress(newEMail, p.getName()));
 
 					// Set the session flag
 					if (p.getID() == ctx.getUser().getID())

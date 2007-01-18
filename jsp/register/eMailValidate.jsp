@@ -17,7 +17,7 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 var act = form.action;
-if ((act.indexOf('resendvalidate.do') == -1) && (!validateText(form.code, 10, 'E-Mail Validation Code'))) return false;
+if ((act.indexOf('resendvalidate.do') == -1) && (!validateText(form.code, 8, 'E-Mail Validation Code'))) return false;
 if (!validateEMail(form.email, 'E-Mail Address')) return false;
 
 setSubmit();
