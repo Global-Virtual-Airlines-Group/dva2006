@@ -61,8 +61,10 @@ public final class AddressValidationHelper {
 	   crc.update(SystemData.get("security.hash.salt").getBytes());
 	   crc.update(addr.getBytes());
 	   
-	   // Return the CRC32
-	   return Long.toHexString(crc.getValue());
+	   // Return the CRC32 plus an equals to match the Base64 encoded hashcode
+	   StringBuilder buf = new StringBuilder(Long.toHexString(crc.getValue()));
+	   buf.append('=');
+	   return buf.toString();
    }
    
    /**

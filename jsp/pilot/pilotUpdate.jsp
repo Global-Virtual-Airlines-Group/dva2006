@@ -82,7 +82,6 @@ matching <content:airline /> Pilots or Applicants with the same name or e-mail a
 <li>The Water Cooler signature image for ${pilot.name} has been updated. It is displayed below:<br />
 <img alt="${pilot.name}" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /></li>
 </c:if>
-</ul>
 <c:if test="${eMailUpdateDupe}">
 <!-- Duplicate E-Mail Address -->
 <br />
@@ -103,6 +102,7 @@ The user account for ${pilot.name} has been suspended.<c:if test="${acarsEnabled
 if this user is currently logged into the ACARS server, you will need terminate the connection using 
 an ACARS client.</c:if><br />
 </c:if>
+</ul>
 <br />
 To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read">Click Here</el:cmd>.<br />
 To return to the Pilot Roster, <el:cmd url="roster">Click Here</el:cmd>.<br />
