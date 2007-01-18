@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.io.*;
@@ -277,7 +277,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 * @param isLower TRUE if the thread should run with slightly lower priority, otherwise FALSE
 	 */
 	private void spawnDaemon(Runnable sd) {
-		Thread dt = new Thread(sd);
+		Thread dt = new Thread(sd, sd.toString());
 		dt.setDaemon(true);
 		dt.setUncaughtExceptionHandler(this);
 		_daemons.put(dt, sd);
