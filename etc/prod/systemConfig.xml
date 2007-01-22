@@ -355,12 +355,12 @@
 		</key>
 
 		<list name="roles" attr="role" sorted="true">
+			<role>AcademyAdmin</role>
 			<role>Admin</role>
 			<role>Blog</role>
 			<role>Developer</role>
 			<role>Dispatch</role>
 			<role>Examination</role>
-			<role>Examiner</role>
 			<role>Event</role>
 			<role>Fleet</role>
 			<role>Gallery</role>			

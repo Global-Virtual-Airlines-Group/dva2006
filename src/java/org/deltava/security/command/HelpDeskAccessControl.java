@@ -52,7 +52,7 @@ public class HelpDeskAccessControl extends AccessControl {
 
 		// Calculate access rights
 		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner");
+		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination");
 		boolean isMine = (_i.getAuthorID() == p.getID());
 		boolean isOpen = (_i.getStatus() == Issue.OPEN);

@@ -36,13 +36,14 @@ public class CertificationAccessControl extends AccessControl {
 
 		// Calculate roles - abort if we cannot read
 		boolean isHR = _ctx.isUserInRole("HR");
-		if (!isHR && !_ctx.isUserInRole("Instructor") && !_ctx.isUserInRole("Examiner"))
+		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
+		if (!isHR && !_ctx.isUserInRole("Instructor") && !isAcademyAdmin)
 			throw new AccessControlException("Not Authorized");
 		
-		_canCreate = isHR;
-		_canCreateVideo = isHR;
-		_canEdit = isHR;
-		_canEditVideo = isHR;
+		_canCreate = isHR || isAcademyAdmin;
+		_canCreateVideo = isHR || isAcademyAdmin;
+		_canEdit = isHR || isAcademyAdmin;
+		_canEditVideo = isHR || isAcademyAdmin;
 		_canDelete = _ctx.isUserInRole("Admin");
 	}
 	

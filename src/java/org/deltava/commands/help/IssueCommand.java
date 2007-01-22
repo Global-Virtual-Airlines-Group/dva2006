@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -191,7 +191,7 @@ public class IssueCommand extends AbstractFormCommand {
 			Collection<Pilot> assignees = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
 			assignees.addAll(pdao.getByRole("HR", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Instructor", SystemData.get("airline.db")));
-			assignees.addAll(pdao.getByRole("Examiner", SystemData.get("airline.db")));
+			assignees.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
 			ctx.setAttribute("assignees", assignees, REQUEST);

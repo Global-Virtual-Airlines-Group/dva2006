@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -21,7 +21,7 @@ import org.deltava.util.RoleUtils;
 
 public class HelpDeskCommand extends AbstractCommand {
 	
-	private static final List<String> ADMIN_ROLES = Arrays.asList(new String[] {"HR", "PIREP", "Examination", "Instrutor", "Examiner"});
+	private static final List<String> ADMIN_ROLES = Arrays.asList(new String[] {"HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin"});
 
     /**
      * Executes the command.
