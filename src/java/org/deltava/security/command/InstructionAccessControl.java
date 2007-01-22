@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.academy.*;
@@ -39,11 +39,11 @@ public class InstructionAccessControl extends AccessControl {
 		
 		// Check roles
 		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isExam = _ctx.isUserInRole("Examiner");
+		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
 		boolean isOurs = (_ctx.getUser().getID() == _i.getPilotID()) || (_ctx.getUser().getID() == _i.getInstructorID());
 
 		// Set create rights
-		_canCreate = isHR || isExam || _ctx.isUserInRole("Instructor");
+		_canCreate = isHR || isAcademyAdmin || _ctx.isUserInRole("Instructor");
 		if ((_i == null) || (!_ctx.isAuthenticated()))
 			return;
 
@@ -54,7 +54,7 @@ public class InstructionAccessControl extends AccessControl {
 			_canEdit |= _canCreate;
 			_canCancel = (isOurs || isHR) && (is.getStatus() == InstructionSession.SCHEDULED);
 		} else
-			_canEdit = isHR || isExam || (_ctx.getUser().getID() == _i.getInstructorID());	
+			_canEdit = isHR || isAcademyAdmin || (_ctx.getUser().getID() == _i.getInstructorID());	
 	}
 	
 	/**

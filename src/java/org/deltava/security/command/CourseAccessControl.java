@@ -49,11 +49,11 @@ public class CourseAccessControl extends AccessControl {
 		// Define conditions
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isINS = _ctx.isUserInRole("Instructor");
-		boolean isExam = _ctx.isUserInRole("Examiner");
+		boolean isAcademyAdmin = _ctx.isUserInRole("AcademyAdmin");
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
 		boolean isStarted = (_c.getStatus() == Course.STARTED);
 		boolean isPending = (_c.getStatus() == Course.PENDING);
-		if (!isMine && !isINS && !isExam && !isHR)
+		if (!isMine && !isINS && !isAcademyAdmin && !isHR)
 			throw new AccessControlException("Not Authorized");
 		
 		// Assign access rights
@@ -63,11 +63,11 @@ public class CourseAccessControl extends AccessControl {
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
-		_canAssign = (isStarted || isPending) && (isHR || isINS || isExam);
+		_canAssign = (isStarted || isPending) && (isHR || isINS || isAcademyAdmin);
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
-		_canApprove = (isHR || isExam) && isStarted && !isMine;
+		_canApprove = (isHR || isAcademyAdmin) && isStarted && !isMine;
 		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
 			CourseProgress cp = i.next();
 			_canApprove &= cp.getComplete();
