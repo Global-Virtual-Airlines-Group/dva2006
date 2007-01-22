@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import org.jdom.*;
@@ -84,7 +84,7 @@ public class XMLSystemDataLoader implements SystemDataLoader {
 
         // Invoke the static "valueOf" method of the type
         try {
-            Class eClass = Class.forName(eType);
+            Class<?> eClass = Class.forName(eType);
             Method m = eClass.getMethod("valueOf", new Class[] { String.class });
             return m.invoke(null, new Object[] { e.getValue() });
         } catch (Exception ex) {

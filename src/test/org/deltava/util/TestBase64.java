@@ -54,7 +54,7 @@ public class TestBase64 extends TestCase {
     	initData();
     	
     	try {
-    		Class c = Class.forName("com.sun.mail.util.BASE64EncoderStream");
+    		Class<?> c = Class.forName("com.sun.mail.util.BASE64EncoderStream");
     		Method m = c.getDeclaredMethod("encode", byte[].class);
     		
     		long now2 = System.currentTimeMillis();
