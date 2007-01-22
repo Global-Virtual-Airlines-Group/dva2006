@@ -987,7 +987,7 @@
 	<command id="pirepscore">
 		<name>Approve PIREP/Score Ride</name>
 		<class>org.deltava.commands.pirep.CheckRidePIREPApprovalCommand</class>
-		<roles>Examination,Examiner,HR</roles>
+		<roles>Examination,AcademyAdmin,HR</roles>
 	</command>
 
 	<command id="crview">
@@ -1505,25 +1505,25 @@
 	<command id="certs">
 		<name>Academy Certifications</name>
 		<class>org.deltava.commands.academy.CertificationListCommand</class>
-		<roles>HR,Instructor,Examiner</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 
 	<command id="cert">
 		<name>Academy Certification</name>
 		<class>org.deltava.commands.academy.CertificationCommand</class>
-		<roles>HR,Instructor,Examiner</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 
 	<command id="certdelete">
 		<name>Delete Academy Certification</name>
 		<class>org.deltava.commands.academy.CertificationDeleteCommand</class>
-		<roles>HR</roles>
+		<roles>Admin</roles>
 	</command>
 
 	<command id="certreqs">
 		<name>Academy Certification Requirements</name>
 		<class>org.deltava.commands.academy.CertificationRequirementsCommand</class>
-		<roles>HR,Instructor</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 
 	<command id="course">
@@ -1535,13 +1535,13 @@
 	<command id="courseassign">
 		<name>Course Instructor Assignment</name>
 		<class>org.deltava.commands.academy.CourseAssignCommand</class>
-		<roles>HR,Instructor,Examiner</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 
 	<command id="coursedelete">
 		<name>Delete Academy Course</name>
 		<class>org.deltava.commands.academy.CourseDeleteCommand</class>
-		<roles>HR,Instructor,Examiner</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 
 	<command id="courses">
@@ -1559,37 +1559,37 @@
 	<command id="courseprogress">
 		<name>Flight Academy Course Progress</name>
 		<class>org.deltava.commands.academy.CourseProgressCommand</class>
-		<roles>HR,Instructor,Examiner</roles>
+		<roles>HR,Instructor,AcademyAdmin</roles>
 	</command>
 	
 	<command id="coursedispose">
 		<name>Flight Academy Course Disposal</name>
 		<class>org.deltava.commands.academy.CourseDisposalCommand</class>
-		<roles>Pilot,Instructor,HR,Examiner</roles>
+		<roles>Pilot,Instructor,HR,AcademyAdmin</roles>
 	</command>
 
 	<command id="courseride">
 		<name>Flight Academy Check Ride Assignment</name>
 		<class>org.deltava.commands.academy.CourseCheckRideCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
 	
 	<command id="insflight">
 		<name>Flight Academy Instruction Flight</name>
 		<class>org.deltava.commands.academy.InstructionFlightCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
 
 	<command id="inslogbook">
 		<name>Flight Academy Instruction Logbook</name>
 		<class>org.deltava.commands.academy.InstructionLogbookCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
 
 	<command id="academyridequeue">
 		<name>Flight Academy Check Ride Queue</name>
 		<class>org.deltava.commands.academy.RideQueueCommand</class>
-		<roles>Instructor,Examiner,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
 
 	<command id="tvideolibrary">
@@ -1601,7 +1601,7 @@
 	<command id="tvideo">
 		<name>Training Video Edit</name>
 		<class>org.deltava.commands.academy.VideoCommand</class>
-		<roles>Instructor,HR</roles>
+		<roles>Instructor,AcademyAdmin,HR</roles>
 	</command>
 
 
