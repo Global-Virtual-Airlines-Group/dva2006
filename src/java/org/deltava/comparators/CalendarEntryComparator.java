@@ -19,9 +19,10 @@ public class CalendarEntryComparator implements Comparator<CalendarEntry> {
 	 * and implement comparable, their native ordering will be used.
 	 * @see Comparator#compare(Object, Object)
 	 */
+	@SuppressWarnings("unchecked")
 	public int compare(CalendarEntry e1, CalendarEntry e2) {
 		if (e2.getClass() == e1.getClass())
-			return e1.getDate().compareTo(e2.getDate());
+			return e1.compareTo(e2);
 		
 		return e1.getDate().compareTo(e2.getDate());
 	}
