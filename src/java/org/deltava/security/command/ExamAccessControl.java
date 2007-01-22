@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Date;
@@ -48,7 +48,7 @@ public class ExamAccessControl extends AccessControl {
 
         // Set access variables
         boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
-        boolean isExam = _t.getAcademy() ? _ctx.isUserInRole("Examiner") : _ctx.isUserInRole("Examination");
+        boolean isExam = _t.getAcademy() ? _ctx.isUserInRole("AcademyAdmin") : _ctx.isUserInRole("Examination");
         boolean isHR = _ctx.isUserInRole("HR");
         
         // With checkrides, NEW == SUBMITTED
