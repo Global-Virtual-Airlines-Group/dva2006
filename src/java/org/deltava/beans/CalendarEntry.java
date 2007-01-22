@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -10,7 +10,7 @@ import java.util.Date;
  * @since 1.0
  */
 
-public interface CalendarEntry {
+public interface CalendarEntry extends Comparable {
 	
 	public Date getDate();
 }

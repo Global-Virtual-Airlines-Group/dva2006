@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.Comparator;
@@ -20,8 +20,8 @@ public class CalendarEntryComparator implements Comparator<CalendarEntry> {
 	 * @see Comparator#compare(Object, Object)
 	 */
 	public int compare(CalendarEntry e1, CalendarEntry e2) {
-		if ((e1 instanceof Comparable) && (e2.getClass() == e1.getClass()))
-			return ((Comparable<CalendarEntry>) e1).compareTo(e2);
+		if (e2.getClass() == e1.getClass())
+			return e1.getDate().compareTo(e2.getDate());
 		
 		return e1.getDate().compareTo(e2.getDate());
 	}
