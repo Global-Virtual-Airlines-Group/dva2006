@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -10,7 +10,6 @@ import org.deltava.dao.*;
 import org.deltava.beans.cooler.LinkedImage;
 
 import org.deltava.taskman.DatabaseTask;
-import org.deltava.util.http.HttpTimeoutHandler;
 
 import org.deltava.util.system.SystemData;
 
@@ -60,7 +59,7 @@ public class ImageLinkTestTask extends DatabaseTask {
 
 					URL url = null;
 					try {
-						url = new URL(null, img.getURL(), new HttpTimeoutHandler(1950));
+						url = new URL(img.getURL());
 						if (invalidHosts.contains(url.getHost()))
 							throw new IllegalArgumentException("Bad Host!");
 
