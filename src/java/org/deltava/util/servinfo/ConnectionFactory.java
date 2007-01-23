@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.servinfo;
 
 import java.io.*;
@@ -10,7 +10,6 @@ import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.file.FileURLConnection;
 
-import org.deltava.util.http.HttpTimeoutHandler;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -33,7 +32,7 @@ class ConnectionFactory {
 
 		if (dataURL.startsWith("http://")) {
 			try {
-				URL url = new URL(null, dataURL, new HttpTimeoutHandler(1750));
+				URL url = new URL(dataURL);
 				return (HttpURLConnection) url.openConnection();
 			} catch (IOException ie) {
 				log.error("Error getting HTTP connection " + ie.getMessage(), ie);
