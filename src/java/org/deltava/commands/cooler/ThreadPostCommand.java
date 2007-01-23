@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.awt.Dimension;
@@ -19,7 +19,6 @@ import org.deltava.dao.*;
 import org.deltava.security.command.CoolerChannelAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.http.HttpTimeoutHandler;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -89,6 +88,7 @@ public class ThreadPostCommand extends AbstractCommand {
 			channels.remove(Channel.SHOTS);
 			ctx.setAttribute("channel", ch, REQUEST);
 			ctx.setAttribute("channels", channels, REQUEST);
+			ctx.release();
 
 			// Initialize the channel access controller
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, ch);
@@ -118,9 +118,11 @@ public class ThreadPostCommand extends AbstractCommand {
 
 				// Validate the image
 				try {
-					URL url = new URL(null, ctx.getParameter("imgURL"), new HttpTimeoutHandler(1750));
+					URL url = new URL(ctx.getParameter("imgURL"));
 					HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 					urlcon.setRequestMethod("HEAD");
+					urlcon.setConnectTimeout(2000);
+					urlcon.setReadTimeout(2500);
 					urlcon.connect();
 
 					// Validate the result code
@@ -234,8 +236,9 @@ public class ThreadPostCommand extends AbstractCommand {
 				for (Iterator i = imgURLs.iterator(); i.hasNext();)
 					mt.addImageURL((LinkedImage) i.next());
 			}
-
-			// Start the transaction
+			
+			// Grab the connection back and start the transaction
+			con = ctx.getConnection();
 			ctx.startTX();
 
 			// Write the image to the gallery if we have one
