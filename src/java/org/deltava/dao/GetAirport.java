@@ -6,9 +6,10 @@ import java.sql.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.schedule.Airline;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.NavigationDataBean;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Airport data.
@@ -74,8 +75,9 @@ public class GetAirport extends DAO {
 			_ps.close();
 
 			// Init the prepared statement to pull in the airline data
-			prepareStatementWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?)");
+			prepareStatementWithoutLimits("SELECT CODE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
 			_ps.setString(1, a.getIATA());
+			_ps.setString(2, SystemData.get("airline.code"));
 
 			// Iterate through the results
 			rs = _ps.executeQuery();
@@ -101,8 +103,9 @@ public class GetAirport extends DAO {
 	public Collection<Airport> getByAirline(Airline al) throws DAOException {
 		try {
 			prepareStatement("SELECT A.* FROM common.AIRPORTS A, common.AIRPORT_AIRLINE AA WHERE "
-					+ "(A.IATA=AA.IATA) AND (AA.CODE=?) ORDER BY A.IATA");
+					+ "(A.IATA=AA.IATA) AND (AA.CODE=?) AND (AA.APPCODE=?) ORDER BY A.IATA");
 			_ps.setString(1, al.getCode());
+			_ps.setString(2, SystemData.get("airline.code"));
 
 			// Execute the query
 			List<Airport> results = new ArrayList<Airport>();
@@ -155,7 +158,8 @@ public class GetAirport extends DAO {
 			loadAltitude(results);
 
 			// Load the airlines for each airport and execute the query
-			prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE");
+			prepareStatementWithoutLimits("SELECT * FROM common.AIRPORT_AIRLINE WHERE (APPCODE=?)");
+			_ps.setString(1, SystemData.get("airline.code"));
 			rs = _ps.executeQuery();
 
 			// Iterate through the results
