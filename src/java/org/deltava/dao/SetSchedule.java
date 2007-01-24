@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.deltava.beans.schedule.*;
 import org.deltava.beans.system.AirlineInformation;
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to update the Flight Schedule.
@@ -157,8 +158,9 @@ public class SetSchedule extends DAO {
 			executeUpdate(1);
 
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA) VALUES (?, ?)");
+			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
 			_ps.setString(2, a.getIATA());
+			_ps.setString(3, SystemData.get("airline.code"));
 			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
 				String aCode = (String) i.next();
 				_ps.setString(1, aCode);
@@ -201,8 +203,9 @@ public class SetSchedule extends DAO {
 			executeUpdate(0);
 
 			// Write the airline data
-			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA) VALUES (?, ?)");
+			prepareStatement("INSERT INTO common.AIRPORT_AIRLINE (CODE, IATA, APPCODE) VALUES (?, ?, ?)");
 			_ps.setString(2, a.getIATA());
+			_ps.setString(3, SystemData.get("airline.code"));
 			for (Iterator i = a.getAirlineCodes().iterator(); i.hasNext();) {
 				String aCode = (String) i.next();
 				_ps.setString(1, aCode);
