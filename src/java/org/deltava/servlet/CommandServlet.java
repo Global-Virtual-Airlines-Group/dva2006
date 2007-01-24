@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -66,11 +66,11 @@ public class CommandServlet extends GenericServlet {
 		}
 
 		// Initialize the redirection command
-		Command cmd = new RedirectCommand();
 		try {
+			Command cmd = new RedirectCommand();
 			cmd.setContext(getServletContext());
 			cmd.init("$redirect", "Request Redirection");
-			cmd.setRoles(Arrays.asList(new String[] { "*" }));
+			cmd.setRoles(Collections.singleton("*"));
 			_cmds.put(cmd.getID(), cmd);
 		} catch (CommandException ce) {
 			throw new ServletException(ce);
@@ -93,6 +93,9 @@ public class CommandServlet extends GenericServlet {
 	private Command getCommand(String rawURL) {
 		URLParser parser = new URLParser(rawURL);
 		String cmdName = parser.getName().toLowerCase();
+		if (cmdName.startsWith("/"))
+			cmdName = cmdName.substring(1);
+		
 		return _cmds.get(cmdName);
 	}
 	
