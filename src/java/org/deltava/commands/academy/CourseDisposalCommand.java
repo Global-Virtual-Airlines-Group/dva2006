@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -120,6 +120,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 			// If we're canceling, cancel all Instruction Sessions
 			if (opCode == Course.ABANDONED) {
 				GetAcademyCalendar cdao = new GetAcademyCalendar(con);
+				SetAcademyCalendar cwdao = new SetAcademyCalendar(con);
 				
 				// Cancel the sessions
 				Collection<Integer> IDs = new HashSet<Integer>();
@@ -128,7 +129,7 @@ public class CourseDisposalCommand extends AbstractCommand {
 					InstructionSession is = i.next();
 					IDs.add(new Integer(is.getInstructorID()));
 					is.setStatus(InstructionSession.CANCELED);
-					wdao.write(is);
+					cwdao.write(is);
 				}
 				
 				// Load the pilots

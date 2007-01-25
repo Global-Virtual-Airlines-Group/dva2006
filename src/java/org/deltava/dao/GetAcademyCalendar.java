@@ -46,6 +46,66 @@ public class GetAcademyCalendar extends DAO {
 	}
 	
 	/**
+	 * Returns Instructor busy time entries for the Calendar.
+	 * @param startDate the start date/time, or null if all values should be displayed
+	 * @param days the number of days to display (ignored if startDate is null)
+	 * @param pilotID the database ID of the instructor, or zero if all selected
+	 * @return a Collection of InstructionBusy beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<InstructionBusy> getBusyCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM INSBUSY ");
+		if ((startDate != null) || (pilotID > 0))
+			sqlBuf.append("WHERE ");
+		if (startDate != null) {
+			sqlBuf.append("(STARTTIME >=?) AND (STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
+			if (pilotID > 0)
+				sqlBuf.append("AND ");
+		}
+		
+		if (pilotID > 0)
+			sqlBuf.append("(INSTRUCTOR_ID=?) ");
+		
+		sqlBuf.append("ORDER BY STARTTIME");
+		
+		int param = 0;
+		try {
+			prepareStatement(sqlBuf.toString());
+			if (startDate != null) {
+				_ps.setTimestamp(++param, createTimestamp(startDate));
+				_ps.setTimestamp(++param, createTimestamp(startDate));
+				_ps.setInt(++param, days);
+			}
+			
+			if (pilotID > 0)
+				_ps.setInt(++param, pilotID);
+			
+			// Execute the query
+			return executeBusy();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all busy time for a particular Instructor.
+	 * @param instructorID the Instructor database ID
+	 * @return a Collection of InstructionBusy beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<InstructionBusy> getBusyTime(int instructorID) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM INSBUSY WHERE (INSTRUCTOR_ID=?) ORDER BY STARTTIME");
+			_ps.setInt(1, instructorID);
+			return executeBusy();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns a specific Flight Academy Instruction flight record.
 	 * @param id the flight database ID
 	 * @return an InstructionFlight bean, or null if not found
@@ -257,6 +317,30 @@ public class GetAcademyCalendar extends DAO {
 			results.add(entry);
 		}
 
+		// Clean up and return
+		rs.close();
+		_ps.close();
+		return results;
+	}
+	
+	/**
+	 * Helper method to parse InstructionBusy result sets.
+	 */
+	private List<InstructionBusy> executeBusy() throws SQLException {
+
+		// Execute the query
+		ResultSet rs = _ps.executeQuery();
+
+		// Iterate through the results
+		List<InstructionBusy> results = new ArrayList<InstructionBusy>();
+		while (rs.next()) {
+			InstructionBusy ib = new InstructionBusy(rs.getInt(1));
+			ib.setStartTime(rs.getTimestamp(2));
+			ib.setEndTime(rs.getTimestamp(3));
+			ib.setComments(rs.getString(4));
+			results.add(ib);
+		}
+		
 		// Clean up and return
 		rs.close();
 		_ps.close();

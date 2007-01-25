@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -73,7 +73,7 @@ public class InstructionCancelCommand extends AbstractCommand {
 			s.setStatus(InstructionSession.CANCELED);
 			
 			// Save the session
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
 			wdao.write(s);
 		} catch (DAOException de) {
 			throw new CommandException(de);
