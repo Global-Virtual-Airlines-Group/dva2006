@@ -14,14 +14,17 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
-<content:js name="wms236" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="radarImg" name="acars.livemap.radar" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
+<content:sysdata var="tileHost" name="acars.livemap.tileHost" />
+<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
+<c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 
 function reloadData(isAuto)
 {
@@ -84,6 +87,7 @@ self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&id=wx" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -155,6 +159,20 @@ var rsat = new GMapType([G_SATELLITE_TYPE.getTileLayers()[0],tileRadar], G_SATEL
 map.addMapType(rmap);
 map.addMapType(rsat);
 </c:if>
+<c:if test="${!empty tileHost}">
+// Create the new tile layers
+var rO = getTileOverlay("radar");
+var srO = getTileOverlay("satrad");
+var sO = getTileOverlay("sat");
+
+// Build the layer controls
+var rC = new WXOverlayControl(rO, "Radar", new GSize(70, 7));
+var srC = new WXOverlayControl(srO, "Sat/Rad", new GSize(142, 7));
+var sC = new WXOverlayControl(sO, "Infrared", new GSize(214, 7));
+// map.addControl(rC);
+// map.addControl(srC);
+// map.addControl(sC);
+</c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
@@ -170,6 +188,15 @@ var routeWaypoints;
 // Reload ACARS data
 document.doRefresh = true;
 reloadData(true);
+<c:if test="${!empty tileHost}">
+// Display the copyright notice
+var d = new Date();
+var cp = document.getElementById("copyright");
+cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(288,12));
+cpos.apply(cp);
+map.getContainer().appendChild(cp);
+</c:if>
 </script>
 </body>
 </map:xhtml>
