@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -63,13 +63,17 @@ public class ScheduleImportTask extends DatabaseTask {
 				log.info("Using local copy of " + fileName);
 			else
 				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
+			
+			// Get the connection
+			Connection con = getConnection();
 
-			// Initialize the DAO
-			GetAircraft acdao = new GetAircraft(getConnection());
+			// Initialize the DAOs
+			GetAirline adao = new GetAirline(con);
+			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
-			dao.setAirlines(SystemData.getAirlines().values());
+			dao.setAirlines(adao.getActive().values());
 			dao.setAirports(SystemData.getAirports().values());
 			dao.setBufferSize(65536);
 			release();
