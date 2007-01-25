@@ -129,6 +129,7 @@
 	<!-- Staff functional areas -->
 	<list name="staff.departments" attr="dept" unqiue="true">
 		<dept>Senior Staff</dept>
+		<dept>Administration Services</dept>
 		<dept>Online Events</dept>
 		<dept>Information Technology</dept>
 		<dept>Chief Pilots</dept>
@@ -532,7 +533,8 @@
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">15000</reload>
-			<radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar>
+			<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
+			<tileHost>gima.weather.com</tileHost>
 		</livemap>
 		
 		<list name="block" attr="addr">
