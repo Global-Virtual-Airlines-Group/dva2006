@@ -117,21 +117,16 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		// Get the Schedule entry
 		try {
 			Connection con = ctx.getConnection();
-			
 			if (id != null) {
 				GetSchedule dao = new GetSchedule(con);
 				ScheduleEntry entry = dao.get(id);
 				if (entry == null)
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
 				
-				// Load Airports
+				// Get Airports
 				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
-				airports.addAll(SystemData.getAirports().values());
-				for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
-					Airport a = i.next();
-					if (!a.getAirlineCodes().contains(entry.getAirline().getCode()))
-						i.remove();
-				}
+				GetAirport adao = new GetAirport(con);
+				airports.addAll(adao.getByAirline(entry.getAirline()));
 
 				// Save the entry and airports in the request
 				ctx.setAttribute("entry", entry, REQUEST);

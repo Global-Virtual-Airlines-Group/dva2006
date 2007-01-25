@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -11,6 +11,8 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.ScheduleLoadDAO;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load CSV-format flight schedules from Innovata LLC.
@@ -198,8 +200,11 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				_errors.add("Unknown Airport at Line " + entries.getLineNumber() + " - " + entries.get(22));
 			} else if (a == null) {
 				isOK = false;
-				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + flightCode);
+				log.warn("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
 				_errors.add("Unknown airline at Line " + entries.getLineNumber() + " - " + entries.get(0));
+			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
+				isOK = false;
+				log.info("Disabled airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
 			}
 
 			// Count the number of days this leg operates
