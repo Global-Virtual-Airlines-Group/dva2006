@@ -81,7 +81,7 @@ public class InstructionFlightCommand extends AbstractFormCommand {
 			}
 			
 			// Update the calendar
-			SetAcademyFlight wdao = new SetAcademyFlight(con);
+			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
 			wdao.write(flight);
 		} catch (DAOException de) {
 			throw new CommandException(de);
