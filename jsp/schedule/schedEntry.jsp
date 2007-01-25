@@ -148,7 +148,7 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" className="small" idx="*" value="true" label="Purge Flight on Schedule Import" checked="${entry.canPurge}" />
+ <td class="data"><el:box name="dontPurge" className="small" idx="*" value="true" label="Don't Purge Flight on Schedule Import" checked="${!entry.canPurge}" />
 <el:box name="isHistoric" className="small" idx="*" value="true" label="Historic Flight" checked="${entry.historic}" />
 <c:if test="${academyEnabled}"><el:box name="isAcademy" className="small" idx="*" value="true" label="Flight Academy Flight" checked="${entry.academy}" /></c:if></td>
 </tr>
