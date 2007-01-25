@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -299,29 +299,6 @@ public class SetAcademy extends DAO {
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
-	 * Writes an Instruction Calendar entry.
-	 * @param s the InstructionSession bean
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public void write(InstructionSession s) throws DAOException {
-		try {
-			prepareStatement("REPLACE INTO INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
-					+ "STATUS, NOSHOW, REMARKS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-			_ps.setInt(1, s.getCourseID());
-			_ps.setInt(2, s.getInstructorID());
-			_ps.setTimestamp(3, createTimestamp(s.getStartTime()));
-			_ps.setTimestamp(4, createTimestamp(s.getEndTime()));
-			_ps.setInt(5, s.getStatus());
-			_ps.setBoolean(6, s.getNoShow());
-			_ps.setString(7, s.getComments());
-			_ps.setInt(8, s.getID());
-			executeUpdate(1);
-		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}

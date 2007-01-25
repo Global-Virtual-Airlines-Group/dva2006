@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -101,7 +101,7 @@ public class InstructionSessionCommand extends AbstractFormCommand {
 			mctx.addData("instructor", pdao.get(s.getInstructorID()));
 			
 			// Save the request
-			SetAcademy wdao = new SetAcademy(con);
+			SetAcademyCalendar wdao = new SetAcademyCalendar(con);
 			wdao.write(s);
 		} catch (DAOException de) {
 			throw new CommandException(de);

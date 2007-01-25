@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -9,13 +9,13 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 /**
- * A Web Site Command to display the Flight Academy Instruction Calendar.
+ * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class InstructionCalendarCommand extends AbstractCalendarCommand {
+public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 
 	/**
 	 * Executes the command.
@@ -31,18 +31,16 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the DAO and the Calendar
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
-			Collection<InstructionSession> sessions = dao.getSessionCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
 			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
-			ctx.setAttribute("sessions", sessions, REQUEST);
-			
+			ctx.setAttribute("busyTime", busyTime, REQUEST);
+
 			// Get the Pilot IDs from the sessions
-			Set<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<InstructionSession> i = sessions.iterator(); i.hasNext(); ) {
-				InstructionSession s = i.next();
-				pilotIDs.add(new Integer(s.getPilotID()));
-				pilotIDs.add(new Integer(s.getInstructorID()));
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			for (Iterator<InstructionBusy> i = busyTime.iterator(); i.hasNext(); ) {
+				InstructionBusy s = i.next();
+				pilotIDs.add(new Integer(s.getID()));
 			}
-			
+
 			// Load the Pilot IDs
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
@@ -58,7 +56,7 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL((cctx.getDays() == 7) ? "/jsp/academy/calendarW.jsp" : "/jsp/academy/calendarM.jsp");
+		result.setURL((cctx.getDays() == 7) ? "/jsp/academy/busyCalendarW.jsp" : "/jsp/academy/busyCalendarM.jsp");
 		result.setSuccess(true);
 	}
 }
