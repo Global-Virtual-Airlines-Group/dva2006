@@ -10,6 +10,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.BusyTimeAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
@@ -56,6 +57,10 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			// Save busy time
 			ctx.setAttribute("accessMap", accessMap, REQUEST);
 			
+			// Get the Flight Instructors
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
+			
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			for (Iterator<? extends InstructorBean> i = entries.iterator(); i.hasNext(); ) {
@@ -66,7 +71,6 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			}
 			
 			// Load the Pilot IDs
-			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
