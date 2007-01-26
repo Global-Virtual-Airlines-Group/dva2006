@@ -2,7 +2,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
-<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Sidebar Navigation Frame -->
 <content:region id="sidebar">
