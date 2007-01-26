@@ -29,6 +29,8 @@ if (act.indexOf('imgvote.do') != -1) {
 	if (!validateCombo(form.score, 'Image Rating')) return false;
 } else if (act.indexOf('threadmove.do') != -1) {
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
+} else if (act.indexOf('threadsubjectedit.do') != -1) {
+	if (!validateText(form.newTitle, 5, 'New Discussion Thread Title')) return false;
 } else {
 	var hasResponse = (form.msgText.value.length > 3);
 	if (!hasResponse)
@@ -279,6 +281,16 @@ notification each time a reply is posted in this Thread.
 </content:filter></td>
 </tr>
 </content:filter>
+<c:if test="${access.canEditTitle}">
+<!-- Update Thread Title -->
+<tr class="title caps">
+ <td colspan="3">UPDATE DISCUSSION THREAD TITLE</td>
+</tr>
+<tr class="pri bld mid">
+ <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />
+ <el:cmdbutton url="threadsubjectedit" linkID="0x${thread.ID}" post="true" label="UPDATE" /></td>
+</tr>
+</c:if>
 
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->

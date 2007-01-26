@@ -24,6 +24,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canRead;
     private boolean _canReply;
     private boolean _canEdit;
+    private boolean _canEditTitle;
     private boolean _canVote;
     private boolean _canReport;
     private boolean _canLock;
@@ -100,6 +101,9 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canDelete = _ctx.isUserInRole("Admin");
         _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
         
+        // Check if we can edit the title
+        _canEditTitle = _canRead && (_ctx.isUserInRole("Moderator") || (isOurs && _mt.getPostCount() == 1));
+        
         // Check if we can update the thread - ie. we have written the last reply and we can edit
         if (_canReply && (!_mt.getPosts().isEmpty())) {
         	List<Message> posts = _mt.getPosts();
@@ -126,7 +130,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     }
     
     /**
-     * Returns wether the thread can be reported for content.
+     * Returns whether the thread can be reported for content.
      * @return TRUE if it can be reported, otherwise FALSE
      */
     public boolean getCanReport() {
@@ -139,6 +143,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanEdit() {
     	return _canEdit;
+    }
+    
+    /**
+     * Returns if the thread title can be edited.
+     * @return TRUE if the title can be edited, otherwise FALSE
+     */
+    public boolean getCanEditTitle() {
+    	return _canEditTitle;
     }
     
     /**
