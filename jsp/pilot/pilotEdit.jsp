@@ -140,7 +140,7 @@ return true;
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label" valign="top">Security Roles</td>
- <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
+ <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="95" cols="7" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
 <tr>
  <td class="label">Subversion User ID</td>
