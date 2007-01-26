@@ -18,10 +18,10 @@
 <content:sysdata var="radarImg" name="acars.livemap.radar" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
 <content:sysdata var="tileHost" name="acars.livemap.tileHost" />
-<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
+<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 <c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
@@ -169,9 +169,9 @@ var sO = getTileOverlay("sat");
 var rC = new WXOverlayControl(rO, "Radar", new GSize(70, 7));
 var srC = new WXOverlayControl(srO, "Sat/Rad", new GSize(142, 7));
 var sC = new WXOverlayControl(sO, "Infrared", new GSize(214, 7));
-// map.addControl(rC);
-// map.addControl(srC);
-// map.addControl(sC);
+map.addControl(rC);
+map.addControl(srC);
+map.addControl(sC);
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
