@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Academy Instruction Calendar</title>
@@ -26,8 +27,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/academy/header.jspf" %> 
+<%@ include file="/jsp/academy/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -48,12 +49,19 @@ return true;
 <calendar:week date="cDate" startDate="${startDate}" entries="${sessions}" topBarClass="dayHdr" 
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="academycalendar">
 <calendar:entry name="session">
+<c:if test="${fn:isBusyTime(session)}">
+<c:set var="ins" value="${pilots[session.ID]}" scope="request" />
+<span class="warn bld caps">${ins.name} IS BUSY</span><br />
+<fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" />
+</c:if>
+<c:if test="${!fn:isBusyTime(session)}">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
 <el:cmd url="isession" linkID="0x${session.ID}" className="pri bld">${session.name}</el:cmd><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" /><br />
 <span class="small"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br />
 <span class="pri small">${ins.name} ${ins.pilotCode}</span>
+</c:if>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>

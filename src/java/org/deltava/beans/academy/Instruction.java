@@ -1,10 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import org.deltava.beans.CalendarEntry;
 
 /**
- * An interface to store common properties for Flight Academy instruction sessions with an Instructor.
+ * An interface to store common properties for Flight Academy instruction sessions with an Instructor
  * and a Pilot.
  * @author Luke
  * @version 1.0
@@ -14,13 +14,13 @@ import org.deltava.beans.CalendarEntry;
 public interface Instruction extends CalendarEntry {
 
 	/**
-	 * Returns the databae ID of the Instructor.
+	 * Returns the database ID of the Instructor.
 	 * @return the Instructor's database ID
 	 */
 	public int getInstructorID();
 	
 	/**
-	 * Returns the databae ID of the Student.
+	 * Returns the database ID of the Student.
 	 * @return the Student's database ID
 	 */
 	public int getPilotID();

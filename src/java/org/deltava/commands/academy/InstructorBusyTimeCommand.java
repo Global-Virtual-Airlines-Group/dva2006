@@ -8,6 +8,10 @@ import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.BusyTimeAccessControl;
+
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
@@ -23,6 +27,11 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Calculate create access rights
+		BusyTimeAccessControl ac = new BusyTimeAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 
 		// Initialize the calendar context
 		CalendarContext cctx = initCalendar(ctx);
@@ -32,7 +41,22 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			// Get the DAO and the Calendar
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
-			ctx.setAttribute("busyTime", busyTime, REQUEST);
+			
+			// Calculcate access rights
+			Map<InstructionBusy, BusyTimeAccessControl> accessMap = new LinkedHashMap<InstructionBusy, BusyTimeAccessControl>();
+			for (Iterator<InstructionBusy> i = busyTime.iterator(); i.hasNext(); ) {
+				InstructionBusy ib = i.next();
+				BusyTimeAccessControl access = new BusyTimeAccessControl(ctx, ib);
+				access.validate();
+				accessMap.put(ib, access);
+			}
+			
+			ctx.setAttribute("busyTime", accessMap.keySet(), REQUEST);
+			ctx.setAttribute("accessMap", accessMap, REQUEST);
+			
+			// Get the Flight Instructors
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
+			ctx.setAttribute("instructors", pdao.getByRole("Instructor", SystemData.get("airline.db")), REQUEST);
 
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
@@ -42,7 +66,6 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 			}
 
 			// Load the Pilot IDs
-			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
