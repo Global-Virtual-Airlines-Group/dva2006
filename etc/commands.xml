@@ -1502,6 +1502,24 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="busycalendar">
+		<name>Flight Academy Busy Time Calendar</name>
+		<class>org.deltava.commands.academy.InstructorBusyTimeCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
+	<command id="insbusysave">
+		<name>Flight Academy Busy Time Save</name>
+		<class>org.deltava.commands.academy.InstructorBusySaveCommand</class>
+		<roles>Instructor,AcademyAdmin,HR</roles>
+	</command>
+
+	<command id="insbusydelete">
+		<name>Flight Academy Busy Time Delete</name>
+		<class>org.deltava.commands.academy.InstructorBusyDeleteCommand</class>
+		<roles>Instructor,AcademyAdmin,HR</roles>
+	</command>
+
 	<command id="certs">
 		<name>Academy Certifications</name>
 		<class>org.deltava.commands.academy.CertificationListCommand</class>

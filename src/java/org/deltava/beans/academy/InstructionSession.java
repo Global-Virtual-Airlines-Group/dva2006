@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionSession extends DatabaseBean implements Comparable, ViewEntry, Instruction {
+public class InstructionSession extends DatabaseBean implements Comparable, ViewEntry, Instruction, InstructorBean {
 	
 	public static final int SCHEDULED = 0;
 	public static final int CANCELED = 1;

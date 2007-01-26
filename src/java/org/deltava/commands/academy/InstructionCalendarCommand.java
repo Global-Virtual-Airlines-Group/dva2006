@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.academy.*;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -31,16 +32,17 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			
 			// Get the DAO and the Calendar
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
-			Collection<InstructionSession> sessions = dao.getSessionCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
-			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID());
-			ctx.setAttribute("sessions", sessions, REQUEST);
+			Collection<InstructorBean> entries = new ArrayList<InstructorBean>(dao.getSessionCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID()));
+			entries.addAll(dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID()));
+			ctx.setAttribute("sessions", entries, REQUEST);
 			
 			// Get the Pilot IDs from the sessions
-			Set<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator<InstructionSession> i = sessions.iterator(); i.hasNext(); ) {
-				InstructionSession s = i.next();
-				pilotIDs.add(new Integer(s.getPilotID()));
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			for (Iterator<? extends InstructorBean> i = entries.iterator(); i.hasNext(); ) {
+				InstructorBean s = i.next();
 				pilotIDs.add(new Integer(s.getInstructorID()));
+				if (s instanceof InstructionSession)
+					pilotIDs.add(new Integer(((InstructionSession) s).getPilotID()));
 			}
 			
 			// Load the Pilot IDs

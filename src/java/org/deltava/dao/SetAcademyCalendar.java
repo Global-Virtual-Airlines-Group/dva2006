@@ -79,7 +79,7 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void write(InstructionBusy ib) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMNETS) VALUES (?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, ib.getID());
 			_ps.setTimestamp(2, createTimestamp(ib.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ib.getEndTime()));
@@ -113,9 +113,9 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void deleteBusy(int instructorID, java.util.Date startTime) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME=FROM_UNIXTIME(?))");
+			prepareStatement("DELETE FROM INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME=?)");
 			_ps.setInt(1, instructorID);
-			_ps.setInt(2, (int) (startTime.getTime() / 1000));
+			_ps.setTimestamp(2, createTimestamp(startTime));
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

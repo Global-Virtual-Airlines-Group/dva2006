@@ -4,8 +4,12 @@ package org.deltava.commands.academy;
 import java.util.Date;
 import java.sql.Connection;
 
+import org.deltava.beans.academy.InstructionBusy;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.security.command.BusyTimeAccessControl;
 
 import org.deltava.util.StringUtils;
 
@@ -25,13 +29,15 @@ public class InstructorBusyDeleteCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Get the instructor ID and validate access
+		// Get the instructor ID and start time
 		int instructorID = ctx.getID();
-		if ((instructorID != ctx.getUser().getID()) && !ctx.isUserInRole("AcademyAdmin"))
-			throw securityException("Cannot delete Instructor busy time entry");
+		Date sd = StringUtils.parseDate(ctx.getParameter("op"), "MMddyyyyHHmm");
 		
-		// Get the start time
-		Date sd = new Date(StringUtils.parse(ctx.getParameter("startTime"), 0) * 1000);
+		// Validate our delete access
+		BusyTimeAccessControl ac = new BusyTimeAccessControl(ctx, new InstructionBusy(instructorID));
+		ac.validate();
+		if (!ac.getCanDelete())
+			throw securityException("Cannot delete Instructor busy time entry");
 
 		try {
 			Connection con = ctx.getConnection();

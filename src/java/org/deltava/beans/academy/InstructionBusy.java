@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionBusy extends DatabaseBean implements Comparable, CalendarEntry, ViewEntry {
+public class InstructionBusy extends DatabaseBean implements Comparable, CalendarEntry, ViewEntry, InstructorBean {
 
 	private Date _startTime;
 	private Date _endTime;
@@ -61,6 +61,13 @@ public class InstructionBusy extends DatabaseBean implements Comparable, Calenda
 	 */
 	public Date getDate() {
 		return _startTime;
+	}
+	
+	/**
+	 * Returns the Instructor database ID.
+	 */
+	public int getInstructorID() {
+		return getID();
 	}
 
 	/**
