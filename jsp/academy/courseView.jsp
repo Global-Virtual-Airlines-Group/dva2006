@@ -47,8 +47,8 @@ return ${access.canComment || access.canUpdateProgress};
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/academy/header.jspf" %> 
+<%@ include file="/jsp/academy/sideMenu.jspf" %>
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[course.instructorID]}" scope="request" />
 

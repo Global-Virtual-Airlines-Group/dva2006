@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.Date;
@@ -6,13 +6,13 @@ import java.util.Date;
 import org.deltava.beans.*;
 
 /**
- * A bean to track Instruction Flights.
+ * A bean to track Flight Academy Instruction Flights.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class InstructionFlight extends DatabaseBean implements Instruction {
+public class InstructionFlight extends DatabaseBean implements Instruction, InstructorBean {
 
 	private int _instructorID;
 	private int _pilotID;

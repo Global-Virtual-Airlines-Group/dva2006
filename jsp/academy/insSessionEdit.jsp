@@ -29,8 +29,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/academy/header.jspf" %> 
+<%@ include file="/jsp/academy/sideMenu.jspf" %>
 <content:sysdata var="dateFmt" name="time.date_format" />
 
 <!-- Main Body Frame -->
