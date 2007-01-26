@@ -128,7 +128,7 @@ This Flight Report has been succesfully deleted from the database.<br />
 To return to the <content:airline /> submitted Flight Report queue, <el:cmd url="pirepqueue" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 </c:if></content:filter>
-<content:filter roles="Examiner,HR"><c:if test="${academyEnabled && (!empty checkRide)}">
+<content:filter roles="AcademyAdmin,HR"><c:if test="${academyEnabled && (!empty checkRide)}">
 To return to the <content:airline /> Flight Academy Check Ride queue, <el:cmd url="academyridequeue" className="sec bld">Click Here</el:cmd>.<br />
 </c:if></content:filter>
 <c:if test="${!isDeleted}">

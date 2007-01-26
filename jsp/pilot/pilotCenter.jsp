@@ -440,7 +440,7 @@ training session with a Flight Academy instructor to meet online for test flight
 situations where a virtual Flight Instructor can asisst you in your development.</td>
 </tr>
 </c:if>
-<content:filter roles="HR,Instructor,Examiner">
+<content:filter roles="HR,Instructor,AcademyAdmin">
 <tr>
  <td class="mid"><el:cmd url="courses" className="bld">Active Courses</el:cmd></td>
  <td class="data">You can view Pilots currently enrolled within a <content:airline /> Flight Academy 
