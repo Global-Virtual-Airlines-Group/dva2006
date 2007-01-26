@@ -712,6 +712,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="threadsubjectedit">
+		<name>Water Cooler Thread Subject Edit</name>
+		<class>org.deltava.commands.cooler.ThreadSubjectEditCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="threadmove">
 		<name>Move Water Cooler Thread</name>
 		<class>org.deltava.commands.cooler.ThreadMoveCommand</class>

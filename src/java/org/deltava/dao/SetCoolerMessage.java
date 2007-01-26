@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -181,6 +181,23 @@ public class SetCoolerMessage extends DAO {
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?)");
 			_ps.setString(1, newChannel);
+			_ps.setInt(2, id);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates the Subject of a Message Thread.
+	 * @param id the Message Thread ID
+	 * @param subj the new Subject
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void updateSubject(int id, String subj) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET SUBJECT=? WHERE (ID=?)");
+			_ps.setString(1, subj);
 			_ps.setInt(2, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
