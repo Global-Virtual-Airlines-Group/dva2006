@@ -48,7 +48,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="insbusysave.do" method="post" linkID="0x${user.ID}" validate="return validate(this)">
+<el:form action="insbusysave.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
  <td width="60%" class="caps"><content:airline /> INSTRUCTOR BUSY TIME CALENDAR - <fmt:date fmt="d" date="${startDate}" d="MMMM yyyy" /></td>
@@ -77,42 +77,7 @@ return true;
 </calendar:month>
 </div>
 <c:if test="${access.canCreate || access.canProxyCreate}">
-<el:table className="form" space="default" pad="default">
-<tr class="title">
- <td colspan="2" class="caps">ADD NEW BUSY TIME</td>
-</tr>
-<c:if test="${access.canProxyCreate}">
-<tr>
- <td class="label">Flight Instructor</td>
- <td class="data"><el:combo name="instructor" idx="*" size="1" className="req" firstEntry="-" options="${instructors}" /></td>
-</tr>
-</c:if>
-<tr>
- <td class="label">Start Date/Time</td>
- <td class="data"><el:text name="startDate" idx="*" size="10" max="10" value="" className="req" /> at
- <el:text name="startTime" idx="*" size="4" max="5" value="" className="req" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].startDate')" />
-&nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
-</tr>
-<tr>
- <td class="label">End Date/Time</td>
- <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="" className="req" /> at
- <el:text name="endTime" idx="*" size="4" max="5" value="" className="req" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" />
-&nbsp;<span class="small">All dates/times are ${pageContext.request.userPrincipal.TZ.name}. (Format: ${dateFmt} HH:mm)</span></td>
-</tr>
-<tr>
- <td class="label" valign="top">Comments</td>
- <td class="data"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
-</tr>
-</el:table>
-
-<!-- Button Bar -->
-<el:table className="bar" space="default" pad="default">
-<tr>
- <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE NEW BUSY TIME" /></td>
-</tr>
-</el:table>
+<%@ include file="/jsp/academy/addBusyTime.jspf" %>
 </c:if>
 </el:form>
 <br />
