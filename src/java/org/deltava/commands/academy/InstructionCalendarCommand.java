@@ -9,6 +9,8 @@ import org.deltava.beans.academy.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.security.command.BusyTimeAccessControl;
+
 /**
  * A Web Site Command to display the Flight Academy Instruction Calendar.
  * @author Luke
@@ -24,6 +26,11 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Calculate busy create access rights
+		BusyTimeAccessControl ac = new BusyTimeAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 
 		// Initialize the calendar context
 		CalendarContext cctx = initCalendar(ctx);
@@ -33,8 +40,21 @@ public class InstructionCalendarCommand extends AbstractCalendarCommand {
 			// Get the DAO and the Calendar
 			GetAcademyCalendar dao = new GetAcademyCalendar(con);
 			Collection<InstructorBean> entries = new ArrayList<InstructorBean>(dao.getSessionCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID()));
-			entries.addAll(dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID()));
+			Collection<InstructionBusy> busyTime = dao.getBusyCalendar(cctx.getStartDate(), cctx.getDays(), ctx.getID()); 
+			entries.addAll(busyTime);
 			ctx.setAttribute("sessions", entries, REQUEST);
+			
+			// Calculcate access rights
+			Map<InstructionBusy, BusyTimeAccessControl> accessMap = new LinkedHashMap<InstructionBusy, BusyTimeAccessControl>();
+			for (Iterator<InstructionBusy> i = busyTime.iterator(); i.hasNext(); ) {
+				InstructionBusy ib = i.next();
+				BusyTimeAccessControl access = new BusyTimeAccessControl(ctx, ib);
+				access.validate();
+				accessMap.put(ib, access);
+			}
+			
+			// Save busy time
+			ctx.setAttribute("accessMap", accessMap, REQUEST);
 			
 			// Get the Pilot IDs from the sessions
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
