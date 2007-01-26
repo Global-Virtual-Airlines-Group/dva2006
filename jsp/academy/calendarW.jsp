@@ -15,11 +15,27 @@
 <content:css name="calendar" />
 <content:pics />
 <content:js name="common" />
+<content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
 function switchType(combo)
 {
 var cType = combo.options[combo.selectedIndex].value;
 self.location = '/academycalendar.do?op=' + cType + '&startDate=<fmt:date fmt="d" d="MM/dd/yyyy" date="${startDate}" />';
+return true;
+}
+
+function validate(form)
+{
+if (!checkSubmit()) return false;
+if (!form.comments) return false;
+
+if (!validateCombo(form.instructor, 'Flight Instructor')) return false;
+if (!validateCombo(form.startDate, 'Busy Start Date')) return false;
+if (!validateCombo(form.startTime, 'Busy Start Time')) return false;
+if (!validateCombo(form.endDate, 'Busy End Date')) return false;
+if (!validateCombo(form.endTime, 'Busy End Time')) return false;
+setSubmit();
+disableButton('SaveButton');
 return true;
 }
 </script>
@@ -32,7 +48,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="academycalendar.do" method="get" validate="return false">
+<el:form action="insbusysave.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title">
  <td width="70%" class="caps"><content:airline /> INSTRUCTION CALENDAR - WEEK OF <fmt:date fmt="d" date="${startDate}" d="MMMM dd, yyyy" /></td>
@@ -51,8 +67,11 @@ return true;
 <calendar:entry name="session">
 <c:if test="${fn:isBusyTime(session)}">
 <c:set var="ins" value="${pilots[session.ID]}" scope="request" />
+<c:set var="busyAccess" value="${accessMap[busy]}" scope="request" />
 <span class="warn bld caps">${ins.name} IS BUSY</span><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" />
+<c:if test="${busyAccess.canDelete}"><br />
+<el:cmd url="insbusydelete" linkID="0x${ins.ID}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
 </c:if>
 <c:if test="${!fn:isBusyTime(session)}">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
@@ -67,6 +86,9 @@ return true;
 <calendar:empty>-</calendar:empty>
 </calendar:week>
 </div>
+<c:if test="${access.canCreate || access.canProxyCreate}">
+<%@ include file="/jsp/academy/addBusyTime.jspf" %>
+</c:if>
 </el:form>
 <br />
 <content:copyright />
