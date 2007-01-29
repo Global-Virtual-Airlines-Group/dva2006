@@ -1,8 +1,9 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
@@ -17,7 +18,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public abstract class MultiAuthenticator implements Authenticator {
+public abstract class MultiAuthenticator implements SQLAuthenticator {
 
 	/**
 	 * The &quot;source&quot; authenticator.
@@ -27,7 +28,13 @@ public abstract class MultiAuthenticator implements Authenticator {
 	/**
 	 * The &quot;destination&quot; authenticators.
 	 */
-	protected Collection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
+	protected final Collection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
+	
+	/**
+	 * If either authenticator is a {@link SQLAuthenticator}, an explict connection can be passed down the authenticator
+	 * chain to preserve transaction atomicity.
+	 */
+	protected final ThreadLocal<Connection> _cons = new ThreadLocal<Connection>(); 
 
 	/**
 	 * The log4j logger.
@@ -83,6 +90,21 @@ public abstract class MultiAuthenticator implements Authenticator {
 			}
 		}
 	}
+	
+	/**
+	 * Provides the JDBC connection for this Authenticator and its children to use.
+	 * @param c the Connection to use
+	 */
+	public void setConnection(Connection c) {
+		_cons.set(c);
+	}
+	
+	/**
+	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
+	 */
+	public void clearConnection() {
+		_cons.set(null);
+	}
 
 	/**
 	 * Returns the Source Authenticator.
@@ -99,6 +121,31 @@ public abstract class MultiAuthenticator implements Authenticator {
 	public final Collection<Authenticator> getDestination() {
 		return _dst;
 	}
+	
+	/**
+	 * Checks if authenticators are a {@link SQLAuthenticator} and if so passes in an explicit Connection to use.
+	 * @param auths the Authenticators to check and update
+	 */
+	protected void setConnection(Authenticator... auths) {
+		for (int x = 0; x < auths.length; x++) {
+			Authenticator auth = auths[x];
+			Connection con = _cons.get();
+			if ((auth instanceof SQLAuthenticator) && (con != null))
+				((SQLAuthenticator) auth).setConnection(con);
+		}
+	}
+	
+	/**
+	 * Checks if authenticators are a {@link SQLAuthenticator} and if so clears the an explicit Connection to use.
+	 * @param auths the Authenticators to check and update
+	 */
+	protected void clearConnection(Authenticator... auths) {
+		for (int x = 0; x < auths.length; x++) {
+			Authenticator auth = auths[x];
+			if (auth instanceof SQLAuthenticator)
+				((SQLAuthenticator) auth).clearConnection();
+		}
+	}
 
 	/**
 	 * Synchronizes user information between the source and destination authenticators. If the supplied credentials
@@ -113,6 +160,7 @@ public abstract class MultiAuthenticator implements Authenticator {
 	protected void sync(Person usr, String pwd) throws SecurityException {
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			try {
 				dst.authenticate(usr, pwd);
 			} catch (SecurityException se) {
@@ -123,6 +171,8 @@ public abstract class MultiAuthenticator implements Authenticator {
 					dst.addUser(usr, pwd);
 				}
 			}
+			
+			clearConnection(dst);
 		}
 	}
 }

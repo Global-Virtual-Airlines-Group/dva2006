@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -53,11 +53,16 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 
 		// Figure out which authenticator to use
 		Authenticator auth = dst.contains(usr) ? dst : _src;
+		setConnection(auth);
 		auth.authenticate(usr, pwd);
 
 		// If we got this far, and we're not in the destination directory, then add us
-		if (auth == _src)
+		if (auth == _src) {
+			setConnection(dst);
 			dst.addUser(usr, pwd);
+		}
+		
+		clearConnection(_src, dst);
 	}
 
 	/**
@@ -67,7 +72,10 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		return _src.contains(usr) || dst.contains(usr);
+		setConnection(_src, dst);
+		boolean result = _src.contains(usr) || dst.contains(usr);
+		clearConnection(_src, dst);
+		return result;
 	}
 
 	/**
@@ -77,11 +85,14 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs, or the user is not in the Destination directory
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
+		setConnection(dst);
 		if (dst.contains(usr)) {
 			dst.updatePassword(usr, pwd);
 		} else {
 			dst.addUser(usr, pwd);
 		}
+		
+		clearConnection(dst);
 	}
 	
 	/**
@@ -91,7 +102,9 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
+		setConnection(dst);
 		dst.addUser(usr, pwd);
+		clearConnection(dst);
 	}
 
 	/**
@@ -101,13 +114,17 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @throws SecurityException if an error occurs or the user does not exist
 	 */
 	public void removeUser(Person usr) throws SecurityException {
+		setConnection(_src, dst);
 		if (dst.contains(usr)) {
 			dst.removeUser(usr);
 		} else if (_src.contains(usr)) {
 			_src.removeUser(usr);
 		} else {
+			clearConnection(_src, dst);
 			throw new SecurityException("Unknown User - " + usr.getDN());
 		}
+		
+		clearConnection(_src, dst);
 	}
 	
    /**
@@ -117,6 +134,8 @@ public class MigrationAuthenticator extends MultiAuthenticator {
     * @throws SecurityException if an error occurs
     */
 	public void rename(Person usr, String newName) throws SecurityException {
+		setConnection(dst);
 		dst.rename(usr, newName);
+		clearConnection(dst);
 	}
 }
