@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -65,10 +65,14 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @see Authenticator#updatePassword(Person, String)
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
+		setConnection(_src);
 		_src.updatePassword(usr, pwd);
+		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			dst.updatePassword(usr, pwd);
+			clearConnection(dst);
 		}
 	}
 
@@ -81,10 +85,14 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @see Authenticator#addUser(Person, String)
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
+		setConnection(_src);
 		_src.addUser(usr, pwd);
+		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			dst.addUser(usr, pwd);
+			clearConnection(dst);
 		}
 	}
 
@@ -96,10 +104,14 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @see org.deltava.security.Authenticator#rename(Person, java.lang.String)
 	 */
 	public void rename(Person usr, String newName) throws SecurityException {
+		setConnection(_src);
 		_src.rename(usr, newName);
+		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			dst.rename(usr, newName);
+			clearConnection(dst);
 		}
 	}
 
@@ -110,14 +122,20 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @see Authenticator#removeUser(Person)
 	 */
 	public void removeUser(Person usr) throws SecurityException {
-		if (_src.contains(usr))
+		if (_src.contains(usr)) {
+			setConnection(_src);
 			_src.removeUser(usr);
+			clearConnection(_src);
+		}
 		
 		// Remove from destinations
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			if (dst.contains(usr))
 				dst.removeUser(usr);
+			
+			clearConnection(dst);
 		}
 	}
 }

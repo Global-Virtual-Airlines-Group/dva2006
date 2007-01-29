@@ -17,10 +17,11 @@ import org.deltava.util.ConfigLoader;
  * @since 1.0
  */
 
-public class JDBCAuthenticator implements Authenticator {
+public class JDBCAuthenticator implements SQLAuthenticator {
 
 	private static final Logger log = Logger.getLogger(JDBCAuthenticator.class);
 
+	private final ThreadLocal<Connection> _con = new ThreadLocal<Connection>();
 	private Properties _props;
 
 	/**
@@ -46,7 +47,31 @@ public class JDBCAuthenticator implements Authenticator {
 	 * Helper method to return a JDBC connection to the data source.
 	 */
 	private Connection getConnection() throws SQLException {
-		return DriverManager.getConnection(_props.getProperty("jdbc.url"), _props);
+		return (_con.get() == null) ? DriverManager.getConnection(_props.getProperty("jdbc.url"), _props) : _con.get();
+	}
+	
+	/**
+	 * Helper method to close the JDBC connection if not provided by external code.
+	 */
+	private void closeConnection() throws SQLException {
+		Connection con = _con.get();
+		if (con == null)
+			con.close();
+	}
+	
+	/**
+	 * Provides the JDBC connection for this Authenticator to use.
+	 * @param c the Connection to use
+	 */
+	public void setConnection(Connection c) {
+		_con.set(c);
+	}
+	
+	/**
+	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
+	 */
+	public void clearConnection() {
+		_con.set(null);
 	}
 
 	/**
@@ -72,7 +97,7 @@ public class JDBCAuthenticator implements Authenticator {
 			// Clean up
 			rs.close();
 			ps.close();
-			c.close();
+			closeConnection();
 
 			// If we haven't authenticated, throw an execption
 			if (!isAuth)
@@ -114,7 +139,7 @@ public class JDBCAuthenticator implements Authenticator {
 
 			// Clean up
 			ps.close();
-			c.close();
+			closeConnection();
 
 			// If no rows were updated, throw an exception
 			if (rowsUpdated == 0) {
@@ -157,7 +182,7 @@ public class JDBCAuthenticator implements Authenticator {
 
 			// Clean up
 			ps.close();
-			c.close();
+			closeConnection();
 		} catch (SQLException se) {
 			log.warn(usr.getDN() + " user addition FAILURE - " + se.getMessage());
 			SecurityException e = new SecurityException("User addition failure for " + usr.getDN());
@@ -185,7 +210,7 @@ public class JDBCAuthenticator implements Authenticator {
 			// Clean up
 			rs.close();
 			ps.close();
-			c.close();
+			closeConnection();
 
 			// Return result
 			return isOK;
@@ -215,7 +240,7 @@ public class JDBCAuthenticator implements Authenticator {
 
 			// Clean up
 			ps.close();
-			c.close();
+			closeConnection();
 		} catch (SQLException se) {
 			log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
 			SecurityException e = new SecurityException("User removal failure for " + usr.getDN());
@@ -246,7 +271,7 @@ public class JDBCAuthenticator implements Authenticator {
 
 			// Clean up
 			ps.close();
-			c.close();
+			closeConnection();
 		} catch (SQLException se) {
 		   log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
 			SecurityException e = new SecurityException("User rename failure for " + usr.getDN());

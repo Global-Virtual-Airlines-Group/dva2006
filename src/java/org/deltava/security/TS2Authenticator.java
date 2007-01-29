@@ -1,15 +1,13 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
 import java.util.*;
-import java.io.IOException;
 
 import org.deltava.beans.*;
 import org.deltava.beans.ts2.*;
 
 import org.deltava.dao.*;
-import org.deltava.jdbc.*;
 
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
@@ -19,34 +17,16 @@ import org.apache.log4j.Logger;
 /**
  * An Authenticator to authenticate against a TeamSpeak 2 user database. This differs from the standard
  * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object.
+ * Since this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection
+ * to use.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class TS2Authenticator implements Authenticator {
+public class TS2Authenticator extends ConnectionPoolAuthenticator {
 
 	private static final Logger log = Logger.getLogger(TS2Authenticator.class);
-
-	private ConnectionPool _pool;
-	private Properties _props;
-
-	/**
-	 * Initialize the authenticator.
-	 * @param propsFile the properties file to use
-	 * @throws SecurityException if an error occurs
-	 */
-	public void init(String propsFile) throws SecurityException {
-		_props = new Properties();
-		try {
-			_props.load(ConfigLoader.getStream(propsFile));
-		} catch (IOException ie) {
-			throw new SecurityException(ie.getMessage());
-		}
-
-		// Get the connection pool
-		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-	}
 
 	/**
 	 * Authenticates a user by validating the password against the database. If a database cryptographic function is
@@ -77,7 +57,7 @@ public class TS2Authenticator implements Authenticator {
 		boolean isAuth = false;
 		Connection c = null;
 		try {
-			c = _pool.getConnection(true);
+			c = getConnection();
 
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
@@ -96,7 +76,7 @@ public class TS2Authenticator implements Authenticator {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(c);
+			closeConnection(c);
 		}
 		
 		// If we haven't authenticated, throw an execption
@@ -126,7 +106,7 @@ public class TS2Authenticator implements Authenticator {
 		Connection c = null;
 		boolean hasUser = false;
 		try {
-			c = _pool.getConnection(true);
+			c = getConnection();
 
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
@@ -143,7 +123,7 @@ public class TS2Authenticator implements Authenticator {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(c);
+			closeConnection(c);
 		}
 
 		return hasUser;
@@ -180,7 +160,7 @@ public class TS2Authenticator implements Authenticator {
 
 		Connection c = null;
 		try {
-			c = _pool.getConnection();
+			c = getConnection();
 
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
@@ -194,7 +174,7 @@ public class TS2Authenticator implements Authenticator {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(c);
+			closeConnection(c);
 		}
 	}
 
@@ -252,7 +232,7 @@ public class TS2Authenticator implements Authenticator {
 		
 		Connection con = null;
 		try {
-			con = _pool.getConnection();
+			con = getConnection();
 			
 			// Get the DAO and update
 			SetTS2Data wdao = new SetTS2Data(con);
@@ -261,7 +241,7 @@ public class TS2Authenticator implements Authenticator {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 		
 		// Encrypt the password
@@ -289,7 +269,7 @@ public class TS2Authenticator implements Authenticator {
 		
 		Connection c = null;
 		try {
-			c = _pool.getConnection();
+			c = getConnection();
 			
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
@@ -302,7 +282,7 @@ public class TS2Authenticator implements Authenticator {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
-			_pool.release(c);
+			closeConnection(c);
 		}
 	}
 }
