@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.io.*;
@@ -30,7 +30,7 @@ public class InnovataStatusCommand extends AbstractCommand {
 		CommandResult result = ctx.getResult();
 
 		// Get the data
-		File f = new File(SystemData.get("schedule.innovata.cache"), "import.status.txt");
+		File f = new File(SystemData.get("schedule.innovata.cache"), SystemData.get("airline.code") + ".import.status.txt");
 		if (!f.exists()) {
 			result.setURL("/jsp/schedule/innovataStatus.jsp");
 			result.setSuccess(true);
