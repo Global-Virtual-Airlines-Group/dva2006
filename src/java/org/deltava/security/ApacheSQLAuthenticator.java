@@ -1,9 +1,7 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
-import java.util.Properties;
-import java.io.IOException;
 
 import org.apache.log4j.Logger;
 
@@ -12,41 +10,20 @@ import org.deltava.beans.*;
 import org.deltava.crypt.MessageDigester;
 
 import org.deltava.jdbc.*;
-
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * An Authenticator to authenticate users against Apache2-style database tables. Unlike the {@link JDBCAuthenticator}
- * class, this uses the existing JDBC Connection Pool.
+ * class, this uses the existing JDBC Connection Pool. Since this implements {@link SQLAuthenticator}, this behavior can
+ * be overriden by providing a JDBC Connection to use.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
-public class ApacheSQLAuthenticator implements Authenticator {
+public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 
 	private static final Logger log = Logger.getLogger(ApacheSQLAuthenticator.class);
-
-	private ConnectionPool _pool;
-	private Properties _props;
-
-	/**
-	 * Initialize the authenticator.
-	 * @param propsFile the properties file to use
-	 * @throws SecurityException if an error occurs
-	 */
-	public void init(String propsFile) throws SecurityException {
-		_pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-
-		_props = new Properties();
-		try {
-			_props.load(ConfigLoader.getStream(propsFile));
-		} catch (IOException ie) {
-			log.error("Error loading " + propsFile + " - " + ie.getMessage());
-			throw new SecurityException(ie.getMessage());
-		}
-	}
 
 	/**
 	 * Authenticates a user by validating the password against the database.
@@ -68,7 +45,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		boolean isOK = false;
 		Connection con = null;
 		try {
-			con = _pool.getConnection(true);
+			con = getConnection();
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 
@@ -92,7 +69,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		} catch (SQLException se) {
 			throw new SecurityException(se);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 
 		// Fail if we're not authenticated
@@ -119,7 +96,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 
 		Connection con = null;
 		try {
-			con = _pool.getConnection(true);
+			con = getConnection();
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 
@@ -134,7 +111,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 	}
 
@@ -158,7 +135,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 
 		Connection con = null;
 		try {
-			con = _pool.getConnection(true);
+			con = getConnection();
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
@@ -169,7 +146,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 	}
 
@@ -195,9 +172,12 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		String pwdHash = "{SHA}" + Base64.encode(md.digest(pwd.getBytes()));
 
 		Connection con = null;
+		boolean isAutoCommit = false;
 		try {
-			con = _pool.getConnection(true);
-			con.setAutoCommit(false);
+			con = getConnection();
+			isAutoCommit = con.getAutoCommit();
+			if (isAutoCommit)
+				con.setAutoCommit(false);
 			
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, id);
@@ -218,10 +198,12 @@ public class ApacheSQLAuthenticator implements Authenticator {
 			
 			// Commit the transaction
 			con.commit();
+			if (isAutoCommit)
+				con.setAutoCommit(true);
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 	}
 
@@ -252,7 +234,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 
 		Connection con = null;
 		try {
-			con = _pool.getConnection(false);
+			con = getConnection();
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 
@@ -262,7 +244,7 @@ public class ApacheSQLAuthenticator implements Authenticator {
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
-			_pool.release(con);
+			closeConnection(con);
 		}
 	}
 }
