@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.WriteBuffer;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to save Innovata Schedule import status.
@@ -22,7 +24,7 @@ public class SetImportStatus extends WriteBuffer {
 	 * @param name the file name
 	 */
 	public SetImportStatus(String path, String name) {
-		super(path, name);
+		super(path, SystemData.get("airline.code") + "." + name);
 	}
 
 	/**
