@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
 
 /**
  * An Authenticator to authenticate against a TeamSpeak 2 user database. This differs from the standard
- * {@link SQLAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object.
+ * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object.
  * @author Luke
  * @version 1.0
  * @since 1.0
