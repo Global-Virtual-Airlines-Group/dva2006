@@ -198,8 +198,9 @@ public class SetSchedule extends DAO {
 			executeUpdate(1);
 
 			// Clear out the airlines
-			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?)");
+			prepareStatement("DELETE FROM common.AIRPORT_AIRLINE WHERE (IATA=?) AND (APPCODE=?)");
 			_ps.setString(1, a.getIATA());
+			_ps.setString(2, SystemData.get("airline.code"));
 			executeUpdate(0);
 
 			// Write the airline data
