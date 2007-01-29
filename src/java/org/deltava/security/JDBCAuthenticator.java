@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.sql.*;
@@ -17,9 +17,9 @@ import org.deltava.util.ConfigLoader;
  * @since 1.0
  */
 
-public class SQLAuthenticator implements Authenticator {
+public class JDBCAuthenticator implements Authenticator {
 
-	private static final Logger log = Logger.getLogger(SQLAuthenticator.class);
+	private static final Logger log = Logger.getLogger(JDBCAuthenticator.class);
 
 	private Properties _props;
 

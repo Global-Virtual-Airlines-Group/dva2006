@@ -17,7 +17,7 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * An Authenticator to authenticate users against Apache2-style database tables. Unlike the {@link SQLAuthenticator}
+ * An Authenticator to authenticate users against Apache2-style database tables. Unlike the {@link JDBCAuthenticator}
  * class, this uses the existing JDBC Connection Pool.
  * @author Luke
  * @version 1.0
