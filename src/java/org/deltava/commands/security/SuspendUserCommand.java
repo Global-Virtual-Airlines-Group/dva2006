@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -10,6 +10,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.Authenticator;
+import org.deltava.security.SQLAuthenticator;
 import org.deltava.security.UserPool;
 import org.deltava.security.command.PilotAccessControl;
 
@@ -68,7 +69,13 @@ public class SuspendUserCommand extends AbstractCommand {
 			
 			// Get the authenticator
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.removeUser(usr);
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.removeUser(usr);
+				sqlAuth.clearConnection();
+			} else
+				auth.removeUser(usr);
 			
 			// Commit the transaction
 			ctx.commitTX();

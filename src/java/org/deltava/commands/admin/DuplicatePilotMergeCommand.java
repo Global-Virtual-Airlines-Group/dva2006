@@ -1,17 +1,15 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
+import org.deltava.security.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.*;
@@ -142,6 +140,9 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			
 				// Get the authenticator and update the password
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+				if (auth instanceof SQLAuthenticator)
+					((SQLAuthenticator) auth).setConnection(con);
+				
 				if (auth.contains(usr)) {
 					auth.updatePassword(usr, newPwd);
 					ctx.setAttribute("updatePwd", Boolean.TRUE, REQUEST);
@@ -149,6 +150,9 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					auth.addUser(usr, newPwd);
 					ctx.setAttribute("addUser", Boolean.TRUE, REQUEST);
 				}
+				
+				if (auth instanceof SQLAuthenticator)
+					((SQLAuthenticator) auth).clearConnection();
 			
 				// Get the message template
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

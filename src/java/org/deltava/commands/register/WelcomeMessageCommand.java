@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.sql.Connection;
@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.Authenticator;
+import org.deltava.security.SQLAuthenticator;
 
 import org.deltava.util.PasswordGenerator;
 import org.deltava.util.system.SystemData;
@@ -89,7 +90,13 @@ public class WelcomeMessageCommand extends AbstractCommand {
 				
 				// Update the user
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				auth.updatePassword(usr, usr.getPassword());
+				if (auth instanceof SQLAuthenticator) {
+					SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+					sqlAuth.setConnection(con);
+					sqlAuth.updatePassword(usr, usr.getPassword());
+					sqlAuth.clearConnection();
+				} else
+					auth.updatePassword(usr, usr.getPassword());
 			}
 			
 			// Add data to the message

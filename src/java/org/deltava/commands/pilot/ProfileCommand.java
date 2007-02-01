@@ -515,7 +515,14 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Rename the user in the Directory if it's not just a case-sensitivity issue
 					Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-					auth.rename(p, newDN);
+					if (auth instanceof SQLAuthenticator) {
+						SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+						sqlAuth.setConnection(con);
+						sqlAuth.rename(p, newDN);
+						sqlAuth.clearConnection();
+					} else
+						auth.rename(p, newDN);
+					
 					p.setDN(newDN);
 					p.setFirstName(p2.getFirstName());
 					p.setLastName(p2.getLastName());
@@ -607,9 +614,6 @@ public class ProfileCommand extends AbstractFormCommand {
 			SetStatusUpdate stwdao = new SetStatusUpdate(con);
 			stwdao.write(updates);
 
-			// Commit the transaction
-			ctx.commitTX();
-
 			// If we're updating the password, then save it
 			if (!StringUtils.isEmpty(ctx.getParameter("pwd1"))) {
 				p.setPassword(ctx.getParameter("pwd1"));
@@ -621,12 +625,19 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 
 				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				auth.updatePassword(p, p.getPassword());
+				if (auth instanceof SQLAuthenticator) {
+					SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+					sqlAuth.setConnection(con);
+					sqlAuth.updatePassword(p, p.getPassword());
+					sqlAuth.clearConnection();
+				} else
+					auth.updatePassword(p, p.getPassword());
+				
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
-
-				// Commit the transaction
-				ctx.commitTX();
 			}
+			
+			// Commit the transaction
+			ctx.commitTX();
 
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);

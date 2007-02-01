@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.PasswordGenerator;
 import org.deltava.util.system.SystemData;
 
 /**
- * A web site command to transfer pilots to a different airline.
+ * A Web Site Command to transfer pilots to a different airline.
  * @author James
  * @version 1.0
  * @since 1.0
@@ -161,12 +161,15 @@ public class TransferAirlineCommand extends AbstractCommand {
 			su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
 			sudao.write(aInfo.getDB(), su2);
 			
+			// Calculate the new password
+			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
+			
 			// Commit transaction
 			ctx.commitTX();
 
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
+			
 			if (auth.contains(newUser)) {
 				auth.updatePassword(newUser, newUser.getPassword());
 			} else {

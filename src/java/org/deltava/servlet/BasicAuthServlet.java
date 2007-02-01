@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.sql.Connection;
@@ -11,17 +11,16 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 
-import org.deltava.dao.DAOException;
-import org.deltava.dao.GetPilotDirectory;
+import org.deltava.dao.*;
 import org.deltava.jdbc.ConnectionPool;
 
-import org.deltava.security.Authenticator;
+import org.deltava.security.*;
 
 import org.deltava.util.Base64;
 import org.deltava.util.system.SystemData;
 
 /**
- * A servlet that supports basic authentication.
+ * A servlet that supports basic HTTP authentication.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -66,7 +65,13 @@ public abstract class BasicAuthServlet extends GenericServlet {
 
 			// Authenticate the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.authenticate(p, tkns.nextToken());
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.authenticate(p, tkns.nextToken());
+				sqlAuth.clearConnection();
+			} else
+				auth.authenticate(p, tkns.nextToken());
 		} catch (SecurityException se) {
 			log.warn("Authentication failure - " + se.getMessage());
 		} catch (DAOException de) {

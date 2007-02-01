@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -15,6 +15,7 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.Authenticator;
+import org.deltava.security.SQLAuthenticator;
 import org.deltava.security.command.ApplicantAccessControl;
 
 import org.deltava.util.*;
@@ -167,12 +168,18 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			SetInactivity idao = new SetInactivity(con);
 			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days"), false);
 			
-			// Commit the transactions
-			ctx.commitTX();
-			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.addUser(a, a.getPassword());
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.addUser(a, a.getPassword());
+				sqlAuth.clearConnection();
+			} else
+				auth.addUser(a, a.getPassword());
+			
+			// Commit the transactions
+			ctx.commitTX();
 			
 			// Save the applicant in the request
 			ctx.setAttribute("applicant", a, REQUEST);
