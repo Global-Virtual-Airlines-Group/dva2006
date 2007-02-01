@@ -1067,31 +1067,31 @@
 	<command id="examqueue">
 		<name>Examination Queue</name>
 		<class>org.deltava.commands.testing.ExamQueueCommand</class>
-		<roles>HR,Examination</roles>
+		<roles>HR,Examination,TestAdmin</roles>
 	</command>
 
 	<command id="eprofiles">
 		<name>Examination Profiles</name>
 		<class>org.deltava.commands.testing.ExamProfilesCommand</class>
-		<roles>HR,Examination,Instructor</roles>
+		<roles>HR,Examination,Instructor,TestAdmin</roles>
 	</command>
 
 	<command id="eprofile">
 		<name>Examination Profile</name>
 		<class>org.deltava.commands.testing.ExamProfileCommand</class>
-		<roles>HR,Examination,Instructor</roles>
+		<roles>HR,Examination,Instructor,TestAdmin</roles>
 	</command>
 
 	<command id="qprofiles">
 		<name>Question Profiles</name>
 		<class>org.deltava.commands.testing.QuestionProfilesCommand</class>
-		<roles>HR,Examination</roles>
+		<roles>HR,Examination,TestAdmin</roles>
 	</command>
 
 	<command id="qprofile">
 		<name>Question Profile</name>
 		<class>org.deltava.commands.testing.QuestionProfileCommand</class>
-		<roles>HR,Examination</roles>
+		<roles>HR,Examination,TestAdmin</roles>
 	</command>
 
 	<command id="qpdelete">

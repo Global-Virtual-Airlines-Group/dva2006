@@ -337,6 +337,7 @@
 		
 		<list name="roles" attr="role" sorted="true" unique="true">
 			<role>Admin</role>
+			<role>AcademyAdmin</role>
 			<role>Blog</role>
 			<role>Developer</role>
 			<role>Dispatch</role>
@@ -355,6 +356,7 @@
 			<role>Signature</role>
 			<role>Senior Staff</role>
 			<role>Tech</role>
+			<role>TestAdmin</role>
 		</list>
 
 		<auth>org.deltava.security.MirrorAuthenticator</auth>
