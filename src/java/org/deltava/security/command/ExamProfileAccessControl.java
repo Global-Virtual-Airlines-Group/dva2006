@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.ExamProfile;
@@ -36,7 +36,7 @@ public class ExamProfileAccessControl extends AccessControl {
 		validateContext();
 
 		// Check if we are a member of the HR role
-		_canEdit = _ctx.isUserInRole("HR");
+		_canEdit = _ctx.isUserInRole("HR") || _ctx.isUserInRole("TestAdmin");
 		_canRead = (_ep == null) || _canEdit || _ctx.isUserInRole("Instructor") ||  _ctx.isUserInRole("Examination");
 	}
 
