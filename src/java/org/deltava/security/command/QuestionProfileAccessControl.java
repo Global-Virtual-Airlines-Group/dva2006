@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.testing.QuestionProfile;
@@ -38,10 +38,9 @@ public class QuestionProfileAccessControl extends AccessControl {
         
         // Calculate access variables
         boolean isHR = _ctx.isUserInRole("HR");
-        boolean isExam = _ctx.isUserInRole("Examination"); 
         
-        _canRead = isHR || isExam;
-        _canEdit = isHR || isExam;
+        _canRead = isHR || _ctx.isUserInRole("Examination");
+        _canEdit = isHR || _ctx.isUserInRole("TestAdmin");
         _canDelete = isHR && (_qp != null) && (_qp.getTotalAnswers() == 0); 
         if (!_canRead)
         	throw new AccessControlException("Cannot view Question Profile");
