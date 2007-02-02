@@ -15,6 +15,8 @@
 <content:js name="airportRefresh" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <content:sysdata var="minPwd" name="security.password.min" />
+<content:sysdata var="defaultTFormat" name="time.time_format" />
+<content:sysdata var="defaultDFormat" name="date.time_format" />
 <script language="JavaScript" type="text/javascript">
 var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 var hasSignature = ${pilot.hasSignature};
@@ -67,6 +69,7 @@ for (var x = 0; x < invalidDomains.length; x++) {
 form.useDefaultSig.checked = (form.useDefaultSig.checked && !(form.useDefaultSig.disabled));
 setSubmit();
 disableButton('SaveButton');
+disableButton('DTDefaultButton');
 return true;
 }
 
@@ -77,6 +80,14 @@ f.coolerImg.disabled = (f.useDefaultSig.checked);
 if (hasSignature)
 	f.useDefaultSig.disabled = (!f.removeCoolerImg.checked);
 
+return true;
+}
+
+function setDefaultFormats()
+{
+var f = document.forms[0];
+f.df.value = '${defaultDFormat}';
+f.tf.value = '${defaultTFormat}';
 return true;
 }
 </script>
@@ -140,7 +151,7 @@ return true;
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label" valign="top">Security Roles</td>
- <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="95" cols="7" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
+ <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
 <tr>
  <td class="label">Subversion User ID</td>
@@ -250,7 +261,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label">Date/Time Format</td>
  <td colspan="${cspan}" class="data"><el:text name="df" value="${pilot.dateFormat}" className="req" size="15" max="25" />
- <el:text name="tf" value="${pilot.timeFormat}" className="req" size="9" max="9" /></td>
+ <el:text name="tf" value="${pilot.timeFormat}" className="req" size="9" max="9" />
+ <el:button ID="DTDefaultButton" className="BUTTON" onClick="void setDefaultFormats()" label="RESET" /></td>
 </tr>
 <tr>
  <td class="label">Number Format</td>
@@ -329,7 +341,7 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <content:copyright />
 </content:region>
 </content:page>
-<script langage="JavaScript" type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 var f = document.forms[0];
 f.useDefaultSig.disabled = hasSignature;
 </script>
