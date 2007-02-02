@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -681,6 +681,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setDateFormat(String pattern) {
 		try {
+			pattern = pattern.replace('m', 'M');
 			DateFormat df = new SimpleDateFormat(pattern);
 			if (!pattern.equals(df.format(new Date())))
 				_dFormat = pattern;
@@ -696,6 +697,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setTimeFormat(String pattern) {
 		try {
+			pattern = pattern.replace('M', 'm');
 			DateFormat df = new SimpleDateFormat(pattern);
 			if (!pattern.equals(df.format(new Date())))
 				_tFormat = pattern;
