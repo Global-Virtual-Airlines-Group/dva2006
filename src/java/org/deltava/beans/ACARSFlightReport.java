@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -14,7 +14,8 @@ import org.deltava.beans.schedule.Airline;
 
 public class ACARSFlightReport extends FlightReport {
 
-    private Map<String, Date> _stateChangeTimes;
+    private final Map<String, Date> _stateChangeTimes = new HashMap<String, Date>();
+    private final Map<Long, Integer> _time = new HashMap<Long, Integer>();
     
     private int _taxiWeight;
     private int _taxiFuel;
@@ -35,8 +36,6 @@ public class ACARSFlightReport extends FlightReport {
     private int _gateWeight;
     private int _gateFuel;
     
-    private Map<Long, Integer> _time;
-    
     /**
      * Creates a new ACARS Flight Report object with a given flight.
      * @param a the Airline
@@ -51,8 +50,6 @@ public class ACARSFlightReport extends FlightReport {
      */
     public ACARSFlightReport(Airline a, int flightNumber, int leg) {
         super(a, flightNumber, leg);
-        _stateChangeTimes = new HashMap<String, Date>();
-        _time = new HashMap<Long, Integer>();
     }
     
     /**

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -21,6 +21,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 	private Date _date;
 	private GeoPosition _gpos;
+	private int _phase;
 
 	private int _alt;
 	private int _radarAlt;
@@ -41,9 +42,14 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	private int _flaps;
 	private int _flags;
 	private int _frameRate;
+	private int _simRate;
+	private int _fuelRemaining;
 
 	private static final int[] AP_FLAGS = { FLAG_AP_APR, FLAG_AP_HDG, FLAG_AP_NAV, FLAG_AP_ALT, FLAG_AP_GPS };
 	private static final String[] AP_FLAG_NAMES = { "APR", "HDG", "NAV", "ALT", "GPS" };
+	
+	private static final String[] PHASE_NAMES = {"Unknown", "Pre-Flight", "Pushback", "Taxi Out", "Takeoff", "Airborne", "Rollout",
+			"Taxi In", "At Gate", "Shutdown", "Completed", "Abort", "Error", "File PIREP" };
 
 	/**
 	 * Creates a new ACARS Route Entry bean.
@@ -256,6 +262,46 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	public double getN2() {
 		return _n2;
 	}
+	
+	/**
+	 * Returns the Flight Simulator time acceleration rate.
+	 * @return the acceleration rate
+	 * @see RouteEntry#setSimRate(int)
+	 */
+	public int getSimRate() {
+		return _simRate;
+	}
+	
+	/**
+	 * Returns the amount of fuel remaining on the aircraft.
+	 * @return the fuel in pounds
+	 * @see RouteEntry#setFuelRemaining(int)
+	 */
+	public int getFuelRemaining() {
+		return _fuelRemaining;
+	}
+	
+	/**
+	 * Returns the flight phase.
+	 * @return the phase code
+	 * @see RouteEntry#getPhaseName()
+	 * @see RouteEntry#setPhase(int)
+	 * @see RouteEntry#setPhase(String)
+	 */
+	public int getPhase() {
+		return _phase;
+	}
+	
+	/**
+	 * Returns the flight phase name for display in a JSP or HTML.
+	 * @return the phase name
+	 * @see RouteEntry#getPhase()
+	 * @see RouteEntry#setPhase(int)
+	 * @see RouteEntry#setPhase(String)
+	 */
+	public String getPhaseName() {
+		return PHASE_NAMES[_phase];
+	}
 
 	/**
 	 * Returns if an ACARS flag was set.
@@ -312,7 +358,12 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * @see RouteEntry#setAOA(double)
 	 */
 	public void setAOA(double aoa) {
-		_aoa = aoa;
+		if (aoa < -100)
+			_aoa = -99.9;
+		else if (aoa > 100)
+			_aoa = 99.9;
+		else
+			_aoa = aoa;
 	}
 
 	/**
@@ -437,6 +488,19 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 
 		_fuelFlow = flow;
 	}
+	
+	/**
+	 * Updates the amount of fuel remaining on the aircraft.
+	 * @param fuel the amount of fuel in pounds
+	 * @throws IllegalArgumentException if fuel is engative
+	 * @see RouteEntry#getFuelRemaining()
+	 */
+	public void setFuelRemaining(int fuel) {
+		if (fuel < 0)
+			throw new IllegalArgumentException("Fuel Remaining cannot be negative - " + fuel);
+		
+		_fuelRemaining = fuel;
+	}
 
 	/**
 	 * Updates the Flight Simulator frame rate.
@@ -445,6 +509,40 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 */
 	public void setFrameRate(int rate) {
 		_frameRate = rate;
+	}
+	
+	/**
+	 * Updates the Flight Simulator time acceleration rate.
+	 * @param rate the rate
+	 * @see RouteEntry#getSimRate()
+	 */
+	public void setSimRate(int rate) {
+		_simRate = (rate < 0) ? 1 : rate;
+	}
+	
+	/**
+	 * Updates the flight phase.
+	 * @param phase the phase code
+	 * @throws IllegalArgumentException if phase is invalid
+	 * @see RouteEntry#setPhase(String)
+	 * @see RouteEntry#getPhase()
+	 */
+	public void setPhase(int phase) {
+		if ((phase < 0) || (phase >= PHASE_NAMES.length))
+			throw new IllegalArgumentException("Invalid Flight phase - " + phase);
+		
+		_phase = phase;
+	}
+
+	/**
+	 * Updates the flight phase.
+	 * @param phaseName the phase name
+	 * @throws IllegalArgumentException if phase is invalid
+	 * @see RouteEntry#setPhase(int)
+	 * @see RouteEntry#getPhase()
+	 */
+	public void setPhase(String phaseName) {
+		setPhase(StringUtils.arrayIndexOf(PHASE_NAMES, phaseName));
 	}
 
 	/**

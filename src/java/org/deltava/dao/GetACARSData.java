@@ -89,10 +89,9 @@ public class GetACARSData extends DAO {
 			throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, PITCH, BANK, "
-						+ "ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUELFLOW, AOA, GFORCE, FLAGS, FRAMERATE "
-						+ "FROM acars.");
+		StringBuilder sqlBuf = new StringBuilder("SELECT REPORT_TIME, TIME_MS, LAT, LNG, B_ALT, R_ALT, HEADING, "
+				+ "PITCH, BANK, ASPEED, GSPEED, VSPEED, N1, N2, FLAPS, WIND_HDG, WIND_SPEED, FUEL, FUELFLOW, "
+				+ "AOA, GFORCE, FLAGS, FRAMERATE, SIM_RATE FROM acars.");
 		sqlBuf.append(isArchived ? "POSITION_ARCHIVE" : "POSITIONS");
 		sqlBuf.append(" WHERE (FLIGHT_ID=?) ORDER BY REPORT_TIME, TIME_MS");
 
@@ -101,14 +100,12 @@ public class GetACARSData extends DAO {
 			_ps.setInt(1, flightID);
 
 			// Execute the query
-			List<GeoLocation> results = new ArrayList<GeoLocation>();
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the result set
+			List<GeoLocation> results = new ArrayList<GeoLocation>();
 			while (rs.next()) {
 				java.util.Date dt = new java.util.Date(rs.getTimestamp(1).getTime() + rs.getInt(2));
 				RouteEntry entry = new RouteEntry(dt, rs.getDouble(3), rs.getDouble(4));
-				entry.setFlags(rs.getInt(21));
+				entry.setFlags(rs.getInt(22));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
 				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && !entry.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN)
@@ -128,10 +125,12 @@ public class GetACARSData extends DAO {
 					entry.setFlaps(rs.getInt(15));
 					entry.setWindHeading(rs.getInt(16));
 					entry.setWindSpeed(rs.getInt(17));
-					entry.setFuelFlow(rs.getInt(18));
-					entry.setAOA(rs.getDouble(19));
-					entry.setG(rs.getDouble(20));
-					entry.setFrameRate(rs.getInt(22));
+					entry.setFuelRemaining(rs.getInt(18));
+					entry.setFuelFlow(rs.getInt(19));
+					entry.setAOA(rs.getDouble(20));
+					entry.setG(rs.getDouble(21));
+					entry.setFrameRate(rs.getInt(23));
+					entry.setSimRate(rs.getInt(24));
 					results.add(entry);
 				}
 			}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -47,15 +47,23 @@ public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntr
    private Collection<NavigationDataBean> _planData;
    
    /**
+    * Creates an empty Flight Information record.
+    * @param conID the connection ID
+    */
+   public FlightInfo(long conID) {
+	   super();
+	   setConnectionID(conID);
+   }
+   
+   /**
     * Creates a new Flight Information record.
     * @param id the flight ID
     * @param conID the connection ID
     * @throws IllegalArgumentException if id or conID are zero or negative
     */
    public FlightInfo(int id, long conID) {
-      super();
+      this(conID);
       setID(id);
-      setConnectionID(conID);
    }
    
    /**
