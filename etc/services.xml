@@ -25,7 +25,11 @@
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
 	<service id="onlinepilots" class="org.deltava.service.OnlinePilotService" />
 
+	<!-- Examination Service -->
 	<service id="answer" class="org.deltava.service.ExamAnswerService" />
+
+	<!-- ACARS Offline PIREP Service -->
+	<service id="acarspirep" class="org.deltava.service.acars.FlightReportService" />
 
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />
