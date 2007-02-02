@@ -143,6 +143,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		   
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ce.getMessage());
 		} catch (ServiceException se) {
+			log.error(se.getMessage(), se);
 			rsp.sendError(se.getCode(), se.getMessage());
 		} finally {
 			pool.release(c);
