@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.util.*;
@@ -143,7 +143,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		   
 			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ce.getMessage());
 		} catch (ServiceException se) {
-			log.error(se.getMessage(), se);
+			log.error(se.getMessage(), se.getLogStackDump() ? se : null);
 			rsp.sendError(se.getCode(), se.getMessage());
 		} finally {
 			pool.release(c);
