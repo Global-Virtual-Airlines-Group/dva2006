@@ -147,6 +147,7 @@ public class FlightReportService extends WebDataService {
 		ACARSFlightReport afr = new ACARSFlightReport(al, flight, leg);
 		afr.setAttribute(FlightReport.ATTR_ACARS, true);
 		afr.setDatabaseID(FlightReport.DBID_PILOT, ctx.getUser().getID());
+		afr.setFSVersion(inf.getFSVersion());
 		afr.setRank(ctx.getUser().getRank());
 		afr.setStatus(FlightReport.SUBMITTED);
 		afr.setDate(dt.getDate());
