@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -56,6 +56,7 @@ public class SetCoolerLinks extends DAO {
 	 * @param id the Message Thread database ID 
 	 * @param url the Image URL to delete
 	 * @throws DAOException if a JDBC error occurs
+	 * @see SetCoolerLinks#delete(int, int)
 	 */
 	public void delete(int id, String url) throws DAOException {
 		
@@ -77,11 +78,20 @@ public class SetCoolerLinks extends DAO {
 	}
 	
 	/**
-	 * Deletes all image URLs associated with a particular Message Thread.
+	 * Deletes an image URL associated with a particular Message Thread.
 	 * @param id the Message Thread database ID
+	 * @param seq the Image URL sequence ID
 	 * @throws DAOException if a JDBC error occurs
+	 * @see SetCoolerLinks#delete(int, String)
 	 */
-	public void delete(int id) throws DAOException {
-		delete(id, null);
+	public void delete(int id, int seq) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?) AND (SEQ=?)");
+			_ps.setInt(1, id);
+			_ps.setInt(2, seq);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }
