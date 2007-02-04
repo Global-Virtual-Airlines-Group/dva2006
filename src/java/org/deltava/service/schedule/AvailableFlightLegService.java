@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
@@ -16,11 +16,12 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to return the next available Leg number for a Flight
+ * A Web Service to return the next available Leg number for a Flight.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
+
 public class AvailableFlightLegService extends WebDataService {
 
 	/**
@@ -32,7 +33,7 @@ public class AvailableFlightLegService extends WebDataService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the Flight Number
-		int flight = StringUtils.parse(ctx.getParameter("flight"), 0);
+		int flight = StringUtils.parse(ctx.getParameter("flight"), 1);
 		Airline a = SystemData.getAirline(ctx.getParameter("airline"));
 		if (a == null)
 			a = SystemData.getAirline(SystemData.get("airline.code"));
