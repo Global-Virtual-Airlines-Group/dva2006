@@ -1,18 +1,18 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.gallery;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.cooler.*;
 import org.deltava.beans.gallery.Image;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.command.GalleryAccessControl;
+import org.deltava.security.command.*;
 
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to view the Image Gallery.
@@ -47,19 +47,35 @@ public class GalleryCommand extends AbstractViewCommand {
 			// Get the Gallery DAO
 			GetGallery dao = new GetGallery(con);
 			dao.setQueryStart(vc.getStart());
-			dao.setQueryMax(vc.getCount());
+			dao.setQueryMax(Math.round(vc.getCount() * 1.2f));
 
 			// Get the images
-			List<Image> results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(
-					Command.OPERATION, null));
-			vc.setResults(results);
-
-			// Get all the Author IDs
-			Set<Integer> authorIDs = new HashSet<Integer>();
+			List<Image> results = dao.getPictureGallery(vc.getSortType(), (String) ctx.getCmdParameter(Command.OPERATION, null));
+			
+			// Get the Water Cooler DAOs
+			GetCoolerChannels chdao = new GetCoolerChannels(con);
+			GetCoolerThreads tdao = new GetCoolerThreads(con);
+			
+			// Validate our access and get author IDs
+			Collection<Integer> authorIDs = new HashSet<Integer>();
+			CoolerThreadAccessControl tAccess = new CoolerThreadAccessControl(ctx);
 			for (Iterator<Image> i = results.iterator(); i.hasNext();) {
 				Image img = i.next();
-				authorIDs.add(new Integer(img.getAuthorID()));
+				if (img.getThreadID() != 0) {
+					MessageThread mt = tdao.getThread(img.getThreadID(), false);
+					Channel ch = chdao.get(mt.getChannel());
+					tAccess.updateContext(mt, ch);
+					tAccess.validate();
+					if (!tAccess.getCanRead())
+						i.remove();
+					else
+						authorIDs.add(new Integer(img.getAuthorID()));
+				} else
+					authorIDs.add(new Integer(img.getAuthorID()));
 			}
+
+			// Save the results
+			vc.setResults(results);
 
 			// Load the Image Authors
 			GetPilot pdao = new GetPilot(con);
