@@ -712,6 +712,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="linkedimgkill">
+		<name>Delete Water Cooler Linked Image</name>
+		<class>org.deltava.commands.cooler.UnlinkImageCommand</class>
+		<roles>Moderator,HR</roles>
+	</command>
+
 	<command id="threadsubjectedit">
 		<name>Water Cooler Thread Subject Edit</name>
 		<class>org.deltava.commands.cooler.ThreadSubjectEditCommand</class>
