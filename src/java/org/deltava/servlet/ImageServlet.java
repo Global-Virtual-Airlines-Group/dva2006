@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -8,8 +8,12 @@ import javax.servlet.http.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.cooler.*;
+import org.deltava.beans.gallery.Image;
 import org.deltava.beans.schedule.Chart;
 import org.deltava.beans.system.VersionInfo;
+
+import org.deltava.security.command.CoolerThreadAccessControl;
 
 import org.deltava.jdbc.*;
 import org.deltava.dao.*;
@@ -123,15 +127,33 @@ public class ImageServlet extends BasicAuthServlet {
 					break;
 
 				case IMG_GALLERY:
+					// Validate that we can view the image
+					GetGallery gdao = new GetGallery(c);
+					Image img = gdao.getImageData(imgID, url.getLastPath());
+					if (img.getThreadID() != 0) {
+						GetCoolerChannels chdao = new GetCoolerChannels(c);
+						GetCoolerThreads tdao = new GetCoolerThreads(c);
+						MessageThread mt = tdao.getThread(img.getThreadID(), false);
+						Channel ch = chdao.get(mt.getChannel());
+						
+						// Validate access to the thread
+						CoolerThreadAccessControl access = new CoolerThreadAccessControl(new ServletSecurityContext(req));
+						access.updateContext(mt, ch);
+						access.validate();
+						if (!access.getCanRead())
+							throw new NotFoundException("Cannot view Image - Cannot read Message Thread " + mt.getID());
+					}
+					
+					// Serve the image
 					imgBuffer = dao.getGalleryImage(imgID, url.getLastPath());
-					rsp.setHeader("Cache-Control", "public");
-					rsp.setIntHeader("max-age", 300);
+					rsp.setHeader("Cache-Control", "private");
+					rsp.setIntHeader("max-age", 600);
 					break;
 
 				case IMG_SIG:
 					imgBuffer = dao.getSignatureImage(imgID, url.getLastPath());
 					rsp.setHeader("Cache-Control", "public");
-					rsp.setIntHeader("max-age", 300);
+					rsp.setIntHeader("max-age", 600);
 					break;
 
 				case IMG_EXAM:

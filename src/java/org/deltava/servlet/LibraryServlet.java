@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -32,14 +32,6 @@ public class LibraryServlet extends GenericServlet {
 
 	private static final Logger log = Logger.getLogger(LibraryServlet.class);
 	private static final int BUFFER_SIZE = 102400;
-
-	private class NotFoundException extends ControllerException {
-
-		public NotFoundException(String msg) {
-			super(msg);
-			setWarning(true);
-		}
-	}
 
 	/**
 	 * Returns the servlet description.
