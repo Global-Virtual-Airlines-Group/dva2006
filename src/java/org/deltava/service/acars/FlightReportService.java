@@ -109,7 +109,7 @@ public class FlightReportService extends WebDataService {
 
 			// Build a position entry
 			try {
-				RouteEntry pos = new RouteEntry(StringUtils.parseDate(pe.getChildTextTrim("date"), "MM/dd/yyyy HH:mm:ss"),
+				RouteEntry pos = new RouteEntry(StringUtils.parseDate(pe.getChildTextTrim("date"), "MM/dd/yyyy HH:mm:ss.SSS"),
 						Double.parseDouble(pe.getChildTextTrim("lat")), Double.parseDouble(pe.getChildTextTrim("lon")));
 				pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 				pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
