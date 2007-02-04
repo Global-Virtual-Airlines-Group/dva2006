@@ -172,14 +172,26 @@ public class GetCoolerThreads extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Retrieves a particular discussion thread with posts and warnings.
+	 * @param id the thread ID
+	 * @return a MessageThread bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 * @see GetCoolerThreads#getThread(int, boolean)
+	 */
+	public MessageThread getThread(int id) throws DAOException {
+		return getThread(id, true);
+	}
 
 	/**
 	 * Retrieves a particular discussion thread.
 	 * @param id the thread ID
-	 * @return a MessageThread
+	 * @param loadPosts TRUE if posts/warnings should be loaded, otherwise FALSE
+	 * @return a MessageThread bean, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public MessageThread getThread(int id) throws DAOException {
+	public MessageThread getThread(int id, boolean loadPosts) throws DAOException {
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.COOLER_THREADS WHERE (ID=?)");
@@ -208,6 +220,10 @@ public class GetCoolerThreads extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Return just the thread if asked
+			if (!loadPosts)
+				return t;
 
 			// Fetch the thread posts
 			prepareStatementWithoutLimits("SELECT THREAD_ID, POST_ID, AUTHOR_ID, CREATED, INET_NTOA(REMOTE_ADDR), "
