@@ -129,7 +129,7 @@ public class GetTransferRequest extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM (TXREQUESTS TX, "
 				+ "PILOTS P) LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
-		sqlBuf.append((orderBy != null) ? orderBy : "TX.CREATED");
+		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
