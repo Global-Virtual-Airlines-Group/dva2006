@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.*;
 
 import org.deltava.beans.gallery.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -46,18 +47,24 @@ public class GetGallery extends DAO {
 		
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT NAME, DESCRIPTION, TYPE, X, Y, SIZE, DATE, FLEET, PILOT_ID FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT G.NAME, G.DESCRIPTION, G.TYPE, G.X, G.Y, G.SIZE, G.DATE, G.FLEET, "
+				+ "G.PILOT_ID, T.ID FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".GALLERY WHERE (ID=?)");
+		sqlBuf.append(".GALLERY G LEFT JOIN common.COOLER_THREADS T ON (G.ID=T.IMAGE_ID) WHERE (G.ID=?)");
 		
 		try {
+			setQueryMax(1);
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 
 			// Execute the query - return null if no image found
+			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next())
+			if (!rs.next()) {
+				rs.close();
+				_ps.close();
 				return null;
+			}
 
 			// Create the image bean
 			Image img = new Image(rs.getString(1), rs.getString(2));
@@ -69,6 +76,7 @@ public class GetGallery extends DAO {
 			img.setCreatedOn(rs.getTimestamp(7));
 			img.setFleet(rs.getBoolean(8));
 			img.setAuthorID(rs.getInt(9));
+			img.setThreadID(rs.getInt(10));
 
 			// Clean up
 			rs.close();
@@ -100,8 +108,8 @@ public class GetGallery extends DAO {
 	 */
 	public List<Image> getFleetGallery() throws DAOException {
 		try {
-			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, " +
-					"I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
+			prepareStatement("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, I.Y, I.SIZE, " +
+					"COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
 					"(I.ID=V.IMG_ID) WHERE (I.FLEET=?) GROUP BY I.ID ORDER BY I.NAME");
 			_ps.setBoolean(1, true);
 
@@ -112,12 +120,19 @@ public class GetGallery extends DAO {
 		}
 	}
 
+	/**
+	 * Returns Images in the Image Gallery. This can optionally select a month's worth of Images. 
+	 * @param orderBy the SQL ORDER BY clause
+	 * @param month the optional month name, in &quot;MMMM YYYY&quot; format
+	 * @return a Collection of Image beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public List<Image> getPictureGallery(String orderBy, String month) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, " +
-						"I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON " +
-						"(I.ID=V.IMG_ID) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
+				+ "I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC, T.ID FROM GALLERY I LEFT JOIN GALLERYSCORE V "
+				+ "ON (I.ID=V.IMG_ID) LEFT JOIN common.COOLER_THREADS T ON (I.ID=T.IMAGE_ID) ");
 
 		// Append the month query if present
 		if (month != null)
@@ -128,12 +143,10 @@ public class GetGallery extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-
-			// Split the month name
 			if (month != null) {
 				StringTokenizer tkns = new StringTokenizer(month, " ");
 				_ps.setString(1, tkns.nextToken());
-				_ps.setInt(2, Integer.parseInt(tkns.nextToken()));
+				_ps.setInt(2, StringUtils.parse(tkns.nextToken(), Calendar.getInstance().get(Calendar.YEAR)));
 			}
 
 			// Execute the query
@@ -143,6 +156,11 @@ public class GetGallery extends DAO {
 		}
 	}
 
+	/**
+	 * Loads the Months with Images in the Gallery.
+	 * @return a Collection of Month/Year values 
+	 * @throws DAOException if a JDBC error occurs
+	 */
 	public Collection<String> getMonths() throws DAOException {
 		try {
 			prepareStatement("SELECT DISTINCT CONCAT_WS(' ', MONTHNAME(DATE), YEAR(DATE)) FROM GALLERY "
@@ -150,8 +168,6 @@ public class GetGallery extends DAO {
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			Collection<String> results = new LinkedHashSet<String>();
 			while (rs.next())
 				results.add(rs.getString(1));
@@ -165,8 +181,13 @@ public class GetGallery extends DAO {
 		}
 	}
 
+	/**
+	 * Helper method to parse Image result sets.
+	 */
 	private List<Image> execute() throws SQLException {
 		ResultSet rs = _ps.executeQuery();
+		boolean hasVotes = (rs.getMetaData().getColumnCount() > 11);
+		boolean hasThreadInfo = (rs.getMetaData().getColumnCount() > 12); 
 
 		// Iterate through the results
 		List<Image> results = new ArrayList<Image>();
@@ -180,8 +201,13 @@ public class GetGallery extends DAO {
 			img.setWidth(rs.getInt(8));
 			img.setHeight(rs.getInt(9));
 			img.setSize(rs.getInt(10));
-			img.setVoteCount(rs.getInt(11));
-			img.setScore(rs.getDouble(12));
+			if (hasVotes) {
+				img.setVoteCount(rs.getInt(11));
+				img.setScore(rs.getDouble(12));
+			}
+			
+			if (hasThreadInfo)
+				img.setThreadID(rs.getInt(13));
 
 			// Add to results
 			results.add(img);

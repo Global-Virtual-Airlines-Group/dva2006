@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.IOException;
@@ -59,6 +59,14 @@ public abstract class GenericServlet extends HttpServlet {
 		}
 	}
 
+	protected class NotFoundException extends ControllerException {
+
+		public NotFoundException(String msg) {
+			super(msg);
+			setWarning(true);
+		}
+	}
+	
     /**
      * A helper method to get the JDBC Connection Pool.
      * @return the JDBC Connection Pool

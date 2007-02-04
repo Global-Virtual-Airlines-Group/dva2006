@@ -109,6 +109,15 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<url-pattern>/exam_rsrc/*</url-pattern>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityCookieFilter</filter-name>
+		<url-pattern>/gallery/*</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>SecurityRequestWrapperFilter</filter-name>
+		<url-pattern>/gallery/*</url-pattern>
+	</filter-mapping>
+
 
 	<!-- Filter mappings to Flight Plans -->
 	<filter-mapping>
