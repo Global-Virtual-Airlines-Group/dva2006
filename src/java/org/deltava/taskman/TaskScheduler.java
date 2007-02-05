@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -38,10 +38,9 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 	
 	/**
 	 * Returns the thread name.
-	 * @return the thread name
 	 */
 	public String toString() {
-		return "Task Scheduler";
+		return SystemData.get("airline.code") + " Task Scheduler";
 	}
 
 	/**
