@@ -132,7 +132,7 @@ public class GetGallery extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.NAME, I.DESCRIPTION, I.ID, I.PILOT_ID, I.DATE, I.FLEET, I.TYPE, I.X, "
 				+ "I.Y, I.SIZE, COUNT(V.SCORE) AS VC, AVG(V.SCORE) AS SC FROM GALLERY I LEFT JOIN GALLERYSCORE V ON "
-				+ "(I.ID=V.IMG_ID) TG");
+				+ "(I.ID=V.IMG_ID) ");
 
 		// Append the month query if present
 		if (month != null)
