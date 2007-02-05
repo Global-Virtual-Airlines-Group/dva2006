@@ -189,7 +189,7 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
 <br />
-<div class="mid"><a rel="external" href="http://www.vatsim.net/" border="0"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" /></a></div>
+<div class="mid"><a rel="external" href="http://www.vatsim.net/"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" border="0" /></a></div>
 <br />
 <content:copyright />
 </content:region>
