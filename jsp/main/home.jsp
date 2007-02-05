@@ -51,8 +51,7 @@ between!) we welcome your interest. <el:cmd url="register" className="pri bld">C
 <br />
 If you are interested in a virtual airline with primarily ${partnerLoc} operations, we encourage you to visit 
 our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld">${partnerName}</a>.<br />
-<br />
-</content:filter>
+<br /></content:filter>
 <!-- Dynamic Content Type #${dynContentType} -->
 <c:if test="${noUpcomingEvents}"><!-- No upcoming Online Events, skipped --></c:if>
 <c:if test="${noACARSUsers}"><!-- No connected ACARS users, skipped --></c:if>
@@ -189,6 +188,8 @@ ${eRoute.airportA.name} (<fmt:airport airport="${eRoute.airportA}" />)</td>
 </c:if>
 If you have questions or comments, please direct them to our Corporate Offices at 
 <a href="mailto:${infoEmail}">${infoEmail}</a>.<br />
+<br />
+<div class="mid"><a rel="external" href="http://www.vatsim.net/" border="0"><el:img src="network/vatsim_button.png" caption="VATSIM Partner Airline" /></a></div>
 <br />
 <content:copyright />
 </content:region>
