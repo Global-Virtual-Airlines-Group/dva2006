@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -55,7 +55,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight flown on FPI network.
 	 */
 	public static final int ATTR_FPI = 0x08;
-	
+
 	/**
 	 * Flight flown on INTVAS network.
 	 */
@@ -95,7 +95,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight Academy Training Flight.
 	 */
 	public static final int ATTR_ACADEMY = 0x400;
-	
+
 	/**
 	 * Flight flown with excessive range for aircraft.
 	 */
@@ -287,7 +287,7 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 			if (_fsVersion == FSVERSION_CODE[x])
 				return FSVERSION[x];
 		}
-		
+
 		return FSVERSION[0];
 	}
 
@@ -390,7 +390,8 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 */
 	public void setCaptEQType(Collection<String> eqTypes) {
 		_captEQType.clear();
-		_captEQType.addAll(eqTypes);
+		if (eqTypes != null)
+			_captEQType.addAll(eqTypes);
 	}
 
 	/**
@@ -552,9 +553,10 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * @see FlightReport#getDatabaseID(String)
 	 */
 	public void setDatabaseID(String idType, int id) {
-		if (idType == null) {
+		if (idType == null)
 			throw new NullPointerException("Database ID type cannot be null");
-		} else if (id < 0) { throw new IllegalArgumentException(idType + " Datbase ID cannot be negative"); }
+		else if (id < 0)
+			throw new IllegalArgumentException(idType + " Datbase ID cannot be negative");
 
 		_dbIds.put(idType, new Integer(id));
 	}

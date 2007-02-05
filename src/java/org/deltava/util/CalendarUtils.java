@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -21,6 +21,19 @@ public class CalendarUtils {
 	public static Date adjust(Date dt, long days) {
 		Calendar cld = getInstance(dt);
 		cld.add(Calendar.DATE, (int) days);
+		return cld.getTime();
+	}
+
+	/**
+	 * Adjust a date/time by a specified number of milliseconds.
+	 * @param dt the date/time
+	 * @param ms the number of milliseconds to adjust
+	 * @return the adjusted date/time
+	 */
+	public static Date adjustMS(Date dt, long ms) {
+		Calendar cld = getInstance(dt);
+		cld.add(Calendar.SECOND, (int) (ms / 1000));
+		cld.add(Calendar.MILLISECOND, (int) (ms % 1000) * ((ms < 0) ? -1 : 1));
 		return cld.getTime();
 	}
 	
