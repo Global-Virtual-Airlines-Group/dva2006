@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import java.sql.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.util.ThreadUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A daemon to monitor JDBC connections.
@@ -19,11 +20,6 @@ class ConnectionMonitor implements Runnable {
 
    private static final Logger log = Logger.getLogger(ConnectionMonitor.class);
    
-   /**
-    * Thread name.
-    */
-   static final String NAME = "JDBC Connection Monitor";
-
    private static final List<String> _sqlStatus = Arrays.asList(new String[] { "08003", "08S01" });
 
    private ConnectionPool _pool;
@@ -111,6 +107,13 @@ class ConnectionMonitor implements Runnable {
             }
          }
       }
+   }
+   
+   /**
+    * Returns the thread name.
+    */
+   public String toString() {
+	   return SystemData.get("airline.code") + " JDBC Connection Monitor";
    }
 
    /**

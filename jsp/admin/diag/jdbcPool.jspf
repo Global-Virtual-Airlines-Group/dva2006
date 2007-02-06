@@ -1,3 +1,4 @@
+<content:sysdata var="jdbcStackLog" name="jdbc.log_stack" />
 <!-- JDBC Connection Pool Data Table -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
@@ -27,6 +28,11 @@
  <td><fmt:int value="${con.totalUse}" /> ms</td>
  <td><fmt:int value="${con.currentUse}" /> ms</td>
 </view:row>
+<c:if test="${jdbcStackLog && (con.inUse || (con.currentUse > 1000))}">
+<view:row entry="${con}">
+ <td class="left small" colspan="7"><pre><fmt:stack exception="${con.stackInfo}" /></pre></td>
+</view:row>
+</c:if>
 </c:forEach>
 </c:if>
 
