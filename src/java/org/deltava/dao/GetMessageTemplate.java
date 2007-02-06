@@ -19,7 +19,7 @@ import org.deltava.beans.system.MessageTemplate;
 public class GetMessageTemplate extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
-	static Cache _cache = new AgingCache(4);
+	static Cache<MessageTemplate> _cache = new AgingCache<MessageTemplate>(4);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -38,7 +38,7 @@ public class GetMessageTemplate extends DAO {
 	public MessageTemplate get(String name) throws DAOException {
 
 		// Check the cache
-		MessageTemplate result = (MessageTemplate) _cache.get(name);
+		MessageTemplate result = _cache.get(name);
 		if (result != null)
 			return result;
 
@@ -48,12 +48,12 @@ public class GetMessageTemplate extends DAO {
 			_ps.setString(1, name.toUpperCase());
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
-			List results = execute();
+			List<MessageTemplate> results = execute();
 			setQueryMax(0);
 			if (results.isEmpty()) {
 				log.warn("Cannot load Message Template " + name);
 			} else {
-				result = (MessageTemplate) results.get(0);
+				result = results.get(0);
 				_cache.add(result);
 			}
 		} catch (SQLException se) {

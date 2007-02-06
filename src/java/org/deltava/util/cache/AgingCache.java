@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 /**
@@ -10,25 +10,19 @@ package org.deltava.util.cache;
  * @since 1.0
  */
 
-public class AgingCache extends Cache {
+public class AgingCache<T extends Cacheable> extends Cache<T> {
    
    protected long _lastCreationTime;
    
-   protected class AgingCacheEntry implements Comparable {
+   protected class AgingCacheEntry<U extends Cacheable> extends CacheEntry<U> {
       
-      private Cacheable _entry;
       private long _createdOn;
       
-      public AgingCacheEntry(Cacheable entry) {
-         super();
-         _entry = entry;
+      public AgingCacheEntry(U entry) {
+         super(entry);
          long now = System.currentTimeMillis();
          _createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
          _lastCreationTime = _createdOn;
-      }
-      
-      public Cacheable getData() {
-         return _entry;
       }
       
       public long getCreationTime() {
@@ -36,8 +30,8 @@ public class AgingCache extends Cache {
       }
       
       public int compareTo(Object o2) {
-         AgingCacheEntry e2 = (AgingCacheEntry) o2;
-         return new Long(_createdOn).compareTo(new Long(e2.getCreationTime()));
+    	  AgingCacheEntry e2 = (AgingCacheEntry) o2;
+         return new Long(_createdOn).compareTo(new Long(e2._createdOn));
       }
    }
    
@@ -56,12 +50,12 @@ public class AgingCache extends Cache {
     * then the entry with the earliest creation date will be removed.
     * @param obj the entry to add to the cache 
     */
-   public synchronized void add(Cacheable obj) {
+   public synchronized void add(T obj) {
       if (obj == null)
     	  return;
 	   
       // Create the cache entry
-      AgingCacheEntry e = new AgingCacheEntry(obj);
+      AgingCacheEntry<T> e = new AgingCacheEntry<T>(obj);
       _cache.put(obj.cacheKey(), e);
 
       // Check for overflow
@@ -73,14 +67,13 @@ public class AgingCache extends Cache {
     * @param key the cache key
     * @return the cache entry, or null if not present
     */
-   public synchronized Cacheable get(Object key) {
+   public synchronized T get(Object key) {
       request();
-      AgingCacheEntry entry = (AgingCacheEntry) _cache.get(key);
-      if (entry != null) {
-         hit();
-         return entry.getData();
-      } 
-         
-      return null;
+      AgingCacheEntry<T> entry = (AgingCacheEntry<T>) _cache.get(key);
+      if (entry == null)
+    	  return null;
+      
+      hit();
+      return entry.getData();
    }
 }

@@ -9,8 +9,8 @@ import org.deltava.beans.schedule.Airline;
 
 public class TestExpiringCache extends TestCase {
    
-   private ExpiringCache _cache;
-   private ExpiringCache.ExpiringCacheEntry _entry;
+   private ExpiringCache<Cacheable> _cache;
+   private ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> _entry;
    
    public static Test suite() {
       return new CoverageDecorator(TestExpiringCache.class, new Class[] { ExpiringCache.class, ExpiringCache.ExpiringCacheEntry.class } );
@@ -18,7 +18,7 @@ public class TestExpiringCache extends TestCase {
 
    protected void setUp() throws Exception {
       super.setUp();
-      _cache = new ExpiringCache(2, 1);
+      _cache = new ExpiringCache<Cacheable>(2, 1);
    }
 
    protected void tearDown() throws Exception {
@@ -30,10 +30,10 @@ public class TestExpiringCache extends TestCase {
       Cacheable e1 = new MockCacheable(1);
       Cacheable e2 = new MockCacheable(2);
       _cache.setExpiration(2);
-      _entry = _cache.new ExpiringCacheEntry(e1);
+      _entry = _cache.new ExpiringCacheEntry<Cacheable>(e1);
       assertSame(e1, _entry.getData());
       _cache.setExpiration(1);
-      ExpiringCache.ExpiringCacheEntry entry2 = _cache.new ExpiringCacheEntry(e2);
+      ExpiringCache<Cacheable>.ExpiringCacheEntry<Cacheable> entry2 = _cache.new ExpiringCacheEntry<Cacheable>(e2);
       assertTrue(_entry.compareTo(entry2) > 0);
    }
    

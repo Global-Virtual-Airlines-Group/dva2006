@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -39,8 +39,8 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static Cache _netCache = new ExpiringCache(3, 43200); // 12 hours
-	private static ExpiringCache _infoCache = new ExpiringCache(3, 240); // 4 minutes
+	private static Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
+	private static ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 240); // 4 minutes
 	
 	private boolean _useCache = true;
 
@@ -117,7 +117,7 @@ public class GetServInfo extends DAO {
 	 * @return a NetworkStatus bean, or null if not cached
 	 */
 	public static synchronized NetworkStatus getCachedStatus(String netName) {
-		NetworkStatus status =  (NetworkStatus) _netCache.get(netName);
+		NetworkStatus status =  _netCache.get(netName);
 		if (status != null)
 			status.setCached();
 		
@@ -130,7 +130,7 @@ public class GetServInfo extends DAO {
 	 * @return a NetworkInfo bean, or null if not cached
 	 */
 	public static synchronized NetworkInfo getCachedInfo(String netName) {
-		NetworkInfo info = (NetworkInfo) _infoCache.get(netName, true);
+		NetworkInfo info = _infoCache.get(netName, true);
 		if (info != null) {
 			info.setCached();
 			if (_infoCache.isExpired(netName) && !info.getExpired())
@@ -149,7 +149,7 @@ public class GetServInfo extends DAO {
 	public NetworkStatus getStatus(String netName) throws DAOException {
 
 		// Get from the cache if possible
-		NetworkStatus status = (NetworkStatus) _netCache.get(netName);
+		NetworkStatus status = _netCache.get(netName);
 		if ((status != null) && (_useCache)) {
 			status.setCached();
 			return status;
@@ -190,7 +190,7 @@ public class GetServInfo extends DAO {
 	public NetworkInfo getInfo(String networkName) throws DAOException {
 
 		// Get from the cache if possible
-		NetworkInfo info = (NetworkInfo) _infoCache.get(networkName);
+		NetworkInfo info = _infoCache.get(networkName);
 		if ((info != null) && (_useCache)) {
 			info.setCached();
 			return info;

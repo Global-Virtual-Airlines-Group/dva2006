@@ -21,7 +21,7 @@ import org.deltava.util.cache.*;
 
 public class GetCoolerChannels extends DAO {
 
-	private static final Cache _cache = new ExpiringCache(5, 3600);
+	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(5, 3600);
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -59,9 +59,8 @@ public class GetCoolerChannels extends DAO {
 	 */
 	public Channel get(String channelName) throws DAOException {
 		// Check if we're in the cache
-		Channel c = (Channel) _cache.get(channelName);
-		if (c != null)
-			return c;
+		if (_cache.contains(channelName))
+			_cache.get(channelName);
 
 		try {
 			setQueryMax(1);
@@ -78,7 +77,7 @@ public class GetCoolerChannels extends DAO {
 			}
 
 			// Initialize the channel
-			c = new Channel(channelName);
+			Channel c = new Channel(channelName);
 			c.setDescription(rs.getString(2));
 			c.setActive(rs.getBoolean(3));
 
@@ -90,13 +89,11 @@ public class GetCoolerChannels extends DAO {
 			Map<String, Channel> results = new HashMap<String, Channel>();
 			results.put(c.getName(), c);
 			loadInfo(results);
+			_cache.add(c);
+			return c;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Add to cache and return
-		_cache.add(c);
-		return c;
 	}
 
 	/**

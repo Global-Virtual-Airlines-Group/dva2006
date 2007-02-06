@@ -23,7 +23,8 @@ public class GetUserData extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
-	static final Cache _cache = new AgingCache(160); // Package private so the set DAO can update it
+	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(2);
+	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(160);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -44,7 +45,7 @@ public class GetUserData extends DAO {
 	public AirlineInformation get(String code) throws DAOException {
 
 		// Check if we're in the cache
-		AirlineInformation result = (AirlineInformation) _cache.get(code.toUpperCase());
+		AirlineInformation result = _appCache.get(code.toUpperCase());
 		if (result != null)
 			return result;
 
@@ -61,7 +62,7 @@ public class GetUserData extends DAO {
 
 		// Add to the cache
 		if (result != null)
-			_cache.add(result);
+			_appCache.add(result);
 
 		return result;
 	}
@@ -78,7 +79,7 @@ public class GetUserData extends DAO {
 		try {
 			prepareStatement("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
 			results = executeAirlineInfo();
-			_cache.addAll(results);
+			_appCache.addAll(results);
 
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -174,7 +175,7 @@ public class GetUserData extends DAO {
 			Integer id = i.next();
 
 			// Pull from the cache if at all possible; this is an evil query
-			UserData usr = (UserData) _cache.get(id);
+			UserData usr = _usrCache.get(id);
 			if (usr == null) {
 				querySize++;
 				sqlBuf.append(id.toString());
@@ -225,7 +226,7 @@ public class GetUserData extends DAO {
 
 			// Add to results and the cache
 			results.add(usr);
-			_cache.add(usr);
+			_usrCache.add(usr);
 		}
 
 		// Clean up and return

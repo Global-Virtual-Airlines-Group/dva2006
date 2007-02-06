@@ -9,8 +9,8 @@ import org.deltava.beans.schedule.Airline;
 
 public class TestAgingCache extends TestCase {
    
-   private AgingCache _cache;
-   private AgingCache.AgingCacheEntry _entry;
+   private AgingCache<Cacheable> _cache;
+   private AgingCache<Cacheable>.AgingCacheEntry<Cacheable> _entry;
    
    public static Test suite() {
       return new CoverageDecorator(TestAgingCache.class, new Class[] { AgingCache.class, AgingCache.AgingCacheEntry.class } );
@@ -18,7 +18,7 @@ public class TestAgingCache extends TestCase {
    
    protected void setUp() throws Exception {
       super.setUp();
-      _cache = new AgingCache(2);
+      _cache = new AgingCache<Cacheable>(2);
    }
 
    protected void tearDown() throws Exception {
@@ -29,10 +29,10 @@ public class TestAgingCache extends TestCase {
    public void testCacheEntry() throws Exception {
       Cacheable e1 = new MockCacheable(1);
       Cacheable e2 = new MockCacheable(2);
-      _entry = _cache.new AgingCacheEntry(e1);
+      _entry = _cache.new AgingCacheEntry<Cacheable>(e1);
       assertSame(e1, _entry.getData());
       Thread.sleep(20);
-      AgingCache.AgingCacheEntry entry2 = _cache.new AgingCacheEntry(e2);
+      AgingCache<Cacheable>.AgingCacheEntry<Cacheable> entry2 = _cache.new AgingCacheEntry<Cacheable>(e2);
       assertTrue(_entry.compareTo(entry2) < 0);
    }
    

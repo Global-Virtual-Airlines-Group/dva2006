@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
 
 public class GetPilotRecognition extends PilotReadDAO {
 	
-	private static final Cache _promoCache = new ExpiringCache(4, 900);
+	private static final Cache<CacheableInteger> _promoCache = new ExpiringCache<CacheableInteger>(4, 900);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -57,7 +57,7 @@ public class GetPilotRecognition extends PilotReadDAO {
     		eqType = "ALL";
     	
     	// Check the cache
-    	CacheableInteger result = (CacheableInteger) _promoCache.get(eqType);
+    	CacheableInteger result = _promoCache.get(eqType);
     	if (result != null)
     		return result.getValue();
 

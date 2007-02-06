@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 
 public class AirlineTotalsCommand extends AbstractCommand {
 
-	private ExpiringCache _cache;
+	private ExpiringCache<AirlineTotals> _cache;
     private Set<TableInfo> _tableStatus = new TreeSet<TableInfo>();
     
     /**
@@ -37,7 +37,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
      */
     public void init(String id, String cmdName) throws CommandException {
     	super.init(id, cmdName);
-    	_cache = new ExpiringCache(1, SystemData.getInt("cache.stats") * 60);
+    	_cache = new ExpiringCache<AirlineTotals>(1, SystemData.getInt("cache.stats") * 60);
     }
     
     /**
@@ -48,8 +48,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
     public void execute(CommandContext ctx) throws CommandException {
         
         synchronized (this) {
-        	AirlineTotals totals = (AirlineTotals) _cache.get(AirlineTotals.class);
-        	
+        	AirlineTotals totals = _cache.get(AirlineTotals.class);
             if (totals == null) {
                _tableStatus.clear();
                

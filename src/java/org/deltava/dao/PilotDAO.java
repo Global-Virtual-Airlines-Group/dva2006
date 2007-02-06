@@ -1,7 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.Connection;
+
+import org.deltava.beans.Person;
 
 import org.deltava.util.cache.*;
 
@@ -18,7 +20,7 @@ abstract class PilotDAO extends DAO {
 	/**
 	 * The Pilot bean cache.
 	 */
-	protected static final Cache _cache = new ExpiringCache(128, 2400);
+	protected static final Cache<Person> _cache = new ExpiringCache<Person>(128, 2400);
 
 	/**
 	 * Initializes the Data Access Object. 

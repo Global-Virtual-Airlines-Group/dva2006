@@ -19,8 +19,8 @@ import org.deltava.util.cache.*;
 
 public class GetStatistics extends DAO {
 
-	private static final Cache _coolerStatsCache = new ExpiringCache(100, 1800);
-	private static final Cache _cache = new ExpiringCache(2, 1800);
+	private static final Cache<CacheableInteger> _coolerStatsCache = new ExpiringCache<CacheableInteger>(100, 1800);
+	private static final Cache<CacheableInteger> _cache = new ExpiringCache<CacheableInteger>(2, 1800);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -278,7 +278,7 @@ public class GetStatistics extends DAO {
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			if (_coolerStatsCache.contains(id)) {
-				CacheableInteger result = (CacheableInteger) _coolerStatsCache.get(id);
+				CacheableInteger result = _coolerStatsCache.get(id);
 				results.put(id, new Integer(result.getValue()));
 				i.remove();
 			}
@@ -369,7 +369,7 @@ public class GetStatistics extends DAO {
 	public int getCoolerStatistics(int days) throws DAOException {
 
 		// Check the cache
-		CacheableInteger result = (CacheableInteger) _cache.get(new Integer(days));
+		CacheableInteger result = _cache.get(new Integer(days));
 		if (result != null)
 			return result.getValue();
 
