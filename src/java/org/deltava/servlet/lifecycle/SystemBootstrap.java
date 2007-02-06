@@ -81,11 +81,11 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
-		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData
-				.getObject("jdbc.connectProperties"));
+		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
 		_jdbcPool.setMaxRequests(SystemData.getInt("jdbc.max_reqs", 0));
+		_jdbcPool.setLogStack(SystemData.getBoolean("jdbc.log_stack"));
 
 		// Attempt to load the driver and connect
 		try {
@@ -103,11 +103,10 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
-		Authenticator auth = null;
 		try {
 			Class c = Class.forName(authClass);
 			log.debug("Loaded class " + authClass);
-			auth = (Authenticator) c.newInstance();
+			Authenticator auth = (Authenticator) c.newInstance();
 
 			// Initialize and store in the servlet context
 			auth.init(Authenticator.DEFAULT_PROPS_FILE);
@@ -231,7 +230,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Shut down the extra threads
 		for (Iterator<Thread> i = _daemons.keySet().iterator(); i.hasNext();) {
 			Thread t = i.next();
-			ThreadUtils.kill(t, 1000);
+			ThreadUtils.kill(t, 2500);
 		}
 
 		// If ACARS is enabled, then clean out the active flags
