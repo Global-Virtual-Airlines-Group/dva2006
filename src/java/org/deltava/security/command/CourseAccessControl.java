@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.Iterator;
@@ -59,7 +59,7 @@ public class CourseAccessControl extends AccessControl {
 		// Assign access rights
 		_canComment = isINS || isHR || (isMine && isStarted);
 		_canStart = (isINS || isHR) && isPending;
-		_canCancel = (isHR || isMine) && isStarted;
+		_canCancel = (isHR || isAcademyAdmin || isMine) && isStarted;
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
