@@ -10,19 +10,17 @@ import java.util.Iterator;
  * @since 1.0
  */
 
-public class ExpiringCache extends Cache {
+public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
 	protected long _lastCreationTime;
 	protected int _expiry;
 
-	protected class ExpiringCacheEntry implements Comparable {
+	protected class ExpiringCacheEntry<U extends Cacheable> extends CacheEntry<U> {
 
-		private Cacheable _entry;
 		private long _expiryTime;
 
-		public ExpiringCacheEntry(Cacheable entryData) {
-			super();
-			_entry = entryData;
+		public ExpiringCacheEntry(U entryData) {
+			super(entryData);
 			long now = System.currentTimeMillis();
 			long createdOn = (now <= _lastCreationTime) ? ++_lastCreationTime : now;
 			_lastCreationTime = createdOn;
@@ -31,10 +29,6 @@ public class ExpiringCache extends Cache {
 			} else {
 				_expiryTime = createdOn + _expiry;
 			}
-		}
-
-		public Cacheable getData() {
-			return _entry;
 		}
 
 		public boolean isExpired() {
@@ -47,7 +41,7 @@ public class ExpiringCache extends Cache {
 
 		public int compareTo(Object o2) {
 			ExpiringCacheEntry e2 = (ExpiringCacheEntry) o2;
-			return new Long(_expiryTime).compareTo(new Long(e2.getExpiryTime()));
+			return new Long(_expiryTime).compareTo(new Long(e2._expiryTime));
 		}
 	}
 
@@ -82,7 +76,7 @@ public class ExpiringCache extends Cache {
 	 * @return the cache entry, or null if not present or expired
 	 * @see ExpiringCache#get(Object, boolean)
 	 */
-	public Cacheable get(Object key) {
+	public T get(Object key) {
 		return get(key, false);
 	}
 
@@ -94,9 +88,9 @@ public class ExpiringCache extends Cache {
 	 * @see ExpiringCache#get(Object)
 	 * @see ExpiringCache#isExpired(Object)
 	 */
-	public synchronized Cacheable get(Object key, boolean ifExpired) {
+	public synchronized T get(Object key, boolean ifExpired) {
 		request();
-		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
+		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		if (entry == null)
 			return null;
 
@@ -116,7 +110,7 @@ public class ExpiringCache extends Cache {
 	 * @return TRUE if the object is present and expired, otherwise FALSE
 	 */
 	public synchronized boolean isExpired(Object key) {
-		ExpiringCacheEntry entry = (ExpiringCacheEntry) _cache.get(key);
+		ExpiringCacheEntry entry = (ExpiringCacheEntry<T>) _cache.get(key);
 		return (entry == null) ? false : entry.isExpired();
 	}
 
@@ -125,12 +119,12 @@ public class ExpiringCache extends Cache {
 	 * with the earliest expiration date will be removed.
 	 * @param obj the entry to add to the cache
 	 */
-	public synchronized void add(Cacheable obj) {
+	public synchronized void add(T obj) {
 		if (obj == null)
 			return;
 
 		// Create the cache entry
-		ExpiringCacheEntry e = new ExpiringCacheEntry(obj);
+		ExpiringCacheEntry<T> e = new ExpiringCacheEntry<T>(obj);
 		_cache.put(obj.cacheKey(), e);
 
 		// Check for overflow and purge

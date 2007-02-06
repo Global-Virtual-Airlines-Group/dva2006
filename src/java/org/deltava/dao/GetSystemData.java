@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.CollectionUtils;
 
 public class GetSystemData extends DAO {
    
-   private static final Cache _cache = new ExpiringCache(1, 7200);
+   private static final Cache<HTTPTotals> _cache = new ExpiringCache<HTTPTotals>(1, 7200);
 
 	/**
 	 * Initialize the Data Access Object.
@@ -74,7 +74,7 @@ public class GetSystemData extends DAO {
 	public HTTPTotals getHTTPTotals() throws DAOException {
 	   
 	   // Check the cache first
-	   HTTPTotals totals = (HTTPTotals) _cache.get(HTTPTotals.class);
+	   HTTPTotals totals = _cache.get(HTTPTotals.class);
 	   if (totals != null)
 	      return totals;
 	   

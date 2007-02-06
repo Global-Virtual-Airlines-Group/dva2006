@@ -1,8 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
-import java.lang.reflect.Method;
 
 /**
  * An an abstract class to store common cache operations.
@@ -11,9 +10,9 @@ import java.lang.reflect.Method;
  * @since 1.0
  */
 
-public abstract class Cache implements java.io.Serializable {
+public abstract class Cache<T extends Cacheable> implements java.io.Serializable {
    
-   protected Map<Object, Comparable> _cache;
+   protected Map<Object, CacheEntry<T>> _cache;
    private int _maxSize;
    
    private int _hits;
@@ -27,19 +26,16 @@ public abstract class Cache implements java.io.Serializable {
    protected Cache(int maxSize) {
       super();
       setMaxSize(maxSize);
-      _cache = new HashMap<Object, Comparable>(_maxSize + 2, 1); // Set so that rehashes never occur
+      _cache = new HashMap<Object, CacheEntry<T>>(_maxSize + 2, 1); // Set so that rehashes never occur
    }
    
    /**
     * Adds a number of entries to the cache.
     * @param entries a Collection of Cacheable entries
     */
-   public void addAll(Collection entries) {
-      for (Iterator i = entries.iterator(); i.hasNext(); ) {
-         Object entry = i.next();
-         if (entry instanceof Cacheable)
-            add((Cacheable) entry);
-      }
+   public void addAll(Collection<? extends T> entries) {
+      for (Iterator<? extends T> i = entries.iterator(); i.hasNext(); )
+            add(i.next());
    }
    
    /**
@@ -98,21 +94,6 @@ public abstract class Cache implements java.io.Serializable {
    }
    
    /**
-    * Calls {@link Object#clone()} on a Cloneable object to create a shallow-copy.
-    * @param src the source Object
-    * @return a clone of src, or src if cloning not supported
-    */
-   protected Cacheable getClone(Cacheable src) {
-      try {
-         Method m = src.getClass().getDeclaredMethod("clone", (Class []) null);
-         Object clone = m.invoke(src, (Object []) null);
-         return (clone instanceof Cacheable) ? (Cacheable) clone : src;
-      } catch (Exception e) {
-         return src;
-      }
-   }
-   
-   /**
     * Log a cache hit. Implementations should call this method from their {@link Cache#get(Object)}
     * method to keep statistics.
     * @see Cache#request()
@@ -155,12 +136,12 @@ public abstract class Cache implements java.io.Serializable {
     * Adds an entry to the cache.
     * @param entry the entry to add
     */
-   public abstract void add(Cacheable entry);
+   public abstract void add(T entry);
    
    /**
     * Retrieves an entry from the cache. 
     * @param key the cache key
     * @return the cache entry, or null if the key is not present or the entry is invalid
     */
-   public abstract Cacheable get(Object key);
+   public abstract T get(Object key);
 }
