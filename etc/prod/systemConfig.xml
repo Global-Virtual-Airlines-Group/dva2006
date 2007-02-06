@@ -573,14 +573,14 @@
 		<sleep type="Integer">30000</sleep>
 		<timeout type="Integer">120</timeout>
 		<ban_length type="Integer">15</ban_length>
-		<position_interval type="Integer">175</position_interval>
+		<position_interval type="Integer">145</position_interval>
 		<build>
 			<map name="minimum">
 				<v1_4>75</v1_4>
 				<v2_0>82</v2_0>
 			</map>
 
-			<latest type="Integer">82</latest>
+			<latest type="Integer">84</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>
 		
