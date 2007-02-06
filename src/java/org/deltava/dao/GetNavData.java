@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 
 public class GetNavData extends DAO {
 	
-	protected static final Cache _cache = new AgingCache(256);
+	protected static final Cache<Cacheable> _cache = new AgingCache<Cacheable>(256);
 
 	/**
 	 * Initializes the Data Access Object.

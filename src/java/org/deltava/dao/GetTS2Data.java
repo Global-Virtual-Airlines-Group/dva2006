@@ -24,7 +24,7 @@ public class GetTS2Data extends DAO {
 	private static final Logger log = Logger.getLogger(GetTS2Data.class);
 
 	private static final DateFormat _df = new SimpleDateFormat("ddMMyyyyHHmmssSSS");
-	private static final Cache _cache = new ExpiringCache(12, 600);
+	private static final Cache<Cacheable> _cache = new ExpiringCache<Cacheable>(12, 600);
 
 	/**
 	 * Initializes the Data Access Object.
