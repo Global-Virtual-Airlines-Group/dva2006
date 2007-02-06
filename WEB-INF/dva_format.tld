@@ -27,7 +27,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- DecimalFormat tag, for formatting decimal values -->
 	<tag>
 		<name>dec</name>
@@ -49,7 +49,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- HexFormat tag, for formatting hexadecimal numbers -->
 	<tag>
 		<name>hex</name>
@@ -67,7 +67,7 @@
 			<type>java.lang.Long</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- TextFormat tag, for rendering formatted text in HTML -->
 	<tag>
 		<name>text</name>
@@ -163,7 +163,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- List tag, used to format lists into delimited strings -->
 	<tag>
 		<name>list</name>
@@ -181,36 +181,7 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
-	
-	<!-- BeanList tag, used to format a property from lists of beans into delimited strings -->
-	<tag>
-		<name>beans</name>
-		<tag-class>org.deltava.taglib.format.BeanListFormatTag</tag-class>
-		<body-content>empty</body-content>
-		<attribute>
-			<name>property</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>delim</name>
-			<required>true</required>
-			<rtexprvalue>false</rtexprvalue>
-		</attribute>
-		<attribute>
-			<name>value</name>
-			<required>true</required>
-			<rtexprvalue>true</rtexprvalue>
-			<type>java.util.Collection</type>
-		</attribute>
-		<attribute>
-			<name>ignoreErrors</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
-	</tag>
-	
+
 	<!-- Airport tag, used to display ICAO/IATA codes depending on user preferences -->
 	<tag>
 		<name>airport</name>
@@ -233,7 +204,7 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 	</tag>
-	
+
 	<!-- GeoPosition tag, used to format geographic coordinates -->
 	<tag>
 		<name>geo</name>
@@ -251,7 +222,7 @@
 			<type>org.deltava.beans.GeoLocation</type>
 		</attribute>
 	</tag>
-	
+
 	<!-- StackDump tag, used to format exception stack traces -->
 	<tag>
 		<name>stack</name>
