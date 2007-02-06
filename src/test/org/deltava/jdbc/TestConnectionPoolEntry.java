@@ -48,7 +48,7 @@ public class TestConnectionPoolEntry extends TestCase {
         _cpe.setDynamic(false);
         assertFalse(_cpe.isDynamic());
         
-        Connection c2 = _cpe.reserve();
+        Connection c2 = _cpe.reserve(false);
         assertSame(c2, _c);
         assertTrue(_cpe.inUse());
         Thread.sleep(100);
@@ -101,9 +101,9 @@ public class TestConnectionPoolEntry extends TestCase {
     }
     
     public void testValidation() {
-        _cpe.reserve();
+        _cpe.reserve(false);
         try {
-            _cpe.reserve();
+            _cpe.reserve(false);
             fail("IllegalStateException expected");
         } catch (IllegalStateException ise) { }
         

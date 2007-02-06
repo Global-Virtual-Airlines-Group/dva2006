@@ -1,7 +1,5 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
-
-import java.io.Serializable;
 
 import org.deltava.beans.ViewEntry;
 
@@ -12,7 +10,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
+public class ConnectionInfo implements Comparable<ConnectionInfo>, ViewEntry {
    
    private int _id;
    private boolean _isSystem;
@@ -20,6 +18,7 @@ public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
    private int _useCount;
    private long _totalUse;
    private long _currentUse;
+   private Throwable _trace;
 
    /**
     * Creates a new ConnectionInfo object from a Connection Pool entry.
@@ -33,6 +32,7 @@ public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
       _useCount = entry.getUseCount();
       _totalUse = entry.getTotalUseTime();
       _currentUse = entry.getUseTime();
+      _trace = entry.getStackInfo();
    }
    
    /**
@@ -41,6 +41,15 @@ public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
     */
    public int getID() {
       return _id;
+   }
+   
+   /**
+    * Returns the Connection's stack trace
+    * @return a Throwable with the stack trace
+    * @see Throwable#getStackTrace()
+    */
+   public Throwable getStackInfo() {
+	   return _trace;
    }
    
    /**
@@ -88,9 +97,8 @@ public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
     * Compares two ConnectionInfo objects by comparing their IDs.
     * @see Comparable#compareTo(Object) 
     */
-   public int compareTo(Object o2) {
-      ConnectionInfo ci2 = (ConnectionInfo) o2;
-      return new Integer(_id).compareTo(new Integer(ci2.getID()));
+   public int compareTo(ConnectionInfo ci2) {
+      return new Integer(_id).compareTo(new Integer(ci2._id));
    }
    
    /**
@@ -98,12 +106,11 @@ public class ConnectionInfo implements Serializable, Comparable, ViewEntry {
     * @return the CSS class name
     */
    public String getRowClassName() {
-      if (_inUse) {
+      if (_inUse)
          return "opt1";
-      } else if (_isSystem) {
+      else if (_isSystem)
          return "opt2";
-      } else {
-         return null;
-      }
+
+      return null;
    }
 }
