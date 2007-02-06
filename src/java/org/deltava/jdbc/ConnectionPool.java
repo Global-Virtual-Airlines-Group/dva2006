@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
@@ -30,6 +30,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	private int _poolMaxSize = 1;
 	private int _maxRequests;
 	private long _totalRequests;
+	private boolean _logStack;
 
 	private ConnectionMonitor _monitor;
 	private SortedSet<ConnectionPoolEntry> _cons;
@@ -63,7 +64,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	 * Start the Connection Monitor thread.
 	 */
 	private void startMonitor() {
-		_monitorThread = new Thread(_monitor, ConnectionMonitor.NAME);
+		_monitorThread = new Thread(_monitor, _monitor.toString());
 		_monitorThread.setPriority(Math.max(Thread.MIN_PRIORITY, Thread.currentThread().getPriority()));
 		_monitorThread.setDaemon(true);
 		_monitorThread.setUncaughtExceptionHandler(this);
@@ -140,6 +141,16 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public void setMaxRequests(int maxReqs) {
 		_maxRequests = maxReqs;
 	}
+	
+	/**
+	 * Sets wether each the thread stack of each thread requesting a connection should be logged for debugging purposes. This
+	 * requires that a dummy exception be thrown on each connection reservation, which may have an adverse effect upon system
+	 * performance.
+	 * @param doLog TRUE if thread state should be logged, otherwise FALSE
+	 */
+	public void setLogStack(boolean doLog) {
+		_logStack = doLog;
+	}
 
 	/**
 	 * Sets multiple JDBC connection properties at once.
@@ -206,7 +217,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 
 				// If the connection pool entry is stale, release it
 				if (cpe.getUseTime() > MAX_USE_TIME) {
-					log.warn("Releasing stale JDBC Connection " + cpe);
+					log.error("Releasing stale JDBC Connection " + cpe, cpe.getStackInfo());
 					cpe.free();
 				}
 
@@ -215,7 +226,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 				if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
 					log.debug("Reserving JDBC Connection " + cpe);
 					_totalRequests++;
-					return cpe.reserve();
+					return cpe.reserve(_logStack);
 				}
 			}
 		}
@@ -243,7 +254,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 			// Return back the new connection
 			_totalRequests++;
 			log.info("Reserving JDBC Connection " + cpe);
-			return cpe.reserve();
+			return cpe.reserve(_logStack);
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
 		}

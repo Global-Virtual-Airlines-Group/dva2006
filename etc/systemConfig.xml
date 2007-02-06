@@ -223,6 +223,7 @@
 		<pool_max_size type="Integer">4</pool_max_size>
 		<max_reqs type="Integer">500</max_reqs>
 		<auto_commit type="Boolean">true</auto_commit>
+		<log_stack type="Boolean">true</log_stack>
 	</jdbc>
 	
 	<html>

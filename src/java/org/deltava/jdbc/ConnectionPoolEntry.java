@@ -1,8 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.jdbc;
 
 import java.sql.*;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * A class to store JDBC connections in a connection pool and track usage.
@@ -11,13 +11,14 @@ import java.util.Properties;
  * @since 1.0
  */
 
-class ConnectionPoolEntry implements Comparable {
+class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 
 	private Connection _c;
+	private Throwable _stackInfo;
 	private int _id;
 
 	private String _url;
-	private Properties _props;
+	private final Properties _props = new Properties();
 
 	private boolean _inUse = false;
 	private boolean _systemOwned = false;
@@ -28,6 +29,13 @@ class ConnectionPoolEntry implements Comparable {
 	private long _useTime;
 	private long _startTime;
 	private int _useCount;
+	
+	class StackTrace extends Throwable {
+		
+		StackTrace() {
+			super(Thread.currentThread().getName());
+		}
+	}
 
 	/**
 	 * Create a new Connection Pool entry.
@@ -39,7 +47,7 @@ class ConnectionPoolEntry implements Comparable {
 		super();
 		_id = id;
 		_url = url;
-		_props = props;
+		_props.putAll(props);
 	}
 
 	/**
@@ -183,12 +191,28 @@ class ConnectionPoolEntry implements Comparable {
 	/**
 	 * Reserve this Connection pool entry, and get the underlyig JDBC connection. This method is package private since
 	 * it only should be called by the ConnectionPool object
+	 * @param logStack wether the current thread's stack state should be preserved
 	 * @return the JDBC Connection object
 	 * @throws IllegalStateException if the connection is already reserved
 	 */
-	Connection reserve() {
+	Connection reserve(boolean logStack) {
 		if (inUse())
 			throw new IllegalStateException("Connection " + toString() + " already in use");
+		
+		// Generate a dummy stack trace if necessary, trimming out entries from this package
+		if (logStack) {
+			_stackInfo = new StackTrace().fillInStackTrace();
+			List<StackTraceElement> el = new ArrayList<StackTraceElement>(Arrays.asList(_stackInfo.getStackTrace()));
+			StackTraceElement ste = el.get(0);
+			while (ste.getClassName().startsWith(ConnectionPoolEntry.class.getPackage().getName()) && (el.size() > 1)) {
+				el.remove(0);
+				ste = el.get(0);
+			}
+			
+			// Save the stack trace
+			if (el.size() > 1)
+				_stackInfo.setStackTrace(el.toArray(new StackTraceElement[0]));
+		}
 
 		// Mark the connection as in use, and return the SQL connection
 		_startTime = System.currentTimeMillis();
@@ -220,6 +244,15 @@ class ConnectionPoolEntry implements Comparable {
 	public long getTotalUseTime() {
 		return _totalTime;
 	}
+	
+	/**
+	 * Returns this connection's stack trace data, from the last thread to reserve the Connection.
+	 * @return a Throwable whose StackTrace is the thread data
+	 * @see Throwable#getStackTrace()
+	 */
+	public Throwable getStackInfo() {
+		return _stackInfo;
+	}
 
 	/**
 	 * This overrides equals behavior by comparing the underlying connection object. This allows us to get a
@@ -229,7 +262,7 @@ class ConnectionPoolEntry implements Comparable {
 		if (o2 instanceof Connection) {
 			return (_c == ((Connection) o2));
 		} else if (o2 instanceof ConnectionPoolEntry) {
-			return (compareTo(o2) == 0);
+			return (compareTo((ConnectionPoolEntry) o2) == 0);
 		} else {
 			return false;
 		}
@@ -237,11 +270,9 @@ class ConnectionPoolEntry implements Comparable {
 
 	/**
 	 * Compares two entries by comparing their ID.
-	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o2) {
-		ConnectionPoolEntry e2 = (ConnectionPoolEntry) o2;
-		return new Integer(_id).compareTo(new Integer(e2.getID()));
+	public int compareTo(ConnectionPoolEntry e2) {
+		return new Integer(_id).compareTo(new Integer(e2._id));
 	}
 
 	/**
