@@ -106,10 +106,13 @@ public class FlightReportService extends WebDataService {
 		Collection<RouteEntry> positions = new ArrayList<RouteEntry>();
 		for (Iterator i = ppe.getChildren("position").iterator(); i.hasNext();) {
 			Element pe = (Element) i.next();
+			String dt = pe.getChildTextTrim("date");
+			if (dt.indexOf('.') == -1)
+				dt = dt + ".000";
 
 			// Build a position entry
 			try {
-				RouteEntry pos = new RouteEntry(StringUtils.parseDate(pe.getChildTextTrim("date"), "MM/dd/yyyy HH:mm:ss.SSS"),
+				RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"),
 						Double.parseDouble(pe.getChildTextTrim("lat")), Double.parseDouble(pe.getChildTextTrim("lon")));
 				pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 				pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
