@@ -84,6 +84,8 @@ public class MapRouteService extends WebService {
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getParameter("id"));
+		if (p == null)
+			throw error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"));
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -91,8 +93,8 @@ public class MapRouteService extends WebService {
 		doc.setRootElement(re);
 
 		// Generate the great circle route
-		for (Iterator i = p.getRoute().iterator(); i.hasNext();) {
-			GeoLocation loc = (GeoLocation) i.next();
+		for (Iterator<GeoLocation> i = p.getRoute().iterator(); i.hasNext();) {
+			GeoLocation loc = i.next();
 			Element e = new Element("navaid");
 			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
