@@ -4,9 +4,12 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.testing.*;
 
 import org.deltava.util.CollectionUtils;
+
+import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -17,7 +20,30 @@ import org.deltava.util.system.SystemData;
  */
 
 public class GetExamProfiles extends DAO {
+	
+	private static final Cache<ExamResults> _rCache = new ExpiringCache<ExamResults>(120, 7200);
 
+	private class ExamResults extends DatabaseBean {
+		
+		private int _total;
+		private int _correct;
+		
+		ExamResults(int id, int total, int correct) {
+			super();
+			setID(id);
+			_total = total;
+			_correct = correct;
+		}
+		
+		public int getTotal() {
+			return _total;
+		}
+		
+		public int getCorrect() {
+			return _correct;
+		}
+	}
+	
 	/**
 	 * Initialize the Data Access Object.
 	 * @param c the JDBC connection to use
@@ -75,7 +101,6 @@ public class GetExamProfiles extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
 	}
 
 	/**
@@ -86,16 +111,14 @@ public class GetExamProfiles extends DAO {
 	 */
 	public QuestionProfile getQuestionProfile(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID), QI.TYPE, QI.SIZE, "
-					+ "QI.X, QI.Y FROM QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN "
-					+ "QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN EXAMS E ON (EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND "
-					+ "(E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN QUESTIONMINFO MQ ON (MQ.ID=Q.ID) "
-					+ "WHERE (Q.ID=?) GROUP BY Q.ID");
-			_ps.setBoolean(1, false);
-			_ps.setInt(2, SystemData.getInt("testing.correct_ratio_age", 90));
-			_ps.setInt(3, id);
+			setQueryMax(1);
+			prepareStatement("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM QUESTIONINFO Q LEFT JOIN "
+					+ "QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN QUESTIONMINFO MQ ON (MQ.ID=Q.ID) WHERE (Q.ID=?) "
+					+ "GROUP BY Q.ID");
+			_ps.setInt(1, id);
 
 			// Execute the Query
+			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
 				rs.close();
@@ -104,7 +127,7 @@ public class GetExamProfiles extends DAO {
 			}
 
 			// Check if we are multiple choice
-			boolean isMultiChoice = (rs.getInt(7) > 0);
+			boolean isMultiChoice = (rs.getInt(5) > 0);
 
 			// Populate the Question Profile
 			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
@@ -112,20 +135,23 @@ public class GetExamProfiles extends DAO {
 			qp.setID(rs.getInt(1));
 			qp.setCorrectAnswer(rs.getString(3));
 			qp.setActive(rs.getBoolean(4));
-			qp.setTotalAnswers(rs.getInt(5));
-			qp.setCorrectAnswers(rs.getInt(6));
+			// qp.setTotalAnswers(rs.getInt(5));
+			//qp.setCorrectAnswers(rs.getInt(6));
 			
 			// Load image data
-			if (rs.getInt(9) > 0) {
-				qp.setType(rs.getInt(8));
-				qp.setSize(rs.getInt(9));
-				qp.setWidth(rs.getInt(10));
-				qp.setHeight(rs.getInt(11));
+			if (rs.getInt(7) > 0) {
+				qp.setType(rs.getInt(6));
+				qp.setSize(rs.getInt(7));
+				qp.setWidth(rs.getInt(8));
+				qp.setHeight(rs.getInt(9));
 			}
 
 			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Load correct answer copunts
+			loadResults(Collections.singleton(qp));
 
 			// Get multiple choice choices
 			if (isMultiChoice) {
@@ -181,10 +207,8 @@ public class GetExamProfiles extends DAO {
 		if (!showAll) conditions.add("(QE.EXAM_NAME=?)");
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(EQ.CORRECT), SUM(EQ.CORRECT), COUNT(MQ.ID), QI.TYPE, "
-				+ "QI.SIZE, QI.X, QI.Y FROM QUESTIONINFO Q LEFT JOIN EXAMQUESTIONS EQ ON (Q.ID=EQ.QUESTION_ID) LEFT JOIN "
-				+ "QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN EXAMS E ON "
-				+ "(EQ.EXAM_ID=E.ID) AND (E.ISEMPTY=?) AND (E.CREATED_ON >= DATE_SUB(NOW(), INTERVAL ? DAY)) LEFT JOIN "
+		StringBuilder sqlBuf = new StringBuilder("SELECT Q.*, COUNT(MQ.ID), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM QUESTIONINFO Q "
+				+ "LEFT JOIN QE_INFO QE ON (Q.ID=QE.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (Q.ID=QI.ID) LEFT JOIN "
 				+ "QUESTIONMINFO MQ ON (Q.ID=MQ.ID) ");
 
 		// Append conditions
@@ -205,8 +229,6 @@ public class GetExamProfiles extends DAO {
 			
 			// Set the parameters
 			int pNum = 0;
-			_ps.setBoolean(++pNum, false);
-			_ps.setInt(++pNum, SystemData.getInt("testing.correct_ratio_age", 90));
 			if (isActive)
 				_ps.setBoolean(++pNum, isActive);
 			if (!showAll)
@@ -218,7 +240,7 @@ public class GetExamProfiles extends DAO {
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				// Check if we are multiple choice
-				boolean isMultiChoice = (rs.getInt(7) > 0);
+				boolean isMultiChoice = (rs.getInt(5) > 0);
 				hasMultiChoice |= isMultiChoice;
 				
 				// Populate the Question Profile
@@ -227,15 +249,13 @@ public class GetExamProfiles extends DAO {
 				qp.setID(rs.getInt(1));
 				qp.setCorrectAnswer(rs.getString(3));
 				qp.setActive(rs.getBoolean(4));
-				qp.setTotalAnswers(rs.getInt(5));
-				qp.setCorrectAnswers(rs.getInt(6));
 				
 				// Load image metadata
-				if (rs.getInt(9) > 0) {
-					qp.setType(rs.getInt(8));
-					qp.setSize(rs.getInt(9));
-					qp.setWidth(rs.getInt(10));
-					qp.setHeight(rs.getInt(11));
+				if (rs.getInt(7) > 0) {
+					qp.setType(rs.getInt(6));
+					qp.setSize(rs.getInt(7));
+					qp.setWidth(rs.getInt(8));
+					qp.setHeight(rs.getInt(9));
 				}
 
 				// Add to results
@@ -245,6 +265,9 @@ public class GetExamProfiles extends DAO {
 			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Load the correct answer counts
+			loadResults(results);
 			
 			// Convert to a map so we can load multiple choices
 			if (hasMultiChoice) {
@@ -375,5 +398,59 @@ public class GetExamProfiles extends DAO {
 		rs.close();
 		_ps.close();
 		return results;
+	}
+	
+	/**
+	 * Helper method to populate correct/incorrect answer statistics.
+	 */
+	private void loadResults(Collection<QuestionProfile> qs) throws SQLException {
+
+		// Determine what question IDs to load
+		Collection<Integer> IDs = new HashSet<Integer>();
+		for (Iterator<QuestionProfile> i = qs.iterator(); i.hasNext(); ) {
+			QuestionProfile qp = i.next();
+			Integer id = new Integer(qp.getID());
+			if (!_rCache.contains(id))
+				IDs.add(id);
+			else {
+				ExamResults er = _rCache.get(id);
+				qp.setTotalAnswers(er.getTotal());
+				qp.setCorrectAnswers(er.getCorrect());
+			}
+		}
+		
+		// Build SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.QUESTION_ID, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
+				+ "EXAMQUESTIONS EQ, EXAMS E WHERE (EQ.EXAM_ID=E.ID) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
+				+ "INTERVAL ? DAY) AND (E.ISEMPTY=?) AND (EQ.QUESTION_ID IN(");
+		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+			sqlBuf.append(i.next().toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(") GROUP BY EQ.QUESTION_ID");
+		
+		// Prepare the statement
+		prepareStatement(sqlBuf.toString());
+		_ps.setInt(1, SystemData.getInt("testing.correct_ratio_age", 90));
+		_ps.setBoolean(2, false);
+		
+		// Execute the query and populate the cache and question profiles
+		ResultSet rs = _ps.executeQuery();
+		Map<Integer, QuestionProfile> questions = CollectionUtils.createMap(qs, "ID");
+		while (rs.next()) {
+			ExamResults er = new ExamResults(rs.getInt(1), rs.getInt(2), rs.getInt(3));
+			_rCache.add(er);
+			QuestionProfile qp = questions.get(er.cacheKey());
+			if (qp != null) {
+				qp.setTotalAnswers(er.getTotal());
+				qp.setCorrectAnswers(er.getCorrect());
+			}
+		}
+		
+		// Clean up after ourselves
+		rs.close();
+		_ps.close();
 	}
 }
