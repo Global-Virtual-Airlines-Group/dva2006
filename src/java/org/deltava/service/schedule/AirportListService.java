@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -13,9 +13,7 @@ import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.*;
 
-import org.deltava.service.ServiceContext;
-import org.deltava.service.ServiceException;
-import org.deltava.service.WebDataService;
+import org.deltava.service.*;
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -26,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class AirportListService extends WebDataService {
+public class AirportListService extends WebService {
 
 	private class NonFilter implements AirportFilter {
 
@@ -84,10 +82,12 @@ public class AirportListService extends WebDataService {
 			// Either search the schedule or return the SystemData list
 			if (useSched) {
 				try {
-					GetScheduleAirport dao = new GetScheduleAirport(_con);
+					GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
 					filter = new AirportListFilter(dao.getOriginAirports(a));
 				} catch (DAOException de) {
 					throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+				} finally {
+					ctx.release();
 				}
 			} else {
 				if ("all".equals(ctx.getParameter("airline"))) {
@@ -105,10 +105,12 @@ public class AirportListService extends WebDataService {
 
 			// Get the airports from the schedule database
 			try {
-				GetScheduleAirport dao = new GetScheduleAirport(_con);
+				GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
 				filter = new AirportListFilter(dao.getConnectingAirports(a, !isDest, null));
 			} catch (DAOException de) {
 				throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage(), de);
+			} finally {
+				ctx.release();
 			}
 		}
 

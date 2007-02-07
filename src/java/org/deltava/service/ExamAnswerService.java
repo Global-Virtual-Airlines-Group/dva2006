@@ -1,6 +1,8 @@
 // Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
+import java.sql.Connection;
+
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.deltava.beans.testing.*;
@@ -17,7 +19,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class ExamAnswerService extends WebDataService {
+public class ExamAnswerService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -36,9 +38,12 @@ public class ExamAnswerService extends WebDataService {
 		int questionNo = Integer.parseInt(ctx.getParameter("q"));
 		String answer = ctx.getParameter("answer");
 
+		
 		try {
+			Connection con = ctx.getConnection();
+			
 			// Get the examination
-			GetExam dao = new GetExam(_con);
+			GetExam dao = new GetExam(con);
 			Examination ex = dao.getExam(examID);
 			if (ex == null)
 				throw new ServiceException(SC_NOT_FOUND, "Unknown Exam ID - " + examID, false);
@@ -63,11 +68,13 @@ public class ExamAnswerService extends WebDataService {
 				q.setAnswer(answer);
 
 				// Get the DAO and write the question
-				SetExam wdao = new SetExam(_con);
+				SetExam wdao = new SetExam(con);
 				wdao.answer(examID, q);
 			}
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Return success code

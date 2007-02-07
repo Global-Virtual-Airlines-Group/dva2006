@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class RouteMapService extends WebDataService {
+public class RouteMapService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -34,10 +34,12 @@ public class RouteMapService extends WebDataService {
 
 		LinkedList<NavigationDataBean> routePoints = null;
 		try {
-			GetNavRoute dao = new GetNavRoute(_con);
+			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 			routePoints = dao.getRouteWaypoints(ctx.getParameter("route"));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Convert to an XML document

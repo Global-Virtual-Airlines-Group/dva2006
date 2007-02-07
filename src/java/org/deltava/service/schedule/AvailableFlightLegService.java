@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class AvailableFlightLegService extends WebDataService {
+public class AvailableFlightLegService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -40,10 +40,12 @@ public class AvailableFlightLegService extends WebDataService {
 		
 		int leg = 0;
 		try {
-			GetScheduleInfo dao = new GetScheduleInfo(_con);
+			GetScheduleInfo dao = new GetScheduleInfo(ctx.getConnection());
 			leg = dao.getNextLeg(a, flight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the XML document

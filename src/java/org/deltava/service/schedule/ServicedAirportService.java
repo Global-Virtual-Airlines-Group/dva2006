@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -11,9 +11,8 @@ import org.jdom.*;
 import org.deltava.beans.schedule.*;
 import org.deltava.dao.*;
 
-import org.deltava.service.ServiceContext;
-import org.deltava.service.ServiceException;
-import org.deltava.service.WebDataService;
+import org.deltava.service.*;
+
 import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ServicedAirportService extends WebDataService {
+public class ServicedAirportService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -41,10 +40,12 @@ public class ServicedAirportService extends WebDataService {
 
 		Collection<Airport> airports = null;
 		try {
-			GetScheduleAirport dao = new GetScheduleAirport(_con);
+			GetScheduleAirport dao = new GetScheduleAirport(ctx.getConnection());
 			airports = dao.getOriginAirports(al);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the XML document

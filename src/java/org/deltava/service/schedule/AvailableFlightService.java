@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class AvailableFlightService extends WebDataService {
+public class AvailableFlightService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -42,10 +42,12 @@ public class AvailableFlightService extends WebDataService {
 		
 		Collection<Integer> flights = null;
 		try {
-			GetScheduleInfo dao = new GetScheduleInfo(_con);
+			GetScheduleInfo dao = new GetScheduleInfo(ctx.getConnection());
 			flights = dao.getFlightNumbers(a, startFlight, endFlight);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Find the first available flight number in the range
