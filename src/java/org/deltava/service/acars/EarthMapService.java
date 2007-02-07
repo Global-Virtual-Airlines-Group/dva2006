@@ -1,9 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
 import java.util.zip.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -50,9 +51,10 @@ public class EarthMapService extends GoogleEarthService {
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
-			GetACARSData dao = new GetACARSData(_con);
+			Connection con = ctx.getConnection();
 			
 			// Loop through the flights
+			GetACARSData dao = new GetACARSData(con);
 			Collection<Integer> userIDs = new HashSet<Integer>();
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
 				Integer flightID = i.next();
@@ -70,11 +72,11 @@ public class EarthMapService extends GoogleEarthService {
 			}
 			
 			// Load the user data
-			GetUserData uddao = new GetUserData(_con);
+			GetUserData uddao = new GetUserData(con);
 			UserDataMap udmap = uddao.get(userIDs);
 			
 			// Add into the pilot map
-			GetPilot pdao = new GetPilot(_con);
+			GetPilot pdao = new GetPilot(con);
 			for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();
 				if (UserDataMap.isPilotTable(tableName))
@@ -83,6 +85,8 @@ public class EarthMapService extends GoogleEarthService {
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 			return SC_INTERNAL_SERVER_ERROR;
+		} finally {
+			ctx.release();
 		}
 		
 		// Create the flights and routes folders

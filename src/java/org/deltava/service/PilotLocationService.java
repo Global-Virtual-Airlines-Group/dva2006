@@ -1,10 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.IOException;
 import java.util.*;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
@@ -22,7 +22,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class PilotLocationService extends WebDataService {
+public class PilotLocationService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -39,7 +39,7 @@ public class PilotLocationService extends WebDataService {
 		// Get active pilots
 		Collection<PilotLocation> usrs = new HashSet<PilotLocation>();
 		try {
-			GetPilot dao = new GetPilot(_con);
+			GetPilot dao = new GetPilot(ctx.getConnection());
 			Map<Integer, GeoLocation> locations = dao.getPilotBoard();
 			Collection<Pilot> pilots = dao.getByID(locations.keySet(), "PILOTS").values();
 
@@ -52,7 +52,9 @@ public class PilotLocationService extends WebDataService {
 				usrs.add(new PilotLocation(usr, gp));
 			}
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Create the XML document
@@ -78,11 +80,11 @@ public class PilotLocationService extends WebDataService {
 			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
 		// Return success code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**

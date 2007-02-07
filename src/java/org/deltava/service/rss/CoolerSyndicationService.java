@@ -1,9 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.util.*;
 import java.net.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class CoolerSyndicationService extends WebDataService {
+public class CoolerSyndicationService extends WebService {
 	
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -39,9 +40,10 @@ public class CoolerSyndicationService extends WebDataService {
 		// Get the channel name
 		String channel = ctx.getParameter("channel");
 
-		List threads = null;
+		List<MessageThread> threads = null;
 		try {
-			GetCoolerChannels cdao = new GetCoolerChannels(_con);
+			Connection con = ctx.getConnection();
+			GetCoolerChannels cdao = new GetCoolerChannels(con);
 
 			// Get the channel and check our access to it
 			if (channel != null) {
@@ -58,7 +60,7 @@ public class CoolerSyndicationService extends WebDataService {
 			}
 
 			// Get the cooler threads
-			GetCoolerThreads tdao = new GetCoolerThreads(_con);
+			GetCoolerThreads tdao = new GetCoolerThreads(con);
 			tdao.setQueryMax(getCount(ctx, 50));
 			threads = Channel.ALL.equals(channel) ? tdao.getByChannel(null, true) : tdao.getByChannel(channel, true);
 
@@ -81,6 +83,8 @@ public class CoolerSyndicationService extends WebDataService {
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Generate the data element

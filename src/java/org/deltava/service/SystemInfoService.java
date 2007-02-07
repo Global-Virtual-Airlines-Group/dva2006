@@ -1,10 +1,10 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
 import java.util.Date;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.apache.log4j.Logger;
 
@@ -20,7 +20,7 @@ import org.deltava.dao.DAOException;
  * @since 1.0
  */
 
-public class SystemInfoService extends WebDataService {
+public class SystemInfoService extends WebService {
 	
 	private static final Logger log = Logger.getLogger(SystemInfoService.class);
 
@@ -64,11 +64,13 @@ public class SystemInfoService extends WebDataService {
 
 		// Write the system information to the database
 		try {
-			SetLibrary dao = new SetLibrary(_con);
+			SetLibrary dao = new SetLibrary(ctx.getConnection());
 			dao.write(si);
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Generate an INI-style response for the Fleet Installer
@@ -81,10 +83,10 @@ public class SystemInfoService extends WebDataService {
 			ctx.getResponse().setContentType("text/plain");
 		   ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
 		// Write result code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 }
