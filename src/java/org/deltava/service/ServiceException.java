@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
+import org.deltava.servlet.ControllerException;
+
 /**
  * An Exception thrown by Web Services.
  * @author Luke
@@ -8,10 +10,9 @@ package org.deltava.service;
  * @since 1.0
  */
 
-public class ServiceException extends Exception {
+public class ServiceException extends ControllerException {
 
 	private int _httpCode;
-	private boolean _logStackDump;
 
 	/**
 	 * Creates a new Web Service Exception from an existing exception.
@@ -42,25 +43,7 @@ public class ServiceException extends Exception {
 	ServiceException(int code, String msg, boolean dumpStack) {
 		super(msg);
 		_httpCode = code;
-		_logStackDump = dumpStack;
-	}
-
-	/**
-	 * Returns wether the handling class should log this Exception's stack trace.
-	 * @return TRUE if the stack trace should be logged, otherwise FALSE
-	 * @see ServiceException#setLogStackDump(boolean)
-	 */
-	public boolean getLogStackDump() {
-		return _logStackDump;
-	}
-
-	/**
-	 * Updates wether the handling class should log this Exception's stack trace.
-	 * @param doLog TRUE if the stack trace should be logged, otherwise FALSE
-	 * @see ServiceException#getLogStackDump()
-	 */
-	public void setLogStackDump(boolean doLog) {
-		_logStackDump = doLog;
+		setLogStackDump(dumpStack);
 	}
 
 	/**

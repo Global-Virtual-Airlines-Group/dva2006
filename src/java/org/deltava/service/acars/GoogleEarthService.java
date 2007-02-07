@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -10,7 +10,8 @@ import org.deltava.beans.schedule.*;
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.NavigationDataBean;
 
-import org.deltava.service.WebDataService;
+import org.deltava.service.WebService;
+
 import org.deltava.util.*;
 import org.deltava.util.color.GoogleEarthColor;
 
@@ -21,7 +22,7 @@ import org.deltava.util.color.GoogleEarthColor;
  * @since 1.0
  */
 
-public abstract class GoogleEarthService extends WebDataService {
+public abstract class GoogleEarthService extends WebService {
 
 	protected static final GoogleEarthColor[] COLORS = {new GoogleEarthColor(208, 184, 0), new GoogleEarthColor(0, 205, 0),
 		new GoogleEarthColor(240, 48, 48), new GoogleEarthColor(80, 192, 240), new GoogleEarthColor(240, 16, 240),

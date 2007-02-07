@@ -1,5 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
+
+import org.deltava.util.StringUtils;
 
 /**
  * Web Services are designed to be light-weight objects that are instantiated using a no-argument constructor
@@ -60,4 +62,14 @@ public abstract class WebService {
    protected ServiceException error(int code, String msg, Throwable t) {
 	   return new ServiceException(code, msg, t);
    }
+   
+	/**
+	 * Helper method to return the number of entries to display.
+	 * @param sctxt the Service Context
+	 * @param defaultValue the default number of entries
+	 * @return the value of the count parameter, or defaultVlue
+	 */
+	protected int getCount(ServiceContext sctxt, int defaultValue) {
+		return StringUtils.parse(sctxt.getRequest().getParameter("count"), defaultValue);
+	}
 }

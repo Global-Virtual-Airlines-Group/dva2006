@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.Date;
@@ -20,7 +20,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class ErrorLogService extends WebDataService {
+public class ErrorLogService extends WebService {
 
 	private static final Logger log = Logger.getLogger(ErrorLogService.class);
 
@@ -48,11 +48,13 @@ public class ErrorLogService extends WebDataService {
 		err.setStateData(ctx.getParameter("stateData"));
 		
 		try {
-			SetACARSLog dao = new SetACARSLog(_con);
+			SetACARSLog dao = new SetACARSLog(ctx.getConnection());
 			dao.logError(err);
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 			return SC_INTERNAL_SERVER_ERROR;
+		} finally {
+			ctx.release();
 		}
 
 		// Return status code

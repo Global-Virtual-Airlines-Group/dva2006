@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.io.*;
@@ -8,6 +8,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.*;
 
 import org.deltava.beans.Person;
+
+import org.deltava.jdbc.*;
+
 import org.deltava.security.SecurityContext;
 
 /**
@@ -17,10 +20,10 @@ import org.deltava.security.SecurityContext;
  * @since 1.0
  */
 
-public class ServiceContext implements Serializable, SecurityContext {
+public class ServiceContext extends ConnectionContext implements SecurityContext {
    
    // List of roles for anonymous users
-   private static final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
+   private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
 
    private Person _usr;
    

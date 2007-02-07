@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class EventSyndicationService extends WebDataService {
+public class EventSyndicationService extends WebService {
 
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -37,11 +37,13 @@ public class EventSyndicationService extends WebDataService {
 
 		List entries = null;
 		try {
-			GetEvent dao = new GetEvent(_con);
+			GetEvent dao = new GetEvent(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 5));
 			entries = dao.getEvents();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the data element

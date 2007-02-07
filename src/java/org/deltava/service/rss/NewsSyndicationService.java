@@ -25,7 +25,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class NewsSyndicationService extends WebDataService {
+public class NewsSyndicationService extends WebService {
 
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -37,11 +37,13 @@ public class NewsSyndicationService extends WebDataService {
 
 		List entries = null;
 		try {
-			GetNews dao = new GetNews(_con);
+			GetNews dao = new GetNews(ctx.getConnection());
 			dao.setQueryMax(getCount(ctx, 10));
 			entries = dao.getNews();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Generate the data element

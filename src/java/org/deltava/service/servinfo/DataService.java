@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.io.*;
@@ -28,12 +28,9 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class DataService extends WebDataService {
+public class DataService extends WebService {
 
 	private static final Logger log = Logger.getLogger(DataService.class);
-
-	// Date formatter for validity date
-	private static final DateFormat _df = new SimpleDateFormat("yyyyMMddHHmmss");
 
 	// Networks
 	public static final String[] NETWORKS = { OnlineNetwork.VATSIM, OnlineNetwork.IVAO };
@@ -49,11 +46,13 @@ public class DataService extends WebDataService {
 		// Get the Pilots and their network IDs
 		Map<String, Integer> pilots = new HashMap<String, Integer>();
 		try {
-			GetPilotOnline dao = new GetPilotOnline(_con);
+			GetPilotOnline dao = new GetPilotOnline(ctx.getConnection());
 			for (int x = 0; x < NETWORKS.length; x++)
 				pilots.putAll(dao.getIDs(NETWORKS[x]));
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Load network data (this will use the cached copy if still valid)
@@ -91,10 +90,11 @@ public class DataService extends WebDataService {
 		ctx.println(";");
 		
 		// GENERAL section
+		final DateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 		ctx.println("!GENERAL");
 		ctx.println("VERSION = 8");
 		ctx.println("RELOAD = 5");
-		ctx.println("UPDATE = " + _df.format(dt.getUTC()));
+		ctx.println("UPDATE = " + df.format(dt.getUTC()));
 		ctx.println("CONNECTED CLIENTS = " + users.size());
 		ctx.println(";");
 		

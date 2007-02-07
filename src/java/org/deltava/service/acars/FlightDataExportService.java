@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class FlightDataExportService extends WebDataService {
+public class FlightDataExportService extends WebService {
 
 	/**
 	 * Executes the Web Service, writing ACARS Flight data in CSV format.
@@ -38,7 +38,7 @@ public class FlightDataExportService extends WebDataService {
 		// Get the ACARS data
 		List<RouteEntry> routeData = null; 
 		try {
-			GetACARSData dao = new GetACARSData(_con);
+			GetACARSData dao = new GetACARSData(ctx.getConnection());
 			FlightInfo info = dao.getInfo(id);
 			if (info != null) 
 				routeData = dao.getRouteEntries(id, info.getArchived());
@@ -46,6 +46,8 @@ public class FlightDataExportService extends WebDataService {
 				routeData = Collections.emptyList();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Write the CSV header

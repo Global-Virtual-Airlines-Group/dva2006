@@ -3,14 +3,12 @@ package org.deltava.servlet;
 
 import java.util.*;
 import java.io.IOException;
-import java.sql.Connection;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.jdbc.*;
 import org.deltava.service.*;
 
 import org.deltava.beans.Pilot;
@@ -113,40 +111,30 @@ public class WebServiceServlet extends BasicAuthServlet {
 			challenge(rsp, WS_REALM);
 			return;
 		}
+		
+		// Generate the service context
+		ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
+		ctx.setUser(usr);
 
-		// Get the JDBC Connection Pool
-		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-
-		Connection c = null;
 		try {
-			// If we're a data service, pass in a connection
-			if (svc instanceof WebDataService) {
-				c = pool.getConnection();
-				((WebDataService) svc).setConnection(c);
-			}
-
-			// Generate the service context
-			ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
-			ctx.setUser(usr);
 
 			// Execute the Web Service
 			if (svc.isLogged())
 				log.info("Executing Web Service " + svc.getClass().getName());
 
 			rsp.setStatus(svc.execute(ctx));
-		} catch (ControllerException ce) {
-			if (ce.isWarning()) {
-				log.warn("Error executing Web Service - " + ce.getMessage());
-			} else {
-				log.error("Error executing Web Service - " + ce.getMessage(), ce.getLogStackDump() ? ce : null);	
-			}
-		   
-			rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, ce.getMessage());
 		} catch (ServiceException se) {
-			log.error(se.getMessage(), se.getLogStackDump() ? se : null);
-			rsp.sendError(se.getCode(), se.getMessage());
-		} finally {
-			pool.release(c);
+			if (se.isWarning()) {
+				log.warn("Error executing Web Service - " + se.getMessage());
+			} else {
+				log.error("Error executing Web Service - " + se.getMessage(), se.getLogStackDump() ? se : null);	
+			}
+
+			try {
+				rsp.sendError(se.getCode(), se.getMessage());
+			} catch (Exception e) {
+				// empty
+			}
 		}
 		
 		// Disable the cache

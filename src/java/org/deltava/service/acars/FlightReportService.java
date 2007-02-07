@@ -3,7 +3,7 @@ package org.deltava.service.acars;
 
 import java.io.*;
 import java.util.*;
-import java.sql.SQLException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -33,7 +33,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class FlightReportService extends WebDataService {
+public class FlightReportService extends WebService {
 
 	private static final Logger log = Logger.getLogger(FlightReportService.class);
 
@@ -212,12 +212,14 @@ public class FlightReportService extends WebDataService {
 		afr.setTime(4, StringUtils.parse(ie.getChildTextTrim("time4X"), 0));
 
 		try {
+			Connection con = ctx.getConnection();
+			
 			// Get the user information
-			GetPilot pdao = new GetPilot(_con);
+			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getUser().getID());
 
 			// Check for Draft PIREPs by this Pilot
-			GetFlightReports prdao = new GetFlightReports(_con);
+			GetFlightReports prdao = new GetFlightReports(con);
 			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
@@ -227,7 +229,7 @@ public class FlightReportService extends WebDataService {
 			}
 			
 			// Check if this Flight Report counts for promotion
-			GetEquipmentType eqdao = new GetEquipmentType(_con);
+			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), afr.getEquipmentType());
 			if (promoEQ.contains(p.getEquipmentType()))
 				afr.setCaptEQType(promoEQ);
@@ -238,7 +240,7 @@ public class FlightReportService extends WebDataService {
 				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
 			
 			// Check for historic aircraft
-			GetAircraft acdao = new GetAircraft(_con);
+			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(afr.getEquipmentType());
 			afr.setAttribute(FlightReport.ATTR_HISTORIC, (a != null) && (a.getHistoric()));
 			
@@ -247,7 +249,7 @@ public class FlightReportService extends WebDataService {
 				afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
 			
 			// Check if it's a Flight Academy flight
-			GetSchedule sdao = new GetSchedule(_con);
+			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
 			afr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
 			
@@ -264,10 +266,10 @@ public class FlightReportService extends WebDataService {
 			}
 			
 			// Turn off auto-commit
-			_con.setAutoCommit(false);
+			ctx.startTX();
 
 			// Write the connection/info records
-			SetACARSData awdao = new SetACARSData(_con);
+			SetACARSData awdao = new SetACARSData(con);
 			awdao.createConnection(ce);
 			awdao.createFlight(inf);
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
@@ -276,7 +278,7 @@ public class FlightReportService extends WebDataService {
 			awdao.writePositions(ce.getID(), inf.getID(), positions);
 			
 			//	Update the checkride record (don't assume pilots check the box, because they don't)
-			GetExam exdao = new GetExam(_con);
+			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
@@ -284,38 +286,30 @@ public class FlightReportService extends WebDataService {
 				cr.setStatus(Test.SUBMITTED);
 				
 				// Update the checkride
-				SetExam wdao = new SetExam(_con);
+				SetExam wdao = new SetExam(con);
 				wdao.write(cr);
 			} else {
 				afr.setAttribute(FlightReport.ATTR_CHECKRIDE, false);
 			}
 			
 			// Write the PIREP
-			SetFlightReport fwdao = new SetFlightReport(_con);
+			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(afr);
 			fwdao.writeACARS(afr, SystemData.get("airline.db"));
 
 			// Commit
-			_con.commit();
-		} catch (SQLException se) {
-			rollback();
+			ctx.commitTX();
 		} catch (DAOException de) {
-			rollback();
+			ctx.rollbackTX();
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Return back success
 		return SC_OK;
 	}
 	
-	private void rollback() {
-		try {
-			_con.rollback();
-		} catch (SQLException se) {
-			log.warn("Error rolling back transaction - " + se.getMessage());
-		}
-	}
-
 	/**
 	 * Returns wether this web service requires authentication.
 	 * @return TRUE always

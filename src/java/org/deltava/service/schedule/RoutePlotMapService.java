@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -35,7 +35,7 @@ public class RoutePlotMapService extends RouteMapService {
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
-			GetNavRoute dao = new GetNavRoute(_con);
+			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 
 			// Get the departure/arrival airports
 			AirportLocation aD = dao.getAirport(ctx.getParameter("airportD"));
@@ -89,6 +89,8 @@ public class RoutePlotMapService extends RouteMapService {
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Convert the points into a List

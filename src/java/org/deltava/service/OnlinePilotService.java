@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class OnlinePilotService extends WebDataService {
+public class OnlinePilotService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -49,11 +49,13 @@ public class OnlinePilotService extends WebDataService {
 
 		Collection<Pilot> results = null;
 		try {
-			GetPilotOnline dao = new GetPilotOnline(_con);
+			GetPilotOnline dao = new GetPilotOnline(ctx.getConnection());
 			dao.setQueryMax(maxResults);
 			results = dao.getPilots(network);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the XML document

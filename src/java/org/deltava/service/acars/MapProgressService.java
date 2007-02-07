@@ -1,8 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -22,7 +23,7 @@ import org.deltava.util.*;
  * @since 1.0
  */
 
-public class MapProgressService extends WebDataService {
+public class MapProgressService extends WebService {
 
 	/**
 	 * Executes the Web Service.
@@ -45,19 +46,22 @@ public class MapProgressService extends WebDataService {
 		Collection<GeoLocation> routePoints = null;
 		Collection<? extends MapEntry> routeWaypoints = null;
 		try {
-			GetACARSData dao = new GetACARSData(_con);
+			Connection con = ctx.getConnection();
+			GetACARSData dao = new GetACARSData(con);
 			routePoints = dao.getRouteEntries(id, false, false);
 
 			// Load the route and the route waypoints
 			info = dao.getInfo(id);
 			if ((info != null) && doRoute) {
-				GetNavRoute navdao = new GetNavRoute(_con);
+				GetNavRoute navdao = new GetNavRoute(con);
 				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
 			} else {
 				routeWaypoints = new HashSet<MapEntry>();
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// Generate the XML document

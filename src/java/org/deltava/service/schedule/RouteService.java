@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class RouteService extends WebDataService {
+public class RouteService extends WebService {
 	
 	private static final Map<String, String> LCOLORS = CollectionUtils.createMap(Arrays.asList(MapEntry.COLORS),
 			Arrays.asList(MapEntry.LINECOLORS));
@@ -44,10 +44,12 @@ public class RouteService extends WebDataService {
 		
 		Collection<ScheduleEntry> flights = null;
 		try {
-			GetSchedule dao = new GetSchedule(_con);
+			GetSchedule dao = new GetSchedule(ctx.getConnection());
 			flights = dao.getFlights(a);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the XML document

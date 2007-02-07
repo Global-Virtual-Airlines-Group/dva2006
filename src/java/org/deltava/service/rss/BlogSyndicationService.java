@@ -1,9 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.rss;
 
 import java.net.*;
 import java.util.*;
 import java.io.IOException;
+import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -26,7 +27,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class BlogSyndicationService extends WebDataService {
+public class BlogSyndicationService extends WebService {
 
 	/**
 	 * Executes the Web Service, returning an RSS data stream.
@@ -39,20 +40,22 @@ public class BlogSyndicationService extends WebDataService {
 		Pilot usr = null;
 		Collection<Entry> entries = null;
 		try {
-			GetBlog dao = new GetBlog(_con);
-			dao.setQueryMax(getCount(ctx, 10));
-			
+			Connection con = ctx.getConnection();
 			// Get the blog entries
+			GetBlog dao = new GetBlog(con);
+			dao.setQueryMax(getCount(ctx, 10));
 			int authorID = StringUtils.isEmpty(ctx.getParameter("id")) ? 0 : StringUtils.parseHex(ctx.getParameter("id"));
 			entries = (authorID == 0) ? dao.getAll() : dao.getLatest(authorID, false);
 			
 			// Get the Author
 			if (authorID != 0) {
-				GetPilot pdao = new GetPilot(_con);
+				GetPilot pdao = new GetPilot(con);
 				usr = pdao.get(authorID);
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 		
 		// Generate the data element

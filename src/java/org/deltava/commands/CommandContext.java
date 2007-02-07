@@ -1,8 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
-import java.sql.Connection;
 
 import javax.servlet.http.*;
 
@@ -12,8 +11,6 @@ import org.deltava.beans.FileUpload;
 import org.deltava.jdbc.*;
 
 import org.deltava.security.SecurityContext;
-import org.deltava.util.system.SystemData;
-
 /**
  * A class for storing run-time data needed for Command invocations. This class handles reserving and
  * releasing JDBC Connections, since by doing so we can easily return connections back to the pool in a
@@ -24,10 +21,10 @@ import org.deltava.util.system.SystemData;
  * @see Command
  */
 
-public class CommandContext implements java.io.Serializable, SecurityContext {
+public class CommandContext extends ConnectionContext implements SecurityContext {
 
     // List of roles for anonymous users
-    private static final List<String> ANONYMOUS_ROLES = Arrays.asList(new String[] { "Anonymous" } );
+    private static final Collection<String> ANONYMOUS_ROLES = Collections.singleton("Anonymous");
     
     public static final String AUTH_COOKIE_NAME = "authToken";
     public static final String USER_ATTR_NAME = "authUser";
@@ -44,7 +41,6 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
 
     private final CacheControl _cache = new CacheControl();
     private final CommandResult _result = new CommandResult(null);
-    private Connection _con;
 
     /**
      * Creates a new Command context from an HTTP Servlet Request/Resposne pair.
@@ -91,41 +87,6 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     }
 
     /**
-     * Reserves a JDBC Connection from the connection pool.
-     * @param isSystem if the command requires a system connection.
-     * @return a JDBC Connection
-     * @throws ConnectionPoolException if an error occurs
-     * @throws IllegalStateException if a connection has already been reserved by this context
-     * @see CommandContext#getConnection()
-     * @see ConnectionPool#getConnection(boolean)
-     * @see CommandContext#release()
-     */
-    public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
-        ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-        if (pool == null)
-            throw new ConnectionPoolException("No Connection Pool defined", false);
-
-        // Check if a connection has already been reserved
-        if (_con != null)
-            throw new IllegalStateException("Connection already reserved");
-
-        _con = pool.getConnection(isSystem);
-        return _con;
-    }
-
-    /**
-     * Reserves a non-system JDBC Connection from the connection pool.
-     * @return a JDBC Connection
-     * @throws ConnectionPoolException if an error occurs
-     * @throws IllegalStateException if a connection has already been reserved by this context
-     * @see CommandContext#getConnection(boolean)
-     * @see CommandContext#release()
-     */
-    public Connection getConnection() throws ConnectionPoolException {
-        return getConnection(false);
-    }
-    
-    /**
      * Returns wether an Administrator is impersonating another user.
      * @return TRUE if superuser mode is on, otherwise FALSE
      */
@@ -133,69 +94,14 @@ public class CommandContext implements java.io.Serializable, SecurityContext {
     	HttpSession s = _req.getSession(false);
     	return (s == null) ? false : (s.getAttribute(SU_ATTR_NAME) instanceof Person);
     }
-    
-    /**
-     * Helper method to ensure a connection has been reserved.
-     */
-    private void checkConnection() {
-       if (_con == null)
-          throw new IllegalStateException("No JDBC Connection reserved");
-    }
-    
-    /**
-     * Starts a JDBC transaction block, by turning off autoCommit on the reserved Connection.
-     * @throws IllegalStateException if no JDBC Connection is reserved
-     * @throws TransactionException if a JDBC error occurs
-     * @see CommandContext#commitTX()
-     * @see CommandContext#rollbackTX()
-     */
-    public void startTX() throws TransactionException {
-       checkConnection();
-       try {
-          _con.setAutoCommit(false);
-       } catch (Exception e) {
-          throw new TransactionException(e);
-       }
-    }
-
-    /**
-     * Commits the current JDBC transaction.
-     * @throws IllegalStateException if no JDBC Connection is reserved
-     * @throws TransactionException if a JDBC error occurs
-     * @see CommandContext#startTX()
-     * @see CommandContext#rollbackTX()
-     */
-    public void commitTX() throws TransactionException {
-       checkConnection();
-       try {
-          _con.commit();
-       } catch (Exception e) {
-          throw new TransactionException(e);
-       }
-    }
-    
-    /**
-     * Rolls back the current JDBC transaction. This will consume all exceptions.
-     * @see CommandContext#startTX()
-     * @see CommandContext#commitTX()
-     */
-    public void rollbackTX() {
-       try {
-          _con.rollback();
-       } catch (Exception e) { }
-    }
 
     /**
      * Returns a JDBC Connection to the connection pool.
      */
-    public void release() {
-        ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-        if ((pool == null) || (_con == null))
-            return;
-
-        // Return the connection and record the back-end usage
-        _result.setBackEndTime(pool.release(_con));
-        _con = null;
+    public long release() {
+    	long time = super.release();
+        _result.setBackEndTime(time);
+        return time;
     }
 
     /**

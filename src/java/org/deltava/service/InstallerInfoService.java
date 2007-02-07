@@ -1,18 +1,17 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
 import java.util.StringTokenizer;
 import java.io.IOException;
 
-import javax.servlet.http.HttpServletResponse;
+import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 import org.jdom.output.*;
 
 import org.deltava.beans.fleet.Installer;
 
-import org.deltava.dao.GetLibrary;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -24,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class InstallerInfoService extends WebDataService {
+public class InstallerInfoService extends WebService {
 
 	/**
 	 * Executes the Web Service, returning an INI file for use with the Fleet Installers.
@@ -38,7 +37,7 @@ public class InstallerInfoService extends WebDataService {
 	   String db = SystemData.get("airline.db");
 		String code = ctx.getParameter("code");
 		if (code == null)
-			throw new ServiceException(HttpServletResponse.SC_BAD_REQUEST, "No Installer Code");
+			throw new ServiceException(SC_BAD_REQUEST, "No Installer Code");
 		
 		// Check if we're using DB.CODE notation
 		if (code.indexOf('.') != -1) {
@@ -50,15 +49,17 @@ public class InstallerInfoService extends WebDataService {
 		// Get the DAO and do the search
 		Installer i = null;
 		try {
-			GetLibrary dao = new GetLibrary(_con);
+			GetLibrary dao = new GetLibrary(ctx.getConnection());
 			i = dao.getInstallerByCode(code, db);
 		} catch (DAOException de) {
-			throw new ServiceException(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, de.getMessage());
+			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
 		}
 
 		// If no installer found, return a 404 error
 		if (i == null)
-			throw new ServiceException(HttpServletResponse.SC_NOT_FOUND, code + " not found");
+			throw new ServiceException(SC_NOT_FOUND, code + " not found");
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -84,11 +85,11 @@ public class InstallerInfoService extends WebDataService {
 			ctx.println(xmlOut.outputString(doc));
 			ctx.commit();
 		} catch (IOException ie) {
-			throw new ServiceException(HttpServletResponse.SC_CONFLICT, "I/O Error");
+			throw new ServiceException(SC_CONFLICT, "I/O Error");
 		}
 
 		// Write result code
-		return HttpServletResponse.SC_OK;
+		return SC_OK;
 	}
 
 	/**
