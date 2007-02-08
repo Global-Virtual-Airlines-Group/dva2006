@@ -109,8 +109,13 @@ public class TaskScheduler implements Runnable, Thread.UncaughtExceptionHandler 
 
 			// Sleep until the next invocation
 			long interval = (System.currentTimeMillis() - now);
-			if (interval < 60000)
-				ThreadUtils.sleep(60000 - interval);
+			if (interval < 60000) {
+				try {
+					Thread.sleep(60000 - interval);	
+				} catch (InterruptedException ie) {
+					Thread.currentThread().interrupt();
+				}
+			}
 		}
 
 		log.info("Stopping");
