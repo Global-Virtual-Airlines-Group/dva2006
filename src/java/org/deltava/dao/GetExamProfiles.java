@@ -422,14 +422,14 @@ public class GetExamProfiles extends DAO {
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.QUESTION_ID, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
 				+ "EXAMQUESTIONS EQ, EXAMS E WHERE (EQ.EXAM_ID=E.ID) AND (E.CREATED_ON >= DATE_SUB(NOW(), "
-				+ "INTERVAL ? DAY) AND (E.ISEMPTY=?) AND (EQ.QUESTION_ID IN(");
+				+ "INTERVAL ? DAY)) AND (E.ISEMPTY=?) AND (EQ.QUESTION_ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
 			sqlBuf.append(i.next().toString());
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
 		
-		sqlBuf.append(") GROUP BY EQ.QUESTION_ID");
+		sqlBuf.append(")) GROUP BY EQ.QUESTION_ID");
 		
 		// Prepare the statement
 		prepareStatement(sqlBuf.toString());
