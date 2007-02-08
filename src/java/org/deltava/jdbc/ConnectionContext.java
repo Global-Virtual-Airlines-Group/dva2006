@@ -111,7 +111,8 @@ public abstract class ConnectionContext {
         if ((_pool == null) || (_con == null))
             return 0;
 
+        long timeUsed = _pool.release(_con);
         _con = null;
-        return _pool.release(_con);
+        return timeUsed;
     }
 }
