@@ -11,6 +11,7 @@ import org.deltava.util.ConfigLoader;
 import org.deltava.util.system.SystemData;
 
 /**
+ * An abstract class to support Authenticators that use a JDBC Connection Pool.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -71,5 +72,7 @@ public abstract class ConnectionPoolAuthenticator implements SQLAuthenticator {
 	protected void closeConnection(Connection c) {
 		if (_con.get() == null)
 			_pool.release(c);
+		else
+			clearConnection();
 	}
 }
