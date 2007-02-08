@@ -410,10 +410,10 @@ public class GetExamProfiles extends DAO {
 		for (Iterator<QuestionProfile> i = qs.iterator(); i.hasNext(); ) {
 			QuestionProfile qp = i.next();
 			Integer id = new Integer(qp.getID());
-			if (!_rCache.contains(id))
+			ExamResults er = _rCache.get(id);
+			if (er == null)
 				IDs.add(id);
 			else {
-				ExamResults er = _rCache.get(id);
 				qp.setTotalAnswers(er.getTotal());
 				qp.setCorrectAnswers(er.getCorrect());
 			}
