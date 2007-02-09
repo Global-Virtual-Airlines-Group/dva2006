@@ -6,7 +6,6 @@ import java.sql.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -79,17 +78,17 @@ class ConnectionMonitor implements Runnable {
     	  log.debug("Checking Connection Pool");
       
       // Loop through the entries
-      for (Iterator<ConnectionPoolEntry> i = _entries.iterator(); i.hasNext(); ) {
+      Collection<ConnectionPoolEntry> entries = new ArrayList<ConnectionPoolEntry>(_entries); 
+      for (Iterator<ConnectionPoolEntry> i = entries.iterator(); i.hasNext(); ) {
          ConnectionPoolEntry cpe = i.next();
 
          // Check if the entry has timed out
          if (cpe.inUse() && (cpe.getUseTime() > ConnectionPool.MAX_USE_TIME)) {
-            log.warn("Releasing stale Connection " + cpe);
+        	 log.error("Releasing stale Connection " + cpe, cpe.getStackInfo());
             _pool.release(cpe.getConnection());
          } else if (cpe.isDynamic() && !cpe.inUse()) {
-            log.warn("Releasing stale dyanmic Connection " + cpe);
+            log.error("Releasing stale dyanmic Connection " + cpe, cpe.getStackInfo());
             _pool.release(cpe.getConnection());
-            i.remove();
          } else if (!cpe.inUse() && !cpe.checkConnection()) {
             log.warn("Reconnecting Connection " + cpe);
             cpe.close();
@@ -125,7 +124,11 @@ class ConnectionMonitor implements Runnable {
       // Check loop
       while (!Thread.currentThread().isInterrupted()) {
          checkPool();
-         ThreadUtils.sleep(_sleepTime);
+         try {
+        	 Thread.sleep(_sleepTime);
+         } catch (InterruptedException ie) {
+        	 Thread.currentThread().interrupt();
+         }
       }
 
       log.info("Stopping");
