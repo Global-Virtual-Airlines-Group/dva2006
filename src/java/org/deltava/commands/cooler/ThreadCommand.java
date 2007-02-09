@@ -185,7 +185,7 @@ public class ThreadCommand extends AbstractCommand {
 			wdao.viewThread(thread.getID());
 
 			// Save all channels in the thread for the move combobox
-			if (ac.getCanUnlock() || ac.getCanLock()) {
+			if (ctx.isUserInRole("Moderator")) {
 				ctx.setAttribute("channel", c, REQUEST);
 				Collection<Channel> channels = cdao.getChannels(airline, ctx.isUserInRole("Admin"));
 				channels.remove(Channel.ALL);
