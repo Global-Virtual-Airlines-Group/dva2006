@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.Iterator;
@@ -69,7 +69,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 
 		_expiry = expiry * 1000;
 	}
-	
+
 	/**
 	 * Returns an unexpired entry from the cache.
 	 * @param key the cache key
@@ -78,6 +78,16 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 	 */
 	public T get(Object key) {
 		return get(key, false);
+	}
+
+	/**
+	 * Returns if the cache contains a particular cache key <i>and the key has not expired</i>.
+	 * @param key the cache key
+	 * @return TRUE if the cache contains the key, otherwise FALSE
+	 */
+	public synchronized boolean contains(Object key) {
+		ExpiringCacheEntry<T> entry = (ExpiringCacheEntry<T>) _cache.get(key);
+		return (entry != null) && (!entry.isExpired());
 	}
 
 	/**
@@ -103,7 +113,7 @@ public class ExpiringCache<T extends Cacheable> extends Cache<T> {
 		hit();
 		return entry.getData();
 	}
-	
+
 	/**
 	 * Queries the cache to determine if an object has expired
 	 * @param key the cache key
