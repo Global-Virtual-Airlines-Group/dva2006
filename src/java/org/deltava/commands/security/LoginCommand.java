@@ -99,7 +99,13 @@ public class LoginCommand extends AbstractCommand {
 
 			// Get the authenticator and try to authenticate
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			auth.authenticate(p, ctx.getParameter("pwd"));
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.authenticate(p, ctx.getParameter("pwd"));
+				sqlAuth.clearConnection();
+			} else
+				auth.authenticate(p, ctx.getParameter("pwd"));
 
 			// If we're on leave, then reset the status (SetPilotLogin.login() will write it)
 			boolean returnToActive = false;
@@ -122,12 +128,7 @@ public class LoginCommand extends AbstractCommand {
 			ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
 
 			// Save screen resolution
-			try {
-				cData.setScreenSize(Integer.parseInt(ctx.getParameter("screenX")), Integer.parseInt(ctx
-						.getParameter("screenY")));
-			} catch (NumberFormatException nfe) {
-				cData.setScreenSize(1024, 768);
-			}
+			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx.getParameter("screenY"), 768));
 
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
