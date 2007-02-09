@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" space="default" pad="default" cmd="academyissues">
+<view:table className="view" space="default" pad="default" cmd="hdissues">
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
  <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="hdissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
