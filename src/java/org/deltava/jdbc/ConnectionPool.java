@@ -297,7 +297,12 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 						_monitor.removeConnection(cpe);
 						cpe.close();
 						i.remove();
-						log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+						
+						// If it's stale, log the stack dump
+						if (cpe.getUseCount() < MAX_USE_TIME)
+							log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+						else
+							log.error("Closed stale dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms", cpe.getStackInfo());
 					} else {
 						log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
 
