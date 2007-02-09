@@ -130,13 +130,10 @@ public class GetExamProfiles extends DAO {
 			boolean isMultiChoice = (rs.getInt(5) > 0);
 
 			// Populate the Question Profile
-			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(
-					rs.getString(2));
+			QuestionProfile qp = isMultiChoice ? new MultiChoiceQuestionProfile(rs.getString(2)) : new QuestionProfile(rs.getString(2));
 			qp.setID(rs.getInt(1));
 			qp.setCorrectAnswer(rs.getString(3));
 			qp.setActive(rs.getBoolean(4));
-			// qp.setTotalAnswers(rs.getInt(5));
-			//qp.setCorrectAnswers(rs.getInt(6));
 			
 			// Load image data
 			if (rs.getInt(7) > 0) {
@@ -418,6 +415,10 @@ public class GetExamProfiles extends DAO {
 				qp.setCorrectAnswers(er.getCorrect());
 			}
 		}
+		
+		// Do nothing if empty collection
+		if (IDs.isEmpty())
+			return;
 		
 		// Build SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.QUESTION_ID, COUNT(EQ.CORRECT), SUM(EQ.CORRECT) FROM "
