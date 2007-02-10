@@ -433,7 +433,7 @@ public class GetExamProfiles extends DAO {
 		sqlBuf.append(")) GROUP BY EQ.QUESTION_ID");
 		
 		// Prepare the statement
-		prepareStatement(sqlBuf.toString());
+		prepareStatementWithoutLimits(sqlBuf.toString());
 		_ps.setInt(1, SystemData.getInt("testing.correct_ratio_age", 90));
 		_ps.setBoolean(2, false);
 		
