@@ -31,16 +31,26 @@
         	<link href="http://www.servlets.com/cos/javadoc" />
         	
            	<doctitle><![CDATA[<h2>Golgotha API Documentation</h2>]]></doctitle>
-			<bottom><![CDATA[<i>Copyright &#169; 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
+			<bottom><![CDATA[<i>Copyright &#169; 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.</i>]]></bottom>
         </javadoc>
     	
-   		<!-- Load the FTP server properties -->
+   		<!-- Load the SCP server properties -->
     	<property name="path.javadoc" value="/usr/local/www/deltava.org/www/javadoc" />
    		<loadproperties srcFile="data/build_doc.properties">
    			<filterchain>
 	   			<prefixlines prefix="javadoc." />
    			</filterchain>
-   		</loadproperties>    	
+   		</loadproperties>
+    	
+    	<!-- TAR/GZIP the JavaDoc -->
+    	<tar destfile="${java.io.tmpdir}/javadoc.tar" longfile="fail">
+			<tarfileset uid="500" group="gva" dir="${java.io.tmpdir}/javadoc">
+    			<include name="**/*" />
+    			<include name="*" />
+    		</tarfileset>
+		</tar>
+		<gzip src="${java.io.tmpdir}/javadoc.tar" destfile="${java.io.tmpdir}/javadoc.tar.gz" />
+		<delete file="${java.io.tmpdir}/javadoc.tar" />
     	
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
@@ -49,12 +59,16 @@
     	
     	<!-- Upload the JavaDoc -->
     	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:${javadoc.ssh.path.javadoc}" trust="yes"
-    		verbose="yes" password="${javadoc.ssh.pwd}">
-    		<fileset dir="${java.io.tmpdir}/javadoc" />
-    	</scp>
+    		verbose="yes" password="${javadoc.ssh.pwd}" file="${java.io.tmpdir}/javadoc.tar.gz" />
+    	
+    	<!-- Extract the JavaDoc -->
+    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
+    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
+    		command="cd ${ssh.path.javadoc} ; tar xvfz javadoc.tar.gz ; rm javadoc.tar.gz" />
     	
     	<!-- Clean out the temp folder -->
     	<delete dir="${java.io.tmpdir}/javadoc" />
+    	<delete file="${java.io.tmpdir}/javadoc.tar.gz" />
     </target>
 	
 	<target name="junit">
