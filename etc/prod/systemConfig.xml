@@ -577,7 +577,7 @@
 		<build>
 			<map name="minimum">
 				<v1_4>75</v1_4>
-				<v2_0>82</v2_0>
+				<v2_0>84</v2_0>
 			</map>
 
 			<latest type="Integer">84</latest>
@@ -605,7 +605,6 @@
 
 		<list name="login_msgs" attr="msg">
 			<msg>All messages are logged by user ID and IP address.</msg>
-			<msg>Builds 71, 75, 82 and 83 will be deprecated soon.</msg>
 		</list>
 
 		<ack>
