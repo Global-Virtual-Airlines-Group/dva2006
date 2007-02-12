@@ -254,9 +254,8 @@ public class GetACARSData extends DAO {
 		try {
 			setQueryMax(1);
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(DISTINCT M.ID), COUNT(P.CON_ID) FROM acars.CONS C "
-					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON (C.ID=M.CON_ID) "
-					+ "LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID) WHERE (C.ID=?) GROUP BY C.ID");
+					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(P.REPORT_TIME) FROM acars.CONS C LEFT JOIN acars.FLIGHTS F "
+					+ "ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) WHERE (C.ID=?) GROUP BY C.ID");
 			_ps.setLong(1, conID);
 
 			// Get the first entry, or null
@@ -313,7 +312,7 @@ public class GetACARSData extends DAO {
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		ResultSetMetaData md = rs.getMetaData();
-		boolean hasMessageCounts = (md.getColumnCount() > 6);
+		boolean hasMessageCounts = (md.getColumnCount() > 7);
 
 		// Iterate through the results
 		List<ConnectionEntry> results = new ArrayList<ConnectionEntry>();
@@ -326,8 +325,7 @@ public class GetACARSData extends DAO {
 			entry.setClientBuild(rs.getInt(6));
 			if (hasMessageCounts) {
 				entry.setFlightInfoCount(rs.getInt(7));
-				entry.setMessageCount(rs.getInt(8));
-				entry.setPositionCount(rs.getInt(9));
+				entry.setPositionCount(rs.getInt(8));
 			}
 
 			// Add to results
