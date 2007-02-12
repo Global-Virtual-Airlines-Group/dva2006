@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -12,10 +12,8 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class TextMessage implements java.io.Serializable, Comparable, AuthoredBean, ACARSLogEntry {
+public class TextMessage implements Comparable, AuthoredBean, ACARSLogEntry {
 
-   private long _id;
-   private long _conID;
    private Date _date;
    private String _msg;
    private int _authorID;
@@ -23,43 +21,18 @@ public class TextMessage implements java.io.Serializable, Comparable, AuthoredBe
 
    /**
     * Creates a new Text Message bean.
-    * @param id the message ID
-    * @param msg the text message
     * @throws IllegalArgumentException if id is zero or negative
     * @throws NullPointerException if msg is null
-    * @see TextMessage#getID()
-    * @see TextMessage#getMessage()
+    * @see TextMessage#getDate()
     */
-   public TextMessage(long id, String msg) {
+   public TextMessage(Date dt) {
       super();
-      setID(id);
-      setMessage(msg);
-   }
-
-   /**
-    * Returns the ACARS message ID.
-    * @return the message ID
-    * @see TextMessage#setID(long)
-    * @see TextMessage#getConnectionID()
-    */
-   public long getID() {
-      return _id;
-   }
-
-   /**
-    * Returns the ACARS connection ID.
-    * @return the connection ID
-    * @see TextMessage#setConnectionID(long)
-    * @see TextMessage#getID()
-    */
-   public long getConnectionID() {
-      return _conID;
+      _date = dt;
    }
 
    /**
     * Returns the date the message was sent.
     * @return the date/time of the message
-    * @see TextMessage#setDate(Date)
     */
    public Date getDate() {
       return _date;
@@ -105,43 +78,6 @@ public class TextMessage implements java.io.Serializable, Comparable, AuthoredBe
    }
 
    /**
-    * Updates the database ID of this message.
-    * @param id the database ID
-    * @throws IllegalArgumentException if id is zero or negative
-    * @see TextMessage#getID()
-    * @see TextMessage#setConnectionID(long)
-    */
-   public void setID(long id) {
-      if (id < 1)
-         throw new IllegalArgumentException("Invalid Message ID - " + id);
-
-      _id = id;
-   }
-
-   /**
-    * Updates the ACARS connection ID of this message.
-    * @param id the connection ID
-    * @throws IllegalArgumentException if id is zero or negative
-    * @see TextMessage#getConnectionID()
-    * @see TextMessage#setID(long)
-    */
-   public void setConnectionID(long id) {
-      if (id < 0)
-         throw new IllegalArgumentException("Invalid Connection ID - " + id);
-
-      _conID = id;
-   }
-
-   /**
-    * Updates the date of the message.
-    * @param dt the date/time the message was sent
-    * @see TextMessage#getDate()
-    */
-   public void setDate(Date dt) {
-      _date = dt;
-   }
-
-   /**
     * Updates the Author of the message.
     * @param id the Author's database ID
     * @throws IllegalArgumentException if id is zero or negative
@@ -183,6 +119,6 @@ public class TextMessage implements java.io.Serializable, Comparable, AuthoredBe
     */
    public int compareTo(Object o2) {
       TextMessage msg2 = (TextMessage) o2;
-      return _date.compareTo(msg2.getDate());
+      return _date.compareTo(msg2._date);
    }
 }

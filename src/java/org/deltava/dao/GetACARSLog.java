@@ -86,10 +86,9 @@ public class GetACARSLog extends GetACARSData {
 	public List<ConnectionEntry> getUnusedConnections(int cutoff) throws DAOException {
 		try {
 			prepareStatement("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), C.REMOTE_HOST, "
-					+ "C.CLIENT_BUILD, COUNT(DISTINCT M.ID) AS MC, COUNT(DISTINCT F.ID) AS FC, COUNT(P.CON_ID) AS PC "
-					+ "FROM acars.CONS C LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.MESSAGES M ON "
-					+ "(C.ID=M.CON_ID) LEFT JOIN acars.POSITIONS P ON (C.ID=P.CON_ID)  WHERE (C.DATE < "
-					+ "DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID HAVING (MC=0) AND (FC=0) AND (PC=0) "
+					+ "C.CLIENT_BUILD, COUNT(DISTINCT F.ID) AS FC, COUNT(P.FLIGHT_ID) AS PC FROM acars.CONS C "
+					+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID) "
+					+ "WHERE (C.DATE < DATE_SUB(NOW(), INTERVAL ? HOUR)) GROUP BY C.ID HAVING (FC=0) AND (PC=0) "
 					+ "ORDER BY C.DATE");
 			_ps.setInt(1, cutoff);
 			return executeConnectionInfo();
@@ -229,11 +228,10 @@ public class GetACARSLog extends GetACARSData {
 		// Iterate through the requests
 		List<TextMessage> results = new ArrayList<TextMessage>();
 		while (rs.next()) {
-			TextMessage msg = new TextMessage(rs.getLong(1), rs.getString(6));
-			msg.setConnectionID(rs.getLong(2));
-			msg.setDate(rs.getTimestamp(3));
-			msg.setAuthorID(rs.getInt(4));
-			msg.setRecipientID(rs.getInt(5));
+			TextMessage msg = new TextMessage(rs.getTimestamp(1));
+			msg.setAuthorID(rs.getInt(2));
+			msg.setRecipientID(rs.getInt(3));
+			msg.setMessage(rs.getString(4));
 
 			// Add to results
 			results.add(msg);
