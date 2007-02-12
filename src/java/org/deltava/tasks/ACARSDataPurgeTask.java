@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -33,8 +33,8 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 	 * Executes the task.
 	 */
 	protected void execute() {
+		
 		// Determine the purge intervals
-		int msgPurge = SystemData.getInt("log.purge.messages", 72);
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
 		int conPurge = SystemData.getInt("log.purge.cons", 60);
 		log.info("Executing");
@@ -44,23 +44,22 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 			
 			// Remove messages and flights
 			SetACARSLog wdao = new SetACARSLog(con);
-			log.info("Purged " + wdao.purgeMessages(msgPurge) + " text messages");
-			log.info("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
+			log.warn("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
 			
 			// Get connections
 			GetACARSLog dao = new GetACARSLog(con);
-			Collection cons = dao.getUnusedConnections(conPurge);
+			Collection<ConnectionEntry> cons = dao.getUnusedConnections(conPurge);
 			
 			// Purge the connections
 			int purgeCount = 0;
-			for (Iterator i = cons.iterator(); i.hasNext(); ) {
-				ConnectionEntry ce = (ConnectionEntry) i.next();
+			for (Iterator<ConnectionEntry> i = cons.iterator(); i.hasNext(); ) {
+				ConnectionEntry ce = i.next();
 				try {
 					wdao.deleteConnection(ce.getID());
 					purgeCount++;
-					log.info("Purged Connection " + StringUtils.formatHex(ce.getID()));
+					log.warn("Purged Connection " + StringUtils.formatHex(ce.getID()));
 				} catch (DAOException de) {
-					log.warn("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - " + de.getMessage());
+					log.error("Error purging Connection " + StringUtils.formatHex(ce.getID()) + " - " + de.getMessage());
 				}
 			}
 			
