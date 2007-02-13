@@ -34,7 +34,7 @@
  <td class="label">Pilot Code</td>
  <td class="data"><el:text name="pilotCode" idx="*" size="7" max="8" value="${param.pilotCode}" /></td>
  <td class="label">Maximum Results</td>
- <td class="data"><el:text name="viewCount" idx="*" size="2" max="2" value="${param.viewCount}" /></td>
+ <td class="data"><el:text name="viewCount" idx="*" size="3" max="4" value="${param.viewCount}" /></td>
 </tr>
 <tr>
  <td class="label">Start Date/Time</td>
@@ -45,6 +45,10 @@
  <td class="data"><el:text name="endDate" idx="*" size="10" max="10" value="${param.endDate}" />&nbsp;
 <el:text name="endTime" idx="*" size="8" max="8" value="${param.endTime}" />&nbsp;
 <el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].endDate')" /></td>
+</tr>
+<tr>
+ <td class="label">Search String</td>
+ <td class="data" colspan="3"><el:text name="searchStr" idx="*" size="32" max="64" value="${param.searchStr}" /></td>
 </tr>
 <c:if test="${!empty system_message}">
 <tr class="pri mid error">
@@ -65,31 +69,13 @@
 <c:when test="${!empty viewContext.results}">
 <!-- Table Log Results -->
 <view:table className="view" space="default" pad="default" cmd="acarslogm">
-<!-- Table Header Bar -->
-<tr class="title caps">
- <td width="12%">DATE/TIME</td>
- <td width="15%">FROM</td>
- <td width="15%">TO</td>
- <td>MESSAGE TEXT</td>
+<tr class="title">
+ <td colspan="4" class="left caps">TEXT MESSAGES</td>
 </tr>
-
-<!-- Log Entries -->
 <c:forEach var="msg" items="${viewContext.results}">
-<c:set var="author" value="${pilots[msg.authorID]}" scope="request" />
-<c:set var="authorLoc" value="${userData[msg.authorID]}" scope="request" />
-<view:row entry="${msg}">
- <td class="small"><fmt:date date="${msg.date}" t="HH:mm:ss" /></td>
- <td class="pri bld"><el:profile location="${authorLoc}">${author.name}</el:profile></td>
-<c:if test="${msg.recipientID > 0}">
-<c:set var="recipient" value="${pilots[msg.recipientID]}" scope="request" />
-<c:set var="recipientLoc" value="${userData[msg.recipientID]}" scope="request" />
- <td class="bld"><el:profile location="${recipientLoc}">${recipient.name}</el:profile></td>
- <td class="left small">${msg.message}</td>
-</c:if>
-<c:if test="${msg.recipientID == 0}">
- <td colspan="2" class="left small">${msg.message}</td>
-</c:if>
-</view:row>
+<tr>
+ <td colspan="4" class="left"><fmt:text value="${msg}" /></td>
+</tr>
 </c:forEach>
 
 <!-- Scroll Bar -->

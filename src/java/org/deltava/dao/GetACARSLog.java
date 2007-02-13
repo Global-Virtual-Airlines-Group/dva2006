@@ -99,10 +99,11 @@ public class GetACARSLog extends GetACARSData {
 	/**
 	 * Returns all ACARS text messages matching particular criteria.
 	 * @param criteria the ACARS log search criteria
+	 * @param searchStr text to search for in the message body, or null
 	 * @return a List of TextMessage beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<TextMessage> getMessages(LogSearchCriteria criteria) throws DAOException {
+	public List<TextMessage> getMessages(LogSearchCriteria criteria, String searchStr) throws DAOException {
 
 		// Build the search criteria
 		List<String> terms = new ArrayList<String>();
@@ -112,6 +113,8 @@ public class GetACARSLog extends GetACARSData {
 			terms.add("(DATE > ?)");
 		if (criteria.getEndDate() != null)
 			terms.add("(DATE < ?)");
+		if (searchStr != null)
+			terms.add("(LOCATE(?, BODY) > 0)");
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT * FROM acars.MESSAGES ");
@@ -136,9 +139,10 @@ public class GetACARSLog extends GetACARSData {
 
 			if (criteria.getStartDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getStartDate()));
-
 			if (criteria.getEndDate() != null)
 				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getEndDate()));
+			if (searchStr != null)
+				_ps.setString(++psOfs, searchStr);
 
 			return executeMsg();
 		} catch (SQLException se) {
