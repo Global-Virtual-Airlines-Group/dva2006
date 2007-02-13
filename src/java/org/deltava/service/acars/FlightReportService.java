@@ -271,11 +271,12 @@ public class FlightReportService extends WebService {
 			// Write the connection/info records
 			SetACARSData awdao = new SetACARSData(con);
 			awdao.createConnection(ce);
+			inf.setConnectionID(ce.getID());
 			awdao.createFlight(inf);
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
 			
 			// Dump the positions
-			awdao.writePositions(ce.getID(), inf.getID(), positions);
+			awdao.writePositions(inf.getID(), positions);
 			
 			//	Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
