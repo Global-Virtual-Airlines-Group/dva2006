@@ -54,7 +54,7 @@ public class SetACARSData extends DAO {
 	public void createFlight(FlightInfo info) throws DAOException {
 		try {
 			prepareStatement("INSERT INTO acars.FLIGHTS (FLIGHT_NUM, CREATED, END_TIME, EQTYPE, CRUISE_ALT, AIRPORT_D, "
-					+ "AIRPORT_A, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "AIRPORT_A, ROUTE, REMARKS, FSVERSION, OFFLINE, PIREP, CON_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, info.getFlightCode());
 			_ps.setTimestamp(2, createTimestamp(info.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(info.getEndTime()));
@@ -67,6 +67,7 @@ public class SetACARSData extends DAO {
 			_ps.setInt(10, info.getFSVersion());
 			_ps.setBoolean(11, info.getOffline());
 			_ps.setBoolean(12, true);
+			_ps.setLong(13, info.getConnectionID());
 			executeUpdate(1);
 			
 			// Since we're writing a new entry, get the database ID

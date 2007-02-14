@@ -271,7 +271,6 @@ public class FlightReportService extends WebService {
 			// Write the connection/info records
 			SetACARSData awdao = new SetACARSData(con);
 			awdao.createConnection(ce);
-			inf.setConnectionID(ce.getID());
 			awdao.createFlight(inf);
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
 			
