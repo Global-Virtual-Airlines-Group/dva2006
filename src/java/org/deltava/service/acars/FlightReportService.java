@@ -103,42 +103,45 @@ public class FlightReportService extends WebService {
 
 		// Build the position entries
 		Element ppe = re.getChild("positions");
+		List pL = (ppe != null) ? ppe.getChildren("position") : null;
 		Collection<RouteEntry> positions = new ArrayList<RouteEntry>();
-		for (Iterator i = ppe.getChildren("position").iterator(); i.hasNext();) {
-			Element pe = (Element) i.next();
-			String dt = pe.getChildTextTrim("date");
-			if (dt.indexOf('.') == -1)
-				dt = dt + ".000";
+		if (!CollectionUtils.isEmpty(pL)) {
+			for (Iterator i = pL.iterator(); i.hasNext();) {
+				Element pe = (Element) i.next();
+				String dt = pe.getChildTextTrim("date");
+				if (dt.indexOf('.') == -1)
+					dt = dt + ".000";
 
-			// Build a position entry
-			try {
-				RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"),
-						Double.parseDouble(pe.getChildTextTrim("lat")), Double.parseDouble(pe.getChildTextTrim("lon")));
-				pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
-				pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
-				pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
-				pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
-				pos.setGroundSpeed(StringUtils.parse(pe.getChildTextTrim("gSpeed"), 0));
-				pos.setVerticalSpeed(StringUtils.parse(pe.getChildTextTrim("vSpeed"), 0));
-				pos.setPitch(Double.parseDouble(pe.getChildTextTrim("pitch")));
-				pos.setBank(Double.parseDouble(pe.getChildTextTrim("bank")));
-				pos.setMach(Double.parseDouble(pe.getChildTextTrim("mach")));
-				pos.setN1(Double.parseDouble(pe.getChildTextTrim("n1")));
-				pos.setN2(Double.parseDouble(pe.getChildTextTrim("n2")));
-				pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
-				pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
-				pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
-				pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
-				pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
-				pos.setFlaps(StringUtils.parse(pe.getChildTextTrim("flaps"), 0));
-				pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("fuel"), 0));
-				pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("wHdg"), 0));
-				pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("wSpeed"), 0));
-				pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
-				pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
-				positions.add(pos);
-			} catch (NumberFormatException nfe) {
-				log.error("Error parsing value - " + nfe.getMessage());
+				// Build a position entry
+				try {
+					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), Double
+							.parseDouble(pe.getChildTextTrim("lat")), Double.parseDouble(pe.getChildTextTrim("lon")));
+					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
+					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
+					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
+					pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
+					pos.setGroundSpeed(StringUtils.parse(pe.getChildTextTrim("gSpeed"), 0));
+					pos.setVerticalSpeed(StringUtils.parse(pe.getChildTextTrim("vSpeed"), 0));
+					pos.setPitch(Double.parseDouble(pe.getChildTextTrim("pitch")));
+					pos.setBank(Double.parseDouble(pe.getChildTextTrim("bank")));
+					pos.setMach(Double.parseDouble(pe.getChildTextTrim("mach")));
+					pos.setN1(Double.parseDouble(pe.getChildTextTrim("n1")));
+					pos.setN2(Double.parseDouble(pe.getChildTextTrim("n2")));
+					pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
+					pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
+					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
+					pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
+					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
+					pos.setFlaps(StringUtils.parse(pe.getChildTextTrim("flaps"), 0));
+					pos.setFuelRemaining(StringUtils.parse(pe.getChildTextTrim("fuel"), 0));
+					pos.setWindHeading(StringUtils.parse(pe.getChildTextTrim("wHdg"), 0));
+					pos.setWindSpeed(StringUtils.parse(pe.getChildTextTrim("wSpeed"), 0));
+					pos.setFrameRate(StringUtils.parse(pe.getChildTextTrim("frameRate"), 0));
+					pos.setFlags(StringUtils.parse(pe.getChildTextTrim("flags"), 0));
+					positions.add(pos);
+				} catch (NumberFormatException nfe) {
+					log.error("Error parsing value - " + nfe.getMessage());
+				}
 			}
 		}
 
@@ -213,46 +216,47 @@ public class FlightReportService extends WebService {
 
 		try {
 			Connection con = ctx.getConnection();
-			
+
 			// Get the user information
 			GetPilot pdao = new GetPilot(con);
 			Pilot p = pdao.get(ctx.getUser().getID());
 
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(), SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(),
+					SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				afr.setID(fr.getID());
 				afr.setDatabaseID(FlightReport.DBID_ASSIGN, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
 				afr.setDatabaseID(FlightReport.DBID_EVENT, fr.getDatabaseID(FlightReport.DBID_EVENT));
 			}
-			
+
 			// Check if this Flight Report counts for promotion
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			Collection<String> promoEQ = eqdao.getPrimaryTypes(SystemData.get("airline.db"), afr.getEquipmentType());
 			if (promoEQ.contains(p.getEquipmentType()))
 				afr.setCaptEQType(promoEQ);
-			
+
 			// Check if the user is rated to fly the aircraft
 			EquipmentType eq = eqdao.get(p.getEquipmentType());
 			if (!p.getRatings().contains(afr.getEquipmentType()) && !eq.getRatings().contains(afr.getEquipmentType()))
 				afr.setAttribute(FlightReport.ATTR_NOTRATED, !afr.hasAttribute(FlightReport.ATTR_CHECKRIDE));
-			
+
 			// Check for historic aircraft
 			GetAircraft acdao = new GetAircraft(con);
 			Aircraft a = acdao.get(afr.getEquipmentType());
 			afr.setAttribute(FlightReport.ATTR_HISTORIC, (a != null) && (a.getHistoric()));
-			
+
 			// Check for excessive distance
 			if ((a != null) && (afr.getDistance() > a.getRange()))
 				afr.setAttribute(FlightReport.ATTR_RANGEWARN, true);
-			
+
 			// Check if it's a Flight Academy flight
 			GetSchedule sdao = new GetSchedule(con);
 			ScheduleEntry sEntry = sdao.get(afr);
 			afr.setAttribute(FlightReport.ATTR_ACADEMY, ((sEntry != null) && sEntry.getAcademy()));
-			
+
 			// Check the schedule database and check the route pair
 			boolean schedValidated = Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue();
 			int avgHours = sdao.getFlightTime(afr.getAirportD().getIATA(), afr.getAirportA().getIATA());
@@ -264,7 +268,7 @@ public class FlightReportService extends WebService {
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
 					afr.setAttribute(FlightReport.ATTR_TIMEWARN, true);
 			}
-			
+
 			// Turn off auto-commit
 			ctx.startTX();
 
@@ -273,25 +277,26 @@ public class FlightReportService extends WebService {
 			awdao.createConnection(ce);
 			awdao.createFlight(inf);
 			afr.setDatabaseID(FlightReport.DBID_ACARS, inf.getID());
-			
+
 			// Dump the positions
-			awdao.writePositions(inf.getID(), positions);
-			
-			//	Update the checkride record (don't assume pilots check the box, because they don't)
+			if (!CollectionUtils.isEmpty(positions))
+				awdao.writePositions(inf.getID(), positions);
+
+			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
+			CheckRide cr = exdao
+					.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());
 				cr.setStatus(Test.SUBMITTED);
-				
+
 				// Update the checkride
 				SetExam wdao = new SetExam(con);
 				wdao.write(cr);
-			} else {
+			} else
 				afr.setAttribute(FlightReport.ATTR_CHECKRIDE, false);
-			}
-			
+
 			// Write the PIREP
 			SetFlightReport fwdao = new SetFlightReport(con);
 			fwdao.write(afr);
@@ -309,7 +314,7 @@ public class FlightReportService extends WebService {
 		// Return back success
 		return SC_OK;
 	}
-	
+
 	/**
 	 * Returns wether this web service requires authentication.
 	 * @return TRUE always
