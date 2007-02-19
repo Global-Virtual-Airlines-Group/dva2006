@@ -1,3 +1,4 @@
+// Copyright 2004, 2005, 2007 Global Virtual Airlines Group. All Righs Reserved.
 package org.deltava.beans;
 
 /**
@@ -40,7 +41,7 @@ public interface Ranks {
     public static final String RANK_SC = "Senior Captain";
     
     /**
-     * Name of Second Officer rank. <i>Used by Aviation Français Virtuel</i>
+     * Name of Second Officer rank. <i>Used by Aviation Francais Virtuel</i>
      */
     public static final String RANK_SO = "Second Officer";
 }
