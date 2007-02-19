@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -305,13 +305,14 @@ public class SetTS2Data extends DAO {
 
 			// Write the server roles
 			prepareStatement("INSERT INTO teamspeak.ts2_server_roles (i_server_id, s_role_name, b_server_admin, "
-					+ "b_channel_admin) VALUES (?, ?, ?, ?)");
+					+ "b_channel_admin, b_autovoice) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, srv.getID());
 			for (Iterator<String> i = allRoles.iterator(); i.hasNext();) {
 				String role = i.next();
 				_ps.setString(2, role);
 				_ps.setBoolean(3, srv.getRoles().get(Server.ADMIN).contains(role));
 				_ps.setBoolean(4, srv.getRoles().get(Server.OPERATOR).contains(role));
+				_ps.setBoolean(5, srv.getRoles().get(Server.VOICE).contains(role));
 				_ps.addBatch();
 			}
 

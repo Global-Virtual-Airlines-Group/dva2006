@@ -78,7 +78,7 @@ return true;
  <td class="data"><el:check name="accessRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['access']}" options="${roles}" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Voice Access</td>
+ <td class="label" valign="top">Auto-Voice Access</td>
  <td class="data"><el:check name="voxRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${server.roles['voice']}" options="${roles}" /></td>
 </tr>
 <tr>
