@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -26,7 +26,7 @@ public class LDAPAuthenticator implements Authenticator {
 	/**
 	 * JNDI environment.
 	 */
-	protected Hashtable<String, String> _env = new Hashtable<String, String>();
+	protected final Hashtable<String, String> _env = new Hashtable<String, String>();
 
 	/**
 	 * Initializes the authenticator.
@@ -170,6 +170,14 @@ public class LDAPAuthenticator implements Authenticator {
 		} catch (NamingException ne) {
 			throw new SecurityException("Error searching for User " + usr.getDN(), ne);
 		}
+	}
+	
+	/**
+	 * This Authenticator accepts all users with a valid Directory Name.
+	 * @return TRUE if the user's DN property is not empty
+	 */
+	public boolean accepts(Person usr) {
+		return ((usr != null) && (!StringUtils.isEmpty(usr.getDN())));
 	}
 
 	/**

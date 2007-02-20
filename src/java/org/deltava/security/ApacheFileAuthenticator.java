@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.io.*;
@@ -25,9 +25,9 @@ public class ApacheFileAuthenticator implements Authenticator {
 	private static final Logger log = Logger.getLogger(ApacheFileAuthenticator.class);
 	private static final String SHA_HDR = "{SHA}";
 
-	private Properties _props;
+	private final Properties _props = new Properties();
 	private File _pwdFile;
-	private Map<String, String> _pwdInfo = new TreeMap<String, String>();
+	private final Map<String, String> _pwdInfo = new TreeMap<String, String>();
 
 	/**
 	 * Create a new Apache File Authenticator and populate its user list from a file.
@@ -36,7 +36,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 */
 	public void init(String propsFile) throws SecurityException {
 
-		_props = new Properties();
+		_props.clear();
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
@@ -108,6 +108,14 @@ public class ApacheFileAuthenticator implements Authenticator {
 	public boolean contains(Person usr) throws SecurityException {
 		String userID = getID(usr);
 		return (userID != null) && _pwdInfo.containsKey(userID);
+	}
+	
+	/**
+	 * Checks if this Authenticator will accept a particular user.
+	 * @return TRUE if the user is a Pilot and has the LDAPName property set, otherwise FALSE
+	 */
+	public boolean accepts(Person usr) {
+		return (getID(usr) != null);
 	}
 
 	/**
@@ -193,7 +201,10 @@ public class ApacheFileAuthenticator implements Authenticator {
 		_pwdInfo.remove(userID);
 		save();
 	}
-	
+
+	/**
+	 * Helper method to retrieve a user's alias.
+	 */
 	private String getID(Person usr) {
 		boolean useAlias = Boolean.valueOf(_props.getProperty("apachefile.alias")).booleanValue();
 		if ((useAlias) && (usr instanceof Applicant))
