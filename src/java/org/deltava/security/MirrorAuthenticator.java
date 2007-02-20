@@ -22,7 +22,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	public MirrorAuthenticator() {
 		super(MirrorAuthenticator.class);
 	}
-	
+
 	/**
 	 * Initializes the Authenticator.
 	 * @param propsFile the name of the proeprties file to load
@@ -33,8 +33,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 
 	/**
-	 * Authenticates the user against the source authenticator. This then synchronizes credentials
-	 * information with the destination authenticator.
+	 * Authenticates the user against the source authenticator. This then synchronizes credentials information with the
+	 * destination authenticator.
 	 * @param usr the User bean
 	 * @param pwd the user's supplied password
 	 * @throws SecurityException if authentication fails
@@ -57,8 +57,8 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	}
 
 	/**
-	 * Updates the user's password in both authenticators. If this operation fails, no guarantee of transaction
-	 * atomicity is given.
+	 * Updates the user's password in all authenticators. If this operation fails, no guarantee of transaction atomicity
+	 * is given.
 	 * @param usr the user bean
 	 * @param pwd the user's new password
 	 * @throws SecurityException if either update operation fails
@@ -68,17 +68,22 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		setConnection(_src);
 		_src.updatePassword(usr, pwd);
 		clearConnection(_src);
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
-			setConnection(dst);
-			dst.updatePassword(usr, pwd);
-			clearConnection(dst);
+			if (dst.accepts(usr)) {
+				setConnection(dst);
+				if (dst.contains(usr))
+					dst.updatePassword(usr, pwd);
+				else
+					dst.addUser(usr, pwd);
+
+				clearConnection(dst);
+			}
 		}
 	}
 
 	/**
-	 * Adds the user to all authenticators. If this operation fails, no guarantee of transaction
-	 * atomicity is given.
+	 * Adds the user to all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if either add operation fails
@@ -88,17 +93,18 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		setConnection(_src);
 		_src.addUser(usr, pwd);
 		clearConnection(_src);
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
-			setConnection(dst);
-			dst.addUser(usr, pwd);
-			clearConnection(dst);
+			if (dst.accepts(usr)) {
+				setConnection(dst);
+				dst.addUser(usr, pwd);
+				clearConnection(dst);
+			}
 		}
 	}
 
 	/**
-	 * Renames the user in all authenticators. If this operation fails, no guarantee of transaction
-	 * atomicity is given.
+	 * Renames the user in all authenticators. If this operation fails, no guarantee of transaction atomicity is given.
 	 * @param usr the user bean
 	 * @param newName the new directory name
 	 * @see org.deltava.security.Authenticator#rename(Person, java.lang.String)
@@ -107,17 +113,19 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		setConnection(_src);
 		_src.rename(usr, newName);
 		clearConnection(_src);
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
-			setConnection(dst);
-			dst.rename(usr, newName);
-			clearConnection(dst);
+			if (dst.accepts(usr)) {
+				setConnection(dst);
+				dst.rename(usr, newName);
+				clearConnection(dst);
+			}
 		}
 	}
 
 	/**
-	 * Removes the user from all  authenticators. If this operation fails, no guarantee of transaction
-	 * atomicity is given.
+	 * Removes the user from all authenticators. If this operation fails, no guarantee of transaction atomicity is
+	 * given.
 	 * @param usr the user bean
 	 * @see Authenticator#removeUser(Person)
 	 */
@@ -127,14 +135,14 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 			_src.removeUser(usr);
 			clearConnection(_src);
 		}
-		
+
 		// Remove from destinations
-		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
 			setConnection(dst);
 			if (dst.contains(usr))
 				dst.removeUser(usr);
-			
+
 			clearConnection(dst);
 		}
 	}

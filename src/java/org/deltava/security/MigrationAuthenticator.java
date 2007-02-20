@@ -57,12 +57,21 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 		auth.authenticate(usr, pwd);
 
 		// If we got this far, and we're not in the destination directory, then add us
-		if (auth == _src) {
+		if ((auth == _src) && dst.accepts(usr)) {
 			setConnection(dst);
 			dst.addUser(usr, pwd);
 		}
 		
 		clearConnection(_src, dst);
+	}
+	
+	/**
+	 * Returns wether the destination Authenticator will accept a user.
+	 * @param usr the user bean
+	 * @return wether the destination Authenticator will accept the person
+	 */
+	public boolean accepts(Person usr) {
+		return dst.accepts(usr);
 	}
 
 	/**

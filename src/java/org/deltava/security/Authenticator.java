@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import org.deltava.beans.Person;
@@ -39,6 +39,16 @@ public interface Authenticator {
      * @throws SecurityException if an error occurs
      */
     public boolean contains(Person usr) throws SecurityException;
+    
+    /**
+     * Checks if a particular user should exist within a Directory. Not all Authenticators will
+     * include all users, and to avoid errors in {@link MultiAuthenticator} implementations,
+     * this method is included to validate which authenticators credentials should be
+     * cascaded to.
+     * @param usr the user bean
+     * @return TRUE if the user will be added to the Directory if requested, otherwise FALSE
+     */
+    public boolean accepts(Person usr);
     
     /**
      * Updates a user's password.

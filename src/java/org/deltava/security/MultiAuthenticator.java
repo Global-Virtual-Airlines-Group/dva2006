@@ -29,12 +29,12 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	 * The &quot;destination&quot; authenticators.
 	 */
 	protected final Collection<Authenticator> _dst = new LinkedHashSet<Authenticator>();
-	
+
 	/**
-	 * If either authenticator is a {@link SQLAuthenticator}, an explict connection can be passed down the authenticator
-	 * chain to preserve transaction atomicity.
+	 * If either authenticator is a {@link SQLAuthenticator}, an explict connection can be passed down the
+	 * authenticator chain to preserve transaction atomicity.
 	 */
-	protected final ThreadLocal<Connection> _cons = new ThreadLocal<Connection>(); 
+	protected final ThreadLocal<Connection> _cons = new ThreadLocal<Connection>();
 
 	/**
 	 * The log4j logger.
@@ -90,7 +90,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 			}
 		}
 	}
-	
+
 	/**
 	 * Provides the JDBC connection for this Authenticator and its children to use.
 	 * @param c the Connection to use
@@ -98,7 +98,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	public void setConnection(Connection c) {
 		_cons.set(c);
 	}
-	
+
 	/**
 	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
 	 */
@@ -121,7 +121,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	public final Collection<Authenticator> getDestination() {
 		return _dst;
 	}
-	
+
 	/**
 	 * Checks if authenticators are a {@link SQLAuthenticator} and if so passes in an explicit Connection to use.
 	 * @param auths the Authenticators to check and update
@@ -134,7 +134,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 				((SQLAuthenticator) auth).setConnection(con);
 		}
 	}
-	
+
 	/**
 	 * Checks if authenticators are a {@link SQLAuthenticator} and if so clears the an explicit Connection to use.
 	 * @param auths the Authenticators to check and update
@@ -160,19 +160,44 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	protected void sync(Person usr, String pwd) throws SecurityException {
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
+			String authName = dst.getClass().getSimpleName();
 			setConnection(dst);
-			try {
-				dst.authenticate(usr, pwd);
-			} catch (SecurityException se) {
-				if (_dst.contains(usr)) {
-					log.warn("Updating password for " + usr.getName() + " in " + _dst.getClass().getSimpleName());
-					dst.updatePassword(usr, pwd);
-				} else {
-					dst.addUser(usr, pwd);
+			if (dst.accepts(usr)) {
+				try {
+					if (log.isDebugEnabled())
+						log.debug("Validating " + usr.getName() + " credentials in " + authName);
+
+					dst.authenticate(usr, pwd);
+				} catch (SecurityException se) {
+					if (_dst.contains(usr)) {
+						log.warn("Updating password for " + usr.getName() + " in " + authName);
+						dst.updatePassword(usr, pwd);
+					} else {
+						log.warn("Adding " + usr.getName() + " in " + authName);
+						dst.addUser(usr, pwd);
+					}
+				}
+			} else {
+				try {
+					if (dst.contains(usr)) {
+						log.warn(authName + " contains " + usr.getName() + ", removing");
+						dst.removeUser(usr);
+					}
+				} catch (SecurityException se) {
+					log.warn("Error removing " + usr.getName() + " from " + authName + " - " + se.getMessage());
 				}
 			}
-			
+
 			clearConnection(dst);
 		}
+	}
+
+	/**
+	 * Returns wether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override
+	 * this default.
+	 * @return TRUE always
+	 */
+	public boolean accepts(Person usr) {
+		return true;
 	}
 }

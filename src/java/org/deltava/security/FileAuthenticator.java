@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -7,11 +7,12 @@ import java.io.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Person;
-import org.deltava.util.ConfigLoader;
+
+import org.deltava.util.*;
 
 /**
- * An authenticator to validate users against a file repository. This should typically be used for testing or backup
- * purposes only.
+ * An authenticator to validate users against a file repository. This should
+ * typically be used for testing or backup purposes only.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -21,8 +22,8 @@ public class FileAuthenticator implements Authenticator {
 
 	private static final Logger log = Logger.getLogger(FileAuthenticator.class);
 
-	private Map<String, UserInfo> _users = new HashMap<String, UserInfo>();
-	private Properties _props;
+	private final Map<String, UserInfo> _users = new HashMap<String, UserInfo>();
+	private final Properties _props = new Properties();
 
 	private class UserInfo {
 
@@ -36,38 +37,39 @@ public class FileAuthenticator implements Authenticator {
 			_pwd = tokens.nextToken();
 			_uid = tokens.nextToken();
 		}
-		
+
 		UserInfo(String dn, String pwd, String uid) {
-		   this(dn + "," + pwd + "," + ((uid == null) ? "" : uid));
+			this(dn + "," + pwd + "," + ((uid == null) ? "" : uid));
 		}
 
 		public String getDN() {
-		   return _dn;
+			return _dn;
 		}
-		
+
 		public String getUID() {
-		   return _uid;
+			return _uid;
 		}
 
 		public String getPassword() {
-		   return _pwd;
+			return _pwd;
 		}
-		
+
 		public void setPassword(String pwd) {
-		   _pwd = pwd;
+			_pwd = pwd;
 		}
 	}
 
 	/**
-	 * Create a new File Authenticator and populate its user list from a file. User entries are stored internally in an
-	 * unsorted Map. This file is comma-delimited with the fields in the following order: <i>FIRSTNAME, LASTNAME, PILOT
-	 * ID, PASSWORD </i>
+	 * Create a new File Authenticator and populate its user list from a file.
+	 * User entries are stored internally in an unsorted Map. This file is
+	 * comma-delimited with the fields in the following order: <i>FIRSTNAME,
+	 * LASTNAME, PILOT ID, PASSWORD </i>
 	 * @param propsFile the properties file to use
 	 * @throws SecurityException if an error occurs
 	 */
 	public void init(String propsFile) throws SecurityException {
 
-		_props = new Properties();
+		_props.clear();
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
@@ -76,7 +78,8 @@ public class FileAuthenticator implements Authenticator {
 		}
 
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(_props.getProperty("file.name"))));
+			BufferedReader br = new BufferedReader(new FileReader(new File(
+					_props.getProperty("file.name"))));
 			while (br.ready()) {
 				UserInfo info = new UserInfo(br.readLine());
 				_users.put(info.getDN(), info);
@@ -85,19 +88,21 @@ public class FileAuthenticator implements Authenticator {
 
 			br.close();
 		} catch (IOException ie) {
-			log.warn("Error loading " + _props.getProperty("file.name") + " - " + ie.getMessage());
+			log.warn("Error loading " + _props.getProperty("file.name") + " - "
+					+ ie.getMessage());
 		}
 
 		log.info("Loaded " + _users.size() + " user records");
 	}
 
 	/**
-	 * Authenticates the user by searching for the directory name and then comparing the existing password on file to
-	 * the one specified. The DN search is case-insensitive.
+	 * Authenticates the user by searching for the directory name and then
+	 * comparing the existing password on file to the one specified. The DN
+	 * search is case-insensitive.
 	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if authentication fails
-	 * @see org.deltava.security.Authenticator#authenticate(Person, String)
+	 * @see Authenticator#authenticate(Person, String)
 	 */
 	public void authenticate(Person usr, String pwd) throws SecurityException {
 		UserInfo ui = _users.get(usr.getDN());
@@ -105,11 +110,22 @@ public class FileAuthenticator implements Authenticator {
 			throw new SecurityException(usr.getDN() + " not found");
 
 		if (!ui.getPassword().equals(pwd)) {
-			log.warn(usr.getDN() + " Authentication FAILURE - Invalid credentials");
+			log.warn(usr.getDN()
+					+ " Authentication FAILURE - Invalid credentials");
 			throw new SecurityException("Invalid Credentials");
 		}
 
 		log.info(usr.getDN() + " authenticated");
+	}
+
+	/**
+	 * Checks wether this Authenticator will accept a User. The User must have a
+	 * non-empty Directory name.
+	 * @param usr the user bean
+	 * @return TRUE if the Directory name is populated, otherwise FALSE
+	 */
+	public boolean accepts(Person usr) {
+		return ((usr != null) && !StringUtils.isEmpty(usr.getDN()));
 	}
 
 	/**
@@ -124,23 +140,28 @@ public class FileAuthenticator implements Authenticator {
 	/**
 	 * Writes the user list out to the data file.
 	 */
-	private void save() throws IOException {
+	private void save() throws SecurityException {
 
-	   // Create the file
-	   PrintWriter pw = new PrintWriter(new FileWriter(new File(_props.getProperty("file.name"))));
-	   for (Iterator i = _users.values().iterator(); i.hasNext(); ) {
-	      UserInfo user = (UserInfo) i.next();
-	      pw.print(user.getDN());
-	      pw.print(',');
-	      pw.println(user.getPassword());
-	   }
-	   
-	   // Close the file
-	   pw.flush();
-	   pw.close();
-	   
-	   // Log success
-	   log.info("Saved " + _users.size() + " user records");
+		// Create the file
+		try {
+			PrintWriter pw = new PrintWriter(new FileWriter(new File(_props
+					.getProperty("file.name"))));
+			for (Iterator i = _users.values().iterator(); i.hasNext();) {
+				UserInfo user = (UserInfo) i.next();
+				pw.print(user.getDN());
+				pw.print(',');
+				pw.println(user.getPassword());
+			}
+
+			// Close the file
+			pw.flush();
+			pw.close();
+		} catch (IOException ie) {
+			throw new SecurityException(ie);
+		}
+
+		// Log success
+		log.info("Saved " + _users.size() + " user records");
 	}
 
 	/**
@@ -150,21 +171,17 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
-	   
-	   // Get the User
-	   UserInfo usrInfo = _users.get(usr.getDN());
-	   if (usrInfo == null)
-	      throw new SecurityException("User " + usr.getDN() + " not found");
-	   
-	   // Update the password
-	   usrInfo.setPassword(pwd);
-	   try {
-	      save();
-	   } catch (IOException ie) {
-	      throw new SecurityException(ie.getMessage());
-	   }
+
+		// Get the User
+		UserInfo usrInfo = _users.get(usr.getDN());
+		if (usrInfo == null)
+			throw new SecurityException("User " + usr.getDN() + " not found");
+
+		// Update the password
+		usrInfo.setPassword(pwd);
+		save();
 	}
-	
+
 	/**
 	 * Adds a user to the Directory.
 	 * @param usr the User bean
@@ -172,21 +189,18 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void addUser(Person usr, String pwd) throws SecurityException {
-	   
-	   // Check if the user exists
-	   if (contains(usr))
-	      throw new SecurityException("User " + usr.getDN() + " already exists");
 
-	   // Create the user object
-	   UserInfo usrInfo = new UserInfo(usr.getDN(), pwd, "usrID");
-	   _users.put(usr.getDN(), usrInfo);
-	   
-	   // Save the user list
-	   try {
-	      save();
-	   } catch (IOException ie) {
-	      throw new SecurityException(ie.getMessage());
-	   }
+		// Check if the user exists
+		if (contains(usr))
+			throw new SecurityException("User " + usr.getDN()
+					+ " already exists");
+
+		// Create the user object
+		UserInfo usrInfo = new UserInfo(usr.getDN(), pwd, "usrID");
+		_users.put(usr.getDN(), usrInfo);
+
+		// Save the user list
+		save();
 	}
 
 	/**
@@ -195,19 +209,15 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws SecurityException if an error occurs
 	 */
 	public void removeUser(Person usr) throws SecurityException {
-	   
-	   // Check for the user
-	   if (!contains(usr))
-	      throw new SecurityException("User " + usr.getDN() + " not found");
-	   
-	   _users.remove(usr.getDN());
-	   try {
-	      save();
-	   } catch (IOException ie) {
-	      throw new SecurityException(ie.getMessage());
-	   }
+
+		// Check for the user
+		if (!contains(usr))
+			throw new SecurityException("User " + usr.getDN() + " not found");
+
+		_users.remove(usr.getDN());
+		save();
 	}
-	
+
 	/**
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
 	 * @param usr the User bean
@@ -215,6 +225,6 @@ public class FileAuthenticator implements Authenticator {
 	 * @throws UnsupportedOperationException always
 	 */
 	public void rename(Person usr, String newName) throws SecurityException {
-	   throw new UnsupportedOperationException();
+		throw new UnsupportedOperationException();
 	}
 }

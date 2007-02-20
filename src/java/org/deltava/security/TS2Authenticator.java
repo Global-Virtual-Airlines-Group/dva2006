@@ -177,11 +177,38 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			closeConnection(c);
 		}
 	}
+	
+	/**
+	 * Returns wether this User can be added to this Authenticator. The user must have a non-empty pilot
+	 * code and be authorized to access at least one TeamSpeak 2 virtual server.
+	 * @param usr the user bean
+	 * @return TRUE if the User is a Pilot and has access to at least one server, otherwise FALSE
+	 */
+	public boolean accepts(Person usr) {
+		if (!(usr instanceof Pilot))
+			return false;
+		
+		// Check the pilot code
+		Pilot p = (Pilot) usr;
+		if (p.getPilotNumber() == 0)
+			return false;
+		
+		// Check the servers
+		@SuppressWarnings("unchecked")
+		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
+		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
+			Server srv = i.next();
+			if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
+				return true;
+		}
+		
+		return false;
+	}
 
 	/**
 	 * Adds a user to the Directory. If a database cryptographic function is set, it is applied to the password within
 	 * the statement. <i>This may result in credential data being passed over the connection to the JDBC data source,
-	 * depending on the driver implementation. </i>
+	 * depending on the driver implementation.</i>
 	 * @param usr the User bean
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs

@@ -8,7 +8,8 @@ import java.util.Properties;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Person;
-import org.deltava.util.ConfigLoader;
+
+import org.deltava.util.*;
 
 /**
  * An authenticator to validate users against a JDBC data source.
@@ -22,7 +23,7 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	private static final Logger log = Logger.getLogger(JDBCAuthenticator.class);
 
 	private final ThreadLocal<Connection> _con = new ThreadLocal<Connection>();
-	private Properties _props;
+	private final Properties _props = new Properties();
 
 	/**
 	 * Initialize the authenticator.
@@ -31,7 +32,7 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	 */
 	public void init(String propsFile) throws SecurityException {
 
-		_props = new Properties();
+		_props.clear();
 		try {
 			_props.load(ConfigLoader.getStream(propsFile));
 		} catch (IOException ie) {
@@ -189,6 +190,16 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 			e.initCause(se);
 			throw e;
 		}
+	}
+	
+	/**
+	 * Checks wether this Authenticator will accept a particular Person. The Person's Directory Name
+	 * field must be non-empty.
+	 * @param usr the user bean
+	 * @return TRUE if the Directory Name field is not empty, otherwise FALSE
+	 */
+	public boolean accepts(Person usr) {
+		return ((usr != null) && (!StringUtils.isEmpty(usr.getDN())));
 	}
 
 	/**
