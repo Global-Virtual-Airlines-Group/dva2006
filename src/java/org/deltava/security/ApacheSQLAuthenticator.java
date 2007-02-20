@@ -82,6 +82,14 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	}
 
 	/**
+	 * This Authenticator will accept all users.
+	 * @param usr the user bean 
+	 */
+	public boolean accepts(Person usr) {
+		return true;
+	}
+	
+	/**
 	 * Checks if a particular name exists in the Directory.
 	 * @param usr the user bean
 	 * @return TRUE if the user exists, otherwise FALSE
