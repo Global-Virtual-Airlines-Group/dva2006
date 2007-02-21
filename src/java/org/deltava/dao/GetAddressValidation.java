@@ -4,7 +4,6 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
-import org.deltava.beans.Applicant;
 import org.deltava.beans.system.AddressValidation;
 
 /**
@@ -92,36 +91,6 @@ public class GetAddressValidation extends DAO {
 			List results = execute();
 			setQueryMax(0);
 			return results.isEmpty() ? null : (AddressValidation) results.get(0);
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the Address Validation data for Pilots.
-	 * @return a List of AddressValidation beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<AddressValidation> getPilots() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID < ?)");
-			_ps.setInt(1, Applicant.BASE_DB_ID);
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns the Address Validation data for Applicants.
-	 * @return a List of AddressValidation beans
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<AddressValidation> getApplicants() throws DAOException {
-		try {
-			prepareStatement("SELECT * FROM EMAIL_VALIDATION WHERE (ID >= ?)");
-			_ps.setInt(1, Applicant.BASE_DB_ID);
-			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
