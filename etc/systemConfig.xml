@@ -288,8 +288,8 @@
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
 			<local>
-				<status>d:\library\servinfo\vatsim.status</status>
-				<info>d:\library\servinfo\vatsim.info</info>
+				<status>/var/cache/servinfo/vatsim.status</status>
+				<info>/var/cache/servinfo/vatsim.info</info>
 			</local>
 		</vatsim>
 
@@ -298,8 +298,8 @@
 			<banner>ivao.png</banner>
 			<url>http://www.ivao.aero/</url>
 			<local>
-				<status>d:\library\servinfo\ivao.status</status>
-				<info>d:\library\servinfo\ivao.info</info>
+				<status>/var/cache/servinfo/ivao.status</status>
+				<info>/var/cache/servinfo/ivao.info</info>
 			</local>
 		</ivao>
 
