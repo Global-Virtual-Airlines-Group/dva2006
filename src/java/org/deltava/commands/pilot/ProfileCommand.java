@@ -219,7 +219,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 					// Check if we're going to Senior Captain for the first time
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
-					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && sudao.isSeniorCaptain(p.getID()));
+					boolean newSC = ((newRank.equals(Ranks.RANK_SC)) && !sudao.isSeniorCaptain(p.getID()));
 
 					// Write the status update
 					if (rcmp.compare() > 0) {
