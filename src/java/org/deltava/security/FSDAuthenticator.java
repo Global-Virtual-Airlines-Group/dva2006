@@ -166,8 +166,7 @@ public class FSDAuthenticator implements Authenticator {
 	}
 
 	/**
-	 * Checks wether this Authenticator accepts a User. The user must be a member of a role that maps to at least Level
-	 * 1.
+	 * Checks wether this Authenticator accepts a User. The user must be a member of a role that maps to at least Level 1.
 	 * @param usr the user bean
 	 * @return TRUE if the User is a member of a Role mapping to at least Level 1, otherwise FALSE
 	 */
@@ -221,13 +220,16 @@ public class FSDAuthenticator implements Authenticator {
 		save();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.deltava.security.Authenticator#rename(org.deltava.beans.Person, java.lang.String)
+	/**
+	 * Renames a user in the Directory. Since the FSD Authenticator relies upon database IDs and pilot codes,
+	 * this is not implemented.
+	 * @param usr the user bean
+	 * @param newName the new fully-qualified directory
+	 * @throws SecurityException if an error occurs
 	 */
 	public void rename(Person usr, String newName) throws SecurityException {
-		// TODO Auto-generated method stub
-
+		if (!contains(usr))
+			throw new SecurityException(usr.getName() + " not found");
 	}
 
 	/**
