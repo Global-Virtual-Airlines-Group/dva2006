@@ -199,11 +199,21 @@ return ${access.canApprove};
  <td class="data"><fmt:msg value="${applicant.comments}" /></td>
 </tr>
 </c:if>
+<!-- HR stuff -->
+<tr class="title">
+ <td colspan="2">HUMAN RESOURCES DATA</td>
+</tr>
 <tr>
  <td class="label">Google Search</td>
  <td class="data"><a rel="external" href="http://www.google.com/search?q=${fn:escape(applicant.name)}">Click Here</a> to 
 do a Google search on &quot;${applicant.name}&quot;.</td>
 </tr>
+<c:if test="${!empty applicant.HRComments}">
+<tr>
+ <td class="label" valign="top">HR Comments</td>
+ <td class="data"><fmt:msg value="${applicant.HRComments}" /></td>
+</tr>
+</c:if>
 <c:if test="${!empty soundexUsers}"><%@ include file="/jsp/register/appSoundexMatch.jspf" %></c:if>
 <c:if test="${!empty netmaskUsers}"><%@ include file="/jsp/register/appNetmaskMatch.jspf" %></c:if>
 <c:if test="${access.canApprove}">
