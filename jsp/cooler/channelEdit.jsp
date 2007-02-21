@@ -56,7 +56,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Authorized Roles</td>
- <td class="data"><el:check name="securityRoles" width="85" cols="6" separator="<div style=\"clear:both;\" />" checked="${channel.roles}" options="${roles}" /></td>
+ <td class="data"><el:check name="securityRoles" width="115" cols="6" separator="<div style=\"clear:both;\" />" checked="${channel.roles}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
