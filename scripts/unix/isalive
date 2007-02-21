@@ -1,6 +1,6 @@
 #!/bin/sh
 # System daemon checking script
-# (c) 2005 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005-2007 Global Virtual Airlines Group. All Rights Reserved.
 
 if [ -f "/var/run/siteDown.flag" ]
 then
@@ -64,19 +64,19 @@ else
   /usr/local/sbin/apachectl start
 fi
 
-if [ -f "/var/run/slapd.pid" ]
-then
-  if [ -d "/proc/`cat /var/run/slapd.pid`" ]
-  then
-   echo "OpenLDAP (Authentication Server) is alive"
-  else
-   echo "OpenLDAP (Authentication Server) is DOWN"
-   /usr/local/sbin/ldapctl start
-  fi
-else
-  echo "OpenLDAP (Authentication Server) is DOWN - no pid"
-  /usr/local/sbin/ldapctl start
-fi
+#if [ -f "/var/run/slapd.pid" ]
+#then
+#  if [ -d "/proc/`cat /var/run/slapd.pid`" ]
+#  then
+#   echo "OpenLDAP (Authentication Server) is alive"
+#  else
+#   echo "OpenLDAP (Authentication Server) is DOWN"
+#   /usr/local/sbin/ldapctl start
+#  fi
+#else
+#  echo "OpenLDAP (Authentication Server) is DOWN - no pid"
+#  /usr/local/sbin/ldapctl start
+#fi
 
 if [ -f "/var/run/postfix-master.pid" ]
 then
@@ -146,4 +146,18 @@ then
 else
  echo "TeamSpeak (Voice Server) is DOWN - no pid"
  /usr/local/sbin/ts2ctl start
+fi
+
+if [ -f "/var/run/fsd.pid" ]
+then
+  if [ -d "/proc/`cat /var/run/fsd.pid`" ]
+  then
+    echo "FSD (FS Multiplayer Server) is alive"
+  else
+    echo "FSD (FS Multiplayer Server) is DOWN"
+    /usr/local/sbin/fsdctl start
+  fi
+else
+  echo "FSD (FS Multiplayer Server) is DOWN - no pid"
+  /usr/local/sbin/fsdctl start
 fi
