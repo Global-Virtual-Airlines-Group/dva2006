@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -26,12 +26,6 @@ public class Applicant extends Person {
      */
     public static final String ROLE = "Applicant";
     
-    /**
-     * The lowest Applicant database ID. If you see a database ID above this number, assume it is an
-     * Applicant and not a Pilot.
-     */
-    public static final int BASE_DB_ID = 200000;
-
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
@@ -39,10 +33,10 @@ public class Applicant extends Person {
     private String _registerHostName;
     private String _registerAddress;
     private String _comments;
+    private String _hrComments;
     
     /**
-     * Create an Applicant object with a given first and last name, converted to "propert case"
-     * 
+     * Create an Applicant object with a given first and last name, converted to "proper case".
      * @param firstName the Applicant's first (given) name
      * @param lastName the Applicant's last (family) name
      * @throws NullPointerException if either name is null
@@ -83,9 +77,20 @@ public class Applicant extends Person {
      * Returns any additional Applicant comments.
      * @return the comments
      * @see Applicant#setComments(String)
+     * @see Applicant#getHRComments()
      */
     public String getComments() {
     	return _comments;
+    }
+    
+    /**
+     * Returns any HR comments.
+     * @return the comments
+     * @see Applicant#setHRComments(String)
+     * @see Applicant#getComments()
+     */
+    public String getHRComments() {
+    	return _hrComments;
     }
     
     /**
@@ -150,9 +155,20 @@ public class Applicant extends Person {
      * Updates the Applicant comments.
      * @param comments the comments
      * @see Applicant#getComments()
+     * @see Applicant#setHRComments(String)
      */
     public void setComments(String comments) {
     	_comments = comments;
+    }
+    
+    /**
+     * Updates the HR comments.
+     * @param comments the comments
+     * @see Applicant#getHRComments()
+     * @see Applicant#setComments(String)
+     */
+    public void setHRComments(String comments) {
+    	_hrComments = comments;
     }
     
     /**
@@ -212,9 +228,7 @@ public class Applicant extends Person {
      * @see Applicant#isInRole(String) 
      */
     public Collection<String> getRoles() {
-        Set<String> results = new HashSet<String>();
-        results.add(Applicant.ROLE);
-        return results;
+    	return Collections.singleton(ROLE);
     }
     
     /**

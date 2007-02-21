@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -49,7 +49,6 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Applicant a) throws DAOException {
-		
 		invalidate(a);
 		try {
 			startTransaction();
@@ -76,10 +75,11 @@ public class SetApplicant extends PilotWriteDAO {
 						+ "IMHANDLE=?, MSNHANDLE=?, VATSIM_ID=?, IVAO_ID=?, LEGACY_HOURS=?, LEGACY_URL=?, LEGACY_OK=?, "
 						+ "HOME_AIRPORT=?, FLEET_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 						+ "CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, "
-						+ "AIRPORTCODE=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=? WHERE (ID=?)");
+						+ "AIRPORTCODE=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? WHERE (ID=?)");
 				_ps.setString(29, a.getEquipmentType());
 				_ps.setString(30, a.getRank());
-				_ps.setInt(31, a.getID());
+				_ps.setString(31, a.getHRComments());
+				_ps.setInt(32, a.getID());
 			}
 
 			// Set the fields

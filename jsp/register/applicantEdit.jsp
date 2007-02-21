@@ -140,6 +140,21 @@ return cmdPost(f.action);
  <td class="label">User Interface</td>
  <td class="data"><el:combo name="uiScheme" idx="*" size="1" options="${schemes}" value="${applicant.UIScheme}" /></td>
 </tr>
+<c:if test="${!empty applicant.comments}">
+<tr>
+ <td class="label" valign="top">Comments</td>
+ <td class="data"><fmt:msg value="${applicant.comments}" /></td>
+</tr>
+</c:if>
+
+<!-- HR Comments -->
+<tr class="title">
+ <td colspan="2">HR COMMENTS</td>
+</tr>
+<tr>
+ <td class="label" valign="top">HR Comments</td>
+ <td class="data"><el:textbox name="HRcomments" idx="*" width="80%" height="4">${applicant.HRComments}</el:textbox></td>
+</tr>
 
 <!-- Legacy Hours -->
 <tr class="title">
@@ -157,11 +172,9 @@ return cmdPost(f.action);
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="legacyOK" idx="*" value="1" label="Legacy Hours Verified" checked="${applicant.legacyVerified}" /></td>
 </tr>
-
 <c:if test="${!empty soundexUsers}">
 <%@ include file="/jsp/register/appSoundexMatch.jspf" %> 
 </c:if>
-
 <c:if test="${access.canApprove}">
 <!-- Hire Section -->
 <tr class="title">

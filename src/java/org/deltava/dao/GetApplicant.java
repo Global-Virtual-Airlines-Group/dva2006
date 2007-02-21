@@ -356,8 +356,6 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<Applicant> results = new ArrayList<Applicant>();
 		while (rs.next()) {
 			Applicant a = new Applicant(rs.getString(4), rs.getString(5));
@@ -391,7 +389,8 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			a.setTZ(TZInfo.get(rs.getString(30)));
 			a.setUIScheme(rs.getString(31));
 			a.setComments(rs.getString(32));
-			a.setRegisterAddress(rs.getString(33));
+			a.setHRComments(rs.getString(33));
+			a.setRegisterAddress(rs.getString(34));
 
 			// Add to results and cache
 			results.add(a);
