@@ -1,6 +1,6 @@
 #!/bin/sh
 # Configuration backup script
-# (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 
 # Goto backup directory
 cd /home/backup/cfg
@@ -14,6 +14,7 @@ tar vcfz postfix.tar.gz /etc/postfix
 tar vcfz imapd.tar.gz /usr/lib/courier-imap/etc
 tar vcfz mysql.tar.gz /home/mysql/my.cnf
 tar vcfz ts2.tar.gz /usr/local/ts2
+tar vcfz fsd.tar.gz /usr/local/fsd
 tar vcfz crontabs.tar.gz /var/spool/cron/tabs
 
 # Update permissions
