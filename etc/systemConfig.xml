@@ -400,7 +400,7 @@
 			</import>
 
 			<!-- downloaded file cache -->
-			<cache>d:\library\sched_cache</cache>
+			<cache>/var/cache/innovata/sched_cache</cache>
 		</innovata>
 	</schedule>
 
@@ -418,10 +418,10 @@
 		<css>css</css>
 		<js>js</js>
 		<img>img</img>
-		<library>d:\library</library>
-		<userfiles>d:\library\userfiles</userfiles>
-		<video>d:\library\videos</video>
-		<httplog>d:\log</httplog>
+		<library>/usr/www/library</library>
+		<userfiles>/usr/www/library/usrfiles</userfiles>
+		<video>/usr/www/library/video</video>
+		<httplog>/var/log/www</httplog>
 	</path>
 	
 	<!-- SMTP Server configuration -->
