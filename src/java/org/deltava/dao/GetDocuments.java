@@ -140,6 +140,22 @@ public class GetDocuments extends GetLibrary {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the contents of the Document Library that are available on the Registration page.
+	 * @return a Collection of Manual beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Manual> getRegistrationManuals() throws DAOException {
+		Collection<Manual> results = getManuals(SystemData.get("airline.db"), false);
+		for (Iterator<Manual> i = results.iterator(); i.hasNext(); ) {
+			Manual m = i.next();
+			if (!m.getShowOnRegister())
+				i.remove();
+		}
+		
+		return results;
+	}
 
 	/**
 	 * Returns the contents of the Document Library. This takes a database name so we can display the contents of other
@@ -254,7 +270,7 @@ public class GetDocuments extends GetLibrary {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasTotals = (rs.getMetaData().getColumnCount() > 6);
+		boolean hasTotals = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the result set
 		List<Manual> results = new ArrayList<Manual>();
@@ -264,9 +280,10 @@ public class GetDocuments extends GetLibrary {
 			doc.setName(rs.getString(2));
 			doc.setVersion(rs.getInt(4));
 			doc.setSecurity(rs.getInt(5));
-			doc.setDescription(rs.getString(6));
+			doc.setShowOnRegister(rs.getBoolean(6));
+			doc.setDescription(rs.getString(7));
 			if (hasTotals)
-				doc.setDownloadCount(rs.getInt(7));
+				doc.setDownloadCount(rs.getInt(8));
 
 			// Add to results
 			results.add(doc);
