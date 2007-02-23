@@ -54,11 +54,13 @@
  <td class="data"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
 </tr>
+<c:if test="${pirep.gateFuel > 0}">
 <tr>
  <td class="label">Arrival Information</td>
  <td class="data"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" />
  lbs fuel</td>
 </tr>
+</c:if>
 <c:set var="airborneTime" value="${fn:delta(pirep.takeoffTime, pirep.landingTime) / 60}" scope="request" />
 <c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="request" />
 <tr>
