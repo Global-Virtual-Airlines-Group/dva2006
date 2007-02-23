@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
 import java.net.*;
@@ -84,8 +84,11 @@ public class MapRouteService extends WebService {
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getParameter("id"));
-		if (p == null)
-			throw error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"));
+		if (p == null) {
+			ServiceException se = error(SC_NOT_FOUND, "Cannot find " + ctx.getParameter("id"));
+			se.setLogStackDump(false);
+			throw se;
+		}
 
 		// Generate the XML document
 		Document doc = new Document();
