@@ -78,10 +78,11 @@ if (distance > 6100) {
 return 10;
 }
 
-function toggleMarkers(map, arrayName)
+function toggleMarkers(map, arrayName, check)
 {
 // Figure out if we add or remove the markers
-var isToggled = displayedMarkers[arrayName];
+var isToggled = check.checked;
+// var isToggled = displayedMarkers[arrayName];
 if (isToggled) {
 	removeMarkers(map, arrayName);
 } else {
