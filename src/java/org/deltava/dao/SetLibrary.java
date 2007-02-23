@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -53,11 +53,11 @@ public class SetLibrary extends DAO {
 		try {
 			startTransaction();
 			if (isNew) {
-				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, FILENAME) VALUES "
-						+ "(?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, FILENAME) "
+						+ "VALUES (?, ?, ?, ?, ?, ?)");
 			} else {
-				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=? WHERE "
-						+ "(FILENAME=?)");
+				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=? "
+						+ "WHERE (FILENAME=?)");
 			}
 
 			// Update the prepared statement
@@ -66,9 +66,8 @@ public class SetLibrary extends DAO {
 			_ps.setInt(3, m.getMajorVersion());
 			_ps.setInt(4, m.getSecurity());
 			_ps.setString(5, m.getDescription());
-			_ps.setString(6, m.getFileName());
-
-			// Update the database
+			_ps.setBoolean(6, m.getShowOnRegister());
+			_ps.setString(7, m.getFileName());
 			executeUpdate(1);
 			
 			// Clean out the certification names

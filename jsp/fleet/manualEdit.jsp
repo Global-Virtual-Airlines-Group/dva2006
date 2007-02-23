@@ -33,6 +33,25 @@ setSubmit();
 disableButton('SaveButton');
 return true;
 }
+
+function updateSecurity(updatedField)
+{
+var f = document.forms[0];
+if ((!f.showRegister) || (!f.showRegister.checked))
+	return true;
+
+// Check to ensure security fields match
+if ((updatedField == f.showRegister) && (f.security.selectedIndex > 0))
+{
+	alert('This Manual has been made available to all users, to show on the Registration page.');
+	f.security.selectedIndex = 0;
+} else if ((updatedField == f.security) && (f.security.selectedIndex > 0) && (f.showRegister.checked)) {
+	alert('This Manual will no longer show on the Registration page.');
+	f.showRegister.checked = false;
+} 
+
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
@@ -92,7 +111,7 @@ return true;
 </content:filter>
 <tr>
  <td class="label">Document Security</td>
- <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" options="${securityOptions}" /></td>
+ <td class="data"><el:combo name="security" idx="*" size="1" value="${fn:get(securityOptions, entry.security)}" onChange="void updateSecurity(this)" options="${securityOptions}" /></td>
 </tr>
 <tr>
  <td class="label">Update File</td>
@@ -100,7 +119,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /></td>
+ <td class="data"><el:box name="noNotify" idx="*" value="true" label="Don't send notification e-mail" /><br />
+<el:box name="showRegister" idx="*" value="true" checked="${entry.showOnRegister}" onChange="void updateSecurity(this)" label="Show Manual on Pilot Registration page" /></td>
 </tr>
 </el:table>
 

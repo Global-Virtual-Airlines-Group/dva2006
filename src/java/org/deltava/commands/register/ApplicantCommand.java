@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.net.*;
@@ -12,8 +12,6 @@ import org.deltava.beans.schedule.Airport;
 import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import static org.deltava.commands.register.RegisterCommand.*;
 
 import org.deltava.security.command.ApplicantAccessControl;
 
@@ -90,8 +88,8 @@ public class ApplicantCommand extends AbstractFormCommand {
 			// Set Notification Options
 			Collection<String> notifyOptions = ctx.getParameters("notifyOption");
 			if (notifyOptions != null) {
-				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-					a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
+					a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
 			}
 
 			// Save the applicant in the request
@@ -136,7 +134,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		// Save the notification options
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(NOTIFY_NAMES, NOTIFY_ALIASES), REQUEST);
+		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 
 		// Sort and save the airports
 		Map<String, Airport> airports = SystemData.getAirports();

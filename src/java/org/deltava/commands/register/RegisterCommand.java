@@ -33,11 +33,6 @@ public class RegisterCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(RegisterCommand.class);
 
-	// Package-private since ApplicantCommand uses these
-	static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
-	static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Library Notifications", "Send Flight Approval Notifications" };
-
 	/**
 	 * Executes the command.
 	 * @param ctx the Command context
@@ -55,9 +50,17 @@ public class RegisterCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// If we're authenticated, redirect to the home page
+		if (ctx.isAuthenticated()) {
+			result.setURL("home.do");
+			result.setType(CommandResult.REDIRECT);
+			result.setSuccess(true);
+			return;
+		}
 
 		// Save the notification options
-		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(NOTIFY_NAMES, NOTIFY_ALIASES), REQUEST);
+		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
 
@@ -69,6 +72,18 @@ public class RegisterCommand extends AbstractCommand {
 
 		// If we're just doing a get, then redirect to the JSP
 		if (ctx.getParameter("firstName") == null) {
+			try {
+				Connection con = ctx.getConnection();
+				
+				// Load manuals to display
+				GetDocuments docdao = new GetDocuments(con);
+				ctx.setAttribute("manuals", docdao.getRegistrationManuals(), REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
+			
 			result.setURL("/jsp/register/register.jsp");
 			result.setSuccess(true);
 			return;
@@ -110,8 +125,8 @@ public class RegisterCommand extends AbstractCommand {
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
 		if (notifyOptions != null) {
-			for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-				a.setNotifyOption(NOTIFY_ALIASES[x], notifyOptions.contains(NOTIFY_ALIASES[x]));
+			for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
+				a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
 		}
 
 		// Save the applicant in the request

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
 import java.util.*;
@@ -12,7 +12,8 @@ import java.util.*;
 
 public class Manual extends FleetEntry {
 	
-	private Collection<String> _certs;
+	private final Collection<String> _certs = new TreeSet<String>();
+	private boolean _showOnRegister;
    
     /**
      * Creates a new Manual bean.
@@ -20,7 +21,6 @@ public class Manual extends FleetEntry {
      */
     public Manual(String fName) {
         super(fName);
-        _certs = new TreeSet<String>();
     }
 
     /**
@@ -29,6 +29,14 @@ public class Manual extends FleetEntry {
      */
     public String getVersion() {
         return String.valueOf(getMajorVersion());
+    }
+    
+    /**
+     * Returns wether the Manual should be shown on the Registration page.
+     * @return TRUE if the Manual should be shown, otherwise FALSE
+     */
+    public boolean getShowOnRegister() {
+    	return _showOnRegister;
     }
     
     /**
@@ -62,6 +70,15 @@ public class Manual extends FleetEntry {
     		_certs.clear();
     		_certs.addAll(certs);
     	}
+    }
+    
+    /**
+     * Marks this Manual as visible on the Registration page.
+     * @param show TRUE if the manual should be displayed, otherwise FALSE
+     * @see Manual#getShowOnRegister()
+     */
+    public void setShowOnRegister(boolean show) {
+    	_showOnRegister = show;
     }
     
     /**

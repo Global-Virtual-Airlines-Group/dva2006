@@ -36,6 +36,17 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * Notify when Flight Reports Approved.
 	 */
 	public static final String PIREP = "PIREP";
+	
+	/**
+	 * Notification type codes.
+	 */
+	public static final String[] NOTIFY_CODES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
+	
+	/**
+	 * Notification type descriptions.
+	 */
+	public static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
+			"Send Library Notifications", "Send Flight Approval Notifications" };
 
 	/**
 	 * Hide e-mail address from all non-staff users.
