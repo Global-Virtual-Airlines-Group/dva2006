@@ -74,17 +74,17 @@ return true;
 
 <!-- Table Header Bar -->
 <tr class="title caps mid">
- <td width="25%">TITLE</td>
- <td width="5%">&nbsp;</td>
- <td width="15%">SIZE</td>
+ <td>&nbsp;</td>
+ <td width="23%">TITLE</td>
+ <td width="12%">SIZE</td>
  <td class="left">DESCRIPTION</td>
 </tr>
 
 <!-- Table Data Section -->
 <c:forEach var="doc" items="${manuals}">
 <view:row entry="${doc}">
- <td class="pri bld mid"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
  <td class="mid"><el:link url="/library/${doc.fileName}"><el:img src="library/adobe.png" caption="Download PDF manual" x="32" y="32" border="0" /></el:link></td>
+ <td class="pri bld mid"><el:link url="/library/${doc.fileName}">${doc.name}</el:link></td>
  <td class="sec bld mid"><fmt:int value="${doc.size}" /> bytes</td>
  <td class="small"><fmt:text value="${doc.description}" /></td>
 </view:row>
