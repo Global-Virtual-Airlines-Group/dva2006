@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -6,10 +6,12 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
+import org.deltava.beans.schedule.Airline;
 import org.deltava.beans.schedule.ScheduleSearchCriteria;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to build a Flight Assignment.
@@ -108,6 +110,17 @@ public class BuildAssignmentCommand extends AbstractCommand {
 					ctx.release();
 				}
 			}
+			
+			// Get Airlines
+			Collection<Airline> airlines = new LinkedHashSet<Airline>(SystemData.getAirlines().values());
+			for (Iterator<Airline> i = airlines.iterator(); i.hasNext(); ) {
+				Airline al = i.next();
+				if (!al.getActive())
+					i.remove();
+			}
+			
+			// Save airlines
+			ctx.setAttribute("airlines", airlines, REQUEST);
 			
 			// Set combo variables for JSP
 			ctx.setAttribute("sortTypes", ScheduleSearchCriteria.SORT_OPTIONS, REQUEST);
