@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 import org.deltava.comparators.PilotComparator;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search for duplicate Pilots.
@@ -22,7 +23,7 @@ import org.deltava.util.StringUtils;
 
 public class DuplicatePilotSearchCommand extends AbstractCommand {
 
-	private static final int DEFAULT_RESULTS = 5;
+	private static final int DEFAULT_RESULTS = 10;
 
 	/**
 	 * Executes the command.
@@ -62,8 +63,8 @@ public class DuplicatePilotSearchCommand extends AbstractCommand {
 			// Get the DAO and search
 			GetPilot dao = new GetPilot(con);
 			dao.setQueryMax(maxResults);
-			results.addAll(dao.search(fName1, lName1, null));
-			results.addAll(dao.search(fName2, lName2, null));
+			results.addAll(dao.search(SystemData.get("airline.db"), fName1, lName1, null));
+			results.addAll(dao.search(SystemData.get("airline.db"), fName2, lName2, null));
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

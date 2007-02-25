@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -124,19 +124,13 @@ abstract class PilotReadDAO extends PilotDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Pilot get(UserData ud) throws DAOException {
-
-		// Check for null
 		if (ud == null)
 			return null;
 
-		// Convert the ID into a set
-		Set<Integer> idSet = new HashSet<Integer>();
-		idSet.add(new Integer(ud.getID()));
-
 		// Get a map from the table, and get the first value
-		Map pilots = getByID(idSet, ud.getDB() + "." + ud.getTable());
-		Iterator i = pilots.values().iterator();
-		return i.hasNext() ? (Pilot) i.next() : null;
+		Map<Integer, Pilot> pilots = getByID(Collections.singleton(new Integer(ud.getID())), ud.getDB() + "." + ud.getTable());
+		Iterator<Pilot> i = pilots.values().iterator();
+		return i.hasNext() ? i.next() : null;
 	}
 
 	/**
@@ -191,7 +185,8 @@ abstract class PilotReadDAO extends PilotDAO {
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		log.debug("Uncached set size = " + querySize);
+		if (log.isDebugEnabled())
+			log.debug("Uncached set size = " + querySize);
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
@@ -214,20 +209,7 @@ abstract class PilotReadDAO extends PilotDAO {
 
 			// If the database does not equal the current airline code, refresh all of the Pilot IDs with
 			// the pilot number, but use the database name as the airline code.
-			if (!dbName.equals(SystemData.get("airline.db"))) {
-				Map apps = (Map) SystemData.getObject("apps");
-				for (Iterator i = apps.values().iterator(); i.hasNext();) {
-					AirlineInformation info = (AirlineInformation) i.next();
-					if (dbName.equals(info.getDB())) {
-						for (Iterator uci = uncached.iterator(); uci.hasNext();) {
-							Pilot p = (Pilot) uci.next();
-							p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
-						}
-
-						break;
-					}
-				}
-			}
+			updatePilotCodes(uncached, dbName);
 
 			// Add to results and the cache
 			results.addAll(uncached);
@@ -422,5 +404,28 @@ abstract class PilotReadDAO extends PilotDAO {
 		// Clean up and return
 		rs.close();
 		_ps.close();
+	}
+	
+	/**
+	 * Updates the Pilot codes when loading Pilots from different databases.
+	 * @param pilots a Collection of Pilot beans to update
+	 * @param dbName the database name
+	 */
+	protected final void updatePilotCodes(Collection<Pilot> pilots, String dbName) {
+		if (SystemData.get("airline.db").equals(dbName))
+			return;
+		
+		Map apps = (Map) SystemData.getObject("apps");
+		for (Iterator i = apps.values().iterator(); i.hasNext();) {
+			AirlineInformation info = (AirlineInformation) i.next();
+			if (dbName.equals(info.getDB())) {
+				for (Iterator<Pilot> uci = pilots.iterator(); uci.hasNext();) {
+					Pilot p = uci.next();
+					p.setPilotCode(info.getCode() + String.valueOf(p.getPilotNumber()));
+				}
+
+				break;
+			}
+		}
 	}
 }

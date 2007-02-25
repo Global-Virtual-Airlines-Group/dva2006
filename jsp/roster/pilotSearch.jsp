@@ -71,7 +71,9 @@ return false;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec small"><el:box name="exactMatch" idx="*" value="true" label="Exact Matches only" checked="${param.exactMatch == '1'}" /></td>
+ <td class="data sec small"><el:box name="exactMatch" idx="*" value="true" label="Exact Matches only" checked="${param.exactMatch == '1'}" />
+<content:filter roles="Admin"><br />
+<el:box name="allAirlines" idx="*" value="true" label="Search all Airlines" /></content:filter></td>
 </tr>
 </el:table>
 
@@ -114,8 +116,10 @@ return false;
 <view:row entry="${pilot}">
 <c:set var="cspan" value="${2}" scope="request" />
 <content:filter roles="HR">
+<c:if test="${access.canActivate || access.canChangeSignature}">
  <td><el:cmdbutton url="cmdlog" linkID="0x${pilot.ID}" label="VIEW LOG" /></td>
 <c:set var="cspan" value="${1}" scope="request" />
+</c:if>
 </content:filter>
 <c:choose>
 <c:when test="${access.canActivate}">

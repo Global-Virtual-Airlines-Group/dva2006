@@ -298,6 +298,7 @@ public class GetPilot extends PilotReadDAO {
 
 	/**
 	 * Searches for Pilots matching certain search criteria, using a SQL LIKE search.
+	 * @param dbName the database name
 	 * @param fName the Pilot's First Name, containing wildcards accepted by the JDBC implementation's LIKE operator
 	 * @param lName the Pilot's Last Name, containing wildcards accepted by the JDBC implementation's LIKE operator
 	 * @param eMail the Pilot's e-mail Address, , containing wildcards accepted by the JDBC implementation's LIKE
@@ -305,11 +306,15 @@ public class GetPilot extends PilotReadDAO {
 	 * @return a List of Pilots
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<Pilot> search(String fName, String lName, String eMail) throws DAOException {
+	public List<Pilot> search(String dbName, String fName, String lName, String eMail) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "
-				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON (P.ID=F.PILOT_ID) WHERE ");
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1), MAX(F.DATE) FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P LEFT JOIN ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PIREPS F ON (P.ID=F.PILOT_ID) WHERE ");
 
 		// Add parameters if they are non-null
 		List<String> searchTerms = new ArrayList<String>();
@@ -322,7 +327,7 @@ public class GetPilot extends PilotReadDAO {
         
         // If no search terms specified, return an empty list
         if (searchTerms.isEmpty())
-           return new ArrayList<Pilot>();
+           return Collections.emptyList();
         
         // Aggregate the search terms
 		for (Iterator i = searchTerms.iterator(); i.hasNext();) {
@@ -335,6 +340,7 @@ public class GetPilot extends PilotReadDAO {
 		// Complete the SQL statement
 		sqlBuf.append(" GROUP BY P.ID");
 
+		List<Pilot> results = null;
 		try {
 			prepareStatement(sqlBuf.toString());
 
@@ -348,9 +354,13 @@ public class GetPilot extends PilotReadDAO {
 				_ps.setString(++idx, eMail);
 
 			// Execute the Query and return
-			return execute();
+			results = execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+		
+		// Update pilot codes and return
+		updatePilotCodes(results, dbName);
+		return results;
 	}
 }

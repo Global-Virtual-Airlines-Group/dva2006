@@ -82,7 +82,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get online hours
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
-			prdao.getOnlineTotals(p);
+			prdao.getOnlineTotals(p, SystemData.get("airline.db"));
 
 			// Get the schedule size
 			GetSchedule sdao = new GetSchedule(con);

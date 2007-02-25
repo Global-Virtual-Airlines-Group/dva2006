@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -27,13 +27,21 @@ public class GetStatusUpdate extends DAO {
 	 * Retrieves all Status Updates for a particular Pilot. <i>The firstName and lastName properties will
 	 * be populated by the <b>Status Update's author name</b>, not the pilot name.</i>
 	 * @param id the Pilot ID
+	 * @param dbName the database name
 	 * @return a List of StatusUpdate beans, sorted by descending date
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<StatusUpdate> getByUser(int id) throws DAOException {
+	public List<StatusUpdate> getByUser(int id, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".STATUS_UPDATES SU, ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS P WHERE (SU.PILOT_ID=?) AND (P.ID=SU.AUTHOR_ID) ORDER BY SU.CREATED DESC");
+		
 		try {
-			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P "
-					+ "WHERE (SU.PILOT_ID=?) AND (P.ID=SU.AUTHOR_ID) ORDER BY SU.CREATED DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, id);
 			return execute();
 		} catch (SQLException se) {

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -10,7 +10,10 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PilotAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
+ * A Web Site Command to save Status History commands for a Pilot.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -49,7 +52,7 @@ public class StatusCommentCommand extends AbstractCommand {
 
 			// Load the status update entries
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", sudao.getByUser(usr.getID()), REQUEST);
+			ctx.setAttribute("statusUpdates", sudao.getByUser(usr.getID(), SystemData.get("airline.db")), REQUEST);
 			
 			// If we're doing a GET, forward to the JSP
 			if (ctx.getParameter("comment") == null) {
