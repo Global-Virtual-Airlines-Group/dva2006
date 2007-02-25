@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.io.IOException;
@@ -136,14 +136,14 @@ public class SecurityCookieFilter implements Filter {
 
 			// Make sure that the pilot is still active
 			if (p != null) {
-				if (p.getStatus() == Pilot.ACTIVE) {
+				if ((p instanceof Pilot) && (p.getStatus() == Pilot.ACTIVE)) {
 					s.setAttribute(CommandContext.USER_ATTR_NAME, p);
 
 					// Check if we are a superUser impersonating someone
 					Person su = (Pilot) s.getAttribute(CommandContext.SU_ATTR_NAME);
 					UserPool.add((su != null) ? su : p, s.getId());
 				} else {
-					log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
+					log.warn(p.getName() + " status = " + p.getStatusName());
 					((HttpServletResponse) rsp).addCookie(new Cookie(CommandContext.AUTH_COOKIE_NAME, ""));
 					s.invalidate();
 				}
