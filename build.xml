@@ -119,7 +119,7 @@
 	<target name="compile">
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
-		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
+		 debug="true" debuglevel="lines,vars,source" source="1.6" target="1.6"
 		 compiler="modern">
 			<compilerarg value="-Xlint:unchecked" />
 	    	<classpath>
@@ -132,7 +132,7 @@
 		
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true"
-		 destfile="${java.io.tmpdir}/build/dva2006.jar" />
+		 destfile="${java.io.tmpdir}/build/golgotha.jar" />
 	</target>
 	
 	<!-- Build the ACARS Server -->
@@ -146,13 +146,13 @@
 				<pathelement path="${classpath}" />
 	    		<pathelement location="lib/deploy/jdom-1.0.jar" />
 	    		<pathelement location="lib/deploy/log4j-1.2.14.jar" />
-	    		<pathelement location="${java.io.tmpdir}/build/dva2006.jar" />
+	    		<pathelement location="${java.io.tmpdir}/build/golgotha.jar" />
 	    	</classpath>
 		</javac>
 
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/acars" compress="true" index="true"
-		 destfile="${java.io.tmpdir}/build/dva_acars.jar" />
+		 destfile="${java.io.tmpdir}/build/golgotha_acars.jar" />
 	</target>
 	
 	<!-- Precompile the JSP pages -->
@@ -175,7 +175,7 @@
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.5" compilerSourceVM="1.5" trimSpaces="false"
+	    	compilerTargetVM="1.6" compilerSourceVM="1.6" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
@@ -189,7 +189,7 @@
 		
 		<!-- Compress the Java classes into a single JAR file -->
 		<jar basedir="${java.io.tmpdir}/build/jsp" compress="true" index="true"
-		 	destfile="${java.io.tmpdir}/build/dva2006_jsp.jar" />
+		 	destfile="${java.io.tmpdir}/build/golgotha_jsp.jar" />
 		 		 
 		<!-- Force all JSPs to load on startup -->
 		<!-- <replace file="${jspc.webXMLInc}" token="&lt;/servlet-class&gt;">
