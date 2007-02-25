@@ -39,10 +39,6 @@ public class ProfileCommand extends AbstractFormCommand {
 	private static final String[] PRIVACY_NAMES = { "Show address to Staff Members only",
 			"Show address to Authenticated Users", "Show address to All Visitors" };
 
-	private static final String[] NOTIFY_ALIASES = { Person.NEWS, Person.EVENT, Person.FLEET, Person.PIREP };
-	private static final String[] NOTIFY_NAMES = { "Send News Notifications", "Send Event Notifications",
-			"Send Library Notifications", "Send Flight Approval Notifications" };
-
 	/**
 	 * Callback method called when saving the profile.
 	 * @param ctx the Command context
@@ -100,11 +96,11 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Set Notification Options
 			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
 			if (notifyOpts != null) {
-				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-					p.setNotifyOption(NOTIFY_ALIASES[x], notifyOpts.contains(NOTIFY_ALIASES[x]));
+				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
+					p.setNotifyOption(Person.NOTIFY_CODES[x], notifyOpts.contains(Person.NOTIFY_CODES[x]));
 			} else {
-				for (int x = 0; x < NOTIFY_ALIASES.length; x++)
-					p.setNotifyOption(NOTIFY_ALIASES[x], false);
+				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
+					p.setNotifyOption(Person.NOTIFY_CODES[x], false);
 			}
 
 			// Determine if we are changing the pilot's status
@@ -440,10 +436,10 @@ public class ProfileCommand extends AbstractFormCommand {
 						isOK = false;
 					}
 				}
-				
+
 				if (isOK) {
 					p.setEmail(newEMail);
-				
+
 					// Initialize the message context
 					MessageContext mctxt = new MessageContext();
 					mctxt.addData("addrValid", av);
@@ -522,7 +518,7 @@ public class ProfileCommand extends AbstractFormCommand {
 						sqlAuth.clearConnection();
 					} else
 						auth.rename(p, newDN);
-					
+
 					p.setDN(newDN);
 					p.setFirstName(p2.getFirstName());
 					p.setLastName(p2.getLastName());
@@ -632,10 +628,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					sqlAuth.clearConnection();
 				} else
 					auth.updatePassword(p, p.getPassword());
-				
+
 				ctx.setAttribute("pwdUpdate", Boolean.TRUE, REQUEST);
 			}
-			
+
 			// Commit the transaction
 			ctx.commitTX();
 
@@ -664,7 +660,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 		// Save time zones and notification/privacy options
 		ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
-		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(NOTIFY_NAMES, NOTIFY_ALIASES), REQUEST);
+		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("privacyOptions", ComboUtils.fromArray(PRIVACY_NAMES, PRIVACY_ALIASES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
 		ctx.setAttribute("statuses", ComboUtils.fromArray(Pilot.STATUS), REQUEST);
@@ -674,14 +670,14 @@ public class ProfileCommand extends AbstractFormCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAO and load the pilot/email profile
+			// Get the DAO and load the pilot profile
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			GetPilotEMail edao = new GetPilotEMail(con);
 			Pilot p = dao.get(ctx.getID());
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// load the email configuration
+			GetPilotEMail edao = new GetPilotEMail(con);
 			EMailConfiguration emailCfg = edao.getEMailInfo(ctx.getID());
 			if (emailCfg != null)
 				ctx.setAttribute("emailCfg", emailCfg, REQUEST);
@@ -702,17 +698,16 @@ public class ProfileCommand extends AbstractFormCommand {
 			MailboxAccessControl m_access = new MailboxAccessControl(ctx, emailCfg);
 			m_access.validate();
 
-			// Save pilot status
-			ctx.setAttribute("status", Pilot.STATUS[p.getStatus()], REQUEST);
+			// Save access controllers
+			ctx.setAttribute("access", ac, REQUEST);
+			ctx.setAttribute("m_access", m_access, REQUEST);
 
 			// Get the Online Hours/Legs if not already loaded
 			GetFlightReports frdao = new GetFlightReports(con);
-			frdao.getOnlineTotals(p);
+			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
 
 			// Save the pilot profile in the request
 			ctx.setAttribute("pilot", p, REQUEST);
-			ctx.setAttribute("access", ac, REQUEST);
-			ctx.setAttribute("m_access", m_access, REQUEST);
 
 			// Get all equipment type profiles
 			GetEquipmentType eqdao = new GetEquipmentType(con);
@@ -728,7 +723,7 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID()), REQUEST);
+			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID(), SystemData.get("airline.db")), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -747,20 +742,28 @@ public class ProfileCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-
-		// Get airport map
-		Map airports = (Map) SystemData.getObject("airports");
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Load the User Data
+			GetUserData uddao = new GetUserData(con);
+			UserData usrInfo = uddao.get(ctx.getID());
+			if (usrInfo == null)
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+
+			// If it's in a different database check our role
+			boolean crossDB = !SystemData.get("airline.db").equals(usrInfo.getDB());
+			if (crossDB && !ctx.isUserInRole("Admin"))
+				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// Get the DAO and load the pilot profile
 			GetPilot dao = new GetPilot(con);
-			Pilot p = dao.get(ctx.getID());
+			Pilot p = dao.get(usrInfo);
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// Get the access controller
-			PilotAccessControl access = new PilotAccessControl(ctx, p);
+			PilotAccessControl access = crossDB ? new CrossAppPilotAccessControl(ctx, p) : new PilotAccessControl(ctx, p);
 			access.validate();
 
 			// Check if we can view examinations
@@ -782,27 +785,27 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Check for an applicant profile
-			if (ctx.isUserInRole("HR")) {
+			if (ctx.isUserInRole("HR") && !crossDB) {
 				GetApplicant adao = new GetApplicant(con);
 				ctx.setAttribute("applicant", adao.getByPilotID(p.getID()), REQUEST);
 			}
 
 			// Get Academy Certifications
-			if (SystemData.getBoolean("academy.enabled")) {
+			if (SystemData.getBoolean("academy.enabled") && !crossDB) {
 				GetAcademyCourses fadao = new GetAcademyCourses(con);
 				ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
 			}
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID()), REQUEST);
+			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID(), usrInfo.getDB()), REQUEST);
 
 			// Get the online totals
 			GetFlightReports prdao = new GetFlightReports(con);
-			prdao.getOnlineTotals(p);
+			prdao.getOnlineTotals(p, usrInfo.getDB());
 
 			// Get TeamSpeak2 data
-			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
+			if (SystemData.getBoolean("airline.voice.ts2.enabled") && !crossDB) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
 				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"),
 						REQUEST);
@@ -812,7 +815,8 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Save the pilot profile and ratings in the request
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute("access", access, REQUEST);
-			ctx.setAttribute("airport", airports.get(p.getHomeAirport()), REQUEST);
+			ctx.setAttribute("crossDB", Boolean.valueOf(crossDB), REQUEST);
+			ctx.setAttribute("airport", SystemData.getAirport(p.getHomeAirport()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

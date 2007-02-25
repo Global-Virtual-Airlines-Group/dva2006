@@ -287,13 +287,19 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Gets online legs/hours for a particular Pilot.
 	 * @param p the Pilot to query for (the object will be updated)
+	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void getOnlineTotals(Pilot p) throws DAOException {
+	public void getOnlineTotals(Pilot p, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(PR.FLIGHT_TIME), SUM(PR.FLIGHT_TIME) FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PIREPS PR WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?) AND ((PR.ATTR & ?) != 0)");
+		
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT COUNT(PR.FLIGHT_TIME), SUM(PR.FLIGHT_TIME) FROM PIREPS PR WHERE "
-					+ "(PR.PILOT_ID=?) AND (PR.STATUS=?) AND ((PR.ATTR & ?) != 0)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, p.getID());
 			_ps.setInt(2, FlightReport.OK);
 			_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);

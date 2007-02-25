@@ -1,19 +1,18 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.security.command.*;
 
-import org.deltava.security.command.PilotAccessControl;
-
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -24,120 +23,131 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PilotSearchCommand extends AbstractCommand {
-   
-   private static final int DEFAULT_RESULTS = 20;
 
-   /**
-    * Executes the command.
-    * @param ctx the Command context
-    * @throws CommandException if an unhandled error occurs
-    */
-   public void execute(CommandContext ctx) throws CommandException {
+	private static final int DEFAULT_RESULTS = 20;
 
-      // Get the command results
-      CommandResult result = ctx.getResult();
+	/**
+	 * Executes the command.
+	 * @param ctx the Command context
+	 * @throws CommandException if an unhandled error occurs
+	 */
+	public void execute(CommandContext ctx) throws CommandException {
 
-      // Check if we're doing a GET
-      if (ctx.getParameter("firstName") == null) {
-         ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
-         ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
-         result.setURL("/jsp/roster/pilotSearch.jsp");
-         result.setSuccess(true);
-         return;
-      }
+		// Get the command results
+		CommandResult result = ctx.getResult();
 
-      // Check if we're doing an exact match
-      boolean exactMatch = Boolean.valueOf(ctx.getParameter("exactMatch")).booleanValue();
+		// Check if we're doing a GET
+		if (ctx.getParameter("firstName") == null) {
+			ctx.setAttribute("noResults", Boolean.TRUE, REQUEST);
+			ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
+			result.setURL("/jsp/roster/pilotSearch.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
-      // Build the parameters
-      String fName = buildParameter(ctx.getParameter("firstName"), exactMatch);
-      String lName = buildParameter(ctx.getParameter("lastName"), exactMatch);
-      String eMail = buildParameter(ctx.getParameter("eMail"), exactMatch);
+		// Check if we're doing an exact match
+		boolean exactMatch = Boolean.valueOf(ctx.getParameter("exactMatch")).booleanValue();
 
-      // Check the pilot code parameter
-      int pilotCode = getPilotCode(ctx.getParameter("pilotCode"));
+		// Build the parameters
+		String fName = buildParameter(ctx.getParameter("firstName"), exactMatch);
+		String lName = buildParameter(ctx.getParameter("lastName"), exactMatch);
+		String eMail = buildParameter(ctx.getParameter("eMail"), exactMatch);
+		UserID id = new UserID(ctx.getParameter("pilotCode"));
 
-      Collection<Pilot> results = null;
-      try {
-         Connection con = ctx.getConnection();
+		// Set the result size
+		int maxResults = StringUtils.parse(ctx.getParameter("maxResults"), 1);
+		if ((maxResults < 1) || (maxResults > 99))
+			maxResults = DEFAULT_RESULTS;
 
-         // Get the DAO and set the result size
-         GetPilot dao = new GetPilot(con);
-         try {
-            int maxResults = Integer.parseInt(ctx.getParameter("maxResults"));
-            if ((maxResults < 1) || (maxResults > 99))
-               throw new IllegalArgumentException();
-            
-            dao.setQueryMax(maxResults);
-            ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
-         } catch (Exception e) {
-            dao.setQueryMax(DEFAULT_RESULTS);
-            ctx.setAttribute("maxResults", new Integer(DEFAULT_RESULTS), REQUEST);
-         }
-         
-         // Get the search results
-         if (pilotCode > 0) {
-            results = new ArrayList<Pilot>();
-            Pilot p = dao.getPilotByCode(pilotCode, SystemData.get("airline.db"));
-            if (p != null)
-               results.add(p);
-         } else {
-            results = dao.search(fName, lName, eMail);
-         }
-      } catch (DAOException de) {
-         throw new CommandException(de);
-      } finally {
-         ctx.release();
-      }
+		// Check for inter-airline search
+		boolean crossAirlineSearch = Boolean.valueOf(ctx.getParameter("allAirlines")).booleanValue();
+		
+		UserDataMap udmap = null;
+		Collection<Pilot> results = new ArrayList<Pilot>();
+		try {
+			Connection con = ctx.getConnection();
 
-      // Calculate access to each search result
-      Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
-      for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
-         Pilot p = i.next();
+			// Load Airline information
+			GetUserData uddao = new GetUserData(con);
+			Map<String, AirlineInformation> apps = uddao.getAirlines(true);
 
-         // Calculate the access level
-         PilotAccessControl access = new PilotAccessControl(ctx, p);
-         access.validate();
+			// Get the DAO
+			GetPilot dao = new GetPilot(con);
+			dao.setQueryMax(maxResults);
 
-         // Save the access level in the map, indexed by pilot ID
-         accessMap.put(new Integer(p.getID()), access);
-      }
+			// Get the search results
+			if (id.getUserID() > 0) {
+				AirlineInformation app = apps.get(id.getAirlineCode());
+				boolean isCrossSearch = !SystemData.get("airline.code").equals(id.getAirlineCode());
+				
+				// Load the profile
+				if ((app != null) && isCrossSearch && ctx.isUserInRole("Admin")) {
+					Pilot p = dao.getPilotByCode(id.getUserID(), app.getDB());
+					if (p != null)
+						results.add(p);
+				} else {
+					Pilot p = dao.getPilotByCode(id.getUserID(), SystemData.get("airline.db"));
+					if (p != null)
+						results.add(p);
+				}
+			} else {
+				boolean isCrossSearch = crossAirlineSearch && ctx.isUserInRole("Admin");
+				if (isCrossSearch) {
+					for (Iterator<AirlineInformation> i = apps.values().iterator(); i.hasNext(); ) {
+						AirlineInformation app = i.next();
+						results.addAll(dao.search(app.getDB(), fName, lName, eMail));
+					}
+				} else
+					results.addAll(dao.search(SystemData.get("airline.db"), fName, lName, eMail));
+			}
+			
+			// Load the pilot IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<Pilot> i = results.iterator(); i.hasNext(); ) {
+				Pilot p = i.next();
+				IDs.add(new Integer(p.getID()));
+			}
+			
+			// Load the user locations
+			udmap = uddao.get(IDs);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
 
-      // Save the results and access level in the request
-      ctx.setAttribute("results", results, REQUEST);
-      ctx.setAttribute("accessMap", accessMap, REQUEST);
+		// Calculate access to each search result
+		Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
+		for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
+			Pilot p = i.next();
+			UserData usrInfo = (UserData) udmap.get(p.getID());
 
-      // Forward to the JSP
-      result.setURL("/jsp/roster/pilotSearch.jsp");
-      result.setSuccess(true);
-   }
+			// Calculate the access level
+			PilotAccessControl access = SystemData.get("airline.db").equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : 
+				new CrossAppPilotAccessControl(ctx, p);
+			access.validate();
 
-   /**
-    * Helper method to take a parameter and add LIKE wildcards.
-    */
-   private String buildParameter(String pValue, boolean exMatch) {
-      if (StringUtils.isEmpty(pValue)) return null;
-      return exMatch ? pValue : "%" + pValue + "%";
-   }
+			// Save the access level in the map, indexed by pilot ID
+			accessMap.put(new Integer(p.getID()), access);
+		}
 
-   /**
-    * Helper method to convert a pilot code to a numeric value.
-    */
-   private int getPilotCode(CharSequence pcValue) {
-	   if (pcValue == null)
-		   return 0;
+		// Save the results and access level in the request
+		ctx.setAttribute("results", results, REQUEST);
+		ctx.setAttribute("accessMap", accessMap, REQUEST);
+		ctx.setAttribute("maxResults", new Integer(maxResults), REQUEST);
 
-      StringBuilder buf = new StringBuilder();
-      for (int x = 0; x < pcValue.length(); x++) {
-         char c = pcValue.charAt(x);
-         if (Character.isDigit(c)) buf.append(c);
-      }
+		// Forward to the JSP
+		result.setURL("/jsp/roster/pilotSearch.jsp");
+		result.setSuccess(true);
+	}
 
-      // Convert the code
-      try {
-         return Integer.parseInt(buf.toString());
-      } catch (NumberFormatException nfe) {
-         return 0;
-      }
-   }
+	/**
+	 * Helper method to take a parameter and add LIKE wildcards.
+	 */
+	private String buildParameter(String pValue, boolean exMatch) {
+		if (StringUtils.isEmpty(pValue))
+			return null;
+
+		return exMatch ? pValue : "%" + pValue + "%";
+	}
 }
