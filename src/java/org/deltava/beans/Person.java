@@ -217,16 +217,26 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 
 	/**
 	 * Return this Person's status. It is up to each implementation to detrmine valid values for this property.
-	 * @return Person's status
+	 * @return the Person's status code
+	 * @see Person#getStatusName()
 	 * @see Person#setStatus(int)
 	 */
 	public int getStatus() {
 		return _status;
 	}
+	
+	/**
+	 * Returns the Person's status.
+	 * @return the status name
+	 * @see Person#getStatus()
+	 * @see Person#setStatus(int)
+	 */
+	public abstract String getStatusName();
 
 	/**
 	 * Return this Person's Time Zone.
 	 * @return the time zone where this Person is located
+	 * @see Person#setTZ(TZInfo)
 	 */
 	public TZInfo getTZ() {
 		return _tz;

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.net.MalformedURLException;
@@ -114,7 +114,7 @@ public class LoginCommand extends AbstractCommand {
 				returnToActive = true;
 				p.setStatus(Pilot.ACTIVE);
 			} else if (p.getStatus() != Pilot.ACTIVE) {
-				log.warn(p.getName() + " status = " + Pilot.STATUS[p.getStatus()]);
+				log.warn(p.getName() + " status = " + p.getStatusName());
 				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
 			}
 

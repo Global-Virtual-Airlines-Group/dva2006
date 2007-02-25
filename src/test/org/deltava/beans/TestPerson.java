@@ -25,6 +25,10 @@ public class TestPerson extends AbstractBeanTestCase {
             super(fName, lName);
         }
         
+        public String getStatusName() {
+        	return "MockPerson";
+        }
+        
         public final void setStatus(int status) {
             super.setStatus(status);
         }
