@@ -189,7 +189,9 @@ Applicant profile for ${pilot.name}.</td>
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td>
+<c:if test="${!crossDB}">
 <el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="LOG BOOK" />
+</c:if>
 <c:if test="${access.canEdit}">
  <el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
@@ -199,6 +201,7 @@ Applicant profile for ${pilot.name}.</td>
 <c:if test="${access.canAssignRide}">
  <el:cmdbutton url="nakedassign" linkID="0x${pilot.ID}" label="ASSIGN CHECK RIDE" />
 </c:if>
+<c:if test="${!crossDB}">
 <content:filter roles="HR,PIREP,Examination">
  <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
 </content:filter>
@@ -211,6 +214,7 @@ Applicant profile for ${pilot.name}.</td>
 <content:filter roles="Admin">
  <el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
 </content:filter>
+</c:if>
 </td>
 </tr>
 </el:table>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -13,9 +13,9 @@ import org.deltava.beans.Pilot;
  * @since 1.0
  */
 
-public final class PilotAccessControl extends AccessControl {
+public class PilotAccessControl extends AccessControl {
 
-	private Pilot _p;
+	protected Pilot _p;
 
 	private boolean _isOurs;
 	private boolean _canViewEmail;
@@ -48,6 +48,8 @@ public final class PilotAccessControl extends AccessControl {
 	 */
 	public void validate() {
 		validateContext();
+		if (_p == null)
+			return;
 
 		// Get the currently logged in user. If not logged in, just check e-mail access
 		if (!_ctx.isAuthenticated()) {
