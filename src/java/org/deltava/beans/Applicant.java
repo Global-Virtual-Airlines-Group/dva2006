@@ -45,6 +45,14 @@ public class Applicant extends Person {
     public Applicant(String firstName, String lastName) {
         super(firstName, lastName);
     }
+    
+    /**
+     * Returns the status name.
+     * @return &quot;Applicant&quot;
+     */
+    public String getStatusName() {
+    	return ROLE;
+    }
 
     /**
      * Returns the URL for legacy hours verification.
