@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.googlemap;
 
 import javax.servlet.jsp.*;
@@ -119,7 +119,8 @@ public class MapDIVTag extends ElementTag {
     */
    public int doEndTag() throws JspException {
       try {
-         _out.print(_data.open(true, true));
+         _out.print(_data.open(true, false));
+         _out.print(_data.close());
       } catch (Exception e) {
          throw new JspException(e);
       } finally {
