@@ -28,9 +28,10 @@ ${pilot.name} has been deleted.<br />
 </c:if>
 <c:if test="${isRestarted}">
 <!-- Flight Academy Course Restarted -->
-<div class="updateHdr">Flight Academy Course Restarted</div>
+<div class="updateHdr">Flight Academy Course Re-Enrollment Requested</div>
 <br />
-You have re-enrolled in the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>.<br />
+You have requested re-enrollment in the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>. A Flight
+Academy Instructor should be in contact with you soon about your request.<br />
 <br />
 To view this Course, <el:cmd url="course" linkID="0x${course.ID}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
