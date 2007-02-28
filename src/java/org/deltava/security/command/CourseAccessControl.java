@@ -16,7 +16,6 @@ import org.deltava.security.SecurityContext;
 public class CourseAccessControl extends AccessControl {
 	
 	private Course _c;
-	
 	private boolean _canComment;
 	private boolean _canCancel;
 	private boolean _canRestart;
@@ -60,7 +59,7 @@ public class CourseAccessControl extends AccessControl {
 		_canComment = isINS || isHR || (isMine && isStarted);
 		_canStart = (isINS || isHR) && isPending;
 		_canCancel = (isHR || isAcademyAdmin || isMine) && isStarted;
-		_canRestart = (_c.getStatus() == Course.ABANDONED) && (isMine || isINS || isHR);
+		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
 		_canAssign = (isStarted || isPending) && (isHR || isINS || isAcademyAdmin);

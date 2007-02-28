@@ -24,7 +24,8 @@ import org.deltava.util.StringUtils;
 public class CourseDisposalCommand extends AbstractCommand {
 	
 	// Operation constants
-	private static final String[] OPNAMES = {"restart", "abandon", "complete"};
+	private static final String[] OPNAMES = {"start", "abandon", "complete", "restart"};
+	private static final int RESTARTED = 3;
 
 	/**
 	 * Executes the command.
@@ -66,9 +67,14 @@ public class CourseDisposalCommand extends AbstractCommand {
 			boolean canExec = false;
 			switch (opCode) {
 				case Course.STARTED :
-					upd.setDescription("Re-enrolled in " + c.getName());
+					upd.setDescription("Enrolled in " + c.getName());
+					canExec = access.getCanStart();
+					break;
+					
+				case RESTARTED:
+					upd.setDescription("Requested return to " + c.getName());
 					ctx.setAttribute("isRestarted", Boolean.TRUE, REQUEST);
-					canExec = access.getCanRestart() || access.getCanStart();
+					canExec = access.getCanRestart();
 					break;
 					
 				case Course.ABANDONED :
@@ -105,10 +111,8 @@ public class CourseDisposalCommand extends AbstractCommand {
 				Pilot usr = pdao.get(c.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
 				usrs.add(usr);
-			} else {
-				
+			} else
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
-			}
 			
 			// Start a transaction
 			ctx.startTX();
