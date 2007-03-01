@@ -20,6 +20,8 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
+<content:js name="common" />
+<content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -41,6 +43,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="dateFmt" name="time.date_format" />
 <content:sysdata var="cats" name="airline.newsletters.categories" />
 
 <!-- Main Body Frame -->
@@ -71,7 +74,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Publishing Date</td>
- <td class="data"><el:text name="date" idx="*" size="10" max="10" className="req" value="${entry.date}" /></td>
+ <td class="data"><el:text name="date" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy')}" />
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].date')" /></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>
