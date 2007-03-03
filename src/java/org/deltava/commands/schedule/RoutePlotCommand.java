@@ -1,9 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.commands.*;
@@ -27,19 +27,22 @@ public class RoutePlotCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Generate empty list for JSP
-		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
+		// Determine if the user uses IATA/ICAO codes
+		Person usr = ctx.getUser();
+		boolean useIATA = (usr == null) ? false : (usr.getAirportCodeType() == Airport.IATA);
 
 		// Sort and save the airports, and force ICAO codes
-		Map airports = (Map) SystemData.getObject("airports");
-		Set<ComboAlias> apSet = new TreeSet<ComboAlias>();
-		for (Iterator i = airports.values().iterator(); i.hasNext(); ) {
-			Airport a = (Airport) i.next();
-			apSet.add(ComboUtils.fromString(a.getName() + " (" + a.getICAO() + ")", a.getICAO()));
+		Collection<ComboAlias> apSet = new TreeSet<ComboAlias>();
+		Collection<Airport> airports = new HashSet<Airport>(SystemData.getAirports().values());
+		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
+			Airport a = i.next();
+			String code = useIATA ? a.getIATA() : a.getICAO();
+			apSet.add(ComboUtils.fromString(a.getName() + " (" + code + ")", code));
 		}
 		
-		// save the airports in the request
+		// Save the airports in the request
 		ctx.setAttribute("airports", apSet, REQUEST);
+		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
