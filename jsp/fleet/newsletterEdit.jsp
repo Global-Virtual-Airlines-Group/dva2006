@@ -29,7 +29,7 @@ if (!checkSubmit()) return false;
 if (!validateText(form.title, 10, 'Newsletter Title')) return false;
 if (!validateCombo(form.category, 'Newsletter Category')) return false;
 if (!validateText(form.desc, 10, 'Description')) return false;
-if (!validateText(form.date, 8, 'Publishing Date')) return false;
+if (!validateText(form.newsDate, 8, 'Publishing Date')) return false;
 if (!validateFile(form.file, 'pdf', 'Uploaded Newsletter')) return false;
 
 setSubmit();
@@ -74,8 +74,9 @@ return true;
 </tr>
 <tr>
  <td class="label">Publishing Date</td>
- <td class="data"><el:text name="date" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy')}" />
-&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].date')" /></td>
+ <td class="data"><el:text name="newsDate" idx="*" size="10" max="10" className="req" value="${fn:dateFmt(entry.date, 'MM/dd/yyyy')}" />
+&nbsp;<el:button className="BUTTON" label="CALENDAR" onClick="void show_calendar('forms[0].date')" />
+&nbsp;<span class="small">(Format: ${dateFmt})</span></td>
 </tr>
 <c:if test="${!empty entry}">
 <tr>

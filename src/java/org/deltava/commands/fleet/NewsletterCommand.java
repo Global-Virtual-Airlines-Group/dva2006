@@ -92,7 +92,7 @@ public class NewsletterCommand extends LibraryEditCommand {
 			nws.setDescription(ctx.getParameter("desc"));
 			nws.setName(ctx.getParameter("title"));
 			nws.setCategory(ctx.getParameter("category"));
-			nws.setDate(StringUtils.parseDate(ctx.getParameter("date"), ctx.getUser().getDateFormat()));
+			nws.setDate(parseDateTime(ctx, "news", SystemData.get("time.date_format"), "HH:mm"));
 			nws.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 			if (mFile != null)
 				nws.setSize(mFile.getBuffer().length);
