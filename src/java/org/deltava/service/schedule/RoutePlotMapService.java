@@ -10,10 +10,13 @@ import org.jdom.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
@@ -33,13 +36,17 @@ public class RoutePlotMapService extends RouteMapService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
-		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
+		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
+			
+			// Translate IATA to ICAO codes
+			String airportDCode = txIATA(ctx.getParameter("airportD"));
+			String airportACode = txIATA(ctx.getParameter("airportA"));
 
 			// Get the departure/arrival airports
-			AirportLocation aD = dao.getAirport(ctx.getParameter("airportD"));
-			AirportLocation aA = dao.getAirport(ctx.getParameter("airportA"));
+			AirportLocation aD = dao.getAirport(airportDCode);
+			AirportLocation aA = dao.getAirport(airportACode);
 
 			// Add the departure airport
 			if (aD != null) {
@@ -129,5 +136,19 @@ public class RoutePlotMapService extends RouteMapService {
 
 		// Return success code
 		return SC_OK;
+	}
+	
+	/**
+	 * Helper method to translate IATA to ICAO codes.
+	 */
+	private String txIATA(String code) {
+		
+		if ((code != null) && (code.length() == 3)) {
+			Airport aD = SystemData.getAirport(code);
+			if (aD != null)
+				return aD.getICAO();
+		}
+		
+		return code;
 	}
 }
