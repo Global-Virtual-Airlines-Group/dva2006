@@ -194,6 +194,7 @@ public class IssueCommand extends AbstractFormCommand {
 			assignees.addAll(pdao.getByRole("AcademyAdmin", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
+			assignees.addAll(pdao.getByRole("Signature", SystemData.get("airline.db")));
 			ctx.setAttribute("assignees", assignees, REQUEST);
 			
 			// Get options for issue conversion
