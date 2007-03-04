@@ -1,5 +1,5 @@
 // Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
-package org.deltava.beans.system;
+package org.deltava.beans.stats;
 
 import java.io.Serializable;
 
