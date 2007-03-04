@@ -4,7 +4,6 @@ package org.deltava.commands.stats;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.system.TableInfo;
 
 import org.deltava.commands.*;
 
@@ -13,6 +12,7 @@ import org.deltava.dao.GetTableStatus;
 import org.deltava.dao.DAOException;
 
 import org.deltava.beans.stats.AirlineTotals;
+import org.deltava.beans.stats.TableInfo;
 
 import org.deltava.util.cache.ExpiringCache;
 import org.deltava.util.system.SystemData;

@@ -4,7 +4,7 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
-import org.deltava.beans.system.TableInfo;
+import org.deltava.beans.stats.TableInfo;
 
 import org.deltava.util.cache.*;
 
