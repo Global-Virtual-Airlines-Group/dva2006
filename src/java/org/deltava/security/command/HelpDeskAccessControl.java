@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
@@ -53,7 +53,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		// Calculate access rights
 		boolean isHR = _ctx.isUserInRole("HR");
 		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
-		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination");
+		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
 		boolean isMine = (_i.getAuthorID() == p.getID());
 		boolean isOpen = (_i.getStatus() == Issue.OPEN);
 		if (!_i.getPublic() && !isMine && !isAdmin)
