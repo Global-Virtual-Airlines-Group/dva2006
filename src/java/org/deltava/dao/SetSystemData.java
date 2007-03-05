@@ -1,10 +1,11 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.servlet.CommandLog;
+import org.deltava.beans.system.RegistrationBlock;
 
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
@@ -96,6 +97,48 @@ public class SetSystemData extends DAO {
 			int rowsDeleted = _ps.executeUpdate();
 			_ps.close();
 			return rowsDeleted;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates a Registration block entry in the database.
+	 * @param block the Registration block bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(RegistrationBlock block) throws DAOException {
+		try {
+			prepareStatement("REPLACE INTO REG_BLOCKS (ID, FIRSTNAME, LASTNAME, REMOTE_ADDR, NETMASK, HOSTNAME, "
+					+ "HAS_FEEDBACK, ACTIVE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+			_ps.setInt(1, block.getID());
+			_ps.setString(2, block.getFirstName());
+			_ps.setString(3, block.getLastName());
+			_ps.setInt(4, block.getAddress());
+			_ps.setInt(5, block.getNetMask());
+			_ps.setString(6, block.getHostName());
+			_ps.setBoolean(7, block.getHasUserFeedback());
+			_ps.setBoolean(8, block.getActive());
+			executeUpdate(1);
+			
+			// Get new ID
+			if (block.getID() == 0)
+				block.setID(getNewID());
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Deletes a Registration block entry from the database.
+	 * @param id the block ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void deleteBlock(int id) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM REG_BLOCKS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
