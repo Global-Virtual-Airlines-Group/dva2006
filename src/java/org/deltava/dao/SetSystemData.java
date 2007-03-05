@@ -7,6 +7,8 @@ import java.util.*;
 import org.deltava.beans.servlet.CommandLog;
 import org.deltava.beans.system.RegistrationBlock;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Data Access Object to write system logging (user commands, tasks) entries.
  * @author Luke
@@ -110,15 +112,16 @@ public class SetSystemData extends DAO {
 	public void write(RegistrationBlock block) throws DAOException {
 		try {
 			prepareStatement("REPLACE INTO REG_BLOCKS (ID, FIRSTNAME, LASTNAME, REMOTE_ADDR, NETMASK, HOSTNAME, "
-					+ "HAS_FEEDBACK, ACTIVE) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "COMMENTS, HAS_FEEDBACK, ACTIVE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, block.getID());
-			_ps.setString(2, block.getFirstName());
-			_ps.setString(3, block.getLastName());
+			_ps.setString(2, StringUtils.nullTrim(block.getFirstName()));
+			_ps.setString(3, StringUtils.nullTrim(block.getLastName()));
 			_ps.setInt(4, block.getAddress());
 			_ps.setInt(5, block.getNetMask());
-			_ps.setString(6, block.getHostName());
-			_ps.setBoolean(7, block.getHasUserFeedback());
-			_ps.setBoolean(8, block.getActive());
+			_ps.setString(6, StringUtils.nullTrim(block.getHostName()));
+			_ps.setString(7, block.getComments());
+			_ps.setBoolean(8, block.getHasUserFeedback());
+			_ps.setBoolean(9, block.getActive());
 			executeUpdate(1);
 			
 			// Get new ID

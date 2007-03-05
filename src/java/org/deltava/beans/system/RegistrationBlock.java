@@ -24,17 +24,19 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	private int _remoteAddress;
 	private int _netMask;
 	
+	private String _comments;
+	
 	/**
 	 * Initializes the bean.
 	 * @param fName the first name
 	 * @param lName the last name
+	 * @see RegistrationBlock#setName(String, String)
 	 * @see RegistrationBlock#getFirstName()
 	 * @see RegistrationBlock#getLastName()
 	 */
 	public RegistrationBlock(String fName, String lName) {
 		super();
-		_firstName = fName;
-		_lastName = lName;
+		setName(fName, lName);
 	}
 	
 	/**
@@ -84,6 +86,15 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
+	 * Returns user comments about this Registration block.
+	 * @return the comments
+	 * @see RegistrationBlock#setComments(String)
+	 */
+	public String getComments() {
+		return _comments;
+	}
+	
+	/**
 	 * Returns the IP address or network to block.
 	 * @return the network address
 	 * @see RegistrationBlock#setAddress(int, int)
@@ -124,12 +135,31 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 	
 	/**
+	 * Updates the name.
+	 * @param fName the first name
+	 * @param lName the last name
+	 */
+	public void setName(String fName, String lName) {
+		_firstName = fName;
+		_lastName = lName;
+	}
+	
+	/**
 	 * Updates the blocked host name.
 	 * @param hostName the host name
 	 * @see RegistrationBlock#getHostName()
 	 */
 	public void setHostName(String hostName) {
 		_remoteHost = hostName;
+	}
+	
+	/**
+	 * Updates user comments about this Registration block entry.
+	 * @param comments the comments
+	 * @see RegistrationBlock#getComments()
+	 */
+	public void setComments(String comments) {
+		_comments = comments;
 	}
 
 	/**
