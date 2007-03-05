@@ -282,8 +282,9 @@ public class GetSystemData extends DAO {
 			rb.setID(rs.getInt(1));
 			rb.setAddress(rs.getInt(4), rs.getInt(5));
 			rb.setHostName(rs.getString(6));
-			rb.setHasUserFeedback(rs.getBoolean(7));
-			rb.setActive(rs.getBoolean(8));
+			rb.setComments(rs.getString(7));
+			rb.setHasUserFeedback(rs.getBoolean(8));
+			rb.setActive(rs.getBoolean(9));
 			
 			// Clean up and return
 			rs.close();
@@ -311,8 +312,9 @@ public class GetSystemData extends DAO {
 				rb.setID(rs.getInt(1));
 				rb.setAddress(rs.getInt(4), rs.getInt(5));
 				rb.setHostName(rs.getString(6));
-				rb.setHasUserFeedback(rs.getBoolean(7));
-				rb.setActive(rs.getBoolean(8));
+				rb.setComments(rs.getString(7));
+				rb.setHasUserFeedback(rs.getBoolean(8));
+				rb.setActive(rs.getBoolean(9));
 				results.add(rb);
 			}
 			

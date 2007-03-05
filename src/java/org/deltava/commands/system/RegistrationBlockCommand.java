@@ -1,10 +1,15 @@
 // Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
+import java.sql.Connection;
+
+import org.deltava.beans.system.RegistrationBlock;
+
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 /**
- * 
+ * A Web Site Command to update Registration Block entries.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -12,31 +17,81 @@ import org.deltava.commands.*;
 
 public class RegistrationBlockCommand extends AbstractFormCommand {
 
-	/* (non-Javadoc)
-	 * @see org.deltava.commands.AbstractFormCommand#execSave(org.deltava.commands.CommandContext)
+	/**
+	 * Callback method called when saving a Registration Block.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
 	 */
-	@Override
 	protected void execSave(CommandContext ctx) throws CommandException {
-		// TODO Auto-generated method stub
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the block entry
+			GetSystemData dao = new GetSystemData(con);
+			RegistrationBlock rb = dao.getBlock(ctx.getID());
+			if (rb == null)
+				throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
+			
+			// Copy data from the request
+			rb.setName(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
+			rb.setAddress(ctx.getParameter("addr"), ctx.getParameter("netMask"));
+			rb.setHostName(ctx.getParameter("hostName"));
+			rb.setHasUserFeedback(Boolean.valueOf(ctx.getParameter("hasFeedback")).booleanValue());
+			rb.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
+			
+			// Save the bean
+			SetSystemData wdao = new SetSystemData(con);
+			wdao.write(rb);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
 
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setType(CommandResult.REDIRECT);
+		result.setURL("regblocks.do");
+		result.setSuccess(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deltava.commands.AbstractFormCommand#execEdit(org.deltava.commands.CommandContext)
+	/**
+	 * Callback method called when editing a Registration Block.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
 	 */
-	@Override
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		// TODO Auto-generated method stub
-
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the DAO and the block entry
+			GetSystemData dao = new GetSystemData(con);
+			RegistrationBlock rb = dao.getBlock(ctx.getID());
+			if (rb == null)
+				throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
+			
+			// Save in the request
+			ctx.setAttribute("block", rb, REQUEST);
+		} catch (DAOException de) {
+			throw new CommandException(de);
+		} finally {
+			ctx.release();
+		}
+		
+		// Forward to the JSP
+		CommandResult result = ctx.getResult();
+		result.setURL("/jsp/admin/regBlockEdit.jsp");
+		result.setSuccess(true);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.deltava.commands.AbstractFormCommand#execRead(org.deltava.commands.CommandContext)
+	/**
+	 * Callback method called when saving a Registration Block. <i>This redirects to the edit
+	 * callback method.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 * @see RegistrationBlockCommand#execEdit(CommandContext)
 	 */
-	@Override
 	protected void execRead(CommandContext ctx) throws CommandException {
-		// TODO Auto-generated method stub
-
+		execEdit(ctx);
 	}
-
 }
