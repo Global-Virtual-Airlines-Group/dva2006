@@ -6,13 +6,14 @@ import java.sql.*;
 
 import org.deltava.beans.servlet.CommandLog;
 import org.deltava.beans.stats.*;
+import org.deltava.beans.system.RegistrationBlock;
 import org.deltava.taskman.TaskLastRun;
 
 import org.deltava.util.cache.*;
 import org.deltava.util.CollectionUtils;
 
 /**
- * A Data Access Object for loading system data (Session/Command/HTTP) log tables.
+ * A Data Access Object for loading system data (Session/Command/HTTP log tables) and Registration blocks.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -254,5 +255,73 @@ public class GetSystemData extends DAO {
 	   
 	   // Return as a map
 	   return CollectionUtils.createMap(results, "name");
+	}
+	
+	/**
+	 * Loads a Registration Block entry from the database.
+	 * @param id the block database ID
+	 * @return a RegistrationBlock bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public RegistrationBlock getBlock(int id) throws DAOException {
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT * FROM REG_BLOCKS WHERE (ID=?)");
+			_ps.setInt(1, id);
+			
+			// Execute the query and return if not found
+			ResultSet rs = _ps.executeQuery();
+			if (!rs.next()) {
+				rs.close();
+				_ps.close();
+				return null;
+			}
+			
+			// Create the bean
+			RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
+			rb.setID(rs.getInt(1));
+			rb.setAddress(rs.getInt(4), rs.getInt(5));
+			rb.setHostName(rs.getString(6));
+			rb.setHasUserFeedback(rs.getBoolean(7));
+			rb.setActive(rs.getBoolean(8));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return rb;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all Registration Block entries from the database.
+	 * @return a Collection of RegistrationBlock beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<RegistrationBlock> getBlocks() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM REG_BLOCKS");
+			
+			// Execute the query
+			Collection<RegistrationBlock> results = new ArrayList<RegistrationBlock>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
+				rb.setID(rs.getInt(1));
+				rb.setAddress(rs.getInt(4), rs.getInt(5));
+				rb.setHostName(rs.getString(6));
+				rb.setHasUserFeedback(rs.getBoolean(7));
+				rb.setActive(rs.getBoolean(8));
+				results.add(rb);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 }
