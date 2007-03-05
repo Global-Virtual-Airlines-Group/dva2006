@@ -369,4 +369,14 @@ public final class StringUtils {
 
 		return buf.toString();
 	}
+	
+	/**
+	 * Trims a String, returning null if the string is empty.
+	 * @param s the string to trim
+	 * @return null, or the trimmed string
+	 * @see String#trim()
+	 */
+	public static String nullTrim(String s) {
+		return isEmpty(s) ? null : s.trim();
+	}
 }
