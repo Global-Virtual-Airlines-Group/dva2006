@@ -167,7 +167,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	 * @see RegistrationBlock#getNetMask()
 	 */
 	public void setAddress(int addr, int mask) {
-		_remoteAddress = addr;
+		_remoteAddress = addr & mask;
 		_netMask = mask;
 	}
 	
