@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -37,11 +37,8 @@ public class PIREPDisposalCommand extends AbstractCommand {
 		// Get the operation
 		String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
 		int opCode = StringUtils.arrayIndexOf(OPNAMES, opName);
-		if (opCode < 2) {
-			CommandException ce = new CommandException("Invalid Operation - " + opName);
-			ce.setLogStackDump(false);
-			throw ce;
-		}
+		if (opCode < 2)
+			throw new CommandException("Invalid Operation - " + opName,false);
 		
 		ctx.setAttribute("opName", opName, REQUEST);
 
@@ -94,15 +91,40 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Load the comments
 			if (ctx.getParameter("dComments") != null)
 				fr.setComments(ctx.getParameter("dComments"));
-
+			
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
+			GetPilot.invalidate(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			if (p == null)
 			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 			
 			// Get the number of approved flights (we load it here since the disposed PIREP will be uncommitted
 			int pirepCount = rdao.getCount(p.getID()) + 1;
+			
+			// Load the pilot's equipment type
+			GetEquipmentType eqdao = new GetEquipmentType(con);
+			EquipmentType eq = eqdao.get(p.getEquipmentType());
+
+			// Check if this flight was flown with an equipment type in our primary ratings
+			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
+			if (pTypeNames.contains(p.getEquipmentType())) {
+				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
+					String pName = i.next();
+					EquipmentType peq = eqdao.get(pName);
+					if ((peq == null) || (peq.getACARSPromotionLegs()))
+						i.remove();
+				}
+				
+				// Add programs if we still have any that do not require ACARS legs
+				if (!pTypeNames.isEmpty())
+					fr.setCaptEQType(pTypeNames);
+			}
+			
+			// Check if the pilot is rated in the equipment type
+			boolean isRated = CollectionUtils.merge(p.getRatings(), eq.getRatings()).contains(fr.getEquipmentType());
+			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
+			fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
@@ -113,10 +135,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Start a JDBC transaction
 			ctx.startTX();
 			
-			// Get the write DAO
+			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
 			
-			// Dispose of the PIREP
 			wdao.dispose(ctx.getUser(), fr, opCode);
 			fr.setStatus(opCode);
 			
@@ -147,9 +168,9 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			if (((opCode == FlightReport.OK) || (opCode == FlightReport.REJECTED)) && (assignID != 0)) {
 			   GetAssignment fadao = new GetAssignment(con);
 			   AssignmentInfo assign = fadao.get(assignID);
-			   List flights = rdao.getByAssignment(assignID, SystemData.get("airline.db"));
-			   for (Iterator i = flights.iterator(); i.hasNext(); )
-			      assign.addFlight((FlightReport) i.next());
+			   List<FlightReport> flights = rdao.getByAssignment(assignID, SystemData.get("airline.db"));
+			   for (Iterator<FlightReport> i = flights.iterator(); i.hasNext(); )
+			      assign.addFlight(i.next());
 			   
 			   // If the assignment is complete, then mark it as such
 			   if (assign.isComplete()) {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -51,11 +51,26 @@ public class CollectionUtils {
 	public static <T> Collection<T> getDelta(Collection<T> c1, Collection<T> c2) {
 
 		// Convert the first collection to a List to preserve data
-		List<T> l1 = new ArrayList<T>(c1);
+		Collection<T> l1 = new ArrayList<T>(c1);
 
 		// Remove the entries from the second collection and return
 		l1.removeAll(c2);
 		return l1;
+	}
+	
+	/**
+	 * Merges a number of Collections, stripping out duplicate etnries.
+	 * @param entries an array of Collections
+	 * @return a Collection of the unique entries across all Collections
+	 */
+	public static <T> Collection<T> merge(Collection<T>... entries) {
+		Collection<T> results = new LinkedHashSet<T>();
+		for (int x = 0; x < entries.length; x++) {
+			Collection<T> c = entries[x];
+			results.addAll(c);
+		}
+		
+		return results;
 	}
 
 	/**

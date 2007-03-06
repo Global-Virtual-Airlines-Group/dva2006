@@ -50,12 +50,12 @@ abstract class PilotReadDAO extends PilotDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE), S.EXT FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID");
+					+ "SIGNATURES S ON (P.ID=S.ID) WHERE (P.ID=?) GROUP BY P.ID LIMIT 1");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, id);
 
 			// Execute the query and get the result
-			List results = execute();
+			List<Pilot> results = execute();
 			p = (results.size() == 0) ? null : (Pilot) results.get(0);
 			if (p == null)
 				return null;
