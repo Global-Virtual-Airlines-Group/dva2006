@@ -94,12 +94,14 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <br />
 </c:if>
 <c:if test="${!empty acarsPool}">
+<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
 <!-- Current ACARS server connections -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps left">
  <td colspan="3">CURRENTLY FLYING USING <content:airline /> ACARS</td>
 </tr>
 <c:forEach var="con" items="${acarsPool}">
+<c:if test="${!con.userHidden || isHR}">
 <tr>
  <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
 <c:if test="${con.flightID > 0}">
@@ -111,6 +113,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="2" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
 </c:if>
 </tr>
+</c:if>
 </c:forEach>
 </el:table>
 </c:if>
