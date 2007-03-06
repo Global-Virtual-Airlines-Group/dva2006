@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
 import java.util.*;
@@ -524,6 +524,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
      */
     public int compareTo(Object o2) {
         Event e2 = (Event) o2;
-        return _startTime.compareTo(e2.getStartTime());
+        int tmpResult = _startTime.compareTo(e2.getStartTime());
+        return (tmpResult == 0) ? super.compareTo(e2) : tmpResult;
     }
 }
