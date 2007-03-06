@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -12,6 +12,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -29,7 +30,6 @@ public class PIREPSubmitCommand extends AbstractCommand {
 	 * @throws CommandException if an error (typically database) occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -46,25 +46,22 @@ public class PIREPSubmitCommand extends AbstractCommand {
 				throw securityException("Cannot submit Flight Report #" + pirep.getID());
 
 			// Get the Pilot profile of the individual who flew this flight
-			Pilot pilot = (Pilot) ctx.getUser();
-			if (pilot.getID() != pirep.getDatabaseID(FlightReport.DBID_PILOT)) {
-				GetPilot pdao = new GetPilot(con);
-				pilot = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
-			}
+			GetPilot pdao = new GetPilot(con);
+			GetPilot.invalidate(pirep.getDatabaseID(FlightReport.DBID_PILOT));
+			Pilot pilot = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Save the Pilot profile
 			ctx.setAttribute("pilot", pilot, REQUEST);
 
 			// Get our equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(ctx.getUser().getEquipmentType());
+			EquipmentType eq = eqdao.get(pilot.getEquipmentType());
 			ctx.setAttribute("eqType", eq, REQUEST);
 			
 			// Check if the pilot is rated in the equipment type
-			if (!pilot.getRatings().contains(pirep.getEquipmentType()) && !eq.getRatings().contains(pirep.getEquipmentType())) {
-				ctx.setAttribute("notRated", Boolean.TRUE, REQUEST);
-				pirep.setAttribute(FlightReport.ATTR_NOTRATED, true);
-			}
+			boolean isRated = CollectionUtils.merge(pilot.getRatings(), eq.getRatings()).contains(pirep.getEquipmentType());
+			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
+			pirep.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
 
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());

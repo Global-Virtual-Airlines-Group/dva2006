@@ -23,6 +23,15 @@ public class GetPilot extends PilotReadDAO {
 	public GetPilot(Connection c) {
 		super(c);
 	}
+	
+	/**
+	 * Removes a Pilot from the cache to ensure a fresh read from the database.
+	 * @param id the Pilot's database ID
+	 * @see PilotDAO#invalidate(int)
+	 */
+	public static void invalidate(int id) {
+		invalidate(id);
+	}
 
 	/**
 	 * Returns the location of the specified Pilot.
