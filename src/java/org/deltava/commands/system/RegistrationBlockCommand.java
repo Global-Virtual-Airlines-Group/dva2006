@@ -8,6 +8,8 @@ import org.deltava.beans.system.RegistrationBlock;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.NetworkUtils;
+
 /**
  * A Web Site Command to update Registration Block entries.
  * @author Luke
@@ -26,19 +28,25 @@ public class RegistrationBlockCommand extends AbstractFormCommand {
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the DAO and the block entry
-			GetSystemData dao = new GetSystemData(con);
-			RegistrationBlock rb = dao.getBlock(ctx.getID());
-			if (rb == null)
-				throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
-			
+			RegistrationBlock rb = null;
+			if (ctx.getID() != 0) {
+				// Get the DAO and the block entry
+				GetSystemData dao = new GetSystemData(con);
+				rb = dao.getBlock(ctx.getID());
+				if (rb == null)
+					throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
+
+				rb.setName(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
+			} else
+				rb = new RegistrationBlock(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
+
 			// Copy data from the request
-			rb.setName(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
-			rb.setAddress(ctx.getParameter("addr"), ctx.getParameter("netMask"));
+			rb.setAddress(NetworkUtils.pack(ctx.getParameter("addr")), NetworkUtils.pack(ctx.getParameter("netMask")));
 			rb.setHostName(ctx.getParameter("hostName"));
+			rb.setComments(ctx.getParameter("comments"));
 			rb.setHasUserFeedback(Boolean.valueOf(ctx.getParameter("hasFeedback")).booleanValue());
 			rb.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-			
+
 			// Save the bean
 			SetSystemData wdao = new SetSystemData(con);
 			wdao.write(rb);
@@ -61,23 +69,27 @@ public class RegistrationBlockCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-		try {
-			Connection con = ctx.getConnection();
-			
-			// Get the DAO and the block entry
-			GetSystemData dao = new GetSystemData(con);
-			RegistrationBlock rb = dao.getBlock(ctx.getID());
-			if (rb == null)
-				throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
-			
-			// Save in the request
-			ctx.setAttribute("block", rb, REQUEST);
-		} catch (DAOException de) {
-			throw new CommandException(de);
-		} finally {
-			ctx.release();
+		if (ctx.getID() != 0) {
+			try {
+				Connection con = ctx.getConnection();
+
+				// Get the DAO and the block entry
+				GetSystemData dao = new GetSystemData(con);
+				RegistrationBlock rb = dao.getBlock(ctx.getID());
+				if (rb == null)
+					throw notFoundException("Invalid Registration Block entry - " + ctx.getID());
+
+				// Save in the request
+				ctx.setAttribute("block", rb, REQUEST);
+				ctx.setAttribute("addr", NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress())), REQUEST);
+				ctx.setAttribute("mask", NetworkUtils.format(NetworkUtils.convertIP(rb.getNetMask())), REQUEST);
+			} catch (DAOException de) {
+				throw new CommandException(de);
+			} finally {
+				ctx.release();
+			}
 		}
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/admin/regBlockEdit.jsp");
@@ -85,8 +97,7 @@ public class RegistrationBlockCommand extends AbstractFormCommand {
 	}
 
 	/**
-	 * Callback method called when saving a Registration Block. <i>This redirects to the edit
-	 * callback method.
+	 * Callback method called when saving a Registration Block. <i>This redirects to the edit callback method.
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 * @see RegistrationBlockCommand#execEdit(CommandContext)

@@ -1,8 +1,6 @@
 // Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
-import java.net.InetAddress;
-
 import org.deltava.beans.*;
 
 /**
@@ -109,7 +107,6 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	 * Returns the IP address netmask.
 	 * @return the netmask
 	 * @see RegistrationBlock#setAddress(int, int)
-	 * @see RegistrationBlock#setAddress(String, String)
 	 * @see RegistrationBlock#getAddress()
 	 */
 	public int getNetMask() {
@@ -166,42 +163,12 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	 * Updates the IP address and network mask.
 	 * @param addr the IPv4 address
 	 * @param mask the network mask
-	 * @see RegistrationBlock#setAddress(String, String)
 	 * @see RegistrationBlock#getAddress()
 	 * @see RegistrationBlock#getNetMask()
 	 */
 	public void setAddress(int addr, int mask) {
 		_remoteAddress = addr;
 		_netMask = mask;
-	}
-	
-	/**
-	 * Updates the IP address and the network mask.
-	 * @param address the IP address
-	 * @param mask the network mask as either a bit count or an IP address
-	 * @throws IllegalArgumentException if addr or mask cannot be parsed
-	 * @see RegistrationBlock#setAddress(int, int)
-	 * @see RegistrationBlock#getAddress()
-	 * @see RegistrationBlock#getNetMask()
-	 */
-	public void setAddress(String address, String mask) {
-		try {
-			byte[] ip = InetAddress.getByName(address).getAddress();
-			int addr = ip[3] + (ip[2] << 8) + (ip[3] << 16) + (ip[4] << 24);
-			
-			// Calculate the netmask
-			int netMask = 0xFFFFFFFF;
-			if (mask.indexOf('.') != -1) {
-				byte[] msk = InetAddress.getByName(mask).getAddress();
-				netMask = msk[3] + (msk[2] << 8) + (msk[3] << 16) + (msk[4] << 24);
-			} else
-				netMask -= (1 << (33 - Integer.parseInt(mask))) - 1;
-			
-			// Update the address
-			setAddress(addr, netMask);
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e.getMessage(), e);
-		}
 	}
 	
 	/**
