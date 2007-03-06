@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="false" %>
+<%@ page isELIgnored="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title><content:airline /> Registration Problem</title>
+<content:css name="main" browserSpecific="true" />
+<content:pics />
+</head>
+<content:copyright visible="false" />
+<body>
+<content:page>
+<%@ include file="/jsp/main/header.jspf" %> 
+<%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="hrEmail" name="airline.mail.hr" />
+
+<!-- Main Body Frame -->
+<content:region id="main">
+<div class="updateHdr">Registration Cannot be Completed</div>
+<br />
+Sorry, but you cannot apply to <content:airline />. Please contact our Human Resources Department at <el:link url="mailto:${hrEmail}">${hrEmail}</el:link> 
+if you have any questions about why this has occurred.<br />
+<br />
+<content:copyright />
+</content:region>
+</content:page>
+</body>
+</html>
