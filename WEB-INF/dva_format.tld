@@ -84,6 +84,11 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>filter</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -220,6 +225,19 @@
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
 			<type>org.deltava.beans.GeoLocation</type>
+		</attribute>
+	</tag>
+
+	<!-- Address tag, used to format IPv4 addresses -->
+	<tag>
+		<name>ip4</name>
+		<tag-class>org.deltava.taglib.format.IP4AddressFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>address</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
 		</attribute>
 	</tag>
 

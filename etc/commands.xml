@@ -1173,16 +1173,34 @@
 		<class>org.deltava.commands.register.ApplicantCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
 	<command id="apphire">
 		<name>Applicant Hire</name>
 		<class>org.deltava.commands.register.ApplicantApproveCommand</class>
 		<roles>HR</roles>
 	</command>
-	
+
 	<command id="appreject">
 		<name>Applicant Reject</name>
 		<class>org.deltava.commands.register.ApplicantRejectCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="regblocks">
+		<name>Registration Blacklist Entries</name>
+		<class>org.deltava.commands.system.RegistrationBlocksCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="regblock">
+		<name>Registration Blacklist Entry</name>
+		<class>org.deltava.commands.system.RegistrationBlockCommand</class>
+		<roles>HR</roles>
+	</command>
+
+	<command id="regblockdelete">
+		<name>Delete Registration Blacklist Entry</name>
+		<class>org.deltava.commands.system.RegistrationBlockDeleteCommand</class>
 		<roles>HR</roles>
 	</command>
 

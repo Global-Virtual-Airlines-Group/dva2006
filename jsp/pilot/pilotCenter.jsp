@@ -518,6 +518,11 @@ Academy students.</td>
  <td class="data">You can search for and merge duplicate pilot names and IDs into a single <content:airline />
  Pilot profile.</td>
 </tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="regblocks">Registration Blocks</el:cmd></td>
+ <td class="data">Applicants can be prevented from registering based on first and last name, IP address,
+ network and/pr host name. This is used to lock out troublemakers and spambots.</td>
+</tr>
 </content:filter> 
 <content:filter roles="HR,Examination">
 <tr>

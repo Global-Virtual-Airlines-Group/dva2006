@@ -25,8 +25,8 @@
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="5%">#</td>
- <td width="20%">USER NAME</td>
- <td width="20%">ADDRESS</td>
+ <td width="15%">USER NAME</td>
+ <td width="15%">ADDRESS</td>
  <td width="25%">HOSTNAME</td>
  <td class="left">COMMENTS</td>
 </tr>
@@ -34,5 +34,21 @@
 <!-- Table data -->
 <c:forEach var="block" items="${viewContext.results}">
 <view:row entry="${block}">
- <td class="sec bld"><fmt:int value="${block.ID}" /></td>
- 
+ <td><el:cmd url="regblock" linkID="0x${block.ID}" className="sec bld"><fmt:int value="${block.ID}" /></el:cmd></td>
+ <td class="small"><fmt:text value="${block.firstName}" default="-" /> <fmt:text value="${block.lastName}" default="-" /></td>
+ <td><fmt:ip4 address="${block.address}" /> / <fmt:ip4 address="${block.netMask}" /></td>
+ <td class="small"><fmt:text value="${block.hostName}" default="-" /></td>
+ <td class="left">${block.comments}</td>
+</view:row>
+</c:forEach>
+
+<!-- Button Bar -->
+<tr class="title">
+ <td colspan="5"><el:cmdbutton url="regblock" op="edit" label="NEW REGISTRATION BLOCK" /></td>
+</tr>
+</view:table>
+<content:copyright />
+</content:region>
+</content:page>
+</body>
+</html>
