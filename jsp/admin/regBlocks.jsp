@@ -44,7 +44,7 @@
 
 <!-- Button Bar -->
 <tr class="title">
- <td colspan="5"><el:cmdbutton url="regblock" op="edit" label="NEW REGISTRATION BLOCK" /></td>
+ <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar> <el:cmdbutton url="regblock" op="edit" label="NEW REGISTRATION BLOCK" /></td>
 </tr>
 </view:table>
 <content:copyright />

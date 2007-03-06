@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
-
 import org.deltava.beans.system.*;
 import org.deltava.beans.testing.*;
 
@@ -43,14 +42,6 @@ public class RegisterCommand extends AbstractCommand {
 		// Get the command result
 		CommandResult result = ctx.getResult();
 
-		// Check for spambots
-		if ("...".equals(ctx.getParameter("firstName"))) {
-			log.error("Detected spambot from " + ctx.getRequest().getRemoteHost());
-			result.setURL("/jsp/register/applicantWelcome.jsp");
-			result.setSuccess(true);
-			return;
-		}
-		
 		// If we're authenticated, redirect to the home page
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
@@ -66,7 +57,7 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Sort and save the airports
 		Map<String, Airport> airports = SystemData.getAirports();
-		Set<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+		Collection<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		apSet.addAll(airports.values());
 		ctx.setAttribute("airports", apSet, REQUEST);
 
@@ -129,12 +120,6 @@ public class RegisterCommand extends AbstractCommand {
 				a.setNotifyOption(Person.NOTIFY_CODES[x], notifyOptions.contains(Person.NOTIFY_CODES[x]));
 		}
 
-		// Save the applicant in the request
-		ctx.setAttribute("applicant", a, REQUEST);
-
-		// Log registration
-		log.info("Commencing registration for " + a.getName());
-
 		// Initialize the message context
 		MessageContext mctxt = new MessageContext();
 		mctxt.addData("applicant", a);
@@ -144,14 +129,47 @@ public class RegisterCommand extends AbstractCommand {
 		boolean checkAddr = (okAddrs != null) && (!okAddrs.contains(a.getEmail()));
 		if (!checkAddr)
 			log.warn("Skipping address uniqueness checks for " + a.getEmail());
-
+		
 		Examination ex = null;
 		Pilot eMailFrom = null;
 		try {
 			Connection con = ctx.getConnection();
-			GetPilotDirectory pdao = new GetPilotDirectory(con);
+
+			// Load the Registration blacklist
+			GetSystemData sysdao = new GetSystemData(con);
+			Collection<RegistrationBlock> regBList = sysdao.getBlocks();
+			
+			// Check the blacklist
+			int regAddr = NetworkUtils.pack(a.getRegisterAddress());
+			for (Iterator<RegistrationBlock> i = regBList.iterator(); i.hasNext(); ) {
+				boolean doBlock = false;
+				RegistrationBlock rb = i.next();
+				if ((regAddr & rb.getNetMask()) == rb.getAddress()) {
+					doBlock = true;
+					log.warn("Blocking " + a.getRegisterAddress() + ", matches" + NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress()))
+							+ "/" + NetworkUtils.format(NetworkUtils.convertIP(rb.getNetMask())));
+				} else if (a.getFirstName().equalsIgnoreCase(rb.getFirstName())) {
+					doBlock = true;
+					log.warn("Blocking " + a.getName() + ", matches fName=" + rb.getFirstName());
+				} else if (a.getLastName().equalsIgnoreCase(rb.getLastName())) {
+					doBlock = true;
+					log.warn("Blocking " + a.getName() + ", matches lName=" + rb.getLastName());
+				} else if ((rb.getHostName() != null) && (a.getRegisterHostName().endsWith(rb.getHostName()))) {
+					doBlock = true;
+					log.warn("Blocking " + a.getRegisterHostName() + ", matches host=" + rb.getHostName());
+				}
+			
+				// If we're blocked, shut it down
+				if (doBlock) {
+					ctx.release();
+					result.setURL("/jsp/register/" + (rb.getHasUserFeedback() ? "blackList.jsp" : "applicantWelcome.jsp"));
+					result.setSuccess(true);
+					return;
+				}
+			}
 
 			// Do address uniqueness check
+			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (checkAddr) {
 				GetUserData uddao = new GetUserData(con);
 				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
@@ -253,6 +271,9 @@ public class RegisterCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the applicant in the request
+		ctx.setAttribute("applicant", a, REQUEST);
 
 		// Send an e-mail notification to the user
 		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? a : eMailFrom);
