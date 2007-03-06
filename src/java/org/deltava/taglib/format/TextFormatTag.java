@@ -1,7 +1,5 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
-
-import java.io.IOException;
 
 import javax.servlet.jsp.*;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -19,6 +17,7 @@ public class TextFormatTag extends TagSupport {
 
     private String _value;
     private String _className;
+    private String _default;
     private boolean _useFilter;
 
     /**
@@ -35,6 +34,14 @@ public class TextFormatTag extends TagSupport {
 	 */
     public void setFilter(boolean doFilter) {
     	_useFilter = doFilter;
+    }
+    
+    /**
+     * Sets the default value if the provided value is null.
+     * @param defValue the default value
+     */
+    public void setDefault(String defValue) {
+    	_default = defValue;
     }
     
     /**
@@ -74,17 +81,15 @@ public class TextFormatTag extends TagSupport {
                 out.print("\">");
             }
             
-            out.print(StringUtils.stripInlineHTML(_value));
-            
+            out.print((_value == null) ? _default : StringUtils.stripInlineHTML(_value));
             if (_className != null)
                 out.print("</span>");
-        } catch (IOException ie) {
-            JspException je = new JspException(ie.getMessage());
-            je.initCause(ie);
-            throw je;
+        } catch (Exception e) {
+            throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        release();
         return EVAL_PAGE;
     }
 }
