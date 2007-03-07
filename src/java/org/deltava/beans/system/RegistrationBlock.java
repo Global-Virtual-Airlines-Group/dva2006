@@ -20,7 +20,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	
 	private String _remoteHost;
 	private int _remoteAddress;
-	private int _netMask;
+	private int _netMask = 0xFFFFFF;
 	
 	private String _comments;
 	
@@ -95,8 +95,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the IP address or network to block.
 	 * @return the network address
-	 * @see RegistrationBlock#setAddress(int, int)
-	 * @see RegistrationBlock#setAddress(int, int)
+	 * @see RegistrationBlock#setAddress(int)
 	 * @see RegistrationBlock#getNetMask()
 	 */
 	public int getAddress() {
@@ -106,7 +105,7 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	/**
 	 * Returns the IP address netmask.
 	 * @return the netmask
-	 * @see RegistrationBlock#setAddress(int, int)
+	 * @see RegistrationBlock#setNetMask(int)
 	 * @see RegistrationBlock#getAddress()
 	 */
 	public int getNetMask() {
@@ -160,14 +159,23 @@ public class RegistrationBlock extends DatabaseBean implements ViewEntry {
 	}
 
 	/**
-	 * Updates the IP address and network mask.
+	 * Updates the IP address.
 	 * @param addr the IPv4 address
-	 * @param mask the network mask
 	 * @see RegistrationBlock#getAddress()
-	 * @see RegistrationBlock#getNetMask()
+	 * @see RegistrationBlock#setNetMask(int)
 	 */
-	public void setAddress(int addr, int mask) {
-		_remoteAddress = addr & mask;
+
+	public void setAddress(int addr) {
+		_remoteAddress = addr & _netMask;
+	}
+
+	/**
+	 * Updates the IP address and network mask.
+	 * @param mask the network mask
+	 * @see RegistrationBlock#getNetMask()
+	 * @see RegistrationBlock#setAddress(int)
+	 */
+	public void setNetMask(int mask) {
 		_netMask = mask;
 	}
 	
