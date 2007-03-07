@@ -17,7 +17,7 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetStatistics extends DAO {
+public class GetStatistics extends DAO implements CachingDAO {
 
 	private static final Cache<CacheableInteger> _coolerStatsCache = new ExpiringCache<CacheableInteger>(100, 1800);
 	private static final Cache<CacheableInteger> _cache = new ExpiringCache<CacheableInteger>(2, 1800);
@@ -28,6 +28,22 @@ public class GetStatistics extends DAO {
 	 */
 	public GetStatistics(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests() + _coolerStatsCache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits() + _coolerStatsCache.getHits();
 	}
 
 	/**

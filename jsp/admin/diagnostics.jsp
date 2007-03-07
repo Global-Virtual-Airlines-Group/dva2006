@@ -80,12 +80,13 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 </tr>
 </el:table>
 
-<%@ include file="/jsp/admin/diag/jdbcPool.jspf" %> 
-<%@ include file="/jsp/admin/diag/scoreBoard.jspf" %> 
-<%@ include file="/jsp/admin/diag/servInfo.jspf" %> 
-<%@ include file="/jsp/admin/diag/schedTasks.jspf" %> 
+<%@ include file="/jsp/admin/diag/jdbcPool.jspf" %>
+<%@ include file="/jsp/admin/diag/daoCache.jspf" %>
+<%@ include file="/jsp/admin/diag/scoreBoard.jspf" %>
+<%@ include file="/jsp/admin/diag/servInfo.jspf" %>
+<%@ include file="/jsp/admin/diag/schedTasks.jspf" %>
 <c:if test="${acarsEnabled}">
-<%@ include file="/jsp/admin/diag/acarsInfo.jspf" %> 
+<%@ include file="/jsp/admin/diag/acarsInfo.jspf" %>
 </c:if>
 <br />
 <content:copyright />
