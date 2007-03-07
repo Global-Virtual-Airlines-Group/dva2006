@@ -10,7 +10,6 @@ import javax.servlet.jsp.tagext.*;
 import javax.servlet.http.HttpServletRequest;
 
 import org.deltava.beans.*;
-import org.deltava.comparators.CalendarEntryComparator;
 
 import org.deltava.taglib.XMLRenderer;
 
@@ -37,7 +36,7 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	protected TZInfo _tz;
 	private String _currentDateAttr;
 
-	protected Collection<CalendarEntry> _entries = new TreeSet<CalendarEntry>(new CalendarEntryComparator());
+	protected final Collection<CalendarEntry> _entries = new TreeSet<CalendarEntry>();
 
 	protected String _tableID;
 	protected String _tableClass;
