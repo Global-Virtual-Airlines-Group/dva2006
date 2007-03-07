@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.Date;
-import java.io.Serializable;
 
 import org.deltava.beans.ViewEntry;
 
@@ -13,7 +12,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class ServletScoreboardEntry implements Serializable, Comparable, ViewEntry {
+public class ServletScoreboardEntry implements java.io.Serializable, Comparable, ViewEntry {
 
 	private String _threadName;
 	private String _remoteAddr;
@@ -21,9 +20,9 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	
 	private long _startTime;
 	private long _endTime;
+	private long _execCount;
 	
 	private String _url;
-	private String _servletClass;
 	
 	/**
 	 * Creates a new Scoreboard Entry.
@@ -34,7 +33,7 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	public ServletScoreboardEntry(String threadName) {
 		super();
 		_threadName = threadName;
-		_startTime = System.currentTimeMillis();
+		start();
 	}
 	
 	/**
@@ -76,6 +75,14 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	}
 	
 	/**
+	 * Returns the Servlet thread execution count.
+	 * @return the execution count
+	 */
+	public long getCount() {
+		return _execCount;
+	}
+	
+	/**
 	 * Returns the completion time of the requeust.
 	 * @return the completion date/time or null if still executing
 	 * @see ServletScoreboardEntry#complete()
@@ -96,14 +103,6 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	}
 	
 	/**
-	 * Returns the servlet name.
-	 * @return the servlet name
-	 */
-	public String getServletName() {
-		return _servletClass;
-	}
-	
-	/**
 	 * Returns the URL of the requuest.
 	 * @return the URL
 	 * @see ServletScoreboardEntry#setURL(String)
@@ -117,6 +116,14 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	 */
 	public void complete() {
 		_endTime = System.currentTimeMillis();
+	}
+	
+	/**
+	 * Starts the servlet timer and updates the execution count.
+	 */
+	public void start() {
+		_startTime = System.currentTimeMillis();
+		_execCount++;
 	}
 	
 	/**
@@ -146,14 +153,6 @@ public class ServletScoreboardEntry implements Serializable, Comparable, ViewEnt
 	 */
 	public void setURL(String url) {
 		_url = url;
-	}
-	
-	public void setServletClass(String scName) {
-		_servletClass = scName;
-	}
-	
-	public void setServletClass(Class sClass) {
-		_servletClass = sClass.getSimpleName();
 	}
 	
 	/**
