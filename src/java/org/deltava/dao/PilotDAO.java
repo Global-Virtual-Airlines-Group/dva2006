@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-abstract class PilotDAO extends DAO {
+abstract class PilotDAO extends DAO implements CachingDAO {
 	
 	/**
 	 * The Pilot bean cache.
@@ -47,5 +47,21 @@ abstract class PilotDAO extends DAO {
 	 */
 	static void invalidate(Cacheable obj) {
 		_cache.remove(obj.cacheKey());
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
 	}
 }

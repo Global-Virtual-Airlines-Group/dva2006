@@ -9,7 +9,7 @@ import org.deltava.beans.servlet.ServletScoreboard;
 
 import org.deltava.commands.*;
 
-import org.deltava.dao.DAO;
+import org.deltava.dao.*;
 import org.deltava.dao.file.GetServInfo;
 
 import org.deltava.jdbc.ConnectionPool;
@@ -77,6 +77,19 @@ public class DiagnosticCommand extends AbstractCommand {
 			
 			ctx.setAttribute("servInfoStatus", netInfo, REQUEST);
 		}
+		
+		// Get DAO cache properties
+		Collection<CachingDAO> daoCaches = new ArrayList<CachingDAO>();
+		daoCaches.add(new GetCoolerChannels(null));
+		daoCaches.add(new GetExamProfiles(null));
+		daoCaches.add(new GetMessageTemplate(null));
+		daoCaches.add(new GetNavData(null));
+		daoCaches.add(new GetStatistics(null));
+		daoCaches.add(new GetSystemData(null));
+		daoCaches.add(new GetTableStatus(null));
+		daoCaches.add(new GetUserData(null));
+		daoCaches.add(new GetPilot(null));
+		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
 		// Run the GC
 		System.gc();

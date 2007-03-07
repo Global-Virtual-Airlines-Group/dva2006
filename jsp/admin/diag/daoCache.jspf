@@ -1,0 +1,29 @@
+<!-- DAO Cache Data Table -->
+<el:table className="view" space="default" pad="default">
+<tr class="title caps">
+ <td colspan="7" class="left">DATA ACCESS LAYER CACHE INFORMATION</td>
+</tr>
+
+<!-- DAO CACHE Data Title Bar -->
+<tr class="title caps">
+ <td width="65%">DATA ACCESS OBJECT CLASS</td>
+ <td width="10%">REQUESTS</td>
+ <td width="10%">HITS</td>
+ <td>HIT RATE</td>
+</tr>
+
+<!-- DAO Cache Data -->
+<c:forEach var="dao" items="${daoCaches}">
+<tr>
+ <td class="pri bld">${dao.class.name}</td>
+ <td><fmt:int value="${dao.requests}" /></td>
+ <td><fmt:int value="${dao.hits}" /></td>
+<c:if test="${dao.requests > 0}">
+ <td class="bld"><fmt:dec value="${dao.hits / dao.requests * 100}" fmt="##0.0" />%</td>
+</c:if> 
+<c:if test="${dao.requests == 0}">
+ <td class="bld">N/A</td>
+</c:if>
+</tr>
+</c:forEach>
+</el:table>

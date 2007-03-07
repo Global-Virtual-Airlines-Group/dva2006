@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetUserData extends DAO {
+public class GetUserData extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
@@ -32,6 +32,22 @@ public class GetUserData extends DAO {
 	 */
 	public GetUserData(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _appCache.getRequests() + _usrCache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _appCache.getHits() + _usrCache.getHits();
 	}
 
 	/**

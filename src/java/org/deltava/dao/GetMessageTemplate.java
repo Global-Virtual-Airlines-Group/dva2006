@@ -16,7 +16,7 @@ import org.deltava.beans.system.MessageTemplate;
  * @since 1.0
  */
 
-public class GetMessageTemplate extends DAO {
+public class GetMessageTemplate extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
 	static Cache<MessageTemplate> _cache = new AgingCache<MessageTemplate>(4);
@@ -27,6 +27,22 @@ public class GetMessageTemplate extends DAO {
 	 */
 	public GetMessageTemplate(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
 	}
 
 	/**

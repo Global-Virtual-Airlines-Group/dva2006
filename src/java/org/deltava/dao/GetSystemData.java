@@ -19,7 +19,7 @@ import org.deltava.util.CollectionUtils;
  * @since 1.0
  */
 
-public class GetSystemData extends DAO {
+public class GetSystemData extends DAO implements CachingDAO {
    
    private static final Cache<HTTPTotals> _cache = new ExpiringCache<HTTPTotals>(1, 7200);
 
@@ -29,6 +29,22 @@ public class GetSystemData extends DAO {
 	 */
 	public GetSystemData(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
 	}
 
 	/**
@@ -280,7 +296,8 @@ public class GetSystemData extends DAO {
 			// Create the bean
 			RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
 			rb.setID(rs.getInt(1));
-			rb.setAddress(rs.getInt(4), rs.getInt(5));
+			rb.setNetMask(rs.getInt(5));
+			rb.setAddress(rs.getInt(4));
 			rb.setHostName(rs.getString(6));
 			rb.setComments(rs.getString(7));
 			rb.setHasUserFeedback(rs.getBoolean(8));
@@ -310,7 +327,8 @@ public class GetSystemData extends DAO {
 			while (rs.next()) {
 				RegistrationBlock rb = new RegistrationBlock(rs.getString(2), rs.getString(3));
 				rb.setID(rs.getInt(1));
-				rb.setAddress(rs.getInt(4), rs.getInt(5));
+				rb.setNetMask(rs.getInt(5));
+				rb.setAddress(rs.getInt(4));
 				rb.setHostName(rs.getString(6));
 				rb.setComments(rs.getString(7));
 				rb.setHasUserFeedback(rs.getBoolean(8));

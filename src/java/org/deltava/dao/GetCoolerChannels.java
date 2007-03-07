@@ -19,7 +19,7 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetCoolerChannels extends DAO {
+public class GetCoolerChannels extends DAO implements CachingDAO {
 
 	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(5, 3600);
 
@@ -29,6 +29,22 @@ public class GetCoolerChannels extends DAO {
 	 */
 	public GetCoolerChannels(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
 	}
 
 	/**
