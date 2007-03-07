@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,9 +15,9 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetTableStatus extends DAO {
+public class GetTableStatus extends DAO implements CachingDAO {
 	
-	private static final Cache _cache = new AgingCache(2);
+	private static final Cache<CacheableSet<String>> _cache = new AgingCache<CacheableSet<String>>(2);
 	
 	/**
      * Creates the DAO using a JDBC connection.
@@ -26,6 +26,22 @@ public class GetTableStatus extends DAO {
     public GetTableStatus(Connection c) {
         super(c);
     }
+    
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
+	}
     
     /**
      * Get the database table status.
@@ -69,12 +85,11 @@ public class GetTableStatus extends DAO {
      * @return a Collection of table names
      * @throws DAOException if a JDBC error occurs
      */
-    @SuppressWarnings("unchecked")
     public Collection<String> getTableNames(String dbName) throws DAOException {
     	
     	// Check the cache
     	dbName = formatDBName(dbName);
-    	CacheableSet<String> results = (CacheableSet<String>) _cache.get(dbName);
+    	CacheableSet<String> results = _cache.get(dbName);
     	if (results != null)
     		return results;
     	

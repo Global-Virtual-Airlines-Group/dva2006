@@ -18,7 +18,7 @@ import org.deltava.util.cache.*;
  * @since 1.0
  */
 
-public class GetNavData extends DAO {
+public class GetNavData extends DAO implements CachingDAO {
 	
 	protected static final Cache<Cacheable> _cache = new AgingCache<Cacheable>(256);
 
@@ -28,6 +28,22 @@ public class GetNavData extends DAO {
 	 */
 	public GetNavData(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _cache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _cache.getHits();
 	}
 
 	/**

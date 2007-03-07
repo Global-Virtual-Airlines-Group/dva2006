@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class GetExamProfiles extends DAO {
+public class GetExamProfiles extends DAO implements CachingDAO {
 	
 	private static final Cache<ExamResults> _rCache = new ExpiringCache<ExamResults>(120, 7200);
 
@@ -50,6 +50,22 @@ public class GetExamProfiles extends DAO {
 	 */
 	public GetExamProfiles(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public int getRequests() {
+		return _rCache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public int getHits() {
+		return _rCache.getHits();
 	}
 
 	/**
