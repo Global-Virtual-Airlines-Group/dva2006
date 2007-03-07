@@ -41,7 +41,8 @@ public class RegistrationBlockCommand extends AbstractFormCommand {
 				rb = new RegistrationBlock(ctx.getParameter("firstName"), ctx.getParameter("lastName"));
 
 			// Copy data from the request
-			rb.setAddress(NetworkUtils.pack(ctx.getParameter("addr")), NetworkUtils.pack(ctx.getParameter("netMask")));
+			rb.setAddress(NetworkUtils.pack(ctx.getParameter("addr")));
+			rb.setNetMask(NetworkUtils.pack(ctx.getParameter("netMask")));
 			rb.setHostName(ctx.getParameter("hostName"));
 			rb.setComments(ctx.getParameter("comments"));
 			rb.setHasUserFeedback(Boolean.valueOf(ctx.getParameter("hasFeedback")).booleanValue());
