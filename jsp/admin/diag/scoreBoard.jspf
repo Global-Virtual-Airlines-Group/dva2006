@@ -1,14 +1,15 @@
 <!-- Servlet Scoreboard -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4" class="left">SERVLET SCOREBOARD</td>
+ <td colspan="5" class="left">SERVLET SCOREBOARD</td>
 </tr>
 
 <!-- Scoreboard Title Bar -->
 <tr class="title caps">
- <td width="10%">THREAD NAME</td>
- <td width="35%">REMOTE ADDRESS</td>
+ <td width="12%">THREAD NAME</td>
+ <td width="30%">REMOTE ADDRESS</td>
  <td width="20%">EXECUTION TIME</td>
+ <td width="7%">COUNT</td>
  <td class="left">REQUEST URI</td>
 </tr>
 
@@ -18,6 +19,7 @@
  <td class="pri small bld">${thread.name}</td>
  <td class="small">${thread.remoteHost} (${thread.remoteAddr})</td>
  <td class="sec small"><fmt:date fmt="dt" d="MM/dd" t="HH:mm:ss" date="${thread.startTime}" /> (<fmt:int value="${thread.executionTime}" /> ms)</td>
+ <td class="small"><fmt:int value="${thread.count}" /></td>
  <td class="small left">${thread.URL}</td>
 </view:row>
 </c:forEach>
