@@ -1,11 +1,8 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servlet;
 
 import java.util.*;
 
-import java.io.Serializable;
-
-import javax.servlet.Servlet;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -15,29 +12,44 @@ import javax.servlet.http.HttpServletRequest;
  * @since 1.0
  */
 
-public class ServletScoreboard implements Serializable {
+public class ServletScoreboard implements java.io.Serializable {
 
-	private static Map<Long, ServletScoreboardEntry> _entries = new TreeMap<Long, ServletScoreboardEntry>();
+	private static final Map<Long, ServletScoreboardEntry> _entries = new TreeMap<Long, ServletScoreboardEntry>();
 	
 	// singleton
 	private ServletScoreboard() {
 	}
 
+	/**
+	 * Returns the scoreboard entries.
+	 * @return a Collection of ServletScoreboardEntry beans
+	 */
 	public static Collection<ServletScoreboardEntry> getScoreboard() {
 		return _entries.values();
 	}
 	
+	/**
+	 * Updates the scoreboard upon servlet completion.
+	 */
 	public static void complete() {
 		Long id = new Long(Thread.currentThread().getId());
 		ServletScoreboardEntry entry = _entries.get(id);
 		if (entry != null)
 			entry.complete();
 	}
-	
-	public static void add(HttpServletRequest req, Servlet srv) {
+
+	/**
+	 * Updates the scoreboard on servlet invocation.
+	 * @param req the servlet request
+	 */
+	public static void add(HttpServletRequest req) {
 		Thread t = Thread.currentThread();
-		ServletScoreboardEntry entry = new ServletScoreboardEntry(t.getName());
-		entry.setServletClass(srv.getClass());
+		ServletScoreboardEntry entry = _entries.get(new Long(t.getId()));
+		if (entry == null)
+			entry = new ServletScoreboardEntry(t.getName());
+		else
+			entry.start();
+		
 		entry.setRemoteAddr(req.getRemoteAddr());
 		entry.setRemoteHost(req.getRemoteHost());
 		entry.setURL(req.getMethod() + " " + req.getRequestURI());
