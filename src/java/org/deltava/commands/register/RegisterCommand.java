@@ -144,9 +144,9 @@ public class RegisterCommand extends AbstractCommand {
 			for (Iterator<RegistrationBlock> i = regBList.iterator(); i.hasNext(); ) {
 				boolean doBlock = false;
 				RegistrationBlock rb = i.next();
-				if ((regAddr & rb.getNetMask()) == rb.getAddress()) {
+				if (((regAddr & rb.getNetMask()) == rb.getAddress()) && (rb.getAddress() != 0)) {
 					doBlock = true;
-					log.warn("Blocking " + a.getRegisterAddress() + ", matches" + NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress()))
+					log.warn("Blocking " + a.getRegisterAddress() + ", matches " + NetworkUtils.format(NetworkUtils.convertIP(rb.getAddress()))
 							+ "/" + NetworkUtils.format(NetworkUtils.convertIP(rb.getNetMask())));
 				} else if (a.getFirstName().equalsIgnoreCase(rb.getFirstName())) {
 					doBlock = true;
