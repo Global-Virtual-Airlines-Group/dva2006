@@ -247,7 +247,8 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 				c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.OPERATOR)));
 				c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ADMIN)));
 				usrs.add(c);
-			}
+			} else
+				i.remove();
 		}
 		
 		// If no accessible servers, abort
