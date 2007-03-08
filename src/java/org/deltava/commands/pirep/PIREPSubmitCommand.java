@@ -47,7 +47,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 
 			// Get the Pilot profile of the individual who flew this flight
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidate(pirep.getDatabaseID(FlightReport.DBID_PILOT));
+			GetPilot.invalidateID(pirep.getDatabaseID(FlightReport.DBID_PILOT));
 			Pilot pilot = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Save the Pilot profile

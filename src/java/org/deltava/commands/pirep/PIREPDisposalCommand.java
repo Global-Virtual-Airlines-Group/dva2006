@@ -94,7 +94,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Get the Pilot object
 			GetPilot pdao = new GetPilot(con);
-			GetPilot.invalidate(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			GetPilot.invalidateID(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
 			if (p == null)
 			   throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
