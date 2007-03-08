@@ -29,7 +29,7 @@ public class GetPilot extends PilotReadDAO {
 	 * @param id the Pilot's database ID
 	 * @see PilotDAO#invalidate(int)
 	 */
-	public static void invalidate(int id) {
+	public static void invalidateID(int id) {
 		invalidate(id);
 	}
 
