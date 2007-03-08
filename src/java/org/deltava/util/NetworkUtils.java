@@ -1,7 +1,7 @@
 // Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
-import java.net.*;
+import java.util.*;
 
 /**
  * A utility class to handle TCP/IP network operations.
@@ -47,12 +47,14 @@ public class NetworkUtils {
 	 * @return a packed 32-bit address
 	 */
 	public static int pack(String addr) {
-		try {
-			InetAddress ip = InetAddress.getByName(addr);
-			return convertIP(ip.getAddress());
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
+		byte[] results = new byte[4];
+		StringTokenizer tkns = new StringTokenizer(addr, ".");
+		for (int x = 0; (x < 4) && (tkns.hasMoreTokens()); x++) {
+			String bt = tkns.nextToken();
+			results[x] = (byte) (StringUtils.parse(bt, 0) & 0xFF);
 		}
+
+		return convertIP(results);
 	}
 	
 	/**
