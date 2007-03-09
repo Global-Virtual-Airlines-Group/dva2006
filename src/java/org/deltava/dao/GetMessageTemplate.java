@@ -19,7 +19,7 @@ import org.deltava.beans.system.MessageTemplate;
 public class GetMessageTemplate extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetMessageTemplate.class);
-	static Cache<MessageTemplate> _cache = new AgingCache<MessageTemplate>(4);
+	static Cache<MessageTemplate> _cache = new AgingCache<MessageTemplate>(8);
 
 	/**
 	 * Initialize the Data Access Object.
