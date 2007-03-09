@@ -123,6 +123,7 @@ public class ServletScoreboardEntry implements java.io.Serializable, Comparable,
 	 */
 	public void start() {
 		_startTime = System.currentTimeMillis();
+		_endTime = 0;
 		_execCount++;
 	}
 	
