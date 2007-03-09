@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -45,7 +45,8 @@ public class SetStatusUpdate extends DAO {
 	   // Build the SQL statement
 	   StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 	   sqlBuf.append(formatDBName(dbName));
-	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?)");
+	   sqlBuf.append(".STATUS_UPDATES (PILOT_ID, AUTHOR_ID, CREATED, TYPE, REMARKS) VALUES (?, ?, ?, ?, ?) ON "
+			   +"DUPLICATE KEY UPDATE CREATED=DATE_ADD(CREATED, INTERVAL 1 SECOND)");
 	   
 		try {
 			// Prepare the statement and write
