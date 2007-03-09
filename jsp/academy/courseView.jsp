@@ -209,7 +209,7 @@ return ${access.canComment || access.canUpdateProgress};
 <tr>
  <td> 
 <c:if test="${access.canStart}">
- <el:cmdbutton ID="EnrollButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="ENROLL STUDENT" />
+ <el:cmdbutton ID="EnrollButton" url="coursedispose" linkID="0x${course.ID}" op="start" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
  <el:cmdbutton ID="CancelButton" url="coursedispose" linkID="0x${course.ID}" op="abandon" label="WITHDRAW" />
