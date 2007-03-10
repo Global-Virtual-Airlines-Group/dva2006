@@ -2,12 +2,12 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <!-- ACARS PIREP Data -->
 <tr class="title">
- <td class="caps" colspan="2"><content:airline /> ACARS DATA</td>
+ <td class="caps" colspan="${cspan + 1}"><content:airline /> ACARS DATA</td>
 </tr>
 <c:if test="${fn:ACARS_ID(pirep) != 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data">${fn:ACARS_ID(pirep)} (<fmt:int value="${flightInfo.positionCount}" /> position records)
+ <td class="data" colspan="${cspan}">${fn:ACARS_ID(pirep)} (<fmt:int value="${flightInfo.positionCount}" /> position records)
  Download ACARS data into <a href="acars_data.ws?id=${fn:ACARS_ID(pirep)}">Microsoft Excel</a>
  <a href="acars_earth.ws?id=${fn:ACARS_ID(pirep)}&amp;showData=true&amp;showRoute=true">Google Earth</a></td>
 </tr>
@@ -15,49 +15,49 @@
 <c:if test="${!empty conInfo && (conInfo.clientBuild > 0)}">
 <tr>
  <td class="label">ACARS Client</td>
- <td class="data">Build <fmt:int value="${conInfo.clientBuild}" /></td>
+ <td class="data" colspan="${cspan}">Build <fmt:int value="${conInfo.clientBuild}" /></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Start Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.startTime}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.startTime}" /></td>
 </tr>
 <tr>
  <td class="label">Taxi from Gate</td>
- <td class="data">at <fmt:date date="${pirep.taxiTime}" />, <fmt:int value="${pirep.taxiWeight}" />
+ <td class="data" colspan="${cspan}"><fmt:date date="${pirep.taxiTime}" />, <fmt:int value="${pirep.taxiWeight}" />
   lbs total, <fmt:int value="${pirep.taxiFuel}" /> lbs fuel</td>
 </tr>
 <tr>
  <td class="label">Takeoff Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.takeoffTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.takeoffTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Takeoff Information</td>
- <td class="data"><fmt:int value="${pirep.takeoffSpeed}" /> knots, <fmt:dec value="${pirep.takeoffN1}" />%
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.takeoffSpeed}" /> knots, <fmt:dec value="${pirep.takeoffN1}" />%
  N<sub>1</sub>, <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />
  lbs fuel</td>
 </tr>
 <tr>
  <td class="label">Landing Time</td>
- <td class="data"><fmt:date className="bld" date="${pirep.landingTime}" />, 
+ <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.landingTime) / 60}" /> minutes after start)</td>
 </tr>
 <tr>
  <td class="label">Landing Information</td>
- <td class="data"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
- feet/min, <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.landingSpeed}" /> knots, <fmt:int value="${pirep.landingVSpeed}" />
+ feet/minute, <fmt:dec value="${pirep.landingN1}" />% N<sub>1</sub>, <fmt:int value="${pirep.landingWeight}" />
  lbs total, <fmt:int value="${pirep.landingFuel}" /> lbs fuel</td>
 </tr>
 <tr>
  <td class="label">Arrival Time</td>
- <td class="data"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
+ <td class="data" colspan="${cspan}"><fmt:date className="sec bld" date="${pirep.endTime}" />, 
 (<fmt:int value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" /> minutes after start)</td>
 </tr>
 <c:if test="${pirep.gateFuel > 0}">
 <tr>
  <td class="label">Arrival Information</td>
- <td class="data"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" />
+ <td class="data" colspan="${cspan}"><fmt:int value="${pirep.gateWeight}" /> lbs total, <fmt:int value="${pirep.gateFuel}" />
  lbs fuel</td>
 </tr>
 </c:if>
@@ -65,70 +65,70 @@
 <c:set var="blockTime" value="${fn:delta(pirep.startTime, pirep.endTime) / 60}" scope="request" />
 <tr>
  <td class="label">Flight Time</td>
- <td class="data"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
+ <td class="data" colspan="${cspan}"><fmt:date fmt="t" t="HH:mm" className="pri bld" date="${pirep.airborneTime}" showZone="false" tzName="Etc/Greenwich" />, block time
  <fmt:date fmt="t" t="HH:mm" date="${pirep.blockTime}" showZone="false" tzName="Etc/Greenwich" /></td>
 </tr>
 <c:set var="times" value="${pirep.times}" scope="request" />
 <c:if test="${(times[0] > 30) || (times[2] > 0) || (times[4] > 0)}">
-<c:if test="${times[0] > 30}">
+<c:if test="${times[0] > 90}">
 <tr>
  <td class="label">Time (Paused)</td>
- <td class="data"><fmt:int value="${times[0] / 60}" /> minutes <fmt:int value="${times[0] % 60}" /> seconds</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${times[0] / 60}" /> minutes <fmt:int value="${times[0] % 60}" /> seconds</td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Flight Time (1X)</td>
- <td class="data"><fmt:int value="${times[1] / 60}" /> minutes <fmt:int value="${times[1] % 60}" /> seconds</td>
+ <td class="data" colspan="${cspan}"><fmt:int value="${times[1] / 60}" /> minutes <fmt:int value="${times[1] % 60}" /> seconds</td>
 </tr>
 <c:if test="${times[2] > 0}">
 <tr>
  <td class="label">Flight Time (2X)</td>
- <td class="data bld"><fmt:int value="${times[2] / 60}" /> minutes <fmt:int value="${times[2] % 60}" /> seconds</td>
+ <td class="data bld" colspan="${cspan}"><fmt:int value="${times[2] / 60}" /> minutes <fmt:int value="${times[2] % 60}" /> seconds</td>
 </tr>
 </c:if>
 <c:if test="${times[4] > 0}">
 <tr>
  <td class="label">Flight Time (4X)</td>
- <td class="data bld"><fmt:int value="${times[4] / 60}" /> minutes <fmt:int value="${times[4] % 60}" /> seconds</td>
+ <td class="data bld" colspan="${cspan}"><fmt:int value="${times[4] / 60}" /> minutes <fmt:int value="${times[4] % 60}" /> seconds</td>
 </tr>
 </c:if>
 </c:if>
 <c:if test="${!empty flightInfo.route}">
 <tr>
  <td class="label">Flight Route</td>
- <td class="data">${flightInfo.route}</td>
+ <td class="data" colspan="${cspan}">${flightInfo.route}</td>
 </tr>
 </c:if>
 <c:if test="${!empty checkRide}">
 <tr class="title">
- <td class="caps" colspan="2">CHECK RIDE INFORMATION</td>
+ <td class="caps" colspan="${cspan + 1}">CHECK RIDE INFORMATION</td>
 </tr>
 <tr>
  <td class="label">Name</td>
- <td class="data pri bld">${checkRide.name} (Stage <fmt:int value="${checkRide.stage}" />)</td>
+ <td class="data pri bld" colspan="${cspan}">${checkRide.name} (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
 <c:if test="${scoreCR}">
 <c:set var="isForm" value="true" scope="request" />
 <tr>
  <td class="label" valign="top">Check Ride Instructions</td>
- <td class="data"><fmt:text value="${checkRide.comments}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Reviewer Comments</td>
- <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
+ <td class="data" colspan="${cspan}"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </tr>
 <tr>
  <td class="label">Check Ride Status</td>
- <td class="data sec bld"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
+ <td class="data sec bld" colspan="${cspan}"><el:check name="crApprove" type="radio" options="${crPassFail}" idx="*" /></td>
 </tr>
 <tr class="title mid">
- <td colspan="2"><el:button ID="CRButton" type="submit" className="BUTTON" label="APPROVE FLIGHT / SCORE CHECK RIDE" /></td>
+ <td colspan="${cspan + 1}"><el:button ID="CRButton" type="submit" className="BUTTON" label="APPROVE FLIGHT / SCORE CHECK RIDE" /></td>
 </tr>
 </c:if>
 <c:if test="${!scoreCR}">
 <tr>
  <td class="label" valign="top">Check Ride Instructions</td>
- <td class="data"><fmt:text value="${checkRide.comments}" /></td>
+ <td class="data" colspan="${cspan}"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
 </c:if>
 </c:if>

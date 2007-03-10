@@ -33,46 +33,9 @@ return true;
 </c:if>
 <c:if test="${fn:isACARS(pirep)}">
 <content:sysdata var="imgPath" name="path.img" />
-function getACARSData()
-{
-// Disable checkboxes
-var f = document.forms[0];
-f.showFDR.disabled = true;
-f.showRoute.disabled = true;
-
-// Build the XML Requester
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "acars_pirep.ws?id=${fn:ACARS_ID(pirep)}", true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	var xmlDoc = xmlreq.responseXML;
-	var ac = xmlDoc.documentElement.getElementsByTagName("pos");
-	for (var i = 0; i < ac.length; i++) {
-		var a = ac[i];
-		var label = a.firstChild;
-		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
-		if (a.getAttribute("color")) {
-			var mrk = googleMarker('${imgPath}', a.getAttribute("color"), p, label.data);
-			routeMarkers.push(mrk);
-		}
-		
-		routePoints.push(p);
-	} // for
-	
-	// Create line
-	gRoute = new GPolyline(routePoints,'#4080AF',3,0.85)
-	
-	// Enable checkboxes
-	f.showFDR.disabled = false;
-	f.showRoute.disabled = false;
-	return true;
-} // function
-
-xmlreq.send(null);
-return true;
-}
 </c:if>
 </script>
+<c:if test="${fn:isACARS(pirep)}"><content:js name="acarsFlightMap" /></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -207,6 +170,7 @@ return true;
 </tr>
 </c:if>
 <c:if test="${fn:isACARS(pirep)}">
+<c:set var="cspan" value="${1}" scope="request" />
 <%@ include file="/jsp/pilot/pirepACARS.jspf" %> 
 </c:if>
 <tr>
@@ -291,7 +255,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 var gRoute;
 var routePoints = new Array();
 var routeMarkers = new Array();
-getACARSData();
+getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 </c:if>
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
