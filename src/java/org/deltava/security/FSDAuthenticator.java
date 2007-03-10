@@ -171,7 +171,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @return TRUE if the User is a member of a Role mapping to at least Level 1, otherwise FALSE
 	 */
 	public boolean accepts(Person usr) {
-		return (getUserLevel(usr) > 0);
+		return (getUserLevel(usr) > 0) && (usr.getStatus() == Pilot.ACTIVE);
 	}
 
 	/**
