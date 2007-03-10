@@ -4,21 +4,18 @@ package org.deltava.security;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.ts2.*;
 
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
-
-import org.apache.log4j.Logger;
 
 /**
  * An Authenticator to authenticate against a TeamSpeak 2 user database. This differs from the standard
- * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object.
- * Since this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection
- * to use.
+ * {@link JDBCAuthenticator} by virtue of its using the standard ConnectionPool loaded via the SystemData object. Since
+ * this implements {@link SQLAuthenticator}, this behavior can be overriden by providing a JDBC Connection to use.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -41,7 +38,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
-		
+
 		// Make sure we're not locked out
 		Pilot p = (Pilot) usr;
 		if (p.getNoVoice())
@@ -52,7 +49,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?) AND (s_client_password=");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?))");
+		sqlBuf.append("(?)) AND (i_client_server_id > 0)");
 
 		boolean isAuth = false;
 		Connection c = null;
@@ -78,7 +75,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		} finally {
 			closeConnection(c);
 		}
-		
+
 		// If we haven't authenticated, throw an execption
 		if (!isAuth)
 			throw new SecurityException("Invalid password for " + p.getPilotCode());
@@ -93,7 +90,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
-		
+
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
@@ -101,7 +98,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
-		sqlBuf.append(".ts2_clients WHERE (s_client_name=?)");
+		sqlBuf.append(".ts2_clients WHERE (s_client_name=?) AND (i_client_server_id > 0)");
 
 		Connection c = null;
 		boolean hasUser = false;
@@ -142,7 +139,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot))
 			throw new SecurityException("Invalid object - " + usr.getClass().getName());
-		
+
 		// If we're locked out, just remove the user
 		Pilot p = (Pilot) usr;
 		if (p.getNoVoice()) {
@@ -177,31 +174,42 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			closeConnection(c);
 		}
 	}
-	
+
 	/**
-	 * Returns wether this User can be added to this Authenticator. The user must have a non-empty pilot
-	 * code and be authorized to access at least one TeamSpeak 2 virtual server.
+	 * Returns wether this User can be added to this Authenticator. The user must have a non-empty pilot code and be
+	 * authorized to access at least one TeamSpeak 2 virtual server.
 	 * @param usr the user bean
 	 * @return TRUE if the User is a Pilot and has access to at least one server, otherwise FALSE
 	 */
 	public boolean accepts(Person usr) {
 		if (!(usr instanceof Pilot))
 			return false;
-		
+
 		// Check the pilot code
 		Pilot p = (Pilot) usr;
 		if (p.getPilotNumber() == 0)
 			return false;
-		
+
 		// Check the servers
-		@SuppressWarnings("unchecked")
-		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
-		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
-			Server srv = i.next();
-			if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
-				return true;
+		Connection con = null;
+		try {
+			con = getConnection();
+			
+			// Get the DAO and the active server
+			GetTS2Data dao = new GetTS2Data(con);
+			Collection<Server> srvs = dao.getServers(usr.getRoles());
+			for (Iterator<Server> i = srvs.iterator(); i.hasNext();) {
+				Server srv = i.next();
+				if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS)))
+					return true;
+			}
+		} catch (Exception e) {
+			log.error(e.getMessage(), e);
+			throw new SecurityException(e.getMessage(), e);
+		} finally {
+			closeConnection(con);
 		}
-		
+	
 		return false;
 	}
 
@@ -220,7 +228,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			log.warn("Cannot add " + usr.getName() + " - " + usr.getClass().getName());
 			return;
 		}
-		
+
 		// If our access has been locked out, then don't do the add
 		Pilot p = (Pilot) usr;
 		if (p.getNoVoice()) {
@@ -230,38 +238,42 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			log.info("Cannot add " + usr.getName() + " - no pilot code");
 			return;
 		}
-		
-		// Get the servers that this person may access
-		Collection<Client> usrs = new HashSet<Client>();
-		@SuppressWarnings("unchecked")
-		Collection<Server> srvs = new ArrayList<Server>((Collection) SystemData.getObject("ts2servers"));
-		for (Iterator<Server> i = srvs.iterator(); i.hasNext(); ) {
-			Server srv = i.next();
-			if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS))) {
-				Client c = new Client(p.getPilotCode());
-				c.setPassword(pwd);
-				c.addChannels(srv);
-				c.setID(usr.getID());
-				c.setServerID(srv.getID());
-				c.setAutoVoice(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.VOICE)));
-				c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.OPERATOR)));
-				c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ADMIN)));
-				usrs.add(c);
-			} else
-				i.remove();
-		}
-		
-		// If no accessible servers, abort
-		if (usrs.isEmpty())
-			return;
-		
-		// Log addition
-		log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
-		
+
 		Connection con = null;
 		try {
 			con = getConnection();
 			
+			// Get the servers that this person may access
+			GetTS2Data dao = new GetTS2Data(con);
+			Collection<Server> srvs = dao.getServers(usr.getRoles());
+			
+			// Create the client entries
+			Collection<Client> usrs = new HashSet<Client>();
+			for (Iterator<Server> i = srvs.iterator(); i.hasNext();) {
+				Server srv = i.next();
+				if (RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ACCESS))) {
+					Client c = new Client(p.getPilotCode());
+					c.setPassword(pwd);
+					c.addChannels(srv);
+					c.setID(usr.getID());
+					c.setServerID(srv.getID());
+					c.setAutoVoice(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.VOICE)));
+					c.setServerOperator(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.OPERATOR)));
+					c.setServerAdmin(RoleUtils.hasAccess(usr.getRoles(), srv.getRoles().get(Server.ADMIN)));
+					usrs.add(c);
+				} else
+					i.remove();
+			}
+
+			// If no accessible servers, abort
+			if (usrs.isEmpty()) {
+				closeConnection(con);
+				return;
+			}
+				
+			// Log addition
+			log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
+
 			// Get the DAO and update
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.write(usrs);
@@ -271,7 +283,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		} finally {
 			closeConnection(con);
 		}
-		
+
 		// Encrypt the password
 		updatePassword(usr, pwd);
 	}
@@ -289,20 +301,20 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public void removeUser(Person usr) throws SecurityException {
-		
+
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients WHERE (UCASE(s_client_name)=?)");
-		
+
 		Connection c = null;
 		try {
 			c = getConnection();
-			
+
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, ((Pilot) usr).getPilotCode().toUpperCase());
-			
+
 			// Execute the query and clean up
 			ps.executeUpdate();
 			ps.close();
