@@ -187,7 +187,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 
 		// Check the pilot code
 		Pilot p = (Pilot) usr;
-		if (p.getPilotNumber() == 0)
+		if ((p.getPilotNumber() == 0) || (p.getStatus() != Pilot.ACTIVE))
 			return false;
 
 		// Check the servers
