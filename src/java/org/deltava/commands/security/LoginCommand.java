@@ -120,7 +120,7 @@ public class LoginCommand extends AbstractCommand {
 
 			// Log the pilot in
 			p.login(ctx.getRequest().getRemoteHost());
-
+			
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));
@@ -140,6 +140,10 @@ public class LoginCommand extends AbstractCommand {
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p);
+			
+			// Save login hostname/IP address forever
+			SetSystemData sysdao = new SetSystemData(con);
+			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
 
 			// Mark as returned from leave
 			if (returnToActive) {
