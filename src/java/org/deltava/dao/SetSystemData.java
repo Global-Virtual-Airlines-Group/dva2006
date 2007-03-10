@@ -5,7 +5,8 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.servlet.CommandLog;
-import org.deltava.beans.system.RegistrationBlock;
+
+import org.deltava.beans.system.*;
 
 import org.deltava.util.StringUtils;
 
@@ -142,6 +143,34 @@ public class SetSystemData extends DAO {
 			prepareStatement("DELETE FROM REG_BLOCKS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Logs user authentication.
+	 * @param dbName the database name
+	 * @param id the User's database ID
+	 * @param addr the remote IP address
+	 * @param host the remote host name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void login(String dbName, int id, String addr, String host) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".SYS_LOGINS (ID, REMOTE_ADDR, REMOTE_HOST, LOGINS) VALUES (?, INET_ATON(?), ?, 1) "
+				+ "ON DUPLICATE KEY UPDATE LOGINS=LOGINS+1, REMOTE_HOST=?");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, id);
+			_ps.setString(2, addr);
+			_ps.setString(3, host);
+			_ps.setString(4, host);
+			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
