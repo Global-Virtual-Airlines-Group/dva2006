@@ -397,12 +397,6 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 			}
 
-			// If we're not currently active, then clear any address validation entries
-			if (p_access.getCanChangeStatus() && (p.getStatus() != 0)) {
-				SetAddressValidation avwdao = new SetAddressValidation(con);
-				avwdao.delete(p.getID());
-			}
-
 			// Check if we're updating the e-mail address
 			String newEMail = ctx.getParameter("email");
 			boolean isEMailUpdate = !p.getEmail().equals(newEMail);
@@ -600,10 +594,25 @@ public class ProfileCommand extends AbstractFormCommand {
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
 
-			// If we're marking Inactive/Retired, purge any Inactivity records
+			// If we're marking Inactive/Retired, purge any Inactivity/Address Update records and remove from Child Authenticators
 			if ((p.getStatus() != Pilot.ACTIVE) && (p.getStatus() != Pilot.ON_LEAVE)) {
 				SetInactivity idao = new SetInactivity(con);
+				SetAddressValidation avwdao = new SetAddressValidation(con);
 				idao.delete(p.getID());
+				avwdao.delete(p.getID());
+				
+				// Remove the user from any destination directories
+				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+				if (auth instanceof MultiAuthenticator) {
+					MultiAuthenticator mAuth = (MultiAuthenticator) auth;
+					if (auth instanceof SQLAuthenticator) {
+						SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+						sqlAuth.setConnection(con);
+						mAuth.removeDestination(p);
+						sqlAuth.clearConnection();
+					} else
+						mAuth.removeDestination(p);
+				}
 			}
 
 			// Write the status updates
@@ -752,7 +761,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
 			// If it's in a different database check our role
-			boolean crossDB = !SystemData.get("airline.db").equals(usrInfo.getDB());
+			boolean crossDB = !SystemData.get("airline.db").equalsIgnoreCase(usrInfo.getDB());
 			if (crossDB && !ctx.isUserInRole("Admin"))
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 

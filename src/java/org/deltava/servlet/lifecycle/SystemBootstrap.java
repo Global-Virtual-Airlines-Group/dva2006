@@ -81,7 +81,8 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
-		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData.getObject("jdbc.connectProperties"));
+		_jdbcPool.setProperties((Map<? extends Object, ? extends Object>) SystemData
+				.getObject("jdbc.connectProperties"));
 		_jdbcPool.setCredentials(SystemData.get("jdbc.user"), SystemData.get("jdbc.pwd"));
 		_jdbcPool.setProperty("url", SystemData.get("jdbc.url"));
 		_jdbcPool.setMaxRequests(SystemData.getInt("jdbc.max_reqs", 0));
@@ -167,18 +168,11 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			}
 
 			// Load TS2 server info if enabled
-			if (SystemData.getBoolean("airline.voice.ts2.enabled")) {
-				log.info("Loading TeamSpeak 2 Voice Servers");
-				GetTS2Data ts2dao = new GetTS2Data(c);
-				SystemData.add("ts2servers", ts2dao.getServers());
-
-				// If we have ACARS, clear the flag
-				if (SystemData.getBoolean("acars.enabled")) {
-					SetTS2Data ts2wdao = new SetTS2Data(c);
-					int flagsCleared = ts2wdao.clearActiveFlags();
-					if (flagsCleared > 0)
-						log.warn("Reset " + flagsCleared + " TeamSpeak 2 client activity flags");
-				}
+			if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
+				SetTS2Data ts2wdao = new SetTS2Data(c);
+				int flagsCleared = ts2wdao.clearActiveFlags();
+				if (flagsCleared > 0)
+					log.warn("Reset " + flagsCleared + " TeamSpeak 2 client activity flags");
 			}
 		} catch (Exception ex) {
 			log.error("Error retrieving data - " + ex.getMessage(), ex);

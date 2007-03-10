@@ -145,9 +145,6 @@ public class ServerCommand extends AbstractFormCommand {
 			wdao.write(addUsrs);
 			ctx.commitTX();
 			
-			// Reload the system model
-			SystemData.add("ts2Servers", dao.getServers());
-			
 			// Save the server and msgs in the request
 			ctx.setAttribute("server", srv, REQUEST);
 			ctx.setAttribute("msgs", msgs, REQUEST);

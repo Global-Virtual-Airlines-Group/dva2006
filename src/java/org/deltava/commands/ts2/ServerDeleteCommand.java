@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -7,8 +7,6 @@ import org.deltava.beans.ts2.Server;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to delete a TeamSpeak 2 virtual server.
@@ -37,9 +35,6 @@ public class ServerDeleteCommand extends AbstractCommand {
 			// Get the write DAO and delete the server
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.delete(srv);
-			
-			// Reload the system model
-			SystemData.add("ts2Servers", dao.getServers());
 			
 			// Save the server in the request
 			ctx.setAttribute("server", srv, REQUEST);
