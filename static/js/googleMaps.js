@@ -81,8 +81,7 @@ return 10;
 function toggleMarkers(map, arrayName, check)
 {
 // Figure out if we add or remove the markers
-var isToggled = check.checked;
-// var isToggled = displayedMarkers[arrayName];
+var isToggled = !check.checked;
 if (isToggled) {
 	removeMarkers(map, arrayName);
 } else {
@@ -97,7 +96,7 @@ return true;
 
 function updateOverlays()
 {
-var page = Math.floor(map.getCenterLatLng().x / 360) * 360;
+var page = Math.floor(map.getCenterLatLng().getLng() / 360) * 360;
 var ppage = page * 100000;
 
 // Update the map overlays

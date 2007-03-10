@@ -103,6 +103,12 @@ public class FlightInfoCommand extends AbstractCommand {
 			   ctx.setAttribute("mapCenter", start.midPoint(info.getAirportA()), REQUEST);
 			   ctx.setAttribute("routeLength", new Integer(start.distanceTo(info.getAirportA())), REQUEST);
 			}
+			
+			// Determine if we are crossing the International Date Line
+			double longD = afr.getAirportD().getLongitude();
+			double longA = afr.getAirportA().getLongitude();
+			boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
+			ctx.setAttribute("crossIDL", Boolean.valueOf(crossIDL), REQUEST);
 
 			// Save the filed/actual routes
 			ctx.setAttribute("filedRoute", routeInfo, REQUEST);
