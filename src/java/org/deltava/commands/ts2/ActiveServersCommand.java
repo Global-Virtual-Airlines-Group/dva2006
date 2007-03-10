@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.util.*;
@@ -32,21 +32,20 @@ public class ActiveServersCommand extends AbstractCommand {
 		if (!SystemData.getBoolean("airline.voice.ts2.enabled"))
 			throw notFoundException("TeamSpeak 2 support disabled");
 		
+		Collection<Server> srvs = null;
 		Map<Integer, Client> clients = null;
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get our credentials
+			// Get our credentials and active servers
 			GetTS2Data dao = new GetTS2Data(con);
 			clients = CollectionUtils.createMap(dao.getUsers(ctx.getUser().getID()), "serverID");
+			srvs = dao.getServers();
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
-		// Get the servers
-		Collection srvs = (Collection) SystemData.getObject("ts2servers");
 		
 		// Check our access
 		Collection<Server> servers = new ArrayList<Server>();
