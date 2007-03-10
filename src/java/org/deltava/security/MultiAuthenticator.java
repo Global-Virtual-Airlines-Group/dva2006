@@ -191,6 +191,22 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 			clearConnection(dst);
 		}
 	}
+	
+	/**
+	 * Removes the specified user from any destination Authenticators, while retaining the user in the source directory.
+	 * @param usr the user bean
+	 * @throws SecurityException if the user does not exist
+	 */
+	public void removeDestination(Person usr) throws SecurityException {
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext(); ) {
+			Authenticator auth = i.next();
+			setConnection(auth);
+			if (auth.contains(usr))
+				auth.removeUser(usr);
+			
+			clearConnection(auth);
+		}
+	}
 
 	/**
 	 * Returns wether this Authenticator will accept a new User. This defaults to TRUE, although subclasses may override
