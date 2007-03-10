@@ -16,6 +16,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="googleMaps" />
+<content:js name="acarsFlightMap" />
 <map:api version="2" />
 <map:vml-ie />
 </head>
@@ -24,9 +25,11 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="imgPath" name="path.img" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="acarsinfo.do" method="post" validate="return false">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="4">ACARS FLIGHT INFORMATION - FLIGHT #<fmt:int value="${info.ID}" /></td>
@@ -80,39 +83,35 @@
  <td class="data"><fmt:date date="${conInfo.startTime}" /></td>
 </tr>
 </c:if>
-</el:table>
 
 <c:if test="${!empty pirep}">
 <!-- ACARS PIREP data -->
-<el:table className="form" space="default" pad="default">
-<c:if test="${!empty pirep.remarks}">
+<c:set var="cspan" value="${3}" scope="request" />
+<c:set var="flightInfo" value="${info}" scope="request" />
 <%@include file="/jsp/pilot/pirepACARS.jspf" %>
+<c:if test="${!empty pirep.remarks}">
 <tr>
  <td class="label" valign="top">Comments</td>
- <td class="data"><fmt:text value="${pirep.remarks}" /></td>
+ <td class="data" colspan="3"><fmt:text value="${pirep.remarks}" /></td>
 </tr>
 </c:if>
-</el:table>
 </c:if>
 
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <!-- Flight Map -->
-<el:form action="acarsinfo.do" method="post" validate="return false">
-<el:table className="form" space="default" pad="default">
 <tr>
  <td class="label">Route Map Data</td>
- <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="false" />
+ <td class="data" colspan="4"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="false" />
 <el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> 
 <el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> 
 <el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="530" /></div>
+ <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="530" /></div>
 </tr>
-</el:table>
-</el:form>
 </c:if>
+</el:table>
 
 <!-- Button Bar -->
 <content:filter roles="Admin"><c:if test="${empty pirep}">
@@ -122,12 +121,18 @@
 </tr>
 </el:table>
 </c:if></content:filter>
+</el:form>
 <br />
 <content:copyright />
 </content:region>
 </content:page>
 <c:if test="${fn:sizeof(mapRoute) > 0}">
 <script language="JavaScript" type="text/javascript">
+var gRoute;
+var routePoints = new Array();
+var routeMarkers = new Array();
+getACARSData(${info.ID}, '${imgPath}');
+
 // Build the route line and map center
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="filedPoints" items="${filedRoute}" />
@@ -145,6 +150,11 @@ map.enableContinuousZoom();
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');
 addMarkers(map, 'filedMarkers');
+<c:if test="${crossIDL}">
+// Update overlays for Date Line fix and set mapMove event
+updateOverlays();
+GEvent.addListener(map, "moveend", function() { updateOverlays() });</c:if>
+var crossIDL = ${crossIDL};
 </script>
 </c:if>
 </body>
