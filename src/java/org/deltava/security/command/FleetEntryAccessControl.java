@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -50,7 +50,7 @@ public class FleetEntryAccessControl extends AccessControl {
 
       // Set access variables
       _canEdit = _ctx.isUserInRole("Fleet");
-      _canDelete = _ctx.isUserInRole("Admin");
+      _canDelete = _ctx.isUserInRole("Admin") || _ctx.isUserInRole("HR");
       switch (_entry.getSecurity()) {
          case LibraryEntry.PUBLIC:
             _canView = true;
