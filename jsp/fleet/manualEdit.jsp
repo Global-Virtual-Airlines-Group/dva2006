@@ -31,6 +31,7 @@ if (!validateFile(form.file, 'pdf', 'Uploaded Manual')) return false;
 
 setSubmit();
 disableButton('SaveButton');
+disableButton('DeleteButton');
 return true;
 }
 
@@ -129,7 +130,10 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit || access.canCreate}">
-<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MANUAL" />
+<el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE MANUAL" />&nbsp;
+</c:if>
+<c:if test="${access.canDelete}">
+<el:cmdbutton ID="DeleteButton" url="manualdelete" linkID="${entry.fileName}" label="DELETE MANUAL" />
 </c:if>
  </td>
 </tr>

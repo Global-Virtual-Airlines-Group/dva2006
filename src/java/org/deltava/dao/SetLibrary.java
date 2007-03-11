@@ -54,7 +54,7 @@ public class SetLibrary extends DAO {
 			startTransaction();
 			if (isNew) {
 				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, FILENAME) "
-						+ "VALUES (?, ?, ?, ?, ?, ?)");
+						+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
 			} else {
 				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=? "
 						+ "WHERE (FILENAME=?)");

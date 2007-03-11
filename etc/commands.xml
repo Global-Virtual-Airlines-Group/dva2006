@@ -283,6 +283,12 @@
 		<class>org.deltava.commands.fleet.ManualCommand</class>
 		<roles>Fleet</roles>	
 	</command>
+
+	<command id="manualdelete">
+		<name>Manual Delete</name>
+		<class>org.deltava.commands.fleet.ManualDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
 	
 	<command id="fleetlib">
 		<name>Installer Edit</name>
