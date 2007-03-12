@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.commands.*;
@@ -12,7 +13,7 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -86,6 +87,19 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ScheduleEntry sEntry = sdao.get(pirep);
 			boolean isAcademy = ((sEntry != null) && sEntry.getAcademy());
 			pirep.setAttribute(FlightReport.ATTR_ACADEMY, isAcademy);
+			
+			// Check if it's an Online Event flight
+			if ((pirep.getDatabaseID(FlightReport.DBID_EVENT) == 0) && (pirep.hasAttribute(FlightReport.ATTR_ONLINE_MASK))) {
+				int networkID = Event.NET_VATSIM;
+				if (pirep.hasAttribute(FlightReport.ATTR_IVAO))
+					networkID = Event.NET_IVAO;
+				else if (pirep.hasAttribute(FlightReport.ATTR_INTVAS))
+					networkID = Event.NET_INTVAS;
+				
+				// Load the event ID
+				GetEvent evdao = new GetEvent(con);
+				pirep.setDatabaseID(FlightReport.DBID_EVENT, evdao.getEvent(pirep.getAirportD(), pirep.getAirportA(), networkID));
+			}
 
 			// Update the status of the PIREP
 			pirep.setStatus(FlightReport.SUBMITTED);

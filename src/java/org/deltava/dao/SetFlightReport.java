@@ -140,7 +140,7 @@ public class SetFlightReport extends DAO {
 		sqlBuf.append(db);
 		sqlBuf.append(".PIREPS SET STATUS=?, DATE=?, AIRLINE=?, FLIGHT=?, LEG=?, AIRPORT_D=?, AIRPORT_A=?, "
 				+ "EQTYPE=?, FSVERSION=?, ATTR=?, DISTANCE=?, FLIGHT_TIME=?, REMARKS=?, DISPOSAL_ID=?, "
-				+ "SUBMITTED=?, DISPOSED=?, ASSIGN_ID=? WHERE (ID=?)");
+				+ "SUBMITTED=?, DISPOSED=?, ASSIGN_ID=?, EVENT_ID=? WHERE (ID=?)");
 
 		// Set the prepared statement parameters
 		prepareStatement(sqlBuf.toString());
@@ -161,7 +161,8 @@ public class SetFlightReport extends DAO {
 		_ps.setTimestamp(15, createTimestamp(fr.getSubmittedOn()));
 		_ps.setTimestamp(16, createTimestamp(fr.getDisposedOn()));
 		_ps.setInt(17, fr.getDatabaseID(FlightReport.DBID_ASSIGN));
-		_ps.setInt(18, fr.getID());
+		_ps.setInt(18, fr.getDatabaseID(FlightReport.DBID_EVENT));
+		_ps.setInt(19, fr.getID());
 	}
 
 	/**
