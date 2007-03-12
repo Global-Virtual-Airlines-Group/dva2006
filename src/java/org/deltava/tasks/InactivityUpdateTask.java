@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -13,6 +13,7 @@ import org.deltava.mail.*;
 
 import org.deltava.taskman.DatabaseTask;
 
+import org.deltava.security.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -44,6 +45,9 @@ public class InactivityUpdateTask extends DatabaseTask {
 		
 		// Check if we're in test mode
 		boolean isTest = SystemData.getBoolean("smtp.testMode");
+		
+		// Get the System authenticator
+		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 
 		try {
 			Connection con = getConnection();
@@ -53,7 +57,6 @@ public class InactivityUpdateTask extends DatabaseTask {
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			SetPilot pwdao = new SetPilot(con);
 			SetInactivity iwdao = new SetInactivity(con);
-			SetTS2Data ts2wdao = new SetTS2Data(con);
 
 			// Get the Message templates
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
@@ -86,14 +89,31 @@ public class InactivityUpdateTask extends DatabaseTask {
 					mctxt.addData("user", taskBy);
 					mctxt.addData("pilot", p);
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
+					
+					// Start a transaction
+					startTX();
 
 					// Deactivate the Pilot
 					p.setStatus(Pilot.INACTIVE);
 					pwdao.write(p);
 					
-					// Clear TS2 credentials
-					if (SystemData.getBoolean("airline.voice.ts2.enabled"))
-						ts2wdao.delete(p.getID());
+					// Remove the user from any destination directories
+					if (auth instanceof MultiAuthenticator) {
+						MultiAuthenticator mAuth = (MultiAuthenticator) auth;
+						if (auth instanceof SQLAuthenticator) {
+							SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+							sqlAuth.setConnection(con);
+							mAuth.removeDestination(p);
+							sqlAuth.clearConnection();
+						} else
+							mAuth.removeDestination(p);
+					}
+					
+					// Remove the inactivity entry
+					iwdao.delete(ip.getID());
+					
+					// Commit
+					commitTX();
 
 					// Send notification message
 					Mailer mailer = new Mailer(isTest ? null : taskBy);
@@ -101,10 +121,8 @@ public class InactivityUpdateTask extends DatabaseTask {
 					mailer.send(p);
 				} else {
 					log.warn("Spurious Purge entry for Pilot ID " + ip.getID());
+					iwdao.delete(ip.getID());
 				}
-
-				// Clear the inactivity record
-				iwdao.delete(ip.getID());
 			}
 			
 			// Get the Pilots to notify
@@ -141,6 +159,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 				}
 			}
 		} catch (DAOException de) {
+			rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
 			release();
