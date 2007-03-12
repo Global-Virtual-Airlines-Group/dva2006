@@ -56,7 +56,7 @@ public class CourseAccessControl extends AccessControl {
 		
 		// Assign access rights
 		_canComment = isINS || isHR || (isMine && isStarted);
-		_canStart = (isINS || isHR) && isPending;
+		_canStart = (isINS || isHR) && (isPending || (_c.getStatus() == Course.ABANDONED));
 		_canCancel = (isHR || isMine || _ctx.isUserInRole("AcademyAdmin")) && isStarted;
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
