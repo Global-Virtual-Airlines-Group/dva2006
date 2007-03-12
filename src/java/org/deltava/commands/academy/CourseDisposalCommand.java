@@ -110,9 +110,12 @@ public class CourseDisposalCommand extends AbstractCommand {
 				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(c.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
+				mctx.addData("pilot", usr);
 				usrs.add(usr);
-			} else
+			} else {
 				ctx.setAttribute("pilot", ctx.getUser(), REQUEST);
+				mctx.addData("pilot", ctx.getUser());
+			}
 			
 			// Start a transaction
 			ctx.startTX();
