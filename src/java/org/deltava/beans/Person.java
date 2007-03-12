@@ -772,7 +772,7 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 * @see Person#getAirportCodeTypeName()
 	 */
 	public void setAirportCodeType(String codeName) {
-		setAirportCodeType(StringUtils.arrayIndexOf(Airport.CODETYPES, codeName));
+		setAirportCodeType(StringUtils.arrayIndexOf(Airport.CODETYPES, codeName, 0));
 	}
 
 	/**
