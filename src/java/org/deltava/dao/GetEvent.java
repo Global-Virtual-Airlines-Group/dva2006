@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.*;
 
 import org.deltava.beans.event.*;
+import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
@@ -73,6 +74,41 @@ public class GetEvent extends DAO {
 			
 			// Return the results
 			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns the Online Event for a particular flight route. This will display the Events that took place within the past 2 days. 
+	 * @param airportD the departure Airport
+	 * @param airportA the arrival Airport
+	 * @param network the online network code
+	 * @return the Online Event database ID, or zero if none found
+	 * @throws DAOException if a JDBC error occurs
+	 * @see Event#NET_VATSIM
+	 * @see Event#NET_IVAO
+	 * @see Event#NET_INTVAS
+	 */
+	public int getEvent(Airport airportD, Airport airportA, int network) throws DAOException {
+		try {
+			setQueryMax(1);
+			prepareStatement("SELECT E.ID FROM common.EVENTS E, common.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
+					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
+					+ "(NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID");
+			_ps.setString(1, airportD.getIATA());
+			_ps.setString(2, airportA.getIATA());
+			_ps.setInt(3, network);
+			
+			// Execute the Query
+			setQueryMax(0);
+			ResultSet rs = _ps.executeQuery();
+			int eventID = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return eventID;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
