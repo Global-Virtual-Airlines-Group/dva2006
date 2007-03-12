@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -40,6 +40,9 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		ac.validate();
 		if (!ac.getCanEdit())
 			throw securityException("Cannot modify Flight Schedule");
+		
+		// Get command results
+		CommandResult result = ctx.getResult();
 
 		try {
 			Connection con = ctx.getConnection();
@@ -52,27 +55,27 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				if (entry == null)
 					throw notFoundException("Invalid Schedule Entry - " + fCode);
 			} else {
-				// Create a new entry
 				Airline a = SystemData.getAirline(ctx.getParameter("airline"));
-				try {
-					int fNumber = Integer.parseInt(ctx.getParameter("flightNumber"));
-					int fLeg = Integer.parseInt(ctx.getParameter("flightLeg"));
-					entry = new ScheduleEntry(a, fNumber, fLeg);
-				} catch (NumberFormatException nfe) {
-					CommandException ce = new CommandException("Invalid Flight data " + nfe.getMessage());
-					ce.setLogStackDump(false);
-					throw ce;
-				}
+				int fNumber = StringUtils.parse(ctx.getParameter("flightNumber"), 1);
+				entry = new ScheduleEntry(a, fNumber, StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 			}
+			
+			// Load the departure airport
+			Airport aD = SystemData.getAirport(ctx.getParameter("airportD"));
+			if (aD == null)
+				aD = SystemData.getAirport(ctx.getParameter("airportDCode"));
+			
+			// Load the arrival airport
+			Airport aA = SystemData.getAirport(ctx.getParameter("airportA"));
+			if (aA == null)
+				aA = SystemData.getAirport(ctx.getParameter("airportACode"));
 
 			// Update the entry
 			entry.setEquipmentType(ctx.getParameter("eqType"));
-			entry.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
-			entry.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 			entry.setCanPurge(!Boolean.valueOf(ctx.getParameter("dontPurge")).booleanValue());
 			entry.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
 			entry.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
-
+			
 			// Parse date/times
 			try {
 				entry.setTimeD(StringUtils.parseDate(ctx.getParameter("timeD"), "HH:mm"));
@@ -82,7 +85,35 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 				ce.setLogStackDump(false);
 				throw ce;
 			}
+			
+			// If either airport is null, redirect to the edit page
+			if ((aD == null) || (aA == null)) {
+				ctx.setMessage("Unknown Airport(s)");
+				
+				// Get Airports
+				Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+				GetAirport adao = new GetAirport(con);
+				airports.addAll(adao.getByAirline(entry.getAirline()));
 
+				// Save the entry and airports in the request
+				ctx.setAttribute("entry", entry, REQUEST);
+				ctx.setAttribute("airports", airports, REQUEST);
+
+				//	Get aircraft types
+				GetAircraft acdao = new GetAircraft(con);
+				ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+
+				// Release and redirect
+				ctx.release();
+				result.setURL("/jsp/schedule/schedEntry.jsp");
+				result.setSuccess(true);
+				return;
+			}
+			
+			// Set the airports
+			entry.setAirportD(aD);
+			entry.setAirportA(aA);
+			
 			// Write the entry to the database
 			SetSchedule wdao = new SetSchedule(con);
 			wdao.write(entry, (id != null));
@@ -97,7 +128,6 @@ public class ScheduleEntryCommand extends AbstractFormCommand {
 		}
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REQREDIRECT);
 		result.setURL("/jsp/schedule/scheduleUpdate.jsp");
 		result.setSuccess(true);

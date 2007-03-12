@@ -140,6 +140,12 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
  <el:text ID="airportDCode" name="airportDCode" idx="*" size="3" max="4" value="${entry.airportD.ICAO}" onBlur="void setAirport(document.forms[0].airportD, this.value)" />
  at <el:text name="timeD" idx="*" size="4" max="5" value="${fn:dateFmt(entry.timeD, 'HH:mm')}" /> <span class="small">(Format: HH:mm)</span></td>
 </tr>
+<c:if test="${!empty system_message}">
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data error bld">CANNOT SAVE SCHEDULE ENTRY - ${system_message}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Arriving At</td>
  <td class="data"><el:combo name="airportA" size="1" options="${airports}" value="${entry.airportA}" onChange="void changeAirport(this)" />

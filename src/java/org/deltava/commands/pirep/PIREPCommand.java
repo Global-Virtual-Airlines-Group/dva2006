@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -22,15 +22,13 @@ import org.deltava.security.command.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A web site command to handle editing/saving PIREPs.
+ * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
  * @version 1.0
  * @since 1.0
  */
 
 public class PIREPCommand extends AbstractFormCommand {
-
-	private static final DateFormat _df = new SimpleDateFormat("yyyy, M, d");
 
 	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
 	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
@@ -55,8 +53,8 @@ public class PIREPCommand extends AbstractFormCommand {
 		
 		// Init flight times
 		if (_flightTimes.isEmpty()) {
-		for (int x = 2; x < 185; x++)
-			_flightTimes.add(String.valueOf(x / 10.0d));
+			for (int x = 2; x < 185; x++)
+				_flightTimes.add(String.valueOf(x / 10.0d));
 		}
 	}
 
@@ -99,10 +97,19 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (a == null)
 				a = SystemData.getAirline(SystemData.get("airline.code"));
 			
+			// Load airports from the code if they're empty
+			if (!isAssignment) {
+				if (ad == null)
+					ad = SystemData.getAirport(ctx.getParameter("airportDCode"));
+				
+				if (aa == null)
+					aa = SystemData.getAirport(ctx.getParameter("airportACode"));
+			}
+			
 			// Validate airports
 			if ((aa == null) || (ad == null))
-				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportD") + " / " 
-						+ ctx.getParameter("airportA"));
+				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 
+						+ ctx.getParameter("airportACode"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
@@ -208,9 +215,9 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Set the redirection URL
 		CommandResult result = ctx.getResult();
 		result.setSuccess(true);
-		if (doSubmit) {
+		if (doSubmit)
 			result.setURL("submit", null, fr.getID());
-		} else {
+		else {
 			ctx.setAttribute("isSaved", Boolean.TRUE, REQUEST);
 			result.setType(CommandResult.REQREDIRECT);
 			result.setURL("/jsp/pilot/pirepUpdate.jsp");
@@ -301,12 +308,11 @@ public class PIREPCommand extends AbstractFormCommand {
 		}
 
 		// Save PIREP date limitations
+		final DateFormat df = new SimpleDateFormat("yyyy, M, d");
 		Calendar forwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.maxDays"));
 		Calendar backwardLimit = CalendarUtils.getInstance(null, true, SystemData.getInt("users.pirep.minDays") * -1);
-		synchronized (_df) {
-			ctx.setAttribute("forwardDateLimit", _df.format(forwardLimit.getTime()), REQUEST);
-			ctx.setAttribute("backwardDateLimit", _df.format(backwardLimit.getTime()), REQUEST);
-		}
+		ctx.setAttribute("forwardDateLimit", df.format(forwardLimit.getTime()), REQUEST);
+		ctx.setAttribute("backwardDateLimit", df.format(backwardLimit.getTime()), REQUEST);
 		
 		// Set flight years
 		Collection<String> years = new LinkedHashSet<String>();
