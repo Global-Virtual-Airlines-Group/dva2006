@@ -205,6 +205,9 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			} else if (!a.getApplications().contains(SystemData.get("airline.code"))) {
 				isOK = false;
 				log.info("Disabled airline at Line " + entries.getLineNumber() + " - " + entries.get(0) + " (" + flightCode + ")");
+			} else if (airportD.getPosition().distanceTo(airportA) < 5) {
+				isOK = false;
+				log.info("Dummy flight from " + airportD.getIATA() + " to " + airportA.getIATA());
 			}
 
 			// Count the number of days this leg operates
