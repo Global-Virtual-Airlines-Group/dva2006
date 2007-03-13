@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -69,7 +69,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			// Get the new ratings
 			List<StatusUpdate> updates = new ArrayList<StatusUpdate>();
 			Collection<String> ratings = ctx.getParameters("ratings");
-			Set<String> newRatings = new TreeSet<String>((ratings == null) ? usr.getRatings() : ratings);
+			Collection<String> newRatings = new TreeSet<String>((ratings == null) ? usr.getRatings() : ratings);
 
 			// Check if we're switching programs
 			String eqType = ctx.getParameter("eqType");
@@ -168,6 +168,7 @@ public class TransferApproveCommand extends AbstractCommand {
 			ctx.commitTX();
 
 			// Write status attributes to the request
+			ctx.setAttribute("txReq", txreq, REQUEST);
 			ctx.setAttribute("isApprove", Boolean.TRUE, REQUEST);
 			ctx.setAttribute("pilot", usr, REQUEST);
 		} catch (DAOException de) {
