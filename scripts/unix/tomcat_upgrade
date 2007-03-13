@@ -46,6 +46,8 @@ echo "Copying Tomcat configuration"
 rm conf/server-minimal.xml
 cp /usr/local/tomcat/conf/server.xml conf
 cp /usr/local/tomcat/conf/tomcat-users.xml conf
+cp /usr/local/tomcat/conf/logging.properties conf
+cp /usr/local/tomcat/bin/catalina.sh bin
 
 # Change permissions
 echo "Changing file permissions"
