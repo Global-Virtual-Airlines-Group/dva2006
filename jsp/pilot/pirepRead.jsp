@@ -179,7 +179,8 @@ return true;
  <td class="data"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="${!fn:isACARS(pirep)}" />
 <c:if test="${fn:isACARS(pirep)}"><el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> </c:if>
 <c:if test="${!empty filedRoute}"><el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> </c:if>
-<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span></td>
+<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span>
+<span id="routeProgress" class="small"></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -286,11 +287,6 @@ addMarkers(map, 'filedMarkers');
 var filedMarkers = [gmA, gmD];
 addMarkers(map, 'filedMarkers');
 </c:if>
-<c:if test="${crossIDL}">
-// Update overlays for Date Line fix and set mapMove event
-updateOverlays();
-GEvent.addListener(map, "moveend", function() { updateOverlays() });</c:if>
-var crossIDL = ${crossIDL};
 </script>
 </c:if>
 </body>

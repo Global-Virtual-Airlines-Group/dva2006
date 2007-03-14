@@ -69,14 +69,6 @@ public class MapProgressService extends WebService {
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
 
-		// Determine if we cross the International Date Line
-		if (info != null) {
-			double longD = info.getAirportD().getLongitude();
-			double longA = info.getAirportA().getLongitude();
-			boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
-			re.setAttribute("crossIDL", String.valueOf(crossIDL));
-		}
-
 		// Write the positions
 		for (Iterator<GeoLocation> i = routePoints.iterator(); i.hasNext();) {
 			GeoLocation entry = i.next();

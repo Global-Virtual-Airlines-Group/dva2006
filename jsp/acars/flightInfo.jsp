@@ -104,7 +104,8 @@
  <td class="data" colspan="4"><span class="bld"><el:box name="showRoute" idx="*" onChange="void toggleMarkers(map, 'gRoute', this)" label="Route" checked="false" />
 <el:box name="showFDR" idx="*" onChange="void toggleMarkers(map, 'routeMarkers', this)" label="Flight Data" checked="false" /> 
 <el:box name="showFPlan" idx="*" onChange="void toggleMarkers(map, 'gfRoute', this)" label="Flight Plan" checked="true" /> 
-<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span></td>
+<el:box name="showFPMarkers" idx="*" onChange="void toggleMarkers(map, 'filedMarkers', this)" label="Navaid Markers" checked="true" /></span>
+<span id="routeProgress" class="small"></span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
@@ -150,11 +151,6 @@ map.enableContinuousZoom();
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');
 addMarkers(map, 'filedMarkers');
-<c:if test="${crossIDL}">
-// Update overlays for Date Line fix and set mapMove event
-updateOverlays();
-GEvent.addListener(map, "moveend", function() { updateOverlays() });</c:if>
-var crossIDL = ${crossIDL};
 </script>
 </c:if>
 </body>
