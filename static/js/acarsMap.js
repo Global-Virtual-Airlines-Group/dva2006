@@ -122,10 +122,6 @@ xreq.onreadystatechange = function() {
 		map.addOverlay(routeData);
 	}
 	
-	// Check if we cross the IDL on either the route or the progress
-	if (wsdata.getAttribute("crossIDL") == "true")
-		updateOverlays();
-	
 	return true;
 } // function
 

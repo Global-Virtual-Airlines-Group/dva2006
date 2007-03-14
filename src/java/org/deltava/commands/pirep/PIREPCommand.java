@@ -480,20 +480,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if (!(fr instanceof ACARSFlightReport))
-					ctx
-							.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100),
-									REQUEST);
-
-				// Determine if we are crossing the International Date Line
-				double longD = fr.getAirportD().getLongitude();
-				double longA = fr.getAirportA().getLongitude();
-				boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
-				ctx.setAttribute("crossIDL", Boolean.valueOf(crossIDL), REQUEST);
+					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100), REQUEST);
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
-				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()),
-						REQUEST);
+				ctx.setAttribute("mapCenter", fr.getAirportD().getPosition().midPoint(fr.getAirportA().getPosition()), REQUEST);
 			}
 
 			// Get the pilot/PIREP beans in the request
