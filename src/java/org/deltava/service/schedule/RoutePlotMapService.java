@@ -117,14 +117,6 @@ public class RoutePlotMapService extends RouteMapService {
 			re.addContent(e);
 		}
 
-		// Determine if we cross the International Date Line
-		if (points.size() > 1) {
-			double longD = points.get(0).getLongitude();
-			double longA = points.get(points.size() - 1).getLongitude();
-			boolean crossIDL = ((longD > 80) && (longA < -40)) || ((longD < -40) && (longA > 80));
-			re.setAttribute("crossIDL", String.valueOf(crossIDL));
-		}
-
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");

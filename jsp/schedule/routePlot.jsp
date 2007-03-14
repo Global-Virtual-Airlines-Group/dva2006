@@ -94,10 +94,6 @@ xmlreq.onreadystatechange = function() {
 	updateRoutes(f.sid, sids);
 	updateRoutes(f.star, stars);
 	
-	// Check if we cross the IDL
-	if (xdoc.getAttribute("crossIDL") == "true")
-		updateOverlays();
-	
 	// Focus on the map
 	if (isLoading)
 		isLoading.innerHTML = '';
