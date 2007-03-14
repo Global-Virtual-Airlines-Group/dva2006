@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import java.util.*;
@@ -61,8 +61,10 @@ public class ManualAccessControl extends FleetEntryAccessControl {
 		// Check if we have any active courses
 		for (Iterator<Course> i = _courses.iterator(); i.hasNext();) {
 			Course c = i.next();
-			if (m.getCertifications().contains(c.getName()))
-				return;
+			if ((c.getStatus() == Course.STARTED) || (c.getStatus() == Course.COMPLETE)) {
+				if (m.getCertifications().contains(c.getName()))
+					return;
+			}
 		}
 
 		// If we got this far, then disable read access
