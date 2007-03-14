@@ -78,7 +78,7 @@ public class GallerySaveCommand extends AbstractCommand {
 				} catch (UnsupportedOperationException uoe) {
 					CommandException ce = new CommandException(uoe.getMessage());
 					ce.setLogStackDump(false);
-					throw new CommandException(uoe.getMessage());
+					throw ce;
 				}
 			}
 			
