@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.testing.*;
+import org.deltava.util.CollectionUtils;
 
 /**
  * A Data Access Object to load Applicant Questionaires.
@@ -46,25 +47,58 @@ public class GetQuestionnaire extends DAO {
 			Examination e = (Examination) results.get(0);
 
 			// Load the questions for this examination
-			prepareStatementWithoutLimits("SELECT * FROM APPQUESTIONS WHERE (EXAM_ID=?) ORDER BY QUESTION_NO");
+			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
+					+ "APPQUESTIONS EQ LEFT JOIN APPQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND "
+					+ "(EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (EQ.QUESTION_ID=QI.ID) "
+					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				Question q = new Question(rs.getString(4));
+				boolean isMC = (rs.getInt(8) > 0);
+				Question q = isMC ? new MultiChoiceQuestion(rs.getString(4)) : new Question(rs.getString(4));
 				q.setID(rs.getInt(2));
 				q.setCorrectAnswer(rs.getString(5));
 				q.setAnswer(rs.getString(6));
 				q.setCorrect(rs.getBoolean(7));
+				if (rs.getInt(10) > 0) {
+					q.setType(rs.getInt(9));
+					q.setSize(rs.getInt(10));
+					q.setWidth(rs.getInt(11));
+					q.setHeight(rs.getInt(12));
+				}
 
 				// Add question to the examination
 				e.addQuestion(q);
 			}
 
-			// Clean up and return
+			// Clean up
 			rs.close();
 			_ps.close();
+			
+			// Load multiple choice questions
+			if (e.hasMultipleChoice()) {
+				Map<Integer, Question> qMap = CollectionUtils.createMap(e.getQuestions(), "ID");
+				prepareStatementWithoutLimits("SELECT QUESTION_ID, SEQ, ANSWER FROM APPQUESTIONSM WHERE "
+						+ "(EXAM_ID=?) ORDER BY QUESTION_ID, SEQ");
+				_ps.setInt(1, e.getID());
+
+				// Execute the query
+				rs = _ps.executeQuery();
+				while (rs.next()) {
+					Question q = qMap.get(new Integer(rs.getInt(1)));
+					if (q != null) {
+						MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+						mq.addChoice(rs.getString(3));
+					}
+				}
+
+				// Clean up
+				rs.close();
+				_ps.close();
+			}
+			
 			return e;
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -78,8 +78,8 @@ public class SetQuestionnaire extends DAO {
 
          // Add the questions
          _ps.setInt(6, e.getID());
-         for (Iterator i = e.getQuestions().iterator(); i.hasNext(); ) {
-            Question q = (Question) i.next();
+         for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext(); ) {
+            Question q = i.next();
             _ps.setInt(1, q.getID());
             _ps.setString(2, q.getQuestion());
             _ps.setString(3, q.getCorrectAnswer());
@@ -91,10 +91,36 @@ public class SetQuestionnaire extends DAO {
          
          // Write the questions
          _ps.executeBatch();
-         
-         // Commit the transaction and clean up
-         commitTransaction();
          _ps.close();
+         
+         // Save multiple choice answers
+         if (e.hasMultipleChoice()) {
+        	 prepareStatement("INSERT INTO APPQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
+        	 _ps.setInt(1, e.getID());
+             for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext(); ) {
+                 Question q = i.next();
+                 if (q instanceof MultiChoiceQuestion) {
+                	 _ps.setInt(2, q.getID());
+                	 MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+                	 
+						// Save the choices
+						int seq = 0;
+						for (Iterator<String> ci = mq.getChoices().iterator(); ci.hasNext(); ) {
+							String choice = ci.next();
+							_ps.setInt(3, ++seq);
+							_ps.setString(4, choice);
+							_ps.addBatch();
+						}
+						
+						_ps.executeBatch();
+                 }
+             }
+             
+             _ps.close();
+         }
+         
+         // Commit the transaction
+         commitTransaction();
       } catch (SQLException se) {
          rollbackTransaction();
          throw new DAOException(se);
@@ -155,8 +181,8 @@ public class SetQuestionnaire extends DAO {
          _ps.setInt(1, examID);
          
          // Batch the questions
-         for (Iterator i = e.getQuestions().iterator(); i.hasNext(); ) {
-            Question q = (Question) i.next();
+         for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext(); ) {
+            Question q = i.next();
             _ps.setInt(2, q.getID());
             _ps.setInt(3, q.getNumber());
             _ps.setString(4, q.getQuestion());
@@ -169,6 +195,34 @@ public class SetQuestionnaire extends DAO {
          // Write the questions and clean up
          _ps.executeBatch();
          _ps.close();
+
+         // Copy multiple choice data
+         if (e.hasMultipleChoice()) {
+        	 prepareStatement("INSERT INTO EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
+        	 _ps.setInt(1, examID);
+        	 
+             // Batch the questions
+             for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext(); ) {
+            	 Question q = i.next();
+            	 if (q instanceof MultiChoiceQuestion) {
+            		 MultiChoiceQuestion mq = (MultiChoiceQuestion) q;
+            		 _ps.setInt(2, mq.getID());
+            		 
+            		 // Save the questions
+            		 int seq = 0;
+            		 for (Iterator<String> ci = mq.getChoices().iterator(); ci.hasNext(); ) {
+							String choice = ci.next();
+							_ps.setInt(3, ++seq);
+							_ps.setString(4, choice);
+							_ps.addBatch();
+            		 }
+            		 
+					_ps.executeBatch();
+            	 }
+             }
+             
+             _ps.close();
+         }
          
          // Commit the transaction
          commitTransaction();

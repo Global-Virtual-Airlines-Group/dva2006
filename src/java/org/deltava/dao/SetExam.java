@@ -71,6 +71,7 @@ public class SetExam extends DAO {
 
 			// Write the questions
 			_ps.executeBatch();
+			_ps.close();
 			
 			// Write multiple-choice questions
 			if (ex.hasMultipleChoice()) {
@@ -98,7 +99,6 @@ public class SetExam extends DAO {
 
 			// Commit the transaction and clean up
 			commitTransaction();
-			_ps.close();
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
