@@ -24,8 +24,8 @@ isOK = true;
 qNum = 1;
 var a = getElement('A' + qNum);
 while (isOK && (a != null)) {
-	if (a.value) {
-		isOK = (isOK && (a.value.length > 1));
+	if (a.length == 1) {
+		isOK = (isOK && (a[0].value.length > 1));
 	} else {
 		var checkCount = 0;
 		for (var x = 0; x < a.length; x++) {
@@ -92,7 +92,12 @@ return true;
 <!-- Answer# ${qnum} -->
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
- <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="80%" height="2">${q.answer}</el:textbox></td>
+ <c:if test="${!fn:isMultiChoice(q)}">
+ <td class="data"><el:textbox ID="A${q.number}" name="answer${q.number}" className="small" width="90%" height="2">${q.answer}</el:textbox></td>
+</c:if>
+<c:if test="${fn:isMultiChoice(q)}">
+ <td class="data"><el:check ID="A${q.number}" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
+</c:if>
 </tr>
 </c:forEach>
 </el:table>
