@@ -94,7 +94,7 @@ public class SetQuestionnaire extends DAO {
          _ps.close();
          
          // Save multiple choice answers
-         if (e.hasMultipleChoice()) {
+         if (e.hasMultipleChoice() && isNew) {
         	 prepareStatement("INSERT INTO APPQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
         	 _ps.setInt(1, e.getID());
              for (Iterator<Question> i = e.getQuestions().iterator(); i.hasNext(); ) {
