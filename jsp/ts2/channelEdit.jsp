@@ -31,7 +31,6 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="servers" name="ts2servers" sort="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
