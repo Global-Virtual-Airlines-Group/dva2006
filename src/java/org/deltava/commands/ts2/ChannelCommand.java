@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -102,6 +102,7 @@ public class ChannelCommand extends AbstractFormCommand {
 				// Save in the request
 				ctx.setAttribute("channel", c, REQUEST);
 				ctx.setAttribute("server", srv, REQUEST);
+				ctx.setAttribute("servers", dao.getServers(), REQUEST);
 			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
