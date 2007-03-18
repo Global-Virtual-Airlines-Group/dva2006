@@ -16,7 +16,8 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.name, 4, 'Aircraft Name')) return false;
+if (!validateText(form.name, 3, 'Aircraft Name')) return false;
+if (!validateText(form.fullName, 5, 'Aircraft Full Name')) return false;
 if (!validateNumber(form.range, 1, 'Aircraft Range')) return false;
 if (!validateNumber(form.engineCount, 1, 'Engine Count')) return false;
 if (!validateText(form.engineType, 4, 'Engine Count')) return false;
@@ -47,8 +48,12 @@ return true;
  <td colspan="2">AIRCRAFT PROFILE</td>
 </tr>
 <tr>
- <td class="label">Aircraft Name</td>
+ <td class="label">Aircraft</td>
  <td class="data"><el:text name="name" idx="*" className="pri bld req" size="15" max="15" value="${aircraft.name}" /></td>
+</tr>
+<tr>
+ <td class="label">Full Aircraft Name</td>
+ <td class="data"><el:text name="fullName" idx="*" className="req" size="32" max="48" value="${aircraft.fullName}" /></td>
 </tr>
 <tr>
  <td class="label">Maximum Range</td>
