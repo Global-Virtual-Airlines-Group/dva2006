@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.*;
@@ -49,6 +49,7 @@ public class AircraftCommand extends AbstractFormCommand {
 				a = new Aircraft(ctx.getParameter("name"));
 
 			// Update the aircraft from the request
+			a.setFullName(ctx.getParameter("fullName"));
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());

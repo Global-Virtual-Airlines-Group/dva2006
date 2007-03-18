@@ -88,20 +88,21 @@ public class GetAircraft extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			Aircraft a = new Aircraft(rs.getString(1));
-			a.setRange(rs.getInt(2));
-			a.setIATA(StringUtils.split(rs.getString(3), ","));
-			a.setHistoric(rs.getBoolean(4));
-			a.setEngines(rs.getByte(5));
-			a.setEngineType(rs.getString(6));
-			a.setCruiseSpeed(rs.getInt(7));
-			a.setFuelFlow(rs.getInt(8));
-			a.setBaseFuel(rs.getInt(9));
-			a.setTaxiFuel(rs.getInt(10));
-			a.setTanks(Aircraft.PRIMARY, rs.getInt(11));
-			a.setPct(Aircraft.PRIMARY, rs.getInt(12));
-			a.setTanks(Aircraft.SECONDARY, rs.getInt(13));
-			a.setPct(Aircraft.SECONDARY, rs.getInt(14));
-			a.setTanks(Aircraft.OTHER, rs.getInt(15));
+			a.setFullName(rs.getString(2));
+			a.setRange(rs.getInt(3));
+			a.setIATA(StringUtils.split(rs.getString(4), ","));
+			a.setHistoric(rs.getBoolean(5));
+			a.setEngines(rs.getByte(6));
+			a.setEngineType(rs.getString(7));
+			a.setCruiseSpeed(rs.getInt(8));
+			a.setFuelFlow(rs.getInt(9));
+			a.setBaseFuel(rs.getInt(10));
+			a.setTaxiFuel(rs.getInt(11));
+			a.setTanks(Aircraft.PRIMARY, rs.getInt(12));
+			a.setPct(Aircraft.PRIMARY, rs.getInt(13));
+			a.setTanks(Aircraft.SECONDARY, rs.getInt(14));
+			a.setPct(Aircraft.SECONDARY, rs.getInt(15));
+			a.setTanks(Aircraft.OTHER, rs.getInt(16));
 			results.put(a.getName(), a);
 		}
 		

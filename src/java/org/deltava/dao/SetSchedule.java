@@ -300,24 +300,25 @@ public class SetSchedule extends DAO {
 	public void create(Aircraft a) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, RANGE, IATA, HISTORIC, ENGINES, ENGINE_TYPE, "
-					+ "CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, SEC_PCT, "
-					+ "OTHER_TANKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, RANGE, IATA, HISTORIC, ENGINES, "
+					+ "ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
+					+ "SEC_PCT, OTHER_TANKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
-			_ps.setInt(2, a.getRange());
-			_ps.setString(3, StringUtils.listConcat(a.getIATA(), ","));
-			_ps.setBoolean(4, a.getHistoric());
-			_ps.setByte(5, a.getEngines());
-			_ps.setString(6, a.getEngineType());
-			_ps.setInt(7, a.getCruiseSpeed());
-			_ps.setInt(8, a.getFuelFlow());
-			_ps.setInt(9, a.getBaseFuel());
-			_ps.setInt(10, a.getTaxiFuel());
-			_ps.setInt(11, a.getTanks(Aircraft.PRIMARY));
-			_ps.setInt(12, a.getPct(Aircraft.PRIMARY));
-			_ps.setInt(13, a.getTanks(Aircraft.SECONDARY));
-			_ps.setInt(14, a.getPct(Aircraft.SECONDARY));
-			_ps.setInt(15, a.getTanks(Aircraft.OTHER));
+			_ps.setString(2, a.getFullName());
+			_ps.setInt(3, a.getRange());
+			_ps.setString(4, StringUtils.listConcat(a.getIATA(), ","));
+			_ps.setBoolean(5, a.getHistoric());
+			_ps.setByte(6, a.getEngines());
+			_ps.setString(7, a.getEngineType());
+			_ps.setInt(8, a.getCruiseSpeed());
+			_ps.setInt(9, a.getFuelFlow());
+			_ps.setInt(10, a.getBaseFuel());
+			_ps.setInt(11, a.getTaxiFuel());
+			_ps.setInt(12, a.getTanks(Aircraft.PRIMARY));
+			_ps.setInt(13, a.getPct(Aircraft.PRIMARY));
+			_ps.setInt(14, a.getTanks(Aircraft.SECONDARY));
+			_ps.setInt(15, a.getPct(Aircraft.SECONDARY));
+			_ps.setInt(16, a.getTanks(Aircraft.OTHER));
 			executeUpdate(1);
 			
 			// Add the webapps
@@ -348,7 +349,7 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("UPDATE common.AIRCRAFT SET RANGE=?, IATA=?, HISTORIC=?, ENGINES=?, ENGINE_TYPE=?, "
 					+ "CRUISE_SPEED=?, FUEL_FLOW=?, BASE_FUEL=?, TAXI_FUEL=?, PRI_TANKS=?, PRI_PCT=?, SEC_TANKS=?, "
-					+ "SEC_PCT=?, OTHER_TANKS=? WHERE (NAME=?)");
+					+ "SEC_PCT=?, OTHER_TANKS=?, FULLNAME=? WHERE (NAME=?)");
 			_ps.setInt(1, a.getRange());
 			_ps.setString(2, StringUtils.listConcat(a.getIATA(), ",").replace("\r", ""));
 			_ps.setBoolean(3, a.getHistoric());
@@ -363,7 +364,8 @@ public class SetSchedule extends DAO {
 			_ps.setInt(12, a.getTanks(Aircraft.SECONDARY));
 			_ps.setInt(13, a.getPct(Aircraft.SECONDARY));
 			_ps.setInt(14, a.getTanks(Aircraft.OTHER));
-			_ps.setString(15, a.getName());
+			_ps.setString(15, a.getFullName());
+			_ps.setString(16, a.getName());
 			executeUpdate(1);
 
 			// Clean out the webapps

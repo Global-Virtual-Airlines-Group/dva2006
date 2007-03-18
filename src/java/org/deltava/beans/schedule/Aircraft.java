@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -41,6 +41,7 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	public static final int OTHER = 2;
 
 	private String _name;
+	private String _fullName;
 	private boolean _historic;
 
 	private int _maxRange;
@@ -103,6 +104,15 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	 */
 	public boolean getHistoric() {
 		return _historic;
+	}
+	
+	/**
+	 * Returns the aircraft's full name.
+	 * @return the full name
+	 * @see Aircraft#setFullName(String)
+	 */
+	public String getFullName() {
+		return _fullName;
 	}
 
 	/**
@@ -279,6 +289,16 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	 */
 	public void setName(String name) {
 		_name = name.trim();
+	}
+	
+	/**
+	 * Updates the aircraft's full name.
+	 * @param name the full name
+	 * @throws NullPointerException if name is null
+	 * @see Aircraft#getFullName()
+	 */
+	public void setFullName(String name) {
+		_fullName = name.trim();
 	}
 
 	/**
@@ -493,6 +513,9 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	 * @return the CSS class name
 	 */
 	public String getRowClassName() {
+		if (_fuelFlow == 0)
+			return "warn";
+		
 		return _historic ? "opt1" : null;
 	}
 }
