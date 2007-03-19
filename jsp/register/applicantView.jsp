@@ -25,6 +25,7 @@ setSubmit();
 disableButton('EditButton');
 disableButton('HireButton');
 disableButton('RejectButton');
+disableButton('DeleteButton');
 disableButton('QuestionnaireButton');
 disableButton('ResendButton');
 </c:if>
@@ -273,6 +274,9 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </c:if>
 <c:if test="${access.canNotify}">
  <el:cmdbutton ID="ResendButton" url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
+</c:if>
+<c:if test="${access.canDelete}">
+ <el:cmdbutton ID="DeleteButton" url="appdelete" linkID="0x${applicant.ID}" label="DELETE" />
 </c:if>
  </td>
 </tr>

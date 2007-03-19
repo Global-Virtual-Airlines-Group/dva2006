@@ -18,14 +18,21 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<c:if test="${isDelete}">
+<div class="updateHdr">Pilot Application Deleted</div>
+<br />
+The <content:airline /> Pilot application from ${applicant.name} has been deleted from the database.<br />
+</c:if>
+<c:if test="${!isDelete}">
 <div class="updateHdr">Pilot Application Rejected</div>
 <br />
 The <content:airline /> Pilot application from ${applicant.name} has been rejected. An e-mail message 
 has been sent to ${applicant.email}.<br />
 <br />
 To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" linkID="0x${applicant.ID}">click here</el:cmd>.<br />
+</c:if>
 <br />
-To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">click here</el:cmd>.<br />
+To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
