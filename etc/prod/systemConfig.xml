@@ -448,7 +448,7 @@
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">false</testMode>
 		<imap>
-			<path>/usr/local/virtual</path>
+			<path>/home/mail</path>
 			<enabled type="Boolean">true</enabled>
 			<quota type="Integer">10240000</quota>
 			<server>mail.deltava.org</server>
