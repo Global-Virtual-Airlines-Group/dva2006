@@ -1,10 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.testing.*;
@@ -24,8 +22,6 @@ import org.deltava.security.command.ExamAccessControl;
 
 public class ExamScoreCommand extends AbstractCommand {
    
-   private static final Logger log = Logger.getLogger(ExamScoreCommand.class);
-
    /**
     * Executes the command.
     * @param ctx the Command context
@@ -64,11 +60,9 @@ public class ExamScoreCommand extends AbstractCommand {
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
             boolean isCorrect = Boolean.valueOf(ctx.getParameter("Score" + String.valueOf(x))).booleanValue();
-            if (isCorrect) {
-               log.debug("Question #" + (x) + " is correct");
-               q.setCorrect(true);
+            q.setCorrect(isCorrect);
+            if (isCorrect)
                score++;
-            }
          }
          
          // Get the Pilot profile
