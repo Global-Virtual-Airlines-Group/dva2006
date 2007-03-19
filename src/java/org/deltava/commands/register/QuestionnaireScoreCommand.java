@@ -1,17 +1,11 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.apache.log4j.Logger;
-
-import org.deltava.beans.testing.Examination;
-import org.deltava.beans.testing.Question;
-import org.deltava.beans.testing.Test;
-
+import org.deltava.beans.testing.*;
 import org.deltava.commands.*;
-
 import org.deltava.dao.*;
 
 import org.deltava.security.command.QuestionnaireAccessControl;
@@ -25,8 +19,6 @@ import org.deltava.security.command.QuestionnaireAccessControl;
 
 public class QuestionnaireScoreCommand extends AbstractCommand {
    
-   private static final Logger log = Logger.getLogger(QuestionnaireScoreCommand.class);
-
    /**
     * Executes the command.
     * @param ctx the Command context
@@ -53,12 +45,10 @@ public class QuestionnaireScoreCommand extends AbstractCommand {
          int score = 0;
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
-            boolean isCorrect = "1".equals(ctx.getParameter("Score" + String.valueOf(x)));
-            if (isCorrect) {
-               log.debug("Question #" + String.valueOf(x) + " is correct");
-               q.setCorrect(true);
+            boolean isCorrect = Boolean.valueOf(ctx.getParameter("Score" + String.valueOf(x))).booleanValue();
+            q.setCorrect(isCorrect);
+            if (isCorrect)
                score++;
-            }
          }
          
          // Update examination

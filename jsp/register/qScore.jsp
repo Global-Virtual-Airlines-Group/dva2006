@@ -80,7 +80,7 @@ return true;
 
 <!-- Score / Answer -->
 <c:if test="${access.canScore}">
- <td class="mid"><input type="checkbox" class="check" name="Score${q.number}" value="1" <c:if test="${fn:correct(q)}">checked="checked"</c:if> />Correct</td>
+ <td class="mid"><input type="checkbox" class="check" name="Score${q.number}" value="true" <c:if test="${fn:correct(q)}">checked="checked"</c:if> />Correct</td>
 </c:if>
 <c:if test="${!access.canScore}">
  <td>&nbsp;</td>
