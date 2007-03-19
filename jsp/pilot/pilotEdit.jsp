@@ -18,7 +18,6 @@
 <content:sysdata var="defaultTFormat" name="time.time_format" />
 <content:sysdata var="defaultDFormat" name="date.time_format" />
 <script language="JavaScript" type="text/javascript">
-var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 var hasSignature = ${pilot.hasSignature};
 
 function validate(form)
@@ -26,7 +25,6 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateText(form.firstName, 2, 'First (given) Name')) return false;
 if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
-if (!validateEMail(form.email, 'E-Mail Address')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
@@ -35,6 +33,7 @@ if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
 if (!validateCombo(form.staffArea, 'Department Name')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
 if (!validateNumber(form.staffSort, 1, 'Staff Profile Sort Order')) return false;
+if (!validateEMail(form.email, 'E-Mail Address')) return false;
 
 // Validate password
 if ((form.pwd1) && (form.pwd2)) {
@@ -53,9 +52,10 @@ if ((form.pwd1) && (form.pwd2)) {
 		return false;
 	}
 }
-
+<content:filter roles="!HR">
 // Validate e-mail domain
 var eMail = form.email.value;
+var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
 var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
 for (var x = 0; x < invalidDomains.length; x++) {
 	if (usrDomain == invalidDomains[x]) {
@@ -64,7 +64,7 @@ for (var x = 0; x < invalidDomains.length; x++) {
 		return false;
 	}
 }
-
+</content:filter>
 // Set disabled checkboxes
 form.useDefaultSig.checked = (form.useDefaultSig.checked && !(form.useDefaultSig.disabled));
 setSubmit();
