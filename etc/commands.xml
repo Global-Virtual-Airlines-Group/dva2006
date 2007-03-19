@@ -1192,6 +1192,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="appdelete">
+		<name>Applicant Delete</name>
+		<class>org.deltava.commands.register.ApplicantDeleteCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="regblocks">
 		<name>Registration Blacklist Entries</name>
 		<class>org.deltava.commands.system.RegistrationBlocksCommand</class>
