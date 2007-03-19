@@ -245,9 +245,14 @@ public class RegisterCommand extends AbstractCommand {
 
 			// Add the questions to the exam
 			int qNum = 0;
-			for (Iterator i = qPool.iterator(); i.hasNext();) {
-				QuestionProfile qp = (QuestionProfile) i.next();
-				Question q = new Question(qp);
+			for (Iterator<QuestionProfile> i = qPool.iterator(); i.hasNext();) {
+				QuestionProfile qp = i.next();
+				Question q = null;
+				if (qp instanceof MultipleChoice)
+					q = new MultiChoiceQuestion((MultiChoiceQuestionProfile) qp);
+				else
+					q = new Question(qp);
+
 				q.setNumber(++qNum);
 				ex.addQuestion(q);
 			}
