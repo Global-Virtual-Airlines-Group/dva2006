@@ -30,6 +30,7 @@ public class SetApplicant extends PilotWriteDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void reject(Applicant a) throws DAOException {
+		invalidate(a);
 		try {
 			prepareStatement("UPDATE APPLICANTS SET STATUS=? WHERE (ID=?)");
 			_ps.setInt(1, Applicant.REJECTED);
@@ -38,9 +39,6 @@ public class SetApplicant extends PilotWriteDAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-
-		// Update the cache
-		_cache.add(a);
 	}
 
 	/**
@@ -151,20 +149,9 @@ public class SetApplicant extends PilotWriteDAO {
 	public void delete(int id) throws DAOException {
 		invalidate(id);
 		try {
-			startTransaction();
-
-			// Remove the applicant profile
 			prepareStatement("DELETE FROM APPLICANTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
-
-			// Remove the USERDATA object
-			prepareStatement("DELETE FROM common.USERDATA WHERE (ID=?)");
-			_ps.setInt(1, id);
-			executeUpdate(1);
-
-			// Commit the transaction
-			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.security.SecurityContext;
@@ -22,6 +22,7 @@ public final class ApplicantAccessControl extends AccessControl {
 	private boolean _canApprove;
 	private boolean _canReject;
 	private boolean _canNotify;
+	private boolean _canDelete;
 	
 	/**
 	 * Initializes the controller.
@@ -48,13 +49,15 @@ public final class ApplicantAccessControl extends AccessControl {
 		// Sets role variables
 		boolean isOurs = (_ap.getID() == p.getID());
 		boolean isHR = p.isInRole("HR");
+		boolean isPending = (_ap.getStatus() == Applicant.PENDING);
 		
 		// Set state variables
 		_canRead = (isOurs || isHR);
-		_canEdit = (isHR && (_ap.getStatus() == Applicant.PENDING));
+		_canEdit = (isHR && isPending);
 		_canApprove = _canEdit;
 		_canReject = _canEdit;
 		_canNotify = isHR && (_ap.getStatus() != Applicant.REJECTED);
+		_canDelete = (isHR && isPending) || (_ctx.isUserInRole("Admin") && (_ap.getStatus() == Applicant.REJECTED));  
 	}
 
    /**
@@ -95,5 +98,13 @@ public final class ApplicantAccessControl extends AccessControl {
 	 */
 	public boolean getCanNotify() {
 		return _canNotify;
+	}
+	
+	/**
+	 * Returns if the user can delete the Applicant.
+	 * @return TRUE if the Applicant can be deleted, otherwise FALSE
+	 */
+	public boolean getCanDelete() {
+		return _canDelete;
 	}
 }

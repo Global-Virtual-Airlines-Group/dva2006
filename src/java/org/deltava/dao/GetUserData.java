@@ -49,6 +49,14 @@ public class GetUserData extends DAO implements CachingDAO {
 	public int getHits() {
 		return _appCache.getHits() + _usrCache.getHits();
 	}
+	
+	/**
+	 * Removes an entry from the user cache.
+	 * @param id the database ID
+	 */
+	static void invalidate(int id) {
+		_usrCache.remove(new Integer(id));
+	}
 
 	/**
 	 * Returns cross-application Airline data for a specific Airline.
