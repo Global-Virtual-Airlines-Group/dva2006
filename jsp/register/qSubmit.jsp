@@ -20,10 +20,10 @@ function validate(form)
 if (!checkSubmit()) return false;
 
 // Check if all questions were answered
-isOK = true;
-qNum = 1;
-var a = getElement('A' + qNum);
-while (isOK && (a != null)) {
+var isOK = true;
+var qNum = 1;
+var a = getElementsById('A' + qNum);
+while (isOK && (a.length > 0)) {
 	if (a.length == 1) {
 		isOK = (isOK && (a[0].value.length > 1));
 	} else {
