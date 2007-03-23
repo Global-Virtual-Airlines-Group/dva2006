@@ -6,7 +6,7 @@ public class TestMessageContext extends TestCase {
 
     private MessageContext _ctxt;
     
-    private final class ContextObject {
+    protected final class ContextObject {
         
         public static final int INT_FIELD = 1;
         

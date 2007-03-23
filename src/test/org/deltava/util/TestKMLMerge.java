@@ -12,7 +12,7 @@ public class TestKMLMerge extends TestCase {
 	private Document _doc;
 	private Element _de;
 	
-	private class KMLFilter implements FileFilter {
+	protected class KMLFilter implements FileFilter {
 		
 		public boolean accept(File f) {
 			return f.getName().endsWith(".kml");

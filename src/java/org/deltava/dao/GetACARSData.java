@@ -73,7 +73,7 @@ public class GetACARSData extends DAO {
 	@SuppressWarnings("unchecked")
 	public List<RouteEntry> getRouteEntries(int flightID, boolean isArchived) throws DAOException {
 		List results = getRouteEntries(flightID, true, isArchived);
-		return (List<RouteEntry>) results;
+		return results;
 	}
 
 	/**

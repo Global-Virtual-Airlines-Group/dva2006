@@ -36,7 +36,7 @@ public class ServiceContext extends ConnectionContext implements SecurityContext
       
       private StringBuilder _buffer;
       
-      private OutputBuffer() {
+      protected OutputBuffer() {
          super();
          _buffer = new StringBuilder(256);
       }

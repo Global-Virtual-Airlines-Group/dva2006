@@ -27,6 +27,10 @@ import org.deltava.util.system.SystemData;
 public class AirportListService extends WebService {
 
 	private class NonFilter implements AirportFilter {
+		
+		protected NonFilter() {
+			super();
+		}
 
 		public boolean accept(Airport a) {
 			return true;
