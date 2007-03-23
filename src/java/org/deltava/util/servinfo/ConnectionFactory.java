@@ -33,7 +33,7 @@ class ConnectionFactory {
 		if (dataURL.startsWith("http://")) {
 			try {
 				URL url = new URL(dataURL);
-				return (HttpURLConnection) url.openConnection();
+				return url.openConnection();
 			} catch (IOException ie) {
 				log.error("Error getting HTTP connection " + ie.getMessage(), ie);
 				return null;
