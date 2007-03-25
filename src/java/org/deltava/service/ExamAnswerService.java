@@ -5,6 +5,8 @@ import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.testing.*;
 import org.deltava.dao.*;
 
@@ -20,6 +22,8 @@ import org.deltava.util.StringUtils;
  */
 
 public class ExamAnswerService extends WebService {
+	
+	private static final Logger log = Logger.getLogger(ExamAnswerService.class);
 
 	/**
 	 * Executes the Web Service.
@@ -34,10 +38,18 @@ public class ExamAnswerService extends WebService {
 			return SC_OK;
 
 		// Get the exam ID and question number
-		int examID = StringUtils.parseHex(ctx.getParameter("id"));
-		int questionNo = Integer.parseInt(ctx.getParameter("q"));
-		String answer = ctx.getParameter("answer");
-
+		int examID = 0;
+		int questionNo = 0;
+		try {
+			examID = StringUtils.parseHex(ctx.getParameter("id"));
+			questionNo = StringUtils.parse(ctx.getParameter("q"), 0);
+		} catch (Exception e) {
+			log.warn(e.getMessage());
+		}
+		
+		// Return if invalid exam/question
+		if ((examID == 0) || (questionNo == 0))
+			return SC_OK;
 		
 		try {
 			Connection con = ctx.getConnection();
@@ -64,6 +76,7 @@ public class ExamAnswerService extends WebService {
 				throw new ServiceException(SC_NOT_FOUND, "Unknown Question - " + questionNo, false);
 
 			// Save the answer
+			String answer = ctx.getParameter("answer");
 			if (!StringUtils.isEmpty(answer)) {
 				q.setAnswer(answer);
 
