@@ -1,10 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
-import org.deltava.taskman.DatabaseTask;
-
-import org.deltava.dao.SetSystemData;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -15,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class CommandLogPurgeTask extends DatabaseTask {
+public class CommandLogPurgeTask extends Task {
 
 	/**
 	 * Initializes the Task.
@@ -27,19 +25,19 @@ public class CommandLogPurgeTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		
 		// Get the purge interval
 		int purgeDays = SystemData.getInt("log.purge.cmds", 10);
 		log.info("Executing");
 		
 		try {
-			SetSystemData dao = new SetSystemData(getConnection());
+			SetSystemData dao = new SetSystemData(ctx.getConnection());
 			dao.purge("COMMANDS", "CMDDATE", purgeDays);
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 		
 		log.info("Completed");

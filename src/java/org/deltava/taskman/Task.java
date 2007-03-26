@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public abstract class Task implements Runnable, Comparable {
     private boolean _enabled;
     private int _runCount;
     
-    private Map<String, Collection<Integer>> _runTimes = new HashMap<String, Collection<Integer>>();
+    private final Map<String, Collection<Integer>> _runTimes = new HashMap<String, Collection<Integer>>();
     
     /**
      * Creates a new Scheduled Task with a given class name.
@@ -219,7 +219,7 @@ public abstract class Task implements Runnable, Comparable {
         setStartTime(new Date());
         _runCount++;
         log.info(_name + " starting ");
-        execute();
+        execute(new TaskContext());
         _lastRunTime = (System.currentTimeMillis() - _lastStartTime.getTime());
     }
     
@@ -235,5 +235,5 @@ public abstract class Task implements Runnable, Comparable {
     /**
      * Executes the Task.
      */
-    protected abstract void execute();
+    protected abstract void execute(TaskContext ctx);
 }

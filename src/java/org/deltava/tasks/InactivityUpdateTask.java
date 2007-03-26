@@ -10,10 +10,9 @@ import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
-
-import org.deltava.taskman.DatabaseTask;
-
+import org.deltava.taskman.*;
 import org.deltava.security.*;
+
 import org.deltava.util.system.SystemData;
 
 /**
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class InactivityUpdateTask extends DatabaseTask {
+public class InactivityUpdateTask extends Task {
 
 	private final DateFormat _df = new SimpleDateFormat("MMMM dd yyyy");
 
@@ -37,7 +36,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 
 		// Get the inactivity cutoff time
 		int inactiveDays = SystemData.getInt("users.inactive_days");
@@ -50,7 +49,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 
 		try {
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 			
 			// Initialize the DAOs
 			GetInactivity idao = new GetInactivity(con);
@@ -91,7 +90,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
 					
 					// Start a transaction
-					startTX();
+					ctx.startTX();
 
 					// Deactivate the Pilot
 					p.setStatus(Pilot.INACTIVE);
@@ -113,7 +112,7 @@ public class InactivityUpdateTask extends DatabaseTask {
 					iwdao.delete(ip.getID());
 					
 					// Commit
-					commitTX();
+					ctx.commitTX();
 
 					// Send notification message
 					Mailer mailer = new Mailer(isTest ? null : taskBy);
@@ -159,10 +158,10 @@ public class InactivityUpdateTask extends DatabaseTask {
 				}
 			}
 		} catch (DAOException de) {
-			rollbackTX();
+			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		// Log completion

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.io.*;
@@ -6,13 +6,10 @@ import java.text.*;
 import java.util.*;
 import java.util.zip.*;
 
-import org.apache.log4j.Logger;
-
 import org.deltava.beans.stats.HTTPStatistics;
 
 import org.deltava.dao.*;
-
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.log.*;
@@ -25,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class HTTPLogStatisticsTask extends DatabaseTask {
+public class HTTPLogStatisticsTask extends Task {
 
 	private static final DateFormat _df = new SimpleDateFormat("yyyy-MMM-dd");
 
@@ -52,7 +49,6 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 			try {
 				String ext = name.substring(name.lastIndexOf('.') + 1);
 				Date d = new Date(Long.parseLong(ext) * 1000);
-				getLog().info("Cutoff date = " + _startTime.getTime() + " log date=" + d);
 				return d.before(_startTime.getTime());
 			} catch (Exception e) {
 				return false;
@@ -68,17 +64,9 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 	}
 
 	/**
-	 * Accessor method so that subclasses may log to log4j.
-	 * @return the log4j logger instance
-	 */
-	protected Logger getLog() {
-		return log;
-	}
-
-	/**
 	 * Executes the Task. This will parse through HTTP server log entries and aggregate the statistics.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 
 		// Get the HTTP log path
 		File logPath = new File(SystemData.get("path.httplog"));
@@ -100,7 +88,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 			if (stats != null) {
 				log.info("Updating statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy"));
 				try {
-					SetSystemLog dao = new SetSystemLog(getConnection());
+					SetSystemLog dao = new SetSystemLog(ctx.getConnection());
 					dao.write(stats);
 					
 					// Convert to a GZIP'd file
@@ -126,7 +114,7 @@ public class HTTPLogStatisticsTask extends DatabaseTask {
 					log.error("Error saving statistics for " + StringUtils.format(stats.getDate(), "MM/dd/yyyy")
 							+ " - " + de.getMessage(), de);
 				} finally {
-					release();
+					ctx.release();
 				}
 			}
 		}

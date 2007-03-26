@@ -1,10 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
-import org.deltava.taskman.DatabaseTask;
-
-import org.deltava.dao.SetSELCAL;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
+import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -15,7 +13,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class SELCALPurgeTask extends DatabaseTask {
+public class SELCALPurgeTask extends Task {
 
 	/**
 	 * Initailizes the task.
@@ -27,17 +25,17 @@ public class SELCALPurgeTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		log.info("Starting");
 		int purgeInterval = SystemData.getInt("users.selcal.inactive", 14);
 		
 		try {
-			SetSELCAL dao = new SetSELCAL(getConnection());
+			SetSELCAL dao = new SetSELCAL(ctx.getConnection());
 			log.info("Freed up " + dao.free(purgeInterval) + " reserved SELCAL codes");
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		log.info("Completed");

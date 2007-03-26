@@ -9,7 +9,7 @@ import org.deltava.dao.*;
 
 import org.deltava.beans.cooler.LinkedImage;
 
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ImageLinkTestTask extends DatabaseTask {
+public class ImageLinkTestTask extends Task {
 
 	private Collection _mimeTypes;
 
@@ -36,18 +36,17 @@ public class ImageLinkTestTask extends DatabaseTask {
 	 * Executes the Task.
 	 * @see org.deltava.taskman.Task#execute()
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		try {
-			GetCoolerLinks dao = new GetCoolerLinks(getConnection());
+			GetCoolerLinks dao = new GetCoolerLinks(ctx.getConnection());
 			final Collection<Integer> ids = dao.getThreads();
 			log.info("Validating images in " + ids.size() + " discussion threads");
-			release();
+			ctx.release();
 
 			// Keep track of invalid hosts
 			final Collection<String> invalidHosts = new HashSet<String>();
 
 			// Loop through the threads
-			
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
 
@@ -65,8 +64,8 @@ public class ImageLinkTestTask extends DatabaseTask {
 
 						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
 						urlcon.setRequestMethod("HEAD");
-						urlcon.setReadTimeout(1950);
-						urlcon.setConnectTimeout(1950);
+						urlcon.setReadTimeout(8250);
+						urlcon.setConnectTimeout(8250);
 						urlcon.connect();
 
 						// Validate the result code
@@ -93,16 +92,16 @@ public class ImageLinkTestTask extends DatabaseTask {
 
 					// If it's invalid, nuke it
 					if (!isOK) {
-						SetCoolerLinks wdao = new SetCoolerLinks(getConnection());
+						SetCoolerLinks wdao = new SetCoolerLinks(ctx.getConnection());
 						wdao.delete(id.intValue(), img.getURL());
-						release();
+						ctx.release();
 					}
 				}
 			}
 		} catch (DAOException de) {
 			log.error("Error validating images - " + de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		// Log completion
