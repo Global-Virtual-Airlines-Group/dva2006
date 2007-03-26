@@ -9,8 +9,7 @@ import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.innovata.*;
-
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.*;
 import org.deltava.util.ftp.*;
@@ -23,7 +22,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ScheduleImportTask extends DatabaseTask {
+public class ScheduleImportTask extends Task {
 
 	/**
 	 * Initializes the task.
@@ -36,7 +35,7 @@ public class ScheduleImportTask extends DatabaseTask {
 	 * Executes the Task.
 	 */
 	@SuppressWarnings("unchecked")
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 
 		// Load import options
 		boolean doPurge = SystemData.getBoolean("schedule.innovata.import.purge");
@@ -65,7 +64,7 @@ public class ScheduleImportTask extends DatabaseTask {
 				log.info("Downloaded " + fileName + ", " + ftpInfo.getSize() + " bytes, " + ftpInfo.getSpeed() + " bytes/sec");
 			
 			// Get the connection
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 
 			// Initialize the DAOs
 			GetAirline adao = new GetAirline(con);
@@ -76,7 +75,7 @@ public class ScheduleImportTask extends DatabaseTask {
 			dao.setAirlines(adao.getActive().values());
 			dao.setAirports(SystemData.getAirports().values());
 			dao.setBufferSize(65536);
-			release();
+			ctx.release();
 
 			// Load the schedule data
 			dao.load();
@@ -103,19 +102,18 @@ public class ScheduleImportTask extends DatabaseTask {
 			log.error(de.getMessage(), de);
 			entries = null;
 		} finally {
-			release();
+			ctx.release();
 		}
 		
 		// Return if aborted
 		if (entries == null)
 			return;
 
-
 		// Save the entries in the database
 		try {
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 			SetSchedule dao = new SetSchedule(con);
-			startTX();
+			ctx.startTX();
 			if (doPurge)
 				dao.purge(false);
 
@@ -145,12 +143,12 @@ public class ScheduleImportTask extends DatabaseTask {
 			}
 
 			// Commit the transaction
-			commitTX();
+			ctx.commitTX();
 		} catch (DAOException de) {
-			rollbackTX();
+			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		// Log completion

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -12,8 +12,7 @@ import org.deltava.beans.schedule.OceanicRoute;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
-
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.http.SSLUtils;
 import org.deltava.util.system.SystemData;
@@ -25,7 +24,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class PACOTDownloadTask extends DatabaseTask {
+public class PACOTDownloadTask extends Task {
 
 	/**
 	 * Initializes the Scheduled Task.
@@ -37,7 +36,7 @@ public class PACOTDownloadTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		try {
 			HttpURLConnection con = null;
 			
@@ -51,8 +50,8 @@ public class PACOTDownloadTask extends DatabaseTask {
 				if (keyStore != null) {
 					log.info("Loading custom SSL keystore " + keyStore);
 					X509Certificate cert = SSLUtils.load(keyStore);
-					SSLContext ctx = SSLUtils.getContext(cert);
-					((HttpsURLConnection) con).setSSLSocketFactory(ctx.getSocketFactory());
+					SSLContext sslctx = SSLUtils.getContext(cert);
+					((HttpsURLConnection) con).setSSLSocketFactory(sslctx.getSocketFactory());
 				}
 			} else {
 				con = (HttpURLConnection) url.openConnection();				
@@ -69,7 +68,7 @@ public class PACOTDownloadTask extends DatabaseTask {
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database
-			SetRoute wdao = new SetRoute(getConnection());
+			SetRoute wdao = new SetRoute(ctx.getConnection());
 			wdao.write(or);
 		} catch (CertificateException ce) {
 			log.error("Cannot load SSL certificate - " + ce.getMessage());
@@ -78,7 +77,7 @@ public class PACOTDownloadTask extends DatabaseTask {
 		} catch (DAOException de) {
 			log.error("Error saving PACOT Data - " + de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 	}
 }
