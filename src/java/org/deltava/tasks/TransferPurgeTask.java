@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -10,8 +10,7 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
-
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -22,7 +21,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class TransferPurgeTask extends DatabaseTask {
+public class TransferPurgeTask extends Task {
 
 	/**
 	 * Initializes the Task.
@@ -34,12 +33,12 @@ public class TransferPurgeTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		log.info("Starting");
 		int purgeInterval = SystemData.getInt("users.transfer_max", 30);
 
 		try {
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			Collection<TransferRequest> oldTX = txdao.getAged(purgeInterval);
 			
@@ -68,7 +67,7 @@ public class TransferPurgeTask extends DatabaseTask {
 				// Get the check ride (if any) and then delete
 				CheckRide cr = exdao.getCheckRide(tx.getCheckRideID());
 				if ((cr == null) || (cr.getStatus() == Test.NEW)) {
-					startTX();
+					ctx.startTX();
 					
 					// Delete the checkride and the transfer request
 					exwdao.delete(cr);
@@ -76,7 +75,7 @@ public class TransferPurgeTask extends DatabaseTask {
 					swdao.write(upd);
 					
 					// Commit the transaction
-					commitTX();
+					ctx.commitTX();
 					
 					// Log the deletion
 					log.warn("Deleting transfer to " + tx.getEquipmentType() + " by " + p.getName() + " after " + purgeInterval + " days");
@@ -96,9 +95,10 @@ public class TransferPurgeTask extends DatabaseTask {
 				}
 			}
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 		
 		log.info("Completed");

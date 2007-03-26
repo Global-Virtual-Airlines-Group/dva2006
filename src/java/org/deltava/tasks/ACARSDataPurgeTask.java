@@ -7,8 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.acars.ConnectionEntry;
 
 import org.deltava.dao.*;
-
-import org.deltava.taskman.DatabaseTask;
+import org.deltava.taskman.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -20,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ACARSDataPurgeTask extends DatabaseTask {
+public class ACARSDataPurgeTask extends Task {
 
 	/**
 	 * Initializes the Task.
@@ -32,7 +31,7 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 	/**
 	 * Executes the task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
@@ -40,7 +39,7 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 		log.info("Executing");
 		
 		try {
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 			
 			// Remove messages and flights
 			SetACARSLog wdao = new SetACARSLog(con);
@@ -68,7 +67,7 @@ public class ACARSDataPurgeTask extends DatabaseTask {
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		log.info("Completed");

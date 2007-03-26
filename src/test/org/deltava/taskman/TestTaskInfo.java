@@ -16,7 +16,7 @@ public class TestTaskInfo extends TestCase {
 			super(name, MockTask.class);
 		}
 
-		protected void execute() {
+		protected void execute(TaskContext ctx) {
 			// noop
 		}
 	}

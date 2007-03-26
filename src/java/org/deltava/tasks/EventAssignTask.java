@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.util.*;
@@ -12,8 +12,8 @@ import org.deltava.beans.schedule.Airline;
 
 import org.deltava.dao.*;
 import org.deltava.mail.*;
+import org.deltava.taskman.*;
 
-import org.deltava.taskman.DatabaseTask;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class EventAssignTask extends DatabaseTask {
+public class EventAssignTask extends Task {
 
 	/**
 	 * Initializes the Scheduled Task.
@@ -48,12 +48,12 @@ public class EventAssignTask extends DatabaseTask {
 	/**
 	 * Executes the Task.
 	 */
-	protected void execute() {
+	protected void execute(TaskContext ctx) {
 		
 		// Create the message context
 		MessageContext mctxt = new MessageContext();
 		try {
-			Connection con = getConnection();
+			Connection con = ctx.getConnection();
 			
 			// Determining who we are operating as
 			GetPilot pdao = new GetPilot(con);
@@ -83,7 +83,7 @@ public class EventAssignTask extends DatabaseTask {
 					SetAssignment awdao = new SetAssignment(con);
 					
 					// Start the transaction
-					startTX();
+					ctx.startTX();
 					
 					// Get the signups for this event
 					log.info("Assigning flights for Event " + e.getName());
@@ -135,6 +135,10 @@ public class EventAssignTask extends DatabaseTask {
 							case Event.NET_IVAO :
 								fr.setAttribute(FlightReport.ATTR_IVAO, true);
 								break;
+								
+							case Event.NET_INTVAS :
+								fr.setAttribute(FlightReport.ATTR_INTVAS, true);
+								break;
 						}
 						
 						// Write the Flight Report to the proper database
@@ -151,14 +155,14 @@ public class EventAssignTask extends DatabaseTask {
 					}
 					
 					// Commit the transaction
-					commitTX();
+					ctx.commitTX();
 				}
 			}
 		} catch (DAOException de) {
-			rollbackTX();
+			ctx.rollbackTX();
 			log.error(de.getMessage(), de);
 		} finally {
-			release();
+			ctx.release();
 		}
 
 		// Log completion
