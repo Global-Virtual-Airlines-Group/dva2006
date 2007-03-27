@@ -59,7 +59,7 @@ public class IssueListCommand extends AbstractViewCommand {
             else if (issueStatus != -1)
                 vc.setResults(dao.getByStatus(issueStatus, issueArea, vc.getSortType()));
             else
-                vc.setResults(dao.getAll(vc.getSortType()));
+                vc.setResults(dao.getAll(vc.getSortType(), issueArea));
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

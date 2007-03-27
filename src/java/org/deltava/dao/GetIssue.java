@@ -52,13 +52,25 @@ public class GetIssue extends DAO {
 	/**
 	 * Returns all Issues.
 	 * @param sortBy the column to sort the results using
+	 * @param area the area code, or -1 if none
 	 * @return a List of Issues
 	 * @throws DAOException the a JDBC error occurs
 	 */
-	public List<Issue> getAll(String sortBy) throws DAOException {
+	public List<Issue> getAll(String sortBy, int area) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC "
+				+ "FROM common.ISSUES I LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID)");
+		if (area >= 0)
+			sqlBuf.append(" WHERE (I.AREA=?)");
+		sqlBuf.append(" GROUP BY I.ID ORDER BY ");
+		sqlBuf.append(sortBy);
+		
 		try {
-			prepareStatement("SELECT I.*, MAX(IC.CREATED) AS LC, COUNT(IC.ID) AS CC  FROM common.ISSUES I "
-			      + "LEFT JOIN common.ISSUE_COMMENTS IC ON (I.ID=IC.ISSUE_ID) GROUP BY I.ID ORDER BY " + sortBy);
+			prepareStatement(sqlBuf.toString());
+			if (area >= 0)
+				_ps.setInt(1, area);
+				
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
