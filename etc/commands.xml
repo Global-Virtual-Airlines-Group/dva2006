@@ -1414,6 +1414,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="hdclose">
+		<name>Help Desk Issue Close</name>
+		<class>org.deltava.commands.help.IssueCloseCommand</class>
+		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin</roles>
+	</command>
+
 	<command id="hdcomment">
 		<name>Help Desk Issue Comment</name>
 		<class>org.deltava.commands.help.IssueCommentCommand</class>

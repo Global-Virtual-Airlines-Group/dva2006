@@ -47,7 +47,13 @@ one of our volunteer staff will answer it soon.</td>
  <content:airline />.</td>
  <td colspan="2"><el:cmdbutton url="faq" label="FREQUENTLY ASKED QUESTIONS" /></td>
 </tr>
-
+<content:filter roles="HR,Instructor,Examiner,AcademyAdmin,PIREP,Examination,Signature">
+<!-- All Issues -->
+<tr>
+ <td class="left" colspan="4">You can view all Issues in the <content:airline /> Help Desk.</td>
+ <td colspan="2"><el:cmdbutton url="hdissues" label="All Issues" /></td>
+</tr>
+</content:filter>
 <!-- My Issues -->
 <tr class="title caps">
  <td class="left" colspan="6">MY ISSUES</td>

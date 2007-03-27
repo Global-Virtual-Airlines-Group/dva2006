@@ -129,6 +129,9 @@ return ${access.canComment};
 <c:if test="${access.canUpdateContent}">
  <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" linkID="0x${issue.ID}" />
 </c:if>
+<c:if test="${access.canClose}">
+ <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" linkID="0x${issue.ID}" />
+</c:if>
 </td>
 </tr>
 </el:table>
