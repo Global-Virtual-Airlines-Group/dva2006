@@ -27,7 +27,7 @@ public class ChannelCommand extends AbstractFormCommand {
 	protected void execSave(CommandContext ctx) throws CommandException {
 
 		// Check if we're creating a new channel
-		boolean isNew = StringUtils.isEmpty((String) ctx.getCmdParameter(ID, null));
+		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -35,14 +35,13 @@ public class ChannelCommand extends AbstractFormCommand {
 			Channel c = null;
 			GetTS2Data dao = new GetTS2Data(con);
 			if (!isNew) {
-				c = dao.getChannel((String) ctx.getCmdParameter(ID, null));
+				c = dao.getChannel(ctx.getID());
 				if (c == null)
-					throw notFoundException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
+					throw notFoundException("Invalid Channel - " + ctx.getID());
 				
 				c.setName(ctx.getParameter("name"));
-			} else {
+			} else
 				c = new Channel(ctx.getParameter("name"));
-			}
 			
 			// Update the bean from the request
 			c.setDescription(ctx.getParameter("desc"));
@@ -52,7 +51,10 @@ public class ChannelCommand extends AbstractFormCommand {
 			c.setServerID(StringUtils.parseHex(ctx.getParameter("server")));
 			c.setModerated(Boolean.valueOf(ctx.getParameter("isModerated")).booleanValue());
 			c.setDefault(Boolean.valueOf(ctx.getParameter("isDefault")).booleanValue());
-			c.setCodec(Integer.parseInt(ctx.getParameter("codec")));
+			c.setCodec(StringUtils.parse(ctx.getParameter("codec"), 0));
+			
+			// Start a transaction
+			ctx.startTX();
 
 			// Get the write DAO and save the channel
 			SetTS2Data wdao = new SetTS2Data(con);
@@ -60,10 +62,17 @@ public class ChannelCommand extends AbstractFormCommand {
 				wdao.write(c);
 			else
 				wdao.update(c);
+			
+			// Check for a default channel
+			wdao.setDefault(c.getServerID());
+			
+			// Commit the transaction
+			ctx.commitTX();
 
 			// Save the channel in the request
 			ctx.setAttribute("channel", c, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -87,14 +96,14 @@ public class ChannelCommand extends AbstractFormCommand {
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
 			// Get the channel
-			if (ctx.getCmdParameter(ID, null) != null) {
+			if (ctx.getID() != 0) {
 				Connection con = ctx.getConnection();
 				
 				// Get the DAO and the Channel
 				GetTS2Data dao = new GetTS2Data(con);
-				Channel c = dao.getChannel((String) ctx.getCmdParameter(ID, null));
+				Channel c = dao.getChannel(ctx.getID());
 				if (c == null)
-					throw notFoundException("Invalid Channel - " + ctx.getCmdParameter(ID, null));
+					throw notFoundException("Invalid Channel - " + ctx.getID());
 				
 				// Get the server
 				Server srv = dao.getServer(c.getServerID());

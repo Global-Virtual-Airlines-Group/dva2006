@@ -166,6 +166,38 @@ public class SetTS2Data extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Sets a random Channel as the default for a Server if no default is specified.
+	 * @param serverID the virtual Server ID 
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setDefault(int serverID) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(*) FROM teamspeak.ts2_channels WHERE (i_channel_server_id=?) AND "
+					+ "(b_channel_flag_default=?)");
+			_ps.setInt(1, serverID);
+			_ps.setInt(2, -1);
+			
+			// Check for a default channel
+			ResultSet rs = _ps.executeQuery();
+			boolean hasDefault = rs.next() ? (rs.getInt(1) > 0) : false;
+			rs.close();
+			_ps.close();
+			if (hasDefault)
+				return;
+			
+			// Update the default channel
+			setQueryMax(1);
+			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=? WHERE (i_channel_server_id=?) "
+					+ "ORDER BY RAND()");
+			_ps.setInt(1, -1);
+			_ps.setInt(2, serverID);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Deletes a TeamSpeak voice channel.
@@ -364,7 +396,7 @@ public class SetTS2Data extends DAO {
 	 */
 	private void clearDefaultChannelFlag(int id, int serverID) throws SQLException {
 		prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=0 WHERE "
-				+ "(i_channel_id <> ?) AND (i_channel_server_id <> ?)");
+				+ "(i_channel_id <> ?) AND (i_channel_server_id=?)");
 		_ps.setInt(1, id);
 		_ps.setInt(2, serverID);
 		executeUpdate(0);

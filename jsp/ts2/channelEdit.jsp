@@ -34,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="ts2channel.do" op="save" linkID="${empty channel ? '' : channel.name}" validate="return validate(this)">
+<el:form method="post" action="ts2channel.do" op="save" linkID="${fn:dbID(channel)}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td class="caps" colspan="2">TEAMSPEAK 2 VOICE CHANNEL</td>

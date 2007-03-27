@@ -73,11 +73,11 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	 * @return a Channel profile, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Channel getChannel(String name) throws DAOException {
+	public Channel getChannel(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT * FROM teamspeak.ts2_channels WHERE (s_channel_name=?)");
-			_ps.setString(1, name);
+			prepareStatement("SELECT * FROM teamspeak.ts2_channels WHERE (i_channel_id=?)");
+			_ps.setInt(1, id);
 
 			// Execute the query and return
 			List<Channel> results = executeChannels();
@@ -95,7 +95,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 	 */
 	public Collection<Channel> getChannels() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM teamspeak.ts2_channels ORDER BY s_channel_name");
+			prepareStatement("SELECT * FROM teamspeak.ts2_channels ORDER BY i_channel_server_id");
 			return executeChannels();
 		} catch (SQLException se) {
 			throw new DAOException(se);

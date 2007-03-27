@@ -27,15 +27,23 @@
 <tr class="title">
  <td width="20%">CHANNEL NAME</td>
  <td width="25%">CHANNEL TOPIC</td>
- <td width="5%">MAX USERS</td>
- <td width="10%"><el:cmdbutton url="ts2channel" op="edit" label="NEW CHANNEL" /></td>
+ <td width="5%">USERS</td>
+ <td width="15%"><el:cmdbutton url="ts2channel" op="edit" label="NEW CHANNEL" /></td>
  <td class="left">DESCRIPTION</td>
 </tr>
 
 <!-- Table Channel Data -->
+<c:set var="serverID" value="${0}" scope="request" />
 <c:forEach var="channel" items="${viewContext.results}">
+<c:if test="${serverID != channel.serverID}">
+<c:set var="server" value="${servers[channel.serverID]}" scope="request" />
+<c:set var="serverID" value="${channel.serverID}" scope="request" />
+<tr class="title">
+ <td colspan="5" class="left caps">${server.name} - PORT ${server.port}</td>
+</tr>
+</c:if>
 <view:row entry="${channel}">
- <td><el:cmd url="ts2channel" op="edit" linkID="${channel.name}" className="pri bld">${channel.name}</el:cmd></td>
+ <td><el:cmd url="ts2channel" op="edit" linkID="${channel.ID}" className="pri bld">${channel.name}</el:cmd></td>
  <td>${channel.topic}</td>
  <td class="sec bld"><fmt:int value="${channel.maxUsers}" /></td>
  <td colspan="2" class="left small">${channel.description}</td>
