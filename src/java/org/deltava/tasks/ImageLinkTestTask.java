@@ -5,10 +5,11 @@ import java.net.*;
 import java.util.*;
 import java.io.IOException;
 
+import java.sql.Connection;
+
+import org.deltava.beans.Pilot;
+import org.deltava.beans.cooler.*;
 import org.deltava.dao.*;
-
-import org.deltava.beans.cooler.LinkedImage;
-
 import org.deltava.taskman.*;
 
 import org.deltava.util.system.SystemData;
@@ -38,13 +39,20 @@ public class ImageLinkTestTask extends Task {
 	 */
 	protected void execute(TaskContext ctx) {
 		try {
-			GetCoolerLinks dao = new GetCoolerLinks(ctx.getConnection());
-			final Collection<Integer> ids = dao.getThreads();
+			Connection con = ctx.getConnection();
+			
+			// Figure out who we're operating as
+			GetPilot pdao = new GetPilot(con);
+			Pilot taskBy = pdao.getByName(SystemData.get("users.tasks_by"), SystemData.get("airline.db"));
+			
+			// Get the images to check
+			GetCoolerLinks dao = new GetCoolerLinks(con);
+			Collection<Integer> ids = dao.getThreads();
 			log.info("Validating images in " + ids.size() + " discussion threads");
 			ctx.release();
 
 			// Keep track of invalid hosts
-			final Collection<String> invalidHosts = new HashSet<String>();
+			Collection<String> invalidHosts = new HashSet<String>();
 
 			// Loop through the threads
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
@@ -92,13 +100,30 @@ public class ImageLinkTestTask extends Task {
 
 					// If it's invalid, nuke it
 					if (!isOK) {
-						SetCoolerLinks wdao = new SetCoolerLinks(ctx.getConnection());
+						ThreadUpdate upd = new ThreadUpdate(id.intValue());
+						upd.setMessage("Removed linked image " + img.getURL());
+						upd.setAuthorID(taskBy.getID());
+						
+						// Get a connection
+						con = ctx.getConnection();
+						ctx.startTX();
+						
+						// Write a Thread update
+						SetCoolerMessage msgdao = new SetCoolerMessage(con);
+						msgdao.write(upd);
+						
+						// Delete the linked image
+						SetCoolerLinks wdao = new SetCoolerLinks(con);
 						wdao.delete(id.intValue(), img.getURL());
+						
+						// Commit
+						ctx.commitTX();
 						ctx.release();
 					}
 				}
 			}
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			log.error("Error validating images - " + de.getMessage(), de);
 		} finally {
 			ctx.release();
