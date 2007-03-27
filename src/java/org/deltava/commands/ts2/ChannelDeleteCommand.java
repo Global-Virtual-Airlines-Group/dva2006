@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.ts2;
 
 import java.sql.Connection;
@@ -28,17 +28,27 @@ public class ChannelDeleteCommand extends AbstractCommand {
 			
 			// Get the DAO and the channel
 			GetTS2Data dao = new GetTS2Data(con);
-			Channel c = dao.getChannel((String) ctx.getCmdParameter(ID, ""));
+			Channel c = dao.getChannel(ctx.getID());
 			if (c == null)
-				throw notFoundException("Invalid Channel - " + ctx.getCmdParameter(ID, ""));
+				throw notFoundException("Invalid Channel - " + ctx.getID());
+			
+			// Start a transaction
+			ctx.startTX();
 			
 			// Get the write DAO and delete the channel
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.delete(c);
 			
+			// Check for a default channel
+			wdao.setDefault(c.getServerID());
+			
+			// Commit the transaction
+			ctx.commitTX();
+			
 			// Save the channel in the request
 			ctx.setAttribute("channel", c, REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
