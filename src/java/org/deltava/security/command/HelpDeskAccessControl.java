@@ -19,6 +19,7 @@ public class HelpDeskAccessControl extends AccessControl {
 	private Issue _i;
 	
 	private boolean _canCreate;
+	private boolean _canClose;
 	private boolean _canComment;
 	private boolean _canUpdateStatus;
 	private boolean _canUpdateContent;
@@ -61,6 +62,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		
 		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isAdmin;
 		_canUpdateStatus = isAdmin;
+		_canClose = _canUpdateStatus && (_i.getStatus() != Issue.CLOSED);
 		_canUpdateContent = isHR;
 	}
 	
@@ -86,6 +88,14 @@ public class HelpDeskAccessControl extends AccessControl {
 	 */
 	public boolean getCanUpdateStatus() {
 		return _canUpdateStatus;
+	}
+	
+	/**
+	 * Returns wether this Issue can have its status changed to Closed. 
+	 * @return TRUE if the status can be changed, otherwise FALSE
+	 */
+	public boolean getCanClose() {
+		return _canClose;
 	}
 	
 	/**
