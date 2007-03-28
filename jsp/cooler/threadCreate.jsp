@@ -91,7 +91,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Water Cooler Channel</td>
- <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${empty param.id ? 'General Discussion' : param.id}" /></td>
+ <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${empty param.id ? 'General Aviation Discussion' : param.id}" /></td>
 </tr>
 <content:filter roles="Moderator,PIREP,HR,Examination">
 <tr>
