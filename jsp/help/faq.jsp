@@ -20,6 +20,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -38,7 +39,12 @@
 <c:forEach var="issue" items="${viewContext.results}">
 <c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
 <tr>
+<c:if test="${isHR}">
+ <td><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld"><fmt:text value="${issue.subject}" /></el:cmd></td>
+</c:if>
+<c:if test="${!isHR}">
  <td class="pri bld">${issue.subject}</td>
+</c:if>
  <td class="left">${issue.body}</td>
 </tr>
 <tr>
