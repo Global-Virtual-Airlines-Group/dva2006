@@ -35,7 +35,7 @@ public class ImageLinkTestTask extends Task {
 
 	/**
 	 * Executes the Task.
-	 * @see org.deltava.taskman.Task#execute()
+	 * @see org.deltava.taskman.Task#execute(TaskContext)
 	 */
 	protected void execute(TaskContext ctx) {
 		try {

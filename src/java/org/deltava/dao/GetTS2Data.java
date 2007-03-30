@@ -69,7 +69,7 @@ public class GetTS2Data extends DAO implements CachingDAO {
 
 	/**
 	 * Returns an individual TeamSpeak voice Channel.
-	 * @param name the Channel name
+	 * @param id the Channel database ID
 	 * @return a Channel profile, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
