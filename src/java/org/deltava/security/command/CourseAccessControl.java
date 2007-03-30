@@ -47,7 +47,8 @@ public class CourseAccessControl extends AccessControl {
 
 		// Define conditions
 		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isINS = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
+		boolean isExaminer = _ctx.isUserInRole("AcademyAdmin") || _ctx.isUserInRole("Examiner");
+		boolean isINS = _ctx.isUserInRole("Instructor") || isExaminer;
 		boolean isMine = (_ctx.getUser().getID() == _c.getPilotID());
 		boolean isStarted = (_c.getStatus() == Course.STARTED);
 		boolean isPending = (_c.getStatus() == Course.PENDING);
@@ -61,11 +62,11 @@ public class CourseAccessControl extends AccessControl {
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
-		_canAssign = (isStarted || isPending) && (isHR || isINS);
+		_canAssign = (isStarted || isPending) && (isHR || isExaminer);
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
-		_canApprove = (isHR || _ctx.isUserInRole("AcademyAdmin")) && isStarted && !isMine;
+		_canApprove = (isHR || isExaminer) && isStarted && !isMine;
 		for (Iterator<CourseProgress> i = _c.getProgress().iterator(); _canApprove && i.hasNext(); ) {
 			CourseProgress cp = i.next();
 			_canApprove &= cp.getComplete();

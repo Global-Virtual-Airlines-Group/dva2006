@@ -43,7 +43,7 @@ public class InstructionAccessControl extends AccessControl {
 		boolean isOurs = (_ctx.getUser().getID() == _i.getPilotID()) || (_ctx.getUser().getID() == _i.getInstructorID());
 
 		// Set create rights
-		_canCreate = isHR || isAcademyAdmin || _ctx.isUserInRole("Instructor");
+		_canCreate = isHR || isAcademyAdmin || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examiner");
 		if ((_i == null) || (!_ctx.isAuthenticated()))
 			return;
 
