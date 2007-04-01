@@ -38,11 +38,18 @@ public class FlightDataEarthService extends GoogleEarthService {
 	 * @throws ServiceException if an error occurs
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
+		
+		// Check if we add position records
+		boolean showData = Boolean.valueOf(ctx.getParameter("showData")).booleanValue();
+		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
+
+		// Set the maximum number of routes
+		int maxFlights = showRoute ? 8 : 20;
 
 		// Get the ACARS Flight IDs
 		Collection<Integer> IDs = new TreeSet<Integer>();
 		Collection<String> rawIDs = StringUtils.split(ctx.getParameter("id"), ",");
-		for (Iterator<String> i = rawIDs.iterator(); i.hasNext();) {
+		for (Iterator<String> i = rawIDs.iterator(); (IDs.size() <= maxFlights) && i.hasNext(); ) {
 			String rawID = i.next();
 			try {
 				IDs.add(new Integer(StringUtils.parseHex(rawID)));
@@ -50,10 +57,6 @@ public class FlightDataEarthService extends GoogleEarthService {
 				log.warn("Invalid ACARS flight ID - " + rawID);
 			}
 		}
-
-		// Check if we add position records
-		boolean showData = Boolean.valueOf(ctx.getParameter("showData")).booleanValue();
-		boolean showRoute = Boolean.valueOf(ctx.getParameter("showRoute")).booleanValue();
 		
 		// Get ACARS data for the flights
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
@@ -95,9 +98,8 @@ public class FlightDataEarthService extends GoogleEarthService {
 					
 					// Save the flight
 					flights.add(info);
-				} else {
+				} else
 					log.warn("Cannot find ACARS flight " + id);
-				}
 			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
