@@ -219,12 +219,12 @@ public class FlightReportService extends WebService {
 
 			// Get the user information
 			GetPilot pdao = new GetPilot(con);
+			GetPilot.invalidateID(ctx.getUser().getID());
 			Pilot p = pdao.get(ctx.getUser().getID());
 
 			// Check for Draft PIREPs by this Pilot
 			GetFlightReports prdao = new GetFlightReports(con);
-			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(),
-					SystemData.get("airline.db"));
+			List<FlightReport> dFlights = prdao.getDraftReports(p.getID(), afr.getAirportD(), afr.getAirportA(), SystemData.get("airline.db"));
 			if (!dFlights.isEmpty()) {
 				FlightReport fr = dFlights.get(0);
 				afr.setID(fr.getID());
@@ -284,8 +284,7 @@ public class FlightReportService extends WebService {
 
 			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao
-					.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
+			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());
