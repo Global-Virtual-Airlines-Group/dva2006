@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -73,6 +73,9 @@ public class SetFlightReport extends DAO {
 			_ps.setInt(2, usr.getID());
 			_ps.setInt(3, pirep.getID());
 			executeUpdate(1);
+			
+			// Save the promotion equipment types
+			writePromoEQ(pirep.getID(), SystemData.get("airline.db"), pirep.getCaptEQType());
 
 			// Write the comments into the database
 			if (!StringUtils.isEmpty(pirep.getComments())) {
@@ -168,7 +171,7 @@ public class SetFlightReport extends DAO {
 	/**
 	 * Helper method to write promotion equipment types.
 	 */
-	private void writePromoEQ(int id, String dbName, Collection eqTypes) throws SQLException {
+	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
 		dbName = formatDBName(dbName);
 		
 		// Delete the existing records
@@ -177,11 +180,10 @@ public class SetFlightReport extends DAO {
 		executeUpdate(0);
 
 		// Queue the new records
-		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) "
-				+ "VALUES (?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO " + dbName + ".PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
 		_ps.setInt(1, id);
-		for (Iterator i = eqTypes.iterator(); i.hasNext();) {
-			_ps.setString(2, (String) i.next());
+		for (Iterator<String> i = eqTypes.iterator(); i.hasNext();) {
+			_ps.setString(2, i.next());
 			_ps.addBatch();
 		}
 
@@ -197,11 +199,10 @@ public class SetFlightReport extends DAO {
 		dbName = formatDBName(dbName);
 		
 		// Initialize the prepared statement
-		if (fr.getID() == 0) {
+		if (fr.getID() == 0)
 			insert(fr, dbName);
-		} else {
+		else
 			update(fr, dbName);
-		}
 
 		// Write the PIREP data into the database; if we are writing a new PIREP get the database ID
 		executeUpdate(1);
