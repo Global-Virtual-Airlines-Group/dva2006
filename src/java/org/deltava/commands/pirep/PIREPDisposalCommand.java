@@ -109,16 +109,17 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), fr.getEquipmentType());
 			if (pTypeNames.contains(p.getEquipmentType())) {
+				boolean isACARS = fr.hasAttribute(FlightReport.ATTR_ACARS);
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pName = i.next();
 					EquipmentType peq = eqdao.get(pName);
-					if ((peq == null) || (peq.getACARSPromotionLegs()))
+					if (peq == null)
+						i.remove();
+					else if (peq.getACARSPromotionLegs() && !isACARS)
 						i.remove();
 				}
 				
-				// Add programs if we still have any that do not require ACARS legs
-				if (!pTypeNames.isEmpty())
-					fr.setCaptEQType(pTypeNames);
+				fr.setCaptEQType(pTypeNames);
 			}
 			
 			// Check if the pilot is rated in the equipment type
@@ -137,7 +138,6 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			
 			wdao.dispose(ctx.getUser(), fr, opCode);
 			fr.setStatus(opCode);
 			
