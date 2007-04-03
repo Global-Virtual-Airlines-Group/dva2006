@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -100,6 +100,11 @@ public class GetSchedule extends DAO {
 			params.add(StringUtils.format(criteria.getHourA() - 1, "00") + ":00\'");
 			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
 		}
+		
+		if (!criteria.getIncludeAcademy()) {
+			conditions.add("ACADEMY=?");
+			params.add("0");
+		}
 
 		// Build the query string
 		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
@@ -128,10 +133,6 @@ public class GetSchedule extends DAO {
 				buf.append(')');
 		}
 		
-		// Check for academy flights
-		if (!criteria.getIncludeAcademy())
-			buf.append(" AND (ACADEMY=0)");
-
 		// Add sort column
 		buf.append(" ORDER BY ");
 		buf.append(sortBy);
