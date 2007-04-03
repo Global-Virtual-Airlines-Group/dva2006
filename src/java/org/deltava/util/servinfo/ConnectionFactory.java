@@ -33,7 +33,10 @@ class ConnectionFactory {
 		if (dataURL.startsWith("http://")) {
 			try {
 				URL url = new URL(dataURL);
-				return url.openConnection();
+				URLConnection con = url.openConnection();
+				con.setConnectTimeout(1500);
+				con.setReadTimeout(5000);
+				return con;
 			} catch (IOException ie) {
 				log.error("Error getting HTTP connection " + ie.getMessage(), ie);
 				return null;
