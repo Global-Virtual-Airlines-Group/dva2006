@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
@@ -12,13 +13,27 @@
 <content:css name="form" />
 <content:js name="common" />
 <content:pics />
+<content:sysdata var="badDomains" name="registration.reject_domain" />
 <script language="JavaScript" type="text/javascript">
+var invalidDomains = ['<fmt:list value="${badDomains}" delim="','" />'];
+
 function validate(form)
 {
 if (!checkSubmit()) return false;
 var act = form.action;
 if ((act.indexOf('resendvalidate.do') == -1) && (!validateText(form.code, 8, 'E-Mail Validation Code'))) return false;
 if (!validateEMail(form.email, 'E-Mail Address')) return false;
+
+// Validate e-mail domain
+var eMail = form.email.value;
+var usrDomain = eMail.substring(eMail.indexOf('@') + 1, eMail.length);
+for (var x = 0; x < invalidDomains.length; x++) {
+	if (usrDomain == invalidDomains[x]) {
+		alert('Your e-mail address (' + eMail + ') contains a forbidden domain - ' + invalidDomains[x]);
+		form.email.focus();
+		return false;
+	}
+}
 
 setSubmit();
 disableButton('SubmitButton');
