@@ -70,11 +70,12 @@ return true;
 
 <!-- Exam Questions -->
 <c:forEach var="q" items="${exam.questions}">
+<c:set var="mcCSS" value="${fn:isMultiChoice(q) ? 'opt1' : ''}" scope="request" />
 <c:set var="hasImage" value="${q.size > 0}" scope="request" />
 <!-- Question #${q.number} -->
 <tr>
  <td class="label" rowspan="${hasImage ? '3' : '2'}" valign="top">Question #<fmt:int value="${q.number}" /></td>
- <td class="data">${q.question}</td>
+ <td class="data ${mcCSS}">${q.question}</td>
 </tr>
 <c:if test="${hasImage}">
 <tr>
@@ -84,13 +85,13 @@ return true;
 </tr>
 </c:if>
 <tr>
- <td class="data small"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span></td>
+ <td class="data small ${mcCSS}"><span class="${q.exactMatch ? 'warn' : 'sec'}">${q.correctAnswer}</span></td>
 </tr>
 
 <!-- Score / Answer -->
 <tr>
  <td class="mid"><el:box className="small" name="Score${q.number}" value="true" checked="${fn:correct(q)}" label="Correct" /></td>
- <td class="data bld">${q.answer}</td>
+ <td class="data bld ${mcCSS}">${q.answer}</td>
 </tr>
 </c:forEach>
 
