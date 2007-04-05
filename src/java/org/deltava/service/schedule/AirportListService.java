@@ -47,19 +47,18 @@ public class AirportListService extends WebService {
 		}
 
 		public boolean accept(Airport a) {
-			return (a == null) ? false : a.getAirlineCodes().contains(_a.getCode());
+			return ((a == null) || (_a == null)) ? false : a.getAirlineCodes().contains(_a.getCode());
 		}
 	}
 
 	private class AirportListFilter implements AirportFilter {
 
-		private Collection<String> _airportCodes;
+		private final Collection<String> _airportCodes = new HashSet<String>();
 
-		AirportListFilter(Collection airports) {
+		AirportListFilter(Collection<Airport> airports) {
 			super();
-			_airportCodes = new HashSet<String>();
-			for (Iterator i = airports.iterator(); i.hasNext();) {
-				Airport a = (Airport) i.next();
+			for (Iterator<Airport> i = airports.iterator(); i.hasNext();) {
+				Airport a = i.next();
 				_airportCodes.add(a.getIATA());
 			}
 		}
