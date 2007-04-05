@@ -62,7 +62,7 @@ public class CourseAccessControl extends AccessControl {
 		_canRestart = (_c.getStatus() == Course.ABANDONED) && isMine;
 		_canUpdateProgress = (isHR || isINS) && isStarted && !isMine;
 		_canSchedule = isStarted && (isHR || isINS);
-		_canAssign = (isStarted || isPending) && (isHR || isExaminer);
+		_canAssign = (isStarted || isPending) && (isHR || isINS);
 		_canDelete = _ctx.isUserInRole("Admin") || _canStart;
 		
 		// Check if we've met all of the requirements
