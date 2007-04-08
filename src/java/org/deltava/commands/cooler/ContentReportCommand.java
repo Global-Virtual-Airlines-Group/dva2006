@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+ // Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -127,7 +127,7 @@ public class ContentReportCommand extends AbstractCommand {
 		result.setType(CommandResult.REDIRECT);
 		result.setSuccess(true);
 		if (isLocked && (!ctx.isUserInRole("Moderator")))
-			result.setURL("channel.do", null, mt.getChannel());
+			result.setURL("channel", null, mt.getChannel());
 		else 
 			result.setURL("thread", null, mt.getID());
 	}

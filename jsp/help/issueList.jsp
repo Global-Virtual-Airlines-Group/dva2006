@@ -26,7 +26,7 @@
 <tr class="title">
  <td colspan="2" class="left caps"><content:airline /> FLIGHT ACADEMY HELP DESK</td>
  <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="hdissue" op="edit">NEW ISSUE</el:cmd> | </c:if>
-<el:cmd url="myacademyissues">MY ISSUES</el:cmd>
+<el:cmd url="myhdissues">MY ISSUES</el:cmd>
 <content:filter roles="Instructor,AcademyAdmin,HR"> | <el:cmd url="hdissues">ALL ISSUES</el:cmd> 
 | <el:cmd url="hdissues" op="active">ACTIVE ISSUES</el:cmd></content:filter></td>
 </tr>
