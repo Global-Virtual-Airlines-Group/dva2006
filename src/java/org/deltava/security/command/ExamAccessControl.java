@@ -47,9 +47,9 @@ public class ExamAccessControl extends AccessControl {
             throw new AccessControlException("Cannot view Examination");
 
         // Set access variables
-        boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
-        boolean isExam = _t.getAcademy() ? _ctx.isUserInRole("Examiner") : _ctx.isUserInRole("Examination");
         boolean isHR = _ctx.isUserInRole("HR");
+        boolean isOurs = (_ctx.getUser().getID() == _t.getPilotID());
+        boolean isExam = isHR || (_t.getAcademy() ? _ctx.isUserInRole("Examiner") : _ctx.isUserInRole("Examination"));
         
         // With checkrides, NEW == SUBMITTED
         boolean isCR = (_t instanceof CheckRide);
