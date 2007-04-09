@@ -55,11 +55,10 @@ function showRemaining(interval)
 var tr = getElement('timeRemaining');
 
 // Update the text color
-if (secondsLeft < 300) {
+if (secondsLeft < 300)
 	tr.className = 'error bld';
-} else if (secondsLeft < 600) {
+else if (secondsLeft < 600)
 	tr.className = 'warn bld';
-}
 
 // Display the text and decrement the counter
 tr.innerHTML = Math.round(secondsLeft / 60) + ' minutes';
@@ -85,12 +84,12 @@ if (!txtbox) return false;
 // Create the AJAX request
 var xmlreq = getXMLHttpRequest();
 xmlreq.open('post', 'answer.ws?id=' + id + '&q=' + qNum);
-xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xmlreq.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
 
 // Save the answer
-if ((txtbox.length == 1) && (txtbox[0].value.length > 1)) {
+if ((txtbox.length == 1) && (txtbox[0].value.length > 1))
 	xmlreq.send('answer=' + txtbox[0].value);
-} else if (txtbox.length > 1) {
+else if (txtbox.length > 1) {
 	for (var x = 0; x < txtbox.length; x++) {
 		if (txtbox[x].checked) {
 			xmlreq.send('answer=' + txtbox[x].value);
