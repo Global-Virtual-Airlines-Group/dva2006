@@ -57,22 +57,25 @@ public class GetNavData extends DAO implements CachingDAO {
 			return new NavigationDataMap();
 		
 		// Check the cache
-		NavigationDataMap result = (NavigationDataMap) _cache.get(code);
-		if (result != null)
-			return result;
+		Cacheable result = _cache.get(code);
+		if (result instanceof NavigationDataMap)
+			return (NavigationDataMap) result;
+		else if (result != null)
+			return null;
 		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (UPPER(CODE)=?)");
 			_ps.setString(1, code.toUpperCase());
-			result = new NavigationDataMap(execute());
+			NavigationDataMap ndmap = new NavigationDataMap(execute());
+			ndmap.setCacheKey(code);
+			_cache.add(ndmap);
+			result = ndmap;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 		
 		// Add to the cache and return
-		result.setCacheKey(code);
-		_cache.add(result);
-		return result;
+		return (NavigationDataMap) result;
 	}
 	
 	/**

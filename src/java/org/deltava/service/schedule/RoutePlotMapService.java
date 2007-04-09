@@ -38,6 +38,7 @@ public class RoutePlotMapService extends RouteMapService {
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
+			long startTime = System.currentTimeMillis();
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 			
 			// Translate IATA to ICAO codes
@@ -76,6 +77,10 @@ public class RoutePlotMapService extends RouteMapService {
 						routePoints.add(point);
 						lastLoc = point;
 					}
+					
+					// Check that we aren't taking too long
+					if ((System.currentTimeMillis() - startTime) > 35000)
+						throw new DAOException("Search Timeout");
 				}
 			}
 
