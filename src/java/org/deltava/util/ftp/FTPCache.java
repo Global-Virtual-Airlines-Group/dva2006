@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -18,7 +18,7 @@ public class FTPCache {
 
 	private static final Logger log = Logger.getLogger(FTPCache.class);
 
-	private String _cachePath;
+	protected String _cachePath;
 	private String _host;
 	private String _user;
 	private String _pwd;
@@ -59,7 +59,7 @@ public class FTPCache {
 	public FTPDownloadData getDownloadInfo() {
 		return _fileInfo;
 	}
-	
+
 	/**
 	 * Returns the newest file on the remote server.
 	 * @param dirName the directory on the server
@@ -71,9 +71,29 @@ public class FTPCache {
 
 		// Init the FTPConnection object
 		FTPConnection con = new FTPConnection(_host);
-		con.connect(_user, _pwd);
-		log.info("Connected to " + _host);
-		return con.getNewest(dirName);
+		try {
+			con.connect(_user, _pwd);
+			log.info("Connected to " + _host);
+			return con.getNewest(dirName);
+		} catch (FTPClientException ce) {
+			log.error(ce.getMessage() + " to " + _host);
+		}
+
+		// Return the newest from the cache if this has an exception
+		File f = null;
+		File[] cacheFiles = new File(_cachePath).listFiles();
+		for (int x = 0; (cacheFiles != null) && (x < cacheFiles.length); x++) {
+			File cf = cacheFiles[x];
+			if ((f == null) || (cf.lastModified() > f.lastModified()))
+				f = cf;
+		}
+
+		if (f == null)
+			return null;
+
+		// Return newest file
+		log.warn("Newest cache file is " + f.getName());
+		return f.getName();
 	}
 
 	/**
