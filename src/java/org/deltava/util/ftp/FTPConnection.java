@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.ftp;
 
 import java.io.*;
@@ -42,6 +42,7 @@ public class FTPConnection {
 		super();
 		_client = new FTPClient();
 		try {
+			_client.setTimeout(5000);
 			_client.setRemoteHost(host);
 		} catch (Exception e) { // empty
 		}
