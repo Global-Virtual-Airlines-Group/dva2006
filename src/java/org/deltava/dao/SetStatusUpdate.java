@@ -68,8 +68,13 @@ public class SetStatusUpdate extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Collection<StatusUpdate> updates) throws DAOException {
+		long lastUpdateTime = 0;
 		for (Iterator<StatusUpdate> i = updates.iterator(); i.hasNext();) {
 			StatusUpdate upd = i.next();
+			if (upd.getCreatedOn().getTime() <= lastUpdateTime)
+				upd.setCreatedOn(new java.util.Date(lastUpdateTime + 1000));
+				
+			lastUpdateTime = upd.getCreatedOn().getTime();
 			write(SystemData.get("airline.db"), upd);
 		}
 	}
