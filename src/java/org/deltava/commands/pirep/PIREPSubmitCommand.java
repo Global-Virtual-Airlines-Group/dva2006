@@ -60,6 +60,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			ctx.setAttribute("eqType", eq, REQUEST);
 			
 			// Check if the pilot is rated in the equipment type
+			@SuppressWarnings("unchecked")
 			boolean isRated = CollectionUtils.merge(pilot.getRatings(), eq.getRatings()).contains(pirep.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			pirep.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
