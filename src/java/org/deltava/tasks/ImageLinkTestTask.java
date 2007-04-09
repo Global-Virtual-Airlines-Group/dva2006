@@ -57,6 +57,7 @@ public class ImageLinkTestTask extends Task {
 			// Loop through the threads
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
+				long lastUpdateTime = (System.currentTimeMillis() / 1000);
 
 				// Get the images
 				final Collection<LinkedImage> urls = dao.getURLs(id.intValue());
@@ -103,6 +104,10 @@ public class ImageLinkTestTask extends Task {
 						ThreadUpdate upd = new ThreadUpdate(id.intValue());
 						upd.setMessage("Removed linked image " + img.getURL());
 						upd.setAuthorID(taskBy.getID());
+						if ((upd.getDate().getTime() / 1000) <= lastUpdateTime) {
+							lastUpdateTime++;
+							upd.setDate(new Date(lastUpdateTime * 1000));
+						}
 						
 						// Get a connection
 						con = ctx.getConnection();
