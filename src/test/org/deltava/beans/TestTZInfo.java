@@ -33,6 +33,10 @@ public class TestTZInfo extends TestCase {
 		assertNotNull(TZInfo.getAll());
 		assertEquals(0, TZInfo.getAll().size());
 	}
+	
+	public void testGetNull() {
+		assertNull(TZInfo.get(null));
+	}
 
 	public void testGMT() {
 		_wrapper = TZInfo.init(TZInfo.GMT, null, null);
@@ -94,14 +98,5 @@ public class TestTZInfo extends TestCase {
 		assertFalse(_wrapper.equals(w2));
 		assertFalse(_wrapper.equals(new Object()));
 		assertFalse(_wrapper.equals(null));
-
-		try {
-			assertEquals(1, _wrapper.compareTo(new Object()));
-			fail("Expected ClassCastException");
-		} catch (ClassCastException cce) {
-			return;
-		} catch (Exception e) {
-			fail("Expected ClassCastException");
-		}
 	}
 }

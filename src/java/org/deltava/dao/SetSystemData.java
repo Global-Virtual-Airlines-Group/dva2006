@@ -4,8 +4,8 @@ package org.deltava.dao;
 import java.sql.*;
 import java.util.*;
 
+import org.deltava.beans.TZInfo;
 import org.deltava.beans.servlet.CommandLog;
-
 import org.deltava.beans.system.*;
 
 import org.deltava.util.StringUtils;
@@ -170,6 +170,44 @@ public class SetSystemData extends DAO {
 			_ps.setString(2, addr);
 			_ps.setString(3, host);
 			_ps.setString(4, host);
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Writes a new Time Zone entry to the database.
+	 * @param tz the Time Zone bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void write(TZInfo tz) throws DAOException {
+		try {
+			prepareStatement("INSERT INTO common.TZ (CODE, NAME, ABBR, GMT_OFFSET, DST) VALUES (?, ?, ?, ?, ?)");
+			_ps.setString(1, tz.getID());
+			_ps.setString(2, tz.getName());
+			_ps.setString(3, tz.getAbbr());
+			_ps.setInt(4, (tz.getTimeZone().getRawOffset() / 60000));
+			_ps.setBoolean(5, tz.getTimeZone().useDaylightTime());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Updates an existing Time Zone entry in the database.
+	 * @param tz the Time Zone bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void update(TZInfo tz) throws DAOException {
+		try {
+			prepareStatement("UPDATE common.TZ SET NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)");
+			_ps.setString(1, tz.getName());
+			_ps.setString(2, tz.getAbbr());
+			_ps.setInt(3, (tz.getTimeZone().getRawOffset() / 60000));
+			_ps.setBoolean(4, tz.getTimeZone().useDaylightTime());
+			_ps.setString(5, tz.getID());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
