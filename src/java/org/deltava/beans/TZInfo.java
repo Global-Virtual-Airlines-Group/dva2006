@@ -1,8 +1,8 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
-import java.text.DecimalFormat;
+import java.text.*;
 
 /**
  * A class for dealing with Time Zones.
@@ -11,7 +11,7 @@ import java.text.DecimalFormat;
  * @since 1.0
  */
 
-public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
+public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZInfo>, ViewEntry {
 
 	/**
 	 * Time Zone ID for GMT/UTC.
@@ -20,7 +20,7 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	private static final TZInfo _local = new TZInfo(TimeZone.getDefault().getID(), null, null);
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
-	private static final DecimalFormat _df = new DecimalFormat("00");
+	private static final NumberFormat _df = new DecimalFormat("00");
 
 	private TimeZone _tz;
 	private String _displayName;
@@ -44,13 +44,9 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	 * @see TimeZone#getTimeZone(java.lang.String)
 	 */
 	public static TZInfo init(String tzName, String dName, String abbr) {
-		if (!_timeZones.containsKey(tzName)) {
-			TZInfo tz = new TZInfo(tzName, dName, abbr);
-			_timeZones.put(tzName, tz);
-			return tz;
-		}
-
-		return null;
+		TZInfo tz = new TZInfo(tzName, dName, abbr);
+		_timeZones.put(tzName, tz);
+		return tz;
 	}
 
 	/**
@@ -163,16 +159,14 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 	}
 
 	/**
-	 * Compares this Time Zone to another object by comparing the UTC offset
-	 * @throws ClassCastException If we pass in anything other than a TZWrapper
+	 * Compares this Time Zone to another object by comparing the UTC offset.
+	 * @param tz2 the TimeZone entry to compare to
 	 */
-	public int compareTo(Object o2) {
-		TZInfo tz2 = (TZInfo) o2;
-		if ((o2 == null) || (_tz.getRawOffset() > tz2.getTimeZone().getRawOffset())) {
+	public int compareTo(TZInfo tz2) {
+		if ((tz2 == null) || (_tz.getRawOffset() > tz2.getTimeZone().getRawOffset()))
 			return 1;
-		} else if (_tz.getRawOffset() < tz2.getTimeZone().getRawOffset()) {
+		else if (_tz.getRawOffset() < tz2.getTimeZone().getRawOffset())
 			return -1;
-		}
 
 		return _tz.getID().compareTo(tz2.getID());
 	}
@@ -191,5 +185,13 @@ public class TZInfo implements ComboAlias, Comparable, java.io.Serializable {
 
 	protected static void reset() {
 		_timeZones.clear();
+	}
+	
+	/**
+	 * Returns the CSS class name when displayed in a view table.
+	 * @return the CSS class name
+	 */
+	public String getRowClassName() {
+		return _tz.useDaylightTime() ? "opt1" : null;
 	}
 }
