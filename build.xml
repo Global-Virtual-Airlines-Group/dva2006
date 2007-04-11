@@ -42,15 +42,10 @@
    			</filterchain>
    		</loadproperties>
     	
-    	<!-- TAR/GZIP the JavaDoc -->
-    	<tar destfile="${java.io.tmpdir}/javadoc.tar" longfile="fail">
-			<tarfileset uid="500" group="gva" dir="${java.io.tmpdir}/javadoc">
-    			<include name="**/*" />
-    			<include name="*" />
-    		</tarfileset>
-		</tar>
-		<gzip src="${java.io.tmpdir}/javadoc.tar" destfile="${java.io.tmpdir}/javadoc.tar.gz" />
-		<delete file="${java.io.tmpdir}/javadoc.tar" />
+    	<!-- Clean out the JavaDoc -->
+    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
+    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
+    		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
     	
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
@@ -59,12 +54,9 @@
     	
     	<!-- Upload the JavaDoc -->
     	<scp todir="${javadoc.ssh.user}@${javadoc.ssh.server}:${javadoc.ssh.path.javadoc}" trust="yes"
-    		verbose="yes" password="${javadoc.ssh.pwd}" file="${java.io.tmpdir}/javadoc.tar.gz" />
-    	
-    	<!-- Extract the JavaDoc -->
-    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
-    		command="cd ${ssh.path.javadoc} ; tar xvfz javadoc.tar.gz ; rm javadoc.tar.gz" />
+    		verbose="yes" password="${javadoc.ssh.pwd}">
+    		<fileset dir="${java.io.tmpdir}/javadoc" />
+    	</scp>
     	
     	<!-- Clean out the temp folder -->
     	<delete dir="${java.io.tmpdir}/javadoc" />
@@ -264,10 +256,9 @@
 				</modified>
 			</fileset>
 		</scp>
-		
+
 		<!-- Upload static content to the HTTP server -->
-		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}"
-			verbose="yes" trust="yes" password="${http.dev.pwd}">
+		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" verbose="yes" trust="yes" password="${http.dev.pwd}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest">
 						<param name="algorithm.algorithm" value="MD5" />
@@ -444,8 +435,7 @@
 		
 		<!-- Compress the TARs -->
 		<gzip src="${java.io.tmpdir}/src/golgotha.tar" destfile="${java.io.tmpdir}/src/golgotha.tar.gz" />
-		<gzip src="${java.io.tmpdir}/src/golgotha_acars.tar" 
-			destfile="${java.io.tmpdir}/src/golgotha_acars.tar.gz" />
+		<gzip src="${java.io.tmpdir}/src/golgotha_acars.tar" destfile="${java.io.tmpdir}/src/golgotha_acars.tar.gz" />
 		<delete file="${java.io.tmpdir}/src/golgotha.tar" />
 		<delete file="${java.io.tmpdir}/src/golgotha_acars.tar" />
 			
