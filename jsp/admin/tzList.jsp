@@ -28,5 +28,28 @@
  <td width="30%">TIME ZONE NAME</td>
  <td width="10%">CODE</td>
  <td width="35%">NAME</td>
- <td>GMT OFFSET</td>
+ <td><el:cmdbutton url="tz" op="edit" label="NEW TIME ZONE" /></td>
 </tr>
+
+<!-- Table Data -->
+<c:forEach var="tz" items="${viewContext.results}">
+<c:set var="gmtOffset" value="${tz.timeZone.rawOffset / 1000}" scope="request" />
+<view:row entry="${tz}">
+ <td class="bld"><el:cmd url="tz" op="edit" linkID="${tz.ID}">${tz.ID}</el:cmd></td>
+ <td class="pri bld">${tz.abbr}</td>
+ <td><fmt:text value="${tz.name}" /></td>
+ <td>GMT ${gmtOffset < 0 ? '' : '+'}<fmt:dec value="${gmtOffset / 3600}" fmt="#0.#" /> hours</td>
+</view:row>
+</c:forEach>
+
+<!-- Scroll bar -->
+<tr class="title">
+ <td colspan="4"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <view:legend width="200" labels="Observes Daylight Savings,Standard Time" classes="opt1, " /></td>
+</tr>
+</view:table>
+<content:copyright />
+</content:region>
+</content:page>
+</body>
+</html>

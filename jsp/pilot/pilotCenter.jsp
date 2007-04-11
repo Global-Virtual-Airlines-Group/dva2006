@@ -666,6 +666,10 @@ scoring delays, Water Cooler participation rates and Flight Report logging.</td>
  can reload the system configuration.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="tzones">Time Zones</el:cmd></td>
+ <td class="data">You can view and update Time Zone profiles.</td>
+</tr>
+<tr>
  <td class="mid"><el:cmd className="bld" url="securityroles">Security Roles</el:cmd></td>
  <td class="data">You can view all <content:airline /> Pilots who have one or more web application security
 roles.</td>

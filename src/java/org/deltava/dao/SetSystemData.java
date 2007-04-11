@@ -197,17 +197,19 @@ public class SetSystemData extends DAO {
 	
 	/**
 	 * Updates an existing Time Zone entry in the database.
+	 * @param oldID the old Time Zone code
 	 * @param tz the Time Zone bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void update(TZInfo tz) throws DAOException {
+	public void update(String oldID, TZInfo tz) throws DAOException {
 		try {
-			prepareStatement("UPDATE common.TZ SET NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)");
-			_ps.setString(1, tz.getName());
-			_ps.setString(2, tz.getAbbr());
-			_ps.setInt(3, (tz.getTimeZone().getRawOffset() / 60000));
-			_ps.setBoolean(4, tz.getTimeZone().useDaylightTime());
-			_ps.setString(5, tz.getID());
+			prepareStatement("UPDATE common.TZ SET CODE=?, NAME=?, ABBR=?, GMT_OFFSET=?, DST=? WHERE (CODE=?)");
+			_ps.setString(1, tz.getID());
+			_ps.setString(2, tz.getName());
+			_ps.setString(3, tz.getAbbr());
+			_ps.setInt(4, (tz.getTimeZone().getRawOffset() / 60000));
+			_ps.setBoolean(5, tz.getTimeZone().useDaylightTime());
+			_ps.setString(6, oldID);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);

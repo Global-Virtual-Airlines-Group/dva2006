@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="innovataEnabled" name="schedule.innovata.enabled" />
@@ -9,11 +10,13 @@
 <tr class="MenuItem">
  <td><el:link url="/">HOME</el:link></td>
 </tr>
-<tr class="MenuItem">
 <content:authUser anonymous="true">
+<tr class="MenuItem">
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
+</tr>
 </content:authUser>
 <content:authUser var="user">
+<tr class="MenuItem">
  <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
 </tr>
 <content:superUser var="superUser">
@@ -26,8 +29,8 @@
 </tr>
 <tr class="MenuItem bld pri">
  <td><el:cmd url="pilotcenter">PILOT CENTER</el:cmd></td>
-</content:authUser>
 </tr>
+</content:authUser>
 <tr class="MenuItem">
  <td><el:cmd url="airlines">AIRLINES</el:cmd></td>
 </tr>
@@ -37,6 +40,11 @@
 <tr class="MenuItem">
  <td><el:cmd url="aircraftlist">AIRCRAFT</el:cmd></td>
 </tr>
+<content:filter roles="Admin">
+<tr class="MenuItem">
+ <td><el:cmd url="tzones">TIME ZONES</el:cmd></td>
+</tr>
+</content:filter>
 <tr class="MenuItem">
  <td><el:cmd url="charts">APPROACH CHARTS</el:cmd></td>
 </tr>

@@ -28,9 +28,9 @@ public class TimeZoneListCommand extends AbstractViewCommand {
 		
 		// Get the entries and shrink to fit
 		List<TZInfo> entries = new ArrayList<TZInfo>(TZInfo.getAll());
-		entries.removeAll(entries.subList(0, vc.getStart()));
+		entries.removeAll(new ArrayList<TZInfo>(entries.subList(0, vc.getStart())));
 		if (entries.size() > vc.getCount())
-			entries.removeAll(entries.subList(vc.getCount() + 1, entries.size()));
+			entries.removeAll(new ArrayList<TZInfo>(entries.subList(vc.getCount() + 1, entries.size())));
 		
 		// Save the entries
 		vc.setResults(entries);
