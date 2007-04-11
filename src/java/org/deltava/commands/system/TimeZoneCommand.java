@@ -37,7 +37,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 
 		// Save the time zone and JVM options
 		ctx.setAttribute("tz", tz, REQUEST);
-		ctx.setAttribute("tzNames", ComboUtils.fromArray(TimeZone.getAvailableIDs()), REQUEST);
+		ctx.setAttribute("tzIDs", ComboUtils.fromArray(TimeZone.getAvailableIDs()), REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -67,14 +67,14 @@ public class TimeZoneCommand extends AbstractFormCommand {
 			Connection con = ctx.getConnection();
 
 			// Get the time zone
-			TZInfo tz = TZInfo.init(id, ctx.getParameter("name"), ctx.getParameter("abbr"));
+			TZInfo tz = TZInfo.init(ctx.getParameter("newID"), ctx.getParameter("name"), ctx.getParameter("abbr"));
 			
 			// Write the time zone
 			SetSystemData wdao = new SetSystemData(con);
 			if (isNew)
 				wdao.write(tz);
 			else
-				wdao.update(tz);
+				wdao.update(id, tz);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -84,7 +84,7 @@ public class TimeZoneCommand extends AbstractFormCommand {
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setType(CommandResult.REDIRECT);
-		result.setURL("tzlist.do");
+		result.setURL("tzones.do");
 		result.setSuccess(true);
 	}
 }

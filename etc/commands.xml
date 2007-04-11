@@ -540,6 +540,18 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="tzones">
+		<name>Time Zone Profiles</name>
+		<class>org.deltava.commands.system.TimeZoneListCommand</class>
+		<roles>Admin</roles>
+	</command>
+
+	<command id="tz">
+		<name>Time Zone Edit</name>
+		<class>org.deltava.commands.system.TimeZoneCommand</class>
+		<roles>Admin</roles>
+	</command>
+
 
 	<!-- Online Event Commands -->
 	<command id="flightboard">
