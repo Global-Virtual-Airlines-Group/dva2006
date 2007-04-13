@@ -9,12 +9,16 @@ xmlreq.onreadystatechange = function() {
 	var isLoading = getElement('isLoading');
 	if (isLoading)
 		isLoading.innerHTML = ' - REDRAWING...';
+		
+	// Clean up the map - don't strip out the weather layer
+	map.clearOverlays();
+	if (map.wxData)
+		map.addOverlay(map.wxData);
 
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
 	if (!xmlDoc) return false;
 	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
-	map.clearOverlays();
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
