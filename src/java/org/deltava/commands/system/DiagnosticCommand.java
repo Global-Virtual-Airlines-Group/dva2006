@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -52,7 +52,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		if (SystemData.getBoolean("acars.enabled")) {
 			// Get the ACARS Connection pool data and save in the request
 			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
-			ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+			ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(true), REQUEST);
 			ctx.setAttribute("acarsBans", acarsPool.getBanInfo(), REQUEST);
 
 			// Get the acars worker info data and save in the request
