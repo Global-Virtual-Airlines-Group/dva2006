@@ -75,6 +75,10 @@ public class RegisterCommand extends AbstractCommand {
 				ctx.release();
 			}
 			
+			// Save FS Versions
+			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
+			
+			// Forward to the JSP
 			result.setURL("/jsp/register/register.jsp");
 			result.setSuccess(true);
 			return;
@@ -100,6 +104,7 @@ public class RegisterCommand extends AbstractCommand {
 		a.setDateFormat(ctx.getParameter("df"));
 		a.setTimeFormat(ctx.getParameter("tf"));
 		a.setNumberFormat(ctx.getParameter("nf"));
+		a.setSimVersion(ctx.getParameter("fsVersion"));
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();

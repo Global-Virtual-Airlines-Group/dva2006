@@ -145,6 +145,10 @@ currently registed with this e-mail address.</div></c:if>
  <td colspan="${cspan + 1}">PILOT PREFERENCES</td>
 </tr>
 <tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="125" options="${fsVersions}" value="FS2004" /></td>
+</tr>
+<tr>
  <td class="label">Time Zone</td>
  <td class="data" colspan="${cspan}"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" firstEntry="< TIME ZONE >" value="${param.tz}" /></td>
 </tr>
@@ -188,6 +192,7 @@ currently registed with this e-mail address.</div></c:if>
  <td class="data" colspan="${cspan}"><span class="small">Plase provide any comments or additional information that you feel would assist
 in processing your application.</span></td>
 </tr>
+<tr>
  <td class="data" colspan="${cspan + 1}"><el:textbox name="comments" idx="*" width="80%" height="4"></el:textbox></td>
 </tr>
 </el:table>

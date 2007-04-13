@@ -13,7 +13,7 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<script language="JavaScript type="text/javascript">
+<script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 <c:if test="${access.canApprove}">
@@ -139,6 +139,10 @@ return ${access.canApprove};
 <!-- Pilot Preferences -->
 <tr class="title">
  <td colspan="2">PILOT PREFERENCES</td>
+</tr>
+<tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data bld">${applicant.simVersionCode}</td>
 </tr>
 <tr>
  <td class="label">Time Zone</td>
