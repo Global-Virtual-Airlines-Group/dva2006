@@ -26,9 +26,21 @@ public class Applicant extends Person {
      */
     public static final String ROLE = "Applicant";
     
+	/**
+	 * Valid Flight Simulator version strings.
+	 */
+	public static final String FSVERSION[] = { "Unknown/Other", "X-Plane", "FS2002", "FS2004", "FS X" };
+
+	/**
+	 * Valid Flight Simulator version values.
+	 */
+	public static final int FSVERSION_CODE[] = { 0, 100, 2002, 2004, 2006 };
+    
     private int _pilotID;
     private String _legacyURL;
     private boolean _legacyVerified;
+    
+    private int _simVersion;
     
     private String _registerHostName;
     private String _registerAddress;
@@ -121,6 +133,33 @@ public class Applicant extends Person {
     	return _registerAddress;
     }
     
+	/**
+	 * The Flight Simulator version preferred by this Applicant.
+	 * @return the version number
+	 * @see Applicant#getSimVersionCode()
+	 * @see Applicant#setSimVersion(int)
+	 * @see Applicant#setSimVersion(String)
+	 */
+	public int getSimVersion() {
+		return _simVersion;
+	}
+
+	/**
+	 * The Flight Simulator version code preferred by this Applicant.
+	 * @return the version code
+	 * @see Applicant#getSimVersion()
+	 * @see Applicant#setSimVersion(String)
+	 * @see Applicant#setSimVersion(int)
+	 */
+	public String getSimVersionCode() {
+		for (int x = 0; x < FSVERSION_CODE.length; x++) {
+			if (_simVersion == FSVERSION_CODE[x])
+				return FSVERSION[x];
+		}
+
+		return FSVERSION[0];
+	}
+    
     /**
      * Sets the URL for legacy hours verification
      * @param url the URL for legacy hours verification
@@ -138,6 +177,42 @@ public class Applicant extends Person {
     public void setLegacyVerified(boolean verified) {
         _legacyVerified = verified;
     }
+    
+	/**
+	 * Set the Flight Simulator version used by this Applicant.
+	 * @param version the Flight Simulator version as found in {@link Applicant#FSVERSION}
+	 * @throws IllegalArgumentException if the version cannot be found
+	 * @see Applicant#setSimVersion(String)
+	 * @see Applicant#getSimVersion()
+	 */
+    public void setSimVersion(int version) {
+		for (int x = 0; x < FlightReport.FSVERSION_CODE.length; x++) {
+			if (version == FlightReport.FSVERSION_CODE[x]) {
+				_simVersion = version;
+				return;
+			}
+		}
+
+		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
+    }
+    
+	/**
+	 * Set the Flight Simulator version used by this Applicant.
+	 * @param version the Flight Simulator version as found in {@link Applicant#FSVERSION}
+	 * @throws IllegalArgumentException if the version cannot be found
+	 * @see Applicant#setSimVersion(int)
+	 * @see Applicant#getSimVersion()
+	 */
+	public void setSimVersion(String version) {
+		for (int x = 0; x < FlightReport.FSVERSION.length; x++) {
+			if (FlightReport.FSVERSION[x].equals(version)) {
+				_simVersion = FlightReport.FSVERSION_CODE[x];
+				return;
+			}
+		}
+
+		throw new IllegalArgumentException("Invalid Flight Simulator version - " + version);
+	}
     
     /**
      * Sets the host name this Applicant registered from.

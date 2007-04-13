@@ -120,6 +120,10 @@ return cmdPost(f.action);
  <td colspan="2">PILOT PREFERENCES</td>
 </tr>
 <tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data"><el:check type="radio" name="fsVersion" idx="*" width="70" options="${fsVersions}" value="${applicant.simVersionCode}" /></td>
+</tr>
+<tr>
  <td class="label">Time Zone</td>
  <td class="data"><el:combo name="tz" idx="*" size="1" options="${timeZones}" className="req" value="${applicant.TZ}" /></td>
 </tr>
