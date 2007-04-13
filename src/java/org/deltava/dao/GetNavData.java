@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 
 public class GetNavData extends DAO implements CachingDAO {
 	
-	protected static final Cache<Cacheable> _cache = new AgingCache<Cacheable>(320);
+	protected static final Cache<Cacheable> _cache = new AgingCache<Cacheable>(1024);
 
 	/**
 	 * Initializes the Data Access Object.
