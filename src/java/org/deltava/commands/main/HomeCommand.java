@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -114,7 +114,7 @@ public class HomeCommand extends AbstractCommand {
 
 				// Online ACARS Users
 				case ACARS_USERS:
-					ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(), REQUEST);
+					ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(false), REQUEST);
 					break;
 
 				// Latest Hires

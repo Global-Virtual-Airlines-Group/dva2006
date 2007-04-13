@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Collection;
@@ -14,9 +14,10 @@ public interface ACARSAdminInfo {
 
 	/**
 	 * Returns all current Connection data.
+	 * @param showHidden TRUE if stealth connections should be displayed, otherwise FALSE
 	 * @return a Collection of ACARSConnection beans
 	 */
-	public Collection getPoolInfo();
+	public Collection getPoolInfo(boolean showHidden);
 
 	/**
 	 * Returns the positions of all ACARS flights.
