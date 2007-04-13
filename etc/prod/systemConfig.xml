@@ -420,7 +420,7 @@
 			</import>
 
 			<!-- downloaded file cache -->
-			<cache>/home/www/sched_cache</cache>
+			<cache>/var/cache/sched</cache>
 		</innovata>
 	</schedule>
 
@@ -561,6 +561,7 @@
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">20000</reload>
 			<radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar>
+			<tileHost>gima.weather.com</tileHost>
 		</livemap>
 
 		<list name="block" attr="addr">
