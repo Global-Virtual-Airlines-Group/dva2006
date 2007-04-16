@@ -186,8 +186,8 @@ public class Applicant extends Person {
 	 * @see Applicant#getSimVersion()
 	 */
     public void setSimVersion(int version) {
-		for (int x = 0; x < FlightReport.FSVERSION_CODE.length; x++) {
-			if (version == FlightReport.FSVERSION_CODE[x]) {
+		for (int x = 0; x < FSVERSION_CODE.length; x++) {
+			if (version == FSVERSION_CODE[x]) {
 				_simVersion = version;
 				return;
 			}
@@ -204,9 +204,9 @@ public class Applicant extends Person {
 	 * @see Applicant#getSimVersion()
 	 */
 	public void setSimVersion(String version) {
-		for (int x = 0; x < FlightReport.FSVERSION.length; x++) {
-			if (FlightReport.FSVERSION[x].equals(version)) {
-				_simVersion = FlightReport.FSVERSION_CODE[x];
+		for (int x = 0; x < FSVERSION.length; x++) {
+			if (FSVERSION[x].equals(version)) {
+				_simVersion = FSVERSION_CODE[x];
 				return;
 			}
 		}
