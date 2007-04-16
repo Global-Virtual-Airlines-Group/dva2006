@@ -75,10 +75,10 @@ public class SetApplicant extends PilotWriteDAO {
 						+ "CREATED=?, REGHOSTNAME=?, REGADDR=INET_ATON(?), DFORMAT=?, TFORMAT=?, NFORMAT=?, "
 						+ "AIRPORTCODE=?, SIM_VERSION=?, TZ=?, UISCHEME=?, COMMENTS=?, EQTYPE=?, RANK=?, HR_COMMENTS=? "
 						+ "WHERE (ID=?)");
-				_ps.setString(31, a.getEquipmentType());
-				_ps.setString(32, a.getRank());
-				_ps.setString(33, a.getHRComments());
-				_ps.setInt(34, a.getID());
+				_ps.setString(30, a.getEquipmentType());
+				_ps.setString(31, a.getRank());
+				_ps.setString(32, a.getHRComments());
+				_ps.setInt(33, a.getID());
 			}
 
 			// Set the fields
