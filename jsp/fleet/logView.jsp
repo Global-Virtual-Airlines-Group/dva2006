@@ -15,7 +15,7 @@
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
-function valdiate(form)
+function validate(form)
 {
 if (!checkSubmit()) return false;
 isOK = (form.installerCode.selectedIndex > 0);

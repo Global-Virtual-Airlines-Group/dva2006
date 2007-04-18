@@ -16,7 +16,7 @@
 <content:js name="common" />
 <content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
-function valdiate(form)
+function validate(form)
 {
 if (!checkSubmit()) return false;
 
