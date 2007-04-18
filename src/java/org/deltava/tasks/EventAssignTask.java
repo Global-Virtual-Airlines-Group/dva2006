@@ -17,7 +17,7 @@ import org.deltava.taskman.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Scheduled Task to automatically assign flghts to Online Event participants
+ * A Scheduled Task to automatically assign flghts to Online Event participants.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -56,9 +56,7 @@ public class EventAssignTask extends Task {
 			Connection con = ctx.getConnection();
 			
 			// Determining who we are operating as
-			GetPilot pdao = new GetPilot(con);
-			Pilot from = pdao.getByName(SystemData.get("online.events_assigned_by"), SystemData.get("airline.db"));
-			mctxt.addData("user", from);
+			EMailAddress from = Mailer.makeAddress(SystemData.get("airline.mail.events"), SystemData.get("airline.name") + " Events");
 			
 			// Get the DAOs
 			GetEvent dao = new GetEvent(con);
@@ -78,7 +76,8 @@ public class EventAssignTask extends Task {
 				if ((!e.getSignups().isEmpty()) && (!hasFlightReports(con, e.getID(), usrmap))) {
 					mctxt.addData("event", e);
 					
-					// Get the write DAOs
+					// Get the DAOs
+					GetPilot pdao = new GetPilot(con);
 					SetFlightReport fwdao = new SetFlightReport(con);
 					SetAssignment awdao = new SetAssignment(con);
 					
