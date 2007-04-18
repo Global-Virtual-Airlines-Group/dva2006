@@ -107,6 +107,7 @@
 		<mail>
 			<info>info@deltava.org</info>
 			<hr>hr@deltava.org</hr>
+			<events>events@deltava.org</events>
 			<webmaster>webmaster@deltava.org</webmaster>
 		</mail>
 	</airline>
@@ -315,7 +316,6 @@
 		</intvas>
 
 		<default_network>VATSIM</default_network>
-		<events_assigned_by>Andrew Vane</events_assigned_by>
 	</online>
 	
 	<security>
