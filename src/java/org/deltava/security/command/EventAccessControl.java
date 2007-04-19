@@ -1,6 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
+import org.deltava.beans.Pilot;
 import org.deltava.beans.event.*;
 
 import org.deltava.security.SecurityContext;
@@ -47,11 +48,15 @@ public class EventAccessControl extends AccessControl {
       _canCreate = _ctx.isUserInRole("Event");
       if (_ev == null)
          return;
+      
+      // Check if we have a network address
+      Pilot p = (Pilot) _ctx.getUser();
+      boolean hasID = p.getNetworkIDs().containsKey(_ev.getNetworkName());
 
       // Set access variables
       boolean isEvent = _ctx.isUserInRole("Event");
       boolean hasSignups = (!_ev.getSignups().isEmpty());
-      _canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() &&  (!_ev.isSignedUp(_ctx.getUser().getID()));
+      _canSignup = (_ev.getStatus() == Event.OPEN) && _ev.getCanSignup() && hasID && (!_ev.isSignedUp(_ctx.getUser().getID()));
       _canAddPlan = ((_ev.getStatus() == Event.OPEN) || (_ev.getStatus() == Event.CLOSED)) && isEvent;
       _canEdit = (_ev.getStatus() != Event.COMPLETE) && isEvent;
       _canAssignFlights = ((_ev.getStatus() == Event.CLOSED) || (_ev.getStatus() == Event.ACTIVE)) && hasSignups && isEvent;
