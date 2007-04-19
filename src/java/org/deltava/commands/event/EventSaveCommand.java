@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.EventAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -88,6 +88,7 @@ public class EventSaveCommand extends AbstractCommand {
 			// Parse the equipment types
 			Collection<String> eqTypes = ctx.getParameters("eqTypes");
 			if (eqTypes != null) {
+				e.getEquipmentTypes().clear();
 				for (Iterator<String> i = eqTypes.iterator(); i.hasNext(); )
 					e.addEquipmentType(i.next());
 			}
@@ -100,8 +101,17 @@ public class EventSaveCommand extends AbstractCommand {
 					chartIDs.add(new Integer(StringUtils.parseHex(i.next())));
 
 				// Load the charts
+				e.getCharts().clear();
 				GetChart cdao = new GetChart(con);
 				e.addCharts(cdao.getByIDs(chartIDs));
+			}
+			
+			// Parse contact addresses
+			Collection<String> addrs = StringUtils.split(ctx.getParameter("contactAddrs"), "\n");
+			if (!CollectionUtils.isEmpty(addrs)) {
+				e.getContactAddrs().clear();
+				for (Iterator<String> i = addrs.iterator(); i.hasNext(); )
+					e.addContactAddr(i.next());
 			}
 
 			// Save the event in the request
@@ -126,8 +136,11 @@ public class EventSaveCommand extends AbstractCommand {
 
 				// Get the Pilots to notify
 				GetPilotNotify pdao = new GetPilotNotify(con);
-				Collection<? extends EMailAddress> pilots = pdao.getNotifications(Person.EVENT);
+				Collection<EMailAddress> pilots = pdao.getNotifications(Person.EVENT);
 				if (pilots != null) {
+					for (Iterator<String> i = e.getContactAddrs().iterator(); i.hasNext(); )
+						pilots.add(Mailer.makeAddress(i.next()));
+					
 					Mailer mailer = new Mailer(ctx.getUser());
 					mailer.setContext(mctxt);
 					mailer.send(pilots);

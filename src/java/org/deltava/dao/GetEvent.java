@@ -225,6 +225,7 @@ public class GetEvent extends DAO {
 			Event e = results.get(0);
 			loadFlightPlans(e);
 			loadEQTypes(e);
+			loadContactAddrs(e);
 			
 			// Create a map and load the airports
 			Map<Integer, Event> eMap = new HashMap<Integer, Event>();
@@ -349,8 +350,6 @@ public class GetEvent extends DAO {
 	 * Helper method to load flight plans for an event.
 	 */
 	private void loadFlightPlans(Event e) throws SQLException {
-
-		// Init the prepared statement
 		prepareStatementWithoutLimits("SELECT * FROM common.EVENT_PLANS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 
@@ -373,8 +372,6 @@ public class GetEvent extends DAO {
 	}
 
 	private void loadEQTypes(Event e) throws SQLException {
-
-		// Init the prepared statement
 		prepareStatementWithoutLimits("SELECT RATING FROM common.EVENT_EQTYPES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 
@@ -382,6 +379,20 @@ public class GetEvent extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next())
 			e.addEquipmentType(rs.getString(1));
+
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+	
+	private void loadContactAddrs(Event e) throws SQLException {
+		prepareStatementWithoutLimits("SELECT ADDRESS FROM common.EVENT_CONTACTS WHERE (ID=?)");
+		_ps.setInt(1, e.getID());
+		
+		// Execute the query and load the addresses
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			e.addContactAddr(rs.getString(1));
 
 		// Clean up
 		rs.close();

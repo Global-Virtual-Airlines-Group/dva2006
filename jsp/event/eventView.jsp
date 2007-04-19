@@ -95,6 +95,13 @@ return true;
  <td class="data" colspan="5"><fmt:list value="${event.equipmentTypes}" delim=", " /></td>
 </tr>
 </c:if>
+<content:filter roles="Event,HR"><c:if test="${!empty event.contactAddrs}">
+<tr>
+ <td class="label" valign="top">ATC Contact Addresses</td>
+ <td class="data"><c:forEach var="addr" items="${event.contactAddrs}">
+<el:link url="mailto:${addr}">${addr}</el:link><br /></c:forEach></td>
+</tr>
+</c:if></content:filter>
 <content:filter roles="Pilot">
 <c:if test="${!empty event.charts}">
 <!-- Chart Section -->
@@ -148,9 +155,9 @@ return true;
 </tr>
 <tr class="title caps mid">
  <td width="10%">ID</td>
- <td width="25%">PILOT NAME</td>
+ <td width="30%">PILOT NAME</td>
  <td width="10%">EQUIPMENT</td>
- <td width="15%">${event.networkName} ID</td>
+ <td width="10%">${event.networkName} ID</td>
  <td colspan="2">FLIGHT ROUTE</td>
 </tr>
 
@@ -159,6 +166,7 @@ return true;
 <c:forEach var="signup" items="${event.signups}">
 <c:set var="idx" value="${idx + 1}" scope="request" />
 <c:set var="pilot" value="${pilots[signup.pilotID]}" scope="request" />
+<c:set var="pilotCerts" value="${certs[signup.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[signup.pilotID]}" scope="request" />
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
 <tr class="mid">
@@ -168,10 +176,11 @@ return true;
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
 </c:if>
- <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
+ <td><el:profile location="${pilotLoc}">${pilot.name}</el:profile>
+<c:if test="${!empty pilotCerts}"><span class="ter bld"><fmt:list value="${pilotCerts}" delim="," /></span></c:if></td>
  <td class="sec bld">${signup.equipmentType}</td>
  <td class="pri bld">${pilot.networkIDs[event.networkName]}</td>
- <td colspan="2">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
+ <td colspan="2" class="small">${signup.airportD.name} (<fmt:airport airport="${signup.airportD}" />) - ${signup.airportA.name}
  (<fmt:airport airport="${signup.airportA}" />)</td>
 </tr>
 </c:forEach>

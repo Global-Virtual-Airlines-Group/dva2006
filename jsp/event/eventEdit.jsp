@@ -105,6 +105,10 @@ return true;
 &nbsp;<span class="small">Your time zone is ${pageContext.request.userPrincipal.TZ.name}.</span></td>
 </tr>
 <tr>
+ <td class="label" valign="top">ATC Contact Addresses</td>
+ <td class="data"><el:textbox name="contactAddrs" idx="*" width="50" height="2">${addrs}</el:textbox></td>
+</tr>
+<tr>
  <td class="label" valign="top">Flight Briefing</td>
  <td class="data"><el:textbox name="briefing" idx="*" width="90%" className="req" height="15">${event.briefing}</el:textbox></td>
 </tr>
