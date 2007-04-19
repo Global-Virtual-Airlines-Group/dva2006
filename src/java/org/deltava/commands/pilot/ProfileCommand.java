@@ -793,10 +793,12 @@ public class ProfileCommand extends AbstractFormCommand {
 				ctx.setAttribute("exams", exams, REQUEST);
 			}
 
-			// Check for an applicant profile
+			// Check for an applicant profile and login data
 			if (ctx.isUserInRole("HR") && !crossDB) {
 				GetApplicant adao = new GetApplicant(con);
+				GetLoginData ldao = new GetLoginData(con);
 				ctx.setAttribute("applicant", adao.getByPilotID(p.getID()), REQUEST);
+				ctx.setAttribute("loginAddrs", ldao.getAddresses(p.getID()), REQUEST);
 			}
 
 			// Get Academy Certifications
