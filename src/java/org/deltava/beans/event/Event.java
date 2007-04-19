@@ -48,13 +48,15 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     private int _network;
     private boolean _canSignup;
     
-    private Set<Chart> _charts;
-    private Collection<FlightPlan> _plans;
+    private final Collection<Chart> _charts = new TreeSet<Chart>();
+    private final Collection<FlightPlan> _plans = new ArrayList<FlightPlan>();
     
-    private Set<Signup> _signups;
-    private Set<Route> _routes;
-    private List<AssignmentInfo> _assignments;
-    private Set<String> _eqTypes;
+    private final Collection<Signup> _signups = new LinkedHashSet<Signup>();
+    private final Collection<Route> _routes = new TreeSet<Route>();
+    private final List<AssignmentInfo> _assignments = new ArrayList<AssignmentInfo>();
+    private final Collection<String> _eqTypes = new TreeSet<String>();
+    
+    private final Collection<String> _contactAddrs = new LinkedHashSet<String>();
     
     /**
      * Creates a new Online Event.
@@ -65,12 +67,6 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     public Event(String name) {
         super();
         setName(name);
-        _charts = new TreeSet<Chart>();
-        _plans = new ArrayList<FlightPlan>();
-        _signups = new LinkedHashSet<Signup>();
-        _assignments = new ArrayList<AssignmentInfo>();
-        _eqTypes = new TreeSet<String>();
-        _routes = new TreeSet<Route>();
     }
     
     /**
@@ -221,6 +217,15 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     }
     
     /**
+     * Returns the e-mail contact addresses for this Online Event.
+     * @return a Collection of email addresses
+     * @see Event#addContactAddr(String)
+     */
+    public Collection<String> getContactAddrs() {
+    	return _contactAddrs;
+    }
+    
+    /**
      * Returns the Flight Plans available for this Online Event.
      * @return a Collection of FlightPlan beans
      * @see Event#addPlan(FlightPlan)
@@ -234,7 +239,7 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
      * @return a Collection of equipment names
      * @see Event#addEquipmentType(String)
      */
-    public Set<String> getEquipmentTypes() {
+    public Collection<String> getEquipmentTypes() {
        return _eqTypes;
     }
     
@@ -515,6 +520,15 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
      */
     public void addCharts(Collection<Chart> charts) {
     	_charts.addAll(charts);
+    }
+    
+    /**
+     * Adds a contact address to this Online Event.
+     * @param addr the e-mail address
+     * @see Event#getContactAddrs()
+     */
+    public void addContactAddr(String addr) {
+    	_contactAddrs.add(addr);
     }
 
     /**

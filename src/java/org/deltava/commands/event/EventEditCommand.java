@@ -90,6 +90,9 @@ public class EventEditCommand extends AbstractCommand {
 			if (!access.getCanEdit())
 				throw securityException("Cannot edit Online Event");
 			
+			// Save the contact addresses
+			ctx.setAttribute("addrs", StringUtils.listConcat(e.getContactAddrs(), "\n"), REQUEST);
+			
 			// Get all of the charts for this event
 			GetChart cdao = new GetChart(con);
 			Map<Airport, Collection<Chart>> charts = new TreeMap<Airport, Collection<Chart>>();
