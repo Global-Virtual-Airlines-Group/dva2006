@@ -196,7 +196,8 @@ return ${access.canApprove};
 </tr>
 <tr>
  <td class="label">Registered from</td>
- <td class="data">${applicant.registerAddress} (${applicant.registerHostName})</td>
+ <td class="data"><el:cmd url="loginaddrs" linkID="${applicant.registerAddress}" op="net">${applicant.registerAddress}</el:cmd>
+ (${applicant.registerHostName})</td>
 </tr>
 <c:if test="${!empty applicant.comments}">
 <tr>
