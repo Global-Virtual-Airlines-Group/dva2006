@@ -9,7 +9,6 @@ import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.mail.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
@@ -80,29 +79,13 @@ public class ExamSubmitCommand extends AbstractCommand {
 		        ctx.setAttribute("isScore", Boolean.TRUE, REQUEST);
 		        ctx.setAttribute("autoScore", Boolean.TRUE, REQUEST);
 
-				// Create the messaging context
-				MessageContext mctxt = new MessageContext();
-				mctxt.addData("user", ctx.getUser());
-
 				// Check if we've passed the examination
 				ex.setPassFail(score >= ep.getPassScore());
-				mctxt.addData("result", ex.getPassFail() ? "PASS" : "UNSATISFACTORY");
-
-				// Get the Message template
-				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				mctxt.setTemplate(mtdao.get("EXAMSCORE"));
-				mctxt.addData("exam", ex);
 
 				// Get the Pilot profile
 				GetPilot pdao = new GetPilot(con);
 				Pilot usr = pdao.get(ex.getPilotID());
 				ctx.setAttribute("pilot", usr, REQUEST);
-				mctxt.addData("pilot", usr);
-
-				// Send the notification message
-				Mailer mailer = new Mailer(ctx.getUser());
-				mailer.setContext(mctxt);
-				mailer.send(usr);
 			} else {
 				ex.setStatus(Test.SUBMITTED);
 				ctx.setAttribute("isSubmit", Boolean.TRUE, REQUEST);
