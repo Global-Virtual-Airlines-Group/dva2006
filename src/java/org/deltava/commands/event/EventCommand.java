@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.UserDataMap;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -105,14 +105,18 @@ public class EventCommand extends AbstractCommand {
 			// Get the DAOs
 			GetPilot pdao = new GetPilot(con);
 			GetFlightReports frdao = new GetFlightReports(con);
+			GetAcademyCourses crsdao = new GetAcademyCourses(con);
+			GetTableStatus tsdao = new GetTableStatus(con);
 			
 			// Load the Pilots and Flight Reports
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
 			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
+			Map<Integer, Collection<String>> certs = new HashMap<Integer, Collection<String>>();
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();
+				Collection<UserData> ids = udm.getByTable(tableName);
 				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName); 
-				pilots.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
+				pilots.putAll(pdao.getByID(ids, tableName));
 				pireps.addAll(flights);
 				
 				// Load pilots who may have logged the flight but not signed up
@@ -127,11 +131,16 @@ public class EventCommand extends AbstractCommand {
 				// Load additional pilots
 				if (!newIDs.isEmpty())
 					pilots.putAll(pdao.getByID(newIDs, tableName));
+				
+				// Load Flight Academy Certifications
+				if (tsdao.getTableNames(tableName).contains("COURSES"))
+					certs.putAll(crsdao.getCertifications(ids, tableName));
 			}
 			
 			// Save the pilots and flight reports
 			ctx.setAttribute("pilots", pilots, REQUEST);
 			ctx.setAttribute("pireps", pireps, REQUEST);
+			ctx.setAttribute("certs", certs, REQUEST);
 
 			// Save event info in the request
 			ctx.setAttribute("event", e, REQUEST);
