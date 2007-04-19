@@ -1210,6 +1210,12 @@
 		<roles>HR</roles>
 	</command>
 
+	<command id="loginaddrs">
+		<name>Login Address List</name>
+		<class>org.deltava.commands.system.LoginAddressCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="regblocks">
 		<name>Registration Blacklist Entries</name>
 		<class>org.deltava.commands.system.RegistrationBlocksCommand</class>
