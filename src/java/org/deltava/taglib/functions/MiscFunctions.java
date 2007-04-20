@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -153,9 +153,9 @@ public class MiscFunctions {
     * Formats a database bean ID into hex, or as an empty string if zero or null.
     * @param b the database bean
     * @return the ID as hex if non-zero, otherwise an empty string
-    * @see DatabaseBean#getID()
+    * @see DatabaseBean#getHexID()
     */
    public static String formatZeroID(DatabaseBean b) {
-	   return (b == null) || (b.getID() == 0) ? "" : ("0x" + String.valueOf(b.getID()));
+	   return (b == null) ? "" : b.getHexID();
    }
 }
