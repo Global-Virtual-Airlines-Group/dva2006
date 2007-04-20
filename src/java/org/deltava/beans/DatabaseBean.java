@@ -1,6 +1,7 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -15,11 +16,19 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
     private int _id;
     
  	/**
- 	 * Return the database row ID of this bean. <i>This typically will only be called by a DAO</i>
- 	 * @return The primary key of the entry in the table in the database that corresponds to this object.
+ 	 * Return the database ID of this bean.
+ 	 * @return The primary key of the entry in the table in the database that corresponds to this object
  	 */
     public int getID() {
         return _id;
+    }
+    
+    /**
+     * Returns the database ID of this bean, formatted to a hexadecimal string.
+     * @return the hexadecimal formatted database ID, or an empty string if zero
+     */
+    public String getHexID() {
+    	return (_id == 0) ? "" : StringUtils.formatHex(_id);
     }
     
     /**
