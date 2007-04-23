@@ -84,12 +84,13 @@ public class SetEvent extends DAO {
 	 */
 	public void save(Route r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE) VALUES "
-					+ "(?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) VALUES "
+					+ "(?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
 			_ps.setString(3, r.getAirportA().getIATA());
 			_ps.setString(4, r.getRoute());
+			_ps.setBoolean(5, r.getActive());
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -182,6 +183,24 @@ public class SetEvent extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Toggles the availability of an Event flight route. 
+	 * @param r the Route bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void toggle(Route r) throws DAOException {
+		try {
+			prepareStatement("UPDATE common.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (AIRPORT_D=?) "
+					+ "AND (AIRPORT_A=?)");
+			_ps.setInt(1, r.getID());
+			_ps.setString(2, r.getAirportD().getIATA());
+			_ps.setString(3, r.getAirportA().getIATA());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	private void writeCharts(Event e) throws SQLException {
 
@@ -218,7 +237,8 @@ public class SetEvent extends DAO {
 		executeUpdate(0);
 
 		// Create the prepared statement
-		prepareStatement("INSERT INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE) VALUES (?, ?, ?, ?)");
+		prepareStatement("INSERT INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) "
+				+ "VALUES (?, ?, ?, ?, ?)");
 		_ps.setInt(1, e.getID());
 
 		// Add the airports
@@ -227,6 +247,7 @@ public class SetEvent extends DAO {
 			_ps.setString(2, r.getAirportD().getIATA());
 			_ps.setString(3, r.getAirportA().getIATA());
 			_ps.setString(4, r.getRoute());
+			_ps.setBoolean(5, r.getActive());
 			_ps.addBatch();
 		}
 
