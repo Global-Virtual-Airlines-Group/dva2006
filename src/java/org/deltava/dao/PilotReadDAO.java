@@ -128,7 +128,7 @@ abstract class PilotReadDAO extends PilotDAO {
 			return null;
 
 		// Get a map from the table, and get the first value
-		Map<Integer, Pilot> pilots = getByID(Collections.singleton(new Integer(ud.getID())), ud.getDB() + "." + ud.getTable());
+		Map<Integer, Pilot> pilots = getByID(Collections.singleton(ud), ud.getDB() + "." + ud.getTable());
 		Iterator<Pilot> i = pilots.values().iterator();
 		return i.hasNext() ? i.next() : null;
 	}
