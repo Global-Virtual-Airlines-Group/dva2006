@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -32,15 +32,62 @@ public class GetEquipmentType extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EquipmentType get(String eqType) throws DAOException {
+		return get(eqType, SystemData.get("airline.db"));
+	}
+
+	/**
+	 * Returns a particular Equipment Program profile.
+	 * @param eqType the Equipment Type to return
+	 * @param dbName the database name
+	 * @return the Equipment Type profile or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public EquipmentType get(String eqType, String dbName) throws DAOException {
+
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+				+ "P.EMAIL FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".EQTYPES EQ, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P WHERE (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=?)");
+
 		try {
-			prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, "
-					+ "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND "
-					+ "(EQ.EQTYPE=R.EQTYPE) AND (EQ.EQTYPE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+			setQueryMax(1);
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, eqType);
 
 			// Execute the query - if we get nothing back, then return null
-			List results = execute();
-			return (results.size() == 0) ? null : (EquipmentType) results.get(0);
+			setQueryMax(0);
+			List<EquipmentType> results = execute();
+			if (results.isEmpty())
+				return null;
+
+			// Get the ratings
+			EquipmentType eq = results.get(0);
+			prepareStatementWithoutLimits("SELECT RATING_TYPE, RATED_EQ FROM " + dbName + ".EQRATINGS WHERE (EQTYPE=?)");
+			_ps.setString(1, eqType);
+
+			// Do the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				switch (rs.getInt(1)) {
+					case EquipmentType.PRIMARY_RATING:
+						eq.addPrimaryRating(rs.getString(2));
+						break;
+
+					default:
+					case EquipmentType.SECONDARY_RATING:
+					eq.addSecondaryRating(rs.getString(2));
+					break;
+				}
+			}
+
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return eq;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -134,7 +181,7 @@ public class GetEquipmentType extends DAO {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?)");
+		sqlBuf.append(".EQRATINGS WHERE (RATING_TYPE=?) AND (RATED_EQ=?) ORDER BY EQTYPE");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
@@ -145,7 +192,7 @@ public class GetEquipmentType extends DAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
-			Set<String> results = new HashSet<String>();
+			Collection<String> results = new LinkedHashSet<String>();
 			while (rs.next())
 				results.add(rs.getString(1));
 
@@ -184,7 +231,7 @@ public class GetEquipmentType extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns the database IDs for all Pilots missing an assigned rating in a particular Equipment type program.
 	 * @param eq the EquipmentType bean
@@ -192,39 +239,40 @@ public class GetEquipmentType extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Integer> getPilotsWithMissingRatings(EquipmentType eq) throws DAOException {
-		
+
 		// Build the SQL statement
 		Collection<String> allRatings = new HashSet<String>(eq.getPrimaryRatings());
 		allRatings.addAll(eq.getSecondaryRatings());
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN RATINGS R "
-				+ " ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
-		for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
+		StringBuilder sqlBuf = new StringBuilder(
+				"SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN RATINGS R "
+						+ " ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
+		for (Iterator<String> i = allRatings.iterator(); i.hasNext();) {
 			i.next();
 			sqlBuf.append('?');
 			if (i.hasNext())
 				sqlBuf.append(',');
 		}
-		
+
 		sqlBuf.append(") GROUP BY P.ID HAVING (CNT < ?)");
-		
+
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, eq.getName());
-			
+
 			int x = 1;
-			for (Iterator<String> i = allRatings.iterator(); i.hasNext(); ) {
+			for (Iterator<String> i = allRatings.iterator(); i.hasNext();) {
 				String rating = i.next();
 				_ps.setString(++x, rating);
 			}
-			
+
 			_ps.setInt(++x, allRatings.size());
-			
+
 			// Execute the query
 			Collection<Integer> results = new LinkedHashSet<Integer>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next())
 				results.add(new Integer(rs.getInt(1)));
-			
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -241,6 +289,7 @@ public class GetEquipmentType extends DAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
+		boolean hasRatings = (rs.getMetaData().getColumnCount() > 15);
 
 		// Iterate through the results
 		List<EquipmentType> results = new ArrayList<EquipmentType>();
@@ -270,7 +319,8 @@ public class GetEquipmentType extends DAO {
 			}
 
 			// The last two columns are the additional rating info
-			switch (rs.getInt(15)) {
+			if (hasRatings) {
+				switch (rs.getInt(15)) {
 				case EquipmentType.PRIMARY_RATING:
 					eq.addPrimaryRating(rs.getString(16));
 					break;
@@ -279,6 +329,7 @@ public class GetEquipmentType extends DAO {
 				case EquipmentType.SECONDARY_RATING:
 					eq.addSecondaryRating(rs.getString(16));
 					break;
+				}
 			}
 		}
 
