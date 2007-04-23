@@ -50,13 +50,11 @@ public class EventCommand extends AbstractCommand {
 				// If no future events, display the "No Events" page
 				if (results.isEmpty()) {
 				   ctx.release();
-
 					result.setURL("/jsp/event/noActiveEvents.jsp");
 					result.setSuccess(true);
 					return;
 				} else if (results.size() > 1) {
 					ctx.release();
-					
 					result.setURL("/jsp/event/multipleEvents.jsp");
 					result.setSuccess(true);
 					return;

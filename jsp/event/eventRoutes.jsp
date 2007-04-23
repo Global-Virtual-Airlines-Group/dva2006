@@ -49,7 +49,9 @@ return true;
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
 - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
-<el:cmdbutton url="eventroutes" op="save&isDelete=true&route=${route.airportD.IATA}-${route.airportA.IATA}" linkID="0x${event.ID}" label="DELETE" /></td>
+<el:cmdbutton url="eventroutes" op="save&isDelete=true&route=${route.airportD.IATA}-${route.airportA.IATA}" linkID="0x${event.ID}" label="DELETE" />
+&nbsp;
+<el:cmdbutton url="eventroutes" op="save&isToggle=true&route=${route.airportD.IATA}-${route.airportA.IATA}" linkID="0x${event.ID}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
 </tr>
 <tr>
  <td class="data" colspan="3">${route.route}</td>

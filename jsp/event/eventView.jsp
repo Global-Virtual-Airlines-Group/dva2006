@@ -75,14 +75,14 @@ return true;
 <c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
-<tr>
+<view:row entry="${route}">
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
  <td class="data" colspan="5">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
-</tr>
-<tr>
+</view:row>
+<view:row entry="${route}">
  <td class="data" colspan="5">${route.route}</td>
-</tr>
+</view:row>
 </c:forEach>
 </c:if>
 <tr>
@@ -98,7 +98,7 @@ return true;
 <content:filter roles="Event,HR"><c:if test="${!empty event.contactAddrs}">
 <tr>
  <td class="label" valign="top">ATC Contact Addresses</td>
- <td class="data"><c:forEach var="addr" items="${event.contactAddrs}">
+ <td colspan="5" class="data"><c:forEach var="addr" items="${event.contactAddrs}">
 <el:link url="mailto:${addr}">${addr}</el:link><br /></c:forEach></td>
 </tr>
 </c:if></content:filter>
@@ -114,7 +114,6 @@ return true;
  <td>IMAGE TYPE</td>
  <td>CHART TYPE</td>
 </tr>
-
 <c:forEach var="chart" items="${event.charts}">
 <c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="request" />
 <view:row entry="${chart}">
@@ -224,15 +223,16 @@ return true;
 </tr>
 </c:if>
 
-<c:if test="${access.canSignup}">
+<!-- Signup Section -->
 <tr class="title caps">
  <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
 </tr>
+<c:if test="${access.canSignup}">
 <tr>
  <td class="label">Flight Route</td>
- <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.routes}" firstEntry="-" className="req" /></td>
+ <td class="data" colspan="2"><el:combo name="route" idx="*" size="1" options="${event.activeRoutes}" firstEntry="-" className="req" /></td>
  <td class="label" valign="top" rowspan="2">Remarks</td> 
- <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="55" height="2"></el:textbox></td>
+ <td class="data" rowspan="2" colspan="2"><el:textbox name="body" idx="*" width="95%" height="2"></el:textbox></td>
 </tr>
 <tr>
  <td class="label">Equipment Type</td>
@@ -240,9 +240,6 @@ return true;
 </tr>
 </c:if>
 <c:if test="${!event.canSignup}">
-<tr class="title caps">
- <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
-</tr>
 <tr>
  <td colspan="6" class="pri bld">This Online Event is posted for informational purposes only, and signups
  are not currently available.</td>
