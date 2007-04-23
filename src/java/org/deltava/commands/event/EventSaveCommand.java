@@ -79,6 +79,7 @@ public class EventSaveCommand extends AbstractCommand {
 				Route r = new Route(0, ctx.getParameter("route"));
 				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				r.setActive(true);
 				e.addRoute(r);
 				
 				// Add to the message context

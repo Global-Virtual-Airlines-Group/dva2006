@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.sql.Connection;
@@ -65,6 +65,10 @@ public class EventSignupCommand extends AbstractCommand {
 			Route r = e.getRoute(ctx.getParameter("route"));
 			if (r == null)
 				throw notFoundException("Invalid Event Route - " + ctx.getParameter("route"));
+			
+			// Make sure it's active, or we're in the Event role
+			if (!r.getActive() && !ctx.isUserInRole("Event"))
+				throw securityException("Inactive Route - " + r);
 			
 			// Create the signup from the request
 			Signup s = new Signup(e.getID(), ctx.getUser().getID());

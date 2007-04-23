@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -34,6 +34,7 @@ public class EventRoutesCommand extends AbstractFormCommand {
 		
 		// Check if we're doing a delete
 		boolean isDelete = Boolean.valueOf(ctx.getParameter("isDelete")).booleanValue();
+		boolean isToggle = Boolean.valueOf(ctx.getParameter("isToggle")).booleanValue();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -55,11 +56,16 @@ public class EventRoutesCommand extends AbstractFormCommand {
 				Route r = e.getRoute(ctx.getParameter("route"));
 				if (r != null)
 					wdao.delete(r);
+			} else if (isToggle) {
+				Route r = e.getRoute(ctx.getParameter("route"));
+				if (r != null)
+					wdao.toggle(r);
 			} else {
 				// Build the route
 				Route r = new Route(e.getID(), ctx.getParameter("route"));
 				r.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 				r.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+				r.setActive(true);
 				
 				// Make sure it doesn't already exist
 				if (!e.getRoutes().contains(r))

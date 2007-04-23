@@ -267,6 +267,7 @@ public class GetEvent extends DAO {
 				Route r = new Route(e.getID(), rs.getString(4));
 				r.setAirportD(SystemData.getAirport(rs.getString(2)));
 				r.setAirportA(SystemData.getAirport(rs.getString(3)));
+				r.setActive(rs.getBoolean(5));
 				e.addRoute(r);
 			}
 		}
