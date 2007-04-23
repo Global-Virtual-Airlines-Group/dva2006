@@ -220,12 +220,16 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 * @param e the ServletContext lifecycle event
 	 */
 	public void contextDestroyed(ServletContextEvent e) {
+		log.warn("Shutting Down");
 
 		// Shut down the extra threads
 		for (Iterator<Thread> i = _daemons.keySet().iterator(); i.hasNext();) {
 			Thread t = i.next();
-			ThreadUtils.kill(t, 2500);
+			t.interrupt();
 		}
+		
+		// Wait for them to die
+		ThreadUtils.sleep(5000);
 
 		// If ACARS is enabled, then clean out the active flags
 		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
