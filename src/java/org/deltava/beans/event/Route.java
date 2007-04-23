@@ -1,9 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.event;
 
-import org.deltava.beans.ComboAlias;
-import org.deltava.beans.DatabaseBean;
-
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.Airport;
 
 /**
@@ -13,11 +11,12 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class Route extends DatabaseBean implements Comparable, ComboAlias {
+public class Route extends DatabaseBean implements Comparable, ComboAlias, ViewEntry {
 	
 	private Airport _airportD;
 	private Airport _airportA;
 	private String _route;
+	private boolean _active = true;
 	
 	/**
 	 * Creates a new Event Route.
@@ -59,6 +58,14 @@ public class Route extends DatabaseBean implements Comparable, ComboAlias {
     public String getRoute() {
     	return _route;
     }
+    
+    /**
+     * Returns whether the Route is active.
+     * @return TRUE if the Route is available for signup, otherwise FALSE
+     */
+    public boolean getActive() {
+    	return _active;
+    }
 
     /**
      * Updates the Arrival airport.
@@ -78,6 +85,14 @@ public class Route extends DatabaseBean implements Comparable, ComboAlias {
      */
     public void setAirportD(Airport a) {
         _airportD = a;
+    }
+    
+    /**
+     * Updates whether the Route is Active.
+     * @param isActive TRUE if the Route is active, otherwise FALSE 
+     */
+    public void setActive(boolean isActive) {
+    	_active = isActive;
     }
     
     /**
@@ -131,5 +146,9 @@ public class Route extends DatabaseBean implements Comparable, ComboAlias {
     	buf.append(_airportA.getIATA());
     	buf.append(')');
     	return buf.toString();
+    }
+    
+    public String getRowClassName() {
+    	return _active ? null : "opt2";
     }
 }
