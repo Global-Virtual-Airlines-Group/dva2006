@@ -254,13 +254,31 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     }
     
     /**
-     * Returns the Routes available for this Online Event.
+     * Returns the Routes for this Online Event.
      * @return a Collection of Route beans
      * @see Event#addRoute(Route)
      * @see Event#getRoute(String)
+     * @see Event#getActiveRoutes()
      */
     public Collection<Route> getRoutes() {
     	return _routes;
+    }
+
+    /**
+     * Returns the active Routes for this Online Event.
+     * @return a Collection of Route beans
+     * @see Event#addRoute(Route)
+     * @see Event#getRoutes()
+     */
+    public Collection<Route> getActiveRoutes() {
+    	Collection<Route> results = new LinkedHashSet<Route>();
+    	for (Iterator<Route> i = _routes.iterator(); i.hasNext(); ) {
+    		Route r = i.next();
+    		if (r.getActive())
+    			results.add(r);
+    	}
+    	
+    	return results;
     }
     
     /**
@@ -525,10 +543,11 @@ public class Event extends DatabaseBean implements ComboAlias, CalendarEntry {
     /**
      * Adds a contact address to this Online Event.
      * @param addr the e-mail address
+     * @throws NullPointerException if addr is null
      * @see Event#getContactAddrs()
      */
     public void addContactAddr(String addr) {
-    	_contactAddrs.add(addr);
+    	_contactAddrs.add(addr.trim());
     }
 
     /**
