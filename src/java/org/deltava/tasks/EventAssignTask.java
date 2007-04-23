@@ -14,6 +14,7 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 import org.deltava.taskman.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -95,7 +96,7 @@ public class EventAssignTask extends Task {
 						mctxt.addData("pilot", usr);
 						
 						// Log assignment creation
-						log.warn("Assigning Event flight for " + usr.getName());
+						log.info("Assigning Event flight for " + usr.getName());
 
 						// Create a Flight Assignment
 						AssignmentInfo ai = new AssignmentInfo(s.getEquipmentType());
@@ -155,6 +156,30 @@ public class EventAssignTask extends Task {
 					
 					// Commit the transaction
 					ctx.commitTX();
+					
+					// Send ATC notification
+					if (!e.getContactAddrs().isEmpty()) {
+						mctxt = new MessageContext();
+						
+						// Get the template
+						mctxt.setTemplate(mtdao.get("EVENTATCNOTIFY"));
+						mctxt.addData("event", e);
+						mctxt.setSubject("Online Event - " + e.getName());
+						
+						// Save the start/end/signup dates
+						mctxt.addData("startDateTime", StringUtils.format(e.getStartTime(), "MM/dd/yyyy HH:mm"));
+						mctxt.addData("endDateTime", StringUtils.format(e.getEndTime(), "MM/dd/yyyy HH:mm"));
+
+						// Get the addresses to send to
+						Collection<EMailAddress> addrs = new LinkedHashSet<EMailAddress>();
+						for (Iterator<String> ai = e.getContactAddrs().iterator(); ai.hasNext(); )
+							addrs.add(Mailer.makeAddress(ai.next()));
+						
+						// Send the message
+						Mailer mailer = new Mailer(from);
+						mailer.setContext(mctxt);
+						mailer.send(addrs);
+					}
 				}
 			}
 		} catch (DAOException de) {

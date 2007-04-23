@@ -142,11 +142,11 @@ to a specific set of equipment.</span><br />
 <c:set var="entryNumber" value="${0}" scope="request" />
 <c:forEach var="route" items="${event.routes}">
 <c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
-<tr>
+<view:row entry="${route}">
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
  <td class="data">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.airportA.name}
  (<fmt:airport airport="${route.airportA}" />)</td>
-</tr>
+</view:row>
 <tr>
  <td class="data">${route.route}</td>
 </tr>
