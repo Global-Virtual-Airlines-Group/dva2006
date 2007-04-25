@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -77,11 +77,11 @@ public class SetACARSLog extends DAO {
 	 */
 	public int purgeFlights(int hours) throws DAOException {
 		try {
-			prepareStatement("DELETE acars.FLIGHTS.* FROM acars.FLIGHTS, acars.CONS WHERE "
-					+ "(acars.CONS.ID=acars.FLIGHTS.CON_ID) AND (acars.FLIGHTS.PIREP=?) AND (acars.FLIGHTS.CREATED "
-					+ "< DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			prepareStatement("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND (CREATED < "
+					+ "DATE_SUB(NOW(), INTERVAL ? HOUR))");
 			_ps.setBoolean(1, false);
-			_ps.setInt(2, hours);
+			_ps.setBoolean(2, false);
+			_ps.setInt(3, hours);
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
