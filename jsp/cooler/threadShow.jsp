@@ -110,7 +110,7 @@ return true;
 <c:if test="${!empty pilot.pilotCode}"><span class="sec bld">${pilot.pilotCode}</span><br /></c:if>
  <span class="caps bld">${pilot.rank}</span>, ${pilot.equipmentType}<br />
 <c:if test="${!empty pilot.certifications}"><span class="ter bld">
-<fmt:list value="${pilot.certifications}" delim="," /></span><br /></c:if>
+<fmt:list value="${pilot.certifications}" delim=", " /></span><br /></c:if>
 <el:showaddr user="${pilot}"><el:email user="${pilot}" className="small caps" label="E-MAIL" /><br /></el:showaddr>
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />

@@ -79,7 +79,7 @@ return true;
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE CHANNEL" />
 <c:if test="${!empty channel}">
- <el:cmdbutton ID="DeleteButton" url="ts2channeldelete" linkID="${channel.name}" label="DELETE CHANNEL" />
+ <el:cmdbutton ID="DeleteButton" url="ts2channeldelete" linkID="0x${channel.ID}" label="DELETE CHANNEL" />
 </c:if></td>
 </tr>
 </el:table>

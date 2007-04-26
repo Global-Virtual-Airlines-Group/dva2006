@@ -43,7 +43,7 @@
 </tr>
 </c:if>
 <view:row entry="${channel}">
- <td><el:cmd url="ts2channel" op="edit" linkID="${channel.ID}" className="pri bld">${channel.name}</el:cmd></td>
+ <td><el:cmd url="ts2channel" op="edit" linkID="0x${channel.ID}" className="pri bld">${channel.name}</el:cmd></td>
  <td>${channel.topic}</td>
  <td class="sec bld"><fmt:int value="${channel.maxUsers}" /></td>
  <td colspan="2" class="left small">${channel.description}</td>
