@@ -153,9 +153,8 @@ public class MiscFunctions {
     * Formats a database bean ID into hex, or as an empty string if zero or null.
     * @param b the database bean
     * @return the ID as hex if non-zero, otherwise an empty string
-    * @see DatabaseBean#getHexID()
     */
    public static String formatZeroID(DatabaseBean b) {
-	   return (b == null) ? "" : b.getHexID();
+	   return (b == null) || (b.getID() == 0) ? "" : ("0x" + String.valueOf(b.getID()));
    }
 }

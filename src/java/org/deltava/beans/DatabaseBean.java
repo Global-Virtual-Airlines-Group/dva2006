@@ -1,7 +1,6 @@
 // Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
-import org.deltava.util.StringUtils;
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -21,14 +20,6 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
  	 */
     public int getID() {
         return _id;
-    }
-    
-    /**
-     * Returns the database ID of this bean, formatted to a hexadecimal string.
-     * @return the hexadecimal formatted database ID, or an empty string if zero
-     */
-    public String getHexID() {
-    	return (_id == 0) ? "" : StringUtils.formatHex(_id);
     }
     
     /**

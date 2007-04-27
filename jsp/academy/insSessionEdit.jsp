@@ -88,7 +88,7 @@ return true;
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPDATE INSTRUCTION SESSION" /></td>
 </tr>
 </el:table>
-<el:text name="course" type="hidden" value="${course.hexID}" />
+<el:text name="course" type="hidden" value="${fn:hex(course.ID)}" />
 </el:form>
 <br />
 <content:copyright />
