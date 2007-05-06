@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import javax.servlet.jsp.JspException;
@@ -13,6 +13,12 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 public class CalendarEntrySpacerTag extends TagSupport {
 	
+	/**
+	 * Renders the spacer entry if the parent tag has more entries for the current day.
+	 * @return TagSupport#EVAL_BODY_INCLUDE if more entries, otherwise TagSupport#SKIP_BODY
+	 * @throws JspException if not included in a {@link CalendarEntryTag}
+	 * @see CalendarEntryTag#hasMoreEntries()
+	 */
 	public int doStartTag() throws JspException {
 
 		// Get the parent tag

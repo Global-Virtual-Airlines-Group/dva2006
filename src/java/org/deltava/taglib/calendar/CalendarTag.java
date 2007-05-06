@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 abstract class CalendarTag extends TagSupport implements IterationTag {
 	
 	private final DateFormat _df = new SimpleDateFormat("MM/dd/yyyy");
-	private static final List<String> RESERVED_PARAMS = Arrays.asList(new String[] {"startDate"});
+	private static final Collection<String> RESERVED_PARAMS = Collections.singleton("startDate");
 
 	protected JspWriter _out;
 	
@@ -51,14 +51,19 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 	private boolean _showScrollTags = true;
 	
 	protected XMLRenderer _table;
+	protected XMLRenderer _day;
 	
 	protected int _cellPad = SystemData.getInt("html.table.spacing", 0);
 	protected int _cellSpace = SystemData.getInt("html.table.padding", 0);
+	
+	private int _intervalType = Calendar.DATE;
+	private int _intervalLength = 7;
 
 	public abstract void setStartDate(Date dt);
 	
 	/**
-	 * Calculcates the end date based on the start date and a particular interval amount
+	 * Calculcates the end date based on the start date and a particular interval amount. <i>This must be called
+	 * by a subclass for the forward/backward links to work properly</i>.
 	 * @param intervalType the interval type (use Calendar constants)
 	 * @param amount the size of the interval
 	 * @see java.util.Calendar
@@ -67,6 +72,8 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		Calendar cld = CalendarUtils.getInstance(_startDate);
 		cld.add(intervalType, amount);
 		_endDate = cld.getTime();
+		_intervalType = intervalType;
+		_intervalLength = amount;
 	}
 	
 	/**
@@ -289,26 +296,38 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		return EVAL_BODY_INCLUDE;
 	}
 	
+	/**
+	 * Ends the Calendar tag by adding the scroll forward/backward link row. Subclasses are responsible
+	 * for closing the current table row and closing the table.
+	 * @return EVAL_PAGE always
+	 * @throws JspException if an I/O error occurs  
+	 */
 	@SuppressWarnings("unchecked")
 	public int doEndTag() throws JspException {
 		if (!_showScrollTags)
 			return EVAL_PAGE;
 		
-    	// Get the URL parameters and the forward/backward start dates
+    	// Get the URL parameters
         Map params = new HashMap<String, Object>(pageContext.getRequest().getParameterMap());
         params.keySet().removeAll(RESERVED_PARAMS);
-        Date bd = CalendarUtils.adjust(_startDate, (Math.abs(_endDate.getTime() - _startDate.getTime()) / 86400000) * -1);
-        Date fd = CalendarUtils.adjust(_startDate, Math.abs(_endDate.getTime() - _startDate.getTime()) / 86400000);
+        
+        // Calculate the next page startDate
+        Calendar fd = CalendarUtils.getInstance(_startDate);
+        fd.add(_intervalType, _intervalLength);
+        
+        // Calculate the previous page startDate
+        Calendar bd = CalendarUtils.getInstance(_startDate);
+        bd.add(_intervalType, _intervalLength * -1);
         
         try {
         	// Build the backward URL
         	XMLRenderer backURL = new XMLRenderer("a");
-        	params.put("startDate", new String[] { _df.format(bd) } );
+        	params.put("startDate", new String[] { _df.format(bd.getTime()) } );
         	backURL.setAttribute("href", buildURL(params));
 
         	// Build the forward URL
         	XMLRenderer fwdURL = new XMLRenderer("a");
-        	params.put("startDate", new String[] { _df.format(fd) } );
+        	params.put("startDate", new String[] { _df.format(fd.getTime()) } );
         	fwdURL.setAttribute("href", buildURL(params));
         	
         	// Render the scroll tag bar row
@@ -365,6 +384,8 @@ abstract class CalendarTag extends TagSupport implements IterationTag {
 		_dayBarClass = null;
 		_contentClass = null;
 		_currentDateAttr = null;
+		_intervalType = Calendar.DATE;
+		_intervalLength = 7;
 		_entries.clear();
 	}
 }

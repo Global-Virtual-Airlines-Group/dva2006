@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -20,14 +20,27 @@ public class CalendarEntryTag extends TagSupport implements IterationTag {
 	private String _attrName;
 	private Iterator<CalendarEntry> _entries;
 	
+	/**
+	 * Sets the name of the request attribute to save the Calendar Entry into.
+	 * @param attrName the request attribute name
+	 */
 	public void setName(String attrName) {
 		_attrName = attrName;
 	}
 	
+	/**
+	 * Returns whether there are further Calendar entries to display.
+	 * @return TRUE if there are more entries, otherwise FALSE
+	 */
 	boolean hasMoreEntries() {
 		return _entries.hasNext();
 	}
 	
+	/**
+	 * Renders the entries for the current date and saves the current entry into the request.
+	 * @return TagSupport#SKIP_BODY if no entries for today, otherwise TagSupport#EVAL_BODY_INCLUDE
+	 * @throws JspException if not contained within a {@link CalendarTag}
+	 */
 	public int doStartTag() throws JspException {
 		
 		// Get the parent tag
@@ -46,6 +59,11 @@ public class CalendarEntryTag extends TagSupport implements IterationTag {
 		return EVAL_BODY_INCLUDE;
 	}
 	
+	/**
+	 * Checks if there are further entries for the current date, and saves the next entry into the request.
+	 * @return TagSupport#SKIP_BODY if no more entries for today, otherwise TagSupport#EVAL_BODY_INCLUDE
+	 * @throws JspException never
+	 */
 	public int doAfterBody() throws JspException {
 		if (!_entries.hasNext())
 			return SKIP_BODY;

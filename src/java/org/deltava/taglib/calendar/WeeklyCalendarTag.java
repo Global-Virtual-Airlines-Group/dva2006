@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -18,8 +18,6 @@ import org.deltava.util.CalendarUtils;
  */
 
 public class WeeklyCalendarTag extends CalendarTag {
-
-	private XMLRenderer _day;
 
 	/**
 	 * Sets the starting date for this calendar tag. This is overriden to be the first day of

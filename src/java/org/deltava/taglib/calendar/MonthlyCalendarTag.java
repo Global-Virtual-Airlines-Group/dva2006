@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.calendar;
 
 import java.util.*;
@@ -19,8 +19,6 @@ import org.deltava.util.*;
 
 public class MonthlyCalendarTag extends CalendarTag {
 	
-	private XMLRenderer _day;
-
 	/**
 	 * Sets the starting date for this monthly calendar tag. This is overriden to be the first
 	 * day of the month.
@@ -132,7 +130,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	/**
 	 * Executed after the end of each day. The day table cell is closed and the superclass tag is called
 	 * to determine if further records are required.
-	 * @return TagSupport.EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport.SKIP_BODY
+	 * @return TagSupport#EVAL_BODY_AGAIN if not at end of month, otherwise TagSupport#SKIP_BODY
 	 * @throws JspException never
 	 */
 	public int doAfterBody() throws JspException {
@@ -154,7 +152,7 @@ public class MonthlyCalendarTag extends CalendarTag {
 	
 	/**
 	 * Closes the calendar table.
-	 * @return TagSupport.EVAL_PAGE always
+	 * @return TagSupport#EVAL_PAGE always
 	 * @throws JspException if an I/O error occurs
 	 */
 	public int doEndTag() throws JspException {
