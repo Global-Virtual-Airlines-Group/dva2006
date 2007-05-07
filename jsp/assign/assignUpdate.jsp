@@ -63,7 +63,7 @@ This <content:airline /> Flight Assigment has been successfully saved in the dat
 </c:otherwise>
 </c:choose>
 <br />
-To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" linkID="0x${pilot.ID}">Click Here</el:cmd>.<br />
+To return to your Log Book, <el:cmd className="sec bld" url="logbook" op="log" link="${pilot}">Click Here</el:cmd>.<br />
 To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />

@@ -27,7 +27,7 @@ This ${checkRide.equipmentType} for ${pilot.name} has been successfully scored. 
 message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring
 of this Check Ride.<br />
 <br />
-To view the Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}">Click here</el:cmd>.<br />
+To view the Pilot Profile, <el:cmd url="profile" link="${pilot}">Click here</el:cmd>.<br />
 To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isAssign}">

@@ -5,7 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Approach Chart - ${chart.name}</TITLE>
+<title><content:airline /> Approach Chart - ${chart.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 <style type="text/css">
@@ -28,7 +28,7 @@ top: -5px;
 </head>
 <content:copyright visible="false" />
 <body>
-<span class="noPrint"><a href="javascript:window.print()">Print Chart</a><br></span>
+<span class="noPrint"><a href="javascript:window.print()">Print Chart</a><br /></span>
 <span class="CHART"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${chart.ID}" border="0" /></span>
 <div class="noPrint"><content:copyright /></div>
 </body>

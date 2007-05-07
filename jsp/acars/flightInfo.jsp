@@ -109,7 +109,7 @@
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="530" /></div>
+ <td class="data" colspan="4"><map:div ID="googleMap" x="100%" y="530" /></td>
 </tr>
 </c:if>
 </el:table>
@@ -118,7 +118,7 @@
 <content:filter roles="Admin"><c:if test="${empty pirep}">
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:cmdbutton url="acarsdelf" linkID="0x${info.ID}" label="DELETE FLIGHT INFORMATION ENTRY" /></td>
+ <td><el:cmdbutton url="acarsdelf" link="${info}" label="DELETE FLIGHT INFORMATION ENTRY" /></td>
 </tr>
 </el:table>
 </c:if></content:filter>

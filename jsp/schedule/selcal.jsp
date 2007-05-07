@@ -71,7 +71,7 @@ return true;
 <c:if test="${!empty sc.reservedOn}">
  <td><fmt:date fmt="d" date="${sc.reservedOn}" /></td>
  <td><fmt:date fmt="d" date="${releaseDate}" /></td>
- <td>${pilot.rank} <el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td>${pilot.rank} <el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
 </c:if>
 <c:if test="${empty sc.reservedOn}">
  <td colspan="3" class="left ter bld caps">SELCAL CODE IS CURRENTLY AVAILABLE</td>

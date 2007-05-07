@@ -89,9 +89,9 @@ ${choice}<br />
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="qprofile" linkID="0x${question.ID}" op="edit" label="EDIT QUESTION" />
+ <td><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" />
 <c:if test="${access.canDelete}">
- <el:cmdbutton url="qpdelete" linkID="0x${question.ID}" label="DELETE QUESTION" />
+ <el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" />
 </c:if>
 </td>
 </tr>

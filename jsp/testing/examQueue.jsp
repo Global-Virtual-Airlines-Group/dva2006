@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Submitted Examinations</title>
@@ -37,8 +38,8 @@
 <c:forEach var="exam" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[exam.pilotID]}" scope="request" />
 <view:row entry="${exam}">
- <td class="pri bld"><el:cmd url="exam" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${exam.pilotID}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="exam" link="${exam}">${exam.name}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" linkID="${fn:hex(exam.pilotID)}">${pilot.name}</el:cmd></td>
  <td>${pilot.rank}, ${pilot.equipmentType}</td>
  <td class="sec"><fmt:date t="HH:mm" date="${exam.date}" /></td>
  <td><fmt:int value="${exam.size}" /></td>

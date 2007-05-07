@@ -56,11 +56,11 @@ return true;
 <c:set var="author" value="${pilots[resource.authorID]}" scope="request" />
 <view:row entry="${resource}">
 <c:if test="${rAccess.canEdit}">
- <td><el:cmdbutton url="resource" linkID="0x${resource.ID}" op="edit" label="EDIT" /></td>
+ <td><el:cmdbutton url="resource" link="${resource}" op="edit" label="EDIT" /></td>
 </c:if>
  <td class="small"><fmt:int value="${resource.hits}" /></td>
- <td colspan="${rAccess.canEdit ? '2' : '3'}"><el:cmd url="gotoresource" linkID="0x${resource.ID}" className="pri bld">${resource.URL}</el:cmd></td>
- <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd></td>
+ <td colspan="${rAccess.canEdit ? '2' : '3'}"><el:cmd url="gotoresource" link="${resource}" className="pri bld">${resource.URL}</el:cmd></td>
+ <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd></td>
  <td class="sec"><fmt:date date="${resource.createdOn}" fmt="d" /></td>
 </view:row>
 <view:row entry="${resource}">

@@ -39,7 +39,7 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 This ${exam.name} Pilot Examination for ${pilot.name} has been successfully scored.<c:if test="${!autoScore}"> An e-mail
 message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring of this Examination.</c:if><br />
 <br />
-To view the Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view the Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isDelete}">

@@ -65,7 +65,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <tr>
  <td class="priB"><fmt:int value="${notam.ID}" /></td>
  <td width="10%" class="bld"><fmt:date fmt="d" date="${notam.date}" /></td>
- <td><el:cmd url="notamedit" linkID="0x${notam.ID}"><fmt:text value="${notam.subject}" /></el:cmd></td>
+ <td><el:cmd url="notamedit" link="${notam}"><fmt:text value="${notam.subject}" /></el:cmd></td>
 </tr>
 <c:if test="${notam.isHTML}">
  <td colspan="3" class="left">${notam.body}</td>
@@ -103,7 +103,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:forEach var="con" items="${acarsPool}">
 <c:if test="${!con.userHidden || isHR}">
 <tr>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
 <c:if test="${con.flightID > 0}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
@@ -158,7 +158,7 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <c:forEach var="event" items="${futureEvents}">
 <c:set var="eRoute" value="${fn:first(event.routes)}" scope="request" />
 <tr>
- <td class="pri bld"><el:cmd url="event" linkID="0x${event.ID}"><fmt:text value="${event.name}" /></el:cmd></td>
+ <td class="pri bld"><el:cmd url="event" link="${event}"><fmt:text value="${event.name}" /></el:cmd></td>
  <td class="sec bld">${event.networkName}</td>
  <td class="small bld"><fmt:date t="HH:mm" date="${event.startTime}" /> - <fmt:date t="HH:mm" date="${event.endTime}" /></td>
 <c:if test="${empty eRoute}">

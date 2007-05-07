@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -70,7 +70,7 @@ return true;
 <tr class="title caps">
  <td colspan="5" class="left">SEARCH RESULTS</td>
  <td colspan="4"><c:if test="${access.canCreate}"><el:cmd url="issue" op="edit">NEW ISSUE</el:cmd></c:if>
-<content:filter roles="Developer"><el:cmd url="issues" linkID="0x${pageContext.request.userPrincipal.ID}">MY ISSUES</el:cmd></content:filter></td>
+<content:filter roles="Developer"><el:cmd url="issues" link="${pageContext.request.userPrincipal}">MY ISSUES</el:cmd></content:filter></td>
 </tr>
 <c:if test="${empty results}">
 <tr>
@@ -95,7 +95,7 @@ return true;
 <c:forEach var="issue" items="${results}">
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td class="small"><el:cmd url="issue" linkID="0x${issue.ID}">${issue.subject}</el:cmd></td>
+ <td class="small"><el:cmd url="issue" link="${issue}">${issue.subject}</el:cmd></td>
  <td class="pri bld">${issue.priorityName}</td>
  <td class="bld">${issue.areaName}</td>
  <td class="sec bld">${issue.typeName}</td>

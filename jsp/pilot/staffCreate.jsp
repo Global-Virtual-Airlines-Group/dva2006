@@ -35,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="newstaff.do" linkID="0x${pilot.ID}" method="post" validate="return validate(this)">
+<el:form action="newstaff.do" link="${pilot}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Staff Profile Title Bar -->
 <tr class="title caps">

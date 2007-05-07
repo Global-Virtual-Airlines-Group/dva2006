@@ -56,7 +56,7 @@ return true;
  <td width="10%" class="mid"><el:cmd url="academycalendar" op="7" startDate="${startDate}">ALL SESSIONS</el:cmd></td>
 </c:if>
 <c:if test="${!isMine && !empty user}">
- <td width="10%" class="mid"><el:cmd url="academycalendar" op="7" linkID="0x${user.ID}" startDate="${startDate}">MY SESSIONS</el:cmd></td>
+ <td width="10%" class="mid"><el:cmd url="academycalendar" op="7" link="${user}" startDate="${startDate}">MY SESSIONS</el:cmd></td>
 </c:if>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>
 </tr>
@@ -71,14 +71,14 @@ return true;
 <span class="warn bld caps">${ins.name} IS BUSY</span><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" />
 <c:if test="${busyAccess.canDelete}"><br />
-<el:cmd url="insbusydelete" linkID="0x${ins.ID}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
+<el:cmd url="insbusydelete" link="${ins}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
 </c:if>
 <c:if test="${!fn:isBusyTime(session)}">
 <c:set var="pilot" value="${pilots[session.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[session.instructorID]}" scope="request" />
-<el:cmd url="isession" linkID="0x${session.ID}" className="pri bld">${session.name}</el:cmd><br />
+<el:cmd url="isession" link="${session}" className="pri bld">${session.name}</el:cmd><br />
 <fmt:date fmt="t" t="HH:mm" date="${session.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${session.endTime}" /><br />
-<span class="small"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br />
+<span class="small"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd> (${pilot.pilotCode})</span><br />
 <span class="pri small">${ins.name} ${ins.pilotCode}</span>
 </c:if>
 <calendar:spacer><hr /></calendar:spacer>

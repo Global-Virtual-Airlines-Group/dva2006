@@ -54,7 +54,7 @@ return ${access.canComment || access.canUpdateProgress};
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="coursecomment.do" linkID="0x${course.ID}" method="post" validate="return validate(this)">
+<el:form action="coursecomment.do" link="${course}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="7">FLIGHT ACADEMY COURSE - ${course.name}</td>
@@ -62,7 +62,7 @@ return ${access.canComment || access.canUpdateProgress};
 <tr>
  <td class="label">Pilot</td>
  <td colspan="6" class="data">${pilot.rank} <span class="pri bld">${pilot.name}</span> (${pilot.pilotCode})
- - <el:cmd url="logbook" linkID="0x${pilot.ID}">View Log Book</el:cmd></td>
+ - <el:cmd url="logbook" link="${pilot}">View Log Book</el:cmd></td>
 </tr>
 <tr>
  <td class="label">Stage</td>
@@ -154,7 +154,7 @@ return ${access.canComment || access.canUpdateProgress};
  <td><fmt:date date="${session.date}" fmt="d" default="-" /></td>
  <td class="left small" colspan="3">${session.comments}</td>
  <td class="sec small">${session.statusName}</td>
- <td class="pri bld" colspan="2"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+ <td class="pri bld" colspan="2"><el:cmd url="profile" link="${ins}">${ins.name}</el:cmd></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -175,7 +175,7 @@ return ${access.canComment || access.canUpdateProgress};
 <tr class="mid">
  <td><fmt:date date="${flight.date}" fmt="d" default="-" /></td>
  <td class="left small" colspan="2">${flight.comments}</td>
- <td class="pri bld" colspan="2"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+ <td class="pri bld" colspan="2"><el:cmd url="profile" link="${ins}">${ins.name}</el:cmd></td>
  <td class="sec small">${flight.equipmentType}</td>
  <td><fmt:dec fmt="#0.0" value="${flight.length / 10}" /> hours</td>
 </tr>
@@ -209,33 +209,33 @@ return ${access.canComment || access.canUpdateProgress};
 <tr>
  <td> 
 <c:if test="${access.canStart}">
- <el:cmdbutton ID="EnrollButton" url="coursedispose" linkID="0x${course.ID}" op="start" label="ENROLL STUDENT" />
+ <el:cmdbutton ID="EnrollButton" url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="coursedispose" linkID="0x${course.ID}" op="abandon" label="WITHDRAW" />
+ <el:cmdbutton ID="CancelButton" url="coursedispose" link="${course}" op="abandon" label="WITHDRAW" />
 </c:if>
 <c:if test="${access.canRestart}">
- <el:cmdbutton ID="ReturnButton" url="coursedispose" linkID="0x${course.ID}" op="restart" label="RETURN" />
+ <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />
 </c:if>
 <c:if test="${access.canApprove && isComplete}">
- <el:cmdbutton ID="ApproveButton" url="coursedispose" linkID="0x${course.ID}" op="complete" label="AWARD CERTIFICATION" />
+ <el:cmdbutton ID="ApproveButton" url="coursedispose" link="${course}" op="complete" label="AWARD CERTIFICATION" />
 </c:if>
 <c:if test="${access.canAssign}">
- <el:cmdbutton ID="AssignButton" url="courseassign" post="true" linkID="0x${course.ID}" label="ASSIGN INSTRUCTOR" />
+ <el:cmdbutton ID="AssignButton" url="courseassign" post="true" link="${course}" label="ASSIGN INSTRUCTOR" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canUpdateProgress}">
- <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" linkID="0x${course.ID}" label="UPDATE PROGRESS" />
- <el:cmdbutton ID="RideButton" url="courseride" linkID="0x${course.ID}" label="ASSIGN CHECK RIDE" />
+ <el:cmdbutton ID="ProgressButton" url="courseprogress" post="true" link="${course}" label="UPDATE PROGRESS" />
+ <el:cmdbutton ID="RideButton" url="courseride" link="${course}" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${access.canSchedule}">
  <el:cmdbutton ID="FlightLogButton" url="insflight" linkID="0&amp;courseID=${course.ID}" op="edit" label="LOG FLIGHT" />
  <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0&course=${fn:hex(course.ID)}" label="INSTRUCTION SESSION" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="coursedelete" linkID="0x${course.ID}" label="DELETE COURSE" />
+ <el:cmdbutton ID="DeleteButton" url="coursedelete" link="${course}" label="DELETE COURSE" />
 </c:if>
  </td>
 </tr>

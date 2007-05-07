@@ -35,7 +35,7 @@ To return to the list of empty ACARS Flight Log entries, <el:cmd url="acarsempty
 This ACARS Flight has an associated Flight Report, and therefore cannot be removed from the ACARS 
 log database.<br />
 <br />
-To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${conDelete}">
 <div class="updateHdr">ACARS Connection Log Entry Removed</div>
@@ -54,7 +54,7 @@ The Flight Information log entries must be removed first.<br />
 To return to the list of empty ACARS Connection Log entries, <el:cmd url="acarsempty" linkID="con" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${!empty info && !infoDelete}">
-To view this flight's ACARS log entry, <el:cmd url="acarsinfo" linkID="0x${info.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view this flight's ACARS log entry, <el:cmd url="acarsinfo" link="${info}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${errorDelete}">
 <div class="updateHdr">ACARS Client Error Log Entry Removed</div>

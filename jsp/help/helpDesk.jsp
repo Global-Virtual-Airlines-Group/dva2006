@@ -80,11 +80,11 @@ one of our volunteer staff will answer it soon.</td>
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td class="pri bld"><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld">${issue.subject}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd> on
+ <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on
  <fmt:date date="${issue.createdOn}" /></td>
- <td><el:cmd url="profile" linkID="0x${assignee.ID}" className="sec bld">${assignee.name}</el:cmd></td>
+ <td><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>
@@ -101,11 +101,11 @@ one of our volunteer staff will answer it soon.</td>
 <c:set var="assignee" value="${pilots[issue.assignedTo]}" scope="request" />
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td class="pri bld"><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld">${issue.subject}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="hdissue" link="${issue}" className="pri bld">${issue.subject}</el:cmd></td>
  <td class="sec bld small">${issue.statusName}</td>
- <td><el:cmd url="profile" linkID="0x${author.ID}" className="bld">${author.name}</el:cmd> on
+ <td><el:cmd url="profile" link="${author}" className="bld">${author.name}</el:cmd> on
  <fmt:date date="${issue.createdOn}" /></td>
- <td class="sec bld"><el:cmd url="profile" linkID="0x${assignee.ID}" className="sec bld">${assignee.name}</el:cmd></td>
+ <td class="sec bld"><el:cmd url="profile" link="${assignee}" className="sec bld">${assignee.name}</el:cmd></td>
  <td><fmt:int value="${issue.commentCount}" /></td>
 </view:row>
 </c:forEach>

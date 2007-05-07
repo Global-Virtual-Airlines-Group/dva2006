@@ -46,7 +46,7 @@
 <c:forEach var="pilot" items="${members}">
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="pri">${pilot.rank}</td>
  <td class="bld">${pilot.equipmentType}</td>
  <td class="small"><a href="mailto:${pilot.email}">${pilot.email}</a></td>

@@ -63,8 +63,8 @@ by ${pilot.name}</td>
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="insflight" linkID="0x${flight.ID}" op="edit" label="EDIT FLIGHT REPORT" />
- <el:cmdbutton url="profile" linkID="0x${pilot.ID}" label="VIEW PILOT PROFILE" /></td>
+ <td><el:cmdbutton url="insflight" link="${flight}" op="edit" label="EDIT FLIGHT REPORT" />
+ <el:cmdbutton url="profile" link="${pilot}" label="VIEW PILOT PROFILE" /></td>
 </tr>
 </el:table>
 <content:copyright />

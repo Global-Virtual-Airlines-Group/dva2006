@@ -34,7 +34,7 @@ The following <content:airline /> Pilots have had their equipment type ratings u
 <br />
 <c:forEach var="pilot" items="${updatedPilots}">
 <c:set var="ratings" value="${updatedRatings[pilot]}" scope="request" />
-${pilot.rank} <el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd> - 
+${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> - 
 added <fmt:list value="${ratings}" delim=", " />.<br />
 </c:forEach>
 <br />

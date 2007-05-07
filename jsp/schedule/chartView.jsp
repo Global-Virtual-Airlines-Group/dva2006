@@ -36,16 +36,16 @@ return true;
  <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void setChart(this)" /></td>
 </tr>
 <tr>
- <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fn:hex(chart.ID)}" />.${fn:lower(chart.imgTypeName)}" border="0" /></td>
+ <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fn:hex(chart.ID)}.${fn:lower(chart.imgTypeName)}" border="0" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="chart" linkID="0x${chart.ID}" op="print" label="VIEW PRINTER-FRIENDLY PAGE" />
+ <td><el:cmdbutton url="chart" link="${chart}" op="print" label="VIEW PRINTER-FRIENDLY PAGE" />
 <c:if test="${access.canEdit}">
-<el:cmdbutton url="chart" linkID="0x${chart.ID}" op="edit" label="EDIT CHART" />
+<el:cmdbutton url="chart" link="${chart}" op="edit" label="EDIT CHART" />
 </c:if>
  </td> 
 </tr>

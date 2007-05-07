@@ -43,7 +43,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="newsdelete" linkID="0x${entry.ID}" label="DELETE SYSTEM NEWS ENTRY" />
+<el:cmdbutton url="newsdelete" link="${entry}" label="DELETE SYSTEM NEWS ENTRY" />
 </c:if>
  </td>
 </tr>

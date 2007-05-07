@@ -37,8 +37,8 @@
 <c:forEach var="txreq" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[txreq.ID]}" scope="request" />
 <view:row entry="${txreq}">
- <td class="bld"><el:cmd url="txreqview" linkID="0x${txreq.ID}">${pilot.name}</el:cmd></td>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.pilotCode}</el:cmd></td>
+ <td class="bld"><el:cmd url="txreqview" link="${txreq}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.pilotCode}</el:cmd></td>
  <td class="sec bld">${pilot.rank}</td>
  <td>${pilot.equipmentType}</td>
  <td class="pri bld">${txreq.equipmentType}</td>

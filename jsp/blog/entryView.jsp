@@ -39,7 +39,7 @@ return ${access.canComment};
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="blogcomment.do" method="post" linkID="0x${entry.ID}" validate="return validate(this)">
+<el:form action="blogcomment.do" method="post" link="${entry}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">${entry.title} - <fmt:date fmt="d" date="${entry.date}" /></td>
@@ -58,7 +58,7 @@ return ${access.canComment};
 <c:if test="${access.canDelete}">
 <hr />
 <span class="small">Posted from ${comment.remoteAddr} (${comment.remoteHost})</span>
- <el:cmd url="blogdelete" linkID="0x${entry.ID}" op="${fn:hex(comment.date.time)}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
+ <el:cmd url="blogdelete" link="${entry}" op="${fn:hex(comment.date.time)}" className="pri small">DELETE COMMENT</el:cmd></c:if></td>
 </tr>
 </c:forEach>
 <c:if test="${access.canComment}">
@@ -94,10 +94,10 @@ return ${access.canComment};
  <el:button ID="CommentButton" type="submit" className="BUTTON" label="SUBMIT COMMENT" />
 </c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" url="blogentry" op="edit" linkID="0x${entry.ID}" label="EDIT JOURNAL ENTRY" />
+ <el:cmdbutton ID="EditButton" url="blogentry" op="edit" link="${entry}" label="EDIT JOURNAL ENTRY" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="blogdelete" op="true" linkID="0x${entry.ID}" label="DELETE ENTRY" />
+ <el:cmdbutton ID="DeleteButton" url="blogdelete" op="true" link="${entry}" label="DELETE ENTRY" />
 </c:if>
 </td></tr>
 </el:table>

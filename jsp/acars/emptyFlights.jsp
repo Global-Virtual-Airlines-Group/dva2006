@@ -79,7 +79,7 @@ return true;
 <c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
 <view:row entry="${info}">
- <td class="pri bld"><el:cmd url="acarsinfo" linkID="0x${flight.ID}"><fmt:int value="${flight.ID}" /></el:cmd></td>
+ <td class="pri bld"><el:cmd url="acarsinfo" link="${flight}"><fmt:int value="${flight.ID}" /></el:cmd></td>
  <td><el:box name="flightID" idx="*" value="${flight.ID}" label="" /></td>
  <td class="small"><fmt:date t="HH:mm" date="${flight.startTime}" />
 <c:if test="${!empty flight.endTime}">

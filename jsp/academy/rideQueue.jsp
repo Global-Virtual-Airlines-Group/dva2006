@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Academy Check Rides</title>
@@ -42,10 +43,10 @@
 <c:set var="course" value="${courses[ride.courseID]}" scope="request" />
 <c:set var="pilot" value="${pilots[ride.pilotID]}" scope="request" />
 <tr>
- <td><el:cmd url="checkride" linkID="0x${ride.ID}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
- <td><el:cmdbutton url="crview" linkID="0x${ride.flightID}" label="SCORE" /></td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd></td>
- <td><el:cmd url="course" linkID="0x${course.ID}">${course.name}</el:cmd></td>
+ <td><el:cmd url="checkride" link="${ride}"><fmt:date date="${ride.submittedOn}" fmt="d" /></el:cmd></td>
+ <td><el:cmdbutton url="crview" linkID="${fn:hex(ride.flightID)}" label="SCORE" /></td>
+ <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="course" link="${course}">${course.name}</el:cmd></td>
  <td class="sec">${ride.equipmentType}</td>
  <td class="small left">${ride.comments}</td>
 </tr>

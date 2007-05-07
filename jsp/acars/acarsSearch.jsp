@@ -126,7 +126,7 @@ return false;
 <view:row entry="${pirep}">
  <td class="title"><fmt:date date="${pirep.date}" fmt="d" default="-" /></td>
  <td><el:box name="doMap" value="${fn:ACARS_ID(pirep)}" idx="*" label="" /></td>
- <td><el:cmd className="bld" url="pirep" linkID="0x${pirep.ID}">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
  ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
  <td class="sec">${pirep.equipmentType}</td>

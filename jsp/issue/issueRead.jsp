@@ -43,7 +43,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="issuecomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
+<el:form method="post" action="issuecomment.do" link="${issue}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Title Bar -->
 <tr class="title">
@@ -124,7 +124,7 @@ return true;
 <tr>
  <td>
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" linkID="0x${issue.ID}" />
+ <el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="issue" op="edit" link="${issue}" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />

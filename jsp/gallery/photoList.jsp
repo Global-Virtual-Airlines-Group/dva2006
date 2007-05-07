@@ -39,9 +39,9 @@
 <c:forEach var="img" items="${viewContext.results}">
 <c:set var="author" value="${pilots[img.authorID]}" scope="request" />
 <tr>
- <td class="pri bld"><el:cmd url="image" linkID="0x${img.ID}">${img.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="image" link="${img}">${img.name}</el:cmd></td>
  <td class="small"><span class="sec bld">${img.width}x${img.height}</span>, <fmt:int value="${img.size / 1024}" />K</td>
- <td class="bld"><el:cmd url="profile" linkID="0x${author.ID}">${author.name}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${author}">${author.name}</el:cmd></td>
 <c:if test="${img.voteCount == 0}">
  <td colspan="2" class="small">NOT YET RATED</td>
 </c:if>

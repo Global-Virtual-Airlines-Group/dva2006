@@ -41,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="examscore.do" linkID="0x${exam.ID}" validate="return validate(this)">
+<el:form method="post" action="examscore.do" link="${exam}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Exam Title Bar -->
 <tr class="title caps">

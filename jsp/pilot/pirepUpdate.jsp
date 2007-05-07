@@ -29,7 +29,7 @@ This <content:airline /> Flight Report has been successfully and saved in the da
 <br />
 <span class="err">Please note that you must <u>SUBMIT</u> a Flight Report if you want the flight 
 hours and flight leg to be counted here at <content:airline />. To Submit this Flight Report for 
-approval,</span> <el:cmd className="sec bld" url="submit" linkID="0x${pirep.ID}">Click Here</el:cmd>.<br />
+approval,</span> <el:cmd className="sec bld" url="submit" link="${pirep}">Click Here</el:cmd>.<br />
 </c:if>
 </c:if>
 <c:if test="${isSubmitted}">
@@ -70,7 +70,7 @@ is <fmt:int value="${pirep.distance}" /> miles, and appears to exceed the maximu
 This may cause a delay in your Flight Report being approved.<br />
 </c:if>
 <br />
-To return to your log book, <el:cmd url="logbook" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To return to your log book, <el:cmd url="logbook" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isApprove}">
 <div class="updateHdr">Flight Report Approved</div>
@@ -132,7 +132,7 @@ To return to the <content:airline /> submitted Flight Report queue, <el:cmd url=
 To return to the <content:airline /> Flight Academy Check Ride queue, <el:cmd url="academyridequeue" className="sec bld">Click Here</el:cmd>.<br />
 </c:if></content:filter>
 <c:if test="${!isDeleted}">
-To view this Flight Report, <el:cmd url="pirep" linkID="0x${pirep.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
