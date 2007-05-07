@@ -60,15 +60,24 @@ public class RegisterCommand extends AbstractCommand {
 		Collection<Airport> apSet = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		apSet.addAll(airports.values());
 		ctx.setAttribute("airports", apSet, REQUEST);
+		
+		// Check if we ignore the fact that the airline is full
+		boolean ignoreFull = "force".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// If we're just doing a get, then redirect to the JSP
 		if (ctx.getParameter("firstName") == null) {
 			try {
 				Connection con = ctx.getConnection();
 				
+				// Check our size - if we're overriding then ignore this
+				GetStatistics stdao = new GetStatistics(con);
+				boolean isFull = (stdao.getActivePilots(SystemData.get("airline.db")) >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
+				
 				// Load manuals to display
-				GetDocuments docdao = new GetDocuments(con);
-				ctx.setAttribute("manuals", docdao.getRegistrationManuals(), REQUEST);
+				if ((!isFull) || ignoreFull) {
+					GetDocuments docdao = new GetDocuments(con);
+					ctx.setAttribute("manuals", docdao.getRegistrationManuals(), REQUEST);
+				}
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -78,7 +87,7 @@ public class RegisterCommand extends AbstractCommand {
 			// Save FS Versions
 			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 			
-			// Forward to the JSP
+			// TODO Forward to the JSP - redirect to seperate page if we're full
 			result.setURL("/jsp/register/register.jsp");
 			result.setSuccess(true);
 			return;

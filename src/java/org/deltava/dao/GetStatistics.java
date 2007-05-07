@@ -145,6 +145,37 @@ public class GetStatistics extends DAO implements CachingDAO {
 	}
 	
 	/**
+	 * Returns the number of active Pilots in an Airline.
+	 * @param dbName the database name
+	 * @return the number of Active/On Leave pilots
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int getActivePilots(String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(*) FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PILOTS WHERE ((STATUS=?) OR (STATUS=?))");
+		
+		try {
+			prepareStatementWithoutLimits(sqlBuf.toString());
+			_ps.setInt(1, Pilot.ACTIVE);
+			_ps.setInt(2, Pilot.ON_LEAVE);
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			int result = rs.next() ? rs.getInt(1) : 0;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns membership data by percentiles.
 	 * @param splitInto the number of segments to divide into
 	 * @return a Map of percentile and joining date.
