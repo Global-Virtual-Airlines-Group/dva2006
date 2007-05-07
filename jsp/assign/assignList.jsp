@@ -72,17 +72,17 @@ return true;
 <td>
 <c:if test="${!access.canReserve && !access.canRelease && !access.canDelete}">&nbsp;</c:if>
 <c:if test="${access.canReserve}">
-<el:cmdbutton url="assignreserve" linkID="0x${assign.ID}" label="RESERVE" />
+<el:cmdbutton url="assignreserve" link="${assign}" label="RESERVE" />
 </c:if>
 <c:if test="${access.canRelease}">
-<el:cmdbutton url="assignrelease" linkID="0x${assign.ID}" label="RELEASE" />
+<el:cmdbutton url="assignrelease" link="${assign}" label="RELEASE" />
 </c:if>
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="assignDelete" linkID="0x${assign.ID}" label="DELETE" />
+<el:cmdbutton url="assignDelete" link="${assign}" label="DELETE" />
 </c:if>
 </td>
 <c:if test="${!empty pilot}">
- <td class="pri bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
 </c:if>
 <c:if test="${empty pilot}">
  <td class="pri bld">NOT ASSIGNED</td>

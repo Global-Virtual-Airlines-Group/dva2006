@@ -29,7 +29,7 @@ e-mail address supplied is validated.<br />
 ${pilot.firstName}'s e-mail address is already invalid, no additional action has been taken.<br />
 </c:if>
 <br />
-To view this Pilot's profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">click here</el:cmd>.<br />
+To view this Pilot's profile, <el:cmd url="profile" link="${pilot}" className="sec bld">click here</el:cmd>.<br />
 </c:if>
 <c:if test="${addrUpdate}">
 <div class="updateHdr">E-Mail Address Updated</div>

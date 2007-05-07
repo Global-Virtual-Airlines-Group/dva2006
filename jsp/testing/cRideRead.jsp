@@ -38,14 +38,14 @@
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> 
-<el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+<el:cmdbutton url="crview" linkID="${fn:hex(checkRide.flightID)}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
 <tr>
  <td class="label">Flight Academy Course</td>
  <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
- <el:cmdbutton url="course" linkID="0x${course.ID}" label="VIEW COURSE" /></td>
+ <el:cmdbutton url="course" link="${course}" label="VIEW COURSE" /></td>
 </tr>
 </c:if>
 <tr>
@@ -95,10 +95,10 @@
 <tr>
  <td>&nbsp;
 <c:if test="${!fn:pending(checkRide) && access.canEdit}">
-<el:cmdbutton url="checkride" linkID="0x${checkRide.ID}" op="edit" label="RESCORE EXAMINATION" />
+<el:cmdbutton url="checkride" link="${checkRide}" op="edit" label="RESCORE EXAMINATION" />
 </c:if> 
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
+<el:cmdbutton url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
  </td>
 </tr>

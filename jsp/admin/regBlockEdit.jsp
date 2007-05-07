@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><c:if test="${empty block}">New </c:if><content:airline /> Registration Block Entry</title>
@@ -33,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="regblock.do" linkID="${fn:dbID(block)}" op="save" validate="return validate(this)">
+<el:form method="post" action="regblock.do" link="${block}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">REGISTRATION BLACKLIST ENTRY</td>
@@ -67,7 +66,7 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SAVE ENTRY" />
-&nbsp;<el:cmdbutton ID="DeleteButton" url="regblockdelete" linkID="0x${block.ID}" label="DELETE ENTRY" /></td>
+&nbsp;<el:cmdbutton ID="DeleteButton" url="regblockdelete" link="${block}" label="DELETE ENTRY" /></td>
 </tr>
 </el:table>
 </el:form>

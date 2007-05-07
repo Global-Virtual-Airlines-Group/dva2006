@@ -56,7 +56,7 @@ return true;
  <td width="20%" class="mid"><el:cmd url="busycalendar" op="7" startDate="${startDate}">ALL INSTRUCTORS</el:cmd></td>
 </c:if>
 <c:if test="${!isMine && !empty user}">
- <td width="20%" class="mid"><el:cmd url="busycalendar" op="7" linkID="0x${user.ID}" startDate="${startDate}">MY BUSY TIME</el:cmd></td>
+ <td width="20%" class="mid"><el:cmd url="busycalendar" op="7" link="${user}" startDate="${startDate}">MY BUSY TIME</el:cmd></td>
 </c:if>
  <td class="right">CALENDAR TYPE <el:combo name="op" size="1" idx="*" options="${typeOptions}" value="7" onChange="void switchType(this)" /></td>
 </tr>
@@ -70,7 +70,7 @@ return true;
 <span class="warn bld caps">${ins.name} IS BUSY</span><br />
 <fmt:date fmt="t" t="HH:mm" date="${busy.startTime}" /> - <fmt:date fmt="t" t="HH:mm" date="${busy.endTime}" />
 <c:if test="${busyAccess.canDelete}"><br />
-<el:cmd url="insbusydelete" linkID="0x${ins.ID}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
+<el:cmd url="insbusydelete" link="${ins}" op="${fn:dateFmt(busy.startTime, 'MMddyyyyHHmm')}" className="pri small bld">DELETE</el:cmd></c:if>
 <calendar:spacer><hr /></calendar:spacer>
 </calendar:entry>
 <calendar:empty>-</calendar:empty>

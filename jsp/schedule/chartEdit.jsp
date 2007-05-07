@@ -36,7 +36,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="chart.do" method="post" linkID="0x${chart.ID}" op="save" validate="return validate(this)">
+<el:form action="chart.do" method="post" link="${chart}" op="save" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
 <c:if test="${!empty chart}">

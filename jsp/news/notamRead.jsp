@@ -51,7 +51,7 @@
 <tr>
  <td>&nbsp;
 <c:if test="${access.canDelete}">
-<el:cmdbutton url="newsdelete" op="NOTAM" linkID="0x${entry.ID}" label="DELETE NOTAM" />
+<el:cmdbutton url="newsdelete" op="NOTAM" link="${entry}" label="DELETE NOTAM" />
 </c:if>
  </td>
 </tr>

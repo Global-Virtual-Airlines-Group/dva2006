@@ -33,7 +33,7 @@ ${pilot.name} has been deleted.<br />
 You have requested re-enrollment in the <content:airline /> Flight Academy course <span class="pri bld">${course.name}</span>. A Flight
 Academy Instructor should be in contact with you soon about your request.<br />
 <br />
-To view this Course, <el:cmd url="course" linkID="0x${course.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view this Course, <el:cmd url="course" link="${course}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isAbandoned}">
 <!-- Flight Academy Course Abandoned -->
@@ -49,7 +49,7 @@ ${pilot.name} has successfully completed the <content:airline /> Flight Academy
 course <span class="pri bld">${course.name}</span>, and has been awarded the <b>${course.name}</b> 
 Certification. An e-mail message has been sent to ${pilot.rank} ${pilot.lastName}.<br />
 <br />
-To view the Pilot profile, <el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">Click Here</el:cmd>.<br />
+To view the Pilot profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isPending}">
 <!-- Flight Academy Course Enrollment Pending -->

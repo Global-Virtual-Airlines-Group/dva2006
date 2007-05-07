@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Duplicate Pilot Search</title>
@@ -103,14 +102,14 @@ return false;
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${results}">
 <view:row entry="${pilot}">
- <td><el:box name="sourceID" idx="*" value="${fn:hex(pilot.ID)}" label="" /></td>
+ <td><el:box name="sourceID" idx="*" value="${pilot.hexID}" label="" /></td>
  <td class="bld">${pilot.pilotCode}</td>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="small">${pilot.rank}, ${pilot.equipmentType}</td>
  <td><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
 <c:if test="${pilot.legs > 0}">
- <td><el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:int value="${pilot.legs}" /> legs</el:cmd>, 
-<el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:dec value="${pilot.hours}" /> hours</el:cmd></td>
+ <td><el:cmd url="logbook" op="log" link="${pilot}"><fmt:int value="${pilot.legs}" /> legs</el:cmd>, 
+<el:cmd url="logbook" op="log" link="${pilot}"><fmt:dec value="${pilot.hours}" /> hours</el:cmd></td>
 </c:if>
 <c:if test="${pilot.legs == 0}">
  <td class="bld">NO FLIGHTS LOGGED</td>

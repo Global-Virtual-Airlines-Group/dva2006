@@ -52,7 +52,7 @@ return true;
 <c:set var="formAction" value="event.do" scope="request" />
 <c:set var="formValidate" value="return false" scope="request" />
 </c:if>
-<el:form action="${formAction}" method="post" linkID="0x${event.ID}" validate="${formValidate}">
+<el:form action="${formAction}" method="post" link="${event}" validate="${formValidate}">
 <el:table className="form view" pad="default" space="default">
 <tr class="title caps">
  <td colspan="6" class="left">${event.name} - <fmt:date date="${event.startTime}" d="EEEE MMMM dd yyyy" t="HH:mm" /> -
@@ -117,7 +117,7 @@ return true;
 <c:forEach var="chart" items="${event.charts}">
 <c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="request" />
 <view:row entry="${chart}">
- <td colspan="2" class="pri bld"><el:cmd url="chart" linkID="0x${chart.ID}">${chart.name}</el:cmd></td>
+ <td colspan="2" class="pri bld"><el:cmd url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
  <td>${chart.imgTypeName}</td>
  <td class="sec">${chart.typeName}</td>
@@ -170,7 +170,7 @@ return true;
 <c:set var="sa" value="${saAccess[signup.pilotID]}" scope="request" />
 <tr class="mid">
 <c:if test="${sa.canRelease}">
- <td><el:cmdbutton url="eventrelease" linkID="0x${event.ID}" op="${fn:hex(pilot.ID)}" label="RELEASE" /></td>
+ <td><el:cmdbutton url="eventrelease" link="${event}" op="${fn:hex(pilot.ID)}" label="RELEASE" /></td>
 </c:if>
 <c:if test="${!sa.canRelease}">
  <td class="pri bld">${pilot.pilotCode}</td>
@@ -208,8 +208,8 @@ return true;
 <c:forEach var="pirep" items="${pireps}">
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
- <td class="bld"><el:cmd url="pirep" linkID="0x${pirep.ID}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pirep.equipmentType}</td>
  <td>${pirep.flightCode}</td>
  <td colspan="2">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
@@ -255,17 +255,17 @@ return true;
  <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="SIGN UP FOR THIS EVENT" />
 </c:if>
 <c:if test="${access.canAddPlan}">
- <el:cmdbutton ID="PlanButton" url="eventplan" linkID="0x${event.ID}" label="ADD FLIGHT PLAN" />
- <el:cmdbutton ID="RouteButton" url="eventroutes" linkID="0x${event.ID}" label="UPDATE ROUTES" />
+ <el:cmdbutton ID="PlanButton" url="eventplan" link="${event}" label="ADD FLIGHT PLAN" />
+ <el:cmdbutton ID="RouteButton" url="eventroutes" link="${event}" label="UPDATE ROUTES" />
 </c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" url="eventedit" linkID="0x${event.ID}" label="EDIT EVENT" />
+ <el:cmdbutton ID="EditButton" url="eventedit" link="${event}" label="EDIT EVENT" />
 </c:if>
 <c:if test="${access.canAssignFlights}">
- <el:cmdbutton ID="AssignButton" url="eventassign" linkID="0x${event.ID}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
+ <el:cmdbutton ID="AssignButton" url="eventassign" link="${event}" label="ASSIGN FLIGHTS FOR THIS EVENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="eventcancel" linkID="0x${event.ID}" label="CANCEL EVENT" />
+ <el:cmdbutton ID="CancelButton" url="eventcancel" link="${event}" label="CANCEL EVENT" />
 </c:if>
  </td>
 </tr>

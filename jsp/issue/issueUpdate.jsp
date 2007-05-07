@@ -40,7 +40,7 @@ The Issue <span class="pri bld">&quot;${issue.subject}&quot;</span> has been mod
 </c:choose>
 <br />
 The Issue will automatically be displayed within 3 seconds. If your browser does not return to the Issue 
-or you are impatient, you can <el:cmd className="sec bld" url="issue" linkID="0x${issue.ID}" op="read">click here</el:cmd>
+or you are impatient, you can <el:cmd className="sec bld" url="issue" link="${issue}" op="read">click here</el:cmd>
 to display the Issue.<br />
 <br />
 To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Click here</el:cmd>.<br />

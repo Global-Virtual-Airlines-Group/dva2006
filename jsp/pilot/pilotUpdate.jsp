@@ -104,7 +104,7 @@ an ACARS client.</c:if><br />
 </c:if>
 </ul>
 <br />
-To view this Pilot Profile, <el:cmd url="profile" linkID="0x${pilot.ID}" op="read" className="sec bld">Click Here</el:cmd>.<br />
+To view this Pilot Profile, <el:cmd url="profile" link="${pilot}" op="read" className="sec bld">Click Here</el:cmd>.<br />
 To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click Here</el:cmd>.<br />
 <c:if test="${spUpdated}">To return to the Staff Roster, <el:cmd url="staff" className="sec bld">Click Here</el:cmd>.<br /></c:if>
 <br />

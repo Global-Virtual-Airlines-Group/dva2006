@@ -58,7 +58,7 @@ return true;
 <c:if test="${fn:isCheckFlight(pirep)}"><el:img src="checkride.png" caption="Check Ride" /></c:if> 
 <c:if test="${fn:isOnline(pirep)}"><el:img src="network/online.png" caption="Online Flight on ${fn:network(pirep)}" /></c:if>
 <c:if test="${fn:isPromoLeg(pirep)}"><el:img src="promote.png" caption="Counts for Promotion in the ${fn:promoEQTypes(pirep)}" /></c:if></td>
- <td><el:cmd className="bld" url="pirep" linkID="0x${pirep.ID}">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - 
  ${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
  <td class="sec">${pirep.equipmentType}</td>

@@ -33,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="txairline.do" method="post" linkID="0x${pilot.ID}" validate="return validate(this)">
+<el:form action="txairline.do" method="post" link="${pilot}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">INTER-AIRLINE PILOT TRANSFER FOR ${pilot.name}</td>

@@ -181,7 +181,7 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 <c:if test="${!empty applicant}">
 <tr>
  <td class="label">Applicant Profile</td>
- <td colspan="${cspan}" class="data"><el:cmd url="applicant" linkID="0x${applicant.ID}">Click here</el:cmd> to view the 
+ <td colspan="${cspan}" class="data"><el:cmd url="applicant" link="${applicant}">Click Here</el:cmd> to view the 
 Applicant profile for ${pilot.name}.</td>
 </tr>
 </c:if>
@@ -194,29 +194,29 @@ Applicant profile for ${pilot.name}.</td>
 <tr>
  <td>
 <c:if test="${!crossDB}">
-<el:cmdbutton url="logbook" op="log" linkID="0x${pilot.ID}" key="L" label="LOG BOOK" />
+<el:cmdbutton url="logbook" op="log" link="${pilot}" key="L" label="LOG BOOK" />
 </c:if>
 <c:if test="${access.canEdit}">
- <el:cmdbutton url="profile" linkID="0x${pilot.ID}" op="edit" key="E" label="EDIT PROFILE" />
+ <el:cmdbutton url="profile" link="${pilot}" op="edit" key="E" label="EDIT PROFILE" />
 </c:if>
 <c:if test="${access.canTransfer}">
- <el:cmdbutton url="txairline" linkID="0x${pilot.ID}" label="INTER-AIRLINE TRANSFER" />
+ <el:cmdbutton url="txairline" link="${pilot}" label="INTER-AIRLINE TRANSFER" />
 </c:if>
 <c:if test="${access.canAssignRide}">
- <el:cmdbutton url="nakedassign" linkID="0x${pilot.ID}" label="ASSIGN CHECK RIDE" />
+ <el:cmdbutton url="nakedassign" link="${pilot}" label="ASSIGN CHECK RIDE" />
 </c:if>
 <c:if test="${!crossDB}">
 <content:filter roles="HR,PIREP,Examination">
- <el:cmdbutton url="invalidate" linkID="0x${pilot.ID}" label="INVALIDATE E-MAIL" />
+ <el:cmdbutton url="invalidate" link="${pilot}" label="INVALIDATE E-MAIL" />
 </content:filter>
 <content:filter roles="HR">
- <el:cmdbutton url="statuscomment" linkID="0x${pilot.ID}" label="COMMENT" />
+ <el:cmdbutton url="statuscomment" link="${pilot}" label="COMMENT" />
 </content:filter>
 <c:if test="${access.canSuspend}">
- <el:cmdbutton url="suspend" linkID="0x${pilot.ID}" label="SUSPEND" />
+ <el:cmdbutton url="suspend" link="${pilot}" label="SUSPEND" />
 </c:if>
 <content:filter roles="Admin">
- <el:cmdbutton url="su" linkID="0x${pilot.ID}" label="SWITCH TO USER" />
+ <el:cmdbutton url="su" link="${pilot}" label="SWITCH TO USER" />
 </content:filter>
 </c:if>
 </td>

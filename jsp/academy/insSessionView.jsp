@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Flight Academy Instruction - ${session.name}</title>
@@ -30,20 +31,20 @@
 <c:if test="${!empty pilot}">
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data"><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd>
+ <td class="data"><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>
  <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank}, ${pilot.equipmentType}</td>
 </tr>
 </c:if>
 <c:if test="${!empty ins}">
 <tr>
  <td class="label">Instructor Name</td>
- <td class="data"><el:cmd url="profile" linkID="0x${ins.ID}" className="bld">${ins.name}</el:cmd></td>
+ <td class="data"><el:cmd url="profile" link="${ins}" className="bld">${ins.name}</el:cmd></td>
 </tr>
 </c:if>
 <tr>
  <td class="label">Course Name</td>
 <c:if test="${viewCourse}">
- <td class="data"><el:cmd url="course" linkID="0x${session.courseID}" className="bld">${session.name}</el:cmd></td>
+ <td class="data"><el:cmd url="course" linkID="${fn:hex(session.courseID)}" className="bld">${session.name}</el:cmd></td>
 </c:if>
 <c:if test="${!viewCourse}">
  <td class="data bld">${session.name}</td>
@@ -75,10 +76,10 @@
  <td> 
  <el:cmdbutton ID="CalendarButton" url="academycalendar" label="INSTRUCTION CALENDAR" />
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="SchedButton" url="isession" op="edit" linkID="0x${session.ID}" label="EDIT SESSION" />
+ <el:cmdbutton ID="SchedButton" url="isession" op="edit" link="${session}" label="EDIT SESSION" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="icancel" linkID="0x${session.ID}" label="CANCEL SESSION" />
+ <el:cmdbutton ID="CancelButton" url="icancel" link="${session}" label="CANCEL SESSION" />
 </c:if>
  </td>
 </tr>

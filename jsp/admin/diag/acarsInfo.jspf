@@ -1,3 +1,7 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <el:table className="view" pad="default" space="default">
 <tr class="title">
  <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
@@ -17,7 +21,7 @@
 <c:forEach var="con" items="${acarsPool}">
 <tr>
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${con.user.ID}">${con.user.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
  <td class="sec bld">${(con.flightID == 0) ? 'N/A' : con.flightInfo.flightCode}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>

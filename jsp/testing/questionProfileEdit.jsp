@@ -65,7 +65,7 @@ return true;
 function viewImage(x, y)
 {
 var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${fn:hex(question.ID)}', 'questionImage', flags);
+var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
 return true;
 }
 </c:if>
@@ -79,7 +79,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="qprofile.do" linkID="${fn:dbID(question)}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="qprofile.do" link="${question}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">

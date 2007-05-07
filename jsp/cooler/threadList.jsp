@@ -72,7 +72,7 @@ return true;
 <c:if test="${thread.locked}"><el:img caption="Thread Locked" x="20" y="20" src="cooler/icon_lock.png" /></c:if>
 <c:if test="${thread.poll}"><el:img caption="Pilot Poll" x="20" y="20" src="cooler/icon_poll.png" /></c:if>
 <c:if test="${!empty thread.stickyUntil}">STICKY:</c:if>
- <el:cmd url="thread" linkID="0x${thread.ID}"><fmt:text value="${thread.subject}" /></el:cmd></td>
+ <el:cmd url="thread" link="${thread}"><fmt:text value="${thread.subject}" /></el:cmd></td>
  <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
  <td><fmt:int value="${thread.views}" /></td>
  <td><fmt:int value="${thread.postCount}" /></td>

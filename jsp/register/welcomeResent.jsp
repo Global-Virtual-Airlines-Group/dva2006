@@ -30,8 +30,8 @@ Since ${applicant.name} has already been hired as a <content:airline /> pilot, t
 been resent, and his or her password has been reset.<br />
 </c:if>
 <br />
-To review this applicant's profile, <el:cmd url="applicant" linkID="0x${applicant.ID}">click here</el:cmd>.<br />
-To return to the Applicant queue, <el:cmd url="applicants">click here</el:cmd>.<br />
+To review this applicant's profile, <el:cmd url="applicant" link="${applicant}" className="sec bld">Click Here</el:cmd>.<br />
+To return to the Applicant queue, <el:cmd url="applicants" className="bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

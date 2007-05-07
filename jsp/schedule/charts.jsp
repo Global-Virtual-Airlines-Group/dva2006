@@ -64,7 +64,7 @@ return true;
  <td>Adobe PDF document, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
 </c:when>
 <c:otherwise>
- <td><el:cmd className="bld" url="chart" linkID="0x${chart.ID}">${chart.name}</el:cmd></td>
+ <td><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td class="sec">${chart.typeName}</td>
  <td>${chart.imgTypeName} image, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
 </c:otherwise>

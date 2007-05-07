@@ -73,7 +73,7 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
  <td class="sec bld">${entryNumber}</td>
  <td>${pirep.firstName} ${pirep.lastName}</td>
  <td class="pri bld"><fmt:date fmt="d" date="${pirep.date}" /></td>
- <td><el:cmd className="small bld" url="pirep" linkID="0x${pirep.ID}">${pirep.flightCode}</el:cmd></td>
+ <td><el:cmd className="small bld" url="pirep" link="${pirep}">${pirep.flightCode}</el:cmd></td>
  <td class="sec">${pirep.equipmentType}</td>
  <td class="bld"><fmt:int value="${pirep.landingVSpeed}" /> ft/min</td>
  <td class="small">${pirep.airportD.name} - ${pirep.airportA.name}</td>

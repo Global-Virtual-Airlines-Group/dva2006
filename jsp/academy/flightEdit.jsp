@@ -41,7 +41,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="insflight.do" linkID="${fn:dbID(flight)}" op="save" validate="return validate(this)">
+<el:form method="post" action="insflight.do" link="${flight}" op="save" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- PIREP Title Bar -->
 <tr class="title caps">

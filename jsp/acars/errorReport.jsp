@@ -74,7 +74,7 @@
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:cmdbutton url="acarserrordelete" linkID="0x${err.ID}" label="DELETE ERROR REPORT" /></td>
+ <td><el:cmdbutton url="acarserrordelete" link="${err}" label="DELETE ERROR REPORT" /></td>
 </tr>
 </el:table>
 <br />

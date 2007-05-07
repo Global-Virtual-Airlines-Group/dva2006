@@ -1,11 +1,10 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Fleet Academy Help Desk</title>
@@ -60,7 +59,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdissue.do" op="save" linkID="${fn:dbID(issue)}" validate="return validate(this)">
+<el:form method="post" action="hdissue.do" op="save" link="${issue}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
 <c:if test="${!empty issue}">
@@ -154,7 +153,7 @@ return true;
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="${empty issue ? 'SAVE NEW' : 'UPDATE'} ISSUE" />
 <c:if test="${access.canUpdateStatus}">
- <el:cmdbutton ID="ConvertButton" post="true" url="hdconvert" linkID="0x${issue.ID}" label="CONVERT ISSUE" />
+ <el:cmdbutton ID="ConvertButton" post="true" url="hdconvert" link="${issue}" label="CONVERT ISSUE" />
 </c:if></td>
 </tr>
 </el:table>

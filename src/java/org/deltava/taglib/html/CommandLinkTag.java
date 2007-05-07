@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.text.*;
@@ -8,6 +8,9 @@ import java.io.UnsupportedEncodingException;
 
 import java.net.URLEncoder;
 import javax.servlet.jsp.JspException;
+
+import org.deltava.beans.DatabaseBean;
+import org.deltava.util.StringUtils;
 
 /**
  * A JSP tag to create a link to a Web Site Command.
@@ -19,31 +22,29 @@ import javax.servlet.jsp.JspException;
 public class CommandLinkTag extends LinkTag {
 
 	private String _cmdName;
-	private Map<String, String> _cmdParams = new TreeMap<String, String>();
+	private final Map<String, String> _cmdParams = new TreeMap<String, String>();
 	private boolean _disableLink;
 
 	/**
-	 * Sets the ID parameter for the command invocation. If it starts with &quot;0x&quot; then turn the rest of the
-	 * string into a hexadecimal number string.
+	 * Sets the ID parameter for the command invocation.
 	 * @param id the parameter
-	 * @see org.deltava.commands.CommandContext#getCmdParameter(int, Object)
 	 */
 	public void setLinkID(String id) {
-		if (id.startsWith("0x")) {
-			if (!"0x0".equals(id)) {
-				try {
-					_cmdParams.put("id", "0x" + Integer.toString(Integer.parseInt(id.substring(2)), 16).toUpperCase());
-				} catch (NumberFormatException nfe) {
-					_cmdParams.put("id", id);
-				}
-			} else {
-				_disableLink = true;
-			}
-		} else {
+		if (StringUtils.isEmpty(id))
+			_disableLink = true;
+		else
 			_cmdParams.put("id", id);
-		}
 	}
-
+	
+	/**
+	 * Sets the database ID to link to.
+	 * @param db a {@link DatabaseBean} with the proper database ID
+	 */
+	public void setLink(DatabaseBean db) {
+		if (db != null)
+			_cmdParams.put("id", db.getHexID());
+	}
+	
 	/**
 	 * Sets the operation parameter for the command invocation.
 	 * @param opName the operation name

@@ -58,7 +58,7 @@ return true;
  <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.name}</span></td>
 </tr>
 <tr>
- <td width="350" class="mid"><el:cmd className="bld" url="profile" linkID="0x${pilot.ID}" op="edit">Edit My Profile</el:cmd></td>
+ <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:int value="${pilot.loginCount}" />
@@ -137,8 +137,8 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <td colspan="2">FLIGHT REPORTS</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" linkID="0x${pilot.ID}">Flight Reports</el:cmd>&nbsp;
- <el:cmd className="bld" url="logbook" op="log" linkID="0x${pilot.ID}">Log Book</el:cmd>
+ <td class="mid"><el:cmd className="bld" url="logbook" op="nolog" link="${pilot}">Flight Reports</el:cmd>&nbsp;
+ <el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>
 <c:if test="${manualPIREP}"><br />
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:int value="${pilot.legs}" /> flights, for a total of
@@ -148,7 +148,7 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <c:if test="${!empty lastFlight}">
 <br />
  Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
- <el:cmd url="pirep" linkID="0x${lastFlight.ID}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
+ <el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
  (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
  in a ${lastFlight.equipmentType}.
 </c:if></td>
@@ -374,7 +374,7 @@ of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight legs in the
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested a change of Equipment 
 Program to the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
-<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" linkID="0x${txreq.ID}">CLICK HERE</el:cmd> 
+<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
 to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
@@ -384,7 +384,7 @@ to withdraw this Transfer Request.</span></c:if></td>
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type
  ratings in the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
-<c:if test="${txaccess.canDelete}"> <span class="small"> <el:cmd className="bld" url="txreqdelete" linkID="0x${txreq.ID}">CLICK HERE</el:cmd> 
+<c:if test="${txaccess.canDelete}"> <span class="small"> <el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
 to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
@@ -425,7 +425,7 @@ specific issues like online flying, VOR tracking, ATC procedures, improved landi
 You have completed or are enrolled in the following <content:airline /> Flight Academy courses: 
 <fmt:list value="${courses}" delim=", " />.</c:if>
 <c:if test="${!empty course}"><br />
-You are currently enrolled in the <el:cmd url="course" linkID="0x${course.ID}" className="pri bld">${course.name}</el:cmd> 
+You are currently enrolled in the <el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd> 
 Flight Academy course.</c:if>
 <c:if test="${pilot.legs < academyFlights}"><br />
 <br />

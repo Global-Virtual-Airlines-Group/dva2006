@@ -37,7 +37,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="eventroutes.do" linkID="0x${event.ID}" op="save" method="post" validate="return validate(this)">
+<el:form action="eventroutes.do" link="${event}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="4">FLIGHT ROUTES FOR ${event.name}</td>
@@ -49,9 +49,9 @@ return true;
  <td class="label" valign="top" rowspan="2">Route #<fmt:int value="${entryNumber}" /></td>
  <td class="data" colspan="3">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) 
 - ${route.airportA.name} (<fmt:airport airport="${route.airportA}" />) 
-<el:cmdbutton url="eventroutes" op="save&isDelete=true&route=${route.airportD.IATA}-${route.airportA.IATA}" linkID="0x${event.ID}" label="DELETE" />
+<el:cmdbutton url="eventroutes" op="save&isDelete=true&route=${route.airportD.IATA}-${route.airportA.IATA}" link="${event}" label="DELETE" />
 &nbsp;
-<el:cmdbutton url="eventroutes" op="save&isToggle=true&route=${route.airportD.IATA}-${route.airportA.IATA}" linkID="0x${event.ID}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
+<el:cmdbutton url="eventroutes" op="save&isToggle=true&route=${route.airportD.IATA}-${route.airportA.IATA}" link="${event}" label="${route.active ? 'DISABLE' : 'ENALBE'}" /></td>
 </tr>
 <tr>
  <td class="data" colspan="3">${route.route}</td>
@@ -80,7 +80,7 @@ return true;
 <el:table className="bar" space="default" pad="default">
 <tr>
  <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="ADD NEW FLIGHT ROUTE" />
- <el:cmdbutton ID="ViewButton" url="event" linkID="0x${event.ID}" label="VIEW EVENT" /></td>
+ <el:cmdbutton ID="ViewButton" url="event" link="${event}" label="VIEW EVENT" /></td>
 </tr>
 </el:table>
 </el:form>

@@ -36,8 +36,8 @@
 <c:forEach var="exam" items="${examQueue}">
 <c:set var="applicant" value="${applicants[exam.pilotID]}" scope="request" />
 <tr>
- <td><el:cmdbutton url="questionnaire" linkID="0x${exam.ID}" label="SCORE" /></td>
- <td class="pri bld"><el:cmd url="applicant" linkID="0x${applicant.ID}">${applicant.name}</el:cmd></td>
+ <td><el:cmdbutton url="questionnaire" link="${exam}" label="SCORE" /></td>
+ <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><a href="mailto:${applicant.email}">${applicant.email}</a></td>
  <td class="sec bld"><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
  <td class="bld"><fmt:date fmt="d" date="${exam.submittedOn}" /></td>

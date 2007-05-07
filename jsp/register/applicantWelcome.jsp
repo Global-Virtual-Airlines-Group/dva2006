@@ -47,7 +47,7 @@ cannot be approved!</span><br />
 <c:if test="${!empty questionnaire}">
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="INITIAL QUESTIONNAIRE" /></td>
+ <td><el:cmdbutton url="questionnaire" link="${questionnaire}" label="INITIAL QUESTIONNAIRE" /></td>
 </tr>
 </el:table>
 <br />

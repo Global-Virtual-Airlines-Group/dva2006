@@ -58,7 +58,7 @@
 <view:row entry="${pilot}">
 <c:choose>
 <c:when test="${pilot.legs > 0}">
- <td><el:cmd className="bld" url="logbook" op="log" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td><el:cmd className="bld" url="logbook" op="log" link="${pilot}">${pilot.name}</el:cmd></td>
 </c:when>
 <c:otherwise>
  <td class="pri bld">${pilot.name}</td>

@@ -118,7 +118,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="examsubmit.do" linkID="0x${exam.ID}" validate="return validate(this)">
+<el:form method="post" action="examsubmit.do" link="${exam}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Exam Title Bar -->
 <tr class="title caps">
@@ -144,7 +144,7 @@ return true;
 <c:if test="${hasImage}">
 <tr>
  <td class="data small">RESOURCE - <span class="pri bld">${q.typeName}</span> image, <fmt:int value="${q.size}" />
- bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)
+ bytes <span class="sec">(<fmt:int value="${q.width}" /> x <fmt:int value="${q.height}" /> pixels)</span>
  <el:link className="pri bld" url="javascript:void viewImage('${fn:hex(q.ID)}', ${q.width}, ${q.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>

@@ -68,7 +68,7 @@
 <view:row entry="${entry}">
  <td class="small"><fmt:date d="MM/dd/yy" t="HH:mm:ss" date="${entry.date}" /></td>
 <c:if test="${entry.pilotID != 0}">
- <td><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd></td>
 </c:if>
 <c:if test="${entry.pilotID == 0}">
  <td class="sec bld">ANONYMOUS</td>

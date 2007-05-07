@@ -48,7 +48,7 @@ return true;
 <!-- Table Question Data -->
 <c:forEach var="q" items="${viewContext.results}">
 <view:row entry="${q}">
- <td><el:cmd className="pri bld" url="qprofile" linkID="0x${q.ID}">VIEW</el:cmd></td>
+ <td><el:cmd className="pri bld" url="qprofile" link="${q}">VIEW</el:cmd></td>
  <td><fmt:int value="${q.correctAnswers}" /></td>
  <td><fmt:int value="${q.totalAnswers}" /></td>
  <td><c:if test="${q.totalAnswers > 0}"><fmt:dec value="${q.correctAnswers * 100 / q.totalAnswers}" fmt="##0.0" />%</c:if>

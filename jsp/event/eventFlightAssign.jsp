@@ -23,7 +23,7 @@
 <br />
 <fmt:int value="${fn:sizeof(event.signups)}" /> flight assignments for the <span class="pri bld">${event.name}</span> Online Event have been successfully created.<br />
 <br />
-To return to this Online Event, <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">click here</el:cmd>.<br />
+To return to this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>

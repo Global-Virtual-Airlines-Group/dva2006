@@ -50,7 +50,7 @@ return true;
 <c:forEach var="pilot" items="${pilots}">
 <tr>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td class="bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="pri">${pilot.rank}</td>
  <td class="sec">${pilot.equipmentType}</td>
  <td>${pilot.location}</td>

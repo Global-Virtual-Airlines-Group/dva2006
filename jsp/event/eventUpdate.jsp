@@ -23,9 +23,9 @@
 <br />
 The <span class="pri bld">${event.name}</span> Online Event has been successfully ${isNew ? 'created' : 'updated'}.<br />
 <br />
-To view this Online Event, <el:cmd className="sec bld" url="event" linkID="0x${event.ID}">Click Here</el:cmd>.<br />
+To view this Online Event, <el:cmd className="sec bld" url="event" link="${event}">Click Here</el:cmd>.<br />
 <c:if test="${isNew}">
-To add additional routes to this Online Event, <el:cmd className="sec bld" url="eventroutes" linkID="0x${event.ID}">Click Here</el:cmd>.<br />
+To add additional routes to this Online Event, <el:cmd className="sec bld" url="eventroutes" link="${event}">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />

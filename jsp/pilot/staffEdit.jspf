@@ -40,6 +40,6 @@
 <tr>
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data">${pilot.name} is not currently listed on the Staff Roster. 
-<el:cmd url="newstaff" linkID="0x${pilot.ID}">Click Here</el:cmd> to create a new Staff Profile.</td>
+<el:cmd url="newstaff" link="${pilot}" className="bld">Click Here</el:cmd> to create a new Staff Profile.</td>
 </tr>
 </c:if>

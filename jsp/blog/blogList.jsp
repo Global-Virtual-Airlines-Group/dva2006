@@ -35,8 +35,8 @@
 <c:set var="author" value="${authors[entry.authorID]}" scope="request" />
 <tr class="title caps" valign="top">
  <td width="65%">${entry.title} - <fmt:date fmt="d" date="${entry.date}" />
-<c:if test="${showAll}"> <el:cmd url="blog" linkID="0x${author.ID}">${author.name}</el:cmd></c:if></td>
- <td><fmt:int value="${entry.size}" /> COMMENTS - <el:cmd url="blogentry" linkID="0x${entry.ID}">VIEW ENTRY</el:cmd></td>
+<c:if test="${showAll}"> <el:cmd url="blog" link="${author}">${author.name}</el:cmd></c:if></td>
+ <td><fmt:int value="${entry.size}" /> COMMENTS - <el:cmd url="blogentry" link="${entry}">VIEW ENTRY</el:cmd></td>
 </tr>
 <tr>
  <td colspan="2" class="left"><fmt:msg value="${entry.body}" />

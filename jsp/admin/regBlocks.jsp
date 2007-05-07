@@ -35,7 +35,7 @@
 <!-- Table data -->
 <c:forEach var="block" items="${viewContext.results}">
 <view:row entry="${block}">
- <td><el:cmd url="regblock" linkID="0x${block.ID}" className="sec bld"><fmt:int value="${block.ID}" /></el:cmd></td>
+ <td><el:cmd url="regblock" link="${block}" className="sec bld"><fmt:int value="${block.ID}" /></el:cmd></td>
  <td class="small"><fmt:text value="${block.firstName}" default="-" /> <fmt:text value="${block.lastName}" default="-" /></td>
  <td><fmt:ip4 address="${block.address}" /> / <fmt:ip4 address="${block.netMask}" /></td>
  <td class="small"><fmt:text value="${block.hostName}" default="-" /></td>

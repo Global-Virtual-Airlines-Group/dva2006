@@ -33,7 +33,7 @@
 <c:forEach var="news" items="${viewContext.results}">
 <tr>
  <td class="priB"><fmt:date fmt="d" date="${news.date}" /></td>
- <td class="pri bld"><el:cmd url="newsedit" linkID="0x${news.ID}">${news.subject}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="newsedit" link="${news}">${news.subject}</el:cmd></td>
  <td class="secB">${news.authorName}</td>
 </tr>
 <tr>

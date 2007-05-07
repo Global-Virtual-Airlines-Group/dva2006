@@ -22,7 +22,7 @@
 <br />
 The <content:airline /> Pilot application from ${applicant.name} has been updated.<br />
 <br />
-To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" linkID="0x${applicant.ID}">Click Here</el:cmd>.<br />
+To review this Applicant's profile, <el:cmd url="applicant" className="sec bld" link="${applicant}">Click Here</el:cmd>.<br />
 <br />
 To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">Click Here</el:cmd>.<br />
 <br />

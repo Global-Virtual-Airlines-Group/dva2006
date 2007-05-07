@@ -54,7 +54,7 @@ return ${access.canComment};
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="hdcomment.do" linkID="0x${issue.ID}" validate="return validate(this)">
+<el:form method="post" action="hdcomment.do" link="${issue}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td class="caps" colspan="2">ISSUE #${issue.ID} - ${issue.subject}</td>
@@ -121,16 +121,16 @@ return ${access.canComment};
 <tr>
  <td>
 <c:if test="${access.canUpdateStatus}">
-<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="hdissue" op="edit" linkID="0x${issue.ID}" />
+<el:cmdbutton ID="EditButton" label="EDIT ISSUE" url="hdissue" op="edit" link="${issue}" />
 </c:if>
 <c:if test="${access.canComment}">
  <el:button ID="CommentButton" type="SUBMIT" className="BUTTON" label="SAVE NEW COMMENT" />
 </c:if>
 <c:if test="${access.canUpdateContent}">
- <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" linkID="0x${issue.ID}" />
+ <el:cmdbutton ID="UpdateButton" label="UPDATE ISSUE/COMMENTS" url="hdupdate" post="true" link="${issue}" />
 </c:if>
 <c:if test="${access.canClose}">
- <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" linkID="0x${issue.ID}" />
+ <el:cmdbutton ID="CloseButton" label="CLOSE ISSUE" url="hdclose" link="${issue}" />
 </c:if>
 </td>
 </tr>

@@ -47,7 +47,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="${cmdName}.do" method="post" linkID="0x${txReq.ID}" validate="return validate(this)">
+<el:form action="${cmdName}.do" method="post" link="${txReq}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">EQUIPMENT TRANSFER REQUEST - ${pilot.name}</td>
@@ -150,7 +150,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:cmdbutton ID="ProfileButton" url="profile" linkID="0x${pilot.ID}" label="VIEW PROFILE" />
+ <td><el:cmdbutton ID="ProfileButton" url="profile" link="${pilot}" label="VIEW PROFILE" />
 <c:if test="${access.canAssignRide}">
 <el:button ID="AssignButton" type="submit" className="BUTTON" label="ASSIGN CHECK RIDE" />
 </c:if>
@@ -158,10 +158,10 @@ return true;
 <el:button ID="ApproveButton" type="submit" className="BUTTON" label="APPROVE TRANSFER" />
 </c:if>
 <c:if test="${access.canReject}">
-<el:cmdbutton ID="RejectButton" url="txreqreject" linkID="0x${txReq.ID}" post="true" label="REJECT TRANSFER" />
+<el:cmdbutton ID="RejectButton" url="txreqreject" link="${txReq}" post="true" label="REJECT TRANSFER" />
 </c:if>
 <c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="txreqdelete" linkID="0x${txReq.ID}" label="DELETE TRANSFER" />
+<el:cmdbutton ID="DeleteButton" url="txreqdelete" link="${txReq}" label="DELETE TRANSFER" />
 </c:if>
  </td>
 </tr>

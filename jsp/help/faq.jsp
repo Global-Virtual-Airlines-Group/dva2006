@@ -40,7 +40,7 @@
 <c:set var="comment" value="${fn:first(issue.comments)}" scope="request" />
 <tr>
 <c:if test="${isHR}">
- <td><el:cmd url="hdissue" linkID="0x${issue.ID}" className="pri bld"><fmt:text value="${issue.subject}" /></el:cmd></td>
+ <td><el:cmd url="hdissue" link="${issue}" className="pri bld"><fmt:text value="${issue.subject}" /></el:cmd></td>
 </c:if>
 <c:if test="${!isHR}">
  <td class="pri bld">${issue.subject}</td>

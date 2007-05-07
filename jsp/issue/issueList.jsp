@@ -60,7 +60,7 @@ return true;
 <c:forEach var="issue" items="${viewContext.results}">
 <view:row entry="${issue}">
  <td class="sec bld"><fmt:int value="${issue.ID}" /></td>
- <td class="small"><el:cmd url="issue" linkID="0x${issue.ID}"><fmt:text value="${issue.subject}" /></el:cmd></td>
+ <td class="small"><el:cmd url="issue" link="${issue}"><fmt:text value="${issue.subject}" /></el:cmd></td>
  <td class="pri bld small">${issue.priorityName}</td>
  <td class="bld small">${issue.areaName}</td>
  <td class="sec bld small">${issue.typeName}</td>

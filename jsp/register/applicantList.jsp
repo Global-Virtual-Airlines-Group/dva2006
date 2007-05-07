@@ -55,7 +55,7 @@ return true;
 <!-- Table Applicant Data -->
 <c:forEach var="applicant" items="${viewContext.results}">
 <view:row entry="${applicant}">
- <td class="pri bld"><el:cmd url="applicant" linkID="0x${applicant.ID}">${applicant.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
 <c:if test="${applicant.pilotID > 0}">
  <td class="sec small">${applicant.rank}, ${applicant.equipmentType}</td>

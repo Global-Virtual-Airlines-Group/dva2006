@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Equipment Type Programs</title>
@@ -39,7 +40,7 @@
 <view:row entry="${eqType}">
  <td class="pri bld"><el:cmd url="eqtype" linkID="${eqType.name}" op="edit">${eqType.name}</el:cmd></td>
  <td class="sec bld"><fmt:int value="${eqType.stage}" /></td>
- <td><el:cmd url="profile" linkID="0x${eqType.CPID}">${eqType.CPName}</el:cmd></td>
+ <td><el:cmd url="profile" linkID="${fn:hex(eqType.CPID)}">${eqType.CPName}</el:cmd></td>
  <td class="sec small"><fmt:list value="${eqType.ranks}" delim=", " /></td>
  <td><fmt:int value="${empty pilotCount ? 0 : pilotCount}" /></td>
  <td class="left small"><span class="pri">PRIMARY: <fmt:list value="${eqType.primaryRatings}" delim=", " /></span>

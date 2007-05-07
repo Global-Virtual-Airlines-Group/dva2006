@@ -39,7 +39,7 @@ s<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.o
 <c:forEach var="event" items="${viewContext.results}">
 <view:row entry="${event}">
  <td class="pri bld"><fmt:date fmt="d" date="${event.startTime}" /></td>
- <td><el:cmd url="event" linkID="0x${event.ID}">${event.name}</el:cmd></td>
+ <td><el:cmd url="event" link="${event}">${event.name}</el:cmd></td>
  <td class="pri bld">${event.networkName}</td>
  <td class="sec">${event.statusName}</td>
  <td class="small"><c:forEach var="route" items="${event.routes}">

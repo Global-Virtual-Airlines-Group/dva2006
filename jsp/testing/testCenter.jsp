@@ -73,7 +73,7 @@ return true;
  <td><el:img caption="Unsatisfactory" x="21" y="21" src="testing/fail.png" /></td>
 </c:when>
 </c:choose>
- <td class="pri bld"><el:cmd url="${cmdName}" linkID="0x${exam.ID}">${exam.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="${cmdName}" link="${exam}">${exam.name}</el:cmd></td>
  <td class="sec">${fn:isCheckRide(exam)? 'Check Ride' : 'Examination'}</td>
  <td class="pri bld">${exam.score}</td>
  <td class="bld">${exam.size}</td>
@@ -110,7 +110,7 @@ return true;
 <c:when test="${examActive > 0}">
  <td class="left" colspan="6">You currently are in the process of taking a Pilot Examination.
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
- <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
+ <td><el:cmdbutton url="exam" linkID="${fn:hex(examActive)}" label="ACTIVE EXAM" /></td>
 </c:when>
 <c:when test="${!empty txreq}">
  <td class="left" colspan="7">You currently are in the process of transferring between Equipment

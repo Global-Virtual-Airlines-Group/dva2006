@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> E-Mail Address Validation</title>
@@ -50,7 +49,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="validate.do" linkID="${fn:dbID(person)}" method="post" op="${empty addr ? 'save' : 'validate'}" validate="return validate(this)">
+<el:form action="validate.do" link="${person}" method="post" op="${empty addr ? 'save' : 'validate'}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <c:choose>
 <c:when test="${validationFailure}">

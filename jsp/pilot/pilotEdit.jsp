@@ -110,7 +110,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="profile.do" linkID="0x${pilot.ID}" op="save" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="profile.do" link="${pilot}" op="save" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Pilot Title Bar -->
 <tr class="title caps">

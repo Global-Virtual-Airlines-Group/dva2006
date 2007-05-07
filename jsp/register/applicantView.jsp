@@ -42,7 +42,7 @@ return ${access.canApprove};
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="apphire.do" method="post" linkID="0x${applicant.ID}" validate="return validate(this)">
+<el:form action="apphire.do" method="post" link="${applicant}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICANT</td>
@@ -236,7 +236,7 @@ do a Google search on &quot;${applicant.name}&quot;.</td>
 <c:if test="${!fn:pending(questionnaire)}">
  <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
 correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
-<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" /></td>
+<el:cmdbutton url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" /></td>
 </c:if>
 <c:if test="${fn:pending(questionnaire)}">
  <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
@@ -266,22 +266,22 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:cmdbutton ID="EditButton" url="applicant" op="edit" linkID="0x${applicant.ID}" label="EDIT APPLICANT" />
+ <el:cmdbutton ID="EditButton" url="applicant" op="edit" link="${applicant}" label="EDIT APPLICANT" />
 </c:if>
 <c:if test="${access.canApprove}">
  <el:button ID="HireButton" type="submit" className="BUTTON" label="HIRE" />
 </c:if>
 <c:if test="${access.canReject}">
- <el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT" />
+ <el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT" />
 </c:if>
 <c:if test="${!empty questionnaire}">
- <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
+ <el:cmdbutton ID="QuestionnaireButton" url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" />
 </c:if>
 <c:if test="${access.canNotify}">
- <el:cmdbutton ID="ResendButton" url="welcome" linkID="0x${applicant.ID}" label="RESEND WELCOME MESSAGE" />
+ <el:cmdbutton ID="ResendButton" url="welcome" link="${applicant}" label="RESEND WELCOME MESSAGE" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="appdelete" linkID="0x${applicant.ID}" label="DELETE" />
+ <el:cmdbutton ID="DeleteButton" url="appdelete" link="${applicant}" label="DELETE" />
 </c:if>
  </td>
 </tr>

@@ -34,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="crscore.do" linkID="0x${checkRide.ID}" method="post" validate="return validate(this)">
+<el:form action="crscore.do" link="${checkRide}" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">${checkRide.aircraftType} CHECK RIDE FOR ${pilot.name}</td>
@@ -51,14 +51,14 @@ return true;
 <tr>
  <td class="label">ACARS Flight ID</td>
  <td class="data sec bld"><fmt:int value="${checkRide.flightID}" />
- <el:cmdbutton url="crview" linkID="0x${checkRide.flightID}" label="VIEW FLIGHT REPORT" /></td>
+ <el:cmdbutton url="crview" linkID="${fn:hex(checkRide.flightID)}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
 <tr>
  <td class="label">Flight Academy Course</td>
  <td class="data"><span class="bld">${course.name}</span> (Stage <fmt:int value="${course.stage}" />)
- <el:cmdbutton url="course" linkID="0x${course.ID}" label="VIEW COURSE" /></td>
+ <el:cmdbutton url="course" link="${course}" label="VIEW COURSE" /></td>
 </tr>
 </c:if>
 <tr>
@@ -90,7 +90,7 @@ return true;
 <tr>
  <td>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" url="examdelete" linkID="0x${checkRide.ID}" op="checkride" label="DELETE CHECK RIDE" />
+ <el:cmdbutton ID="DeleteButton" url="examdelete" link="${checkRide}" op="checkride" label="DELETE CHECK RIDE" />
 </c:if>
 <c:if test="${access.canScore}">
  <el:button ID="SubmitButton" type="submit" className="BUTTON" label="EVALUATE CHECK RIDE" />

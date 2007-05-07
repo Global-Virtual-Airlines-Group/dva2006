@@ -25,7 +25,7 @@
 <br />
 This Pilot Examination Question has been succesfully updated in the database.<br />
 <br />
-To view this Question, <el:cmd url="qprofile" linkID="0x${question.ID}">Click Here</el:cmd>.<br />
+To view this Question, <el:cmd url="qprofile" link="${question}">Click Here</el:cmd>.<br />
 <br />
 This Question has been included in <fmt:int value="${fn:sizeof(question.examNames)}" /> Pilot
 Examinations. To view all Questions in these Examinations, select one from the list below:<br />

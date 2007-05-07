@@ -37,7 +37,7 @@
 <c:forEach var="server" items="${viewContext.results}">
 <c:set var="accessRoles" value="${server.roles['access']}" scope="request" />
 <view:row entry="${server}">
- <td><el:cmd url="ts2server" op="edit" linkID="0x${server.ID}" className="pri bld">${server.name}</el:cmd></td>
+ <td><el:cmd url="ts2server" op="edit" link="${server}" className="pri bld">${server.name}</el:cmd></td>
  <td class="sec bld">${server.port}</td>
  <td><fmt:int value="${server.maxUsers}" /></td>
  <td class="sec"><c:if test="${empty accessRoles}">ALL</c:if><fmt:list value="${accessRoles}" delim=", " /></td>

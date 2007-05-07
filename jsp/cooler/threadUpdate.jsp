@@ -111,7 +111,7 @@ channel <span class="sec bld">${newChannel}</span>.<br />
 <br />
 <c:if test="${!isDelete}">
 The discussion thread will automatically be displayed within 3 seconds. If your browser does not return
-to the thread or you are impatient, you can <el:cmd className="sec bld" url="thread" linkID="0x${thread.ID}" op="read">click here</el:cmd>
+to the thread or you are impatient, you can <el:cmd className="sec bld" url="thread" link="${thread}" op="read">click here</el:cmd>
 to display the discussion thread.<br />
 <br />
 </c:if>

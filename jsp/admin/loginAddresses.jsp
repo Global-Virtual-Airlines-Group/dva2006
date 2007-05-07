@@ -85,7 +85,7 @@ cause the provided host name to be translated into an IP address before searchin
 <c:set var="pilot" value="${pilots[addr.ID]}" scope="request" />
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td>${(addr.remoteAddr == addr.remoteHost) ? 'UNKNOWN' : addr.remoteHost}</td>
  <td>${addr.remoteAddr}</td>
  <td><fmt:int value="${addr.loginCount}" /></td>

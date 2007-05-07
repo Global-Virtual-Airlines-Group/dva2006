@@ -43,7 +43,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${promotions}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${promotion.ID}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -57,7 +57,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${rankChanges}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${promotion.ID}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -71,7 +71,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${recognition}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${promotion.ID}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -85,7 +85,7 @@ following accomplishments:<br />
 <c:forEach var="promotion" items="${ratingChanges}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${promotion.ID}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -99,7 +99,7 @@ following accomplishments:<br />
 <c:forEach var="cert" items="${academyCerts}">
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${cert.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" linkID="0x${cert.ID}">${cert.firstName} ${cert.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${cert}">${cert.firstName} ${cert.lastName}</el:cmd></td>
  <td class="left">${cert.description}</td>
 </tr>
 </c:forEach>

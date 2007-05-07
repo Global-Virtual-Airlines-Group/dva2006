@@ -1,4 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
 <%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -34,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form method="post" action="ts2channel.do" op="save" linkID="${fn:dbID(channel)}" validate="return validate(this)">
+<el:form method="post" action="ts2channel.do" op="save" link="${channel}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
  <td class="caps" colspan="2">TEAMSPEAK 2 VOICE CHANNEL</td>
@@ -79,7 +79,7 @@ return true;
 <tr>
  <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE CHANNEL" />
 <c:if test="${!empty channel}">
- <el:cmdbutton ID="DeleteButton" url="ts2channeldelete" linkID="0x${channel.ID}" label="DELETE CHANNEL" />
+ <el:cmdbutton ID="DeleteButton" url="ts2channeldelete" link="${channel}" label="DELETE CHANNEL" />
 </c:if></td>
 </tr>
 </el:table>
