@@ -151,6 +151,35 @@ public class GetQuestionnaire extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Loads all Questionnaires for a subset of Applicants. 
+	 * @param ids a Collection of Applicant databsae IDs
+	 * @return a Map of Questionnaires, keyed by Applicant database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Examination> getByID(Collection<Integer> ids) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), "
+				+ "A.FIRSTNAME, A.LASTNAME FROM APPEXAMS E, APPQUESTIONS Q, APPLICANTS A WHERE (E.ID=Q.EXAM_ID) "
+				+ "AND (E.APP_ID=A.ID) AND (A.ID IN (");
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(")) GROUP BY E.ID");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			return CollectionUtils.createMap(execute(), "pilotID");
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Helper method to iterate through the result set.

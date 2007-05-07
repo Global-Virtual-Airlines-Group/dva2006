@@ -518,6 +518,9 @@
 	</cooler>
 	
 	<users>
+		<!-- Maximum user count -->
+		<max type="Integer">2250</max>
+	
 		<notify_days type="Integer">59</notify_days>
 		<inactive_days type="Integer">90</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
