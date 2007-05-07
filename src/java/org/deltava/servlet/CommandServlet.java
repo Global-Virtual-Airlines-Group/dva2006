@@ -116,7 +116,8 @@ public class CommandServlet extends GenericServlet {
 			_cmdLogPool.clear();
 		}
 
-		log.debug("Batched command logs");
+		if (log.isDebugEnabled())
+			log.debug("Batched command logs");
 	}
 
 	/**
@@ -165,7 +166,9 @@ public class CommandServlet extends GenericServlet {
 				RequestStateHelper.clear(req);
 
 			// Execute the command
-			log.debug("Executing " + req.getMethod() + " " + cmd.getName());
+			if (log.isDebugEnabled())
+				log.debug("Executing " + req.getMethod() + " " + cmd.getName());
+			
 			cmd.execute(ctxt);
 			ctxt.setCacheHeaders();
 			CommandResult result = ctxt.getResult();
@@ -183,23 +186,32 @@ public class CommandServlet extends GenericServlet {
 			try {
 				switch (result.getResult()) {
 					case CommandResult.REQREDIRECT:
-						log.debug("Preserving servlet request state");
+						if (log.isDebugEnabled())
+							log.debug("Preserving servlet request state");
+						
 						RequestStateHelper.save(req, result.getURL());
-						result.setURL("$redirect.do");
+						rsp.sendRedirect("$redirect.do");
+						break;
 
 					case CommandResult.REDIRECT:
-						log.debug("Redirecting to " + result.getURL());
+						if (log.isDebugEnabled())
+							log.debug("Redirecting to " + result.getURL());
+						
 						rsp.sendRedirect(result.getURL());
 						break;
 
 					case CommandResult.HTTPCODE:
-						log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
+						if (log.isDebugEnabled())
+							log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
+						
 						rsp.setStatus(result.getHttpCode());
 						break;
 
 					default:
 					case CommandResult.FORWARD:
-						log.debug("Forwarding to " + result.getURL());
+						if (log.isDebugEnabled())
+							log.debug("Forwarding to " + result.getURL());
+						
 						RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
 						rd.forward(req, rsp);
 						break;
@@ -222,12 +234,10 @@ public class CommandServlet extends GenericServlet {
 			
 			// Log the error
 			String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
-			if (logWarning) {
+			if (logWarning)
 				log.warn(usrName + " executing " + cmd.getName() + " - " + e.getMessage());
-			} else {
-				log.error(usrName + " executing " + cmd.getName() + " - " + e.getMessage(),
-						logStackDump ? e : null);
-			}
+			else
+				log.error(usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
 
 			// Redirect to the error page
 			RequestDispatcher rd = req.getRequestDispatcher(errPage);
@@ -240,11 +250,10 @@ public class CommandServlet extends GenericServlet {
 			}
 		} finally {
 			long execTime = System.currentTimeMillis() - startTime;
-			if (execTime < MAX_EXEC_TIME) {
+			if (execTime < MAX_EXEC_TIME)
 				log.debug("Completed in " + String.valueOf(execTime) + " ms");
-			} else {
+			else
 				log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
-			}
 
 			// Create the command result statistics entry
 			CommandLog cmdLog = new CommandLog((cmd == null) ? "null" : cmd.getID(), ctxt.getResult());
