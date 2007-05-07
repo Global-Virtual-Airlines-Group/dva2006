@@ -60,7 +60,7 @@ flights.<br />
 <tr>
  <td class="sec bld">${entryNumber}</td>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.firstName} ${pilot.lastName}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="pri bld">${pilot.rank}</td>
  <td><fmt:int value="${pilot.legs}" /></td>

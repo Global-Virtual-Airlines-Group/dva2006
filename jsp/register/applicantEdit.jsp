@@ -57,7 +57,7 @@ return cmdPost(f.action);
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="applicant.do" linkID="0x${applicant.ID}" op="save" method="post" validate="return validate(this)">
+<el:form action="applicant.do" link="${applicant}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> PILOT APPLICATION</td>
@@ -193,7 +193,7 @@ return cmdPost(f.action);
 <c:if test="${!fn:pending(questionnaire)}">
  <td class="data"><span class="ter bld caps">Completed - <fmt:int value="${questionnaire.score}" /> 
 correct out of <fmt:int value="${questionnaire.size}" /> questions</span> 
-<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" /></td>
+<el:cmdbutton url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" /></td>
 </c:if>
 <c:if test="${fn:pending(questionnaire)}">
  <td class="data"><span class="sec bld caps">Pending - <fmt:int value="${questionnaire.size}" /> questions</span></td>
@@ -227,10 +227,10 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 </c:if> 
 <el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE APPLICANT" />
 <c:if test="${access.canReject}">
-<el:cmdbutton ID="RejectButton" url="appreject" linkID="0x${applicant.ID}" label="REJECT APPLICANT" />
+<el:cmdbutton ID="RejectButton" url="appreject" link="${applicant}" label="REJECT APPLICANT" />
 </c:if>
 <c:if test="${!empty questionnaire}">
-<el:cmdbutton url="questionnaire" linkID="0x${questionnaire.ID}" label="VIEW QUESTIONNAIRE" />
+<el:cmdbutton url="questionnaire" link="${questionnaire}" label="VIEW QUESTIONNAIRE" />
 </c:if>
  </td>
 </tr>

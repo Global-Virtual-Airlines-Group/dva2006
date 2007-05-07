@@ -68,7 +68,7 @@ return true;
 <c:set var="pilotLoc" value="${userData[err.userID]}" scope="request" />
 <view:row entry="${err}">
  <td class="sec bld"><fmt:int value="${err.ID}" /></td>
- <td class="small bld"><el:cmd url="acarserror" linkID="0x${err.ID}"><fmt:date date="${err.createdOn}" /></el:cmd></td>
+ <td class="small bld"><el:cmd url="acarserror" link="${err}"><fmt:date date="${err.createdOn}" /></el:cmd></td>
  <td class="pri bld"><el:profile location="${pilotLoc}">${pilot.name}</el:profile></td>
  <td class="sec bld"><fmt:int value="${err.clientBuild}" /></td>
 <c:if test="${err.FSVersion > 0}">

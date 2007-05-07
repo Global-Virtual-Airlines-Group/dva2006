@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Logbook<c:if test="${!empty pilot}"> for ${pilot.name} (${pilot.pilotCode})</c:if></title>
@@ -56,10 +57,10 @@ return true;
 <c:set var="pilot" value="${pilots[pirep.pilotID]}" scope="request" />
 <c:set var="ins" value="${pilots[pirep.instructorID]}" scope="request" />
 <view:row entry="${pirep}">
- <td><el:cmd url="insflight" linkID="0x${pirep.ID}"><fmt:date date="${pirep.date}" fmt="d" default="-" /></el:cmd></td>
- <td class="pri small"><el:cmd url="course" linkID="0x${pirep.courseID}">${pirep.courseName}</el:cmd></td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
- <td class="sec"><el:cmd url="profile" linkID="0x${ins.ID}">${ins.name}</el:cmd></td>
+ <td><el:cmd url="insflight" link="${pirep}"><fmt:date date="${pirep.date}" fmt="d" default="-" /></el:cmd></td>
+ <td class="pri small"><el:cmd url="course" linkID="${fn:hex(pirep.courseID)}">${pirep.courseName}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
+ <td class="sec"><el:cmd url="profile" link="${ins}">${ins.name}</el:cmd></td>
  <td class="small"><fmt:dec fmt="#0.0" value="${pirep.length / 10}" /> hours</td>
  <td class="small left" colspan="2">${pirep.comments}</td>
 </view:row>

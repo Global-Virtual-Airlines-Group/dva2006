@@ -1,8 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
+import org.deltava.beans.DatabaseBean;
 import org.deltava.taglib.ContentHelper;
 
 /**
@@ -17,7 +18,6 @@ public class CommandButtonTag extends ButtonTag {
    private String _cmdName;
    private String _id;
    private String _opName;
-
    private boolean _doPost;
 
    /**
@@ -29,23 +29,21 @@ public class CommandButtonTag extends ButtonTag {
    }
 
    /**
-    * Sets the ID parameter for the command invocation. If it starts with &quot;0x&quot; then turn the rest of the
-    * string into a hexadecimal number string.
+    * Sets the ID parameter for the command invocation.
     * @param id the parameter
-    * @see org.deltava.commands.CommandContext#getCmdParameter(int, Object)
     */
    public void setLinkID(String id) {
-
-      if (id.startsWith("0x")) {
-         try {
-            _id = "0x" + Integer.toString(Integer.parseInt(id.substring(2)), 16).toUpperCase();
-         } catch (NumberFormatException nfe) {
-            _id = id;
-         }
-      } else {
-         _id = id;
-      }
+	   _id = id;
    }
+   
+	/**
+	 * Sets the database ID to link to.
+	 * @param db a {@link DatabaseBean} with the proper database ID
+	 */
+	public void setLink(DatabaseBean db) {
+		if (db != null)
+			_id = db.getHexID();
+	}
 
    /**
     * Sets the command name for the button, <i>without extension </i>.

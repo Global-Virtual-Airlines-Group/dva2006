@@ -45,7 +45,7 @@ return true;
 <calendar:month date="cDate" startDate="${startDate}" entries="${events}" topBarClass="dayHdr"
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="eventcalendar">
 <calendar:entry name="event">
-<el:cmd url="event" linkID="0x${event.ID}" className="pri bld">${event.name}</el:cmd><br />
+<el:cmd url="event" link="${event}" className="pri bld">${event.name}</el:cmd><br />
 <span class="sec small bld">${event.networkName}</span> <span class="small"><fmt:date fmt="t" t="HH:mm" date="${event.startTime}" /> 
 - <fmt:date fmt="t" t="HH:mm" date="${event.endTime}" /></span><br />
 <c:forEach var="route" items="${event.routes}"><div class="small">${route.airportD.name} - ${route.airportA.name}</div></c:forEach>

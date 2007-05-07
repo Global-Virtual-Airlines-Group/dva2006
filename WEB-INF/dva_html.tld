@@ -139,6 +139,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>link</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.DatabaseBean</type>
+		</attribute>
+		<attribute>
 			<name>startDate</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -220,6 +226,12 @@
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>link</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.DatabaseBean</type>
+		</attribute>
+		<attribute>
 			<name>validate</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
@@ -297,6 +309,12 @@
 			<name>linkID</name>
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>link</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>org.deltava.beans.DatabaseBean</type>
 		</attribute>
 		<attribute>
 			<name>post</name>

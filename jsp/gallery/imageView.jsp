@@ -38,14 +38,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="imgvote.do" linkID="0x${img.ID}" method="POST" validate="return validate(this)">
+<el:form action="imgvote.do" link="${img}" method="POST" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left">${img.name}</td>
 </tr>
 <tr>
  <td class="label">Created by</td>
- <td class="data"><el:cmd className="pri bld" url="profile" linkID="0x${author.ID}">${author.name}</el:cmd>
+ <td class="data"><el:cmd className="pri bld" url="profile" link="${author}">${author.name}</el:cmd>
  on <fmt:date fmt="d" date="${img.createdOn}" /></td>
 </tr>
 <tr>
@@ -76,10 +76,10 @@ FEEDBACK <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry=
 <el:button ID="VoteButton" type="submit" className="BUTTON" label="SUBMIT FEEDBACK" />
 </c:if>
 <c:if test="${access.canEdit}">
-<el:cmdbutton ID="EditButton" url="image" linkID="0x${img.ID}" op="edit" label="EDIT IMAGE" />
+<el:cmdbutton ID="EditButton" url="image" link="${img}" op="edit" label="EDIT IMAGE" />
 </c:if>
 <c:if test="${access.canDelete}">
-<el:cmdbutton ID="DeleteButton" url="imgdelete" linkID="0x${img.ID}" label="DELETE IMAGE" />
+<el:cmdbutton ID="DeleteButton" url="imgdelete" link="${img}" label="DELETE IMAGE" />
 </c:if>
  </td>
 </tr>

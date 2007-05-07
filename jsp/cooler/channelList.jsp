@@ -55,7 +55,7 @@
  <td class="right"><span class="small">${author.rank}</span> <span class="pri bld small">${author.name}</span>
  <span class="small"><c:if test="${!empty author.pilotCode}">(${author.pilotCode}) </c:if>at
  <fmt:date date="${post.createdOn}" /></span><br />
- in <el:cmd url="thread" linkID="0x${post.threadID}" className="bld">${post.subject}</el:cmd></td>
+ in <el:cmd url="thread" link="${post.thread}" className="bld">${post.subject}</el:cmd></td>
 </c:if>
 <c:if test="${channel.lastThreadID == 0}">
  <td colspan="4" class="right"><i>No Topics have been posted in this Channel</i></td>

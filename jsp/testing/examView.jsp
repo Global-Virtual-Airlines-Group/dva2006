@@ -104,10 +104,10 @@ return true;
 <tr>
  <td>&nbsp;
 <c:if test="${access.canEdit}">
- <el:cmdbutton url="exam" linkID="0x${exam.ID}" op="edit" label="RESCORE EXAMINATION" />
+ <el:cmdbutton url="exam" link="${exam}" op="edit" label="RESCORE EXAMINATION" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton url="examdelete" linkID="0x${exam.ID}" label="DELETE EXAMINATION" />
+ <el:cmdbutton url="examdelete" link="${exam}" label="DELETE EXAMINATION" />
 </c:if>
  </td>
 </tr>

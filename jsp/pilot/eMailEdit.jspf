@@ -46,6 +46,6 @@
 <tr>
  <td class="label">&nbsp;</td>
  <td colspan="${cspan}" class="data">${pilot.name} does not currently have a hosted IMAP mailbox. 
-<el:cmd url="newmailbox" linkID="0x${pilot.ID}">Click Here</el:cmd> to create a new IMAP mailbox Profile.</td>
+<el:cmd url="newmailbox" link="${pilot}" className="bld">Click Here</el:cmd> to create a new IMAP mailbox Profile.</td>
 </tr>
 </c:if>

@@ -117,28 +117,28 @@ return false;
 <c:set var="cspan" value="${2}" scope="request" />
 <content:filter roles="HR">
 <c:if test="${access.canActivate || access.canChangeSignature}">
- <td><el:cmdbutton url="cmdlog" linkID="0x${pilot.ID}" label="VIEW LOG" /></td>
+ <td><el:cmdbutton url="cmdlog" link="${pilot}" label="VIEW LOG" /></td>
 <c:set var="cspan" value="${1}" scope="request" />
 </c:if>
 </content:filter>
 <c:choose>
 <c:when test="${access.canActivate}">
- <td colspan="${cspan}"><el:cmdbutton url="activate" linkID="0x${pilot.ID}" label="ACTIVATE PILOT" /></td>
+ <td colspan="${cspan}"><el:cmdbutton url="activate" link="${pilot}" label="ACTIVATE PILOT" /></td>
 </c:when>
 <c:when test="${access.canChangeSignature}">
- <td colspan="${cspan}"><el:cmdbutton url="sigupdate" linkID="0x${pilot.ID}" label="EDIT SIGNATURE" /></td>
+ <td colspan="${cspan}"><el:cmdbutton url="sigupdate" link="${pilot}" label="EDIT SIGNATURE" /></td>
 </c:when>
 <c:otherwise>
  <td colspan="${cspan}">&nbsp;</td>
 </c:otherwise>
 </c:choose>
- <td class="pri bld"><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.name}</el:cmd></td>
+ <td class="pri bld"><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td class="small"><fmt:date fmt="d" date="${pilot.createdOn}" /></td>
 <c:if test="${pilot.legs > 0}">
  <td class="small"><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
- <td class="bld"><el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:int value="${pilot.legs}" /></el:cmd></td>
- <td class="pri bld"><el:cmd url="logbook" op="log" linkID="0x${pilot.ID}"><fmt:dec value="${pilot.hours}" /></el:cmd></td>
+ <td class="bld"><el:cmd url="logbook" op="log" link="${pilot}"><fmt:int value="${pilot.legs}" /></el:cmd></td>
+ <td class="pri bld"><el:cmd url="logbook" op="log" link="${pilot}"><fmt:dec value="${pilot.hours}" /></el:cmd></td>
 </c:if>
 <c:if test="${pilot.legs == 0}">
  <td colspan="3" class="bld">NO FLIGHTS LOGGED</td>

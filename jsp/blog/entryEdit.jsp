@@ -35,7 +35,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="blogentry.do" method="post" op="save" linkID="${fn:dbID(entry)}" validate="return validate(this)">
+<el:form action="blogentry.do" method="post" op="save" link="${entry}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><c:if test="${empty entry}">NEW </c:if>JOURNAL ENTRY</td>

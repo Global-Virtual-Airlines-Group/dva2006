@@ -61,9 +61,9 @@ return true;
 <c:forEach var="course" items="${viewContext.results}">
 <c:set var="pilot" value="${pilots[course.pilotID]}" scope="request" />
 <view:row entry="${course}">
- <td><el:cmd url="course" linkID="0x${course.ID}" className="pri bld">${course.name}</el:cmd></td>
+ <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
- <td class="small"><el:cmd url="profile" linkID="0x${pilot.ID}" className="sec bld">${pilot.name}</el:cmd>
+ <td class="small"><el:cmd url="profile" link="${pilot}" className="sec bld">${pilot.name}</el:cmd>
  (${pilot.pilotCode})</td>
  <td class="pri bld small">${course.statusName}</td>
  <td class="small"><fmt:date fmt="d" date="${course.startDate}" /></td>

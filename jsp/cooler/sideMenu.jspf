@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
@@ -7,11 +8,13 @@
 <content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>WATER COOLER</td></tr>
-<tr class="MenuItem">
 <content:authUser anonymous="true">
+<tr class="MenuItem">
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
+</tr>
 </content:authUser>
 <content:authUser var="user">
+<tr class="MenuItem">
  <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
 </tr>
 <content:superUser var="superUser">
@@ -21,8 +24,8 @@
 </content:superUser>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</content:authUser>
 </tr>
+</content:authUser>
 <tr class="MenuItem">
  <td><el:cmd url="channel" linkID="ALL">ALL POSTS</el:cmd></td>
 </tr>
@@ -121,7 +124,7 @@
 </tr>
 <content:filter roles="Developer">
 <tr class="MenuItem">
- <td><el:cmd url="issues" linkID="0x${user.ID}">MY ISSUES</el:cmd></td>
+ <td><el:cmd url="issues" link="${user}">MY ISSUES</el:cmd></td>
 </tr>
 </content:filter>
 <tr class="MenuItem">

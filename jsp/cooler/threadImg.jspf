@@ -1,3 +1,7 @@
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <c:choose>
 <c:when test="${!empty thread.imageURLs}">
 <!-- Linked Image(s) -->
@@ -6,7 +10,7 @@
 <img src="${imgLink.URL}" alt="${imgLink.description}" border="0" /><br />
 <span class="small">${imgLink.description}</span>
 <c:if test="${access.canDelete || access.canLock || access.canUnlock}">
-&nbsp;<el:cmd url="linkedimgkill" linkID="0x${thread.ID}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />
+&nbsp;<el:cmd url="linkedimgkill" link="${thread}" op="${imgLink.ID}" className="pri bld small">UNLINK IMAGE</el:cmd></c:if><br />
 <hr />
 </c:forEach></td>
 </tr>
@@ -21,7 +25,7 @@
  <td class="label">Image Feedback</td>
  <td class="data" colspan="2"><c:if test="${!empty img.votes}"><span class="pri bld">${img.voteCount} ratings, Average <fmt:dec value="${img.score}" /></span></c:if>
  <c:if test="${imgAccess.canVote}"><b>RATE IMAGE</b> <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry="-" />&nbsp;
-<el:cmdbutton ID="VoteButton" url="imgvote" linkID="0x${img.ID}" op="${fn:hex(thread.ID)}" post="true" label="SUBMIT FEEDBACK" /></c:if>
+<el:cmdbutton ID="VoteButton" url="imgvote" link="${img}" op="${thread.hexID}" post="true" label="SUBMIT FEEDBACK" /></c:if>
 </td>
 </tr>
 </c:if>

@@ -5,7 +5,6 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Web Resource</title>
@@ -41,7 +40,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="resource.do" linkID="${fn:dbID(resource)}" op="save" method="post" validate="return validate(this)">
+<el:form action="resource.do" link="${resource}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">${empty resource ? 'NEW ' : ''} <content:airline /> WEB RESOURCE</td>

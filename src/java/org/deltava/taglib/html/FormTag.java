@@ -1,3 +1,4 @@
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.io.UnsupportedEncodingException;
@@ -5,9 +6,10 @@ import java.net.URLEncoder;
 
 import javax.servlet.jsp.JspException;
 
+import org.deltava.beans.DatabaseBean;
+
 /**
  * A JSP tag for generating HTML forms.
- * 
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -120,17 +122,24 @@ public class FormTag extends ElementTag {
      * @see org.deltava.commands.CommandContext#getCmdParameter(int, Object)
      */
     public void setLinkID(String id) {
-
         if (id.startsWith("0x")) {
             try {
                 _id = "0x" + Integer.toString(Integer.parseInt(id.substring(2)), 16).toUpperCase();
             } catch (NumberFormatException nfe) {
                 _id = id;
             }
-        } else if (!"".equals(id)) {
+        } else if (!"".equals(id))
             _id = id;
-        }
     }
+    
+	/**
+	 * Sets the database ID to link to.
+	 * @param db a {@link DatabaseBean} with the proper database ID
+	 */
+	public void setLink(DatabaseBean db) {
+		if (db != null)
+			_id = db.getHexID();
+	}
     
     /**
      * Sets the command operation for this button.

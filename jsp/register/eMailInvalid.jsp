@@ -32,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="validate.do" linkID="0x${p.ID}" method="post" validate="return validate(this)">
+<el:form action="validate.do" link="${p}" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">E-Mail Address Validation Failure</td>

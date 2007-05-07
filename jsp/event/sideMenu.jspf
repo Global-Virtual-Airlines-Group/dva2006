@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
@@ -8,11 +9,13 @@
 <content:region id="sidebar">
 <el:table ID="sidenav" pad="default" space="default">
 <tr class="MenuHeader"><td>ONLINE EVENTS</td></tr>
-<tr class="MenuItem">
 <content:authUser anonymous="true">
+<tr class="MenuItem">
  <td><el:cmd className="bld" url="login">LOG IN</el:cmd></td>
+</tr>
 </content:authUser>
 <content:authUser var="user">
+<tr class="MenuItem">
  <td class="MenuItem sec caps">WELCOME, ${user.name}</td>
 </tr>
 <content:superUser var="superUser">
@@ -22,8 +25,8 @@
 </content:superUser>
 <tr class="MenuItem">
  <td><el:cmd url="logout">LOG OUT</el:cmd></td>
-</content:authUser>
 </tr>
+</content:authUser>
 <tr class="MenuItem">
  <td><el:cmd url="eventcalendar" className="bld">EVENT CALENDAR</el:cmd></td>
 </tr>
@@ -42,7 +45,7 @@
 <tr class="MenuHeader"><td>UPCOMING EVENTS</td></tr>
 <c:forEach var="nextEvent" items="${futureEvents}">
 <tr class="MenuItem">
- <td class="caps"><el:cmd url="event" linkID="0x${nextEvent.ID}">${nextEvent.name}</el:cmd></td>
+ <td class="caps"><el:cmd url="event" link="${nextEvent}">${nextEvent.name}</el:cmd></td>
 </tr>
 </c:forEach>
 </c:if>

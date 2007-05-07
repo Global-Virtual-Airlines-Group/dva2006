@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Academy - ${pilot.name}</title>
@@ -78,7 +79,7 @@ return true;
 <!-- Flight Academy Course Data -->
 <c:forEach var="course" items="${courses}">
 <view:row entry="${course}">
- <td><el:cmd url="course" linkID="0x${course.ID}" className="pri bld">${course.name}</el:cmd></td>
+ <td><el:cmd url="course" link="${course}" className="pri bld">${course.name}</el:cmd></td>
  <td class="bld"><fmt:int value="${course.stage}" /></td>
  <td class="pri bld">${course.statusName}</td>
  <td><fmt:date fmt="d" date="${course.startDate}" /></td>
@@ -147,7 +148,7 @@ you may not enroll in any other Flight Academy courses.</td>
 <c:if test="${examActive > 0}">
  <td class="left" colspan="4">You currently are in the process of taking a Pilot Examination.
  Until this examination has been submitted and scored, you cannot take any new examinations.</td>
- <td><el:cmdbutton url="exam" linkID="0x${examActive}" label="ACTIVE EXAM" /></td>
+ <td><el:cmdbutton url="exam" linkID="${fn:hex(examActive)}" label="ACTIVE EXAM" /></td>
 </c:if>
 <c:if test="${empty examActive}">
  <td class="left" colspan="5">Please select a written examination from the list below. Make sure that

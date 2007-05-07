@@ -32,7 +32,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="activate.do" method="POST" linkID="0x${pilot.ID}" validate="return validate(this)">
+<el:form action="activate.do" method="POST" link="${pilot}" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title caps">
  <td colspan="2">PILOT REACTIVATION - ${pilot.name}</td>

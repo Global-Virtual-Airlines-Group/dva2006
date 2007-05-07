@@ -35,14 +35,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="isession.do" linkID="${fn:dbID(session)}" op="save" method="post" validate="return validate(this)">
+<el:form action="isession.do" link="${session}" op="save" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> FLIGHT ACADEMY INSTRUCTION SESSION</td>
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data"><el:cmd url="profile" linkID="0x${pilot.ID}" className="pri bld">${pilot.name}</el:cmd>
+ <td class="data"><el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd>
  <span class="bld">(${pilot.pilotCode})</span>, ${pilot.rank}, ${pilot.equipmentType}</td>
 </tr>
 <tr>
@@ -51,7 +51,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Course Name</td>
- <td class="data"><el:cmd url="course" linkID="0x${course.ID}" className="bld">${course.name}</el:cmd></td>
+ <td class="data"><el:cmd url="course" link="${course}" className="bld">${course.name}</el:cmd></td>
 </tr>
 <tr>
  <td class="label">Start Date/Time</td>

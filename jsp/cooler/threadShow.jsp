@@ -74,14 +74,14 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="threadReply.do" linkID="0x${thread.ID}" method="post" validate="return validate(this)">
+<el:form action="threadReply.do" link="${thread}" method="post" validate="return validate(this)">
 <el:table className="thread form" pad="default" space="default">
 <!-- Thread Header -->
 <tr class="title">
  <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
  WATER COOLER</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
  ${thread.subject}<c:if test="${access.canReport && (postCount > 1)}">
- ( <el:cmd url="threadreport" linkID="0x${thread.ID}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
+ ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
 <!-- Thread Sticky Date Information -->
@@ -115,11 +115,29 @@ return true;
 <br />
 Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <c:choose>
+<c:when test="${pilot.legs >= 2000}">
+<font color="#2020AF"><b>${ccLevels['CC2000']}</b></font><br />
+</c:when>
 <c:when test="${pilot.legs >= 1500}">
 <font color="#AF2020"><b>${ccLevels['CC1500']}</b></font><br />
 </c:when>
+<c:when test="${pilot.legs >= 1400}">
+<font color="#AF2020"><b>${ccLevels['CC1400']}</b></font><br />
+</c:when>
+<c:when test="${pilot.legs >= 1300}">
+<font color="#AF2020"><b>${ccLevels['CC1300']}</b></font><br />
+</c:when>
+<c:when test="${pilot.legs >= 1200}">
+<font color="#AF2020"><b>${ccLevels['CC1200']}</b></font><br />
+</c:when>
+<c:when test="${pilot.legs >= 1100}">
+<font color="#AF2020"><b>${ccLevels['CC1100']}</b></font><br />
+</c:when>
 <c:when test="${pilot.legs >= 1000}">
 <font color="#AF2020"><b>${ccLevels['CC1000']}</b></font><br />
+</c:when>
+<c:when test="${pilot.legs >= 900}">
+<font color="#6060BF"><b>${ccLevels['CC900']}</b></font><br />
 </c:when>
 <c:when test="${pilot.legs >= 800}">
 <font color="#6060BF"><b>${ccLevels['CC800']}</b></font><br />
@@ -184,11 +202,11 @@ WARNING</span></c:if>
 <c:choose>
 <c:when test="${canEdit}">
  </td>
- <td class="postEdit"><el:cmd className="pri bld small" url="thread" linkID="0x${thread.ID}" op="edit">EDIT POST</el:cmd>
+ <td class="postEdit"><el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd></td>
 </c:when>
 <c:when test="${access.canDelete && (postCount > 1)}">
  </td>
- <td class="postEdit"><el:cmd className="pri error small" url="postkill" linkID="0x${thread.ID}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd>
+ <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd>
 </c:when>
 </c:choose></td>
 </tr>
@@ -236,33 +254,33 @@ WARNING</span></c:if>
 <tr class="pri bld mid">
  <td colspan="3">
 <c:if test="${access.canLock}">
- <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" linkID="0x${thread.ID}" op="lock" />
- <el:cmdbutton ID="HideButton" label="HIDE" url="threadlock" linkID="0x${thread.ID}" op="hide" />
+ <el:cmdbutton ID="LockButton" label="LOCK" url="threadlock" link="${thread}" op="lock" />
+ <el:cmdbutton ID="HideButton" label="HIDE" url="threadlock" link="${thread}" op="hide" />
 </c:if>
 <c:if test="${access.canUnlock}">
- <el:cmdbutton ID="UnlockButton" label="UNLOCK" url="threadunlock" linkID="0x${thread.ID}" op="unlock" />
- <el:cmdbutton ID="UnhideButton" label="UNHIDE" url="threadunlock" linkID="0x${thread.ID}" op="unhide" />
+ <el:cmdbutton ID="UnlockButton" label="UNLOCK" url="threadunlock" link="${thread}" op="unlock" />
+ <el:cmdbutton ID="UnhideButton" label="UNHIDE" url="threadunlock" link="${thread}" op="unhide" />
 </c:if>
 <c:if test="${imgAccess.canDelete}">
- <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" linkID="0x${img.ID}" />
+ <el:cmdbutton ID="ImgDeleteButton" label="DELETE IMAGE" url="imgdelete" link="${img}" />
 </c:if>
 <content:filter roles="Moderator"><c:if test="${contentWarn || (thread.reportCount > 0)}">
- <el:cmdbutton ID="UnfilterButton" label="CLEAR WARNINGS" url="clearcontentwarn" linkID="0x${thread.ID}" />
+ <el:cmdbutton ID="UnfilterButton" label="CLEAR WARNINGS" url="clearcontentwarn" link="${thread}" />
 </c:if></content:filter>
 <c:if test="${access.canUnstick}">
- <el:cmdbutton ID="UnstickButton" label="UNSTICK" url="unstick" linkID="0x${thread.ID}" />
+ <el:cmdbutton ID="UnstickButton" label="UNSTICK" url="unstick" link="${thread}" />
 </c:if>
 <c:if test="${access.canDelete}">
- <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" linkID="0x${thread.ID}" />
+ <el:cmdbutton ID="DeleteButton" label="DELETE THREAD" url="threadkill" link="${thread}" />
 </c:if>
 <content:filter roles="Moderator">
  MOVE TO <el:combo name="newChannel" idx="*" size="1" options="${channels}" firstEntry="-" value="${thread.channel}" />
- <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" linkID="0x${thread.ID}" />
+ <el:cmdbutton ID="MoveButton" label="MOVE" url="threadmove" post="true" link="${thread}" />
  STICK UNTIL <el:text name="stickyDate" idx="*" size="9" max="10" value="${stickyDate}" />
 <c:if test="${user.dateFormat == 'MM/dd/yyyy'}">
  <el:button ID="CalendarButton" label="CALENDAR" className="BUTTON" onClick="void show_calendar('forms[0].stickyDate')" />
 </c:if>
- <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" linkID="0x${thread.ID}" />
+ <el:cmdbutton ID="StickButton" label="STICK" url="threadstick" post="true" link="${thread}" />
 </content:filter>
  </td>
 </tr>
@@ -275,9 +293,9 @@ WARNING</span></c:if>
 <tr class="pri bld mid">
  <td colspan="3">You will <c:if test="${!doNotify}"><u><i>NOT</i></u> </c:if>receive an e-mail 
 notification each time a reply is posted in this Thread.
-<el:cmdbutton url="notifytoggle" linkID="0x${thread.ID}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
+<el:cmdbutton url="notifytoggle" link="${thread}" label="${doNotify ? 'DISABLE' : 'ENABLE'} NOTIFICATIONS" /> 
 <content:filter roles="Moderator">
-<c:if test="${!empty notify.IDs}"><el:cmdbutton url="notifyclear" linkID="0x${thread.ID}" label="RESET NOTIFICATIONS" /></c:if>
+<c:if test="${!empty notify.IDs}"><el:cmdbutton url="notifyclear" link="${thread}" label="RESET NOTIFICATIONS" /></c:if>
 </content:filter></td>
 </tr>
 </content:filter>
@@ -288,7 +306,7 @@ notification each time a reply is posted in this Thread.
 </tr>
 <tr class="pri bld mid">
  <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />
- <el:cmdbutton url="threadsubjectedit" linkID="0x${thread.ID}" post="true" label="UPDATE" /></td>
+ <el:cmdbutton url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
 </tr>
 </c:if>
 

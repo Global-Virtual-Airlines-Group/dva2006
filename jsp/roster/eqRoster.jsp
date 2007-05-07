@@ -54,7 +54,7 @@ return true;
 <c:forEach var="pilot" items="${viewContext.results}">
 <view:row entry="${pilot}">
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" linkID="0x${pilot.ID}">${pilot.firstName} ${pilot.lastName}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="small"><el:link url="mailto:${pilot.email}">${pilot.email}</el:link></td>
  <td class="pri bld">${pilot.rank}</td>
  <td class="sec">${pilot.homeAirport}</td>

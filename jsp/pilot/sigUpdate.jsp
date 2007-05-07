@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Water Cooler Signature Update</title>
@@ -33,7 +34,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="sigupdate.do" method="post" linkID="0x${pilot.ID}" allowUpload="true" validate="return validate(this)">
+<el:form action="sigupdate.do" method="post" link="${pilot}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2" class="left">WATER COOLER SIGNATURE IMAGE UPDATE - ${pilot.name}</td>

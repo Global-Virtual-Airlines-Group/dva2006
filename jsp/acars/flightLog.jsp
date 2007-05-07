@@ -52,7 +52,7 @@
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT INFORMATION LOG" />
+ <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT INFORMATION LOG" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -78,7 +78,7 @@
 <c:set var="pilot" value="${pilots[flight.pilotID]}" scope="request" />
 <c:set var="pilotLoc" value="${userData[flight.pilotID]}" scope="request" />
 <view:row entry="${entry}">
- <td class="pri bld"><el:cmd url="acarsinfo" linkID="0x${flight.ID}"><fmt:int value="${flight.ID}" /></el:cmd></td>
+ <td class="pri bld"><el:cmd url="acarsinfo" link="${flight}"><fmt:int value="${flight.ID}" /></el:cmd></td>
  <td><fmt:date t="HH:mm" date="${flight.startTime}" />
 <c:if test="${!empty flight.endTime}">
 <br /><fmt:date t="HH:mm" date="${flight.endTime}" />

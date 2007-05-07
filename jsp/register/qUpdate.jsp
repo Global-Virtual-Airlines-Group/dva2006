@@ -52,8 +52,8 @@ The e-mail address for ${applicant.name} has not yet been validated. Until this 
 should not be approved. The validation message may be resent from the Applicant profile.<br />
 </c:if>
 <br />
-To return to the Applicant questionnaire queue, <el:cmd url="questionnaires" className="sec bld">click here</el:cmd>.<br />
-To review this Applicant's profile, <el:cmd url="applicant" linkID="0x${applicant.ID}" className="sec bld">click here</el:cmd>.<br />
+To return to the Applicant questionnaire queue, <el:cmd url="questionnaires" className="sec bld">Click Here</el:cmd>.<br />
+To review this Applicant's profile, <el:cmd url="applicant" link="${applicant}" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <br />
 <content:copyright />
