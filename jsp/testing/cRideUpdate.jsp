@@ -37,11 +37,17 @@ To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.
 This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
 and an e-mail message has been sent to the Pilot.<br />
 </c:when>
-<c:when test="${isRideAlreadyAssigned}">
+<c:when test="${isRideAlreadyAssigned && (empty tx)}">
 <div class="updateHdr">Check Ride Pending</div>
 <br />
-A ${checkRide.equipmentType} check ride is currently pending for ${pilot.name}. No new check rides can 
+A ${checkRide.equipmentType} Check Ride is currently pending for ${pilot.name}. No new Check Rides can 
 be assigned while one is currently pending.<br />
+</c:when>
+<c:when test="${!empty txt}">
+<div class="updateHdr">Transfer Request Pending</div>
+<br />
+An Equipment Program Transfer Request to the ${tx.equipmentType} is currently pending for ${pilot.name}. No new
+Check Rides be assigned while a Transfer Request is pending.<br />
 </c:when>
 </c:choose>
 <br />

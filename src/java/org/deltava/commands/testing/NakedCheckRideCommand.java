@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -56,6 +57,14 @@ public class NakedCheckRideCommand extends AbstractCommand {
 					hasRide = true;
 					ctx.setAttribute("checkRide", cr, REQUEST);
 				}
+			}
+			
+			// Check if we already have a pending transfer request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest tx = txdao.get(p.getID());
+			if (tx != null) {
+				hasRide = true;
+				ctx.setAttribute("tx", tx, REQUEST);
 			}
 
 			// Save the pilot in the request
