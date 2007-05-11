@@ -70,8 +70,10 @@ public class PilotSearchCommand extends AbstractCommand {
 			// Load Airline information
 			GetUserData uddao = new GetUserData(con);
 			Map<String, AirlineInformation> apps = uddao.getAirlines(true);
+			Map<String, Integer> sizes = new HashMap<String, Integer>();
 
-			// Get the DAO
+			// Get the DAOs
+			GetStatistics stdao = new GetStatistics(con);
 			GetPilot dao = new GetPilot(con);
 			dao.setQueryMax(maxResults);
 
@@ -82,10 +84,12 @@ public class PilotSearchCommand extends AbstractCommand {
 				
 				// Load the profile
 				if ((app != null) && isCrossSearch && ctx.isUserInRole("Admin")) {
+					sizes.put(app.getCode(), new Integer(stdao.getActivePilots(app.getDB())));
 					Pilot p = dao.getPilotByCode(id.getUserID(), app.getDB());
 					if (p != null)
 						results.add(p);
 				} else {
+					sizes.put(SystemData.get("airline.code"), new Integer(stdao.getActivePilots(SystemData.get("airline.db"))));
 					Pilot p = dao.getPilotByCode(id.getUserID(), SystemData.get("airline.db"));
 					if (p != null)
 						results.add(p);
@@ -96,10 +100,16 @@ public class PilotSearchCommand extends AbstractCommand {
 					for (Iterator<AirlineInformation> i = apps.values().iterator(); i.hasNext(); ) {
 						AirlineInformation app = i.next();
 						results.addAll(dao.search(app.getDB(), fName, lName, eMail));
+						sizes.put(app.getCode(), new Integer(stdao.getActivePilots(app.getDB())));
 					}
-				} else
+				} else {
 					results.addAll(dao.search(SystemData.get("airline.db"), fName, lName, eMail));
+					sizes.put(SystemData.get("airline.code"), new Integer(stdao.getActivePilots(SystemData.get("airline.db"))));
+				}
 			}
+			
+			// Save the airline sizes
+			ctx.setAttribute("airlineSizes", sizes, REQUEST);
 			
 			// Load the pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
