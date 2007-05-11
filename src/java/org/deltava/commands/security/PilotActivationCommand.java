@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -31,16 +31,34 @@ public class PilotActivationCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the command result
+		// If we're doing a GET, redirect to the JSP
 		CommandResult result = ctx.getResult();
+		if (ctx.getParameter("eMail") == null) {
+			result.setURL("/jsp/admin/activatePilot.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
 		// Initialize the Message context
 		MessageContext mctx = new MessageContext();
 		mctx.addData("user", ctx.getUser());
 
+		// Check if we're forcing
+		boolean isFull = false;
+		boolean doForce = "force".equals(ctx.getCmdParameter(OPERATION, null));
+
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
+
+			// Check if we're full
+			if (!doForce) {
+				GetStatistics stdao = new GetStatistics(con);
+				int size = stdao.getActivePilots(SystemData.get("airline.db"));
+				isFull = (size >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
+				if (isFull)
+					ctx.setAttribute("airlineSize", new Integer(size), REQUEST);
+			}
 
 			// Get the DAO and the Pilot profile
 			GetPilot dao = new GetPilot(con);
@@ -64,53 +82,55 @@ public class PilotActivationCommand extends AbstractCommand {
 			mctx.addData("pilot", p);
 			mctx.addData("eqType", eq);
 
-			// If we're doing a GET, redirect to the JSP
-			if (ctx.getParameter("eMail") == null) {
-				result.setURL("/jsp/admin/activatePilot.jsp");
-			} else {
-				// Update the pilot status
-				p.setEmail(ctx.getParameter("eMail"));
-				p.setRank(ctx.getParameter("rank"));
-				p.setStatus(Pilot.ACTIVE);
-
-				// Reset the password
-				p.setPassword(PasswordGenerator.generate(8));
-
-				// Get the Message Template DAO
-				GetMessageTemplate mtdao = new GetMessageTemplate(con);
-				mctx.setTemplate(mtdao.get("USERACTIVATE"));
-				
-				// Create the status update entry
-				StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
-				upd.setAuthorID(ctx.getUser().getID());
-				upd.setDescription("Returned to Active status");
-
-				// Start the transaction
-				ctx.startTX();
-
-				// Get the write DAO and save the pilot
-				SetPilot pwdao = new SetPilot(con);
-				pwdao.write(p);
-				
-				// Write the status update entry
-				SetStatusUpdate sudao = new SetStatusUpdate(con);
-				sudao.write(upd);
-
-				// Get the authenticator and update the password
-				Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-				if (auth.contains(p)) {
-					auth.updatePassword(p, p.getPassword());
-				} else {
-					auth.addUser(p, p.getPassword());
-				}
-
-				// Commit the transaction
-				ctx.commitTX();
-
-				// Set JSP result
-				result.setType(CommandResult.REQREDIRECT);
-				result.setURL("/jsp/admin/activatePilotComplete.jsp");
+			// If we're full and not forcing, redirect to a warning page
+			if (isFull && !doForce) {
+				ctx.release();
+				result.setURL("/jsp/admin/activatePilotFull.jsp");
+				result.setSuccess(true);
+				return;
 			}
+
+			// Update the pilot status
+			p.setEmail(ctx.getParameter("eMail"));
+			p.setRank(ctx.getParameter("rank"));
+			p.setStatus(Pilot.ACTIVE);
+
+			// Reset the password
+			p.setPassword(PasswordGenerator.generate(8));
+
+			// Get the Message Template DAO
+			GetMessageTemplate mtdao = new GetMessageTemplate(con);
+			mctx.setTemplate(mtdao.get("USERACTIVATE"));
+
+			// Create the status update entry
+			StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
+			upd.setAuthorID(ctx.getUser().getID());
+			upd.setDescription("Returned to Active status");
+
+			// Start the transaction
+			ctx.startTX();
+
+			// Get the write DAO and save the pilot
+			SetPilot pwdao = new SetPilot(con);
+			pwdao.write(p);
+
+			// Write the status update entry
+			SetStatusUpdate sudao = new SetStatusUpdate(con);
+			sudao.write(upd);
+
+			// Get the authenticator and update the password
+			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			if (auth.contains(p))
+				auth.updatePassword(p, p.getPassword());
+			else
+				auth.addUser(p, p.getPassword());
+
+			// Commit the transaction
+			ctx.commitTX();
+
+			// Set JSP result
+			result.setType(CommandResult.REQREDIRECT);
+			result.setURL("/jsp/admin/activatePilotComplete.jsp");
 		} catch (SecurityException se) {
 			ctx.rollbackTX();
 			throw new CommandException(se);

@@ -4,6 +4,8 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.commands.*;
@@ -23,6 +25,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PIREPDisposalCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(PIREPDisposalCommand.class);
 	
 	// Operation constants
 	private static final String[] OPNAMES = { "", "", "hold", "approve", "reject" };
@@ -113,13 +117,19 @@ public class PIREPDisposalCommand extends AbstractCommand {
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pName = i.next();
 					EquipmentType peq = eqdao.get(pName);
-					if (peq == null)
+					if (peq == null) {
+						log.warn("Unknown equipment type - " + pName);
 						i.remove();
-					else if (peq.getACARSPromotionLegs() && !isACARS)
+					} else if (peq.getACARSPromotionLegs() && !isACARS) {
+						log.warn("Flight " + fr.getID() + " not logged using ACARS - " + peq.getName() + " requires ACARS");					 
 						i.remove();
+					}
 				}
 				
+				// Update the PIREP
 				fr.setCaptEQType(pTypeNames);
+				if (CollectionUtils.hasDelta(pTypeNames, fr.getCaptEQType()))
+					log.warn("Updating Promotion to Captain types - was " + fr.getCaptEQType() + ", now " + pTypeNames);
 			}
 			
 			// Check if the pilot is rated in the equipment type
