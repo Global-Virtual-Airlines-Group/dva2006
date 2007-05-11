@@ -14,7 +14,10 @@ xmlreq.onreadystatechange = function() {
 		var a = ac[i];
 		var apCode = a.getAttribute(codeAttr);
 		var apName = a.getAttribute("name") + " (" + apCode + ")";
-		combo.options[i+1] = new Option(apName, apCode);
+		var opt = new Option(apName, apCode);
+		opt.icao = a.getAttribute("icao");
+		opt.iata = a.getAttribute("iata");
+		combo.options[i+1] = opt;
 	} // for
 
 	setAirport(combo, oldCode);
@@ -66,8 +69,9 @@ if (code == null)
 	return false;
 
 code = code.toUpperCase();
-for (x = 0; x < combo.options.length; x++) {
-	if (code == combo.options[x].value) {
+for (var x = 0; x < combo.options.length; x++) {
+	var opt = combo.options[x];
+	if ((code == opt.value) || (code == opt.icao) || (code == opt.iata)) {
 		combo.selectedIndex = x;
 		return true;
 	}
