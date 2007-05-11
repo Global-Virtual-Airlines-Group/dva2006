@@ -62,6 +62,7 @@ public class RegisterCommand extends AbstractCommand {
 		ctx.setAttribute("airports", apSet, REQUEST);
 		
 		// Check if we ignore the fact that the airline is full
+		boolean isFull = false;
 		boolean ignoreFull = "force".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// If we're just doing a get, then redirect to the JSP
@@ -71,13 +72,15 @@ public class RegisterCommand extends AbstractCommand {
 				
 				// Check our size - if we're overriding then ignore this
 				GetStatistics stdao = new GetStatistics(con);
-				boolean isFull = (stdao.getActivePilots(SystemData.get("airline.db")) >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
+				int size = stdao.getActivePilots(SystemData.get("airline.db"));
+				isFull = (size >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
 				
 				// Load manuals to display
 				if ((!isFull) || ignoreFull) {
 					GetDocuments docdao = new GetDocuments(con);
 					ctx.setAttribute("manuals", docdao.getRegistrationManuals(), REQUEST);
-				}
+				} else
+					ctx.setAttribute("airlineSize", new Integer(size), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -87,8 +90,8 @@ public class RegisterCommand extends AbstractCommand {
 			// Save FS Versions
 			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 			
-			// TODO Forward to the JSP - redirect to seperate page if we're full
-			result.setURL("/jsp/register/register.jsp");
+			// Forward to the JSP - redirect to seperate page if we're full
+			result.setURL("/jsp/register/" + ((ignoreFull || (!isFull)) ? "register.jsp" : "regFullWarn.jsp"));
 			result.setSuccess(true);
 			return;
 		}
