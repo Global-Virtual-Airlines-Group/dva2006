@@ -18,7 +18,7 @@
 <c:if test="${access.canDelete && (!empty viewContext.results)}">
 <content:js name="datePicker" />
 <script language="JavaScript" type="text/javascript">
-function validate(this)
+function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateText(form.purgeDate, 10, 'Purge Date')) return false;
