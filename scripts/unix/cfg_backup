@@ -6,16 +6,16 @@
 cd /home/backup/cfg
 
 # Copy configuration files
-tar vcfz authlib.tar.gz /usr/local/etc/authlib
-tar vcfz awstats.tar.gz /usr/local/etc/awstats
-tar vcfz spamassassin.tar.gz /etc/mail/spamassassin
-tar vcfz tomcat.tar.gz /usr/local/tomcat/conf /usr/local/tomcat/bin
-tar vcfz postfix.tar.gz /etc/postfix
-tar vcfz imapd.tar.gz /usr/lib/courier-imap/etc
-tar vcfz mysql.tar.gz /home/mysql/my.cnf
-tar vcfz ts2.tar.gz /usr/local/ts2
-tar vcfz fsd.tar.gz /usr/local/fsd
-tar vcfz crontabs.tar.gz /var/spool/cron/tabs
+nice tar vcfz authlib.tar.gz /usr/local/etc/authlib
+nice tar vcfz awstats.tar.gz /usr/local/etc/awstats
+nice tar vcfz spamassassin.tar.gz /etc/mail/spamassassin
+nice tar vcfz tomcat.tar.gz /usr/local/tomcat/conf /usr/local/tomcat/bin
+nice tar vcfz postfix.tar.gz /etc/postfix
+nice tar vcfz imapd.tar.gz /usr/lib/courier-imap/etc
+nice tar vcfz mysql.tar.gz /home/mysql/my.cnf
+nice tar vcfz ts2.tar.gz /usr/local/ts2
+nice tar vcfz fsd.tar.gz /usr/local/fsd
+nice tar vcfz crontabs.tar.gz /var/spool/cron/tabs
 
 # Update permissions
 chmod 660 *.tar.gz
