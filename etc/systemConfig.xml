@@ -495,6 +495,9 @@
 	</cooler>
 	
 	<users>
+		<!-- Maximum user count -->
+		<max type="Integer">2000</max>
+	
 		<notify_days type="Integer">59</notify_days>
 		<inactive_days type="Integer">90</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
@@ -557,9 +560,8 @@
 		<position_interval type="Integer">125</position_interval>
 		<build>
 			<map name="minimum">
-				<v1_2>71</v1_2>
-				<v1_9>74</v1_9>
-				<v2_0>82</v2_0>
+				<v1_4>75</v1_4>
+				<v2_0>84</v2_0>
 			</map>
 
 			<latest type="Integer">71</latest>
