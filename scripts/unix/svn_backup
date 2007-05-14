@@ -20,9 +20,9 @@ if [ "$1" != "force" ] ;then
 fi
 
 # Back up the first 1000 revisions
-if [ ! -f "/home/backup/svn/svn_1xxx.gz" ] ;then
+if [ ! -f "/home/backup/svn/svn_1xxx.bz2" ] ;then
  echo 'Backing up revisions 0-999'
- svnadmin dump /usr/local/svn --revision 0:999 | gzip -9 > svn_1xxx.gz
+ nice svnadmin dump /usr/local/svn --revision 0:999 | bzip2 -9 > svn_1xxx.bz2
  echo 1000 > /tmp/svn.revision_base
 else
  echo 1000 > /tmp/svn.revision_base
@@ -30,9 +30,9 @@ fi
 
 # If we have more than 1500 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "1500" ] ;then
- if [ ! -f "/home/backup/svn/svn_15xx.gz" ] ;then
+ if [ ! -f "/home/backup/svn/svn_15xx.bz2" ] ;then
   echo 'Backing up revisions 1000-1499'
-  svnadmin dump /usr/local/svn --incremental --revision 1000:1499 | gzip -9 > svn_15xx.gz
+  nice svnadmin dump /usr/local/svn --incremental --revision 1000:1499 | bzip2 -9 > svn_15xx.bz2
  fi
 
  echo 1500 > /tmp/svn.revision_base
@@ -40,9 +40,9 @@ fi
 
 # If we have more than 2000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "2000" ] ;then
- if [ ! -f "/home/backup/svn/svn_20xx.gz" ] ;then
+ if [ ! -f "/home/backup/svn/svn_20xx.bz2" ] ;then
   echo 'Backing up revisions 1500-1999'
-  svnadmin dump /usr/local/svn --incremental --revision 1500:1999 | gzip -9 > svn_20xx.gz
+  nice svnadmin dump /usr/local/svn --incremental --revision 1500:1999 | bzip2 -9 > svn_20xx.bz2
  fi
 
  echo 2000 > /tmp/svn.revision_base
@@ -50,9 +50,9 @@ fi
 
 # If we have more than 2500 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "2500" ] ;then
- if [ ! -f "/home/backup/svn/svn_25xx.gz" ] ;then
+ if [ ! -f "/home/backup/svn/svn_25xx.bz2" ] ;then
   echo 'Backing up revisions 2000-2499'
-  svnadmin dump /usr/local/svn --incremental --revision 2000:2499 | gzip -9 > svn_25xx.gz
+  nice svnadmin dump /usr/local/svn --incremental --revision 2000:2499 | bzip2 -9 > svn_25xx.bz2
  fi
 
  echo 2500 > /tmp/svn.revision_base
@@ -60,9 +60,9 @@ fi
 
 # If we have more than 3000 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "3000" ] ;then
- if [ ! -f "/home/backup/svn/svn_30xx.gz" ] ;then
+ if [ ! -f "/home/backup/svn/svn_30xx.bz2" ] ;then
   echo 'Backing up revisions 2500-2999'
-  svnadmin dump /usr/local/svn --incremental --revision 2500:2999 | gzip -9 > svn_30xx.gz
+  nice svnadmin dump /usr/local/svn --incremental --revision 2500:2999 | bzip2 -9 > svn_30xx.bz2
  fi
 
  echo 3000 > /tmp/svn.revision_base
@@ -70,22 +70,42 @@ fi
 
 # If we have more than 3500 revisions, back them up
 if [ "`cat /tmp/svn.revision`" -gt "3500" ] ;then
- if [ ! -f "/home/backup/svn/svn_35xx.gz" ] ;then
-  echo 'Backing up revisions 300-3499'
-  svnadmin dump /usr/local/svn --incremental --revision 3000:3499 | gzip -9 > svn_35xx.gz
+ if [ ! -f "/home/backup/svn/svn_35xx.bz2" ] ;then
+  echo 'Backing up revisions 3000-3499'
+  nice svnadmin dump /usr/local/svn --incremental --revision 3000:3499 | bzip2 -9 > svn_35xx.bz2
  fi
 
- echo 3000 > /tmp/svn.revision_base
+ echo 3500 > /tmp/svn.revision_base
+fi
+
+# If we have more than 4000 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "4000" ] ;then
+ if [ ! -f "/home/backup/svn/svn_40xx.bz2" ] ;then
+  echo 'Backing up revisions 3500-3999'
+  nice svnadmin dump /usr/local/svn --incremental --revision 3500:3999 | bzip2 -9 > svn_40xx.bz2
+ fi
+
+ echo 4000 > /tmp/svn.revision_base
+fi
+
+# If we have more than 4500 revisions, back them up
+if [ "`cat /tmp/svn.revision`" -gt "4500" ] ;then
+ if [ ! -f "/home/backup/svn/svn_45xx.bz2" ] ;then
+  echo 'Backing up revisions 4000-4499'
+  nice svnadmin dump /usr/local/svn --incremental --revision 4000:4499 | bzip2 -9 > svn_45xx.bz2
+ fi
+
+ echo 4000 > /tmp/svn.revision_base
 fi
 
 # Back up the last revisions
 echo "Backing up revisions `cat /tmp/svn.revision_base`-`cat /tmp/svn.revision`"
-svnadmin dump /usr/local/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | gzip -9 > svn_top.gz
+nice svnadmin dump /usr/local/svn --incremental --revision `cat /tmp/svn.revision_base`:`cat /tmp/svn.revision` --incremental | bzip2 -9 > svn_top.bz2
 
 # Clean up
 mv /tmp/svn.revision /home/backup/svn/svn.revision_base
 rm /tmp/svn.revision_base
 
 # Change file permissions
-chown -R backup:gva *.gz
+chown -R backup:gva *.bz2
 chmod 640 *

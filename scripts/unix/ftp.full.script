@@ -34,12 +34,14 @@ lcd /etc/svn
 put svn.access
 
 lcd /home/backup/svn
-put svn_1xxx.gz
-put svn_15xx.gz
-put svn_20xx.gz
-put svn_25xx.gz
-put svn_30xx.gz
-put svn_top.gz
+put svn_1xxx.bz2
+put svn_15xx.bz2
+put svn_20xx.bz2
+put svn_25xx.bz2
+put svn_30xx.bz2
+put svn_35xx.bz2
+put svn_40xx.bz2
+put svn_top.bz2
 
 cd /cfg
 lcd /usr/local/apache22/conf
