@@ -57,6 +57,7 @@ return true;
  <td><el:button ID="ActivateButton" type="submit" className="BUTTON" label="REACTIVATE PILOT" /></td>
 </tr>
 </el:table>
+<el:text name="op" type="hidden" value="force" />
 </el:form>
 <br />
 <content:copyright />
