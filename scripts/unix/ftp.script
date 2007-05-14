@@ -28,7 +28,7 @@ lcd /etc/svn
 put svn.access
 
 lcd /home/backup/svn
-put svn_top.gz
+put svn_top.bz2
 
 cd /cfg
 lcd /usr/local/apache22/conf

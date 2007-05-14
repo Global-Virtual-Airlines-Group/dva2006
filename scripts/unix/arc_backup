@@ -1,24 +1,39 @@
 #!/bin/sh
 # Archive Database backup script
-# (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+# (c) 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+
+# Log Starting
+echo `date +%H:%M:%S`' Starting'
+
+# Set up mysql utility aliases
+alias mysql='/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock'
+alias mysqldump='/usr/local/mysql5/bin/mysqldump --socket=/var/run/mysql5/mysql.sock'
 
 # Goto backup directory
 cd /home/backup/db
 
 # Dump Navigation Data
-echo 'Writing Navigation Data'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS CHARTS | gzip -9 > old/navdata.sql.gz
+echo `date +%H:%M:%S`' Writing Navigation Data'
+mysqldump -C -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS CHARTS | bzip2 -9 > old/navdata.sql.bz2
+
+# Write last backup time
+echo `date +%H:%M:%S`' Write last backup time'
+echo 'SELECT UNIX_TIMESTAMP(NOW())' | mysql -h mysql.deltava.org -N `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
 
 # Dump ACARS position archive
-echo 'Writing ACARS Position Archive'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | gzip -9 > old/acars_pos.sql.gz
+echo `date +%H:%M:%S`' Writing ACARS Position Archive'
+mysqldump -C -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > old/acars_pos.sql.bz2
 
 # Dump Image Gallery Data
-echo 'Writing DVA Image Gallery'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY GALLERYSCORE | gzip -9 > old/dva_gallery.sql.gz
-echo 'Writing AFV Image Gallery'
-mysqldump -C -n -t -K -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY GALLERYSCORE | gzip -9 > old/afv_gallery.sql.gz
+echo `date +%H:%M:%S`' Writing DVA Image Gallery'
+mysqldump -C -n -t -K --single-transaction -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY GALLERYSCORE | bzip2 -9 > old/dva_gallery.sql.bz2
+echo `date +%H:%M:%S`' Writing AFV Image Gallery'
+mysqldump -C -n -t -K --single-transaction -q -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY GALLERYSCORE | bzip2 -9 > old/afv_gallery.sql.bz2
 
 # Change file permissions
-chown -R root:gva old/*.sql.gz
-chmod 640 old/*.sql.gz
+echo `date +%H:%M:%S`' Setting file permissions'
+chown -R root:gva old/*.sql.bz2
+chmod 640 old/*.sql.bz2
+
+# Log Completion
+echo `date +%H:%M:%S`' Complete'

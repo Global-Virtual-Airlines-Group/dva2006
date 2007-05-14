@@ -6,7 +6,7 @@
 cd /home/backup/mail
 
 # Backup maildirs
-tar cfj mailbox.tar.bz2 /home/mail
+nice tar cfj mailbox.tar.bz2 /home/mail
 
 # Update permissions
 chmod 640 *.tar.bz2

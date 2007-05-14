@@ -9,49 +9,48 @@ cd /tmpdbrestore
 # Rebuild tables
 echo 'Recreating Tables'
 cp /home/backup/db/create_tables.tar.bz2 .
-bzip2 -d create_tables.tar.bz2 | tar xvf create_tables.tar
-rm create_tables.tar
-/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common < common.sql
-/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars < acars.sql
-/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv < afv.sql
-/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva < dva.sql
+tar xvfj create_tables.tar.bz2
+/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 common < common.sql
+/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 acars < acars.sql
+/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv < afv.sql
+/usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva < dva.sql
 rm *.sql
 
 # Rebuild databases
 echo 'Loading Common Data'
-bzcat /home/backup/db/common.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common
-bzcat /home/backup/db/events.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common
+lzcat /home/backup/db/common.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 common
+lzcat /home/backup/db/events.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 common
 
 echo 'Restoring Postfix/Teampseak Data'
-bzcat /home/backup/db/postfix.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# postfix
-bzcat /home/backup/db/teamspeak.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# teamspeak
+lzcat /home/backup/db/postfix.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 postfix
+lzcat /home/backup/db/teamspeak.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 teamspeak
 
 echo 'Restoring DVA data'
-bzcat /home/backup/db/dva.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
-bzcat /home/backup/db/dva_academy.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
-bzcat /home/backup/db/dva_sched.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
-bzcat /home/backup/db/dva_sys.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
-bzcat /home/backup/db/dva_test.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
+lzcat /home/backup/db/dva.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
+lzcat /home/backup/db/dva_academy.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
+lzcat /home/backup/db/dva_sched.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
+lzcat /home/backup/db/dva_sys.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
+lzcat /home/backup/db/dva_test.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
 
 echo 'Restoring AFV data'
-bzcat /home/backup/db/afv.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv
-bzcat /home/backup/db/afv_sched.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv
-bzcat /home/backup/db/afv_sys.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv
-bzcat /home/backup/db/afv_test.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv
+lzcat /home/backup/db/afv.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv
+lzcat /home/backup/db/afv_sched.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv
+lzcat /home/backup/db/afv_sys.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv
+lzcat /home/backup/db/afv_test.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv
 
 echo 'Restoring Water Cooler'
-bzcat /home/backup/db/cooler.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common
+lzcat /home/backup/db/cooler.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 common
 
 echo 'Restoring ACARS data'
-bzcat /home/backup/db/acars.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars
-# bzcat /home/backup/db/acars_pos_inc.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars
+lzcat /home/backup/db/acars.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 acars
+lzcat /home/backup/db/acars_pos_inc.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 acars
 
 echo 'Restoring Navigation Data'
-bzcat /home/backup/db/navdata.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# common
+lzcat /home/backup/db/navdata.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 common
 
 echo 'Restoring ACARS position archive'
-bzcat /home/backup/db/acars_pos.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# acars
+lzcat /home/backup/db/acars_pos.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 acars
 
 echo 'Restoring Image Galleries'
-bzcat /home/backup/db/dva_gallery.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# dva
-bzcat /home/backup/db/afv_gallery.sql.bz2 | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -pgv@root# afv
+lzcat /home/backup/db/dva_gallery.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 dva
+lzcat /home/backup/db/afv_gallery.sql.lzma | /usr/local/mysql5/bin/mysql --socket=/var/run/mysql5/mysql.sock -p$1 afv
