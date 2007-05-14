@@ -31,13 +31,8 @@ public class PilotActivationCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// If we're doing a GET, redirect to the JSP
+		// Get command results
 		CommandResult result = ctx.getResult();
-		if (ctx.getParameter("eMail") == null) {
-			result.setURL("/jsp/admin/activatePilot.jsp");
-			result.setSuccess(true);
-			return;
-		}
 
 		// Initialize the Message context
 		MessageContext mctx = new MessageContext();
@@ -55,7 +50,7 @@ public class PilotActivationCommand extends AbstractCommand {
 			if (!doForce) {
 				GetStatistics stdao = new GetStatistics(con);
 				int size = stdao.getActivePilots(SystemData.get("airline.db"));
-				isFull = (size >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
+				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				if (isFull)
 					ctx.setAttribute("airlineSize", new Integer(size), REQUEST);
 			}
@@ -86,6 +81,11 @@ public class PilotActivationCommand extends AbstractCommand {
 			if (isFull && !doForce) {
 				ctx.release();
 				result.setURL("/jsp/admin/activatePilotFull.jsp");
+				result.setSuccess(true);
+				return;
+			} else if (ctx.getParameter("eMail") == null)  {
+				ctx.release();
+				result.setURL("/jsp/admin/activatePilot.jsp");
 				result.setSuccess(true);
 				return;
 			}
