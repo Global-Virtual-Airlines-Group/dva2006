@@ -49,6 +49,14 @@ public class RegisterCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
+		
+		// If we're requesting reactivation, just go to the dupe user page
+		boolean isDupe = "dupe".equals(ctx.getCmdParameter(OPERATION, null));
+		if (isDupe) {
+			result.setURL("/jsp/register/duplicateRegistration.jsp");
+			result.setSuccess(true);
+			return;
+		}
 
 		// Save the notification options
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
@@ -73,7 +81,7 @@ public class RegisterCommand extends AbstractCommand {
 				// Check our size - if we're overriding then ignore this
 				GetStatistics stdao = new GetStatistics(con);
 				int size = stdao.getActivePilots(SystemData.get("airline.db"));
-				isFull = (size >= SystemData.getInt("pilots.max", Integer.MAX_VALUE));
+				isFull = (size >= SystemData.getInt("users.max", Integer.MAX_VALUE));
 				
 				// Load manuals to display
 				if ((!isFull) || ignoreFull) {
@@ -201,6 +209,7 @@ public class RegisterCommand extends AbstractCommand {
 					dupeResults.addAll(adao.checkUnique(a, info.getDB()));
 					if (!dupeResults.isEmpty()) {
 						ctx.release();
+						ctx.setAttribute("appSubmitted", Boolean.TRUE, REQUEST);
 
 						// Save airline
 						ctx.setAttribute("airline", info, REQUEST);
