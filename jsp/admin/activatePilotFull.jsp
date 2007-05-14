@@ -9,6 +9,7 @@
 <head>
 <title>Reactivate <content:airline /> Pilot - Airline Full</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:pics />
 <content:js name="common" />
 </head>
@@ -17,7 +18,7 @@
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="maxPilots" name="pilots.max" />
+<content:sysdata var="maxPilots" name="users.max" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
