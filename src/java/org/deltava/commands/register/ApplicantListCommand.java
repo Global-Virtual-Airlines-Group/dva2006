@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -8,9 +8,7 @@ import org.deltava.beans.Applicant;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
-import org.deltava.util.ComboUtils;
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display applicants.
@@ -21,8 +19,8 @@ import org.deltava.util.StringUtils;
 
 public class ApplicantListCommand extends AbstractViewCommand {
 	
-	private static final List LETTERS = Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O",
-			"P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"});
+	private static final List<String> LETTERS = Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
+			"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"});
 
 	/**
 	 * Executes the command.
@@ -51,17 +49,32 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Figure out which method to call
-			List results = null;
+			List<Applicant> results = null;
 			if (ctx.getParameter("status") != null) {
 				int statusCode = StringUtils.arrayIndexOf(Applicant.STATUS, ctx.getParameter("status"));
 				results = dao.getByStatus((statusCode == -1) ? Applicant.PENDING : statusCode, "CREATED DESC");
-			} else if (ctx.getParameter("eqType") != null) {
+			} else if (ctx.getParameter("eqType") != null)
 				results = dao.getByEquipmentType(ctx.getParameter("eqType"));
-			} else if (!StringUtils.isEmpty(ctx.getParameter("letter"))) {
+			else if (!StringUtils.isEmpty(ctx.getParameter("letter")))
 				results = dao.getByLetter(ctx.getParameter("letter"));
-			} else {
-				results = dao.getByStatus(Applicant.PENDING, "CREATED");
+			else
+				results = dao.getByStatus(Applicant.PENDING, "CREATED DESC");
+			
+			// Get the applicant/pilot IDs
+			Collection<Integer> IDs = new HashSet<Integer>();
+			Collection<Integer> pIDs = new HashSet<Integer>();
+			for (Iterator<Applicant> i = results.iterator(); i.hasNext(); ) {
+				Applicant a = i.next();
+				IDs.add(new Integer(a.getID()));
+				if (a.getPilotID() != 0)
+					pIDs.add(new Integer(a.getPilotID()));
 			}
+			
+			// Load the questionnaires
+			GetExam exdao = new GetExam(con);
+			GetQuestionnaire qdao = new GetQuestionnaire(con);
+			ctx.setAttribute("qMap", qdao.getByID(IDs), REQUEST);
+			ctx.setAttribute("pqMap", exdao.getQuestionnaires(pIDs), REQUEST);
 
 			// Save the results
 			vc.setResults(results);

@@ -39,21 +39,26 @@ return true;
 <tr class="title">
  <td class="left">PILOT APPLICATIONS</td>
  <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
- <td>STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void sort(this)" /></td>
+ <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void sort(this)" /></td>
  <td colspan="2">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void sort(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="25%">APPLICANT NAME</td>
+ <td width="20%">APPLICANT NAME</td>
  <td width="10%">REGISTERED ON</td>
- <td width="20%">HIRED AS</td>
- <td width="20%">LOCATION</td>
+ <td width="18%">HIRED AS</td>
+ <td width="17%">LOCATION</td>
+ <td width="10%">SCORE</td>
  <td>E-MAIL ADDRESS</td>
 </tr>
 
 <!-- Table Applicant Data -->
 <c:forEach var="applicant" items="${viewContext.results}">
+<c:set var="q" value="${qMap[applicant.ID]}" scope="request" />
+<c:if test="${empty q}">
+<c:set var="q" value="${pqMap[applicant.pilotID]}" scope="request" />
+</c:if>
 <view:row entry="${applicant}">
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
@@ -63,14 +68,20 @@ return true;
 <c:if test="${applicant.pilotID == 0}">
  <td>N/A</td>
 </c:if>
- <td>${applicant.location}</td>
+ <td class="small">${applicant.location}</td>
+<c:if test="${!empty q}">
+ <td class="sec small bld"><fmt:int value="${q.score}" /> / <fmt:int value="${q.size}" /></td>
+</c:if>
+<c:if test="${empty q}">
+ <td>N/A</td>
+</c:if>
  <td><a class="small" href="mailto:${applicant.email}">${applicant.email}</a></td>
 </view:row>
 </c:forEach>
 
 <!-- Scroll bar -->
 <tr class="title">
- <td colspan="5"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /><br /></view:scrollbar>
 <view:legend width="100" labels="Pending,Approved,Rejected" classes="opt1, ,err" /></td>
 </tr>
 </view:table>
