@@ -282,10 +282,42 @@ public class GetExam extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all Initial Questionnaires for hired Pilots.
+	 * @param ids a Collection of Pilot database IDs
+	 * @return a Map of Examination beans keyed by Pilot ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Examination> getQuestionnaires(Collection<Integer> ids) throws DAOException {
+		if (ids.isEmpty())
+			return Collections.emptyMap();
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), "
+				+ "EP.STAGE, EP.ACADEMY FROM EXAMS E, EXAMQUESTIONS Q, EXAMINFO EP WHERE (E.NAME=?) AND "
+				+ "(EP.NAME=E.NAME) AND (E.ID=Q.EXAM_ID) AND (E.ID IN (");
+		for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
+			Integer id = i.next();
+			sqlBuf.append(id.toString());
+			if (i.hasNext())
+				sqlBuf.append(',');
+		}
+		
+		sqlBuf.append(")) GROUP BY E.ID");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, Examination.QUESTIONNAIRE_NAME);
+			return CollectionUtils.createMap(execute(), "pilotID");
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Loads all submitted Examinations.
-	 * @return a List of Tests
+	 * @return a List of Examinations
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public List<Examination> getSubmitted() throws DAOException {
