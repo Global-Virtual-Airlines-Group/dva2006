@@ -153,8 +153,14 @@ public class PIREPCommand extends AbstractFormCommand {
 			fr.setAttribute(FlightReport.ATTR_HISTORIC, (aInfo != null) && (aInfo.getHistoric()));
 			fr.setAttribute(FlightReport.ATTR_RANGEWARN, (fr.getDistance() > aInfo.getRange()));
 
-			// Figure out what network the flight was flown on
+			// Figure out what network the flight was flown on and ensure we have an ID
 			String net = ctx.getParameter("network");
+			if (!StringUtils.isEmpty(net)) {
+				if (!ctx.getUser().getNetworkIDs().keySet().contains(net))
+					net = "";
+			}
+			
+			// Set network attribute
 			if (OnlineNetwork.VATSIM.equals(net))
 				fr.setAttribute(FlightReport.ATTR_VATSIM, true);
 			else if (OnlineNetwork.IVAO.equals(net))
@@ -175,15 +181,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			}
 
 			// Calculate the date
-			try {
-				Calendar pd = new GregorianCalendar(Integer.parseInt(ctx.getParameter("dateY")), Integer.parseInt(ctx
-						.getParameter("dateM")), Integer.parseInt(ctx.getParameter("dateD")));
-				fr.setDate(pd.getTime());
-			} catch (NumberFormatException nfe) {
-				CommandException ce = new CommandException("Invalid Flight Date");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			Calendar cld = Calendar.getInstance();
+			Calendar pd = new GregorianCalendar(StringUtils.parse(ctx.getParameter("dateY"), cld.get(Calendar.YEAR)),
+					StringUtils.parse(ctx.getParameter("dateM"), cld.get(Calendar.MONTH)), StringUtils.parse(ctx.getParameter("dateD"),
+					cld.get(Calendar.DAY_OF_MONTH)));
+			fr.setDate(pd.getTime());
 
 			// Validate the date
 			if (!ctx.isUserInRole("PIREP")) {
@@ -334,6 +336,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("fsVersions", _fsVersions, REQUEST);
 
 		// Set basic lists for the JSP
+		ctx.setAttribute("networks", ctx.getUser().getNetworkIDs().keySet(), REQUEST);
 		ctx.setAttribute("emptyList", Collections.EMPTY_LIST, REQUEST);
 		ctx.setAttribute("flightTimes", _flightTimes, REQUEST);
 		ctx.setAttribute("months", months, REQUEST);
