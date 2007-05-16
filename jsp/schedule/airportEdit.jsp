@@ -86,7 +86,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Airlines</td>
- <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" separator="<div style=\"clear:both;\" />" checked="${airport.airlineCodes}" /></td>
+ <td class="data"><el:check name="airline" idx="*" width="175" className="small" cols="4" options="${airlines}" newLine="true" checked="${airport.airlineCodes}" /></td>
 </tr>
 <c:if test="${!empty system_message}">
 <tr>

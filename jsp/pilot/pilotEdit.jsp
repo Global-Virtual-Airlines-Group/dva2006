@@ -151,7 +151,7 @@ return true;
 <c:if test="${access.canChangeRoles}">
 <tr>
  <td class="label" valign="top">Security Roles</td>
- <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${pilot.roles}" options="${roles}" /></td>	
+ <td colspan="${cspan}" class="data"><el:check name="securityRoles" width="115" cols="7" newLine="true" checked="${pilot.roles}" options="${roles}" /></td>	
 </tr>
 <tr>
  <td class="label">Subversion User ID</td>
@@ -171,7 +171,7 @@ return true;
 <tr>
  <td class="label" valign="top">Additional Ratings</td>
 <c:if test="${access.canPromote}">
- <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="ratings" idx="*" cols="9" width="85" newLine="true" className="small" checked="${pilot.ratings}" options="${allEQ}" /></td>
 </c:if>
 <c:if test="${!access.canPromote}">
  <td colspan="${cspan}" class="data small"><fmt:list value="${pilot.ratings}" delim=", " /></td>
@@ -211,7 +211,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">E-Mail Notifications</td>
- <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" separator="<DIV STYLE=\"clear:both;\" />" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
+ <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
 </tr>
 <tr>
  <td class="label">AOL Instant Messenger</td>

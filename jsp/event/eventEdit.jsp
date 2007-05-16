@@ -116,7 +116,7 @@ return true;
  <td class="label" valign="top">Equipment Types</td>
  <td class="data"><span class="sec small">These should be unselected unless signups are restricted 
 to a specific set of equipment.</span><br />
-<el:check name="eqTypes" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
+<el:check name="eqTypes" idx="*" cols="9" width="85" newLine="true" className="small" checked="${event.equipmentTypes}" options="${allEQ}" /></td>
 </tr>
 <tr class="title caps">
  <td colspan="2">AVAILABLE FLIGHT ROUTES</td>
@@ -160,7 +160,7 @@ to a specific set of equipment.</span><br />
 <c:set var="apCharts" value="${charts[chartAirport]}" scope="request" />
 <tr>
  <td class="label" valign="top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
- <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${apCharts}" separator="<div style=\"clear:both;\" />" className="small" /></td>
+ <td class="data"><el:check name="charts" cols="4" width="185" checked="${event.charts}" options="${apCharts}" newLine="true" className="small" /></td>
 </tr>
 </c:forEach>
 </c:if>
