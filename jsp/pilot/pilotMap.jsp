@@ -40,11 +40,11 @@
 </tr>
 <tr>
  <td class="label" valign="top">Equipment Programs</td>
- <td class="data"><el:check name="eqTypes" width="80" cols="6" className="small" separator="<div style=\"clear:both;\" />" checked="${eqTypes}" options="${eqTypes}" onChange="void updateMarkers(this)" /></td>
+ <td class="data"><el:check name="eqTypes" width="80" cols="6" className="small" newLine="true" checked="${eqTypes}" options="${eqTypes}" onChange="void updateMarkers(this)" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Ranks</td>
- <td class="data"><el:check name="ranks" width="160" cols="3" className="small" separator="<div style=\"clear:both;\" />" checked="${ranks}" options="${ranks}" onChange="void updateMarkers(this)" /></td>
+ <td class="data"><el:check name="ranks" width="160" cols="3" className="small" newLine="true" checked="${ranks}" options="${ranks}" onChange="void updateMarkers(this)" /></td>
 </tr>
 </el:table>
 
