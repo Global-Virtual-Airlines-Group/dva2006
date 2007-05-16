@@ -89,7 +89,7 @@ return true;
 <content:filter roles="HR">
 <tr>
  <td class="label" valign="top">Flight Academy Certifications</td>
- <td class="data"><el:check name="certNames" width="150" cols="3" className="small" separator="<div style=\"clear:both;\" />" checked="${video.certifications}" options="${certs}" /></td>
+ <td class="data"><el:check name="certNames" width="150" cols="3" className="small" newLine="true" checked="${video.certifications}" options="${certs}" /></td>
 </tr>
 </content:filter>
 <tr>

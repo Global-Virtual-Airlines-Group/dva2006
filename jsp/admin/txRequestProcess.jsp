@@ -119,7 +119,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Equipment Ratings</td>
- <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" separator="<div style=\"clear:both;\" />" className="small" checked="${newRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="ratings" idx="*" cols="9" width="85" newLine="true" className="small" checked="${newRatings}" options="${allEQ}" /></td>
 </tr>
 </c:if>
 <c:if test="${access.canAssignRide}">

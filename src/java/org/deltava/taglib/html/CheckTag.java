@@ -221,9 +221,20 @@ public class CheckTag extends FormElementTag {
 	/**
 	 * Sets the multiple element separator.
 	 * @param sep the string to insert between multiple elements
+	 * @see CheckTag#setNewLine(boolean)
 	 */
 	public void setSeparator(String sep) {
 		_itemSeparator = sep;
+	}
+	
+	/**
+	 * Sets the multiple element separator to a DIV with a new line.
+	 * @param doNewLine TRUE if the separator should be set, otherwise FALSE
+	 * @see CheckTag#setSeparator(String)
+	 */
+	public void setNewLine(boolean doNewLine) {
+		if (doNewLine)
+			_itemSeparator = "<div style=\"clear:both;\" />";
 	}
 
 	/**

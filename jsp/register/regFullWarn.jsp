@@ -33,7 +33,8 @@ Pilots. Therefore, there may be a delay before your application is processed.<br
 you do NOT need to register again.</span> To reactivate your membership at <content:airline />, please
 <el:cmd url="register" op="dupe" className="sec bld">Click Here</el:cmd>.<br />
 <br />
-If you still wish to apply for membership at <content:airline />, we welcome your interest.<br />
+If you still wish to apply for membership at <content:airline />, we welcome your interest. Please submit your application. We 
+will contact you at the email address on your application when there is an opening.<br />
 <br />
 
 <!-- Button Bar -->

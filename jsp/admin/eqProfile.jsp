@@ -72,15 +72,15 @@ return true;
 </tr>
 <tr>
  <td class="label">Available Ranks</td>
- <td class="data"><el:check name="ranks" cols="6" width="120" className="pri small" separator="<div style=\"clear:both;\" />" checked="${eqType.ranks}" options="${ranks}" /></td>
+ <td class="data"><el:check name="ranks" cols="6" width="120" className="pri small" newLine="true" checked="${eqType.ranks}" options="${ranks}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Primary Ratings</td>
- <td class="data"><el:check name="pRatings" cols="9" width="85" className="small req" separator="<div style=\"clear:both;\" />" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="pRatings" cols="9" width="85" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Secondary Ratings</td>
- <td class="data"><el:check name="sRatings" cols="9" width="85" className="small" separator="<div style=\"clear:both;\" />" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="sRatings" cols="9" width="85" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label">First Officer's Examination</td>

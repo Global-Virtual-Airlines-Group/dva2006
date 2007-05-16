@@ -74,19 +74,19 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Server Access</td>
- <td class="data"><el:check name="accessRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${server.roles['access']}" options="${roles}" /></td>
+ <td class="data"><el:check name="accessRoles" width="115" cols="7" newLine="true" checked="${server.roles['access']}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Auto-Voice Access</td>
- <td class="data"><el:check name="voxRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${server.roles['voice']}" options="${roles}" /></td>
+ <td class="data"><el:check name="voxRoles" width="115" cols="7" newLine="true" checked="${server.roles['voice']}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Server Administration</td>
- <td class="data"><el:check name="adminRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${server.roles['admin']}" options="${roles}" /></td>
+ <td class="data"><el:check name="adminRoles" width="115" cols="7" newLine="true" checked="${server.roles['admin']}" options="${roles}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Channel Operation</td>
- <td class="data"><el:check name="opRoles" width="115" cols="7" separator="<div style=\"clear:both;\" />" checked="${server.roles['op']}" options="${roles}" /></td>
+ <td class="data"><el:check name="opRoles" width="115" cols="7" newLine="true" checked="${server.roles['op']}" options="${roles}" /></td>
 </tr>
 </el:table>
  
