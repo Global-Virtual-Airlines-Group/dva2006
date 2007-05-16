@@ -59,7 +59,7 @@ cause the provided host name to be translated into an IP address before searchin
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH USER LOGINS" />
+ <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH USER LOGINS" /></td>
 </tr>
 </el:table>
 </el:form>

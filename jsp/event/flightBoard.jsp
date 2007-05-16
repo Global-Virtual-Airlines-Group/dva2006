@@ -58,7 +58,7 @@ return true;
  <td>${pilot.ID}</td>
  <td class="bld">${pilot.name}</td>
  <td class="small">${pilot.airportD.name} - ${pilot.airportA.name}</td>
- <td class="sec">${pilot.equipmentCode}</tD>
+ <td class="sec">${pilot.equipmentCode}</td>
  <td class="small bld"><fmt:int fmt="##,###" value="${pilot.altitude}" /> feet</td>
  <td class="small bld">${pilot.groundSpeed} knots</td>
 </view:row>

@@ -27,7 +27,7 @@ imported into the database. <fmt:int value="${routeCount}" /> Preferred Routes h
 added to the database.<br />
 <c:if test="${!empty warnings}">
 <br />
-<span class="warn bld">The following Errors and Warnings occured during the import process:</span></br>
+<span class="warn bld">The following Errors and Warnings occured during the import process:</span><br />
 <c:forEach var="warning" items="${warnings}">
 ${warning}<br />
 </c:forEach>
