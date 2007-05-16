@@ -57,7 +57,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Required Examinations</td>
- <td class="data"><el:check name="reqExams" width="150" cols="4" className="small" separator="<div style=\"clear:both;\" />" checked="${cert.examNames}" options="${exams}" /></td>
+ <td class="data"><el:check name="reqExams" width="150" cols="4" className="small" newLine="true" checked="${cert.examNames}" options="${exams}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

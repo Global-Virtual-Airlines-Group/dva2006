@@ -8,6 +8,7 @@
 <title><content:airline /> User Switched</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
+</head>
 <content:copyright visible="false" />
 <body>
 <content:page>
