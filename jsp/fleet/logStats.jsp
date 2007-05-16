@@ -62,7 +62,7 @@ return true;
 <tr class="title caps">
  <td width="65%">STATISTICS LABEL</td>
  <td>TOTAL INSTANCES</td>
-</tr
+</tr>
 
 <!-- Table Statistics Data -->
 <c:forEach var="stat" items="${stats}">

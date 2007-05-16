@@ -1,3 +1,5 @@
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+
 <!-- DAO Cache Data Table -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps">
