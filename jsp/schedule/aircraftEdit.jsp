@@ -101,7 +101,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Primary Tanks</td>
- <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Primary']}" options="${tankNames}" /></td>
+ <td class="data"><el:check name="pTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Primary']}" options="${tankNames}" /></td>
 </tr>
 <tr>
  <td class="label">Primary Percentage</td>
@@ -110,7 +110,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Secondary Tanks</td>
- <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Secondary']}" options="${tankNames}" /></td>
+ <td class="data"><el:check name="sTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Secondary']}" options="${tankNames}" /></td>
 </tr>
 <tr>
  <td class="label">Secondary Percentage</td>
@@ -119,7 +119,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Other Tanks</td>
- <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" separator="<div style=\"clear:both;\" />" checked="${aircraft.tankNames['Other']}" options="${tankNames}" /></td>
+ <td class="data"><el:check name="oTanks" idx="*" width="100" cols="6" newLine="true" checked="${aircraft.tankNames['Other']}" options="${tankNames}" /></td>
 </tr>
 </el:table>
 

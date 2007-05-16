@@ -126,7 +126,7 @@ return true;
 <hr />
 <span class="small">You can search for an available flight number between 
 <el:text name="rangeStart" idx="*" className="small" size="3" max="4" value="" /> and 
-<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" />
+<el:text name="rangeEnd" idx="*" className="small" size="3" max="4" value="" /></span>
 <el:button ID="FlightSearchButton" className="BUTTON" onClick="void getAvailableFlight()" label="SEARCH" /><br />
 You can search for the next available Flight Leg. <el:button ID="LegSearchButton" className="BUTTON" onClick="void getAvailableLeg()" label="SEARCH" /></c:if></td>
 </tr>

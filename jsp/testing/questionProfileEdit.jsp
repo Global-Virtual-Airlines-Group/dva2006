@@ -97,7 +97,7 @@ return true;
 </c:if>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
- <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" separator="<div style=\"clear:both;\" />" className="small" checked="${question.examNames}" options="${examNames}" /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" newLine="true" className="small" checked="${question.examNames}" options="${examNames}" /></td>
 </tr>
 <c:if test="${!empty question}">
 <tr>
