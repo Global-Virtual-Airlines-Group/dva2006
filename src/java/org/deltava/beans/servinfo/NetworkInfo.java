@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -24,8 +24,8 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     private boolean _isCached;
     private boolean _isExpired;
     
-    private Map<String, Pilot> _pilots;
-    private Map<String, Controller> _controllers;
+    private final Map<String, Pilot> _pilots = new TreeMap<String, Pilot>();
+    private final Map<String, Controller> _controllers = new TreeMap<String, Controller>();
     
     /**
      * Initializes this bean for a particular network name.
@@ -36,8 +36,6 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     public NetworkInfo(String name) {
         super();
         _name = name.toUpperCase();
-        _pilots = new TreeMap<String, Pilot>();
-        _controllers = new TreeMap<String, Controller>();
     }
     
     /**
@@ -112,7 +110,7 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     		switch (c.getFacility()) {
     			case Controller.OBSERVER:
     			case Controller.DEL:
-    				maxDistance = 15;
+    				maxDistance = 25;
     				break;
     				
     			case Controller.GND:
@@ -120,19 +118,19 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     				break;
     				
     			case Controller.TWR:
-    				maxDistance = 50;
+    				maxDistance = 75;
     				break;
     				
     			case Controller.APP:
-    				maxDistance = 120;
+    				maxDistance = 250;
     				break;
     				
     			case Controller.CTR:
-    				maxDistance = 700;
+    				maxDistance = 1000;
     				break;
     				
     			case Controller.FSS:
-    				maxDistance = 1500;
+    				maxDistance = 2000;
     				break;
     		}
     		
