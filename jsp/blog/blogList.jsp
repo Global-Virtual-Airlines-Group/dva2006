@@ -39,7 +39,7 @@
  <td><fmt:int value="${entry.size}" /> COMMENTS - <el:cmd url="blogentry" link="${entry}">VIEW ENTRY</el:cmd></td>
 </tr>
 <tr>
- <td colspan="2" class="left"><fmt:msg value="${entry.body}" />
+ <td colspan="2" class="left"><fmt:msg value="${entry.body}" /></td>
 </tr>
 </c:forEach>
 
