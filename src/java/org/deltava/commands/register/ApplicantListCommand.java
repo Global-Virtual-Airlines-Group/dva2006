@@ -8,7 +8,9 @@ import org.deltava.beans.Applicant;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display applicants.
@@ -75,6 +77,10 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			GetQuestionnaire qdao = new GetQuestionnaire(con);
 			ctx.setAttribute("qMap", qdao.getByID(IDs), REQUEST);
 			ctx.setAttribute("pqMap", exdao.getQuestionnaires(pIDs), REQUEST);
+			
+			// Load the airline size
+			GetStatistics stdao = new GetStatistics(con);
+			ctx.setAttribute("airlineSize", new Integer(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
 
 			// Save the results
 			vc.setResults(results);
