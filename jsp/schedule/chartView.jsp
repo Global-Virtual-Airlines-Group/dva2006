@@ -26,6 +26,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="filename" value="${chart.hexID}.${fn:lower(chart.imgTypeName)}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -36,7 +37,14 @@ return true;
  <td class="right">SELECT CHART <el:combo name="chart" size="1" idx="1" options="${charts}" value="${chart}" onChange="void setChart(this)" /></td>
 </tr>
 <tr>
- <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fn:hex(chart.ID)}.${fn:lower(chart.imgTypeName)}" border="0" /></td>
+<c:choose>
+<c:when test="${isPDF}">
+ <td colspan="2"><object width="100%" data="/charts/${fileName}" type="application/pdf" /></td>
+</c:when>
+<c:otherwise>
+ <td colspan="2"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${fileName}" border="0" /></td>
+</c:otherwise>
+</c:choose>
 </tr>
 </el:table>
 
