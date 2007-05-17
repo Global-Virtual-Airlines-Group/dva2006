@@ -155,12 +155,17 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 </tr>
 
 <content:filter roles="PIREP">
+<c:if test="${pirepQueueSize > 15}">
+<c:set var="queueClass" value="sec bld" scope="request" />
+</c:if>
+<c:if test="${pirepQueueSize <= 15}">
+<c:set var="queueClass" value="sec" scope="request" />
+</c:if>
 <!-- Flight Report Admin Section -->
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
- <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here. 
-<c:if test="${pirepQueueSize > 15}"><span class="sec bld"></c:if>There are currently
- <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.<c:if test="${pirepQueueSize > 15}"></span></c:if></td>
+ <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.  <span class="${queueClass}">There 
+ are currently <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.</span></td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Examination">

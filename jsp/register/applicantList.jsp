@@ -30,15 +30,21 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="maxSize" name="users.max" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="applicants.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="applicants">
+<tr class="title caps">
+ <td class="left" colspan="3"><content:airline />PILOT APPLICATIONS</td>
+ <td class="right colspan="3">AIRLINE SIZE - <fmt:int value="${airlineSize}" /> PILOTS, MAX <fmt:int value="${maxSize}" /></td>
+</tr>
+
 <!-- Sort Bar -->
 <tr class="title">
- <td class="left">PILOT APPLICATIONS</td>
- <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
+ <td>&nbsp;</td>
+ <td colspan="2">LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
  <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void sort(this)" /></td>
  <td colspan="2">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void sort(this)" /></td>
 </tr>

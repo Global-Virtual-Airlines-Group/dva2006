@@ -198,17 +198,15 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <content:filter roles="Moderator,HR">
  from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT 
 WARNING</span></c:if>
-</content:filter>
+</content:filter></td>
 <c:choose>
 <c:when test="${canEdit}">
- </td>
  <td class="postEdit"><el:cmd className="pri bld small" url="thread" link="${thread}" op="edit">EDIT POST</el:cmd></td>
 </c:when>
 <c:when test="${access.canDelete && (postCount > 1)}">
- </td>
- <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd>
+ <td class="postEdit"><el:cmd className="pri error small" url="postkill" link="${thread}" op="${fn:hex(msg.ID)}">KILL POST</el:cmd></td>
 </c:when>
-</c:choose></td>
+</c:choose>
 </tr>
 <tr>
  <td class="postBody" colspan="2"><fmt:msg value="${msg.body}" filter="${!noFilter && msg.contentWarning}" />

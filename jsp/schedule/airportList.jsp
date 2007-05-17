@@ -48,7 +48,7 @@ return true;
 
 <!-- Table Header Bar -->
 <tr class="title">
- <td width="10%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" />
+ <td width="10%"><el:cmdbutton url="airport" op="edit" label="NEW AIRPORT" /></td>
  <td width="20%">AIRPORT NAME</td>
  <td width="7%">IATA</td>
  <td width="8%">ICAO</td>
