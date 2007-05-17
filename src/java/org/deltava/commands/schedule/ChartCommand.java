@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -191,6 +191,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);
+			ctx.setAttribute("isPDF", Boolean.valueOf(c.getType() == Chart.IMG_PDF), REQUEST);
 			ctx.setAttribute("charts", dao.getCharts(c.getAirport().getIATA()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
