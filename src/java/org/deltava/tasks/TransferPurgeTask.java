@@ -62,7 +62,7 @@ public class TransferPurgeTask extends Task {
 				// Make a status update
 				StatusUpdate upd = new StatusUpdate(tx.getID(), StatusUpdate.COMMENT);
 				upd.setAuthorID(taskBy.getID());
-				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program Rejected after " + purgeInterval + " days");
+				upd.setDescription("Transfer to " + tx.getEquipmentType() + " program purged after " + purgeInterval + " days");
 				
 				// Get the check ride (if any) and then delete
 				CheckRide cr = exdao.getCheckRide(tx.getCheckRideID());
