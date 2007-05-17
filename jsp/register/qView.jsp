@@ -36,7 +36,7 @@
  <td class="label">Submitted on</td>
  <td class="data"><fmt:date date="${exam.submittedOn}" />
 <c:if test="${exam.submittedOn > exam.expiryDate}"><span class="error">${(exam.submittedOn.time - exam.expiryDate.time) / 60000}
- minutes late</span></c:if>
+ minutes late</span></c:if></td>
 </tr>
 </c:if>
 

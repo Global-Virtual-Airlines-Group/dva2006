@@ -9,6 +9,7 @@
 <title><content:airline /> Mass Mailing Sent</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
+</head>
 <content:copyright visible="false" />
 <body>
 <content:page>

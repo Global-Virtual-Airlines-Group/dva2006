@@ -135,7 +135,6 @@ you may not enroll in any other Flight Academy courses.</td>
  <td class="left" colspan="5">Please select a Flight Academy course from the list below. Make sure
  that you are prepared to enroll before clicking on &quot;Enroll.&quot;</td>
 </tr>
-</tr>
 <tr class="title">
  <td colspan="5">SELECT COURSE <el:combo name="courseName" idx="1" size="1" options="${certs}" firstEntry="< SELECT COURSE >" />
  <el:button ID="EnrollButton" type="submit" className="BUTTON" label="ENROLL IN COURSE" /></td>

@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>Flight Academy Instruction - ${empty session ? 'New Session' : session.name}</title>
+<title>Flight Academy Instruction - ${empty session ? "New Session" : session.name}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
