@@ -115,12 +115,23 @@ return true;
  <td>CHART TYPE</td>
 </tr>
 <c:forEach var="chart" items="${event.charts}">
+<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
 <c:set var="cAirport" value="${airports[chart.airport.IATA]}" scope="request" />
 <view:row entry="${chart}">
+<c:choose>
+<c:when test="${hasPDF}">
+ <td><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+ <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
+ <td>Adobe PDF</td>
+ <td class="sec">${chart.typeName}</td>
+</c:when>
+<c:otherwise>
  <td colspan="2" class="pri bld"><el:cmd url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
- <td>${chart.imgTypeName}</td>
+ <td>${chart.imgTypeName}</td> 
  <td class="sec">${chart.typeName}</td>
+</c:otherwise>
+</c:choose>
 </view:row>
 </c:forEach>
 </c:if>
