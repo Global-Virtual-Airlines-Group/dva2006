@@ -6,7 +6,6 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Approach Charts</title>
@@ -53,13 +52,12 @@ return true;
 </tr>
 
 <!-- Table Pilot Data -->
-<c:set var="hasPDF" value="${false}" scope="request" />
 <c:forEach var="chart" items="${charts}">
+<c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
 <view:row entry="${chart}">
 <c:choose>
-<c:when test="${chart.imgTypeName == 'PDF'}">
-<c:set var="hasPDF" value="${true}" scope="request" />
- <td><el:link url="/charts/${fn:hex(chart.ID)}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+<c:when test="${hasPDF}">
+ <td><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td class="sec">${chart.typeName}</td>
  <td>Adobe PDF document, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
 </c:when>
