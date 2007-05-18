@@ -145,7 +145,7 @@
 	</task>
 
 	<!-- Transfer Request purge -->
-	<task id="txpurge" enabled="false">
+	<task id="txpurge" enabled="true">
 		<class>org.deltava.tasks.TransferPurgeTask</class>
 		<time>
 			<min>0</min>
