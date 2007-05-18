@@ -120,7 +120,7 @@ return true;
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
- <td><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+ <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td colspan="2">${cAirport.name} (<fmt:airport airport="${cAirport}" />)</td>
  <td>Adobe PDF</td>
  <td class="sec">${chart.typeName}</td>
