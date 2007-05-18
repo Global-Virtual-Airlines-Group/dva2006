@@ -159,6 +159,8 @@ public class GetQuestionnaire extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<Integer, Examination> getByID(Collection<Integer> ids) throws DAOException {
+		if (CollectionUtils.isEmpty(ids))
+			return Collections.emptyMap();
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(DISTINCT Q.QUESTION_ID), SUM(Q.CORRECT), "
