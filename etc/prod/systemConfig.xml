@@ -519,10 +519,10 @@
 	
 	<users>
 		<!-- Maximum user count -->
-		<max type="Integer">2250</max>
+		<max type="Integer">2500</max>
 	
-		<notify_days type="Integer">59</notify_days>
-		<inactive_days type="Integer">90</inactive_days>
+		<notify_days type="Integer">31</notify_days>
+		<inactive_days type="Integer">45</inactive_days>
 		<inactive_leave_days type="Integer">180</inactive_leave_days>
 		<inactive_new_days type="Integer">21</inactive_new_days>
 		<inactive_assign type="Integer">5</inactive_assign>
@@ -532,7 +532,7 @@
 		</selcal>
 		
 		<user_cookie_age type="Integer">30</user_cookie_age>
-		<transfer_max type="Integer">30</transfer_max>
+		<transfer_max type="Integer">21</transfer_max>
 		
 		<pirep>
 			<maxDays type="Integer">1</maxDays>
@@ -563,7 +563,7 @@
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">20000</reload>
-			<radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar>
+			<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
 			<tileHost>gima.weather.com</tileHost>
 		</livemap>
 
@@ -599,7 +599,7 @@
 				<logic type="Integer">2</logic>
 				<write>
 					<min type="Integer">1</min>
-					<max type="Integer">6</max>
+					<max type="Integer">4</max>
 				</write>
 			</threads>
 		</pool>
