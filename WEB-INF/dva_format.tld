@@ -25,6 +25,7 @@
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Number</type>
 		</attribute>
 	</tag>
 
@@ -47,6 +48,45 @@
 			<name>value</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Number</type>
+		</attribute>
+	</tag>
+
+	<!-- QuantitiyFormat tag, for displaying quantities -->
+	<tag>
+		<name>quantity</name>
+		<tag-class>org.deltava.taglib.format.QuantityFormatTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>fmt</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>className</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>	
+		<attribute>
+			<name>value</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.Integer</type>
+		</attribute>
+		<attribute>
+			<name>single</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>plural</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>zero</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 	</tag>
 

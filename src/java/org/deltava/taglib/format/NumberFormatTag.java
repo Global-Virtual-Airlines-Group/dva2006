@@ -1,8 +1,7 @@
+// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
-import java.text.DecimalFormat;
-import java.text.ParseException;
-import java.io.IOException;
+import java.text.*;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,7 @@ import org.deltava.beans.Person;
 public abstract class NumberFormatTag extends TagSupport {
 
     protected DecimalFormat _nF;
-    protected String _value;
+    protected Number _value;
     protected String _className;
     
     /**
@@ -53,7 +52,7 @@ public abstract class NumberFormatTag extends TagSupport {
      * Sets the value to format.
      * @param value the value to format
      */
-    public final void setValue(String value) {
+    public final void setValue(Number value) {
         _value = value;
     }
     
@@ -80,36 +79,27 @@ public abstract class NumberFormatTag extends TagSupport {
     }
     
     /**
-     * Formats the number and writes it to the JSP output writer. If the value cannot be parsed,
-     * it is output &quot;as is&quot;.
+     * Formats the number and writes it to the JSP output writer.
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
      */
     public int doEndTag() throws JspException {
-
         JspWriter out = pageContext.getOut();
         try {
             if (_className != null) {
                 out.print("<span class=\"");
                 out.print(_className);
                 out.print("\">");
-            }
-            
-            try {
-                out.print(_nF.format(_nF.parse(_value)));
-            } catch (ParseException pe) {
-                out.print(_value);
-            }
-            
-            if (_className != null)
+                out.print(_nF.format(_value.doubleValue()));
                 out.print("</span>");
-        } catch (IOException ie) {
-            JspException je = new JspException(ie.getMessage());
-            je.initCause(ie);
-            throw je;
+            } else
+            	out.print(_nF.format(_value.doubleValue()));
+        } catch (Exception e) {
+            throw new JspException(e);
+        } finally {
+        	release();
         }
         
-        release();
         return EVAL_PAGE;
     }
 }

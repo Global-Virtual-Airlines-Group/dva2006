@@ -12,6 +12,7 @@ import org.jdom.input.*;
 import junit.framework.TestCase;
 import com.kizna.servletunit.*;
 
+import org.apache.log4j.PropertyConfigurator;
 import org.deltava.beans.Person;
 import org.deltava.commands.CommandContext;
 import org.deltava.servlet.filter.CustomRequestWrapper;
@@ -49,9 +50,9 @@ public class AbstractTagTestCase extends TestCase {
 
    protected void setUp() throws Exception {
       super.setUp();
-
+		PropertyConfigurator.configure("data/log4j.test.properties");
       SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
-
+      
       _rootReq = new HttpServletRequestSimulatorHelper();
       _req = new CustomRequestWrapper(_rootReq);
       _rsp = new HttpServletResponseSimulator();
