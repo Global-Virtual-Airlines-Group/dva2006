@@ -1,3 +1,4 @@
+// Copyright 2004, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.format;
 
 import java.text.DecimalFormat;
@@ -32,7 +33,12 @@ public class IntegerFormatTag extends NumberFormatTag {
         super.release(DEFAULT_PATTERN);
     }
     
-    public final int doEndTag() throws JspException {
+    /**
+     * Formats the number and writes it to the JSP output writer.
+     * @return TagSupport.EVAL_PAGE
+     * @throws JspException if an error occurs
+     */
+    public int doEndTag() throws JspException {
         
         // Check to ensure that the number format string has no decimals
         String pattern = _nF.toPattern();

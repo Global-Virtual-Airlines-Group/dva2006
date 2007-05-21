@@ -32,7 +32,7 @@ public class TestDecimalFormatTag extends AbstractTagTestCase {
         _ctx.initialize(null, new CustomRequestWrapper(hreq), _rsp, "", false, 8192, false);
         
         _tag.setPageContext(_ctx);
-        _tag.setValue("1");
+        _tag.setValue(new Integer(1));
         assertEvalPage(_tag.doEndTag());
         assertEquals("01.0", _jspOut.toString());
     }
@@ -40,7 +40,7 @@ public class TestDecimalFormatTag extends AbstractTagTestCase {
     public void testTagProperties() throws Exception {
         _tag.setPageContext(_ctx);
         _tag.setFmt("#00.0");
-        _tag.setValue("2");
+        _tag.setValue(new Long(2));
         assertEvalPage(_tag.doEndTag());
         assertEquals("02.0", _jspOut.toString());
     }
