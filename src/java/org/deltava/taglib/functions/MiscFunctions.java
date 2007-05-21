@@ -32,19 +32,19 @@ public class MiscFunctions {
 	 * @return the element
 	 * @throws IndexOutOfBoundsException if the index is out of range
 	 */
-	public static Object get(List l, int idx) {
+	public static <T> T get(List<T> l, int idx) {
 		return l.get(idx);
 	}
-	
+
 	/**
 	 * Returns the first object in a Collection.
 	 * @param c the Collection
 	 * @return the first Object returned by the Collection's iterator.
 	 */
-	public static Object first(Collection c) {
+	public static <T> T first(Collection<T> c) {
 		return CollectionUtils.isEmpty(c) ? null : c.iterator().next();
 	}
-	
+
 	/**
 	 * Returns a subset of a Collection.
 	 * @param c the Collection
@@ -61,16 +61,16 @@ public class MiscFunctions {
 		List<T> results = new ArrayList<T>(c);
 		return results.subList(0, size);
 	}
-	
+
 	/**
-	 * A JSP-friendly function to check if an object exists within a Collection. 
+	 * A JSP-friendly function to check if an object exists within a Collection.
 	 * @param c the Collection
 	 * @param obj the Object
 	 * @return TRUE if c is not null and c.contains(obj), otherwise FALSE
 	 * @see Collection#contains(Object)
 	 */
 	public static boolean contains(Collection c, Object obj) {
-	   return (c == null) ? false : c.contains(obj);
+		return (c == null) ? false : c.contains(obj);
 	}
 
 	/**
@@ -82,7 +82,7 @@ public class MiscFunctions {
 	public static String escape(String s) {
 		return StringUtils.stripInlineHTML(s);
 	}
-	
+
 	/**
 	 * Concatenates a series of list elements into a String.
 	 * @param c a Collection of objects
@@ -92,7 +92,7 @@ public class MiscFunctions {
 	public static String splice(Collection c, String delim) {
 		return StringUtils.listConcat(c, delim);
 	}
-	
+
 	/**
 	 * Converts a number to hexadecimal.
 	 * @param val the number to convert
@@ -102,25 +102,25 @@ public class MiscFunctions {
 	public static String toHex(long val) {
 		return StringUtils.formatHex(val);
 	}
-	
+
 	/**
 	 * Converts a string to lower case.
 	 * @param s the string to convert
 	 * @return the lower case string, or null
 	 */
 	public static String toLower(String s) {
-	   return (s == null) ? null : s.toLowerCase();
+		return (s == null) ? null : s.toLowerCase();
 	}
-	
+
 	/**
 	 * Converts a string to upper case.
 	 * @param s the string to convert
 	 * @return the upper case string, or null
 	 */
 	public static String toUpper(String s) {
-	   return (s == null) ? null : s.toUpperCase();
+		return (s == null) ? null : s.toUpperCase();
 	}
-	
+
 	/**
 	 * Formats a Date into a String for use in a JSP Tag parameter.
 	 * @param dt the date/time value
@@ -132,18 +132,17 @@ public class MiscFunctions {
 		DateFormat df = new SimpleDateFormat(fmt);
 		return (dt == null) ? "" : df.format(dt);
 	}
-	
-   /**
-    * Displays the time difference between two date/times. Both date/times are assumed to be
-    * in the same time zone.
-    * @param d1 the first date/time
-    * @param d2 the second date/time
-    * @return the difference in seconds, or 0 if either date is null 
-    */
-   public static int difference(Date d1, Date d2) {
-      if ((d1 == null) || (d2 == null))
-         return 0;
-      
-      return (int) ((d2.getTime() - d1.getTime()) / 1000);
-   }
+
+	/**
+	 * Displays the time difference between two date/times. Both date/times are assumed to be in the same time zone.
+	 * @param d1 the first date/time
+	 * @param d2 the second date/time
+	 * @return the difference in seconds, or 0 if either date is null
+	 */
+	public static int difference(Date d1, Date d2) {
+		if ((d1 == null) || (d2 == null))
+			return 0;
+
+		return (int) ((d2.getTime() - d1.getTime()) / 1000);
+	}
 }
