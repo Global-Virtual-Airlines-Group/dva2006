@@ -38,9 +38,12 @@ Simulator X, and Laminar Research X-Plane. We are in no way affiliated with Delt
 <br />
 Since May 2003, we have received over <fmt:int value="${httpStats.homeHits}" /> visits and received 
 <fmt:int value="${httpStats.hits}" /> hits. During this time, our servers have sent out over
-<fmt:int value="${httpStats.bytes}" /> bytes worth of data. <c:if test="${coolerStats > 1}">Our 
-members have posted over <fmt:int value="${coolerStats}" /> messages in our Water Cooler discussion 
-forum in the past 24 hours.</c:if><br />
+<fmt:int value="${httpStats.bytes}" /> bytes worth of data.
+<c:if test="${coolerStats > 1}"> Our members have posted over <fmt:quantity value="${coolerStats}" single="message" /> in 
+our Water Cooler discussion forum in the past 24 hours.</c:if>
+<c:if test="${(!empty runTimeDays) && (runTimeDays > 0)}"> Our web server has been running for <fmt:quantity value="${runTimeDays}" single="day" />, 
+<fmt:quantity value="${runTimeHours}" single="hour" /> and <fmt:quantity value="${runTimeMinutes}" single="minute" />.</c:if>
+<br />
 <br />
 <content:filter roles="!Pilot">
 Please feel free to browse around our web site. Once you join <content:airline />' active pilot roster, 

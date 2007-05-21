@@ -4,11 +4,15 @@ package org.deltava.commands.main;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.acars.ACARSAdminInfo;
 
 import org.deltava.commands.*;
+
 import org.deltava.dao.*;
+import org.deltava.dao.file.GetProcData;
 
 import org.deltava.util.system.SystemData;
 
@@ -21,6 +25,7 @@ import org.deltava.util.system.SystemData;
 
 public class HomeCommand extends AbstractCommand {
 
+	private static final Logger log = Logger.getLogger(HomeCommand.class);
 	private static final Random RND = new Random();
 
 	// Dynamic content codes
@@ -52,8 +57,23 @@ public class HomeCommand extends AbstractCommand {
 			return;
 		}
 		
+		// Get OS uptime if running on Linux
+		if ("Linux".equals(System.getProperty("os.name"))) {
+			GetProcData pdao = new GetProcData();
+			try {
+				int runTime = pdao.getUptime();
+				ctx.setAttribute("runTimeDays", new Integer(runTime / 86400), REQUEST);
+				runTime %= 86400;
+				ctx.setAttribute("runTimeHours", new Integer(runTime / 3600), REQUEST);
+				runTime %= 3600;
+				ctx.setAttribute("runTimeMinutes", new Integer(runTime / 60), REQUEST);
+			} catch (DAOException de) {
+				log.error(de.getMessage());
+			}
+		}
+		
 		// Build a list of choices
-		List<Integer> cList = new ArrayList<Integer>();
+		List<Integer> cList = new ArrayList<Integer>(DYN_CHOICES.length);
 		for (int x = 0; x < DYN_CHOICES.length; x++)
 			cList.add(new Integer(DYN_CHOICES[x]));
 

@@ -27,7 +27,7 @@ public class GetProcData extends DAO {
 	 * @return the machine's uptime in milliseconds
 	 * @throws DAOException if an I/O error occurs
 	 */
-	public long getUptime() throws DAOException {
+	public int getUptime() throws DAOException {
 		try {
 			InputStream is = new FileInputStream("/proc/uptime");
 			BufferedReader br = new BufferedReader(new InputStreamReader(is));
@@ -40,7 +40,7 @@ public class GetProcData extends DAO {
 			if (data.indexOf(' ') != -1)
 				data = data.substring(0, data.indexOf(' '));
 			try {
-				return (long) Math.floor(Double.parseDouble(data));
+				return (int) Math.floor(Double.parseDouble(data));
 			} catch (NumberFormatException nfe) {
 				throw new IOException("Unparseable uptime - " + data);
 			}
