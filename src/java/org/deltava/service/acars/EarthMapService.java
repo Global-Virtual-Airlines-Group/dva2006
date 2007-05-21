@@ -117,7 +117,6 @@ public class EarthMapService extends GoogleEarthService {
 				folders.get("positions").addContent(createAircraft(usrName, info.getPosition()));
 
 				Element fpe = createProgress(info.getRouteData(), COLORS[colorOfs]);
-				KMLUtils.setVisibility(fpe, false);
 				XMLUtils.setChildText(fpe, "name", usrName);
 				folders.get("progress").addContent(fpe);
 			}
