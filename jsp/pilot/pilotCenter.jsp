@@ -61,8 +61,7 @@ return true;
  <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
  <td class="data">Welcome back to <span class="pri"><content:airline /></span>, ${pilot.firstName}.
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
- You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:int value="${pilot.loginCount}" />
- times.<br />
+ You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
 </tr>
 <tr>
@@ -141,8 +140,8 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
  <el:cmd className="bld" url="logbook" op="log" link="${pilot}">Log Book</el:cmd>
 <c:if test="${manualPIREP}"><br />
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
- <td class="data">You have flown <fmt:int value="${pilot.legs}" /> flights, for a total of
- <fmt:dec value="${pilot.hours}" /> hours and <fmt:int value="${pilot.miles}" fmt="#,###,###" /> miles.<br />
+ <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of
+ <fmt:dec value="${pilot.hours}" /> hours and <fmt:quantity value="${pilot.miles}" fmt="#,###,###" single="mile" />.<br />
 <span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and
  <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br />
 <c:if test="${!empty lastFlight}">
@@ -165,7 +164,7 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <tr>
  <td class="mid"><el:cmd className="bld" url="pirepqueue">Submitted Flight Reports</el:cmd></td>
  <td class="data">You can Approve, Reject or Hold submitted pilot Flight Reports here.  <span class="${queueClass}">There 
- are currently <fmt:int value="${pirepQueueSize}" /> Flight Reports awaiting review.</span></td>
+ are currently <fmt:quantity value="${pirepQueueSize}" single="Flight Report" /> awaiting review.</span></td>
 </tr>
 </content:filter>
 <content:filter roles="HR,Examination">
@@ -179,20 +178,20 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 they have met the necessary requirements for a new Equipment Program. You can view these transfer 
 requests here, assign Check Rides, and complete the Promotion Process.<c:if test="${txQueueSize > 0}"><br />
 <br />
-<i>There are <fmt:int value="${txQueueSize}" /> pending Transfer Requests.</i></c:if></td>
+<i>There are <fmt:quantity value="${txQueueSize}" single="pending Transfer Request" />.</i></c:if></td>
 </tr>
 <tr>
  <td class="mid bld"><el:cmd url="promoqueue">Promotion Queue</el:cmd></td>
  <td class="data">The Promotion Queue lists pilots who have successfully met all the requirements
 for promotion to the rank of Captain in their Equipment Program.<c:if test="${promoQueueSize > 0}"><br />
 <br />
-<b>There are <fmt:int value="${promoQueueSize}" /> Pilot(s) awaiting promotion to Captain.</b></c:if></td>
+<b>There are <fmt:quantity value="${promoQueueSize}" single="Pilot" /> awaiting promotion to Captain.</b></c:if></td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="examqueue">Submitted Examinations</el:cmd></td>
  <td class="data">You can view and score submitted Pilot Examinations.<c:if test="${examQueueSize > 0}"><br />
 <br />
-<b>There are <fmt:int value="${examQueueSize}" /> submitted Examinations awaiting evaluation.</b></c:if></td>
+<b>There are <fmt:quantity value="${examQueueSize}" single="submitted Examination" /> awaiting evaluation.</b></c:if></td>
 </tr>
 </content:filter>
 
@@ -330,8 +329,8 @@ program. Your name is on the list of Pilots eligible for a promotion, and you ca
 within the next 24 to 72 hours. You are also eligible for equipment transfers and additional ratings in 
 higher stage equipment type programs.</td></c:when>
 <c:when test="${promoteLegs < fn:promoLegs(eqType, 'Captain')}">
- <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" />
- Flights in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
+ <td class="data">You have completed <fmt:int value="${promoteLegs}" /> of the <fmt:quantity value="${fn:promoLegs(eqType, 'Captain')}" single="Flight" />
+ in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
 <c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if>required for promotion to the rank of 
 Captain in the ${eqType.name} program.</td></c:when>
 <c:when test="${promoteLegs >= fn:promoLegs(eqType, 'Captain')}">
