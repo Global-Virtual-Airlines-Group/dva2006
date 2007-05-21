@@ -87,7 +87,7 @@ self.location = '/acars_map_earth.ws';
 return true;
 }
 </script>
-<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&id=wx" type="text/javascript"></script></c:if>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
