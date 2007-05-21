@@ -37,6 +37,20 @@
  <td class="label">Operating System</td>
  <td class="data">${sys['os.name']} v${sys['os.version']}, (${sys['os.arch']} platform)</td>
 </tr>
+<c:if test="${!empty osStart}">
+<tr>
+ <td class="label">Server Started on</td>
+ <td class="data"><fmt:date date="${osStart}" /> (<fmt:int value="${osExecTime / 86400}" /> days)</td>
+ </tr>
+</c:if>
+<c:if test="${!empty loadAvg}">
+<tr>
+ <td class="label" valign="top">Load Average</td>
+ <td class="data">Last 1 Minute: <fmt:dec value="${fn:get(loadAvg, 0)}" /> processes queued<br />
+ Last 5 Minutes: <fmt:dec value="${fn:get(loadAvg, 1)}" /> processes queued<br />
+ Last 15 Minutes: <fmt:dec value="${fn:get(loadAvg, 2)}" /> processes queued</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Server Information</td>
  <td class="data">${serverInfo}</td>

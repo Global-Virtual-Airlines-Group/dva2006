@@ -3,6 +3,8 @@ package org.deltava.commands.system;
 
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.acars.*;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.servlet.ServletScoreboard;
@@ -10,7 +12,7 @@ import org.deltava.beans.servlet.ServletScoreboard;
 import org.deltava.commands.*;
 
 import org.deltava.dao.*;
-import org.deltava.dao.file.GetServInfo;
+import org.deltava.dao.file.*;
 
 import org.deltava.jdbc.ConnectionPool;
 import org.deltava.taskman.TaskScheduler;
@@ -28,6 +30,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class DiagnosticCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(DiagnosticCommand.class);
 
 	/**
 	 * Executes the command.
@@ -35,6 +39,21 @@ public class DiagnosticCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
+		// Get system uptime and load average if running on Linux
+		if ("Linux".equals(System.getProperty("os.name"))) {
+			try {
+				Calendar cld = Calendar.getInstance();
+				GetProcData procdao = new GetProcData();
+				int osRunTime = procdao.getUptime();
+				cld.add(Calendar.SECOND, osRunTime * -1);
+				ctx.setAttribute("osStart", cld.getTime(), REQUEST);
+				ctx.setAttribute("osExecTime", new Integer(osRunTime), REQUEST);
+				ctx.setAttribute("loadAvg", procdao.getLoad(), REQUEST);
+			} catch (DAOException de) {
+				log.error(de.getMessage());
+			}
+		}
 
 		// Get the Connection Pool data
 		ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
@@ -117,7 +136,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Calculate DAO usage count
 		ctx.setAttribute("execTime", new Long((System.currentTimeMillis() - startDate.getTime()) / 1000), REQUEST);
-		ctx.setAttribute("daoUsageCount", new Long(DAO.getQueryCount()), REQUEST);
+		ctx.setAttribute("daoUsageCount", new Long(org.deltava.dao.DAO.getQueryCount()), REQUEST);
 
 		// Get the Google Maps API usage count
 		ctx.setAttribute("mapsAPIUsage", _ctx.getAttribute(InsertGoogleAPITag.USAGE_ATTR_NAME), REQUEST);
