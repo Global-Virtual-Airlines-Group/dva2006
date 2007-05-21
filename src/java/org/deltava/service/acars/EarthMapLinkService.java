@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
 import java.io.IOException;
@@ -39,17 +39,18 @@ public class EarthMapLinkService extends WebService {
 		buf.setLength(buf.lastIndexOf("/") + 1);
 
 		// Create the progress/flight plan network link entries
-		de.addContent(createLink("ACARS Live Map", buf.toString() + "acars_map_eprog.ws", 30));
-		de.addContent(createLink("ACARS Flight Plans", buf.toString() + "acars_map_eplan.ws", 360));
+		de.addContent(createLink("ACARS Live Map", buf.toString() + "acars_map_eprog.ws", 30, true));
+		de.addContent(createLink("ACARS Flight Plans", buf.toString() + "acars_map_eplan.ws", 360, false));
 		
 		// Create the NWS radar/cloud cover/daynight/METAR network link entries
-		de.addContent(createLink("US Radar Image", buf.toString() + "servinfo/nws_radar.kml", 0));
-		de.addContent(createLink("Cloud Cover", buf.toString() + "servinfo/clouds.kml", 0));
-		de.addContent(createLink("Day/Night", buf.toString() + "servinfo/dayNight.kml", 0));
+		de.addContent(createLink("BlueMarble Earth", "http://www.gearthblog.com/kmfiles/bmngv2.kmz", 0, true));
+		de.addContent(createLink("US Radar Image", buf.toString() + "servinfo/nws_radar.kml", 0, false));
+		de.addContent(createLink("Cloud Cover", buf.toString() + "servinfo/clouds.kml", 0, false));
+		de.addContent(createLink("Day/Night", buf.toString() + "servinfo/dayNight.kml", 0, false));
 
 		// Create FIR boundary/DAFIF network link entries
-		de.addContent(createLink("FIR Boundaries", buf.toString() + "servinfo/firs.kmz", 86400));
-		de.addContent(createLink("DAFIF Data", buf.toString() + "servinfo/dafif.kmz", 0));
+		de.addContent(createLink("FIR Boundaries", buf.toString() + "servinfo/firs.kmz", 86400, false));
+		de.addContent(createLink("DAFIF Data", buf.toString() + "servinfo/dafif.kmz", 0, false));
 
 		// Write the XML
 		try {
@@ -68,11 +69,12 @@ public class EarthMapLinkService extends WebService {
 	/**
 	 * Helper method to generate the Url element.
 	 */
-	private Element createLink(String name, String url, int refreshSeconds) {
+	private Element createLink(String name, String url, int refreshSeconds, boolean isVisible) {
 		Element le = new Element("NetworkLink");
 		le.addContent(XMLUtils.createElement("name", name));
 		Element e = new Element("Url");
 		e.addContent(XMLUtils.createElement("href", url));
+		e.addContent(XMLUtils.createElement("visibility", isVisible ? "1" : "0"));
 		if (refreshSeconds > 0) {
 			e.addContent(XMLUtils.createElement("refreshMode", "onInterval"));
 			e.addContent(XMLUtils.createElement("refreshInterval", String.valueOf(refreshSeconds)));
