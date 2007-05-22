@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.FlightReport;
@@ -20,6 +20,7 @@ public final class PIREPAccessControl extends AccessControl {
 	private boolean _canEdit;
 	private boolean _canSubmit;
 	private boolean _canHold;
+	private boolean _canRelease;
 	private boolean _canApprove;
 	private boolean _canReject;
 	private boolean _canDelete;
@@ -57,6 +58,7 @@ public final class PIREPAccessControl extends AccessControl {
 		final boolean isDraft = (status == FlightReport.DRAFT);
 		final boolean isSubmitted = (status == FlightReport.SUBMITTED);
 		final boolean isRejected = (status == FlightReport.REJECTED);
+		final boolean isHeld = (status == FlightReport.HOLD);
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
 		_canSubmit = isDraft && (_ourPIREP || isPirep || isHR);
@@ -64,6 +66,7 @@ public final class PIREPAccessControl extends AccessControl {
 		_canApprove = ((isPirep || isHR) && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = (_ourPIREP && isSubmitted) || (_canSubmit || _canHold || _canApprove || _canReject);
+		_canRelease = (isHeld && (isHR || (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID())));
 		
 		// Get the flight assignment ID
 		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
@@ -114,6 +117,14 @@ public final class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanHold() {
 		return _canHold;
+	}
+	
+	/**
+	 * Returns if the PIREP can be released from hold status.
+	 * @return TRUE if it can be released, otherwise FALSE
+	 */
+	public boolean getCanRelease() {
+		return _canRelease;
 	}
 
 	/**
