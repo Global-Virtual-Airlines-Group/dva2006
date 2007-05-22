@@ -846,6 +846,12 @@
 		<roles>PIREP</roles>
 	</command>
 
+	<command id="release">
+		<name>PIREP Release</name>
+		<class>org.deltava.commands.pirep.PIREPReleaseCommand</class>
+		<roles>PIREP</roles>
+	</command>
+
 	<command id="pirepdelete">
 		<name>PIREP Delete</name>
 		<class>org.deltava.commands.pirep.PIREPDeleteCommand</class>
