@@ -46,7 +46,7 @@ public class PIREPReleaseCommand extends AbstractCommand {
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ctx.getUser(), fr, FlightReport.SUBMITTED);
+			wdao.dispose(null, fr, FlightReport.SUBMITTED);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
