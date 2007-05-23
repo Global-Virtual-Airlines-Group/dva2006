@@ -79,6 +79,18 @@ public abstract class NumberFormatTag extends TagSupport {
     }
     
     /**
+     * Checks that a non-null value has been provided.
+     * @return SKIP_BODY always
+     * @throws JspException never
+     */
+    public int doStartTag() throws JspException {
+    	if (_value == null)
+    		_value = new Double(0);
+    	
+    	return SKIP_BODY;
+    }
+    
+    /**
      * Formats the number and writes it to the JSP output writer.
      * @return TagSupport.EVAL_PAGE
      * @throws JspException if an error occurs
