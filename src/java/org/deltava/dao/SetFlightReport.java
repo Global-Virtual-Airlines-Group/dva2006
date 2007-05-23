@@ -62,6 +62,7 @@ public class SetFlightReport extends DAO {
 	 * @param pirep the Flight Report
 	 * @param statusCode the new Flight Report status code
 	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if pirep is null
 	 */
 	public void dispose(Person usr, FlightReport pirep, int statusCode) throws DAOException {
 		try {
@@ -70,7 +71,7 @@ public class SetFlightReport extends DAO {
 			// Write the PIREP
 			prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
 			_ps.setInt(1, statusCode);
-			_ps.setInt(2, usr.getID());
+			_ps.setInt(2, (usr == null) ? 0 : usr.getID());
 			_ps.setInt(3, pirep.getID());
 			executeUpdate(1);
 			
