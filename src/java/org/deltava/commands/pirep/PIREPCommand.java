@@ -169,6 +169,12 @@ public class PIREPCommand extends AbstractFormCommand {
 				fr.setAttribute(FlightReport.ATTR_FPI, true);
 			else if (OnlineNetwork.INTVAS.equals(net))
 				fr.setAttribute(FlightReport.ATTR_INTVAS, true);
+			else {
+				fr.setAttribute(FlightReport.ATTR_INTVAS, false);
+				fr.setAttribute(FlightReport.ATTR_VATSIM, false);
+				fr.setAttribute(FlightReport.ATTR_IVAO, false);
+				fr.setAttribute(FlightReport.ATTR_FPI, false);
+			}
 
 			// Get the flight time
 			try {
