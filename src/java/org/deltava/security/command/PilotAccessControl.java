@@ -64,7 +64,7 @@ public class PilotAccessControl extends AccessControl {
 		int status = _p.getStatus();
 
 		// Set parameters
-		_canEdit = (_isOurs || isPIREP || isHR);
+		_canEdit = (_isOurs || isHR);
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewEmail = (_p.getEmailAccess() == Person.HIDE_EMAIL) ? (_canEdit) : true;
 		_canPromote = (isPIREP || isHR);
