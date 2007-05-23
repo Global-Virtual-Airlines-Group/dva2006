@@ -6,6 +6,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
+import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -39,11 +40,16 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			else if (!(fr instanceof ACARSFlightReport))
 				throw notFoundException("Flight Report does not use ACARS");
 			
+			// Look for a transfer request
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			TransferRequest tx = txdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
 			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT),
 					fr.getEquipmentType(), Test.NEW);
-			if (cr == null) {
+			boolean newCR = (cr == null);
+			if (newCR) {
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
 				cr.setAircraftType(fr.getEquipmentType());
 				cr.setDate(fr.getDate());
@@ -80,6 +86,16 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			// Save the check ride
 			SetExam ewdao = new SetExam(con);
 			ewdao.write(cr);
+			
+			// Update the transfer request
+			if (newCR && (tx != null)) {
+				tx.setCheckRideID(cr.getID());
+				tx.setStatus(TransferRequest.ASSIGNED);
+				
+				// Save the transfer request
+				SetTransferRequest twdao = new SetTransferRequest(con);
+				twdao.write(tx);
+			}
 			
 			// Commit the transaction
 			ctx.commitTX();
