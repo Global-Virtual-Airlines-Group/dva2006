@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -41,7 +41,8 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 * @see MultiChoiceQuestionProfile#getChoices()
 	 */
 	public void addChoice(String choice) {
-		_choices.add(choice.trim());
+		String tmp = choice.trim().replace("\n", "");
+		_choices.add(tmp.replace("\r", ""));
 	}
 	
 	/**
@@ -52,6 +53,7 @@ public class MultiChoiceQuestionProfile extends QuestionProfile implements Multi
 	 */
 	public void setChoices(Collection<String> choices) {
 		_choices.clear();
-		_choices.addAll(choices);
+		for (Iterator<String> i = choices.iterator(); i.hasNext(); )
+			addChoice(i.next());
 	}
 }
