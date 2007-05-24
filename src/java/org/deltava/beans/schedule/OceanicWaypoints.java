@@ -1,0 +1,133 @@
+// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans.schedule;
+
+import java.util.*;
+
+import org.deltava.beans.navdata.*;
+
+/**
+ * A bean to store waypoint information for an oceanic route.
+ * @author Luke
+ * @verison 1.0
+ * @since 1.0
+ */
+
+public class OceanicWaypoints extends OceanicRoute implements Comparable<OceanicWaypoints> {
+	
+	/**
+	 * Direction code for an Easterly track.
+	 */
+	public static final int EAST = 0;
+	
+	/**
+	 * Direction code for an Westerly track.
+	 */
+	public static final int WEST = 1;
+	
+	private String _track;
+	private final Collection<NavigationDataBean> _waypoints = new LinkedHashSet<NavigationDataBean>();
+
+	/**
+	 * Initializes the route. 
+	 * @param type the route type
+	 * @param dt the effective date
+	 */
+	public OceanicWaypoints(int type, Date dt) {
+		super(type);
+		setDate(dt);
+	}
+
+	/**
+	 * Returns the waypoints on this route.
+	 * @return a Collection of {@link Intersection} beans
+	 * @see OceanicWaypoints#addWaypoint(Intersection)
+	 */
+	public Collection<NavigationDataBean> getWaypoints() {
+		return new LinkedHashSet<NavigationDataBean>(_waypoints);
+	}
+	
+	/**
+	 * Returns the Oceanic track code.
+	 * @return the code
+	 * @see OceanicWaypoints#setTrack(String)
+	 */
+	public String getTrack() {
+		return _track;
+	}
+	
+	/**
+	 * Returns a space-delimited list of the waypoints in this track.
+	 * @return the waypoint codes
+	 */
+	public String getWaypointCodes() {
+		StringBuilder buf = new StringBuilder();
+		for (Iterator<NavigationDataBean> i = _waypoints.iterator(); i.hasNext(); ) {
+			NavigationDataBean wp = i.next();
+			buf.append(wp.getCode());
+			if (i.hasNext())
+				buf.append(' ');
+		}
+		
+		return buf.toString();
+	}
+	
+	/**
+	 * Returns the direction for this Oceanic Track.
+	 * @return the direction code
+	 */
+	public int getDirection() {
+		if (_waypoints.size() < 2)
+			return EAST;
+		
+		// Get the frist two waypoints
+		List<NavigationDataBean> wpl = new ArrayList<NavigationDataBean>(_waypoints);
+		NavigationDataBean wp1 = wpl.get(0);
+		NavigationDataBean wp2 = wpl.get(1);
+		return (wp1.getLongitude() < wp2.getLongitude()) ? EAST : WEST;
+	}
+	
+	/**
+	 * Adds a waypoint to the end of this route.
+	 * @param i the Intersection
+	 * @see OceanicWaypoints#getWaypoints()
+	 */
+	public void addWaypoint(NavigationDataBean i) {
+		_waypoints.add(i);
+	}
+	
+	/**
+	 * Updates the track code. Only the first character is used. 
+	 * @param code the track code
+	 * @throws NullPointerException if code is null
+	 * @see OceanicWaypoints#getTrack()
+	 */
+	public void setTrack(String code) {
+		_track = code.substring(0, 1).toUpperCase();
+	}
+	
+	/**
+	 * Compares two routes by comparing their dates, track types and route codes.
+	 */
+	public int compareTo(OceanicWaypoints ow2) {
+		int tmpResult = getDate().compareTo(ow2.getDate());
+		if (tmpResult == 0)
+			tmpResult = new Integer(getType()).compareTo(new Integer(ow2.getType()));
+		return (tmpResult == 0) ? tmpResult = _track.compareTo(ow2._track) : tmpResult;
+	}
+	
+	public String toString() {
+		StringBuilder buf = new StringBuilder(getTypeName());
+		buf.append(_track);
+		buf.append('-');
+		buf.append(getDate().toString());
+		buf.append('-');
+		for (Iterator<NavigationDataBean> i = _waypoints.iterator(); i.hasNext(); ) {
+			NavigationDataBean wp = i.next();
+			buf.append(wp.getCode());
+			if (i.hasNext())
+				buf.append('.');
+		}
+		
+		return buf.toString();
+	}
+}

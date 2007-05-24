@@ -8,7 +8,7 @@ import java.util.Date;
 import java.io.IOException;
 import java.security.cert.*;
 
-import org.deltava.beans.schedule.OceanicRoute;
+import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
@@ -58,8 +58,7 @@ public class PACOTDownloadTask extends Task {
 			}
 			
 			// Build the oceanic route bean
-			OceanicRoute or = new OceanicRoute(OceanicRoute.PACOT);
-			or.setDate(new Date());
+			OceanicNOTAM or = new OceanicNOTAM(OceanicRoute.PACOT, new Date());
 			or.setSource(url.getHost());
 
 			// Get the DAO and the NAT data
