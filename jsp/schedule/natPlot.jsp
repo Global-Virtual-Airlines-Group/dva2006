@@ -19,6 +19,18 @@
 <content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
+function showTrackInfo(marker)
+{
+var label = getElement("trackLabel");
+var data = getElement("trackData");
+if ((!label) || (!data))
+	return false;
+	
+label.innerHTML = "Track " + marker.title;
+data.innerHTML = marker.trackPoints;
+return true;
+}
+
 function loadTracks()
 {
 // Set map as loading
@@ -48,12 +60,18 @@ xmlreq.onreadystatechange = function() {
 			var label = wp.firstChild;
 			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 			trackPos.push(p);
-			map.addOverlay(googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data));
+
+			// Create the map marker
+			var mrk = googleMarker('${imgPath}', wp.getAttribute('color'), p, label.data);
+			mrk.title = track.getAttribute("code");
+			mrk.trackPoints = track.getAttribute("track");
+			mrk.showTrack = showTrackInfo;
+			GEvent.addListener(mrk, 'click', function() { mrk.showTrack(this); });
+			map.addOverlay(mrk);
 		}
 
 		// Draw the route
-		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.8);
-		trackLine.code = track.getAttribute("code");
+		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.7);
 		map.addOverlay(trackLine);
 	}
 
@@ -87,8 +105,8 @@ return true;
  <td class="data"><el:combo name="date" idx="*" firstEntry="-" options="${dates}" value="${param.date}" onChange="void loadTracks()" /></td>
 </tr>
 <tr>
- <td class="label">Track Data</td>
- <td class="data"></td>
+ <td class="label"><span id="trackLabel">Track Data</span></td>
+ <td class="data"><span id="trackData">N/A</span></td>
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
