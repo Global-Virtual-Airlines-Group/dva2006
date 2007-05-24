@@ -1,4 +1,4 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.Date;
@@ -10,7 +10,7 @@ import java.util.Date;
  * @since 1.0
  */
 
-public class OceanicRoute implements java.io.Serializable, Comparable {
+public abstract class OceanicRoute implements java.io.Serializable {
 
     /**
      * Route type for North Atlantic Track (NAT) data.
@@ -29,9 +29,6 @@ public class OceanicRoute implements java.io.Serializable, Comparable {
     
     private Date _date;
     private int _routeType;
-    
-    private String _sourceHost;
-    private String _routeInfo;
     
     /**
      * Creates a new Oceanic Route for a given data.
@@ -54,24 +51,6 @@ public class OceanicRoute implements java.io.Serializable, Comparable {
      */
     public Date getDate() {
         return _date;
-    }
-    
-    /**
-     * Returns the source hostname where this NOTAM was downloaded from.
-     * @return the hostname
-     * @see OceanicRoute#setSource(String)
-     */
-    public String getSource() {
-        return _sourceHost;
-    }
-    
-    /**
-     * Returns the route NOTAM text.
-     * @return the NOTAM text
-     * @see OceanicRoute#setRoute(String)
-     */
-    public String getRoute() {
-        return _routeInfo;
     }
     
     /**
@@ -139,32 +118,4 @@ public class OceanicRoute implements java.io.Serializable, Comparable {
         throw new IllegalArgumentException("Invalid Oceanic Route type - " + typeName);
     }
     
-    /**
-     * Updates the NOTAM source hostname.
-     * @param srcHost the host this NOTAM was downloaded from
-     * @throws NullPointerException if srcHost is null
-     * @see OceanicRoute#getSource()
-     */
-    public void setSource(String srcHost) {
-        _sourceHost = srcHost.trim().toLowerCase();
-    }
-    
-    /**
-     * Updates the NOTAM contents.
-     * @param routeData the NOTAM contents
-     * @see OceanicRoute#getRoute()
-     */
-    public void setRoute(String routeData) {
-        _routeInfo = routeData;
-    }
-    
-    /**
-     * Implements Comparable interface by comparing the dates, then the route types.
-     * @see Comparable#compareTo(Object)
-     */
-    public int compareTo(Object o2) {
-        OceanicRoute or2 = (OceanicRoute) o2;
-        int tmpResult = _date.compareTo(or2.getDate());
-        return (tmpResult == 0) ? new Integer(_routeType).compareTo(new Integer(or2.getType())) : tmpResult;
-    }
 }

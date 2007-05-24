@@ -4,6 +4,7 @@ package org.deltava.dao;
 import java.util.*;
 import java.sql.*;
 
+import org.deltava.beans.navdata.Intersection;
 import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
@@ -110,7 +111,7 @@ public class GetRoute extends DAO {
      * @return a List of OceanicRoutes
      * @throws DAOException if a JDBC error occurs
      */
-    public List<OceanicRoute> getOceanic() throws DAOException {
+    public List<OceanicNOTAM> getOceanic() throws DAOException {
         try {
             prepareStatement("SELECT * FROM common.OCEANIC ORDER BY VALID_DATE DESC");
             return execute();
@@ -145,15 +146,14 @@ public class GetRoute extends DAO {
     /**
      * Helper method to load Oceanic Route data.
      */
-    private List<OceanicRoute> execute() throws SQLException {
+    private List<OceanicNOTAM> execute() throws SQLException {
         // Execute the query
         ResultSet rs = _ps.executeQuery();
-        List<OceanicRoute> results = new ArrayList<OceanicRoute>();
+        List<OceanicNOTAM> results = new ArrayList<OceanicNOTAM>();
         
         // Iterate through the results
         while (rs.next()) {
-            OceanicRoute or = new OceanicRoute(rs.getInt(1));
-            or.setDate(expandDate(rs.getDate(2)));
+            OceanicNOTAM or = new OceanicNOTAM(rs.getInt(1), expandDate(rs.getDate(2)));
             or.setSource(rs.getString(3));
             or.setRoute(rs.getString(4));
             
@@ -196,5 +196,73 @@ public class GetRoute extends DAO {
         } catch (SQLException se) {
             throw new DAOException(se);
         }
+    }
+    
+    /**
+     * Returns the dates for which oceanic track waypoints are available.
+     * @param routeType the route type
+     * @return a Collection of {@link java.util.Date} objects
+     * @throws DAOException if a JDBC error occurs
+     */
+    public Collection<java.util.Date> getOceanicTrackDates(int routeType) throws DAOException {
+    	try {
+    		prepareStatement("SELECT DISTINCT VALID_DATE FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) "
+    				+ "ORDER BY VALID_DATE DESC");
+    		_ps.setInt(1, routeType);
+    		
+    		// Execute the query
+    		Collection<java.util.Date> results = new LinkedHashSet<java.util.Date>();
+    		ResultSet rs = _ps.executeQuery();
+    		while (rs.next())
+    			results.add(rs.getDate(1));
+    		
+    		// Clean up and return
+    		rs.close();
+    		_ps.close();
+    		return results;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
+    }
+    
+    /**
+     * Returns all of the oceanic route waypoints for a particular date.
+     * @param routeType the route type
+     * @param dt the date
+     * @return a Map of {@link OceanicWaypoints} beans, keyed by track code
+     * @throws DAOException if a JDBC error occurs
+     */
+    public Map<String, OceanicWaypoints> getOceanicTrakcs(int routeType, java.util.Date dt) throws DAOException {
+    	try {
+    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND "
+    				+ "(VALID_DATE=?) ORDER BY TRACK, SEQ");
+    		_ps.setInt(1, routeType);
+    		_ps.setTimestamp(2, createTimestamp(dt));
+    		
+    		// Execute the query
+    		OceanicWaypoints wp = null;
+    		Map<String, OceanicWaypoints> results = new TreeMap<String, OceanicWaypoints>();
+    		ResultSet rs = _ps.executeQuery();
+    		while (rs.next()) {
+    			String newTrack = rs.getString(3);
+    			if ((wp == null) || (!newTrack.equals(wp.getTrack()))) {
+    				wp = new OceanicWaypoints(routeType, dt);
+    				wp.setTrack(newTrack);
+    				results.put(newTrack, wp);
+    			}
+    			
+    			// Add the waypoint
+    			Intersection i = new Intersection(rs.getDouble(6), rs.getDouble(7));
+    			i.setCode(rs.getString(5));
+    			wp.addWaypoint(i);
+    		}
+    		
+    		// Clean up and return
+    		rs.close();
+    		_ps.close();
+    		return results;
+    	} catch (SQLException se) {
+    		throw new DAOException(se);
+    	}
     }
 }

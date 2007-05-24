@@ -7,17 +7,17 @@ import org.hansel.CoverageDecorator;
 
 import org.deltava.beans.AbstractBeanTestCase;
 
-public class TestOceanicRoute extends AbstractBeanTestCase {
+public class TestOceanicNOTAM extends AbstractBeanTestCase {
 
-    private OceanicRoute _or;
+    private OceanicNOTAM _or;
     
     public static Test suite() {
-        return new CoverageDecorator(TestOceanicRoute.class, new Class[] { OceanicRoute.class } );
+        return new CoverageDecorator(TestOceanicNOTAM.class, new Class[] { OceanicNOTAM.class } );
     }
     
     protected void setUp() throws Exception {
         super.setUp();
-        _or = new OceanicRoute(OceanicRoute.NAT);
+        _or = new OceanicNOTAM(OceanicRoute.NAT, new Date());
         setBean(_or);
     }
 
@@ -50,10 +50,8 @@ public class TestOceanicRoute extends AbstractBeanTestCase {
         Date d = new Date();
         Date d2 = new Date(d.getTime() + 100);
         _or.setDate(d);
-        OceanicRoute or2 = new OceanicRoute(OceanicRoute.NAT);
-        or2.setDate(d2);
-        OceanicRoute or3 = new OceanicRoute(OceanicRoute.PACOT);
-        or3.setDate(d);
+        OceanicNOTAM or2 = new OceanicNOTAM(OceanicRoute.NAT, d2);
+        OceanicNOTAM or3 = new OceanicNOTAM(OceanicRoute.PACOT, d);
         assertTrue(_or.compareTo(or2) < 0);
         assertTrue(_or.compareTo(or3) < 0);
         assertTrue(or2.compareTo(or3) > 0);

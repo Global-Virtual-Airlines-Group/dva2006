@@ -1,10 +1,14 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.net.URLConnection;
+import java.util.*;
+
+import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
+
+import org.deltava.util.StringUtils;
 
 /**
  * A Data Access Object to get North Atlantic Track data.
@@ -13,21 +17,35 @@ import org.deltava.dao.DAOException;
  * @since 1.0
  */
 public class GetNATs extends DAO implements TrackDAO {
+	
+	private String _notam;
 
 	/**
 	 * Initializes the DAO with a particular HTTP connection.
 	 * @param c the HTTP connection
 	 */
-	public GetNATs(URLConnection c) throws DAOException {
+	public GetNATs(java.net.URLConnection c) throws DAOException {
 		super(c);
 	}
-
+	
+	/**
+	 * Initializes the DAO with a pre-generated NOTAM. <i>This is typically used for data migration</i>
+	 * @param notam the NOTAM text
+	 */
+	public GetNATs(String notam) {
+		super((InputStream) null);
+		_notam = notam;
+	}
+	
 	/**
 	 * Retrieves the NAT information.
 	 * @return a String with the formatted NAT data
 	 * @throws DAOException if an I/O error occurs
 	 */
 	public String getTrackInfo() throws DAOException {
+		if (_notam != null)
+			return _notam;
+		
 		try {
 			BufferedReader br = getReader();
 			StringBuilder buf = new StringBuilder();
@@ -61,7 +79,53 @@ public class GetNATs extends DAO implements TrackDAO {
 
 			// Return the data
 			br.close();
-			return buf.toString();
+			_notam = buf.toString();
+			return _notam;
+		} catch (IOException ie) {
+			throw new DAOException(ie);
+		}
+	}
+
+	/**
+	 * Returns the Waypoints for each North Atlantic Track.
+	 * @return a Map of {@link OceanicWaypoints} beans, keyed by track code
+	 * @throws DAOException if an I/O error occurs
+	 */
+	public Map<String, Collection<String>> getWaypoints() throws DAOException {
+		if (_notam == null)
+			getTrackInfo();
+		
+		// Parse the NOTAM data
+		try {
+			Map<String, Collection<String>> results = new TreeMap<String, Collection<String>>();
+			BufferedReader br = new BufferedReader(new StringReader(_notam));
+			while (br.ready()) {
+				String data = br.readLine();
+				br.mark(512);
+				
+				// Check if the track code is the first character
+				if ((data != null) && (data.length() > 2) && (data.charAt(1) == ' ')) {
+					String el = br.ready() ? br.readLine() : null;
+					String wl = br.ready() ? br.readLine() : null;
+					
+					// Validate the next two lines - if they're good then parse the track
+					if ((el != null) && (el.startsWith("EAST LVLS") && (wl != null) && (wl.startsWith("WEST LVLS")))) {
+						String code = data.substring(0, 1);
+						int end = data.indexOf('<');
+						if (end == -1)
+							end = data.length();
+						
+						Collection<String> wps = new LinkedHashSet<String>(StringUtils.split(data.substring(2, end), " "));
+						results.put(code, wps);
+					}
+				} else if (data == null)
+					break;
+				
+				br.reset();
+			}
+			
+			br.close();
+			return results;
 		} catch (IOException ie) {
 			throw new DAOException(ie);
 		}

@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 /**
@@ -53,5 +53,26 @@ public class Intersection extends NavigationDataBean {
 		buf.append(getHTMLPosition());
 		buf.append("</span>");
 		return buf.toString();
+	}
+	
+	/**
+	 * Parses a North Atlantic Track latitude/longitude waypoint code.
+	 * @param code the waypoint code
+	 * @return an Intersection
+	 * @throws IllegalArgumentException if the code is not in the format NN/WW or NNWWN
+	 * @throws NullPointerException if code is null
+	 * @throws NumberFormatException if the latitude/longitude cannot be parsed
+	 */
+	public static Intersection parseNAT(String code) {
+		if (code.contains("/") && (code.length() == 5)) {
+			return parseNAT(code.substring(0, 2) + code.substring(3) + "N");
+		} else if (code.endsWith("N") && (code.length() == 5)) {
+			double lat = Double.parseDouble(code.substring(0, 2));
+			double lng = Double.parseDouble(code.substring(2, 4)) * -1;
+			Intersection i = new Intersection(lat, lng);
+			i.setCode(code);
+			return i;
+		} else
+			throw new IllegalArgumentException("Invalid NAT waypoint - " + code);
 	}
 }
