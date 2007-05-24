@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import org.jdom.*;
 
+import org.deltava.beans.MapEntry;
 import org.deltava.beans.navdata.NavigationDataBean;
 import org.deltava.beans.schedule.*;
 
@@ -58,15 +59,15 @@ public class NATPlotService extends WebService {
 			boolean isEast = (ow.getDirection() == OceanicWaypoints.EAST);
 			Element te = new Element("track");
 			te.setAttribute("code", ow.getTrack());
-			te.setAttribute("isEast", String.valueOf(isEast));
 			te.setAttribute("color", isEast ? "#EEEEEE" : "#EEEE44");
+			te.setAttribute("track", ow.getWaypointCodes());
 			for (Iterator<NavigationDataBean> wi = ow.getWaypoints().iterator(); wi.hasNext(); ) {
 				NavigationDataBean ndb = wi.next();
 				Element we = XMLUtils.createElement("waypoint", ndb.getInfoBox(), true);
 				we.setAttribute("code", ndb.getCode());
 				we.setAttribute("lat", String.valueOf(ndb.getLatitude()));
 				we.setAttribute("lng", String.valueOf(ndb.getLongitude()));
-				we.setAttribute("color", ndb.getIconColor());
+				we.setAttribute("color", isEast ? MapEntry.WHITE : MapEntry.ORANGE);
 				te.addContent(we);
 			}
 			
