@@ -38,6 +38,7 @@
 	<service id="acars_progress" class="org.deltava.service.acars.MapProgressService" />
 	<service id="acars_pirep" class="org.deltava.service.acars.MapFlightDataService" />
 	<service id="acars_earth" class="org.deltava.service.acars.FlightDataEarthService" />
+	<service id="natinfo" class="org.deltava.service.schedule.NATPlotService" />
 
 	<!-- The names of ACARSMapEarthServices are hardcoded in ACARSMapEarthLinkService -->
 	<service id="acars_map_earth" class="org.deltava.service.acars.EarthMapLinkService" />

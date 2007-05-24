@@ -283,6 +283,16 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
  Delta Virtual Airlines, Continental and Northwest Airlines.</td>
 </tr>
 <tr>
+ <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
+ <td class="data">Our servers automatically download North Atlantic and Pacific Track information 
+every day.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="natplot">NAT Route Plotter</el:cmd></td>
+ <td class="data">You can use our Google Maps tool to plot today's North Atlantic Tracks, or NAT routes
+ for the previous several weeks.</td>
+</tr>
+<tr>
  <td class="mid bld">Navigation Aids</td>
  <td class="data">You can search for a particular Airport, VOR, NDB or Intersection.
 <el:text name="navaidCode" size="4" max="5" value="" />&nbsp;<el:button ID="NavSearchButton" type="submit" className="BUTTON" label="SEARCH" /></td>
@@ -292,11 +302,6 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
  <td class="data">We've obtained over 12,900 preferred flight routes from the Federal Aviation 
  Administration, providing mulitple routes from almost 100 airports in the United States and Canada. 
 <i>NOTE: These are for flight planning purposes only, and is NOT a schedule.</i></td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
- <td class="data">Our servers automatically download North Atlantic and Pacific Track information 
-every day.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="selcals">SELCAL Codes</el:cmd></td>
