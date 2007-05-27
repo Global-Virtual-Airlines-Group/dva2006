@@ -1,6 +1,10 @@
+// Copyright 2004, 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.fleet;
 
+import java.util.*;
+
 import org.deltava.beans.ComboAlias;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A bean to store information about Fleet Library installers.
@@ -11,6 +15,8 @@ import org.deltava.beans.ComboAlias;
 
 public class Installer extends FleetEntry implements ComboAlias {
 
+	private final Collection<AirlineInformation> _apps = new TreeSet<AirlineInformation>();
+	
 	private String _imgName;
     private String _code;
     
@@ -21,7 +27,16 @@ public class Installer extends FleetEntry implements ComboAlias {
     public Installer(String fName) {
         super(fName);
     }
-
+    
+    /**
+     * Returns the Airlines whose Fleet Libraries will include this Installer.
+     * @return a Collection of AirlineInformation beans
+     * @see Installer#addApp(AirlineInformation)
+     */
+    public Collection<AirlineInformation> getApps() {
+    	return _apps;
+    }
+    
     /**
      * Returns this installer's equipment code.
      * @return the equipment code
@@ -62,6 +77,16 @@ public class Installer extends FleetEntry implements ComboAlias {
         buf.append(String.valueOf(getMinorVersion()));
         buf.append(String.valueOf(getSubVersion()));
         return buf.toString();
+    }
+    
+    /**
+     * Adds this Installer to an Airline's Fleet Library.
+     * @param info an AirlineInformation bean
+     * @see Installer#getApps()
+     */
+    public void addApp(AirlineInformation info) {
+    	if (info != null)
+    		_apps.add(info);
     }
     
     /**
