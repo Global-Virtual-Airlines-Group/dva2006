@@ -16,16 +16,28 @@
 <content:js name="pilotMap" />
 <map:api version="2" />
 <map:vml-ie />
+<content:sysdata var="imgPath" name="path.img" />
 <script language="JavaScript" type="text/javascript">
+function reloadMap()
+{
+if (allMarkers.length > 0) {
+	allMarkers.length = 0;
+	map.clearOverlays();
+}
 
+// Load the map
+addMarkers(map, 'hq');
+var xmlreq = generateXMLRequest('${imgPath}');
+xmlreq.send(null);
+return true;
+}
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="void enableElement('eq', false); void enableElement('rnk', false);" onunload="GUnload()">
+<body onunload="GUnload()">
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="ranks" name="ranks" />
 
 <!-- Main Body Frame -->
@@ -36,15 +48,22 @@
  <td colspan="2"><content:airline /> PILOT LOCATIONS<span id="isLoading" /></td>
 </tr>
 <tr>
- <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="650" /></td>
+ <td class="data" colspan="2"><map:div ID="googleMap" x="100%" y="625" /></td>
+</tr>
+<tr class="title caps">
+ <td colspan="2">PILOT LOCATION FILTERING</td>
 </tr>
 <tr>
- <td class="label" valign="top">Equipment Programs</td>
- <td class="data"><el:check name="eqTypes" width="80" cols="6" className="small" newLine="true" checked="${eqTypes}" options="${eqTypes}" onChange="void updateMarkers(this)" /></td>
+ <td class="label">Equipment Program</td>
+ <td class="data"><el:combo name="eqType" size="1" firstEntry="ALL" options="${eqTypes}" onChange="void updateMarkers()" /></td>
 </tr>
 <tr>
- <td class="label" valign="top">Pilot Ranks</td>
- <td class="data"><el:check name="ranks" width="160" cols="3" className="small" newLine="true" checked="${ranks}" options="${ranks}" onChange="void updateMarkers(this)" /></td>
+ <td class="label">Pilot Ranks</td>
+ <td class="data"><el:combo name="rank" size="1" firstEntry="ALL" options="${ranks}" onChange="void updateMarkers()" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="noFilter" value="true" checked="false" label="Disable range-based filtering (slow)" onChange="void reloadMap()" /></td>
 </tr>
 </el:table>
 
@@ -64,26 +83,16 @@
 <script language="JavaScript" type="text/javascript">
 // Build the map
 <map:point var="mapC" point="${mapCenter}" />
-<map:marker var="hq" point="${mapCenter}" />
-var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE, G_HYBRID_TYPE]);
+<map:marker var="hq" point="${hq}" />
+var allMarkers = new Array();
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
-map.setCenter(mapC, 4);
-addMarkers(map, 'hq');
-
-// Initialize the marker hashtables
-var pMarkers = new Array();
-pMarkers['EMB-120'] = new Array();
-<c:forEach var="rank" items="${ranks}">
-pMarkers['${rank}'] = new Array();
-</c:forEach>
-<c:forEach var="eqType" items="${eqTypes}">
-pMarkers['${eqType}'] = new Array();
-</c:forEach>
-
-// Load the markers
-var xmlreq = generateXMLRequest('${imgPath}');
-xmlreq.send(null);
+map.setCenter(mapC, 6);
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+var mm = new GMarkerManager(map);
+reloadMap();
 </script>
 </body>
 </map:xhtml>

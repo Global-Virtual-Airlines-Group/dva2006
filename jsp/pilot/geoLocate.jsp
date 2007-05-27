@@ -14,7 +14,7 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:sysdata var="imgPath" name="path.img" />
-<map:api version="2" current="true" />
+<map:api version="2" />
 <map:vml-ie />
 <script language="JavaScript" type="text/javascript">
 function updateLocation()
@@ -45,6 +45,19 @@ geoCoder.getLocations(addr.value, showResponse);
 return true;
 }
 
+function buildIcon()
+{
+// Build the marker icon
+var icon = new GIcon();
+icon.image = '/${imgPath}/maps/point_blue.png';
+icon.shadow = '/${imgPath}/maps/shadow.png';
+icon.iconSize = new GSize(12, 20);
+icon.shadowSize = new GSize(22, 20);
+icon.iconAnchor = new GPoint(6, 20);
+icon.infoWindowAnchor = new GPoint(5, 1);
+return icon;
+}
+
 function showResponse(response)
 {
 var f = document.forms[0];
@@ -73,6 +86,7 @@ return true;
 function setLatLon(overlay, geoPosition)
 {
 var f = document.forms[0];
+map.removeOverlay(usrLocation);
 
 // Update Latitude
 var isSouth = (geoPosition.y < 0);
@@ -90,8 +104,10 @@ f.lonM.value = Math.floor(lonF * 60);
 f.lonS.value = Math.floor((lonF % (1/60)) * 3600);
 f.lonDir.selectedIndex = (isWest) ? 1 : 0;
 
-map.removeOverlay(usrLocation);
-usrLocation = googleMarker('${imgPath}','blue',geoPosition,labelText);
+// Build the marker
+var icon = buildIcon();
+usrLocation = new GMarker(geoPosition, {icon:icon, bouncy:true, draggable:true, bounceGravity:0.8});
+GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, usrLocation.getPoint()); } );
 map.addOverlay(usrLocation);
 map.closeInfoWindow();
 return true;
@@ -176,13 +192,18 @@ var map = new GMap2(getElement("googleMap"), [G_MAP_TYPE, G_SATELLITE_TYPE]);
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${!empty location ? 30 : 2000}));
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
 var geoCoder = new GClientGeocoder();
 
 // Add user's location
 var usrLocation;
 var labelText = '${empty locationText ? pageContext.request.remoteUser : locationText}';
 <c:if test="${!empty location}">
-<map:marker var="usrLocation" point="${location}" />
+var icon = buildIcon();
+<map:point var="usrLoc" point="${location}" />
+usrLocation = new GMarker(usrLoc, {icon:icon, draggable:true, bouncy:true, bounceGravity:0.8});
+GEvent.addListener(usrLocation, "dragend", function() { setLatLon(usrLocation, usrLocation.getPoint()); } );
 addMarkers(map, 'usrLocation');
 </c:if>
 

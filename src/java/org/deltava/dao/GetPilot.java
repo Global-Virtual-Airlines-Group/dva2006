@@ -73,7 +73,7 @@ public class GetPilot extends PilotReadDAO {
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the result set
-			Map<Integer, GeoLocation> results = new HashMap<Integer, GeoLocation>();
+			Map<Integer, GeoLocation> results = new TreeMap<Integer, GeoLocation>();
 			while (rs.next()) {
 				GeoPosition gp = new GeoPosition(rs.getDouble(2), rs.getDouble(3));
 				results.put(new Integer(rs.getInt(1)), gp);

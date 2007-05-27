@@ -1,8 +1,8 @@
 // Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.io.IOException;
 import java.util.*;
+import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -14,6 +14,7 @@ import org.deltava.beans.stats.PilotLocation;
 
 import org.deltava.dao.*;
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 /**
  * A Web Service to display Pilot Locations on a map.
@@ -24,6 +25,8 @@ import org.deltava.util.*;
 
 public class PilotLocationService extends WebService {
 
+	private static final Cache<CacheableSet<Element>> _cache = new ExpiringCache<CacheableSet<Element>>(1, 3600);
+
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -32,29 +35,72 @@ public class PilotLocationService extends WebService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Calculate the random location adjuster (between -1.5 and +1.5)
-		Random rnd = new Random();
-		double rndAmt = ((rnd.nextDouble() * 3) - 1) / GeoLocation.DEGREE_MILES;
+		// Check if we have any cached data
+		CacheableSet<Element> locs = null;
+		synchronized (PilotLocationService.class) {
+			locs = _cache.get(PilotLocationService.class);
+			if (locs == null) {
+				// Calculate the random location adjuster (between -1.5 and +1.5)
+				Random rnd = new Random();
+				double rndAmt = ((rnd.nextDouble() * 3) - 1) / GeoLocation.DEGREE_MILES;
 
-		// Get active pilots
-		Collection<PilotLocation> usrs = new HashSet<PilotLocation>();
-		try {
-			GetPilot dao = new GetPilot(ctx.getConnection());
-			Map<Integer, GeoLocation> locations = dao.getPilotBoard();
-			Collection<Pilot> pilots = dao.getByID(locations.keySet(), "PILOTS").values();
+				// Get active pilots and their locations
+				Collection<Pilot> pilots = null;
+				Map<Integer, GeoLocation> locations = null;
+				try {
+					GetPilot dao = new GetPilot(ctx.getConnection());
+					locations = dao.getPilotBoard();
+					pilots = dao.getActivePilots(null);
+				} catch (DAOException de) {
+					throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+				} finally {
+					ctx.release();
+				}
 
-			// Loop through the GeoLocations, apply the random adjuster and combine with the Pilot
-			for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
-				Pilot usr = i.next();
-				GeoPosition gp = new GeoPosition(locations.get(new Integer(usr.getID())));
-				gp.setLatitude(gp.getLatitude() + rndAmt);
-				gp.setLongitude(gp.getLongitude() + rndAmt);
-				usrs.add(new PilotLocation(usr, gp));
+				// Loop through the GeoLocations, apply the random adjuster and combine with the Pilot
+				Collection<PilotLocation> usrs = new LinkedHashSet<PilotLocation>();
+				for (Iterator<Pilot> i = pilots.iterator(); i.hasNext();) {
+					Pilot usr = i.next();
+					GeoLocation gl = locations.get(new Integer(usr.getID()));
+					if (gl != null) {
+						GeoPosition gp = new GeoPosition(gl);
+						gp.setLatitude(gp.getLatitude() + rndAmt);
+						gp.setLongitude(gp.getLongitude() + rndAmt);
+
+						// Build the pilot location and calculate the minimum zoom
+						PilotLocation loc = new PilotLocation(usr, gp);
+						int distance = 8192;
+						int minZoom = 1;
+						Collection<GeoLocation> neighbors = GeoUtils.neighbors(loc, usrs, distance);
+						while ((neighbors.size() > 60) && (minZoom < 12) && (distance > 30)) {
+							distance /= 1.9;
+							minZoom++;
+							neighbors = GeoUtils.neighbors(loc, neighbors, distance);
+						}
+
+						loc.setMinZoom(minZoom);
+						usrs.add(loc);
+					}
+				}
+				
+				// Add the Map entries
+				locs = new CacheableSet<Element>(PilotLocationService.class);
+				for (Iterator<PilotLocation> i = usrs.iterator(); i.hasNext();) {
+					PilotLocation loc = i.next();
+					Pilot usr = loc.getUser();
+					Element e = XMLUtils.createElement("pilot", loc.getInfoBox(), true);
+					e.setAttribute("rank", usr.getRank());
+					e.setAttribute("eqType", usr.getEquipmentType());
+					e.setAttribute("minZoom", String.valueOf(loc.getMinZoom()));
+					e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
+					e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
+					e.setAttribute("color", loc.getIconColor());
+					locs.add(e);
+				}
+
+				// Add to the cache
+				_cache.add(locs);
 			}
-		} catch (DAOException de) {
-			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
-		} finally {
-			ctx.release();
 		}
 
 		// Create the XML document
@@ -63,15 +109,9 @@ public class PilotLocationService extends WebService {
 		doc.setRootElement(re);
 
 		// Add the Map entries
-		for (Iterator<PilotLocation> i = usrs.iterator(); i.hasNext();) {
-			PilotLocation loc = i.next();
-			Element e = XMLUtils.createElement("pilot", loc.getInfoBox(), true);
-			e.setAttribute("rank", loc.getUser().getRank());
-			e.setAttribute("eqType", loc.getUser().getEquipmentType());
-			e.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));
-			e.setAttribute("lng", StringUtils.format(loc.getLongitude(), "##0.00000"));
-			e.setAttribute("color", loc.getIconColor());
-			re.addContent(e);
+		for (Iterator<Element> i = locs.iterator(); i.hasNext();) {
+			Element e = i.next();
+			re.addContent((Element) e.clone());
 		}
 
 		// Dump the XML to the output stream
