@@ -1,8 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
+import java.util.*;
 import java.io.File;
-import java.util.List;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
  */
 
 public class InstallerCommand extends LibraryEditCommand {
-	
+
 	/**
 	 * Method called when editing the form.
 	 * @param ctx the Command context
@@ -84,8 +84,18 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setCode(ctx.getParameter("code"));
 			entry.setImage(ctx.getParameter("img"));
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
-			entry.setVersion(Integer.parseInt(ctx.getParameter("majorVersion")), Integer.parseInt(ctx
-					.getParameter("minorVersion")), Integer.parseInt(ctx.getParameter("subVersion")));
+			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx
+					.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
+
+			// Add airline codes
+			Collection<String> appCodes = ctx.getParameters("airlines");
+			if (appCodes != null) {
+				entry.getApps().clear();
+				for (Iterator<String> i = appCodes.iterator(); i.hasNext();) {
+					String appCode = i.next();
+					entry.addApp(SystemData.getApp(appCode));
+				}
+			}
 
 			// Get the message template
 			if (!noNotify) {
@@ -95,8 +105,10 @@ public class InstallerCommand extends LibraryEditCommand {
 			}
 
 			// Get the pilots to notify
-			GetPilotNotify pdao = new GetPilotNotify(con);
-			pilots = pdao.getNotifications(Person.FLEET);
+			if (!noNotify) {
+				GetPilotNotify pdao = new GetPilotNotify(con);
+				pilots = pdao.getNotifications(Person.FLEET);
+			}
 
 			// Get the write DAO and update the database
 			SetLibrary wdao = new SetLibrary(con);

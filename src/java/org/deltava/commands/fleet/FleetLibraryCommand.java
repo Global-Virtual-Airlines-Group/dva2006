@@ -1,3 +1,4 @@
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -54,17 +55,16 @@ public class FleetLibraryCommand extends AbstractLibraryCommand {
             Map apps = (Map) SystemData.getObject("apps");
             for (Iterator i = apps.values().iterator(); i.hasNext();) {
                AirlineInformation info = (AirlineInformation) i.next();
-               if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
-                  results.addAll(0, dao.getFleet(info.getDB()));
-               } else {
-                  Collection<Installer> entries = dao.getFleet(info.getDB());
+               if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
+                  results.addAll(0, dao.getFleet(info.getDB(), false));
+               else {
+                  Collection<Installer> entries = dao.getFleet(info.getDB(), false);
                   appendDB(entries, info.getDB());
                   results.addAll(entries);
                }
             }
-         } else {
-            results.addAll(dao.getFleet(SystemData.get("airline.db")));
-         }
+         } else
+            results.addAll(dao.getFleet(SystemData.get("airline.db"), true));
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {
