@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import org.deltava.beans.Pilot;
@@ -18,6 +18,9 @@ public class PilotLocation implements MapEntry {
 	
 	private Pilot _usr;
 	private GeoLocation _position;
+	private int _minZoom;
+	
+	public String _info;
 
 	/**
 	 * Creates a new Pilot location object.
@@ -57,6 +60,22 @@ public class PilotLocation implements MapEntry {
 	}
 	
 	/**
+	 * Reutrns the minimum map zoom level to display the Pilot at.
+	 * @return the minimum zoom level
+	 */
+	public int getMinZoom() {
+		return _minZoom;
+	}
+	
+	/**
+	 * Updates the minimum map zoom level to display the Pilot at.
+	 * @param zoom the minimum zoom level
+	 */
+	public void setMinZoom(int zoom) {
+		_minZoom = (zoom < 1) ? 1 : zoom;
+	}
+	
+	/**
 	 * Display the Google Map icon color.
 	 * @return BLUE
 	 */
@@ -69,6 +88,9 @@ public class PilotLocation implements MapEntry {
 	 * @return the info box text
 	 */
 	public String getInfoBox() {
+		if (_info != null)
+			return _info;
+		
 		StringBuilder buf = new StringBuilder("<span class=\"mapInfoBox\"><b>");
 		buf.append(_usr.getName());
 		buf.append("</b> (");
@@ -94,6 +116,7 @@ public class PilotLocation implements MapEntry {
 		buf.append("<br />Joined on: ");
 		buf.append(StringUtils.format(_usr.getCreatedOn(), "EEEE MMMM dd, yyyy"));
 		buf.append("</span>");
-		return buf.toString();
+		_info = buf.toString();
+		return _info;
 	}
 }

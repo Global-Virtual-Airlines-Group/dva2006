@@ -1,12 +1,14 @@
 function generateXMLRequest(imgPath)
 {
 // Build the XML Requester
+var f = document.forms[0];
 var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "pilotmap.ws", true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	
+
 	// Parse the XML
+	var noFilter = f.noFilter;
 	var xmlDoc = xmlreq.responseXML;
 	var ac = xmlDoc.documentElement.getElementsByTagName("pilot");
 	for (var i = 0; i < ac.length; i++) {
@@ -17,66 +19,49 @@ xmlreq.onreadystatechange = function() {
 		mrk.infoLabel = label.data;
 		mrk.rank = a.getAttribute("rank");
 		mrk.eqType = a.getAttribute("eqType");
-		mrk.infoShow = showInfo;
-		mrk.isVisible = true;
-		
-		// Set the the click handler and add to the map
-		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
-		map.addOverlay(mrk);
-		
-		// Save in the eqType and rank hashmaps
-		if (pMarkers[mrk.rank]) pMarkers[mrk.rank].push(mrk);
-		if (pMarkers[mrk.eqType]) pMarkers[mrk.eqType].push(mrk);
+
+		// Set the the click handler and add to the list
+		GEvent.bind(mrk, 'click', mrk, function() { this.openInfoWindowHtml(this.infoLabel); } );
+		allMarkers.push(mrk);
+		mm.addMarker(mrk, noFilter ? 1 : parseInt(a.getAttribute("minZoom")));
 	} // for
-	
-	// Restore the checkboxes
-	enableElement('eq', true);
-	enableElement('rnk', true);
+
+	// Display the markers
 	isLoading.innerHTML = '';
+	enableElement(f.noFilter, true);
+	enableElement(f.eqType, true);
+	enableElement(f.rank, true);
 	return true;
 } // function
 
 var isLoading = getElement('isLoading');
-isLoading.innerHTML = ' - REDRAWING...';
+isLoading.innerHTML = ' - LOADING...';
+enableElement(f.noFilter, false);
+enableElement(f.eqType, false);
+enableElement(f.rank, false);
 return xmlreq;
 }
 
-function showInfo()
+function updateMarkers()
 {
-this.openInfoWindowHtml(this.infoLabel);
-return true;
-}
-
-function updateMarkers(checkbox)
-{
+// Get the rank/program values
 var f = document.forms[0];
-
-// Get the markers we are going to add or remove
-var markers = pMarkers[checkbox.value];
-if (!markers) return false;
-
-// Load equipment types
-var showOptions = new Array();
-for (var x = 0; x < f.eqTypes.length; x++)
-	showOptions[f.eqTypes[x].value] = f.eqTypes[x];
-
-// Load rank names
-for (var x = 0; x < f.ranks.length; x++)
-	showOptions[f.ranks[x].value] = f.ranks[x];
+var checkRank = (f.rank.selectedIndex > 0);
+var checkEQ = (f.eqType.selectedIndex > 0);
+var rank = f.rank.options[f.rank.selectedIndex].value;
+var eqType = f.eqType.options[f.eqType.selectedIndex].value;
 
 // Add or remove the markers
-for (var x = 0; x < markers.length; x++) {
-	var mrk = markers[x];
-	if (checkbox.checked && (!mrk.isVisible)) {
-		mrk.isVisible = true;
-		map.addOverlay(mrk);
-	} else if ((!checkbox.checked) && mrk.isVisible) {
-		var showMe = (showOptions[mrk.eqType].checked || showOptions[mrk.rank].checked);
-		if (!showMe) {
-			mrk.isVisible = false;
-			map.removeOverlay(mrk);
-		}
-	}
+for (var x = 0; x < allMarkers.length; x++) {
+	var mrk = allMarkers[x];
+	var rankOK = (!checkRank) || (mrk.rank == rank);
+	var eqOK = (!checkEQ) || (mrk.eqType == eqType);
+
+	// Update visibility
+	if (rankOK && eqOK)
+		mrk.show();
+	else
+		mrk.hide();
 }
 
 return true;
