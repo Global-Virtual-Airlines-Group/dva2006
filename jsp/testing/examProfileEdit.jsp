@@ -45,12 +45,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Examination Name</td>
-<c:if test="${empty eProfile}">
- <td class="data"><el:text name="examName" className="pri bld req" idx="*" size="32" max="48" value="" /></td>
-</c:if>
-<c:if test="${!empty eProfile}">
- <td class="data pri bld">${eProfile.name}</td>
-</c:if>
+ <td class="data"><el:text name="examName" className="pri bld req" idx="*" size="32" max="48" value="${eProfile.name}" /></td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>

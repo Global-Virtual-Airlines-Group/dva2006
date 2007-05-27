@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -26,12 +26,13 @@ public class SetExamProfile extends DAO {
    /**
 	 * Saves an existing Examination Profile to the database.
 	 * @param ep the ExamProfile bean to update
+	 * @param examName the old Examination Profile name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-   public void update(ExamProfile ep) throws DAOException {
+   public void update(ExamProfile ep, String examName) throws DAOException {
       try {
          prepareStatement("UPDATE EXAMINFO SET STAGE=?, QUESTIONS=?, PASS_SCORE=?, TIME=?, "+
-               "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=? WHERE (NAME=?)");
+               "ACTIVE=?, EQTYPE=?, MIN_STAGE=?, ACADEMY=?, NAME=? WHERE (NAME=?)");
          _ps.setInt(1, ep.getStage());
          _ps.setInt(2, ep.getSize());
          _ps.setInt(3, ep.getPassScore());
@@ -41,6 +42,7 @@ public class SetExamProfile extends DAO {
          _ps.setInt(7, ep.getMinStage());
          _ps.setBoolean(8, ep.getAcademy());
          _ps.setString(9, ep.getName());
+         _ps.setString(10, examName);
          
          // Execute the update
          executeUpdate(1);

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
@@ -37,6 +37,9 @@ public class ExamProfileCommand extends AbstractFormCommand {
             ep = rdao.getExamProfile(examName);
             if (ep == null)
             	throw notFoundException("Examination " + examName + " not found");
+            
+            // Update the exam name
+            ep.setName(ctx.getParameter("examName"));
          } else {
             ep = new ExamProfile(ctx.getParameter("examName"));
             ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
@@ -61,11 +64,10 @@ public class ExamProfileCommand extends AbstractFormCommand {
 
          // Get the write DAO and save the profile
          SetExamProfile wdao = new SetExamProfile(con);
-         if (examName == null) {
+         if (examName == null)
             wdao.create(ep);
-         } else {
-            wdao.update(ep);
-         }
+         else
+            wdao.update(ep, examName);
          
          // Save the exam profile
          ctx.setAttribute("exam", ep, REQUEST);

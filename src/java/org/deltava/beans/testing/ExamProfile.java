@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import org.deltava.beans.ViewEntry;
@@ -32,7 +32,7 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      */
     public ExamProfile(String name) {
         super();
-        _name = name.trim();
+        setName(name);
     }
     
     /**
@@ -126,6 +126,16 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
             throw new IllegalArgumentException("Stage cannot be negative");
         
         _stage = stage;
+    }
+    
+    /**
+     * Updates the Examination name.
+     * @param name the new name
+     * @throws NullPointerException if name is null
+     * @see ExamProfile#getName()
+     */
+    public void setName(String name) {
+    	_name = name.trim();
     }
     
     /**
@@ -225,6 +235,10 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      */
     public Object cacheKey() {
         return getName();
+    }
+    
+    public int hashCode() {
+    	return _name.hashCode();
     }
 
     /**
