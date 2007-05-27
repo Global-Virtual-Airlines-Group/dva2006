@@ -465,7 +465,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Update the pilot name
 			boolean nameChanged = (!p.getFirstName().equals(ctx.getParameter("firstName")))
 					|| (!p.getLastName().equals(ctx.getParameter("lastName")));
-			if (p_access.getCanChangeRoles() && nameChanged) {
+			if (p_access.getCanChangeStatus() && nameChanged) {
 				Pilot p2 = p.cloneExceptID();
 				p2.setFirstName(ctx.getParameter("firstName"));
 				p2.setLastName(ctx.getParameter("lastName"));
