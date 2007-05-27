@@ -25,7 +25,7 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.title, 10, 'Installer Title')) return false;
+if (!validateText(form.title, 6, 'Installer Title')) return false;
 if (!validateNumber(form.majorVersion, 1, 'Major Version Number')) return false;
 if (!validateNumber(form.minorVersion, 0, 'Minor Version Number')) return false;
 if (!validateNumber(form.subVersion, 0, 'Sub-Version Number')) return false;
@@ -44,6 +44,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -84,6 +85,10 @@ return true;
 <tr>
  <td class="label" valign="top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" className="req" height="3">${entry.description}</el:textbox></td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" className="req" checked="${entry.apps}" /></td>
 </tr>
 <tr>
  <td class="label">Installer Security</td>

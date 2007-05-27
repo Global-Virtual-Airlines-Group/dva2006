@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -30,21 +30,30 @@ public class GetLibrary extends DAO {
 	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
 	 * @param dbName the database name
+	 * @boolean isAdmin TRUE if in admin mode and all files should be returned, otherwise FALSE
 	 * @return a List of Installer beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Installer> getFleet(String dbName) throws DAOException {
+	public List<Installer> getFleet(String dbName, boolean isAdmin) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT F.*, COUNT(L.FILENAME) FROM ");
 		sqlBuf.append(dbName);
+		sqlBuf.append(".FLEET_AIRLINE FA, ");
+		sqlBuf.append(dbName);
 		sqlBuf.append(".FLEET F LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) GROUP BY F.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=FA.FILENAME)");
+		if (!isAdmin)
+			sqlBuf.append(" AND (FA.CODE=?)");
+		sqlBuf.append(" GROUP BY F.NAME");
 
 		try {
 			prepareStatement(sqlBuf.toString());
+			if (!isAdmin)
+				_ps.setString(1, SystemData.get("airline.code"));
+			
 			return loadInstallers();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -73,9 +82,25 @@ public class GetLibrary extends DAO {
 			_ps.setString(1, fName);
 
 			// Get results - if empty return null
-			List results = loadInstallers();
+			List<Installer> results = loadInstallers();
 			setQueryMax(0);
-			return results.isEmpty() ? null : (Installer) results.get(0);
+			if (results.isEmpty())
+				return null;
+			
+			// Get airline data
+			Installer i = results.get(0);
+			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
+			_ps.setString(1, fName);
+			
+			// Do the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				i.addApp(SystemData.getApp(rs.getString(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -105,9 +130,25 @@ public class GetLibrary extends DAO {
 			_ps.setString(1, code.toUpperCase());
 
 			// Get results - if empty return null
-			List results = loadInstallers();
+			List<Installer> results = loadInstallers();
 			setQueryMax(0);
-			return results.isEmpty() ? null : (Installer) results.get(0);
+			if (results.isEmpty())
+				return null;
+			
+			// Get airline data
+			Installer i = results.get(0);
+			prepareStatementWithoutLimits("SELECT CODE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
+			_ps.setString(1, i.getFileName());
+			
+			// Do the query
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				i.addApp(SystemData.getApp(rs.getString(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return i;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

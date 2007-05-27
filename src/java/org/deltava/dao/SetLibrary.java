@@ -5,6 +5,7 @@ import java.sql.*;
 import java.util.Iterator;
 
 import org.deltava.beans.fleet.*;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
@@ -132,13 +133,20 @@ public class SetLibrary extends DAO {
 	 */
 	public void write(Installer i) throws DAOException {
 		try {
-			if (i.getDownloadCount() == 0) {
+			startTransaction();
+			
+			// Clean out airline entries
+			prepareStatementWithoutLimits("DELETE FROM FLEET_AIRLINE WHERE (FILENAME=?)");
+			_ps.setString(1, i.getFileName());
+			executeUpdate(0);
+			
+			// Prepare the statement
+			if (i.getDownloadCount() == 0)
 				prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, "
 						+ "CODE, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-			} else {
+			else
 				prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
 						+ "SECURITY=?, CODE=?, BODY=? WHERE (FILENAME=?)");
-			}
 
 			// Update the prepared statement
 			_ps.setString(1, i.getName());
@@ -152,9 +160,24 @@ public class SetLibrary extends DAO {
 			_ps.setString(9, i.getDescription());
 			_ps.setString(10, i.getFileName());
 
-			// Update the database
+			// Update the file entry
 			executeUpdate(1);
+			
+			// Write the app entries
+			prepareStatement("INSERT INTO FLEET_AIRLINE (FILENAME, CODE) VALUES (?, ?)");
+			_ps.setString(1, i.getFileName());
+			for (Iterator<AirlineInformation> ai = i.getApps().iterator(); ai.hasNext();) {
+				AirlineInformation info = ai.next();
+				_ps.setString(2, info.getCode());
+				_ps.addBatch();
+			}
+			
+			// Execute and commit
+			_ps.executeBatch();
+			_ps.close();
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
@@ -166,13 +189,12 @@ public class SetLibrary extends DAO {
 	 */
 	public void write(FileEntry e) throws DAOException {
 		try {
-			if (e.getDownloadCount() == 0) {
+			if (e.getDownloadCount() == 0)
 				prepareStatement("REPLACE INTO FILES (NAME, FILESIZE, SECURITY, AUTHOR, BODY, FILENAME) VALUES "
 						+ "(?, ?, ?, ?, ?, ?)");
-			} else {
+			else
 				prepareStatement("UPDATE FILES SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, BODY=? WHERE "
 						+ "(FILENAME=?)");
-			}
 
 			// Update the prepared statement
 			_ps.setString(1, e.getName());
@@ -196,13 +218,12 @@ public class SetLibrary extends DAO {
 	 */
 	public void write(Video v) throws DAOException {
 		try {
-			if (v.getDownloadCount() == 0) {
+			if (v.getDownloadCount() == 0)
 				prepareStatement("REPLACE INTO VIDEOS (NAME, FILESIZE, SECURITY, AUTHOR, CATEGORY, BODY, "
 						+ "FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			} else {
+			else
 				prepareStatement("UPDATE VIDEOS SET NAME=?, FILESIZE=?, SECURITY=?, AUTHOR=?, CATEGORY=?, "
 						+ "BODY=? WHERE (FILENAME=?)");
-			}
 			
 			// Update the prepared statement
 			_ps.setString(1, v.getName());
@@ -230,17 +251,16 @@ public class SetLibrary extends DAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");
-		if (entry instanceof Installer) {
+		if (entry instanceof Installer)
 			sqlBuf.append("FLEET");
-		} else if (entry instanceof Manual) {
+		else if (entry instanceof Manual)
 			sqlBuf.append("DOCS");
-		} else if (entry instanceof FileEntry) {
+		else if (entry instanceof FileEntry)
 			sqlBuf.append("FILES");
-		} else if (entry instanceof Video) {
+		else if (entry instanceof Video)
 			sqlBuf.append("VIDEOS");
-		} else {
+		else
 			throw new IllegalArgumentException("Unknown library entry type - " + entry.getClass().getName());
-		}
 
 		sqlBuf.append(" WHERE (FILENAME=?)");
 

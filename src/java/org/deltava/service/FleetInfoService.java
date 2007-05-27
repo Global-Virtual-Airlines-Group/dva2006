@@ -29,10 +29,10 @@ public class FleetInfoService extends WebService {
 	 */
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		Collection entries = null;
+		Collection<Installer> entries = null;
 		try {
 			GetLibrary dao = new GetLibrary(ctx.getConnection());
-			entries = dao.getFleet(SystemData.get("airline.db"));
+			entries = dao.getFleet(SystemData.get("airline.db"), false);
 		} catch (DAOException de) {
 			throw new ServiceException(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
@@ -56,8 +56,8 @@ public class FleetInfoService extends WebService {
 		
 		// Write installer version info
 		ctx.println("\n[versionInfo]");
-		for (Iterator i = entries.iterator(); i.hasNext();) {
-			Installer fe = (Installer) i.next();
+		for (Iterator<Installer> i = entries.iterator(); i.hasNext();) {
+			Installer fe = i.next();
 			if (fe.getCode() != null) {
 				ctx.print(fe.getCode());
 				ctx.print("=");
