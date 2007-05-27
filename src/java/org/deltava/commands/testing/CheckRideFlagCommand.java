@@ -46,8 +46,8 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT),
-					fr.getEquipmentType(), Test.NEW);
+			CheckRide cr = (tx.getCheckRideID() != 0) ? exdao.getCheckRide(tx.getCheckRideID()) : 
+				exdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.NEW);
 			boolean newCR = (cr == null);
 			if (newCR) {
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
@@ -68,6 +68,9 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				// Set the equipment type
 				cr.setEquipmentType(eqTypes.iterator().next());
 			} else {
+				if ((cr.getFlightID() != 0) || (cr.getStatus() != Test.NEW))
+					throw securityException("Cannot update submitted Check Ride");
+				
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
 			}
@@ -75,6 +78,8 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
 			fr.setAttribute(FlightReport.ATTR_NOTRATED, false);
+			if (fr.getStatus() == FlightReport.HOLD)
+				fr.setStatus(FlightReport.SUBMITTED);
 			
 			// Start the transaction
 			ctx.startTX();
