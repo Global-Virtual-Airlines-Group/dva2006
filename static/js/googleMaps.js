@@ -26,25 +26,12 @@ var markers = eval(arrayName);
 if (!markers) return false;
 
 // Add the map data, either an array or a single element
-if (isNaN(markers.length)) {
+if (isNaN(markers.length))
 	map.addOverlay(markers);
-} else if (markers.length > 0) {
-	var prog = document.getElementById('routeProgress');
-	var hasProgress = (prog != null);
-	
-	// Update the map
-	for (x = 0; x < markers.length; x++) {
+else if (markers.length > 0) {
+	for (var x = 0; x < markers.length; x++)
 		map.addOverlay(markers[x]);
-		if (hasProgress) {
-			var progPct = Math.floor((x + 1) / markers.length * 100);
-			prog.innerHTML = progPct + '% complete';
-		}
-	}
-	
-	if (hasProgress)
-		prog.innerHTML = '';
 }
-
 
 displayedMarkers[arrayName] = true;
 return true;
@@ -57,10 +44,10 @@ var markers = eval(arrayName);
 if (!markers) return false;
 
 // Remove the map data, either an array or a single element
-if (isNaN(markers.length)) {
+if (isNaN(markers.length))
 	map.removeOverlay(markers);
-} else if (markers.length > 0) {
-	for (x = 0; x < markers.length; x++)
+else if (markers.length > 0) {
+	for (var x = 0; x < markers.length; x++)
 		map.removeOverlay(markers[x]);
 }
 	
@@ -70,23 +57,22 @@ return true;
 
 function getDefaultZoom(distance)
 {
-if (distance > 6100) {
+if (distance > 6100)
 	return 2;
-} else if (distance > 2900) {
+else if (distance > 2900)
 	return 3;
-} else if (distance > 1600) {
+else if (distance > 1600)
 	return 4;
-} else if (distance > 780) {
+else if (distance > 780)
 	return 5;
-} else if (distance > 390) {
+else if (distance > 390)
 	return 6;
-} else if (distance > 195) {
+else if (distance > 195)
 	return 7;
-} else if (distance > 90) {
+else if (distance > 90)
 	return 8
-} else if (distance > 50) {
+else if (distance > 50)
 	return 9;
-}
 
 return 10;
 }
@@ -95,11 +81,10 @@ function toggleMarkers(map, arrayName, check)
 {
 // Figure out if we add or remove the markers
 var isToggled = !check.checked;
-if (isToggled) {
+if (isToggled)
 	removeMarkers(map, arrayName);
-} else {
+else
 	addMarkers(map, arrayName);
-}
 
 return true;
 }

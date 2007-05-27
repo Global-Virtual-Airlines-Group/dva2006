@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -151,5 +151,24 @@ public class GeoUtils {
 		double lat2 = distance * StrictMath.cos(angle);
 		double lng2 = distance * StrictMath.sin(angle);
 		return normalize(p1.getLatitude() + lat2, p1.getLongitude() + lng2);
+	}
+	
+	/**
+	 * Returns all the neighbors of a location within a certain distance.
+	 * @param gl the point
+	 * @param points the locations to check
+	 * @param distance the distance in miles
+	 * @return a Collection of GeoLocations
+	 */
+	public static Collection<GeoLocation> neighbors(GeoLocation gl, Collection<? extends GeoLocation> points, int distance) {
+		GeoPosition gp = new GeoPosition(gl); 
+		Collection<GeoLocation> results = new ArrayList<GeoLocation>();
+		for (Iterator<? extends GeoLocation> i = points.iterator(); i.hasNext(); ) {
+			GeoLocation loc = i.next();
+			if (gp.distanceTo(loc) < distance)
+				results.add(loc);
+		}
+		
+		return results;
 	}
 }
