@@ -56,6 +56,14 @@ public class OceanicWaypoints extends OceanicRoute implements Comparable<Oceanic
 	}
 	
 	/**
+	 * Returns whether the track is fixed from day to day.
+	 * @return FALSE
+	 */
+	public boolean isFixed() {
+		return false;
+	}
+	
+	/**
 	 * Returns a space-delimited list of the waypoints in this track.
 	 * @return the waypoint codes
 	 */
@@ -117,7 +125,7 @@ public class OceanicWaypoints extends OceanicRoute implements Comparable<Oceanic
 	
 	public String toString() {
 		StringBuilder buf = new StringBuilder(getTypeName());
-		buf.append(_track);
+		buf.append(getTrack());
 		buf.append('-');
 		buf.append(getDate().toString());
 		buf.append('-');

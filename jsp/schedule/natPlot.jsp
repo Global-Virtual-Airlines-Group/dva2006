@@ -16,7 +16,6 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
-<content:getCookie name="acarsMapZoomLevel" default="12" var="zoomLevel" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
 function showTrackInfo(marker)
@@ -28,6 +27,48 @@ if ((!label) || (!data))
 	
 label.innerHTML = "Track " + marker.title;
 data.innerHTML = marker.trackPoints;
+return true;
+}
+
+function resetTracks()
+{
+// Initialize map data arrays
+tracks['W'] = new Array();
+tracks['E'] = new Array();
+tracks['C'] = new Array();
+points['W'] = new Array();
+points['E'] = new Array();
+points['C'] = new Array();
+
+// Reset checkboxes
+var f = document.forms[0];
+for (var x = 0; x < f.showTracks.length; x++)
+	f.showTracks[x].checked = true;
+
+return true;
+}
+
+function updateTracks(checkbox)
+{
+var xtracks = tracks[checkbox.value];
+var trackPoints = points[checkbox.value];
+
+// Toggle the points
+for (var x = 0; x < trackPoints.length; x++) {
+	if (checkbox.checked)
+		trackPoints[x].show();
+	else
+		trackPoints[x].hide();
+}
+
+// Toggle the tracks
+for (var x = 0; x < xtracks.length; x++) {
+	if (checkbox.checked)
+		map.addOverlay(xtracks[x]);
+	else
+		map.removeOverlay(xtracks[x]);
+}
+
 return true;
 }
 
@@ -43,17 +84,19 @@ var f = document.forms[0];
 var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "natinfo.ws?date=" + f.date.value, true);
 
-// Build the update handler	
+// Build the update handler
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	map.clearOverlays();
+	resetTracks();
 
 	// Get the XML document
 	var xdoc = xmlreq.responseXML.documentElement;
-	var tracks = xdoc.getElementsByTagName("track");
-	for (var i = 0; i < tracks.length; i++) {
+	var xtracks = xdoc.getElementsByTagName("track");
+	for (var i = 0; i < xtracks.length; i++) {
 		var trackPos = new Array();
-		var track = tracks[i];
+		var track = xtracks[i];
+		var trackType = track.getAttribute("type");
 		var waypoints = track.getElementsByTagName("waypoint");
 		for (var j = 0; j < waypoints.length; j++) {
 			var wp = waypoints[j];
@@ -68,11 +111,15 @@ xmlreq.onreadystatechange = function() {
 			mrk.showTrack = showTrackInfo;
 			GEvent.addListener(mrk, 'click', function() { mrk.showTrack(this); });
 			map.addOverlay(mrk);
+			points[trackType].push(mrk);
 		}
 
 		// Draw the route
 		var trackLine = new GPolyline(trackPos, track.getAttribute("color"), 2, 0.7);
 		map.addOverlay(trackLine);
+		
+		// Save the route/points
+		tracks[trackType].push(trackLine);
 	}
 
 	// Focus on the map
@@ -109,6 +156,15 @@ return true;
  <td class="data"><span id="trackData">N/A</span></td>
 </tr>
 <tr>
+ <td class="label">Map Legend</td>
+ <td class="data"><map:legend color="white" legend="Eastbound" />  <map:legend color="orange" legend="Westbound" />
+ <map:legend color="blue" legend="Concorde" /></td>
+</tr>
+<tr>
+ <td class="label">Display Tracks</td>
+ <td class="data"><el:check name="showTracks" idx="*" options="${trackTypes}" checked="${trackTypes}" width="100" cols="3" onChange="void updateTracks(this)" /></td>
+</tr>
+<tr>
  <td class="label" valign="top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="600" /></td>
 </tr>
@@ -120,13 +176,18 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap2(getElement('googleMap'), [G_MAP_TYPE,G_SATELLITE_TYPE]);
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(52.0, -35.0), 4);
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+map.setMapType(${gMapType == 'map' ? 'G_NORMAL_MAP' : 'G_SATELLITE_MAP'});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+
+// Create the tracks/waypoints
+var tracks = new Array();
+var points = new Array();
+resetTracks();
 </script>
 </body>
 </map:xhtml>
