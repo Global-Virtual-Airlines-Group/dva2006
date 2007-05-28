@@ -3,12 +3,13 @@ package org.deltava.commands.schedule;
 
 import java.util.*;
 
+import org.deltava.beans.ComboAlias;
 import org.deltava.beans.schedule.OceanicRoute;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 
 /**
  * A Web Site Command to display the North Atlantic Track plotting map.
@@ -18,6 +19,9 @@ import org.deltava.util.StringUtils;
  */
 
 public class NATPlotCommand extends AbstractCommand {
+	
+	private static final Collection<ComboAlias> TYPES = ComboUtils.fromArray(new String[]{"Eastbound", "Westbound", "Concorde"}, 
+			new String[] {"E", "W", "C"});
 
 	/**
 	 * Executes the command.
@@ -46,6 +50,7 @@ public class NATPlotCommand extends AbstractCommand {
 		
 		// Save the dates in the request
 		ctx.setAttribute("dates", fmtDates, REQUEST);
+		ctx.setAttribute("trackTypes", TYPES, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
