@@ -65,7 +65,7 @@ mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
-mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | bzip2 -9 > dva.sql.bz2
+mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | bzip2 -9 > dva.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > dva_test.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > dva_sys.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | bzip2 -9 > dva_sched.sql.bz2
@@ -73,7 +73,7 @@ mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/
 
 # Dump AFV database
 echo `date +%H:%M:%S`' Writing AFV database'
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | bzip2 -9 > afv.sql.bz2
+mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | bzip2 -9 > afv.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > afv_test.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > afv_sys.sql.bz2
 mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv SCHEDULE ROUTES SELCAL | bzip2 -9 > afv_sched.sql.bz2
