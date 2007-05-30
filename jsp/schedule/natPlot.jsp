@@ -74,18 +74,20 @@ return true;
 
 function loadTracks()
 {
+// Check the combobox
+var f = document.forms[0];
+var dt = f.date.options[f.date.selectedIndex];
+if (f.date.selectedIndex == 0)
+	return;
+
 // Set map as loading
 var isLoading = getElement("isLoading");
 if (isLoading)
 	isLoading.innerHTML = " - LOADING...";
 
 // Generate an XMLHTTP request
-var f = document.forms[0];
-var dt = f.date.options[f.date.selectedIndex];
 var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "natinfo.ws?date=" + dt.text, true);
-
-// Build the update handler
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
 	map.clearOverlays();
