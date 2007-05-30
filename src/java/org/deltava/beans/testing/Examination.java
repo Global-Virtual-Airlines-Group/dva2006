@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -25,6 +25,7 @@ public class Examination extends Test {
 	private Map<Integer, Question> _questions;
 	private int _size;
 	private boolean _empty;
+	private boolean _autoScored;
 
 	/**
 	 * Creates a new examination.
@@ -89,6 +90,15 @@ public class Examination extends Test {
 	 */
 	public Question getQuestion(int idx) {
 		return _questions.get(new Integer(idx));
+	}
+	
+	/**
+	 * Returns whether this Examination was automatically scored.
+	 * @return TRUE if the Examination was automatically scored, otherwise FALSE
+	 * @see Examination#getAutoScored()
+	 */
+	public boolean getAutoScored() {
+		return _autoScored;
 	}
 
 	/**
@@ -176,6 +186,15 @@ public class Examination extends Test {
 	 */
 	public void setExpiryDate(Date dt) {
 		_expiryDate = dt;
+	}
+	
+	/**
+	 * Updates whether this Examination was automatically scored.
+	 * @param isAutoScored TRUE if the Examination was automatically scored, otherwise FALSE
+	 * @see Examination#getAutoScored()
+	 */
+	public void setAutoScored(boolean isAutoScored) {
+		_autoScored = isAutoScored;
 	}
 
 	/**

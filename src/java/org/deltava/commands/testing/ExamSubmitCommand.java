@@ -57,7 +57,8 @@ public class ExamSubmitCommand extends AbstractCommand {
 				q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
 				allMC &= (q instanceof MultiChoiceQuestion);
 				if (q instanceof MultiChoiceQuestion) {
-					q.setCorrect(q.getAnswer().equals(q.getCorrectAnswer()));
+					String ca = q.getAnswer().replace("\r", "");
+					q.setCorrect(ca.equals(q.getCorrectAnswer()));
 					if (q.isCorrect())
 						score++;
 				}
@@ -72,6 +73,7 @@ public class ExamSubmitCommand extends AbstractCommand {
 				ex.setScoredOn(cld.getTime());
 				ex.setStatus(Test.SCORED);
 				ex.setScore(score);
+				ex.setAutoScored(true);
 				ex.setScorerID(ctx.getUser().getID());
 				ex.setComments("Automatically Scored Multiple-Choice Examination");
 				

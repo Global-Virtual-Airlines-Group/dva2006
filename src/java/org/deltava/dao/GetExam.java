@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -284,6 +284,24 @@ public class GetExam extends DAO {
 	}
 	
 	/**
+	 * Returns automatically scored Examiantions.
+	 * @return a Collection of Examination beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Examination> getAutoScored() throws DAOException {
+		try {
+			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, "
+					+ "EP.ACADEMY, P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, "
+					+ "EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.AUTOSCORE=?) "
+					+ "AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON DESC");
+			_ps.setBoolean(1, true);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all Initial Questionnaires for hired Pilots.
 	 * @param ids a Collection of Pilot database IDs
 	 * @return a Map of Examination beans keyed by Pilot ID
@@ -370,7 +388,7 @@ public class GetExam extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 17);
+		boolean hasName = (rs.getMetaData().getColumnCount() > 18);
 
 		// Iterate through the results
 		List<Examination> results = new ArrayList<Examination>();
@@ -386,16 +404,17 @@ public class GetExam extends DAO {
 			e.setScorerID(rs.getInt(9));
 			e.setPassFail(rs.getBoolean(10));
 			e.setEmpty(rs.getBoolean(11));
-			e.setComments(rs.getString(12));
-			e.setSize(rs.getInt(13));
-			e.setScore(rs.getInt(14));
-			e.setStage(rs.getInt(15));
-			e.setAcademy(rs.getBoolean(16));
+			e.setAutoScored(rs.getBoolean(12));
+			e.setComments(rs.getString(13));
+			e.setSize(rs.getInt(14));
+			e.setScore(rs.getInt(15));
+			e.setStage(rs.getInt(16));
+			e.setAcademy(rs.getBoolean(17));
 
 			// If we're joining with pilots, get the pilot name
 			if (hasName) {
-				e.setFirstName(rs.getString(17));
-				e.setLastName(rs.getString(18));
+				e.setFirstName(rs.getString(18));
+				e.setLastName(rs.getString(19));
 			}
 
 			// Add to results
