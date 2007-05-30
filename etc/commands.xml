@@ -1106,6 +1106,12 @@
 		<roles>HR,Examination,TestAdmin</roles>
 	</command>
 
+	<command id="autoscoredexams">
+		<name>Auto-Scored Examinations</name>
+		<class>org.deltava.commands.testing.AutoScoredExamsCommand</class>
+		<roles>HR,Examination,TestAdmin</roles>
+	</command>
+
 	<command id="eprofiles">
 		<name>Examination Profiles</name>
 		<class>org.deltava.commands.testing.ExamProfilesCommand</class>

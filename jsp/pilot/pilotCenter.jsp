@@ -533,7 +533,7 @@ Academy students.</td>
  network and/pr host name. This is used to lock out troublemakers and spambots.</td>
 </tr>
 </content:filter> 
-<content:filter roles="HR,Examination">
+<content:filter roles="HR,Examination,TestAdmin">
 <tr>
  <td class="mid"><el:cmd className="bld" url="eprofiles">Examination Profiles</el:cmd></td>
  <td class="data">You can add new written examinations or modify the examinations to
@@ -542,8 +542,11 @@ Academy students.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="qprofiles" linkID="ALL">Examination Question Profiles</el:cmd></td>
- <td class="data">You can add new examination questionss or modify existing examination 
- questions.</td>
+ <td class="data">You can add new examination questions or modify existing examination questions.</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="autoscoredexams">Automatically Scored Examinations</el:cmd></td>
+ <td class="data">You can review all automatically scored multiple choice examinations.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="crscripts">Check Ride Scripts</el:cmd></td>

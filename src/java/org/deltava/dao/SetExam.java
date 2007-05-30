@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -38,7 +38,7 @@ public class SetExam extends DAO {
 
 			// Prepare the statement for the examination
 			prepareStatement("INSERT INTO EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, GRADED_ON, "
-					+ "GRADED_BY, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ex.getName());
 			_ps.setInt(2, ex.getPilotID());
 			_ps.setInt(3, ex.getStatus());
@@ -46,7 +46,8 @@ public class SetExam extends DAO {
 			_ps.setTimestamp(5, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(6, createTimestamp(ex.getScoredOn()));
 			_ps.setInt(7, ex.getScorerID());
-			_ps.setTimestamp(8, createTimestamp(ex.getExpiryDate()));
+			_ps.setBoolean(8, ex.getAutoScored());
+			_ps.setTimestamp(9, createTimestamp(ex.getExpiryDate()));
 
 			// Write the exam
 			executeUpdate(1);
@@ -117,7 +118,7 @@ public class SetExam extends DAO {
 
 			// Prepare the statement for the examination
 			prepareStatement("UPDATE EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, PASS=?, "
-					+ "COMMENTS=?, ISEMPTY=? WHERE (ID=?)");
+					+ "COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
 			_ps.setInt(1, ex.getStatus());
 			_ps.setTimestamp(2, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(3, createTimestamp(ex.getScoredOn()));
@@ -125,7 +126,8 @@ public class SetExam extends DAO {
 			_ps.setBoolean(5, ex.getPassFail());
 			_ps.setString(6, ex.getComments());
 			_ps.setBoolean(7, ex.getEmpty());
-			_ps.setInt(8, ex.getID());
+			_ps.setBoolean(8, ex.getAutoScored());
+			_ps.setInt(9, ex.getID());
 
 			// Update the exam
 			executeUpdate(1);
