@@ -34,7 +34,7 @@
 </c:when>
 </c:choose>
  <td class="pri bld"><el:cmd url="${cmdName}" link="${exam}">${exam.name}</el:cmd></td>
- <td class="sec">${exam.academy ? 'Flight Academy ' : ''}${examType}</td>
+ <td class="sec"><c:if test="${exam.academy}">Flight Academy </c:if>${examType}</td>
  <td class="bld">${exam.size}</td>
 <c:if test="${!fn:passed(exam) && !fn:failed(exam)}">
  <td colspan="2" class="sec bld">NOT SCORED</td>
