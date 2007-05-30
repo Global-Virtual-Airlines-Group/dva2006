@@ -81,8 +81,9 @@ if (isLoading)
 
 // Generate an XMLHTTP request
 var f = document.forms[0];
+var dt = f.date.options[f.date.selectedIndex];
 var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "natinfo.ws?date=" + f.date.value, true);
+xmlreq.open("GET", "natinfo.ws?date=" + dt.text, true);
 
 // Build the update handler
 xmlreq.onreadystatechange = function() {
