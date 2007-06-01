@@ -66,7 +66,7 @@ public final class PIREPAccessControl extends AccessControl {
 		_canApprove = ((isPirep || isHR) && (isSubmitted || (status == FlightReport.HOLD)) || (isHR && isRejected));
 		_canReject = !isRejected && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = (_ourPIREP && isSubmitted) || (_canSubmit || _canHold || _canApprove || _canReject);
-		_canRelease = (isHeld && (isHR || (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID())));
+		_canRelease = (isHeld && _ctx.isAuthenticated() && (isHR || (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID())));
 		
 		// Get the flight assignment ID
 		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
