@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -34,10 +34,10 @@ public class UserListCommand extends AbstractCommand {
     		sortOpt = PilotComparator.TYPES[PilotComparator.PILOTCODE];
     	
     	// Initialize the comparator
-    	Set<Pilot> users = new TreeSet<Pilot>(new PilotComparator(sortOpt));
+    	List<Pilot> users = new ArrayList<Pilot>(UserPool.getPilots());
+    	Collections.sort(users, new PilotComparator(sortOpt));
 
         // Get and save the users in the request
-    	users.addAll(UserPool.getPilots());
         ctx.setAttribute("pilots", users, REQUEST);
         
         // Save combobox options
