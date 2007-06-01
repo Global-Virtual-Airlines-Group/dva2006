@@ -21,7 +21,7 @@ import org.deltava.util.RoleUtils;
 
 public class HelpDeskCommand extends AbstractCommand {
 	
-	private static final List<String> ADMIN_ROLES = Arrays.asList(new String[] {"HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin"});
+	private static final List<String> ADMIN_ROLES = Arrays.asList("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin");
 
     /**
      * Executes the command.
@@ -35,6 +35,11 @@ public class HelpDeskCommand extends AbstractCommand {
 			// Get the DAO and my issue list
 			GetHelp idao = new GetHelp(con);
 			Collection<Issue> myIssues = idao.getByPilot(ctx.getUser().getID(), false); 
+			for (Iterator<Issue> i = myIssues.iterator(); i.hasNext(); ) {
+				Issue is = i.next();
+				if (is.getStatus() == Issue.CLOSED)
+					i.remove();
+			}
 			
 			// Add Active issues
 			Collection<Issue> allIssues = new HashSet<Issue>(myIssues);
