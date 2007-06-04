@@ -4,7 +4,7 @@
 <content:sysdata var="airlineBanner" name="airline.banner" />
 <!-- Header Frame -->
 <content:region id="header" cols="2" closeRow="true">
-<el:img className="header" src="${airlineBanner}" caption="${airlineName}" />
+<el:link url="/"><el:img className="header" src="${airlineBanner}" caption="${airlineName}" border="0" /></el:link>
 <h1 class="header caps"><content:airline /><br />
 FLIGHT ACADEMY</h1>
 </content:region>
