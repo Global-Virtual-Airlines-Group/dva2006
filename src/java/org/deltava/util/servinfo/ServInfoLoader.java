@@ -29,26 +29,6 @@ public class ServInfoLoader implements Runnable {
 	private String _network;
 	private NetworkInfo _info;
 
-	private static class LoaderThread {
-
-		private long _startTime;
-		private Thread _loader;
-
-		LoaderThread(Thread t) {
-			super();
-			_loader = t;
-			_startTime = System.currentTimeMillis();
-		}
-
-		public Thread getThread() {
-			return _loader;
-		}
-
-		public long getRunTime() {
-			return System.currentTimeMillis() - _startTime;
-		}
-	}
-
 	/**
 	 * Determines if a particular network's data is being loaded.
 	 * @param network the network name
@@ -87,7 +67,10 @@ public class ServInfoLoader implements Runnable {
 		if (isLoading(network))
 			throw new IllegalArgumentException(network + " data already being loaded!");
 
-		LOADERS.put(network.toUpperCase(), new LoaderThread(loaderThread));
+		// Get the current thread stack
+		LoaderThread lt = new LoaderThread(loaderThread);
+		lt.setStack(Thread.currentThread().getStackTrace());
+		LOADERS.put(network.toUpperCase(), lt);
 		if (!loaderThread.isAlive())
 			loaderThread.start();
 	}
