@@ -1,0 +1,78 @@
+// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.service;
+
+import java.io.IOException;
+import java.sql.Connection;
+
+import static javax.servlet.http.HttpServletResponse.*;
+
+import org.deltava.beans.Pilot;
+
+import org.deltava.dao.*;
+import org.deltava.security.*;
+
+import org.deltava.util.system.SystemData;
+
+/**
+ * A Web Service to return database IDs for ACARS users without Pilot codes.
+ * @author Luke
+ * @version 1.0
+ * @since 1.0
+ */
+
+public class DatabaseIDService extends WebService {
+
+	/**
+	 * Executes the Web Service, writing ACARS flight data in KML format.
+	 * @param ctx the Web Service Context
+	 * @return the HTTP status code
+	 * @throws ServiceException if an error occurs
+	 */
+	public int execute(ServiceContext ctx) throws ServiceException {
+		
+		// Get the name and password
+		String name = ctx.getParameter("name");
+		String pwd = ctx.getParameter("pwd");
+		
+		Pilot usr = null;
+		try {
+			Connection con = ctx.getConnection();
+			
+			// Get the user by name
+			GetPilot pdao = new GetPilot(con);
+			usr = pdao.getByName(name, SystemData.get("airline.db"));
+		} catch (DAOException de ) {
+			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
+		} finally {
+			ctx.release();
+		}
+		
+		// Validate that we have a user
+		if (usr == null)
+			return SC_NOT_FOUND;
+		
+		// Get the authenticator
+		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+		try {
+			auth.authenticate(usr, pwd);
+		} catch (SecurityException se) {
+			return SC_UNAUTHORIZED;
+		}
+		
+		// Return an INI file with the name and ID
+		ctx.println("[userInfo]");
+		ctx.println("user=" + usr.getName());
+		ctx.println("id=" + usr.getID());
+		
+		// Dump the text to the output stream
+		try {
+			ctx.getResponse().setContentType("text/plain");
+			ctx.commit();
+		} catch (IOException ie) {
+			throw error(SC_CONFLICT, "I/O Error");
+		}
+		
+		// Return success code
+		return SC_OK;
+	}
+}
