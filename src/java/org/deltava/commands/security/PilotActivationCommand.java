@@ -4,12 +4,11 @@ package org.deltava.commands.security;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
+import org.deltava.security.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.PasswordGenerator;
@@ -83,7 +82,7 @@ public class PilotActivationCommand extends AbstractCommand {
 				result.setURL("/jsp/admin/activatePilotFull.jsp");
 				result.setSuccess(true);
 				return;
-			} else if (ctx.getParameter("eMail") == null)  {
+			} else if (ctx.getParameter("eMail") == null) {
 				ctx.release();
 				result.setURL("/jsp/admin/activatePilot.jsp");
 				result.setSuccess(true);
@@ -114,16 +113,31 @@ public class PilotActivationCommand extends AbstractCommand {
 			SetPilot pwdao = new SetPilot(con);
 			pwdao.write(p);
 
+			// Write the inactivity entry
+			SetInactivity iwdao = new SetInactivity(con);
+			iwdao.setInactivity(p.getID(), 5, true);
+
 			// Write the status update entry
 			SetStatusUpdate sudao = new SetStatusUpdate(con);
 			sudao.write(upd);
 
 			// Get the authenticator and update the password
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-			if (auth.contains(p))
-				auth.updatePassword(p, p.getPassword());
-			else
-				auth.addUser(p, p.getPassword());
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				if (auth.contains(p))
+					auth.updatePassword(p, p.getPassword());
+				else
+					auth.addUser(p, p.getPassword());
+				
+				sqlAuth.clearConnection();
+			} else {
+				if (auth.contains(p))
+					auth.updatePassword(p, p.getPassword());
+				else
+					auth.addUser(p, p.getPassword());
+			}
 
 			// Commit the transaction
 			ctx.commitTX();
