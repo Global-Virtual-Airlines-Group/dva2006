@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Delta Virtual Airlines. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -72,6 +72,30 @@ public class GetInactivity extends PilotReadDAO {
 			prepareStatement("SELECT * FROM INACTIVITY WHERE (PURGE_DATE < DATE_ADD(CURDATE(), INTERVAL ? DAY))");
 			_ps.setInt(1, days);
 			return executeInactivity();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns Pilots with no Flight Reports in a set number of days. This call can be used to purge pilots
+	 * based on no flying activity, and can set different thresholds for different levels of total Flights.
+	 * @param days the number of days with no Flight Reports
+	 * @param flights the maximum number of total Flights for each Pilot
+	 * @return a Collection of Pilot beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Pilot> getNoFlightPilots(int days, int flights) throws DAOException {
+		try {
+			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
+					+ "MAX(F.DATE) AS LF FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
+					+ "(P.STATUS=?) GROUP BY P.ID HAVING (LEGS <= ?) AND ((DATE_ADD(LF, INTERVAL ? DAY) < CURDATE()) "
+					+ "OR (LF IS NULL))");
+			_ps.setInt(1, FlightReport.OK);
+			_ps.setInt(2, Pilot.ACTIVE);
+			_ps.setInt(3, flights);
+			_ps.setInt(4, days);
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
