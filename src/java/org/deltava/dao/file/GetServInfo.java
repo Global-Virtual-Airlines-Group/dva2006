@@ -39,8 +39,8 @@ public class GetServInfo extends DAO {
 
 	private static final Logger log = Logger.getLogger(GetServInfo.class);
 
-	private static Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
-	private static ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 240); // 4 minutes
+	private static final Cache<NetworkStatus> _netCache = new ExpiringCache<NetworkStatus>(3, 43200); // 12 hours
+	private static final ExpiringCache<NetworkInfo> _infoCache = new ExpiringCache<NetworkInfo>(3, 240); // 4 minutes
 	
 	private boolean _useCache = true;
 
@@ -159,15 +159,14 @@ public class GetServInfo extends DAO {
 			BufferedReader br = getReader();
 			status = new NetworkStatus(netName, SystemData.get("online." + netName.toLowerCase() + ".local.info"));
 			String sData = br.readLine();
-			while (sData != null) {
+			while ((sData != null) && (!Thread.currentThread().isInterrupted())) {
 				StringTokenizer tk = new StringTokenizer(sData, "=");
 				if (tk.countTokens() > 1) {
 					String param = tk.nextToken();
-					if (("url0".equals(param)) && (tk.countTokens() > 0)) {
+					if (("url0".equals(param)) && (tk.countTokens() > 0))
 						status.addURL(tk.nextToken());
-					} else if (("msg0".equals(param)) && (tk.countTokens() > 0)) {
+					else if (("msg0".equals(param)) && (tk.countTokens() > 0))
 						status.setMessage(tk.nextToken());
-					}
 				}
 
 				// Read next line
@@ -204,7 +203,7 @@ public class GetServInfo extends DAO {
 			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
 			String iData = br.readLine();
-			while (iData != null) {
+			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
 				if ((iData.length() > 0) && (iData.charAt(0) == '!')) {
 					String sectionName = iData.substring(1, 8).toUpperCase();
 					log.debug("Loading Section " + sectionName);
@@ -242,13 +241,7 @@ public class GetServInfo extends DAO {
 						iData = br.readLine();
 						while ((iData != null) && (iData.length() > 3) && (iData.charAt(0) != '!')) {
 							SITokens si = new SITokens(iData);
-
-							// Get the network ID for the controller/pilot
-							int id = 0;
-							try {
-								id = Integer.parseInt(si.get(SITokens.ID));
-							} catch (NumberFormatException nfe) {
-							}
+							int id = StringUtils.parse(si.get(SITokens.ID), 0);
 
 							// Load the type
 							switch (NetworkUser.getType(si.get(SITokens.TYPE))) {
@@ -324,12 +317,10 @@ public class GetServInfo extends DAO {
 							// Read next line
 							iData = br.readLine();
 						}
-					} else {
+					} else
 						iData = br.readLine();
-					}
-				} else {
+				} else
 					iData = br.readLine();
-				}
 			}
 
 			// Return result

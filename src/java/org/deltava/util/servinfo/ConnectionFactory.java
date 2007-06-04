@@ -35,7 +35,7 @@ class ConnectionFactory {
 				URL url = new URL(dataURL);
 				URLConnection con = url.openConnection();
 				con.setConnectTimeout(1500);
-				con.setReadTimeout(5000);
+				con.setReadTimeout(2500);
 				return con;
 			} catch (IOException ie) {
 				log.error("Error getting HTTP connection " + ie.getMessage(), ie);
