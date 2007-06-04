@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.servinfo;
 
 import java.io.*;
@@ -90,6 +90,21 @@ public class ServInfoLoader implements Runnable {
 		LOADERS.put(network.toUpperCase(), new LoaderThread(loaderThread));
 		if (!loaderThread.isAlive())
 			loaderThread.start();
+	}
+	
+	/**
+	 * Returns all running ServInfo loader threads.
+	 * @return a Map of Threads, keyed by network name
+	 */
+	public static final synchronized Map<String, Thread> getLoaders() {
+		Map<String, Thread> results = new LinkedHashMap<String, Thread>();
+		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext(); ) {
+			String networkName = i.next();
+			LoaderThread lt = LOADERS.get(networkName);
+			results.put(networkName, lt.getThread());
+		}
+		
+		return results;
 	}
 
 	/**
