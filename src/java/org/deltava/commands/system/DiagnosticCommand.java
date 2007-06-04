@@ -21,6 +21,7 @@ import org.deltava.taglib.googlemap.InsertGoogleAPITag;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
+import org.deltava.util.servinfo.ServInfoLoader;
 
 /**
  * A Web Site Command to display diagnostic infomration.
@@ -95,6 +96,12 @@ public class DiagnosticCommand extends AbstractCommand {
 			}
 			
 			ctx.setAttribute("servInfoStatus", netInfo, REQUEST);
+			
+			// Dump the Servinfo thread map after cleaning up
+			ServInfoLoader.isLoading("?");
+			Map loaders = ServInfoLoader.getLoaders();
+			ctx.setAttribute("servInfoLoaders", loaders, REQUEST);
+			ctx.setAttribute("servInfoLoaderNets", loaders.keySet(), REQUEST);
 		}
 		
 		// Get DAO cache properties
