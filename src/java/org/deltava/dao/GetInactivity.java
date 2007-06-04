@@ -133,8 +133,7 @@ public class GetInactivity extends PilotReadDAO {
 			InactivityPurge ip = new InactivityPurge(rs.getInt(1));
 			ip.setPurgeDate(expandDate(rs.getDate(2)));
 			ip.setNotify(rs.getBoolean(3));
-			
-			// Add to results
+			ip.setInterval(rs.getInt(4));
 			results.add(ip);
 		}
 		

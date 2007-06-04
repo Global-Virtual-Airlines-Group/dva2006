@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -29,11 +29,12 @@ public class SetInactivity extends DAO {
 	 */
 	public void setInactivity(int pilotID, int days, boolean isNotified) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO INACTIVITY (ID, NOTIFY, PURGE_DATE) VALUES (?, ?, "
-					+ "DATE_ADD(CURDATE(), INTERVAL ? DAY))");
+			prepareStatement("REPLACE INTO INACTIVITY (ID, NOTIFY, PURGE_DATE, PURGE_DAYS) VALUES (?, ?, "
+					+ "DATE_ADD(CURDATE(), INTERVAL ? DAY), ?)");
 			_ps.setInt(1, pilotID);
 			_ps.setBoolean(2, isNotified);
 			_ps.setInt(3, days);
+			_ps.setInt(4, days);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
