@@ -8,7 +8,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 import org.deltava.beans.Pilot;
 
 import org.deltava.dao.*;
-import org.deltava.security.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -32,8 +31,6 @@ public class DatabaseIDService extends WebService {
 		
 		// Get the name and password
 		String name = ctx.getParameter("name");
-		String pwd = ctx.getParameter("pwd");
-		
 		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -50,14 +47,6 @@ public class DatabaseIDService extends WebService {
 		// Validate that we have a user
 		if (usr == null)
 			return SC_NOT_FOUND;
-		
-		// Get the authenticator
-		Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
-		try {
-			auth.authenticate(usr, pwd);
-		} catch (SecurityException se) {
-			return SC_UNAUTHORIZED;
-		}
 		
 		// Return an INI file with the name and ID
 		ctx.println("[userInfo]");
