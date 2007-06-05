@@ -1,7 +1,6 @@
 // Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.io.IOException;
 import java.sql.Connection;
 
 import static javax.servlet.http.HttpServletResponse.*;
@@ -11,6 +10,7 @@ import org.deltava.beans.Pilot;
 import org.deltava.dao.*;
 import org.deltava.security.*;
 
+import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -63,12 +63,14 @@ public class DatabaseIDService extends WebService {
 		ctx.println("[userInfo]");
 		ctx.println("user=" + usr.getName());
 		ctx.println("id=" + usr.getID());
+		if (!StringUtils.isEmpty(usr.getPilotCode()))
+			ctx.println("code=" + usr.getPilotCode());
 		
 		// Dump the text to the output stream
 		try {
 			ctx.getResponse().setContentType("text/plain");
 			ctx.commit();
-		} catch (IOException ie) {
+		} catch (Exception e) {
 			throw error(SC_CONFLICT, "I/O Error");
 		}
 		
