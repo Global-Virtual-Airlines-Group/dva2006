@@ -70,15 +70,15 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
+			setConnection(dst);
 			if (dst.accepts(usr)) {
-				setConnection(dst);
 				if (dst.contains(usr))
 					dst.updatePassword(usr, pwd);
 				else
 					dst.addUser(usr, pwd);
-
-				clearConnection(dst);
 			}
+			
+			clearConnection(dst);
 		}
 	}
 
