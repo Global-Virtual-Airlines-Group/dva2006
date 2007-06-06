@@ -326,8 +326,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTaxiWeight()
      */
     public void setTaxiWeight(int w) {
-        if (w <= 0)
-            throw new IllegalArgumentException("Weight cannot be negative or negative");
+        if (w < 0)
+            throw new IllegalArgumentException("Weight cannot be negative");
         
         _taxiWeight = w;
     }
@@ -398,8 +398,8 @@ public class ACARSFlightReport extends FlightReport {
      * @see ACARSFlightReport#getTakeoffWeight()
      */
     public void setTakeoffWeight(int w) {
-        if (w <= 0)
-            throw new IllegalArgumentException("Weight cannot be zero or negative - " + w);
+        if (w < 0)
+            throw new IllegalArgumentException("Weight cannot be negative - " + w);
         
         _takeoffWeight = w;
     }
@@ -482,7 +482,7 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setLandingWeight(int w) {
         if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be zero or negative - " + w);
+            throw new IllegalArgumentException("Weight cannot be negative - " + w);
         
         _landingWeight = w;
     }
@@ -517,7 +517,7 @@ public class ACARSFlightReport extends FlightReport {
      */
     public void setGateWeight(int w) {
         if (w < 0)
-            throw new IllegalArgumentException("Weight cannot be zero or negative");
+            throw new IllegalArgumentException("Weight cannot be negative");
         
         _gateWeight = w;
     }
