@@ -142,6 +142,29 @@ public class GetTransferRequest extends DAO {
 	}
 
 	/**
+	 * Returns all Transfer Requests for a particular Equipment program.
+	 * @param eqType the Equipment program name
+	 * @param orderBy the sort order
+	 * @return a List of TransferRequest beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<TransferRequest> getByEQ(String eqType, String orderBy) throws DAOException {
+
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM (TXREQUESTS TX, PILOTS P) "
+			+ "LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) AND (TX.EQTYPE=?) ORDER BY ");
+		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setString(1, eqType);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
 	 * Helper method to iterate through the result set.
 	 */
 	private List<TransferRequest> execute() throws SQLException {
