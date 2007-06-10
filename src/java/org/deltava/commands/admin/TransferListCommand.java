@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -7,10 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.GetTransferRequest;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Site Command to list pending equipment program Transfer Requests.
@@ -30,6 +27,8 @@ public class TransferListCommand extends AbstractViewCommand {
       
       // Initialize the view context
       ViewContext vc = initView(ctx);
+      String eqType = ctx.getParameter("eqType");
+      boolean allEQ = (eqType == null) || ("-".equals(eqType));
       
       try {
          Connection con = ctx.getConnection();
@@ -38,14 +37,19 @@ public class TransferListCommand extends AbstractViewCommand {
          GetTransferRequest txdao = new GetTransferRequest(con);
          txdao.setQueryStart(vc.getStart());
          txdao.setQueryMax(vc.getCount());
-         vc.setResults(txdao.getAll(vc.getSortType()));
+         Collection<TransferRequest> results = allEQ ? txdao.getAll(vc.getSortType()) : txdao.getByEQ(eqType, vc.getSortType());
+         vc.setResults(results);
          
          // Build a set of Pilot IDs
-         Set<Integer> pilotIDs = new HashSet<Integer>();
-         for (Iterator i = vc.getResults().iterator(); i.hasNext(); ) {
-            TransferRequest txreq = (TransferRequest) i.next();
+         Collection<Integer> pilotIDs = new HashSet<Integer>();
+         for (Iterator<TransferRequest> i = results.iterator(); i.hasNext(); ) {
+            TransferRequest txreq = i.next();
             pilotIDs.add(new Integer(txreq.getID()));
          }
+         
+         // Get equipment types
+         GetEquipmentType eqdao = new GetEquipmentType(con);
+         ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
          
          // Save the Pilot beans in the request
          GetPilot pdao = new GetPilot(con);

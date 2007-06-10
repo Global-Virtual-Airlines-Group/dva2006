@@ -10,9 +10,19 @@
 <head>
 <title><content:airline /> Equipment Transfer Requests</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function refresh(combo)
+{
+enableElement(combo, false);
+var eqType = combo.options[combo.selectedIndex].text;
+self.location = '/txrequests.do?eqType=' + eqType;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,7 +32,14 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="txrequests.do" method="post" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="txrequests">
+<!-- Top Header Bar -->
+<tr class="title caps">
+ <td colspan="3" class="left"><content:airline /> EQUIPMENT TRANSFER REQUESTS</td>
+ <td colspan="3" class="right">EQUIPMENT PROGRAM <el:combo name="eqType" size="1" options="${activeEQ}" firstEntry="-" value="${param.eqType}" onChange="void refresh(this)" /></td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title caps">
  <td width="30%"><el:cmd url="txrequests" className="title" sort="P.LASTNAME">PILOT NAME</el:cmd></td>
@@ -53,6 +70,8 @@
 classes="opt2,opt1,opt3, " /></td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
