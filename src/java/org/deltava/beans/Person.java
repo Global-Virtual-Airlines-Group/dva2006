@@ -485,7 +485,8 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 		if (network == null)
 			throw new NullPointerException("Network ID cannot be null");
 
-		_networkIDs.put(network, id);
+		if (!StringUtils.isEmpty(id))
+			_networkIDs.put(network, id);
 	}
 
 	/**
