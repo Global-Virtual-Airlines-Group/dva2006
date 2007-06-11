@@ -598,7 +598,7 @@
 			<threads>
 				<logic type="Integer">2</logic>
 				<write>
-					<min type="Integer">1</min>
+					<min type="Integer">2</min>
 					<max type="Integer">4</max>
 				</write>
 			</threads>
