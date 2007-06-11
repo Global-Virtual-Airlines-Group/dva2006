@@ -587,12 +587,12 @@
 				<v2_0>84</v2_0>
 			</map>
 
-			<latest type="Integer">84</latest>
+			<latest type="Integer">86</latest>
 			<dispatch type="Integer">1</dispatch>
 		</build>
 		
 		<pool>
-			<size type="Integer">100</size>
+			<size type="Integer">128</size>
 			<multiple type="Boolean">false</multiple>
 			<kill_old type="Boolean">true</kill_old>
 			<threads>
