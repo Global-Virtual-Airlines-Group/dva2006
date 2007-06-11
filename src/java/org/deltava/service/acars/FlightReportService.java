@@ -37,6 +37,13 @@ public class FlightReportService extends WebService {
 
 	private static final Logger log = Logger.getLogger(FlightReportService.class);
 
+	private double parse(String xml) {
+		if (xml.contains(","))
+			xml = xml.replace(',', '.');
+		
+		return Double.parseDouble(xml);
+	}
+	
 	/**
 	 * Executes the Web Service.
 	 * @param ctx the Web Service context
@@ -114,21 +121,21 @@ public class FlightReportService extends WebService {
 
 				// Build a position entry
 				try {
-					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), Double
-							.parseDouble(pe.getChildTextTrim("lat")), Double.parseDouble(pe.getChildTextTrim("lon")));
+					RouteEntry pos = new RouteEntry(StringUtils.parseDate(dt, "MM/dd/yyyy HH:mm:ss.SSS"), 
+							parse(pe.getChildTextTrim("lat")), parse(pe.getChildTextTrim("lon")));
 					pos.setAltitude(StringUtils.parse(pe.getChildTextTrim("msl"), 0));
 					pos.setRadarAltitude(StringUtils.parse(pe.getChildTextTrim("agl"), 0));
 					pos.setHeading(StringUtils.parse(pe.getChildTextTrim("hdg"), 0));
 					pos.setAirSpeed(StringUtils.parse(pe.getChildTextTrim("aSpeed"), 0));
 					pos.setGroundSpeed(StringUtils.parse(pe.getChildTextTrim("gSpeed"), 0));
 					pos.setVerticalSpeed(StringUtils.parse(pe.getChildTextTrim("vSpeed"), 0));
-					pos.setPitch(Double.parseDouble(pe.getChildTextTrim("pitch")));
-					pos.setBank(Double.parseDouble(pe.getChildTextTrim("bank")));
-					pos.setMach(Double.parseDouble(pe.getChildTextTrim("mach")));
-					pos.setN1(Double.parseDouble(pe.getChildTextTrim("n1")));
-					pos.setN2(Double.parseDouble(pe.getChildTextTrim("n2")));
-					pos.setAOA(Double.parseDouble(pe.getChildTextTrim("aoa")));
-					pos.setG(Double.parseDouble(pe.getChildTextTrim("g")));
+					pos.setPitch(parse(pe.getChildTextTrim("pitch")));
+					pos.setBank(parse(pe.getChildTextTrim("bank")));
+					pos.setMach(parse(pe.getChildTextTrim("mach")));
+					pos.setN1(parse(pe.getChildTextTrim("n1")));
+					pos.setN2(parse(pe.getChildTextTrim("n2")));
+					pos.setAOA(parse(pe.getChildTextTrim("aoa")));
+					pos.setG(parse(pe.getChildTextTrim("g")));
 					pos.setFuelFlow(StringUtils.parse(pe.getChildTextTrim("fuelFlow"), 0));
 					pos.setPhase(StringUtils.parse(pe.getChildTextTrim("phase"), 0));
 					pos.setSimRate(StringUtils.parse(pe.getChildTextTrim("simRate"), 0));
@@ -200,8 +207,8 @@ public class FlightReportService extends WebService {
 
 		// Set the Takeoff/Landing N1 values, but don't fail on invalid numeric values
 		try {
-			afr.setTakeoffN1(Double.parseDouble(ie.getChildTextTrim("takeoffN1")));
-			afr.setLandingN1(Double.parseDouble(ie.getChildTextTrim("landingN1")));
+			afr.setTakeoffN1(parse(ie.getChildTextTrim("takeoffN1")));
+			afr.setLandingN1(parse(ie.getChildTextTrim("landingN1")));
 		} catch (NumberFormatException nfe) {
 			throw new IllegalArgumentException("Invalid N1 - " + nfe.getMessage());
 		} catch (IllegalArgumentException iae) {
