@@ -10,6 +10,7 @@ import org.deltava.beans.servinfo.*;
 
 import org.deltava.dao.file.FileURLConnection;
 
+import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -60,7 +61,16 @@ class ConnectionFactory {
 			return false;
 		
 		// Check that the file exists
+		int totalTime = 0;
 		File f = new File(fName);
+		while ((totalTime < 900) && !f.exists()) {
+			ThreadUtils.sleep(75);
+			totalTime += 75;
+		}
+		
+		if (!f.exists())
+			log.warn("Cannot find local file " + fName);
+		
 		return f.exists();
 	}
 	
