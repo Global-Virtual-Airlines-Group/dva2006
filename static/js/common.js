@@ -166,7 +166,7 @@ return false;
 
 function validateCheckBox(checkbox, minSelected, title)
 {
-if (!checkbox) return true;
+if ((!checkbox) || (!checkbox.length)) return true;
 var checkCount = 0;
 for (x = 0; x < checkbox.length; x++) {
 	if (checkbox[x].checked)
