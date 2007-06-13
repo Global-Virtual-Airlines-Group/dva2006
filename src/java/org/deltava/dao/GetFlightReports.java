@@ -145,7 +145,7 @@ public class GetFlightReports extends DAO {
 				sqlBuf.append(" OR ");
 		}
 
-		sqlBuf.append(") ORDER BY PR.DATE, PR.ID");
+		sqlBuf.append(") ORDER BY PR.DATE, PR.SUBMITTED, PR.ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
