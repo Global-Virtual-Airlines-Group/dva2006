@@ -238,6 +238,13 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			log.info("Cannot add " + usr.getName() + " - no pilot code");
 			return;
 		}
+		
+		// Build the SQL query
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
+		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
+		sqlBuf.append(".ts2_clients SET s_client_password=");
+		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
+		sqlBuf.append("(?) WHERE (s_client_name=?)");
 
 		Connection con = null;
 		try {
@@ -273,19 +280,25 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 				
 			// Log addition
 			log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
-
+			
 			// Get the DAO and update
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.write(usrs);
+			
+			// Encrypt the password
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
+			ps.setString(1, pwd);
+			ps.setString(2, ((Pilot) usr).getPilotCode());
+			
+			// Execute the update and clean up
+			ps.executeUpdate();
+			ps.close();
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(con);
 		}
-
-		// Encrypt the password
-		updatePassword(usr, pwd);
 	}
 
 	/**
