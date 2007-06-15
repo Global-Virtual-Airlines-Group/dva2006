@@ -107,5 +107,6 @@ To view all <content:airline /> Flight Academy certifications, <el:cmd url="cert
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

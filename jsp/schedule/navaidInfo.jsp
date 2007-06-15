@@ -155,7 +155,7 @@ map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(navP, getDefaultZoom(90));
 addMarkers(map, 'nav');
-</script>
-</c:if>
+</script></c:if>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

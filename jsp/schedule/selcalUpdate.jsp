@@ -42,5 +42,6 @@ To return to the list of available SELCAL codes, <el:cmd url="selcals" className
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

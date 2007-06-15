@@ -221,7 +221,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 changeAirport(document.forms[0].airportD);
 changeAirport(document.forms[0].airportA);
-</script>
-</c:if>
+</script></c:if>
+<content:googleAnalytics />
 </body>
 </html>

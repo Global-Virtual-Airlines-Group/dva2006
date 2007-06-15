@@ -36,5 +36,6 @@ major event per month, and ad hoc events approximately once every seven to ten d
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

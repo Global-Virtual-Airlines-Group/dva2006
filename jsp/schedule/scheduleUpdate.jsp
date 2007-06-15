@@ -76,5 +76,6 @@ To return to the list of airports, <el:cmd url="airports" className="sec bld">cl
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

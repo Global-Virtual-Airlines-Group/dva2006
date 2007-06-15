@@ -29,5 +29,6 @@ are impersonating - <span class="sec">${user.name}!</span></b><br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

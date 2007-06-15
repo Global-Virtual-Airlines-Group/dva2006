@@ -113,5 +113,6 @@ space below.</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

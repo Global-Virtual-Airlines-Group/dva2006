@@ -28,5 +28,6 @@ go into your browser's preferences, and ensure that you can accept cookies from
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

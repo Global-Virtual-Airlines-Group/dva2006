@@ -101,6 +101,6 @@ cause the provided host name to be translated into an IP address before searchin
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>
-

@@ -64,5 +64,6 @@ e-mail message, into the space provided below.</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

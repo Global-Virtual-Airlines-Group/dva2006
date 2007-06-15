@@ -60,5 +60,6 @@ ${appName.name}<br /></c:forEach></td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

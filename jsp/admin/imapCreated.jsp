@@ -38,5 +38,6 @@ To do so, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

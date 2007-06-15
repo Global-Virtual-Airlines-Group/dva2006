@@ -38,5 +38,6 @@ To view the Pilot Location Board, please <el:cmd url="pilotboard">Click here</el
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

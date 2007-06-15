@@ -20,10 +20,12 @@
 <content:region id="main">
 <div class="updateHdr">Duplicate Registration Information Sent</div>
 <br />
-Thank you! Your information has been submitted to the <content:airline /> Human Resources Department. You should hear from them within 48-72 hours. Thank you for your interest!
+Thank you! Your information has been submitted to the <content:airline /> Human Resources Department. You should hear from them
+within 48-72 hours. Thank you for your interest!<br />
 <br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

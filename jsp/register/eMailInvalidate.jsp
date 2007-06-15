@@ -42,5 +42,6 @@ to provide the validation code.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

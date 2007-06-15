@@ -75,5 +75,6 @@ classes="opt2,opt1,opt3, " /></td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

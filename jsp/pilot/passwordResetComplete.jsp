@@ -29,5 +29,6 @@ at the e-mail address we have on file, notifying this Pilot of the new password.
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

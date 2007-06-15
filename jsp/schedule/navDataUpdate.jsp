@@ -49,5 +49,6 @@ To return to the AIRAC Navigation Data import page, <el:cmd url="navimport">clic
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

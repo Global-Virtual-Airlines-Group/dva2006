@@ -121,5 +121,6 @@ To view all Water Cooler discussion threads, <el:cmd url="channel" linkID="ALL" 
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

@@ -46,5 +46,6 @@
 </el:table>
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

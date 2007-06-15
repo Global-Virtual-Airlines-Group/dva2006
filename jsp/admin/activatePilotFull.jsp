@@ -38,5 +38,6 @@ the Airline above its maximum size, to a total of <fmt:int value="${airlineSize 
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

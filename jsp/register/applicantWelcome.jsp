@@ -53,5 +53,6 @@ application to <content:airline /> cannot be approved!</span><br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

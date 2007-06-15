@@ -151,7 +151,7 @@ map.enableContinuousZoom();
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');
 addMarkers(map, 'filedMarkers');
-</script>
-</c:if>
+</script></c:if>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

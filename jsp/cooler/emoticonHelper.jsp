@@ -62,5 +62,6 @@ return true;
  <td colspan="3"><el:button className="BUTTON" onClick="void self.close()" label="CLOSE WINDOW" /></td>
 </tr>
 </el:table>
+<content:googleAnalytics />
 </body>
 </html>

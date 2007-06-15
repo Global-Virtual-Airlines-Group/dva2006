@@ -59,5 +59,6 @@ To review this Applicant's profile, <el:cmd url="applicant" link="${applicant}" 
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

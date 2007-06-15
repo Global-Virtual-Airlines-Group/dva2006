@@ -69,5 +69,6 @@ Schedule Database Reloaded</c:if></td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

@@ -190,5 +190,6 @@ map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(38.88, -93.25), 4);
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

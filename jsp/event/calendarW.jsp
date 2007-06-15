@@ -76,5 +76,6 @@ ${pilot.name} <c:if test="${!empty pilot.pilotCode}">(${pilot.pilotCode})<br /><
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>
