@@ -42,5 +42,6 @@ This Water Cooler Channel has been renamed to <span class="pri bld">${newName}</
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

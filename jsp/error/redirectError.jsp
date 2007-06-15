@@ -29,5 +29,6 @@ page.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

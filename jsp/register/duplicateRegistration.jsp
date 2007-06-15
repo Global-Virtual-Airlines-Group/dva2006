@@ -74,5 +74,6 @@ in <content:airline />!</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

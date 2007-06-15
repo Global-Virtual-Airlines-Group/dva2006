@@ -54,5 +54,6 @@ Check Rides be assigned while a Transfer Request is pending.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

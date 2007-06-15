@@ -112,5 +112,6 @@ following accomplishments:<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

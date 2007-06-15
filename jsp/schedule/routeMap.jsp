@@ -67,5 +67,6 @@ var routes;
 var airports = new Array();
 updateAirports(getElement('airlineCode'));
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

@@ -70,5 +70,6 @@ return true;
 <br />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

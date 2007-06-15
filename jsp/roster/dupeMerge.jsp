@@ -36,5 +36,6 @@ To view ${pilot.name}'s Pilot Profile, <el:cmd url="profile" link="${pilot}" cla
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

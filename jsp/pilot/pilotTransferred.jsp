@@ -26,5 +26,6 @@ ${pilot.name} has been successfully transferred to ${airline.name}.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

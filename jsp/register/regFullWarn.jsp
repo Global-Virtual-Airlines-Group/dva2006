@@ -48,5 +48,6 @@ will contact you at the email address on your application when there is an openi
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

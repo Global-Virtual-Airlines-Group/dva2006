@@ -198,5 +198,6 @@ cpos.apply(cp);
 map.getContainer().appendChild(cp);
 </c:if>
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

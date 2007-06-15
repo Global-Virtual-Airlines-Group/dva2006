@@ -179,5 +179,6 @@ to a specific set of equipment.</span><br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

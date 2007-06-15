@@ -72,5 +72,6 @@ The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer 
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

@@ -90,5 +90,6 @@ IN <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" value="${param.
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

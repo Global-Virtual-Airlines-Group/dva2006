@@ -74,5 +74,6 @@ Examination is part of the <content:airline /> Flight Academy</c:if></td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

@@ -30,5 +30,6 @@ To log in to the <content:airline /> web site, <el:cmd url="login" className="se
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

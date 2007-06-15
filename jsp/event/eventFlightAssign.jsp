@@ -28,5 +28,6 @@ To return to this Online Event, <el:cmd className="sec bld" url="event" link="${
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

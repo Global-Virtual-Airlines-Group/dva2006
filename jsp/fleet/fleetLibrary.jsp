@@ -102,5 +102,6 @@ Select a Fleet Installer from the list above.</div>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

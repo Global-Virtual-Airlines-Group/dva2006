@@ -241,5 +241,6 @@ correct out of <fmt:int value="${questionnaire.size}" /> questions</span>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

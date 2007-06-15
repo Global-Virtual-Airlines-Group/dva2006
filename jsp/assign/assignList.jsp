@@ -112,5 +112,6 @@ ${leg.airportA.name} (<fmt:airport airport="${leg.airportA}" />)</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

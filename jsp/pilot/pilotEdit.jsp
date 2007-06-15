@@ -345,5 +345,6 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 var f = document.forms[0];
 f.useDefaultSig.disabled = hasSignature;
 </script>
+<content:googleAnalytics />
 </body>
 </html>

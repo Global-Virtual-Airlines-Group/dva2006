@@ -28,5 +28,6 @@ contact us at <a href="mailto:${infoEmail}" class="bld">${infoEmail}</a>.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

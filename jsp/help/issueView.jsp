@@ -140,5 +140,6 @@ return ${access.canComment};
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

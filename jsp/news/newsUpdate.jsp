@@ -43,5 +43,6 @@ This ${entryType} has been successfully removed from the database.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

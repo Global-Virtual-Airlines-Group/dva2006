@@ -26,9 +26,8 @@ if (act.indexOf('courseprogress.do') != -1) {
 
 } else if (act.indexOf('courseassign.do') != -1) {
 
-} else {
+} else
 	if (!validateText(form.msgText, 5, 'Course Comments')) return false;
-}
 
 setSubmit();
 disableButton('EnrollButton');
@@ -42,7 +41,15 @@ disableButton('FlightLogButton');
 disableButton('CommentButton');</c:if>
 return ${access.canComment || access.canUpdateProgress};
 }
-</script>
+<c:if test="${access.canCancel}">
+function validateCancel()
+{
+if (confirm('Are you sure you want to withdraw?'))
+	self.location = '/coursedispose.do?op=abandon&id=${course.hexID}';
+
+return true;
+}
+</c:if></script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -212,7 +219,7 @@ return ${access.canComment || access.canUpdateProgress};
  <el:cmdbutton ID="EnrollButton" url="coursedispose" link="${course}" op="start" label="ENROLL STUDENT" />
 </c:if>
 <c:if test="${access.canCancel}">
- <el:cmdbutton ID="CancelButton" url="coursedispose" link="${course}" op="abandon" label="WITHDRAW" />
+ <el:button ID="CancelButton" onClick="validateCancel()" className="BUTTON" label="WITHDRAW" />
 </c:if>
 <c:if test="${access.canRestart}">
  <el:cmdbutton ID="ReturnButton" url="coursedispose" link="${course}" op="restart" label="RETURN" />
@@ -245,5 +252,6 @@ return ${access.canComment || access.canUpdateProgress};
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

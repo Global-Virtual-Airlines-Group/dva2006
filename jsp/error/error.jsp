@@ -48,5 +48,6 @@ This is the root cause of the exception: <b>${ex.cause.class.name}</b><br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

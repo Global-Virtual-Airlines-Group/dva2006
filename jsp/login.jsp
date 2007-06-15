@@ -95,5 +95,6 @@ in order to log into the site.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

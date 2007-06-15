@@ -69,5 +69,6 @@ To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" cla
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>
