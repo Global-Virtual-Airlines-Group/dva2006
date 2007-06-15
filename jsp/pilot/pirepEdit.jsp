@@ -206,5 +206,6 @@ if (f.airline.selectedIndex != 0) {
 	updateAirports(f.airportA, 'airline=' + aCode, false, '${pirep.airportA.IATA}');
 }
 </script>
+<content:googleAnalytics />
 </body>
 </html>

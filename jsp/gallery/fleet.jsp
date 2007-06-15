@@ -67,5 +67,6 @@ return true;
 <script language="JavaScript" type="text/javascript">
 var dList = getElement('fleetDescs').value.split(',');
 </script>
+<content:googleAnalytics />
 </body>
 </html>

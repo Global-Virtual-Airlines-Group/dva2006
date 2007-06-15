@@ -89,5 +89,6 @@ FEEDBACK <el:combo name="score" idx="*" size="1" options="${scores}" firstEntry=
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

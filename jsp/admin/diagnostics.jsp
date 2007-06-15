@@ -104,5 +104,6 @@ Free Memory: <fmt:int value="${freeMemory}" /> bytes</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

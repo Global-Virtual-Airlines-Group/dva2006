@@ -24,10 +24,11 @@
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Pilot Leave of Absence</div>
 <br />
-You have been placed on a Leave of Absence for up to <fmt:dec value="${interval}" /> days. To 
-return to Active status, you just need to log into the web site again.<br />
+You have been placed on a Leave of Absence for up to <fmt:int value="${interval}" /> days. To 
+return to Active status, you just need to log into the <content:airline /> web site again.<br />
 <br />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

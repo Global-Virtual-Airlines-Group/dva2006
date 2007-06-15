@@ -63,5 +63,6 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" />K.</span>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

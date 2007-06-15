@@ -44,5 +44,6 @@ To return to the list of Equipment Program profiles, <el:cmd url="eqtypes" class
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

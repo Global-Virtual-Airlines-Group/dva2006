@@ -25,13 +25,13 @@ if (!checkSubmit()) return false;
 
 // Validate response
 var act = form.action;
-if (act.indexOf('imgvote.do') != -1) {
+if (act.indexOf('imgvote.do') != -1)
 	if (!validateCombo(form.score, 'Image Rating')) return false;
-} else if (act.indexOf('threadmove.do') != -1) {
+else if (act.indexOf('threadmove.do') != -1)
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
-} else if (act.indexOf('threadsubjectedit.do') != -1) {
+else if (act.indexOf('threadsubjectedit.do') != -1)
 	if (!validateText(form.newTitle, 5, 'New Discussion Thread Title')) return false;
-} else {
+else {
 	var hasResponse = (form.msgText.value.length > 3);
 	if (!hasResponse)
 		if (!validateCheckBox(form.pollVote, 1, 'poll Vote')) return false;
@@ -332,5 +332,6 @@ notification each time a reply is posted in this Thread.
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

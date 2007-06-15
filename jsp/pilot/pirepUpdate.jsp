@@ -138,5 +138,6 @@ To view this Flight Report, <el:cmd url="pirep" link="${pirep}" className="sec b
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

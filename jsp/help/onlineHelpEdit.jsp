@@ -50,5 +50,6 @@ return true;
 </el:form>
 <br />
 <content:copyright />
+<content:googleAnalytics />
 </body>
 </html>

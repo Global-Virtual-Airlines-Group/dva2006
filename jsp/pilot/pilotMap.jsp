@@ -94,5 +94,6 @@ map.enableContinuousZoom();
 var mm = new GMarkerManager(map);
 reloadMap();
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

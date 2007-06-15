@@ -111,5 +111,6 @@ To return to the Pilot Roster, <el:cmd url="roster" className="sec bld">Click He
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

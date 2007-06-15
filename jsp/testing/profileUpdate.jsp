@@ -62,5 +62,6 @@ The script for the ${script.equipmentType} Check Ride has been succesfully remov
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

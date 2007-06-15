@@ -210,5 +210,6 @@ addMarkers(map, 'usrLocation');
 // Set onClick event for the map
 GEvent.addListener(map, 'click', setLatLon);
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

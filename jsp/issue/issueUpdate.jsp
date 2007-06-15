@@ -48,5 +48,6 @@ To view all open Issues, <el:cmd className="sec bld" url="issues" op="Open">Clic
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

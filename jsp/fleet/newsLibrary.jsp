@@ -86,5 +86,6 @@ This is a free download.</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

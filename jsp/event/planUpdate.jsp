@@ -30,5 +30,6 @@ To view this Online Event, <el:cmd url="event" link="${event}" className="sec bl
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

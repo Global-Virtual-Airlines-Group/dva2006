@@ -150,4 +150,5 @@ addMarkers(map, 'apMarker');
 </script>
 </c:if>
 </body>
+<content:googleAnalytics />
 </map:xhtml>

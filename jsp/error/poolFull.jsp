@@ -29,5 +29,6 @@ Attempting to refresh this page right away will most likely make the problem wor
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

@@ -292,5 +292,6 @@ addMarkers(map, 'filedMarkers');
 </c:if>
 </script>
 </c:if>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

@@ -27,5 +27,6 @@ if you have any questions about why this has occurred.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

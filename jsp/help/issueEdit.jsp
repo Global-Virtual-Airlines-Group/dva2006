@@ -168,7 +168,7 @@ return true;
 // Set original assignee
 var f = document.forms[0];
 document.originalAssignee = f.assignedTo.selectedIndex;
-</script>
-</c:if>
+</script></c:if>
+<content:googleAnalytics />
 </body>
 </html>

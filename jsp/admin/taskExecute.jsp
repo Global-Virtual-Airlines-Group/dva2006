@@ -46,5 +46,6 @@ To return to the <content:airline /> System Diagnostics page, <el:cmd url="diag"
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

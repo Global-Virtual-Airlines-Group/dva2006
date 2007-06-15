@@ -72,5 +72,6 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

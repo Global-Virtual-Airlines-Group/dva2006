@@ -720,5 +720,6 @@ create, edit or delete TeamSpeak 2 voice channels.</td>
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

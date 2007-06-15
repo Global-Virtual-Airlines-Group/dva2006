@@ -192,5 +192,6 @@ var tracks = new Array();
 var points = new Array();
 resetTracks();
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

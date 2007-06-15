@@ -51,5 +51,6 @@ To view all Approach Charts for ${chart.airport.name}, <el:cmd url="charts" link
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

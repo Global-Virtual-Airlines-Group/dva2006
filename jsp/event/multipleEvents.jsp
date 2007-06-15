@@ -62,5 +62,6 @@ ${route.airportD.name} (<fmt:airport airport="${route.airportD}" />) - ${route.a
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

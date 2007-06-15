@@ -323,6 +323,13 @@
 		</attribute>
 	</tag>
 
+	<!-- Google Analytics Tag, for inserting Analytics calls -->
+	<tag>
+		<name>googleAnalytics</name>
+		<tag-class>org.deltava.taglib.content.GoogleAnalyticsTag</tag-class>
+		<body-content>empty</body-content>
+	</tag>
+
 	<!-- Page Layout Tag, for displaying regions as DIVs or TABLEs -->
 	<tag>
 		<name>page</name>

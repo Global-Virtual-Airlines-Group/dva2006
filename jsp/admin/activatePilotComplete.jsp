@@ -31,5 +31,6 @@ of this change in status, and welcoming him or her back to <content:airline />.<
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

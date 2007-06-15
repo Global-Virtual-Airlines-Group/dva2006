@@ -173,5 +173,6 @@ You can search for the next available Flight Leg. <el:button ID="LegSearchButton
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

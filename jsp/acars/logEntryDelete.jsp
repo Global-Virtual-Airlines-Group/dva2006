@@ -67,5 +67,6 @@ To return to the list of ACARS Client Error Log entries, <el:cmd url="acarserror
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

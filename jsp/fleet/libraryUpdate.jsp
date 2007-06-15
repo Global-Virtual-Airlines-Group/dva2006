@@ -37,5 +37,6 @@ To return to the ${library} Library, <el:cmd op="${libraryop}" url="${librarycmd
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

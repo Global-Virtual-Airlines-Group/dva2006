@@ -48,5 +48,6 @@ To view the list of Flight Academy certifications, <el:cmd url="certs" className
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

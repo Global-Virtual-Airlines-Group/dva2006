@@ -27,5 +27,6 @@ The mass e-mail message to all active ${eqType} pilots has been sent.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

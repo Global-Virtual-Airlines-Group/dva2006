@@ -31,5 +31,6 @@ To add additional routes to this Online Event, <el:cmd className="sec bld" url="
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

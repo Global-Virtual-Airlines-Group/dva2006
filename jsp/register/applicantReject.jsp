@@ -37,5 +37,6 @@ To return to the Applicant Queue, <el:cmd url="applicants" className="sec bld">C
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

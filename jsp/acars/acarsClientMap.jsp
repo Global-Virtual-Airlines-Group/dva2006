@@ -106,5 +106,6 @@ var routeWaypoints;
 document.doRefresh = true;
 reloadData(true);
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

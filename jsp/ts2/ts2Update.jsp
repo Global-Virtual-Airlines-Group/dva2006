@@ -62,5 +62,6 @@ To return to the list of TeamSpeak 2 voice channels, <el:cmd url="ts2channels" c
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

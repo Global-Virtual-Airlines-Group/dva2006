@@ -28,5 +28,6 @@ a Water Cooler message thread, the link has also been removed.<br />
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

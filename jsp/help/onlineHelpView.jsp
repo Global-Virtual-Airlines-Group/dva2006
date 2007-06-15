@@ -25,4 +25,5 @@
 <br />
 <content:copyright />
 </body>
+<content:googleAnalytics />
 </html>

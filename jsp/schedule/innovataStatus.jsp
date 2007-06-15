@@ -55,5 +55,6 @@ Invalid Airport Code - <el:cmd url="airport" linkID="${code}" op="edit" target="
 <content:copyright />
 </content:region>
 </content:page>
+<content:googleAnalytics />
 </body>
 </html>

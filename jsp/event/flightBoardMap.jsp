@@ -127,5 +127,6 @@ map.setMapType(G_SATELLITE_TYPE);
 GEvent.addListener(map, 'infowindowclose', function() { map.removeOverlay(selectedRoute); });
 addMarkers(map, 'positions');
 </script>
+<content:googleAnalytics />
 </body>
 </map:xhtml>

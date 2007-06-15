@@ -31,5 +31,6 @@ top: -5px;
 <span class="noPrint"><a href="javascript:window.print()">Print Chart</a><br /></span>
 <span class="CHART"><img alt="${chart.name}, ${chart.size} bytes" src="/charts/${chart.ID}" border="0" /></span>
 <div class="noPrint"><content:copyright /></div>
+<content:googleAnalytics />
 </body>
 </html>
