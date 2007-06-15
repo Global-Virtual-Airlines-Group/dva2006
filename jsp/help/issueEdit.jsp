@@ -40,7 +40,7 @@ return true;
 function checkAssignee(combo)
 {
 var f = document.forms[0];
-if ((combo.selectedIndex == document.originalAssignee) || (combo.selectedIndex == 0)) {
+if (combo.selectedIndex == document.originalAssignee) {
 	f.sendIssue.disabled = true;
 } else {
 	f.sendIssue.disabled = false;
