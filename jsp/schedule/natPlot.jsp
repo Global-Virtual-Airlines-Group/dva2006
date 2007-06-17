@@ -16,8 +16,12 @@
 <map:api version="2" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
+<content:sysdata var="tileHost" name="weather.tileHost" />
+<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';
+</c:if>
 function showTrackInfo(marker)
 {
 var label = getElement("trackLabel");
@@ -36,15 +40,25 @@ function resetTracks()
 tracks['W'] = new Array();
 tracks['E'] = new Array();
 tracks['C'] = new Array();
+allTracks = new Array();
 points['W'] = new Array();
 points['E'] = new Array();
 points['C'] = new Array();
+allPoints = new Array();
 
 // Reset checkboxes
 var f = document.forms[0];
 for (var x = 0; x < f.showTracks.length; x++)
 	f.showTracks[x].checked = true;
 
+// Reset track data label
+var label = getElement("trackLabel");
+var data = getElement("trackData");
+if ((!label) || (!data))
+	return false;
+
+label.innerHTML = 'Track Data';
+data.innerHTML = 'N/A';
 return true;
 }
 
@@ -90,7 +104,8 @@ var xmlreq = GXmlHttp.create();
 xmlreq.open("GET", "natinfo.ws?date=" + dt.text, true);
 xmlreq.onreadystatechange = function() {
 	if (xmlreq.readyState != 4) return false;
-	map.clearOverlays();
+	removeMarkers(map, 'allPoints');
+	removeMarkers(map, 'allTracks');
 	resetTracks();
 
 	// Get the XML document
@@ -115,6 +130,7 @@ xmlreq.onreadystatechange = function() {
 			GEvent.addListener(mrk, 'click', function() { mrk.showTrack(this); });
 			map.addOverlay(mrk);
 			points[trackType].push(mrk);
+			allPoints.push(mrk);
 		}
 
 		// Draw the route
@@ -123,6 +139,7 @@ xmlreq.onreadystatechange = function() {
 		
 		// Save the route/points
 		tracks[trackType].push(trackLine);
+		allTracks.push(trackLine);
 	}
 
 	// Focus on the map
@@ -136,6 +153,7 @@ xmlreq.send(null);
 return true;
 }
 </script>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -169,7 +187,7 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="600" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld" style="color:#fefefe;"></div></td>
 </tr>
 </el:table>
 </el:form>
@@ -179,11 +197,18 @@ return true;
 </content:page>
 <script language="JavaScript" type="text/javascript">
 // Create the map
-var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP]});
+<c:if test="${!empty tileHost}">
+// Build the sat layer control
+var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize(70, 7));
+map.addControl(sC);
+map.addControl(new WXClearControl(new GSize(142, 7)));
+</c:if>
+// Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(new GLatLng(52.0, -35.0), 4);
-map.setMapType(${gMapType == 'map' ? 'G_NORMAL_MAP' : 'G_SATELLITE_MAP'});
+map.setMapType(G_SATELLITE_MAP);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 
@@ -191,7 +216,15 @@ map.enableContinuousZoom();
 var tracks = new Array();
 var points = new Array();
 resetTracks();
-</script>
+<c:if test="${!empty tileHost}">
+// Display the copyright notice
+var d = new Date();
+var cp = document.getElementById('copyright');
+cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(215, 12));
+cpos.apply(cp);
+map.getContainer().appendChild(cp);
+</c:if></script>
 <content:googleAnalytics />
 </body>
 </map:xhtml>
