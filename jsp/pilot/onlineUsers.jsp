@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Online Users</title>
@@ -32,7 +33,8 @@ return true;
 <el:form action="users.do" method="get" validate="return false">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td colspan="5" class="left caps">CURRENTLY LOGGED IN USERS</td>
+ <td colspan="5" class="left caps"><fmt:int value="${fn:sizeof(pilots)}" /> CURRENTLY LOGGED IN USERS
+<c:if test="${!empty maxUserDate}"> - MAXIMUM <fmt:int value="${maxUsers}" /> on <fmt:date date="${maxUserDate}" /></c:if></td>
  <td colspan="2" class="right">SORT BY <el:combo name="sortOpt" idx="*" size="1" options="${sortOptions}" value="${sortOpt}" onChange="void sortBy(this)" /></td>
 </tr>
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security;
 
 import java.util.*;
@@ -14,8 +14,11 @@ import org.deltava.beans.*;
 
 public class UserPool {
 
-	private static final Map<Object, UserSessionWrapper> _users = new TreeMap<Object, UserSessionWrapper>();
-	private static final Collection<Integer> _blockedUsers = new HashSet<Integer>();
+	private static final Map<Integer, UserSessionWrapper> _users = new TreeMap<Integer, UserSessionWrapper>();
+	private static final Collection<Integer> _blockedUsers = Collections.synchronizedSet(new HashSet<Integer>());
+	
+	private static int _maxSize;
+	private static Date _maxSizeDate;
 
 	// We're a singleton, alone and lonely
 	private UserPool() {
@@ -51,7 +54,11 @@ public class UserPool {
 	public synchronized static void add(Person p, String sessionID) {
 		if ((p != null) && (!isBlocked(p))) {
 			UserSessionWrapper uw = new UserSessionWrapper(p, sessionID);
-			_users.put(p.cacheKey(), uw);
+			_users.put(new Integer(p.getID()), uw);
+			if (_users.size() >= _maxSize) {
+				_maxSize = _users.size();
+				_maxSizeDate = new Date();
+			}
 		}
 	}
 	
@@ -60,7 +67,7 @@ public class UserPool {
 	 * @param p the user to block
 	 * @see UserPool#isBlocked(Person)
 	 */
-	public synchronized static void block(Person p) {
+	public static void block(Person p) {
 		_blockedUsers.add(new Integer(p.getID()));
 	}
 
@@ -100,18 +107,16 @@ public class UserPool {
 	 * @see UserPool#contains(int)
 	 * @see UserPool#block(Person)
 	 */
-	public synchronized static boolean isBlocked(Person usr) {
+	public static boolean isBlocked(Person usr) {
 		return (usr != null) ? _blockedUsers.contains(new Integer(usr.getID())) : false;
 	}
 
 	/**
 	 * Returns all logged in Pilots.
 	 * @return a Collection of Pilots
-	 * @see UserPool#getUsers()
-	 * @see UserPool#getUserNames()
 	 */
 	public static synchronized Collection<Pilot> getPilots() {
-		Set<Pilot> results = new HashSet<Pilot>();
+		Collection<Pilot> results = new LinkedHashSet<Pilot>();
 		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
 			UserSessionWrapper uw = i.next();
 			if (uw.getPerson() instanceof Pilot)
@@ -122,42 +127,28 @@ public class UserPool {
 	}
 
 	/**
-	 * Returns all logged in Pilots.
-	 * @return a Collection of Persons
-	 * @see UserPool#getPilots()
-	 * @see UserPool#getUserNames()
-	 */
-	public static Collection<Person> getUsers() {
-		Set<Person> results = new HashSet<Person>();
-		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = i.next();
-			results.add(uw.getPerson());
-		}
-
-		return results;
-	}
-
-	/**
-	 * Return the names of all logged in Pilots.
-	 * @return a sorted Collection of names
-	 * @see UserPool#getPilots()
-	 * @see UserPool#getUsers()
-	 */
-	public static synchronized Collection<String> getUserNames() {
-		Set<String> result = new TreeSet<String>();
-		for (Iterator<UserSessionWrapper> i = _users.values().iterator(); i.hasNext();) {
-			UserSessionWrapper uw = i.next();
-			result.add(uw.getPerson().getName());
-		}
-
-		return result;
-	}
-
-	/**
 	 * Returns the number of logged-in users.
 	 * @return the number of concurrent users
 	 */
 	public static synchronized int getSize() {
 		return _users.size();
+	}
+	
+	/**
+	 * Returns the maximum number of concurrent users.
+	 * @return the maxmimum number of concurrent users
+	 * @see UserPool#getMaxSizeDate()
+	 */
+	public static int getMaxSize() {
+		return _maxSize;
+	}
+
+	/**
+	 * Returns the date when the maximum number of concurrent users occurred. 
+	 * @return the date/time when the maximum user count was reached
+	 * @see UserPool#getMaxSize()
+	 */
+	public static Date getMaxSizeDate() {
+		return _maxSizeDate;
 	}
 }

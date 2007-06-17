@@ -36,6 +36,10 @@ public class UserListCommand extends AbstractCommand {
     	// Initialize the comparator
     	List<Pilot> users = new ArrayList<Pilot>(UserPool.getPilots());
     	Collections.sort(users, new PilotComparator(sortOpt));
+    	
+    	// Get maximum concurrent user data
+    	ctx.setAttribute("maxUsers", new Integer(UserPool.getMaxSize()), REQUEST);
+    	ctx.setAttribute("maxUserDate", UserPool.getMaxSizeDate(), REQUEST);
 
         // Get and save the users in the request
         ctx.setAttribute("pilots", users, REQUEST);
