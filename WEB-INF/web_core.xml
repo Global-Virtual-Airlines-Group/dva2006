@@ -50,6 +50,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<servlet>
 		<servlet-name>cmdController</servlet-name>
 		<servlet-class>org.deltava.servlet.CommandServlet</servlet-class>
+		<init-param>
+			<param-name>defaultCommand</param-name>
+			<param-value>home</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	

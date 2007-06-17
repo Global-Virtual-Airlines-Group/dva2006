@@ -14,14 +14,10 @@ import org.deltava.beans.servlet.*;
 import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.commands.*;
+import org.deltava.dao.*;
 import org.deltava.jdbc.*;
 
-import org.deltava.dao.SetSystemData;
-import org.deltava.dao.DAOException;
-
-import org.deltava.util.URLParser;
-import org.deltava.util.RoleUtils;
-
+import org.deltava.util.*;
 import org.deltava.util.redirect.RequestStateHelper;
 import org.deltava.util.system.SystemData;
 
@@ -40,6 +36,7 @@ public class CommandServlet extends GenericServlet {
 	private static final String ERR_PAGE = "/jsp/error/error.jsp";
 
 	private final Map<String, Command> _cmds = new HashMap<String, Command>();
+	private Command _defaultCmd;
 	
 	private final Collection<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
 	private int _maxCmdLogSize;
@@ -60,11 +57,17 @@ public class CommandServlet extends GenericServlet {
 	public void init() throws ServletException {
 		log.info("Initializing");
 		try {
-			_cmds.putAll(CommandFactory.load(SystemData.get("config.commands"), getServletContext()));
+			Map<String, Command> cmds = CommandFactory.load(SystemData.get("config.commands"), getServletContext());
+			_cmds.putAll(cmds);
+			
+			// Initialize the default command
+			_defaultCmd = cmds.get(getInitParameter("defaultCommand"));
+			if ((_defaultCmd == null) && (!cmds.isEmpty()))
+				_defaultCmd = cmds.values().iterator().next();
 		} catch (IOException ie) {
 			throw new ServletException(ie);
 		}
-
+		
 		// Initialize the redirection command
 		try {
 			Command cmd = new RedirectCommand();
@@ -92,11 +95,15 @@ public class CommandServlet extends GenericServlet {
 	 */
 	private Command getCommand(String rawURL) {
 		URLParser parser = new URLParser(rawURL);
-		String cmdName = parser.getName().toLowerCase();
-		if (cmdName.startsWith("/"))
-			cmdName = cmdName.substring(1);
-		
-		return _cmds.get(cmdName);
+		try {
+			String cmdName = parser.getName().toLowerCase();
+			if (cmdName.startsWith("/"))
+				cmdName = cmdName.substring(1);
+			
+			return _cmds.get(cmdName);
+		} catch (Exception e) {
+			return _defaultCmd;
+		}
 	}
 	
 	/**
