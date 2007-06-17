@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -65,24 +65,23 @@ public final class StringUtils {
 		StringBuilder buf = new StringBuilder(s.length());
 		for (int x = 0; x < s.length(); x++) {
 			char c = s.charAt(x);
-			if (c == '<') {
+			if (c == '<')
 				buf.append("&lt;");
-			} else if (c == '>') {
+			else if (c == '>')
 				buf.append("&gt;");
-			} else if (c == '&') {
+			else if (c == '&')
 				buf.append("&amp;");
-			} else if (c == '\"') {
+			else if (c == '\"')
 				buf.append("&quot;");
-			} else if (c == '\'') {
+			else if (c == '\'')
 				buf.append("&#039;");
-			} else if (c == '\\') {
+			else if (c == '\\')
 				buf.append("&#092;");
-			} else if (c == '\n') {
+			else if (c == '\n') {
 				buf.append("<br />");
 				buf.append(System.getProperty("line.separator"));
-			} else {
+			} else
 				buf.append(c);
-			}
 		}
 
 		return buf.toString();
@@ -195,9 +194,8 @@ public final class StringUtils {
 	 * @see DateFormat#parse(java.lang.String)
 	 */
 	public static Date parseDate(String dt, String fmt) {
-		DateFormat df = new SimpleDateFormat(fmt);
 		try {
-			return df.parse(dt);
+			return new SimpleDateFormat(fmt).parse(dt);
 		} catch (ParseException pe) {
 			throw new IllegalArgumentException(pe);
 		}
@@ -261,9 +259,8 @@ public final class StringUtils {
 			if (delim.equals(entry)) {
 				results.add(lastEntry);
 				lastEntry = "";
-			} else {
+			} else
 				lastEntry = entry;
-			}
 		}
 
 		if (!"".equals(lastEntry))
@@ -318,8 +315,7 @@ public final class StringUtils {
 	 * @see NumberFormat#format(long)
 	 */
 	public static String format(long value, String fmtPattern) {
-		NumberFormat fmt = new DecimalFormat(fmtPattern);
-		return fmt.format(value);
+		return new DecimalFormat(fmtPattern).format(value);
 	}
 
 	/**
@@ -331,8 +327,7 @@ public final class StringUtils {
 	 * @see NumberFormat#format(long)
 	 */
 	public static String format(double value, String fmtPattern) {
-		NumberFormat fmt = new DecimalFormat(fmtPattern);
-		return fmt.format(value);
+		return new DecimalFormat(fmtPattern).format(value);
 	}
 
 	/**
@@ -343,8 +338,7 @@ public final class StringUtils {
 	 * @see DateFormat#format(Date)
 	 */
 	public static String format(Date dt, String fmtPattern) {
-		DateFormat fmt = new SimpleDateFormat(fmtPattern);
-		return fmt.format(dt);
+		return new SimpleDateFormat(fmtPattern).format(dt);
 	}
 
 	/**

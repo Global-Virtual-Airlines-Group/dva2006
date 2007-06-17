@@ -220,7 +220,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 					log.error("Releasing stale JDBC Connection " + cpe, cpe.getStackInfo());
 					cpe.free();
 				}
-
+				
 				// If the connection pool entry is not in use, reserve it - system connections can use idle regular
 				// connections
 				if (!cpe.inUse() && (isSystem || (cpe.isSystemConnection() == isSystem))) {
@@ -272,15 +272,13 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		if (c == null)
 			return 0;
 
-		// Since this connection may have been given to us with pending writes, ROLL THEM BACK, or do a commit if
-		// autoCommit=true
+		// Since this connection may have been given to us with pending writes, ROLL THEM BACK
 		try {
-			if (c.getAutoCommit()) {
-				c.commit();
-			} else {
+			if (!c.getAutoCommit())
 				c.rollback();
-			}
 		} catch (SQLException se) {
+			log.warn("Error rolling back transaction - " + se.getMessage());
+			_monitor.execute();
 		}
 
 		// Find the connection pool entry and free it
@@ -369,11 +367,10 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	public void close() {
 		// Shut down the monitor
 		ThreadUtils.kill(_monitorThread, 500);
-
-		// Disconnect the regular connections
 		if (_cons == null)
 			return;
 
+		// Disconnect the regular connections
 		synchronized (_cons) {
 			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
 				ConnectionPoolEntry cpe = i.next();
@@ -416,6 +413,9 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		return _totalRequests;
 	}
 
+	/**
+	 * Connection Monitor uncaught exception handler.
+	 */
 	public void uncaughtException(Thread t, Throwable e) {
 		if (t == _monitorThread)
 			startMonitor();

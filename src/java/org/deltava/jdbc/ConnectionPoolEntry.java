@@ -28,6 +28,7 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 	private long _totalTime;
 	private long _useTime;
 	private long _startTime;
+	private long _lastUsed;
 	private int _useCount;
 	
 	class StackTrace extends Throwable {
@@ -89,6 +90,7 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 		_c = DriverManager.getConnection(_url, _props);
 		_c.setAutoCommit(_autoCommit);
 		_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		_lastUsed = System.currentTimeMillis();
 	}
 
 	/**
@@ -216,6 +218,7 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 
 		// Mark the connection as in use, and return the SQL connection
 		_startTime = System.currentTimeMillis();
+		_lastUsed = _startTime;
 		_inUse = true;
 		_useCount++;
 		return _c;
@@ -235,6 +238,14 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 	 */
 	public int getUseCount() {
 		return _useCount;
+	}
+	
+	/**
+	 * Returns the timestamp of this Connection's last use.
+	 * @return the connection's last use timestamp
+	 */
+	public long getLastUseTime() {
+		return _lastUsed;
 	}
 
 	/**
@@ -259,13 +270,12 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 	 * ConnectionPoolEntry from the pool when all we get back is the SQL Connection.
 	 */
 	public boolean equals(Object o2) {
-		if (o2 instanceof Connection) {
+		if (o2 instanceof Connection)
 			return (_c == ((Connection) o2));
-		} else if (o2 instanceof ConnectionPoolEntry) {
+		else if (o2 instanceof ConnectionPoolEntry)
 			return (compareTo((ConnectionPoolEntry) o2) == 0);
-		} else {
+		else
 			return false;
-		}
 	}
 
 	/**
