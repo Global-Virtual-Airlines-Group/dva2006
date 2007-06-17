@@ -40,8 +40,12 @@ return true;
 function removeMarkers(map, arrayName)
 {
 // Get the map data
-var markers = eval(arrayName);
-if (!markers) return false;
+try {
+	var markers = eval(arrayName);
+	if (!markers) return false;
+} catch (err) {
+	return false;
+}
 
 // Remove the map data, either an array or a single element
 if (isNaN(markers.length))

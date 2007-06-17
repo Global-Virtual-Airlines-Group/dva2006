@@ -15,9 +15,9 @@
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="radarImg" name="acars.livemap.radar" />
+<content:sysdata var="radarImg" name="weather.radar" />
+<content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<content:sysdata var="tileHost" name="acars.livemap.tileHost" />
 <c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
@@ -139,7 +139,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 // Create the map
-var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
 <c:if test="${!empty radarImg}">
 // Add US Radar layer
 var tileRadar = new GTileLayer(new GCopyrightCollection(""), 1, 12);
@@ -160,18 +160,14 @@ map.addMapType(rmap);
 map.addMapType(rsat);
 </c:if>
 <c:if test="${!empty tileHost}">
-// Create the new tile layers
-var rO = getTileOverlay("radar");
-var srO = getTileOverlay("satrad");
-var sO = getTileOverlay("sat");
-
 // Build the layer controls
-var rC = new WXOverlayControl(rO, "Radar", new GSize(70, 7));
-var srC = new WXOverlayControl(srO, "Sat/Rad", new GSize(142, 7));
-var sC = new WXOverlayControl(sO, "Infrared", new GSize(214, 7));
+var rC = new WXOverlayControl(getTileOverlay("radar"), "Radar", new GSize(70, 7));
+var srC = new WXOverlayControl(getTileOverlay("satrad"), "Sat/Rad", new GSize(142, 7));
+var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize(214, 7));
 map.addControl(rC);
 map.addControl(srC);
 map.addControl(sC);
+map.addControl(new WXClearControl(new GSize(286, 7)));
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
@@ -193,11 +189,10 @@ reloadData(true);
 var d = new Date();
 var cp = document.getElementById("copyright");
 cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(288,12));
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(360, 12));
 cpos.apply(cp);
 map.getContainer().appendChild(cp);
-</c:if>
-</script>
+</c:if></script>
 <content:googleAnalytics />
 </body>
 </map:xhtml>

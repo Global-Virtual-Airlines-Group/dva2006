@@ -211,14 +211,15 @@
 		<pwd>***REMOVED***</pwd>
 		
 		<map name="connectProperties">
-			<useNewIO>false</useNewIO>
+			<useNewIO>true</useNewIO>
 			<useCompression>false</useCompression>
-			<autoReconnect>true</autoReconnect>
+			<autoReconnect>false</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>false</useServerPrepStmts>
+			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
+			<useLocalSessionState>true</useLocalSessionState>
 		</map>
 		
 		<pool_size type="Integer">1</pool_size>
@@ -254,10 +255,18 @@
 		</http>
 	</log>
 
+	<!-- Testing settings -->
 	<testing>
 		<lockout type="Integer">24</lockout>
 	</testing>
 
+	<!-- Weather map tile sources -->	
+	<weather>
+		<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
+		<tileHost>gima.weather.com</tileHost>
+	</weather>
+
+	<!-- Configuration files -->
 	<config>
 		<commands>/etc/commands.xml</commands>
 		<services>/etc/services.xml</services>
@@ -541,8 +550,6 @@
 			<lat type="Double">38.88</lat>
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">15000</reload>
-			<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
-			<tileHost>gima.weather.com</tileHost>
 		</livemap>
 		
 		<list name="block" attr="addr">
