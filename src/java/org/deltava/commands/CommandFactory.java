@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import org.apache.log4j.Logger;
 import org.jdom.*;
 import org.jdom.input.SAXBuilder;
 
-import org.deltava.util.ConfigLoader;
+import org.deltava.util.*;
 
 /**
  * A factory class to initalize the web command map.
@@ -31,19 +31,12 @@ public class CommandFactory {
 	 * Helper method to parse comma-delimited list of roles.
 	 */
 	private static Collection<String> getRoles(String roleNames) {
-		if (roleNames == null) {
-			Collection<String> results = new HashSet<String>();
-			results.add("*");
-			return results;
-		}
+		if (StringUtils.isEmpty(roleNames))
+			return Collections.singleton("*");
 
-		// Loop through the roles
-		Set<String> results = new TreeSet<String>();
-		StringTokenizer tkns = new StringTokenizer(roleNames, ",");
-		while (tkns.hasMoreTokens())
-			results.add(tkns.nextToken().trim());
-
-		// Return the roles
+		// Build the roles
+		Collection<String> results = new HashSet<String>();
+		results.addAll(StringUtils.split(roleNames, ","));
 		return results;
 	}
 
@@ -70,8 +63,7 @@ public class CommandFactory {
 			doc = builder.build(is);
 			is.close();
 		} catch (JDOMException je) {
-			IOException ie = new IOException("XML Parse Error in " + configXML);
-			ie.initCause(je);
+			IOException ie = new IOException("XML Parse Error in " + configXML, je);
 			throw ie;
 		}
 
@@ -81,7 +73,7 @@ public class CommandFactory {
 			throw new IOException("Empty XML Document");
 
 		// Parse through the commands
-		Map<String, Command> results = new HashMap<String, Command>();
+		Map<String, Command> results = new LinkedHashMap<String, Command>();
 		List cmds = root.getChildren("command");
 		for (Iterator i = cmds.iterator(); i.hasNext();) {
 			Element e = (Element) i.next();
