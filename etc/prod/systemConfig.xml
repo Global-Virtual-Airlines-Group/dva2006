@@ -228,7 +228,7 @@
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>false</useServerPrepStmts>
+			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 		</map>
 		
@@ -275,6 +275,12 @@
 		<lockout type="Integer">24</lockout>
 		<correct_ratio_age type="Integer">90</correct_ratio_age>
 	</testing>
+
+	<!-- Weather map tile sources -->	
+	<weather>
+		<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
+		<tileHost>gima.weather.com</tileHost>
+	</weather>
 
 	<config>
 		<commands>/etc/commands.xml</commands>

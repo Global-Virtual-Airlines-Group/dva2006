@@ -6,12 +6,21 @@ document.seriesDate = new Array();
 function loadSeries(id, sdata)
 {
 var info = sdata.seriesInfo;
-document.maxZoom['sat'] = info.sat.maxZoom;
-document.maxZoom['radar'] = info.radar.maxZoom;
-document.maxZoom['satrad'] = info.satrad.maxZoom;
-document.seriesDate['sat'] = info.sat.series[0].unixDate;
-document.seriesDate['radar'] = info.radar.series[0].unixDate;
-document.seriesDate['satrad'] = info.satrad.series[0].unixDate;
+if (info.sat) {
+	document.maxZoom['sat'] = info.sat.maxZoom;
+	document.seriesDate['sat'] = info.sat.series[0].unixDate;
+}
+
+if (info.radar) {
+	document.maxZoom['radar'] = info.radar.maxZoom;
+	document.seriesDate['radar'] = info.radar.series[0].unixDate;
+}
+
+if (info.satrad) {
+	document.maxZoom['satrad'] = info.satrad.maxZoom;
+	document.seriesDate['satrad'] = info.satrad.series[0].unixDate;
+}
+
 return true;
 }
 
@@ -55,7 +64,7 @@ WXOverlayControl.prototype = new GControl();
 WXOverlayControl.prototype.initialize = function(map) {
 	var container = document.createElement("div");
 	var btn = document.createElement("div");
-	this.setButtonStyle_(btn);
+	this.setButtonStyle(btn);
 	container.appendChild(btn);
 	btn.appendChild(document.createTextNode(this.layerName));
 	btn.layerName = this.layerName;
@@ -77,7 +86,7 @@ WXOverlayControl.prototype.updateMap = function() {
 	return true;
 }
 
-WXOverlayControl.prototype.setButtonStyle_ = function(button) {
+WXOverlayControl.prototype.setButtonStyle = function(button) {
 	button.style.color = "#303030";
 	button.style.backgroundColor = "white";
 	button.style.font = "small Arial";
@@ -88,4 +97,34 @@ WXOverlayControl.prototype.setButtonStyle_ = function(button) {
 	button.style.textAlign = "center";
 	button.style.width = "6em";
 	button.style.cursor = "pointer";
+}
+
+function WXClearControl(padding) {
+	this.layerName = 'None';
+	this.padding = padding;
+}
+
+WXClearControl.prototype = new GControl();
+WXClearControl.prototype.setButtonStyle = WXOverlayControl.prototype.setButtonStyle;
+WXClearControl.prototype.initialize = function(map) {
+	var container = document.createElement("div");
+	var btn = document.createElement("div");
+	this.setButtonStyle(btn);
+	container.appendChild(btn);
+	btn.appendChild(document.createTextNode(this.layerName));
+	btn.layerName = this.layerName;
+	GEvent.addDomListener(btn, "click", this.clearWX);
+	map.getContainer().appendChild(container);
+	return container;
+}
+
+WXClearControl.prototype.getDefaultPosition = function() {
+	return new GControlPosition(G_ANCHOR_BOTTOM_LEFT, this.padding);
+}
+
+WXClearControl.prototype.clearWX = function() {
+	if (map.wxData)
+		map.removeOverlay(map.wxData);
+		
+	return true;
 }
