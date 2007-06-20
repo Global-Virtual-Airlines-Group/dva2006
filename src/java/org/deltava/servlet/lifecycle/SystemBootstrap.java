@@ -9,6 +9,7 @@ import javax.servlet.*;
 import org.apache.log4j.*;
 
 import org.deltava.dao.*;
+import org.deltava.dao.file.*;
 import org.deltava.jdbc.*;
 
 import org.deltava.mail.MailerDaemon;
@@ -32,6 +33,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	private static Logger log;
 
 	private ConnectionPool _jdbcPool;
+	private final ThreadGroup _daemonGroup = new ThreadGroup("System Daemons");
 	private final Map<Thread, Runnable> _daemons = new HashMap<Thread, Runnable>();
 
 	/**
@@ -55,6 +57,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 */
 	public void contextInitialized(ServletContextEvent e) {
 		e.getServletContext().setAttribute("startedOn", new java.util.Date());
+		_daemonGroup.setDaemon(true);
 
 		// Initialize system data
 		SystemData.init();
@@ -77,7 +80,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		} catch (IOException ie) {
 			log.warn("Cannot load Profanity Filter - " + ie.getMessage());
 		}
-
+		
 		// Initialize the connection pool
 		log.info("Starting JDBC connection pool");
 		_jdbcPool = new ConnectionPool(SystemData.getInt("jdbc.pool_max_size"));
@@ -166,6 +169,14 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 					taskSched.setLastRunTime(tlr);
 				}
 			}
+			
+			// Load User Pool max values
+			InputStream is = ConfigLoader.getStream("/etc/maxUsers.properties");
+			if (is != null) {
+				GetProperties pdao = new GetProperties(is);
+				Properties p = pdao.read();
+				UserPool.init(StringUtils.parse(p.getProperty("users"), 0), StringUtils.parseDate(p.getProperty("date"), "MM/dd/yyyy HH:mm"));
+			}
 
 			// Load TS2 server info if enabled
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
@@ -223,13 +234,21 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		log.warn("Shutting Down");
 
 		// Shut down the extra threads
-		for (Iterator<Thread> i = _daemons.keySet().iterator(); i.hasNext();) {
-			Thread t = i.next();
-			t.interrupt();
-		}
+		_daemonGroup.interrupt();
 		
-		// Wait for them to die
-		ThreadUtils.sleep(5000);
+		// Save maximum users
+		File f = new File("/var/cache", SystemData.get("airline.code").toLowerCase() + ".maxUsers.properties");
+		try {
+			Properties p = new Properties();
+			p.setProperty("users", String.valueOf(UserPool.getMaxSize()));
+			p.setProperty("date", StringUtils.format(UserPool.getMaxSizeDate(), "MM/dd/yyyy HH:mm"));
+			
+			// Save properties
+			SetProperties pdao = new SetProperties(new FileOutputStream(f));
+			pdao.save(p, SystemData.get("airline.name") + " Maximum Users");
+		} catch (Exception ex) {
+			log.warn("Cannot save Maximum User count/date");
+		}
 
 		// If ACARS is enabled, then clean out the active flags
 		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
@@ -249,6 +268,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 
 		// Shut down the JDBC connection pool
+		ThreadUtils.sleep(5000);
 		_jdbcPool.close();
 
 		// Deregister JDBC divers
@@ -274,8 +294,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 	 * @param isLower TRUE if the thread should run with slightly lower priority, otherwise FALSE
 	 */
 	private void spawnDaemon(Runnable sd) {
-		Thread dt = new Thread(sd, sd.toString());
-		dt.setDaemon(true);
+		Thread dt = new Thread(_daemonGroup, sd, sd.toString());
 		dt.setUncaughtExceptionHandler(this);
 		_daemons.put(dt, sd);
 		dt.start();
