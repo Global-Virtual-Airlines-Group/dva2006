@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -28,18 +28,21 @@ public class NavaidSearchCommand extends AbstractCommand {
       
       // Get the navaid to search for
       String code = ctx.getParameter("navaidCode");
-      
       try {
          Connection con = ctx.getConnection();
          
          // Get the DAO and find the navaid
          GetNavData dao = new GetNavData(con);
          NavigationDataMap ndMap = dao.get(code);
+         if (ndMap == null)
+        	 ndMap = new NavigationDataMap();
+         
+         // Save results
          ctx.setAttribute("navaid", ndMap.get(code), REQUEST);
          ctx.setAttribute("results", ndMap.getAll(), REQUEST);
 
          // Don't do search if the navaid was not found
-         Set<NavigationDataBean> navaids = new HashSet<NavigationDataBean>();
+         Collection<NavigationDataBean> navaids = new HashSet<NavigationDataBean>();
          for (Iterator<NavigationDataBean> i = ndMap.getAll().iterator(); i.hasNext(); ) {
         	 NavigationDataBean nv = i.next();
         	 Map<String, NavigationDataBean> nMap = new HashMap<String, NavigationDataBean>();
