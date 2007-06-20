@@ -81,8 +81,6 @@ public class UserPool {
 	 * @see UserPool#add(Person, String)
 	 */
 	public synchronized static void remove(Person p, String sessionID) {
-
-		// Check if the session ID matches the person we wish to remove
 		UserSessionWrapper uw = _users.get(p.cacheKey());
 		if ((uw != null) && (sessionID.equals(uw.getSessionID())))
 			_users.remove(p.cacheKey());
@@ -150,5 +148,15 @@ public class UserPool {
 	 */
 	public static Date getMaxSizeDate() {
 		return _maxSizeDate;
+	}
+	
+	/**
+	 * Initializes the maximum size values.
+	 * @param maxSize the maximum number of users
+	 * @param maxSizeDate the date the maximum concurrent users was reached
+	 */
+	public static void init(int maxSize, Date maxSizeDate) {
+		_maxSize = maxSize;
+		_maxSizeDate = maxSizeDate;
 	}
 }
