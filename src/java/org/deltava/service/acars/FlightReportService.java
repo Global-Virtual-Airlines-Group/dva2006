@@ -148,6 +148,8 @@ public class FlightReportService extends WebService {
 					positions.add(pos);
 				} catch (NumberFormatException nfe) {
 					log.error("Error parsing value - " + nfe.getMessage());
+				} catch (Exception e) {
+					log.error("Error loading Position Report - " + e.getMessage());
 				}
 			}
 		}
