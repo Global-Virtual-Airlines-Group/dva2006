@@ -98,6 +98,7 @@ public class EventAssignCommand extends AbstractCommand {
 				
 				// Create a Flight Report
 				FlightReport fr = new FlightReport(leg);
+				fr.setRank(usr.getRank());
 				fr.setDatabaseID(FlightReport.DBID_PILOT, s.getPilotID());
 				fr.setDatabaseID(FlightReport.DBID_ASSIGN, ai.getID());
 				fr.setDatabaseID(FlightReport.DBID_EVENT, e.getID());
