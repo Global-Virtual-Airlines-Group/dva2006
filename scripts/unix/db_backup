@@ -18,33 +18,33 @@ alias mysqldump='/usr/local/mysql5/bin/mysqldump --socket=/var/run/mysql5/mysql.
 
 # Dump core table
 echo `date +%H:%M:%S`' Writing mySQL configuration'
-mysqldump -e -h mysql.deltava.org mysql `cat /usr/local/etc/sqlbackup` | bzip2 -9 > mysql.sql.bz2
+mysqldump -e `cat /usr/local/etc/sqlbackup` mysql | bzip2 -9 > mysql.sql.bz2
 
 # Dump table definitions
 echo `date +%H:%M:%S`' Writing table definitions'
-mysqldump -e -K -d -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common > common.sql
-mysqldump -e -K -d -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars > acars.sql
-mysqldump -e -K -d -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva > dva.sql
-mysqldump -e -K -d -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv > afv.sql
-tar cfvj create_tables.tar.bz2 *.sql
+mysqldump -e -K -d --skip-triggers `cat /usr/local/etc/sqlbackup` common > common.sql
+mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` acars > acars.sql
+mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` dva > dva.sql
+mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` afv > afv.sql
+tar cfj create_tables.tar.bz2 *.sql
 rm *.sql
 
 # Dump e-mail data
 echo `date +%H:%M:%S`' Writing e-mail configuration'
-mysqldump -e -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` postfix | bzip2 -9 > postfix.sql.bz2
+mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` postfix | bzip2 -9 > postfix.sql.bz2
 
 # Dump TeamSpeak data
 echo `date +%H:%M:%S`' Writing TeamSpeak configuration'
-mysqldump -e -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` teamspeak | bzip2 -9 > teamspeak.sql.bz2
+mysqldump -e -K --single-transaction `cat /usr/local/etc/sqlbackup` teamspeak | bzip2 -9 > teamspeak.sql.bz2
 
 # Dump Common data/Water Cooler/Events
 echo `date +%H:%M:%S`' Writing Common data'
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES ISSUES ISSUE_COMMENTS SYSINFODATA | bzip2 -9 > common.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS | bzip2 -9 > events.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common AIRLINEINFO TZ AIRCRAFT AIRCRAFT_AIRLINE AIRLINES APP_AIRLINES AIRLINE_CODES AIRPORTS AIRPORT_AIRLINE AIRPORT_CODES USERDATA AUTH AUTH_ALIAS OCEANIC OCEANIC_ROUTES ISSUES ISSUE_COMMENTS SYSINFODATA | bzip2 -9 > common.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` common EVENTS EVENT_AIRPORTS EVENT_CHARTS EVENT_PLANS EVENT_EQTYPES EVENT_SIGNUPS EVENT_CONTACTS | bzip2 -9 > events.sql.bz2
 
 # Dump Water Cooler
 echo `date +%H:%M:%S`' Writing Water Cooler'
-mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | bzip2 -9 > cooler.sql.bz2
+mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common COOLER_CHANNELS COOLER_CHANNELINFO COOLER_THREADS COOLER_THREADHISTORY COOLER_POSTS COOLER_NOTIFY COOLER_POLLS COOLER_VOTES COOLER_IMGURLS | bzip2 -9 > cooler.sql.bz2
 
 # Dump Navigation Data if we're doing a full backup
 if [ "$1" = "full" ]
@@ -53,43 +53,43 @@ then
   echo 'SELECT UNIX_TIMESTAMP(NOW())' | mysql -h mysql.deltava.org -N `cat /usr/local/etc/sqlbackup` acars > lastbackuptime
 
   echo `date +%H:%M:%S`' Writing ACARS Position Archive'
-  mysqldump -e -n -t -K -q  --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > acars_pos.sql.bz2
+  mysqldump -e -n -t -K -q  --single-transaction `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > acars_pos.sql.bz2
 else
   echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
-  mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(REPORT_TIME) > `cat lastbackuptime`" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(REPORT_TIME) > `cat lastbackuptime`" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
 fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` acars CONS FLIGHTS POSITIONS ERRORS MESSAGES | bzip2 -9 > acars.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` acars CONS FLIGHTS POSITIONS ERRORS MESSAGES | bzip2 -9 > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
-mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | bzip2 -9 > dva.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > dva_test.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > dva_sys.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | bzip2 -9 > dva_sched.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva CERTS CERTREQS CERTEXAMS CERTDOCS CERTVIDEOS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR INSLOG | bzip2 -9 > dva_academy.sql.bz2
+mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE VIDEOS NEWSLETTERS EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | bzip2 -9 > dva.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > dva_test.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > dva_sys.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | bzip2 -9 > dva_sched.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva CERTS CERTREQS CERTEXAMS CERTDOCS CERTVIDEOS COURSES COURSEPROGRESS COURSECHAT INSCALENDAR INSLOG | bzip2 -9 > dva_academy.sql.bz2
 
 # Dump AFV database
 echo `date +%H:%M:%S`' Writing AFV database'
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | bzip2 -9 > afv.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > afv_test.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > afv_sys.sql.bz2
-mysqldump -e -n -t -K --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv SCHEDULE ROUTES SELCAL | bzip2 -9 > afv_sched.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE EQTYPES EQRATINGS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | bzip2 -9 > afv.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CHECKRIDES CR_DESCS EXAMINFO QUESTIONINFO QUESTIONMINFO QUESTIONIMGS QE_INFO EXAMS EXAMQUESTIONS EXAMQUESTIONSM TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > afv_test.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > afv_sys.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv SCHEDULE ROUTES SELCAL | bzip2 -9 > afv_sched.sql.bz2
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
 then
   echo `date +%H:%M:%S`' Writing DVA Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` dva GALLERY | bzip2 -9 > dva_gallery.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva GALLERY | bzip2 -9 > dva_gallery.sql.bz2
   echo `date +%H:%M:%S`' Writing AFV Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` afv GALLERY | bzip2 -9 > afv_gallery.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` afv GALLERY | bzip2 -9 > afv_gallery.sql.bz2
 else  
   echo `date +%H:%M:%S`' Writing Incremental DVA Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" dva GALLERY | bzip2 -9 > dva_gallery_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" dva GALLERY | bzip2 -9 > dva_gallery_inc.sql.bz2
   echo `date +%H:%M:%S`' Writing Incremental AFV Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" afv GALLERY | bzip2 -9 > afv_gallery_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" afv GALLERY | bzip2 -9 > afv_gallery_inc.sql.bz2
 fi
 
 # Change file permissions
