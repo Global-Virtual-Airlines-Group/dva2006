@@ -123,8 +123,10 @@ WXClearControl.prototype.getDefaultPosition = function() {
 }
 
 WXClearControl.prototype.clearWX = function() {
-	if (map.wxData)
+	if (map.wxData) {
 		map.removeOverlay(map.wxData);
+		delete map.wxData;
+	}
 		
 	return true;
 }
