@@ -361,7 +361,7 @@ examination in order to be eligible for promotion to Captain</i>.</td></c:when>
  ratings in the following equipment types: <b><fmt:list value="${eqSwitch}" delim=", " /></b>.</c:if>
 <c:if test="${!empty eqSwitch && canSwitchFO}"><br /><br /></c:if>
 <c:if test="${canSwitchFO}">You are eligible to transfer to or request additional ratings in the 
-the following equipment types upon successful completion of the First Officer's examination for these 
+following equipment types upon successful completion of the First Officer's examination for these 
 equipment programs: <b><fmt:list value="${eqSwitchFOExam}" delim=", " /></b>.</c:if>
 <c:if test="${(isFO && !captPromote) || (promoteLegs < fn:promoLegs(eqType, 'Captain'))}"><br />
 <c:if test="${isFO && !captPromote}">
