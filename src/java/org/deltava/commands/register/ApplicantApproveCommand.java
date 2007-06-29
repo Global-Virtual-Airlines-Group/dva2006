@@ -166,7 +166,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Write an inactivity purge entry
 			SetInactivity idao = new SetInactivity(con);
-			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days"), false);
+			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days", 21), true);
 			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
