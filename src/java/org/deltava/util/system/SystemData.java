@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.system;
 
 import java.io.*;
@@ -25,8 +25,6 @@ public final class SystemData implements Serializable {
 	public static final String AUTHENTICATOR = "security.auth.obj";
 	public static final String JDBC_POOL = "jdbc.pool";
 	public static final String TASK_POOL = "tasks.pool";
-	public static final String ACARS_POOL = "acars.pool";
-	public static final String ACARS_DAEMON = "acars.daemon";
 
 	public static final String CFG_NAME = "$CONFIGNAME$";
 	public static final String LOADER_NAME = "$LOADERCLASS$";
@@ -75,7 +73,8 @@ public final class SystemData implements Serializable {
 				log.error("Error loading System Data - " + ce.getMessage());
 		} finally {
 			_properties.put(SystemData.LOADER_NAME, _loader.getClass().getName());
-			w.unlock();
+			while (rwl.isWriteLockedByCurrentThread())
+				w.unlock();
 		}
 	}
 
@@ -187,7 +186,8 @@ public final class SystemData implements Serializable {
 		try {
 			_properties.put(pName, value);
 		} finally {
-			w.unlock();
+			while (rwl.isWriteLockedByCurrentThread())
+				w.unlock();
 		}
 	}
 
