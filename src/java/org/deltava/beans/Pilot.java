@@ -525,7 +525,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * @see Pilot#getMapTypeName()
 	 */
 	public void setMapType(String mapType) {
-		setMapType(StringUtils.arrayIndexOf(Pilot.MAP_TYPES, mapType));
+		setMapType(StringUtils.arrayIndexOf(Pilot.MAP_TYPES, mapType, 0));
 	}
 
 	/**
