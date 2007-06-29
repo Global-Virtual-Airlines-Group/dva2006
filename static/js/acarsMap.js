@@ -11,9 +11,10 @@ xmlreq.onreadystatechange = function() {
 		isLoading.innerHTML = ' - REDRAWING...';
 		
 	// Clean up the map - don't strip out the weather layer
-	map.clearOverlays();
-	if (map.wxData)
-		map.addOverlay(map.wxData);
+	map.removeOverlay(routeData);
+	map.removeOverlay(routeWaypoints);
+	removeMarkers(map, 'acPositions');
+	acPositions.length = 0;
 
 	// Parse the XML
 	var xmlDoc = xmlreq.responseXML;
@@ -39,15 +40,16 @@ xmlreq.onreadystatechange = function() {
 				mrk.tabs.push(new GInfoWindowTab(tab.getAttribute("name"), label.data));
 			}
 		}
-		
+
 		// Set the the click handler
 		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+		acPositions.push(mrk);
 		map.addOverlay(mrk);
 	} // for
-	
+
 	// Enable the Google Earth button depending on if we have any aircraft
 	enableElement('EarthButton', (ac.length > 0));
-	
+
 	// Focus on the map
 	if (isLoading)
 		isLoading.innerHTML = '';
@@ -67,11 +69,10 @@ var isRoute = f.showRoute.checked;
 var isInfo = f.showInfo.checked;
 
 // Display the info
-if (isInfo && (this.tabs)) {
+if (isInfo && (this.tabs))
 	this.openInfoWindowTabsHtml(this.tabs)
-} else if (isInfo) {
+else if (isInfo)
 	this.openInfoWindowHtml(this.infoLabel);
-}
 
 // Display flight progress / route
 if (isProgress || isRoute) {
@@ -96,7 +97,7 @@ xreq.onreadystatechange = function() {
 	// Load the XML
 	var xdoc = xreq.responseXML;
 	var wsdata = xdoc.documentElement;
-	
+
 	// Draw the flight route
 	if (doRoute) {
 		var wps = wsdata.getElementsByTagName("route");
@@ -106,11 +107,11 @@ xreq.onreadystatechange = function() {
 			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
 			waypoints.push(p);
 		} // for
-	
+
 		routeWaypoints = new GPolyline(waypoints, '#AF8040', 2, 0.7);
 		map.addOverlay(routeWaypoints);
 	}
-	
+
 	// Draw the flight progress
 	if (doProgress) {
 		var pos = wsdata.getElementsByTagName("pos");
@@ -120,28 +121,15 @@ xreq.onreadystatechange = function() {
 			var p = new GLatLng(parseFloat(pe.getAttribute("lat")), parseFloat(pe.getAttribute("lng")));
 			positions.push(p);
 		} // for
-		
+
 		// Draw the line
 		routeData = new GPolyline(positions, '#4080AF', 2, 0.8);
 		map.addOverlay(routeData);
 	}
-	
+
 	return true;
 } // function
 
 xreq.send(null);
-return true;
-}
-
-function renderBlowup(lat, lng, color, zoom)
-{
-// Create the map
-var bmap = new GMap2(getElement("mapBlowupBox"), G_SATELLITE_TYPE);
-bmap.setCenter(new GLatLng(lat, lng), zoom);
-bmap.setMapType(G_SATELLITE_TYPE);
-
-// Create the marker
-var mrk = googleMarker(document.imgPath, color, p, null);
-bmap.addOverlay(mrk);
 return true;
 }

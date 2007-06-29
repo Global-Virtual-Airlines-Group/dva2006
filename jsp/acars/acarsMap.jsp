@@ -180,6 +180,7 @@ map.enableContinuousZoom();
 // Placeholder for route
 var routeData;
 var routeWaypoints;
+var acPositions = new Array();
 
 // Reload ACARS data
 document.doRefresh = true;
