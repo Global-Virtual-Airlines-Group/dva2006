@@ -32,17 +32,19 @@ public class ACARSDataPurgeTask extends Task {
 	 * Executes the task.
 	 */
 	protected void execute(TaskContext ctx) {
+		log.info("Executing");
 		
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
 		int conPurge = SystemData.getInt("log.purge.cons", 60);
-		log.info("Executing");
-		
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Remove messages and flights
+			// Ensure all archived data is in the right place
 			SetACARSLog wdao = new SetACARSLog(con);
+			wdao.synchronizeArchive();
+			
+			// Remove old flights and position reports without a flight report
 			log.warn("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
 			
 			// Get connections
