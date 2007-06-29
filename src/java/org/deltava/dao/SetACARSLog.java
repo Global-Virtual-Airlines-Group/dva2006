@@ -2,6 +2,9 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
+
+import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.ACARSError;
 
@@ -13,6 +16,8 @@ import org.deltava.beans.acars.ACARSError;
  */
 
 public class SetACARSLog extends DAO {
+	
+	private static final Logger log = Logger.getLogger(SetACARSData.class);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -163,6 +168,54 @@ public class SetACARSLog extends DAO {
 			_ps.setInt(1, id);
 			executeUpdate(0);
 		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Synchronizes ACARS position data to ensure that position reports from archived flights are stored within
+	 * the corret table.
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void synchronizeArchive() throws DAOException {
+		try {
+			// Get Flight IDs that haven't been copied
+			prepareStatementWithoutLimits("SELECT DISTINCT P.FLIGHT_ID FROM acars.POSITIONS P, acars.FLIGHTS F WHERE "
+					+ "(F.ARCHIVED=?) AND (P.FLIGHT_ID=F.ID)");
+			_ps.setBoolean(1, true);
+			
+			// Copy the flight IDs
+			Collection<Integer> IDs = new LinkedHashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				IDs.add(new Integer(rs.getInt(1)));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// If we've got flights, copy them over
+			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+				int id = i.next().intValue();
+				startTransaction();
+				
+				// Copy the entries
+				prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE (SELECT * FROM acars.POSITIONS WHERE "
+						+ "(FLIGHT_ID=?)");
+				_ps.setInt(1, id);
+				int rowsMoved = executeUpdate(1);
+				
+				// Delete the entries
+				prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+				_ps.setInt(1, id);
+				executeUpdate(0);
+				
+				// Commit and log
+				commitTransaction();
+				log.warn("Moved " + rowsMoved + " entries for Flight " + id + " to Position Archive");
+			}
+		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
