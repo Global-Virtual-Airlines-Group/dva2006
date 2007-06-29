@@ -56,7 +56,7 @@ public class LeaveCommand extends AbstractCommand {
 
 			// Add an inactivity table entry
 			SetInactivity idao = new SetInactivity(con);
-			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days"), false);
+			idao.setInactivity(p.getID(), SystemData.getInt("users.inactive_leave_days", 180), true);
 
 			// Commit the transaction
 			ctx.commitTX();
