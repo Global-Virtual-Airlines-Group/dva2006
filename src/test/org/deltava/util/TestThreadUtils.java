@@ -39,7 +39,7 @@ public class TestThreadUtils extends TestCase {
 	}
 
 	public void testIsAlive() throws Exception {
-		assertFalse(ThreadUtils.isAlive(null));
+		assertFalse(ThreadUtils.isAlive((Thread) null));
 		_st = new SleepyThread(100);
 		assertNotNull(_st);
 		assertFalse(ThreadUtils.isAlive(_st));
@@ -68,6 +68,6 @@ public class TestThreadUtils extends TestCase {
 		assertFalse(ThreadUtils.isAlive(_st));
 		
 		ThreadUtils.kill(_st, 50);
-		ThreadUtils.kill(null, 50);
+		ThreadUtils.kill((Thread) null, 50);
 	}
 }
