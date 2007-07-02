@@ -9,6 +9,8 @@ import org.apache.log4j.Logger;
 
 import org.deltava.util.*;
 
+import org.gvagroup.ipc.IPCInfo;
+
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
@@ -18,7 +20,7 @@ import org.deltava.util.*;
  * @see ConnectionMonitor
  */
 
-public class ConnectionPool implements Thread.UncaughtExceptionHandler {
+public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(ConnectionPool.class);
 
@@ -394,6 +396,7 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 	/**
 	 * Returns information about the connection pool.
 	 * @return a Collection of ConnectionInfo entries
+	 * @see ConnectionPool#getSerializedInfo()
 	 */
 	public Collection<ConnectionInfo> getPoolInfo() {
 		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>();
@@ -403,6 +406,16 @@ public class ConnectionPool implements Thread.UncaughtExceptionHandler {
 		}
 
 		return results;
+	}
+
+	/**
+	 * Returns information about the connection pool in a serialized fashion for transfer between classloaders and
+	 * virtual machines.
+	 * @return a Collection of byte arrays
+	 * @see ConnectionPool#getPoolInfo()
+	 */
+	public Collection<byte[]> getSerializedInfo() {
+		return IPCUtils.serialize(getPoolInfo());
 	}
 
 	/**
