@@ -18,5 +18,6 @@
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/edtftpj-1.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.0.6-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.0.jar" sourcepath="/IPC/src"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -11,6 +11,8 @@ import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.*;
 
 /**
  * A Web Site Command to modify Airport data.
@@ -35,9 +37,9 @@ public class AirportCommand extends AbstractFormCommand {
 		String aCode = (String) ctx.getCmdParameter(ID, null);
 		boolean isNew = (aCode == null);
 		if (isNew) {
-			Airport ap = SystemData.getAirport(ctx.getParameter("iata").toUpperCase());
-			if (ap != null) {
-				ctx.setMessage("Airport already exists - " + ap.getName());
+			Airport a = SystemData.getAirport(ctx.getParameter("iata"));
+			if (a != null) {
+				ctx.setMessage("Airport already exists - " + a.getName());
 
 				// Save directions and time zones in request
 				ctx.setAttribute("timeZones", TZInfo.getAll(), REQUEST);
@@ -51,8 +53,8 @@ public class AirportCommand extends AbstractFormCommand {
 			}
 		}
 
-		Airport a = null;
 		try {
+			Airport a = null;
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and the Airport
@@ -65,9 +67,8 @@ public class AirportCommand extends AbstractFormCommand {
 				// Load airport fields
 				a.setName(ctx.getParameter("name"));
 				a.setICAO(ctx.getParameter("icao"));
-			} else {
+			} else
 				a = new Airport(ctx.getParameter("iata"), ctx.getParameter("icao"), ctx.getParameter("name"));
-			}
 
 			// Update the aiport from the request
 			a.setTZ(ctx.getParameter("tz"));
@@ -98,9 +99,7 @@ public class AirportCommand extends AbstractFormCommand {
 				// Update the airport
 				a.setLocation(gp.getLatitude(), gp.getLongitude());
 			} catch (NumberFormatException nfe) {
-				CommandException ce = new CommandException("Error parsing Airport latitude/longitude");
-				ce.setLogStackDump(false);
-				throw ce;
+				throw new CommandException("Error parsing Airport latitude/longitude", false);
 			}
 
 			// Get the DAO and write the airport
@@ -121,10 +120,8 @@ public class AirportCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 
-		// Update the SystemData map
-		Map<String, Airport> airports = SystemData.getAirports();
-		airports.put(a.getIATA(), a);
-		airports.put(a.getICAO(), a);
+		// Update the Airports
+		EventDispatcher.send(SystemEvent.AIRPORT_RELOAD);
 
 		// Set status update flag
 		ctx.setAttribute("isAirport", Boolean.TRUE, REQUEST);

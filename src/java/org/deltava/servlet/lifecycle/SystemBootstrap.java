@@ -18,8 +18,11 @@ import org.deltava.security.*;
 import org.deltava.taskman.*;
 
 import org.deltava.util.*;
+import org.deltava.util.ipc.IPCDaemon;
 import org.deltava.util.servinfo.ServInfoLoader;
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.SharedData;
 
 /**
  * The System bootstrap loader, that fires when the servlet container is started or stopped.
@@ -61,6 +64,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Initialize system data
 		SystemData.init();
+		SharedData.addApp(SystemData.get("airline.code"));
 
 		// Load the profanity filter
 		try {
@@ -104,6 +108,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Save the connection pool in the SystemData
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
+		SharedData.addData(SharedData.JDBC_POOL + SystemData.get("airline.code"), _jdbcPool);
 
 		// Get and load the authenticator
 		String authClass = SystemData.get("security.auth");
@@ -205,25 +210,9 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 			ServInfoLoader.addLoader(network, t);
 		}
 
-		// Start the ACARS server
-		if (SystemData.getBoolean("acars.enabled")) {
-			Runnable acarsServer = null;
-			try {
-				Class acarsSrvC = Class.forName(SystemData.get("acars.daemon"));
-				acarsServer = (Runnable) acarsSrvC.newInstance();
-			} catch (ClassNotFoundException cnfe) {
-				log.error("Cannot find ACARS Daemon " + SystemData.get("acars.daemon"));
-			} catch (Exception ex) {
-				log.error("Error Starting ACARS Daemon", ex);
-			}
-
-			// Start the server
-			SystemData.add(SystemData.ACARS_DAEMON, acarsServer);
-			spawnDaemon(acarsServer);
-		}
-
-		// Start the mailer daemon
+		// Start the mailer/IPC daemons
 		spawnDaemon(new MailerDaemon());
+		spawnDaemon(new IPCDaemon());
 	}
 
 	/**
@@ -272,6 +261,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		_jdbcPool.close();
 
 		// Deregister JDBC divers
+		SharedData.purge(SystemData.get("airline.code"));
 		for (Enumeration<Driver> en = DriverManager.getDrivers(); en.hasMoreElements();) {
 			Driver driver = en.nextElement();
 			if (driver.getClass().getClassLoader() == getClass().getClassLoader()) {
