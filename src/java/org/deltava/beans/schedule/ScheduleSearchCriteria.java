@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -36,6 +36,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _hourA = -1;
 
 	private String _sortBy;
+	private String _dbName;
 	private final Collection<String> _eqTypes = new LinkedHashSet<String>();
 
 	/**
@@ -47,6 +48,10 @@ public class ScheduleSearchCriteria extends Flight {
 	public ScheduleSearchCriteria(Airline aCode, int fNumber, int leg) {
 		super(aCode, fNumber, leg);
 		setLeg(leg);
+	}
+	
+	public String getDBName() {
+		return _dbName;
 	}
 
 	public String getSortBy() {
@@ -109,6 +114,10 @@ public class ScheduleSearchCriteria extends Flight {
 		return _eqTypes;
 	}
 
+	public void setDBName(String db) {
+		_dbName = db;
+	}
+	
 	/**
 	 * Sets the length of the flight.
 	 * @param length the length in hours multiplied by ten
