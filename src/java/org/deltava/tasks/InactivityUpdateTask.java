@@ -73,13 +73,13 @@ public class InactivityUpdateTask extends Task {
 				InactivityPurge ip = i.next();
 				Pilot p = pilots.get(new Integer(ip.getID()));
 				if (p != null) {
-					log.warn("Marking " + p.getName() + " Inactive");
+					log.warn("Marking " + p.getName() + " Inactive after " + ip.getInterval() + " days");
 
 					// Create the StatusUpdate bean
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.STATUS_CHANGE);
 					upd.setAuthorID(taskBy.getID());
 					upd.setCreatedOn(new Date());
-					upd.setDescription("Marked Inactive due to no logins within " + inactiveDays + " days");
+					upd.setDescription("Marked Inactive due to no logins within " + ip.getInterval() + " days");
 					sudao.write(upd);
 
 					// Create the Message Context
@@ -134,13 +134,6 @@ public class InactivityUpdateTask extends Task {
 				if ((ip == null) || (!ip.isNotified())) {
 					log.warn("Notifying " + p.getName());
 					
-					// Create the StatusUpdate bean
-					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
-					upd.setAuthorID(taskBy.getID());
-					upd.setCreatedOn(new Date());
-					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
-					sudao.write(upd);
-
 					// Create the Message Context
 					MessageContext mctxt = new MessageContext();
 					mctxt.setTemplate(nmt);
@@ -148,8 +141,21 @@ public class InactivityUpdateTask extends Task {
 					mctxt.addData("pilot", p);
 					mctxt.addData("lastLogin", (p.getLastLogin() == null) ? "NEVER" : _df.format(p.getLastLogin()));
 
+					// Start the transaction
+					ctx.startTX();
+					
+					// Create the StatusUpdate bean
+					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.INACTIVITY);
+					upd.setAuthorID(taskBy.getID());
+					upd.setCreatedOn(new Date());
+					upd.setDescription("Sent Reminder due to no logins within " + notifyDays + " days");
+					sudao.write(upd);
+
 					// Make sure we have a notification entry
 					iwdao.setInactivity(p.getID(), inactiveDays - notifyDays, true);
+					
+					// Commit the transaction
+					ctx.commitTX();
 					
 					// Send the message
 					Mailer mailer = new Mailer(isTest ? null : taskBy);
