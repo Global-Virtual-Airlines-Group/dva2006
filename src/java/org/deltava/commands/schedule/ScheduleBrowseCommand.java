@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.sql.Connection;
@@ -38,6 +38,7 @@ public class ScheduleBrowseCommand extends AbstractViewCommand {
       ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
       criteria.setAirportD(aD);
       criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+      criteria.setDBName(SystemData.get("airline.db"));
       criteria.setIncludeAcademy(ctx.isUserInRole("Instructor") || ctx.isUserInRole("Schedule") || ctx.isUserInRole("HR"));
       
       // Save the search criteria
