@@ -11,14 +11,14 @@ import java.util.*;
  * @since 1.0
  */
 
-class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
+class ConnectionPoolEntry implements java.io.Serializable, Comparable<ConnectionPoolEntry> {
 
-	private Connection _c;
-	private Throwable _stackInfo;
+	private transient Connection _c;
+	private StackTrace _stackInfo;
 	private int _id;
 
 	private String _url;
-	private final Properties _props = new Properties();
+	private transient final Properties _props = new Properties();
 
 	private boolean _inUse = false;
 	private boolean _systemOwned = false;
@@ -31,13 +31,6 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 	private long _lastUsed;
 	private int _useCount;
 	
-	class StackTrace extends Throwable {
-		
-		StackTrace() {
-			super(Thread.currentThread().getName());
-		}
-	}
-
 	/**
 	 * Create a new Connection Pool entry.
 	 * @param id the connection pool entry ID
@@ -203,7 +196,8 @@ class ConnectionPoolEntry implements Comparable<ConnectionPoolEntry> {
 		
 		// Generate a dummy stack trace if necessary, trimming out entries from this package
 		if (logStack) {
-			_stackInfo = new StackTrace().fillInStackTrace();
+			_stackInfo = new StackTrace();
+			_stackInfo.fillInStackTrace();
 			List<StackTraceElement> el = new ArrayList<StackTraceElement>(Arrays.asList(_stackInfo.getStackTrace()));
 			StackTraceElement ste = el.get(0);
 			while (ste.getClassName().startsWith(ConnectionPoolEntry.class.getPackage().getName()) && (el.size() > 1)) {
