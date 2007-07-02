@@ -3,18 +3,18 @@ package org.deltava.commands.security;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.StatusUpdate;
+import org.apache.log4j.Logger;
 
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
-import org.deltava.security.Authenticator;
-import org.deltava.security.SQLAuthenticator;
-import org.deltava.security.UserPool;
+import org.deltava.security.*;
 import org.deltava.security.command.PilotAccessControl;
 
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.*;
 
 /**
  * A Web Site Command to lock out a user.
@@ -24,6 +24,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class SuspendUserCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(SuspendUserCommand.class);
 
 	/**
 	 * Execute the command.
@@ -31,7 +33,6 @@ public class SuspendUserCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occrurs.
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		Pilot usr = null;
 		try {
 			Connection con = ctx.getConnection();
@@ -85,12 +86,16 @@ public class SuspendUserCommand extends AbstractCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Save the pilot in the request
 		ctx.setAttribute("pilot", usr, REQUEST);
 		
 		// Block the user
 		UserPool.block(usr);
+		log.warn(ctx.getUser() + " suspended user " + usr.getName());
+		
+		// Notify other web applications
+		EventDispatcher.send(SystemEvent.USER_SUSPEND);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
