@@ -30,7 +30,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 	private static final String WS_REALM = "\"DVA Web Services\"";
 
 	private static final Logger log = Logger.getLogger(WebServiceServlet.class);
-	private Map _svcs;
+	private Map<String, String> _svcs;
 
 	/**
 	 * Returns the servlet description.
@@ -71,7 +71,7 @@ public class WebServiceServlet extends BasicAuthServlet {
 		String svcName = parser.getName().toLowerCase();
 
 		// Get the service class
-		String svcClass = (String) _svcs.get(svcName);
+		String svcClass = _svcs.get(svcName);
 		if (svcClass == null)
 			return null;
 
@@ -103,32 +103,30 @@ public class WebServiceServlet extends BasicAuthServlet {
 
 		// Get our credentials if we're already logged in
 		Pilot usr = (Pilot) req.getUserPrincipal();
-		if (usr == null)
-			usr = authenticate(req);
 
 		// Check if we need to be authenticated
 		if (svc.isSecure() && (usr == null)) {
-			challenge(rsp, WS_REALM);
-			return;
+			usr = authenticate(req);
+			if (usr == null) {
+				challenge(rsp, WS_REALM);
+				return;
+			}
 		}
 		
 		// Generate the service context
 		ServiceContext ctx = new ServiceContext(req, rsp, getServletContext());
 		ctx.setUser(usr);
+		if (svc.isLogged())
+			log.info("Executing Web Service " + svc.getClass().getName());
 
+		// Execute the Web Service
 		try {
-
-			// Execute the Web Service
-			if (svc.isLogged())
-				log.info("Executing Web Service " + svc.getClass().getName());
-
 			rsp.setStatus(svc.execute(ctx));
 		} catch (ServiceException se) {
-			if (se.isWarning()) {
+			if (se.isWarning())
 				log.warn("Error executing Web Service - " + se.getMessage());
-			} else {
+			else
 				log.error("Error executing Web Service - " + se.getMessage(), se.getLogStackDump() ? se : null);	
-			}
 
 			try {
 				rsp.sendError(se.getCode(), se.getMessage());
