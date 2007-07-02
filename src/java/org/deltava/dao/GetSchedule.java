@@ -107,7 +107,9 @@ public class GetSchedule extends DAO {
 		}
 
 		// Build the query string
-		StringBuilder buf = new StringBuilder("SELECT * FROM SCHEDULE WHERE ");
+		StringBuilder buf = new StringBuilder("SELECT * FROM ");
+		buf.append(formatDBName(criteria.getDBName()));
+		buf.append(".SCHEDULE WHERE ");
 		for (Iterator<String> i = conditions.iterator(); i.hasNext();) {
 			buf.append('(');
 			buf.append(i.next());
