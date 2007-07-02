@@ -139,6 +139,7 @@ public class SetTS2Data extends DAO {
 			// Clean out the privileges
 			prepareStatementWithoutLimits("DELETE FROM teamspeak.ts2_channel_privileges where (i_cp_client_id=?)");
 			_ps.setInt(1, usr.getID());
+			executeUpdate(0);
 			
 			// Write the client/channel privileges
 			prepareStatement("REPLACE INTO teamspeak.ts2_channel_privileges (i_cp_server_id, i_cp_channel_id, "
