@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project default="deploy">
-	<!-- Clean out documentation -->
-	<target name="doc_clean">
-    	<property name="path.doc" value="/usr/local/www/deltava.org/www" />		
-		<property file="data/build_doc.properties" prefix="doc" />
-
-		<ftp password="${doc.ftp.pwd}" server="${doc.ftp.server}" userid="${doc.ftp.user}"
-    	 remotedir="${path.doc}" action="del">
-    		<fileset>
-    			<include name="junit/**.*" />
-    			<include name="javadoc/**.*" />
-    		</fileset>
-    	</ftp>  
-	</target>
-
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
@@ -111,9 +97,8 @@
 	<target name="compile">
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
-		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
-		 compiler="modern">
-			<compilerarg value="-Xlint:unchecked" />
+		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5" compiler="modern">
+			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath>
 				<pathelement path="${classpath}" />
 		    	<fileset dir="lib">
@@ -126,31 +111,11 @@
 		<jar basedir="${java.io.tmpdir}/build/classes" compress="true" index="true"
 		 destfile="${java.io.tmpdir}/build/golgotha.jar" />
 	</target>
-	
-	<!-- Build the ACARS Server -->
-	<target name="acars" depends="compile">
-		<mkdir dir="${java.io.tmpdir}/build/acars" />
-		<javac srcdir="../DVA ACARS/src/java" optimize="on" destdir="${java.io.tmpdir}/build/acars"
-		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5"
-		 compiler="modern">
-			<compilerarg value="-Xlint:unchecked" />
-	    	<classpath id="acars.classpath">
-				<pathelement path="${classpath}" />
-	    		<pathelement location="lib/deploy/jdom-1.0.jar" />
-	    		<pathelement location="lib/deploy/log4j-1.2.14.jar" />
-	    		<pathelement location="${java.io.tmpdir}/build/golgotha.jar" />
-	    	</classpath>
-		</javac>
 
-		<!-- Compress the Java classes into a single JAR file -->
-		<jar basedir="${java.io.tmpdir}/build/acars" compress="true" index="true"
-		 destfile="${java.io.tmpdir}/build/golgotha_acars.jar" />
-	</target>
-	
 	<!-- Precompile the JSP pages -->
 	<target name="jspc" depends="compile">
 		<property name="jspc.webXMLInc" value="${java.io.tmpdir}/src/jsp/include.xml" />
-		<taskdef classname="org.apache.jasper.JspC" name="jasper2"> 
+		<taskdef classname="org.apache.jasper.JspC" name="jasper2">
 			<classpath id="jspc.classpath"> 
 				<pathelement path="${classpath}" />
 				<fileset dir="${java.io.tmpdir}/build" includes="*.jar" />
@@ -167,14 +132,15 @@
 		<copy file="WEB-INF/web_core.xml" tofile="${basedir}/WEB-INF/web.xml" />
 	    <jasper2 package="org.deltava" uriroot="${basedir}" verbose="0" poolingEnabled="false"
 	    	xpoweredBy="true" validateXml="false" webXmlFragment="${jspc.webXMLInc}"
-	    	compilerTargetVM="1.6" compilerSourceVM="1.6" trimSpaces="false"
+	    	compilerTargetVM="1.5" compilerSourceVM="1.5" trimSpaces="false"
 			outputDir="${java.io.tmpdir}/src/jsp" />
 		<delete file="${basedir}/WEB-INF/web.xml" />		
 
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp"
-			debug="on" debuglevel="source" optimize="on" target="1.5" source="1.5" nowarn="on">
+			debug="on" debuglevel="source" optimize="on" target="1.5" source="1.5">
+			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
 		</javac>
@@ -195,19 +161,12 @@
 		<replace file="${java.io.tmpdir}/build/web.xml" token="&lt;!-- [INSERT FRAGMENT HERE] --&gt;" value="${webXmlFragment}" /> 
 	</target>
 	
-	<target name="deploy" depends="compile,acars,jspc">
+	<target name="deploy" depends="compile,jspc">
 		<loadproperties srcFile="data/build_deploy.properties" />
 
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF"
-				verbose="yes" trust="yes" password="${webapp.dev.pwd}">
-	    	<fileset dir="WEB-INF">
-	    		<include name="*.tld" />
-				<modified seldirs="false" algorithm="digest">
-					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
-				</modified>
-			</fileset>
+			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -231,7 +190,9 @@
 		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.dev.user}@${webapp.dev.server}:${webapp.dev.path}/WEB-INF/lib"
 			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
-			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
+	 		<fileset dir="${java.io.tmpdir}/build">
+				<include name="golgotha.jar" />
+				<include name="golgotha_jsp.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.dev.txt" />
@@ -251,8 +212,8 @@
 			verbose="yes" trust="yes" password="${webapp.dev.pwd}">
 			<fileset dir="etc" includes="*.*">
 				<modified seldirs="false" algorithm="digest">
-						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/cfg.cache.dev.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -261,8 +222,8 @@
 		<scp todir="${http.dev.user}@${http.dev.server}:${http.dev.path}" verbose="yes" trust="yes" password="${http.dev.pwd}">
 			<fileset dir="static">
 				<modified seldirs="true" algorithm="digest">
-						<param name="algorithm.algorithm" value="MD5" />
-						<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
+					<param name="algorithm.algorithm" value="MD5" />
+					<param name="cache.cachefile" value="../.local_data/static.cache.dev.txt" />
 				</modified>
 			</fileset>
 		</scp>
@@ -292,19 +253,12 @@
 	</target>
 	
 	<!-- Production Deployment via SSH -->
-	<target name="prod_deploy" depends="compile,acars,jspc,put_scripts">
+	<target name="prod_deploy" depends="compile,jspc,put_scripts">
 		<loadproperties srcFile="data/build_deploy.properties" />
 
 		<!-- Upload the web configuration -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
 				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
-	    	<fileset dir="WEB-INF">
-	    		<include name="*.tld" />
-				<modified seldirs="false" algorithm="digest">
-					<param name="algorithm.algorithm" value="MD5" />
-					<param name="cache.cachefile" value="../.local_data/cfg.cache.txt" />
-				</modified>
-			</fileset>
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
@@ -328,7 +282,9 @@
 		<!-- Upload the JAR files to the app server -->
 		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
-			<fileset dir="${java.io.tmpdir}/build" includes="*.jar">
+			<fileset dir="${java.io.tmpdir}/build">
+				<include name="golgotha.jar" />
+				<include name="golgotha_jsp.jar" />
 				<modified seldirs="false" algorithm="digest">
 					<param name="algorithm.algorithm" value="MD5" />
 					<param name="cache.cachefile" value="../.local_data/jar.cache.txt" />
