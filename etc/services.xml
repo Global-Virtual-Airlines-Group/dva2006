@@ -49,4 +49,5 @@
 	<!-- ServInfo Services -->
 	<service id="servinfo" class="org.deltava.service.servinfo.DataService" />
 	<service id="si_route" class="org.deltava.service.servinfo.MapRouteService" />
+	<service id="vatsim_info" class="org.deltava.service.servinfo.PilotValidationService" />
 </services>
