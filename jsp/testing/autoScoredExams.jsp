@@ -11,9 +11,18 @@
 <head>
 <title><content:airline /> Automatically Scored Examinations</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function setExam(combo)
+{
+var examName = combo.options[combo.selectedIndex].text;
+self.location = '/autoscoredexams.do?examName=' +examName;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,7 +32,13 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="autoscoredexams.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="eprofiles">
+<tr class="title caps">
+ <td colspan="2" class="left">AUTOMATICALLY SCORED EXAMINATIONS</td>
+ <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void setExam(this)" /></td>
+</tr>
+
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td>&nbsp;</td>
@@ -64,6 +79,8 @@
  <td colspan="7"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
