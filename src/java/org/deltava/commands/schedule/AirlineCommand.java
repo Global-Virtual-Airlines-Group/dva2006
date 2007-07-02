@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -11,7 +11,8 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.system.SystemData;
+
+import org.gvagroup.common.*;
 
 /**
  * A Web Site Command to update Airline profiles.
@@ -74,10 +75,8 @@ public class AirlineCommand extends AbstractFormCommand {
 			ctx.release();
 		}
 		
-		// Update the airline in the SystemData map
-		@SuppressWarnings("unchecked")
-		Map<String, Airline> airlines = (Map) SystemData.getObject("airlines");
-		airlines.put(a.getCode(), a);
+		// Force an airline reload
+		EventDispatcher.send(SystemEvent.AIRLINE_RELOAD);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
