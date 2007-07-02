@@ -9,6 +9,8 @@ import org.deltava.beans.testing.Examination;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Web Site Command to display automatically scored Examinations.
  * @author Luke
@@ -25,8 +27,12 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the view context
+		// Get the view context and examination name filter
 		ViewContext vc = initView(ctx);
+		String examName = ctx.getParameter("examName");
+		if (StringUtils.isEmpty(examName))
+			examName = null;
+		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -34,7 +40,10 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 			GetExam dao = new GetExam(con);
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
-			Collection<Examination> exams = dao.getAutoScored();
+			Collection<Examination> exams = dao.getAutoScored(examName);
+			
+			// Save exam names
+			ctx.setAttribute("examNames", dao.getAutoScoredExamNames(), REQUEST);
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
