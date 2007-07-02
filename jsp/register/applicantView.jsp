@@ -31,6 +31,37 @@ disableButton('ResendButton');
 </c:if>
 return ${access.canApprove};
 }
+<c:if test="${access.canApprove}">
+function checkVATSIMData(id, name)
+{
+disableButton('ValidateButton');
+var xmlreq = getXMLHttpRequest();
+xmlreq.open('GET', 'vatsim_info.ws?id=' + id + '&name=' + name);
+xmlreq.onreadystatechange = function() {
+	if (xmlreq.readyState != 4) return false;
+	if ((xmlreq.status == 404) || (xmlreq.status == 500)) {
+		alert('No records found!');
+		enableElement('ValidateButton', true);
+		return false;
+	}
+
+	// Parse the XML
+	var xmlDoc = xmlreq.responseXML;
+	if (!xmlDoc) return false;
+
+	// Get the info
+	var info = xmlDoc.documentElement;
+	var infoStr = info.getAttribute('network') + ' Information for ' + info.getAttribute('id')
+		+ ':\n\nPilot Name : ' + info.getAttribute('name') + '\nUser Status : '
+		+ info.getAttribute('status') + '\nE-Mail Domain : ' + info.getAttribute('domain');
+	alert(infoStr);
+	enableElement('ValidateButton', true);
+	return true;
+} // function
+
+xmlreq.send(null);
+return true;
+}</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -89,10 +120,13 @@ return ${access.canApprove};
  <td class="label">Location</td>
  <td class="data">${applicant.location}</td>
 </tr>
-<c:if test="${!empty applicant.networkIDs['VATSIM']}">
+<c:set var="VATSIM_ID" value="${applicant.networkIDs['VATSIM']}" scope="request" />
+<c:if test="${!empty VATSIM_ID}">
 <tr>
  <td class="label">VATSIM ID#</td>
- <td class="data">${applicant.networkIDs['VATSIM']}</td>
+ <td class="data">${VATSIM_ID}
+<c:if test="${access.canApprove}"> <el:button ID="ValidateButton" className="BUTTON" onClick="void checkVATSIMData(${VATSIM_ID}, '${applicant.name}')" label="VALIDATE" /></c:if>
+ </td>
 </tr>
 </c:if>
 <c:if test="${!empty applicant.networkIDs['IVAO']}">
