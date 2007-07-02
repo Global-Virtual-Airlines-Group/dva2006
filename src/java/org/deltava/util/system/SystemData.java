@@ -29,7 +29,6 @@ public final class SystemData implements Serializable {
 	public static final String CFG_NAME = "$CONFIGNAME$";
 	public static final String LOADER_NAME = "$LOADERCLASS$";
 
-	private static SystemDataLoader _loader;
 	private static final Map<String, Object> _properties = new HashMap<String, Object>();
 	
     private static final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
@@ -49,13 +48,14 @@ public final class SystemData implements Serializable {
 	public static void init(String loaderClassName, boolean clearData) {
 
 		// Get the data loader class
+		SystemDataLoader loader = null;
 		try {
 			Class ldClass = Class.forName(loaderClassName);
-			_loader = (SystemDataLoader) ldClass.newInstance();
+			loader = (SystemDataLoader) ldClass.newInstance();
 			log.debug("Instantiated " + loaderClassName);
 		} catch (Exception e) {
-			_loader = new XMLSystemDataLoader();
-			log.debug("Using default loader class " + _loader.getClass().getName());
+			loader = new XMLSystemDataLoader();
+			log.debug("Using default loader class " + loader.getClass().getSimpleName());
 		}
 		
 		// Reset the properties
@@ -64,7 +64,7 @@ public final class SystemData implements Serializable {
 			_properties.clear();
 
 		try {
-			_properties.putAll(_loader.load());
+			_properties.putAll(loader.load());
 		} catch (IOException ie) {
 			Throwable ce = ie.getCause();
 			if (ce == null)
@@ -72,7 +72,7 @@ public final class SystemData implements Serializable {
 			else
 				log.error("Error loading System Data - " + ce.getMessage());
 		} finally {
-			_properties.put(SystemData.LOADER_NAME, _loader.getClass().getName());
+			_properties.put(SystemData.LOADER_NAME, loader.getClass().getName());
 			while (rwl.isWriteLockedByCurrentThread())
 				w.unlock();
 		}
