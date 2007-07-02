@@ -10,7 +10,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class ConnectionInfo implements Comparable<ConnectionInfo>, ViewEntry {
+public class ConnectionInfo implements java.io.Serializable, Comparable<ConnectionInfo>, ViewEntry {
    
    private int _id;
    private boolean _isSystem;
@@ -94,11 +94,11 @@ public class ConnectionInfo implements Comparable<ConnectionInfo>, ViewEntry {
    }
 
    /**
-    * Compares two ConnectionInfo objects by comparing their IDs.
-    * @see Comparable#compareTo(Object) 
+    * Compares two ConnectionInfo objects by comparing their IDs and usage counts.
     */
    public int compareTo(ConnectionInfo ci2) {
-      return new Integer(_id).compareTo(new Integer(ci2._id));
+      int tmpResult = new Integer(_id).compareTo(new Integer(ci2._id));
+      return (tmpResult == 0) ? new Integer(_useCount).compareTo(new Integer(ci2._useCount)) : tmpResult;
    }
    
    /**
