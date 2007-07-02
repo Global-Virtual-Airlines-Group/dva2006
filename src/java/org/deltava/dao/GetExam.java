@@ -285,21 +285,58 @@ public class GetExam extends DAO {
 	
 	/**
 	 * Returns automatically scored Examiantions.
+	 * @param examName the Examination name, or null if all requested
 	 * @return a Collection of Examination beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Examination> getAutoScored() throws DAOException {
+	public Collection<Examination> getAutoScored(String examName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), "
+				+ "EP.STAGE, EP.ACADEMY, P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, "
+				+ "EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.AUTOSCORE=?) AND "
+				+ "(E.ID=Q.EXAM_ID) ");
+		if (examName != null)
+			sqlBuf.append("AND (E.NAME=?) ");
+		
+		sqlBuf.append("GROUP BY E.ID ORDER BY E.CREATED_ON DESC");
+		
 		try {
-			prepareStatement("SELECT E.*, COUNT(DISTINCT Q.QUESTION_NO), SUM(Q.CORRECT), EP.STAGE, "
-					+ "EP.ACADEMY, P.FIRSTNAME, P.LASTNAME FROM EXAMS E, EXAMQUESTIONS Q, PILOTS P, "
-					+ "EXAMINFO EP WHERE (P.ID=E.PILOT_ID) AND (E.NAME=EP.NAME) AND (E.AUTOSCORE=?) "
-					+ "AND (E.ID=Q.EXAM_ID) GROUP BY E.ID ORDER BY E.CREATED_ON DESC");
+			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, true);
+			if (examName != null)
+				_ps.setString(2, examName);
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the names of all automatically scored examinations.
+	 * @return a Collection of Examination names
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getAutoScoredExamNames() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT NAME FROM EXAMS WHERE (AUTOSCORE=?)");
+			_ps.setBoolean(1, true);
+			
+			// Do the query
+			Collection<String> results = new TreeSet<String>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(rs.getString(1));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	} 
 	
 	/**
 	 * Returns all Initial Questionnaires for hired Pilots.
