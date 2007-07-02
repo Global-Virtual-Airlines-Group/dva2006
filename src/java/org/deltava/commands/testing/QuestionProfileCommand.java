@@ -42,7 +42,12 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				
 				// Update question text / answer
 				qp.setQuestion(ctx.getParameter("question"));
-				qp.setCorrectAnswer(ctx.getParameter((qp instanceof MultipleChoice) ? "correctChoice" : "correct"));
+				if (qp instanceof MultipleChoice) {
+					MultiChoiceQuestionProfile mqp = (MultiChoiceQuestionProfile) qp;
+					mqp.setCorrectAnswer(ctx.getParameter("correctChoice"));
+					mqp.setChoices(StringUtils.split(ctx.getParameter("answerChoices"), "\n"));
+				} else
+					qp.setCorrectAnswer(ctx.getParameter("correct"));
 			} else {
 				// Check if we're creating a multiple-choice question
 				boolean isMC = Boolean.valueOf(ctx.getParameter("isMultiChoice")).booleanValue();
