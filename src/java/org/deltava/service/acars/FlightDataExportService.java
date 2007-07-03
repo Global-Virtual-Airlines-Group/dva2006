@@ -13,6 +13,8 @@ import org.deltava.service.*;
 
 import org.deltava.util.StringUtils;
 
+import static org.gvagroup.acars.ACARSFlags.*;
+
 /**
  * A Web Service to return ACARS flight data parameters.
  * @author Luke
@@ -93,21 +95,21 @@ public class FlightDataExportService extends WebService {
 			ctx.print(",");
 			ctx.print(StringUtils.format(entry.getAOA(), "##0.000"));
 			ctx.print(",");
-			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_NAV) ? "NAV," : ",");
-			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_HDG) ? "HDG," : ",");
-			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_APR) ? "APR," : ",");
-			ctx.print(entry.isFlagSet(ACARSFlags.FLAG_AP_ALT) ? "ALT," : ",");
-			if (entry.isFlagSet(ACARSFlags.FLAG_AT_IAS))
+			ctx.print(entry.isFlagSet(FLAG_AP_NAV) ? "NAV," : ",");
+			ctx.print(entry.isFlagSet(FLAG_AP_HDG) ? "HDG," : ",");
+			ctx.print(entry.isFlagSet(FLAG_AP_APR) ? "APR," : ",");
+			ctx.print(entry.isFlagSet(FLAG_AP_ALT) ? "ALT," : ",");
+			if (entry.isFlagSet(FLAG_AT_IAS))
 				ctx.print("IAS");
-			else if (entry.isFlagSet(ACARSFlags.FLAG_AT_MACH))
+			else if (entry.isFlagSet(FLAG_AT_MACH))
 				ctx.print("MACH");
 			
 			ctx.print(",");
 			ctx.print(String.valueOf(entry.getFrameRate()));
 			ctx.print(",");
-			if (entry.isFlagSet(ACARSFlags.FLAG_STALL))
+			if (entry.isFlagSet(FLAG_STALL))
 				ctx.println("STALL");
-			else if (entry.isFlagSet(ACARSFlags.FLAG_OVERSPEED))
+			else if (entry.isFlagSet(FLAG_OVERSPEED))
 				ctx.println("OVERSPEED");
 			else
 				ctx.println("");

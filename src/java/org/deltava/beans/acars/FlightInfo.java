@@ -18,7 +18,7 @@ import org.deltava.util.CollectionUtils;
  * @since 1.0
  */
 
-public class FlightInfo extends DatabaseBean implements Comparable, ACARSLogEntry, ViewEntry {
+public class FlightInfo extends DatabaseBean implements ViewEntry {
 
 	private long _conID;
 	private int _pilotID;

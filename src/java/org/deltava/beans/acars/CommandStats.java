@@ -3,6 +3,10 @@ package org.deltava.beans.acars;
 
 import java.util.*;
 
+import org.deltava.util.IPCUtils;
+
+import org.gvagroup.ipc.IPCInfo;
+
 /**
  * A bean to track ACARS server command statistics. 
  * @author Luke
@@ -10,11 +14,12 @@ import java.util.*;
  * @since 1.0
  */
 
-public class CommandStats implements java.io.Serializable {
+public class CommandStats implements IPCInfo<CommandStats.Entry>{
 
 	private static final Map<String, Entry> _stats = new TreeMap<String, Entry>();
+	private static final CommandStats _instance = new CommandStats();
 
-	public static class Entry implements Comparable<CommandStats.Entry> {
+	public static class Entry implements java.io.Serializable, Comparable<CommandStats.Entry> {
 		
 		private String _cmd;
 		private long _count;
@@ -67,6 +72,11 @@ public class CommandStats implements java.io.Serializable {
 
 	// singleton constructor
 	private CommandStats() {
+		super();
+	}
+	
+	public static CommandStats getInstance() {
+		return _instance;
 	}
 	
 	/**
@@ -88,7 +98,7 @@ public class CommandStats implements java.io.Serializable {
 	 * Returns the command statistics.
 	 * @return a Collection of CommandStats.Entry beans
 	 */
-	public static synchronized Collection<Entry> getInfo() {
-		return _stats.values();
+	public synchronized Collection<byte[]> getSerializedInfo() {
+		return IPCUtils.serialize(_stats.values());
 	}
 }
