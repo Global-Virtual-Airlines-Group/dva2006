@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -13,7 +13,7 @@ import org.deltava.beans.Pilot;
  * @since 1.0
  */
 
-public class ConnectionEntry implements ACARSLogEntry {
+public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
 
    private long _id;
    private int _pilotID;
@@ -24,10 +24,17 @@ public class ConnectionEntry implements ACARSLogEntry {
    private String _remoteAddr;
    
    private int _clientBuild;
+   private String _flightCode;
    
    private int _msgCount;
    private int _infoCount;
    private int _posCount;
+   
+   private int _msgsIn;
+   private int _msgsOut;
+   private long _bytesIn;
+   private long _bytesOut;
+   private int _bufferWrites;
    
    /**
     * Creates a new ACARS Connection entry.
@@ -109,6 +116,54 @@ public class ConnectionEntry implements ACARSLogEntry {
    }
    
    /**
+    * Returns the flight code for the flight.
+    * @return the flight code, or 'N/A' if none
+    */
+   public String getFlightCode() {
+	   return (_flightCode == null) ? "N/A" : _flightCode;
+   }
+   
+   /**
+    * Returns the number of ACARS messages sent by the client.
+    * @return the number of messages
+    */
+   public int getMsgsIn() {
+	   return _msgsIn;
+   }
+   
+   /**
+    * Returns the number of ACARS messages sent by the server.
+    * @return the number of messages
+    */
+   public int getMsgsOut() {
+	   return _msgsOut;
+   }
+   
+   /**
+    * Returns the number of bytes sent by the client.
+    * @return the number of bytes
+    */
+   public long getBytesIn() {
+	   return _bytesIn;
+   }
+   
+   /**
+    * Returns the number of bytes sent by the server.
+    * @return the number of bytes
+    */
+   public long getBytesOut() {
+	 return _bytesOut;  
+   }
+   
+   /**
+    * Returns the number of output I/O buffer writes completed by the server.
+    * @return the number of writes
+    */
+   public int getBufferWrites() {
+	   return _bufferWrites;
+   }
+   
+   /**
     * Returns the number of text messages sent by this connection. 
     * @return the number of messages
     * @see ConnectionEntry#setMessageCount(int)
@@ -164,6 +219,15 @@ public class ConnectionEntry implements ACARSLogEntry {
    }
    
    /**
+    * Sets the flight code for this flight.
+    * @param code the flight code, or null if none
+    * @see ConnectionEntry#getFlightCode()
+    */
+   public void setFlightCode(String code) {
+	   _flightCode = code;
+   }
+   
+   /**
     * Updates the IP address for this connection.
     * @param addr the IP address
     * @see ConnectionEntry#getRemoteAddr()
@@ -181,6 +245,40 @@ public class ConnectionEntry implements ACARSLogEntry {
     */
    public void setRemoteHost(String host) {
       _remoteHost = host;
+   }
+   
+   /**
+    * Updates the number of network I/O buffer writes
+    * @param writes the number of writes
+    * @see ConnectionEntry#getBufferWrites()
+    */
+   public void setBufferWrites(int writes) {
+	   _bufferWrites = writes;
+   }
+   
+   /**
+    * Updates the number of messages sent on this connection.
+    * @param in the number of messages received by the server
+    * @param out the number of messages sent by the server
+    * @see ConnectionEntry#getMsgsIn()
+    * @see ConnectionEntry#getMsgsOut()
+    */
+   public void setMessages(int in, int out) {
+	   _msgsIn = in;
+	   _msgsOut = out;
+   }
+   
+   
+   /**
+    * Updates the number of bytes sent on this connection.
+    * @param in the number of bytes received by the server
+    * @param out the number of bytes sent by the server
+    * @see ConnectionEntry#getBytesIn()
+    * @see ConnectionEntry#getBytesOut()
+    */
+   public void setBytes(long in, long out) {
+	   _bytesIn = in;
+	   _bytesOut = out;
    }
    
    /**
@@ -265,10 +363,8 @@ public class ConnectionEntry implements ACARSLogEntry {
    
    /**
     * Compares two connections by comparing their date/times.
-    * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-      ConnectionEntry ce2 = (ConnectionEntry) o2;
-      return _dt.compareTo(ce2.getStartTime());
+   public int compareTo(ACARSLogEntry e2) {
+      return _dt.compareTo(e2.getStartTime());
    }
 }

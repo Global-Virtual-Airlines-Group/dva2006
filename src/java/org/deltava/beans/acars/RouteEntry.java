@@ -6,9 +6,9 @@ import java.util.Date;
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
-import static org.deltava.beans.acars.ACARSFlags.*;
-
 import org.deltava.util.StringUtils;
+
+import static org.gvagroup.acars.ACARSFlags.*;
 
 /**
  * A bean to store a snapshot of an ACARS-logged flight.
@@ -620,7 +620,7 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		if (Math.abs(1 - _gForce) >= 0.25)
 			return true;
 
-		return (isFlagSet(ACARSFlags.FLAG_STALL) || isFlagSet(ACARSFlags.FLAG_OVERSPEED));
+		return (isFlagSet(FLAG_STALL) || isFlagSet(FLAG_OVERSPEED));
 	}
 
 	/**
@@ -636,11 +636,11 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 	 * Return the Google Maps icon color.
 	 */
 	public String getIconColor() {
-		if (isFlagSet(ACARSFlags.FLAG_TOUCHDOWN))
+		if (isFlagSet(FLAG_TOUCHDOWN))
 			return PURPLE;
-		else if (isWarning() || isFlagSet(ACARSFlags.FLAG_CRASH))
+		else if (isWarning() || isFlagSet(FLAG_CRASH))
 			return RED;
-		else if (isFlagSet(ACARSFlags.FLAG_AP_ANY))
+		else if (isFlagSet(FLAG_AP_ANY))
 			return WHITE;
 
 		return YELLOW;
@@ -716,15 +716,15 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		}
 
 		// Add afterburner if deployed
-		if (isFlagSet(ACARSFlags.FLAG_AFTERBURNER))
+		if (isFlagSet(FLAG_AFTERBURNER))
 			buf.append("<b><i>AFTERBURNER</i></b><br />");
 
 		// Add pushback flag if pushing back
-		if (isFlagSet(ACARSFlags.FLAG_PUSHBACK))
+		if (isFlagSet(FLAG_PUSHBACK))
 			buf.append("<b><i>PUSHBACK</i></b><br />");
 
 		// Add Autopilot flags if set
-		if (isFlagSet(ACARSFlags.FLAG_AP_ANY)) {
+		if (isFlagSet(FLAG_AP_ANY)) {
 			buf.append("Autopilot: ");
 			for (int x = 0; x < AP_FLAGS.length; x++) {
 				if (isFlagSet(AP_FLAGS[x])) {
@@ -737,20 +737,20 @@ public class RouteEntry extends DatabaseBean implements Comparable, GeospaceLoca
 		}
 
 		// Add Autothrottle flags if set
-		if (isFlagSet(ACARSFlags.FLAG_AT_IAS)) {
+		if (isFlagSet(FLAG_AT_IAS)) {
 			buf.append("Autothrottle: IAS<br />");
-		} else if (isFlagSet(ACARSFlags.FLAG_AT_MACH)) {
+		} else if (isFlagSet(FLAG_AT_MACH)) {
 			buf.append("Autothrottle: MACH<br />");
 		}
 
 		// Add Pause/Stall/Overspeed flags
-		if (isFlagSet(ACARSFlags.FLAG_PAUSED))
+		if (isFlagSet(FLAG_PAUSED))
 			buf.append("<span class=\"error\">FLIGHT PAUSED</span><br />");
-		if (isFlagSet(ACARSFlags.FLAG_STALL))
+		if (isFlagSet(FLAG_STALL))
 			buf.append("<span class=\"warn bld\">STALL</span><br />");
-		if (isFlagSet(ACARSFlags.FLAG_OVERSPEED))
+		if (isFlagSet(FLAG_OVERSPEED))
 			buf.append("<span class=\"warn bld\">OVERSPEED</span><br />");
-		if (isFlagSet(ACARSFlags.FLAG_CRASH))
+		if (isFlagSet(FLAG_CRASH))
 			buf.append("<span class=\"error\">AIRCRAFT CRASHED</span><br />");
 
 		buf.append("</span>");
