@@ -47,7 +47,7 @@ public class EarthMapService extends GoogleEarthService {
 		// Get the ACARS flights currently in progress
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 		Collection<Integer> ids = acarsPool.getFlightIDs();
-		Map positions = CollectionUtils.createMap(acarsPool.getMapEntries(), "ID");
+		Map positions = CollectionUtils.createMap(IPCUtils.deserialize(acarsPool.getSerializedInfo()), "ID");
 
 		// Load the flight information
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();

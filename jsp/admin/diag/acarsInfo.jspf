@@ -28,7 +28,14 @@
 </tr>
 <tr>
  <td class="small">Build <fmt:int value="${con.clientBuild}" /></td>
- <td class="sec bld">${con.flightCode}</td>
+<c:choose>
+<c:when test="${empty con.flightInfo || empty con.flightInfo.flightCode}">
+ <td class="sec bld">N/A</td>
+</c:when>
+<c:otherwise>
+ <td class="sec bld">${con.flightInfo.flightCode}</td>
+</c:otherwise>
+</c:choose>
  <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
 <fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> writes per message, 
 <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> average bytes per write</td>
