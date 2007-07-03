@@ -15,6 +15,8 @@ import org.deltava.service.WebService;
 import org.deltava.util.*;
 import org.deltava.util.color.GoogleEarthColor;
 
+import static org.gvagroup.acars.ACARSFlags.*;
+
 /**
  * An abstract class to support Web Services rendering ACARS data in Google Earth. 
  * @author Luke
@@ -82,7 +84,7 @@ public abstract class GoogleEarthService extends WebService {
 
 		// Create the actual point
 		Element pe = new Element("Point");
-		if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
+		if (entry.isFlagSet(FLAG_ONGROUND)) {
 			pe.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 			pe.addContent(XMLUtils.createElement("altitudeMode", "clampedToGround"));
 		} else if (entry.getRadarAltitude() < 1000) {
@@ -166,7 +168,7 @@ public abstract class GoogleEarthService extends WebService {
 			ps.addContent(pis);
 			pe.addContent(ps);
 			Element pp = new Element("Point");
-			if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND)) {
+			if (entry.isFlagSet(FLAG_ONGROUND)) {
 				pp.addContent(XMLUtils.createElement("coordinates", GeoUtils.format2D(entry)));
 				pp.addContent(XMLUtils.createElement("altitudeMode", "clampedToGround"));
 			} else if (entry.getRadarAltitude() < 1000) {

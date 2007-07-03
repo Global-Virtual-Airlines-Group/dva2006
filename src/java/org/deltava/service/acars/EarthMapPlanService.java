@@ -20,7 +20,9 @@ import org.deltava.dao.*;
 import org.deltava.service.*;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
+
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
@@ -39,13 +41,16 @@ public class EarthMapPlanService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the ACARS flights currently in progress
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
-		Collection<Integer> ids = acarsPool.getFlightIDs();
+		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		if (acarsPool == null)
+			return SC_NOT_FOUND;
 
 		// Load the flight information
+		Collection<Integer> ids = acarsPool.getFlightIDs();
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			Connection con = ctx.getConnection();

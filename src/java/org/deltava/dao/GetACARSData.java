@@ -10,6 +10,8 @@ import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.system.SystemData;
 
+import static org.gvagroup.acars.ACARSFlags.*;
+
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
@@ -108,7 +110,7 @@ public class GetACARSData extends DAO {
 				entry.setFlags(rs.getInt(22));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
-				if (entry.isFlagSet(ACARSFlags.FLAG_ONGROUND) && !entry.isFlagSet(ACARSFlags.FLAG_TOUCHDOWN)
+				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN)
 						&& !includeOnGround) {
 					results.add(new GeoPosition(entry));
 				} else {

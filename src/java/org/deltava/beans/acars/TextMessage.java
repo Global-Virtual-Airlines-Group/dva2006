@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class TextMessage implements Comparable, AuthoredBean, ACARSLogEntry {
+public class TextMessage implements AuthoredBean, ACARSLogEntry {
 
    private Date _date;
    private String _msg;
@@ -115,10 +115,8 @@ public class TextMessage implements Comparable, AuthoredBean, ACARSLogEntry {
    
    /**
     * Compares two messages by comparing their dates.
-    * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-      TextMessage msg2 = (TextMessage) o2;
-      return _date.compareTo(msg2._date);
+   public int compareTo(ACARSLogEntry e2) {
+      return _date.compareTo(e2.getStartTime());
    }
 }

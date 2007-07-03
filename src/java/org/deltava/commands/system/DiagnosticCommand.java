@@ -13,15 +13,18 @@ import org.deltava.commands.*;
 
 import org.deltava.dao.*;
 import org.deltava.dao.file.*;
+import org.deltava.jdbc.*;
 
-import org.deltava.jdbc.ConnectionPool;
 import org.deltava.taskman.TaskScheduler;
-
 import org.deltava.taglib.googlemap.InsertGoogleAPITag;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 import org.deltava.util.servinfo.ServInfoLoader;
+
+import org.gvagroup.acars.*;
+import org.gvagroup.ipc.IPCInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to display diagnostic infomration.
@@ -57,9 +60,11 @@ public class DiagnosticCommand extends AbstractCommand {
 		}
 
 		// Get the Connection Pool data
+		Collection<ConnectionInfo> poolInfo = new ArrayList<ConnectionInfo>();
 		ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-		ctx.setAttribute("jdbcPoolInfo", (cPool == null) ? null : cPool.getPoolInfo(), REQUEST);
-
+		if (cPool != null)
+			poolInfo.addAll(cPool.getPoolInfo());
+		
 		// Get the Task Scheduler data
 		TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
 		if (tSched != null)
@@ -69,20 +74,28 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("scoreBoard", ServletScoreboard.getScoreboard(), REQUEST);
 
 		// Get ACARS server data
-		if (SystemData.getBoolean("acars.enabled")) {
+		if (SystemData.getBoolean("acars.enabled") && SharedData.getApplications().contains("ACARS")) {
 			// Get the ACARS Connection pool data and save in the request
-			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
-			ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(true), REQUEST);
+			ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+			ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(true)), REQUEST);
 			ctx.setAttribute("acarsBans", acarsPool.getBanInfo(), REQUEST);
 
 			// Get the acars worker info data and save in the request
-			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SystemData.getObject(SystemData.ACARS_DAEMON);
+			ACARSWorkerInfo acarsInfo = (ACARSWorkerInfo) SharedData.get(SharedData.ACARS_DAEMON);
 			ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
 
 			// Save the ACARS statistics in the request
-			ctx.setAttribute("acarsStats", ServerStats.getInstance(), REQUEST);
-			ctx.setAttribute("acarsCmdStats", CommandStats.getInfo(), REQUEST);
+			CommandStats stats = CommandStats.getInstance();
+			ctx.setAttribute("acarsCmdStats", IPCUtils.deserialize(stats), REQUEST);
+			
+			// Get the ACARS webapp JDBC Connection Pool
+			IPCInfo<ConnectionInfo> acarsCPool = (IPCInfo) SharedData.get(SharedData.JDBC_POOL + "ACARS");
+			poolInfo.addAll(IPCUtils.deserialize(acarsCPool));
 		}
+		
+		// Save connection pool data
+		if (!poolInfo.isEmpty())
+			ctx.setAttribute("jdbcPoolInfo", poolInfo, REQUEST);
 		
 		// Get ServInfo statistics
 		List networks = (List) SystemData.getObject("online.networks");

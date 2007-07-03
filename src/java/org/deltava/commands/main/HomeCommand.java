@@ -7,7 +7,6 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.acars.ACARSAdminInfo;
 
 import org.deltava.commands.*;
 
@@ -15,6 +14,9 @@ import org.deltava.dao.*;
 import org.deltava.dao.file.GetProcData;
 
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to display the home page.
@@ -78,7 +80,7 @@ public class HomeCommand extends AbstractCommand {
 			cList.add(new Integer(DYN_CHOICES[x]));
 
 		// Check if ACARS has anyone connected
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
+		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 		if ((acarsPool == null) || acarsPool.isEmpty()) {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
 			cList.remove(new Integer(ACARS_USERS));

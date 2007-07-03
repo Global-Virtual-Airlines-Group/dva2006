@@ -19,9 +19,10 @@ import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
-
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
+
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Service to render the ACARS Map in Google Earth.
@@ -40,12 +41,13 @@ public class EarthMapService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the ACARS flights currently in progress
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
+		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 		Collection<Integer> ids = acarsPool.getFlightIDs();
-		Map<Integer, RouteEntry> positions = CollectionUtils.createMap(acarsPool.getMapEntries(), "ID");
+		Map positions = CollectionUtils.createMap(acarsPool.getMapEntries(), "ID");
 
 		// Load the flight information
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
@@ -64,7 +66,7 @@ public class EarthMapService extends GoogleEarthService {
 					Collection<RouteEntry> routeData = dao.getRouteEntries(flightID.intValue(), info.getArchived());
 					info.setRouteData(routeData);
 					if (positions.containsKey(flightID))
-						info.setPosition(positions.get(flightID));
+						info.setPosition((RouteEntry) positions.get(flightID));
 					
 					// Add the flight data
 					flights.add(info);

@@ -2,17 +2,17 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<c:if test="${!empty acarsPool}">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td class="left caps" colspan="7">ACARS CONNECTION POOL INFORMATION</td>
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION</td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
  <td width="18%">USER</td>
- <td width="10%">FLIGHT ID</td> 
- <td width="27%">REMOTE ADDRESS</td>
+ <td width="37%">REMOTE ADDRESS</td>
  <td width="15%">MESSAGES</td>
  <td>BYTES</td>
 </tr>
@@ -22,22 +22,20 @@
 <tr>
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
- <td class="sec bld">${(con.flightID == 0) ? 'N/A' : con.flightInfo.flightCode}</td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
- <td><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
+ <td class="small"><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
 </tr>
 <tr>
- <td class="small">Build <fmt:int value="${con.clientVersion}" /></td>
- <td colspan="3" class="small">Socket: <fmt:int value="${con.socket.sendBufferSize}" /> bytes 
-out, <fmt:int value="${con.socket.receiveBufferSize}" /> bytes in. NODELAY=${con.socket.tcpNoDelay}, 
-KEEPALIVE=${con.socket.keepAlive}</td>
- <td colspan="2" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
-<fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> per message, 
-<fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> avg. bytes</td>
+ <td class="small">Build <fmt:int value="${con.clientBuild}" /></td>
+ <td class="sec bld">${con.flightCode}</td>
+ <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
+<fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> writes per message, 
+<fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> average bytes per write</td>
 </tr>
 </c:forEach>
 </el:table>
+</c:if>
 
 <c:if test="${!empty acarsBans}">
 <el:table className="view" pad="default" space="default">

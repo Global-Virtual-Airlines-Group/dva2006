@@ -1,8 +1,8 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.acars;
 
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
@@ -13,7 +13,9 @@ import org.deltava.beans.acars.*;
 
 import org.deltava.service.*;
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
+
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
@@ -30,10 +32,13 @@ public class MapService extends WebService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the ACARS connection Pool
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SystemData.getObject(SystemData.ACARS_POOL);
+		ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		if (acarsPool == null)
+			return SC_NOT_FOUND;
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -41,7 +46,8 @@ public class MapService extends WebService {
 		doc.setRootElement(re);
 
 		// Add the items
-		for (Iterator<RouteEntry> i = acarsPool.getMapEntries().iterator(); i.hasNext();) {
+		Collection<RouteEntry> entries = IPCUtils.deserialize(acarsPool.getSerializedInfo());
+		for (Iterator<RouteEntry> i = entries.iterator(); i.hasNext();) {
 			RouteEntry entry = i.next();
 			Element e = new Element("aircraft");
 			e.setAttribute("lat", StringUtils.format(entry.getLatitude(), "##0.00000"));

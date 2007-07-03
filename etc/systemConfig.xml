@@ -296,6 +296,7 @@
 		
 		<vatsim>
 			<status_url>http://usa-s1.vatsim.net/data/status.txt</status_url>
+			<validation_url>http://cert.vatsim.net/vatsimnet/status.php</validation_url>
 			<banner>vatsim.gif</banner>
 			<url>http://www.vatsim.net/</url>
 			<local>
@@ -542,8 +543,6 @@
 	<!-- ACARS Server Properties -->
 	<acars>
 		<enabled type="Boolean">true</enabled>
-		<debug type="Boolean">true</debug>
-		<daemon>org.deltava.acars.TomcatDaemon</daemon>
 
 		<!-- Live map settings -->
 		<livemap>
@@ -551,59 +550,6 @@
 			<lng type="Double">-93.25</lng>
 			<reload type="Integer">15000</reload>
 		</livemap>
-		
-		<list name="block" attr="addr">
-			<addr>127.0.0.1</addr>
-		</list>
-
-		<!-- List of valid protocol revisions -->
-		<map name="protocols">
-			<v1>org.deltava.acars.xml.v1</v1>
-		</map>
-
-		<port type="Integer">15527</port>
-		<sleep type="Integer">30000</sleep>
-		<timeout type="Integer">240</timeout>
-		<ban_length type="Integer">15</ban_length>
-		<position_interval type="Integer">125</position_interval>
-		<build>
-			<map name="minimum">
-				<v1_4>75</v1_4>
-				<v2_0>84</v2_0>
-			</map>
-
-			<latest type="Integer">71</latest>
-			<dispatch type="Integer">1</dispatch>
-		</build>
-		
-		<pool>
-			<size type="Integer">20</size>
-			<multiple type="Boolean">true</multiple>
-			<threads>
-				<logic type="Integer">2</logic>
-				<write>
-					<min type="Integer">2</min>
-					<max type="Integer">5</max>
-				</write>
-			</threads>
-		</pool>
-		
-		<buffer>
-			<send type="Integer">20480</send>
-			<recv type="Integer">3072</recv>
-			<nio type="Integer">6144</nio>
-		</buffer>
-		
-		<ack>
-			<ping type="Boolean">false</ping>
-			<position type="Boolean">true</position>
-			<text type="Boolean">false</text>
-		</ack>
-		
-		<list name="login_msgs" attr="msg">
-			<msg>All messages are logged by user ID and IP address.</msg>
-			<msg>Don't be a goof.</msg>
-		</list>
 	</acars>
 
 	<!-- Flight Academy Data -->
