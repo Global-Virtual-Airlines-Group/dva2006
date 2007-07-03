@@ -101,19 +101,20 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
 <!-- Current ACARS server connections -->
 <el:table className="view" space="default" pad="default">
 <tr class="title caps left">
- <td colspan="3">CURRENTLY FLYING USING <content:airline /> ACARS</td>
+ <td colspan="4">CURRENTLY FLYING USING <content:airline /> ACARS</td>
 </tr>
 <c:forEach var="con" items="${acarsPool}">
 <c:if test="${!con.userHidden || isHR}">
 <tr>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
-<c:if test="${con.flightID > 0}">
+<c:if test="${!empty con.flightInfo.flightCode}">
  <td class="sec bld">${con.flightInfo.flightCode}</td>
+ <td class="small bld">${con.flightInfo.equipmentType}</td>
  <td class="small">${con.flightInfo.airportD.name} (<fmt:airport airport="${con.flightInfo.airportD}" />) 
 - ${con.flightInfo.airportA.name} (<fmt:airport airport="${con.flightInfo.airportA}" />)</td>
 </c:if>
-<c:if test="${con.flightID == 0}">
- <td colspan="2" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
+<c:if test="${empty con.flightInfo.flightCode}">
+ <td colspan="3" class="sec bld mid">NOT CURRENTLY IN FLIGHT</td>
 </c:if>
 </tr>
 </c:if>
