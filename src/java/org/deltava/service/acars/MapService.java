@@ -10,9 +10,9 @@ import org.jdom.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
-
 import org.deltava.service.*;
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 import org.gvagroup.acars.ACARSAdminInfo;
 import org.gvagroup.common.SharedData;
@@ -25,6 +25,8 @@ import org.gvagroup.common.SharedData;
  */
 
 public class MapService extends WebService {
+	
+	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 4); 
 
 	/**
 	 * Executes the Web Service.
@@ -35,10 +37,21 @@ public class MapService extends WebService {
 	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 
-		// Get the ACARS connection Pool
-		ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		if (acarsPool == null)
-			return SC_NOT_FOUND;
+		// Get the ACARS connection data
+		CacheableList<RouteEntry> entries = _cache.get(MapService.class);
+		synchronized (_cache) {
+			if (entries == null) {
+				entries = new CacheableList<RouteEntry>(MapService.class);
+			
+				// Get the pool
+				ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+				if (acarsPool == null)
+					return SC_NOT_FOUND;
+			
+				entries.addAll(IPCUtils.deserialize(acarsPool));
+				_cache.add(entries);
+			}
+		}
 
 		// Generate the XML document
 		Document doc = new Document();
@@ -46,7 +59,6 @@ public class MapService extends WebService {
 		doc.setRootElement(re);
 
 		// Add the items
-		Collection<RouteEntry> entries = IPCUtils.deserialize(acarsPool.getSerializedInfo());
 		for (Iterator<RouteEntry> i = entries.iterator(); i.hasNext();) {
 			RouteEntry entry = i.next();
 			Element e = new Element("aircraft");
