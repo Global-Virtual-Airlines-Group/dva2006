@@ -221,14 +221,14 @@
 		<pwd>m4n3l5</pwd>
 		
 		<map name="connectProperties">
-			<useNewIO>false</useNewIO>
+			<useNewIO>true</useNewIO>
 			<useCompression>false</useCompression>
-			<autoReconnect>true</autoReconnect>
+			<autoReconnect>false</autoReconnect>
 			<useLocalSessionState>true</useLocalSessionState>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>true</useServerPrepStmts>
+			<useServerPrepStmts>false</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 		</map>
 		
