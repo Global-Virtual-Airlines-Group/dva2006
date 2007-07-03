@@ -154,13 +154,20 @@ public class GetSchedule extends DAO {
 	/**
 	 * Return a particular flight from the Schedule database.
 	 * @param f the Flight to return, using the airline code, flight number and leg
+	 * @param dbName the database name
 	 * @return a ScheduleEntry matching the criteria, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if f is null
 	 */
-	public ScheduleEntry get(Flight f) throws DAOException {
+	public ScheduleEntry get(Flight f, String dbName) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
+		
 		try {
-			prepareStatement("SELECT * FROM SCHEDULE WHERE (AIRLINE=?) AND (FLIGHT=?) AND (LEG=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, f.getAirline().getCode());
 			_ps.setInt(2, f.getFlightNumber());
 			_ps.setInt(3, f.getLeg());
@@ -171,6 +178,17 @@ public class GetSchedule extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Return a particular flight from the Schedule database.
+	 * @param f the Flight to return, using the airline code, flight number and leg
+	 * @return a ScheduleEntry matching the criteria, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if f is null
+	 */
+	public ScheduleEntry get(Flight f) throws DAOException {
+		return get(f, SystemData.get("airline.db"));
 	}
 
 	/**
@@ -198,7 +216,7 @@ public class GetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ScheduleEntry get(String aCode, int flightNumber, int leg) throws DAOException {
-		return get(new ScheduleEntry(new Airline(aCode), flightNumber, leg));
+		return get(new ScheduleEntry(new Airline(aCode), flightNumber, leg), SystemData.get("airline.db"));
 	}
 
 	/**
@@ -209,12 +227,15 @@ public class GetSchedule extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if airportD or airportA are null
 	 */
-	public int getFlightTime(String airportD, String airportA) throws DAOException {
+	public int getFlightTime(String airportD, String airportA, String dbName) throws DAOException {
 
-		// Init the prepared statement
+		// Build the prepared statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".SCHEDULE WHERE (AIRPORT_D=?) AND (AIRPORT_A=?) AND (ACADEMY=?)");
+		
 		try {
-			prepareStatement("SELECT IFNULL(ROUND(AVG(FLIGHT_TIME)), 0) FROM SCHEDULE WHERE (AIRPORT_D=?) "
-					+ "AND (AIRPORT_A=?) AND (ACADEMY=?)");
+			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, airportD.toUpperCase());
 			_ps.setString(2, airportA.toUpperCase());
 			_ps.setBoolean(3, false);
@@ -230,6 +251,18 @@ public class GetSchedule extends DAO {
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Returns the average flight time for all flights in the Schedule database between two airports.
+	 * @param airportD the origin airport IATA code
+	 * @param airportA the destination airport IATA code
+	 * @return the average time between the two airports in hours <i>multiplied by 10</i>, or 0 if no flights found
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airportD or airportA are null
+	 */
+	public int getFlightTime(String airportD, String airportA) throws DAOException {
+		return getFlightTime(airportD, airportA, SystemData.get("airline.db"));
 	}
 
 	/**
