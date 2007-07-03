@@ -24,7 +24,6 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    private String _remoteAddr;
    
    private int _clientBuild;
-   private String _flightCode;
    
    private int _msgCount;
    private int _infoCount;
@@ -35,6 +34,10 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    private long _bytesIn;
    private long _bytesOut;
    private int _bufferWrites;
+   
+   private FlightInfo _fInfo;
+   private boolean _isDispatch;
+   private boolean _isHidden;
    
    /**
     * Creates a new ACARS Connection entry.
@@ -116,11 +119,29 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    }
    
    /**
-    * Returns the flight code for the flight.
-    * @return the flight code, or 'N/A' if none
+    * Returns if this is a Dispatch connection.
+    * @return TRUE if this is a Dispatch connection, otherwise FALSE
+    * @see ConnectionEntry#setDispatch(boolean)
     */
-   public String getFlightCode() {
-	   return (_flightCode == null) ? "N/A" : _flightCode;
+   public boolean getDispatch() {
+	   return _isDispatch; 
+   }
+   
+   /**
+    * Returns if this is a Hidden connection.
+    * @return TRUE if this is a Hidden connection, otherwise FALSE
+    * @see ConnectionEntry#setUserHidden(boolean)
+    */
+   public boolean getUserHidden() {
+	   return _isHidden;
+   }
+   
+   /**
+    * Returns the flight information for the flight.
+    * @return a FlightInformation bean
+    */
+   public FlightInfo getFlightInfo() {
+	   return _fInfo;
    }
    
    /**
@@ -219,12 +240,12 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    }
    
    /**
-    * Sets the flight code for this flight.
-    * @param code the flight code, or null if none
-    * @see ConnectionEntry#getFlightCode()
+    * Sets the flight information for this connection.
+    * @param info the flight information
+    * @see ConnectionEntry#getFlightInfo()
     */
-   public void setFlightCode(String code) {
-	   _flightCode = code;
+   public void setFlightInfo(FlightInfo info) {
+	   _fInfo = info;
    }
    
    /**
@@ -298,6 +319,24 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
     */
    public void setUser(Pilot usr) {
       _usr = usr;
+   }
+   
+   /**
+    * Marks the connection as a Dispatch connection.
+    * @param isDispatch TRUE if this is a Dispatcher connection, otherwise FALSE
+    * @see ConnectionEntry#getDispatch()
+    */
+   public void setDispatch(boolean isDispatch) {
+	   _isDispatch = isDispatch;
+   }
+   
+   /**
+    * Marks this connection as a Hidden connection.
+    * @param isHidden TRUE if this is a hidden connection, otherwise FALSE
+    * @see ConnectionEntry#getUser()
+    */
+   public void setUserHidden(boolean isHidden) {
+	   _isHidden = isHidden;
    }
    
    /**

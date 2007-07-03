@@ -5,7 +5,6 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
-import org.deltava.beans.acars.*;
 import org.deltava.beans.servinfo.*;
 import org.deltava.beans.servlet.ServletScoreboard;
 
@@ -42,6 +41,7 @@ public class DiagnosticCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an unhandled error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 		
 		// Get system uptime and load average if running on Linux
@@ -86,7 +86,7 @@ public class DiagnosticCommand extends AbstractCommand {
 
 			// Save the ACARS statistics in the request
 			CommandStats stats = CommandStats.getInstance();
-			ctx.setAttribute("acarsCmdStats", IPCUtils.deserialize(stats), REQUEST);
+			ctx.setAttribute("acarsCmdStats", stats.getInfo(), REQUEST);
 			
 			// Get the ACARS webapp JDBC Connection Pool
 			IPCInfo<ConnectionInfo> acarsCPool = (IPCInfo) SharedData.get(SharedData.JDBC_POOL + "ACARS");

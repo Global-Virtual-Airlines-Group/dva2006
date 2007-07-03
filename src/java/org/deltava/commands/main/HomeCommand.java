@@ -13,6 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.dao.file.GetProcData;
 
+import org.deltava.util.IPCUtils;
 import org.deltava.util.system.SystemData;
 
 import org.gvagroup.acars.ACARSAdminInfo;
@@ -28,7 +29,7 @@ import org.gvagroup.common.SharedData;
 public class HomeCommand extends AbstractCommand {
 
 	private static final Logger log = Logger.getLogger(HomeCommand.class);
-	private static final Random RND = new Random();
+	private final Random RND = new Random();
 
 	// Dynamic content codes
 	private static final int NEXT_EVENT = 0;
@@ -136,7 +137,7 @@ public class HomeCommand extends AbstractCommand {
 
 				// Online ACARS Users
 				case ACARS_USERS:
-					ctx.setAttribute("acarsPool", acarsPool.getPoolInfo(false), REQUEST);
+					ctx.setAttribute("acarsPool", IPCUtils.deserialize(acarsPool.getPoolInfo(false)), REQUEST);
 					break;
 
 				// Latest Hires
@@ -151,11 +152,10 @@ public class HomeCommand extends AbstractCommand {
 				case PROMOTIONS:
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
 					sudao.setQueryMax(5);
-					if (contentType.intValue() == CENTURY_CLUB) {
+					if (contentType.intValue() == CENTURY_CLUB)
 						ctx.setAttribute("centuryClub", sudao.getByType(StatusUpdate.RECOGNITION), REQUEST);
-					} else {
+					else
 						ctx.setAttribute("promotions", sudao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
-					}
 
 					break;
 			}
