@@ -8,6 +8,7 @@ import java.util.LinkedHashSet;
  * @author Luke
  * @version 1.0
  * @since 1.0
+ * @see CacheableList
  */
 
 public class CacheableSet<E> extends LinkedHashSet<E> implements Cacheable {
