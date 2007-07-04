@@ -34,8 +34,8 @@ return true;
 <content:region id="main">
 <el:form action="autoscoredexams.do" method="get" validate="return false">
 <view:table className="view" pad="default" space="default" cmd="eprofiles">
-<tr class="title caps">
- <td colspan="2" class="left">AUTOMATICALLY SCORED EXAMINATIONS</td>
+<tr class="title">
+ <td colspan="3" class="left caps">AUTOMATICALLY SCORED EXAMINATIONS</td>
  <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void setExam(this)" /></td>
 </tr>
 
