@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import java.util.*;
 
 public class ProfanityFilter {
 	
-	private static Collection<String> _badWords = new TreeSet<String>(Collections.reverseOrder());
+	private static final Collection<String> _badWords = new TreeSet<String>(Collections.reverseOrder());
 	
 	// Singleton
 	private ProfanityFilter() {
@@ -58,6 +58,11 @@ public class ProfanityFilter {
 		return false;
 	}
 	
+	/**
+	 * Applies the filter to a message to remove inappropriate content.
+	 * @param msg the message text
+	 * @return the filtered test
+	 */
 	public static String filter(String msg) {
 		if (msg == null)
 			return null;
@@ -69,7 +74,7 @@ public class ProfanityFilter {
 		for (Iterator<String> i = _badWords.iterator(); i.hasNext(); ) {
 			String word = i.next();
 			if (ucMsg.contains(word))
-				msg = StringUtils.replace(msg, word, "****");
+				msg = msg.replace(word, "****");
 		}
 		
 		return msg;
