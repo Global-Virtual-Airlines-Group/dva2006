@@ -4,6 +4,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> ACARS Client Version Control</title>
@@ -17,9 +18,9 @@ function validate(form)
 if (!checkSubmit()) return false;
 if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
 <c:forEach var="ver" items="${versions}">
-if (!validateNumber(form.min_${ver.key}_Build, 1, 'Minimum ${ver.version} Build')) return false;
+<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
+if (!validateNumber(form.min_${versionCode}_Build, 1, 'Minimum ${ver} Build')) return false;
 </c:forEach>
-
 setSubmit();
 disableButton('SaveButton');
 return true;
@@ -31,19 +32,20 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="latestBuild" name="acars.build.latest" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="acarsversion.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4"><content:airline /> ACARS CLIENT VERSION CONTROL</td>
+ <td colspan="4">GLOBAL ACARS CLIENT VERSION CONTROL</td>
 </tr>
 <c:forEach var="ver" items="${versions}">
+<c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
+<c:set var="minBuild" value="${versionInfo[ver]}" scope="request" />
 <tr>
- <td class="label">Minimum ${ver.version} Build</td>
- <td class="data"><el:text className="pri bld req" name="min_${ver.key}_build" idx="*" size="3" max="4" value="${ver.minBuild}" /></td>
+ <td class="label">Minimum ${ver} Build</td>
+ <td class="data"><el:text className="pri bld req" name="min_${versionCode}_build" idx="*" size="3" max="4" value="${minBuild}" /></td>
 </tr>
 </c:forEach>
 <tr>
