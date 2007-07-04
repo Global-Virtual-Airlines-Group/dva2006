@@ -88,27 +88,6 @@ public final class StringUtils {
 	}
 	
 	/**
-	 * Performs a search and replace on a String.
-	 * @param src the source string
-	 * @param substr the substring to search for
-	 * @param dst the substring to replace with
-	 * @return the updated String
-	 */
-	public static String replace(String src, String substr, CharSequence dst) {
-		
-		// Find the location
-		int pos = (src == null) ? -1 : src.toUpperCase().indexOf(substr.toUpperCase());
-		if (pos == -1)
-			return src;
-		
-		// Do the replace
-		StringBuilder buf = new StringBuilder(src.subSequence(0, pos));
-		buf.append(dst);
-		buf.append(src.substring(pos + substr.length()));
-		return buf.toString();
-	}
-
-	/**
 	 * Escapes forward slashes and single quotes for use when writing HTML using JavaScript.
 	 * @param rawString the string to escape
 	 * @return an escaped string
