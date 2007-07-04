@@ -82,6 +82,18 @@ public class MiscFunctions {
 	public static String escape(String s) {
 		return StringUtils.stripInlineHTML(s);
 	}
+	
+	/**
+	 * Performs a search and replace operation.
+	 * @param s the string to update
+	 * @param old the subtext to remove
+	 * @param n the subtext to replace with
+	 * @return the updated string
+	 * @since 1.1
+	 */
+	public static String replace(String s, String old, String n) {
+		return s.replace(old, n);
+	}
 
 	/**
 	 * Concatenates a series of list elements into a String.
