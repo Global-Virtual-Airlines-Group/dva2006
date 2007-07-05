@@ -4,14 +4,14 @@ package org.deltava.util.cache;
 import java.util.ArrayList;
 
 /**
- * A utility class to create a cacheable Set.
+ * A utility class to create a cacheable List.
  * @author Luke
  * @version 1.1
  * @since 1.1
  * @see CacheableSet
  */
 
-public class CacheableList<T> extends ArrayList<T> implements Cacheable {
+public class CacheableList<E> extends ArrayList<E> implements CacheableCollection<E> {
 
 	private Object _key;
 	
