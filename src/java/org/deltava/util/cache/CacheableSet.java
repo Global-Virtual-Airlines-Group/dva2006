@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
  * @see CacheableList
  */
 
-public class CacheableSet<E> extends LinkedHashSet<E> implements Cacheable {
+public class CacheableSet<E> extends LinkedHashSet<E> implements CacheableCollection<E> {
 	
 	private Object _key;
 	
