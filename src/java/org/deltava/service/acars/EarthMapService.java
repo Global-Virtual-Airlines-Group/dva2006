@@ -20,6 +20,7 @@ import org.deltava.beans.system.*;
 import org.deltava.dao.*;
 import org.deltava.service.*;
 import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 import org.gvagroup.acars.ACARSAdminInfo;
 import org.gvagroup.common.SharedData;
@@ -34,6 +35,9 @@ import org.gvagroup.common.SharedData;
 public class EarthMapService extends GoogleEarthService {
 	
 	private static final Logger log = Logger.getLogger(EarthMapService.class);
+	
+	private final Cache<CacheableList<RouteEntry>> _cache = new ExpiringCache<CacheableList<RouteEntry>>(1, 4);
+	private final Cache<CacheableSet<Integer>> _idCache = new ExpiringCache<CacheableSet<Integer>>(1, 4);
 
 	/**
 	 * Executes the Web Service, writing ACARS flight data in KML format.
@@ -44,10 +48,28 @@ public class EarthMapService extends GoogleEarthService {
 	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
-		// Get the ACARS flights currently in progress
-		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		Collection<Integer> ids = acarsPool.getFlightIDs();
-		Map positions = CollectionUtils.createMap(IPCUtils.deserialize(acarsPool.getSerializedInfo()), "ID");
+		// Get the ACARS connection data
+		CacheableList<RouteEntry> entries = _cache.get(MapService.class);
+		CacheableSet<Integer> ids = _idCache.get(MapService.class);
+		synchronized (_cache) {
+			if ((entries == null) || (ids == null)) {
+				entries = new CacheableList<RouteEntry>(MapService.class);
+				ids = new CacheableSet<Integer>(MapService.class);
+			
+				// Get the pool
+				ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+				if (acarsPool == null)
+					return SC_NOT_FOUND;
+			
+				entries.addAll(IPCUtils.deserialize(acarsPool));
+				ids.addAll(acarsPool.getFlightIDs());
+				_cache.add(entries);
+				_idCache.add(ids);
+			}
+		}
+		
+		// Get the entries
+		Map positions = CollectionUtils.createMap(entries, "ID");
 
 		// Load the flight information
 		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
