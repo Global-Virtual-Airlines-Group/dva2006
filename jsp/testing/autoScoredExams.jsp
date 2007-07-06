@@ -33,7 +33,7 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="autoscoredexams.do" method="get" validate="return false">
-<view:table className="view" pad="default" space="default" cmd="eprofiles">
+<view:table className="view" pad="default" space="default" cmd="autoscoredexams">
 <tr class="title">
  <td colspan="3" class="left caps">AUTOMATICALLY SCORED EXAMINATIONS</td>
  <td colspan="4" class="right">EXAMINATION <el:combo name="examName" size="1" idx="*" options="${examNames}" firstEntry="All Exams" value="${param.examName}" onChange="void setExam(this)" /></td>

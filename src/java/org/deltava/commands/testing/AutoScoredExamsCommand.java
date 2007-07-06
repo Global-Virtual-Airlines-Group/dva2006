@@ -30,20 +30,20 @@ public class AutoScoredExamsCommand extends AbstractViewCommand {
 		// Get the view context and examination name filter
 		ViewContext vc = initView(ctx);
 		String examName = ctx.getParameter("examName");
-		if (StringUtils.isEmpty(examName))
-			examName = null;
-		
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the DAO and the exams
+			// Get the DAO and the exam names
 			GetExam dao = new GetExam(con);
+			Collection<String> examNames = dao.getAutoScoredExamNames();
+			ctx.setAttribute("examNames", examNames, REQUEST);
+			if (StringUtils.isEmpty(examName) || (!examNames.contains(examName)))
+				examName = null;
+
+			// Get the exams
 			dao.setQueryStart(vc.getStart());
 			dao.setQueryMax(vc.getCount());
 			Collection<Examination> exams = dao.getAutoScored(examName);
-			
-			// Save exam names
-			ctx.setAttribute("examNames", dao.getAutoScoredExamNames(), REQUEST);
 			
 			// Get the Pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
