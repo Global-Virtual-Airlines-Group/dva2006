@@ -1,7 +1,7 @@
 // Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
-import java.util.Collection;
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
@@ -23,11 +23,11 @@ import org.deltava.util.StringUtils;
 
 public class QuestionProfileCommand extends AbstractFormCommand {
 
-    /**
-     * Callback method called when saving the profile.
-     * @param ctx the Command context
-     * @throws CommandException if an error occurs
-     */
+	/**
+	 * Callback method called when saving the profile.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
 	protected void execSave(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -39,7 +39,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 				qp = rdao.getQuestionProfile(ctx.getID());
 				if (qp == null)
 					throw notFoundException("Invalid Question Profile - " + ctx.getID());
-				
+
 				// Update question text / answer
 				qp.setQuestion(ctx.getParameter("question"));
 				if (qp instanceof MultipleChoice) {
@@ -61,26 +61,25 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 				}
 			}
-			
+
 			// Validate our access
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot modify Examination Question Profile");
-			
+
 			// Load the fields from the request
 			qp.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			Collection<String> examNames = ctx.getParameters("examNames");
-			if (examNames != null)
-			   qp.setExams(examNames);
-			
+			qp.setExams((examNames != null) ? examNames : new HashSet<String>());
+
 			// Start a transaction
 			ctx.startTX();
-			
+
 			// Save the profile
 			SetExamProfile wdao = new SetExamProfile(con);
 			wdao.write(qp);
-			
+
 			// Save/delete the image
 			FileUpload imgData = ctx.getFile("imgData");
 			boolean clearImg = Boolean.valueOf(ctx.getParameter("clearImg")).booleanValue();
@@ -93,7 +92,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
-			
+
 			// Save the question in the request
 			ctx.setAttribute("question", qp, REQUEST);
 		} catch (DAOException de) {
@@ -102,10 +101,10 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Set status attribute
 		ctx.setAttribute("isUpdate", Boolean.TRUE, REQUEST);
-		
+
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/testing/profileUpdate.jsp");
@@ -113,11 +112,11 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 
-    /**
-     * Callback method called when editing the profile.
-     * @param ctx the Command context
-     * @throws CommandException if an error occurs
-     */
+	/**
+	 * Callback method called when editing the profile.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -127,13 +126,13 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if ((qp == null) && (ctx.getID() != 0))
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
-			
+
 			// Validate our access
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
 			if (!access.getCanEdit())
 				throw securityException("Cannot modify Examination Question Profile");
-			
+
 			// Get exam names
 			ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
 
@@ -155,11 +154,11 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 		result.setSuccess(true);
 	}
 
-    /**
-     * Callback method called when reading the profile.
-     * @param ctx the Command context
-     * @throws CommandException if an error occurs
-     */
+	/**
+	 * Callback method called when reading the profile.
+	 * @param ctx the Command context
+	 * @throws CommandException if an error occurs
+	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
@@ -169,7 +168,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			QuestionProfile qp = dao.getQuestionProfile(ctx.getID());
 			if (qp == null)
 				throw notFoundException("Invalid Question Profile - " + ctx.getID());
-			
+
 			// Check our access level
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();

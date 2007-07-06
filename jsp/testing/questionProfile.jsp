@@ -42,9 +42,8 @@ return true;
 </tr>
 <c:if test="${fn:isMultiChoice(question)}">
 <tr>
- <td class="label" valign="top">Answer Choices
- <td class="data"><c:forEach var="choice" items="${question.choices}">
-${choice}<br />
+ <td class="label" valign="top">Answer Choices</td>
+ <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br />
 </c:forEach></td>
 </tr>
 </c:if>
@@ -90,7 +89,7 @@ ${choice}<br />
 <el:table className="bar" pad="default" space="default">
 <tr>
  <td><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" />
-<c:if test="${access.canDelete}">
+<c:if test="${access.canDelete && (question.totalAnswers == 0)}">
  <el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" />
 </c:if>
 </td>
