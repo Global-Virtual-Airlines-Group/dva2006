@@ -92,6 +92,22 @@ public class SetACARSLog extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Purges old ACARS command logs from the database older than a specified number of hours.
+	 * @param hours the number of hours
+	 * @return the number of entries purged
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purgeLogs(int hours) throws DAOException {
+		try {
+			prepareStatement("DELETE FROM acars.COMMAND_LOG WHERE (CMDDATE < DATE_SUB(NOW(), INTERVAL ? HOURS))");
+			_ps.setInt(1, hours);
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Moves ACARS position data from the live table to the archive.
