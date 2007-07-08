@@ -17,6 +17,7 @@ public abstract class AbstractDAOTestCase extends TestCase {
         props.load(new FileInputStream("data/jdbc.properties"));
 
         Class.forName(props.getProperty("driver"));
+        DriverManager.setLoginTimeout(3);
         _con = DriverManager.getConnection(props.getProperty("url"), props.getProperty("user"), props.getProperty("password"));
     }
     
