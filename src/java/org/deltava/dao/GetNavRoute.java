@@ -200,6 +200,8 @@ public class GetNavRoute extends GetNavData {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public LinkedList<NavigationDataBean> getRouteWaypoints(String route) throws DAOException {
+		if (route == null)
+			return new LinkedList<NavigationDataBean>();
 
 		// Check the cache
 		Cacheable obj = _cache.get(route);
