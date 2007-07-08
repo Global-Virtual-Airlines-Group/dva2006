@@ -169,7 +169,7 @@ public class FlightReportService extends WebService {
 		afr.setSubmittedOn(afr.getDate());
 		afr.setAirportD(inf.getAirportD());
 		afr.setAirportA(inf.getAirportA());
-		afr.setRemarks(inf.getRemarks());
+		afr.setRemarks("OFFLINE PIREP: " + inf.getRemarks());
 		afr.setEquipmentType(inf.getEquipmentType());
 		inf.setFlightCode(afr.getFlightCode());
 
