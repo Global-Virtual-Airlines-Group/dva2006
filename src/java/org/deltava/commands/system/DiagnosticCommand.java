@@ -2,6 +2,7 @@
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.sql.Connection;
 
 import org.apache.log4j.Logger;
 
@@ -85,8 +86,15 @@ public class DiagnosticCommand extends AbstractCommand {
 			ctx.setAttribute("workers", acarsInfo.getWorkers(), REQUEST);
 
 			// Save the ACARS statistics in the request
-			CommandStats stats = CommandStats.getInstance();
-			ctx.setAttribute("acarsCmdStats", stats.getInfo(), REQUEST);
+			try {
+				Connection con = ctx.getConnection();
+				GetACARSLog addao = new GetACARSLog(con);
+				ctx.setAttribute("acarsCmdStats", addao.getCommandStats(), REQUEST);
+			} catch (DAOException de) {
+				log.error("Error loading ACARS command statistics - " + de.getMessage(), de);
+			} finally {
+				ctx.release();
+			}
 			
 			// Get the ACARS webapp JDBC Connection Pool
 			IPCInfo<ConnectionInfo> acarsCPool = (IPCInfo) SharedData.get(SharedData.JDBC_POOL + "ACARS");

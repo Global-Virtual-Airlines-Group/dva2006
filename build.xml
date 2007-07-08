@@ -97,7 +97,7 @@
 	<target name="compile">
 		<mkdir dir="${java.io.tmpdir}/build/classes" />
 		<javac srcdir="src/java" optimize="on" destdir="${java.io.tmpdir}/build/classes"
-		 debug="true" debuglevel="lines,vars,source" source="1.5" target="1.5" compiler="modern">
+		 debug="true" debuglevel="lines,vars,source" source="1.6" target="1.6" compiler="modern">
 			<compilerarg value="-Xlint:unchecked,deprecation,finally" />
 	    	<classpath>
 				<pathelement path="${classpath}" />
@@ -139,7 +139,7 @@
 		<!-- Compile the files -->
 		<mkdir dir="${java.io.tmpdir}/build/jsp" />
 		<javac srcdir="${java.io.tmpdir}/src/jsp" destdir="${java.io.tmpdir}/build/jsp"
-			debug="on" debuglevel="source" optimize="on" target="1.5" source="1.5">
+			debug="on" debuglevel="source" optimize="on" target="1.6" source="1.6">
 			<compilerarg value="-Xlint:deprecation,finally" />
 			<classpath refid="jspc.classpath" />
 			<include name="org/deltava/jsp/**/*.java" />
