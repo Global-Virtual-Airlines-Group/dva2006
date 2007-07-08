@@ -79,13 +79,25 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void write(InstructionBusy ib) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMENTS) VALUES (?, ?, ?, ?)");
+			startTransaction();
+			
+			// Nuke any existing entries
+			prepareStatement("DELETE FROM INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME >= ?) AND (STARTTIME <= ?)");
+			_ps.setInt(1, ib.getID());
+			_ps.setTimestamp(2, createTimestamp(ib.getStartTime()));
+			_ps.setTimestamp(3, createTimestamp(ib.getEndTime()));
+			executeUpdate(0);
+			
+			// Add the entry
+			prepareStatement("INSERT INTO INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, ib.getID());
 			_ps.setTimestamp(2, createTimestamp(ib.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ib.getEndTime()));
 			_ps.setString(4, ib.getComments());
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}
