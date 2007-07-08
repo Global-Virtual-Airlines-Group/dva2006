@@ -22,6 +22,37 @@ public class GetACARSLog extends GetACARSData {
 	public GetACARSLog(Connection c) {
 		super(c);
 	}
+	
+	/**
+	 * Retrieves ACARS server Command statistics from the database.
+	 * @return a Collection of CommandEntry beans
+	 * @throws DAOException if a JDBC error occurss
+	 */
+	public Collection<CommandEntry> getCommandStats() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT CLASS, COUNT(CMDDATE), SUM(EXECTIME), MAX(EXECTIME), MIN(EXECTIME) "
+					+ "FROM acars.COMMAND_STATS GROUP BY CLASS");
+			
+			// Execute the query
+			Collection<CommandEntry> results = new ArrayList<CommandEntry>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				CommandEntry entry = new CommandEntry(rs.getString(1));
+				entry.setCount(rs.getLong(2));
+				entry.setTotalTime(rs.getLong(3));
+				entry.setMaxTime(rs.getInt(4));
+				entry.setMinTime(rs.getInt(5));
+				results.add(entry);
+			}
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all ACARS connection log entries matching particular criteria.
