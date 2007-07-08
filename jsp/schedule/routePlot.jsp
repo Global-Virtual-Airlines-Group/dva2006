@@ -141,12 +141,12 @@ return true;
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airportD" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" />
+ <td class="data"><el:combo name="airportD" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
  <el:text name="airportDCode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportD, this.value); plotMap()" /></td>
 </tr>
 <tr>
  <td class="label">Arriving at</td>
- <td class="data"><el:combo name="airportA" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void plotMap()" />
+ <td class="data"><el:combo name="airportA" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotMap()" />
  <el:text name="airportACode" idx="*" size="3" max="4" onBlur="setAirport(document.forms[0].airportA, this.value); plotMap()" /></td>
 </tr>
 <tr>
@@ -183,6 +183,11 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
+// Load the airports
+var f = document.forms[0];
+updateAirports(f.airportD, 'airline=all', ${!useIATA}, getValue(f.airportD));
+updateAirports(f.airportA, 'airline=all', ${!useIATA}, getValue(f.airportD));
+
 // Create the map
 var map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
 map.addControl(new GLargeMapControl());
