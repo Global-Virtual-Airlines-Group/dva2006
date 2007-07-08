@@ -53,6 +53,7 @@ public class HelpDeskAccessControl extends AccessControl {
 
 		// Calculate access rights
 		boolean isHR = _ctx.isUserInRole("HR");
+		boolean isHelpDesk = _ctx.isUserInRole("HelpDesk");
 		boolean isAcademy = _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("AcademyAdmin");
 		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
 		boolean isMine = (_i.getAuthorID() == p.getID());
@@ -60,8 +61,8 @@ public class HelpDeskAccessControl extends AccessControl {
 		if (!_i.getPublic() && !isMine && !isAdmin)
 			throw new AccessControlException("Not Authorized");
 		
-		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isAdmin;
-		_canUpdateStatus = isAdmin;
+		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isHelpDesk || isAdmin;
+		_canUpdateStatus = isAdmin || isHelpDesk;
 		_canClose = _canUpdateStatus && (_i.getStatus() != Issue.CLOSED);
 		_canUpdateContent = isHR;
 	}
