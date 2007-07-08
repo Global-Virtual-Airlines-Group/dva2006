@@ -21,7 +21,7 @@ import org.deltava.util.RoleUtils;
 
 public class HelpDeskCommand extends AbstractCommand {
 	
-	private static final List<String> ADMIN_ROLES = Arrays.asList("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin");
+	private static final List<String> ADMIN_ROLES = Arrays.asList("HR", "PIREP", "Examination", "Instrutor", "AcademyAdmin", "HelpDesk");
 
     /**
      * Executes the command.
