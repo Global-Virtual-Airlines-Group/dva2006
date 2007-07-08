@@ -8,7 +8,6 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
-import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
@@ -38,7 +37,6 @@ public class RoutePlotMapService extends RouteMapService {
 		List<TerminalRoute> tRoutes = new ArrayList<TerminalRoute>();
 		Collection<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		try {
-			long startTime = System.currentTimeMillis();
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
 			
 			// Translate IATA to ICAO codes
@@ -67,21 +65,8 @@ public class RoutePlotMapService extends RouteMapService {
 
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
-				GeoLocation lastLoc = CollectionUtils.getLast(routePoints);
-				Collection<String> wPoints = StringUtils.split(ctx.getParameter("route"), " ");
-				NavigationDataMap ndmap = dao.getByID(wPoints);
-				for (Iterator<String> i = wPoints.iterator(); i.hasNext(); ) {
-					String wp = i.next();
-					NavigationDataBean point = ndmap.get(wp, lastLoc);
-					if (point != null) {
-						routePoints.add(point);
-						lastLoc = point;
-					}
-					
-					// Check that we aren't taking too long
-					if ((System.currentTimeMillis() - startTime) > 35000)
-						throw new DAOException("Search Timeout");
-				}
+				List<NavigationDataBean> points = dao.getRouteWaypoints(ctx.getParameter("route"));
+				routePoints.addAll(points);
 			}
 
 			// Check if we have a STAR

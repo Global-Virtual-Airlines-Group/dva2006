@@ -8,7 +8,6 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.assign.*;
-import org.deltava.beans.navdata.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.beans.schedule.*;
@@ -109,7 +108,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Validate airports
 			if ((aa == null) || (ad == null))
 				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 
-						+ ctx.getParameter("airportACode"));
+					+ ctx.getParameter("airportACode"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
 			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
@@ -384,9 +383,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getFirstName() + " "
 						+ dPilot.getLastName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
-			} else {
+			} else
 				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
-			}
 
 			// If this PIREP was flown as part of an event, get its information
 			int eventID = fr.getDatabaseID(FlightReport.DBID_EVENT);
@@ -424,32 +422,14 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
-					List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
-					GeoPosition lastWaypoint = new GeoPosition(fr.getAirportD());
-
-					// Get navigation aids
-					GetNavData navdao = new GetNavData(con);
-					NavigationDataMap navaids = navdao.getByID(routeEntries);
-
-					// Filter out navaids and put them in the correct order
-					List<NavigationDataBean> routeInfo = new ArrayList<NavigationDataBean>();
-					for (Iterator<String> i = routeEntries.iterator(); i.hasNext();) {
-						String navCode = i.next();
-						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
-						if (wPoint != null) {
-							if (lastWaypoint.distanceTo(wPoint) < fr.getDistance()) {
-								routeInfo.add(wPoint);
-								lastWaypoint.setLatitude(wPoint.getLatitude());
-								lastWaypoint.setLongitude(wPoint.getLongitude());
-							}
-						}
-					}
+					GetNavRoute navdao = new GetNavRoute(con);
+					List<? extends GeoLocation> entries = navdao.getRouteWaypoints(info.getRoute());
 
 					// Get the connectoin data
 					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
 
 					// Save ACARS info
-					ctx.setAttribute("filedRoute", routeInfo, REQUEST);
+					ctx.setAttribute("filedRoute", entries, REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					ctx.setAttribute("conInfo", conInfo, REQUEST);
 				}
