@@ -164,7 +164,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			_ps.close();
 			
 			// Load correct answer copunts
-			loadResults(Collections.singleton(qp));
+			loadResults(Collections.singleton(qp), true);
 
 			// Get multiple choice choices
 			if (isMultiChoice) {
@@ -280,7 +280,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			_ps.close();
 			
 			// Load the correct answer counts
-			loadResults(results);
+			loadResults(results, false);
 			
 			// Convert to a map so we can load multiple choices
 			if (hasMultiChoice) {
@@ -416,7 +416,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 	/**
 	 * Helper method to populate correct/incorrect answer statistics.
 	 */
-	private void loadResults(Collection<QuestionProfile> qs) throws SQLException {
+	private void loadResults(Collection<QuestionProfile> qs, boolean loadAll) throws SQLException {
 
 		// Determine what question IDs to load
 		Collection<Integer> IDs = new HashSet<Integer>();
@@ -450,7 +450,7 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 		
 		// Prepare the statement
 		prepareStatementWithoutLimits(sqlBuf.toString());
-		_ps.setInt(1, SystemData.getInt("testing.correct_ratio_age", 90));
+		_ps.setInt(1, loadAll ? Short.MAX_VALUE : SystemData.getInt("testing.correct_ratio_age", 90));
 		_ps.setBoolean(2, false);
 		
 		// Execute the query and populate the cache and question profiles
