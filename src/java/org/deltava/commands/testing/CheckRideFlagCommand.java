@@ -43,11 +43,12 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			// Look for a transfer request
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest tx = txdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			int crID = (tx == null) ? 0 : tx.getCheckRideID();
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = (tx.getCheckRideID() != 0) ? exdao.getCheckRide(tx.getCheckRideID()) : 
-				exdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.NEW);
+			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(SystemData.get("airline.db"), 
+					fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.NEW);
 			boolean newCR = (cr == null);
 			if (newCR) {
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
