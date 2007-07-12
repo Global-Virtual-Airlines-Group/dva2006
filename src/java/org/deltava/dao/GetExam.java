@@ -487,8 +487,8 @@ public class GetExam extends DAO {
 			cr.setScorerID(rs.getInt(9));
 			cr.setPassFail(rs.getBoolean(10));
 			cr.setComments(rs.getString(11));
-			cr.setEquipmentType(rs.getString(12));
-			cr.setAircraftType(rs.getString(13));
+			cr.setAircraftType(rs.getString(12));
+			cr.setEquipmentType(rs.getString(13));
 			cr.setAcademy(rs.getBoolean(14));
 			cr.setStage(rs.getInt(15));
 			if (hasAcademy)
