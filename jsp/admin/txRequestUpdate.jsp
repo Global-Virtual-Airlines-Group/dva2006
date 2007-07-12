@@ -28,8 +28,7 @@ Your request for additional ratings from the <span class="pri bld">${txReq.equip
 <div class="updateHdr">Transfer Request Submitted</div>
 <br />
 Your request to be transferred to the <span class="pri bld">${txReq.equipmentType}</span></c:if>
-<br />
-program has been submitted. A Check Ride may be required in order to complete the process. If this is the case, 
+ program has been submitted. A Check Ride may be required in order to complete the process. If this is the case, 
 you will be notified via e-mail within the next 24 to 72 hours regarding the requirements for your Check Ride.<br />
 </c:if>
 <c:if test="${isApprove}">
