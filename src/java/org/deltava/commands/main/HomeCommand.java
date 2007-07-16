@@ -46,6 +46,7 @@ public class HomeCommand extends AbstractCommand {
 	 * @param ctx the Command context
 	 * @throws CommandException if an error occurs
 	 */
+	@SuppressWarnings("unchecked")
 	public void execute(CommandContext ctx) throws CommandException {
 
 		// Get Command result
@@ -86,7 +87,7 @@ public class HomeCommand extends AbstractCommand {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
 			cList.remove(new Integer(ACARS_USERS));
 		}
-
+		
 		try {
 			Connection con = ctx.getConnection();
 
@@ -128,6 +129,7 @@ public class HomeCommand extends AbstractCommand {
 			Integer contentType = cList.get(ofs);
 			
 			// Figure out dynamic content
+			
 			switch (contentType.intValue()) {
 				// Next Event
 				case NEXT_EVENT:
