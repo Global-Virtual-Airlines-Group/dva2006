@@ -11,7 +11,7 @@ import org.deltava.util.CalendarUtils;
 import org.deltava.util.cache.*;
 
 /**
- * A Data Access Object to retrieve airline statistics.
+ * A Data Access Object to retrieve Airline statistics.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -274,11 +274,19 @@ public class GetStatistics extends DAO implements CachingDAO {
 	 * @return a List of StatsEntry beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy, boolean descSort)
-			throws DAOException {
+	public List<FlightStatsEntry> getPIREPStatistics(String groupBy, String orderBy, boolean descSort) throws DAOException {
 
-		// Generate SQL statement
-		StringBuilder sqlBuf = (groupBy.indexOf("P.") != -1) ? getPilotJoinSQL(groupBy) : getSQL(groupBy);
+		// Get the SQL statement to use
+		StringBuilder sqlBuf = null;
+		if (groupBy.contains("AP."))
+			sqlBuf = getAirportJoinSQL("AP.NAME", groupBy.replace("AP.", "F."));
+		else if (groupBy.contains("P."))
+			sqlBuf = getPilotJoinSQL(groupBy);
+		else if (groupBy.contains("AL."))
+			sqlBuf = getAirlineJoinSQL(groupBy);
+		else
+			sqlBuf = getSQL(groupBy);
+		
 		sqlBuf.append(orderBy);
 		if (descSort)
 			sqlBuf.append(" DESC");
@@ -386,17 +394,14 @@ public class GetStatistics extends DAO implements CachingDAO {
 		sqlBuf.append(orderBy);
 
 		try {
-			prepareStatement(sqlBuf.toString());
-
 			// Execute the query
+			prepareStatement(sqlBuf.toString());
 			ResultSet rs = _ps.executeQuery();
 
 			// Iterate through the results
 			List<CoolerStatsEntry> results = new ArrayList<CoolerStatsEntry>();
-			while (rs.next()) {
-				CoolerStatsEntry entry = new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3));
-				results.add(entry);
-			}
+			while (rs.next())
+				results.add(new CoolerStatsEntry(rs.getString(1), rs.getInt(2), rs.getInt(3)));
 
 			// Clean up and return
 			rs.close();
@@ -467,6 +472,35 @@ public class GetStatistics extends DAO implements CachingDAO {
 			+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
 			+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM PILOTS P, PIREPS F WHERE (P.ID=F.PILOT_ID) AND "
 			+ "(F.STATUS=?) GROUP BY LABEL ORDER BY ");
+		return buf;
+	}
+	
+	/**
+	 * Private helper method to return SQL statement that involves a join on the <i>AIRLINES</i> table.
+	 */
+	private StringBuilder getAirlineJoinSQL(String groupBy) {
+		StringBuilder buf = new StringBuilder("SELECT ");
+		buf.append(groupBy);
+		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
+				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM common.AIRLINES AL, PIREPS F WHERE (AL.CODE=F.AIRLINE) "
+				+ "AND (F.STATUS=?) GROUP BY LABEL ORDER BY ");
+		return buf;
+	}
+
+	/**
+	 * Private helper method to return SQL statement that involves a join on the <i>AIRPORTS</i> table.
+	 */
+	private StringBuilder getAirportJoinSQL(String groupBy, String apColumn) {
+		StringBuilder buf = new StringBuilder("SELECT ");
+		buf.append(groupBy);
+		buf.append(" AS LABEL, COUNT(F.DISTANCE) AS LEGS, SUM(F.DISTANCE) AS MILES, "
+				+ "ROUND(SUM(F.FLIGHT_TIME), 1) AS HOURS, AVG(F.FLIGHT_TIME) AS AVGHOURS, AVG(F.DISTANCE) AS "
+				+ "AVGMILES, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS ACARSLEGS, SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS OLEGS, "
+				+ "SUM(IF((F.ATTR & ?) > 0, 1, 0)) AS HISTLEGS FROM common.AIRPORTS AP, PIREPS F WHERE (AP.IATA=");
+		buf.append(apColumn);
+		buf.append(") AND (F.STATUS=?) GROUP BY LABEL ORDER BY ");
 		return buf;
 	}
 }

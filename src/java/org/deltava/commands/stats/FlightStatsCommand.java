@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.List;
@@ -28,10 +28,10 @@ public class FlightStatsCommand extends AbstractViewCommand {
 			"Avg. Hours", "Avg. Miles", "Flight Date", "ACARS Legs", "Online Legs", "Historic Legs"}, SORT_CODE);
 
 	// Group by options
-	private static final String[] GROUP_CODE = { "CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE",
-			"$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)" };
+	private static final String[] GROUP_CODE = {"CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME)", "F.DATE", "F.EQTYPE",
+			"AL.NAME", "AP.AIRPORT_D", "AP.AIRPORT_A", "$MONTH", "DATE_SUB(F.DATE, INTERVAL WEEKDAY(F.DATE) DAY)" };
 	private static final List GROUP_OPTIONS = ComboUtils.fromArray(new String[] {"Pilot Name", "Flight Date", "Equipment Type", 
-			"Month", "Week" }, GROUP_CODE);
+			"Airline", "Departed from", "Arrived at", "Month", "Week" }, GROUP_CODE);
 
 	/**
 	 * Execute the command.
@@ -49,7 +49,7 @@ public class FlightStatsCommand extends AbstractViewCommand {
 		String labelType = ctx.getParameter("groupType");
 		if (StringUtils.arrayIndexOf(GROUP_CODE, labelType) == -1)
 			labelType = GROUP_CODE[0];
-		else if (GROUP_CODE[3].equals(labelType))
+		else if (GROUP_CODE[6].equals(labelType))
 			labelType = "DATE_FORMAT(F.DATE, '%M %x')";
 		
 		try {
