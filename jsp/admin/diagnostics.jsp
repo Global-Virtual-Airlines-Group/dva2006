@@ -63,6 +63,12 @@
  <td class="label">Application Started on</td>
  <td class="data"><fmt:date date="${startedOn}" /> (<fmt:int value="${execTime / 60}" /> minutes)</td>
 </tr>
+<c:if test="${!empty appNames}">
+<tr>
+ <td class="label">Web Application Names</td>
+ <td class="data"><fmt:list value="${appNames}" delim=", " /></td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Servlet API</td>
  <td class="data">Version ${majorServletAPI}.${minorServletAPI}</td>
