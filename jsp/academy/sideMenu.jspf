@@ -2,6 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
@@ -76,7 +77,7 @@
  <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
- <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
+ <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
 </tr>
 <c:if test="${acarsEnabled}">
 <tr class="MenuHeader"><td>ACARS</td></tr>

@@ -6,9 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler Channel Updated</title>
+<title><content:airline /> ${forumName} Channel Updated</title>
 <content:css name="main" browserSpecific="true" />
 <content:pics />
 </head>
@@ -21,21 +22,21 @@
 <!-- Main Body Frame -->
 <content:region id="main">
 <c:if test="${isCreate}">
-<!-- Water Cooler Channel created -->
-<div class="updateHdr">Water Cooler Channel Created</div>
+<!-- ${forumName} Channel created -->
+<div class="updateHdr">${forumName} Channel Created</div>
 <br />
-The <content:airline /> Water Cooler Channel <span class="pri bld">${channel.name}</span> has been successfully 
+The <content:airline /> ${forumName} Channel <span class="pri bld">${channel.name}</span> has been successfully 
 saved in the database.<br />
 </c:if>
 
 <c:if test="${isUpdate}">
-<!-- Water Cooler Channel updated -->
-<div class="updateHdr">Water Cooler Channel Updated</div>
+<!-- ${forumName} Channel updated -->
+<div class="updateHdr">${forumName} Channel Updated</div>
 <br />
-The <content:airline /> Water Cooler Channel <span class="pri bld">${channel.name}</span> has been successfully 
+The <content:airline /> ${forumName} Channel <span class="pri bld">${channel.name}</span> has been successfully 
 updated in the database.<br />
 <c:if test="${isRename}">
-This Water Cooler Channel has been renamed to <span class="pri bld">${newName}</span>.<br />
+This ${forumName} Channel has been renamed to <span class="pri bld">${newName}</span>.<br />
 </c:if>
 </c:if>
 <br />

@@ -4,9 +4,10 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title>New <content:airline /> Water Cooler Thread</title>
+<title>New <content:airline /> ${forumName} Thread</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -83,14 +84,14 @@ return true;
 <el:form action="threadpost.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td colspan="2" class="left caps">New Water Cooler Discusion Thread</td>
+ <td colspan="2" class="left caps">New ${forumName} Discusion Thread</td>
 </tr>
 <tr>
  <td class="label">Thread Title</td>
  <td class="data"><el:text name="subject" className="pri bld req" idx="*" size="64" max="80" value="${param.subject}" /></td>
 </tr>
 <tr>
- <td class="label">Water Cooler Channel</td>
+ <td class="label">${forumName} Channel</td>
  <td class="data"><el:combo name="id" idx="*" size="1" options="${channels}" value="${empty param.id ? 'General Aviation Discussion' : param.id}" /></td>
 </tr>
 <content:filter roles="Moderator,PIREP,HR,Examination">

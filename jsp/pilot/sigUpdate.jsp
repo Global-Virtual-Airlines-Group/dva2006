@@ -5,9 +5,10 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler Signature Update</title>
+<title><content:airline /> ${forumName} Signature Update</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -37,7 +38,7 @@ return true;
 <el:form action="sigupdate.do" method="post" link="${pilot}" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2" class="left">WATER COOLER SIGNATURE IMAGE UPDATE - ${pilot.name}</td>
+ <td colspan="2" class="left">${forumName} SIGNATURE IMAGE UPDATE - ${pilot.name}</td>
 </tr>
 <tr>
  <td class="label">Signature Image</td>

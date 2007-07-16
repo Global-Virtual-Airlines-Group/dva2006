@@ -6,16 +6,17 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler Search</title>
+<title><content:airline /> ${forumName} Search</title>
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:rss title="${airlineName} Water Cooler" path="/cooler_rss.ws" />
+<content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
 {
@@ -46,7 +47,7 @@ return true;
 <el:form action="coolersearch.do" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <tr class="title">
- <td colspan="2" class="left caps">Water Cooler Search</td>
+ <td colspan="2" class="left caps">${forumName} Search</td>
 </tr>
 <tr>
  <td class="label">Search String</td>
@@ -70,7 +71,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH WATER COOLER" /></td>
+ <td><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH ${forumName}" /></td>
 </tr>
 </el:table>
 
@@ -80,7 +81,7 @@ return true;
 <view:table className="view" pad="default" space="default" cmd="coolersearch">
 <!-- Table Sort Combo Bar -->
 <tr class="title">
- <td colspan="2" class="left caps">WATER COOLER SEARCH RESULTS</td>
+ <td colspan="2" class="left caps">${forumName} SEARCH RESULTS</td>
  <td colspan="3" class="right">CHANNEL <el:combo name="sortType" size="1" options="${channels}" value="${channel}" onChange="void setChannel(this)" /></td>
 </tr>
 
@@ -121,7 +122,7 @@ return true;
 <c:if test="${empty viewContext.results}">
 <el:table className="view" space="default" pad="default">
 <tr class="pri bld caps">
- <td>No <content:airline /> Water Cooler Discussion Threads matching your criteria were found.</td>
+ <td>No <content:airline /> ${forumName} Discussion Threads matching your criteria were found.</td>
 </tr>
 </el:table>
 </c:if>

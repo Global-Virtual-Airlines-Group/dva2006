@@ -243,7 +243,8 @@ public class ThreadPostCommand extends AbstractCommand {
 
 			// Write the image to the gallery if we have one
 			if (img != null) {
-				Image gImg = new Image(mt.getSubject(), "Water Cooler Screen Shot");
+				String forumName = SystemData.get("airline.forum");
+				Image gImg = new Image(mt.getSubject(), forumName + " Screen Shot");
 				gImg.setAuthorID(p.getID());
 				gImg.setCreatedOn(new Date());
 				gImg.load(img.getBuffer());

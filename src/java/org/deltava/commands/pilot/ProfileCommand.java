@@ -88,7 +88,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			p.setTimeFormat(ctx.getParameter("tf"));
 			p.setNumberFormat(ctx.getParameter("nf"));
 
-			// Get Water Cooler option checkboxes
+			// Get Discussion Forum option checkboxes
 			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
 			p.setShowSSThreads(Boolean.valueOf(ctx.getParameter("showImageThreads")).booleanValue());
 			p.setHasDefaultSignature(Boolean.valueOf(ctx.getParameter("useDefaultSig")).booleanValue());
@@ -118,16 +118,16 @@ public class ProfileCommand extends AbstractFormCommand {
 					log.info(p.getName() + " " + upd.getDescription());
 				}
 
-				// Check Water Cooler access
+				// Check Discussion Forum access
 				boolean coolerPostsLocked = Boolean.valueOf(ctx.getParameter("noCooler")).booleanValue();
 				if (coolerPostsLocked != p.getNoCooler()) {
 					p.setNoCooler(coolerPostsLocked);
+					String forumName = SystemData.get("airline.forum");
 
 					// Write the status update entry
 					StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
 					upd.setAuthorID(ctx.getUser().getID());
-					upd.setDescription(coolerPostsLocked ? "Water Cooler posts locked out"
-							: "Water Cooler posts enabled");
+					upd.setDescription(forumName + " posts " + (coolerPostsLocked ? "locked out" : "enabled"));
 					updates.add(upd);
 					log.warn(p.getName() + " " + upd.getDescription());
 				}
