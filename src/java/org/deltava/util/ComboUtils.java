@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util;
 
 import java.util.*;
@@ -18,7 +18,7 @@ public class ComboUtils {
     private ComboUtils() { // private constructor since we are all static
     }
 
-    private static class ComboAliasImpl implements ComboAlias, Comparable {
+    private static class ComboAliasImpl implements ComboAlias, Comparable<ComboAlias> {
         
         private String _name;
         private String _alias;
@@ -41,8 +41,7 @@ public class ComboUtils {
             return _name;
         }
         
-        public int compareTo(Object o2) {
-        	ComboAlias c2 = (ComboAlias) o2;
+        public int compareTo(ComboAlias c2) {
         	int tmpResult = _name.compareTo(c2.getComboName());
         	if (tmpResult == 0)
         		tmpResult = _alias.compareTo(c2.getComboAlias());
@@ -51,7 +50,7 @@ public class ComboUtils {
         }
         
         public boolean equals(Object o2) {
-        	return (o2 instanceof ComboAlias) ? (compareTo(o2) == 0) : false;
+        	return (o2 instanceof ComboAlias) ? (compareTo((ComboAlias) o2) == 0) : false;
         }
     }
 
@@ -61,7 +60,7 @@ public class ComboUtils {
      * @return a List of ComboAlias objects
      * @see ComboUtils#fromList(Collection)
      */
-    public static List fromArray(String... names) {
+    public static List<ComboAlias> fromArray(String... names) {
         return fromList(Arrays.asList(names));
     }
 
