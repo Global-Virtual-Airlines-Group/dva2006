@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 /**
@@ -14,11 +14,11 @@ public interface Emoticons {
     * Emoticon names.
     */
    public static final String[] ICON_NAMES = {"smile", "wink", "cool", "frown", "eek", "mad", "redface", "confused",
-         "rolleyes", "biggrin", "razz", "plotting", "judge", "slitwrist", "scared", "evilgrin", "rofl", "nuts", "blahblah"};
+         "rolleyes", "biggrin", "razz", "plotting", "judge", "slitwrist", "scared", "evilgrin", "rofl", "nuts", "blahblah", "puke", "rawk"};
    
    /**
     * Emoticon codes.
     */
    public static final String[] ICON_CODES = {":)", ";)", null, ":(", ":O", null, null, null, null, ":D", ":p", null, null, 
-         null, null, ">)", null, null, null};
+         null, null, ">)", null, null, null, null, null};
 }
