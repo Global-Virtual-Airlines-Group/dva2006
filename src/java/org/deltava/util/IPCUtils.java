@@ -24,7 +24,28 @@ public class IPCUtils {
 	}
 	
 	/**
-	 * Deserializes
+	 * Reserializes a shared object to allow local access if loaded by a different class loader.
+	 * @param data the shared object
+	 * @return a local class version of the shared object
+	 */
+	public static Serializable reserialize(Serializable data) {
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream(1024);
+			ObjectOutputStream oos = new ObjectOutputStream(bos);
+			oos.writeObject(data);
+			ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+			return (Serializable) in.readObject();
+		} catch (ClassNotFoundException cnfe) {
+			log.error("Unknown class " + cnfe.getMessage());
+		} catch (IOException ie) {
+			log.error("I/O exception - " + ie.getMessage(), ie);
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Deserializes shared data.
 	 * @param data the object that can pass serialized data
 	 * @return a Collection of beans
 	 */
