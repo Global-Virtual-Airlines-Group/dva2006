@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 
 public class PIREPCommand extends AbstractFormCommand {
 
-	private static final Collection<String> _flightTimes = new LinkedHashSet<String>();
+	private final Collection<String> _flightTimes = new LinkedHashSet<String>();
 	private static final Collection _fsVersions = ComboUtils.fromArray(FlightReport.FSVERSION).subList(1,
 			FlightReport.FSVERSION.length);
 
@@ -49,12 +49,8 @@ public class PIREPCommand extends AbstractFormCommand {
 	 */
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
-		
-		// Init flight times
-		if (_flightTimes.isEmpty()) {
-			for (int x = 2; x < 185; x++)
-				_flightTimes.add(String.valueOf(x / 10.0d));
-		}
+		for (int x = 2; x < 185; x++)
+			_flightTimes.add(String.valueOf(x / 10.0f));
 	}
 
 	/**
@@ -79,13 +75,11 @@ public class PIREPCommand extends AbstractFormCommand {
 			boolean doCreate = (fr == null);
 			boolean isAssignment = !doCreate && (fr.getDatabaseID(FlightReport.DBID_ASSIGN) != 0);
 
-			// Create the access controller
+			// Create the access controller and validate our access
 			PIREPAccessControl ac = new PIREPAccessControl(ctx, fr);
 			ac.validate();
 			boolean hasAccess = doCreate ? ac.getCanCreate() : ac.getCanEdit();
 			doSubmit &= ac.getCanSubmitIfEdit(); // If we cannot submit just turn that off
-
-			// Validate our access
 			if (!hasAccess)
 				throw securityException("Not Authorized");
 
@@ -107,35 +101,20 @@ public class PIREPCommand extends AbstractFormCommand {
 			
 			// Validate airports
 			if ((aa == null) || (ad == null))
-				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 
-					+ ctx.getParameter("airportACode"));
+				throw notFoundException("Invalid Airport(s) - " + ctx.getParameter("airportDCode") + " / " 	+ ctx.getParameter("airportACode"));
 
 			// If we are creating a new PIREP, check if draft PIREP exists with a similar route pair
-			List draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
+			List<FlightReport> draftFlights = rdao.getDraftReports(ctx.getUser().getID(), ad, aa, SystemData.get("airline.db"));
 			if (doCreate && (!draftFlights.isEmpty()))
-				fr = (FlightReport) draftFlights.get(0);
+				fr = draftFlights.get(0);
 
 			// Create a new PIREP bean if we're creating one, otherwise update the flight code
-			if (fr == null) {
-				try {
-					fr = new FlightReport(a, Integer.parseInt(ctx.getParameter("flightNumber")), Integer.parseInt(ctx
-							.getParameter("flightLeg")));
-				} catch (NumberFormatException nfe) {
-					CommandException ce = new CommandException("Invalid Flight/Leg Number");
-					ce.setLogStackDump(false);
-					throw ce;
-				}
-			} else {
+			if (fr != null) {
 				fr.setAirline(a);
-				try {
-					fr.setFlightNumber(Integer.parseInt(ctx.getParameter("flightNumber")));
-					fr.setLeg(Integer.parseInt(ctx.getParameter("flightLeg")));
-				} catch (NumberFormatException nfe) {
-					CommandException ce = new CommandException("Invalid Flight/Leg Number");
-					ce.setLogStackDump(false);
-					throw ce;
-				}
-			}
+				fr.setFlightNumber(StringUtils.parse(ctx.getParameter("flightNumber"), 1));
+				fr.setFlightNumber(StringUtils.parse(ctx.getParameter("flightLeg"), 1));
+			} else
+				fr = new FlightReport(a, StringUtils.parse(ctx.getParameter("flightNumber"), 1), StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 
 			// Update the original PIREP with fields from the request
 			fr.setDatabaseID(FlightReport.DBID_PILOT, ctx.getUser().getID());
@@ -180,9 +159,7 @@ public class PIREPCommand extends AbstractFormCommand {
 				double fTime = Double.parseDouble(ctx.getParameter("flightTime"));
 				fr.setLength((int) (fTime * 10));
 			} catch (NumberFormatException nfe) {
-				CommandException ce = new CommandException("Invalid Flight Time");
-				ce.setLogStackDump(false);
-				throw ce;
+				throw new CommandException("Invalid Flight Time", false);
 			}
 
 			// Calculate the date
@@ -199,10 +176,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				forwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.maxDays"));
 				backwardLimit.add(Calendar.DATE, SystemData.getInt("users.pirep.minDays") * -1);
 				if ((fr.getDate().before(backwardLimit.getTime())) || (fr.getDate().after(forwardLimit.getTime()))) {
-					CommandException ce = new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
-							+ backwardLimit.getTime() + " - " + forwardLimit.getTime());
-					ce.setLogStackDump(false);
-					throw ce;
+					throw new CommandException("Invalid Flight Report Date - " + fr.getDate() + " ("
+							+ backwardLimit.getTime() + " - " + forwardLimit.getTime(), false);
 				}
 			}
 
@@ -237,9 +212,14 @@ public class PIREPCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
+		
+		// Get command results
+		CommandResult result = ctx.getResult();
 
 		// Check if we're creating a new PIREP
+		Pilot usr = (Pilot) ctx.getUser();
 		boolean isNew = (ctx.getID() == 0);
+		boolean forcePage = Boolean.valueOf(ctx.getParameter("force")).booleanValue();
 
 		// Get the current date/time in the user's local zone
 		Calendar cld = Calendar.getInstance();
@@ -248,12 +228,21 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Get all airlines
 		Map<String, Airline> allAirlines = SystemData.getAirlines();
-
+		Collection<Airline> airlines = new TreeSet<Airline>();
 		PIREPAccessControl ac = null;
 		try {
 			Connection con = ctx.getConnection();
-			Collection<Airline> airlines = new TreeSet<Airline>();
-			Pilot usr = (Pilot) ctx.getUser();
+
+			// Send to the ACARS nag page
+			if (isNew && (usr.getACARSLegs() == 0) && (!forcePage) && SystemData.getBoolean("acars.enabled")) {
+				GetEquipmentType eqdao = new GetEquipmentType(con);
+				ctx.setAttribute("eqType", eqdao.get(usr.getEquipmentType()), REQUEST);
+				ctx.release();
+				
+				result.setURL("/jsp/pilot/pirepNagACARS.jsp");
+				result.setSuccess(true);
+				return;
+			}
 			
 			//	Get aircraft types
 			GetAircraft acdao = new GetAircraft(con);
@@ -351,7 +340,6 @@ public class PIREPCommand extends AbstractFormCommand {
 		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
-		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/pilot/pirepEdit.jsp");
 		result.setSuccess(true);
 	}
@@ -365,7 +353,6 @@ public class PIREPCommand extends AbstractFormCommand {
 
 		// Calculate what map type to use
 		int mapType = ctx.isAuthenticated() ? ((Pilot) ctx.getUser()).getMapType() : Pilot.MAP_GOOGLE;
-
 		try {
 			Connection con = ctx.getConnection();
 
