@@ -20,7 +20,7 @@ abstract class PilotDAO extends DAO implements CachingDAO {
 	/**
 	 * The Pilot bean cache.
 	 */
-	protected static final Cache<Person> _cache = new ExpiringCache<Person>(384, 2400);
+	protected static final Cache<Person> _cache = new ExpiringCache<Person>(512, 2400);
 
 	/**
 	 * Initializes the Data Access Object. 
