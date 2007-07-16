@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
@@ -81,6 +81,15 @@ public class LinkTag extends ElementTag {
      */
     public void setTarget(String targetFrame) {
         _data.setAttribute("target", targetFrame);
+    }
+    
+    /**
+     * Marks this link as an external link.
+     * @param isExternal TRUE if the link is external, otherwise FALSE
+     */
+    public void setExternal(boolean isExternal) {
+    	if (isExternal)
+    		_data.setAttribute("rel", "external");
     }
     
     /**
