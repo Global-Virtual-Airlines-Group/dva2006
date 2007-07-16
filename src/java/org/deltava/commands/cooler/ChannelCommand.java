@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.Collection;
@@ -7,15 +7,14 @@ import java.sql.Connection;
 import org.deltava.beans.cooler.Channel;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetCoolerChannels;
-import org.deltava.dao.SetCoolerChannel;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerChannelAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
- * A Web Site Command to maintain Water Cooler channel profiles.
+ * A Web Site Command to maintain Discussion Forum channel profiles.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -33,6 +32,7 @@ public class ChannelCommand extends AbstractFormCommand {
 		// Check if we're creating a new channel
 		String channel = (String) ctx.getCmdParameter(Command.ID, null);
 		boolean isNew = (channel == null);
+		String forumName = SystemData.get("airline.forum");
 
 		try {
 			Connection con = ctx.getConnection();
@@ -43,7 +43,7 @@ public class ChannelCommand extends AbstractFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(con);
 				c = dao.get(channel);
 				if (c == null)
-					throw notFoundException("Invalid Water Cooler Channel - " + channel);
+					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
 			} else {
 				c = new Channel(ctx.getParameter("newName"));
 			}
@@ -58,7 +58,7 @@ public class ChannelCommand extends AbstractFormCommand {
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
 			access.validate();
 			if (!access.getCanEdit())
-				throw securityException("Cannot edit Water Cooler Channel");
+				throw securityException("Cannot edit " + forumName + " Channel");
 
 			// Update the channel from the request
 			c.setDescription(ctx.getParameter("desc"));
@@ -105,6 +105,7 @@ public class ChannelCommand extends AbstractFormCommand {
 		// Check if we're creating a new channel
 		String channel = (String) ctx.getCmdParameter(Command.ID, null);
 		boolean isNew = (channel == null);
+		String forumName = SystemData.get("airline.forum");
 
 		try {
 			Connection con = ctx.getConnection();
@@ -115,14 +116,14 @@ public class ChannelCommand extends AbstractFormCommand {
 				GetCoolerChannels dao = new GetCoolerChannels(con);
 				c = dao.get(channel);
 				if (c == null)
-					throw notFoundException("Invalid Water Cooler Channel - " + channel);
+					throw notFoundException("Invalid " + forumName + " Channel - " + channel);
 			}
 			
 			// Check our access
 			CoolerChannelAccessControl access = new CoolerChannelAccessControl(ctx, c);
 			access.validate();
 			if (!access.getCanEdit())
-				throw securityException("Cannot edit Water Cooler Channel");
+				throw securityException("Cannot edit " + forumName + " Channel");
 			
 			// Save channel and access controller
 			ctx.setAttribute("channel", c, REQUEST);

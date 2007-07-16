@@ -6,9 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler - ${thread.subject}</title>
+<title><content:airline /> ${forumName} - ${thread.subject}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="cooler" />
 <content:css name="form" />
@@ -172,8 +173,12 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <b><fmt:int fmt="#,##0" value="${pilot.legs}" /></b> legs, <b><fmt:dec fmt="#,##0.0" value="${pilot.hours}" /></b> hours total<br />
 </c:if>
 <c:if test="${pilot.onlineLegs > 0}">
-<span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.onlineLegs}" /></b> legs, <b>
-<fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br />
+<span class="sec"><b><fmt:int fmt="#,##0" value="${pilot.onlineLegs}" /></b> legs,
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.onlineHours}" /></b> hours online</span><br />
+</c:if>
+<c:if test="${pilot.ACARSLegs > 0}">
+<span class="pri"><b><fmt:int fmt="#,##0" value="${pilot.ACARSLegs}" /></b> legs,
+ <b><fmt:dec fmt="#,##0.0" value="${pilot.ACARSHours}" /></b> hours ACARS</span><br />
 </c:if>
 <content:filter roles="Moderator">
 <fmt:int fmt="#,##0" value="${postStats[pilot.ID]}" /> total posts<br />
@@ -196,8 +201,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 </el:showaddr></td>
  <td class="postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator,HR">
- from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT 
-WARNING</span></c:if>
+ from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
 <c:choose>
 <c:when test="${canEdit}">

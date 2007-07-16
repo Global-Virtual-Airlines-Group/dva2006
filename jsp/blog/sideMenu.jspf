@@ -1,7 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
-<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="helpDeskEnabled" name="helpdesk.enabled" />
 <!-- Sidebar Navigation Frame -->
@@ -22,7 +22,7 @@
 </tr>
 <content:superUser var="superUser">
 <tr class="MenuItem">
- <td class="ter bld">${fn:upper(superUser.name)}</td>
+ <td class="ter bld">${superUser.name}</td>
 </tr>
 </content:superUser>
 <tr class="MenuItem">
@@ -42,7 +42,7 @@
 <c:forEach var="aID" items="${authorIDs}">
 <c:set var="a" value="${authors[aID]}" scope="request" />
 <tr class="MenuItem">
- <td><el:cmd url="blog" link="${a}">${fn:upper(a.name)}</el:cmd></td>
+ <td class="caps"><el:cmd url="blog" link="${a}">${a.name}</el:cmd></td>
 </tr>
 </c:forEach>
 </c:if>
@@ -61,7 +61,7 @@
  <td><el:cmd url="eventcalendar">ONLINE EVENTS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
- <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
+ <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>CONTACT US</td></tr>
 <tr class="MenuItem">
