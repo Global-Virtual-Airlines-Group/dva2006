@@ -37,6 +37,7 @@ public class ACARSDataPurgeTask extends Task {
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
 		int conPurge = SystemData.getInt("log.purge.cons", 60);
+		int statsPurge = SystemData.getInt("log.purge.acars_stats", 96);
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -46,6 +47,9 @@ public class ACARSDataPurgeTask extends Task {
 			
 			// Remove old flights and position reports without a flight report
 			log.warn("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
+			
+			// Purge old stats
+			log.warn("Purged " + wdao.purgeLogs(statsPurge) + " command statistics entries");
 			
 			// Get connections
 			GetACARSLog dao = new GetACARSLog(con);

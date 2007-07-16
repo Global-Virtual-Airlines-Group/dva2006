@@ -66,9 +66,14 @@ public class SetACARSLog extends DAO {
 	 */
 	public int purgeMessages(int hours) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			prepareStatementWithoutLimits("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
-			return executeUpdate(0);
+			int rows = executeUpdate(0);
+			
+			// Optimize the table
+			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.MESSAGES");
+			executeUpdate(0);
+			return rows;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -82,12 +87,17 @@ public class SetACARSLog extends DAO {
 	 */
 	public int purgeFlights(int hours) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND (CREATED < "
+			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND (CREATED < "
 					+ "DATE_SUB(NOW(), INTERVAL ? HOUR))");
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
-			return executeUpdate(0);
+			int rows = executeUpdate(0);
+			
+			// Optimize the table
+			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.FLIGHTS");
+			executeUpdate(0);
+			return rows;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -101,9 +111,15 @@ public class SetACARSLog extends DAO {
 	 */
 	public int purgeLogs(int hours) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM acars.COMMAND_LOG WHERE (CMDDATE < DATE_SUB(NOW(), INTERVAL ? HOURS))");
+			prepareStatementWithoutLimits("DELETE FROM acars.COMMAND_STATS WHERE (CMDDATE < DATE_SUB(NOW(), "
+					+ "INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
-			return executeUpdate(0);
+			int rows = executeUpdate(0);
+			
+			// Optimize the table
+			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.COMMAND_STATS");
+			executeUpdate(0);
+			return rows;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -211,24 +227,30 @@ public class SetACARSLog extends DAO {
 			_ps.close();
 			
 			// If we've got flights, copy them over
-			for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
-				int id = i.next().intValue();
-				startTransaction();
+			if (!IDs.isEmpty()) {
+				for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+					int id = i.next().intValue();
+					startTransaction();
 				
-				// Copy the entries
-				prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE (SELECT * FROM acars.POSITIONS WHERE "
-						+ "(FLIGHT_ID=?))");
-				_ps.setInt(1, id);
-				int rowsMoved = executeUpdate(1);
+					// Copy the entries
+					prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE (SELECT * FROM acars.POSITIONS WHERE "
+							+ "(FLIGHT_ID=?))");
+					_ps.setInt(1, id);
+					int rowsMoved = executeUpdate(1);
 				
-				// Delete the entries
-				prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
-				_ps.setInt(1, id);
+					// Delete the entries
+					prepareStatementWithoutLimits("DELETE FROM acars.POSITIONS WHERE (FLIGHT_ID=?)");
+					_ps.setInt(1, id);
+					executeUpdate(0);
+				
+					// Commit and log
+					commitTransaction();
+					log.warn("Moved " + rowsMoved + " entries for Flight " + id + " to Position Archive");
+				}
+				
+				// Optimize the table
+				prepareStatementWithoutLimits("OPTIMIZE TABLE acars.POSITIONS");
 				executeUpdate(0);
-				
-				// Commit and log
-				commitTransaction();
-				log.warn("Moved " + rowsMoved + " entries for Flight " + id + " to Position Archive");
 			}
 		} catch (SQLException se) {
 			rollbackTransaction();
