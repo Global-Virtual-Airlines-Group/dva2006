@@ -165,13 +165,21 @@ ${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.
 </tr>
 </c:if>
 <tr>
- <td class="label">Flights</td>
+ <td class="label">Total Flights</td>
  <td colspan="${cspan}" class="data"><fmt:int value="${pilot.legs}" /> legs, <fmt:dec value="${pilot.hours}" /> hours</td>
 </tr>
+<c:if test="${pilot.onlineLegs > 0}">
 <tr>
  <td class="label">Online Flights</td>
  <td colspan="${cspan}" class="data pri"><fmt:int value="${pilot.onlineLegs}" /> legs, <fmt:dec value="${pilot.onlineHours}" /> hours</td>
 </tr>
+</c:if>
+<c:if test="${pilot.ACARSLegs > 0}">
+<tr>
+ <td class="label">ACARS Flights</td>
+ <td colspan="${cspan}" class="data sec"><fmt:int value="${pilot.ACARSLegs}" /> legs, <fmt:dec value="${pilot.ACARSHours}" /> hours</td>
+</tr>
+</c:if>
 <c:if test="${pilot.legacyHours > 0}">
 <tr>
  <td class="label">Legacy Hours</td>

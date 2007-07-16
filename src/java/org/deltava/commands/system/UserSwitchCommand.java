@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.sql.Connection;
@@ -9,6 +9,8 @@ import org.deltava.beans.Pilot;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to switch credentials and impersonate a user.
@@ -41,6 +43,12 @@ public class UserSwitchCommand extends AbstractCommand {
 			usr = dao.get(ctx.getID());
 			if (usr == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
+			
+			// Populate online totals
+			if (usr.getACARSLegs() < 0) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				frdao.getOnlineTotals(usr, SystemData.get("airline.db"));
+			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -50,10 +58,8 @@ public class UserSwitchCommand extends AbstractCommand {
 		// Log warning
 		log.warn(ctx.getUser().getName() + " switching to user " + usr.getName());
 		
-		// Save new user in request
+		// Save new user in request and switch to the user, saving the old user
 		ctx.setAttribute("user", usr, REQUEST);
-		
-		// Switch to the user, saving the old user
 		ctx.setAttribute(CommandContext.SU_ATTR_NAME, ctx.getUser(), SESSION);
 		ctx.setAttribute(CommandContext.USER_ATTR_NAME, usr, SESSION);
 
