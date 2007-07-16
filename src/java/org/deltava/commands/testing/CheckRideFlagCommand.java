@@ -68,13 +68,19 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				
 				// Set the equipment type
 				cr.setEquipmentType(eqTypes.iterator().next());
-			} else {
-				if ((cr.getFlightID() != 0) || (cr.getStatus() != Test.NEW))
-					throw securityException("Cannot update submitted Check Ride");
-				
+			} else if (cr.getStatus() == Test.NEW) {
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
-			}
+			} else if (cr.getStatus() == Test.SUBMITTED) {
+				if (cr.getFlightID() != 0) {
+					ACARSFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
+					if (ofr != null)
+						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
+				}
+						
+				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+			} else
+				throw securityException("Cannot update " + cr.getStatusName() + " Check Ride");
 			
 			// Update the flight report
 			fr.setAttribute(FlightReport.ATTR_CHECKRIDE, true);
