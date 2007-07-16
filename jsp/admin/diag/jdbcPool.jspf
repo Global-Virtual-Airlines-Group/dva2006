@@ -11,7 +11,7 @@
  <td colspan="7" class="left">JDBC CONNECTION INFORMATION</td>
 </tr>
 
-<c:if test="${!empty jdbcPoolInfo}">
+<c:if test="${!empty jdbcPools}">
 <!-- JDBC Data Title Bar -->
 <tr class="title caps">
  <td width="10%">ID</td>
@@ -22,9 +22,13 @@
  <td width="15%">TOTAL USAGE</td>
  <td>LAST/CURRENT USAGE</td>
 </tr>
-
-<!-- JDBC Data -->
-<c:forEach var="con" items="${jdbcPoolInfo}">
+<c:forEach var="appName" items="${appNames}">
+<c:set var="pool" value="${jdbcPools[appName]}" scope="request" />
+<tr class="title caps">
+ <td colspan="7" class="left">${appName} CONNECTION POOL - <fmt:int value="${pool.totalRequests}" /> TOTAL REQUESTS, 
+<fmt:int value="${pool.expandCount}" /> EXPANSIONS, <fmt:int value="${pool.fullCount}" /> POOL FULL ERRORS</td>
+</tr>
+<c:forEach var="con" items="${pool.poolInfo}">
 <view:row entry="${con}">
  <td class="pri bld"><fmt:int value="${con.ID}" /></td>
  <td class="sec">${con.system? 'System' : 'User'}</td>
@@ -40,9 +44,10 @@
 </view:row>
 </c:if>
 </c:forEach>
+</c:forEach>
 </c:if>
 
-<c:if test="${empty jdbcPoolInfo}">
+<c:if test="${empty jdbcPools}">
 <!-- JDBC Connection Data not available -->
 <tr>
  <td class="pri bld" colspan="6">JDBC CONNECTION POOL DATA IS NOT AVAILABLE</td>

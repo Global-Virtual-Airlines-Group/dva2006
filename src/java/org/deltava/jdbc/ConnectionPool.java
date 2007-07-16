@@ -9,8 +9,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.util.*;
 
-import org.gvagroup.ipc.IPCInfo;
-
 /**
  * A user-configurable JDBC Connection Pool.
  * @author Luke
@@ -20,28 +18,30 @@ import org.gvagroup.ipc.IPCInfo;
  * @see ConnectionMonitor
  */
 
-public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtExceptionHandler {
+public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(ConnectionPool.class);
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
 	static final int MAX_USE_TIME = 150 * 1000;
-	static final int MAX_SYS_CONS = 3;
+	private static final int MAX_SYS_CONS = 3;
 
 	private int _poolMaxSize = 1;
 	private int _maxRequests;
 	private long _totalRequests;
+	private int _expandCount;
+	private int _fullCount;
 	private boolean _logStack;
 
-	private ConnectionMonitor _monitor;
+	private transient ConnectionMonitor _monitor;
 	private SortedSet<ConnectionPoolEntry> _cons;
-	private Thread _monitorThread;
+	private transient Thread _monitorThread;
 
-	private final Properties _props = new Properties();
+	private transient final Properties _props = new Properties();
 	private boolean _autoCommit = true;
 
-	private final Semaphore _lock = new Semaphore(1, true);
+	private transient final Semaphore _lock = new Semaphore(1, true);
 
 	public class ConnectionPoolFullException extends ConnectionPoolException {
 		public ConnectionPoolFullException() {
@@ -205,7 +205,7 @@ public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtE
 	 * @throws IllegalStateException if the connection pool is not connected to the JDBC data source
 	 * @throws ConnectionPoolException if the connection pool is entirely in use
 	 */
-	public synchronized Connection getConnection(boolean isSystem) throws ConnectionPoolException {
+	public Connection getConnection(boolean isSystem) throws ConnectionPoolException {
 		if (_cons == null)
 			throw new IllegalStateException("Pool not connected");
 
@@ -237,8 +237,10 @@ public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtE
 		if ((isSystem && (sysConSize >= MAX_SYS_CONS)) || (_cons.size() >= _poolMaxSize)) {
 			try {
 				log.warn("Waiting 1000ms for ConnectionPool");
-				if (!_lock.tryAcquire(1000, TimeUnit.MILLISECONDS))
+				if (!_lock.tryAcquire(1000, TimeUnit.MILLISECONDS)) {
+					_fullCount++;
 					throw new ConnectionPoolFullException();
+				}
 			} catch (InterruptedException ie) {
 				throw new ConnectionPoolException("Thread Interrupted", false);
 			}
@@ -255,6 +257,7 @@ public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtE
 
 			// Return back the new connection
 			_totalRequests++;
+			_expandCount++;
 			log.info("Reserving JDBC Connection " + cpe);
 			return cpe.reserve(_logStack);
 		} catch (SQLException se) {
@@ -396,10 +399,9 @@ public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtE
 	/**
 	 * Returns information about the connection pool.
 	 * @return a Collection of ConnectionInfo entries
-	 * @see ConnectionPool#getSerializedInfo()
 	 */
 	public Collection<ConnectionInfo> getPoolInfo() {
-		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>();
+		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>(_cons.size());
 		for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
 			ConnectionPoolEntry cpe = i.next();
 			results.add(new ConnectionInfo(cpe));
@@ -409,21 +411,27 @@ public class ConnectionPool implements IPCInfo<ConnectionInfo>, Thread.UncaughtE
 	}
 
 	/**
-	 * Returns information about the connection pool in a serialized fashion for transfer between classloaders and
-	 * virtual machines.
-	 * @return a Collection of byte arrays
-	 * @see ConnectionPool#getPoolInfo()
-	 */
-	public Collection<byte[]> getSerializedInfo() {
-		return IPCUtils.serialize(getPoolInfo());
-	}
-
-	/**
 	 * Returns the total number of connections handed out by the Connection Pool.
 	 * @return the number of connection reservations
 	 */
 	public long getTotalRequests() {
 		return _totalRequests;
+	}
+	
+	/**
+	 * Returns the number of times the Connection Pool has been full and a request failed.
+	 * @return the number of ConnectionPoolFullExceptions thrown
+	 */
+	public int getFullCount() {
+		return _fullCount;
+	}
+	
+	/**
+	 * Returns the number of times the Connection Pool has been expanded and a dynamic connection returned.
+	 * @return the number of times the Connection Pool was expanded
+	 */
+	public int getExpandCount() {
+		return _expandCount;
 	}
 
 	/**
