@@ -142,8 +142,12 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <el:cmd className="pri bld" url="pirep" op="edit">File New Flight Report</el:cmd></c:if></td>
  <td class="data">You have flown <fmt:quantity value="${pilot.legs}" single="flight" />, for a total of
  <fmt:dec value="${pilot.hours}" /> hours and <fmt:quantity value="${pilot.miles}" fmt="#,###,###" single="mile" />.<br />
-<span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and
- <span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br />
+<c:if test="${pilot.onlineLegs > 0}">
+<span class="sec bld"><fmt:int value="${pilot.onlineLegs}" /></span> of these flights and 
+<span class="sec bld"><fmt:dec value="${pilot.onlineHours}" /></span> hours were logged online.<br /></c:if>
+<c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}">
+<span class="pri bld"><fmt:int value="${pilot.ACARSLegs}" /></span> of these flights and 
+<span class="pri bld"><fmt:dec value="${pilot.ACARSHours}" /></span> hours where logged using ACARS.<br /></c:if>
 <c:if test="${!empty lastFlight}">
 <br />
  Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
@@ -658,7 +662,7 @@ new Online Events, System News entries and NOTAMs, and Flight Report approval or
 <tr>
  <td class="mid"><el:cmd className="bld" url="dashboard">Performance Dashboard</el:cmd></td>
  <td class="data">You can view performance metrics on Flight Report approval, Pilot Examination and Check Ride
-scoring delays, Water Cooler participation rates and Flight Report logging.</td>
+scoring delays, discussion forum participation rates and Flight Report logging.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="memberstats">Membership Statistics</el:cmd></td>
