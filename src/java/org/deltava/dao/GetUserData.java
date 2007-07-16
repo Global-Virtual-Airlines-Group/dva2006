@@ -24,7 +24,7 @@ public class GetUserData extends DAO implements CachingDAO {
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
 	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(2);
-	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(320);
+	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(512);
 
 	/**
 	 * Initializes the Data Access Object.
