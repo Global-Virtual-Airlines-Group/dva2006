@@ -24,7 +24,7 @@ public class MailerDaemon implements Runnable {
 
 	private static final Logger log = Logger.getLogger(MailerDaemon.class);
 
-	private static BlockingQueue<SMTPEnvelope> _queue = new PriorityBlockingQueue<SMTPEnvelope>();
+	private static final BlockingQueue<SMTPEnvelope> _queue = new PriorityBlockingQueue<SMTPEnvelope>();
 
 	/**
 	 * Returns the thread name.
@@ -124,7 +124,6 @@ public class MailerDaemon implements Runnable {
 					log.error("Error connecting to STMP server " + e.getMessage());
 				}
 			} catch (InterruptedException ie) {
-				log.warn("Interrupted");
 				Thread.currentThread().interrupt();
 			}
 		}
