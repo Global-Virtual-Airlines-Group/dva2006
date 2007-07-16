@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<config env="dev" default="true">
+<config env="prod" default="true">
 
 	<!-- Airline Information -->
 	<airline>
@@ -8,6 +8,7 @@
 		<url>www.deltava.org</url>
 		<banner>DeltaBanner.png</banner>
 		<code>DVA</code>
+		<forum>Water Cooler</forum>
 		<db>dva</db>
 		<voice>
 			<url>rw.deltava.org/DAL</url>
@@ -261,6 +262,7 @@
 			<messages type="Integer">96</messages>
 			<flights type="Integer">48</flights>
 			<cons type="Integer">60</cons>
+			<acars_stats type="Integer">96</acars_stats>
 			<cmds type="Integer">10</cmds>
 		</purge>
 

@@ -21,7 +21,7 @@ import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Service to display a Water Cooler RSS feed.
+ * A Web Service to display a Discussion Forum RSS feed.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -39,6 +39,7 @@ public class CoolerSyndicationService extends WebService {
 
 		// Get the channel name
 		String channel = ctx.getParameter("channel");
+		String forumName = SystemData.get("airline.forum");
 
 		List<MessageThread> threads = null;
 		try {
@@ -95,8 +96,8 @@ public class CoolerSyndicationService extends WebService {
 
 		// Create the RSS channel
 		Element ch = new Element("channel");
-		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " Water Cooler"));
-		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " Water Cooler Message Threads"));
+		ch.addContent(XMLUtils.createElement("title", SystemData.get("airline.name") + " " + forumName));
+		ch.addContent(XMLUtils.createElement("description", SystemData.get("airline.name") + " " + forumName + " Message Threads"));
 		ch.addContent(XMLUtils.createElement("link", "http://" + ctx.getRequest().getServerName() + "/channel.do?id=ALL", true));
 		ch.addContent(XMLUtils.createElement("language", "en"));
 		ch.addContent(XMLUtils.createElement("copyright", VersionInfo.TXT_COPYRIGHT));

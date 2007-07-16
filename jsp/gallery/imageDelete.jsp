@@ -17,13 +17,14 @@
 <content:page>
 <%@include file="/jsp/gallery/header.jspf" %> 
 <%@include file="/jsp/gallery/sideMenu.jspf" %>
+<content:sysdata var="forumName" name="airline.forum" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <div class="updateHdr"><content:airline /> Image Gallery Entry Deleted</div>
 <br />
-This Image Gallery entry has been successfully deleted from the database. If this Image was linked to
-a Water Cooler message thread, the link has also been removed.<br />
+This Image Gallery entry has been successfully deleted from the database. If this Image was linked to a ${forumName} message thread, 
+the link has also been removed.<br />
 <br />
 <content:copyright />
 </content:region>

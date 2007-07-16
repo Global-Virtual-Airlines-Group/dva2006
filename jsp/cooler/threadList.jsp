@@ -5,9 +5,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler</title>
+<title><content:airline /> ${forumName}</title>
 <meta http-equiv="REFRESH" content="300" />
 <content:sysdata var="airlineName" name="airline.name" />
 <content:css name="main" browserSpecific="true" />
@@ -15,7 +16,7 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
-<content:rss title="${airlineName} Water Cooler" path="/cooler_rss.ws" />
+<content:rss title="${airlineName} ${forumName}" path="/cooler_rss.ws" />
 <script language="JavaScript" type="text/javascript">
 function setChannel(combo)
 {

@@ -6,9 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler Statistics</title>
+<title><content:airline /> ${forumName} Statistics</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:css name="form" />
@@ -32,7 +33,7 @@ return true;
 <el:form action="coolerstats.do" method="post" validate="return true">
 <view:table className="view" pad="default" space="default" cmd="coolerstats">
 <tr class="title">
- <td colspan="2" class="left">WATER COOLER STATISTICS</td>
+ <td colspan="2" class="left">${forumName} STATISTICS</td>
  <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
 </tr>

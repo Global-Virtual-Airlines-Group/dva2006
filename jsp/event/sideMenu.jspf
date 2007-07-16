@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="infoEmail" name="airline.mail.info" />
 <content:sysdata var="ts2Enabled" name="airline.voice.ts2.enabled" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
@@ -87,7 +88,7 @@
 </c:if>
 </content:filter>
 <tr class="MenuItem">
- <td><el:cmd url="channels">WATER COOLER</el:cmd></td>
+ <td class="caps"><el:cmd url="channels">${forumName}</el:cmd></td>
 </tr>
 <tr class="MenuHeader"><td>CONTACT US</td></tr>
 <tr class="MenuItem">

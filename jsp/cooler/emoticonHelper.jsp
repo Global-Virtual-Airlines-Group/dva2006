@@ -4,9 +4,10 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler Emoticons</title>
+<title><content:airline /> ${forumName} Emoticons</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -16,7 +17,7 @@ function addEmoticon(name)
 // Get the window opener
 var parent = window.opener;
 if (!parent) {
-	alert('Your Water Cooler post does not appear to be open.');
+	alert('Your ${forumName} post does not appear to be open.');
 	self.close();
 	return false;
 }

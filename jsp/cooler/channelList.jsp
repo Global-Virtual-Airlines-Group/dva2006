@@ -6,9 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Water Cooler</title>
+<title><content:airline /> ${forumName}</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:pics />
@@ -23,7 +24,7 @@
 <content:region id="main">
 <view:table className="view" pad="default" space="default" cmd="staff">
 <tr class="title caps">
- <td class="left" colspan="5">WATER COOLER CHANNELS</td>
+ <td class="left" colspan="5">${forumName} CHANNELS</td>
 </tr>
 
 <!-- Table Header Bar-->

@@ -13,6 +13,7 @@
 <content:pics />
 <content:js name="common" />
 <content:js name="airportRefresh" />
+<content:sysdata var="forumName" name="airline.forum" />
 <content:sysdata var="badDomains" name="registration.reject_domain" />
 <content:sysdata var="minPwd" name="security.password.min" />
 <content:sysdata var="defaultTFormat" name="time.time_format" />
@@ -28,7 +29,7 @@ if (!validateText(form.lastName, 2, 'Last (family) Name')) return false;
 if (!validateText(form.df, 7, 'Date Format')) return false;
 if (!validateText(form.tf, 5, 'Time Format')) return false;
 if (!validateText(form.nf, 5, 'Number Format')) return false;
-if (!validateFile(form.coolerImg, 'jpg,png,gif', 'Water Cooler Signature Image')) return false;
+if (!validateFile(form.coolerImg, 'jpg,png,gif', '${forumName} Cooler Signature Image')) return false;
 if (!validateText(form.staffTitle, 8, 'Staff Title')) return false;
 if (!validateCombo(form.staffArea, 'Department Name')) return false;
 if (!validateText(form.staffBody, 30, 'Staff Biographical Profile')) return false;
@@ -129,7 +130,7 @@ return true;
  <td class="label" valign="top">Pilot Status</td>
 <c:if test="${access.canChangeStatus}">
  <td colspan="${cspan}" class="data"><el:combo name="status" size="1" idx="*" options="${statuses}" value="${pilot.statusName}" /><br />
-<el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable Water Cooler posting access" /><br />
+<el:box name="noCooler" idx="*" value="true" checked="${pilot.noCooler}" label="Disable ${forumName} posting access" /><br />
 <el:box name="noVoice" idx="*" value="true" checked="${pilot.noVoice}" label="Disable Private Voice access" /><br />
 <el:box name="noExams" idx="*" value="true" checked="${pilot.noExams}" label="Disable Testing Center access" /></td>
 </tr>
@@ -226,15 +227,15 @@ return true;
  <td colspan="${cspan}" class="data"><el:check type="radio" name="privacyOption" idx="*" cols="1" separator="<br />" options="${privacyOptions}" value="${pilot.emailAccess}" /></td>
 </tr>
 
-<!-- Water Cooler Preferences -->
-<tr class="title">
- <td colspan="${cspan + 1}">WATER COOLER</td>
+<!-- ${forumName} Preferences -->
+<tr class="title caps">
+ <td colspan="${cspan + 1}">${forumName}</td>
 </tr>
 <tr>
  <td class="label" valign="top">Signature Image</td>
  <td colspan="${cspan}" class="data"><c:if test="${pilot.hasSignature}">
-<img alt="Water Cooler Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
-<el:box name="removeCoolerImg" value="true" label="Remove Water Cooler Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
+<img alt="${forumName} Signature" src="/sig/${db}/0x<fmt:hex value="${pilot.ID}" />" /><br />
+<el:box name="removeCoolerImg" value="true" label="Remove ${forumName} Signature Image" onChange="void disableSigBoxes()" /><br /></c:if>
 <el:box name="useDefaultSig" value="true" label="Use default Signature Image" checked="${pilot.hasDefaultSignature}" onChange="void disableSigBoxes()" /></td>
 </tr>
 <tr>
@@ -245,8 +246,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 </tr>
 <tr>
  <td class="label" valign="top">Display Options</td>
- <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show Water Cooler Signature Images" /><br />
- <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show Water Cooler screen shot Message Threads" />
+ <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show ${forumName} Signature Images" /><br />
+ <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" />
  </td>
 </tr>
 
