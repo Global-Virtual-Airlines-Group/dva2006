@@ -2,6 +2,7 @@
 package org.deltava.commands.system;
 
 import java.util.*;
+import java.io.Serializable;
 import java.sql.Connection;
 
 import org.apache.log4j.Logger;
@@ -23,7 +24,6 @@ import org.deltava.util.system.SystemData;
 import org.deltava.util.servinfo.ServInfoLoader;
 
 import org.gvagroup.acars.*;
-import org.gvagroup.ipc.IPCInfo;
 import org.gvagroup.common.SharedData;
 
 /**
@@ -60,12 +60,6 @@ public class DiagnosticCommand extends AbstractCommand {
 			}
 		}
 
-		// Get the Connection Pool data
-		Collection<ConnectionInfo> poolInfo = new ArrayList<ConnectionInfo>();
-		ConnectionPool cPool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
-		if (cPool != null)
-			poolInfo.addAll(cPool.getPoolInfo());
-		
 		// Get the Task Scheduler data
 		TaskScheduler tSched = (TaskScheduler) SystemData.getObject(SystemData.TASK_POOL);
 		if (tSched != null)
@@ -95,15 +89,23 @@ public class DiagnosticCommand extends AbstractCommand {
 			} finally {
 				ctx.release();
 			}
-			
-			// Get the ACARS webapp JDBC Connection Pool
-			IPCInfo<ConnectionInfo> acarsCPool = (IPCInfo) SharedData.get(SharedData.JDBC_POOL + "ACARS");
-			poolInfo.addAll(IPCUtils.deserialize(acarsCPool));
+		}
+		
+		// Get JDBC Connection Pool data
+		Collection<String> appNames = SharedData.getApplications();
+		Map<String, ConnectionPool> pools = new HashMap<String, ConnectionPool>();
+		for (Iterator<String> i = appNames.iterator(); i.hasNext(); ) {
+			String appName = i.next();
+			Serializable rawPool = (Serializable) SharedData.get(SharedData.JDBC_POOL + appName);
+			ConnectionPool jdbcPool = (ConnectionPool) IPCUtils.reserialize(rawPool);
+			pools.put(appName, jdbcPool);
 		}
 		
 		// Save connection pool data
-		if (!poolInfo.isEmpty())
-			ctx.setAttribute("jdbcPoolInfo", poolInfo, REQUEST);
+		if (!pools.isEmpty()) {
+			ctx.setAttribute("appNames", appNames, REQUEST);
+			ctx.setAttribute("jdbcPools", pools, REQUEST);
+		}
 		
 		// Get ServInfo statistics
 		List networks = (List) SystemData.getObject("online.networks");
@@ -138,9 +140,6 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetPilot(null));
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
-		// Run the GC
-		System.gc();
-
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
 		ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
