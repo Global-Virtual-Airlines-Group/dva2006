@@ -812,8 +812,10 @@ public class ProfileCommand extends AbstractFormCommand {
 			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID(), usrInfo.getDB()), REQUEST);
 
 			// Get the online totals
-			GetFlightReports prdao = new GetFlightReports(con);
-			prdao.getOnlineTotals(p, usrInfo.getDB());
+			if (p.getACARSLegs() < 0) {
+				GetFlightReports prdao = new GetFlightReports(con);
+				prdao.getOnlineTotals(p, usrInfo.getDB());
+			}
 
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && !crossDB) {
