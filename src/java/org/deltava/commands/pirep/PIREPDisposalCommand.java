@@ -201,6 +201,10 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// Commit the transaction
 			ctx.commitTX();
 			
+			// Invalidate the pilot again to reflect the new totals
+			if (opCode == FlightReport.OK)
+				GetPilot.invalidateID(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			
 			// Save the flight report in the request and the Message Context
 			ctx.setAttribute("pirep", fr, REQUEST);
 			mctx.addData("pirep", fr);
