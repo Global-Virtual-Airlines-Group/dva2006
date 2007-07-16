@@ -121,6 +121,10 @@ public class LoginCommand extends AbstractCommand {
 			// Log the pilot in
 			p.login(ctx.getRequest().getRemoteHost());
 			
+			// Load online/ACARS totals
+			GetFlightReports frdao = new GetFlightReports(con);
+			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
+			
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));

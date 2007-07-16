@@ -285,43 +285,20 @@ public class GetFlightReports extends DAO {
 	}
 
 	/**
-	 * Gets online legs/hours for a particular Pilot.
+	 * Gets online and ACARS legs/hours for a particular Pilot.
 	 * @param p the Pilot to query for (the object will be updated)
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
+	 * @see GetFlightReports#getOnlineTotals(Map, String)
 	 */
 	public void getOnlineTotals(Pilot p, String dbName) throws DAOException {
-		
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT COUNT(PR.FLIGHT_TIME), SUM(PR.FLIGHT_TIME) FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS PR WHERE (PR.PILOT_ID=?) AND (PR.STATUS=?) AND ((PR.ATTR & ?) != 0)");
-		
-		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, p.getID());
-			_ps.setInt(2, FlightReport.OK);
-			_ps.setInt(3, FlightReport.ATTR_ONLINE_MASK);
-
-			// Execute the query - update the pilot if data found
-			ResultSet rs = _ps.executeQuery();
-			if (rs.next()) {
-				p.setOnlineLegs(rs.getInt(1));
-				p.setOnlineHours(rs.getDouble(2));
-			}
-
-			// Clean up
-			setQueryMax(0);
-			rs.close();
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
+		Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>(2);
+		pilots.put(new Integer(p.getID()), p);
+		getOnlineTotals(pilots, dbName);
 	}
 
 	/**
-	 * Returns online legs/hours for a group of Pilots .
+	 * Returns online and ACARS legs/hours for a group of Pilots .
 	 * @param pilots a Map of Pilot objects to populate with results
 	 * @param dbName the database name
 	 * @throws DAOException if a JDBC error occurs
@@ -329,8 +306,9 @@ public class GetFlightReports extends DAO {
 	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT F.PILOT_ID, COUNT(F.FLIGHT_TIME), ROUND(SUM(F.FLIGHT_TIME), 1) FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT F.PILOT_ID, COUNT(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, NULL)) AS OC, "
+				+ "ROUND(SUM(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, NULL)) "
+				+ "AS AC, ROUND(SUM(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, 0)), 1) AS AH FROM ");
 		sqlBuf.append(formatDBName(dbName));
 		sqlBuf.append(".PIREPS F WHERE ((F.ATTR & ?) != 0) AND (F.STATUS=?) AND F.PILOT_ID IN (");
 
@@ -338,7 +316,7 @@ public class GetFlightReports extends DAO {
 		int setSize = 0;
 		for (Iterator<Pilot> i = pilots.values().iterator(); i.hasNext();) {
 			Pilot p = i.next();
-			if (p.getOnlineLegs() == 0) {
+			if (p.getACARSLegs() < 0) {
 				setSize++;
 				sqlBuf.append(String.valueOf(p.getID()));
 				sqlBuf.append(',');
@@ -355,25 +333,27 @@ public class GetFlightReports extends DAO {
 			sqlBuf.setLength(sqlBuf.length() - 1);
 
 		// Close the SQL statement
-		sqlBuf.append(") GROUP BY F.PILOT_ID");
+		sqlBuf.append(") GROUP BY F.PILOT_ID LIMIT ?");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
-			_ps.setInt(2, FlightReport.OK);
+			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
+			_ps.setInt(3, FlightReport.ATTR_ACARS);
+			_ps.setInt(4, FlightReport.ATTR_ACARS);
+			_ps.setInt(5, (FlightReport.ATTR_ONLINE_MASK | FlightReport.ATTR_ACARS));
+			_ps.setInt(6, FlightReport.OK);
+			_ps.setInt(7, setSize);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			while (rs.next()) {
-				int pilotID = rs.getInt(1);
-				Pilot p = pilots.get(new Integer(pilotID));
+				Pilot p = pilots.get(new Integer(rs.getInt(1)));
 				if (p != null) {
 					p.setOnlineLegs(rs.getInt(2));
 					p.setOnlineHours(rs.getDouble(3));
-				} else {
-					log.warn("Pilot ID " + pilotID + " not in Map");
+					p.setACARSLegs(rs.getInt(4));
+					p.setACARSHours(rs.getDouble(5));
 				}
 			}
 
