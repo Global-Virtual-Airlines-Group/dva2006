@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -61,9 +61,9 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 
 	private String _ldapID;
 
-	private Set<String> _ratings = new TreeSet<String>();
-	private Set<String> _roles = new TreeSet<String>();
-	private Set<String> _certs = new LinkedHashSet<String>();
+	private final Set<String> _ratings = new TreeSet<String>();
+	private final Set<String> _roles = new TreeSet<String>();
+	private final Set<String> _certs = new LinkedHashSet<String>();
 
 	private long _miles;
 	private Date _lastFlight;
@@ -71,8 +71,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private String _motto;
 
 	private int _legs;
+	private int _acarsLegs = -1; // Set to -1 which is uninitialized
 	private int _onlineLegs;
 	private double _hours;
+	private double _acarsHours;
 	private double _onlineHours;
 
 	private boolean _showSigs;
@@ -86,7 +88,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private int _mapType;
 	private String _sigExt;
 
-	private static final DecimalFormat _df = new DecimalFormat("##000");
+	private final DecimalFormat _df = new DecimalFormat("##000");
 
 	/**
 	 * Creates a Pilot object with a given first and last name, converted to "proper case".
@@ -289,7 +291,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Return the number of flight hours logged by this Pilot.
+	 * Returns the number of flight hours logged by this Pilot.
 	 * @return the number of hours flown
 	 * @see Pilot#getOnlineHours()
 	 * @see Person#getLegacyHours()
@@ -300,9 +302,9 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Return the number of online flight legs logged by this Pilot.
+	 * Returns the number of online flight legs logged by this Pilot.
 	 * @return the number of hours flown
-	 * @see Pilot#getHours()
+	 * @see Pilot#getOnlineHours()
 	 * @see Person#getLegacyHours()
 	 * @see Pilot#setOnlineLegs(int)
 	 */
@@ -311,7 +313,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Return the number of online flight hours logged by this Pilot.
+	 * Returns the number of online flight hours logged by this Pilot.
 	 * @return the number of hours flown
 	 * @see Pilot#getHours()
 	 * @see Pilot#getLastFlight()
@@ -321,6 +323,29 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public double getOnlineHours() {
 		return _onlineHours;
+	}
+	
+	/**
+	 * Returns the number of ACARS flight legs logged by this Pilot.
+	 * @return the number of hours flown
+	 * @see Pilot#getACARSHours()
+	 * @see Person#getLegacyHours()
+	 * @see Pilot#setACARSLegs(int)
+	 */
+	public int getACARSLegs() {
+		return _acarsLegs;
+	}
+	
+	/**
+	 * Return the number of ACARS flight hours logged by this Pilot.
+	 * @return the number of hours flown
+	 * @see Pilot#getHours()
+	 * @see Person#getLegacyHours()
+	 * @see Pilot#getOnlineLegs()
+	 * @see Pilot#setACARSHours(double)
+	 */
+	public double getACARSHours() {
+		return _acarsHours;
 	}
 
 	/**
@@ -574,7 +599,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 * Update this Pilot's logged onlne flight legs. This method will typically only be called from a DAO where we are
 	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
 	 * <B>COUNT(PIREPS.HOURS) WHERE ((PIREPS.ATTR & 0x0D) != 0)</B>.
-	 * @param legs the number of legs logged by this Pilot
+	 * @param legs the number of online legs logged by this Pilot
 	 * @throws IllegalArgumentException if legs is negative
 	 * @see Pilot#setHours(double)
 	 * @see Pilot#setOnlineHours(double)
@@ -582,9 +607,26 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public void setOnlineLegs(int legs) {
 		if (legs < 0)
-			throw new IllegalArgumentException("Legs cannot be negative");
+			throw new IllegalArgumentException("Online Legs cannot be negative");
 
 		_onlineLegs = legs;
+	}
+	
+	/**
+	 * Update this Pilot's logged ACARS flight legs. This method will typically only be called from a DAO where we are
+	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
+	 * <B>COUNT(PIREPS.HOURS) WHERE ((PIREPS.ATTR & 0x10) != 0)</B>.
+	 * @param legs the number of ACARS legs logged by this Pilot
+	 * @throws IllegalArgumentException if legs is negative
+	 * @see Pilot#setHours(double)
+	 * @see Pilot#setACARSHours(double)
+	 * @see Pilot#getACARSLegs()
+	 */
+	public void setACARSLegs(int legs) {
+		if (legs < 0)
+			throw new IllegalArgumentException("ACARS Legs cannot be negative");
+		
+		_acarsLegs = legs;
 	}
 
 	/**
@@ -614,6 +656,23 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 			throw new IllegalArgumentException("Online hours cannot be negative");
 
 		_onlineHours = hours;
+	}
+	
+	/**
+	 * Updates this Pilot's logged ACARS hours. This method will typically only be called from a DAO where we are
+	 * querying the <b>PILOTS</b> table, and not actually loading all the PIREPs but just getting a
+	 * <B>SUM(PIREPS.HOURS) WHERE ((PIREPS.ATTRS & 0x10) != 0)</B>.
+	 * @param hours the ACARS hours logged by this Pilot
+	 * @throws IllegalArgumentException if hours is negative
+	 * @see Pilot#setHours(double)
+	 * @see Pilot#setLegs(int)
+	 * @see Pilot#getACARSHours()
+	 */
+	public void setACARSHours(double hours) {
+		if (hours < 0)
+			throw new IllegalArgumentException("ACARS hours cannot be negative");
+		
+		_acarsHours = hours;
 	}
 
 	/**

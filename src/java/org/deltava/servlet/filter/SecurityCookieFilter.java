@@ -75,14 +75,17 @@ public class SecurityCookieFilter implements Filter {
 		// Get the connection pool
 		ConnectionPool pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 		Connection con = null;
-		Person p = null;
-
+		Pilot p = null;
 		try {
 			con = pool.getConnection(true);
 
 			// Get the person
 			GetPilotDirectory dao = new GetPilotDirectory(con);
 			p = dao.getFromDirectory(dN);
+			
+			// Populate online/ACARS legs
+			GetFlightReports frdao = new GetFlightReports(con);
+			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
 		} catch (DAOException de) {
 			log.error("Error loading " + dN + " - " + de.getMessage(), de);
 		} finally {
