@@ -119,7 +119,12 @@ public class ThreadPostCommand extends AbstractCommand {
 				// Validate the image
 				try {
 					URL url = new URL(ctx.getParameter("imgURL"));
-					HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
+					URLConnection urlc = url.openConnection();
+					if (!(urlc instanceof HttpURLConnection))
+						throw new MalformedURLException();
+					
+					// Open the connection
+					HttpURLConnection urlcon = (HttpURLConnection) urlc;
 					urlcon.setRequestMethod("HEAD");
 					urlcon.setConnectTimeout(2000);
 					urlcon.setReadTimeout(2500);
