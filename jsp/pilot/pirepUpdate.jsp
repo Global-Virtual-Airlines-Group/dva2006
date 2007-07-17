@@ -82,7 +82,7 @@ for ${pilot.name} is <b>${pilot.pilotCode}</b>.<br />
 </c:if>
 <c:if test="${!empty centuryClub}">
 <br />
-With the approval of this Flight Report, ${pilot.name} has joined the &quot;${centuryClub}&quot;.<br />
+<span class="sec bld">With the approval of this Flight Report, ${pilot.name} has joined the &quot;${centuryClub}&quot;.</span><br />
 </c:if>
 <c:if test="${assignComplete}">
 With the approval of this Flight Report, a Flight Assignment has been successfully completed.<br />
