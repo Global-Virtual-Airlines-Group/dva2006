@@ -219,7 +219,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Check if we're creating a new PIREP
 		Pilot usr = (Pilot) ctx.getUser();
 		boolean isNew = (ctx.getID() == 0);
-		boolean forcePage = Boolean.valueOf(ctx.getParameter("force")).booleanValue();
+		boolean forcePage = Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
 
 		// Get the current date/time in the user's local zone
 		Calendar cld = Calendar.getInstance();
@@ -239,6 +239,8 @@ public class PIREPCommand extends AbstractFormCommand {
 				ctx.setAttribute("eqType", eqdao.get(usr.getEquipmentType()), REQUEST);
 				ctx.release();
 				
+				// Set force flag and display JSP
+				ctx.setAttribute("forcePIREP", Boolean.TRUE, SESSION);
 				result.setURL("/jsp/pilot/pirepNagACARS.jsp");
 				result.setSuccess(true);
 				return;
