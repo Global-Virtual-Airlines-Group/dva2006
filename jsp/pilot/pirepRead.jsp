@@ -72,7 +72,7 @@ return true;
 <c:if test="${access.canApprove && (pilot.legs % 100 == 99)}">
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data sec bld caps">Flight Report Approval will update Century Club status</td>
+ <td class="data bld caps">Flight Report Approval will update Century Club status</td>
 </tr>
 </c:if>
 <tr>
