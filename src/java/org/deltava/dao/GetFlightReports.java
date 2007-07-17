@@ -68,14 +68,14 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(1, id);
 
 			// Execute the query, if nothing returned then give back null
-			List results = execute();
+			List<FlightReport> results = execute();
 			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
 			// Get the primary equipment types
-			FlightReport fr = (FlightReport) results.get(0);
-			fr.setCaptEQType(getCaptEQType(fr.getID()));
+			FlightReport fr = results.get(0);
+			fr.setCaptEQType(getCaptEQType(fr.getID(), dbName));
 			return fr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -110,14 +110,14 @@ public class GetFlightReports extends DAO {
 			_ps.setInt(1, acarsID);
 
 			// Execute the query, if nothing returned then give back null
-			List results = execute();
+			List<FlightReport> results = execute();
 			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
 			// Get the primary equipment types
 			ACARSFlightReport afr = (ACARSFlightReport) results.get(0);
-			afr.setCaptEQType(getCaptEQType(afr.getID()));
+			afr.setCaptEQType(getCaptEQType(afr.getID(), dbName));
 			return afr;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -564,15 +564,21 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Helper method to load data for flights counting towards promotion.
 	 */
-	private Collection<String> getCaptEQType(int id) throws SQLException {
+	private Collection<String> getCaptEQType(int id, String dbName) throws SQLException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQTYPE FROM ");
+		sqlBuf.append(formatDBName(dbName));
+		sqlBuf.append(".PROMO_EQ WHERE (ID=?) ORDER BY EQTYPE");
+		
 
 		// Build the prepared statement and execute the query
-		prepareStatementWithoutLimits("SELECT EQTYPE FROM PROMO_EQ WHERE (ID=?) ORDER BY EQTYPE");
+		prepareStatementWithoutLimits(sqlBuf.toString());
 		_ps.setInt(1, id);
 		ResultSet rs = _ps.executeQuery();
 
 		// Iterate through the results
-		Set<String> results = new LinkedHashSet<String>();
+		Collection<String> results = new LinkedHashSet<String>();
 		while (rs.next())
 			results.add(rs.getString(1));
 
