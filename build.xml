@@ -257,7 +257,7 @@
 		<loadproperties srcFile="data/build_deploy.properties" />
 
 		<!-- Upload the web configuration -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF"
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}"
 				verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset file="${java.io.tmpdir}/build/web.xml">
 				<modified seldirs="false" algorithm="digest">
@@ -280,7 +280,7 @@
 		</scp>
 
 		<!-- Upload the JAR files to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/lib"
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/lib"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="${java.io.tmpdir}/build">
 				<include name="golgotha.jar" />
@@ -300,7 +300,7 @@
 		</scp>
 		
 		<!-- Upload the config file to the app server -->
-		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/WEB-INF/classes/etc"
+		<scp todir="${webapp.ssh.user}@${webapp.ssh.server}:${webapp.ssh.path}/classes/etc"
 			verbose="yes" trust="yes" password="${webapp.ssh.pwd}">
 			<fileset dir="etc">
 				<include name="commands.xml" />
