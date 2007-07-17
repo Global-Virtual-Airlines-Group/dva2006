@@ -47,7 +47,7 @@ Microsoft Flight Simulator 2002, 2004 and Flight Simulator X. You can also run A
 registered version of <el:link external="true" url="http://www.schiratti.com/dowson.html">Peter Dowson's WideFS</el:link>.<br />
 <br />
 The final benefit to using ACARS is that it will get rid of this nag page. To continue filing your Flight Report manually, 
-<el:cmd url="pirep" op="edit&amp;force=true" className="sec bld">Click Here</el:cmd>.<br />
+<el:cmd url="pirep" op="edit" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
