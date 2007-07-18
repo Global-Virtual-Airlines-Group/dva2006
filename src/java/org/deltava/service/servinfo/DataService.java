@@ -2,13 +2,10 @@
 package org.deltava.service.servinfo;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 import java.text.*;
 
 import static javax.servlet.http.HttpServletResponse.*;
-
-import org.apache.log4j.Logger;
 
 import org.deltava.beans.DateTime;
 import org.deltava.beans.OnlineNetwork;
@@ -29,8 +26,6 @@ import org.deltava.util.system.SystemData;
  */
 
 public class DataService extends WebService {
-
-	private static final Logger log = Logger.getLogger(DataService.class);
 
 	// Networks
 	public static final String[] NETWORKS = { OnlineNetwork.VATSIM, OnlineNetwork.IVAO };
@@ -59,24 +54,9 @@ public class DataService extends WebService {
 		Collection<Pilot> users = new ArrayList<Pilot>();
 		try {
 			for (int x = 0; x < NETWORKS.length; x++) {
-				// Get network status
-				HttpURLConnection con = getURL(SystemData.get("online." + NETWORKS[x].toLowerCase() + ".status_url"));
-				GetServInfo sdao = new GetServInfo(con);
-				NetworkStatus status = sdao.getStatus(NETWORKS[x]);
-				sdao.setUseCache(true);
-				con.disconnect();
-
-				// Get network info
-				NetworkDataURL nd = status.getDataURL(true); 
-				con = getURL(nd.getURL());
-				GetServInfo idao = new GetServInfo(con);
-				idao.setBufferSize(32768);
-				NetworkInfo info = idao.getInfo(NETWORKS[x]);
-				con.disconnect();
-				nd.logUsage(true);
-
-				// Mash the VATSIM/IVAO user data together
-				users.addAll(combineUsers(info, pilots));
+				NetworkInfo info = GetServInfo.getCachedInfo(NETWORKS[x]);
+				if (info != null)
+					users.addAll(combineUsers(info, pilots));
 			}
 		} catch (Exception e) {
 			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
@@ -127,15 +107,6 @@ public class DataService extends WebService {
 
 		// Return result code
 		return SC_OK;
-	}
-
-	/**
-	 * Helper method to open a connection to a particular URL.
-	 */
-	private HttpURLConnection getURL(String dataURL) throws IOException {
-		URL url = new URL(dataURL);
-		log.debug("Loading data from " + url.toString());
-		return (HttpURLConnection) url.openConnection();
 	}
 
 	/**

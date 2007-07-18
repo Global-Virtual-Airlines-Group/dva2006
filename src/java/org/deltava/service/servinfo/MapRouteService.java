@@ -1,13 +1,10 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.servinfo;
 
-import java.net.*;
 import java.util.*;
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
-
-import org.apache.log4j.Logger;
 
 import org.jdom.*;
 
@@ -30,17 +27,6 @@ import org.deltava.util.system.SystemData;
 
 public class MapRouteService extends WebService {
 
-	private static final Logger log = Logger.getLogger(MapRouteService.class);
-
-	/**
-	 * Helper method to open a connection to a particular URL.
-	 */
-	private HttpURLConnection getURL(String dataURL) throws IOException {
-		URL url = new URL(dataURL);
-		log.debug("Loading data from " + url.toString());
-		return (HttpURLConnection) url.openConnection();
-	}
-
 	/**
 	 * Executes the Web Service, returning ServInfo route data.
 	 * @param ctx the Web Service context
@@ -54,33 +40,8 @@ public class MapRouteService extends WebService {
 		if (networkName == null)
 			networkName = SystemData.get("online.default_network");
 
-		// Get VATSIM/IVAO data
-		NetworkInfo info = null;
-		NetworkDataURL nd = null;
-		try {
-			// Connect to info URL
-			HttpURLConnection urlcon = getURL(SystemData.get("online." + networkName.toLowerCase() + ".status_url"));
-
-			// Get network status
-			GetServInfo sdao = new GetServInfo(urlcon);
-			sdao.setUseCache(true);
-			NetworkStatus status = sdao.getStatus(networkName);
-			urlcon.disconnect();
-
-			// Get network status
-			nd = status.getDataURL(false); 
-			urlcon = getURL(nd.getURL());
-			GetServInfo idao = new GetServInfo(urlcon);
-			idao.setBufferSize(32768);
-			info = idao.getInfo(networkName);
-			urlcon.disconnect();
-			nd.logUsage(true);
-		} catch (Exception e) {
-			nd.logUsage(false);
-			log.error("Error loading " + networkName + " data");
-			log.error(e.getMessage(), e);
-			throw error(SC_INTERNAL_SERVER_ERROR, e.getMessage());
-		}
+		// Get the network info from the cache
+		NetworkInfo info = GetServInfo.getCachedInfo(networkName);
 
 		// Get the Pilot
 		Pilot p = info.getPilot(ctx.getParameter("id"));
