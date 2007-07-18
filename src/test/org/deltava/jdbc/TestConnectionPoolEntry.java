@@ -23,7 +23,7 @@ public class TestConnectionPoolEntry extends TestCase {
         _props = new Properties();
         _props.load(new FileInputStream("data/jdbc.properties"));
         Class.forName(_props.getProperty("driver"));
-        _cpe = new ConnectionPoolEntry(1, _props.getProperty("url"), _props);
+        _cpe = new ConnectionPoolEntry(1, _props);
         _cpe.connect();
         _c = _cpe.getConnection();
     }
@@ -79,7 +79,7 @@ public class TestConnectionPoolEntry extends TestCase {
     }
     
     public void testCloseException() {
-        ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props.getProperty("url"), _props);
+        ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props);
         cpe2.close();
     }
     
@@ -92,7 +92,7 @@ public class TestConnectionPoolEntry extends TestCase {
     }
     
     public void testIndexOf() {
-       ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props.getProperty("url"), _props);
+       ConnectionPoolEntry cpe2 = new ConnectionPoolEntry(2, _props);
        List<ConnectionPoolEntry> l = new ArrayList<ConnectionPoolEntry>();
        l.add(_cpe);
        l.add(cpe2);
