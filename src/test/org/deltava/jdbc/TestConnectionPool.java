@@ -35,9 +35,6 @@ public class TestConnectionPool extends TestCase {
         _pool.setProperties(_props);
         _pool.setCredentials(_props.getProperty("user"), _props.getProperty("password"));
         _pool.setDriver(_props.getProperty("driver"));
-        assertEquals(_props.getProperty("url"), _pool.getURL());
-        _pool.setProperty("url", "URL");
-        assertEquals("URL", _pool.getURL());
     }
     
     public void testValidation() throws Exception {

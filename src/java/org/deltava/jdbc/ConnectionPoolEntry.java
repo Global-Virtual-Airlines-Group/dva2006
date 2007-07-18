@@ -17,7 +17,6 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private StackTrace _stackInfo;
 	private int _id;
 
-	private String _url;
 	private transient final Properties _props = new Properties();
 
 	private boolean _inUse = false;
@@ -34,13 +33,11 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	/**
 	 * Create a new Connection Pool entry.
 	 * @param id the connection pool entry ID
-	 * @param url the JDBC URL to connect to
 	 * @param props JDBC connection properties
 	 */
-	ConnectionPoolEntry(int id, String url, Properties props) {
+	ConnectionPoolEntry(int id, Properties props) {
 		super();
 		_id = id;
-		_url = url;
 		_props.putAll(props);
 	}
 
@@ -80,7 +77,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 			throw new IllegalStateException("Connection " + toString() + " already Connected");
 
 		// Create the connection
-		_c = DriverManager.getConnection(_url, _props);
+		_c = DriverManager.getConnection(_props.getProperty("url"), _props);
 		_c.setAutoCommit(_autoCommit);
 		_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 		_lastUsed = System.currentTimeMillis();
