@@ -138,6 +138,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		daoCaches.add(new GetTableStatus(null));
 		daoCaches.add(new GetUserData(null));
 		daoCaches.add(new GetPilot(null));
+		daoCaches.add(new GetACARSLog(null));
 		ctx.setAttribute("daoCaches", daoCaches, REQUEST);
 		
 		// Get Virtual Machine properties
