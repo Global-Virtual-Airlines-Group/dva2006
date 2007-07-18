@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.acars.*;
 
+import org.deltava.util.cache.*;
+
 /**
  * A Data Access Object to load ACARS log data.
  * @author Luke
@@ -13,7 +15,9 @@ import org.deltava.beans.acars.*;
  * @since 1.0
  */
 
-public class GetACARSLog extends GetACARSData {
+public class GetACARSLog extends GetACARSData  implements CachingDAO {
+	
+	private static final Cache<CacheableList<CommandEntry>> _statCache = new ExpiringCache<CacheableList<CommandEntry>>(1, 900);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -29,12 +33,18 @@ public class GetACARSLog extends GetACARSData {
 	 * @throws DAOException if a JDBC error occurss
 	 */
 	public Collection<CommandEntry> getCommandStats() throws DAOException {
+		
+		// Check the cache
+		CacheableList<CommandEntry> results = _statCache.get(GetACARSLog.class);
+		if (results != null)
+			return results;
+		
 		try {
 			prepareStatementWithoutLimits("SELECT CLASS, COUNT(CMDDATE), SUM(EXECTIME), MAX(EXECTIME), MIN(EXECTIME) "
 					+ "FROM acars.COMMAND_STATS GROUP BY CLASS");
 			
 			// Execute the query
-			Collection<CommandEntry> results = new ArrayList<CommandEntry>();
+			results = new CacheableList<CommandEntry>(GetACARSLog.class);
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
 				CommandEntry entry = new CommandEntry(rs.getString(1));
@@ -48,12 +58,21 @@ public class GetACARSLog extends GetACARSData {
 			// Clean up
 			rs.close();
 			_ps.close();
+			_statCache.add(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
+	public int getHits() {
+		return _statCache.getHits();
+	}
+	
+	public int getRequests() {
+		return _statCache.getRequests();
+	}
+	
 	/**
 	 * Returns all ACARS connection log entries matching particular criteria.
 	 * @param criteria the search criteria
