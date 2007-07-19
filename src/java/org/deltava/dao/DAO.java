@@ -196,7 +196,7 @@ public abstract class DAO {
 		_ps = null;
 
 		// Check if we've updated the expected number of rows
-		if (rowsUpdated < minUpdateCount)
+		if ((rowsUpdated >= 0) && (rowsUpdated < minUpdateCount))
 			throw new SQLException("Unexpected Row Update count - " + rowsUpdated + ", expected " + minUpdateCount);
 
 		return rowsUpdated;
