@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -45,6 +45,8 @@ public class CheckRideCommand extends AbstractCommand {
          // Load the check ride data 
          GetExam dao = new GetExam(con);
          CheckRide cr = dao.getCheckRide(ctx.getID());
+         if (cr == null)
+        	 throw notFoundException("Invalid Check Ride - " + ctx.getID());
          
          // Check our access
          ExamAccessControl access = new ExamAccessControl(ctx, cr);
