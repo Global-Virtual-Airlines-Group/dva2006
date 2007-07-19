@@ -21,7 +21,7 @@
         </javadoc>
     	
    		<!-- Load the SCP server properties -->
-    	<property name="path.javadoc" value="/usr/local/www/deltava.org/www/javadoc" />
+    	<property name="path.javadoc" value="/home/deltava.org/www/javadoc" />
    		<loadproperties srcFile="data/build_doc.properties">
    			<filterchain>
 	   			<prefixlines prefix="javadoc." />
@@ -79,7 +79,7 @@
 		</junitreport>
 		
 		<!-- Load the FTP server properties -->
-		<property name="path.junit" value="/usr/local/www/deltava.org/www/junit" />
+		<property name="path.junit" value="/home/www/deltava.org/www/junit" />
 		<property file="data/build_doc.properties" prefix="junit" />
 		
     	<!-- Upload the JUnit report -->
