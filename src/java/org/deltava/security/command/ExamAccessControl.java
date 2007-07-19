@@ -43,7 +43,7 @@ public class ExamAccessControl extends AccessControl {
        validateContext();
        
         // Check if we're authenticated
-        if (!_ctx.isAuthenticated())
+        if (!_ctx.isAuthenticated() || (_t == null))
             throw new AccessControlException("Cannot view Examination");
 
         // Set access variables
