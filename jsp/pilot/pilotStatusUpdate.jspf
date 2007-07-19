@@ -2,7 +2,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <c:if test="${!empty statusUpdates}">
-<content:filter roles="HR,Examination">
+<content:filter roles="HR">
 <c:set var="isHR" value="${true}" scope="request" />
 </content:filter>
 
