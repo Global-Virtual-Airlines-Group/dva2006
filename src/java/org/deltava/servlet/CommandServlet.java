@@ -240,7 +240,12 @@ public class CommandServlet extends GenericServlet {
 			}
 			
 			// Log the error
-			String usrName = (req.getUserPrincipal() == null) ? "Anonymous" : req.getUserPrincipal().getName();
+			String usrName = null;
+			if (req.getUserPrincipal() == null)
+				usrName = "Anonymous (" + req.getRemoteHost() + ")";
+			else
+				usrName = req.getUserPrincipal().getName();
+			
 			if (logWarning)
 				log.warn(usrName + " executing " + cmd.getName() + " - " + e.getMessage());
 			else
