@@ -152,7 +152,7 @@ public class InactivityUpdateTask extends Task {
 					sudao.write(upd);
 
 					// Make sure we have a notification entry
-					iwdao.setInactivity(p.getID(), inactiveDays - notifyDays, true);
+					iwdao.setInactivity(p.getID(), inactiveDays, true);
 					
 					// Commit the transaction
 					ctx.commitTX();
