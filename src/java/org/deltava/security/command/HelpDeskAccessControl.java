@@ -58,7 +58,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		boolean isAdmin = isHR || isAcademy || _ctx.isUserInRole("PIREP") || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Signature");
 		boolean isMine = (_i.getAuthorID() == p.getID());
 		boolean isOpen = (_i.getStatus() == Issue.OPEN);
-		if (!_i.getPublic() && !isMine && !isAdmin)
+		if (!_i.getPublic() && !isMine && !isAdmin && !isHelpDesk)
 			throw new AccessControlException("Not Authorized");
 		
 		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isHelpDesk || isAdmin;
