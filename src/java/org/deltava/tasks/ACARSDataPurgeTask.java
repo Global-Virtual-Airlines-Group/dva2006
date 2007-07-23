@@ -12,6 +12,9 @@ import org.deltava.taskman.*;
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
 
+import org.gvagroup.acars.ACARSAdminInfo;
+import org.gvagroup.common.SharedData;
+
 /**
  * A Scheduled Task to purge old ACARS log data.
  * @author Luke
@@ -31,8 +34,13 @@ public class ACARSDataPurgeTask extends Task {
 	/**
 	 * Executes the task.
 	 */
+	@SuppressWarnings("unchecked")
 	protected void execute(TaskContext ctx) {
 		log.info("Executing");
+		
+		// Get active flights
+		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		Collection<Integer> activeIDs = acarsPool.getFlightIDs();
 		
 		// Determine the purge intervals
 		int flightPurge = SystemData.getInt("log.purge.flights", 48);
@@ -46,7 +54,7 @@ public class ACARSDataPurgeTask extends Task {
 			wdao.synchronizeArchive();
 			
 			// Remove old flights and position reports without a flight report
-			log.warn("Purged " + wdao.purgeFlights(flightPurge) + " flight entries");
+			log.warn("Purged " + wdao.purgeFlights(flightPurge, activeIDs) + " flight entries");
 			
 			// Purge old stats
 			log.warn("Purged " + wdao.purgeLogs(statsPurge) + " command statistics entries");

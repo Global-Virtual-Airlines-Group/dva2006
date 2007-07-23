@@ -8,6 +8,8 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.acars.ACARSError;
 
+import org.deltava.util.CollectionUtils;
+
 /**
  * A Data Access Object to update or remove ACARS log entries.
  * @author Luke
@@ -82,13 +84,29 @@ public class SetACARSLog extends DAO {
 	/**
 	 * Deletes unfiled ACARS flight information older than a specified number of hours.
 	 * @param hours the number of hours
+	 * @param activeIDs a Collection of active Flight IDs
 	 * @return the number of flights purged
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purgeFlights(int hours) throws DAOException {
+	public int purgeFlights(int hours, Collection<Integer> activeIDs) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND "
+				+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+		if (!CollectionUtils.isEmpty(activeIDs)) {
+			sqlBuf.append(" AND (ID NOT IN (");
+			for (Iterator<Integer> i = activeIDs.iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				sqlBuf.append(id.toString());
+				if (i.hasNext())
+					sqlBuf.append(',');
+			}
+			
+			sqlBuf.append("))");
+		}
+		
 		try {
-			prepareStatementWithoutLimits("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND (CREATED < "
-					+ "DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
