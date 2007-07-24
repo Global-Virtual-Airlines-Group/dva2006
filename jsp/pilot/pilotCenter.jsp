@@ -633,7 +633,6 @@ database.</td>
 </tr>
 </content:filter>
 <content:filter roles="Admin">
-<content:sysdata var="latestBuild" name="acars.build.latest" />
 <tr>
  <td class="mid"><el:cmd className="bld" url="acarsversion">ACARS Client Versions</el:cmd></td>
  <td class="data">You can control which versions of the <content:airline /> ACARS client are allowed to 

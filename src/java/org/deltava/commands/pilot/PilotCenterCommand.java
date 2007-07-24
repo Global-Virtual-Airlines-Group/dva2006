@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -18,6 +18,9 @@ import org.deltava.security.command.*;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
+
+import org.gvagroup.acars.ACARSClientInfo;
+import org.gvagroup.common.SharedData;
 
 /**
  * A Web Site Command to display the Pilot Center.
@@ -195,6 +198,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+		
+		// Get latest acars version
+		if (ctx.isUserInRole("Admin") && SystemData.getBoolean("acars.enabled")) {
+			ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
+			ctx.setAttribute("latestBuild", new Integer(cInfo.getLatest()), REQUEST);
 		}
 
 		// Figure out the image to display
