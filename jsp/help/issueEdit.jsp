@@ -7,7 +7,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Fleet Academy Help Desk</title>
+<title><content:airline /> Help Desk</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
@@ -25,7 +25,7 @@ if (act.indexOf('hdissue.do') != -1) {
 	if ((form.sendIssue) && (form.sendIssue.disabled))
 		form.sendIssue.checked = false;
 } else {
-	if (!validateCombo(form.assignedTo, 'Development Issue Assignee')) return false;
+	if (!validateCombo(form.devAssignedTo, 'Development Issue Assignee')) return false;
 	if (!validateCombo(form.area, 'Development Issue Area')) return false;
 	if (!validateCombo(form.type, 'Development Issue Type')) return false;
 	if (!validateCombo(form.priority, 'Development Issue Priority')) return false;
@@ -40,15 +40,9 @@ return true;
 function checkAssignee(combo)
 {
 var f = document.forms[0];
-if (combo.selectedIndex == document.originalAssignee) {
-	f.sendIssue.disabled = true;
-} else {
-	f.sendIssue.disabled = false;
-}
-
+f.sendIssue.disabled = (combo.selectedIndex == document.originalAssignee);
 return true;
-}
-</c:if>
+}</c:if>
 </script>
 </head>
 <content:copyright visible="false" />
@@ -108,7 +102,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Assign To</td>
- <td class="data"><el:combo name="assignedTo" idx="*" size="1" options="${devs}" firstEntry="-" /></td>
+ <td class="data"><el:combo name="devAssignedTo" idx="*" size="1" options="${devs}" firstEntry="-" /></td>
 </tr>
 <tr>
  <td class="label">Priority</td>
