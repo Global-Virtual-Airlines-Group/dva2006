@@ -110,27 +110,27 @@ public class NetworkInfo implements java.io.Serializable, Cacheable {
     		switch (c.getFacility()) {
     			case Controller.OBSERVER:
     			case Controller.DEL:
-    				maxDistance = 25;
-    				break;
-    				
-    			case Controller.GND:
     				maxDistance = 30;
     				break;
     				
+    			case Controller.GND:
+    				maxDistance = 60;
+    				break;
+    				
     			case Controller.TWR:
-    				maxDistance = 75;
+    				maxDistance = 125;
     				break;
     				
     			case Controller.APP:
-    				maxDistance = 250;
+    				maxDistance = 350;
     				break;
     				
     			case Controller.CTR:
-    				maxDistance = 1000;
+    				maxDistance = 1500;
     				break;
     				
     			case Controller.FSS:
-    				maxDistance = 2000;
+    				maxDistance = 2500;
     				break;
     		}
     		
