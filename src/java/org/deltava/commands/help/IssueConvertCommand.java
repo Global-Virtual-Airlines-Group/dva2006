@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.net.*;
@@ -52,7 +52,7 @@ public class IssueConvertCommand extends AbstractCommand {
 			i.setSubject(hi.getSubject());
 			i.setStatus(org.deltava.beans.system.Issue.STATUS_OPEN);
 			i.setDescription(hi.getBody());
-			i.setAssignedTo(StringUtils.parse(ctx.getParameter("assignedTo"), ctx.getUser().getID()));
+			i.setAssignedTo(StringUtils.parse(ctx.getParameter("devAssignedTo"), ctx.getUser().getID()));
 			i.setArea(StringUtils.arrayIndexOf(Issue.AREA, ctx.getParameter("area"), Issue.AREA_WEBSITE));
 			i.setType(StringUtils.arrayIndexOf(Issue.TYPE, ctx.getParameter("type"), Issue.TYPE_BUG));
 			i.setPriority(StringUtils.arrayIndexOf(Issue.PRIORITY, ctx.getParameter("priority"), Issue.PRIORITY_MEDIUM));
