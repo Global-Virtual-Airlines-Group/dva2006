@@ -257,7 +257,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		}
 
 		// Shut down the JDBC connection pool
-		ThreadUtils.sleep(5000);
+		ThreadUtils.sleep(2000);
 		_jdbcPool.close();
 
 		// Deregister JDBC divers
