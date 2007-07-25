@@ -5,6 +5,7 @@ Disallow: /thread.do
 Disallow: /roster.do
 Disallow: /logbook.do
 Disallow: /profile.do
+Disallow: /pirep.do
 Disallow: /staff.do
 Disallow: /pwdreset.do
 Disallow: /airlinestats.do
