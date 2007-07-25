@@ -13,6 +13,23 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${!empty loginAddrs}">
+<script language="JavaScript" type="text/javascript">
+function toggleLoginAddrs()
+{
+var addrDiv = getElement('loginAddrs');
+if (!addrDiv) return false;
+
+// Toggle the visibility
+var s = addrDiv.style;
+s.visibility = (s.visibility == 'collapse') ? 'visible' : 'collapse';
+
+// Update the link
+var addrLink = getElement('addrDivLink');
+addrLink.innerHTML = (s.visibility == 'collapse') ? 'SHOW' : 'HIDE';
+return true;
+}</c:if>
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -151,12 +168,19 @@
 <tr>
  <td class="label" valign="top">Logins</td>
  <td colspan="${cspan}" class="data"><fmt:int value="${pilot.loginCount}" />, last on <fmt:date date="${pilot.lastLogin}" />
-<content:filter roles="HR"> from <el:cmd url="loginaddrs" linkID="${pilot.loginHost}" op="net">${pilot.loginHost}</el:cmd></content:filter>.
-<c:if test="${!empty loginAddrs}"><br /><c:forEach var="loginAddr" items="${loginAddrs}">
-${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach>
-</c:if>
+<content:filter roles="HR"> from <el:cmd url="loginaddrs" linkID="${pilot.loginHost}" op="net">${pilot.loginHost}</el:cmd>.
+<c:if test="${!empty loginAddrs}"><a id="addrDivLink" href="javascript:void toggleLoginAddrs()">SHOW</a></c:if></content:filter>
 </td>
 </tr>
+<content:filter roles="HR">
+<c:if test="${!empty loginAddrs}">
+<tr id="loginAddrs" style="visibility:collapse;">
+ <td class="label">&nbsp;</td>
+ <td colspan="${cspan}" class="data"><c:forEach var="loginAddr" items="${loginAddrs}">
+${loginAddr.remoteAddr} (${loginAddr.remoteHost}) - <fmt:int value="${loginAddr.loginCount}" /> logins<br /></c:forEach></td>
+</tr>
+</c:if>
+</content:filter>
 </c:if>
 <c:if test="${!empty pilot.lastLogoff}">
 <tr>
