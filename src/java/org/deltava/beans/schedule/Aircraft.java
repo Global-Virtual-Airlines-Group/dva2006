@@ -43,6 +43,7 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	private String _name;
 	private String _fullName;
 	private boolean _historic;
+	private boolean _etops;
 
 	private int _maxRange;
 	private byte _engineCount;
@@ -98,12 +99,21 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	}
 
 	/**
-	 * Returns wether this aircraft is a Historic type.
+	 * Returns whether this aircraft is a Historic type.
 	 * @return TRUE if this is a Historic type, otherwise FALSE
 	 * @see Aircraft#setHistoric(boolean)
 	 */
 	public boolean getHistoric() {
 		return _historic;
+	}
+	
+	/**
+	 * Returns whether the aircraft is ETOPS-qualified.
+	 * @return TRUE if this is ETOPS-rated, otherwise FALSE
+	 * @see Aircraft#setETOPS(boolean)
+	 */
+	public boolean getETOPS() {
+		return (_etops && (_engineCount == 2));
 	}
 	
 	/**
@@ -315,12 +325,20 @@ public class Aircraft implements Comparable, Cacheable, ViewEntry {
 	}
 
 	/**
-	 * Update wether this aircraft is a Historic type.
+	 * Updates whether this aircraft is a Historic type.
 	 * @param isHistoric TRUE if a Historic type, otherwise FALSE
 	 * @see Aircraft#getHistoric()
 	 */
 	public void setHistoric(boolean isHistoric) {
 		_historic = isHistoric;
+	}
+	
+	/**
+	 * Updates whether this aircraft is ETOPS-rated.
+	 * @param isETOPS TRUE if ETOPS-rated, otherwise FALSE
+	 */
+	public void setETOPS(boolean isETOPS) {
+		_etops = isETOPS;
 	}
 
 	/**
