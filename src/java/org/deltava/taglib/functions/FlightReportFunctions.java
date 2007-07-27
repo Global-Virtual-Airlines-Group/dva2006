@@ -170,6 +170,16 @@ public class FlightReportFunctions {
     }
     
     /**
+     * Returns if this Flight was operated using non-ETOPS-rated aircraft on an ETOPS route.
+     * @param fr the Flight Report
+     * @return TRUE if the ETOPSWARN attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_ETOPSWARN
+     */
+    public static boolean etopsWarn(FlightReport fr) {
+    	return ((fr != null) && fr.hasAttribute(FlightReport.ATTR_ETOPSWARN));
+    }
+    
+    /**
      * Returns if this Flight counts towards promotion to Captain.
      * @param fr the Flight Report
      * @return TRUE if the Leg counts towards promotion, otherwise FALSE

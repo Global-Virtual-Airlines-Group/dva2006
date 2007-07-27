@@ -230,14 +230,21 @@
 		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
 		<function-signature>boolean timeWarn(org.deltava.beans.FlightReport)</function-signature>
 	</function>
-	
+
+	<!-- Check for ETOPS warning flag -->
+	<function>
+		<name>etopsWarn</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean etopsWarn(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Check Ride -->
 	<function>
 		<name>isCheckRide</name>
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean isCheckRide(org.deltava.beans.testing.Test)</function-signature>
 	</function>
-	
+
 	<!-- Check for multiple-choice question -->
 	<function>
 		<name>isMultiChoice</name>
@@ -251,7 +258,7 @@
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean correct(org.deltava.beans.testing.Question)</function-signature>
 	</function>
-	
+
 	<!-- Check for incorrectly answered question -->
 	<function>
 		<name>incorrect</name>
@@ -259,49 +266,49 @@
 		<function-signature>boolean incorrect(org.deltava.beans.testing.Test,
 			org.deltava.beans.testing.Question)</function-signature>
 	</function>
-	
+
 	<!-- Check for passed Examination -->
 	<function>
 		<name>passed</name>
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean isPass(org.deltava.beans.testing.Test)</function-signature>
 	</function>
-	
+
 	<!-- Check for failed Examination -->
 	<function>
 		<name>failed</name>
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean isFail(org.deltava.beans.testing.Test)</function-signature>
 	</function>
-	
+
 	<!-- Check for pending Examination -->
 	<function>
 		<name>pending</name>
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean isPending(org.deltava.beans.testing.Test)</function-signature>
 	</function>
-	
+
 	<!-- Check for submitted Examination -->
 	<function>
 		<name>submitted</name>
 		<function-class>org.deltava.taglib.functions.TestingFunctions</function-class>
 		<function-signature>boolean isSubmitted(org.deltava.beans.testing.Test)</function-signature>
 	</function>
-	
+
 	<!-- Get Captain's Examination Name -->
 	<function>
 		<name>examC</name>
 		<function-class>org.deltava.taglib.functions.EquipmentTypeFunctions</function-class>
 		<function-signature>java.lang.String examC(org.deltava.beans.EquipmentType)</function-signature>
 	</function>
-	
+
 	<!-- Get First Officer's Examination Name -->
 	<function>
 		<name>examFO</name>
 		<function-class>org.deltava.taglib.functions.EquipmentTypeFunctions</function-class>
 		<function-signature>java.lang.String examFO(org.deltava.beans.EquipmentType)</function-signature>
 	</function>
-	
+
 	<!-- Get the legs required for promotion -->
 	<function>
 		<name>promoLegs</name>
@@ -309,7 +316,7 @@
 		<function-signature>int promotionLegs(org.deltava.beans.EquipmentType,
 			java.lang.String)</function-signature>
 	</function>
-	
+
 	<!-- Get the hours required for promotion -->
 	<function>
 		<name>promoHours</name>

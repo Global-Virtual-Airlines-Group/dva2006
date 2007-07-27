@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -100,6 +100,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight flown with excessive range for aircraft.
 	 */
 	public static final int ATTR_RANGEWARN = 0x800;
+	
+	/**
+	 * Flight flown with non-ETOPS-rated aircraft.
+	 */
+	public static final int ATTR_ETOPSWARN = 0x2000;
 
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.

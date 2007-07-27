@@ -53,6 +53,7 @@ public class AircraftCommand extends AbstractFormCommand {
 			a.setRange(StringUtils.parse(ctx.getParameter("range"), 0));
 			a.setIATA(StringUtils.split(ctx.getParameter("iataCodes"), "\n"));
 			a.setHistoric(Boolean.valueOf(ctx.getParameter("isHistoric")).booleanValue());
+			a.setETOPS(Boolean.valueOf(ctx.getParameter("isETOPS")).booleanValue());
 			a.setEngines((byte) StringUtils.parse(ctx.getParameter("engineCount"), 2));
 			a.setEngineType(ctx.getParameter("engineType"));
 			a.setCruiseSpeed(StringUtils.parse(ctx.getParameter("cruiseSpeed"), 0));
