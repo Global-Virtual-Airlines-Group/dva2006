@@ -65,7 +65,8 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /></td>
+ <td class="data"><el:box name="isHistoric" idx="*" value="true" checked="${aircraft.historic}" label="This is a Historic Aircraft" /><br />
+<el:box name="isETOPS" idx="*" value="true" checked="${aircraft.ETOPS}" label="This Aircraft is ETOPS-rated" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Web Applications</td>

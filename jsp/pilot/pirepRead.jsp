@@ -135,6 +135,9 @@ return true;
 <c:if test="${fn:rangeWarn(pirep)}">
 <div class="warn bld caps">Flight Distance outside Aircraft Range</div>
 </c:if>
+<c:if test="${fn:etopsWarn(pirep)}">
+<div class="warn bld caps">Non-ETOPS Aircraft used on ETOPS route</div>
+</c:if>
 <c:if test="${fn:timeWarn(pirep)}">
 <div class="warn bld caps">Flight Length outside Schedule Guidelines</div>
 </c:if>
