@@ -286,7 +286,6 @@
 		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
-			<network>INTVAS</network>
 		</list>
 
 		<list name="highlightCodes" attr="code" unique="true">
