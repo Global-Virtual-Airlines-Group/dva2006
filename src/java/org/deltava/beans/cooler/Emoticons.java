@@ -14,11 +14,11 @@ public interface Emoticons {
     * Emoticon names.
     */
    public static final String[] ICON_NAMES = {"smile", "wink", "cool", "frown", "eek", "mad", "redface", "confused",
-         "rolleyes", "biggrin", "razz", "plotting", "judge", "slitwrist", "scared", "evilgrin", "rofl", "nuts", "blahblah", "puke", "rawk"};
+         "rolleyes", "biggrin", "razz", "plotting", "judge", "slitwrist", "scared", "evilgrin", "rofl", "nuts", "blahblah", "rawk"};
    
    /**
     * Emoticon codes.
     */
    public static final String[] ICON_CODES = {":)", ";)", null, ":(", ":O", null, null, null, null, ":D", ":p", null, null, 
-         null, null, ">)", null, null, null, null, null};
+         null, null, ">)", null, null, null, null};
 }
