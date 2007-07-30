@@ -366,8 +366,8 @@ public class SetSchedule extends DAO {
 			_ps.setInt(12, a.getTanks(Aircraft.SECONDARY));
 			_ps.setInt(13, a.getPct(Aircraft.SECONDARY));
 			_ps.setInt(14, a.getTanks(Aircraft.OTHER));
-			_ps.setString(15, a.getFullName());
-			_ps.setBoolean(16, a.getETOPS());
+			_ps.setBoolean(15, a.getETOPS());
+			_ps.setString(16, a.getFullName());
 			_ps.setString(17, a.getName());
 			executeUpdate(1);
 
