@@ -190,7 +190,7 @@ public class GetQuestionnaire extends DAO {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasName = (rs.getMetaData().getColumnCount() > 10);
+		boolean hasName = (rs.getMetaData().getColumnCount() > 13);
 
 		// Iterate through the result set
 		List<Examination> results = new ArrayList<Examination>();
@@ -204,13 +204,15 @@ public class GetQuestionnaire extends DAO {
 			e.setSubmittedOn(rs.getTimestamp(6));
 			e.setScoredOn(rs.getTimestamp(7));
 			e.setScorerID(rs.getInt(8));
-			e.setSize(rs.getInt(9));
-			e.setScore(rs.getInt(10));
+			e.setAutoScored(rs.getBoolean(9));
+			e.setComments(rs.getString(10));
+			e.setSize(rs.getInt(11));
+			e.setScore(rs.getInt(12));
 
 			// Add name data if present
 			if (hasName) {
-				e.setFirstName(rs.getString(11));
-				e.setLastName(rs.getString(12));
+				e.setFirstName(rs.getString(13));
+				e.setLastName(rs.getString(14));
 			}
 
 			// Add to results

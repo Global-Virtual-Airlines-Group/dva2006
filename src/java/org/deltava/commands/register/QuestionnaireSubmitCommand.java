@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.util.*;
@@ -42,14 +42,34 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
             throw securityException("Cannot submit Questionnaire");
 
          // Set the status of the examination, and submitted date
+		Calendar cld = Calendar.getInstance();
+		ex.setSubmittedOn(cld.getTime());
          ex.setStatus(Test.SUBMITTED);
-         ex.setSubmittedOn(new Date());
          
          // Save answers from the request
+         int score = 0;
+         boolean allMC = true;
          for (int x = 1; x <= ex.getSize(); x++) {
             Question q = ex.getQuestion(x);
             q.setAnswer(ctx.getParameter("answer" + String.valueOf(x)));
+			allMC &= (q instanceof MultiChoiceQuestion);
+			if ((q instanceof MultiChoiceQuestion) && (q.getAnswer() != null)) {
+				String ca = q.getAnswer().replace("\r", "");
+				q.setCorrect(ca.equals(q.getCorrectAnswer()));
+				if (q.isCorrect())
+					score++;
+			}
          }
+         
+         // If we're entirely multiple choice, then mark the examination scored
+		if (allMC) {
+			ex.setScoredOn(cld.getTime());
+			ex.setStatus(Test.SCORED);
+			ex.setScore(score);
+			ex.setAutoScored(true);
+			ex.setScorerID(ctx.getUser().getID());
+	        ex.setPassFail(true);
+		}
          
          // Get EMail validation results
          GetAddressValidation avdao = new GetAddressValidation(con);
