@@ -221,6 +221,7 @@
 			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>true</useLocalSessionState>
+			<useCursorFetch>true</useCursorFetch>
 		</map>
 		
 		<pool_size type="Integer">1</pool_size>
@@ -314,16 +315,6 @@
 				<info>/var/cache/servinfo/ivao.info</info>
 			</local>
 		</ivao>
-
-		<intvas>
-			<status_url>http://www.intvas.net/whazzup/status.txt</status_url>
-			<banner>intvas.png</banner>
-			<url>http://www.intvas.net/</url>
-			<local>
-				<status>/var/cache/servinfo/intvas.status</status>
-				<info>/var/cache/servinfo/intvas.info</info>
-			</local>
-		</intvas>
 
 		<default_network>VATSIM</default_network>
 	</online>
