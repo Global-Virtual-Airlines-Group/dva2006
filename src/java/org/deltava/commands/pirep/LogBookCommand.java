@@ -1,18 +1,16 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FlightReport;
-
+import org.deltava.beans.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-
 import org.deltava.util.*;
 
 /**
- * A Web Site Command to display a Pilot's flight reports.
+ * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -21,9 +19,10 @@ import org.deltava.util.*;
 public class LogBookCommand extends AbstractViewCommand {
 	
     // List of query columns we can order by
-    private static final String[] SORT_CODE = {"DATE DESC, PR.ID DESC", "EQTYPE", "DISTANCE DESC", "FLIGHT_TIME DESC"};
-    private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Flight Time"};
-    private static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
+    private static final String[] SORT_CODE = {"DATE DESC, PR.ID DESC", "EQTYPE", "DISTANCE DESC", "AIRPORT_D",
+    	"AIRPORT_A", "FLIGHT_TIME DESC"};
+    private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Origin", "Destination", "Flight Time"};
+    private static final List<ComboAlias> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
 
     /**
      * Executes the command.
@@ -43,7 +42,6 @@ public class LogBookCommand extends AbstractViewCommand {
         
         // Set sort options
         ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
-        
         try {
             Connection con = ctx.getConnection();
             
