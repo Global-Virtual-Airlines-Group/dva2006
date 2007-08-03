@@ -1,6 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <%@ page session="false" %>
-<%@ page isELIgnored="false" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
@@ -9,7 +8,7 @@
 <content:sysdata var="forumName" name="airline.forum" />
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> ${forumName} - ${thread.subject}</title>
+<title><content:airline /> ${forumName} - <fmt:text value="${thread.subject}" /></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="cooler" />
 <content:css name="form" />
@@ -81,7 +80,7 @@ return true;
 <tr class="title">
  <td colspan="3" class="left caps"><el:cmd className="title" url="channels"><content:airline />
  WATER COOLER</el:cmd> | <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
- ${thread.subject}<c:if test="${access.canReport && (postCount > 1)}">
+ <fmt:text value="${thread.subject}" /><c:if test="${access.canReport && (postCount > 1)}">
  ( <el:cmd url="threadreport" link="${thread}" className="small">WARN MODERATORS</el:cmd> )</c:if></td>
 </tr>
 <c:if test="${!empty thread.stickyUntil}">
@@ -97,7 +96,7 @@ return true;
 <c:set var="postIdx" value="${0}" scope="request" />
 <c:set var="contentWarn" value="${false}" scope="request" />
 <c:forEach var="msg" items="${thread.posts}">
-<!-- Response 0x<fmt:hex value="${msg.ID}" /> -->
+<!-- Response 0x${msg.hexID} -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
@@ -194,9 +193,6 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <el:showaddr user="${pilot}">
 <c:if test="${!empty pilot.IMHandle['AOL']}">
 <a href="aim:goim?screenname=${pilot.IMHandle['AOL']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle['AOL']}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
-</c:if>
-<c:if test="${!empty pilot.IMHandle['MSN']}">
-<a href="msnim:chat?contact=${pilot.IMHandle['MSN']}"><img border="0" src="http://blockchecker.msnfanatic.com/status/${pilot.IMHandle['MSN']}.gif" alt="My MSN status" /></a>
 </c:if>
 </el:showaddr></td>
  <td class="postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
