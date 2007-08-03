@@ -229,8 +229,9 @@
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
 			<continueBatchOnError>true</continueBatchOnError>
-			<useServerPrepStmts>false</useServerPrepStmts>
+			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
+			<useCursorFetch>true</useCursorFetch>
 		</map>
 		
 		<pool_size type="Integer">4</pool_size>
@@ -299,6 +300,7 @@
 	</config>
 
 	<online>
+		<default_network>VATSIM</default_network>
 		<list name="networks" attr="network" unique="true">
 			<network>VATSIM</network>
 			<network>IVAO</network>
@@ -330,18 +332,6 @@
 				<info>/var/cache/servinfo/ivao.info</info>
 			</local>
 		</ivao>
-
-		<intvas>
-			<status_url>http://www.intvas.net/whazzup/status.txt</status_url>
-			<banner>intvas.jpg</banner>
-			<url>http://www.intvas.net/</url>
-			<local>
-				<status>/var/cache/servinfo/intvas.status</status>
-				<info>/var/cache/servinfo/intvas.info</info>
-			</local>
-		</intvas>
-
-		<default_network>VATSIM</default_network>
 	</online>
 
 	<security>
