@@ -1,19 +1,18 @@
 // Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service;
 
-import java.util.StringTokenizer;
+import java.util.*;
 import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
-import org.jdom.output.*;
 
 import org.deltava.beans.fleet.Installer;
 
 import org.deltava.dao.*;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -76,13 +75,18 @@ public class InstallerInfoService extends WebService {
 		le.setAttribute("version", i.getVersion());
 		le.setAttribute("dl", StringUtils.format(i.getDownloadCount(), "#,##0"));
 		le.setAttribute("img", "/" + SystemData.get("path.img") + "/fleet/" + i.getImage());
-		le.addContent(new CDATA(i.getDescription()));
+		Element e = new Element("desc");
+		e.addContent(new CDATA(i.getDescription()));
+		le.addContent(e);
+		for (Iterator<String> vi = i.getFSVersionNames().iterator(); vi.hasNext(); ) {
+			String version = vi.next();
+			le.addContent(XMLUtils.createElement("version", version));
+		}
 
 		// Dump the XML to the output stream
-		XMLOutputter xmlOut = new XMLOutputter(Format.getPrettyFormat().setEncoding("ISO-8859-1"));
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(xmlOut.outputString(doc));
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw new ServiceException(SC_CONFLICT, "I/O Error");
