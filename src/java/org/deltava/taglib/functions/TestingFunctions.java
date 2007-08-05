@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import org.deltava.beans.testing.*;
@@ -87,6 +87,6 @@ public class TestingFunctions {
 	 * @throws NullPointerException if t is null
 	 */
 	public static boolean isSubmitted(Test t) {
-	   return (t.getStatus() == Test.SUBMITTED);
+	   return (t != null) && (t.getStatus() == Test.SUBMITTED);
 	}
 }
