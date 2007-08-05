@@ -21,8 +21,8 @@ import org.deltava.util.system.SystemData;
 
 public class ApplicantListCommand extends AbstractViewCommand {
 	
-	private static final List<String> LETTERS = Arrays.asList(new String[] {"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
-			"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"});
+	private static final List<String> LETTERS = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", 
+			"O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
 
 	/**
 	 * Executes the command.
@@ -33,6 +33,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 
 		// Initialize the view context
 		ViewContext vc = initView(ctx);
+		boolean isQueue = false;
 		
 		// Set combobox options
 		ctx.setAttribute("letters", LETTERS, REQUEST);
@@ -59,8 +60,10 @@ public class ApplicantListCommand extends AbstractViewCommand {
 				results = dao.getByEquipmentType(ctx.getParameter("eqType"));
 			else if (!StringUtils.isEmpty(ctx.getParameter("letter")))
 				results = dao.getByLetter(ctx.getParameter("letter"));
-			else
+			else {
+				isQueue = true;
 				results = dao.getByStatus(Applicant.PENDING, "CREATED DESC");
+			}
 			
 			// Get the applicant/pilot IDs
 			Collection<Integer> IDs = new HashSet<Integer>();
@@ -78,6 +81,19 @@ public class ApplicantListCommand extends AbstractViewCommand {
 			ctx.setAttribute("qMap", qdao.getByID(IDs), REQUEST);
 			ctx.setAttribute("pqMap", exdao.getQuestionnaires(pIDs), REQUEST);
 			
+			// Load address validation entries
+			if (isQueue) {
+				Map<Integer, Boolean> addrOK = new HashMap<Integer, Boolean>();
+				GetAddressValidation avdao = new GetAddressValidation(con);
+				for (Iterator<Integer> i = IDs.iterator(); i.hasNext(); ) {
+					Integer id = i.next();
+					addrOK.put(id, Boolean.valueOf(avdao.isValid(id.intValue())));
+				}
+			
+				// Save address validation
+				ctx.setAttribute("addrValid", addrOK, REQUEST);
+			}
+			
 			// Load the airline size
 			GetStatistics stdao = new GetStatistics(con);
 			ctx.setAttribute("airlineSize", new Integer(stdao.getActivePilots(SystemData.get("airline.db"))), REQUEST);
@@ -92,7 +108,7 @@ public class ApplicantListCommand extends AbstractViewCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/register/applicantList.jsp");
+		result.setURL("/jsp/register/" + (isQueue ? "applicantQueue.jsp" : "applicantList.jsp"));
 		result.setSuccess(true);
 	}
 }
