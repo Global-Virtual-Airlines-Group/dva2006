@@ -13,7 +13,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.FleetEntryAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -31,6 +31,7 @@ public class InstallerCommand extends LibraryEditCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
+		ctx.setAttribute("fsVersions", ComboUtils.fromArray(Installer.FS_NAMES, Installer.FS_CODES), REQUEST);
 		super.execEdit(ctx, "fleet");
 	}
 
@@ -86,6 +87,11 @@ public class InstallerCommand extends LibraryEditCommand {
 			entry.setSecurity(StringUtils.arrayIndexOf(LibraryEntry.SECURITY_LEVELS, ctx.getParameter("security")));
 			entry.setVersion(StringUtils.parse(ctx.getParameter("majorVersion"), 1), StringUtils.parse(ctx
 					.getParameter("minorVersion"), 0), StringUtils.parse(ctx.getParameter("subVersion"), 0));
+			
+			// Add FS Codes
+			Collection<String> fsCodes = ctx.getParameters("fsVersion");
+			if (fsCodes != null)
+				entry.setFSVersions(StringUtils.listConcat(fsCodes, ","));
 
 			// Add airline codes
 			Collection<String> appCodes = ctx.getParameters("airlines");
@@ -96,7 +102,7 @@ public class InstallerCommand extends LibraryEditCommand {
 					entry.addApp(SystemData.getApp(appCode));
 				}
 			}
-
+			
 			// Get the message template
 			if (!noNotify) {
 				GetMessageTemplate mtdao = new GetMessageTemplate(con);

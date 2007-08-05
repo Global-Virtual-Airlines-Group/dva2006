@@ -271,13 +271,13 @@ public class GetLibrary extends DAO {
 		List<Installer> results = new ArrayList<Installer>();
 		while (rs.next()) {
 			File f = new File(SystemData.get("path.library"), rs.getString(1));
-
 			Installer entry = new Installer(f.getPath());
 			entry.setName(rs.getString(2));
 			entry.setImage(rs.getString(3));
 			entry.setVersion(rs.getInt(5), rs.getInt(6), rs.getInt(7));
 			entry.setSecurity(rs.getInt(8));
 			entry.setCode(rs.getString(9));
+			entry.setFSVersions(rs.getString(10));
 			entry.setDescription(rs.getString(11));
 			if (hasTotals)
 				entry.setDownloadCount(rs.getInt(12));

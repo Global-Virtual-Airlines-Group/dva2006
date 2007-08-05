@@ -7,6 +7,8 @@ import java.util.Iterator;
 import org.deltava.beans.fleet.*;
 import org.deltava.beans.system.AirlineInformation;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A Data Access Object to write and update Fleet/Document Library metadata.
  * @author Luke
@@ -50,13 +52,12 @@ public class SetLibrary extends DAO {
 	public void write(Manual m, boolean isNew) throws DAOException {
 		try {
 			startTransaction();
-			if (isNew) {
+			if (isNew)
 				prepareStatement("INSERT INTO DOCS (NAME, FILESIZE, VERSION, SECURITY, BODY, ONREG, FILENAME) "
 						+ "VALUES (?, ?, ?, ?, ?, ?, ?)");
-			} else {
+			else
 				prepareStatement("UPDATE DOCS SET NAME=?, FILESIZE=?, VERSION=?, SECURITY=?, BODY=?, ONREG=? "
 						+ "WHERE (FILENAME=?)");
-			}
 
 			// Update the prepared statement
 			_ps.setString(1, m.getName());
@@ -102,13 +103,12 @@ public class SetLibrary extends DAO {
 	 */
 	public void write(Newsletter nws) throws DAOException {
 		try {
-			if (nws.getDownloadCount() == 0) {
+			if (nws.getDownloadCount() == 0)
 				prepareStatement("REPLACE INTO NEWSLETTERS (NAME, CATEGORY, FILESIZE, SECURITY, PUBLISHED, "
 						+ "BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?)");
-			} else {
+			else
 				prepareStatement("UPDATE NEWSLETTERS SET NAME=?, CATEGORY=?, FILESIZE=?, SECURITY=?, "
 						+ "PUBLISHED=?, BODY=? WHERE (FILENAME=?)");
-			}
 			
 			// Update the prepared statement
 			_ps.setString(1, nws.getName());
@@ -118,8 +118,6 @@ public class SetLibrary extends DAO {
 			_ps.setTimestamp(5, createTimestamp(nws.getDate()));
 			_ps.setString(6, nws.getDescription());
 			_ps.setString(7, nws.getFileName());
-			
-			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -143,10 +141,10 @@ public class SetLibrary extends DAO {
 			// Prepare the statement
 			if (i.getDownloadCount() == 0)
 				prepareStatement("REPLACE INTO FLEET (NAME, IMG, FILESIZE, MAJOR, MINOR, SUBMINOR, SECURITY, "
-						+ "CODE, BODY, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+						+ "CODE, BODY, FSVERSION, FILENAME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			else
 				prepareStatement("UPDATE FLEET SET NAME=?, IMG=?, FILESIZE=?, MAJOR=?, MINOR=?, SUBMINOR=?, "
-						+ "SECURITY=?, CODE=?, BODY=? WHERE (FILENAME=?)");
+						+ "SECURITY=?, CODE=?, BODY=?, FSVERSION=? WHERE (FILENAME=?)");
 
 			// Update the prepared statement
 			_ps.setString(1, i.getName());
@@ -158,9 +156,8 @@ public class SetLibrary extends DAO {
 			_ps.setInt(7, i.getSecurity());
 			_ps.setString(8, i.getCode());
 			_ps.setString(9, i.getDescription());
-			_ps.setString(10, i.getFileName());
-
-			// Update the file entry
+			_ps.setString(10, StringUtils.listConcat(i.getFSVersions(), ","));
+			_ps.setString(11, i.getFileName());
 			executeUpdate(1);
 			
 			// Write the app entries
@@ -203,8 +200,6 @@ public class SetLibrary extends DAO {
 			_ps.setInt(4, e.getAuthorID());
 			_ps.setString(5, e.getDescription());
 			_ps.setString(6, e.getFileName());
-
-			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -233,8 +228,6 @@ public class SetLibrary extends DAO {
 			_ps.setString(5, v.getCategory());
 			_ps.setString(6, v.getDescription());
 			_ps.setString(7, v.getFileName());
-
-			// Update the database
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -303,8 +296,6 @@ public class SetLibrary extends DAO {
 			_ps.setInt(7, si.getFSVersion());
 			_ps.setString(8, si.getCode());
 			_ps.setTimestamp(9, createTimestamp(si.getDate()));
-
-			// Execute the update
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
