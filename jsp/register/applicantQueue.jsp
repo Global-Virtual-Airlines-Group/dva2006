@@ -6,9 +6,10 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Applicant Roster</title>
+<title><content:airline /> Pending Applicant Queue</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -44,44 +45,50 @@ return true;
 <!-- Sort Bar -->
 <tr class="title">
  <td colspan="2">STATUS <el:combo name="status" idx="*" size="1" firstEntry="" options="${statuses}" value="${param.status}" onChange="void sort(this)" /></td>
- <td colspan="3">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void sort(this)" /></td>
- <td>LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
+ <td colspan="2">EQUIPMENT PROGRAM <el:combo name="eqType" idx="*" size="1" firstEntry="" options="${eqTypes}" value="${param.eqType}" onChange="void sort(this)" /></td>
+ <td colspan="2">LETTER <el:combo name="letter" idx="*" size="1" firstEntry="" options="${letters}" value="${param.letter}" onChange="void sort(this)" /></td>
 </tr>
 
 <!-- Table Header Bar-->
 <tr class="title">
- <td width="20%">APPLICANT NAME</td>
+ <td width="25%">APPLICANT NAME</td>
  <td width="10%">REGISTERED ON</td>
- <td width="18%">HIRED AS</td>
- <td width="17%">LOCATION</td>
+ <td width="20%">LOCATION</td>
  <td width="10%">SCORE</td>
  <td>E-MAIL ADDRESS</td>
+ <td width="10%">&nbsp;</td>
 </tr>
 
 <!-- Table Applicant Data -->
 <c:forEach var="applicant" items="${viewContext.results}">
+<c:set var="addrOK" value="${addrValid[applicant.ID]}" scope="request" />
 <c:set var="q" value="${qMap[applicant.ID]}" scope="request" />
-<c:if test="${empty q}">
-<c:set var="q" value="${pqMap[applicant.pilotID]}" scope="request" />
-</c:if>
-<view:row entry="${applicant}">
+<tr>
  <td class="pri bld"><el:cmd url="applicant" link="${applicant}">${applicant.name}</el:cmd></td>
  <td><fmt:date fmt="d" date="${applicant.createdOn}" /></td>
-<c:if test="${applicant.pilotID > 0}">
- <td class="sec small">${applicant.rank}, ${applicant.equipmentType}</td>
-</c:if>
-<c:if test="${applicant.pilotID == 0}">
- <td>N/A</td>
-</c:if>
  <td class="small">${applicant.location}</td>
-<c:if test="${!empty q}">
- <td class="sec small bld"><fmt:int value="${q.score}" /> / <fmt:int value="${q.size}" /></td>
-</c:if>
-<c:if test="${empty q}">
+<c:choose>
+<c:when test="${empty q}">
  <td>N/A</td>
-</c:if>
+</c:when>
+<c:when test="${fn:submitted(q)}">
+ <td class="pri small bld">SUBMITTED</td>
+</c:when>
+<c:when test="${fn:pending(q)}">
+ <td class="small">PENDING</td>
+</c:when>
+<c:otherwise>
+ <td class="sec small bld"><fmt:int value="${q.score}" /> / <fmt:int value="${q.size}" /></td>
+</c:otherwise>
+</c:choose>
  <td><a class="small" href="mailto:${applicant.email}">${applicant.email}</a></td>
-</view:row>
+<c:if test="${addrOK}">
+ <td class="ter bld small caps">VERIFIED</td>
+</c:if>
+<c:if test="${!addrOK}">
+ <td class="small caps">UNVERIFIED</td>
+</c:if>
+</tr>
 </c:forEach>
 
 <!-- Scroll bar -->
