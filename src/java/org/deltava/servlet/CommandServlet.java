@@ -2,6 +2,7 @@
 package org.deltava.servlet;
 
 import java.util.*;
+import java.util.concurrent.*;
 import java.sql.Connection;
 import java.io.IOException;
 
@@ -28,18 +29,19 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class CommandServlet extends GenericServlet {
+public class CommandServlet extends GenericServlet implements Thread.UncaughtExceptionHandler {
 
 	private static final Logger log = Logger.getLogger(CommandServlet.class);
-	
+
 	private static final int MAX_EXEC_TIME = 20000;
 	private static final String ERR_PAGE = "/jsp/error/error.jsp";
 
 	private final Map<String, Command> _cmds = new HashMap<String, Command>();
 	private Command _defaultCmd;
-	
-	private final Collection<CommandLog> _cmdLogPool = new ArrayList<CommandLog>();
+
+	protected final BlockingQueue<CommandLog> _cmdLogPool = new LinkedBlockingQueue<CommandLog>();
 	private int _maxCmdLogSize;
+	private CommandLogger _logThread;
 
 	/**
 	 * Returns the servlet description.
@@ -47,6 +49,51 @@ public class CommandServlet extends GenericServlet {
 	 */
 	public String getServletInfo() {
 		return "Command Controller Servlet " + VersionInfo.TXT_COPYRIGHT;
+	}
+
+	private class CommandLogger extends Thread {
+		
+		private final Logger tlog = Logger.getLogger(CommandLogger.class);
+		private int _maxSize;
+
+		CommandLogger(int maxSize) {
+			super(SystemData.get("airline.code") + " Command Logger");
+			setDaemon(true);
+			_maxSize = Math.max(1, maxSize);
+		}
+
+		public void run() {
+			tlog.info("Started");
+			while (!isInterrupted()) {
+				try {
+					sleep(2000);
+				} catch (InterruptedException ie) {
+					interrupt();
+				}
+
+				// Check if we need to log
+				if ((_cmdLogPool.size() >= _maxSize) || isInterrupted()) {
+					Collection<CommandLog> entries = new ArrayList<CommandLog>();
+					_cmdLogPool.drainTo(entries);
+					ConnectionPool pool = getConnectionPool();
+					Connection c = null;
+					try {
+						c = pool.getConnection(true);
+						SetSystemData swdao = new SetSystemData(c);
+						swdao.logCommands(entries);
+						if (tlog.isDebugEnabled())
+							tlog.debug("Wrote command statistics");
+					} catch (DAOException de) {
+						tlog.warn("Error writing command result staitistics - " + de.getMessage());
+					} finally {
+						pool.release(c);
+						_cmdLogPool.clear();
+					}
+				}
+			}
+			
+			tlog.info("Stopped");
+		}
 	}
 
 	/**
@@ -59,7 +106,7 @@ public class CommandServlet extends GenericServlet {
 		try {
 			Map<String, Command> cmds = CommandFactory.load(SystemData.get("config.commands"), getServletContext());
 			_cmds.putAll(cmds);
-			
+
 			// Initialize the default command
 			_defaultCmd = cmds.get(getInitParameter("defaultCommand"));
 			if ((_defaultCmd == null) && (!cmds.isEmpty()))
@@ -67,7 +114,7 @@ public class CommandServlet extends GenericServlet {
 		} catch (IOException ie) {
 			throw new ServletException(ie);
 		}
-		
+
 		// Initialize the redirection command
 		try {
 			Command cmd = new RedirectCommand();
@@ -81,6 +128,9 @@ public class CommandServlet extends GenericServlet {
 
 		// Save the max command log size
 		_maxCmdLogSize = SystemData.getInt("cache.cmdlog", 20);
+		_logThread = new CommandLogger(_maxCmdLogSize);
+		_logThread.setUncaughtExceptionHandler(this);
+		_logThread.start();
 	}
 
 	/**
@@ -88,6 +138,7 @@ public class CommandServlet extends GenericServlet {
 	 */
 	public void destroy() {
 		log.info("Shutting Down");
+		ThreadUtils.kill(_logThread, 500);
 	}
 
 	/**
@@ -99,32 +150,11 @@ public class CommandServlet extends GenericServlet {
 			String cmdName = parser.getName().toLowerCase();
 			if (cmdName.startsWith("/"))
 				cmdName = cmdName.substring(1);
-			
+
 			return _cmds.get(cmdName);
 		} catch (Exception e) {
 			return _defaultCmd;
 		}
-	}
-	
-	/**
-	 * A private helper method to dump the command logs.
-	 */
-	private void dumpCommandLogs() {
-		ConnectionPool pool = getConnectionPool();
-		Connection c = null;
-		try {
-			c = pool.getConnection(true);
-			SetSystemData swdao = new SetSystemData(c);
-			swdao.logCommands(_cmdLogPool);
-		} catch (DAOException de) {
-			log.warn("Error writing command result staitistics - " + de.getMessage());
-		} finally {
-			pool.release(c);
-			_cmdLogPool.clear();
-		}
-
-		if (log.isDebugEnabled())
-			log.debug("Batched command logs");
 	}
 
 	/**
@@ -146,6 +176,7 @@ public class CommandServlet extends GenericServlet {
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
 		long startTime = System.currentTimeMillis();
+		req.setCharacterEncoding("UTF-8");
 
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());
@@ -175,12 +206,12 @@ public class CommandServlet extends GenericServlet {
 			// Execute the command
 			if (log.isDebugEnabled())
 				log.debug("Executing " + req.getMethod() + " " + cmd.getName());
-			
+
 			cmd.execute(ctxt);
 			ctxt.setCacheHeaders();
 			CommandResult result = ctxt.getResult();
 			result.complete();
-			
+
 			// Check for empty result
 			if (result.getURL() == null) {
 				ControllerException ce = new CommandException("Null result URL from " + req.getRequestURI(), false);
@@ -190,41 +221,37 @@ public class CommandServlet extends GenericServlet {
 			}
 
 			// Redirect/forward/send status code
-			try {
-				switch (result.getResult()) {
-					case CommandResult.REQREDIRECT:
-						if (log.isDebugEnabled())
-							log.debug("Preserving servlet request state");
-						
-						RequestStateHelper.save(req, result.getURL());
-						rsp.sendRedirect("$redirect.do");
-						break;
+			switch (result.getResult()) {
+			case CommandResult.REQREDIRECT:
+				if (log.isDebugEnabled())
+					log.debug("Preserving servlet request state");
 
-					case CommandResult.REDIRECT:
-						if (log.isDebugEnabled())
-							log.debug("Redirecting to " + result.getURL());
-						
-						rsp.sendRedirect(result.getURL());
-						break;
+				RequestStateHelper.save(req, result.getURL());
+				rsp.sendRedirect("$redirect.do");
+				break;
 
-					case CommandResult.HTTPCODE:
-						if (log.isDebugEnabled())
-							log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
-						
-						rsp.setStatus(result.getHttpCode());
-						break;
+			case CommandResult.REDIRECT:
+				if (log.isDebugEnabled())
+					log.debug("Redirecting to " + result.getURL());
 
-					default:
-					case CommandResult.FORWARD:
-						if (log.isDebugEnabled())
-							log.debug("Forwarding to " + result.getURL());
-						
-						RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
-						rd.forward(req, rsp);
-						break;
-				}
-			} catch (Exception e) {
-				throw new CommandException("Error forwarding to " + result.getURL(), e);
+				rsp.sendRedirect(result.getURL());
+				break;
+
+			case CommandResult.HTTPCODE:
+				if (log.isDebugEnabled())
+					log.debug("Setting HTTP status " + String.valueOf(result.getHttpCode()));
+
+				rsp.setStatus(result.getHttpCode());
+				break;
+
+			default:
+			case CommandResult.FORWARD:
+				if (log.isDebugEnabled())
+					log.debug("Forwarding to " + result.getURL());
+
+				RequestDispatcher rd = req.getRequestDispatcher(result.getURL());
+				rd.forward(req, rsp);
+				break;
 			}
 		} catch (Exception e) {
 			String errPage = ERR_PAGE;
@@ -232,20 +259,20 @@ public class CommandServlet extends GenericServlet {
 			boolean logStackDump = true;
 			if (e instanceof CommandException) {
 				CommandException ce = (CommandException) e;
-				if (ce.getForwardURL() != null) 
+				if (ce.getForwardURL() != null)
 					errPage = ce.getForwardURL();
-				
+
 				logWarning = ce.isWarning();
 				logStackDump = ce.getLogStackDump();
 			}
-			
+
 			// Log the error
 			String usrName = null;
 			if (req.getUserPrincipal() == null)
 				usrName = "Anonymous (" + req.getRemoteHost() + ")";
 			else
 				usrName = req.getUserPrincipal().getName();
-			
+
 			if (logWarning)
 				log.warn(usrName + " executing " + cmd.getName() + " - " + e.getMessage());
 			else
@@ -258,13 +285,18 @@ public class CommandServlet extends GenericServlet {
 			try {
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
-				rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				try {
+					rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+				} catch (Exception ee) {
+					log.error("Error sending error code - " + ee.getMessage());
+				}
 			}
 		} finally {
 			long execTime = System.currentTimeMillis() - startTime;
-			if (execTime < MAX_EXEC_TIME)
-				log.debug("Completed in " + String.valueOf(execTime) + " ms");
-			else
+			if (execTime < MAX_EXEC_TIME) {
+				if (log.isDebugEnabled())
+					log.debug("Completed in " + String.valueOf(execTime) + " ms");
+			} else
 				log.warn(cmd.getID() + " completed in " + String.valueOf(execTime) + " ms");
 
 			// Create the command result statistics entry
@@ -272,15 +304,22 @@ public class CommandServlet extends GenericServlet {
 			cmdLog.setRemoteAddr(req.getRemoteAddr());
 			cmdLog.setRemoteHost(req.getRemoteHost());
 			cmdLog.setPilotID(ctxt.isAuthenticated() ? ctxt.getUser().getID() : 0);
-
-			// Add to the log pool
-			synchronized (_cmdLogPool) {
-				_cmdLogPool.add(cmdLog);
-
-				// If the pool is full, batch the entries
-				if (_cmdLogPool.size() >= _maxCmdLogSize)
-					dumpCommandLogs();
-			}
+			_cmdLogPool.add(cmdLog);
 		}
+	}
+	
+	/**
+	 * Logger thread uncaught exception handler.
+	 */
+	public void uncaughtException(Thread t, Throwable e) {
+		if (t != _logThread) {
+			log.error("Unknown thread - " + t.getName(), e);
+			return;
+		}
+		
+		_logThread = new CommandLogger(_maxCmdLogSize);
+		_logThread.setUncaughtExceptionHandler(this);
+		_logThread.start();
+		log.error("Restarted " + t.getName(), e);
 	}
 }
