@@ -32,17 +32,26 @@ xmlreq.onreadystatechange = function() {
 	var xmlDoc = xmlreq.responseXML;
 	var infoElements = xmlDoc.documentElement.getElementsByTagName("installer");
 	var info = infoElements[0];
-	
+
+	// Get the Flight Simulator versions
+	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ';
+	var versions = info.getElementsByTagName('version');
+	for (var x = 0; x < versions.length; x++) {
+		verDesc = verDesc + versions[x].textContent;
+		if (x < (versions.length - 1))
+			verDesc = verDesc + ', ';
+	}
+
 	// Update the page
 	document.fName = info.getAttribute('filename');
 	getElement('FleetPic').src = info.getAttribute('img');
 	getElement('divName').innerHTML = info.getAttribute('title');
 	getElement('divSize').innerHTML = info.getAttribute('size') + ' bytes';
+	getElement('FSVersions').innerHTML = (versions.length == 0) ? '' : verDesc;
 
 	// Load the description
-	var descE = info.firstChild;
+	var descE = info.getElementsByTagName('desc')[0].firstChild;
 	getElement('divDesc').innerHTML = descE.data;
-
 	combo.disabled = false;
 	return true;
 }
@@ -79,8 +88,9 @@ return true;
 </tr>
 <tr>
  <td class="fleetImg" rowspan="2"><el:img ID="FleetPic" x="164" y="314" src="blank.png" caption="Fleet Library" /></td>
- <td valign="top"><div id="divName" class="pri bld"></div><br />
+ <td valign="top"><div id="divName" class="pri bld"></div>
 <div id="divSize" class="sec bld"></div><br />
+<div id="FSVersions" class="pri bld small"></div><br />
 <div id="divDesc">The <content:airline /> Fleet Library contains Windows installation packages to let 
 you quickly and easily install all aircraft in our fleet, and the fleets of our partner airlines. Each 
 aircraft comes in a number of liveries, along with a high quality freeware panel and the ability to 

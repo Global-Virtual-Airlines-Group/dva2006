@@ -83,12 +83,16 @@ return true;
 <el:text name="subVersion" idx="*" size="1" max="2" className="req" value="${entry.subVersion}" /></td>
 </tr>
 <tr>
+ <td class="label">Flight Simulator</td>
+ <td class="data"><el:check name="fsVersion" width="200" options="${fsVersions}" className="req" checked="${entry.FSVersions}" /></td>
+</tr>
+<tr>
  <td class="label" valign="top">Description</td>
  <td class="data"><el:textbox name="desc" idx="*" width="80%" className="req" height="3">${entry.description}</el:textbox></td>
 </tr>
 <tr>
  <td class="label">Airlines</td>
- <td class="data"><el:check name="airlines" width="175" options="${airlines}" className="req" checked="${entry.apps}" /></td>
+ <td class="data"><el:check name="airlines" width="175" options="${airlines}" checked="${entry.apps}" /></td>
 </tr>
 <tr>
  <td class="label">Installer Security</td>

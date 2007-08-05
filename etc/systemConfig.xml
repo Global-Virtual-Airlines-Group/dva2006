@@ -422,15 +422,15 @@
 		<css>css</css>
 		<js>js</js>
 		<img>img</img>
-		<library>/usr/www/library</library>
-		<userfiles>/usr/www/library/usrfiles</userfiles>
-		<video>/usr/www/library/video</video>
+		<library>/home/www/library</library>
+		<userfiles>/home/www/library/usrfiles</userfiles>
+		<video>/home/www/library/video</video>
 		<httplog>/var/log/www</httplog>
 	</path>
 	
 	<!-- SMTP Server configuration -->
 	<smtp>
-		<server>sirius.sce.net</server>
+		<server>polaris.sce.net</server>
 		<errors-to>webmaster@sce.net</errors-to>
 		<testMode type="Boolean">true</testMode>
 		<imap>
