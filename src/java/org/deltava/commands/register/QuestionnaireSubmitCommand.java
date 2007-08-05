@@ -67,7 +67,6 @@ public class QuestionnaireSubmitCommand extends AbstractCommand {
 			ex.setStatus(Test.SCORED);
 			ex.setScore(score);
 			ex.setAutoScored(true);
-			ex.setScorerID(ctx.getUser().getID());
 	        ex.setPassFail(true);
 		}
          
