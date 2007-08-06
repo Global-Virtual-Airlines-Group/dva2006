@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlnes Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlnes Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.*;
@@ -75,7 +75,7 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	private int _majorVersion;
 	private int _minorVersion;
 	
-	private Set<IssueComment> _comments;
+	private final Collection<IssueComment> _comments = new TreeSet<IssueComment>();
 	private int _commentCount;
 	
 	/**
@@ -103,7 +103,6 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public Issue(String subj) {
 	    super();
 	    setSubject(subj);
-	    _comments = new TreeSet<IssueComment>();
 	}
 
 	/**
