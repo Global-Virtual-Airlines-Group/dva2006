@@ -70,12 +70,7 @@ public class SetACARSLog extends DAO {
 		try {
 			prepareStatementWithoutLimits("DELETE FROM acars.MESSAGES WHERE (DATE < DATE_SUB(NOW(), INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
-			int rows = executeUpdate(0);
-			
-			// Optimize the table
-			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.MESSAGES");
-			executeUpdate(0);
-			return rows;
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -110,12 +105,7 @@ public class SetACARSLog extends DAO {
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
-			int rows = executeUpdate(0);
-			
-			// Optimize the table
-			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.FLIGHTS");
-			executeUpdate(0);
-			return rows;
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -132,12 +122,7 @@ public class SetACARSLog extends DAO {
 			prepareStatementWithoutLimits("DELETE FROM acars.COMMAND_STATS WHERE (CMDDATE < DATE_SUB(NOW(), "
 					+ "INTERVAL ? HOUR))");
 			_ps.setInt(1, hours);
-			int rows = executeUpdate(0);
-			
-			// Optimize the table
-			prepareStatementWithoutLimits("OPTIMIZE TABLE acars.COMMAND_STATS");
-			executeUpdate(0);
-			return rows;
+			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -265,10 +250,6 @@ public class SetACARSLog extends DAO {
 					commitTransaction();
 					log.warn("Moved " + rowsMoved + " entries for Flight " + id + " to Position Archive");
 				}
-				
-				// Optimize the table
-				prepareStatementWithoutLimits("OPTIMIZE TABLE acars.POSITIONS");
-				executeUpdate(0);
 			}
 		} catch (SQLException se) {
 			rollbackTransaction();
