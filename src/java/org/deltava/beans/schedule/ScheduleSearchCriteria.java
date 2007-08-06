@@ -15,10 +15,10 @@ import org.deltava.util.ComboUtils;
 
 public class ScheduleSearchCriteria extends Flight {
 
-	private static final String[] SORT_NAMES = { "Random", "Flight Number", "Equipment Type", "Origin", "Destination",
-			"Departure Time", "Arrival Time", "Length", "Distance" };
-	public static final String[] SORT_CODES = { "RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D",
-			"TIME_A", "FLIGHT_TIME", "DISTANCE" };
+	private static final String[] SORT_NAMES = {"Random", "Flight Number", "Equipment Type", "Origin", "Destination",
+			"Departure Time", "Arrival Time", "Length", "Distance"};
+	public static final String[] SORT_CODES = {"RAND()", "FLIGHT", "EQTYPE", "AIRPORT_D", "AIRPORT_A", "TIME_D",
+			"TIME_A", "FLIGHT_TIME", "DISTANCE"};
 	public static final List SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODES);
 
 	public static final List HOURS = ComboUtils.fromArray(new String[] { "-", "Midnight", "1 AM", "2 AM", "3 AM",
@@ -48,6 +48,11 @@ public class ScheduleSearchCriteria extends Flight {
 	public ScheduleSearchCriteria(Airline aCode, int fNumber, int leg) {
 		super(aCode, fNumber, leg);
 		setLeg(leg);
+	}
+	
+	public ScheduleSearchCriteria(String sortBy) {
+		super(null, 0, 0);
+		setSortBy(sortBy);
 	}
 	
 	public String getDBName() {

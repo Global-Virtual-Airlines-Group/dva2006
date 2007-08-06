@@ -260,24 +260,42 @@ public class GetFlightReports extends DAO {
 	/**
 	 * Returns all Flight Reports for a particular Pilot, using a sort column.
 	 * @param id the Pilot database ID
-	 * @param orderBy the sort column (or null)
+	 * @param criteria the search criteria
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
+	public List<FlightReport> getByPilot(int id, ScheduleSearchCriteria criteria) throws DAOException {
 
 		// Build the statement
 		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
 				+ "PILOTS P, PIREPS PR LEFT JOIN PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ACARS_PIREPS APR "
 				+ "ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (P.ID=?)");
-		if (orderBy != null) {
-			buf.append(" ORDER BY PR.");
-			buf.append(orderBy);
+		if (criteria != null) {
+			if (criteria.getEquipmentType() != null)
+				buf.append(" AND (PR.EQTYPE=?)");
+			if (criteria.getAirportD() != null)
+				buf.append(" AND (PR.AIRPORT_D=?)");
+			if (criteria.getAirportA() != null)
+				buf.append(" AND (PR.AIRPORT_A=?)");
+			if (criteria.getSortBy() != null) {
+				buf.append(" ORDER BY PR.");
+				buf.append(criteria.getSortBy());
+			}
 		}
 
+		int idx = 1;
 		try {
 			prepareStatement(buf.toString());
 			_ps.setInt(1, id);
+			if (criteria != null) {
+				if (criteria.getEquipmentType() != null)
+					_ps.setString(++idx, criteria.getEquipmentType());
+				if (criteria.getAirportD() != null)
+					_ps.setString(++idx, criteria.getAirportD().getIATA());
+				if (criteria.getAirportA() != null)
+					_ps.setString(++idx, criteria.getAirportA().getIATA());
+			}
+			
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);

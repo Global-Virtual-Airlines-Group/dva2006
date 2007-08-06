@@ -127,6 +127,34 @@ public class GetAirport extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all airports visited by a particular Pilot.
+	 * @param id the Pilot's database ID
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getByPilot(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT AIRPORT_D, AIRPORT_A FROM PIREPS P WHERE (PILOT_ID=?) ORDER BY ID");
+			_ps.setInt(1, id);
+			
+			// Execute the query
+			Collection<Airport> results = new LinkedHashSet<Airport>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				results.add(SystemData.getAirport(rs.getString(1)));
+				results.add(SystemData.getAirport(rs.getString(2)));
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all airports.
