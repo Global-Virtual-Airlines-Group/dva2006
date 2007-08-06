@@ -130,6 +130,7 @@ public class IssueComment extends DatabaseBean implements AuthoredBean {
 	 */
 	public int compareTo(Object o2) {
 		IssueComment ic2 = (IssueComment) o2; 
-		return _createdOn.compareTo(ic2.getCreatedOn());
+		int tmpResult = _createdOn.compareTo(ic2.getCreatedOn());
+		return (tmpResult == 0) ? super.compareTo(o2) : tmpResult;
 	}
 }
