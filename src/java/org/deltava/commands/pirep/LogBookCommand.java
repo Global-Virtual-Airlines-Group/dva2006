@@ -5,9 +5,14 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
+import org.deltava.comparators.AirportComparator;
+
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
@@ -40,6 +45,13 @@ public class LogBookCommand extends AbstractViewCommand {
         boolean showComments = "log".equals(ctx.getCmdParameter(Command.OPERATION, "log"));
         ctx.setAttribute("comments", Boolean.valueOf(showComments), REQUEST);
         
+        // Initialize the search criteria
+        ScheduleSearchCriteria criteria = new ScheduleSearchCriteria(null, 0, 0);
+        criteria.addEquipmentType(ctx.getParameter("eqType"));
+        criteria.setSortBy(vc.getSortType());
+        criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
+        criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
+        
         // Set sort options
         ctx.setAttribute("sortTypes", SORT_OPTIONS, REQUEST);
         try {
@@ -55,9 +67,19 @@ public class LogBookCommand extends AbstractViewCommand {
             dao2.setQueryMax(vc.getCount());
             
             // Get the PIREP beans and load the promotion eligibility
-            Collection<FlightReport> pireps = dao2.getByPilot(ctx.getID(), vc.getSortType());
+            Collection<FlightReport> pireps = dao2.getByPilot(ctx.getID(), criteria);
             dao2.getCaptEQType(pireps);
             vc.setResults(pireps);
+            
+            // Load the Equipment types
+            GetAircraft acdao = new GetAircraft(con);
+            ctx.setAttribute("eqTypes", acdao.getAircraftTypes(), REQUEST);
+            
+            // Load the airport options
+            Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
+            GetAirport adao = new GetAirport(con);
+            airports.addAll(adao.getByPilot(ctx.getID())); 
+            ctx.setAttribute("airports", airports, REQUEST);
         } catch (DAOException de) {
             throw new CommandException(de);
         } finally {

@@ -9,19 +9,11 @@
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Logbook for ${pilot.name} (${pilot.pilotCode})</title>
+<title><content:airline /> Logbook for ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
-<script language="javascript" type="text/javascript">
-function sort(combo)
-{
-var sortType = combo.options[combo.selectedIndex].value;
-self.location = '/logbook.do?id=0x<fmt:hex value="${pilot.ID}" />&sortType=' + sortType;
-return true;
-}
-</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,12 +23,20 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="logbook.do" method="get" validate="return false">
+<el:form action="logbook.do" method="post" validate="return true">
 <view:table className="view" pad="default" space="default" cmd="logbook">
 <!-- Title Header Bar -->
 <tr class="title">
- <td colspan="4" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name} (${pilot.pilotCode})</td>
- <td colspan="2" class="right">SORT BY <el:combo name="sortType" size="1" idx="1" options="${sortTypes}" value="${viewContext.sortType}" onChange="void sort(this)" /></td>
+ <td colspan="6" class="caps left">PILOT LOGBOOK FOR ${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></td>
+</tr>
+
+<!-- Sort/Filter Options -->
+<tr class="title">
+ <td colspan="2">AIRCRAFT <el:combo name="eqype" size="1" idx="*" options="${eqTypes}" value="${param.eqType}" firstEntry="-" /></td>
+ <td colspan="4" class="right">FROM <el:combo name="airportD" size="1" idx="*" options="${airports}" value="${param.airportD}" firstEntry="-" /> TO
+ <el:combo name="airportA" size="1" idx="*" options="${airports}" value="${param.airportA}" firstEntry="-" /> SORT BY
+ <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" />
+ <el:button type="submit" className="BUTTON" label="FILTER" /></td>
 </tr>
 
 <!-- Table Header Bar-->
@@ -75,6 +75,7 @@ return true;
 <view:legend width="100" labels="Draft,Submitted,Held,Approved,Rejected" classes="opt2,opt1,warn, ,err" /></td>
 </tr>
 </view:table>
+<el:text name="id" type="hidden" value="${pilot.hexID}" readOnly="true" />
 </el:form>
 <br />
 <content:copyright />

@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSession;
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.Course;
+import org.deltava.beans.schedule.ScheduleSearchCriteria;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -74,7 +75,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Load all PIREPs and save the latest PIREP as a separate bean in the request
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.setQueryMax(10);
-			List<FlightReport> results = frdao.getByPilot(p.getID(), "DATE DESC");
+			List<FlightReport> results = frdao.getByPilot(p.getID(), new ScheduleSearchCriteria("DATE DESC"));
 			for (Iterator<FlightReport> i = results.iterator(); i.hasNext();) {
 				FlightReport fr = i.next();
 				if ((fr.getStatus() != FlightReport.DRAFT) && (fr.getStatus() != FlightReport.REJECTED)) {
