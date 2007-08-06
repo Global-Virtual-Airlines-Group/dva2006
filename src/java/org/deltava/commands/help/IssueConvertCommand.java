@@ -78,16 +78,21 @@ public class IssueConvertCommand extends AbstractCommand {
 			}
 			
 			// Add a dummy issue comment
-			org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment("Converted Help Desk Issue");
-			ic.setAuthorID(ctx.getUser().getID());
-			ic.setIssueID(i.getID());
-			wdao.writeComment(ic);
+			try {
+				URL url = new URL("http", ctx.getRequest().getServerName(), "/hdissue.do?id=" + hi.getHexID());
+				org.deltava.beans.system.IssueComment ic = new org.deltava.beans.system.IssueComment("Converted Help Desk Issue at " + url.toString());
+				ic.setAuthorID(ctx.getUser().getID());
+				ic.setIssueID(i.getID());
+				wdao.writeComment(ic);
+			} catch (MalformedURLException mue) {
+				// empty
+			}
 			
 			// Create the new Help Desk issue comment
 			IssueComment hic = new IssueComment(ctx.getUser().getID());
 			hic.setID(hi.getID());
 			try {
-				URL url = new URL("http", ctx.getRequest().getServerName(), "/issue.do?id=" + StringUtils.formatHex(i.getID()));
+				URL url = new URL("http", ctx.getRequest().getServerName(), "/issue.do?id=" + i.getHexID());
 				hic.setBody("Converted to Development Issue at " + url.toString());
 			} catch (MalformedURLException mue) {
 				hic.setBody("Converted to Development Issue");
