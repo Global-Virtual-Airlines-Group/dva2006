@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.content;
 
 import java.net.*;
@@ -49,7 +49,7 @@ public class InsertCSSTag extends InsertContentTag {
 	 * @see InsertCSSTag#getScheme()
 	 */
 	public void setScheme(String name) {
-		_scheme = name;
+		_scheme = name.toLowerCase().replace(' ', '_');
 	}
 	
 	/**
@@ -132,11 +132,12 @@ public class InsertCSSTag extends InsertContentTag {
 			out.print("\" />");
 		} catch (Exception e) {
 			throw new JspException(e);
+		} finally {
+			release();
 		}
 
 		// Mark the content as added and return
 		ContentHelper.addContent(pageContext, "CSS", buf.toString());
-		release();
 		return EVAL_PAGE;
 	}
 
