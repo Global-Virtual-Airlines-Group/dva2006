@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.sql.Connection;
@@ -51,7 +51,7 @@ public class ThreadMoveCommand extends AbstractCommand {
 			// Create the status update bean
 			ThreadUpdate upd = new ThreadUpdate(t.getID());
 			upd.setAuthorID(ctx.getUser().getID());
-			upd.setMessage("Moved to Channel \"" + newChannel + "\"");
+			upd.setMessage("Moved to Channel \"" + newChannel + "\" from \"" + t.getChannel() + "\"");
 			
 			// Start a transaction
 			ctx.startTX();
