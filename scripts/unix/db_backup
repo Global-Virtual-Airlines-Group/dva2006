@@ -56,7 +56,7 @@ then
   mysqldump -e -n -t -K -q  --single-transaction `cat /usr/local/etc/sqlbackup` acars POSITION_ARCHIVE | bzip2 -9 > acars_pos.sql.bz2
 else
   echo `date +%H:%M:%S`' Writing Incremental ACARS Positions'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(REPORT_TIME) > `cat lastbackuptime`" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="REPORT_TIME > FROM_UNIXTIME(`cat lastbackuptime`)" acars POSITION_ARCHIVE | bzip2 -9 > acars_pos_inc.sql.bz2
 fi
 
 # Dump ACARS data
@@ -87,9 +87,9 @@ then
   mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` afv GALLERY | bzip2 -9 > afv_gallery.sql.bz2
 else  
   echo `date +%H:%M:%S`' Writing Incremental DVA Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" dva GALLERY | bzip2 -9 > dva_gallery_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" dva GALLERY | bzip2 -9 > dva_gallery_inc.sql.bz2
   echo `date +%H:%M:%S`' Writing Incremental AFV Image Gallery'
-  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="UNIX_TIMESTAMP(DATE) > `cat lastbackuptime`" afv GALLERY | bzip2 -9 > afv_gallery_inc.sql.bz2
+  mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --where="DATE > FROM_UNIXTIME(`cat lastbackuptime`)" afv GALLERY | bzip2 -9 > afv_gallery_inc.sql.bz2
 fi
 
 # Change file permissions
