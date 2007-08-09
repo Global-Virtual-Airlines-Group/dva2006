@@ -219,7 +219,7 @@ public class PIREPCommand extends AbstractFormCommand {
 		// Check if we're creating a new PIREP
 		Pilot usr = (Pilot) ctx.getUser();
 		boolean isNew = (ctx.getID() == 0);
-		boolean forcePage = Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
+		boolean forcePage = (ctx.getSession() != null) && Boolean.valueOf(String.valueOf(ctx.getSession().getAttribute("forcePIREP"))).booleanValue();
 
 		// Get the current date/time in the user's local zone
 		Calendar cld = Calendar.getInstance();
