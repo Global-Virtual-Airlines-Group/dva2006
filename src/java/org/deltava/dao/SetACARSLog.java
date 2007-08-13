@@ -236,7 +236,7 @@ public class SetACARSLog extends DAO {
 					startTransaction();
 				
 					// Copy the entries
-					prepareStatementWithoutLimits("INSERT INTO acars.POSITION_ARCHIVE (SELECT * FROM acars.POSITIONS WHERE "
+					prepareStatementWithoutLimits("REPLACE INTO acars.POSITION_ARCHIVE (SELECT * FROM acars.POSITIONS WHERE "
 							+ "(FLIGHT_ID=?))");
 					_ps.setInt(1, id);
 					int rowsMoved = executeUpdate(1);
