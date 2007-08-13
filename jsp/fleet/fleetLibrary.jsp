@@ -37,7 +37,8 @@ xmlreq.onreadystatechange = function() {
 	var verDesc = 'This <content:airline /> Fleet Library installer is compatible with ';
 	var versions = info.getElementsByTagName('version');
 	for (var x = 0; x < versions.length; x++) {
-		verDesc = verDesc + versions[x].textContent;
+		var vE = versions[x];
+		verDesc = verDesc + ((vE.text) ? vE.text : vE.textContent);
 		if (x < (versions.length - 1))
 			verDesc = verDesc + ', ';
 	}
@@ -47,7 +48,7 @@ xmlreq.onreadystatechange = function() {
 	getElement('FleetPic').src = info.getAttribute('img');
 	getElement('divName').innerHTML = info.getAttribute('title');
 	getElement('divSize').innerHTML = info.getAttribute('size') + ' bytes';
-	getElement('FSVersions').innerHTML = (versions.length == 0) ? '' : verDesc;
+	getElement('FSVersions').innerHTML = (versions.length == 0) ? '' : (verDesc + '.');
 
 	// Load the description
 	var descE = info.getElementsByTagName('desc')[0].firstChild;
