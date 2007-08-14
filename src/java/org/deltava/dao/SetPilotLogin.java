@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -24,19 +24,18 @@ public class SetPilotLogin extends PilotWriteDAO {
 
 	/**
 	 * Write the pilot's last login date to the database. This also resets the Pilot's status to ACTIVE, if on leave. 
-	 * @param p the Pilot
+	 * @param id the Pilot's database ID
+	 * @param hostName the host from which the Pilot is logging in from 
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void login(Pilot p) throws DAOException {
-		
-		invalidate(p);
+	public void login(int id, String hostName) throws DAOException {
+		invalidate(id);
 		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGIN=?, LOGINHOSTNAME=?, LOGINS=LOGINS+1, " +
+			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGIN=NOW(), LOGINHOSTNAME=?, LOGINS=LOGINS+1, " +
 					"STATUS=? WHERE (ID=?)");
-			_ps.setTimestamp(1, createTimestamp(p.getLastLogin()));
-			_ps.setString(2, p.getLoginHost());
-			_ps.setInt(3, Pilot.ACTIVE);
-			_ps.setInt(4, p.getID());
+			_ps.setString(1, hostName);
+			_ps.setInt(2, Pilot.ACTIVE);
+			_ps.setInt(3, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -45,16 +44,14 @@ public class SetPilotLogin extends PilotWriteDAO {
 	
 	/**
 	 * Write the pilot's last logout date to the database. 
-	 * @param p the Pilot
+	 * @param id the Pilot's database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void logout(Pilot p) throws DAOException {
-
-		invalidate(p);
+	public void logout(int id) throws DAOException {
+		invalidate(id);
 		try {
-			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=? WHERE (ID=?)");
-			_ps.setTimestamp(1, createTimestamp(p.getLastLogoff()));
-			_ps.setInt(2, p.getID());
+			prepareStatementWithoutLimits("UPDATE PILOTS SET LAST_LOGOFF=NOW() WHERE (ID=?)");
+			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
 			throw new DAOException(se);
