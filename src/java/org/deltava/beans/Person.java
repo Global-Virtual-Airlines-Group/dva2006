@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -774,22 +774,5 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	 */
 	public void setAirportCodeType(String codeName) {
 		setAirportCodeType(StringUtils.arrayIndexOf(Airport.CODETYPES, codeName, 0));
-	}
-
-	/**
-	 * A helper method to record a successful login. Updates the loginCount and lastLogin properties.
-	 * @param hostName the host name the user is logging in from
-	 */
-	public void login(String hostName) {
-		_loginCount++;
-		_lastLogin = new Date();
-		_loginHost = hostName;
-	}
-
-	/**
-	 * A helper method to record a logoff. Updates the lastLogoff property.
-	 */
-	public void logoff() {
-		_lastLogoff = new Date();
 	}
 }

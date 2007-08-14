@@ -106,18 +106,6 @@ public class TestPerson extends AbstractBeanTestCase {
         assertEquals("TESTROLE", roles.get(0));
     }
     
-    public void testLogin() {
-        _p.login("localhost");
-        assertEquals(1, _p.getLoginCount());
-        assertTrue((_p.getLastLogin().getTime() <= System.currentTimeMillis()));
-        assertEquals("localhost", _p.getLoginHost());
-    }
-    
-    public void testLogoff() {
-    	_p.logoff();
-    	assertTrue((_p.getLastLogoff().getTime() <= System.currentTimeMillis()));
-    }
-    
     public void testNetworkIDs() {
         assertNull(_p.getNetworkIDs().get("VATSIM"));
         _p.setNetworkID("VATSIM", "12345");
