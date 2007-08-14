@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.net.MalformedURLException;
@@ -118,9 +118,6 @@ public class LoginCommand extends AbstractCommand {
 				throw new SecurityException("You are not an Active Pilot at " + SystemData.get("airline.name"));
 			}
 
-			// Log the pilot in
-			p.login(ctx.getRequest().getRemoteHost());
-			
 			// Load online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
@@ -143,11 +140,16 @@ public class LoginCommand extends AbstractCommand {
 
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
-			wdao.login(p);
+			wdao.login(p.getID(), ctx.getRequest().getRemoteHost());
 			
 			// Save login hostname/IP address forever
 			SetSystemData sysdao = new SetSystemData(con);
 			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
+			
+			// Check if we've surpassed the notificaton interval
+			long interval = (System.currentTimeMillis() - p.getLastLogin().getTime()) / 1000;
+			if ((interval / 86400) < SystemData.getInt("users.notify_days", 30))
+				returnToActive = false;
 
 			// Mark as returned from leave
 			if (returnToActive) {

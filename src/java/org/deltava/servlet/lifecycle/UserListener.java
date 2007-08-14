@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.lifecycle;
 
 import java.sql.*;
@@ -52,7 +52,6 @@ public class UserListener implements HttpSessionListener {
 			return;
 
 		// Log the user off
-		p.logoff();
 		UserPool.remove(p, s.getId());
 		log.info(p.getName() + " logged out");
 
@@ -63,7 +62,7 @@ public class UserListener implements HttpSessionListener {
 			// Update the user's last login date
 			con = jdbcPool.getConnection(true);
 			SetPilotLogin pldao = new SetPilotLogin(con);
-			pldao.logout((Pilot) p);
+			pldao.logout(p.getID());
 		} catch (ConnectionPoolException cpe) {
 			log.warn(cpe.getMessage(), cpe.getLogStackDump() ? cpe : null);
 		} catch (Exception ex) {
