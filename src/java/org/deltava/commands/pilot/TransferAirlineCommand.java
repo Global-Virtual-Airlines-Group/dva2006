@@ -13,7 +13,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 import org.deltava.mail.*;
 
-import org.deltava.security.Authenticator;
+import org.deltava.security.*;
 import org.deltava.security.command.*;
 
 import org.deltava.util.PasswordGenerator;
@@ -149,11 +149,10 @@ public class TransferAirlineCommand extends AbstractCommand {
 			newUser.setStatus(Pilot.ACTIVE);
 			newUser.setEquipmentType(ctx.getParameter("eqType"));
 			newUser.setRank(ctx.getParameter("rank"));
-			if (isExisting) {
+			if (isExisting)
 				wdao.write(newUser, aInfo.getDB());
-			} else {
+			else
 				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
-			}
 
 			// Create the second status update
 			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
@@ -164,17 +163,22 @@ public class TransferAirlineCommand extends AbstractCommand {
 			// Calculate the new password
 			newUser.setPassword(PasswordGenerator.generate(SystemData.getInt("security.password.default", 8)));
 			
-			// Commit transaction
-			ctx.commitTX();
-
 			// Add the new DN to the authenticator with the new password, and remove the old DN
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
+			if (auth instanceof SQLAuthenticator)
+				((SQLAuthenticator) auth).setConnection(con);
 			
-			if (auth.contains(newUser)) {
+			if (auth.contains(newUser))
 				auth.updatePassword(newUser, newUser.getPassword());
-			} else {
+			else
 				auth.addUser(newUser, newUser.getPassword());
-			}
+			
+			// Reset the authenticator
+			if (auth instanceof SQLAuthenticator)
+				((SQLAuthenticator) auth).clearConnection();
+			
+			// Commit transaction
+			ctx.commitTX();
 
 			// Update the message context
 			mctxt.addData("oldUser", p);
