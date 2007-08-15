@@ -21,6 +21,11 @@ if (info.satrad) {
 	document.seriesDate['satrad'] = info.satrad.series[0].unixDate;
 }
 
+if (info.ussat) {
+	document.maxZoom['ussat'] = info.ussat.maxZoom;
+	document.seriesDate['ussat'] = info.ussat.series[0].unixDate;
+}
+
 return true;
 }
 
