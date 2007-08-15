@@ -112,7 +112,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (fr != null) {
 				fr.setAirline(a);
 				fr.setFlightNumber(StringUtils.parse(ctx.getParameter("flightNumber"), 1));
-				fr.setFlightNumber(StringUtils.parse(ctx.getParameter("flightLeg"), 1));
+				fr.setLeg(StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 			} else
 				fr = new FlightReport(a, StringUtils.parse(ctx.getParameter("flightNumber"), 1), StringUtils.parse(ctx.getParameter("flightLeg"), 1));
 
