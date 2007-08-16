@@ -149,10 +149,15 @@ public class TransferAirlineCommand extends AbstractCommand {
 			newUser.setStatus(Pilot.ACTIVE);
 			newUser.setEquipmentType(ctx.getParameter("eqType"));
 			newUser.setRank(ctx.getParameter("rank"));
-			if (isExisting)
-				wdao.write(newUser, aInfo.getDB());
-			else
+			if (!isExisting) {
 				wdao.transfer(newUser, aInfo.getDB(), newUser.getRatings());
+				
+				// Assign an ID if requested
+				boolean assignID = Boolean.valueOf(ctx.getParameter("assignID")).booleanValue();
+				if (assignID)
+					wdao.assignID(newUser, aInfo.getDB());
+			} else
+				wdao.write(newUser, aInfo.getDB());
 
 			// Create the second status update
 			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
