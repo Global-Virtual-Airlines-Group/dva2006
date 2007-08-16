@@ -170,7 +170,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			// If we're approving and have not assigned a Pilot Number yet, assign it
 			if ((opCode == FlightReport.OK) && (p.getPilotNumber() == 0)) {
 			   SetPilot pwdao = new SetPilot(con);
-			   pwdao.assignID(p);
+			   pwdao.assignID(p, SystemData.get("airline.db"));
 			   ctx.setAttribute("assignID", Boolean.TRUE, REQUEST);
 			}
 			
