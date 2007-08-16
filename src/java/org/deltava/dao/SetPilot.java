@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -60,7 +60,7 @@ public class SetPilot extends PilotWriteDAO {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
-		sqlBuf.append(db.toLowerCase());
+		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
 				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
@@ -161,13 +161,17 @@ public class SetPilot extends PilotWriteDAO {
 	/**
 	 * Assigns a Pilot ID to a Pilot.
 	 * @param p the Pilot bean
+	 * @param db the database name
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void assignID(Pilot p) throws DAOException {
+	public void assignID(Pilot p, String db) throws DAOException {
 		invalidate(p);
 		try {
+			startTransaction();
+			
 			// Get the next available Pilot ID
-			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM PILOTS");
+			setQueryMax(1);
+			prepareStatement("SELECT MAX(PILOT_ID)+1 FROM " + formatDBName(db) + ".PILOTS");
 			ResultSet rs = _ps.executeQuery();
 			p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
 
@@ -176,12 +180,16 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.close();
 
 			// Write the new Pilot ID
-			prepareStatement("UPDATE PILOTS SET PILOT_ID=? WHERE (ID=?) AND ((PILOT_ID=0) OR (PILOT_ID IS NULL))");
+			prepareStatement("UPDATE " + formatDBName(db) + ".PILOTS SET PILOT_ID=? WHERE (ID=?) AND ((PILOT_ID=0) OR (PILOT_ID IS NULL))");
 			_ps.setInt(1, p.getPilotNumber());
 			_ps.setInt(2, p.getID());
 			executeUpdate(1);
+			commitTransaction();
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
+		} finally {
+			setQueryMax(0);
 		}
 	}
 	

@@ -59,6 +59,10 @@ ${eqType.name} (Stage <fmt:int value="${eqType.stage}" />)<br />
  <td class="data"><el:combo name="rank" size="1" idx="*" options="${ranks}" value="${pilot.rank}" /></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="assignID" idx="*" value="true" checked="${param.assignID}" label="Automatically assign Pilot ID at new Airline" /></td>
+</tr>
 </el:table>
 
 <!-- Button Bar -->
