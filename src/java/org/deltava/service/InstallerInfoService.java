@@ -86,6 +86,7 @@ public class InstallerInfoService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
+			ctx.getResponse().setCharacterEncoding("UTF-8");
 			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
