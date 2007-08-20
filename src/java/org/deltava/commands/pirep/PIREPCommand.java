@@ -215,6 +215,10 @@ public class PIREPCommand extends AbstractFormCommand {
 		
 		// Get command results
 		CommandResult result = ctx.getResult();
+		
+		// Don't allow anonymous access
+		if (!ctx.isAuthenticated())
+			throw securityException("Cannot create/edit Flight Report");
 
 		// Check if we're creating a new PIREP
 		Pilot usr = (Pilot) ctx.getUser();
