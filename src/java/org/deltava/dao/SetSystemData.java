@@ -158,6 +158,10 @@ public class SetSystemData extends DAO {
 	 */
 	public void login(String dbName, int id, String addr, String host) throws DAOException {
 		
+		// Fix null hostname
+		if (host == null)
+			host = addr;
+		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("INSERT INTO ");
 		sqlBuf.append(formatDBName(dbName));

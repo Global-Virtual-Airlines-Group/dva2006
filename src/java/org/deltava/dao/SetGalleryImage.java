@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -109,7 +109,7 @@ public class SetGalleryImage extends DAO {
 			_ps.setInt(1, id);
 
 			// Remove the image
-			executeUpdate(1);
+			executeUpdate(0);
 			
 			// Update any Water Cooler threads that link to this.
 			prepareStatement("UPDATE common.COOLER_THREADS SET IMAGE_ID=0 WHERE (IMAGE_ID=?)");
