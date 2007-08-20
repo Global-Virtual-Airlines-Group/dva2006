@@ -302,7 +302,7 @@ public class SetSchedule extends DAO {
 			startTransaction();
 			prepareStatement("INSERT INTO common.AIRCRAFT (NAME, FULLNAME, RANGE, IATA, HISTORIC, ETOPS, ENGINES, "
 					+ "ENGINE_TYPE, CRUISE_SPEED, FUEL_FLOW, BASE_FUEL, TAXI_FUEL, PRI_TANKS, PRI_PCT, SEC_TANKS, "
-					+ "SEC_PCT, OTHER_TANKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "SEC_PCT, OTHER_TANKS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, a.getName());
 			_ps.setString(2, a.getFullName());
 			_ps.setInt(3, a.getRange());
