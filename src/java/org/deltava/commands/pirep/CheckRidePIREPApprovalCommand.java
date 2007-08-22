@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -96,6 +96,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Update the checkride
 			cr.setScore(crApproved);
 			cr.setScoredOn(new Date());
+			cr.setScorerID(ctx.getUser().getID());
 			cr.setSubmittedOn(fr.getSubmittedOn());
 			cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			cr.setStatus(Test.SCORED);
