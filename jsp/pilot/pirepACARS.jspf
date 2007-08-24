@@ -17,7 +17,7 @@
 <c:if test="${!empty conInfo && (conInfo.clientBuild > 0)}">
 <tr>
  <td class="label">ACARS Client</td>
- <td class="data" colspan="${cspan}">Build <fmt:int value="${conInfo.clientBuild}" /></td>
+ <td class="data" colspan="${cspan}">Build <fmt:int value="${conInfo.clientBuild}" /><content:filter roles="HR"> from ${conInfo.remoteHost}</content:filter></td>
 </tr>
 </c:if>
 <tr>
