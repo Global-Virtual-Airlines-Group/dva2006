@@ -147,9 +147,11 @@ public class LoginCommand extends AbstractCommand {
 			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
 			
 			// Check if we've surpassed the notificaton interval
-			long interval = (System.currentTimeMillis() - p.getLastLogin().getTime()) / 1000;
-			if ((interval / 86400) < SystemData.getInt("users.notify_days", 30))
-				returnToActive = false;
+			if (returnToActive) {
+				long interval = (System.currentTimeMillis() - p.getLastLogin().getTime()) / 1000;
+				if ((interval / 86400) < SystemData.getInt("users.notify_days", 30))
+					returnToActive = false;
+			}
 
 			// Mark as returned from leave
 			if (returnToActive) {
