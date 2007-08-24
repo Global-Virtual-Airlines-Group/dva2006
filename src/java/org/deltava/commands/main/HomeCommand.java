@@ -112,7 +112,7 @@ public class HomeCommand extends AbstractCommand {
 			ctx.setAttribute("coolerStats", new Integer(stdao.getCoolerStatistics(1)), REQUEST);
 
 			// Get new/active NOTAMs since last login
-			if (ctx.isAuthenticated()) {
+			if (ctx.isAuthenticated() && (ctx.getUser().getLastLogin() != null)) {
 				Person usr = ctx.getUser();
 				Collection notams = nwdao.getActiveNOTAMs();
 				for (Iterator i = notams.iterator(); i.hasNext();) {
@@ -129,7 +129,6 @@ public class HomeCommand extends AbstractCommand {
 			Integer contentType = cList.get(ofs);
 			
 			// Figure out dynamic content
-			
 			switch (contentType.intValue()) {
 				// Next Event
 				case NEXT_EVENT:
