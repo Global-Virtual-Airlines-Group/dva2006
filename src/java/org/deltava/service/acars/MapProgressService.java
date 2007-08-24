@@ -53,8 +53,14 @@ public class MapProgressService extends WebService {
 			// Load the route and the route waypoints
 			info = dao.getInfo(id);
 			if ((info != null) && doRoute) {
+				Collection<String> wps = new LinkedHashSet<String>();
+				wps.add(info.getAirportD().getICAO());
+				wps.addAll(StringUtils.split(info.getRoute(), " "));
+				wps.add(info.getAirportA().getICAO());
+
+				// Load the route
 				GetNavRoute navdao = new GetNavRoute(con);
-				routeWaypoints = navdao.getRouteWaypoints(info.getRoute());
+				routeWaypoints = navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "));
 			} else {
 				routeWaypoints = new HashSet<MapEntry>();
 			}
@@ -91,7 +97,8 @@ public class MapProgressService extends WebService {
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");

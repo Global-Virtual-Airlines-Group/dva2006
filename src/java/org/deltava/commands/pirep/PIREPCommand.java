@@ -415,16 +415,16 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
-					GetNavRoute navdao = new GetNavRoute(con);
-					List<? extends GeoLocation> entries = navdao.getRouteWaypoints(info.getRoute());
-
-					// Get the connectoin data
-					ConnectionEntry conInfo = ardao.getConnection(info.getConnectionID());
-
+					Collection<String> wps = new LinkedHashSet<String>();
+					wps.add(info.getAirportD().getICAO());
+					wps.addAll(StringUtils.split(info.getRoute(), " "));
+					wps.add(info.getAirportA().getICAO());
+					
 					// Save ACARS info
-					ctx.setAttribute("filedRoute", entries, REQUEST);
+					GetNavRoute navdao = new GetNavRoute(con);
+					ctx.setAttribute("filedRoute", navdao.getRouteWaypoints(StringUtils.listConcat(wps, " ")), REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
-					ctx.setAttribute("conInfo", conInfo, REQUEST);
+					ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
 				}
 
 				// Get the check ride
