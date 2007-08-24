@@ -80,10 +80,10 @@ public class SetACARSLog extends DAO {
 	 * Deletes unfiled ACARS flight information older than a specified number of hours.
 	 * @param hours the number of hours
 	 * @param activeIDs a Collection of active Flight IDs
-	 * @return the number of flights purged
+	 * @return a Collection of purged Flight IDs
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public int purgeFlights(int hours, Collection<Integer> activeIDs) throws DAOException {
+	public Collection<Integer> purgeFlights(int hours, Collection<Integer> activeIDs) throws DAOException {
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND "
@@ -101,12 +101,38 @@ public class SetACARSLog extends DAO {
 		}
 		
 		try {
+			startTransaction();
+			
+			// Get IDs to purge
+			prepareStatementWithoutLimits("SELECT ID FROM acars.FLIGHTS WHERE (PIREP=?) AND (ARCHIVED=?) AND "
+					+ "(CREATED < DATE_SUB(NOW(), INTERVAL ? HOUR))");
+			_ps.setBoolean(1, false);
+			_ps.setBoolean(2, false);
+			_ps.setInt(3, hours);
+			
+			// Execute the query
+			Collection<Integer> results = new LinkedHashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			// Clean up and remove active
+			rs.close();
+			_ps.close();
+			results.removeAll(activeIDs);
+
+			// Purge the ones we want to
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setBoolean(1, false);
 			_ps.setBoolean(2, false);
 			_ps.setInt(3, hours);
-			return executeUpdate(0);
+			executeUpdate(0);
+			
+			// Commit and return
+			commitTransaction();
+			return results;
 		} catch (SQLException se) {
+			rollbackTransaction();
 			throw new DAOException(se);
 		}
 	}

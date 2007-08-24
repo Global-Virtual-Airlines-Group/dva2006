@@ -54,7 +54,8 @@ public class ACARSDataPurgeTask extends Task {
 			wdao.synchronizeArchive();
 			
 			// Remove old flights and position reports without a flight report
-			log.warn("Purged " + wdao.purgeFlights(flightPurge, activeIDs) + " flight entries");
+			Collection<Integer> purgedIDs = wdao.purgeFlights(flightPurge, activeIDs);
+			log.warn("Purged " + purgedIDs.size() + " flight entries - " + purgedIDs);
 			
 			// Purge old stats
 			log.warn("Purged " + wdao.purgeLogs(statsPurge) + " command statistics entries");
