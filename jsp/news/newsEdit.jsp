@@ -33,7 +33,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="newssave.do" method="post" linkID="${entry}" validate="return validate(this)">
+<el:form action="newssave.do" method="post" link="${entry}" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> SYSTEM NEWS ENTRY</td>
