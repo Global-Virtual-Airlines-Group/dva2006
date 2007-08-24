@@ -20,7 +20,7 @@ import org.deltava.util.cache.*;
 
 public class GetNavData extends DAO implements CachingDAO {
 	
-	protected static final Cache<Cacheable> _cache = new AgingCache<Cacheable>(2048);
+	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(2560);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -57,11 +57,9 @@ public class GetNavData extends DAO implements CachingDAO {
 			return new NavigationDataMap();
 		
 		// Check the cache
-		Cacheable result = _cache.get(code);
-		if (result instanceof NavigationDataMap)
-			return (NavigationDataMap) result;
-		else if (result != null)
-			return null;
+		NavigationDataMap result = _cache.get(code);
+		if (result != null)
+			return result;
 		
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (UPPER(CODE)=?)");
@@ -75,7 +73,7 @@ public class GetNavData extends DAO implements CachingDAO {
 		}
 		
 		// Add to the cache and return
-		return (NavigationDataMap) result;
+		return  result;
 	}
 	
 	/**
@@ -127,43 +125,18 @@ public class GetNavData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public NavigationDataMap getByID(Collection<String> ids) throws DAOException {
-
-		// Check for empty id set
-		if (ids.isEmpty())
+		if (CollectionUtils.isEmpty(ids))
 			return new NavigationDataMap();
 		
 		// Check the cache
-		NavigationDataMap results = (NavigationDataMap) _cache.get(ids);
-		if (results != null)
-			return results;
-
-		// Build the SQL Statement
-		Collection<String> orderedIDs = new LinkedHashSet<String>(ids);
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.NAVDATA WHERE CODE IN (");
-		for (Iterator<String> i = orderedIDs.iterator(); i.hasNext();) {
-			i.next();
-			sqlBuf.append('?');
-			if (i.hasNext())
-			sqlBuf.append(',');
+		NavigationDataMap results = new NavigationDataMap();
+		for (Iterator<String> i = ids.iterator(); i.hasNext(); ) {
+			String id = i.next();
+			results.addAll(get(id).getAll());
 		}
-
-		sqlBuf.append(')');
-		try {
-			prepareStatementWithoutLimits(sqlBuf.toString());
-			int ofs = 0;
-			for (Iterator<String> i = orderedIDs.iterator(); i.hasNext(); ) {
-				String id = i.next().toUpperCase();
-				_ps.setString(++ofs, id);
-			}
-			
-			results = new NavigationDataMap(execute());
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-
+		
 		// Add to the cache and return
 		results.setCacheKey(ids);
-		_cache.add(results);
 		return results;
 	}
 

@@ -14,10 +14,10 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Airway implements java.io.Serializable, Comparable, Cacheable {
+public class Airway implements Comparable, Cacheable, Route {
 
 	private String _code;
-	private List<String> _waypoints;
+	private final List<String> _waypoints = new ArrayList<String>();
 
 	/**
 	 * Creates a new Airway bean.
@@ -27,7 +27,6 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	public Airway(String code) {
 		super();
 		setCode(code);
-		_waypoints = new ArrayList<String>();
 	}
 
 	/**
@@ -78,8 +77,8 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	public Collection<NavigationDataBean> getWaypoints(NavigationDataMap ndmap, GeoLocation lastPosition) {
 	   // Iterate through the waypoint codes
 	   Collection<NavigationDataBean> results = new LinkedHashSet<NavigationDataBean>();
-		for (Iterator i = _waypoints.iterator(); i.hasNext();) {
-			String trwp = (String) i.next();
+		for (Iterator<String> i = _waypoints.iterator(); i.hasNext();) {
+			String trwp = i.next();
 			NavigationDataBean nd = ndmap.get(trwp, lastPosition);
 			if (nd != null) {
 				results.add(nd);
@@ -175,7 +174,7 @@ public class Airway implements java.io.Serializable, Comparable, Cacheable {
 	 */
 	public int compareTo(Object o) {
 		Airway a2 = (Airway) o;
-		return _code.compareTo(a2.getCode());
+		return _code.compareTo(a2._code);
 	}
 
 	/**

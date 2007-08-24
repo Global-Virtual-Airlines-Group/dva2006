@@ -5,11 +5,10 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.GeoLocation;
-
 import org.deltava.beans.navdata.*;
 
-import org.deltava.util.GeoUtils;
-import org.deltava.util.cache.Cacheable;
+import org.deltava.util.*;
+import org.deltava.util.cache.*;
 
 /**
  * A Data Access Object to load navigation route and airway data.
@@ -19,33 +18,63 @@ import org.deltava.util.cache.Cacheable;
  */
 
 public class GetNavRoute extends GetNavData {
+	
+	private static final Cache<Route> _rCache = new AgingCache<Route>(1024);
 
-	private class CacheableRoute implements Cacheable {
+	private class CacheableRoute implements Route {
 
 		private String _route;
 		private LinkedList<NavigationDataBean> _waypoints;
 
 		CacheableRoute(String route, LinkedList<NavigationDataBean> waypoints) {
 			super();
-			_route = route;
+			_route = route.toUpperCase();
 			_waypoints = waypoints;
 		}
 
-		public LinkedList<NavigationDataBean> getWaypoints() {
+		public Collection<String> getWaypoints() {
+			return StringUtils.split(_route, " ");
+		}
+		
+		public LinkedList<NavigationDataBean> getEntries() {
 			return _waypoints;
+		}
+		
+		public String getRoute() {
+			return _route;
+		}
+		
+		public int getSize() {
+			return _waypoints.size();
 		}
 
 		public Object cacheKey() {
-			return _route;
+			return new Integer(_route.hashCode());
 		}
 	}
 
 	/**
-	 * Initializes the Data Access Object
+	 * Initializes the Data Access Object.
 	 * @param c the JDBC connection to use
 	 */
 	public GetNavRoute(Connection c) {
 		super(c);
+	}
+	
+	/**
+	 * Returns the number of cache hits.
+	 * @return the number of hits
+	 */
+	public final int getRequests() {
+		return _rCache.getRequests();
+	}
+	
+	/**
+	 * Returns the number of cache requests.
+	 * @return the number of requests
+	 */
+	public final int getHits() {
+		return _rCache.getHits();
 	}
 
 	/**
@@ -57,9 +86,9 @@ public class GetNavRoute extends GetNavData {
 	public TerminalRoute getRoute(String name) throws DAOException {
 
 		// Chceck the cache
-		TerminalRoute result = (TerminalRoute) _cache.get(name);
-		if (result != null)
-			return result;
+		Route result = _rCache.get(name);
+		if ((result != null) && (result instanceof TerminalRoute))
+			return (TerminalRoute) result;
 
 		// Split the name
 		StringTokenizer tkns = new StringTokenizer(name, ".");
@@ -73,18 +102,18 @@ public class GetNavRoute extends GetNavData {
 			_ps.setString(2, tkns.nextToken().toUpperCase());
 
 			// Execute the query
-			List results = executeSIDSTAR();
+			List<TerminalRoute> results = executeSIDSTAR();
 			setQueryMax(0);
-			result = results.isEmpty() ? null : (TerminalRoute) results.get(0);
+			result = results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 
 		// Add to the cache
-		_cache.add(result);
-		return result;
+		_rCache.add(result);
+		return (TerminalRoute) result;
 	}
-
+	
 	/**
 	 * Loads all SIDs/STARs for a particular Airport.
 	 * @param code the Airport ICAO code
@@ -106,7 +135,7 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		// Add to the cache and return
-		_cache.addAll(results);
+		_rCache.addAll(results);
 		return new LinkedHashSet<TerminalRoute>(results);
 	}
 
@@ -119,12 +148,9 @@ public class GetNavRoute extends GetNavData {
 	public Airway getAirway(String name) throws DAOException {
 
 		// Check the cache
-		Cacheable result = _cache.get(name);
-		if (result instanceof Airway) {
-			return (Airway) result;
-		} else if (result != null) {
+		Route result = _rCache.get(name);
+		if ((result != null) && (result instanceof Airway))
 			result = null;
-		}
 
 		try {
 			setQueryMax(1);
@@ -147,7 +173,7 @@ public class GetNavRoute extends GetNavData {
 		}
 
 		// Add to cache and return
-		_cache.add(result);
+		_rCache.add(result);
 		return (Airway) result;
 	}
 
@@ -204,36 +230,58 @@ public class GetNavRoute extends GetNavData {
 			return new LinkedList<NavigationDataBean>();
 
 		// Check the cache
-		Cacheable obj = _cache.get(route);
+		Route obj = _rCache.get(route);
 		if (obj instanceof CacheableRoute) {
 			CacheableRoute cr = (CacheableRoute) obj;
-			return cr.getWaypoints();
-		} else if (obj != null) {
+			return cr.getEntries();
+		} else if (obj != null)
 			obj = null;
-		}
 
 		// Get the route text
-		List tkns = Collections.list(new StringTokenizer(route, " "));
+		List<String> tkns = StringUtils.split(route, " ");
 		GeoLocation lastPosition = null;
 		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
-			String wp = (String) tkns.get(x);
+			String wp = tkns.get(x);
 
 			// Check for an SID/STAR
-			if (wp.indexOf('.') != -1) {
-				TerminalRoute tr = getRoute(wp); // Load the SID/STAR
+			if (x == 1) {
+				TerminalRoute tr = null;
+				if (wp.indexOf('.') != -1)
+					tr = getRoute(wp);
+				else if (x < (tkns.size() - 1))
+					tr = getRoute(tkns.get(0) + "." + wp);
+					
+				// If we've found something, load the waypoints
 				if (tr != null) {
 					NavigationDataMap ndMap = getByID(tr.getWaypoints());
 					routePoints.addAll(tr.getWaypoints(ndMap));
+					wp = null;
 				}
-			} else {
+			} else if (x == (tkns.size() - 2)) {
+				TerminalRoute tr = null;
+				if (wp.indexOf('.') != -1)
+					tr = getRoute(wp);
+				else if (x > 1)
+					tr = getRoute(tkns.get(tkns.size() - 1) + "." + wp);
+
+				// If we've found something, load the waypoints
+				if (tr != null) {
+					NavigationDataMap ndMap = getByID(tr.getWaypoints());
+					routePoints.addAll(tr.getWaypoints(ndMap));
+					wp = null;
+				}
+			} 
+			
+			// We do the null check because if we did a SID/STAR check with no hits, we need to run this
+			if (wp != null) {
 				Airway aw = getAirway(wp); // Check if we're referencing an airway
 				if (aw != null) {
-					String endPoint = (x < (tkns.size() - 1)) ? (String) tkns.get(x + 1) : "";
-					Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : (String) tkns.get(x - 1), endPoint);
+					String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
+					Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
 					NavigationDataMap ndMap = getByID(awPoints);
-					for (Iterator i = awPoints.iterator(); i.hasNext();) {
-						String awp = (String) i.next();
+					for (Iterator<String> i = awPoints.iterator(); i.hasNext();) {
+						String awp = i.next();
 						NavigationDataBean nd = ndMap.get(awp, lastPosition);
 						if (nd != null) {
 							routePoints.add(nd);
@@ -258,8 +306,8 @@ public class GetNavRoute extends GetNavData {
 			int distance = GeoUtils.distance(lastP, points.getLast());
 
 			// Add a check to ensure that this point isn't crazily out of the way
-			for (Iterator i = points.iterator(); i.hasNext();) {
-				GeoLocation gl = (GeoLocation) i.next();
+			for (Iterator<? extends GeoLocation> i = points.iterator(); i.hasNext();) {
+				GeoLocation gl = i.next();
 				if (GeoUtils.distance(lastP, gl) > distance)
 					i.remove();
 			}
@@ -268,7 +316,7 @@ public class GetNavRoute extends GetNavData {
 		// Add to the cache and return the waypoints
 		if (tkns.size() > 1) {
 			CacheableRoute cr = new CacheableRoute(route, points);
-			_cache.add(cr);
+			_rCache.add(cr);
 		}
 		
 		return points;
@@ -281,16 +329,12 @@ public class GetNavRoute extends GetNavData {
 
 		// Execute the Query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
 		while (rs.next()) {
 			TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2) + 1);
 			tr.setTransition(rs.getString(4));
 			tr.setRunway(rs.getString(5));
 			tr.setRoute(rs.getString(6));
-
-			// Add to results
 			results.add(tr);
 		}
 
