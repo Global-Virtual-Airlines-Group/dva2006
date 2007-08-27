@@ -5,8 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.ACARSFlightReport;
+import org.deltava.beans.UserData;
 import org.deltava.beans.acars.FlightInfo;
-import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;

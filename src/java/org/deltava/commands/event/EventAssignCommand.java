@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,9 +6,10 @@ import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.FlightReport;
+import org.deltava.beans.UserData;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -75,7 +76,7 @@ public class EventAssignCommand extends AbstractCommand {
 				Signup s = i.next();
 				
 				// Get the Pilot
-				UserData usrData = (UserData) usrmap.get(s.getPilotID());
+				UserData usrData = usrmap.get(s.getPilotID());
 				Pilot usr = pdao.get(usrData);
 				mctxt.addData("pilot", usr);
 				

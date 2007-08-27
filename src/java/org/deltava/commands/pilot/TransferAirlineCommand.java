@@ -53,7 +53,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			Pilot p = rdao.get(ctx.getID());
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
-
+			
 			// Check access level
 			PilotAccessControl access = new PilotAccessControl(ctx, p);
 			access.validate();
@@ -65,7 +65,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Get the databases
 			GetUserData uddao = new GetUserData(con);
-			Map airlines = uddao.getAirlines(false);
+			Map<String, AirlineInformation> airlines = uddao.getAirlines(false);
 			ctx.setAttribute("airlines", airlines.values(), REQUEST);
 
 			// Check if we are transferring or just displaying the JSP
@@ -75,15 +75,15 @@ public class TransferAirlineCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-
+			
 			// Get the airline to change to
-			AirlineInformation aInfo = (AirlineInformation) airlines.get(ctx.getParameter("dbName"));
+			AirlineInformation aInfo = airlines.get(ctx.getParameter("dbName"));
 			if (aInfo == null)
 				throw notFoundException("Invalid Airline - " + ctx.getParameter("dbName"));
 
 			// Get the equipment types
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			Collection eqTypes = eqdao.getActive(aInfo.getDB());
+			Collection<EquipmentType> eqTypes = eqdao.getActive(aInfo.getDB());
 
 			// Check if we've selected an equipmentType/Rank
 			if (ctx.getParameter("eqType") == null) {
@@ -93,7 +93,12 @@ public class TransferAirlineCommand extends AbstractCommand {
 				result.setSuccess(true);
 				return;
 			}
-
+			
+			// Load the user's cross-airline information and see if the user already exists
+			UserData ud = uddao.get(p.getID());
+			UserDataMap udm = uddao.get(ud.getIDs());
+			boolean isExisting = udm.getTableNames().contains(aInfo.getDB() + ".PILOTS");
+			
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("TXAIRLINE"));
@@ -115,12 +120,17 @@ public class TransferAirlineCommand extends AbstractCommand {
 			sudao.write(su);
 
 			// Check if the user already exists in the new airline database
-			newUser = rdao.getByName(p.getName(), aInfo.getDB());
-			boolean isExisting = false;
-			if (newUser != null) {
-				isExisting = true;
-				log.info("Reactivating " + newUser.getDN());
-			} else {
+			if (isExisting) {
+				Collection<UserData> users = udm.getByTable(aInfo.getDB() + ".PILOTS");
+				if (!users.isEmpty()) {
+					UserData ud2 = users.iterator().next();
+					newUser = rdao.get(ud2);
+				}
+			}
+			
+			if (newUser != null)
+				log.info("Reactivating " + newUser.getName());
+			else {
 				log.info("Creating User record for " + p.getName() + " at " + aInfo.getCode());
 
 				// Clone the Pilot and update the ID
@@ -131,7 +141,8 @@ public class TransferAirlineCommand extends AbstractCommand {
 				newUser.setDN("cn=" + p.getName() + ",ou=" + aInfo.getDB().toLowerCase() + ",o=sce");
 
 				// Create a new UserData record
-				UserData ud = new UserData(aInfo.getDB(), "PILOTS", aInfo.getDomain());
+				ud = new UserData(aInfo.getDB(), "PILOTS", aInfo.getDomain());
+				ud.addID(p.getID());
 
 				// Write the user data record
 				SetUserData udao = new SetUserData(con);

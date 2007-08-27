@@ -7,6 +7,7 @@ import java.util.*;
 import org.deltava.commands.*;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
 

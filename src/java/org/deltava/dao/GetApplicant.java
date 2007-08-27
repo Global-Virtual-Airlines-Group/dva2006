@@ -7,7 +7,6 @@ import java.sql.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.UserData;
 
 import org.deltava.util.CollectionUtils;
 import org.deltava.util.StringUtils;
