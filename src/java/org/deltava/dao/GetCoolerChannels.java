@@ -21,7 +21,7 @@ import org.deltava.util.cache.*;
 
 public class GetCoolerChannels extends DAO implements CachingDAO {
 
-	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(5, 3600);
+	private static final Cache<Channel> _cache = new ExpiringCache<Channel>(15, 3600);
 
 	/**
 	 * Create this DAO using a JDBC connection.
@@ -84,8 +84,8 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			_ps.setString(1, channelName);
 
 			// Execute the query - if nothing is returned, return null
-			ResultSet rs = _ps.executeQuery();
 			setQueryMax(0);
+			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
 				_ps.close();
 				rs.close();
@@ -132,17 +132,15 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 		Map<String, Channel> results = new TreeMap<String, Channel>();
 		try {
 			prepareStatement(sqlBuf.toString());
-			if (showHidden) {
+			if (showHidden)
 				_ps.setBoolean(1, true);
-			} else {
+			else {
 				_ps.setBoolean(1, false);
 				_ps.setBoolean(2, true);
 			}
 
 			// Execute the query - we store results in a map for now
 			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
 			while (rs.next()) {
 				Channel c = new Channel(rs.getString(1));
 				c.setDescription(rs.getString(2));
@@ -219,9 +217,8 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO WHERE (CHANNEL=?)");
 			Channel c = channels.values().iterator().next();
 			_ps.setString(1, c.getName());
-		} else {
+		} else
 			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELINFO");
-		}
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
@@ -251,10 +248,10 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	 * @return a Map of Messages, keyed by database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Map getLastPosts(Collection<Channel> channels) throws DAOException {
+	public Map<Integer, Message> getLastPosts(Collection<Channel> channels) throws DAOException {
 
 		// Build a set of post IDs
-		Set<Integer> idSet = new HashSet<Integer>();
+		Collection<Integer> idSet = new HashSet<Integer>();
 		for (Iterator<Channel> i = channels.iterator(); i.hasNext();) {
 			Channel ch = i.next();
 			if (ch.getLastThreadID() != 0)
@@ -263,7 +260,7 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 
 		// If we have no post IDs, then return an empty map
 		if (idSet.isEmpty())
-			return Collections.EMPTY_MAP;
+			return Collections.emptyMap();
 
 		// Init the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT T.* FROM common.COOLER_THREADS T WHERE (T.ID IN (");
@@ -292,8 +289,6 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 				msg.setID(msg.getThreadID());
 				msg.setSubject(rs.getString(2));
 				msg.setCreatedOn(rs.getTimestamp(12));
-
-				// Add to results
 				results.add(msg);
 			}
 
