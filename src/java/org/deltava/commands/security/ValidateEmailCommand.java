@@ -5,7 +5,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.system.AddressValidation;
-import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;

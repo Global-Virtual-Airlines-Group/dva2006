@@ -1,10 +1,11 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -86,15 +87,8 @@ public class IssueCommentCommand extends AbstractCommand {
             UserDataMap udm = uddao.get(pilotIDs);
 
             // Get the pilot profiles
-            Set<Pilot> pilots = new HashSet<Pilot>();
             GetPilot pdao = new GetPilot(con);
-            for (Iterator<String> pi = udm.getTableNames().iterator(); pi.hasNext(); ) {
-            	String dbTableName = pi.next();
-            	if (UserDataMap.isPilotTable(dbTableName)) {
-            		Map<Integer, Pilot> pMap = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
-            		pilots.addAll(pMap.values());
-            	}
-            }
+            Collection<Pilot> pilots = pdao.get(udm).values();
 
             // Create the e-mail message
             Mailer mailer = new Mailer(ctx.getUser());

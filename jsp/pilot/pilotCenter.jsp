@@ -148,6 +148,9 @@ You are also qualified to file Flight Reports using the following aircraft:<br /
 <c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}">
 <span class="pri bld"><fmt:int value="${pilot.ACARSLegs}" /></span> of these flights and 
 <span class="pri bld"><fmt:dec value="${pilot.ACARSHours}" /></span> hours were logged using ACARS.<br /></c:if>
+<c:if test="${pilot.totalLegs > pilot.legs}">
+You have flown <fmt:int value="${pilot.totalLegs}" /> flights and <fmt:dec value="${pilot.totalHours}" /> hours combined between 
+<content:airline /> and our partner airlines.<br /></c:if>
 <c:if test="${!empty lastFlight}">
 <br />
  Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />

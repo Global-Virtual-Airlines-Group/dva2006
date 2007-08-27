@@ -1,12 +1,12 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.acars.ACARSError;
-import org.deltava.beans.system.*;
 
 import org.deltava.comparators.PilotComparator;
 
@@ -79,12 +79,7 @@ public class ErrorLogCommand extends AbstractViewCommand {
 			
 			// Load the user profles
 			GetPilot pdao = new GetPilot(con);
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
-			for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
-				String tableName = i.next();
-				if (UserDataMap.isPilotTable(tableName))
-					pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
-			}
+			Map<Integer, Pilot> pilots = pdao.get(udmap);
 			
 			// Get report author IDs
 			Collection<Pilot> authors = new TreeSet<Pilot>(new PilotComparator(PilotComparator.PILOTCODE));

@@ -5,6 +5,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;

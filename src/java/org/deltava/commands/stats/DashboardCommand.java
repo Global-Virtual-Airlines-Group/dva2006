@@ -1,11 +1,10 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.system.*;
+import org.deltava.beans.*;
 import org.deltava.beans.stats.PerformanceMetrics;
 
 import org.deltava.comparators.PerformanceComparator;

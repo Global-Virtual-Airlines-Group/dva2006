@@ -4,8 +4,8 @@ package org.deltava.commands.event;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserData;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;

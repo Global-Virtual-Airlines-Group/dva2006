@@ -6,9 +6,10 @@ import java.util.*;
 
 import org.apache.log4j.Logger;
 
+import org.deltava.beans.*;
 import org.deltava.beans.system.*;
 
-import org.deltava.util.CollectionUtils;
+import org.deltava.util.*;
 import org.deltava.util.cache.*;
 import org.deltava.util.system.SystemData;
 
@@ -23,8 +24,8 @@ public class GetUserData extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(GetUserData.class);
 
-	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(2);
-	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(512);
+	private static final Cache<AirlineInformation> _appCache = new AgingCache<AirlineInformation>(3);
+	private static final Cache<UserData> _usrCache = new AgingCache<UserData>(640);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -57,6 +58,15 @@ public class GetUserData extends DAO implements CachingDAO {
 	static void invalidate(int id) {
 		_usrCache.remove(new Integer(id));
 	}
+	
+	/**
+	 * Removes an entry from the web application cache.
+	 * @param id the airline code
+	 * @throws NullPointerException if id is null
+	 */
+	static void invalidate(String id) {
+		_appCache.remove(id.toUpperCase());
+	}
 
 	/**
 	 * Returns cross-application Airline data for a specific Airline.
@@ -74,12 +84,14 @@ public class GetUserData extends DAO implements CachingDAO {
 			return result;
 
 		try {
+			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRLINEINFO WHERE (CODE=?)");
 			_ps.setString(1, code.toUpperCase());
 
 			// Get the results, if empty return null
-			List results = executeAirlineInfo();
-			result = results.isEmpty() ? null : (AirlineInformation) results.get(0);
+			setQueryMax(0);
+			List<AirlineInformation> results = executeAirlineInfo();
+			result = results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -98,13 +110,11 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Map<String, AirlineInformation> getAirlines(boolean includeSelf) throws DAOException {
-
 		Collection<AirlineInformation> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
+			prepareStatementWithoutLimits("SELECT * FROM common.AIRLINEINFO ORDER BY CODE");
 			results = executeAirlineInfo();
 			_appCache.addAll(results);
-
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -129,16 +139,23 @@ public class GetUserData extends DAO implements CachingDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public UserData get(int id) throws DAOException {
+		
+		// Check the cache
+		if (_usrCache.contains(new Integer(id)))
+			return _usrCache.get(new Integer(id));
+		
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, common.AIRLINEINFO AI "
-					+ "WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?)");
-			_ps.setInt(1, id);
+			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) "
+					+ "AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
+					+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID=?) GROUP BY UD.ID");
+			_ps.setString(1, ",");
+			_ps.setInt(2, id);
 
 			// Get the results, if empty return null
-			List results = execute();
+			List<UserData> results = execute();
 			setQueryMax(0);
-			return results.isEmpty() ? null : (UserData) results.get(0);
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -152,10 +169,12 @@ public class GetUserData extends DAO implements CachingDAO {
 	 */
 	public UserDataMap getByThread(int threadID) throws DAOException {
 		try {
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.AIRLINEINFO AI, common.USERDATA UD "
-					+ "LEFT JOIN common.COOLER_POSTS P ON (P.AUTHOR_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND "
-					+ "(P.THREAD_ID=?)");
-			_ps.setInt(1, threadID);
+			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS "
+					+ "FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON "
+					+ "((UD.ID=XDB.ID) OR (UD.ID=XDB.OTHER_ID)) LEFT JOIN common.COOLER_POSTS P ON (P.AUTHOR_ID=UD.ID) "
+					+ "WHERE (UD.AIRLINE=AI.CODE) AND (P.THREAD_ID=?) GROUP BY UD.ID");
+			_ps.setString(1, ",");
+			_ps.setInt(2, threadID);
 			return new UserDataMap(execute());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -170,9 +189,12 @@ public class GetUserData extends DAO implements CachingDAO {
 	 */
 	public UserDataMap getByEvent(int eventID) throws DAOException {
 		try {
-			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.AIRLINEINFO AI, common.USERDATA UD "
-					+ "LEFT JOIN common.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?)");
-			_ps.setInt(1, eventID);
+			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS "
+					+ "FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON"
+					+ "((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) LEFT JOIN common.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) "
+					+ "WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?) GROUP BY UD.ID");
+			_ps.setString(1, ",");
+			_ps.setInt(2, eventID);
 			return new UserDataMap(execute());
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -188,11 +210,14 @@ public class GetUserData extends DAO implements CachingDAO {
 	public UserDataMap get(Collection<Integer> ids) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME FROM common.USERDATA UD, "
-				+ "common.AIRLINEINFO AI WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID "
+				+ "SEPARATOR ?) AS IDS FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB "
+				+ "ON ((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) WHERE (UD.AIRLINE=AI.CODE) AND (UD.ID IN (");
 
 		// Strip out entries already in the cache
-		log.debug("Raw set size = " + ids.size());
+		if (log.isDebugEnabled())
+			log.debug("Raw set size = " + ids.size());
+		
 		int querySize = 0;
 		UserDataMap result = new UserDataMap();
 		for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
@@ -211,16 +236,19 @@ public class GetUserData extends DAO implements CachingDAO {
 		}
 
 		// Only execute the prepared statement if we haven't gotten anything from the cache
-		log.debug("Uncached set size = " + querySize);
+		if (log.isDebugEnabled())
+			log.debug("Uncached set size = " + querySize);
+		
 		if (querySize > 0) {
 			if (sqlBuf.charAt(sqlBuf.length() - 1) == ',')
 				sqlBuf.setLength(sqlBuf.length() - 1);
-			sqlBuf.append("))");
+			sqlBuf.append(")) GROUP BY UD.ID");
 
 			// Execute the query
 			setQueryMax(querySize);
 			try {
-				prepareStatement(sqlBuf.toString());
+				prepareStatementWithoutLimits(sqlBuf.toString());
+				_ps.setString(1, ",");
 				result.putAll(CollectionUtils.createMap(execute(), "ID"));
 			} catch (SQLException se) {
 				throw new DAOException(se);
@@ -247,6 +275,16 @@ public class GetUserData extends DAO implements CachingDAO {
 			usr.setTable(rs.getString(3));
 			usr.setDomain(rs.getString(4));
 			usr.setDB(rs.getString(5));
+			
+			// Get the crossdomain IDs
+			Collection<String> xdb_ids = StringUtils.split(rs.getString(6), ",");
+			if (xdb_ids != null) {
+				for (Iterator<String> i = xdb_ids.iterator(); i.hasNext(); ) {
+					int xdb_id = StringUtils.parse(i.next(), 0);
+					if (xdb_id > 0)
+						usr.addID(xdb_id);
+				}
+			}
 
 			// Add to results and the cache
 			results.add(usr);
@@ -266,16 +304,12 @@ public class GetUserData extends DAO implements CachingDAO {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the results
 		List<AirlineInformation> results = new ArrayList<AirlineInformation>();
 		while (rs.next()) {
 			AirlineInformation info = new AirlineInformation(rs.getString(1), rs.getString(2));
 			info.setDB(rs.getString(3));
 			info.setDomain(rs.getString(4));
 			info.setCanTransfer(rs.getBoolean(5));
-
-			// Add to results
 			results.add(info);
 		}
 

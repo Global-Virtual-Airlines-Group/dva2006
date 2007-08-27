@@ -130,7 +130,7 @@ public class CollectionUtils {
 	@SuppressWarnings("unchecked")
 	public static <K, V> Map<K, V> createMap(Collection<V> values, String keyProperty) {
 		Method m = null;
-		Map<K, V> results = new HashMap<K, V>();
+		Map<K, V> results = new LinkedHashMap<K, V>();
 		for (Iterator<V> i = values.iterator(); i.hasNext(); ) {
 			V obj = i.next();
 			try {
@@ -154,7 +154,7 @@ public class CollectionUtils {
 	 * @return a Map of key/value pairs.
 	 */
 	public static <K, V> Map<K, V> createMap(Collection<K> keys, Collection<V> values) {
-		Map<K, V> results = new HashMap<K, V>();
+		Map<K, V> results = new LinkedHashMap<K, V>();
 		Iterator<V> vi = values.iterator();
 		for (Iterator<K> ki = keys.iterator(); ki.hasNext() && vi.hasNext(); ) {
 			K key = ki.next();
