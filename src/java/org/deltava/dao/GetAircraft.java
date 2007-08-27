@@ -5,7 +5,7 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.schedule.Aircraft;
-import org.deltava.beans.system.AirlineInformation; 
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.StringUtils;
 import org.deltava.util.system.SystemData;
@@ -26,7 +26,7 @@ public class GetAircraft extends DAO {
 	public GetAircraft(Connection c) {
 		super(c);
 	}
-	
+
 	/**
 	 * Loads a particular aircraft profile.
 	 * @param name the aircraft name
@@ -38,7 +38,7 @@ public class GetAircraft extends DAO {
 			setQueryMax(1);
 			prepareStatement("SELECT * FROM common.AIRCRAFT WHERE (NAME=?)");
 			_ps.setString(1, name);
-			
+
 			// Load the result
 			List<Aircraft> results = execute();
 			setQueryMax(0);
@@ -61,29 +61,40 @@ public class GetAircraft extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Returns all aircraft used by the current web application.
 	 * @return a Collection of Aircraft beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<Aircraft> getAircraftTypes() throws DAOException {
+		return getAircraftTypes(SystemData.get("airline.code"));
+	}
+
+	/**
+	 * Returns all aircraft used by a web application.
+	 * @param airlineCode the Airline code
+	 * @return a Collection of Aircraft beans
+	 * @throws DAOException if a JDBC error occurs
+	 * @throws NullPointerException if airlineCode is null
+	 */
+	public Collection<Aircraft> getAircraftTypes(String airlineCode) throws DAOException {
 		try {
 			prepareStatement("SELECT * FROM common.AIRCRAFT A, common.AIRCRAFT_AIRLINE AA WHERE "
 					+ "(A.NAME=AA.NAME) AND (AA.AIRLINE=?)");
-			_ps.setString(1, SystemData.get("airline.code"));
+			_ps.setString(1, airlineCode.toUpperCase());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Helper method to process result sets.
 	 */
 	private List<Aircraft> execute() throws SQLException {
 		Map<String, Aircraft> results = new LinkedHashMap<String, Aircraft>();
-		
+
 		// Exeucte the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
@@ -106,11 +117,11 @@ public class GetAircraft extends DAO {
 			a.setTanks(Aircraft.OTHER, rs.getInt(17));
 			results.put(a.getName(), a);
 		}
-		
+
 		// Clean up
 		rs.close();
 		_ps.close();
-		
+
 		// Load the webapp data
 		prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT_AIRLINE");
 		rs = _ps.executeQuery();
@@ -121,7 +132,7 @@ public class GetAircraft extends DAO {
 			if ((al != null) && (a != null))
 				a.addApp(al);
 		}
-		
+
 		// Clean up and return
 		rs.close();
 		_ps.close();
