@@ -757,7 +757,7 @@
 			<name>location</name>
 			<required>true</required>
 			<rtexprvalue>true</rtexprvalue>
-			<type>org.deltava.beans.system.UserData</type>
+			<type>org.deltava.beans.UserData</type>
 		</attribute>
 		<attribute>
 			<name>className</name>

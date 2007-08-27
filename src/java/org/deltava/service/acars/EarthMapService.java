@@ -13,9 +13,9 @@ import org.apache.log4j.Logger;
 import org.jdom.*;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.acars.*;
 import org.deltava.beans.schedule.*;
-import org.deltava.beans.system.*;
 
 import org.deltava.dao.*;
 import org.deltava.service.*;
@@ -101,11 +101,7 @@ public class EarthMapService extends GoogleEarthService {
 			
 			// Add into the pilot map
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
-				String tableName = i.next();
-				if (UserDataMap.isPilotTable(tableName))
-					pilots.putAll(pdao.getByID(userIDs, tableName));
-			}
+			pilots.putAll(pdao.get(udmap));
 		} catch (DAOException de) {
 			log.error(de.getMessage(), de);
 			return SC_INTERNAL_SERVER_ERROR;

@@ -7,7 +7,6 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.assign.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.*;
 import org.deltava.beans.schedule.Airline;
 
 import org.deltava.dao.*;
@@ -91,7 +90,7 @@ public class EventAssignTask extends Task {
 						Signup s = si.next();
 
 						// Get the Pilot
-						UserData usrData = (UserData) usrmap.get(s.getPilotID());
+						UserData usrData = usrmap.get(s.getPilotID());
 						Pilot usr = pdao.get(usrData);
 						mctxt.addData("pilot", usr);
 						

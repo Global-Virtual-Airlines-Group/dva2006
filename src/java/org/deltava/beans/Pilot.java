@@ -73,9 +73,11 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private int _legs;
 	private int _acarsLegs = -1; // Set to -1 which is uninitialized
 	private int _onlineLegs;
+	private int _totalLegs;
 	private double _hours;
 	private double _acarsHours;
 	private double _onlineHours;
+	private double _totalHours;
 
 	private boolean _showSigs;
 	private boolean _showSSThreads;
@@ -346,6 +348,26 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	 */
 	public double getACARSHours() {
 		return _acarsHours;
+	}
+	
+	/**
+	 * Returns the total number of flight hours logged by this pilot across all Airlines.
+	 * @return the total number of flight hours flown
+	 * @see Pilot#setTotalHours(int)
+	 * @see Pilot#getTotalLegs()
+	 */
+	public double getTotalHours() {
+		return _totalHours;
+	}
+	
+	/**
+	 * Returns the total number of flight legs logged by this Pilot across all Airlines.
+	 * @return the total number of legs flown
+	 * @see Pilot#setTotalLegs(int)
+	 * @see Pilot#getTotalHours()
+	 */
+	public int getTotalLegs() {
+		return _totalLegs;
 	}
 
 	/**
@@ -674,6 +696,32 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 		
 		_acarsHours = hours;
 	}
+	
+	/**
+	 * Updates the Pilot's total logged hours between all airlines.
+	 * @param hours the total hours logged by this Pilot
+	 * @throws IllegalArgumentException if hours is negative
+	 * @see Pilot#getTotalHours()
+	 */
+	public void setTotalHours(double hours) {
+		if (hours < 0)
+			throw new IllegalArgumentException("Total hours cannot be negative");
+		
+		_totalHours = hours;
+	}
+	
+	/**
+	 * Updates the Pilot's total flight legs between all airlines.
+	 * @param legs the total legs logged by the Pilot
+	 * @throws IllegalArgumentException if legs is negative
+	 * @see Pilot#getTotalLegs()
+	 */
+	public void setTotalLegs(int legs) {
+		if (legs < 0)
+			throw new IllegalArgumentException("Total legs cannot be negative");
+		
+		_totalLegs = legs;
+	}
 
 	/**
 	 * Update this pilot's logged miles. This method will typically only be called from a DAO where we are querying the
@@ -875,6 +923,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 		p2.setTimeFormat(getTimeFormat());
 		p2.setTZ(getTZ());
 		p2.setUIScheme(getUIScheme());
+		p2.setMotto(getMotto());
 		p2.addRoles(getRoles());
 		p2.addRatings(getRatings());
 		p2.setSignatureExtension(getSignatureExtension());
@@ -885,6 +934,10 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 		p2.setMiles(getMiles());
 		p2.setOnlineHours(getOnlineHours());
 		p2.setOnlineLegs(getOnlineLegs());
+		p2.setACARSHours(getACARSHours());
+		p2._acarsLegs = _acarsLegs;
+		p2.setTotalHours(getTotalHours());
+		p2._totalLegs = _totalLegs;
 		p2.setShowSignatures(getShowSignatures());
 		p2.setShowSSThreads(getShowSSThreads());
 		p2._networkIDs.putAll(getNetworkIDs());

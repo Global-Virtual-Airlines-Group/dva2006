@@ -217,6 +217,7 @@ return true;
 
 <!-- Flight Report data -->
 <c:forEach var="pirep" items="${pireps}">
+<c:set var="pilotLoc" value="${userData[fn:PilotID(pirep)]}" scope="request" />
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
  <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>

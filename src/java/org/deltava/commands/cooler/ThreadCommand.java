@@ -38,9 +38,6 @@ public class ThreadCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the user for the channel list
-		Person p = ctx.getUser();
-		
 		// Determine if we are editing the last post
 		boolean doEdit = "edit".equals(ctx.getCmdParameter(OPERATION, null));
 
@@ -51,8 +48,8 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Get the Pilot's airline
 			GetUserData uddao = new GetUserData(con);
-			if (p != null) {
-				UserData usrData = uddao.get(p.getID());
+			if (ctx.isAuthenticated()) {
+				UserData usrData = uddao.get(ctx.getUser().getID());
 				if (usrData != null)
 					airline = SystemData.getApp(usrData.getAirlineCode());
 			}
@@ -123,9 +120,12 @@ public class ThreadCommand extends AbstractCommand {
 				updateIDs.add(new Integer(upd.getAuthorID()));
 			}
 
-			// Get the location of all the Pilots reporting/updating/posting in the thread
+			// Get the location of all the Pilots reporting/updating/posting in the thread and load all cross
 			updateIDs.addAll(thread.getReportIDs());
 			UserDataMap udm = uddao.getByThread(thread.getID());
+			Collection<Integer> xdbIDs = udm.getAllIDs();
+			xdbIDs.removeAll(udm.getIDs());
+			udm.putAll(uddao.get(xdbIDs));
 			udm.putAll(uddao.get(updateIDs));
 			
 			// Save the user data in the request
@@ -165,6 +165,33 @@ public class ThreadCommand extends AbstractCommand {
 				} else {
 					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
+				}
+			}
+			
+			// Aggregate totals for pilots
+			for (Iterator<Person> i = users.values().iterator(); i.hasNext(); ) {
+				Person p = i.next();
+				if (p instanceof Pilot) {
+					Collection<Integer> ids = udm.get(p.getID()).getIDs();
+					Pilot usr = (Pilot) p;
+				
+					// Add the totals
+					int totalLegs = 0;
+					double totalHours = 0;
+					for (Iterator<Integer> ii = ids.iterator(); ii.hasNext(); ) {
+						Integer userID = ii.next();
+						Person p2 = users.get(userID);
+						if (p2 instanceof Pilot) {
+							Pilot usr2 = (Pilot) p2;
+							totalLegs += usr2.getLegs();
+							totalHours += usr2.getHours();
+							usr.addCertifications(usr2.getCertifications());
+						}
+					}
+					
+					// Set the totals
+					usr.setTotalHours(totalHours);
+					usr.setTotalLegs(totalLegs);
 				}
 			}
 			

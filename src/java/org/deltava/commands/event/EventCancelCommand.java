@@ -5,9 +5,9 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.FlightReport;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.assign.AssignmentInfo;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.UserDataMap;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;

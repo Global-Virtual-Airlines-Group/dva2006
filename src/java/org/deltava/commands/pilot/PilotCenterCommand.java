@@ -56,10 +56,30 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
-
-			// Get the pilot profile from the database and stuff it in the request and the session
+			
+			// Get the User data object
+			GetUserData uddao = new GetUserData(con);
+			UserData ud = uddao.get(ctx.getUser().getID());
+			UserDataMap udm = uddao.get(ud.getIDs());
+			
+			// Load pther Pilot profiles we have achieved
 			GetPilot pdao = new GetPilot(con);
-			p = pdao.get(ctx.getUser().getID());
+			Map<Integer, Pilot> profiles = pdao.get(udm);
+			
+			// Calculate total legs/hours
+			int totalLegs = 0; double totalHours = 0;
+			for (Iterator<Pilot> i = profiles.values().iterator(); i.hasNext(); ) {
+				Pilot usr = i.next();
+				totalLegs += usr.getLegs();
+				totalHours += usr.getHours();
+			}
+			
+			// Save total legs/hours
+			p = profiles.get(new Integer(ctx.getUser().getID()));
+			p.setTotalLegs(totalLegs);
+			p.setTotalHours(totalHours);
+
+			// Stuff the pilot profile in the request and the session
 			ctx.setAttribute("pilot", p, REQUEST);
 			ctx.setAttribute(CommandContext.USER_ATTR_NAME, p, SESSION);
 			ctx.setAttribute("manualPIREP", Boolean.valueOf(p.getACARSRestriction() != Pilot.ACARS_ONLY), REQUEST);

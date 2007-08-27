@@ -7,7 +7,6 @@ import java.util.*;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
-import org.deltava.beans.system.UserData;
 import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.util.CollectionUtils;
@@ -132,6 +131,23 @@ abstract class PilotReadDAO extends PilotDAO {
 		Iterator<Pilot> i = pilots.values().iterator();
 		return i.hasNext() ? i.next() : null;
 	}
+	
+	/**
+	 * Returns Pilot objects which may be in another Airline's database.
+	 * @param udm the UserDataMap bean containg the Pilot locations
+	 * @return a Map of Pilots indexed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Pilot> get(UserDataMap udm) throws DAOException {
+		Map<Integer, Pilot> results = new HashMap<Integer, Pilot>();
+		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
+			String tableName = i.next();
+			if (UserDataMap.isPilotTable(tableName))
+				results.putAll(getByID(udm.getByTable(tableName), tableName));
+		}
+		
+		return results;
+	}
 
 	/**
 	 * Returns a Map of pilots based on a Set of pilot IDs. This is typically called by a Water Cooler thread/channel
@@ -152,7 +168,8 @@ abstract class PilotReadDAO extends PilotDAO {
 			tableName = tableName.substring(ofs + 1);
 
 		List<Pilot> results = new ArrayList<Pilot>();
-		log.debug("Raw set size = " + ids.size());
+		if (log.isDebugEnabled())
+			log.debug("Raw set size = " + ids.size());
 
 		// Init the prepared statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), "

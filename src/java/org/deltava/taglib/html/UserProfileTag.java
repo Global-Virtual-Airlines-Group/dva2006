@@ -3,7 +3,7 @@ package org.deltava.taglib.html;
 
 import javax.servlet.jsp.JspException;
 
-import org.deltava.beans.system.UserData;
+import org.deltava.beans.UserData;
 
 import org.deltava.util.StringUtils;
 

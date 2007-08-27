@@ -1,8 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
-package org.deltava.beans.system;
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.Person;
+import java.util.*;
 
 import org.deltava.util.cache.Cacheable;
 
@@ -20,6 +19,8 @@ public class UserData extends DatabaseBean implements Cacheable {
 	private String _dbName;
 	private String _tableName;
 	private String _domainName;
+	
+	private final Collection<Integer> _xAirlineIDs = new HashSet<Integer>();
 
 	/**
 	 * Creates a new UserData bean when a User is created.
@@ -87,6 +88,24 @@ public class UserData extends DatabaseBean implements Cacheable {
 	public String getDomain() {
 		return _domainName;
 	}
+	
+	/**
+	 * Returns the database IDs of this user's profiles in other Airlines.
+	 * @return a Collection of Database IDs
+	 * @see UserData#addID(int)
+	 */
+	public Collection<Integer> getIDs() {
+		return new LinkedHashSet<Integer>(_xAirlineIDs);
+	}
+	
+	/**
+	 * Returns whether this User has a particular database ID in an application. 
+	 * @param id the database ID
+	 * @return TRUE if this User has this ID in an application, otherwise FALSE
+	 */
+	public boolean hasID(int id) {
+		return _xAirlineIDs.contains(new Integer(id));
+	}
 
 	/**
 	 * Returns if the User is an Applicant or a Pilot.
@@ -95,7 +114,7 @@ public class UserData extends DatabaseBean implements Cacheable {
 	public boolean isApplicant() {
 		return "APPLICANTS".equals(_tableName);
 	}
-
+	
 	/**
 	 * Updates the database name. This will be converted to lowercase.
 	 * @param dbName the name of the database containing this User
@@ -134,6 +153,26 @@ public class UserData extends DatabaseBean implements Cacheable {
 	 */
 	public void setDomain(String domainName) {
 		_domainName = domainName.trim().toLowerCase();
+	}
+	
+	/**
+	 * Updates the user's database ID in the current database.
+	 */
+	public void setID(int id) {
+		super.setID(id);
+		_xAirlineIDs.add(new Integer(id));
+	}
+	
+	/**
+	 * Adds the database ID for the user's profile in another airline.
+	 * @param id the new ID
+	 * @throws IllegalArgumentException if id is zero or negative
+	 */
+	public void addID(int id) {
+		if (id < 1)
+			throw new IllegalArgumentException("Invalid Cross-Airline ID - " + id);
+		
+		_xAirlineIDs.add(new Integer(id));
 	}
 
 	/**

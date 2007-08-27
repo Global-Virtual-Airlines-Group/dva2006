@@ -7,8 +7,8 @@ import java.sql.Connection;
 import org.apache.log4j.Logger;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.fleet.*;
-import org.deltava.beans.system.UserDataMap;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -61,14 +61,8 @@ public class UserLibraryCommand extends AbstractViewCommand {
 			ctx.setAttribute("userData", udmap, REQUEST);
 
 			// Get the author profiles
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> it = udmap.getTableNames().iterator(); it.hasNext();) {
-				String tableName = it.next();
-				if (UserDataMap.isPilotTable(tableName))
-					pilots.putAll(pdao.getByID(udmap.getByTable(tableName), tableName));
-			}
-
+			Map<Integer, Pilot> pilots = pdao.get(udmap);
 			ctx.setAttribute("authors", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);

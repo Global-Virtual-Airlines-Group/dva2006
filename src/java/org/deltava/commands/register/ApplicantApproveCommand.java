@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
-import org.deltava.beans.system.UserData;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;

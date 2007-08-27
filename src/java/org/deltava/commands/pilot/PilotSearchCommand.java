@@ -5,6 +5,8 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.Pilot;
+import org.deltava.beans.UserData;
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
@@ -130,7 +132,7 @@ public class PilotSearchCommand extends AbstractCommand {
 		Map<Integer, PilotAccessControl> accessMap = new HashMap<Integer, PilotAccessControl>();
 		for (Iterator<Pilot> i = results.iterator(); i.hasNext();) {
 			Pilot p = i.next();
-			UserData usrInfo = (UserData) udmap.get(p.getID());
+			UserData usrInfo = udmap.get(p.getID());
 
 			// Calculate the access level
 			PilotAccessControl access = SystemData.get("airline.db").equals(usrInfo.getDB()) ? new PilotAccessControl(ctx, p) : 

@@ -1,5 +1,5 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.beans.system;
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+package org.deltava.beans;
 
 import java.util.*;
 
@@ -13,16 +13,15 @@ import org.deltava.util.CollectionUtils;
  * @since 1.0
  */
 
-public class UserDataMap implements java.io.Serializable, Map {
+public class UserDataMap implements Map {
 
-	private Map<Integer, UserData> _entries;
+	private final Map<Integer, UserData> _entries = new HashMap<Integer, UserData>();
 
 	/**
 	 * Creates a new, empty UserDataCollection.
 	 */
 	public UserDataMap() {
 		super();
-		_entries = new HashMap<Integer, UserData>();
 	}
 
 	/**
@@ -31,17 +30,17 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @see UserDataMap#putAll(Map)
 	 */
 	public UserDataMap(Collection<UserData> data) {
-		this();
+		super();
 		putAll(CollectionUtils.createMap(data, "ID"));
 	}
 
 	/**
 	 * Adds an entry to the map.
-	 * @param obj the object key (is discared)
+	 * @param id the object key (is discared)
 	 * @param usr the UserData object
 	 * @return the entry
 	 */
-	public Object put(Object obj, Object usr) {
+	public UserData put(Object id, Object usr) {
 		return _entries.put(new Integer(((UserData) usr).getID()), (UserData) usr);
 	}
 
@@ -50,7 +49,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @param data a Collection of UserData objects
 	 */
 	@SuppressWarnings("unchecked")
-	public void putAll(Map data) {
+	public void putAll(Map  data) {
 		_entries.putAll(data);
 	}
 
@@ -69,7 +68,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return the UserData bean, or null if not found
 	 * @see UserDataMap#get(int)
 	 */
-	public Object get(Object id) {
+	public UserData get(Object id) {
 		return _entries.get(id);
 	}
 	
@@ -79,7 +78,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return the UserData bean, or null if not found
 	 * @see UserDataMap#get(Object)
 	 */
-	public Object get(int id) {
+	public UserData get(int id) {
 		return _entries.get(new Integer(id));
 	}
 	
@@ -90,12 +89,10 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @throws NullPointerException if tableName is null
 	 */
 	public Collection<UserData> getByTable(String tableName) {
-
-		Set<UserData> results = new HashSet<UserData>();
+		Collection<UserData> results = new HashSet<UserData>();
 		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = i.next();
-			String usrTable = usr.getDB() + "." + usr.getTable();
-			if (tableName.equals(usrTable))
+			if (tableName.equals(usr.getDB() + "." + usr.getTable()))
 				results.add(usr);
 		}
 
@@ -107,7 +104,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return a Collection of table names in DB.TABLE format
 	 */
 	public Collection<String> getTableNames() {
-		Set<String> results = new HashSet<String>();
+		Collection<String> results = new LinkedHashSet<String>(4);
 		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext();) {
 			UserData usr = i.next();
 			results.add(usr.getDB() + "." + usr.getTable());
@@ -121,10 +118,25 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return a Collection of domain names
 	 */
 	public Collection<String> getDomains() {
-		Set<String> results = new HashSet<String>();
+		Collection<String> results = new LinkedHashSet<String>(4);
 		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext(); ) {
 			UserData usr = i.next();
 			results.add(usr.getDomain());
+		}
+		
+		return results;
+	}
+	
+	/**
+	 * Returns the database IDs across all databases for every user within this container.
+	 * @return a Collection of database IDs
+	 * @see UserDataMap#getIDs()
+	 */
+	public Collection<Integer> getAllIDs() {
+		Collection<Integer> results = new HashSet<Integer>(_entries.size());
+		for (Iterator<UserData> i = _entries.values().iterator(); i.hasNext(); ) {
+			UserData usr = i.next();
+			results.addAll(usr.getIDs());
 		}
 		
 		return results;
@@ -151,11 +163,11 @@ public class UserDataMap implements java.io.Serializable, Map {
 	}
 	
 	/**
-	 * Removes an entry from the Map. <i>NOT IMPLEMENTED</i>
-	 * @throws UnsupportedOperationException always 
+	 * Removes an entry from the Map.
+	 * @return the removed UserData entry 
 	 */
 	public Object remove(Object obj) {
-		throw new UnsupportedOperationException();
+		return _entries.remove(obj);
 	}
 	
 	/**
@@ -167,7 +179,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	}
 
 	public Collection<UserData> values() {
-		return new HashSet<UserData>(_entries.values());
+		return new LinkedHashSet<UserData>(_entries.values());
 	}
 	
 	/**
@@ -197,7 +209,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * Returns the map's entries.
 	 * @return a Set of MapEntry objects
 	 */
-	public Set entrySet() {
+	public Set<Map.Entry<Integer, UserData>> entrySet() {
 		return _entries.entrySet();
 	}
 	
@@ -205,6 +217,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * Returns the database IDs contained within the map.
 	 * @return a Collection of Integers
 	 * @see UserDataMap#keySet()
+	 * @see UserDataMap#getAllIDs()
 	 */
 	public Collection<Integer> getIDs() {
 		return _entries.keySet();
@@ -215,7 +228,7 @@ public class UserDataMap implements java.io.Serializable, Map {
 	 * @return a Set of Integers
 	 * @see UserDataMap#getIDs()
 	 */
-	public Set keySet() {
+	public Set<Integer> keySet() {
 		return _entries.keySet();
 	}
 	

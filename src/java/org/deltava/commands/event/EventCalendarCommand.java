@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -6,7 +6,6 @@ import java.sql.Connection;
 
 import org.deltava.beans.*;
 import org.deltava.beans.event.*;
-import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -54,13 +53,8 @@ public class EventCalendarCommand extends AbstractCalendarCommand {
 			UserDataMap udMap = uddao.get(pilotIDs);
 			
 			// Load the Pilots for the signups
-			Map<Integer, Pilot> pilots = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udMap.getTableNames().iterator(); i.hasNext(); ) {
-				String dbTableName = i.next();
-				if (UserDataMap.isPilotTable(dbTableName))
-					pilots.putAll(pdao.getByID(udMap.getByTable(dbTableName), dbTableName));
-			}
+			Map<Integer, Pilot> pilots = pdao.get(udMap);
 			
 			// Save the pilots
 			ctx.setAttribute("pilots", pilots, REQUEST);
