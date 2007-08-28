@@ -164,7 +164,8 @@ return true;
 </tr>
 <tr>
  <td class="label">Logged Time</td>
- <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours</td>
+ <td class="data"><fmt:dec value="${pirep.length / 10.0}" /> hours<c:if test="${avgTime > 0}">
+ <i>(average time: <fmt:dec value="${avgTime / 10.0}" /> hours)</i></c:if></td>
 </tr>
 <c:if test="${!empty pirep.remarks}">
 <tr>
