@@ -268,10 +268,10 @@ public class FlightReportService extends WebService {
 
 			// Check the schedule database and check the route pair
 			boolean schedValidated = Boolean.valueOf(ie.getChildTextTrim("schedOK")).booleanValue();
-			int avgHours = sdao.getFlightTime(afr.getAirportD().getIATA(), afr.getAirportA().getIATA());
-			if ((avgHours == 0) && (!schedValidated)) {
+			int avgHours = sdao.getFlightTime(afr.getAirportD(), afr.getAirportA());
+			if ((avgHours == 0) && (!schedValidated))
 				afr.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
-			} else if (avgHours > 0) {
+			else if (avgHours > 0) {
 				int minHours = (int) ((avgHours * 0.75) - (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				int maxHours = (int) ((avgHours * 1.15) + (SystemData.getDouble("users.pirep.pad_hours", 0) * 10));
 				if ((afr.getLength() < minHours) || (afr.getLength() > maxHours))
