@@ -115,7 +115,7 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 
 			// Check the schedule database and check the route pair
-			int avgHours = sdao.getFlightTime(pirep.getAirportD().getIATA(), pirep.getAirportA().getIATA());
+			int avgHours = sdao.getFlightTime(pirep.getAirportD(), pirep.getAirportA());
 			if ((avgHours == 0) && (!isAcademy)) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
