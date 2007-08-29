@@ -39,6 +39,7 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 
 	private int _fsVersion;
 	private boolean _offline;
+	private boolean _scheduleValidated;
 	private boolean _hasPIREP;
 	private boolean _archived;
 
@@ -268,6 +269,14 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	public boolean hasPlanData() {
 		return !CollectionUtils.isEmpty(_planData);
 	}
+	
+	/**
+	 * Returns if this flight has been validated as being in the schedule.
+	 * @return TRUE if the route was validated, otherwise FALSE
+	 */
+	public boolean isScheduleValidated() {
+		return _scheduleValidated;
+	}
 
 	/**
 	 * Updates the ACARS Connection ID used for this flight.
@@ -320,6 +329,14 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public void setArchived(boolean archived) {
 		_archived = archived;
+	}
+	
+	/**
+	 * Marks this Flight as having a valid flight route.
+	 * @param isOK TRUE if the Flight is valid, otherwise FALSE
+	 */
+	public void setScheduleValidated(boolean isOK) {
+		_scheduleValidated = isOK;
 	}
 
 	/**
