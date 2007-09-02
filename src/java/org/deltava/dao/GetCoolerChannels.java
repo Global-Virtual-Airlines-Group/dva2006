@@ -131,7 +131,7 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 
 		Map<String, Channel> results = new TreeMap<String, Channel>();
 		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			if (showHidden)
 				_ps.setBoolean(1, true);
 			else {
