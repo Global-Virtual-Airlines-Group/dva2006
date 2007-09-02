@@ -1,20 +1,15 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
-import java.sql.Connection;
 import java.util.*;
+import java.sql.Connection;
 
-import org.deltava.commands.*;
-
-import org.deltava.beans.Pilot;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.beans.system.*;
 
-import org.deltava.dao.GetCoolerChannels;
-import org.deltava.dao.GetUserData;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.util.system.SystemData;
 
@@ -24,6 +19,7 @@ import org.deltava.util.system.SystemData;
  * @version 1.0
  * @since 1.0
  */
+
 public class ChannelListCommand extends AbstractCommand {
 
     /**
@@ -35,7 +31,6 @@ public class ChannelListCommand extends AbstractCommand {
 
 		// Get the default airline
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code").toUpperCase());
-		
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -47,13 +42,13 @@ public class ChannelListCommand extends AbstractCommand {
 			ctx.setAttribute("channels", channels, REQUEST);
 			
 			// Get the last posts in each of the returned channels
-			Map posts = dao.getLastPosts(channels);
+			Map<Integer, Message> posts = dao.getLastPosts(channels);
 			ctx.setAttribute("posts", posts, REQUEST);
 			
 			// Build a set of pilot IDs from the last posts
-			Set<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator i = posts.values().iterator(); i.hasNext(); ) {
-			    Message msg = (Message) i.next();
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
+			for (Iterator<Message> i = posts.values().iterator(); i.hasNext(); ) {
+			    Message msg = i.next();
 			    pilotIDs.add(new Integer(msg.getAuthorID()));
 			}
 			
@@ -63,15 +58,8 @@ public class ChannelListCommand extends AbstractCommand {
 			ctx.setAttribute("userData", udm, REQUEST);
 
 			// Get the authors for the last post in each channel
-			Map<Integer, Pilot> authors = new HashMap<Integer, Pilot>();
 			GetPilot pdao = new GetPilot(con);
-			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
-				String tableName = i.next();
-				authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-			}
-
-			// Save the authors for the last post in each channel
-			ctx.setAttribute("authors", authors, REQUEST);
+			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
