@@ -539,14 +539,6 @@
 			<minDays type="Integer">7</minDays>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
-			
-			<!-- Charter flight operations -->
-			<charter>
-				<min_flights type="Integer">10</min_flights>
-				<valid_ratio type="Double">15.5</valid_ratio>
-				<charter_ratio type="Double">10.5</charter_ratio>
-			</charter>
-			
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
