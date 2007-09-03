@@ -240,6 +240,7 @@
 		
 		<list name="schemes" attr="css">
 			<css>legacy</css>
+			<css>Delta 2007</css>
 		</list>
 	</html>
 	
@@ -436,7 +437,7 @@
 		<imap>
 			<enabled type="Boolean">true</enabled>
 			<quota type="Integer">10240000</quota>
-			<server>endor.sce.net</server>
+			<server>endor.gvagroup.org</server>
 		</imap>
 	</smtp>
 	
@@ -519,17 +520,10 @@
 			<minDays type="Integer">45</minDays>
 			<pad_hours type="Double">0.5</pad_hours>
 			<draft_purge type="Integer">30</draft_purge>
-
-			<!-- Charter flight operations -->
-			<charter>
-				<min_flights type="Integer">10</min_flights>
-				<valid_ratio type="Double">15.5</valid_ratio>
-				<charter_ratio type="Double">10.5</charter_ratio>
-			</charter>
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>Ralph Snyder</tasks_by>
+		<tasks_by>David Keech</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->
