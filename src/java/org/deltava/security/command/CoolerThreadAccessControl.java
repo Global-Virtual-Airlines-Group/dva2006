@@ -92,7 +92,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
         
         // Validate if we can read the thread
-        _canRead = _ctx.isUserInRole("Admin") || (channelAccess && !_mt.getHidden());
+        _canRead = _ctx.isUserInRole("Admin") || (channelAccess && (!_mt.getHidden() || isModerator));
         _canReply = _ctx.isAuthenticated() && _canRead && (isModerator || !isClosed);
         _canVote = _canReply && !_mt.getOptions().isEmpty() && !hasVoted;
         _canLock = channelAccess && !isClosed && isModerator;
