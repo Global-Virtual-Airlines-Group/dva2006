@@ -1,6 +1,8 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
+import java.io.*;
+import java.util.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Connection;
@@ -15,6 +17,7 @@ import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+import org.deltava.dao.file.SetProperties;
 import org.deltava.security.*;
 
 import org.deltava.util.StringUtils;
@@ -40,7 +43,7 @@ public class LoginCommand extends AbstractCommand {
 
 		// Get the command result
 		CommandResult result = ctx.getResult();
-		
+
 		// If we're already logged in, just redirect to home
 		if (ctx.isAuthenticated()) {
 			result.setURL("home.do");
@@ -79,13 +82,14 @@ public class LoginCommand extends AbstractCommand {
 			result.setSuccess(true);
 			return;
 		}
-		
+
 		// Build the full name
 		StringBuilder fullName = new StringBuilder(fName.trim());
 		fullName.append(' ');
 		fullName.append(lName.trim());
 
 		Pilot p = null;
+		Date maxUserDate = UserPool.getMaxSizeDate();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -94,7 +98,7 @@ public class LoginCommand extends AbstractCommand {
 			p = dao.getByName(fullName.toString(), SystemData.get("airline.db"));
 			if (p == null) {
 				log.warn("Unknown User Name - \"" + fullName + "\"");
-				throw new SecurityException("Unknown User Name - \"" + fullName + "\""); 
+				throw new SecurityException("Unknown User Name - \"" + fullName + "\"");
 			}
 
 			// Get the authenticator and try to authenticate
@@ -121,7 +125,7 @@ public class LoginCommand extends AbstractCommand {
 			// Load online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(p, SystemData.get("airline.db"));
-			
+
 			// Create the user authentication cookie
 			SecurityCookieData cData = new SecurityCookieData(p.getDN());
 			cData.setPassword(ctx.getParameter("pwd"));
@@ -129,7 +133,8 @@ public class LoginCommand extends AbstractCommand {
 			ctx.getResponse().addCookie(SecurityCookieGenerator.getCookie(CommandContext.AUTH_COOKIE_NAME, cData));
 
 			// Save screen resolution
-			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx.getParameter("screenY"), 768));
+			cData.setScreenSize(StringUtils.parse(ctx.getParameter("screenX"), 1024), StringUtils.parse(ctx
+					.getParameter("screenY"), 768));
 
 			// Check if we have an address validation entry outstanding
 			GetAddressValidation avdao = new GetAddressValidation(con);
@@ -141,11 +146,11 @@ public class LoginCommand extends AbstractCommand {
 			// Save login time and hostname
 			SetPilotLogin wdao = new SetPilotLogin(con);
 			wdao.login(p.getID(), ctx.getRequest().getRemoteHost());
-			
+
 			// Save login hostname/IP address forever
 			SetSystemData sysdao = new SetSystemData(con);
 			sysdao.login(SystemData.get("airline.db"), p.getID(), ctx.getRequest().getRemoteAddr(), p.getLoginHost());
-			
+
 			// Check if we've surpassed the notificaton interval
 			if (returnToActive) {
 				long interval = (System.currentTimeMillis() - p.getLastLogin().getTime()) / 1000;
@@ -198,6 +203,22 @@ public class LoginCommand extends AbstractCommand {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
+		}
+
+		// Check if we need to save maximum users
+		if (UserPool.getMaxSizeDate().after(maxUserDate)) {
+			File f = new File("/var/cache", SystemData.get("airline.code").toLowerCase() + ".maxUsers.properties");
+			try {
+				Properties props = new Properties();
+				props.setProperty("users", String.valueOf(UserPool.getMaxSize()));
+				props.setProperty("date", StringUtils.format(UserPool.getMaxSizeDate(), "MM/dd/yyyy HH:mm"));
+
+				// Save properties
+				SetProperties pdao = new SetProperties(new FileOutputStream(f));
+				pdao.save(props, SystemData.get("airline.name") + " Maximum Users");
+			} catch (Exception ex) {
+				log.warn("Cannot save Maximum User count/date");
+			}
 		}
 
 		// Check if we are going to save the first/last names

@@ -225,20 +225,6 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 		// Shut down the extra threads
 		_daemonGroup.interrupt();
 		
-		// Save maximum users
-		File f = new File("/var/cache", SystemData.get("airline.code").toLowerCase() + ".maxUsers.properties");
-		try {
-			Properties p = new Properties();
-			p.setProperty("users", String.valueOf(UserPool.getMaxSize()));
-			p.setProperty("date", StringUtils.format(UserPool.getMaxSizeDate(), "MM/dd/yyyy HH:mm"));
-			
-			// Save properties
-			SetProperties pdao = new SetProperties(new FileOutputStream(f));
-			pdao.save(p, SystemData.get("airline.name") + " Maximum Users");
-		} catch (Exception ex) {
-			log.warn("Cannot save Maximum User count/date");
-		}
-
 		// If ACARS is enabled, then clean out the active flags
 		if (SystemData.getBoolean("airline.voice.ts2.enabled") && SystemData.getBoolean("acars.enabled")) {
 			log.info("Resetting TeamSpeak 2 client activity flags");
