@@ -136,7 +136,11 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			@SuppressWarnings("unchecked")
 			boolean isRated = CollectionUtils.merge(p.getRatings(), eq.getRatings()).contains(fr.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
-			fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
+			if (fr.hasAttribute(FlightReport.ATTR_NOTRATED) != !isRated) {
+				log.warn("Updating NotRated flag for " + p.getName() + ", eq="  + fr.getEquipmentType() + " ratings = " + p.getRatings());
+				log.warn("NotRated was " + fr.hasAttribute(FlightReport.ATTR_NOTRATED) + ", now " + !isRated);
+				fr.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
+			}
 			
 			// Set message context objects
 			ctx.setAttribute("pilot", p, REQUEST);
