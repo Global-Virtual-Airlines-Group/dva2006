@@ -22,6 +22,8 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 	private Airport _cdg;
 	private Airport _eze;
 	private Airport _icn;
+	private Airport _phx;
+	private Airport _dfw;
 
 	public static Test suite() {
 		return new CoverageDecorator(TestScheduleEntry.class, new Class[] { ScheduleEntry.class, Flight.class });
@@ -36,6 +38,7 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		TZInfo.init("Europe/Paris", null, null);
 		TZInfo.init("Asia/Seoul", null, null);
 		TZInfo.init("America/Sao_Paulo", null, null);
+		TZInfo.init("US/Arizona", null, null);
 
 		_atl = new Airport("ATL", "KATL", "Atlanta GA");
 		_atl.setLocation(34.6404, -84.4269);
@@ -58,6 +61,12 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_icn = new Airport("ICN", "RKSI", "Seoul-Inchon South Korea");
 		_icn.setLocation(37.4689, 126.45);
 		_icn.setTZ("Asia/Seoul");
+		_phx = new Airport("PHX", "KHPX", "Phoenix AZ");
+		_phx.setLocation(33.4342, -112.008);
+		_icn.setTZ("US/Arizona");
+		_dfw = new Airport("DFW", "KDFW", "Dallas-Fort Worth TX");
+		_dfw.setLocation(32.8956, -97.0367);
+		_dfw.setTZ("US/Central");
 
 		_e = new ScheduleEntry(_dva, 129, 1);
 		setBean(_e);
@@ -207,6 +216,14 @@ public class TestScheduleEntry extends AbstractBeanTestCase {
 		_e.setTimeD(df.parse("10:25"));
 		_e.setTimeA(df.parse("13:25"));
 		assertEquals(130, _e.getLength());
+	}
+	
+	public void testNoDST() throws ParseException {
+		_e.setAirportD(_phx);
+		_e.setAirportA(_dfw);
+		_e.setTimeD(df.parse("12:30"));
+		_e.setTimeA(df.parse("13:26"));
+		assertEquals(19, _e.getLength());
 	}
 
 	public void testComparator() {
