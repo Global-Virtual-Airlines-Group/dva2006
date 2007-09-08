@@ -27,7 +27,7 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	private static final DateFormat _df = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 	private static final DateFormat _tf = new SimpleDateFormat("HH:mm");
 
-	private static final List<String> GROUND_EQ = Arrays.asList(new String[] {"TRN", "BUS", "LMO"});
+	private static final List<String> GROUND_EQ = Arrays.asList("TRN", "BUS", "LMO", "RFS");
 
 	private long _effDate;
 
