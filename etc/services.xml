@@ -23,7 +23,7 @@
 
 	<!-- Pilot Data Services -->
 	<service id="pilotmap" class="org.deltava.service.PilotLocationService" />
-	<service id="onlinepilots" class="org.deltava.service.OnlinePilotService" />
+	<service id="net_ids" class="org.deltava.service.OnlineIDService" />
 	<service id="id" class="org.deltava.service.DatabaseIDService" />
 
 	<!-- Examination Service -->
