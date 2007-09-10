@@ -26,6 +26,11 @@ if (info.ussat) {
 	document.seriesDate['ussat'] = info.ussat.series[0].unixDate;
 }
 
+if (info.temp) {
+	document.maxZoom['temp'] = info.temp.maxZoom;
+	document.seriesDate['temp'] = info.temp.series[0].unixDate;
+}
+
 return true;
 }
 
