@@ -170,6 +170,54 @@ public class SetFlightReport extends DAO {
 	}
 
 	/**
+	 * Clears whether a Flight Report counts towards promotion to Captain.
+	 * @param id the Flight Report database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void clearPromoEQ(int id) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Sets whether a Flight Report counts towards promotion to Captain.
+	 * @param id the Flight Report database ID
+	 * @param eqTypes
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void setPromoEQ(int id, Collection<String> eqTypes) throws DAOException {
+		try {
+			startTransaction();
+			
+			// Clear the flags
+			prepareStatementWithoutLimits("DELETE FROM PROMO_EQ WHERE (ID=?)");
+			_ps.setInt(1, id);
+			executeUpdate(0);
+			
+			// Write the flags
+			prepareStatementWithoutLimits("INSERT INTO PROMO_EQ (ID, EQTYPE) VALUES (?, ?)");
+			_ps.setInt(1, id);
+			for (Iterator<String> i = eqTypes.iterator(); i.hasNext();) {
+				_ps.setString(2, i.next());
+				_ps.addBatch();
+			}
+			
+			// Write the entries
+			_ps.executeBatch();
+			_ps.close();
+			commitTransaction();
+		} catch (SQLException se) {
+			rollbackTransaction();
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Helper method to write promotion equipment types.
 	 */
 	private void writePromoEQ(int id, String dbName, Collection<String> eqTypes) throws SQLException {
