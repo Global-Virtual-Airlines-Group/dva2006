@@ -3,6 +3,8 @@ package org.deltava.jdbc;
 
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.commands.CommandContext;
 
 import org.deltava.util.system.SystemData;
@@ -16,6 +18,8 @@ import org.deltava.util.system.SystemData;
 
 public abstract class ConnectionContext {
 
+	private static final Logger log = Logger.getLogger(ConnectionContext.class);
+	
 	private final ConnectionPool _pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 	private Connection _con;
 	
@@ -101,7 +105,9 @@ public abstract class ConnectionContext {
     public void rollbackTX() {
        try {
           _con.rollback();
-       } catch (Exception e) { }
+       } catch (Exception e) {
+    	   log.error("Error rolling back transaction - " + e.getMessage(), e);
+       }
     }
     
     /**
