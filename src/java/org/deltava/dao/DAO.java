@@ -5,6 +5,8 @@ import java.sql.*;
 import java.util.Calendar;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.util.CalendarUtils;
 
 /**
@@ -16,6 +18,7 @@ import org.deltava.util.CalendarUtils;
 
 public abstract class DAO {
 	
+	private static final Logger log = Logger.getLogger(DAO.class);
 	private static final AtomicLong _queryCount = new AtomicLong();
 
 	/**
@@ -35,7 +38,7 @@ public abstract class DAO {
 	/**
 	 * The query timeout, in seconds.
 	 */
-	protected int _queryTimeout = 45;
+	protected int _queryTimeout = 40;
 
 	/**
 	 * A prepared statement that can be used to perform SQL queries.
@@ -280,7 +283,8 @@ public abstract class DAO {
 			try {
 				_c.rollback();
 				_c.setAutoCommit(_commitLevel);
-			} catch (Exception e) {
+			} catch (SQLException se) {
+				log.error("Cannot rollback - " + se.getMessage(), se);
 			}
 		}
 	}
