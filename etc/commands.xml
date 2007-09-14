@@ -846,6 +846,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="promotoggle">
+		<name>PIREP Promotion Flag Toggle</name>
+		<class>org.deltava.commands.pirep.PromotionToggleCommand</class>
+		<roles>HR</roles>
+	</command>
+
 	<command id="dispose">
 		<name>PIREP Disposal</name>
 		<class>org.deltava.commands.pirep.PIREPDisposalCommand</class>
