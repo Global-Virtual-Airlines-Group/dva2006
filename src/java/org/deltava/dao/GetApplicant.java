@@ -236,7 +236,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public boolean isIPRegistered(String addr, int days) throws DAOException {
 		try {
 			prepareStatement("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND "
-					+ "(REGADDR=INET_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)");
+					+ "(REGADDR=INET_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY))");
 			_ps.setInt(1, Applicant.REJECTED);
 			_ps.setString(2, addr);
 			_ps.setInt(3, Math.max(1, days));

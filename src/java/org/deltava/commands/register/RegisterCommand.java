@@ -71,12 +71,17 @@ public class RegisterCommand extends AbstractCommand {
 		
 		// Check if we ignore the fact that the airline is full
 		boolean isFull = false;
+		boolean isDupeAddr = false;
 		boolean ignoreFull = "force".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// If we're just doing a get, then redirect to the JSP
 		if (ctx.getParameter("firstName") == null) {
 			try {
 				Connection con = ctx.getConnection();
+				
+				// Check if we've used this IP address before
+				GetApplicant adao = new GetApplicant(con);
+				isDupeAddr = adao.isIPRegistered(ctx.getRequest().getRemoteAddr(), SystemData.getInt("registration.ip_interval", 1));
 				
 				// Check our size - if we're overriding then ignore this
 				GetStatistics stdao = new GetStatistics(con);
@@ -88,7 +93,7 @@ public class RegisterCommand extends AbstractCommand {
 					GetDocuments docdao = new GetDocuments(con);
 					ctx.setAttribute("manuals", docdao.getRegistrationManuals(), REQUEST);
 				} else
-					ctx.setAttribute("airlineSize", new Integer(size), REQUEST);
+					ctx.setAttribute("airlineSize", Integer.valueOf(size), REQUEST);
 			} catch (DAOException de) {
 				throw new CommandException(de);
 			} finally {
@@ -99,8 +104,12 @@ public class RegisterCommand extends AbstractCommand {
 			ctx.setAttribute("fsVersions", ComboUtils.fromArray(Applicant.FSVERSION), REQUEST);
 			
 			// Forward to the JSP - redirect to seperate page if we're full
-			result.setURL("/jsp/register/" + ((ignoreFull || (!isFull)) ? "register.jsp" : "regFullWarn.jsp"));
 			result.setSuccess(true);
+			if (isDupeAddr)
+				result.setURL("/jsp/register/dupeAddress.jsp");
+			else
+				result.setURL("/jsp/register/" + ((ignoreFull || (!isFull)) ? "register.jsp" : "regFullWarn.jsp"));
+			
 			return;
 		}
 
