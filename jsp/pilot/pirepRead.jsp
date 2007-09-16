@@ -232,7 +232,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 </content:filter></c:if>
 </c:if>
 <content:filter roles="HR"><c:if test="${access.canDispose}">
-<c:set var="bLabel" value="${(fn:size(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="request" />
+<c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="request" />
  <el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" />
 </c:if></content:filter>
 <c:if test="${access.canEdit}">
