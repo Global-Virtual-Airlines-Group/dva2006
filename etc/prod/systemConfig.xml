@@ -459,14 +459,15 @@
 			<script>/usr/local/sbin/www/mailbox_create</script>
 		</imap>
 	</smtp>
-	
+
 	<registration>
 		<list name="reject_domain" attr="domain">
 			<domain>localhost</domain>
 			<domain>127.0.0.1</domain>
 		</list>
-		
+
 		<auto_reject type="Integer">5</auto_reject>
+		<ip_interval type="Integer">7</ip_interval>
 		<from>David Keech</from>
 		<list name="email.ok" attr="addr" unique="true">
 			<addr>luke@sce.net</addr>
@@ -474,7 +475,7 @@
 			<addr>info@deltava.org</addr>
 		</list>
 	</registration>
-	
+
 	<!-- PICS content ratings -->
 	<content>
 		<safesurf>SS~~000 3</safesurf>
