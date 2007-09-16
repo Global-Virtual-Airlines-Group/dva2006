@@ -225,6 +225,34 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Checks if this IP address had been used to register in the past few days.
+	 * @param addr the IP address
+	 * @param days the number of days to check
+	 * @return TRUE if the IP address was used, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean isIPRegistered(String addr, int days) throws DAOException {
+		try {
+			prepareStatement("SELECT COUNT(DISTINCT ID) FROM APPLICANTS WHERE (STATUS <> ?) AND "
+					+ "(REGADDR=INET_ATON(?)) AND (CREATED > DATE_SUB(NOW(), INTERVAL ? DAY)");
+			_ps.setInt(1, Applicant.REJECTED);
+			_ps.setString(2, addr);
+			_ps.setInt(3, Math.max(1, days));
+			
+			// Execute the query
+			ResultSet rs = _ps.executeQuery();
+			boolean result = rs.next() ? (rs.getInt(1) > 0) : false;
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return result;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Checks if an Applicant is unique, by checking the first/last names and the e-mail address. This will not return a

@@ -59,13 +59,11 @@ public class GetMessageTemplate extends DAO implements CachingDAO {
 			return result;
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?)");
+			prepareStatementWithoutLimits("SELECT * FROM MSG_TEMPLATES WHERE (UPPER(NAME)=?) LIMIT 1");
 			_ps.setString(1, name.toUpperCase());
 
 			// Get the results, if we get back a null, log a warning, otherwise update the cache
 			List<MessageTemplate> results = execute();
-			setQueryMax(0);
 			if (results.isEmpty()) {
 				log.warn("Cannot load Message Template " + name);
 			} else {

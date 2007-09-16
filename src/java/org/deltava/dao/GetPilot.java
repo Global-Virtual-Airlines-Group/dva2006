@@ -41,14 +41,12 @@ public class GetPilot extends PilotReadDAO {
 	 */
 	public GeoLocation getLocation(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT LAT, LNG FROM PILOT_MAP WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			
 			// Execute the query and get results
 			ResultSet rs = _ps.executeQuery();
 			GeoLocation gl = (rs.next()) ? new GeoPosition(rs.getDouble(1), rs.getDouble(2)) : null;
-			setQueryMax(0);
 			
 			// Clean up and return
 			rs.close();

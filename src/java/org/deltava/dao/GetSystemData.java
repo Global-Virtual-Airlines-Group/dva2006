@@ -281,8 +281,7 @@ public class GetSystemData extends DAO implements CachingDAO {
 	 */
 	public RegistrationBlock getBlock(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM REG_BLOCKS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM REG_BLOCKS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query and return if not found

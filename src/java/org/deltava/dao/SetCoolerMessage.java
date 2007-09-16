@@ -162,8 +162,7 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void viewThread(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET VIEWS=VIEWS+1 WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -179,7 +178,7 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void setChannel(int id, String newChannel) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, newChannel);
 			_ps.setInt(2, id);
 			executeUpdate(1);
@@ -196,7 +195,7 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void updateSubject(int id, String subj) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET SUBJECT=? WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET SUBJECT=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, subj);
 			_ps.setInt(2, id);
 			executeUpdate(1);
@@ -214,7 +213,8 @@ public class SetCoolerMessage extends DAO {
 	 */
 	public void moderateThread(int id, boolean doHide, boolean doLock) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET HIDDEN=?, LOCKED=? WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET HIDDEN=?, LOCKED=? WHERE "
+					+ "(ID=?) LIMIT 1");
 			_ps.setBoolean(1, doHide);
 			_ps.setBoolean(2, doLock);
 			_ps.setInt(3, id);
@@ -264,19 +264,20 @@ public class SetCoolerMessage extends DAO {
 	public void synchThread(MessageThread mt) throws DAOException {
 		try {
 			startTransaction();
-
-			setQueryMax(1);
-			prepareStatement("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
+			prepareStatementWithoutLimits("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
 					+ "WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED ASC LIMIT 1) AS AID, (SELECT P.AUTHOR_ID FROM "
 					+ "common.COOLER_POSTS P WHERE (P.THREAD_ID=T.ID) ORDER BY P.CREATED DESC LIMIT 1) AS LUID, "
 					+ "MAX(P.CREATED) FROM common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (P.THREAD_ID=T.ID) "
-					+ "WHERE (T.ID=?) GROUP BY T.ID");
+					+ "WHERE (T.ID=?) GROUP BY T.ID LIMIT 1");
 			_ps.setInt(1, mt.getID());
 
 			// Get the thread Author ID
 			ResultSet rs = _ps.executeQuery();
-			if (!rs.next())
+			if (!rs.next()) {
+				rs.close();
+				_ps.close();
 				throw new DAOException("Message Thread is empty");
+			}
 
 			// Save the post count
 			if (mt.getPosts().isEmpty())

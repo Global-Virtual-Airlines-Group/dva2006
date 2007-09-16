@@ -189,7 +189,6 @@ public class SetTS2Data extends DAO {
 				return;
 			
 			// Update the default channel
-			setQueryMax(1);
 			prepareStatement("UPDATE teamspeak.ts2_channels SET b_channel_flag_default=? WHERE (i_channel_server_id=?) "
 					+ "ORDER BY RAND()");
 			_ps.setInt(1, -1);
