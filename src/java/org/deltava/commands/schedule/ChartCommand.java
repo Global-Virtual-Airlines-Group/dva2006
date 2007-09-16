@@ -191,7 +191,7 @@ public class ChartCommand extends AbstractFormCommand {
 
 			// Save the chart and the available charts for this airport
 			ctx.setAttribute("chart", c, REQUEST);
-			ctx.setAttribute("isPDF", Boolean.valueOf(c.getType() == Chart.IMG_PDF), REQUEST);
+			ctx.setAttribute("isPDF", Boolean.valueOf(c.getImgType() == Chart.IMG_PDF), REQUEST);
 			ctx.setAttribute("charts", dao.getCharts(c.getAirport().getIATA()), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
