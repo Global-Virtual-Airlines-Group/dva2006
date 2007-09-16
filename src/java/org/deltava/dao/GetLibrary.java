@@ -74,16 +74,14 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".FLEET F LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME");
+		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME LIMIT 1");
 
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, fName);
 
 			// Get results - if empty return null
 			List<Installer> results = loadInstallers();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			
@@ -122,16 +120,14 @@ public class GetLibrary extends DAO {
 		sqlBuf.append(".FLEET F LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".DOWNLOADS L ON (F.FILENAME=L.FILENAME) WHERE (UCASE(F.CODE)=?) GROUP BY "
-				+ "F.NAME ORDER BY F.NAME");
+				+ "F.NAME ORDER BY F.NAME LIMIT 1");
 
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, code.toUpperCase());
 
 			// Get results - if empty return null
 			List<Installer> results = loadInstallers();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			
@@ -162,14 +158,12 @@ public class GetLibrary extends DAO {
 	 */
 	public FileEntry getFile(String fName) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L ON "
-					+ "(F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME");
+			prepareStatementWithoutLimits("SELECT F.*, COUNT(L.FILENAME) FROM FILES F LEFT JOIN DOWNLOADS L "
+					+ "ON (F.FILENAME=L.FILENAME) WHERE (F.FILENAME=?) GROUP BY F.NAME ORDER BY F.NAME LIMIT 1");
 			_ps.setString(1, fName);
 
 			// Get results - if empty return null
 			List<FileEntry> results = loadFiles(false);
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -184,14 +178,12 @@ public class GetLibrary extends DAO {
 	 */
 	public Video getVideo(String fName) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME");
+			prepareStatementWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
+					+ "(V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1");
 			_ps.setString(1, fName);
 			
 			// Get results - if empty return null
 			List results = loadFiles(true);
-			setQueryMax(0);
 			return (results.isEmpty()) ? null : (Video) results.get(0); 
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -31,13 +31,11 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM CERTS WHERE (NAME=?)");
+			prepareStatementWithoutLimits("SELECT * FROM CERTS WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
 			
 			// Execute the query
 			List<Certification> results = execute();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			

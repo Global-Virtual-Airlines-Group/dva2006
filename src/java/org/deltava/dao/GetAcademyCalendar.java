@@ -31,14 +31,12 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	public InstructionSession getSession(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM COURSES C, INSCALENDAR I WHERE "
-					+ "(C.ID=I.COURSE) AND (I.ID=?)");
+			prepareStatementWithoutLimits("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM COURSES C, INSCALENDAR I "
+					+ "WHERE (C.ID=I.COURSE) AND (I.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query, if empty return null
 			List<InstructionSession> results = executeCalendar();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -113,14 +111,12 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	public InstructionFlight getFlight(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C WHERE "
-					+ "(I.COURSE=C.ID) AND (I.ID=?)");
+			prepareStatementWithoutLimits("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C "
+				+ "WHERE (I.COURSE=C.ID) AND (I.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query, if empty return null
 			List<InstructionFlight> results = executeFlightCalendar();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

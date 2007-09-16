@@ -32,13 +32,13 @@ public class GetAcademyCourses extends DAO {
 	 */
 	public Course get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) AND (C.ID=?)");
+			prepareStatementWithoutLimits("SELECT C.*, CR.STAGE FROM COURSES C, CERTS CR WHERE (C.CERTNAME=CR.NAME) "
+					+ "AND (C.ID=?) LIMIT 1");
+			
 			_ps.setInt(1, id);
 			
 			// Execute the query
 			List<Course> results = execute();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 			

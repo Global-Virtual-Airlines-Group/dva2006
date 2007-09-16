@@ -35,13 +35,11 @@ public class GetAircraft extends DAO {
 	 */
 	public Aircraft get(String name) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.AIRCRAFT WHERE (NAME=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.AIRCRAFT WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
 
 			// Load the result
 			List<Aircraft> results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

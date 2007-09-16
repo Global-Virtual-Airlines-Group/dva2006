@@ -170,8 +170,7 @@ public class SetPilot extends PilotWriteDAO {
 			startTransaction();
 			
 			// Get the next available Pilot ID
-			setQueryMax(1);
-			prepareStatement("SELECT MAX(PILOT_ID)+1 FROM " + formatDBName(db) + ".PILOTS");
+			prepareStatementWithoutLimits("SELECT MAX(PILOT_ID)+1 FROM " + formatDBName(db) + ".PILOTS");
 			ResultSet rs = _ps.executeQuery();
 			p.setPilotNumber(rs.next() ? rs.getInt(1) : 1);
 
