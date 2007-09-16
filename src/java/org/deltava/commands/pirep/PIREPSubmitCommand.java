@@ -4,6 +4,8 @@ package org.deltava.commands.pirep;
 import java.util.*;
 import java.sql.Connection;
 
+import org.apache.log4j.Logger;
+
 import org.deltava.beans.*;
 import org.deltava.beans.event.Event;
 import org.deltava.beans.schedule.*;
@@ -24,6 +26,8 @@ import org.deltava.util.system.SystemData;
  */
 
 public class PIREPSubmitCommand extends AbstractCommand {
+	
+	private static final Logger log = Logger.getLogger(PIREPSubmitCommand.class);
 
 	/**
 	 * Executes the command.
@@ -49,25 +53,27 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			// Get the Pilot profile of the individual who flew this flight
 			GetPilot pdao = new GetPilot(con);
 			GetPilot.invalidateID(pirep.getDatabaseID(FlightReport.DBID_PILOT));
-			Pilot pilot = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
+			Pilot p = pdao.get(pirep.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Save the Pilot profile
-			ctx.setAttribute("pilot", pilot, REQUEST);
+			ctx.setAttribute("pilot", p, REQUEST);
 
 			// Get our equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = eqdao.get(pilot.getEquipmentType());
+			EquipmentType eq = eqdao.get(p.getEquipmentType());
 			ctx.setAttribute("eqType", eq, REQUEST);
 			
 			// Check if the pilot is rated in the equipment type
 			@SuppressWarnings("unchecked")
-			boolean isRated = CollectionUtils.merge(pilot.getRatings(), eq.getRatings()).contains(pirep.getEquipmentType());
+			boolean isRated = CollectionUtils.merge(p.getRatings(), eq.getRatings()).contains(pirep.getEquipmentType());
 			ctx.setAttribute("notRated", Boolean.valueOf(!isRated), REQUEST);
 			pirep.setAttribute(FlightReport.ATTR_NOTRATED, !isRated);
+			if (!isRated)
+				log.warn(p.getName() + " not rated in " + pirep.getEquipmentType() + " ratings = " + p.getRatings());
 
 			// Check if this flight was flown with an equipment type in our primary ratings
 			Collection<String> pTypeNames = eqdao.getPrimaryTypes(SystemData.get("airline.db"), pirep.getEquipmentType());
-			if (pTypeNames.contains(pilot.getEquipmentType())) {
+			if (pTypeNames.contains(p.getEquipmentType())) {
 				for (Iterator<String> i = pTypeNames.iterator(); i.hasNext(); ) {
 					String pName = i.next();
 					EquipmentType peq = eqdao.get(pName);
