@@ -60,16 +60,14 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) LEFT JOIN ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?)");
+		sqlBuf.append(".ACARS_PIREPS APR ON (PR.ID=APR.ID) WHERE (PR.PILOT_ID=P.ID) AND (PR.ID=?) LIMIT 1");
 
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, id);
 
 			// Execute the query, if nothing returned then give back null
 			List<FlightReport> results = execute();
-			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
@@ -102,16 +100,14 @@ public class GetFlightReports extends DAO {
 		sqlBuf.append(".ACARS_PIREPS APR) LEFT JOIN ");
 		sqlBuf.append(dbName);
 		sqlBuf.append(".PIREP_COMMENT PC ON (PR.ID=PC.ID) WHERE (APR.ID=PR.ID) AND (PR.PILOT_ID=P.ID) "
-				+ "AND (APR.ACARS_ID=?)");
+				+ "AND (APR.ACARS_ID=?) LIMIT 1");
 
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, acarsID);
 
 			// Execute the query, if nothing returned then give back null
 			List<FlightReport> results = execute();
-			setQueryMax(0);
 			if (results.size() == 0)
 				return null;
 
@@ -431,15 +427,13 @@ public class GetFlightReports extends DAO {
 	 */
 	public int getCount(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
+			prepareStatementWithoutLimits("SELECT COUNT(DISTINCT ID) FROM PIREPS WHERE (PILOT_ID=?) AND (STATUS=?)");
 			_ps.setInt(1, pilotID);
 			_ps.setInt(2, FlightReport.OK);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			int result = (rs.next()) ? rs.getInt(1) : 0;
-			setQueryMax(0);
 
 			// Clean up and return
 			rs.close();

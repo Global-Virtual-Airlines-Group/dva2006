@@ -51,15 +51,13 @@ public class GetEquipmentType extends DAO {
 		sqlBuf.append(dbName);
 		sqlBuf.append(".EQTYPES EQ, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P WHERE (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=?)");
+		sqlBuf.append(".PILOTS P WHERE (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=?) LIMIT 1");
 
 		try {
-			setQueryMax(1);
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setString(1, eqType);
 
 			// Execute the query - if we get nothing back, then return null
-			setQueryMax(0);
 			List<EquipmentType> results = execute();
 			if (results.isEmpty())
 				return null;
@@ -79,8 +77,8 @@ public class GetEquipmentType extends DAO {
 
 					default:
 					case EquipmentType.SECONDARY_RATING:
-					eq.addSecondaryRating(rs.getString(2));
-					break;
+						eq.addSecondaryRating(rs.getString(2));
+						break;
 				}
 			}
 

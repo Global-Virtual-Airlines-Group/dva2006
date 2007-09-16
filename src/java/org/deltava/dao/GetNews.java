@@ -32,14 +32,12 @@ public class GetNews extends DAO {
 	 */
 	public News getNews(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P "
-					+ "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID)");
+			prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P "
+					+ "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query - if we get nothing back, then return null
 			List results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : (News) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -69,14 +67,12 @@ public class GetNews extends DAO {
 	 */
 	public Notice getNOTAM(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
-					+ "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID)");
+			prepareStatementWithoutLimits("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
+					+ "WHERE (N.ID=?) AND (N.PILOT_ID=P.ID) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query - if we get nothing back, then return null
 			List results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : (Notice) results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

@@ -55,14 +55,13 @@ public class GetPilotEMail extends DAO {
     */
    public EMailConfiguration getEMailInfo(int id) throws DAOException {
        try {
-    	   setQueryMax(1);
-           prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE (ID=?)");
+           prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox WHERE "
+        		   + "(ID=?) LIMIT 1");
            _ps.setInt(1, id);
            
            // Execute the query, return null if not found
-           List results = execute();
-           setQueryMax(0);
-           return (results.isEmpty()) ? null : (EMailConfiguration) results.get(0);
+           List<EMailConfiguration> results = execute();
+           return (results.isEmpty()) ? null : results.get(0);
        } catch (SQLException se) {
            throw new DAOException(se);
        }
@@ -73,9 +72,9 @@ public class GetPilotEMail extends DAO {
     * @return a Collection of EMailConfiguration beans
     * @throws DAOException if a JDBC error occurs
     */
-   public Collection getAll() throws DAOException {
+   public Collection<EMailConfiguration> getAll() throws DAOException {
       try {
-         prepareStatement("SELECT ID, username, maildir, quota, active FROM postfix.mailbox");
+         prepareStatementWithoutLimits("SELECT ID, username, maildir, quota, active FROM postfix.mailbox");
          return execute();
       } catch (SQLException se) {
          throw new DAOException(se); 

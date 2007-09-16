@@ -79,12 +79,10 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			_cache.get(channelName);
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?) LIMIT 1");
 			_ps.setString(1, channelName);
 
 			// Execute the query - if nothing is returned, return null
-			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
 			if (!rs.next()) {
 				_ps.close();

@@ -69,7 +69,6 @@ public class SetRoute extends DAO {
 	 */
 	public void deleteOceanic(int routeType, java.util.Date vd) throws DAOException {
 		try {
-			setQueryMax(1);
 			prepareStatement("DELETE FROM common.OCEANIC WHERE (ROUTETYPE=?) AND (VALID_DATE=?)");
 			_ps.setInt(1, routeType);
 			_ps.setTimestamp(2, createTimestamp(vd));

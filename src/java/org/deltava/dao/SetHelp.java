@@ -113,7 +113,6 @@ public class SetHelp extends DAO {
 			executeUpdate(0);
 			
 			// Update the FAQ
-			setQueryMax(1);
 			prepareStatement("UPDATE HELPDESK SET ISFAQ=? WHERE (ID=?)");
 			_ps.setBoolean(1, (createdOn != null));
 			_ps.setInt(2, id);
