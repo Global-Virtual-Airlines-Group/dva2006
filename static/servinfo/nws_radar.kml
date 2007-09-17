@@ -45,6 +45,7 @@
     <open>1</open>
     <GroundOverlay>
       <name>Mosaic</name>
+      <visibility>0</visibility>
       <color>bcffffff</color>
       <Icon>
         <href>http://www.srh.noaa.gov/ridge/Conus/RadarImg/latest_radaronly.gif</href>

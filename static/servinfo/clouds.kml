@@ -2,6 +2,7 @@
 <kml xmlns="http://earth.google.com/kml/2.0">
 <GroundOverlay>
   <name>Global Cloud Map</name>
+  <visibility>0</visibility>
   <description>This cloud map has transparency information built in so it&apos;s easier to see the land masses under the clouds.
 
 Credit to Hari Nair at XPlanet (http://xplanet.sf.net) for the great source image.</description>
