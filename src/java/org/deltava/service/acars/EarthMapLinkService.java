@@ -44,8 +44,8 @@ public class EarthMapLinkService extends WebService {
 		
 		// Create the NWS radar/cloud cover/daynight/METAR network link entries
 		de.addContent(createLink("BlueMarble Earth", "http://www.gearthblog.com/kmfiles/bmngv2.kmz", 0, true));
-		de.addContent(createLink("US Radar Image", buf.toString() + "servinfo/nws_radar.kml", 0, false));
-		de.addContent(createLink("Cloud Cover", buf.toString() + "servinfo/clouds.kml", 0, false));
+		//de.addContent(createLink("US Radar Image", buf.toString() + "servinfo/nws_radar.kml", 0, false));
+		//de.addContent(createLink("Cloud Cover", buf.toString() + "servinfo/clouds.kml", 0, false));
 		de.addContent(createLink("Day/Night", buf.toString() + "servinfo/dayNight.kml", 0, false));
 
 		// Create FIR boundary/DAFIF network link entries
