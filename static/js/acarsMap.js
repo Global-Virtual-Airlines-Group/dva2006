@@ -11,8 +11,8 @@ xmlreq.onreadystatechange = function() {
 		isLoading.innerHTML = ' - REDRAWING...';
 		
 	// Clean up the map - don't strip out the weather layer
-	map.removeOverlay(routeData);
-	map.removeOverlay(routeWaypoints);
+	removeMarkers(map, 'routeData');
+	removeMarkers(map, 'routeWaypoints');
 	removeMarkers(map, 'acPositions');
 	acPositions.length = 0;
 
@@ -27,7 +27,7 @@ xmlreq.onreadystatechange = function() {
 		mrk.flight_id = a.getAttribute("flight_id");
 		var tabs = parseInt(a.getAttribute("tabs"));
 		mrk.infoShow = clickIcon;
-		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; map.removeOverlay(routeData); map.removeOverlay(routeWaypoints); });
+		GEvent.addListener(mrk, 'infowindowclose', function() { document.pauseRefresh = false; removeMarkers(map, 'routeData'); removeMarkers(map, 'routeWaypoints'); });
 		if (tabs == 0) {
 			var label = a.firstChild;
 			mrk.infoLabel = label.data;
@@ -76,8 +76,8 @@ else if (isInfo)
 
 // Display flight progress / route
 if (isProgress || isRoute) {
-	map.removeOverlay(routeData);
-	map.removeOverlay(routeWaypoints);
+	removeMarkers(map, 'routeData');
+	removeMarkers(map, 'routeWaypoints');
 	showFlightProgress(this, isProgress, isRoute);
 }
 
