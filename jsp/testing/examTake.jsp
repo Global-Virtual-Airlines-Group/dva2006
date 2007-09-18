@@ -33,10 +33,10 @@ while (isOK && (a.length > 0)) {
 			if (a[x].checked)
 				checkCount++;
 		}
-		
+
 		isOK = (isOK && (checkCount > 0));
 	}
-	
+
 	qNum++;
 	a = getElementsById('A' + qNum);
 }
@@ -153,7 +153,7 @@ return true;
 <tr>
  <td class="label" valign="top">Answer #<fmt:int value="${q.number}" /></td>
 <c:if test="${!fn:isMultiChoice(q)}">
- <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="90%" height="2">${q.answer}</el:textbox></td>
+ <td class="data"><el:textbox ID="A${q.number}" onBlur="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" name="answer${q.number}" className="small" width="90%" height="3">${q.answer}</el:textbox></td>
 </c:if>
 <c:if test="${fn:isMultiChoice(q)}">
  <td class="data"><el:check ID="A${q.number}" onChange="void saveAnswer(${q.number}, ${fn:hex(exam.ID)})" type="radio" name="answer${q.number}" className="small" width="400" cols="1" options="${q.choices}" value="${q.answer}" /></td>
