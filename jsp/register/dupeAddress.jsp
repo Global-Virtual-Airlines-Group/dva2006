@@ -25,7 +25,7 @@
 <content:region id="main">
 <div class="updateHdr">Duplicate Registration Address</div>
 <br />
-Your IP Address ( <b>${pageContext.request.remoteAddr}</b> ) has been used within the past <fmt:int value="${addrInterval} " /> 
+Your IP Address ( <b>${pageContext.request.remoteAddr}</b> ) has been used within the past <fmt:int value="${addrInterval}" /> 
 days to register at the <content:airline /> web site, and the previous application is Pending or has already 
 been Approved. You cannot register again from this IP address.<br />
 <br />
