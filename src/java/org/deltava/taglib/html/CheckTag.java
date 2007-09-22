@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.html;
 
 import java.util.*;
@@ -234,7 +234,7 @@ public class CheckTag extends FormElementTag {
 	 */
 	public void setNewLine(boolean doNewLine) {
 		if (doNewLine)
-			_itemSeparator = "<div style=\"clear:both;\" />";
+			_itemSeparator = "<div style=\"clear:both;\"></div>";
 	}
 
 	/**
