@@ -11,16 +11,16 @@ import java.text.*;
  * @since 1.0
  */
 
-public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZInfo>, ViewEntry {
+public class TZInfo implements ComboAlias, Comparable<TZInfo>, ViewEntry {
 
 	/**
-	 * Time Zone ID for GMT/UTC.
+	 * Time Zone for GMT/UTC.
 	 */
-	public static final String GMT = "Etc/Greenwich";
+	public static final TZInfo UTC = new TZInfo("Etc/Greenwich", null, null);
 	private static final TZInfo _local = new TZInfo(TimeZone.getDefault().getID(), null, null);
 
 	private static final Map<String, TZInfo> _timeZones = new HashMap<String, TZInfo>();
-	private static final NumberFormat _df = new DecimalFormat("00");
+	private final NumberFormat _df = new DecimalFormat("00");
 
 	private TimeZone _tz;
 	private String _displayName;
@@ -172,7 +172,7 @@ public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZIn
 	}
 
 	/**
-	 * Compares this Time Zone to another TimeZone by comparing the JVM time zone ID
+	 * Compares this Time Zone to another TimeZone by comparing the JVM time zone ID.
 	 */
 	public boolean equals(Object o2) {
 		try {
