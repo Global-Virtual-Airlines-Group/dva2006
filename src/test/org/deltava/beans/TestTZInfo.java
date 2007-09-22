@@ -39,7 +39,7 @@ public class TestTZInfo extends TestCase {
 	}
 
 	public void testGMT() {
-		_wrapper = TZInfo.init(TZInfo.GMT, null, null);
+		_wrapper = TZInfo.UTC;
 		assertNotNull(_wrapper.getName());
 		assertEquals("Greenwich Mean Time [GMT+0:00]", _wrapper.toString());
 		assertEquals(123456, _wrapper.getUTC(123456));
@@ -76,20 +76,15 @@ public class TestTZInfo extends TestCase {
 
 	public void testLocal() {
 		TZInfo.init(TimeZone.getDefault().getID(), null, null);
-		TZInfo.init(TZInfo.GMT, null, null);
 		TZInfo local = TZInfo.local();
 		assertEquals(TimeZone.getDefault().getID(), local.getID());
-		TZInfo gmt = TZInfo.get(TZInfo.GMT);
-		assertEquals(TZInfo.GMT, gmt.getID());
 	}
 
 	public void testComparable() {
 		_wrapper = TZInfo.init("US/Eastern", "Eastern Time", "EST");
 		TZInfo w2 = TZInfo.init("US/Central", "Central Time", "CT");
-		TZInfo w3 = TZInfo.init("US/Eastern", "Eastern Time", "EST");
 		TZInfo w4 = TZInfo.init("Canada/Atlantic", "Atlantic Time", "AST");
 
-		assertNull(w3);
 		assertEquals(1, _wrapper.compareTo(w2));
 		assertEquals(-1, w2.compareTo(_wrapper));
 		assertEquals(1, _wrapper.compareTo(null));
