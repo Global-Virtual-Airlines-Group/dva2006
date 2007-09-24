@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.util.*;
@@ -63,13 +63,13 @@ public class RouteService extends WebService {
 			ScheduleEntry entry = i.next();
 			Airport ap = entry.getAirportA();
 			if (!dstAirports.contains(ap)) {
-				Collection<GeoLocation> gc = GeoUtils.greatCircle(a, ap, 60);
+				Collection<? extends GeoLocation> gc = Arrays.asList(a, ap); 
 				Element gce = new Element("route");
 				gce.setAttribute("from", a.getICAO());
 				gce.setAttribute("to", ap.getICAO());
 				gce.setAttribute("airline", entry.getAirline().getCode());
 				gce.setAttribute("color", LCOLORS.get(entry.getAirline().getColor()));
-				for (Iterator<GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
+				for (Iterator<? extends GeoLocation> gci = gc.iterator(); gci.hasNext(); ) {
 					GeoLocation loc = gci.next();
 					Element pe = new Element("pos");
 					pe.setAttribute("lat", StringUtils.format(loc.getLatitude(), "##0.00000"));

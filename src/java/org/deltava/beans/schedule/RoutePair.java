@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import java.util.*;
@@ -10,13 +10,13 @@ import java.util.*;
  * @since 1.0
  */
 
-public class RoutePair implements java.io.Serializable, Comparable {
+public class RoutePair implements Comparable<RoutePair> {
 	
 	private static final String DEP = "$D";
-	private static final String ARR = "$D";
+	private static final String ARR = "$A";
 
 	private Airline _a;
-	private Map<String, Airport> _airports = new HashMap<String, Airport>();
+	private final Map<String, Airport> _airports = new HashMap<String, Airport>();
 	
 	/**
 	 * Creates a new Route Pair.
@@ -72,8 +72,8 @@ public class RoutePair implements java.io.Serializable, Comparable {
 	 * @see RoutePair#toString()
 	 * @see Comparable#compareTo(Object)
 	 */
-	public int compareTo(Object o) {
-		return toString().compareTo(o.toString());
+	public int compareTo(RoutePair rp2) {
+		return toString().compareTo(rp2.toString());
 	}
 	
 	/**
@@ -81,7 +81,7 @@ public class RoutePair implements java.io.Serializable, Comparable {
 	 * @see RoutePair#toString()
 	 */
 	public boolean equals(Object o) {
-		return (compareTo(o) == 0);
+		return (o instanceof RoutePair) ? (compareTo((RoutePair) o) == 0) : false;
 	}
 	
 	/**

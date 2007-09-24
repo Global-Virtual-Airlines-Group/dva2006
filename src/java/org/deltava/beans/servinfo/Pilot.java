@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -27,7 +27,6 @@ public class Pilot extends NetworkUser implements MapEntry {
 	private String _wayPoints;
 	
 	private String _rawData;
-	private List<GeoLocation> _route;
 
 	/**
 	 * Initializes the bean with a given user ID.
@@ -250,38 +249,21 @@ public class Pilot extends NetworkUser implements MapEntry {
 	}
 	
 	/**
-	 * Returns the flight route. This is one or two Great Circle routes between the origin, current positon
-	 * and destination. If the current position is less than 200 miles from the destination then we calculate
-	 * direct from the origin airport to the current position, then Great Circle to the destination. If we are
-	 * less than 200 miles from the destination, we calculate Great Circle from the origin to the current
-	 * position, then direct to the destination. 
+	 * Returns the flight route. 
 	 * @return a List of GeoLocations
-	 * @see GeoUtils#greatCircle(GeoLocation, GeoLocation, int)
 	 */
 	public Collection<GeoLocation> getRoute() {
-		// If we have already generated the route, return it
-		if (_route != null)
-			return _route;
 		
 		// Only generate a route if both airports have positions
-		_route = new ArrayList<GeoLocation>();
+		Collection<GeoLocation> route = new ArrayList<GeoLocation>();
 		if ((_airportD.hasPosition()) && (_airportA.hasPosition())) {
-			// Check for special situations requiring direct routings
-			if (_position.distanceTo(_airportD) < 200) {
-				_route.add(_airportD);
-				_route.addAll(GeoUtils.greatCircle(_position, _airportA, 200));
-			} else if (_position.distanceTo(_airportA) < 200) {
-				_route.addAll(GeoUtils.greatCircle(_airportD, _position, 200));
-				_route.add(_airportA);
-			} else {
-				_route.addAll(GeoUtils.greatCircle(_airportD, _position, 200));
-				_route.remove(_position); // Remove since greatCircle adds the start/end point 
-				_route.addAll(GeoUtils.greatCircle(_position, _airportA, 200));
-			}
+			route.add(_airportD);
+			route.add(_position);
+			route.add(_airportA);
 		}
 	
 		// return course
-		return _route;
+		return route;
 	}
 	
 	/**

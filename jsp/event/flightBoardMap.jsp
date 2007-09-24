@@ -39,23 +39,22 @@ selectedRoute = allRoutes[pilotID];
 if (!selectedRoute) {
 	var request = GXmlHttp.create();
 	request.open("GET", "si_route.ws?network=" + networkName + "&id=" + pilotID, true);
-	request.onreadystatechange = function()
-	{
-	if (request.readyState != 4) return false;
-	var points = new Array();
-	var xmlDoc = request.responseXML;
-	var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
-	for (var i = 0; i < navaids.length; i++) {
-		var nav = navaids[i];
-		points.push(new GLatLng(parseFloat(nav.getAttribute("lat")), parseFloat(nav.getAttribute("lng"))));
+	request.onreadystatechange = function() {
+		if (request.readyState != 4) return false;
+		var points = new Array();
+		var xmlDoc = request.responseXML;
+		var navaids = xmlDoc.documentElement.getElementsByTagName("navaid");
+		for (var i = 0; i < navaids.length; i++) {
+			var nav = navaids[i];
+			points.push(new GLatLng(parseFloat(nav.getAttribute("lat")), parseFloat(nav.getAttribute("lng"))));
+		}
+
+		allRoutes[pilotID] = new GPolyline(points, '#4080AF', 2, 0.8, { geodesic:true });
+		selectedRoute = allRoutes[pilotID];
+		addMarkers(map, 'selectedRoute');
+		return true;
 	}
-	
-	allRoutes[pilotID] = new GPolyline(points, '#4080AF', 2, 0.8);
-	selectedRoute = allRoutes[pilotID];
-	addMarkers(map, 'selectedRoute');
-	return true;
-	}
-	
+
 	request.send(null);
 	return true;
 }

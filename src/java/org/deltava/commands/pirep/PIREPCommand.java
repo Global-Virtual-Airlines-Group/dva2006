@@ -467,7 +467,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			if (mapType == Pilot.MAP_GOOGLE) {
 				// If this isnt't an ACARS PRIEP, calculate the GC route
 				if (!(fr instanceof ACARSFlightReport))
-					ctx.setAttribute("mapRoute", GeoUtils.greatCircle(fr.getAirportD(), fr.getAirportA(), 100), REQUEST);
+					ctx.setAttribute("mapRoute", Arrays.asList(fr.getAirportD(), fr.getAirportA()), REQUEST); 
 
 				// Save the route and map center for the Google Map
 				ctx.setAttribute("googleMap", Boolean.TRUE, REQUEST);
