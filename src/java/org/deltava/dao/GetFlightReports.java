@@ -443,6 +443,37 @@ public class GetFlightReports extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns the city pairs flown by a particular Pilot.
+	 * @param pilotID the Pilot database ID
+	 * @return a Collection of RoutePair beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<RoutePair> getRoutePairs(int pilotID) throws DAOException {
+		try {
+			prepareStatement("SELECT DISTINCT AIRLINE, AIRPORT_D, AIRPORT_A FROM PIREPS WHERE "
+					+ "(PILOT_ID=?) AND (STATUS=?)");
+			_ps.setInt(1, pilotID);
+			_ps.setInt(2, FlightReport.OK);
+			
+			// Execute the query
+			Collection<RoutePair> results = new TreeSet<RoutePair>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				RoutePair rp = new RoutePair(SystemData.getAirline(rs.getString(1)), SystemData.getAirport(rs.getString(2)),
+						SystemData.getAirport(rs.getString(3)));
+				results.add(rp);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Helper method to load PIREP data.

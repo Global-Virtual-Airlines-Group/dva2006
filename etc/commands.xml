@@ -157,7 +157,13 @@
 		<class>org.deltava.commands.pilot.PilotLocationCommand</class>
 		<roles>Pilot</roles>
 	</command>
-	
+
+	<command id="myroutemap">
+		<name>Pilot Route Map</name>
+		<class>org.deltava.commands.pilot.PilotRouteMapCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="pilotboard">
 		<name>Pilot Location Board</name>
 		<class>org.deltava.commands.pilot.PilotBoardCommand</class>
