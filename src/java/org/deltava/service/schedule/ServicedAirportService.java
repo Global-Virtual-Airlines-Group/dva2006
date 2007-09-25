@@ -62,6 +62,7 @@ public class ServicedAirportService extends WebService {
 			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.00000"));
 			e.setAttribute("lng", StringUtils.format(a.getLongitude(), "##0.00000"));
 			e.setAttribute("color", al.getColor());
+			e.addContent(new CDATA(a.getInfoBox()));
 			
 			// Add Airlines
 			for (Iterator<String> ai = a.getAirlineCodes().iterator(); ai.hasNext(); ) {
