@@ -5,30 +5,11 @@ document.seriesDate = new Array();
 
 function loadSeries(id, sdata)
 {
-var info = sdata.seriesInfo;
-if (info.sat) {
-	document.maxZoom['sat'] = info.sat.maxZoom;
-	document.seriesDate['sat'] = info.sat.series[0].unixDate;
-}
-
-if (info.radar) {
-	document.maxZoom['radar'] = info.radar.maxZoom;
-	document.seriesDate['radar'] = info.radar.series[0].unixDate;
-}
-
-if (info.satrad) {
-	document.maxZoom['satrad'] = info.satrad.maxZoom;
-	document.seriesDate['satrad'] = info.satrad.series[0].unixDate;
-}
-
-if (info.ussat) {
-	document.maxZoom['ussat'] = info.ussat.maxZoom;
-	document.seriesDate['ussat'] = info.ussat.series[0].unixDate;
-}
-
-if (info.temp) {
-	document.maxZoom['temp'] = info.temp.maxZoom;
-	document.seriesDate['temp'] = info.temp.series[0].unixDate;
+for (var x = 0; x < sdata.seriesNames.length; x++)
+{
+	var series = sdata.seriesNames[x];
+	document.maxZoom[series] = eval('sdata.seriesInfo.' + series + '.maxZoom');
+	document.seriesDate[series] = eval('sdata.seriesInfo.' + series + '.series[0].unixDate');
 }
 
 return true;

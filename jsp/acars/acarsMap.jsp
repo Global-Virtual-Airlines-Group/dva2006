@@ -161,13 +161,16 @@ map.addMapType(rsat);
 </c:if>
 <c:if test="${!empty tileHost}">
 // Build the layer controls
+var xPos = 70;
 var rC = new WXOverlayControl(getTileOverlay("radar"), "Radar", new GSize(70, 7));
-var srC = new WXOverlayControl(getTileOverlay("satrad"), "Sat/Rad", new GSize(142, 7));
-var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize(214, 7));
+var srC = new WXOverlayControl(getTileOverlay("satrad"), "Sat/Rad", new GSize((xPos += 72), 7));
+var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize((xPos += 72), 7));
+var tC = new WXOverlayControl(getTileOverlay("temp"), "Temparture", new GSize((xPos += 72), 7));
 map.addControl(rC);
 map.addControl(srC);
 map.addControl(sC);
-map.addControl(new WXClearControl(new GSize(286, 7)));
+map.addControl(tC);
+map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
 </c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
@@ -189,8 +192,8 @@ reloadData(true);
 // Display the copyright notice
 var d = new Date();
 var cp = document.getElementById("copyright");
-cp.innerHTML = 'Weather Data &copy; ' + (d.getYear() + 1900) + ' The Weather Channel.'
-var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize(360, 12));
+cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 12));
 cpos.apply(cp);
 map.getContainer().appendChild(cp);
 </c:if></script>
