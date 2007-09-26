@@ -40,9 +40,10 @@ xmlreq.onreadystatechange = function() {
 		mrk.iata = a.getAttribute("iata");
 		mrk.infoShow = showRoutes;
 		GEvent.addListener(mrk, 'infowindowclose', function() { removeMarkers(map, 'routes'); });
-		var label = a.firstChild;
+		var label = a.childNodes[1];
 		mrk.infoLabel = label.data;
 		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+		document.lastAirport = a;
 
 		// Add to array and map
 		aps.push(mrk);
@@ -96,8 +97,7 @@ xmlreq.onreadystatechange = function() {
 			} // for
 
 			// Draw the line
-			var color = rt.getAttribute("color");
-			var routeLine = new GPolyline(positions, (color) ? color : '#4080AF', 2, 0.8);
+			var routeLine = new GPolyline(positions, '#4080AF', 2, 0.8, { geodesic: true });
 			map.addOverlay(routeLine);
 			routes.push(routeLine);
 		}

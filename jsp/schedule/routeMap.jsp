@@ -41,7 +41,7 @@
 </tr>
 <tr>
  <td class="label" valign="top">Route Map</td>
- <td class="data"><map:div ID="googleMap" x="650" y="575" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="540" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -54,11 +54,13 @@
 document.imgPath = '${imgPath}';
 
 // Create the map
-var map = new GMap2(getElement('googleMap'), G_DEFAULT_MAP_TYPES);
+var map = new GMap2(getElement('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
 
 // Routes placeholder
 var routes;
