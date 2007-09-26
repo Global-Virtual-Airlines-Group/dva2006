@@ -11,9 +11,9 @@ import org.deltava.security.SecurityContext;
  * @since 1.0
  */
 
-public final class PIREPAccessControl extends AccessControl {
+public class PIREPAccessControl extends AccessControl {
 
-	private FlightReport _pirep;
+	protected FlightReport _pirep;
 
 	private boolean _ourPIREP;
 	private boolean _canCreate;
