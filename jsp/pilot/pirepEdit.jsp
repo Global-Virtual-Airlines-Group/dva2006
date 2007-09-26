@@ -48,7 +48,7 @@ if (parseInt(form.flightLeg.value) > 8) {
 }
 
 // Validate the date
-<c:if test="${!empty pirep}"><content:filter roles="!PIREP">
+<content:filter roles="!PIREP">
 var pY = parseInt(f.dateY.options[f.dateY.selectedIndex].text);
 var pDate = new Date(pY, f.dateM.selectedIndex + 1,	f.dateD.selectedIndex + 1);
 if (pDate > fwdLimit) {
@@ -60,8 +60,7 @@ if (pDate > fwdLimit) {
 	f.dateD.focus();
 	return false;
 }
-</content:filter></c:if>
-
+</content:filter>
 setSubmit();
 disableButton('SaveButton');
 disableButton('CalcButton');
