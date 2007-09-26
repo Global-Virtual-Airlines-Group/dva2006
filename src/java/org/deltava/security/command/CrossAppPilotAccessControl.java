@@ -7,7 +7,9 @@ import org.deltava.beans.Person;
 import org.deltava.beans.Pilot;
 
 /**
- * An access controller for Pilot profile operations.
+ * An access controller for Pilot profile operations performed by users in another
+ * airline. This is designed to allow HR staffs in one airline to review the status of
+ * a Pilot before a Transfer..
  * @author Luke
  * @version 1.0
  * @since 1.0
