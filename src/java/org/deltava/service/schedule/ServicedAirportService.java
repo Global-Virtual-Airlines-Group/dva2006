@@ -56,7 +56,7 @@ public class ServicedAirportService extends WebService {
 		// Write the entries
 		for (Iterator<Airport> i = airports.iterator(); i.hasNext(); ) {
 			Airport a = i.next();
-			Element e = XMLUtils.createElement("airport", a.getInfoBox(), true);
+			Element e = new Element("airport");
 			e.setAttribute("icao", a.getICAO());
 			e.setAttribute("iata", a.getIATA());
 			e.setAttribute("lat", StringUtils.format(a.getLatitude(), "##0.00000"));
