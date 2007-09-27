@@ -50,7 +50,7 @@ public class SystemBootstrap implements ServletContextListener, Thread.UncaughtE
 
 		// Force headless AWT operation and default character set
 		System.setProperty("java.awt.headless", "true");
-		System.setProperty("mail.mime.charset", "ISO-8859-1");
+		System.setProperty("mail.mime.charset", "UTF-8");
 	}
 
 	/**
