@@ -20,7 +20,10 @@ import org.deltava.util.system.SystemData;
 
 public class InsertCSSTag extends InsertContentTag {
 
-	private static final String DEFAULT_SCHEME = "legacy";
+	/**
+	 * Default CSS scheme name.
+	 */
+	static final String DEFAULT_SCHEME = "legacy";
 
 	private String _host;
 	private String _scheme;
