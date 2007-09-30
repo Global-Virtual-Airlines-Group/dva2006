@@ -243,6 +243,18 @@
 		<body-content>empty</body-content>
 	</tag>
 
+	<!-- Airline banner name tag -->
+	<tag>
+		<name>banner</name>
+		<tag-class>org.deltava.taglib.content.AirlineBannerTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>var</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
 	<!-- Copyright notice tag -->
 	<tag>
 		<name>copyright</name>
