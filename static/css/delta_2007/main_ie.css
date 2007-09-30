@@ -1,0 +1,216 @@
+/* Main Cascading Style Sheet (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the main IE formatting table */
+TABLE#ieLayout {
+	position: relative;
+	width: 100%;
+	top: -16px;
+	left: 0px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the top header image section */
+TD#header {
+	background-color: #ffffff;
+}
+
+/* Formatting for header title caption */
+h1.header {
+	font-family: Trebuchet MS, Verdana, Tahoma, sans-serif;
+	font-size: 17pt;
+	color: #1A4876;
+	text-align: center;
+	vertical-align: middle;
+	margin-top: 12px;
+}
+
+/* Formatting for header image */
+img.header {
+	float: right;
+	border: none;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the side menu section        */
+TD#sidebar {
+	width: 160px;
+	vertical-align: top;
+	background-color: #ffffff;
+}
+
+TD#main {
+	vertical-align: top;
+	background-color: #ffffff;
+	color: #1A4876;
+}
+
+/* Formatting for the side menu table */
+TABLE#sidenav {
+	table-layout: fixed;
+	border-collapse: separate;
+	text-align: center;
+	vertical-align: middle;
+	color: #000000;
+	border-width: 2px 2px 2px 2px;
+	padding: 4px 4px 4px 4px;
+}
+
+/* Formatting for side menu section headers */
+TR.MenuHeader {
+	font-family: Verdana, Tahoma, sans-serif;
+	background-color: #1A4876;
+	color: #FFFFFF;
+	text-align: center;
+	font-weight: bold;
+	font-size: 9pt;
+}
+
+/* Formatting for side menu items */
+TR.MenuItem {
+	font-family: Verdana, Tahoma, sans-serif;
+	background-color: #F8F8F8;
+	text-decoration: none;
+	font-size: 7pt;
+}
+
+/* Side menu hyperlinks */
+*.MenuItem :link, *.MenuItem :visited {
+	text-decoration:none;
+	font-size:7pt;
+	color: #000000;
+}
+
+/* Side menu hyperlinks */
+*.MenuItem :link:hover, *.MenuItem :hover {
+	text-decoration:none;
+	font-size:7pt;
+	color: #C01933;
+}
+
+/* Google Maps infobox font */
+.mapInfoBox {
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 8pt;
+}
+
+/* ------------------------------------------------------------------ */
+/* Controls the sizing and formatting of the main display section     */
+
+/* Result page Header */
+.updateHdr {
+	font-family: Verdana, Tahoma, sans-serif;
+	font-weight: bold;
+	font-size: 10pt;
+	background-color: #1A4876;
+	width: 100%;
+	color: #ffffff;
+	text-transform: uppercase;
+}
+
+/* Default table formatting */
+TABLE {
+	table-layout: auto;
+	border-collapse: separate;
+	border-spacing: 3px 3px;
+	font-family: Verdana, Tahoma, sans-serif;
+	color: #000000;
+	border-width: 4px 4px 4px 4px;
+	padding: 6px 6px 6px 6px;
+}
+
+BODY {
+	scrollbar-face-color: #000080;
+	scrollbar-track-color: #303030;
+	scrollbar-arrow-color: #FFFFFF;
+	color: #1A4876;
+	margin-left: 2px;
+	margin-right: 0px;
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 9pt;
+}
+
+.BUTTON, .cmdButton {
+	background-color: #003366;
+	color: #FFFFFF;
+	font-family: Verdana, Tahoma, sans-serif;
+	font-size: 8pt;
+	text-transform: uppercase;
+	border: 2px outset #CFCFFF;
+	font-weight: normal;
+}
+
+a, a:visited {
+	color: #1A4876;
+	text-decoration: underline;
+	font-size: 9pt;
+}
+
+a:hover {
+	color: #C01933;
+	text-decoration: underline;
+	font-size: 9pt;
+}
+
+.bld {
+	font-weight: bold;
+}
+
+.pri {
+	color: #1A4876;
+}
+
+.sec {
+	color: #C01933;
+}
+
+.ter {
+	color: #008000;
+}
+
+.error {
+	color: #E02010;
+}
+
+.warn {
+	color: #FF8040;
+}
+
+.small {
+	font-size: 8pt;
+}
+
+.caps {
+	text-transform: uppercase;
+}
+
+.mid {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.visible {
+	visibility: visible;
+}
+
+*.small A {
+	font-size: 8pt;
+}
+
+/* This is an IE-only hack for required SELECT elements */
+SELECT.req {
+	background: #FFF8FA;
+	border: 1px solid #E00404;
+	color: #9F0303;
+}
