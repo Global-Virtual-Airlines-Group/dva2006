@@ -1,0 +1,73 @@
+/* Cascading Style Sheet for Table Views (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+
+TABLE.view {
+	width: 100%;
+}
+
+TABLE.view TR.title {
+	font-size: 9pt;
+	background-color: #003366;
+	font-family: Verdana, Tahoma, sans-serif;
+	vertical-align: middle;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+TABLE.view TR {
+	font-size: 9pt;
+	background-color: #F8F8F8;
+	font-family: Verdana, Tahoma, sans-serif;
+	vertical-align: middle;
+	text-align: center;
+}
+
+TD.priB {
+	background-color: #1A4876;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+TD.secB {
+	background-color: #C01933;
+	color: #FFFFFF;
+	font-weight: bold;
+}
+
+TD.def {
+	background-color: #F8F8F8;
+	color: #000000;
+}
+
+/* Table row classes for view legends */
+TABLE.view *.opt1 {
+	background-color: #EFEFBF;
+}
+
+TABLE.view *.opt2 {
+	background-color: #A0FFD8;
+}
+
+TABLE.view *.opt3 {
+	background-color: #B0E0FF;
+}
+
+TABLE.view *.warn {
+	background-color: #FFEFC0;
+}
+
+TABLE.view *.err {
+	background-color: #FFC0C0;
+}
+
+*.title :link, *.title :visited, *.title A {
+	font-size: 9pt;	
+	font-family: Verdana, Tahoma, sans-serif;
+	font-weight: bold;
+	text-decoration: underline;
+	color: #FFFFFF;
+}
+
+TABLE.view TR :link, TABLE.view TR :visited {
+	color: inherit;
+	text-decoration: none;
+}
