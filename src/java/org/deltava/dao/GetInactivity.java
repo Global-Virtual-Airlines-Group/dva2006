@@ -111,7 +111,7 @@ public class GetInactivity extends PilotReadDAO {
 		try {
 			prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
 					+ "MAX(F.DATE) FROM PILOTS P LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) WHERE "
-					+ "(P.STATUS=?) AND (DATE_ADD(P.LAST_LOGIN, INTERVAL ? DAY) < CURDATE()) GROUP BY P.ID");
+					+ "(P.STATUS=?) AND (DATE_ADD(IFNULL(P.LAST_LOGIN, P.CREATED), INTERVAL ? DAY) < CURDATE()) GROUP BY P.ID");
 			_ps.setInt(1, FlightReport.OK);
 			_ps.setInt(2, Pilot.ACTIVE);
 			_ps.setInt(3, days);
