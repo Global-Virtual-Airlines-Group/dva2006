@@ -109,12 +109,6 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 		</attribute>
-		<attribute>
-			<name>geodesic</name>
-			<required>false</required>
-			<rtexprvalue>false</rtexprvalue>
-			<type>java.lang.Boolean</type>
-		</attribute>
 	</tag>
 
 	<!-- MarkerArray Tag, to generate a JavaScript array of GMarkers -->
@@ -207,6 +201,12 @@
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
 			<type>java.lang.Double</type>
+		</attribute>
+		<attribute>
+			<name>geodesic</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+			<type>java.lang.Boolean</type>
 		</attribute>
 	</tag>
 
