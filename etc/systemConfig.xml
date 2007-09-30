@@ -58,8 +58,10 @@
 		</resources>
 
 		<!-- Copyright disclaimer -->
-		<copyright>In no way are we affiliated with Delta Air Lines or its affiliates. All images, logos and trademarks remain property of their respective owners.</copyright>
-		
+		<copyright>For flight simulation purposes only. Not a commercial website. In no way are we affiliated with Air France, its affiliates, or any
+ other airline.  All logos, images, and trademarks remain the property of their respective owners.  Air France Virtual is a non-profit entity engaged
+ in providing an avenue for flight simulation enthusiasts.</copyright>
+ 
 		<!-- Home Page Meta Tags -->
 		<meta>
 			<desc>Delta Virtual Airlines is a virtual airline based on Delta Air Lines.</desc>
