@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pirep;
 
 import java.util.*;
@@ -18,7 +18,7 @@ import org.deltava.dao.*;
 
 public class PIREPQueueCommand extends AbstractViewCommand {
 	
-	private static final Integer PENDING[] = { new Integer(FlightReport.SUBMITTED), new Integer(FlightReport.HOLD) };
+	private static final Integer PENDING[] = { Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD) };
 
     /**
      * Executes the command.
@@ -45,7 +45,21 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			// Get the PIREPs and load the promotion type
 			Collection<FlightReport> pireps = dao.getByStatus(Arrays.asList(PENDING));
 			dao.getCaptEQType(pireps);
+			
+			// Split into my held PIREPs
+			int id = ctx.getUser().getID();
+			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
+			for (Iterator<FlightReport> i = pireps.iterator(); i.hasNext(); ) {
+				FlightReport fr = i.next();
+				if ((fr.getStatus() == FlightReport.HOLD) && (fr.getDatabaseID(FlightReport.DBID_DISPOSAL) == id)) {
+					myHeld.add(fr);
+					i.remove();
+				}
+			}
+			
+			// Save in request
 			vc.setResults(pireps);
+			ctx.setAttribute("myHeld", myHeld, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
