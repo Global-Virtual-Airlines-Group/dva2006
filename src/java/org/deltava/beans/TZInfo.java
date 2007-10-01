@@ -11,7 +11,7 @@ import java.text.*;
  * @since 1.0
  */
 
-public class TZInfo implements ComboAlias, Comparable<TZInfo>, ViewEntry {
+public class TZInfo implements java.io.Serializable, ComboAlias, Comparable<TZInfo>, ViewEntry {
 
 	/**
 	 * Time Zone for GMT/UTC.
