@@ -1,0 +1,41 @@
+/* Cascading Style Sheet for Calendar pages */
+
+TABLE.calendar {
+	table-layout: auto;
+	border-collapse: separate;
+	border-spacing: 3px 3px;
+	border-width: 4px 4px 4px 4px;
+	padding: 6px 6px 6px 6px;
+	width: 100%;
+}
+
+TABLE.calendar TR {
+	background-color: #EFEFEF;
+}
+
+TABLE.calendar TD.dayHdr, TABLE.calendar TR.scroll {
+	font-size: 9pt;
+	background-color: #003366;
+	color: #ffffff;
+	font-weight: bold;
+}
+
+TABLE.calendar TD.contentW {
+	height: 300px;
+	width: 14%;
+	vertical-align: top;
+}
+
+TABLE.calendar TD.contentM {
+	height: 160px;
+	width: 14%;
+	vertical-align: top;
+}
+
+*.dayHdr :link, *.dayHdr :visited, *.scroll :link, *.scroll :visited {
+	color: #EFFFFF;
+	font-weight: bold;
+	text-decoration: underline;
+	text-transform: uppercase;
+	font-family: Tahoma, Verdana;
+}
