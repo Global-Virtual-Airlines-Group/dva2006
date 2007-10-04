@@ -92,7 +92,7 @@ public class GetACARSLog extends GetACARSData  implements CachingDAO {
 
 		// Build the SQL statement
 		StringBuilder buf = new StringBuilder("SELECT C.ID, C.PILOT_ID, C.DATE, INET_NTOA(C.REMOTE_ADDR), "
-				+ "C.REMOTE_HOST, C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(P.CON_ID) FROM acars.CONS C "
+				+ "C.REMOTE_HOST, C.CLIENT_BUILD, COUNT(DISTINCT F.ID), COUNT(P.FLIGHT_ID) FROM acars.CONS C "
 				+ "LEFT JOIN acars.FLIGHTS F ON (C.ID=F.CON_ID) LEFT JOIN acars.POSITIONS P ON (F.ID=P.FLIGHT_ID)");
 
 		// Add the terms
