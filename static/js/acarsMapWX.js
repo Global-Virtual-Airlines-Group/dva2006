@@ -15,14 +15,15 @@ for (var x = 0; x < sdata.seriesNames.length; x++)
 return true;
 }
 
-function getTileOverlay(name)
+function getTileOverlay(name, opacity)
 {
 var cpc = new GCopyrightCollection("Weather Imagery");
 var cp = new GCopyright(111, new GLatLngBounds(new GLatLng(-90, -180), new GLatLng(90, 180)), 0, "The Weather Channel")
 cpc.addCopyright(cp);
 
 var newLayer = new GTileLayer(cpc, 1, document.maxZoom[name]);
-newLayer.getOpacity = function() { return 0.55; }
+newLayer.tx = opacity;
+newLayer.getOpacity = function() { return this.tx; }
 newLayer.isPng = function() { return true; }
 newLayer.myBaseURL = 'http://' + document.tileHost + '/TileServer/imgs/' + name + '/u' + document.seriesDate[name] + '/';
 newLayer.getTileUrl = function(pnt, zoom) {

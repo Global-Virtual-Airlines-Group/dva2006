@@ -162,10 +162,10 @@ map.addMapType(rsat);
 <c:if test="${!empty tileHost}">
 // Build the layer controls
 var xPos = 70;
-var rC = new WXOverlayControl(getTileOverlay("radar"), "Radar", new GSize(70, 7));
-var srC = new WXOverlayControl(getTileOverlay("satrad"), "Sat/Rad", new GSize((xPos += 72), 7));
-var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize((xPos += 72), 7));
-var tC = new WXOverlayControl(getTileOverlay("temp"), "Temparture", new GSize((xPos += 72), 7));
+var rC = new WXOverlayControl(getTileOverlay("radar", 0.5), "Radar", new GSize(70, 7));
+var srC = new WXOverlayControl(getTileOverlay("satrad", 0.4), "Sat/Rad", new GSize((xPos += 72), 7));
+var sC = new WXOverlayControl(getTileOverlay("sat", 0.4), "Infrared", new GSize((xPos += 72), 7));
+var tC = new WXOverlayControl(getTileOverlay("temp", 0.3), "Temparture", new GSize((xPos += 72), 7));
 map.addControl(rC);
 map.addControl(srC);
 map.addControl(sC);
