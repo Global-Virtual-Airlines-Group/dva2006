@@ -92,7 +92,7 @@ public class SuspendUserCommand extends AbstractCommand {
 		
 		// Block the user
 		UserPool.block(usr);
-		log.warn(ctx.getUser() + " suspended user " + usr.getName());
+		log.warn(ctx.getUser().getName() + " suspended user " + usr.getName());
 		
 		// Notify other web applications
 		EventDispatcher.send(SystemEvent.USER_SUSPEND);
