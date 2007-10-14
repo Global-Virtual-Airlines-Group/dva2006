@@ -46,6 +46,9 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			Collection<FlightReport> pireps = dao.getByStatus(Arrays.asList(PENDING));
 			dao.getCaptEQType(pireps);
 			
+			// Check if we display the scroll bar
+			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() == vc.getCount()), REQUEST);
+			
 			// Split into my held PIREPs
 			int id = ctx.getUser().getID();
 			Collection<FlightReport> myHeld = new ArrayList<FlightReport>();
