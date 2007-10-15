@@ -79,6 +79,7 @@ public class FindFlightCommand extends AbstractCommand {
 		criteria.setAirportD(SystemData.getAirport(ctx.getParameter("airportD")));
 		criteria.setAirportA(SystemData.getAirport(ctx.getParameter("airportA")));
 		criteria.setDistance(StringUtils.parse(ctx.getParameter("distance"), 0));
+		criteria.setDistanceRange(StringUtils.parse(ctx.getParameter("distRange"), 150));
 		criteria.setMaxResults(StringUtils.parse(ctx.getParameter("maxResults"), 0));
 		criteria.setHourA(StringUtils.parse(ctx.getParameter("hourA"), -1));
 		criteria.setHourD(StringUtils.parse(ctx.getParameter("hourD"), -1));

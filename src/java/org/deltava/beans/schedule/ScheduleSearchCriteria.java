@@ -28,6 +28,7 @@ public class ScheduleSearchCriteria extends Flight {
 					"16", "17", "18", "19", "20", "21", "22", "23" });
 
 	private int _distance;
+	private int _distanceRange = 150;
 	private int _length;
 	private int _maxResults;
 	private boolean _includeAcademy;
@@ -65,6 +66,10 @@ public class ScheduleSearchCriteria extends Flight {
 
 	public final int getDistance() {
 		return _distance;
+	}
+	
+	public final int getDistanceRange() {
+		return _distanceRange;
 	}
 	
 	public boolean getIncludeAcademy() {
@@ -139,8 +144,11 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param distance the distance in miles
 	 */
 	public void setDistance(int distance) {
-		if (distance > 0)
-			_distance = distance;
+		_distance = Math.max(1, distance);
+	}
+	
+	public void setDistanceRange(int range) {
+		_distanceRange = Math.max(1, range);
 	}
 
 	/**
