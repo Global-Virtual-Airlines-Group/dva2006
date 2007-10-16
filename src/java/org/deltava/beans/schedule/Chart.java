@@ -1,10 +1,9 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.*;
 
 import org.deltava.util.StringUtils;
-import org.deltava.util.cache.Cacheable;
 
 /**
  * A class for storing approach/procedure chart data.
@@ -13,14 +12,14 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Chart extends DatabaseBlobBean implements ComboAlias, Cacheable {
+public class Chart extends DatabaseBlobBean implements ComboAlias {
 
-	public static final int TYPE_UNKNOWN = 0;
-	public static final int TYPE_ILS = 1;
-	public static final int TYPE_APR = 2;
-	public static final int TYPE_STAR = 3;
-	public static final int TYPE_SID = 4;
-	public static final int TYPE_GROUND = 5;
+	public static final int UNKNOWN = 0;
+	public static final int ILS = 1;
+	public static final int APR = 2;
+	public static final int STAR = 3;
+	public static final int SID = 4;
+	public static final int GROUND = 5;
 
 	/**
 	 * Chart type descriptions.
@@ -33,10 +32,10 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, Cacheable {
 	public static final String[] TYPENAMES = { "Unknown", "ILS Approach", "Approach", "Standard Terminal Arrival",
 			"Standard Instrument Departure", "Facility" };
 
-	public static final int IMG_GIF = 0;
-	public static final int IMG_JPEG = 1;
-	public static final int IMG_PNG = 2;
-	public static final int IMG_PDF = 3;
+	public static final int GIF = 0;
+	public static final int JPEG = 1;
+	public static final int PNG = 2;
+	public static final int PDF = 3;
 
 	/**
 	 * Image type codes.
@@ -228,12 +227,8 @@ public class Chart extends DatabaseBlobBean implements ComboAlias, Cacheable {
 	public String getComboAlias() {
 		return StringUtils.formatHex(getID());
 	}
-
-	/**
-	 * Returns the Chart's cache key.
-	 * @return the Database ID as an Integer object
-	 */
-	public Object cacheKey() {
-		return new Integer(getID());
+	
+	public String toString() {
+		return getName();
 	}
 }

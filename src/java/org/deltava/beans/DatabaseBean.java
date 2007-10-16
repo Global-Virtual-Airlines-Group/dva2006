@@ -75,7 +75,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
      */
     public int compareTo(Object o) {
     	DatabaseBean db2 = (DatabaseBean) o;
-    	return new Integer(_id).compareTo(new Integer(db2._id));
+    	return Integer.valueOf(_id).compareTo(Integer.valueOf(db2._id));
     }
     
     /**
@@ -83,7 +83,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
      * @return the cache key
      */
     public Object cacheKey() {
-        return new Integer(getID());
+        return Integer.valueOf(getID());
     }
     
     /**

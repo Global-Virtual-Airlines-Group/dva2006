@@ -36,8 +36,8 @@ public class TestChart extends AbstractBeanTestCase {
         assertEquals(Chart.TYPENAMES[5], _c.getTypeName());
         checkProperty("imgType", new Integer(1));
         assertEquals(Chart.IMG_TYPE[1].toUpperCase(), _c.getImgTypeName());
-        _c.setType(Chart.TYPES[Chart.TYPE_GROUND]);
-        assertEquals(Chart.TYPE_GROUND, _c.getType());
+        _c.setType(Chart.TYPES[Chart.GROUND]);
+        assertEquals(Chart.GROUND, _c.getType());
         
         InputStream imgS = _c.getInputStream();
         assertNotNull(imgS);
