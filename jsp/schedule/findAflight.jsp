@@ -99,8 +99,8 @@ return true;
  <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" />
  <el:text name="flightLeg" idx="*" size="1" max="1" value="${fafCriteria.leg == 0 ? '' : fafCriteria.leg}" /></td>
  <td class="label">Distance</td>
- <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance == 0 ? '' : fafCriteria.distance}" />
- +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance == 0 ? '' : fafCriteria.distanceRange}" /> miles</td>
+ <td class="data"><el:text name="distance" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distance}" />
+ +/- <el:text name="distRange" idx="*" size="4" max="4" value="${fafCriteria.distance < 1 ? '' : fafCriteria.distanceRange}" /> miles</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
@@ -122,6 +122,10 @@ return true;
  <el:box name="sortDesc" idx="*" value="true" checked="${param.sortDesc}" label="Descending" /></td>
  <td class="label">Maximum Results</td>
  <td class="data"><el:text name="maxResults" idx="*" size="2" max="3" value="${empty fafCriteria ? 20 : fafCriteria.maxResults}" /></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data" colspan="3"><el:box name="includeHistoric" idx="*" value="true" checked="${fafCriteria.includeHistoric}" label="Include Historic Flights" /></td>
 </tr>
 <tr class="title mid">
  <td colspan="4"><el:button ID="SearchButton" type="submit" className="BUTTON" label="SEARCH FLIGHT SCHEDULE" /></td>

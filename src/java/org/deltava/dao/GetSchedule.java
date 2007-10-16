@@ -74,8 +74,8 @@ public class GetSchedule extends DAO {
 		if (criteria.getDistance() != 0) {
 			conditions.add("DISTANCE >= ?");
 			conditions.add("DISTANCE <= ?");
-			params.add(String.valueOf(criteria.getDistance() - 150));
-			params.add(String.valueOf(criteria.getDistance() + 150));
+			params.add(String.valueOf(criteria.getDistance() - criteria.getDistanceRange()));
+			params.add(String.valueOf(criteria.getDistance() + criteria.getDistanceRange()));
 		}
 
 		// Set flight time criteria +/- 1 hour
@@ -101,8 +101,15 @@ public class GetSchedule extends DAO {
 			params.add(StringUtils.format(criteria.getHourA() + 1, "00") + ":00\'");
 		}
 		
+		// Check whether to include Flight Academy flights
 		if (!criteria.getIncludeAcademy()) {
 			conditions.add("ACADEMY=?");
+			params.add("0");
+		}
+		
+		// Check whether to include historic flights
+		if (!criteria.getIncludeHistoric()) {
+			conditions.add("HISTORIC=?");
 			params.add("0");
 		}
 
