@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -26,22 +26,18 @@ public class SetChart extends DAO {
 	}
 
 	/**
-	 * Adds an Approach Chart to the database.
-	 * @param c the Approach Chart
+	 * Adds or updates an Approach Chart to the database.
+	 * @param c the Chart bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Chart c) throws DAOException {
-
-		// Make sure this is a new chart
-		if (c.getID() != 0)
-			throw new DAOException("Chart already exists");
-
 		try {
 			// Calculate the MD5 hash
 			MessageDigester md = new MessageDigester("MD5");
 			byte[] md5data = md.digest(c.getInputStream());
 
-			prepareStatement("INSERT INTO common.CHARTS (IATA, TYPE, IMGFORMAT, NAME, SIZE, IMG, HASH) VALUES (?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("REPLACE INTO common.CHARTS (IATA, TYPE, IMGFORMAT, NAME, SIZE, IMG, HASH, ID) VALUES " +
+					"(?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getAirport().getIATA());
 			_ps.setInt(2, c.getType());
 			_ps.setInt(3, c.getImgType());
@@ -49,12 +45,12 @@ public class SetChart extends DAO {
 			_ps.setInt(5, c.getSize());
 			_ps.setBinaryStream(6, c.getInputStream(), c.getSize());
 			_ps.setString(7, MessageDigester.convert(md5data));
-
-			// Update the database
+			_ps.setInt(8, c.getID());
 			executeUpdate(1);
 
 			// Get the database ID
-			c.setID(getNewID());
+			if (c.getID() == 0)
+				c.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		} catch (IOException ie) {
@@ -89,7 +85,7 @@ public class SetChart extends DAO {
 	 */
 	public void delete(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM common.CHARTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("DELETE FROM common.CHARTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
