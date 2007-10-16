@@ -32,6 +32,7 @@ public class ScheduleSearchCriteria extends Flight {
 	private int _length;
 	private int _maxResults;
 	private boolean _includeAcademy;
+	private boolean _includeHistoric;
 
 	private int _hourD = -1;
 	private int _hourA = -1;
@@ -74,6 +75,10 @@ public class ScheduleSearchCriteria extends Flight {
 	
 	public boolean getIncludeAcademy() {
 		return _includeAcademy;
+	}
+	
+	public boolean getIncludeHistoric() {
+		return _includeHistoric;
 	}
 
 	public Date getTimeD() {
@@ -144,11 +149,11 @@ public class ScheduleSearchCriteria extends Flight {
 	 * @param distance the distance in miles
 	 */
 	public void setDistance(int distance) {
-		_distance = Math.max(1, distance);
+		_distance = Math.max(0, distance);
 	}
 	
 	public void setDistanceRange(int range) {
-		_distanceRange = Math.max(1, range);
+		_distanceRange = Math.max(0, range);
 	}
 
 	/**
@@ -208,5 +213,13 @@ public class ScheduleSearchCriteria extends Flight {
 	 */
 	public void setIncludeAcademy(boolean doInclude) {
 		_includeAcademy = doInclude;
+	}
+	
+	/**
+	 * Includes Historic flights in the search.
+	 * @param doInclude TRUE if Historic flights should be included, otherwise FALSE
+	 */
+	public void setIncludeHistoric(boolean doInclude) {
+		_includeHistoric = doInclude;
 	}
 }
