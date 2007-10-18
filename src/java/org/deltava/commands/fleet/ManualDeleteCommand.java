@@ -36,7 +36,7 @@ public class ManualDeleteCommand extends AbstractCommand {
 
 			// Get the DAO and the library entry
 			GetDocuments dao = new GetDocuments(con);
-			Manual m = dao.getManual(fName, SystemData.get("airline.db"), false);
+			Manual m = dao.getManual(fName, SystemData.get("airline.db"));
 			if (m == null)
 				throw notFoundException("Invalid file name - " + fName);
 

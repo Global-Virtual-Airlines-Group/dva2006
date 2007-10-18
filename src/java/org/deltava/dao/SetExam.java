@@ -6,8 +6,6 @@ import java.util.*;
 
 import org.deltava.beans.testing.*;
 
-import org.deltava.util.system.SystemData;
-
 /**
  * A Data Access Object to write Pilot Examinations and Check Rides to the database.
  * @author Luke
@@ -32,13 +30,12 @@ public class SetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Examination ex) throws DAOException {
-
 		try {
 			startTransaction();
 
 			// Prepare the statement for the examination
-			prepareStatement("INSERT INTO EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, GRADED_ON, "
-					+ "GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
+					+ "GRADED_ON, GRADED_BY, AUTOSCORE, EXPIRY_TIME) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ex.getName());
 			_ps.setInt(2, ex.getPilotID());
 			_ps.setInt(3, ex.getStatus());
@@ -49,15 +46,13 @@ public class SetExam extends DAO {
 			_ps.setBoolean(8, ex.getAutoScored());
 			_ps.setTimestamp(9, createTimestamp(ex.getExpiryDate()));
 
-			// Write the exam
+			// Write the exam and get the new exam ID
 			executeUpdate(1);
-
-			// Get the new exam ID
 			ex.setID(getNewID());
 
 			// Prepare the statement for questions
-			prepareStatement("INSERT INTO EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, QUESTION, "
-					+ "CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, "
+					+ "QUESTION, CORRECT_ANSWER) VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, ex.getID());
 			
 			// Batch the questions
@@ -76,7 +71,7 @@ public class SetExam extends DAO {
 			
 			// Write multiple-choice questions
 			if (ex.hasMultipleChoice()) {
-				prepareStatement("INSERT INTO EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
 				_ps.setInt(1, ex.getID());
 				for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext(); ) {
 					Question q = i.next();
@@ -112,13 +107,12 @@ public class SetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Examination ex) throws DAOException {
-
 		try {
 			startTransaction();
 
 			// Prepare the statement for the examination
-			prepareStatement("UPDATE EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, PASS=?, "
-					+ "COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
+			prepareStatement("UPDATE exams.EXAMS SET STATUS=?, SUBMITTED_ON=?, GRADED_ON=?, GRADED_BY=?, "
+					+ "PASS=?, COMMENTS=?, ISEMPTY=?, AUTOSCORE=? WHERE (ID=?)");
 			_ps.setInt(1, ex.getStatus());
 			_ps.setTimestamp(2, createTimestamp(ex.getSubmittedOn()));
 			_ps.setTimestamp(3, createTimestamp(ex.getScoredOn()));
@@ -133,12 +127,12 @@ public class SetExam extends DAO {
 			executeUpdate(1);
 
 			// Prepare the statement for questions
-			prepareStatement("UPDATE EXAMQUESTIONS SET ANSWER=?, CORRECT=? WHERE (EXAM_ID=?) AND (QUESTION_ID=?)");
+			prepareStatement("UPDATE exams.EXAMQUESTIONS SET ANSWER=?, CORRECT=? WHERE (EXAM_ID=?) AND (QUESTION_ID=?)");
 			_ps.setInt(3, ex.getID());
 
 			// Batch the questions
-			for (Iterator i = ex.getQuestions().iterator(); i.hasNext();) {
-				Question q = (Question) i.next();
+			for (Iterator<Question> i = ex.getQuestions().iterator(); i.hasNext();) {
+				Question q = i.next();
 				_ps.setString(1, q.getAnswer());
 				_ps.setBoolean(2, q.isCorrect());
 				_ps.setInt(4, q.getID());
@@ -158,31 +152,18 @@ public class SetExam extends DAO {
 	}
 
 	/**
-	 * Writes a Check Ride to <i>the current database</i>. This can handle inserts and updates.
+	 * Writes a Check Ride to the database. This can handle inserts and updates.
 	 * @param cr the Check Ride object
 	 * @throws DAOException if a JDBC error occurs
-	 * @see SetExam#write(String, CheckRide)
 	 */
 	public void write(CheckRide cr) throws DAOException {
-		write(SystemData.get("airline.db"), cr);
-	}
-
-	/**
-	 * Writes a Check Ride to a database. This can handle inserts and updates.
-	 * @param dbName the database name
-	 * @param cr the Check Ride object
-	 * @throws DAOException if a JDBC error occurs
-	 * @see SetExam#write(CheckRide)
-	 */
-	public void write(String dbName, CheckRide cr) throws DAOException {
 		try {
 			startTransaction();
 			
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO " + formatDBName(dbName) + ".CHECKRIDES (NAME, PILOT_ID, ACARS_ID, "
-						+ "STATUS, EQTYPE, ACTYPE, GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES "
-						+ "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, ACARS_ID, STATUS, EQTYPE, ACTYPE, "
+						+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getPilotID());
 				_ps.setInt(3, cr.getFlightID());
@@ -196,8 +177,8 @@ public class SetExam extends DAO {
 				_ps.setBoolean(11, cr.getPassFail());
 				_ps.setBoolean(12, cr.getAcademy());
 			} else {
-				prepareStatement("UPDATE " + formatDBName(dbName) + ".CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, "
-						+ "ACARS_ID=?, GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
+				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, ACARS_ID=?, "
+						+ "GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
 				_ps.setInt(1, cr.getStatus());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
 				_ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));
@@ -235,9 +216,9 @@ public class SetExam extends DAO {
 	public void linkCheckRide(CheckRide cr) throws DAOException {
 		try {
 			if (cr.getCourseID() == 0)
-				prepareStatement("DELETE FROM COURSERIDES WHERE (CHECKRIDE=?)");
+				prepareStatement("DELETE FROM exams.COURSERIDES WHERE (CHECKRIDE=?)");
 			else {
-				prepareStatement("REPLACE INTO COURSERIDES (CHECKRIDE, COURSE) VALUES (?, ?)");
+				prepareStatement("REPLACE INTO exams.COURSERIDES (CHECKRIDE, COURSE) VALUES (?, ?)");
 				_ps.setInt(2, cr.getCourseID());
 			}
 			
@@ -257,7 +238,7 @@ public class SetExam extends DAO {
 	 */
 	public void answer(int examID, Question q) throws DAOException {
 		try {
-			prepareStatement("UPDATE EXAMQUESTIONS SET ANSWER=? WHERE (EXAM_ID=?) AND (QUESTION_NO=?)");
+			prepareStatement("UPDATE exams.EXAMQUESTIONS SET ANSWER=? WHERE (EXAM_ID=?) AND (QUESTION_NO=?)");
 			_ps.setString(1, q.getAnswer());
 			_ps.setInt(2, examID);
 			_ps.setInt(3, q.getNumber());
@@ -274,11 +255,10 @@ public class SetExam extends DAO {
 	 */
 	public void delete(Test t) throws DAOException {
 		try {
-			if (t instanceof Examination) {
-				prepareStatement("DELETE FROM EXAMS WHERE (ID=?)");
-			} else if (t instanceof CheckRide) {
-				prepareStatement("DELETE FROM CHECKRIDES WHERE (ID=?)");
-			}
+			if (t instanceof Examination)
+				prepareStatement("DELETE FROM exams.EXAMS WHERE (ID=?)");
+			else if (t instanceof CheckRide)
+				prepareStatement("DELETE FROM exams.CHECKRIDES WHERE (ID=?)");
 
 			// Set the ID and update the database
 			_ps.setInt(1, t.getID());

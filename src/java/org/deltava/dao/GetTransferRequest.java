@@ -32,15 +32,49 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest get(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
-					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=?)");
+			prepareStatementWithoutLimits("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
+					+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns whether the Pilot has a pending transfer request at any airline.
+	 * @param pilotID the Pilot ID
+	 * @return TRUE if the pilot has a transfer request, otherwise FALSE
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public boolean hasTransfer(int pilotID) throws DAOException {
+		try {
+			Collection<String> dbNames = new LinkedHashSet<String>();
+			prepareStatementWithoutLimits("SELECT DISTINCT DBNAME FROM common.AIRLINEINFO");
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				dbNames.add(rs.getString(1));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// Iterate through the databases to find out if they have a checkride
+			boolean hasTX = false;
+			for (Iterator<String> i = dbNames.iterator(); !hasTX && i.hasNext(); ) {
+				String db = formatDBName(i.next());
+				prepareStatementWithoutLimits("SELECT COUNT(*) FROM " + db + ".TXREQUESTS WHERE (ID=?)");
+				_ps.setInt(1, pilotID);
+				rs = _ps.executeQuery();
+				hasTX = rs.next() ? (rs.getInt(1) > 0) : false;
+				rs.close();
+				_ps.close();
+			}
+			
+			return hasTX;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -85,14 +119,12 @@ public class GetTransferRequest extends DAO {
 	 */
 	public TransferRequest getByCheckRide(int checkRideID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
-					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CHECKRIDE_ID=?)");
+			prepareStatementWithoutLimits("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
+					+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CHECKRIDE_ID=?) LIMIT 1");
 			_ps.setInt(1, checkRideID);
 
 			// Execute the query, if empty return null
 			List<TransferRequest> results = execute();
-			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -129,8 +161,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getAll(String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM (TXREQUESTS TX, "
-				+ "PILOTS P) LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
+				+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
@@ -151,8 +183,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getByEQ(String eqType, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS, P.LASTNAME FROM (TXREQUESTS TX, PILOTS P) "
-			+ "LEFT JOIN CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) AND (TX.EQTYPE=?) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
+				+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.EQTYPE=?) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
@@ -168,12 +200,8 @@ public class GetTransferRequest extends DAO {
 	 * Helper method to iterate through the result set.
 	 */
 	private List<TransferRequest> execute() throws SQLException {
-
-		// Execute the query
-		ResultSet rs = _ps.executeQuery();
-
-		// Iterate through the result set
 		List<TransferRequest> results = new ArrayList<TransferRequest>();
+		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			TransferRequest txreq = new TransferRequest(rs.getInt(1), rs.getString(4));
 			txreq.setStatus(rs.getInt(2));
@@ -181,8 +209,6 @@ public class GetTransferRequest extends DAO {
 			txreq.setDate(rs.getTimestamp(5));
 			txreq.setRatingOnly(rs.getBoolean(6));
 			txreq.setCheckRideSubmitted((rs.getInt(7) == Test.SUBMITTED));
-
-			// Add to results
 			results.add(txreq);
 		}
 

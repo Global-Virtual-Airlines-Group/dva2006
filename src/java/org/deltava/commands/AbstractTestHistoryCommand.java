@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
@@ -48,18 +48,20 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 		TestingHistoryHelper helper = new TestingHistoryHelper((Pilot) p, eq, exdao.getExams(p.getID()), pireps);
 		helper.setEquipmentTypes(eqdao.getAll());
 
-		// Create a dummy FO exam for the hired in program
+		// Create a dummy FO exam(s) for the hired in program
 		if (ieq != null) {
-			String foExam = ieq.getExamName(Ranks.RANK_FO);
-			if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(foExam)) {
-				Examination ex = new Examination(ieq.getExamName(Ranks.RANK_FO));
-				ex.setSize(1);
-				ex.setScore(1);
-				ex.setPassFail(true);
-				ex.setStatus(Test.SCORED);
-				ex.setDate(p.getCreatedOn());
-				ex.setScoredOn(p.getCreatedOn());
-				helper.addExam(ex);
+			for (Iterator<String> i = ieq.getExamNames(Ranks.RANK_FO).iterator(); i.hasNext(); ) {
+				String foExam = i.next();
+				if (!StringUtils.isEmpty(foExam) && !helper.hasPassed(Collections.singleton(foExam))) {
+					Examination ex = new Examination(foExam);
+					ex.setSize(1);
+					ex.setScore(1);
+					ex.setPassFail(true);
+					ex.setStatus(Test.SCORED);
+					ex.setDate(p.getCreatedOn());
+					ex.setScoredOn(p.getCreatedOn());
+					helper.addExam(ex);
+				}
 			}
 		}
 		

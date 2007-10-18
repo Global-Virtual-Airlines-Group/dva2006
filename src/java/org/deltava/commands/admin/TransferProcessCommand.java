@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import org.deltava.security.command.TransferAccessControl;
  * @since 1.0
  */
 
-public class TransferProcessCommand extends AbstractTestHistoryCommand {
+public class TransferProcessCommand extends AbstractCommand {
 
 	/**
 	 * Executes the command.
@@ -48,29 +48,32 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			access.validate();
 
 			// Get the pilot
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			Pilot usr = pdao.get(txreq.getID());
+			UserData ud = uddao.get(txreq.getID());
+			Pilot usr = pdao.get(ud);
 			ctx.setAttribute("pilot", usr, REQUEST);
-
-			// Init the testing history
-			TestingHistoryHelper testHistory = initTestHistory(usr, con);
+			
+			// If the checkride has been submitted, get the flight report
+			if ((cr != null) && (cr.getFlightID() != 0)) {
+				GetFlightReports frdao = new GetFlightReports(con);
+				ctx.setAttribute("pirep", frdao.getACARS(ud.getDB(), cr.getFlightID()), REQUEST);
+			}
 
 			// Get the requested equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
 			EquipmentType newEQ = eqdao.get(txreq.getEquipmentType());
-			EquipmentType currEQ = eqdao.get(usr.getEquipmentType());
+			EquipmentType currEQ = eqdao.get(usr.getEquipmentType(), ud.getDB());
 			ctx.setAttribute("currentEQ", currEQ, REQUEST);
 			ctx.setAttribute("eqType", newEQ, REQUEST);
-			if (txreq.getRatingOnly()) {
-				Collection<EquipmentType> eqTypes = new HashSet<EquipmentType>();
-				eqTypes.add(currEQ);
-				ctx.setAttribute("activeEQ", eqTypes, REQUEST);
-			} else {
+			if (txreq.getRatingOnly())
+				ctx.setAttribute("activeEQ", Collections.singleton(currEQ), REQUEST);
+			else
 				ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
-			}
-
+			
 			// Check if the user has passed the Captain's examination
-			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamName(Ranks.RANK_C));
+			TestingHistoryHelper testHistory = new TestingHistoryHelper(usr, currEQ, exdao.getExams(usr.getID()), null);
+			boolean hasCaptExam = testHistory.hasPassed(newEQ.getExamNames(Ranks.RANK_C));
 
 			// Check how many legs the user has completed
 			GetFlightReportRecognition prdao = new GetFlightReportRecognition(con);
@@ -83,7 +86,7 @@ public class TransferProcessCommand extends AbstractTestHistoryCommand {
 			ctx.setAttribute("captOK", Boolean.valueOf(hasCaptExam && hasLegs), REQUEST);
 
 			// Determine new equipment ratings if approved
-			Set<String> newRatings = new TreeSet<String>(usr.getRatings());
+			Collection<String> newRatings = new TreeSet<String>(usr.getRatings());
 			newRatings.addAll(newEQ.getPrimaryRatings());
 			newRatings.addAll(newEQ.getSecondaryRatings());
 			ctx.setAttribute("newRatings", newRatings, REQUEST);

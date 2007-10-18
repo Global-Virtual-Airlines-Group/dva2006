@@ -153,11 +153,25 @@ public class HomeCommand extends AbstractCommand {
 				case PROMOTIONS:
 					GetStatusUpdate sudao = new GetStatusUpdate(con);
 					sudao.setQueryMax(5);
-					if (contentType.intValue() == CENTURY_CLUB)
-						ctx.setAttribute("centuryClub", sudao.getByType(StatusUpdate.RECOGNITION), REQUEST);
-					else
+					Collection<StatusUpdate> upds = null;
+					if (contentType.intValue() == CENTURY_CLUB) {
+						upds = sudao.getByType(StatusUpdate.RECOGNITION);
+						ctx.setAttribute("centuryClub", upds, REQUEST);
+					} else {
+						upds = sudao.getByType(StatusUpdate.RECOGNITION);
 						ctx.setAttribute("promotions", sudao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
-
+					}
+					
+					// Get pilot IDs
+					Collection<Integer> IDs = new HashSet<Integer>();
+					for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
+						StatusUpdate upd = i.next();
+						IDs.add(new Integer(upd.getID()));
+					}
+					
+					// Load pilots
+					GetPilot pdao = new GetPilot(con);
+					ctx.setAttribute("updPilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
 					break;
 			}
 			

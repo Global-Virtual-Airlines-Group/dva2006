@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.stats;
 
 import java.util.Date;
@@ -11,7 +11,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class MembershipTotals extends DatabaseBean implements Comparable {
+public class MembershipTotals extends DatabaseBean {
 
 	private Date _dt;
 	private int _count;

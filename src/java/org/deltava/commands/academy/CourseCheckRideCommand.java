@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -104,6 +104,7 @@ public class CourseCheckRideCommand extends AbstractCommand {
 			
 			// Create a new Check Ride bean
 			CheckRide cr = new CheckRide(c.getName());
+			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new Date());
 			cr.setAcademy(true);
 			cr.setPilotID(p.getID());

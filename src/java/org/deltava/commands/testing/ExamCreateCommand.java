@@ -85,6 +85,7 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 
 			// Create the examination
 			ex = new Examination(examName);
+			ex.setOwner(ep.getOwner());
 			ex.setPilotID(ctx.getUser().getID());
 			ex.setStage(ep.getStage());
 			ex.setStatus(Test.NEW);
@@ -110,11 +111,10 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			for (Iterator<QuestionProfile> i = qPool.iterator(); i.hasNext();) {
 				QuestionProfile qp = i.next();
 				Question q = null;
-				if (qp instanceof MultipleChoice) {
+				if (qp instanceof MultipleChoice)
 					q = new MultiChoiceQuestion((MultiChoiceQuestionProfile) qp);
-				} else {
+				else
 					q = new Question(qp);
-				}
 				
 				q.setNumber(++qNum);
 				ex.addQuestion(q);

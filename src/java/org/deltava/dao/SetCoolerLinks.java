@@ -52,6 +52,25 @@ public class SetCoolerLinks extends DAO {
 	}
 	
 	/**
+	 * Adds a Linked Image to an existing discussion thread.
+	 * @param threadID the MessageThread database ID
+	 * @param img the LinkedImage bean
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void add(int threadID, LinkedImage img) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
+			_ps.setInt(1, threadID);
+			_ps.setInt(2, img.getID());
+			_ps.setString(3, img.getURL());
+			_ps.setString(4, img.getDescription());
+			executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Deletes an image URL associated with a particular Message Thread.
 	 * @param id the Message Thread database ID 
 	 * @param url the Image URL to delete

@@ -27,7 +27,7 @@ import org.deltava.util.system.SystemData;
 public class AirlineTotalsCommand extends AbstractCommand {
 
 	private ExpiringCache<AirlineTotals> _cache;
-    private Set<TableInfo> _tableStatus = new TreeSet<TableInfo>();
+    private final Collection<TableInfo> _tableStatus = new TreeSet<TableInfo>();
     
     /**
      * Initializes the command.
@@ -63,6 +63,8 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     // Get the Table Status for our database and common
                     GetTableStatus dao2 = new GetTableStatus(con);
                     _tableStatus.addAll(dao2.getStatus("common"));
+                    _tableStatus.addAll(dao2.getStatus("exams"));
+                    _tableStatus.addAll(dao2.getStatus("event"));
                     _tableStatus.addAll(dao2.getStatus("acars"));
                     _tableStatus.addAll(dao2.getStatus("postfix"));
                     _tableStatus.addAll(dao2.getStatus("teamspeak"));
@@ -94,7 +96,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
             ctx.setAttribute("effectiveDate", new Date(totals.getEffectiveDate()), REQUEST);
         }
         
-        // Forward to the JSP        CommandResult result = ctx.getResult();
+        // Forward to the JSP
         CommandResult result = ctx.getResult();
         result.setURL("/jsp/stats/airlineTotals.jsp");
         result.setSuccess(true);

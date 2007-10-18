@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import org.deltava.beans.DatabaseBean;
@@ -11,7 +11,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class CertificationRequirement extends DatabaseBean implements Comparable {
+public class CertificationRequirement extends DatabaseBean {
 
 	private String _desc;
 	
@@ -39,14 +39,5 @@ public class CertificationRequirement extends DatabaseBean implements Comparable
 	 */
 	public void setText(String msg) {
 		_desc = msg;
-	}
-
-	/**
-	 * Compares Requirements by comparing their sequence numbers.
-	 * @see Comparable#compareTo(Object)
-	 */
-	public int compareTo(Object o) {
-		CertificationRequirement cp2 = (CertificationRequirement) o;
-		return new Integer(getID()).compareTo(new Integer(cp2.getID()));
 	}
 }

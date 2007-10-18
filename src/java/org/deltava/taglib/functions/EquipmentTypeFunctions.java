@@ -1,8 +1,9 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
-import org.deltava.beans.EquipmentType;
-import org.deltava.beans.Ranks;
+import java.util.Collection;
+
+import org.deltava.beans.*;
 
 /**
  * A JSP Function Library to define Equipment Program-related functions.
@@ -19,8 +20,8 @@ public class EquipmentTypeFunctions {
     * @param eq the Equipment Program (can be null)
     * @return the First Officer's examination name
     */
-	public static String examFO(EquipmentType eq) {
-	   return (eq == null) ? null : eq.getExamName(Ranks.RANK_FO);
+	public static Collection<String> examFO(EquipmentType eq) {
+	   return (eq == null) ? null : eq.getExamNames(Ranks.RANK_FO);
 	}
 	
 	 /**
@@ -28,8 +29,8 @@ public class EquipmentTypeFunctions {
     * @param eq the Equipment Program (can be null)
     * @return the First Officer's examination name
     */
-	public static String examC(EquipmentType eq) {
-	   return (eq == null) ? null : eq.getExamName(Ranks.RANK_C);
+	public static Collection<String> examC(EquipmentType eq) {
+	   return (eq == null) ? null : eq.getExamNames(Ranks.RANK_C);
 	}
    
 	/**

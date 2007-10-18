@@ -373,7 +373,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			int disposalID = fr.getDatabaseID(FlightReport.DBID_DISPOSAL);
 			Pilot dPilot = (disposalID != 0) ? dao2.get(disposalID) : null;
 			if (dPilot != null) {
-				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getFirstName() + " " + dPilot.getLastName();
+				String msg = FlightReport.STATUS[fr.getStatus()] + " - by " + dPilot.getName();
 				ctx.setAttribute("statusMsg", msg, REQUEST);
 			} else
 				ctx.setAttribute("statusMsg", FlightReport.STATUS[fr.getStatus()], REQUEST);
@@ -402,7 +402,7 @@ public class PIREPCommand extends AbstractFormCommand {
 			// Calculate the average time between the airports
 			if (ctx.isUserInRole("PIREP")) {
 				GetSchedule scdao = new GetSchedule(con);
-				ctx.setAttribute("avgTime", new Integer(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
+				ctx.setAttribute("avgTime", Integer.valueOf(scdao.getFlightTime(fr.getAirportD(), fr.getAirportA())), REQUEST);
 			}
 
 			// Create the access controller and stuff it in the request

@@ -13,6 +13,7 @@ import org.deltava.dao.*;
 import org.deltava.mail.*;
 
 import org.deltava.security.command.PilotAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to assign Check Rides not linked to a Transfer Request.
@@ -134,6 +135,7 @@ public class NakedCheckRideCommand extends AbstractCommand {
 
 			// Create the checkride bean
 			CheckRide cr = new CheckRide(acType + " Check Ride");
+			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new java.util.Date());
 			cr.setPilotID(ctx.getID());
 			cr.setScorerID(ctx.getUser().getID());

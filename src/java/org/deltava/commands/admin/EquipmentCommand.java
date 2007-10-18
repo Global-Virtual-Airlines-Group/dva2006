@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
 import java.util.*;
@@ -11,6 +11,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.EquipmentAccessControl;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to edit Equipment Type profiles. 
@@ -46,9 +47,9 @@ public class EquipmentCommand extends AbstractFormCommand {
 			
 			// Get the DAO and execute
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType eq = (eqType == null) ? null : eqdao.get(eqType);
+			EquipmentType eq = (eqType == null) ? null : eqdao.get(eqType, SystemData.get("airline.db"));
 			if (eq != null)
-			   ctx.setAttribute("captLegs", new Integer(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
+			   ctx.setAttribute("captLegs", Integer.valueOf(eq.getPromotionLegs(Ranks.RANK_C)), REQUEST);
 			
 			// Get the aircraft types
 			GetAircraft acdao = new GetAircraft(con);
@@ -95,19 +96,19 @@ public class EquipmentCommand extends AbstractFormCommand {
 			
 			// Get the DAO and the existing equipment type profile
 			GetEquipmentType rdao = new GetEquipmentType(con);
-			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType);
+			EquipmentType eq = isNew ? new EquipmentType(ctx.getParameter("eqType")) : rdao.get(eqType, SystemData.get("airline.db"));
 			
 			// Update the equipment type profile from the request
 			eq.setCPID(Integer.parseInt(ctx.getParameter("cp")));
-			eq.setStage(Integer.parseInt(ctx.getParameter("stage")));
+			eq.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
 			eq.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
 			eq.setACARSPromotionLegs(Boolean.valueOf(ctx.getParameter("acarsPromote")).booleanValue());
 			eq.setRanks(ctx.getParameters("ranks"));
 			eq.setRatings(ctx.getParameters("pRatings"), ctx.getParameters("sRatings"));
 
 			// Update examination names
-			eq.setExamName(Ranks.RANK_FO, ctx.getParameter("examFO"));
-			eq.setExamName(Ranks.RANK_C, ctx.getParameter("examC"));
+			eq.setExamNames(Ranks.RANK_FO, ctx.getParameters("examFO"));
+			eq.setExamNames(Ranks.RANK_C, ctx.getParameters("examC"));
 			
 			// Determine who is missing the ratings
 			GetPilot pdao = new GetPilot(con);
@@ -122,10 +123,9 @@ public class EquipmentCommand extends AbstractFormCommand {
 			if (isNew) {
 				wdao.create(eq);
 				ctx.setAttribute("isCreated", Boolean.TRUE, REQUEST);
-			} else {
+			} else
 				wdao.update(eq);
-			}
-			
+
 			// Update pilot ratings
 			boolean updatePilots = Boolean.valueOf(ctx.getParameter("updateRatings")).booleanValue();
 			if (updatePilots && (!pilots.isEmpty())) {

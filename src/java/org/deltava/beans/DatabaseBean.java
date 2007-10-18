@@ -65,8 +65,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
      * @return TRUE if the objects have the same class and database ID
      */
     public boolean equals(Object o) {
-    	DatabaseBean db2 = (DatabaseBean) o;
-        return (compareTo(o) == 0) && (getClass() == db2.getClass()); 
+        return (o instanceof DatabaseBean) && (compareTo(o) == 0) && (getClass() == o.getClass()); 
     }
     
     /**
@@ -74,8 +73,7 @@ public abstract class DatabaseBean implements java.io.Serializable, Cacheable, C
      * @see Comparable#compareTo(Object)
      */
     public int compareTo(Object o) {
-    	DatabaseBean db2 = (DatabaseBean) o;
-    	return Integer.valueOf(_id).compareTo(Integer.valueOf(db2._id));
+    	return Integer.valueOf(_id).compareTo(Integer.valueOf(((DatabaseBean) o)._id));
     }
     
     /**

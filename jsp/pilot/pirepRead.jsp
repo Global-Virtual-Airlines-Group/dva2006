@@ -46,14 +46,17 @@ return true;
 <!-- Main Body Frame -->
 <content:region id="main">
 <c:choose>
+<c:when test="${scoreCR && extPIREP}">
+<form method="post" action="extpirepscore.do?id=${checkRide.hexID}" onsubmit="return validate(this)">
+</c:when>
 <c:when test="${scoreCR}">
-<form method="post" action="pirepscore.do?id=${fn:hex(pirep.ID)}" onsubmit="return validate(this)">
+<form method="post" action="pirepscore.do?id=${pirep.hexID}" onsubmit="return validate(this)">
 </c:when>
 <c:when test="${access.canDispose}">
-<form method="post" action="pirep.do?id=${fn:hex(pirep.ID)}">
+<form method="post" action="pirep.do?id=${pirep.hexID}">
 </c:when>
 <c:when test="${fn:isACARS(pirep)}">
-<form method="get" action="pirep.do?id=${fn:hex(pirep.ID)}" onsubmit="return false">
+<form method="get" action="pirep.do?id=${pirep.hexID}" onsubmit="return false">
 </c:when>
 </c:choose>
 <el:table className="form" pad="default" space="default">
@@ -196,13 +199,13 @@ return true;
 alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" /></td>
 </c:if>
 </tr>
-<c:if test="${!scoreCR}">
+<c:if test="${!scoreCR && (access.canDispose || access.canViewComments)}">
 <tr>
  <td class="label" valign="top">Reviewer Comments</td>
 <c:if test="${access.canDispose}">
  <td class="data"><textarea name="dComments" cols="100" rows="5">${pirep.comments}</textarea></td>
 </c:if>
-<c:if test="${!access.canDispose}">
+<c:if test="${!access.canDispose && access.canViewComments}">
  <td class="data"><fmt:text value="${pirep.comments}" /></td>
 </c:if>
 </tr>
@@ -231,7 +234,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
  <el:cmdbutton url="crflag" link="${pirep}" label="MARK AS CHECK RIDE" />
 </content:filter></c:if>
 </c:if>
-<content:filter roles="HR"><c:if test="${access.canDispose}">
+<content:filter roles="HR"><c:if test="${access.canDispose && (empty checkRide)}">
 <c:set var="bLabel" value="${(fn:sizeof(pirep.captEQType) == 0) ? 'SET' : 'CLEAR'}" scope="request" />
  <el:cmdbutton url="promotoggle" link="${pirep}" label="${bLabel} PROMOTION FLAG" />
 </c:if></content:filter>
@@ -272,7 +275,7 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 <c:if test="${!empty filedRoute}">
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.65" />
+<map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.65" geodesic="true" />
 </c:if>
 // Build the map
 var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);

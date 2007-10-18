@@ -4,6 +4,7 @@ package org.deltava.commands.admin;
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
@@ -52,8 +53,10 @@ public class TransferListCommand extends AbstractViewCommand {
          ctx.setAttribute("activeEQ", eqdao.getActive(), REQUEST);
          
          // Save the Pilot beans in the request
+         GetUserData uddao = new GetUserData(con);
+         UserDataMap udm = uddao.get(pilotIDs);
          GetPilot pdao = new GetPilot(con);
-         ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
+         ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

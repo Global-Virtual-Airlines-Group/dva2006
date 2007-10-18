@@ -4,7 +4,7 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -66,8 +66,10 @@ public class ExamScoreCommand extends AbstractCommand {
          }
          
          // Get the Pilot profile
+         GetUserData uddao = new GetUserData(con);
          GetPilot pdao = new GetPilot(con);
-         usr = pdao.get(ex.getPilotID());
+         UserData ud = uddao.get(ex.getPilotID());
+         usr = pdao.get(ud);
          ctx.setAttribute("pilot", usr, REQUEST);
          mctxt.addData("pilot", usr);
          

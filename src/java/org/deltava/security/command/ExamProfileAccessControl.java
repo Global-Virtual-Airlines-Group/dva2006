@@ -5,6 +5,8 @@ import org.deltava.beans.testing.ExamProfile;
 
 import org.deltava.security.SecurityContext;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * An Access Controller for Examination Profiles.
  * @author Luke
@@ -13,7 +15,7 @@ import org.deltava.security.SecurityContext;
  */
 
 public class ExamProfileAccessControl extends AccessControl {
-	
+
 	private ExamProfile _ep;
 
 	private boolean _canRead;
@@ -35,9 +37,12 @@ public class ExamProfileAccessControl extends AccessControl {
 	public void validate() {
 		validateContext();
 
+		// Check if the exam belongs to our airline
+		boolean isOurAirline = (_ep == null) || SystemData.get("airline.code").equals(_ep.getOwner().getCode());
+
 		// Check if we are a member of the HR role
-		_canEdit = _ctx.isUserInRole("HR") || _ctx.isUserInRole("TestAdmin");
-		_canRead = (_ep == null) || _canEdit || _ctx.isUserInRole("Instructor") ||  _ctx.isUserInRole("Examination");
+		_canEdit = isOurAirline && (_ctx.isUserInRole("HR") || _ctx.isUserInRole("TestAdmin"));
+		_canRead = (_ep == null) || _canEdit || _ctx.isUserInRole("Instructor") || _ctx.isUserInRole("Examination");
 	}
 
 	/**

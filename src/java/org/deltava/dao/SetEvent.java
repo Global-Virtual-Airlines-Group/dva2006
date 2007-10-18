@@ -61,7 +61,7 @@ public class SetEvent extends DAO {
 	 */
 	public void signup(Signup s) throws DAOException {
 		try {
-			prepareStatement("INSERT INTO common.EVENT_SIGNUPS (ID, PILOT_ID, EQTYPE, AIRPORT_D, AIRPORT_A, REMARKS) "
+			prepareStatement("INSERT INTO events.EVENT_SIGNUPS (ID, PILOT_ID, EQTYPE, AIRPORT_D, AIRPORT_A, REMARKS) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getEventID());
 			_ps.setInt(2, s.getPilotID());
@@ -84,7 +84,7 @@ public class SetEvent extends DAO {
 	 */
 	public void save(Route r) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) VALUES "
+			prepareStatement("REPLACE INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) VALUES "
 					+ "(?, ?, ?, ?, ?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
@@ -104,7 +104,7 @@ public class SetEvent extends DAO {
 	 */
 	public void save(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO common.EVENT_PLANS (ID, PLANTYPE, AIRPORT_D, AIRPORT_A, PLANDATA) "
+			prepareStatement("REPLACE INTO events.EVENT_PLANS (ID, PLANTYPE, AIRPORT_D, AIRPORT_A, PLANDATA) "
 					+ "VALUES (?, ?, ?, ?, ?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getType());
@@ -126,7 +126,7 @@ public class SetEvent extends DAO {
 	 */
 	public void delete(Signup s) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM common.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
+			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (PILOT_ID=?)");
 			_ps.setInt(1, s.getEventID());
 			_ps.setInt(2, s.getPilotID());
 			executeUpdate(1);
@@ -142,7 +142,7 @@ public class SetEvent extends DAO {
 	 */
 	public void delete(FlightPlan fp) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM common.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (AIRPORT_D=?) "
+			prepareStatement("DELETE FROM events.EVENT_PLANS WHERE (ID=?) AND (PLANTYPE=?) AND (AIRPORT_D=?) "
 					+ "AND (AIRPORT_A=?)");
 			_ps.setInt(1, fp.getID());
 			_ps.setInt(2, fp.getType());
@@ -164,14 +164,14 @@ public class SetEvent extends DAO {
 			startTransaction();
 
 			// Delete the route
-			prepareStatement("DELETE FROM common.EVENT_AIRPORTS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
 			_ps.setString(3, r.getAirportA().getIATA());
 			executeUpdate(1);
 
 			// Delete the signups
-			prepareStatement("DELETE FROM common.EVENT_SIGNUPS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
+			prepareStatement("DELETE FROM events.EVENT_SIGNUPS WHERE (ID=?) AND (AIRPORT_D=?) AND (AIRPORT_A=?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
 			_ps.setString(3, r.getAirportA().getIATA());
@@ -191,7 +191,7 @@ public class SetEvent extends DAO {
 	 */
 	public void toggle(Route r) throws DAOException {
 		try {
-			prepareStatement("UPDATE common.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (AIRPORT_D=?) "
+			prepareStatement("UPDATE events.EVENT_AIRPORTS SET ACTIVE=(NOT ACTIVE) WHERE (ID=?) AND (AIRPORT_D=?) "
 					+ "AND (AIRPORT_A=?)");
 			_ps.setInt(1, r.getID());
 			_ps.setString(2, r.getAirportD().getIATA());
@@ -205,7 +205,7 @@ public class SetEvent extends DAO {
 	private void writeCharts(Event e) throws SQLException {
 
 		// Clear airports
-		prepareStatement("DELETE FROM common.EVENT_CHARTS WHERE (ID=?)");
+		prepareStatement("DELETE FROM events.EVENT_CHARTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
@@ -214,7 +214,7 @@ public class SetEvent extends DAO {
 			return;
 
 		// Create the prepared statement
-		prepareStatement("INSERT INTO common.EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
+		prepareStatement("INSERT INTO events.EVENT_CHARTS (ID, CHART) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
 
 		// Write the charts
@@ -232,12 +232,12 @@ public class SetEvent extends DAO {
 	private void writeAirports(Event e) throws SQLException {
 
 		// Clear airports
-		prepareStatement("DELETE FROM common.EVENT_AIRPORTS WHERE (ID=?)");
+		prepareStatement("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
 		// Create the prepared statement
-		prepareStatement("INSERT INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) "
+		prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE, ACTIVE) "
 				+ "VALUES (?, ?, ?, ?, ?)");
 		_ps.setInt(1, e.getID());
 
@@ -259,12 +259,12 @@ public class SetEvent extends DAO {
 	private void writeEQTypes(Event e) throws SQLException {
 
 		// Clear equipment types
-		prepareStatement("DELETE FROM common.EVENT_EQTYPES WHERE (ID=?)");
+		prepareStatement("DELETE FROM events.EVENT_EQTYPES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
 		// Add the equipment types
-		prepareStatement("INSERT INTO common.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)");
+		prepareStatement("INSERT INTO events.EVENT_EQTYPES (ID, RATING) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
 		for (Iterator<String> i = e.getEquipmentTypes().iterator(); i.hasNext();) {
 			_ps.setString(2, i.next());
@@ -279,12 +279,12 @@ public class SetEvent extends DAO {
 	private void writeRoutes(Event e) throws SQLException {
 
 		// Clear routes
-		prepareStatementWithoutLimits("DELETE FROM common.EVENT_AIRPORTS WHERE (ID=?)");
+		prepareStatementWithoutLimits("DELETE FROM events.EVENT_AIRPORTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
 		// Create the prepared statement
-		prepareStatement("INSERT INTO common.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE) VALUES (?, ?, ?, ?)");
+		prepareStatement("INSERT INTO events.EVENT_AIRPORTS (ID, AIRPORT_D, AIRPORT_A, ROUTE) VALUES (?, ?, ?, ?)");
 		_ps.setInt(1, e.getID());
 		for (Iterator<Route> i = e.getRoutes().iterator(); i.hasNext();) {
 			Route r = i.next();
@@ -302,12 +302,12 @@ public class SetEvent extends DAO {
 	private void writeContactAddrs(Event e) throws SQLException {
 
 		// Clear contacts
-		prepareStatementWithoutLimits("DELETE FROM common.EVENT_CONTACTS WHERE (ID=?)");
+		prepareStatementWithoutLimits("DELETE FROM events.EVENT_CONTACTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		executeUpdate(0);
 
 		// Create the prepared statement
-		prepareStatement("INSERT INTO common.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)");
+		prepareStatement("INSERT INTO events.EVENT_CONTACTS (ID, ADDRESS) VALUES (?, ?)");
 		_ps.setInt(1, e.getID());
 		for (Iterator<String> i = e.getContactAddrs().iterator(); i.hasNext();) {
 			_ps.setString(2, i.next());
@@ -323,7 +323,7 @@ public class SetEvent extends DAO {
 	 * Adds a new Online Event to the database.
 	 */
 	private void insert(Event e) throws SQLException {
-		prepareStatement("INSERT INTO common.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
+		prepareStatement("INSERT INTO events.EVENTS (TITLE, NETWORK, STATUS, STARTTIME, ENDTIME, SU_DEADLINE, "
 				+ "BRIEFING, CAN_SIGNUP) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());
@@ -344,7 +344,7 @@ public class SetEvent extends DAO {
 	 */
 	private void update(Event e) throws SQLException {
 		// Prepare the statement
-		prepareStatement("UPDATE common.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
+		prepareStatement("UPDATE events.EVENTS SET TITLE=?, NETWORK=?, STARTTIME=?, ENDTIME=?, SU_DEADLINE=?, "
 				+ "BRIEFING=?, CAN_SIGNUP=?, STATUS=? WHERE (ID=?)");
 		_ps.setString(1, e.getName());
 		_ps.setInt(2, e.getNetwork());

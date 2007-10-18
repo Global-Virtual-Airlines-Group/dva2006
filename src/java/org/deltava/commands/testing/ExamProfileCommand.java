@@ -1,14 +1,19 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.testing.ExamProfile;
+import org.deltava.beans.system.AirlineInformation;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.ExamProfileAccessControl;
+
+import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support the modification of Examination Profiles.
@@ -40,10 +45,8 @@ public class ExamProfileCommand extends AbstractFormCommand {
             
             // Update the exam name
             ep.setName(ctx.getParameter("examName"));
-         } else {
+         } else
             ep = new ExamProfile(ctx.getParameter("examName"));
-            ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
-         }
          
          // Check our access level
          ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
@@ -53,14 +56,22 @@ public class ExamProfileCommand extends AbstractFormCommand {
 
          // Load the fields from the request
          ep.setEquipmentType("N/A".equals(ctx.getParameter("eqType")) ? null : ctx.getParameter("eqType"));
-         ep.setStage(Integer.parseInt(ctx.getParameter("stage")));
-         ep.setMinStage(Integer.parseInt(ctx.getParameter("minStage")));
-         ep.setSize(Integer.parseInt(ctx.getParameter("size")));
-         ep.setPassScore(Integer.parseInt(ctx.getParameter("passScore")));
-         ep.setTime(Integer.parseInt(ctx.getParameter("time")));
+         ep.setStage(StringUtils.parse(ctx.getParameter("stage"), 1));
+         ep.setMinStage(StringUtils.parse(ctx.getParameter("minStage"), 1));
+         ep.setSize(StringUtils.parse(ctx.getParameter("size"), 1));
+         ep.setPassScore(StringUtils.parse(ctx.getParameter("passScore"), 1));
+         ep.setTime(StringUtils.parse(ctx.getParameter("time"), 15));
          ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
-         if (ctx.getParameter("isAcademy") != null)
-        	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+       	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
+       	 ep.setOwner(SystemData.getApp(ctx.getParameter("owner")));
+       	 Collection<String> airlines = ctx.getParameters("airlines");
+       	 if (airlines != null) {
+       		 Collection<AirlineInformation> ai = new ArrayList<AirlineInformation>();
+       		 for (Iterator<String> i = airlines.iterator(); i.hasNext(); )
+       			 ai.add(SystemData.getApp(i.next()));
+       		 
+       		 ep.setAirlines(ai);
+       	 }
 
          // Get the write DAO and save the profile
          SetExamProfile wdao = new SetExamProfile(con);

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.academy;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class Course extends DatabaseBean implements ViewEntry, Comparable {
+public class Course extends DatabaseBean implements ViewEntry {
 	
 	public static final int STARTED = 0;
 	public static final int ABANDONED = 1;
@@ -289,7 +289,7 @@ public class Course extends DatabaseBean implements ViewEntry, Comparable {
 	 */
 	public int compareTo(Object o) {
 		Course c2 = (Course) o;
-		int tmpResult = new Integer(_pilotID).compareTo(new Integer(c2._pilotID));
+		int tmpResult = Integer.valueOf(_pilotID).compareTo(Integer.valueOf(c2._pilotID));
 		return (tmpResult == 0) ? _startDate.compareTo(c2._startDate) : tmpResult;
 	}
 	

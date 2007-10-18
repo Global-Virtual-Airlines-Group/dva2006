@@ -1,9 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
 import java.sql.Connection;
 
+import org.deltava.beans.UserDataMap;
 import org.deltava.beans.testing.Test;
 
 import org.deltava.commands.*;
@@ -37,12 +38,12 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			GetExam dao = new GetExam(con);
 			dao.setQueryMax(vc.getCount());
 			dao.setQueryStart(vc.getStart());
-			List results = dao.getSubmitted();
+			List<? extends Test> results = dao.getSubmitted();
 
 			// Check our access level, remove those exams we cannot score and build a list of Pilot IDs
 			Collection<Integer> pilotIDs = new HashSet<Integer>();
-			for (Iterator i = results.iterator(); i.hasNext();) {
-				Test t = (Test) i.next();
+			for (Iterator<? extends Test> i = results.iterator(); i.hasNext();) {
+				Test t = i.next();
 				ExamAccessControl access = new ExamAccessControl(ctx, t);
 				try {
 					access.validate();
@@ -53,8 +54,10 @@ public class ExamQueueCommand extends AbstractViewCommand {
 			}
 			
 			// Get the Pilot Profiles
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udm = uddao.get(pilotIDs);
 			GetPilot pdao = new GetPilot(con);
-			ctx.setAttribute("pilots", pdao.getByID(pilotIDs, "PILOTS"), REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 
 			// Save the examination queue
 			vc.setResults(results);
