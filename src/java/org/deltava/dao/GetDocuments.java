@@ -196,7 +196,7 @@ public class GetDocuments extends GetLibrary {
 	 */
 	public Collection<Manual> getByCertification(String certName) throws DAOException {
 		try {
-			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM CERTDOCS CD, DOCS D LEFT JOIN "
+			prepareStatement("SELECT D.*, COUNT(L.FILENAME) FROM exams.CERTDOCS CD, DOCS D LEFT JOIN "
 					+ "DOWNLOADS L ON (D.FILENAME=L.FILENAME) WHERE (CD.FILENAME=D.FILENAME) AND "
 					+ "(CD.CERTNAME=?) GROUP BY D.NAME");
 			_ps.setString(1, certName);
