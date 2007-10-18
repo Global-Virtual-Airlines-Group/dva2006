@@ -3,7 +3,6 @@ package org.deltava.jdbc;
 
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.*;
 
 import org.apache.log4j.Logger;
 
@@ -32,7 +31,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private long _totalRequests;
 	private int _expandCount;
 	private int _fullCount;
-	private int _transferCount;
 	private boolean _logStack;
 
 	private transient ConnectionMonitor _monitor;
@@ -42,10 +40,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private transient final Properties _props = new Properties();
 	private boolean _autoCommit = true;
 
-	// These queues are used when releasing a connection, we can transfer the connection between threads
-	private transient final SynchronousQueue<ConnectionPoolEntry> _free = new SynchronousQueue<ConnectionPoolEntry>();
-	private transient final SynchronousQueue<ConnectionPoolEntry> _sysFree = new SynchronousQueue<ConnectionPoolEntry>(true);
-	
 	public class ConnectionPoolFullException extends ConnectionPoolException {
 		public ConnectionPoolFullException() {
 			super("Connection Pool Full", false);
@@ -232,35 +226,16 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		
 		// Check if we are not going to add a new connection and if so, wait for another thread to offer us a connection
 		if ((isSystem && (sysConSize >= MAX_SYS_CONS)) || (_cons.size() >= _poolMaxSize)) {
-			try {
-				log.warn("Waiting 1000ms for ConnectionPool");
-				SynchronousQueue<ConnectionPoolEntry> queue = isSystem ? _sysFree : _free;
-				ConnectionPoolEntry cpe = queue.poll(1000, TimeUnit.MILLISECONDS);
-				if (cpe == null) {
-					_fullCount++;
-					throw new ConnectionPoolFullException();
-				}
-				
-				// Reserve the connection and return it
-				synchronized (_cons) {
-					_transferCount++;
-					if (!cpe.inUse()) {
-						log.info("Reserving offered JDBC Connection " + cpe);
-						_totalRequests++;
-						return cpe.reserve(_logStack);
-					}
-				}
-			} catch (InterruptedException ie) {
-				throw new ConnectionPoolException("Thread Interrupted", false);
-			}
+			_fullCount++;
+			throw new ConnectionPoolFullException();
 		}
 
 		// Get a new connection and add it to the pool
 		try {
 			ConnectionPoolEntry cpe = createConnection(isSystem, getNextID());
 			cpe.setDynamic(true);
+			_monitor.addConnection(cpe);
 			synchronized (_cons) {
-				_monitor.addConnection(cpe);
 				_cons.add(cpe);
 			}
 
@@ -305,13 +280,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 				if (cpe.equals(c)) {
 					cpe.free();
 					
-					// If we have a thread waiting for it, pass it around like a fat joint at a Grateful Dead show
-					SynchronousQueue<ConnectionPoolEntry> queue = cpe.isSystemConnection() ? _sysFree : _free;
-					if (queue.offer(cpe)) {
-						log.warn("Passed JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-						return cpe.getUseTime();
-					}
-
 					// If this is a dynamic connection, such it down
 					if (cpe.isDynamic()) {
 						_monitor.removeConnection(cpe);
@@ -452,14 +420,6 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 */
 	public int getExpandCount() {
 		return _expandCount;
-	}
-	
-	/**
-	 * Returns the number of times a Connection has been transferred on return to the Connection Pool to a waiting thread. 
-	 * @return the number of times a ConnectionPool was expanded
-	 */
-	public int getTransferCount() {
-		return _transferCount;
 	}
 
 	/**

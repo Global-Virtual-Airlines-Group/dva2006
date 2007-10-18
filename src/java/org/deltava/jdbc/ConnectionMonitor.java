@@ -46,14 +46,6 @@ class ConnectionMonitor implements Runnable {
 	}
 
 	/**
-	 * Return the monitor interval.
-	 * @return the interval <i>in minutes </i>.
-	 */
-	public int getInterval() {
-		return (int) (_sleepTime / 60000);
-	}
-
-	/**
 	 * Adds a JDBC connection to monitor.
 	 * @param cpe a ConnectionPoolEntry object
 	 */

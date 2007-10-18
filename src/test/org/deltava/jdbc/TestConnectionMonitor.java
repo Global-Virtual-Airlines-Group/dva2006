@@ -20,8 +20,6 @@ public class TestConnectionMonitor extends TestCase {
 
     public void testBasicProperties() {
         assertEquals(0, _cm.size());
-        assertEquals(5, _cm.getInterval());
-        assertEquals(3, _cm.getInterval());
 
         ArrayList<Object> pool1 = new ArrayList<Object>();
         pool1.add(new Object());
