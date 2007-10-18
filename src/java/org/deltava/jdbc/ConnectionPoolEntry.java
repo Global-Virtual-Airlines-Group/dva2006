@@ -18,6 +18,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	private int _id;
 
 	private transient final Properties _props = new Properties();
+	private transient String _validationQuery = "SELECT 1";
 
 	private boolean _inUse = false;
 	private boolean _systemOwned = false;
@@ -38,6 +39,11 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	ConnectionPoolEntry(int id, Properties props) {
 		super();
 		_id = id;
+		if (props.containsKey("validationQuery")) {
+			_validationQuery = props.getProperty("validationQuery");
+			props.remove("validationQuery");
+		}
+		
 		_props.putAll(props);
 	}
 
@@ -122,7 +128,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	boolean checkConnection() {
 		try {
 			Statement s = _c.createStatement();
-			ResultSet rs = s.executeQuery("SELECT 1");
+			ResultSet rs = s.executeQuery(_validationQuery);
 			rs.close();
 			s.close();
 			return true;
@@ -273,7 +279,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * Compares two entries by comparing their ID.
 	 */
 	public int compareTo(ConnectionPoolEntry e2) {
-		return new Integer(_id).compareTo(new Integer(e2._id));
+		return Integer.valueOf(_id).compareTo(Integer.valueOf(e2._id));
 	}
 
 	/**
