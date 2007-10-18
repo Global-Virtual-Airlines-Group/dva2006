@@ -54,8 +54,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			GetExam crdao = new GetExam(con);
 			CheckRide cr = crdao.getACARSCheckRide(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			if (cr == null)
-				cr = crdao.getCheckRide(SystemData.get("airline.db"), fr.getDatabaseID(FlightReport.DBID_PILOT),
-						fr.getEquipmentType(), Test.SUBMITTED);
+				cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.SUBMITTED);
 
 			// Check our access levels
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
@@ -108,7 +107,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 			// Get the PIREP write DAO and perform the operation
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ctx.getUser(), fr, FlightReport.OK);
+			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, FlightReport.OK);
 
 			// Archive the Position data
 			if (fr instanceof ACARSFlightReport) {

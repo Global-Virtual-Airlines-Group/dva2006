@@ -32,10 +32,13 @@ else if (act.indexOf('threadmove.do') != -1)
 	if (!validateCombo(form.newChannel, 'Channel Name')) return false;
 else if (act.indexOf('threadsubjectedit.do') != -1)
 	if (!validateText(form.newTitle, 5, 'New Discussion Thread Title')) return false;
-else {
+else if (act.indexOf('linkimg.do') != -1) {
+	if (!validateText(form.imgURL, 12, 'URL of your Linked Image')) return false;
+	if (!validateText(form.desc, 8, 'Description of your Linked Image')) return false;
+} else {
 	var hasResponse = (form.msgText.value.length > 3);
 	if (!hasResponse)
-		if (!validateCheckBox(form.pollVote, 1, 'poll Vote')) return false;
+		if (!validateCheckBox(form.pollVote, 1, 'Poll Vote')) return false;
 }
 
 setSubmit();
@@ -46,6 +49,8 @@ disableButton('UnlockButton');
 disableButton('UnstickButton');
 disableButton('StickButton');
 disableButton('VoteButton');
+disableButton('EditButton');
+disableButton('LinkButton');
 disableButton('ImgDeleteButton');
 disableButton('DeleteButton');
 disableButton('MoveButton');
@@ -308,10 +313,22 @@ notification each time a reply is posted in this Thread.
 </tr>
 <tr class="pri bld mid">
  <td colspan="3">Update to <el:text name="newTitle" idx="*" size="64" max="96" value="${thread.subject}" />
- <el:cmdbutton url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
+ <el:cmdbutton ID="EditButton" url="threadsubjectedit" link="${thread}" post="true" label="UPDATE" /></td>
 </tr>
 </c:if>
-
+<c:if test="${access.canAddImage}">
+<!-- Add Linked Image -->
+<tr class="title caps">
+ <td colspan="3">ADD LINKED IMAGE</td>
+</tr>
+<tr class="pri bld mid">
+ <td colspan="3">Add Linked Image at this URL <el:text name="imgURL" idx="*" size="64" max="192" value="${param.imgURL}" />
+<c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td>
+</tr>
+<tr class="pri bld mid">
+ <td colspan="3">Image Description <el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" /> <el:cmdbutton ID="LinkButton" url="imglink" link="${thread}" post="true" label="LINK IMAGE" /></td>
+</tr>
+</c:if>
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->
 <tr class="title caps">

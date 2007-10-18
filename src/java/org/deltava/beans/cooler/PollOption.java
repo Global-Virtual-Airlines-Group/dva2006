@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import org.deltava.beans.*;
@@ -12,7 +12,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class PollOption extends DatabaseBean implements Comparable, ComboAlias {
+public class PollOption extends DatabaseBean implements ComboAlias {
 	
 	private String _name;
 	private int _optID;
@@ -71,8 +71,8 @@ public class PollOption extends DatabaseBean implements Comparable, ComboAlias {
 	
 	public int compareTo(Object o2) {
 		PollOption po2 = (PollOption) o2;
-		int tmpResult = new Integer(getID()).compareTo(new Integer(po2.getID()));
-		return (tmpResult == 0) ? new Integer(_optID).compareTo(new Integer(po2._optID)) : tmpResult;
+		int tmpResult = Integer.valueOf(getID()).compareTo(Integer.valueOf(po2.getID()));
+		return (tmpResult == 0) ? Integer.valueOf(_optID).compareTo(Integer.valueOf(po2._optID)) : tmpResult;
 	}
 	
 	public String toString() {

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.util.*;
@@ -13,6 +13,7 @@ import org.deltava.dao.*;
 import org.deltava.security.command.QuestionProfileAccessControl;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to support the modification of Examination Question Profiles.
@@ -60,6 +61,8 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 					qp = new QuestionProfile(ctx.getParameter("question"));
 					qp.setCorrectAnswer(ctx.getParameter("correct"));
 				}
+				
+				qp.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			}
 
 			// Validate our access
@@ -118,6 +121,8 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
+		
+		boolean doEdit = false;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -130,11 +135,17 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 			// Validate our access
 			QuestionProfileAccessControl access = new QuestionProfileAccessControl(ctx, qp);
 			access.validate();
-			if (!access.getCanEdit())
+			if (!access.getCanEdit() && !access.getCanInclude())
 				throw securityException("Cannot modify Examination Question Profile");
+			
+			// If we cannot edit, we're just including
+			doEdit = access.getCanEdit();
 
 			// Get exam names
-			ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
+			if (doEdit)
+				ctx.setAttribute("examNames", dao.getAllExamProfiles(), REQUEST);
+			else
+				ctx.setAttribute("examNames", dao.getExamProfiles(), REQUEST);
 
 			// Save the profile in the request
 			ctx.setAttribute("question", qp, REQUEST);
@@ -150,7 +161,7 @@ public class QuestionProfileCommand extends AbstractFormCommand {
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
-		result.setURL("/jsp/testing/questionProfileEdit.jsp");
+		result.setURL("/jsp/testing/" + (doEdit ? "questionProfileEdit.jsp" : "questionProfileInclude.jsp"));
 		result.setSuccess(true);
 	}
 

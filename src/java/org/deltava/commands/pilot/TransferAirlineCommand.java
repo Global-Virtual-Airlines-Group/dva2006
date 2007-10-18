@@ -172,8 +172,8 @@ public class TransferAirlineCommand extends AbstractCommand {
 
 			// Create the second status update
 			StatusUpdate su2 = new StatusUpdate(newUser.getID(), StatusUpdate.AIRLINE_TX);
-			su2.setAuthorID(newUser.getID());
-			su2.setDescription("Transferred from " + SystemData.get("airline.name") + " by " + ctx.getUser().getName());
+			su2.setAuthorID(ctx.getUser().getID());
+			su2.setDescription("Transferred from " + SystemData.get("airline.name"));
 			sudao.write(aInfo.getDB(), su2);
 			
 			// Calculate the new password

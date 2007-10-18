@@ -299,14 +299,14 @@
 	<function>
 		<name>examC</name>
 		<function-class>org.deltava.taglib.functions.EquipmentTypeFunctions</function-class>
-		<function-signature>java.lang.String examC(org.deltava.beans.EquipmentType)</function-signature>
+		<function-signature>java.util.Collection examC(org.deltava.beans.EquipmentType)</function-signature>
 	</function>
 
 	<!-- Get First Officer's Examination Name -->
 	<function>
 		<name>examFO</name>
 		<function-class>org.deltava.taglib.functions.EquipmentTypeFunctions</function-class>
-		<function-signature>java.lang.String examFO(org.deltava.beans.EquipmentType)</function-signature>
+		<function-signature>java.util.Collection examFO(org.deltava.beans.EquipmentType)</function-signature>
 	</function>
 
 	<!-- Get the legs required for promotion -->

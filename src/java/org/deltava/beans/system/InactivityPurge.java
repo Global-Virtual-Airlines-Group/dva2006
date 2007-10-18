@@ -12,7 +12,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class InactivityPurge extends DatabaseBean implements Comparable {
+public class InactivityPurge extends DatabaseBean {
 
 	private Date _purgeDate;
 	private int _interval;

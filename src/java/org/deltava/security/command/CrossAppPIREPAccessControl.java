@@ -15,7 +15,7 @@ import org.deltava.security.SecurityContext;
 
 public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 
-	private CheckRide _cr;
+	private ExamAccessControl _crAccess;
 	
 	/**
 	 * Initializes the access controller.
@@ -25,7 +25,7 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	 */
 	public CrossAppPIREPAccessControl(SecurityContext ctx, FlightReport fr, CheckRide cr) {
 		super(ctx, fr);
-		_cr = cr;
+		_crAccess = new ExamAccessControl(ctx, cr);
 	}
 	
 	/**
@@ -33,6 +33,11 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	 */
 	public void validate() {
 		super.validate();
+		try {
+			_crAccess.validate();
+		} catch (AccessControlException ace) {
+			// empty
+		}
 	}
 
 	/**
@@ -84,11 +89,11 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	}
 
 	/**
-	 * Returns if the PIREP can be approved.
+	 * Returns if the PIREP can be approved <i>and the Check Ride can be scored</i>.
 	 * @return TRUE if it can be approved, otherwise FALSE
 	 */
 	public boolean getCanApprove() {
-		return _canApprove; // PIREP must be submitted and checkride must be ours.
+		return super.getCanApprove() && _crAccess.getCanScore();
 	}
 
 	/**
@@ -96,7 +101,7 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	 * @return TRUE if it can be rejected, otherwise FALSE
 	 */
 	public boolean getCanReject() {
-		return _canReject;
+		return super.getCanReject() && _crAccess.getCanScore();
 	}
 
 	/**
@@ -116,13 +121,12 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	}
 	
 	/**
-	 * Returns if the PIREP can be disposed of in any way (approved/rejected/held) by the current user.
-	 * @return TRUE if the PIREP can be approved, rejected or held, otherwise FALSE
+	 * Returns if the PIREP can be disposed of in any way (approved/rejected) by the current user.
+	 * @return TRUE if the PIREP can be approved or rejected, otherwise FALSE
 	 * @see PIREPAccessControl#getCanApprove()
-	 * @see PIREPAccessControl#getCanHold()
 	 * @see PIREPAccessControl#getCanReject()
 	 */
 	public boolean getCanDispose() {
-		return _canApprove || _canReject;
+		return (super.getCanApprove() || super.getCanReject()) && _crAccess.getCanScore();
 	}
 }

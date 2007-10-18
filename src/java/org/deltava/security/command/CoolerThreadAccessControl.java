@@ -25,6 +25,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
     private boolean _canReply;
     private boolean _canEdit;
     private boolean _canEditTitle;
+    private boolean _canAddImage;
     private boolean _canVote;
     private boolean _canReport;
     private boolean _canLock;
@@ -86,7 +87,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         boolean isLockedOut = ((usr != null) && usr.getNoCooler());
         
         // Get the roles and role state - we assume it's OK if channel is null
-        boolean isOurs = (_ctx.getUser() != null) && (_mt.getAuthorID() == _ctx.getUser().getID());
+        boolean isOurs = _ctx.isAuthenticated() && (_mt.getAuthorID() == _ctx.getUser().getID());
         boolean isModerator = _ctx.isUserInRole("Moderator");
         boolean isClosed = _mt.getLocked() || _mt.getHidden() || isLockedOut;
         boolean hasVoted = (_ctx.getUser() != null) && _mt.hasVoted(_ctx.getUser().getID());
@@ -100,6 +101,7 @@ public final class CoolerThreadAccessControl extends AccessControl {
         _canUnstick = channelAccess && (_mt.getStickyUntil() != null) && ((!isClosed && isOurs) || isModerator);
         _canDelete = _ctx.isUserInRole("Admin");
         _canReport = _canReply && (!isClosed) && (!_mt.getReportIDs().contains(new Integer(_ctx.getUser().getID())));
+        _canAddImage = (isOurs && _canReply) || (isModerator && _canRead);
         
         // Check if we can edit the title
         _canEditTitle = _canRead && (_ctx.isUserInRole("Moderator") || (isOurs && _mt.getPostCount() == 1));
@@ -151,6 +153,14 @@ public final class CoolerThreadAccessControl extends AccessControl {
      */
     public boolean getCanEditTitle() {
     	return _canEditTitle;
+    }
+    
+    /**
+     * Returns if a user can add a Linked Image to the thread.
+     * @return TRUE if an Image can be added, otherwise FALSE
+     */
+    public boolean getCanAddImage() {
+    	return _canAddImage;
     }
     
     /**

@@ -30,7 +30,7 @@ public class SetAcademyCalendar extends DAO {
 	public void write(InstructionFlight flight) throws DAOException {
 		try {
 			// Prepare the statement
-			prepareStatement("REPLACE INTO INSLOG (ID, INSTRUCTOR_ID, COURSE, EQTYPE, STARTDATE, "
+			prepareStatement("REPLACE INTO exams.INSLOG (ID, INSTRUCTOR_ID, COURSE, EQTYPE, STARTDATE, "
 					+ "FLIGHT_TIME, REMARKS) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, flight.getID());
 			_ps.setInt(2, flight.getInstructorID());
@@ -56,7 +56,7 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void write(InstructionSession s) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
+			prepareStatement("REPLACE INTO exams.INSCALENDAR (COURSE, INSTRUCTOR_ID, STARTTIME, ENDTIME, "
 					+ "STATUS, NOSHOW, REMARKS, ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, s.getCourseID());
 			_ps.setInt(2, s.getInstructorID());
@@ -82,14 +82,14 @@ public class SetAcademyCalendar extends DAO {
 			startTransaction();
 			
 			// Nuke any existing entries
-			prepareStatement("DELETE FROM INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME >= ?) AND (STARTTIME <= ?)");
+			prepareStatement("DELETE FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME >= ?) AND (STARTTIME <= ?)");
 			_ps.setInt(1, ib.getID());
 			_ps.setTimestamp(2, createTimestamp(ib.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ib.getEndTime()));
 			executeUpdate(0);
 			
 			// Add the entry
-			prepareStatement("INSERT INTO INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMENTS) VALUES (?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.INSBUSY (INSTRUCTOR_ID, STARTTIME, ENDTIME, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, ib.getID());
 			_ps.setTimestamp(2, createTimestamp(ib.getStartTime()));
 			_ps.setTimestamp(3, createTimestamp(ib.getEndTime()));
@@ -109,7 +109,7 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void delete(int id) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM INSLOG WHERE (ID=?)");
+			prepareStatement("DELETE FROM exams.INSLOG WHERE (ID=?)");
 			_ps.setInt(1, id);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -125,7 +125,7 @@ public class SetAcademyCalendar extends DAO {
 	 */
 	public void deleteBusy(int instructorID, java.util.Date startTime) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME=?)");
+			prepareStatement("DELETE FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) AND (STARTTIME=?)");
 			_ps.setInt(1, instructorID);
 			_ps.setTimestamp(2, createTimestamp(startTime));
 			executeUpdate(1);

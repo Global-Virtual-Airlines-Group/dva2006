@@ -25,6 +25,7 @@ public class MessageContext {
 
     private MessageTemplate _mt;
     private String _subject;
+    private String _body;
     private final Map<String, Object> _data = new HashMap<String, Object>();
   
     /**
@@ -36,11 +37,10 @@ public class MessageContext {
     	// Initialize predefined variables
     	_data.put("airline", SystemData.get("airline.name"));
     	String url = SystemData.get("airline.url");
-    	if (url == null) {
+    	if (url == null)
     		_data.put("url", "http://www." + SystemData.get("airline.domain") + "/");
-    	} else {
+    	else
     		_data.put("url", "http://" + url + "/");
-    	}
     }
     
     /**
@@ -82,12 +82,11 @@ public class MessageContext {
      * @throws IllegalStateException if no template exists
      */
     public String getBody() {
-       // Check that the template has been set
-       if (_mt == null)
-          throw new IllegalStateException("Message Template not loaded");
+       if ((_mt == null) && (_body == null))
+          throw new IllegalStateException("Message Template or Body not loaded");
 
        // Load the Message template
-       StringBuilder buf = new StringBuilder(_mt.getBody());
+       StringBuilder buf = new StringBuilder((_mt == null) ? _mt.getBody() : _body);
 
        // Parse the message template with data from the MessageContext
        int spos = buf.indexOf("${");
@@ -99,9 +98,8 @@ public class MessageContext {
              String token = buf.substring(spos + 2, epos);
              buf.replace(spos, epos + 1, execute(token));
              spos = buf.indexOf("${");
-          } else {
+          } else
              spos = buf.indexOf("${", spos);
-          }
        }
 
        // Return the message body
@@ -116,6 +114,14 @@ public class MessageContext {
      */
     boolean hasData(String name) {
         return _data.containsKey(name.trim());
+    }
+    
+    /**
+     * Sets the message body to use, if no template is used.
+     * @param body the message body
+     */
+    public void setBody(String body) {
+    	_body = body;
     }
     
     /**

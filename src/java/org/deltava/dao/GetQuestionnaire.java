@@ -5,7 +5,9 @@ import java.sql.*;
 import java.util.*;
 
 import org.deltava.beans.testing.*;
+
 import org.deltava.util.CollectionUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load Applicant Questionaires.
@@ -49,7 +51,7 @@ public class GetQuestionnaire extends DAO {
 			// Load the questions for this examination
 			prepareStatementWithoutLimits("SELECT EQ.*, COUNT(MQ.SEQ), QI.TYPE, QI.SIZE, QI.X, QI.Y FROM "
 					+ "APPQUESTIONS EQ LEFT JOIN APPQUESTIONSM MQ ON (EQ.EXAM_ID=MQ.EXAM_ID) AND "
-					+ "(EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN QUESTIONIMGS QI ON (EQ.QUESTION_ID=QI.ID) "
+					+ "(EQ.QUESTION_ID=MQ.QUESTION_ID) LEFT JOIN exams.QUESTIONIMGS QI ON (EQ.QUESTION_ID=QI.ID) "
 					+ "WHERE (EQ.EXAM_ID=?) GROUP BY EQ.QUESTION_ID, EQ.QUESTION_NO ORDER BY EQ.QUESTION_NO");
 			_ps.setInt(1, id);
 
@@ -195,7 +197,8 @@ public class GetQuestionnaire extends DAO {
 		// Iterate through the result set
 		List<Examination> results = new ArrayList<Examination>();
 		while (rs.next()) {
-			Examination e = new Examination(Examination.QUESTIONNAIRE_NAME);
+			Examination e = new Examination(SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME);
+			e.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			e.setID(rs.getInt(1));
 			e.setPilotID(rs.getInt(2));
 			e.setStatus(rs.getInt(3));

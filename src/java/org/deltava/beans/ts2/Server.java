@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
  * @since 1.0
  */
 
-public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Comparable {
+public class Server extends DatabaseBean implements ComboAlias, ViewEntry {
 
 	public static final String ACCESS = "access";
 	public static final String ADMIN = "admin";
@@ -342,7 +342,7 @@ public class Server extends DatabaseBean implements ComboAlias, ViewEntry, Compa
 	public int compareTo(Object o) {
 		Server s2 = (Server) o;
 		int tmpResult = _name.compareTo(s2._name);
-		return (tmpResult == 0) ? new Integer(_port).compareTo(new Integer(s2._port)) : tmpResult;
+		return (tmpResult == 0) ? Integer.valueOf(_port).compareTo(Integer.valueOf(s2._port)) : tmpResult;
 	}
 
 	/**

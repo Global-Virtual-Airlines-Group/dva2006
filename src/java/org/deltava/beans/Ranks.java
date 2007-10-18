@@ -11,11 +11,6 @@ package org.deltava.beans;
 public interface Ranks {
 
     /**
-     * A placeholder for rank denoting "entry into a particular program".
-     */
-    public static final String ENTRY = "$entry";
-    
-    /**
      * Name of Chief Pilot rank.
      */
     public static final String RANK_CP = "Chief Pilot";

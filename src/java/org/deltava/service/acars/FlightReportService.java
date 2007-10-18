@@ -298,7 +298,7 @@ public class FlightReportService extends WebService {
 
 			// Update the checkride record (don't assume pilots check the box, because they don't)
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = exdao.getCheckRide(SystemData.get("airline.db"), p.getID(), afr.getEquipmentType(), Test.NEW);
+			CheckRide cr = exdao.getCheckRide(p.getID(), afr.getEquipmentType(), Test.NEW);
 			if (cr != null) {
 				cr.setFlightID(inf.getID());
 				cr.setSubmittedOn(new Date());

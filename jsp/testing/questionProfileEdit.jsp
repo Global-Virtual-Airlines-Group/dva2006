@@ -20,6 +20,8 @@ if (!checkSubmit()) return false;
 if (!validateText(form.question, 20, 'Question Text')) return false;
 if (!validateText(form.correct, 3, 'Correct Answer to this Question')) return false;
 if (!validateFile(form.imgData, 'gif,jpg,png', 'Image Resource')) return false;
+if (!validateCombo(form.owner, 'Owner')) return false;
+if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
 if ((f.isMultiChoice) && (f.isMultiChoice.checked)) {
 	if (!validateCombo(form.correctChoice, 'Correct Answer to this Question')) return false;
 }
@@ -76,6 +78,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -95,6 +98,14 @@ return true;
  <td class="data"><el:text name="correct" idx="*" size="120" className="req" max="255" value="${question.correctAnswer}" /></td>
 </tr>
 </c:if>
+<tr>
+ <td class="label">Owner Airline</td>
+ <td class="data"><el:combo name="owner" idx="*" size="1" className="req" firstEntry="-" options="${airlines}" value="${question.owner}" /></td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${question.airlines}" /></td>
+</tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
  <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" newLine="true" className="small" checked="${question.examNames}" options="${examNames}" /></td>
@@ -121,7 +132,7 @@ return true;
 </c:if>
 </c:if>
 <tr>
- <td class="label">Upload Image</td>
+ <td class="label" valign="top">Upload Image</td>
  <td class="data"><el:file name="imgData" idx="*" className="small" size="64" max="192" /><c:if test="${!empty question}"><br />
 <el:box name="clearImg" className="small" idx="*" value="true" label="Clear Image Resource" /></c:if></td>
 </tr>

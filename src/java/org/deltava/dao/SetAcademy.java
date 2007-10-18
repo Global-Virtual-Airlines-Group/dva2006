@@ -33,7 +33,7 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Write the certification entry
-			prepareStatementWithoutLimits("INSERT INTO CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL) "
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTS (NAME, ABBR, STAGE, PREREQ, ACTIVE, AUTO_ENROLL) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, c.getName());
 			_ps.setString(2, c.getCode());
@@ -65,7 +65,7 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Write the profile
-			prepareStatement("UPDATE CERTS SET NAME=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=? WHERE (NAME=?)");
+			prepareStatement("UPDATE exams.CERTS SET NAME=?, STAGE=?, PREREQ=?, ACTIVE=?, AUTO_ENROLL=? WHERE (NAME=?)");
 			_ps.setString(1, c.getName());
 			_ps.setInt(2, c.getStage());
 			_ps.setInt(3, c.getReqs());
@@ -75,12 +75,12 @@ public class SetAcademy extends DAO {
 			executeUpdate(1);
 			
 			// Clear the exams
-			prepareStatementWithoutLimits("DELETE FROM CERTEXAMS WHERE (CERTNAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
 			// Clear the requirements
-			prepareStatementWithoutLimits("DELETE FROM CERTREQS WHERE (CERTNAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTREQS WHERE (CERTNAME=?)");
 			_ps.setString(1, c.getName());
 			executeUpdate(0);
 			
@@ -119,11 +119,11 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Prepare the statement
-			if (c.getID() == 0) {
-				prepareStatement("INSERT INTO COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE) "
+			if (c.getID() == 0)
+				prepareStatement("INSERT INTO exams.COURSES (CERTNAME, PILOT_ID, INSTRUCTOR_ID, STATUS, STARTDATE) "
 						+ "VALUES (?, ?, ?, ?, ?)");
-			} else {
-				prepareStatement("UPDATE COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
+			else {
+				prepareStatement("UPDATE exams.COURSES SET CERTNAME=?, PILOT_ID=?, INSTRUCTOR_ID=?, STATUS=?, "
 						+ "STARTDATE=?, ENDDATE=? WHERE (ID=?)");
 				_ps.setTimestamp(6, createTimestamp(c.getEndDate()));
 				_ps.setInt(7, c.getID());
@@ -138,10 +138,10 @@ public class SetAcademy extends DAO {
 			executeUpdate(1);
 			
 			// Get the new database ID or clear course progress
-			if (c.getID() == 0) {
+			if (c.getID() == 0)
 				c.setID(getNewID());
-			} else {
-				prepareStatementWithoutLimits("DELETE FROM COURSEPROGRESS WHERE (ID=?)");
+			else {
+				prepareStatementWithoutLimits("DELETE FROM exams.COURSEPROGRESS WHERE (ID=?)");
 				_ps.setInt(1, c.getID());
 				executeUpdate(0);
 			}
@@ -170,7 +170,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void comment(CourseComment cc) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("INSERT INTO COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) "
+			prepareStatementWithoutLimits("INSERT INTO exams.COURSECHAT (COURSE_ID, PILOT_ID, CREATED, COMMENTS) "
 					+ "VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, cc.getID());
 			_ps.setInt(2, cc.getAuthorID());
@@ -190,7 +190,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void complete(int courseID, int seq) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("UPDATE COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE "
+			prepareStatementWithoutLimits("UPDATE exams.COURSEPROGRESS SET COMPLETE=?, COMPLETED=NOW() WHERE "
 					+ "(ID=?) AND (SEQ=?) AND (COMPLETE=?)");
 			_ps.setBoolean(1, true);
 			_ps.setInt(2, courseID);
@@ -209,7 +209,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void updateProgress(CourseProgress cp) throws DAOException {
 		try {
-			prepareStatement("REPLACE INTO COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, COMPLETE, COMPLETED) "
+			prepareStatement("REPLACE INTO exams.COURSEPROGRESS (ID, SEQ, AUTHOR, REQENTRY, COMPLETE, COMPLETED) "
 					+ "VALUES (?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, cp.getCourseID());
 			_ps.setInt(2, cp.getID());
@@ -231,7 +231,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void setStatus(int courseID, int status) throws DAOException {
 		try {
-			prepareStatement("UPDATE COURSES SET STATUS=? WHERE (ID=?)");
+			prepareStatement("UPDATE exams.COURSES SET STATUS=? WHERE (ID=?)");
 			_ps.setInt(1, status);
 			_ps.setInt(2, courseID);
 			executeUpdate(1);
@@ -247,7 +247,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void delete(int courseID) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM COURSES WHERE (ID=?)");
+			prepareStatement("DELETE FROM exams.COURSES WHERE (ID=?)");
 			_ps.setInt(1, courseID);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -262,7 +262,7 @@ public class SetAcademy extends DAO {
 	 */
 	public void delete(String certName) throws DAOException {
 		try {
-			prepareStatement("DELETE FROM CERTS WHERE (NAME=?)");
+			prepareStatement("DELETE FROM exams.CERTS WHERE (NAME=?)");
 			_ps.setString(1, certName);
 			executeUpdate(1);
 		} catch (SQLException se) {
@@ -280,12 +280,12 @@ public class SetAcademy extends DAO {
 			startTransaction();
 			
 			// Clean out the certifications
-			prepareStatementWithoutLimits("DELETE FROM CERTVIDEOS WHERE (FILENAME=?)");
+			prepareStatementWithoutLimits("DELETE FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
 			_ps.setString(1, video.getFileName());
 			executeUpdate(0);
 			
 			// Add the certifications
-			prepareStatementWithoutLimits("INSERT INTO CERTVIDEOS (CERTNAME, FILENAME) VALUES (?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO exams.CERTVIDEOS (CERTNAME, FILENAME) VALUES (?, ?)");
 			_ps.setString(2, video.getFileName());
 			for (Iterator<String> i = video.getCertifications().iterator(); i.hasNext(); ) {
 				_ps.setString(1, i.next());
@@ -309,7 +309,7 @@ public class SetAcademy extends DAO {
 	private void writeExams(String certName, Collection<String> exams) throws SQLException {
 
 		// Prepare the statement
-		prepareStatementWithoutLimits("INSERT INTO CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
+		prepareStatementWithoutLimits("INSERT INTO exams.CERTEXAMS (CERTNAME, EXAMNAME) VALUES (?, ?)");
 		_ps.setString(1, certName);
 		for (Iterator<String> i = exams.iterator(); i.hasNext(); ) {
 			_ps.setString(2, i.next());

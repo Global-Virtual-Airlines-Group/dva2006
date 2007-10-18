@@ -22,6 +22,8 @@ if (!validateNumber(form.minStage, 0, 'Examination Minimum Stage')) return false
 if (!validateNumber(form.questions, 1, 'Examination Size')) return false;
 if (!validateNumber(form.passScore, 0, 'Passing Score')) return false;
 if (!validateNumber(form.time, 5, 'Examination Duration')) return false;
+if (!validateCombo(form.owner, 'Owner')) return false;
+if (!validateCheckBox(form.airline, 1, 'Airline')) return false;
 
 setSubmit();
 disableButton('SaveButton');
@@ -34,6 +36,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -70,6 +73,14 @@ return true;
 <tr>
  <td class="label">Testing Time</td>
  <td class="data"><el:text name="time" idx="*" size="2" max="2" className="req" value="${eProfile.time}" /> minutes</td>
+</tr>
+<tr>
+ <td class="label">Owner Airline</td>
+ <td class="data"><el:combo name="owner" idx="*" size="1" className="req" firstEntry="-" options="${airlines}" value="${eProfile.owner}" /></td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${eProfile.airlines}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

@@ -69,6 +69,7 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 					sleep(2000);
 				} catch (InterruptedException ie) {
 					interrupt();
+					tlog.warn("Interrupted");
 				}
 
 				// Check if we need to log

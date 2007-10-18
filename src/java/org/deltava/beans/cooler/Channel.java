@@ -1,4 +1,4 @@
-// Copyright (c) 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Channel implements java.io.Serializable, Comparable, Cacheable, ComboAlias, ViewEntry {
+public class Channel implements Comparable<Channel>, Cacheable, ComboAlias, ViewEntry {
 
     public static final Channel ALL = new AllChannel("All Discussions", "ALL", true);
     public static final Channel SHOTS = new AllChannel("Screen Shots", "SSHOTS", false);
@@ -36,7 +36,7 @@ public class Channel implements java.io.Serializable, Comparable, Cacheable, Com
     
     static class AllChannel extends Channel {
     	
-    	private static Collection<String> ROLES = Arrays.asList(new String[] {"*"});
+    	private static Collection<String> ROLES = Arrays.asList("*");
     	
     	private String _myName;
     	private boolean _topOfList;
@@ -59,8 +59,7 @@ public class Channel implements java.io.Serializable, Comparable, Cacheable, Com
     		return ROLES;
     	}
     	
-    	public final int compareTo(Object o) {
-    		Channel c2 = (Channel) o;
+    	public final int compareTo(Channel c2) {
     		return _topOfList ? -1 : getName().compareTo(c2.getName());
     	}
     }
@@ -215,10 +214,10 @@ public class Channel implements java.io.Serializable, Comparable, Cacheable, Com
      * @see Channel#getAirlines()
      * @see Channel#hasAirline(String)
      */
-    public void setAirlines(Collection aCodes) {
+    public void setAirlines(Collection<String> aCodes) {
     	_airlines.clear();
-    	for (Iterator i = aCodes.iterator(); i.hasNext(); )
-    	   addAirline((String) i.next());
+    	for (Iterator<String> i = aCodes.iterator(); i.hasNext(); )
+    	   addAirline(i.next());
     }
     
     /**
@@ -237,10 +236,10 @@ public class Channel implements java.io.Serializable, Comparable, Cacheable, Com
      * @see Channel#getRoles()
      * @see Channel#addRole(String)
      */
-    public void setRoles(Collection roles) {
+    public void setRoles(Collection<String> roles) {
     	_roles.clear();
-    	for (Iterator i = roles.iterator(); i.hasNext(); )
-    	   addRole((String) i.next());
+    	for (Iterator<String> i = roles.iterator(); i.hasNext(); )
+    	   addRole(i.next());
     }
     
     /**
@@ -364,10 +363,8 @@ public class Channel implements java.io.Serializable, Comparable, Cacheable, Com
     
     /**
      * Compares two Channels by comparing their names.
-     * @see Comparable#compareTo(Object)
      */
-    public int compareTo(Object o) {
-    	Channel c2 = (Channel) o;
+    public int compareTo(Channel c2) {
     	return _name.compareTo(c2._name);
     }
     

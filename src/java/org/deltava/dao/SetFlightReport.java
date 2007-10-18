@@ -58,34 +58,36 @@ public class SetFlightReport extends DAO {
 
 	/**
 	 * Disposes of a Flight Report, by setting its status to Approved, Rejected or Held.
+	 * @param db the database name
 	 * @param usr the Person updating the Flight Report
 	 * @param pirep the Flight Report
 	 * @param statusCode the new Flight Report status code
 	 * @throws DAOException if a JDBC error occurs
 	 * @throws NullPointerException if pirep is null
 	 */
-	public void dispose(Person usr, FlightReport pirep, int statusCode) throws DAOException {
+	public void dispose(String db, Person usr, FlightReport pirep, int statusCode) throws DAOException {
+		db = formatDBName(db);
 		try {
 			startTransaction();
 
 			// Write the PIREP
-			prepareStatementWithoutLimits("UPDATE PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
+			prepareStatementWithoutLimits("UPDATE " + db + ".PIREPS SET STATUS=?, DISPOSAL_ID=?, DISPOSED=NOW() WHERE (ID=?)");
 			_ps.setInt(1, statusCode);
 			_ps.setInt(2, (usr == null) ? 0 : usr.getID());
 			_ps.setInt(3, pirep.getID());
 			executeUpdate(1);
 			
 			// Save the promotion equipment types
-			writePromoEQ(pirep.getID(), SystemData.get("airline.db"), pirep.getCaptEQType());
+			writePromoEQ(pirep.getID(), db, pirep.getCaptEQType());
 
 			// Write the comments into the database
 			if (!StringUtils.isEmpty(pirep.getComments())) {
-				prepareStatement("REPLACE INTO PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
+				prepareStatement("REPLACE INTO " + db + ".PIREP_COMMENT (ID, COMMENTS) VALUES (?, ?)");
 				_ps.setInt(1, pirep.getID());
 				_ps.setString(2, pirep.getComments());
 				executeUpdate(1);
 			} else {
-				prepareStatement("DELETE FROM PIREP_COMMENT WHERE (ID=?)");
+				prepareStatement("DELETE FROM " + db + ".PIREP_COMMENT WHERE (ID=?)");
 				_ps.setInt(1, pirep.getID());
 				executeUpdate(0);
 			}

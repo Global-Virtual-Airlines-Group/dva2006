@@ -1,10 +1,10 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.Date;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
+import org.deltava.beans.*;
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * An class to implement commonalities between user examinations and flight videos.
@@ -13,7 +13,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public abstract class Test extends DatabaseBean implements Comparable, ViewEntry {
+public abstract class Test extends DatabaseBean implements ViewEntry {
 
     public static final int EXAM = 0;
     public static final int VIDEO = 1;
@@ -51,6 +51,7 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
     private boolean _pass;
     private boolean _academy;
     
+    private AirlineInformation _owner;
     private String _comments;
     
     /**
@@ -128,12 +129,21 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
     }
     
     /**
-     * Returns wether this Test is part of the Flight Academy.
+     * Returns whether this Test is part of the Flight Academy.
      * @return TRUE if the Test is part of the Flight Academy, otherwise FALSE
      * @see Test#setAcademy(boolean)
      */
     public boolean getAcademy() {
     	return _academy;
+    }
+    
+    /**
+     * Returns the owner Airline of this Examination.
+     * @return the AirlineInformation bean
+     * @see Test#setOwner(AirlineInformation)
+     */
+    public AirlineInformation getOwner() {
+    	return _owner;
     }
     
     /**
@@ -377,11 +387,20 @@ public abstract class Test extends DatabaseBean implements Comparable, ViewEntry
     }
     
     /**
+     * Updates this Examination's owner Airline.
+     * @param ai the AirlineInformation bean
+     * @see Test#getOwner()
+     */
+    public void setOwner(AirlineInformation ai) {
+    	_owner = ai;
+    }
+    
+    /**
      * Compares examinations/checkrides by comparing their date.
      */
     public int compareTo(Object o2) {
         Test t2 = (Test) o2;
         int tmpResult = _createdOn.compareTo(t2.getDate());
-        return (tmpResult == 0) ? new Integer(getID()).compareTo(new Integer(t2.getID())) : tmpResult;
+        return (tmpResult == 0) ? Integer.valueOf(getID()).compareTo(Integer.valueOf(t2.getID())) : tmpResult;
     }
 }

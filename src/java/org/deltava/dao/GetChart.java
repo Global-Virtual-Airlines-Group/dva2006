@@ -94,7 +94,7 @@ public class GetChart extends DAO {
 	public List<Chart> getChartsByEvent(int eventID) throws DAOException {
 		try {
 			prepareStatement("SELECT C.ID, C.NAME, C.IATA, C.TYPE, C.IMGFORMAT, C.SIZE FROM common.CHARTS C, "
-					+ "common.EVENT_CHARTS EC WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
+					+ "events.EVENT_CHARTS EC WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
 			_ps.setInt(1, eventID);
 
 			// Execute the query

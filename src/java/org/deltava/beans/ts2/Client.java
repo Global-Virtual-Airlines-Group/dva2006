@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class Client extends DatabaseBean implements Comparable, Cacheable {
+public class Client extends DatabaseBean implements Cacheable {
 	
 	private String _userID;
 	private String _pwd;
@@ -25,12 +25,12 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	private boolean _serverOperator;
 	private boolean _autoVoice;
 	
-	private Date _createdOn;
+	private Date _createdOn = new Date();
 	private Date _lastOnline;
 	
 	private boolean _isACARS;
 	
-	private Collection<Integer> _channelIDs;
+	private final Collection<Integer> _channelIDs = new HashSet<Integer>();
 	
 	/**
 	 * Creates a new TeamSpeak 2 user.
@@ -41,8 +41,6 @@ public class Client extends DatabaseBean implements Comparable, Cacheable {
 	public Client(String userID) {
 		super();
 		setUserID(userID);
-		_createdOn = new Date();
-		_channelIDs = new HashSet<Integer>();
 	}
 	
 	/**

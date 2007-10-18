@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -43,19 +43,15 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAOs
-			GetDocuments dao = new GetDocuments(con);
-			GetTableStatus tsdao = new GetTableStatus(con);
-
 			// Get the document libraries from the other airlines
+			GetDocuments dao = new GetDocuments(con);
 			Map apps = (Map) SystemData.getObject("apps");
 			for (Iterator i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
-				boolean loadCerts = tsdao.getTableNames(info.getDB()).contains("CERTS");
-				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db"))) {
-					results.addAll(0, dao.getManuals(info.getDB(), loadCerts));
-				} else {
-					Collection<Manual> entries = dao.getManuals(info.getDB(), loadCerts);
+				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
+					results.addAll(0, dao.getManuals(info.getDB(), false));
+				else {
+					Collection<Manual> entries = dao.getManuals(info.getDB(), false);
 					appendDB(entries, info.getDB());
 					results.addAll(entries);
 				}

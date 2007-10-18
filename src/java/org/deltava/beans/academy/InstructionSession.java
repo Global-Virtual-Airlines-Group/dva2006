@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionSession extends DatabaseBean implements Comparable, ViewEntry, Instruction, InstructorBean {
+public class InstructionSession extends DatabaseBean implements ViewEntry, Instruction, InstructorBean {
 	
 	public static final int SCHEDULED = 0;
 	public static final int CANCELED = 1;

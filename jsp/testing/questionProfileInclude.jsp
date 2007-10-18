@@ -13,15 +13,23 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<c:if test="${question.size > 0}">
 <script language="JavaScript" type="text/javascript">
+function validate(form)
+{
+if (!checkSubmit()) return false;
+setSubmit();
+disableButton('SaveButton');
+return true;
+}
+<c:if test="${question.size > 0}">
 function viewImage(x, y)
 {
 var flags = 'height=' + y + ',width=' + x + ',menubar=no,toolbar=no,status=yes,scrollbars=yes';
-var w = window.open('/exam_rsrc/${fn:hex(question.ID)}', 'questionImage', flags);
+var w = window.open('/exam_rsrc/${question.hexID}', 'questionImage', flags);
 return true;
 }
-</script></c:if>
+</c:if>
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -31,29 +39,33 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="qinclude.do" link="${question}" method="post" validate="return validate(this)">
 <el:table className="form" pad="default" space="default">
 <!-- Question Title Bar -->
 <tr class="title caps">
- <td colspan="2">${fn:isMultiChoice(question) ? 'MULTIPLE CHOICE ' : ''}EXAMINATION QUESTION PROFILE</td>
+ <td colspan="2">EXAMINATION QUESTION PROFILE</td>
 </tr>
 <tr>
  <td class="label">Question Text</td>
  <td class="data bld">${question.question}</td>
 </tr>
-<c:if test="${fn:isMultiChoice(question)}">
+<c:if test="${!fn:isMultiChoice(question)}">
 <tr>
- <td class="label" valign="top">Answer Choices</td>
- <td class="data"><c:forEach var="choice" items="${question.choices}">${choice}<br />
-</c:forEach></td>
+ <td class="label">Correct Answer</td>
+ <td class="data">${question.correctAnswer}"</td>
 </tr>
 </c:if>
 <tr>
- <td class="label">Correct Answer</td>
- <td class="data">${question.correctAnswer}</td>
+ <td class="label">Owner Airline</td>
+ <td class="data">${question.owner.name}</td>
+</tr>
+<tr>
+ <td class="label">Airlines</td>
+ <td class="data sec"><c:forEach var="airline" items="${question.airlines}">${airline.name} </c:forEach></td>
 </tr>
 <tr>
  <td class="label" valign="top">Pilot Examinations</td>
- <td class="data small"><fmt:list value="${question.examNames}" delim=", " /></td>
+ <td class="data"><el:check name="examNames" idx="*" cols="5" width="160" newLine="true" className="small" checked="${question.examNames}" options="${examNames}" /></td>
 </tr>
 <tr>
  <td class="label">Statistics</td>
@@ -74,27 +86,29 @@ return true;
  pixels) <el:link className="pri bld small" url="javascript:void viewImage(${question.width},${question.height})">VIEW IMAGE</el:link></td>
 </tr>
 </c:if>
-<tr>
- <td class="label">&nbsp;</td>
-<c:if test="${question.active}">
- <td class="data ter bld caps">Question is Available</td>
-</c:if>
-<c:if test="${!question.active}">
- <td class="data error bld caps">Question is Not Available</td>
-</c:if>
+<c:if test="${fn:isMultiChoice(question)}">
+<tr class="title caps">
+ <td colspan="2">MULTIPLE CHOICE QUESTION</td>
 </tr>
+<tr>
+ <td class="label" valign="top">Answer Choices</td>
+ <td class="data small"><c:forEach var="choice" items="${question.choices}">${choice}<br /></c:forEach>
+</tr>
+<tr>
+ <td class="label">Correct Answer</td>
+ <td class="data">${question.correctAnswer}</td>
+</tr>
+</c:if>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" pad="default" space="default">
 <tr>
- <td><el:cmdbutton url="qprofile" link="${question}" op="edit" label="EDIT QUESTION" />
-<c:if test="${access.canDelete && (question.totalAnswers == 0)}">
- <el:cmdbutton url="qpdelete" link="${question}" label="DELETE QUESTION" />
-</c:if>
-</td>
+ <td><el:button ID="SaveButton" type="SUBMIT" className="BUTTON" label="UPDATE QUESTION" /></td>
 </tr>
 </el:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>

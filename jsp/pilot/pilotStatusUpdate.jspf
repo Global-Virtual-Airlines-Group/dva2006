@@ -19,11 +19,12 @@
 
 <!-- Pilot Status History Data -->
 <c:forEach var="update" items="${statusUpdates}">
+<c:set var="author" value="${authors[update.authorID]}" scope="request" />
 <c:if test="${(update.type != 0) || isHR}">
 <tr class="mid">
  <td class="pri bld"><fmt:date fmt="d" date="${update.createdOn}" /></td>
  <td colspan="2">${update.description}</td>
- <td class="pri" colspan="2">${update.firstName} ${update.lastName}</td> 
+ <td class="pri" colspan="2">${author.name}</td> 
  <td class="sec" colspan="2">${update.typeName}</td>
 </tr>
 </c:if>

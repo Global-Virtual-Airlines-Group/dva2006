@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.io.File;
@@ -9,6 +9,7 @@ import org.deltava.beans.academy.TrainingVideo;
 import org.deltava.util.system.SystemData;
 
 /**
+ * A Data Access Object to load Videos.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -25,15 +26,13 @@ public class GetAcademyVideos extends GetLibrary {
 	}
 	
 	/**
-	 * Returns the contents of the Video Library <i>in the current database</i>.
+	 * Returns the contents of the Video Library.
 	 * @return a List of TrainingVideo beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<TrainingVideo> getVideos() throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) LEFT JOIN CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) "
-					+ "GROUP BY V.NAME ORDER BY V.NAME");
+			prepareStatement("SELECT V.*, 0 FROM exams.VIDEOS V ORDER BY V.NAME");
 			return loadVideos();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -48,9 +47,8 @@ public class GetAcademyVideos extends GetLibrary {
 	 */
 	public Collection<TrainingVideo> getVideos(String certName) throws DAOException {
 		try {
-			prepareStatement("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) LEFT JOIN CERTVIDEOS VC ON (V.FILENAME=VC.FILENAME) "
-					+ "WHERE (VC.CERTNAME=?) GROUP BY V.NAME ORDER BY V.NAME");
+			prepareStatement("SELECT V.*, 0 FROM exams.VIDEOS V LEFT JOIN exams.CERTVIDEOS VC ON "
+					+ "(V.FILENAME=VC.FILENAME) WHERE (VC.CERTNAME=?) GROUP BY V.NAME ORDER BY V.NAME");
 			_ps.setString(1, certName);
 			return loadVideos();
 		} catch (SQLException se) {
@@ -86,7 +84,7 @@ public class GetAcademyVideos extends GetLibrary {
 		_ps.close();
 		
 		// Lload certification data
-		prepareStatementWithoutLimits("SELECT * FROM CERTVIDEOS");
+		prepareStatementWithoutLimits("SELECT * FROM exams.CERTVIDEOS");
 		rs = _ps.executeQuery();
 		while (rs.next()) {
 			TrainingVideo v = results.get(rs.getString(2));
@@ -110,7 +108,7 @@ public class GetAcademyVideos extends GetLibrary {
 		
 		Collection<String> results = new ArrayList<String>();
 		try {
-			prepareStatementWithoutLimits("SELECT CERTNAME FROM CERTVIDEOS WHERE (FILENAME=?)");
+			prepareStatementWithoutLimits("SELECT CERTNAME FROM exams.CERTVIDEOS WHERE (FILENAME=?)");
 			_ps.setString(1, fName);
 			
 			// Execute the query

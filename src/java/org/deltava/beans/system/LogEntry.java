@@ -1,8 +1,7 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
-import java.io.Serializable;
 
 import org.deltava.beans.DatabaseBean;
 import org.deltava.beans.ViewEntry;
@@ -14,7 +13,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class LogEntry extends DatabaseBean implements Serializable, Comparable, ViewEntry {
+public class LogEntry extends DatabaseBean implements ViewEntry {
    
    public static final int DEBUG = 1;
    public static final int INFO = 2;

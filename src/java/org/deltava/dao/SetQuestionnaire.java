@@ -6,6 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.testing.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to write Applicant Questionnaires.
  * @author Luke
@@ -14,6 +16,8 @@ import org.deltava.beans.testing.*;
  */
 
 public class SetQuestionnaire extends DAO {
+	
+	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
 	/**
 	 * Initialize the Data Access Object.
@@ -32,7 +36,7 @@ public class SetQuestionnaire extends DAO {
 	public void write(Examination e) throws DAOException {
 
 		// Check the exam name
-		if (!Examination.QUESTIONNAIRE_NAME.equals(e.getName()))
+		if (_qName.equals(e.getName()))
 			throw new IllegalArgumentException("Invalid Examination - " + e.getName());
 
 		// Check if we're adding or updating
@@ -152,33 +156,34 @@ public class SetQuestionnaire extends DAO {
 	public void convertToExam(Examination e, int pilotID) throws DAOException {
 
 		// Check the exam name
-		if (!Examination.QUESTIONNAIRE_NAME.equals(e.getName()))
+		if (!_qName.equals(e.getName()))
 			throw new IllegalArgumentException("Invalid Examination - " + e.getName());
 
 		try {
 			startTransaction();
 
 			// Create the Examination prepared statement
-			prepareStatement("INSERT INTO EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, GRADED_ON, "
-					+ "GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.EXAMS (NAME, AIRLINE, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
+					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, e.getName());
-			_ps.setInt(2, pilotID);
-			_ps.setInt(3, e.getStatus());
-			_ps.setTimestamp(4, createTimestamp(e.getDate()));
-			_ps.setTimestamp(5, createTimestamp(e.getSubmittedOn()));
-			_ps.setTimestamp(6, createTimestamp(e.getScoredOn()));
-			_ps.setInt(7, e.getScorerID());
-			_ps.setTimestamp(8, createTimestamp(e.getExpiryDate()));
-			_ps.setBoolean(9, true);
-			_ps.setBoolean(10, e.getAutoScored());
-			_ps.setString(11, e.getComments());
+			_ps.setString(2, e.getOwner().getCode());
+			_ps.setInt(3, pilotID);
+			_ps.setInt(4, e.getStatus());
+			_ps.setTimestamp(5, createTimestamp(e.getDate()));
+			_ps.setTimestamp(6, createTimestamp(e.getSubmittedOn()));
+			_ps.setTimestamp(7, createTimestamp(e.getScoredOn()));
+			_ps.setInt(8, e.getScorerID());
+			_ps.setTimestamp(9, createTimestamp(e.getExpiryDate()));
+			_ps.setBoolean(10, true);
+			_ps.setBoolean(11, e.getAutoScored());
+			_ps.setString(12, e.getComments());
 
 			// Write the exam and get the new exam ID
 			executeUpdate(1);
 			int examID = getNewID();
 
 			// Prepare the statement for questions
-			prepareStatement("INSERT INTO EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, QUESTION, "
+			prepareStatement("INSERT INTO exams.EXAMQUESTIONS (EXAM_ID, QUESTION_ID, QUESTION_NO, QUESTION, "
 					+ "CORRECT_ANSWER, ANSWER, CORRECT) VALUES (?, ?, ?, ?, ?, ?, ?)");
 			_ps.setInt(1, examID);
 
@@ -200,7 +205,7 @@ public class SetQuestionnaire extends DAO {
 
 			// Copy multiple choice data
 			if (e.hasMultipleChoice()) {
-				prepareStatement("INSERT INTO EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.EXAMQUESTIONSM (EXAM_ID, QUESTION_ID, SEQ, ANSWER) VALUES (?, ?, ?, ?)");
 				_ps.setInt(1, examID);
 
 				// Batch the questions

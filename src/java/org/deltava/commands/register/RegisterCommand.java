@@ -240,16 +240,17 @@ public class RegisterCommand extends AbstractCommand {
 			mctxt.setTemplate(mtdao.get("USERREGISTER"));
 
 			// Get the questionnaire profile
+			String examName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME; 
 			GetExamProfiles epdao = new GetExamProfiles(con);
-			ExamProfile ep = epdao.getExamProfile(Examination.QUESTIONNAIRE_NAME);
+			ExamProfile ep = epdao.getExamProfile(examName);
 			if (ep == null)
-				throw notFoundException("Invalid Examination - " + Examination.QUESTIONNAIRE_NAME);
+				throw notFoundException("Invalid Examination - " + examName);
 
 			// Load the question pool for the questionnaire
 			epdao.setQueryMax(ep.getSize());
-			Collection<QuestionProfile> qPool = epdao.getQuestionPool(Examination.QUESTIONNAIRE_NAME, true, true);
+			Collection<QuestionProfile> qPool = epdao.getQuestionPool(examName, true, true);
 			if (qPool.isEmpty())
-				throw notFoundException("Empty Question Pool for " + Examination.QUESTIONNAIRE_NAME);
+				throw notFoundException("Empty Question Pool for " + examName);
 
 			// Start the transaction
 			ctx.startTX();
@@ -265,7 +266,7 @@ public class RegisterCommand extends AbstractCommand {
 			mctxt.addData("addr", addrValid);
 
 			// Create the examination
-			ex = new Examination(Examination.QUESTIONNAIRE_NAME);
+			ex = new Examination(examName);
 			ex.setPilotID(a.getID());
 			ex.setStage(1);
 			ex.setStatus(Test.NEW);

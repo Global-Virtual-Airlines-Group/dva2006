@@ -114,7 +114,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Get the PIREP disposal queue size
 			if (ctx.isUserInRole("PIREP"))
-				ctx.setAttribute("pirepQueueSize", new Integer(prdao.getDisposalQueueSize()), REQUEST);
+				ctx.setAttribute("pirepQueueSize", Integer.valueOf(prdao.getDisposalQueueSize()), REQUEST);
 
 			// Get the Assistant Chief Pilots (if any) for the equipment program
 			ctx.setAttribute("asstCP", pdao.getPilotsByEQRank(Ranks.RANK_ACP, p.getEquipmentType()), REQUEST);
@@ -131,7 +131,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			// Count how many legs completed towards Promtion
 			int promoLegs = prdao.getPromotionCount(p.getID(), p.getEquipmentType());
 			ctx.setAttribute("isFO", Boolean.valueOf(Ranks.RANK_FO.equals(p.getRank())), REQUEST);
-			ctx.setAttribute("promoteLegs", new Integer(promoLegs), REQUEST);
+			ctx.setAttribute("promoteLegs", Integer.valueOf(promoLegs), REQUEST);
 
 			// Get Exam profiles
 			GetExamProfiles epdao = new GetExamProfiles(con);
@@ -139,19 +139,26 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 			// Check if we are trying to switch equipment types
 			GetTransferRequest txdao = new GetTransferRequest(con);
-			TransferRequest txreq = txdao.get(p.getID());
-			if ((txreq == null) && (p.getLegs() > 0)) {
+			boolean hasTX = txdao.hasTransfer(p.getID());
+			TransferRequest txreq = hasTX ? txdao.get(p.getID()) : null;
+			if (!hasTX && (p.getLegs() > 0)) {
 				// Get all active equipment programs, and see which we can switch to
 				GetEquipmentType eqdao = new GetEquipmentType(con);
-				Collection<EquipmentType> activeEQ = eqdao.getActive();
+				Collection<EquipmentType> activeEQ = eqdao.getAvailable(SystemData.get("airline.code"));
 				Collection<EquipmentType> needFOExamEQ = new TreeSet<EquipmentType>();
 				for (Iterator<EquipmentType> i = activeEQ.iterator(); i.hasNext();) {
 					EquipmentType eq = i.next();
 					if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq)) {
-						ExamProfile ep = exams.get(eq.getExamName(Ranks.RANK_FO));
-						if ((ep != null) && (testHistory.canWrite(ep)))
-							needFOExamEQ.add(eq);
-
+						Collection<String> eNames = eq.getExamNames(Ranks.RANK_FO);
+						if (!testHistory.hasPassed(eNames)) {
+							for (Iterator<String> ei = eNames.iterator(); ei.hasNext(); ) {
+								String examName = ei.next();
+								ExamProfile ep = exams.get(examName);
+								if ((ep != null) && (testHistory.canWrite(ep)))
+									needFOExamEQ.add(eq);
+							}
+						}
+						
 						i.remove();
 					}
 				}
@@ -171,11 +178,11 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 					GetExam exdao = new GetExam(con);
 					ctx.setAttribute("checkRide", exdao.getCheckRide(txreq.getCheckRideID()), REQUEST);
 				}
-			}
+			} else
+				ctx.setAttribute("txPending", Boolean.TRUE, REQUEST);
 
 			// See if we can write any examinations
-			Collection<ExamProfile> allExams = exams.values();
-			for (Iterator<ExamProfile> i = allExams.iterator(); i.hasNext();) {
+			for (Iterator<ExamProfile> i = exams.values().iterator(); i.hasNext();) {
 				ExamProfile ep = i.next();
 				if (!testHistory.canWrite(ep))
 					i.remove();
@@ -187,12 +194,12 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 				
 				// Get promotion queue size
 				GetPilotRecognition rdao = new GetPilotRecognition(con);
-				ctx.setAttribute("promoQueueSize", new Integer(rdao.hasPromotionQueue(myEQType)), REQUEST);
+				ctx.setAttribute("promoQueueSize", Integer.valueOf(rdao.hasPromotionQueue(myEQType)), REQUEST);
 				
 				// Get exam/transfer queue sizes
 				GetExam exdao = new GetExam(con);
-				ctx.setAttribute("examQueueSize", new Integer(exdao.getSubmitted().size()), REQUEST);
-				ctx.setAttribute("txQueueSize", new Integer(txdao.getCount(myEQType)), REQUEST);
+				ctx.setAttribute("examQueueSize", Integer.valueOf(exdao.getSubmitted().size()), REQUEST);
+				ctx.setAttribute("txQueueSize", Integer.valueOf(txdao.getCount(myEQType)), REQUEST);
 			}
 
 			// See if we are enrolled in a Flight Academy course
@@ -214,7 +221,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 			}
 
 			// Save the examinations
-			ctx.setAttribute("availableExams", allExams, REQUEST);
+			ctx.setAttribute("availableExams", exams.values(), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

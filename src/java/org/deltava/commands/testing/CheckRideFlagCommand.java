@@ -47,11 +47,12 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			
 			// Look for a check ride record - if not found, create a new check ride
 			GetExam exdao = new GetExam(con);
-			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(SystemData.get("airline.db"), 
-					fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.NEW);
+			CheckRide cr = (crID != 0) ? exdao.getCheckRide(crID) : exdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), 
+					fr.getEquipmentType(), Test.NEW);
 			boolean newCR = (cr == null);
 			if (newCR) {
 				cr = new CheckRide(fr.getEquipmentType() + " Check Ride");
+				cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 				cr.setAircraftType(fr.getEquipmentType());
 				cr.setDate(fr.getDate());
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));

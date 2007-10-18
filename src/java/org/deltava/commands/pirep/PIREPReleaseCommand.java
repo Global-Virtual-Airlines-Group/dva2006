@@ -9,6 +9,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.PIREPAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to release a held Flight Report.
@@ -46,7 +47,7 @@ public class PIREPReleaseCommand extends AbstractCommand {
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(null, fr, FlightReport.SUBMITTED);
+			wdao.dispose(SystemData.get("airline.db"), null, fr, FlightReport.SUBMITTED);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

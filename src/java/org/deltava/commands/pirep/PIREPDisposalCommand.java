@@ -153,7 +153,7 @@ public class PIREPDisposalCommand extends AbstractCommand {
 			
 			// Get the write DAO and update/dispose of the PIREP
 			SetFlightReport wdao = new SetFlightReport(con);
-			wdao.dispose(ctx.getUser(), fr, opCode);
+			wdao.dispose(SystemData.get("airline.db"), ctx.getUser(), fr, opCode);
 			fr.setStatus(opCode);
 			
 			// If we're approving and we have hit a century club milestone, log it

@@ -1,7 +1,5 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
-
-import java.io.Serializable;
 
 import org.deltava.beans.ComboAlias;
 import org.deltava.util.cache.Cacheable;
@@ -13,7 +11,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class AirlineInformation implements Comparable, Serializable, ComboAlias, Cacheable {
+public class AirlineInformation implements Comparable<AirlineInformation>, ComboAlias, Cacheable {
    
    private String _code;
    private String _name;
@@ -116,16 +114,30 @@ public class AirlineInformation implements Comparable, Serializable, ComboAlias,
    }
    
    public Object cacheKey() {
-      return getCode();
+      return _code;
    }
    
    /**
     * Compares two Airline Information beans by comparing their codes.
-    * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-      AirlineInformation ai2 = (AirlineInformation) o2;
-      return _code.compareTo(ai2.getCode());
+   public int compareTo(AirlineInformation ai2) {
+      return _code.compareTo(ai2._code);
+   }
+   
+   public boolean equals(Object o) {
+	   if (o instanceof AirlineInformation)
+		   return (compareTo((AirlineInformation) o) == 0);
+	   else if (o instanceof String)
+		   return _code.equals(o);
+	   else
+		   return false;
+   }
+   
+   /**
+    * Returns the airline code.
+    */
+   public String toString() {
+	   return _code;
    }
    
    /**

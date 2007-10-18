@@ -130,8 +130,9 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="2">OUR NEWEST CENTURY CLUB MEMBERS</td>
 </tr>
 <c:forEach var="entry" items="${centuryClub}">
+<c:set var="pilot" value="${updPilots[entry.ID]}" scope="request" />
 <tr>
- <td class="priB mid">${entry.firstName} ${entry.lastName}</td>
+ <td class="priB mid">${pilot.name}</td>
  <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
 </tr>
 </c:forEach>
@@ -146,8 +147,9 @@ our sister airline <a rel="external" href="http://${partnerURL}/" class="sec bld
  <td colspan="2"><content:airline /> CONGRATULATES</td>
 </tr>
 <c:forEach var="entry" items="${promotions}">
+<c:set var="pilot" value="${updPilots[entry.ID]}" scope="request" />
 <tr>
- <td class="priB mid">${entry.firstName} ${entry.lastName}</td>
+ <td class="priB mid">${pilot.name}</td>
  <td class="def mid">${entry.description} on <fmt:date fmt="d" date="${entry.createdOn}" /></td>
 </tr>
 </c:forEach>

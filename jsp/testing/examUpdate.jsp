@@ -23,7 +23,7 @@
 <!-- Examination Submitted -->
 <div class="updateHdr">Examination Submitted</div>
 <br />
-Your ${exam.name} Pilot Examination has been submitted to <content:airline />. Please allow
+Your ${exam.name} Pilot Examination has been submitted to ${exam.owner.name}. Please allow
 between 48 and 96 hours for this Examination to be evaluated and scored. Your will receive an
 e-mail notification when this is complete.<br />
 <br />
@@ -46,7 +46,7 @@ To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">
 <!-- Examination/Check Ride Deleted -->
 <div class="updateHdr">Examination/Check Ride Deleted</div>
 <br />
-This <content:airline /> ${isCheckRide ? 'Check Ride' : 'Examination'} has been canceled and deleted 
+This ${exam.owner.name} ${isCheckRide ? 'Check Ride' : 'Examination'} has been canceled and deleted 
 from the database.<br />
 </c:when>
 </c:choose>

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.blog;
 
 import java.util.Date;
@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class Comment extends DatabaseBean implements Comparable, CalendarEntry {
+public class Comment extends DatabaseBean implements CalendarEntry {
 	
 	private Date _date;
 	private String _name;

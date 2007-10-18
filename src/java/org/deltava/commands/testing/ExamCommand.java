@@ -1,17 +1,14 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.testing.Test;
-import org.deltava.beans.testing.Examination;
+import org.deltava.beans.*;
+import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetExam;
-import org.deltava.dao.GetPilot;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
@@ -49,19 +46,25 @@ public class ExamCommand extends AbstractCommand {
             throw securityException("Cannot view Examination " + ctx.getID());
          
          // Get the Pilot and the scorer
-         GetPilot pdao = new GetPilot(con);
-         Pilot p = pdao.get(ex.getPilotID());
-         ctx.setAttribute("pilot", p, REQUEST);
+         Collection<Integer> IDs = new HashSet<Integer>();
+         IDs.add(new Integer(ex.getPilotID()));
          if (ex.getScorerID() != 0)
-        	 ctx.setAttribute("scorer", pdao.get(ex.getScorerID()), REQUEST);
+        	 IDs.add(new Integer(ex.getScorerID()));
+         
+         // Load the Pilots
+         GetPilot pdao = new GetPilot(con);
+         GetUserData uddao = new GetUserData(con);
+         UserDataMap udm = uddao.get(IDs);
+         Map<Integer, Pilot> pilots = pdao.get(udm);
+         ctx.setAttribute("pilot", pilots.get(new Integer(ex.getPilotID())), REQUEST);
+       	 ctx.setAttribute("scorer", pilots.get(new Integer(ex.getScorerID())), REQUEST);
          
          // Display answers only if we have the necessary role
          int activeExamID = dao.getActiveExam(ctx.getUser().getID());
-         if (ex.getPilotID() == ctx.getUser().getID()) {
+         if (ex.getPilotID() == ctx.getUser().getID())
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers() && (activeExamID == 0)), REQUEST);
-         } else {
+         else
          	ctx.setAttribute("showAnswers", Boolean.valueOf(access.getCanViewAnswers()), REQUEST);
-         }
          
          // Determine what we will do with the examination
          String opName = (String) ctx.getCmdParameter(Command.OPERATION, null);
@@ -69,13 +72,12 @@ public class ExamCommand extends AbstractCommand {
             // Calculate time remaining
             ctx.setAttribute("timeRemaining", new Long((ex.getExpiryDate().getTime() - System.currentTimeMillis()) / 1000), REQUEST);
             result.setURL("/jsp/testing/examTake.jsp");
-         } else if ((ex.getStatus() != Test.SCORED) && access.getCanScore()) {
+         } else if ((ex.getStatus() != Test.SCORED) && access.getCanScore())
             result.setURL("/jsp/testing/examScore.jsp");
-         } else if (("edit".equals(opName)) && (access.getCanEdit())) {
+         else if (("edit".equals(opName)) && (access.getCanEdit()))
             result.setURL("/jsp/testing/examScore.jsp");
-         } else {
+         else
             result.setURL("/jsp/testing/examView.jsp");
-         }
          
          // Save the exam and access in the request
          ctx.setAttribute("exam", ex, REQUEST);

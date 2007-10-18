@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.DatabaseBean;
@@ -10,7 +10,7 @@ import org.deltava.beans.DatabaseBean;
  * @since 1.0
  */
 
-public class PreferredRoute extends DatabaseBean implements Comparable {
+public class PreferredRoute extends DatabaseBean {
     
     private Airport _airportD;
     private Airport _airportA;

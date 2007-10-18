@@ -49,11 +49,10 @@ public class ManualCommand extends LibraryEditCommand {
 
 		// Get the uploaded file
 		FileUpload mFile = ctx.getFile("file");
-		if (isNew && (mFile == null)) {
+		if (isNew && (mFile == null))
 			throw notFoundException("No Manual Uploaded");
-		} else if (isNew && (mFile != null)) {
+		else if (isNew && (mFile != null))
 			fName = mFile.getName();
-		}
 
 		// Check if we notify people
 		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
@@ -67,13 +66,9 @@ public class ManualCommand extends LibraryEditCommand {
 		try {
 			Connection con = ctx.getConnection();
 
-			// Get the DAOs
-			GetDocuments dao = new GetDocuments(con);
-			GetTableStatus tsdao = new GetTableStatus(con);
-			
 			// Get the Library entry
-			String db = SystemData.get("airline.db");
-			entry = dao.getManual(fName, db, tsdao.getTableNames(db).contains("CERTS"));
+			GetDocuments dao = new GetDocuments(con);
+			entry = dao.getManual(fName, SystemData.get("airline.db"));
 
 			// Check our access level
 			FleetEntryAccessControl access = new FleetEntryAccessControl(ctx, entry);
@@ -83,9 +78,9 @@ public class ManualCommand extends LibraryEditCommand {
 				throw securityException("Cannot create/edit Document Library entry");
 
 			// Check if we're uploading to ensure that the file does not already exist
-			if (isNew && (entry != null)) {
+			if (isNew && (entry != null))
 				throw new CommandException("Document " + fName + " already exists");
-			} else if (isNew) {
+			else if (isNew) {
 				File f = new File(SystemData.get("path.library"), fName);
 				entry = new Manual(f.getPath());
 				ctx.setAttribute("fileAdded", Boolean.TRUE, REQUEST);

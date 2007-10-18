@@ -1,7 +1,11 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
+import java.util.*;
+
 import org.deltava.beans.ViewEntry;
+import org.deltava.beans.system.AirlineInformation;
+
 import org.deltava.util.cache.Cacheable;
 
 /**
@@ -11,7 +15,7 @@ import org.deltava.util.cache.Cacheable;
  * @since 1.0
  */
 
-public class ExamProfile implements java.io.Serializable, Comparable, Cacheable, ViewEntry {
+public class ExamProfile implements Comparable<ExamProfile>, Cacheable, ViewEntry {
 
     private String _name;
     private int _stage;
@@ -23,6 +27,9 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
     
     private boolean _active;
     private boolean _flightAcademy;
+    
+    private AirlineInformation _owner;
+    private final Collection<AirlineInformation> _airlines = new HashSet<AirlineInformation>();
     
     /**
      * Creates a new Examination profile.
@@ -113,6 +120,25 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
      */
     public boolean getAcademy() {
     	return _flightAcademy;
+    }
+    
+    /**
+     * Returns the Owner Airline for this Examination.
+     * @return an AirlineInformation bean
+     * @see ExamProfile#setOwner(AirlineInformation)
+     */
+    public AirlineInformation getOwner() {
+    	return _owner;
+    }
+    
+    /**
+     * Returns the Airlines that can access this Examination.
+     * @return a Collection of AirlineInformation beans
+     * @see ExamProfile#addAirline(AirlineInformation)
+     * @see ExamProfile#setAirlines(Collection)
+     */
+    public Collection<AirlineInformation> getAirlines() {
+    	return _airlines;
     }
 
     /**
@@ -218,14 +244,41 @@ public class ExamProfile implements java.io.Serializable, Comparable, Cacheable,
     }
     
     /**
-     * Compares two examinations by comparing their stage and name.
-     * @see Comparable#compareTo(Object)
+     * Sets which airline is the owner of this Examination.
+     * @param ai the AirlineInformation bean for the owner airline
+     * @see ExamProfile#getOwner()
      */
-    public int compareTo(Object o2) {
-        ExamProfile e2 = (ExamProfile) o2;
-        
-        // Compare the stages
-        int tmpResult = new Integer(_stage).compareTo(new Integer(e2.getStage()));
+    public void setOwner(AirlineInformation ai) {
+    	_owner = ai;
+    	_airlines.add(ai);
+    }
+    
+    /**
+     * Makes this Examination visible to an Airline.
+     * @param ai the AirlineInformation bean
+     * @see ExamProfile#setAirlines(Collection)
+     * @see ExamProfile#getAirlines()
+     */
+    public void addAirline(AirlineInformation ai) {
+    	_airlines.add(ai);
+    }
+    
+    /**
+     * Sets the Airlines that this Examination will be visible to.
+     * @param airlines a Collection of AirlineInformation beans
+     */
+    public void setAirlines(Collection<AirlineInformation> airlines) {
+    	_airlines.clear();
+    	_airlines.add(_owner);
+    	if (airlines != null)
+    		_airlines.addAll(airlines);
+    }
+    
+    /**
+     * Compares two examinations by comparing their stage and name.
+     */
+    public int compareTo(ExamProfile e2) {
+        int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(e2.getStage()));
         return (tmpResult != 0) ? tmpResult : _name.compareTo(e2.getName()); 
     }
     

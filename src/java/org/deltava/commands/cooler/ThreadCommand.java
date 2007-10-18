@@ -136,7 +136,6 @@ public class ThreadCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetApplicant adao = new GetApplicant(con);
 			GetFlightReports prdao = new GetFlightReports(con);
-			GetTableStatus tsdao = new GetTableStatus(con);
 			GetAcademyCourses acdao = new GetAcademyCourses(con);
 			
 			// Get the authors and online totals for each user
@@ -148,24 +147,20 @@ public class ThreadCommand extends AbstractCommand {
 				if (UserDataMap.isPilotTable(dbTableName)) {
 					Map<Integer, Pilot> pilots = pdao.getByID(udm.getByTable(dbTableName), dbTableName);
 					prdao.getOnlineTotals(pilots, dbTableName);
-					
-					// If the Flight Academy exists, save the certifications 
-					if (tsdao.getTableNames(dbTableName).contains("CERTS")) {
-						Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getByTable(dbTableName), dbTableName);
-						for (Iterator<Integer> ci = certs.keySet().iterator(); ci.hasNext(); ) {
-							Integer id = ci.next();
-							Pilot cp = pilots.get(id);
-							if (cp != null)
-								cp.addCertifications(certs.get(id));
-						}
-					}
-						
-					// Save the pilots
 					users.putAll(pilots);
 				} else {
 					Map<Integer, Applicant> applicants = adao.getByID(udm.getByTable(dbTableName), dbTableName);
 					users.putAll(applicants);
 				}
+			}
+			
+			// Get Flight Academy certifications 
+			Map<Integer, Collection<String>> certs = acdao.getCertifications(udm.getAllIDs());
+			for (Iterator<Integer> ci = certs.keySet().iterator(); ci.hasNext(); ) {
+				Integer id = ci.next();
+				Person cp = users.get(id);
+				if ((cp != null) && (cp instanceof Pilot))
+					((Pilot) cp).addCertifications(certs.get(id));
 			}
 			
 			// Aggregate totals for pilots

@@ -16,8 +16,7 @@
 	<classpathentry kind="lib" path="lib/hansel-2.0a3.jar"/>
 	<classpathentry kind="lib" path="lib/junit-4.1.jar"/>
 	<classpathentry kind="lib" path="lib/asm-all-3.0_RC1.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/edtftpj-1.5.4.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.0.jar" sourcepath="/IPC/src"/>
-	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.0.7-bin.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/edtftpj-1.5.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

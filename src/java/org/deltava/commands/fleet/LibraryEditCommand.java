@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.fleet;
 
 import java.util.*;
@@ -63,25 +63,20 @@ public abstract class LibraryEditCommand extends AbstractFormCommand {
 
 			// Get the DAO and the library entry
 			GetDocuments dao = new GetDocuments(con);
-			GetTableStatus tsdao = new GetTableStatus(con);
 			if ("manual".equals(docType)) {
 				String db = SystemData.get("airline.db");
-				boolean hasCerts = tsdao.getTableNames(db).contains("CERTS");
 				
 				// Load the manual
-				Manual m = dao.getManual(fName, db, hasCerts);
-				if (hasCerts) {
-					GetAcademyCertifications cdao = new GetAcademyCertifications(con);
-					ctx.setAttribute("certs", cdao.getAll(), REQUEST);
-				}
+				Manual m = dao.getManual(fName, db);
+				GetAcademyCertifications cdao = new GetAcademyCertifications(con);
+				ctx.setAttribute("certs", cdao.getAll(), REQUEST);
 
 				// Save the entry
 				entry = m;
-			} else if ("newsletter".equals(docType)) {
+			} else if ("newsletter".equals(docType))
 				entry = dao.getNewsletter(fName, SystemData.get("airline.db"));
-			} else {
+			else
 				entry = dao.getInstaller(fName, SystemData.get("airline.db"));
-			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

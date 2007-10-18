@@ -294,8 +294,8 @@ including Standard Instrument Departure (SID) and Standard Terminal Arrival Rout
 </tr>
 <tr>
  <td class="mid"><el:cmd className="pri bld" url="charts" linkID="${pilot.homeAirport}">Approach Charts</el:cmd></td>
- <td class="data">We have the Q2 2003 version of EchoPlate approach charts for all United States Airports served by 
- Delta Virtual Airlines, Continental and Northwest Airlines.</td>
+ <td class="data">We have airport, instrument approach, departure and arrival charts airports served by <content:airline />,
+ Continental and Northwest Airlines.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="routes" op="oceanic">Oceanic Tracks</el:cmd></td>
@@ -410,6 +410,12 @@ to withdraw this Transfer Request.</span></c:if></td>
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
 <c:if test="${txaccess.canDelete}"> <span class="small"> <el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
 to withdraw this Transfer Request.</span></c:if></td>
+</tr>
+</c:if>
+<c:if test="${txPending && (empty txreq)}">
+<tr>
+ <td class="mid bld">Additional Rating Request</td>
+ <td class="data">You currently have a pending additional ratings request with a partner virtual airline.</td>
 </tr>
 </c:if>
 <tr>

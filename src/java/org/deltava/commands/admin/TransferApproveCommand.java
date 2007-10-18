@@ -57,8 +57,10 @@ public class TransferApproveCommand extends AbstractCommand {
 				throw securityException("Cannot approve Transfer Request");
 
 			// Get the Pilot
+			GetUserData uddao = new GetUserData(con);
 			GetPilot pdao = new GetPilot(con);
-			usr = pdao.get(txreq.getID());
+			UserData ud = uddao.get(txreq.getID());
+			usr = pdao.get(ud);
 			if (usr == null)
 				throw notFoundException("Invalid Pilot - " + txreq.getID());
 			
@@ -154,11 +156,12 @@ public class TransferApproveCommand extends AbstractCommand {
 
 			// Save the Pilot
 			SetPilot pwdao = new SetPilot(con);
-			pwdao.write(usr);
+			pwdao.write(usr, ud.getDB());
 
 			// Write the Status Updates
 			SetStatusUpdate swdao = new SetStatusUpdate(con);
-			swdao.write(updates);
+			for (Iterator<StatusUpdate> i = updates.iterator(); i.hasNext(); )
+				swdao.write(ud.getDB(), i.next());
 
 			// Delete the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);

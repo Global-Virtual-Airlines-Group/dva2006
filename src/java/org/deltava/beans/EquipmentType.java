@@ -1,7 +1,9 @@
-// Copyright 2004, 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
+
+import org.deltava.beans.system.AirlineInformation;
 
 /**
  * A class for storing equipment program information.
@@ -10,12 +12,14 @@ import java.util.*;
  * @since 1.0
  */
 
-public class EquipmentType implements java.io.Serializable, Comparable, ComboAlias, ViewEntry {
+public class EquipmentType implements Comparable<EquipmentType>, ComboAlias, ViewEntry {
 	
 	// Database constants
 	public static final int SECONDARY_RATING = 0;
 	public static final int PRIMARY_RATING = 1;
-    
+	public static final int EXAM_FO = 0;
+	public static final int EXAM_CAPT = 1;
+	
     private String _name;
     private int _stage = 1;
     private boolean _active = true;
@@ -30,7 +34,10 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     private final Collection<String> _secondaryRatings = new TreeSet<String>();
     
     private final Map<String, Integer> _promotionCriteria = new HashMap<String, Integer>();
-    private final Map<String, String> _examNames = new HashMap<String, String>();
+    private final Map<String, Collection<String>> _examNames = new HashMap<String, Collection<String>>();
+    
+    private AirlineInformation _owner;
+    private final Collection<AirlineInformation> _airlines = new TreeSet<AirlineInformation>();
     
     /**
      * Create a new EquipmentType object for a given aircraft type
@@ -137,20 +144,19 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     /**
      * Return the name of the examination required for promotion into a rank
      * @param rank The rank to be promoted <i>into</i>. Use Ranks.ENTRY for an entrance exam.
-     * @return The name of the examination, null if none
-     * @see Ranks
-     * @see EquipmentType#setExamName(String, String)
+     * @return The names of the examinations
+     * @see EquipmentType#setExamNames(String, Collection)
      */
-    public String getExamName(String rank) {
-        return _examNames.get(rank);
+    public Collection<String> getExamNames(String rank) {
+    	Collection<String> names = _examNames.get(rank);
+    	return (names == null) ? new HashSet<String>() : names;
     }
     
     /**
-     * Return the number of hours required for promotion
-     * @param rank The <i>current</i> rank of the pilot, use constants when you can
+     * Return the number of hours required for promotion.
+     * @param rank The <i>current</i> rank of the pilot
      * @return The number of hours required for a promotion <i>out of</i> the specified rank, returns 0 if not set
      * @throws NullPointerException if rank is null 
-     * @see Ranks
      * @see EquipmentType#setPromotionHours(String, int)
      * @see EquipmentType#getPromotionLegs(String)
      */
@@ -160,8 +166,8 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
 
     /**
-     * Return the number of flight legs required for promotion
-     * @param rank The <i>current</i> rank of the pilot, use constants when you can
+     * Return the number of flight legs required for promotion.
+     * @param rank The <i>current</i> rank of the pilot
      * @return The number of legs required for a promotion <i>out of</i> the specified rank, returns 0 if not set
      * @throws NullPointerException if rank is null 
      * @see Ranks
@@ -202,8 +208,27 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
     }
     
     /**
+     * Returns the Airline that owns this equipment program profile.
+     * @return an AirlineInformation bean
+     * @see EquipmentType#setOwner(AirlineInformation)
+     */
+    public AirlineInformation getOwner() {
+    	return _owner;
+    }
+    
+    /**
+     * Returns the Airlines whose pilots can get ratings via this equipment program.
+     * @return a Collection of AirlineInformation beans
+     * @see EquipmentType#addAirline(AirlineInformation)
+     * @see EquipmentType#setAirlines(Collection)
+     */
+    public Collection<AirlineInformation> getAirlines() {
+    	return _airlines;
+    }
+    
+    /**
      * Add an available rank to this equipment type.
-     * @param rank The rank name
+     * @param rank The rank
      * @throws NullPointerException if rank is null
      * @see EquipmentType#getRanks()
      * @see EquipmentType#addRanks(String, String)
@@ -225,9 +250,8 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
      */
     public void addRanks(String ranks, String delim) {
         StringTokenizer rankTokens = new StringTokenizer(ranks, delim);
-        while (rankTokens.hasMoreTokens()) {
+        while (rankTokens.hasMoreTokens())
             addRank(rankTokens.nextToken());
-        }
     }
     
     /**
@@ -329,16 +353,75 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
 
 	    _cpID = id;
     }
+
+    /**
+     * Adds an examination required for promotion into a particular rank.
+     * @param rank The rank to be promoted <i>into</i>
+     * @param examName The name of the examination
+     * @see Ranks
+     * @see EquipmentType#setExamNames(String, Collection)
+     * @see EquipmentType#getExamNames(String)
+     */
+    public void addExam(String rank, String examName) {
+    	Collection<String> eNames = _examNames.get(rank);
+    	if (eNames == null) {
+    		eNames = new LinkedHashSet<String>();
+    		_examNames.put(rank, eNames);
+    	}
+    	
+    	eNames.add(examName);
+    }
     
     /**
-     * Set the examination required for promotion into a particular rank
-     * @param rank The rank to be promoted <i>into</i>. Use Ranks.ENTRY for an entrance exam.
-     * @param examName The name of the examination.
+     * Set the examinations required for promotion into a particular rank.
+     * @param rank The rank to be promoted <i>into</i>
+     * @param examNames The name of the examinations
      * @see Ranks
-     * @see EquipmentType#getExamName(String)
+     * @see EquipmentType#addExam(String, String)
+     * @see EquipmentType#getExamNames(String)
      */
-    public void setExamName(String rank, String examName) {
-        _examNames.put(rank, examName);
+    public void setExamNames(String rank, Collection<String> examNames) {
+    	Collection<String> eNames = _examNames.get(rank);
+    	if (eNames == null) {
+    		eNames = new LinkedHashSet<String>();
+    		_examNames.put(rank, eNames);
+    	} else
+    		eNames.clear();
+    	
+    	if (examNames != null)
+    		eNames.addAll(examNames);
+    }
+    
+    /**
+     * Updates the Airline that owns this equipment program.
+     * @param ai an AirlineInformation bean
+     * @see EquipmentType#getOwner()
+     */
+    public void setOwner(AirlineInformation ai) {
+    	_owner = ai;
+    	_airlines.add(ai);
+    }
+    
+    /**
+     * Adds an Airline to the list of applications whose Pilots can get ratings in this equipment program.
+     * @param ai an AirlineInformation bean
+     * @see EquipmentType#getAirlines()
+     * @see EquipmentType#setAirlines(Collection)
+     */
+    public void addAirline(AirlineInformation ai) {
+    	_airlines.add(ai);
+    }
+    
+    /**
+     * Updates the list of applications whose Pilots can get ratings in this equipment program.
+     * @param airlines a Collection of AirlineInformation beans
+     * @see EquipmentType#getAirlines()
+     * @see EquipmentType#addAirline(AirlineInformation)
+     */
+    public void setAirlines(Collection<AirlineInformation> airlines) {
+    	_airlines.clear();
+    	if (airlines != null)
+    		_airlines.addAll(airlines);
     }
     
     /**
@@ -373,7 +456,7 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
 
     /**
      * Set the number of legs required for promotion.
-     * @param rank The <i>current</i> rank of the pilot, use constants when you can
+     * @param rank The <i>current</i> rank of the pilot
      * @param legs The number of legs required for promotion
      * @throws IllegalArgumentException if legs is negative
      * @throws NullPointerException if rank is null
@@ -385,18 +468,15 @@ public class EquipmentType implements java.io.Serializable, Comparable, ComboAli
         if (legs < 0)
             throw new IllegalArgumentException("Legs cannot be zero");
         
-        _promotionCriteria.put(rank + "_LEGS", new Integer(legs));
+        _promotionCriteria.put(rank + "_LEGS", Integer.valueOf(legs));
     }
     
     /**
      * Compares programs by comparing stage values, then the name.
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     * @see String#compareTo(String)
      */
-    public int compareTo(Object o2) {
-        EquipmentType et2 = (EquipmentType) o2; 
-        int tmp = new Integer(getStage()).compareTo(new Integer(et2.getStage()));
-        return (tmp == 0) ? getName().compareTo(et2.getName()) : tmp;
+    public int compareTo(EquipmentType et2) {
+        int tmp = Integer.valueOf(_stage).compareTo(Integer.valueOf(et2._stage));
+        return (tmp == 0) ? _name.compareTo(et2._name) : tmp;
     }
     
     /**

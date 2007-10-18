@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.sql.Connection;
@@ -54,8 +54,8 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			
 			// Make sure we have passed the examination
 			EquipmentType eq = testHistory.getEquipmentType();
-			if (!testHistory.hasPassed(eq.getExamName(Ranks.RANK_C))) {
-				CommandException ce = new CommandException(usr.getName() + " has not passed Captain's exam");
+			if (!testHistory.hasPassed(eq.getExamNames(Ranks.RANK_C))) {
+				CommandException ce = new CommandException(usr.getName() + " has not passed Captain's exams");
 				ce.setLogStackDump(false);
 				throw ce;
 			}

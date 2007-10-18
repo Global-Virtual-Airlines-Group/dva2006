@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.*;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -26,66 +27,63 @@ public class GetEquipmentType extends DAO {
 	}
 
 	/**
-	 * Returns a particular Equipment Program profile.
+	 * Returns a particular Equipment Program profile. If multiple airlines have the same equipment program name,
+	 * then the results are undefined.
 	 * @param eqType the Equipment Type to return
-	 * @return the Equipment Type profile
+	 * @return the Equipment Type profile or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EquipmentType get(String eqType) throws DAOException {
-		return get(eqType, SystemData.get("airline.db"));
+		return get(eqType, null);
 	}
-
+	
 	/**
-	 * Returns a particular Equipment Program profile.
+	 * Returns a particular Equipment Program profile from a specific database.
 	 * @param eqType the Equipment Type to return
 	 * @param dbName the database name
 	 * @return the Equipment Type profile or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public EquipmentType get(String eqType, String dbName) throws DAOException {
-
-		// Build the SQL statement
-		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-				+ "P.EMAIL FROM ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".EQTYPES EQ, ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P WHERE (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=?) LIMIT 1");
-
 		try {
+			if (dbName == null) {
+				prepareStatementWithoutLimits("SELECT AI.DBNAME FROM common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE "
+						+ "(EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=?) LIMIT 1");
+				_ps.setString(1, eqType);
+			
+				// Execute the query
+				ResultSet rs = _ps.executeQuery();
+				dbName = rs.next() ? rs.getString(1) : null;
+				rs.close();
+				_ps.close();
+				if (dbName == null)
+					return null;
+			}
+			
+			// Build the SQL statement
+			StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+					+ "P.EMAIL FROM ");
+			sqlBuf.append(dbName);
+			sqlBuf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+			sqlBuf.append(dbName);
+			sqlBuf.append(".PILOTS P WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.AIRLINE=AI.CODE) AND "
+					+ "(AI.DBNAME=?) AND (EQ.EQTYPE=?) LIMIT 1");
+
+			// Prepare the statement
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			_ps.setString(1, eqType);
+			_ps.setString(1, dbName);
+			_ps.setString(2, eqType);
 
 			// Execute the query - if we get nothing back, then return null
 			List<EquipmentType> results = execute();
 			if (results.isEmpty())
 				return null;
 
-			// Get the ratings
-			EquipmentType eq = results.get(0);
-			prepareStatementWithoutLimits("SELECT RATING_TYPE, RATED_EQ FROM " + dbName + ".EQRATINGS WHERE (EQTYPE=?)");
-			_ps.setString(1, eqType);
-
-			// Do the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				switch (rs.getInt(1)) {
-					case EquipmentType.PRIMARY_RATING:
-						eq.addPrimaryRating(rs.getString(2));
-						break;
-
-					default:
-					case EquipmentType.SECONDARY_RATING:
-						eq.addSecondaryRating(rs.getString(2));
-						break;
-				}
-			}
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return eq;
+			// Get the ratings/exams
+			loadRatings(results, dbName);
+			loadExams(results, dbName);
+			loadAirlines(results, dbName);
+			return results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -99,13 +97,73 @@ public class GetEquipmentType extends DAO {
 	 */
 	public Collection<EquipmentType> getByStage(int stage) throws DAOException {
 		try {
-			prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, "
-					+ "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND "
-					+ "(EQ.EQTYPE=R.EQTYPE) AND (EQ.STAGE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
+			prepareStatement("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, "
+					+ "R.RATING_TYPE, R.RATED_EQ FROM EQTYPES EQ, common.EQPROGRAMS EP, PILOTS P, EQRATINGS R "
+					+ "WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.EQTYPE=R.EQTYPE) AND (EQ.STAGE=?) "
+					+ "ORDER BY EQ.STAGE, EQ.EQTYPE");
 			_ps.setInt(1, stage);
 
 			// Return results
 			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Returns all equipment programs a Pilot in a particular airline can get ratings in.
+	 * @param aCode the Airline code
+	 * @return a Collection of EquipmentType beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<EquipmentType> getAvailable(String aCode) throws DAOException {
+		try {
+			// Get the programs to load
+			prepareStatementWithoutLimits("SELECT DISTINCT AI.DBNAME FROM common.AIRLINEINFO AI, "
+					+ "common.EQPROGRAMS EP WHERE (AI.CODE=EP.AIRLINE) AND (LOCATE(?, EP.AIRLINES) > 0)");
+			_ps.setString(1, aCode);
+			
+			// Execute the query
+			Collection<String> dbs = new LinkedHashSet<String>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				dbs.add(rs.getString(1));
+			
+			// Clean up
+			rs.close();
+			_ps.close();
+			
+			// Loop through the databases and load the programs
+			Collection<EquipmentType> results = new ArrayList<EquipmentType>();
+			for (Iterator<String> i = dbs.iterator(); i.hasNext(); ) {
+				String db = formatDBName(i.next());
+				
+				// Build the SQL statement
+				StringBuilder buf = new StringBuilder("SELECT DISTINCT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
+						+ "P.EMAIL FROM ");
+				buf.append(db);
+				buf.append(".EQTYPES EQ, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
+				buf.append(db);
+				buf.append(".PILOTS P, ");
+				buf.append(db);
+				buf.append(".EQAIRLINES EA WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) AND "
+						+ "(EA.AIRLINE=?) AND (AI.DBNAME=LOWER(?)) AND (EA.EQTYPE=EQ.EQTYPE)");
+				
+				// Prepare the statement and execute
+				prepareStatementWithoutLimits(buf.toString());
+				_ps.setBoolean(1, true);
+				_ps.setString(2, aCode);
+				_ps.setString(3, db.toLowerCase());
+				Collection<EquipmentType> exams = execute();
+				
+				// Load child rows and add
+				loadRatings(exams, db);
+				loadExams(exams, db);
+				loadAirlines(exams, db);
+				results.addAll(new TreeSet<EquipmentType>(exams));
+			}
+			
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -122,20 +180,21 @@ public class GetEquipmentType extends DAO {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
-		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), "
-				+ "P.EMAIL, R.RATING_TYPE, R.RATED_EQ FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(".PILOTS P, common.EQPROGRAMS EP, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".EQTYPES EQ LEFT JOIN ");
-		sqlBuf.append(dbName);
-		sqlBuf.append(".EQRATINGS R ON (EQ.EQTYPE=R.EQTYPE) WHERE (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) "
-				+ "ORDER BY EQ.STAGE, EQ.EQTYPE");
+		sqlBuf.append(".EQTYPES EQ WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY "
+				+ "EQ.STAGE, EQ.EQTYPE");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setBoolean(1, true);
-			return execute();
+			List<EquipmentType> results = execute();
+			loadRatings(results, dbName);
+			loadExams(results, dbName);
+			loadAirlines(results, dbName);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -158,10 +217,14 @@ public class GetEquipmentType extends DAO {
 	 */
 	public List<EquipmentType> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT EQ.*, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL, R.RATING_TYPE, "
-					+ "R.RATED_EQ FROM EQTYPES EQ, PILOTS P, EQRATINGS R WHERE (EQ.CP_ID=P.ID) AND "
-					+ "(EQ.EQTYPE=R.EQTYPE) ORDER BY EQ.STAGE, EQ.EQTYPE");
-			return execute();
+			prepareStatement("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM EQTYPES EQ, "
+					+ "common.EQPROGRAMS EP, PILOTS P WHERE (EQ.EQTYPE=EP.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EP.AIRLINE=?) "
+					+ "ORDER BY EQ.STAGE, EQ.EQTYPE");
+			_ps.setString(1, SystemData.get("airline.code"));
+			List<EquipmentType> results = execute();
+			loadRatings(results, SystemData.get("airline.db"));
+			loadExams(results, SystemData.get("airline.db"));
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -217,9 +280,8 @@ public class GetEquipmentType extends DAO {
 			// Execute the query
 			Map<String, Integer> results = new LinkedHashMap<String, Integer>();
 			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
+			while (rs.next())
 				results.put(rs.getString(1), new Integer(rs.getInt(2)));
-			}
 
 			// Clean up and return
 			rs.close();
@@ -241,9 +303,8 @@ public class GetEquipmentType extends DAO {
 		// Build the SQL statement
 		Collection<String> allRatings = new HashSet<String>(eq.getPrimaryRatings());
 		allRatings.addAll(eq.getSecondaryRatings());
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN RATINGS R "
-						+ " ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID, COUNT(R.RATING) AS CNT FROM PILOTS P LEFT JOIN "
+				+ "RATINGS R ON (P.ID=R.ID) WHERE (P.EQTYPE=?) AND R.RATING IN (");
 		for (Iterator<String> i = allRatings.iterator(); i.hasNext();) {
 			i.next();
 			sqlBuf.append('?');
@@ -279,56 +340,112 @@ public class GetEquipmentType extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Helper method to load type ratings for each equipment type program.
+	 */
+	private void loadRatings(Collection<EquipmentType> eTypes, String db) throws SQLException {
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+
+		// Execute the query
+		prepareStatementWithoutLimits("SELECT * FROM " + db + ".EQRATINGS");
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			EquipmentType eq = types.get(rs.getString(1));
+			if (eq != null) {
+				switch (rs.getInt(2)) {
+				case EquipmentType.PRIMARY_RATING:
+					eq.addPrimaryRating(rs.getString(3));
+					break;
+
+				default:
+				case EquipmentType.SECONDARY_RATING:
+					eq.addSecondaryRating(rs.getString(3));
+					break;
+				}
+			}
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+
+	/**
+	 * Helper method to load examinations for each equipment type program.
+	 */
+	private void loadExams(Collection<EquipmentType> eTypes, String db) throws SQLException {
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		
+		// Execute the query
+		prepareStatementWithoutLimits("SELECT EQTYPE, EXAMTYPE, EXAM FROM " + db + ".EQEXAMS");
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			EquipmentType eq = types.get(rs.getString(1));
+			if (eq != null) {
+				switch (rs.getInt(2)) {
+					default:
+					case EquipmentType.EXAM_FO:
+						eq.addExam(Ranks.RANK_FO, rs.getString(3));
+						break;
+						
+					case EquipmentType.EXAM_CAPT:
+						eq.addExam(Ranks.RANK_C, rs.getString(3));
+						break;
+				}
+			}
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
+	
+	/**
+	 * Helper method to load airlines for equipment type program.
+	 */
+	private void loadAirlines(Collection<EquipmentType> eTypes, String db) throws SQLException {
+		Map<String, EquipmentType> types = CollectionUtils.createMap(eTypes, "name");
+		
+		// Execute the query
+		prepareStatementWithoutLimits("SELECT EQTYPE, AIRLINE FROM " + db + ".EQAIRLINES");
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			EquipmentType eq = types.get(rs.getString(1));
+			if (eq != null)
+				eq.addAirline(SystemData.getApp(rs.getString(2)));
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+	}
 
 	/**
 	 * Helper method to iterate through the result set.
 	 */
 	private List<EquipmentType> execute() throws SQLException {
+		List<EquipmentType> results = new ArrayList<EquipmentType>();
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
-		boolean hasRatings = (rs.getMetaData().getColumnCount() > 15);
-
-		// Iterate through the results
-		List<EquipmentType> results = new ArrayList<EquipmentType>();
-		EquipmentType eq = new EquipmentType("");
 		while (rs.next()) {
-			String eqName = rs.getString(1);
+			EquipmentType eq = new EquipmentType(rs.getString(1));
+			eq.setCPID(rs.getInt(2));
+			eq.setStage(rs.getInt(3));
+			eq.addRanks(rs.getString(4), ",");
+			eq.setActive(rs.getBoolean(5));
+			eq.setPromotionLegs(Ranks.RANK_SO, rs.getInt(6));
+			eq.setPromotionHours(Ranks.RANK_SO, rs.getInt(7));
+			eq.setPromotionLegs(Ranks.RANK_C, rs.getInt(8));
+			eq.setPromotionHours(Ranks.RANK_C, rs.getInt(9));
+			eq.setACARSPromotionLegs(rs.getBoolean(10));
+			eq.setOwner(SystemData.getApp(rs.getString(11)));
+			eq.setCPName(rs.getString(12));
+			eq.setCPEmail(rs.getString(13));
 
-			// If it's a new equipment type, then add it to the list and populate it
-			if (!eqName.equals(eq.getName())) {
-				eq = new EquipmentType(eqName);
-				eq.setCPID(rs.getInt(2));
-				eq.setStage(rs.getInt(3));
-				eq.addRanks(rs.getString(4), ",");
-				eq.setExamName(Ranks.RANK_FO, rs.getString(5));
-				eq.setExamName(Ranks.RANK_C, rs.getString(6));
-				eq.setActive(rs.getBoolean(7));
-				eq.setPromotionLegs(Ranks.RANK_SO, rs.getInt(8));
-				eq.setPromotionHours(Ranks.RANK_SO, rs.getInt(9));
-				eq.setPromotionLegs(Ranks.RANK_C, rs.getInt(10));
-				eq.setPromotionHours(Ranks.RANK_C, rs.getInt(11));
-				eq.setACARSPromotionLegs(rs.getBoolean(12));
-				eq.setCPName(rs.getString(13));
-				eq.setCPEmail(rs.getString(14));
-
-				// Add to the results
-				results.add(eq);
-			}
-
-			// The last two columns are the additional rating info
-			if (hasRatings) {
-				switch (rs.getInt(15)) {
-				case EquipmentType.PRIMARY_RATING:
-					eq.addPrimaryRating(rs.getString(16));
-					break;
-
-				default:
-				case EquipmentType.SECONDARY_RATING:
-					eq.addSecondaryRating(rs.getString(16));
-					break;
-				}
-			}
+			// Add to the results
+			results.add(eq);
 		}
 
 		// Clean up JDBC resources

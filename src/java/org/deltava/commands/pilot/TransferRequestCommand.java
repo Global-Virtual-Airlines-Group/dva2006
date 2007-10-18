@@ -1,16 +1,18 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.EquipmentType;
+import org.deltava.beans.*;
 import org.deltava.beans.system.TransferRequest;
 import org.deltava.beans.testing.TestingHistoryHelper;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
+
+import org.deltava.util.CollectionUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to request a transfer to a different Equipment program.
@@ -47,9 +49,9 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 
 			// Get the active Equipment Profiles and determine what we can switch to
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			List<EquipmentType> activeEQ = new ArrayList<EquipmentType>(eqdao.getActive());
-			for (Iterator i = activeEQ.iterator(); i.hasNext();) {
-				EquipmentType eq = (EquipmentType) i.next();
+			Map<String, EquipmentType> activeEQ = CollectionUtils.createMap(eqdao.getAvailable(SystemData.get("airline.code")), "name");
+			for (Iterator<EquipmentType> i = activeEQ.values().iterator(); i.hasNext(); ) {
+				EquipmentType eq = i.next();
 				if (!testHistory.canSwitchTo(eq) && !testHistory.canRequestCheckRide(eq))
 					i.remove();
 				else if (isRating && !testHistory.canRequestRatings(eq))
@@ -60,7 +62,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			String eqType = ctx.getParameter("eqType");
 			if (eqType == null) {
 				ctx.release();
-				ctx.setAttribute("availableEQ", activeEQ, REQUEST);
+				ctx.setAttribute("availableEQ", activeEQ.values(), REQUEST);
 				ctx.setAttribute("isEmpty", Boolean.valueOf(activeEQ.isEmpty()), REQUEST);
 
 				// Forward to the JSP
@@ -71,20 +73,20 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 			
 			// Check if we have a pending transfer request
 			GetTransferRequest txdao = new GetTransferRequest(con);
-			TransferRequest txreq = txdao.get(ctx.getUser().getID());
-			if (txreq != null)
+			if (txdao.hasTransfer(p.getID()))
 				throw securityException("Pending Equipment Transfer request");
 
 			// Check if we can transfer into that program
-			int ofs = activeEQ.indexOf(new EquipmentType(eqType));
-			if (ofs == -1)
+			if (!activeEQ.containsKey(eqType))
 				throw securityException("Cannot request transfer to " + eqType);
 			
 			// Populate the transfer request
-			EquipmentType eq = activeEQ.get(ofs);
-			txreq = new TransferRequest(p.getID(), eqType);
+			EquipmentType eq = activeEQ.get(eqType);
+			TransferRequest txreq = new TransferRequest(p.getID(), eqType);
 			txreq.setStatus(testHistory.canSwitchTo(eq) ? TransferRequest.OK : TransferRequest.PENDING);
-			if (eq.getStage() > 1)
+			if (!eq.getOwner().equals(SystemData.get("airline.code")))
+				txreq.setRatingOnly(true);
+			else if (eq.getStage() > 1)
 				txreq.setRatingOnly(Boolean.valueOf(ctx.getParameter("ratingOnly")).booleanValue());
 
 			// Save the transfer request

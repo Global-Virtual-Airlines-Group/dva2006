@@ -126,6 +126,7 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			
 			// Check a dummy check ride entry for the user to reflect the stage qualification
 			CheckRide cr = new CheckRide(a.getEquipmentType() + " Initial Hire");
+			cr.setOwner(SystemData.getApp(SystemData.get("airline.code")));
 			cr.setDate(new Date());
 			cr.setPilotID(a.getPilotID());
 			cr.setPassFail(true);

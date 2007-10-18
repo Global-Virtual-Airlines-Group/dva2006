@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.Date;
@@ -32,8 +32,6 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 			"Status Change", "Added Security Role", "Removed Rating", "Removed Security Role", "Promotion", "Airline Transfer",
 			"Inactivity Notice", "Academy Update", "Pilot Certification", "Senior Captain"};
 
-	private String _firstName;
-	private String _lastName;
 	private int _type;
 	
 	private int _authorID;
@@ -70,24 +68,6 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 	 */
 	public String getTypeName() {
 		return TYPES[getType()];
-	}
-	
-	/**
-	 * Returns the first (given) name of the Pilot.
-	 * @return the Pilot's first name
-	 * @see StatusUpdate#setFirstName(String)
-	 */
-	public String getFirstName() {
-		return _firstName;
-	}
-	
-	/**
-	 * Returns the last (family) name of the Pilot.
-	 * @return the Pilot's last name
-	 * @see StatusUpdate#setLastName(String)
-	 */
-	public String getLastName() {
-		return _lastName;
 	}
 	
 	/**
@@ -129,24 +109,6 @@ public class StatusUpdate extends DatabaseBean implements AuthoredBean {
 			throw new IllegalArgumentException("Invalid Type code - " + type);
 		
 		_type = type;
-	}
-	
-	/**
-	 * Sets the pilot's first (given) name.
-	 * @param fName the first name
-	 * @see StatusUpdate#getFirstName()
-	 */
-	public void setFirstName(String fName) {
-		_firstName = fName; 
-	}
-	
-	/**
-	 * Sets the pilot's last (family) name.
-	 * @param lName the last name
-	 * @see StatusUpdate#getLastName()
-	 */
-	public void setLastName(String lName) {
-		_lastName = lName;
 	}
 	
 	/**
