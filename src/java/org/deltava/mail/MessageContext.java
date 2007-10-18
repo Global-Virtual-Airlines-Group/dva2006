@@ -86,7 +86,7 @@ public class MessageContext {
           throw new IllegalStateException("Message Template or Body not loaded");
 
        // Load the Message template
-       StringBuilder buf = new StringBuilder((_mt == null) ? _mt.getBody() : _body);
+       StringBuilder buf = new StringBuilder((_mt != null) ? _mt.getBody() : _body);
 
        // Parse the message template with data from the MessageContext
        int spos = buf.indexOf("${");
