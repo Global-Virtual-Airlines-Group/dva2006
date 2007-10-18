@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -34,26 +34,23 @@ public class SetEquipmentType extends DAO {
 	public void create(EquipmentType eq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, EXAM_FO, EXAM_CAPT, ACTIVE, " +
-					"SO_LEGS, SO_HOURS, C_LEGS, C_HOURS, C_LEGS_ACARS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO EQTYPES (EQTYPE, CP_ID, STAGE, RANKS, ACTIVE, SO_LEGS, SO_HOURS, "
+					+ "C_LEGS, C_HOURS, C_LEGS_ACARS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			
 			_ps.setString(1, eq.getName());
 			_ps.setInt(2, eq.getCPID());
 			_ps.setInt(3, eq.getStage());
 			_ps.setString(4, StringUtils.listConcat(eq.getRanks(), ","));
-			_ps.setString(5, eq.getExamName(Ranks.RANK_FO));
-			_ps.setString(6, eq.getExamName(Ranks.RANK_C));
-			_ps.setBoolean(7, eq.getActive());
-			_ps.setInt(8, eq.getPromotionLegs(Ranks.RANK_SO));
-			_ps.setDouble(9, eq.getPromotionHours(Ranks.RANK_SO));
-			_ps.setInt(10, eq.getPromotionLegs(Ranks.RANK_C));
-			_ps.setDouble(11, eq.getPromotionHours(Ranks.RANK_C));
-			_ps.setBoolean(12, eq.getACARSPromotionLegs());
-			
-			// Update the equipment profile
+			_ps.setBoolean(5, eq.getActive());
+			_ps.setInt(6, eq.getPromotionLegs(Ranks.RANK_SO));
+			_ps.setDouble(7, eq.getPromotionHours(Ranks.RANK_SO));
+			_ps.setInt(8, eq.getPromotionLegs(Ranks.RANK_C));
+			_ps.setDouble(9, eq.getPromotionHours(Ranks.RANK_C));
+			_ps.setBoolean(10, eq.getACARSPromotionLegs());
 			executeUpdate(1);
 			
-			// Write the ratings and commit
+			// Write the exams/ratings and commit
+			writeExams(eq);
 			writeRatings(eq);
 			commitTransaction();
 		} catch (SQLException se) {
@@ -70,26 +67,23 @@ public class SetEquipmentType extends DAO {
 	public void update(EquipmentType eq) throws DAOException {
 		try {
 			startTransaction();
-			prepareStatement("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, EXAM_FO=?, EXAM_CAPT=?, ACTIVE=?, " +
-					"SO_LEGS=?, SO_HOURS=?, C_LEGS=?, C_HOURS=?, C_LEGS_ACARS=? WHERE (EQTYPE=?)");
+			prepareStatement("UPDATE EQTYPES SET CP_ID=?, STAGE=?, RANKS=?, ACTIVE=?, SO_LEGS=?, SO_HOURS=?, "
+					+ "C_LEGS=?, C_HOURS=?, C_LEGS_ACARS=? WHERE (EQTYPE=?)");
 			
 			_ps.setInt(1, eq.getCPID());
 			_ps.setInt(2, eq.getStage());
 			_ps.setString(3, StringUtils.listConcat(eq.getRanks(), ","));
-			_ps.setString(4, eq.getExamName(Ranks.RANK_FO));
-			_ps.setString(5, eq.getExamName(Ranks.RANK_C));
-			_ps.setBoolean(6, eq.getActive());
-			_ps.setInt(7, eq.getPromotionLegs(Ranks.RANK_SO));
-			_ps.setDouble(8, eq.getPromotionHours(Ranks.RANK_SO));
-			_ps.setInt(9, eq.getPromotionLegs(Ranks.RANK_C));
-			_ps.setDouble(10, eq.getPromotionHours(Ranks.RANK_C));
-			_ps.setBoolean(11, eq.getACARSPromotionLegs());
-			_ps.setString(12, eq.getName());
-			
-			// Update the equipment profile
+			_ps.setBoolean(4, eq.getActive());
+			_ps.setInt(5, eq.getPromotionLegs(Ranks.RANK_SO));
+			_ps.setDouble(6, eq.getPromotionHours(Ranks.RANK_SO));
+			_ps.setInt(7, eq.getPromotionLegs(Ranks.RANK_C));
+			_ps.setDouble(8, eq.getPromotionHours(Ranks.RANK_C));
+			_ps.setBoolean(9, eq.getACARSPromotionLegs());
+			_ps.setString(10, eq.getName());
 			executeUpdate(1);
 			
-			// Write the ratings and commit
+			// Write the exams/ratings and commit
+			writeExams(eq);
 			writeRatings(eq);
 			commitTransaction();
 		} catch (SQLException se) {
@@ -98,29 +92,34 @@ public class SetEquipmentType extends DAO {
 		}
 	}
 	
-	public void rename(EquipmentType eq, String oldName) throws DAOException {
-
-		try {
-			startTransaction();
-			prepareStatement("UPDATE EQTYPES SET EQTYPE=? WHERE (EQTYPE=?)");
-			_ps.setString(1, eq.getName());
-			_ps.setString(2, oldName);
-			
-			// Update the equipment profile
-			executeUpdate(1);
-			
-			// Rename the pilots
-			prepareStatementWithoutLimits("UPDATE PILOTS SET EQTYPE=? WHERE (EQTYPE=?)");
-			_ps.setString(1, eq.getName());
-			_ps.setString(2, oldName);
-
-			// Update the pilot profiles and commit
-			executeUpdate(0);
-			commitTransaction();
-		} catch (SQLException se) {
-			rollbackTransaction();
-			throw new DAOException(se);
+	private void writeExams(EquipmentType eq) throws SQLException {
+		
+		// Clean out exams
+		prepareStatementWithoutLimits("DELETE FROM EQEXAMS WHERE (EQTYPE=?)");
+		_ps.setString(1, eq.getName());
+		executeUpdate(0);
+		
+		// Write exams
+		prepareStatementWithoutLimits("INSERT INTO EQEXAMS (EQTYPE, EXAM, EXAMTYPE) VALUES (?, ?, ?)");
+		_ps.setString(1, eq.getName());
+		
+		// Write the FO exams
+		_ps.setInt(3, EquipmentType.EXAM_FO);
+		for (Iterator<String> i = eq.getExamNames(Ranks.RANK_FO).iterator(); i.hasNext(); ) {
+			_ps.setString(2, i.next());
+			_ps.addBatch();
 		}
+		
+		// Write the Captain exams
+		_ps.setInt(3, EquipmentType.EXAM_CAPT);
+		for (Iterator<String> i = eq.getExamNames(Ranks.RANK_C).iterator(); i.hasNext(); ) {
+			_ps.setString(2, i.next());
+			_ps.addBatch();
+		}
+		
+		// Execute the batch update
+		_ps.executeBatch();
+		_ps.close();
 	}
 	
 	/**

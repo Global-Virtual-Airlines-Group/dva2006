@@ -672,16 +672,16 @@ public class ProfileCommand extends AbstractFormCommand {
 		ctx.setAttribute("notifyOptions", ComboUtils.fromArray(Person.NOTIFY_NAMES, Person.NOTIFY_CODES), REQUEST);
 		ctx.setAttribute("privacyOptions", ComboUtils.fromArray(PRIVACY_NAMES, PRIVACY_ALIASES), REQUEST);
 		ctx.setAttribute("acTypes", ComboUtils.fromArray(Airport.CODETYPES), REQUEST);
-		ctx.setAttribute("statuses", ComboUtils.fromArray(Pilot.STATUS), REQUEST);
 		ctx.setAttribute("mapTypes", ComboUtils.fromArray(Pilot.MAP_TYPES), REQUEST);
 		ctx.setAttribute("acarsRest", ComboUtils.fromArray(Pilot.RESTRICT), REQUEST);
-
+		
+		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the DAO and load the pilot profile
 			GetPilotDirectory dao = new GetPilotDirectory(con);
-			Pilot p = dao.get(ctx.getID());
+			p = dao.get(ctx.getID());
 			if (p == null)
 				throw notFoundException("Invalid Pilot ID - " + ctx.getID());
 
@@ -732,12 +732,33 @@ public class ProfileCommand extends AbstractFormCommand {
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID(), SystemData.get("airline.db")), REQUEST);
+			Collection<StatusUpdate> upds = updao.getByUser(p.getID(), SystemData.get("airline.db"));
+			ctx.setAttribute("statusUpdates", upds, REQUEST);
+			
+			// Get Author IDs from Status Updates
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
+				StatusUpdate upd = i.next();
+				IDs.add(new Integer(upd.getAuthorID()));
+			}
+			
+			// Load authors
+			GetUserData uddao = new GetUserData(con);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("authors", dao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
+		
+		// Don't allow manual switching to Suspended if the pilot isn't already in that status
+		if (p.getStatus() != Pilot.SUSPENDED) {
+			List<ComboAlias> statuses = ComboUtils.fromArray(Pilot.STATUS); 
+			statuses.remove(Pilot.SUSPENDED);
+			ctx.setAttribute("statuses", statuses, REQUEST);
+		} else
+			ctx.setAttribute("statuses", ComboUtils.fromArray(Pilot.STATUS), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
@@ -802,15 +823,27 @@ public class ProfileCommand extends AbstractFormCommand {
 			}
 
 			// Get Academy Certifications
-			if (SystemData.getBoolean("academy.enabled") && !crossDB) {
+			if (!crossDB) {
 				GetAcademyCourses fadao = new GetAcademyCourses(con);
 				ctx.setAttribute("courses", fadao.getCompleted(p.getID(), "C.STARTDATE"), REQUEST);
 			}
 
 			// Get status updates
 			GetStatusUpdate updao = new GetStatusUpdate(con);
-			ctx.setAttribute("statusUpdates", updao.getByUser(p.getID(), usrInfo.getDB()), REQUEST);
-
+			Collection<StatusUpdate> upds = updao.getByUser(p.getID(), usrInfo.getDB());
+			ctx.setAttribute("statusUpdates", upds, REQUEST);
+			
+			// Get Author IDs from Status Updates
+			Collection<Integer> IDs = new HashSet<Integer>();
+			for (Iterator<StatusUpdate> i = upds.iterator(); i.hasNext(); ) {
+				StatusUpdate upd = i.next();
+				IDs.add(new Integer(upd.getAuthorID()));
+			}
+			
+			// Load authors
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("authors", dao.get(udm), REQUEST);
+			
 			// Get the online totals
 			if (p.getACARSLegs() < 0) {
 				GetFlightReports prdao = new GetFlightReports(con);

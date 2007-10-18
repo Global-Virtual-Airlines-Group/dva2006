@@ -34,11 +34,9 @@ public class GetStatusUpdate extends DAO {
 	public List<StatusUpdate> getByUser(int id, String dbName) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".STATUS_UPDATES SU, ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P WHERE (SU.PILOT_ID=?) AND (P.ID=SU.AUTHOR_ID) ORDER BY SU.CREATED DESC");
+		sqlBuf.append(".STATUS_UPDATES WHERE (PILOT_ID=?) ORDER BY CREATED DESC");
 		
 		try {
 			prepareStatement(sqlBuf.toString());
@@ -76,42 +74,6 @@ public class GetStatusUpdate extends DAO {
 	}
 	
 	/**
-	 * Returns all Status Updates created by a particular Staff member.
-	 * @param id the Pilot ID of the staff member
-	 * @return a List of StatusUpdate beans, sorted by descending date
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<StatusUpdate> getByStaffMember(int id) throws DAOException {
-		try {
-			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P "
-					+ "WHERE (SU.AUTHOR_ID=?) AND (P.ID=SU.PILOT_ID) ORDER BY SU.CREATED DESC");
-			_ps.setInt(1, id);
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-
-	/**
-	 * Returns all Status Updates created between two dates.
-	 * @param sd the start date/time
-	 * @param ed the end date/time
-	 * @return a List of StatusUpdate beans, sorted by descending date 
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public List<StatusUpdate> getByDate(java.util.Date sd, java.util.Date ed) throws DAOException {
-		try {
-			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P WHERE "
-					+ "(SU.PILOT_ID=P.ID) AND (SU.CREATED >= ?) AND (SU.CREATED <= ?) ORDER BY SU.CREATED DESC");
-			_ps.setTimestamp(1, createTimestamp(sd));
-			_ps.setTimestamp(2, createTimestamp(ed));
-			return execute();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-	}
-	
-	/**
 	 * Returns all Status Updates with a given type.
 	 * @param updateType the Status Update type
 	 * @return a List of StatusUpdate beans
@@ -119,8 +81,7 @@ public class GetStatusUpdate extends DAO {
 	 */
 	public List<StatusUpdate> getByType(int updateType) throws DAOException {
 		try {
-			prepareStatement("SELECT SU.*, P.FIRSTNAME, P.LASTNAME FROM STATUS_UPDATES SU, PILOTS P WHERE"
-					+ "(SU.PILOT_ID=P.ID) AND (SU.TYPE=?) ORDER BY SU.CREATED DESC");
+			prepareStatement("SELECT * FROM STATUS_UPDATES WHERE (TYPE=?) ORDER BY CREATED DESC");
 			_ps.setInt(1, updateType);
 			return execute();
 		} catch (SQLException se) {
@@ -137,11 +98,9 @@ public class GetStatusUpdate extends DAO {
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
 			StatusUpdate upd = new StatusUpdate(rs.getInt(1), rs.getInt(4));
-			upd.setCreatedOn(rs.getTimestamp(2));
+			upd.setCreatedOn(rs.getDate(2));
 			upd.setAuthorID(rs.getInt(3));
 			upd.setDescription(rs.getString(5));
-			upd.setFirstName(rs.getString(6));
-			upd.setLastName(rs.getString(7));
 			results.add(upd);
 		}
 		

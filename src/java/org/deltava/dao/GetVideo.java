@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -34,7 +34,7 @@ public class GetVideo extends DAO {
     */
    public InputStream getVideoStream(int id) throws DAOException {
       try {
-         prepareStatement("SELECT DATA FROM VIDEOS WHERE (ID=?)");
+         prepareStatement("SELECT DATA FROM exams.VIDEOS WHERE (ID=?)");
          _ps.setInt(1, id);
          
          // Execute the query and return an input stream to the binary data

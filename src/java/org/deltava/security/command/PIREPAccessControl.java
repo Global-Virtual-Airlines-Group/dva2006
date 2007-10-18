@@ -24,6 +24,7 @@ public class PIREPAccessControl extends AccessControl {
 	private boolean _canApprove;
 	private boolean _canReject;
 	private boolean _canDelete;
+	private boolean _canViewComments;
 
 	/**
 	 * Initializes the controller.
@@ -67,9 +68,10 @@ public class PIREPAccessControl extends AccessControl {
 		_canReject = !isRejected && (_canApprove || (isHR && (status == FlightReport.OK)));
 		_canEdit = _canSubmit || _canHold || _canApprove || _canReject;
 		_canRelease = (isHeld && _ctx.isAuthenticated() && (isHR || (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID())));
+		_canViewComments = isHR || isPirep || _ourPIREP;
 		
 		// Get the flight assignment ID
-		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
+		boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
 		_canDelete = (_ourPIREP && !isAssigned && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
 				((isRejected && isAssigned) || !isAssigned));
 	}
@@ -149,6 +151,14 @@ public class PIREPAccessControl extends AccessControl {
 	 */
 	public boolean getCanDelete() {
 		return _canDelete;
+	}
+	
+	/**
+	 * Returns whether the disposition comments can be viewed.
+	 * @return TRUE if the comments can be viewed, otherwise FALSE
+	 */
+	public boolean getCanViewComments() {
+		return _canViewComments;
 	}
 
 	/**

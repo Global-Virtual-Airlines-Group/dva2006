@@ -200,7 +200,7 @@ return true;
 var map = new GMap2(getElement('googleMap'), {mapTypes:[G_SATELLITE_MAP]});
 <c:if test="${!empty tileHost}">
 // Build the sat layer control
-var sC = new WXOverlayControl(getTileOverlay("sat"), "Infrared", new GSize(70, 7));
+var sC = new WXOverlayControl(getTileOverlay("sat", 0.4), "Infrared", new GSize(70, 7));
 map.addControl(sC);
 map.addControl(new WXClearControl(new GSize(142, 7)));
 </c:if>

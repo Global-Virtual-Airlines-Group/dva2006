@@ -3,9 +3,10 @@ package org.deltava.security.command;
 
 import java.util.Date;
 
-import org.deltava.security.SecurityContext;
-
 import org.deltava.beans.testing.*;
+
+import org.deltava.security.SecurityContext;
+import org.deltava.util.system.SystemData;
 
 /**
  * An Access Controller for Pilot Examinations and Check Ride records.
@@ -45,6 +46,9 @@ public class ExamAccessControl extends AccessControl {
         // Check if we're authenticated
         if (!_ctx.isAuthenticated() || (_t == null))
             throw new AccessControlException("Cannot view Examination");
+        
+        // Check if the exam belongs to our airline
+        boolean isOurAirline = SystemData.getApp(SystemData.get("airline.code")).equals(_t.getOwner());
 
         // Set access variables
         boolean isHR = _ctx.isUserInRole("HR");
@@ -63,10 +67,10 @@ public class ExamAccessControl extends AccessControl {
         // Set access
         _canRead = isOurs || isExam || isHR || _ctx.isUserInRole("Instructor");
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
-        _canEdit = isScored && isHR && !isOurs;
-        _canDelete = _ctx.isUserInRole("Admin");
+        _canEdit = isScored && isHR && isOurAirline && !isOurs;
+        _canDelete = _ctx.isUserInRole("Admin") && isOurAirline;
         _canScore = _canEdit || (isSubmitted && isExam);
-        _canViewAnswers = isScored && (isHR || isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
+        _canViewAnswers = isScored && (isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
         
         // Throw an exception if we cannot view
         if (!_canRead)

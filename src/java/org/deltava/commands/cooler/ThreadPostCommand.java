@@ -30,7 +30,7 @@ import org.deltava.util.system.SystemData;
 
 public class ThreadPostCommand extends AbstractCommand {
 
-	private static Collection _imgMimeTypes;
+	private Collection _imgMimeTypes;
 
 	/* private static final String[] IMG_OPTIONS = { "Let me resize the Image", "Resize the Image automatically" };
 	 * private static final String[] IMG_ALIASES = { "0", "1" };
@@ -213,9 +213,7 @@ public class ThreadPostCommand extends AbstractCommand {
 				try {
 					mt.setStickyUntil(StringUtils.parseDate(ctx.getParameter("stickyDate"), "MM/dd/yyyy"));
 				} catch (IllegalArgumentException iae) {
-					CommandException ce = new CommandException(iae);
-					ce.setLogStackDump(false);
-					throw ce;
+					throw new CommandException(iae.getMessage(), false);
 				}
 			}
 

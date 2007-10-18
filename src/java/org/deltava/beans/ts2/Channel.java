@@ -1,4 +1,4 @@
-// Copyright (c) 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.ts2;
 
 import java.util.*;
@@ -265,7 +265,7 @@ public class Channel extends DatabaseBean implements Comparable, Cacheable, View
 	public int compareTo(Object o) {
 		Channel c2 = (Channel) o;
 		int tmpResult = _name.compareTo(c2._name);
-		return (tmpResult == 0) ? new Integer(_serverID).compareTo(new Integer(c2._serverID)) : tmpResult;
+		return (tmpResult == 0) ? Integer.valueOf(_serverID).compareTo(Integer.valueOf(c2._serverID)) : tmpResult;
 	}
 	
 	/**

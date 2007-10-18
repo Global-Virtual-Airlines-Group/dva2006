@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.testing;
 
 import java.util.*;
@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 
 import org.deltava.beans.*;
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A helper class to extract information from a user's examination/check ride history.
@@ -22,14 +23,16 @@ public class TestingHistoryHelper {
 	// Arbitrary max exam stage used for Chief Pilots and Assistants
 	private static final int CP_STAGE = 4;
 	private static final String[] CAPT_RANKS = { Ranks.RANK_C, Ranks.RANK_SC };
+	
+	private final String _qName = SystemData.get("airline.code") + " " + Examination.QUESTIONNAIRE_NAME;
 
 	private Pilot _usr;
 	private EquipmentType _myEQ;
 	private boolean _debugLog;
 
-	private SortedSet<Test> _tests = new TreeSet<Test>();
+	private final SortedSet<Test> _tests = new TreeSet<Test>();
 	private Collection<FlightReport> _pireps;
-	private Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
+	private final Collection<EquipmentType> _allEQ = new TreeSet<EquipmentType>();
 
 	/**
 	 * Initializes the helper.
@@ -148,8 +151,7 @@ public class TestingHistoryHelper {
 		int maxStage = 1;
 		for (Iterator i = _tests.iterator(); i.hasNext();) {
 			Test t = (Test) i.next();
-			if ((t instanceof Examination) && (!Examination.QUESTIONNAIRE_NAME.equals(t.getName()))
-					&& (t.getPassFail()))
+			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && (t.getPassFail()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -207,8 +209,8 @@ public class TestingHistoryHelper {
 		}
 
 		// If it's the Initial Questionnaire, uh uh
-		if (Examination.QUESTIONNAIRE_NAME.equals(ep.getName())) {
-			log(ep.getName() + " is the Initial Questionnaire");
+		if (_qName.equals(ep.getName())) {
+			log(ep.getName() + " is the Questionnaire");
 			return false;
 		}
 
@@ -217,13 +219,13 @@ public class TestingHistoryHelper {
 			return false;
 
 		// Check if we've passed or submitted the exam
-		if (hasPassed(ep.getName()) || hasSubmitted(ep.getName())) {
+		if (hasPassed(Collections.singleton(ep.getName())) || hasSubmitted(ep.getName())) {
 			log(ep.getName() + " is passed / submitted");
 			return false;
 		}
 
 		// Check if it's the FO exam for the current program
-		if (ep.getName().equals(_myEQ.getExamName(Ranks.RANK_FO))) {
+		if (_myEQ.getExamNames(Ranks.RANK_FO).contains(ep.getName())) {
 			log(ep.getName() + " is FO exam for " + _myEQ.getName());
 			return false;
 		}
@@ -271,14 +273,20 @@ public class TestingHistoryHelper {
 			log("Already in " + eq.getName() + " program");
 			return false;
 		}
+		
+		// If it's not in our airline, don't allow it
+		if (!SystemData.get("airline.code").equals(eq.getOwner().getCode())) {
+			log(eq.getName() + " is a " + eq.getOwner().getName() + " program");
+			return false;
+		}
 
 		// If it's a stage 1 program, allow the transfer
 		if (eq.getStage() == 1)
 			return true;
 
 		// Check if we've passed the FO exam for that program
-		if (!hasPassed(eq.getExamName(Ranks.RANK_FO))) {
-			log("Haven't passed " + eq.getExamName(Ranks.RANK_FO));
+		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO))) {
+			log("Haven't passed " + eq.getExamNames(Ranks.RANK_FO));
 			return false;
 		}
 
@@ -312,7 +320,7 @@ public class TestingHistoryHelper {
 			return false;
 
 		// Check if we've passed the FO/CAPT exam for that program
-		if (!hasPassed(eq.getExamName(Ranks.RANK_FO)) && !hasPassed(eq.getExamName(Ranks.RANK_C)))
+		if (!hasPassed(eq.getExamNames(Ranks.RANK_FO)) && !hasPassed(eq.getExamNames(Ranks.RANK_C)))
 			return false;
 
 		// Make sure we're not already in that program
@@ -365,8 +373,8 @@ public class TestingHistoryHelper {
 	 */
 	public boolean promotionEligible(EquipmentType eq) {
 
-		// Check if we've passed the examination
-		if (!hasPassed(eq.getExamName(Ranks.RANK_C)))
+		// Check if we've passed the examinations
+		if (!hasPassed(eq.getExamNames(Ranks.RANK_C)))
 			return false;
 
 		// Check if we've got enough flight legs in the primary equipment type
@@ -374,18 +382,19 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns if a user has passed a particular Examination.
-	 * @param examName the Examination name
-	 * @return TRUE if the user has passed this Examination, otherwise FALSE
+	 * Returns if a user has passed particular Examinations.
+	 * @param examNames a Collection of Examination names
+	 * @return TRUE if the user has passed these Examinations, otherwise FALSE
 	 */
-	public boolean hasPassed(String examName) {
-		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+	public boolean hasPassed(Collection<String> examNames) {
+		Collection<String> names = new HashSet<String>(examNames);
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext() && !names.isEmpty(); ) {
 			Test t = i.next();
-			if (t.getPassFail() && (t.getName().equals(examName)))
-				return true;
+			if (t.getPassFail())
+				names.remove(t.getName());
 		}
 
-		return false;
+		return names.isEmpty();
 	}
 
 	/**

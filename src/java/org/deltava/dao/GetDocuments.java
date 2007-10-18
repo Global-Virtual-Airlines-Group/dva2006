@@ -31,11 +31,10 @@ public class GetDocuments extends GetLibrary {
 	 * Returns metadata about a specific Manual .
 	 * @param fName the filename
 	 * @param dbName the database name
-	 * @param loadCerts TRUE if Flight Academy data should be loaded, otherwise FALSE
 	 * @return a Manual, or null if not found
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Manual getManual(String fName, String dbName, boolean loadCerts) throws DAOException {
+	public Manual getManual(String fName, String dbName) throws DAOException {
 
 		// Build the SQL statement
 		dbName = formatDBName(dbName);
@@ -58,9 +57,7 @@ public class GetDocuments extends GetLibrary {
 			
 			// Load the certifications
 			Manual m = results.get(0);
-			if (loadCerts)
-				m.addCertifications(getCertifications(fName, dbName));
-			
+			m.addCertifications(getCertifications(fName));
 			return m;
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -238,15 +235,10 @@ public class GetDocuments extends GetLibrary {
 	/**
 	 * Helper method to return all Flight Academy Certifications associated with a particular Manual.
 	 */
-	private Collection<String> getCertifications(String fileName, String dbName) throws SQLException {
+	private Collection<String> getCertifications(String fileName) throws SQLException {
 
-		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT CERTNAME FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
-		
 		// Prepare the statement
-		prepareStatementWithoutLimits(sqlBuf.toString());
+		prepareStatementWithoutLimits("SELECT CERTNAME FROM exams.CERTDOCS WHERE (FILENAME=?) ORDER BY CERTNAME");
 		_ps.setString(1, fileName);
 
 		// Execute the Query

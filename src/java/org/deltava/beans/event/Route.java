@@ -11,7 +11,7 @@ import org.deltava.beans.schedule.Airport;
  * @since 1.0
  */
 
-public class Route extends DatabaseBean implements Comparable, ComboAlias, ViewEntry {
+public class Route extends DatabaseBean implements ComboAlias, ViewEntry {
 	
 	private Airport _airportD;
 	private Airport _airportA;

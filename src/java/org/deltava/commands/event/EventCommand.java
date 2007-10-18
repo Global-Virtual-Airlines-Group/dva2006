@@ -103,7 +103,6 @@ public class EventCommand extends AbstractCommand {
 			GetPilot pdao = new GetPilot(con);
 			GetFlightReports frdao = new GetFlightReports(con);
 			GetAcademyCourses crsdao = new GetAcademyCourses(con);
-			GetTableStatus tsdao = new GetTableStatus(con);
 			
 			// Load the Pilots and Flight Reports
 			Collection<FlightReport> pireps = new ArrayList<FlightReport>();
@@ -130,8 +129,7 @@ public class EventCommand extends AbstractCommand {
 					pilots.putAll(pdao.getByID(newIDs, tableName));
 				
 				// Load Flight Academy Certifications
-				if (tsdao.getTableNames(tableName).contains("COURSES"))
-					certs.putAll(crsdao.getCertifications(ids, tableName));
+				certs.putAll(crsdao.getCertifications(ids));
 			}
 			
 			// Save the pilots and flight reports

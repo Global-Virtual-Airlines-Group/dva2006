@@ -17,7 +17,7 @@ public class Examination extends Test {
 	/**
 	 * Applicant Questionnaire Examination Name.
 	 */
-	public static final String QUESTIONNAIRE_NAME = "Initial Questionnaire";
+	public static final String QUESTIONNAIRE_NAME = "Questionnaire";
 
 	private static final String[] CLASS_NAMES = { "opt2", "opt1", null };
 

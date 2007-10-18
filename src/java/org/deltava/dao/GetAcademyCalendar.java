@@ -31,7 +31,7 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	public InstructionSession getSession(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM COURSES C, INSCALENDAR I "
+			prepareStatementWithoutLimits("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, exams.INSCALENDAR I "
 					+ "WHERE (C.ID=I.COURSE) AND (I.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
@@ -54,7 +54,7 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionBusy> getBusyCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM INSBUSY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM exams.INSBUSY ");
 		if ((startDate != null) || (pilotID > 0))
 			sqlBuf.append("WHERE ");
 		if (startDate != null) {
@@ -95,7 +95,7 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	public Collection<InstructionBusy> getBusyTime(int instructorID) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM INSBUSY WHERE (INSTRUCTOR_ID=?) ORDER BY STARTTIME");
+			prepareStatement("SELECT * FROM exams.INSBUSY WHERE (INSTRUCTOR_ID=?) ORDER BY STARTTIME");
 			_ps.setInt(1, instructorID);
 			return executeBusy();
 		} catch (SQLException se) {
@@ -111,7 +111,7 @@ public class GetAcademyCalendar extends DAO {
 	 */
 	public InstructionFlight getFlight(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C "
+			prepareStatementWithoutLimits("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C "
 				+ "WHERE (I.COURSE=C.ID) AND (I.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
@@ -132,7 +132,7 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlights(int courseID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM INSLOG ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM exams.INSLOG ");
 		if (courseID != 0)
 			sqlBuf.append("WHERE (COURSE=?) ");
 
@@ -159,8 +159,8 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionSession> getSessions(int courseID) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM INSCALENDAR I, COURSES C "
-				+ "WHERE (C.ID=I.COURSE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.INSCALENDAR I, "
+				+ "exams.COURSES C WHERE (C.ID=I.COURSE) ");
 		if (courseID != 0)
 			sqlBuf.append("AND (I.COURSE=?) ");
 
@@ -188,8 +188,8 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionFlight> getFlightCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM INSLOG I, COURSES C WHERE "
-				+ "(C.ID=I.COURSE) ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, C.CERTNAME, C.PILOT_ID FROM exams.INSLOG I, exams.COURSES C "
+				+ "WHERE (C.ID=I.COURSE) ");
 		if (startDate != null)
 			sqlBuf.append("AND (I.STARTTIME >=?) AND (I.STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) ");
 		if (pilotID != 0)
@@ -229,8 +229,8 @@ public class GetAcademyCalendar extends DAO {
 	public Collection<InstructionSession> getSessionCalendar(java.util.Date startDate, int days, int pilotID) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM COURSES C, "
-				+ "INSCALENDAR I WHERE (C.ID=I.COURSE) AND (I.STARTTIME >=?) AND (I.STARTTIME "
+		StringBuilder sqlBuf = new StringBuilder("SELECT C.CERTNAME, C.PILOT_ID, I.* FROM exams.COURSES C, "
+				+ "exams.INSCALENDAR I WHERE (C.ID=I.COURSE) AND (I.STARTTIME >=?) AND (I.STARTTIME "
 				+ "< DATE_ADD(?, INTERVAL ? DAY)) AND (I.STATUS != ?) ");
 		if (pilotID != 0)
 			sqlBuf.append("AND ((C.PILOT_ID=?) OR (I.INSTRUCTOR_ID=?)) ");

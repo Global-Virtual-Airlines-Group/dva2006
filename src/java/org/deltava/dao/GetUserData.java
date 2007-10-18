@@ -191,7 +191,7 @@ public class GetUserData extends DAO implements CachingDAO {
 		try {
 			prepareStatement("SELECT UD.*, AI.DOMAIN, AI.DBNAME, GROUP_CONCAT(DISTINCT XDB.ID SEPARATOR ?) AS IDS "
 					+ "FROM common.AIRLINEINFO AI, common.USERDATA UD LEFT JOIN common.XDB_IDS XDB ON"
-					+ "((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) LEFT JOIN common.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) "
+					+ "((XDB.ID=UD.ID) OR (XDB.OTHER_ID=UD.ID)) LEFT JOIN events.EVENT_SIGNUPS ES ON (ES.PILOT_ID=UD.ID) "
 					+ "WHERE (UD.AIRLINE=AI.CODE) AND (ES.ID=?) GROUP BY UD.ID");
 			_ps.setString(1, ",");
 			_ps.setInt(2, eventID);

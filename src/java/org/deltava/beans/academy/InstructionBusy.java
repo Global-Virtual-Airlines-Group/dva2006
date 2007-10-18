@@ -12,7 +12,7 @@ import org.deltava.beans.*;
  * @since 1.0
  */
 
-public class InstructionBusy extends DatabaseBean implements Comparable, CalendarEntry, ViewEntry, InstructorBean {
+public class InstructionBusy extends DatabaseBean implements CalendarEntry, ViewEntry, InstructorBean {
 
 	private Date _startTime;
 	private Date _endTime;

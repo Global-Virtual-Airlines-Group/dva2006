@@ -31,7 +31,7 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Certification get(String name) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM CERTS WHERE (NAME=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM exams.CERTS WHERE (NAME=?) LIMIT 1");
 			_ps.setString(1, name);
 			
 			// Execute the query
@@ -56,7 +56,7 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getActive() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C LEFT JOIN CERTREQS CR ON "
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTREQS CR ON "
 					+ "(C.NAME=CR.CERTNAME) WHERE (C.ACTIVE=?) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			_ps.setBoolean(1, true);
 			Collection<Certification> results = execute();
@@ -80,7 +80,7 @@ public class GetAcademyCertifications extends DAO {
 	 */
 	public Collection<Certification> getAll() throws DAOException {
 		try {
-			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM CERTS C LEFT JOIN CERTREQS CR ON " 
+			prepareStatement("SELECT C.*, COUNT(CR.SEQ) FROM exams.CERTS C LEFT JOIN exams.CERTREQS CR ON " 
 					+ "(C.NAME=CR.CERTNAME) GROUP BY C.NAME ORDER BY C.STAGE, C.NAME");
 			Collection<Certification> results = execute();
 			
@@ -132,7 +132,7 @@ public class GetAcademyCertifications extends DAO {
 	private void loadRequirements(Certification cert) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT SEQ, REQENTRY FROM CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
+		prepareStatementWithoutLimits("SELECT SEQ, REQENTRY FROM exams.CERTREQS WHERE (CERTNAME=?) ORDER BY SEQ");
 		_ps.setString(1, cert.getName());
 		
 		// Load the result set
@@ -154,7 +154,7 @@ public class GetAcademyCertifications extends DAO {
 	private void loadExams(Certification cert) throws SQLException {
 		
 		// Prepare the statement
-		prepareStatementWithoutLimits("SELECT EXAMNAME FROM CERTEXAMS WHERE (CERTNAME=?)");
+		prepareStatementWithoutLimits("SELECT EXAMNAME FROM exams.CERTEXAMS WHERE (CERTNAME=?)");
 		_ps.setString(1, cert.getName());
 		
 		// Load the result set

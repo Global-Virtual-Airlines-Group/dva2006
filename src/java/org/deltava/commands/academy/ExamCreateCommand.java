@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -80,6 +80,7 @@ public class ExamCreateCommand extends AbstractAcademyHistoryCommand {
 
 			// Create the examination
 			ex = new Examination(examName);
+			ex.setOwner(ep.getOwner());
 			ex.setPilotID(ctx.getUser().getID());
 			ex.setStage(ep.getStage());
 			ex.setStatus(Test.NEW);

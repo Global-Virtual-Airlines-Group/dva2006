@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.system;
 
 import java.util.Date;
@@ -14,7 +14,7 @@ import org.deltava.beans.ViewEntry;
  * @since 1.0
  */
 
-public class TransferRequest extends DatabaseBean implements Comparable, ViewEntry {
+public class TransferRequest extends DatabaseBean implements ViewEntry {
 
 	public static final int NEW = 0;
 	public static final int PENDING = 1;

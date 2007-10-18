@@ -41,6 +41,7 @@ return true;
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="ranks" name="ranks" />
+<content:sysdata var="airlines" name="apps" mapValues="true" />
 <content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
@@ -72,27 +73,31 @@ return true;
 </tr>
 <tr>
  <td class="label">Available Ranks</td>
- <td class="data"><el:check name="ranks" cols="6" width="120" className="pri small" newLine="true" checked="${eqType.ranks}" options="${ranks}" /></td>
+ <td class="data"><el:check name="ranks" cols="6" width="145" className="pri small" newLine="true" checked="${eqType.ranks}" options="${ranks}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Primary Ratings</td>
- <td class="data"><el:check name="pRatings" cols="9" width="85" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="pRatings" cols="8" width="95" className="small req" newLine="true" checked="${eqType.primaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
  <td class="label" valign="top">Secondary Ratings</td>
- <td class="data"><el:check name="sRatings" cols="9" width="85" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
+ <td class="data"><el:check name="sRatings" cols="8" width="95" className="small" newLine="true" checked="${eqType.secondaryRatings}" options="${allEQ}" /></td>
 </tr>
 <tr>
- <td class="label">First Officer's Examination</td>
- <td class="data"><el:combo name="examFO" idx="*" size="1" firstEntry="" options="${exams}" value="${fn:examFO(eqType)}" /></td>
+ <td class="label">Web Applications</td>
+ <td class="data"><el:check name="airline" width="175" idx="*" options="${airlines}" className="req" checked="${eqType.airlines}" /></td>
+</tr>
+<tr>
+ <td class="label" valign="top">First Officer Examinations</td>
+ <td class="data"><el:check name="examFO" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examFO(eqType)}" /></td>
 </tr>
 <tr>
  <td class="label">Flight Legs for Promotion</td>
  <td class="data"><el:text name="captLegs" size="2" max="2" idx="*" className="req" value="${empty captLegs ? 10 : captLegs}" /></td>
 </tr>
 <tr>
- <td class="label">Captain's Examination</td>
- <td class="data"><el:combo name="examC" idx="*" size="1" firstEntry="" options="${exams}" value="${fn:examC(eqType)}" /></td>
+ <td class="label" valign="top">Captain Examinations</td>
+ <td class="data"><el:check name="examC" width="180" idx="*" cols="4" newLine="true" className="small" options="${exams}" checked="${fn:examC(eqType)}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

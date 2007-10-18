@@ -30,6 +30,7 @@ if (act.indexOf('txreqdelete.do') != -1) {
 
 setSubmit();
 disableButton('ProfileButton');
+disableButton('PIREPButton');
 disableButton('AssignButton');
 disableButton('ApproveButton');
 disableButton('RejectButton');
@@ -80,6 +81,9 @@ return true;
 <c:when test="${fn:failed(checkRide)}">
  <td class="data error bld caps">CHECK RIDE FAILED ON <fmt:date fmt="d" date="${checkRide.scoredOn}" /></td>
 </c:when>
+<c:when test="${fn:submitted(checkRide)}">
+ <td class="data bld pri caps">CHECK RIDE SUBMITTED ON <fmt:date fmt="d" date="${checkRide.submittedOn}" /></td>
+</c:when>
 <c:otherwise>
  <td class="data bld caps">CHECK RIDE ASSIGNED ON <fmt:date fmt="d" date="${checkRide.date}" /></td>
 </c:otherwise>
@@ -96,7 +100,7 @@ return true;
 <c:if test="${checkRide.flightID != 0}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data"><fmt:int value="${checkRide.flightID}" /></td>
+ <td class="data"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="extpirep" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 </c:if>

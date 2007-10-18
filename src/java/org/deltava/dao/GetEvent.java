@@ -34,7 +34,7 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME > ?) AND (STATUS != ?) "
+			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME > ?) AND (STATUS != ?) "
 					+ "ORDER BY STARTTIME");
 			_ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
 			_ps.setInt(2, Event.CANCELED);
@@ -59,7 +59,7 @@ public class GetEvent extends DAO {
 	public List<Event> getAssignableEvents() throws DAOException {
 		try {
 			Timestamp now = new Timestamp(System.currentTimeMillis());
-			prepareStatement("select E.*, COUNT(S.ID) from common.EVENTS E LEFT JOIN common.EVENT_SIGNUPS S "
+			prepareStatement("select E.*, COUNT(S.ID) from events.EVENTS E LEFT JOIN events.EVENT_SIGNUPS S "
 					+ "ON (E.ID=S.ID) WHERE (E.SU_DEADLINE < ?) AND (E.ENDTIME > ?) AND (E.STATUS != ?) "
 					+ "GROUP BY E.ID ORDER BY E.STARTTIME DESC");
 			_ps.setTimestamp(1, now);
@@ -93,7 +93,7 @@ public class GetEvent extends DAO {
 	public int getEvent(Airport airportD, Airport airportA, int network) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT E.ID FROM common.EVENTS E, common.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
+			prepareStatement("SELECT E.ID FROM events.EVENTS E, events.EVENT_AIRPORTS EA WHERE (E.ID=EA.ID) "
 					+ "AND (EA.AIRPORT_D=?) AND (EA.AIRPORT_A=?) AND (E.NETWORK=?) AND (E.STARTTIME < NOW()) AND "
 					+ "(NOW() < DATE_ADD(E.ENDTIME, INTERVAL 2 DAY)) ORDER BY E.ID");
 			_ps.setString(1, airportD.getIATA());
@@ -123,7 +123,7 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getEventCalendar(java.util.Date startDate, int days) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.EVENTS WHERE (STARTTIME >= ?) AND "
+			prepareStatement("SELECT * FROM events.EVENTS WHERE (STARTTIME >= ?) AND "
 					+ "(STARTTIME < DATE_ADD(?, INTERVAL ? DAY)) AND (STATUS !=?) ORDER BY STARTTIME");
 			_ps.setTimestamp(1, createTimestamp(startDate));
 			_ps.setTimestamp(2, createTimestamp(startDate));
@@ -150,7 +150,7 @@ public class GetEvent extends DAO {
 	 */
 	public boolean hasFutureEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT COUNT(*) FROM common.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?)");
+			prepareStatement("SELECT COUNT(*) FROM events.EVENTS WHERE (STARTTIME > NOW()) AND (STATUS != ?)");
 			_ps.setInt(1, Event.CANCELED);
 			
 			// Execute the query
@@ -173,7 +173,7 @@ public class GetEvent extends DAO {
 	 */
 	public List<Event> getEvents() throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM common.EVENTS ORDER BY STARTTIME DESC");
+			prepareStatement("SELECT * FROM events.EVENTS ORDER BY STARTTIME DESC");
 			List<Event> results = execute();
 			
 			// Load the airports
@@ -194,7 +194,7 @@ public class GetEvent extends DAO {
 	 */
 	public Collection<Event> getWithACARS() throws DAOException {
 		try {
-			prepareStatement("SELECT DISTINCT E.* FROM common.EVENTS E, PIREPS PR, ACARS_PIREPS APR "
+			prepareStatement("SELECT DISTINCT E.* FROM events.EVENTS E, PIREPS PR, ACARS_PIREPS APR "
 					+ "WHERE (PR.EVENT_ID=E.ID) AND (APR.ID=PR.ID) AND (APR.ACARS_ID <> 0) ORDER BY "
 					+ "E.STARTTIME DESC");
 			return execute();
@@ -212,7 +212,7 @@ public class GetEvent extends DAO {
 	public Event get(int id) throws DAOException {
 		try {
 			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.EVENTS WHERE (ID=?)");
+			prepareStatement("SELECT * FROM events.EVENTS WHERE (ID=?)");
 			_ps.setInt(1, id);
 
 			// Execute the query and return null if nothing found
@@ -246,7 +246,7 @@ public class GetEvent extends DAO {
 			return;
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.EVENT_AIRPORTS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM events.EVENT_AIRPORTS WHERE (ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -314,7 +314,7 @@ public class GetEvent extends DAO {
 			return;
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.EVENT_SIGNUPS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM events.EVENT_SIGNUPS WHERE (ID IN (");
 		for (Iterator<Integer> i = events.keySet().iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(id.toString());
@@ -351,7 +351,7 @@ public class GetEvent extends DAO {
 	 * Helper method to load flight plans for an event.
 	 */
 	private void loadFlightPlans(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT * FROM common.EVENT_PLANS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT * FROM events.EVENT_PLANS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 
 		// Execute the query and load the flight plans
@@ -373,7 +373,7 @@ public class GetEvent extends DAO {
 	}
 
 	private void loadEQTypes(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT RATING FROM common.EVENT_EQTYPES WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT RATING FROM events.EVENT_EQTYPES WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 
 		// Execute the query and load the equipment types
@@ -387,7 +387,7 @@ public class GetEvent extends DAO {
 	}
 	
 	private void loadContactAddrs(Event e) throws SQLException {
-		prepareStatementWithoutLimits("SELECT ADDRESS FROM common.EVENT_CONTACTS WHERE (ID=?)");
+		prepareStatementWithoutLimits("SELECT ADDRESS FROM events.EVENT_CONTACTS WHERE (ID=?)");
 		_ps.setInt(1, e.getID());
 		
 		// Execute the query and load the addresses

@@ -52,7 +52,7 @@ return true;
  <td class="data"><el:text name="desc" idx="*" size="80" max="144" className="req" value="${channel.description}" /></td>
 </tr>
 <tr>
- <td class="label">Airlines</td>
+ <td class="label">Web Applications</td>
  <td class="data"><el:check name="airline" width="175" options="${airlines}" className="req" checked="${channel.airlines}" /></td>
 </tr>
 <tr>

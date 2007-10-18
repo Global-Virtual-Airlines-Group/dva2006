@@ -84,17 +84,21 @@ public class GetPilotRecognition extends PilotReadDAO {
     public List<Pilot> getPromotionQueue() throws DAOException {
        try {
           prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-                + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) AND "
-                + "(F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS FROM PILOTS P "
-                + "LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN EQTYPES EQ ON "
-                + "(P.EQTYPE=EQ.EQTYPE) LEFT JOIN EXAMS EX ON ((EX.PILOT_ID=P.ID) AND (EX.NAME=EQ.EXAM_CAPT)) "
-                + "WHERE (P.STATUS=?) AND (P.RANK=?) AND (EX.PASS=?) GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) "
-                + "ORDER BY CLEGS DESC");
+        		  + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) "
+        		  + "AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, "
+        		  + "COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, COUNT(DISTINCT EX.ID) as C_EXAMS FROM "
+        		  + "(PILOTS P, EQTYPES EQ) LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
+        		  + "EQEXAMS EQE ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND "
+        		  + "(EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND (P.RANK=?) "
+        		  + "AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) GROUP BY P.ID "
+        		  + "HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
           _ps.setInt(1, FlightReport.OK);
           _ps.setInt(2, FlightReport.OK);
-          _ps.setInt(3, Pilot.ACTIVE);
-          _ps.setString(4, Ranks.RANK_FO);
-          _ps.setBoolean(5, true);
+          _ps.setInt(3, EquipmentType.EXAM_CAPT);
+          _ps.setBoolean(4, true);
+          _ps.setInt(5, Pilot.ACTIVE);
+          _ps.setString(6, Ranks.RANK_FO);
+          _ps.setInt(7, EquipmentType.EXAM_CAPT);
           return execute();
        } catch (SQLException se) {
           throw new DAOException(se);

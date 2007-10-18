@@ -47,14 +47,14 @@ public class TestEquipmentType extends AbstractBeanTestCase {
     public void testRanks() {
         assertNotNull(_eq.getRanks());
         assertEquals(0, _eq.getRanks().size());
-        _eq.addRank("RANK1");
+        _eq.addRank(Ranks.RANK_SO);
         assertEquals(1, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains("RANK1"));
-        _eq.addRank("RANK2");
+        assertTrue(_eq.getRanks().contains(Ranks.RANK_SO));
+        _eq.addRank(Ranks.RANK_FO);
         assertEquals(2, _eq.getRanks().size());
-        assertTrue(_eq.getRanks().contains("RANK2"));
+        assertTrue(_eq.getRanks().contains(Ranks.RANK_FO));
         
-        _eq.addRanks("RANK3,RANK4", ",");
+        _eq.addRanks("Senior Captain,Chief Pilot", ",");
         assertEquals(4, _eq.getRanks().size());
         assertTrue(_eq.getRanks().contains("RANK3"));
         assertTrue(_eq.getRanks().contains("RANK4"));
@@ -72,13 +72,6 @@ public class TestEquipmentType extends AbstractBeanTestCase {
         assertFalse(_eq.hasSO());
         _eq.addRank(Ranks.RANK_SO);
         assertTrue(_eq.hasSO());
-    }
-    
-    public void testExamNames() {
-        assertNull(_eq.getExamName(Ranks.ENTRY));
-        _eq.setExamName(Ranks.ENTRY, "ENTRYEXAM");
-        assertNotNull(_eq.getExamName(Ranks.ENTRY));
-        assertEquals("ENTRYEXAM", _eq.getExamName(Ranks.ENTRY));
     }
     
     public void testPromotionInfo() {
