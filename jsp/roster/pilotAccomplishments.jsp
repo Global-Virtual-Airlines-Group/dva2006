@@ -41,9 +41,10 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOTS PROMOTED TO NEW EQUIPMENT PROGRAMS</td>
 </tr>
 <c:forEach var="promotion" items="${promotions}">
+<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -55,9 +56,10 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOTS PROMOTED WITHIN AN EQUIPMENT PROGRAM</td>
 </tr>
 <c:forEach var="promotion" items="${rankChanges}">
+<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -69,9 +71,10 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOT ACCOMPLISHMENTS AND MILESTONES</td>
 </tr>
 <c:forEach var="promotion" items="${recognition}">
+<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -83,9 +86,10 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOTS GAINING ADDITIONAL RATINGS</td>
 </tr>
 <c:forEach var="promotion" items="${ratingChanges}">
+<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${promotion.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" link="${promotion}">${promotion.firstName} ${promotion.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${promotion.description}</td>
 </tr>
 </c:forEach>
@@ -97,9 +101,10 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOTS OBTAINING FLIGHT ACADEMY RATINGS</td>
 </tr>
 <c:forEach var="cert" items="${academyCerts}">
+<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${cert.createdOn}" /></td>
- <td class="bld"><el:cmd url="profile" link="${cert}">${cert.firstName} ${cert.lastName}</el:cmd></td>
+ <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
  <td class="left">${cert.description}</td>
 </tr>
 </c:forEach>
