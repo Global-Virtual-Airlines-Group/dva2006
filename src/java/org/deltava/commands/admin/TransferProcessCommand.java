@@ -12,6 +12,7 @@ import org.deltava.commands.*;
 import org.deltava.dao.*;
 
 import org.deltava.security.command.TransferAccessControl;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to display a Transfer Request for processing.
@@ -59,6 +60,10 @@ public class TransferProcessCommand extends AbstractCommand {
 				GetFlightReports frdao = new GetFlightReports(con);
 				ctx.setAttribute("pirep", frdao.getACARS(ud.getDB(), cr.getFlightID()), REQUEST);
 			}
+			
+			// Check if it's across applications
+			boolean crossDB = !SystemData.get("airline.db").equals(ud.getDB());
+			ctx.setAttribute("crossDB", Boolean.valueOf(crossDB), REQUEST);
 
 			// Get the requested equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
