@@ -164,7 +164,7 @@ public class SetQuestionnaire extends DAO {
 
 			// Create the Examination prepared statement
 			prepareStatement("INSERT INTO exams.EXAMS (NAME, AIRLINE, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
-					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, e.getName());
 			_ps.setString(2, e.getOwner().getCode());
 			_ps.setInt(3, pilotID);
