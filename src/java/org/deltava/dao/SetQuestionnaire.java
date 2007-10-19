@@ -36,7 +36,7 @@ public class SetQuestionnaire extends DAO {
 	public void write(Examination e) throws DAOException {
 
 		// Check the exam name
-		if (_qName.equals(e.getName()))
+		if (!_qName.equals(e.getName()))
 			throw new IllegalArgumentException("Invalid Examination - " + e.getName());
 
 		// Check if we're adding or updating
