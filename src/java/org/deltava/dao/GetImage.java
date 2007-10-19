@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -97,6 +97,6 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getExamResource(int id) throws DAOException {
-    	return execute(id, "SELECT IMG FROM QUESTIONIMGS WHERE (ID=?)");
+    	return execute(id, "SELECT IMG FROM exams.QUESTIONIMGS WHERE (ID=?)");
     }
 }
