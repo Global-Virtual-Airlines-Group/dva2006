@@ -97,10 +97,10 @@ return true;
  <td class="label" valign="top">Comments</td>
  <td class="data"><fmt:text value="${checkRide.comments}" /></td>
 </tr>
-<c:if test="${checkRide.flightID != 0}">
+<c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="extpirep" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="${crossDB ? 'extpirep' : 'pirep'}" link="${pirep}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 </c:if>
