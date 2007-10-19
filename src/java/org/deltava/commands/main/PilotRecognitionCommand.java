@@ -1,13 +1,12 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
+import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.StatusUpdate;
+import org.deltava.beans.*;
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetStatusUpdate;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Site Command to display Pilot accomplishments.
@@ -32,14 +31,35 @@ public class PilotRecognitionCommand extends AbstractCommand {
 			GetStatusUpdate dao = new GetStatusUpdate(con);
 			dao.setQueryMax(10);
 			
-			// Get promotions and rank changes
-			ctx.setAttribute("promotions", dao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
-			ctx.setAttribute("rankChanges", dao.getByType(StatusUpdate.INTPROMOTION), REQUEST);
-			ctx.setAttribute("ratingChanges", dao.getByType(StatusUpdate.RATING_ADD), REQUEST);
-			ctx.setAttribute("academyCerts", dao.getByType(StatusUpdate.CERT_ADD), REQUEST);
+			// Get the status data
+			Collection<Integer> IDs = new HashSet<Integer>();
+			Map<String, Collection<StatusUpdate>> updates = new HashMap<String, Collection<StatusUpdate>>();
 			
-			// Get pilot recognition
-			ctx.setAttribute("recognition", dao.getByType(StatusUpdate.RECOGNITION), REQUEST);
+			// Get promotions and rank changes
+			updates.put("promotions", dao.getByType(StatusUpdate.EXTPROMOTION));
+			updates.put("rankChanges", dao.getByType(StatusUpdate.INTPROMOTION));
+			updates.put("ratingChanges", dao.getByType(StatusUpdate.RATING_ADD));
+			updates.put("academyCerts", dao.getByType(StatusUpdate.CERT_ADD));
+			updates.put("recognition", dao.getByType(StatusUpdate.RECOGNITION));
+			
+			// Get pilot IDs and save in the request
+			for (Iterator<String> i = updates.keySet().iterator(); i.hasNext(); ) {
+				String key = i.next();
+				Collection<StatusUpdate> upds = updates.get(key);
+				ctx.setAttribute(key, upds, REQUEST);
+				
+				// Save pilot IDs
+				for (Iterator<StatusUpdate> ui = upds.iterator(); ui.hasNext(); ) {
+					StatusUpdate upd = ui.next();
+					IDs.add(new Integer(upd.getID()));
+				}
+			}
+			
+			// Load the pilot IDs
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			UserDataMap udm = uddao.get(IDs);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
