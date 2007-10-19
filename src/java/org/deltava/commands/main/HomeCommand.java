@@ -66,11 +66,11 @@ public class HomeCommand extends AbstractCommand {
 			GetProcData pdao = new GetProcData();
 			try {
 				int runTime = pdao.getUptime();
-				ctx.setAttribute("runTimeDays", new Integer(runTime / 86400), REQUEST);
+				ctx.setAttribute("runTimeDays", Integer.valueOf(runTime / 86400), REQUEST);
 				runTime %= 86400;
-				ctx.setAttribute("runTimeHours", new Integer(runTime / 3600), REQUEST);
+				ctx.setAttribute("runTimeHours", Integer.valueOf(runTime / 3600), REQUEST);
 				runTime %= 3600;
-				ctx.setAttribute("runTimeMinutes", new Integer(runTime / 60), REQUEST);
+				ctx.setAttribute("runTimeMinutes", Integer.valueOf(runTime / 60), REQUEST);
 			} catch (DAOException de) {
 				log.error(de.getMessage());
 			}
@@ -79,13 +79,13 @@ public class HomeCommand extends AbstractCommand {
 		// Build a list of choices
 		List<Integer> cList = new ArrayList<Integer>(DYN_CHOICES.length);
 		for (int x = 0; x < DYN_CHOICES.length; x++)
-			cList.add(new Integer(DYN_CHOICES[x]));
+			cList.add(Integer.valueOf(DYN_CHOICES[x]));
 
 		// Check if ACARS has anyone connected
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
 		if ((acarsPool == null) || acarsPool.isEmpty()) {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
-			cList.remove(new Integer(ACARS_USERS));
+			cList.remove(Integer.valueOf(ACARS_USERS));
 		}
 		
 		try {
@@ -104,7 +104,7 @@ public class HomeCommand extends AbstractCommand {
 			GetEvent evdao = new GetEvent(con);
 			if (!evdao.hasFutureEvents()) {
 				ctx.setAttribute("noUpcomingEvents", Boolean.TRUE, REQUEST);
-				cList.remove(new Integer(NEXT_EVENT));
+				cList.remove(Integer.valueOf(NEXT_EVENT));
 			}
 
 			// Get latest water cooler data
@@ -158,8 +158,8 @@ public class HomeCommand extends AbstractCommand {
 						upds = sudao.getByType(StatusUpdate.RECOGNITION);
 						ctx.setAttribute("centuryClub", upds, REQUEST);
 					} else {
-						upds = sudao.getByType(StatusUpdate.RECOGNITION);
-						ctx.setAttribute("promotions", sudao.getByType(StatusUpdate.EXTPROMOTION), REQUEST);
+						upds = sudao.getByType(StatusUpdate.EXTPROMOTION);
+						ctx.setAttribute("promotions", upds, REQUEST);
 					}
 					
 					// Get pilot IDs
