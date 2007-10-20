@@ -9,7 +9,7 @@ if (!validateCombo(f.busyDate, 'Busy Date')) return false;
 
 // Set the fields
 f.startDate.value = f.busyDate.value;
-f.startTime.value= '00:00';
+f.startTime.value= '09:00';
 f.endDate.value = f.busyDate.value;
 f.endTime.value = '23:59';
 f.submit();
