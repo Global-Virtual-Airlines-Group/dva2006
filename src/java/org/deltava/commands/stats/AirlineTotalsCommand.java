@@ -64,7 +64,7 @@ public class AirlineTotalsCommand extends AbstractCommand {
                     GetTableStatus dao2 = new GetTableStatus(con);
                     _tableStatus.addAll(dao2.getStatus("common"));
                     _tableStatus.addAll(dao2.getStatus("exams"));
-                    _tableStatus.addAll(dao2.getStatus("event"));
+                    _tableStatus.addAll(dao2.getStatus("events"));
                     _tableStatus.addAll(dao2.getStatus("acars"));
                     _tableStatus.addAll(dao2.getStatus("postfix"));
                     _tableStatus.addAll(dao2.getStatus("teamspeak"));
