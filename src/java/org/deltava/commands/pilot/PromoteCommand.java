@@ -54,18 +54,12 @@ public class PromoteCommand extends AbstractTestHistoryCommand {
 			
 			// Make sure we have passed the examination
 			EquipmentType eq = testHistory.getEquipmentType();
-			if (!testHistory.hasPassed(eq.getExamNames(Ranks.RANK_C))) {
-				CommandException ce = new CommandException(usr.getName() + " has not passed Captain's exams");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			if (!testHistory.hasPassed(eq.getExamNames(Ranks.RANK_C)))
+				throw new CommandException(usr.getName() + " has not passed Captain's exams", false);
 			
 			// Make sure we have the legs
-			if (testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C)) {
-				CommandException ce = new CommandException(usr.getName() + " has insufficient flight legs");
-				ce.setLogStackDump(false);
-				throw ce;
-			}
+			if (testHistory.getFlightLegs(eq) < eq.getPromotionLegs(Ranks.RANK_C))
+				throw new CommandException(usr.getName() + " has insufficient flight legs", false);
 			
 			// Determine if we can jump to SC
 			GetStatusUpdate sudao = new GetStatusUpdate(con);
