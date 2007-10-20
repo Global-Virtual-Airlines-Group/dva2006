@@ -357,8 +357,8 @@ Captain in the ${eqType.name} program.</td></c:when>
  <td class="data">You have completed the <fmt:int value="${fn:promoLegs(eqType, 'Captain')}" /> Flight Legs
  in the <fmt:list value="${eqType.primaryRatings}" delim=", " /> 
 <c:if test="${eqType.ACARSPromotionLegs}">using ACARS </c:if> required for promotion to the rank of 
-Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld">${fn:examC(eqType)}</span> 
-examination in order to be eligible for promotion to Captain</i>.</td></c:when>
+Captain in the ${eqType.name} program. <i>You still need to pass the <span class="pri bld"><fmt:list value="${fn:examC(eqType)}" delim="," /></span> 
+examination(s) in order to be eligible for promotion to Captain</i>.</td></c:when>
 </c:choose>
 </tr>
 </c:if>
