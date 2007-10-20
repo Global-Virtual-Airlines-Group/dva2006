@@ -10,6 +10,7 @@ import org.deltava.beans.testing.*;
 import org.deltava.dao.*;
 
 import org.deltava.util.StringUtils;
+import org.deltava.util.system.SystemData;
 
 /**
  * A class to support Web Site Commands use a {@link TestingHistoryHelper} object to determine what
@@ -36,7 +37,7 @@ public abstract class AbstractTestHistoryCommand extends AbstractCommand {
 
 		// Get the Pilot's equipment program and all equipment types
 		GetEquipmentType eqdao = new GetEquipmentType(c);
-		EquipmentType eq = eqdao.get(p.getEquipmentType());
+		EquipmentType eq = eqdao.get(p.getEquipmentType(), SystemData.get("airline.db"));
 
 		// Get the Pilot's applicant profile to get eq program hired into
 		GetApplicant adao = new GetApplicant(c);
