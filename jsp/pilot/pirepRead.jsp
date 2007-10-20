@@ -264,7 +264,7 @@ alt="${pirep.airportD.name} to ${pirep.airportA.name}" width="620" height="365" 
 <map:point var="mapC" point="${mapCenter}" />
 <c:if test="${!empty mapRoute}">
 <map:points var="routePoints" items="${mapRoute}" />
-<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" />
+<map:line var="gRoute" src="routePoints" color="#4080AF" width="3" transparency="0.75" geodesic="true" />
 </c:if>
 <c:if test="${empty mapRoute && fn:isACARS(pirep)}">
 var gRoute;
