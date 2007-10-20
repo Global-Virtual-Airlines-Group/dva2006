@@ -142,7 +142,9 @@ public class Mailer {
 		}
 
 		// Warn if we have no template
-		if (_ctx.getTemplate() == null) {
+		try {
+			_ctx.getBody();
+		} catch (IllegalStateException ise) {
 			log.error("Message Template not loaded");
 			return;
 		}
@@ -158,7 +160,7 @@ public class Mailer {
 			_env.setSubject(_ctx.getSubject());
 
 			// Determine the content type
-			_env.setContentType(_ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
+			_env.setContentType((_ctx.getTemplate() != null) && _ctx.getTemplate().getIsHTML() ? "text/html" : "text/plain");
 
 			// Queue the message up
 			MailerDaemon.push((SMTPEnvelope) _env.clone());
