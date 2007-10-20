@@ -62,9 +62,10 @@ public class GetPilotRecognition extends PilotReadDAO {
     		return result.getValue();
 
     	// Get the results
-    	Collection<Pilot> results = getPromotionQueue();
+    	Collection<Integer> results = getPromotionQueue();
     	if (!"ALL".equals(eqType)) {
-    		for (Iterator<Pilot> i = results.iterator(); i.hasNext(); ) {
+    		Collection<Pilot> pilots = getByID(results, "PILOTS").values();
+    		for (Iterator<Pilot> i = pilots.iterator(); i.hasNext(); ) {
     			Pilot p = i.next();
     			if (!p.getEquipmentType().equals(eqType))
     				i.remove();
@@ -81,25 +82,32 @@ public class GetPilotRecognition extends PilotReadDAO {
      * @return a List of Pilots
      * @throws DAOException if a JDBC error occurs
      */
-    public List<Pilot> getPromotionQueue() throws DAOException {
+    public Collection<Integer> getPromotionQueue() throws DAOException {
        try {
-          prepareStatement("SELECT P.*, COUNT(DISTINCT F.ID) AS LEGS, SUM(F.DISTANCE), ROUND(SUM(F.FLIGHT_TIME), 1), "
-        		  + "MAX(F.DATE), (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE (F.PILOT_ID=P.ID) "
-        		  + "AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, EQ.C_LEGS, "
-        		  + "COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, COUNT(DISTINCT EX.ID) as C_EXAMS FROM "
-        		  + "(PILOTS P, EQTYPES EQ) LEFT JOIN PIREPS F ON ((P.ID=F.PILOT_ID) AND (F.STATUS=?)) LEFT JOIN "
-        		  + "EQEXAMS EQE ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS EX ON ((EX.PILOT_ID=P.ID) AND "
-        		  + "(EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) WHERE (P.STATUS=?) AND (P.RANK=?) "
-        		  + "AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) AND (EQE.EXAMTYPE=?)) GROUP BY P.ID "
-        		  + "HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
+          prepareStatement("SELECT P.ID, (SELECT COUNT(DISTINCT F.ID) FROM PIREPS F, PROMO_EQ PEQ WHERE "
+        		  + "(F.PILOT_ID=P.ID) AND (F.ID=PEQ.ID) AND (PEQ.EQTYPE=P.EQTYPE) AND (F.STATUS=?)) AS CLEGS, "
+        		  + "EQ.C_LEGS, COUNT(DISTINCT EQE.EXAM) AS CREQ_EXAMS, COUNT(DISTINCT EX.ID) as C_EXAMS FROM "
+        		  + "(PILOTS P, EQTYPES EQ) LEFT JOIN EQEXAMS EQE ON (EQE.EQTYPE=P.EQTYPE) LEFT JOIN exams.EXAMS "
+        		  + "EX ON ((EX.PILOT_ID=P.ID) AND (EX.NAME=EQE.EXAM) AND (EQE.EXAMTYPE=?) AND (EX.PASS=?)) "
+        		  + "WHERE (P.STATUS=?) AND (P.RANK=?) AND ((P.EQTYPE=EQ.EQTYPE) AND (EQ.EQTYPE=EQE.EQTYPE) "
+        		  + "AND (EQE.EXAMTYPE=?)) GROUP BY P.ID HAVING (CLEGS >= EQ.C_LEGS) AND (C_EXAMS>=CREQ_EXAMS)");
           _ps.setInt(1, FlightReport.OK);
-          _ps.setInt(2, FlightReport.OK);
-          _ps.setInt(3, EquipmentType.EXAM_CAPT);
-          _ps.setBoolean(4, true);
-          _ps.setInt(5, Pilot.ACTIVE);
-          _ps.setString(6, Ranks.RANK_FO);
-          _ps.setInt(7, EquipmentType.EXAM_CAPT);
-          return execute();
+          _ps.setInt(2, EquipmentType.EXAM_CAPT);
+          _ps.setBoolean(3, true);
+          _ps.setInt(4, Pilot.ACTIVE);
+          _ps.setString(5, Ranks.RANK_FO);
+          _ps.setInt(6, EquipmentType.EXAM_CAPT);
+          
+          // Execute the query
+          Collection<Integer> results = new LinkedHashSet<Integer>();
+          ResultSet rs = _ps.executeQuery();
+          while (rs.next())
+        	  results.add(new Integer(rs.getInt(1)));
+          
+          // Clean up
+          rs.close();
+          _ps.close();
+          return results;
        } catch (SQLException se) {
           throw new DAOException(se);
        }
