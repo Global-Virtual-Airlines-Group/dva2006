@@ -178,8 +178,8 @@ public class GetLibrary extends DAO {
 	 */
 	public Video getVideo(String fName) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM VIDEOS V LEFT JOIN DOWNLOADS L ON "
-					+ "(V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1");
+			prepareStatementWithoutLimits("SELECT V.*, COUNT(L.FILENAME) FROM exams.VIDEOS V LEFT JOIN DOWNLOADS L "
+					+ "ON (V.FILENAME=L.FILENAME) WHERE (V.FILENAME=?) GROUP BY V.NAME ORDER BY V.NAME LIMIT 1");
 			_ps.setString(1, fName);
 			
 			// Get results - if empty return null

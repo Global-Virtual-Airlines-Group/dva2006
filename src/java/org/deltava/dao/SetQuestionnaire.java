@@ -163,20 +163,19 @@ public class SetQuestionnaire extends DAO {
 			startTransaction();
 
 			// Create the Examination prepared statement
-			prepareStatement("INSERT INTO exams.EXAMS (NAME, AIRLINE, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
-					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+			prepareStatement("INSERT INTO exams.EXAMS (NAME, PILOT_ID, STATUS, CREATED_ON, SUBMITTED_ON, "
+					+ "GRADED_ON, GRADED_BY, EXPIRY_TIME, PASS, AUTOSCORE, COMMENTS) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, e.getName());
-			_ps.setString(2, e.getOwner().getCode());
-			_ps.setInt(3, pilotID);
-			_ps.setInt(4, e.getStatus());
-			_ps.setTimestamp(5, createTimestamp(e.getDate()));
-			_ps.setTimestamp(6, createTimestamp(e.getSubmittedOn()));
-			_ps.setTimestamp(7, createTimestamp(e.getScoredOn()));
-			_ps.setInt(8, e.getScorerID());
-			_ps.setTimestamp(9, createTimestamp(e.getExpiryDate()));
-			_ps.setBoolean(10, true);
-			_ps.setBoolean(11, e.getAutoScored());
-			_ps.setString(12, e.getComments());
+			_ps.setInt(2, pilotID);
+			_ps.setInt(3, e.getStatus());
+			_ps.setTimestamp(4, createTimestamp(e.getDate()));
+			_ps.setTimestamp(5, createTimestamp(e.getSubmittedOn()));
+			_ps.setTimestamp(6, createTimestamp(e.getScoredOn()));
+			_ps.setInt(7, e.getScorerID());
+			_ps.setTimestamp(8, createTimestamp(e.getExpiryDate()));
+			_ps.setBoolean(9, true);
+			_ps.setBoolean(10, e.getAutoScored());
+			_ps.setString(11, e.getComments());
 
 			// Write the exam and get the new exam ID
 			executeUpdate(1);
