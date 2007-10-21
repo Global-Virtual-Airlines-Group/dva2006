@@ -147,13 +147,12 @@ public class GetEquipmentType extends DAO {
 				buf.append(".PILOTS P, ");
 				buf.append(db);
 				buf.append(".EQAIRLINES EA WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) AND "
-						+ "(EA.AIRLINE=?) AND (AI.DBNAME=LOWER(?)) AND (EA.EQTYPE=EQ.EQTYPE)");
+						+ "(EA.AIRLINE=AI.CODE) AND (EP.AIRLINE=AI.CODE) AND (AI.DBNAME=LOWER(?)) AND (EA.EQTYPE=EQ.EQTYPE)");
 				
 				// Prepare the statement and execute
 				prepareStatementWithoutLimits(buf.toString());
 				_ps.setBoolean(1, true);
-				_ps.setString(2, aCode);
-				_ps.setString(3, db.toLowerCase());
+				_ps.setString(2, db.toLowerCase());
 				Collection<EquipmentType> exams = execute();
 				
 				// Load child rows and add
@@ -182,14 +181,15 @@ public class GetEquipmentType extends DAO {
 		dbName = formatDBName(dbName);
 		StringBuilder sqlBuf = new StringBuilder("SELECT EQ.*, EP.AIRLINE, CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME), P.EMAIL FROM ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".PILOTS P, common.EQPROGRAMS EP, ");
+		sqlBuf.append(".PILOTS P, common.EQPROGRAMS EP, common.AIRLINEINFO AI, ");
 		sqlBuf.append(dbName);
-		sqlBuf.append(".EQTYPES EQ WHERE (EP.EQTYPE=EQ.EQTYPE) AND (EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY "
-				+ "EQ.STAGE, EQ.EQTYPE");
+		sqlBuf.append(".EQTYPES EQ WHERE (AI.DBNAME=?) AND (EP.AIRLINE=AI.CODE) AND (EP.EQTYPE=EQ.EQTYPE) AND "
+				+ "(EQ.CP_ID=P.ID) AND (EQ.ACTIVE=?) ORDER BY EQ.STAGE, EQ.EQTYPE");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setBoolean(1, true);
+			_ps.setString(1, dbName);
+			_ps.setBoolean(2, true);
 			List<EquipmentType> results = execute();
 			loadRatings(results, dbName);
 			loadExams(results, dbName);
