@@ -91,7 +91,7 @@ public class CheckRideScoreCommand extends AbstractCommand {
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
-				txwdao.write(txreq);
+				txwdao.update(txreq);
 			}
 
 			// Commit the transaction

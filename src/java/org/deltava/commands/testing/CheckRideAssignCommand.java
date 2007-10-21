@@ -112,7 +112,7 @@ public class CheckRideAssignCommand extends AbstractCommand {
 
 			// Save the transfer request
 			SetTransferRequest txwdao = new SetTransferRequest(con);
-			txwdao.write(txreq);
+			txwdao.update(txreq);
 			
 			// Commit the transaction
 			ctx.commitTX();

@@ -129,7 +129,7 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 
 				// Write the transfer request
 				SetTransferRequest txwdao = new SetTransferRequest(con);
-				txwdao.write(txreq);
+				txwdao.update(txreq);
 			}
 
 			// If we're approving and we have hit a century club milestone, log it

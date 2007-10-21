@@ -91,7 +91,7 @@ public class TransferRequestCommand extends AbstractTestHistoryCommand {
 
 			// Save the transfer request
 			SetTransferRequest wdao = new SetTransferRequest(con);
-			wdao.write(txreq);
+			wdao.create(txreq, eq.getOwner().getDB());
 
 			// Store the transfer request in the request
 			ctx.setAttribute("txReq", txreq, REQUEST);

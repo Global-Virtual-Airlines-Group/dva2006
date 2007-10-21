@@ -107,7 +107,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				
 				// Save the transfer request
 				SetTransferRequest twdao = new SetTransferRequest(con);
-				twdao.write(tx);
+				twdao.update(tx);
 			}
 			
 			// Commit the transaction

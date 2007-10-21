@@ -23,33 +23,34 @@ public class SetTransferRequest extends DAO {
 	}
 
 	/**
-	 * Writes a Transfer Request to the database. This can handle INSERTs and UPDATEs.
+	 * Writes a new Transfer Request into a database.
+	 * @param txreq the TransferRequest bean
+	 * @param dbName the database name
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public void create(TransferRequest txreq, String dbName) throws DAOException {
+		try {
+            prepareStatement("INSERT INTO " + formatDBName(dbName) + ".TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, "
+            		+ "CREATED, RATING_ONLY, ID) VALUES (?, ?, ?, NOW(), ?, ?)");
+            _ps.setInt(1, txreq.getStatus());
+            _ps.setInt(2, txreq.getCheckRideID());
+            _ps.setString(3, txreq.getEquipmentType());
+            _ps.setBoolean(4, txreq.getRatingOnly());
+            _ps.setInt(5, txreq.getID());
+            executeUpdate(1);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+
+	/**
+	 * Updates an existing Transfer Request in the current database.
 	 * @param txreq the TransferRequest bean
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void write(TransferRequest txreq) throws DAOException {
+	public void update(TransferRequest txreq) throws DAOException {
 		try {
-			// Get the database
-			prepareStatement("SELECT AI.DBNAME FROM common.AIRLINEINFO AI, common.EQPROGRAMS EP WHERE "
-					+ "(AI.CODE=EP.AIRLINE) AND (EP.EQTYPE=?)");
-			_ps.setString(1, txreq.getEquipmentType());
-			ResultSet rs = _ps.executeQuery();
-			String dbName = rs.next() ? formatDBName(rs.getString(1)) : null;
-			rs.close();
-			_ps.close();
-			if (dbName == null)
-				throw new DAOException("Unknown Equipment Type - " + txreq.getEquipmentType());
-
-			// Write the request
-			if (txreq.getDate() == null) {
-				prepareStatement("INSERT INTO " + dbName + ".TXREQUESTS (STATUS, CHECKRIDE_ID, EQTYPE, CREATED, "
-						+ "RATING_ONLY, ID) VALUES (?, ?, ?, ?, ?, ?)");
-				txreq.setDate(new java.util.Date());
-			} else
-				prepareStatement("UPDATE " + dbName + ".TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, "
-						+ "CREATED=?, RATING_ONLY=? WHERE (ID=?)");
-
-			// Update the prepared statement
+			prepareStatement("UPDATE TXREQUESTS SET STATUS=?, CHECKRIDE_ID=?, EQTYPE=?, CREATED=?, RATING_ONLY=? WHERE (ID=?)");
 			_ps.setInt(1, txreq.getStatus());
 			_ps.setInt(2, txreq.getCheckRideID());
 			_ps.setString(3, txreq.getEquipmentType());
@@ -65,7 +66,7 @@ public class SetTransferRequest extends DAO {
 	}
 
 	/**
-	 * Deletes a Transfer Request from the database.
+	 * Deletes a Transfer Request from the current database.
 	 * @param pilotID the Pilot's database ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
