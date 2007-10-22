@@ -39,8 +39,12 @@ public class ExamCommand extends AbstractCommand {
          if (ex == null)
             throw notFoundException("Invalid Examination - " + ctx.getID());
          
+         // Get the Pilot taking the exam
+         GetUserData uddao = new GetUserData(con);
+         UserData ud = uddao.get(ex.getPilotID());
+         
          // Check our access level
-         ExamAccessControl access = new ExamAccessControl(ctx, ex);
+         ExamAccessControl access = new ExamAccessControl(ctx, ex, ud);
          access.validate();
          if (!access.getCanRead())
             throw securityException("Cannot view Examination " + ctx.getID());
@@ -53,7 +57,6 @@ public class ExamCommand extends AbstractCommand {
          
          // Load the Pilots
          GetPilot pdao = new GetPilot(con);
-         GetUserData uddao = new GetUserData(con);
          UserDataMap udm = uddao.get(IDs);
          Map<Integer, Pilot> pilots = pdao.get(udm);
          ctx.setAttribute("pilot", pilots.get(new Integer(ex.getPilotID())), REQUEST);

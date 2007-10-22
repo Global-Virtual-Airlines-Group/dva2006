@@ -43,8 +43,16 @@ public class ExamScoreCommand extends AbstractCommand {
          if (ex == null)
             throw notFoundException("Invalid Examination - " + ctx.getID());
          
+         // Get the Pilot profile
+         GetUserData uddao = new GetUserData(con);
+         GetPilot pdao = new GetPilot(con);
+         UserData ud = uddao.get(ex.getPilotID());
+         usr = pdao.get(ud);
+         ctx.setAttribute("pilot", usr, REQUEST);
+         mctxt.addData("pilot", usr);
+         
          // Check our access level
-         ExamAccessControl access = new ExamAccessControl(ctx, ex);
+         ExamAccessControl access = new ExamAccessControl(ctx, ex, ud);
          access.validate();
          if (!access.getCanScore())
             throw securityException("Cannot score Examination");
@@ -64,14 +72,6 @@ public class ExamScoreCommand extends AbstractCommand {
             if (isCorrect)
                score++;
          }
-         
-         // Get the Pilot profile
-         GetUserData uddao = new GetUserData(con);
-         GetPilot pdao = new GetPilot(con);
-         UserData ud = uddao.get(ex.getPilotID());
-         usr = pdao.get(ud);
-         ctx.setAttribute("pilot", usr, REQUEST);
-         mctxt.addData("pilot", usr);
          
          // Get the Message template
          GetMessageTemplate mtdao = new GetMessageTemplate(con);

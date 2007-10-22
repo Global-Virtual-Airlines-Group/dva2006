@@ -3,6 +3,7 @@ package org.deltava.security.command;
 
 import java.util.Date;
 
+import org.deltava.beans.UserData;
 import org.deltava.beans.testing.*;
 
 import org.deltava.security.SecurityContext;
@@ -18,6 +19,7 @@ import org.deltava.util.system.SystemData;
 public class ExamAccessControl extends AccessControl {
 
     private Test _t;
+    private UserData _user;
     
     private boolean _canRead;
     private boolean _canSubmit;
@@ -32,8 +34,19 @@ public class ExamAccessControl extends AccessControl {
      * @param t the Examination/CheckRide to validate against
      */
     public ExamAccessControl(SecurityContext ctx, Test t) {
+    	this (ctx, t, null);
+    }
+    
+    /**
+     * Initialize the Access controller.
+     * @param ctx the command context
+     * @param t the Examination/CheckRide to validate against
+     * @param ud the UserData bean for the user taking the test
+     */
+    public ExamAccessControl(SecurityContext ctx, Test t, UserData ud) {
         super(ctx);
         _t = t;
+        _user = ud;
     }
 
     /**
@@ -49,6 +62,7 @@ public class ExamAccessControl extends AccessControl {
         
         // Check if the exam belongs to our airline
         boolean isOurAirline = SystemData.getApp(SystemData.get("airline.code")).equals(_t.getOwner());
+        boolean isOurUser = (_user != null) && (SystemData.get("airline.code").equals(_user.getAirlineCode()));
 
         // Set access variables
         boolean isHR = _ctx.isUserInRole("HR");
@@ -68,7 +82,7 @@ public class ExamAccessControl extends AccessControl {
         _canRead = isOurs || isExam || isHR || _ctx.isUserInRole("Instructor");
         _canSubmit = isOurs && !isCR && !isSubmitted && !isScored;
         _canEdit = isScored && isHR && isOurAirline && !isOurs;
-        _canDelete = _ctx.isUserInRole("Admin") && isOurAirline;
+        _canDelete = _ctx.isUserInRole("Admin") && (isOurAirline || isOurUser);
         _canScore = _canEdit || (isSubmitted && isExam);
         _canViewAnswers = isScored && (isExam || (_t.getAcademy() && _ctx.isUserInRole("Instructor")));
         

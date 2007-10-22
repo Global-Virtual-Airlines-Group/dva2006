@@ -61,7 +61,7 @@ public class ExamAnswerService extends WebService {
 				throw new ServiceException(SC_NOT_FOUND, "Unknown Exam ID - " + examID, false);
 
 			// Check our access to it, and stop if we cannot access it
-			ExamAccessControl access = new ExamAccessControl(ctx, ex);
+			ExamAccessControl access = new ExamAccessControl(ctx, ex, null);
 			try {
 				access.validate();
 				if (!access.getCanSubmit())

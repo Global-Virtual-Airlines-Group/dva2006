@@ -803,7 +803,7 @@ public class ProfileCommand extends AbstractFormCommand {
 				for (Iterator<Test> i = exams.iterator(); i.hasNext();) {
 					Test t = i.next();
 					try {
-						ExamAccessControl ac = new ExamAccessControl(ctx, t);
+						ExamAccessControl ac = new ExamAccessControl(ctx, t, usrInfo);
 						ac.validate();
 					} catch (AccessControlException ace) {
 						i.remove();

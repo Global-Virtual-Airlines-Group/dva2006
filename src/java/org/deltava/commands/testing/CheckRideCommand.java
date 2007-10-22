@@ -4,7 +4,7 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.ComboAlias;
+import org.deltava.beans.*;
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.testing.*;
 
@@ -48,8 +48,12 @@ public class CheckRideCommand extends AbstractCommand {
          if (cr == null)
         	 throw notFoundException("Invalid Check Ride - " + ctx.getID());
          
+         // Get the pilot taking the checkride
+         GetUserData uddao = new GetUserData(con);
+         UserData ud = uddao.get(cr.getPilotID());
+         
          // Check our access
-         ExamAccessControl access = new ExamAccessControl(ctx, cr);
+         ExamAccessControl access = new ExamAccessControl(ctx, cr, ud);
          access.validate();
          if (!access.getCanRead())
             throw securityException("Cannot view Check Ride");
@@ -68,9 +72,9 @@ public class CheckRideCommand extends AbstractCommand {
          
          // Load the pilot data
          GetPilot pdao = new GetPilot(con);
-         ctx.setAttribute("pilot", pdao.get(cr.getPilotID()), REQUEST);
+         ctx.setAttribute("pilot", pdao.get(ud), REQUEST);
          if (cr.getScorerID() != 0) {
-            ctx.setAttribute("scorer", pdao.get(cr.getScorerID()), REQUEST);
+            ctx.setAttribute("scorer", pdao.get(uddao.get(cr.getScorerID())), REQUEST);
             ctx.setAttribute("score", String.valueOf(cr.getPassFail()), REQUEST);
          }
          

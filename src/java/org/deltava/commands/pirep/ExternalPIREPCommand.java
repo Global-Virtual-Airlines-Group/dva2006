@@ -42,8 +42,16 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			if (cr == null)
 				throw notFoundException("Invalid Check Ride ID - " + ctx.getID());
 			
+			// Load the pilot object
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			UserData ud = uddao.get(cr.getPilotID());
+			Pilot p = pdao.get(ud);
+			if (p == null)
+				throw notFoundException("Unknown Pilot ID - " + cr.getPilotID());
+			
 			// Validate our access
-			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr, ud);
 			crAccess.validate();
 			ctx.setAttribute("crAccess", crAccess, REQUEST);
 			if (crAccess.getCanScore())
@@ -51,14 +59,6 @@ public class ExternalPIREPCommand extends AbstractCommand {
 			
 			// Save the checkride
 			ctx.setAttribute("checkRide", cr, REQUEST);
-			
-			// Load the pilot object
-			GetUserData uddao = new GetUserData(con);
-			UserData ud = uddao.get(cr.getPilotID());
-			GetPilot pdao = new GetPilot(con);
-			Pilot p = pdao.get(ud);
-			if (p == null)
-				throw notFoundException("Unknown Pilot ID - " + cr.getPilotID());
 			
 			// Get the Flight Report
 			GetFlightReports frdao = new GetFlightReports(con);

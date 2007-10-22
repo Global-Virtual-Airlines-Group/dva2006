@@ -1,12 +1,11 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.admin;
 
+import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.commands.*;
-
-import org.deltava.dao.GetPilotRecognition;
-import org.deltava.dao.DAOException;
+import org.deltava.dao.*;
 
 /**
  * A Web Site Command to display Pilots eligible for Promotion.
@@ -29,7 +28,8 @@ public class PromotionQueueCommand extends AbstractCommand {
          
          // Get the DAO and the Promotion Queue
          GetPilotRecognition dao = new GetPilotRecognition(con);
-         ctx.setAttribute("queue", dao.getPromotionQueue(), REQUEST);
+         Collection<Integer> IDs = dao.getPromotionQueue();
+         ctx.setAttribute("queue", dao.getByID(IDs, "PILOTS").values(), REQUEST);
       } catch (DAOException de) {
          throw new CommandException(de);
       } finally {

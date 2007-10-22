@@ -55,11 +55,19 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			CheckRide cr = crdao.getACARSCheckRide(fr.getDatabaseID(FlightReport.DBID_ACARS));
 			if (cr == null)
 				cr = crdao.getCheckRide(fr.getDatabaseID(FlightReport.DBID_PILOT), fr.getEquipmentType(), Test.SUBMITTED);
+			
+			// Get the Pilot object
+			GetUserData uddao = new GetUserData(con);
+			GetPilot pdao = new GetPilot(con);
+			UserData ud = uddao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
+			p = pdao.get(ud);
+			if (p == null)
+				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Check our access levels
 			PIREPAccessControl access = new PIREPAccessControl(ctx, fr);
 			access.validate();
-			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr);
+			ExamAccessControl crAccess = new ExamAccessControl(ctx, cr, ud);
 			crAccess.validate();
 			if (!crAccess.getCanScore())
 				throw securityException("Cannot score Check Ride");
@@ -72,12 +80,6 @@ public class CheckRidePIREPApprovalCommand extends AbstractCommand {
 			// Get the Transfer Request
 			GetTransferRequest txdao = new GetTransferRequest(con);
 			TransferRequest txreq = txdao.getByCheckRide(cr.getID());
-
-			// Get the Pilot object
-			GetPilot pdao = new GetPilot(con);
-			p = pdao.get(fr.getDatabaseID(FlightReport.DBID_PILOT));
-			if (p == null)
-				throw notFoundException("Unknown Pilot - " + fr.getDatabaseID(FlightReport.DBID_PILOT));
 
 			// Get the Message Template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);

@@ -4,7 +4,7 @@ package org.deltava.commands.testing;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 
 import org.deltava.commands.*;
@@ -36,9 +36,13 @@ public class ExamSubmitCommand extends AbstractCommand {
 			Examination ex = rdao.getExam(ctx.getID());
 			if (ex == null)
 				throw notFoundException("Invalid Examination - " + ctx.getID());
+			
+			// Get the user's data
+			GetUserData uddao = new GetUserData(con);
+			UserData ud = uddao.get(ctx.getUser().getID());
 
 			// Check our access level
-			ExamAccessControl access = new ExamAccessControl(ctx, ex);
+			ExamAccessControl access = new ExamAccessControl(ctx, ex, ud);
 			access.validate();
 			if (!access.getCanSubmit())
 				throw securityException("Cannot submit Examination");
