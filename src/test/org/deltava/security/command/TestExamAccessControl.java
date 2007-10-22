@@ -19,7 +19,7 @@ public class TestExamAccessControl extends AccessControlTestCase {
    protected void setUp() throws Exception {
       super.setUp();
       _exam = new Examination("Dummy");
-      _ac = new ExamAccessControl(_ctxt, _exam);
+      _ac = new ExamAccessControl(_ctxt, _exam, null);
    }
 
    protected void tearDown() throws Exception {
@@ -157,6 +157,6 @@ public class TestExamAccessControl extends AccessControlTestCase {
    }
    
    public void testContextValidation() {
-      doContextValidation(new ExamAccessControl(null, _exam));
+      doContextValidation(new ExamAccessControl(null, _exam, null));
    }
 }

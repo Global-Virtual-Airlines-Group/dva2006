@@ -1,14 +1,13 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 
+import org.deltava.beans.UserData;
 import org.deltava.beans.testing.*;
-import org.deltava.commands.*;
 
-import org.deltava.dao.GetExam;
-import org.deltava.dao.SetExam;
-import org.deltava.dao.DAOException;
+import org.deltava.commands.*;
+import org.deltava.dao.*;
 
 import org.deltava.security.command.ExamAccessControl;
 
@@ -40,8 +39,12 @@ public class ExamDeleteCommand extends AbstractCommand {
          if (t == null)
             throw notFoundException("Invalid " + (isCheckRide ? "Check Ride - " : "Examination - ") + ctx.getID());
          
+         // Get the user data
+         GetUserData uddao = new GetUserData(con);
+         UserData ud = uddao.get(t.getPilotID());
+         
          // Check our access
-         ExamAccessControl access = new ExamAccessControl(ctx, t);
+         ExamAccessControl access = new ExamAccessControl(ctx, t, ud);
          access.validate();
          if (!access.getCanDelete())
             throw securityException("Cannot delete Examination/Check Ride");

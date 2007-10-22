@@ -25,7 +25,7 @@ public class CrossAppPIREPAccessControl extends PIREPAccessControl {
 	 */
 	public CrossAppPIREPAccessControl(SecurityContext ctx, FlightReport fr, CheckRide cr) {
 		super(ctx, fr);
-		_crAccess = new ExamAccessControl(ctx, cr);
+		_crAccess = new ExamAccessControl(ctx, cr, null);
 	}
 	
 	/**
