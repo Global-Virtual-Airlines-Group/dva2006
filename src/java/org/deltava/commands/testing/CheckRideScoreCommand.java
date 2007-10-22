@@ -1,9 +1,9 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.testing;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
+import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.system.TransferRequest;
 
@@ -42,16 +42,20 @@ public class CheckRideScoreCommand extends AbstractCommand {
 			CheckRide cr = rdao.getCheckRide(ctx.getID());
 			if (cr == null)
 				throw notFoundException("Invalid Check Ride - " + ctx.getID());
+			
+			// Get the user taking the Check Ride
+			GetUserData uddao = new GetUserData(con);
+			UserData ud = uddao.get(cr.getPilotID());
 
 			// Check our access level
-			ExamAccessControl access = new ExamAccessControl(ctx, cr);
+			ExamAccessControl access = new ExamAccessControl(ctx, cr, ud);
 			access.validate();
 			if (!access.getCanScore())
 				throw securityException("Cannot score Check Ride");
 
 			// Get the Pilot read DAO
 			GetPilot prdao = new GetPilot(con);
-			sendTo = prdao.get(cr.getPilotID());
+			sendTo = prdao.get(ud);
 			mctxt.addData("pilot", sendTo);
 			mctxt.addData("checkRide", cr);
 
