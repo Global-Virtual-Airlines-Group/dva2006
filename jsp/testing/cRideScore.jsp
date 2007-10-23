@@ -47,11 +47,10 @@ return true;
  <td class="label">Equipment Program</td>
  <td class="data"><span class="sec bld">${checkRide.equipmentType}</span> (Stage <fmt:int value="${checkRide.stage}" />)</td>
 </tr>
-<c:if test="${checkRide.flightID != 0}">
+<c:if test="${(checkRide.flightID != 0) && (!empty pirep)}">
 <tr>
  <td class="label">ACARS Flight ID</td>
- <td class="data sec bld"><fmt:int value="${checkRide.flightID}" />
- <el:cmdbutton url="crview" linkID="${fn:hex(checkRide.flightID)}" label="VIEW FLIGHT REPORT" /></td>
+ <td class="data sec bld"><fmt:int value="${checkRide.flightID}" /> <el:cmdbutton ID="PIREPButton" url="crview" link="${checkRide}" label="VIEW FLIGHT REPORT" /></td>
 </tr>
 </c:if>
 <c:if test="${!empty course}">
