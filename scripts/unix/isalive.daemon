@@ -1,0 +1,217 @@
+#!/bin/bash
+# System daemon checking script
+# (c) 2005-2007 Global Virtual Airlines Group. All Rights Reserved.
+
+# Start loop
+echo `date +%H:%M:%S`" Starting"
+while ( true );
+do
+	# Check for status file and remove it
+	if [ -f "/var/cache/isalive.txt" ]
+	then
+		rm /var/cache/isalive.txt
+	fi
+
+	# Check to ensure that we haven't marked the site as down
+	if [ ! -f "/var/run/siteDown.flag" ]
+  	then
+
+		# Check BIND
+		if [ -f "/var/run/named.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/named.pid`" ]
+			then
+				echo `date +%H:%M:%S`" BIND (DNS Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/named start
+			fi
+		else
+			echo `date +%H:%M:%S`" BIND (DNS Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/named start
+		fi
+
+		# Check MySQL
+		if [ -f "/var/run/mysql5.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/mysql5.pid`" ]
+			then
+				echo `date +%H:%M:%S`" mySQL 5 (Database Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/mysqld start
+			fi
+		else
+ 			echo `date +%H:%M:%S`" mySQL 5 (Database Server) is DOWN - no pid" >> /var/cache/isalive.txt
+ 			/etc/init.d/mysqld start
+		fi
+
+		# Check Tomcat
+		if [ -f "/var/run/tomcat55.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/tomcat55.pid`" ]
+			then
+				echo `date +%H:%M:%S`" Tomcat (Application Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/tomcat start
+			fi
+		else
+			echo `date +%H:%M:%S`" Tomcat (Application Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/tomcat start
+		fi
+
+		# Check Apache HTTPD
+		if [ -f "/var/run/httpd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/httpd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" Apache HTTPD (Web Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/httpd start
+			fi
+		else
+			echo `date +%H:%M:%S`" Apache (Web Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/httpd start
+		fi
+
+		# Check OpenLDAP
+		if [ -f "/var/run/slapd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/slapd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" OpenLDAP (Authentication Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/slapd start
+			fi
+		fi
+
+		# Check Postfix
+		if [ -f "/var/run/postfix-master.pid" ]
+		then
+			if [ ! -d "/proc/`pidof postfix/master`" ]
+			then
+				echo `date +%H:%M:%S`" PostFix (SMTP Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/postfix start
+			fi
+		else
+			echo `date +%H:%M:%S`" PostFix (SMTP Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/postfix start
+		fi
+
+		# Check SpamAssassin
+		if [ -f "/var/run/spamd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/spamd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" SpamAssassin (Spam Filtering Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/spamd start
+			fi
+		else
+			echo `date +%H:%M:%S`" SpamAssassin (Spam Filtering Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/spamd start
+		fi
+
+		# Check ClamAV
+		if [ -f "/var/run/clamd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/clamd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" ClamAV (Anti-Virus) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/clamd start
+			fi
+		else
+			echo `date +%H:%M:%S`" ClamAV (Anti-Virus) is DOWN" >> /var/cache/isalive.txt
+			/etc/init.d/clamd start
+		fi
+
+		# Check ClamAV milter
+		if [ -f "/var/run/clamav-milter.pid" ]
+		then
+			if [ ! -d "/proc/`pidof clamav-milter`" ]
+			then
+				echo `date +%H:%M:%S`" ClamAV Milter (Anti-Virus mail filter) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/clamd start
+			fi
+		else
+			echo `date +%H:%M:%S`" ClamAV Milter (Anti-Virus mail filter) is DOWN" >> /var/cache/isalive.txt
+			/etc/init.d/clamd start
+		fi
+
+		# Check IMAP Authorization daemon
+		if [ -f "/var/run/authdaemon.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/authdaemon.pid`" ]
+			then
+				echo `date +%H:%M:%S`" Authentication Server is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/authdaemond start
+ 			fi
+		else
+			echo `date +%H:%M:%S`" Authentication Server is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/authdaemond start
+		fi
+
+		# Check IMAP Server
+		if [ -f "/var/run/imapd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/imapd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" Courier (IMAP Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/imapd start
+			fi
+		else
+			echo `date +%H:%M:%S`" Courier (IMAP Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/imapd start
+		fi
+
+		# Check TeamSpeak server
+		if [ -f "/var/run/ts2.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/ts2.pid`" ]
+			then
+				echo `date +%H:%M:%S`" TeamSpeak (Voice Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/ts2 start
+			fi
+		else
+			echo `date +%H:%M:%S`" TeamSpeak (Voice Server) is DOWN - no pid" >> /var/cache/isalive.txt
+			/etc/init.d/ts2 start
+		fi
+
+		# Check FSD Multiplayer FS Server
+		if [ -f "/var/run/fsd.pid" ]
+		then
+			if [ ! -d "/proc/`cat /var/run/fsd.pid`" ]
+			then
+				echo `date +%H:%M:%S`" FSD (FS Multiplayer Server) is DOWN" >> /var/cache/isalive.txt
+				/etc/init.d/fsd start
+			fi
+		fi
+	
+		# If we have something, warn us
+		if [ -f "/var/cache/isalive.txt" ]
+		then
+			if [ ! -f "/var/cache/isalive.error" ]
+			then
+				touch /var/cache/isalive.error
+				for addr in $(cat /usr/local/etc/isalive.addrs);
+				do
+					echo `date +%H:%M:%S`" Sending notification to $addr"
+					cat /var/cache/isalive.txt | mail $addr -r www@deltava.org -s "System Down"
+				done
+			else
+				echo `date +%H:%M:%S`" Repeating error - skipping notifications"
+				sleep 150
+			fi
+		
+			# Remove the message file
+			rm /var/cache/isalive.txt
+		else
+			if [ -f "/var/cache/isalive.error" ]
+			then
+				echo `date +%H:%M:%S`" Errors cleared"
+				rm /var/cache/isalive.error
+			fi
+		fi
+	fi
+
+	# Go to sleep for a while
+	sleep 30
+done
+
+# Shut down
+echo `date +%H:%M:%S`" Shutting Down"
+rm /var/run/isalive.pid
+exit 0
+
