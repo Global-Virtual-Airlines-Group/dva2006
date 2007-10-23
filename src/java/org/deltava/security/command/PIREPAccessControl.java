@@ -71,8 +71,9 @@ public class PIREPAccessControl extends AccessControl {
 		_canViewComments = isHR || isPirep || _ourPIREP;
 		
 		// Get the flight assignment ID
-		boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
-		_canDelete = (_ourPIREP && !isAssigned && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
+		final boolean isCheckRide = _pirep.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+		final boolean isAssigned = (_pirep.getDatabaseID(FlightReport.DBID_ASSIGN) > 0);
+		_canDelete = (_ourPIREP && !isAssigned && !isCheckRide && (isDraft || isSubmitted)) || (_ctx.isUserInRole("Admin") && 
 				((isRejected && isAssigned) || !isAssigned));
 	}
 
