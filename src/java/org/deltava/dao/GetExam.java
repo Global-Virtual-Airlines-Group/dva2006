@@ -115,8 +115,9 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int id) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT CR.*, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
-					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
+			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE "
+					+ "FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
 					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			List<CheckRide> results = executeCheckride();
@@ -134,9 +135,10 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getACARSCheckRide(int acarsID) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT CR.*, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
-					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
-					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CR.ACARS_ID=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
+					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE "
+					+ "(CR.EQTYPE=EQ.EQTYPE) AND (CF.ACARS_ID=?) LIMIT 1");
 			_ps.setInt(1, acarsID);
 			List<CheckRide> results = executeCheckride();
 			return results.isEmpty() ? null : results.get(0);
@@ -155,9 +157,10 @@ public class GetExam extends DAO {
 	 */
 	public CheckRide getCheckRide(int pilotID, String eqType, int status) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT CR.*, EQ.STAGE, EQ.AIRLINE FROM exams.CHECKRIDES CR, "
-					+ "common.EQPROGRAMS EQ WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND "
-					+ "(CR.ACTYPE=?) AND (CR.STATUS=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE FROM "
+					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+					+ "ON (CR.ID=CF.ID) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) AND (CR.ACTYPE=?) "
+					+ "AND (CR.STATUS=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 			_ps.setString(2, eqType);
 			_ps.setInt(3, status);
@@ -178,8 +181,9 @@ public class GetExam extends DAO {
 	 */
 	public Collection<CheckRide> getCheckRides(int pilotID) throws DAOException {
 		try {
-			prepareStatement("SELECT CR.*, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
-					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) "
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
+					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) "
 					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?) ORDER BY CR.CREATED");
 			_ps.setInt(1, pilotID);
 			return executeCheckride();
@@ -196,8 +200,9 @@ public class GetExam extends DAO {
 	 */
 	public Collection<CheckRide> getCheckRideQueue(boolean isAcademy) throws DAOException {
 		try {
-			prepareStatement("SELECT CR.*, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
-					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) "
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
+					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
+					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) "
 					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) AND ((CR.ACADEMY=?) OR (EQ.AIRLNE=?)) "
 					+ "ORDER BY CR.CREATED");
 			_ps.setInt(1, Test.SUBMITTED);
@@ -226,8 +231,9 @@ public class GetExam extends DAO {
 			List<Test> results = new ArrayList<Test>(execute());
 
 			// Load Check Rides
-			prepareStatement("SELECT CR.*, EQ.STAGE, CRR.COURSE FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT "
-					+ "JOIN exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?)");
+			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, CRR.COURSE FROM (exams.CHECKRIDES CR, "
+					+ "common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN "
+					+ "exams.COURSERIDES CRR ON (CR.ID=CRR.CHECKRIDE) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.PILOT_ID=?)");
 			
 			// Execute the query
 			_ps.setInt(1, id);
@@ -360,14 +366,13 @@ public class GetExam extends DAO {
 	 */
 	public int getActiveExam(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT ID FROM exams.EXAMS WHERE (PILOT_ID=?) AND ((STATUS=?) OR (STATUS=?))");
+			prepareStatementWithoutLimits("SELECT ID FROM exams.EXAMS WHERE (PILOT_ID=?) AND "
+					+ "((STATUS=?) OR (STATUS=?)) LIMIT 1");
 			_ps.setInt(1, id);
 			_ps.setInt(2, Test.NEW);
 			_ps.setInt(3, Test.SUBMITTED);
 
 			// Execute the query
-			setQueryMax(0);
 			ResultSet rs = _ps.executeQuery();
 			int testID = rs.next() ? rs.getInt(1) : 0;
 
@@ -442,17 +447,17 @@ public class GetExam extends DAO {
 			CheckRide cr = new CheckRide(rs.getString(2));
 			cr.setID(rs.getInt(1));
 			cr.setPilotID(rs.getInt(3));
-			cr.setFlightID(rs.getInt(4));
-			cr.setStatus(rs.getInt(5));
-			cr.setDate(rs.getTimestamp(6));
-			cr.setSubmittedOn(rs.getTimestamp(7));
-			cr.setScoredOn(rs.getTimestamp(8));
-			cr.setScorerID(rs.getInt(9));
-			cr.setPassFail(rs.getBoolean(10));
-			cr.setComments(rs.getString(11));
-			cr.setAircraftType(rs.getString(12));
-			cr.setEquipmentType(rs.getString(13));
-			cr.setAcademy(rs.getBoolean(14));
+			cr.setStatus(rs.getInt(4));
+			cr.setDate(rs.getTimestamp(5));
+			cr.setSubmittedOn(rs.getTimestamp(6));
+			cr.setScoredOn(rs.getTimestamp(7));
+			cr.setScorerID(rs.getInt(8));
+			cr.setPassFail(rs.getBoolean(9));
+			cr.setComments(rs.getString(10));
+			cr.setAircraftType(rs.getString(11));
+			cr.setEquipmentType(rs.getString(12));
+			cr.setAcademy(rs.getBoolean(13));
+			cr.setFlightID(rs.getInt(14));
 			cr.setStage(rs.getInt(15));
 			cr.setOwner(SystemData.getApp(rs.getString(16)));
 			if (hasAcademy)
