@@ -162,31 +162,29 @@ public class SetExam extends DAO {
 			
 			// Prepare the statement, either an INSERT or an UPDATE
 			if (cr.getID() == 0) {
-				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, ACARS_ID, STATUS, EQTYPE, ACTYPE, "
-						+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+				prepareStatement("INSERT INTO exams.CHECKRIDES (NAME, PILOT_ID, STATUS, EQTYPE, ACTYPE, "
+						+ "GRADED_BY, CREATED, SUBMITTED, COMMENTS, PASS, ACADEMY) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 				_ps.setString(1, cr.getName());
 				_ps.setInt(2, cr.getPilotID());
-				_ps.setInt(3, cr.getFlightID());
-				_ps.setInt(4, cr.getStatus());
-				_ps.setString(5, cr.getEquipmentType());
-				_ps.setString(6, cr.getAircraftType());
-				_ps.setInt(7, cr.getScorerID());
-				_ps.setTimestamp(8, createTimestamp(cr.getDate()));
-				_ps.setTimestamp(9, createTimestamp(cr.getSubmittedOn()));
-				_ps.setString(10, cr.getComments());
-				_ps.setBoolean(11, cr.getPassFail());
-				_ps.setBoolean(12, cr.getAcademy());
+				_ps.setInt(3, cr.getStatus());
+				_ps.setString(4, cr.getEquipmentType());
+				_ps.setString(5, cr.getAircraftType());
+				_ps.setInt(6, cr.getScorerID());
+				_ps.setTimestamp(7, createTimestamp(cr.getDate()));
+				_ps.setTimestamp(8, createTimestamp(cr.getSubmittedOn()));
+				_ps.setString(9, cr.getComments());
+				_ps.setBoolean(10, cr.getPassFail());
+				_ps.setBoolean(11, cr.getAcademy());
 			} else {
-				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, ACARS_ID=?, "
-						+ "GRADED_BY=?, PASS=?, COMMENTS=? WHERE (ID=?)");
+				prepareStatement("UPDATE exams.CHECKRIDES SET STATUS=?, SUBMITTED=?, GRADED=?, GRADED_BY=?, "
+						+ "PASS=?, COMMENTS=? WHERE (ID=?)");
 				_ps.setInt(1, cr.getStatus());
 				_ps.setTimestamp(2, createTimestamp(cr.getSubmittedOn()));
 				_ps.setTimestamp(3, createTimestamp(cr.getScoredOn()));
-				_ps.setInt(4, cr.getFlightID());
-				_ps.setInt(5, cr.getScorerID());
-				_ps.setBoolean(6, cr.getPassFail());
-				_ps.setString(7, cr.getComments());
-				_ps.setInt(8, cr.getID());
+				_ps.setInt(4, cr.getScorerID());
+				_ps.setBoolean(5, cr.getPassFail());
+				_ps.setString(6, cr.getComments());
+				_ps.setInt(7, cr.getID());
 			}
 
 			// Update the database
@@ -195,6 +193,17 @@ public class SetExam extends DAO {
 			// Update the database ID
 			if (cr.getID() == 0)
 				cr.setID(getNewID());
+			
+			// Write the ACARS Flight ID
+			if (cr.getFlightID() != 0) {
+				prepareStatement("REPLACE INTO exams.CHECKRIDE_FLIGHTS (ID, ACARS_ID) VALUES (?, ?)");
+				_ps.setInt(2, cr.getFlightID());
+			} else
+				prepareStatement("DELETE FROM exams.CHECKRIDE_FLIGHTS WHERE (ID=?)");
+			
+			// Do the write
+			_ps.setInt(1, cr.getID());
+			executeUpdate(0);
 			
 			// Write the Flight Academy data
 			if (cr.getCourseID() != 0)
