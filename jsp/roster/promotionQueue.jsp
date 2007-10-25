@@ -40,7 +40,7 @@
 <view:row entry="${pilot}">
  <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>
  <td class="pri bld">${pilot.pilotCode}</td>
- <td><el:cmd url="profile" link="${pilot}" op="edit" className="bld">${pilot.name}</el:cmd></td>
+ <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="bld">${pilot.rank}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
