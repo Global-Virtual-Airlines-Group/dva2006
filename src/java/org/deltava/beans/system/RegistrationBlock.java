@@ -6,7 +6,7 @@ import org.deltava.beans.*;
 /**
  * A bean used to block user names and IP addresses from registering.
  * @author Luke
- * @verison 1.0
+ * @version 1.0
  * @since 1.0
  */
 

@@ -353,7 +353,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	/**
 	 * Returns the total number of flight hours logged by this pilot across all Airlines.
 	 * @return the total number of flight hours flown
-	 * @see Pilot#setTotalHours(int)
+	 * @see Pilot#setTotalHours(double)
 	 * @see Pilot#getTotalLegs()
 	 */
 	public double getTotalHours() {
