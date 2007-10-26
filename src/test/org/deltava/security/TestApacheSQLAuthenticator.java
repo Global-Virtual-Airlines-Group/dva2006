@@ -40,7 +40,7 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 		
 		// Add a user
 		assertFalse(_auth.contains(usr));
-		_auth.addUser(usr, "password");
+		_auth.add(usr, "password");
 		assertTrue(_auth.contains(usr));
 	}
 }

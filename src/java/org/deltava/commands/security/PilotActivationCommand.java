@@ -129,14 +129,14 @@ public class PilotActivationCommand extends AbstractCommand {
 				if (auth.contains(p))
 					auth.updatePassword(p, p.getPassword());
 				else
-					auth.addUser(p, p.getPassword());
+					auth.add(p, p.getPassword());
 				
 				sqlAuth.clearConnection();
 			} else {
 				if (auth.contains(p))
 					auth.updatePassword(p, p.getPassword());
 				else
-					auth.addUser(p, p.getPassword());
+					auth.add(p, p.getPassword());
 			}
 
 			// Commit the transaction

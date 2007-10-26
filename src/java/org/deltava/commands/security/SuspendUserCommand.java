@@ -73,10 +73,10 @@ public class SuspendUserCommand extends AbstractCommand {
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
 				sqlAuth.setConnection(con);
-				sqlAuth.removeUser(usr);
+				sqlAuth.disable(usr);
 				sqlAuth.clearConnection();
 			} else
-				auth.removeUser(usr);
+				auth.disable(usr);
 			
 			// Commit the transaction
 			ctx.commitTX();

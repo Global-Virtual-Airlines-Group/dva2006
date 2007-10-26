@@ -59,7 +59,7 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 		// If we got this far, and we're not in the destination directory, then add us
 		if ((auth == _src) && dst.accepts(usr)) {
 			setConnection(dst);
-			dst.addUser(usr, pwd);
+			dst.add(usr, pwd);
 		}
 		
 		clearConnection(_src, dst);
@@ -95,13 +95,16 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 */
 	public void updatePassword(Person usr, String pwd) throws SecurityException {
 		setConnection(dst);
-		if (dst.contains(usr)) {
-			dst.updatePassword(usr, pwd);
-		} else {
-			dst.addUser(usr, pwd);
+		try {
+			if (dst.contains(usr))
+				dst.updatePassword(usr, pwd);
+			else
+				dst.add(usr, pwd);
+		} catch (SecurityException se) {
+			throw se;
+		} finally {
+			clearConnection(dst);
 		}
-		
-		clearConnection(dst);
 	}
 	
 	/**
@@ -110,10 +113,15 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 		setConnection(dst);
-		dst.addUser(usr, pwd);
-		clearConnection(dst);
+		try {
+			dst.add(usr, pwd);
+		} catch (SecurityException se) {
+			throw se;
+		} finally {
+			clearConnection(dst);
+		}
 	}
 
 	/**
@@ -122,18 +130,22 @@ public class MigrationAuthenticator extends MultiAuthenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs or the user does not exist
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		setConnection(_src, dst);
-		if (dst.contains(usr)) {
-			dst.removeUser(usr);
-		} else if (_src.contains(usr)) {
-			_src.removeUser(usr);
-		} else {
+		try {
+			if (dst.contains(usr))
+				dst.remove(usr);
+			else if (_src.contains(usr))
+				_src.remove(usr);
+			else {
+				clearConnection(_src, dst);
+				throw new SecurityException("Unknown User - " + usr.getDN());
+			}
+		} catch (SecurityException se) {
+			throw se;
+		} finally {
 			clearConnection(_src, dst);
-			throw new SecurityException("Unknown User - " + usr.getDN());
 		}
-		
-		clearConnection(_src, dst);
 	}
 	
    /**
@@ -144,7 +156,32 @@ public class MigrationAuthenticator extends MultiAuthenticator {
     */
 	public void rename(Person usr, String newName) throws SecurityException {
 		setConnection(dst);
-		dst.rename(usr, newName);
-		clearConnection(dst);
+		try {
+			dst.rename(usr, newName);
+		} catch (SecurityException se) {
+			throw se;
+		} finally {
+			clearConnection(dst);
+		}
+	}
+	
+	/**
+	 * Disables a user in the source and/or destination authenticators.
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		setConnection(_src, dst);
+		try {
+			if (_src.contains(usr))
+				_src.disable(usr);
+			
+			if (dst.contains(usr))
+				dst.disable(usr);
+		} catch (SecurityException se) {
+			throw se;
+		} finally {
+			clearConnection(_src, dst);
+		}
 	}
 }

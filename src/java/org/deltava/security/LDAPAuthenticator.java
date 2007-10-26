@@ -99,7 +99,7 @@ public class LDAPAuthenticator implements Authenticator {
 				ctrls.setSearchScope(SearchControls.OBJECT_SCOPE);
 			   ctxt.search(usr.getDN(), "(objectClass=person)", null);
 			} catch (NameNotFoundException nnfe) {
-				addUser(usr, pwd); // Add the user entry if not found
+				add(usr, pwd); // Add the user entry if not found
 				return;
 			}
 			   
@@ -121,7 +121,7 @@ public class LDAPAuthenticator implements Authenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Bind to the directory
@@ -179,13 +179,22 @@ public class LDAPAuthenticator implements Authenticator {
 	public boolean accepts(Person usr) {
 		return ((usr != null) && (!StringUtils.isEmpty(usr.getDN())));
 	}
+	
+	/**
+	 * Disables a user's account. <i>This deletes the User.</i>
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		remove(usr);
+	}
 
 	/**
 	 * Removes a User from the Directory.
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getDN() + " from Directory");
 		if (!contains(usr))
 			throw new SecurityException(usr.getDN() + " not found");

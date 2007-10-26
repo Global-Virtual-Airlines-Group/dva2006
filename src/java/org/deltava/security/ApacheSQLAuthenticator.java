@@ -135,7 +135,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
-		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
+		sqlBuf.append(" (ID, PWD, ENABLED) VALUES (?, ?, ?)");
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
@@ -147,6 +147,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, usr.getID());
 			ps.setString(2, pwdHash);
+			ps.setBoolean(3, true);
 
 			// Execute the update and clean up
 			ps.executeUpdate();
@@ -164,7 +165,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Get the ID
@@ -173,7 +174,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO ");
 		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
-		sqlBuf.append(" (ID, PWD) VALUES (?,?)");
+		sqlBuf.append(" (ID, PWD, ENABLED) VALUES (?, ?, ?)");
 
 		// Generate the password hash
 		MessageDigester md = new MessageDigester("SHA-1");
@@ -190,6 +191,7 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setInt(1, id);
 			ps.setString(2, pwdHash);
+			ps.setBoolean(3, true);
 
 			// Write the row
 			ps.executeUpdate();
@@ -226,13 +228,43 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 		if (!contains(usr))
 			throw new SecurityException(usr.getID() + " not found");
 	}
+	
+	/**
+	 * Disables a user's account.
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		log.debug("Disabling user " + usr.getName());
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
+		sqlBuf.append(_props.getProperty("apachesql.table", "AUTH"));
+		sqlBuf.append(" SET ENABLED=? WHERE (ID=?)");
+		
+		Connection con = null;
+		try {
+			con = getConnection();
+			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
+			ps.setBoolean(1, false);
+			ps.setInt(2, usr.getID());
+			
+			// Execute the update and clean up
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			throw new SecurityException(e);
+		} finally {
+			closeConnection(con);
+		}
+	}
 
 	/**
 	 * Removes a user from the Directory. This will fail silently if the user does not exist in the Directory.
 	 * @param usr the user bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getName() + " from Directory");
 
 		// Build the SQL statement

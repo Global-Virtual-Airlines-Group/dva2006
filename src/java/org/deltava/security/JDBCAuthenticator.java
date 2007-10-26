@@ -54,10 +54,17 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	/**
 	 * Helper method to close the JDBC connection if not provided by external code.
 	 */
-	private void closeConnection() throws SQLException {
+	private void closeConnection() {
 		Connection con = _con.get();
-		if (con == null)
-			con.close();
+		if (con != null) {
+			try {
+				con.close();
+			} catch (Exception e) {
+				log.warn("Cannot close connection - " + e.getMessage());
+			} finally {
+				_con.remove();
+			}
+		}
 	}
 	
 	/**
@@ -84,33 +91,33 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public void authenticate(Person usr, String pwd) throws SecurityException {
+		boolean isAuth = false;
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM AUTH WHERE (USER=?) AND (PWD="
-					+ _props.getProperty("jdbc.cryptfunc", "") + "(?))");
+					+ _props.getProperty("jdbc.cryptfunc", "") + "(?)) AND (ENABLED=?)");
 			ps.setString(1, usr.getDN());
 			ps.setString(2, pwd);
+			ps.setBoolean(3, true);
 
 			// Execute the query and check what we get back
 			ResultSet rs = ps.executeQuery();
-			boolean isAuth = rs.next() ? (rs.getInt(1) == 1) : false;
+			isAuth = rs.next() ? (rs.getInt(1) == 1) : false;
 
 			// Clean up
 			rs.close();
 			ps.close();
-			closeConnection();
-
-			// If we haven't authenticated, throw an execption
-			if (!isAuth)
-				throw new SecurityException("Invalid password for " + usr.getDN());
-
-			log.info(usr.getName() + " authenticated");
 		} catch (SQLException se) {
-			log.warn(usr.getDN() + " Authentication FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("Authentication failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("Authentication failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
+		
+		// If we haven't authenticated, throw an execption
+		if (!isAuth)
+			throw new SecurityException("Invalid password for " + usr.getDN());
+
+		log.info(usr.getName() + " authenticated");
 	}
 
 	/**
@@ -125,34 +132,32 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 		log.debug("Updating password for " + usr.getDN() + " in Directory");
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO AUTH (USER, PWD) VALUES (?, ");
+		StringBuilder sqlBuf = new StringBuilder("REPLACE INTO AUTH (USER, PWD, ENABLED) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
-		sqlBuf.append("(?))");
+		sqlBuf.append("(?), ?)");
 		
+		int rowsUpdated = 0;
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, usr.getDN());
 			ps.setString(2, pwd);
+			ps.setBoolean(3, true);
 
 			// Update the directory
-			int rowsUpdated = ps.executeUpdate();
+			rowsUpdated = ps.executeUpdate();
 
 			// Clean up
 			ps.close();
-			closeConnection();
-
-			// If no rows were updated, throw an exception
-			if (rowsUpdated == 0) {
-				log.warn(usr.getDN() + " password update FAILURE - Unknown User");
-				throw new SecurityException("Unknown User Name - " + usr.getDN());
-			}
 		} catch (SQLException se) {
-			log.warn(usr.getDN() + " password update FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("Password Update failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("Password Update failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
+		
+		// If no rows were updated, throw an exception
+		if (rowsUpdated == 0)
+			throw new SecurityException("Unknown User Name - " + usr.getDN());
 	}
 
 	/**
@@ -163,13 +168,13 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 		log.debug("Adding user " + usr.getDN() + " to Directory");
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("INSERT INTO AUTH (USER, PWD, ALIAS) VALUES (?, ");
+		StringBuilder sqlBuf = new StringBuilder("INSERT INTO AUTH (USER, PWD, ALIAS, ENABLED) VALUES (?, ");
 		sqlBuf.append(_props.getProperty("jdbc.cryptfunc"));
-		sqlBuf.append("(?), ?)");
+		sqlBuf.append("(?), ?, ?)");
 
 		try {
 			Connection c = getConnection();
@@ -177,18 +182,15 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 			ps.setString(1, pwd);
 			ps.setString(2, usr.getDN());
 			ps.setString(3, null);
+			ps.setBoolean(4, true);
 
-			// Update the directory
+			// Update the directory and clean up
 			ps.executeUpdate();
-
-			// Clean up
 			ps.close();
-			closeConnection();
 		} catch (SQLException se) {
-			log.warn(usr.getDN() + " user addition FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User addition failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("User addition failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
 	}
 	
@@ -209,6 +211,7 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	 * @throws SecurityException if a JDBC error occurs
 	 */
 	public boolean contains(Person usr) throws SecurityException {
+		boolean isOK = false;
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("SELECT COUNT(*) FROM AUTH WHERE (USER=?)");
@@ -216,21 +219,18 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 
 			// Execute the query
 			ResultSet rs = ps.executeQuery();
-			boolean isOK = rs.next() ? (rs.getInt(1) == 1) : false;
+			isOK = rs.next() ? (rs.getInt(1) == 1) : false;
 
 			// Clean up
 			rs.close();
 			ps.close();
-			closeConnection();
-
-			// Return result
-			return isOK;
 		} catch (SQLException se) {
-			log.warn(usr.getDN() + " user search FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User search failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("User search failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
+		
+		return isOK;
 	}
 
 	/**
@@ -238,25 +238,43 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 	 * @param usr the user bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		log.debug("Removing user " + usr.getDN() + " from Directory");
-
 		try {
 			Connection c = getConnection();
 			PreparedStatement ps = c.prepareStatement("DELETE FROM AUTH WHERE (USER=?)");
 			ps.setString(1, usr.getDN());
 
-			// Execute the update
+			// Execute the update and clean up
 			ps.executeUpdate();
-
-			// Clean up
 			ps.close();
-			closeConnection();
 		} catch (SQLException se) {
-			log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User removal failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("User removal failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
+		}
+	}
+	
+	/**
+	 * Disables a user's account.
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		log.debug("Disabling user " + usr.getName());
+		try {
+			Connection c = getConnection();
+			PreparedStatement ps = c.prepareStatement("UPDATE AUTH SET ENABLED=? WHERE (USER=?)");
+			ps.setBoolean(1, true);
+			ps.setString(2, usr.getDN());
+
+			// Execute the update and clean up
+			ps.executeUpdate();
+			ps.close();
+		} catch (SQLException se) {
+			throw new SecurityException("User disable failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
 	}
 	
@@ -277,17 +295,13 @@ public class JDBCAuthenticator implements SQLAuthenticator {
 		   ps.setString(1, newName);
 		   ps.setString(2, usr.getDN());
 		   
-			// Execute the update
+			// Execute the update and clean up
 			ps.executeUpdate();
-
-			// Clean up
 			ps.close();
-			closeConnection();
 		} catch (SQLException se) {
-		   log.warn(usr.getDN() + " user removal FAILURE - " + se.getMessage());
-			SecurityException e = new SecurityException("User rename failure for " + usr.getDN());
-			e.initCause(se);
-			throw e;
+			throw new SecurityException("User rename failure for " + usr.getDN(), se);
+		} finally {
+			closeConnection();
 		}
 	}
 }

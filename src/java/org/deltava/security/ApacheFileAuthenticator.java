@@ -146,7 +146,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param pwd the new password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Get the ID to add
 		String userID = getID(usr);
@@ -190,7 +190,7 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 
 		// Get the ID to delete
 		String userID = getID(usr);
@@ -200,6 +200,15 @@ public class ApacheFileAuthenticator implements Authenticator {
 		// Remove the ID and update the
 		_pwdInfo.remove(userID);
 		save();
+	}
+	
+	/**
+	 * Disables a user's account. <i>This deletes the account.</i>
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		remove(usr);
 	}
 
 	/**
@@ -219,8 +228,6 @@ public class ApacheFileAuthenticator implements Authenticator {
 	 * Updates the password file.
 	 */
 	private void save() throws SecurityException {
-		
-		// Open the file
 		try {
 			PrintWriter out = new PrintWriter(new FileWriter(_pwdFile));
 			for (Iterator<String> i = _pwdInfo.keySet().iterator(); i.hasNext(); ) {
