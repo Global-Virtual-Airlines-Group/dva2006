@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return North Atlantic Track data.
  * @author Luke
- * @verison 1.0
+ * @version 1.0
  * @since 1.0
  */
 

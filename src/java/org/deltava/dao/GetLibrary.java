@@ -30,7 +30,7 @@ public class GetLibrary extends DAO {
 	 * Returns the contents of a Fleet Library. This takes a database name so we can display the contents of other
 	 * airlines' libraries.
 	 * @param dbName the database name
-	 * @boolean isAdmin TRUE if in admin mode and all files should be returned, otherwise FALSE
+	 * @param isAdmin TRUE if in admin mode and all files should be returned, otherwise FALSE
 	 * @return a List of Installer beans
 	 * @throws DAOException if a JDBC error occurs
 	 */

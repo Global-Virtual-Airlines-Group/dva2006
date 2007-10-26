@@ -8,7 +8,7 @@ import org.deltava.beans.navdata.*;
 /**
  * A bean to store waypoint information for an oceanic route.
  * @author Luke
- * @verison 1.0
+ * @version 1.0
  * @since 1.0
  */
 
@@ -40,7 +40,7 @@ public class OceanicWaypoints extends OceanicRoute implements Comparable<Oceanic
 	/**
 	 * Returns the waypoints on this route.
 	 * @return a Collection of {@link Intersection} beans
-	 * @see OceanicWaypoints#addWaypoint(Intersection)
+	 * @see OceanicWaypoints#addWaypoint(NavigationDataBean)
 	 */
 	public Collection<NavigationDataBean> getWaypoints() {
 		return new LinkedHashSet<NavigationDataBean>(_waypoints);
