@@ -187,7 +187,7 @@ public class TransferAirlineCommand extends AbstractCommand {
 			if (auth.contains(newUser))
 				auth.updatePassword(newUser, newUser.getPassword());
 			else
-				auth.addUser(newUser, newUser.getPassword());
+				auth.add(newUser, newUser.getPassword());
 			
 			// Reset the authenticator
 			if (auth instanceof SQLAuthenticator)

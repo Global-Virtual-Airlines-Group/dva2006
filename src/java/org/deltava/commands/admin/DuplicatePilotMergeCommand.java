@@ -147,7 +147,7 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 					auth.updatePassword(usr, newPwd);
 					ctx.setAttribute("updatePwd", Boolean.TRUE, REQUEST);
 				} else {
-					auth.addUser(usr, newPwd);
+					auth.add(usr, newPwd);
 					ctx.setAttribute("addUser", Boolean.TRUE, REQUEST);
 				}
 				

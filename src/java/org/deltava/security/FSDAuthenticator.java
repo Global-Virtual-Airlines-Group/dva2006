@@ -205,7 +205,7 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Get the user's level; abort if they do not have access
 		int level = getUserLevel(usr);
@@ -237,13 +237,22 @@ public class FSDAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		if (!contains(usr))
 			return;
 
 		// Remove the user
 		_certs.remove(new Integer(usr.getID()));
 		save();
+	}
+	
+	/**
+	 * Disables a user's account. <i>This removes the account.</i>
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		remove(usr);
 	}
 
 	/**

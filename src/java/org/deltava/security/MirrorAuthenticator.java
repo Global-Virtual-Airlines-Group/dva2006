@@ -75,7 +75,7 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 				if (dst.contains(usr))
 					dst.updatePassword(usr, pwd);
 				else
-					dst.addUser(usr, pwd);
+					dst.add(usr, pwd);
 			}
 			
 			clearConnection(dst);
@@ -87,18 +87,23 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 	 * @param usr the User bean
 	 * @param pwd the user's password
 	 * @throws SecurityException if either add operation fails
-	 * @see Authenticator#addUser(Person, String)
+	 * @see Authenticator#add(Person, String)
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 		setConnection(_src);
-		_src.addUser(usr, pwd);
+		_src.add(usr, pwd);
 		clearConnection(_src);
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
 			if (dst.accepts(usr)) {
 				setConnection(dst);
-				dst.addUser(usr, pwd);
-				clearConnection(dst);
+				try {
+					dst.add(usr, pwd);
+				} catch (SecurityException se) {
+					throw se;
+				} finally {
+					clearConnection(dst);
+				}
 			}
 		}
 	}
@@ -122,26 +127,70 @@ public class MirrorAuthenticator extends MultiAuthenticator {
 			}
 		}
 	}
+	
+	/**
+	 * Disables a Userus account in all authenticators. If this operation fails, no guarantee of transaction
+	 * atomicity is given.
+	 * @param usr the user bean
+	 * @see Authenticator#disable(Person)
+	 */
+	public void disable(Person usr) throws SecurityException {
+		if (_src.contains(usr)) {
+			setConnection(_src);
+			try {
+				_src.disable(usr);
+			} catch (SecurityException se) {
+				throw se;
+			} finally {
+				clearConnection(_src);
+			}
+		}
+		
+		// Remove from destinations
+		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
+			Authenticator dst = i.next();
+			setConnection(dst);
+			if (dst.contains(usr)) {
+				try {
+					dst.disable(usr);
+				} catch (SecurityException se) {
+					log.error(se.getMessage(), se);
+				}
+			}
+
+			clearConnection(dst);
+		}
+	}
 
 	/**
 	 * Removes the user from all authenticators. If this operation fails, no guarantee of transaction atomicity is
 	 * given.
 	 * @param usr the user bean
-	 * @see Authenticator#removeUser(Person)
+	 * @see Authenticator#remove(Person)
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 		if (_src.contains(usr)) {
 			setConnection(_src);
-			_src.removeUser(usr);
-			clearConnection(_src);
+			try {
+				_src.remove(usr);
+			} catch (SecurityException se) {
+				throw se;
+			} finally {
+				clearConnection(_src);
+			}
 		}
 
 		// Remove from destinations
 		for (Iterator<Authenticator> i = _dst.iterator(); i.hasNext();) {
 			Authenticator dst = i.next();
 			setConnection(dst);
-			if (dst.contains(usr))
-				dst.removeUser(usr);
+			if (dst.contains(usr)) {
+				try {
+					dst.remove(usr);
+				} catch (SecurityException se) {
+					log.error(se.getMessage(), se);
+				}
+			}
 
 			clearConnection(dst);
 		}
