@@ -202,6 +202,11 @@ do
 			then
 				echo `date +%H:%M:%S`" Errors cleared"
 				rm /var/cache/isalive.error
+				for addr in $(cat /usr/local/etc/isalive.addrs);
+				do
+					echo `date +%H:%M:%S`" Sending notification to $addr"
+					echo "Errors cleared" | mail $addr -r www@deltava.org -s "System Up"
+				done
 			fi
 		fi
 	fi
@@ -214,4 +219,3 @@ done
 echo `date +%H:%M:%S`" Shutting Down"
 rm /var/run/isalive.pid
 exit 0
-
