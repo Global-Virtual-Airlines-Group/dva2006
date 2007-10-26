@@ -144,7 +144,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Pilot p = (Pilot) usr;
 		if (p.getNoVoice()) {
 			log.warn("Cannot update " + usr.getName() + " - Voice disabled");
-			removeUser(usr);
+			remove(usr);
 			return;
 		}
 
@@ -221,7 +221,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param pwd the User's password
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Ensure we are a Pilot, not a Person
 		if (!(usr instanceof Pilot)) {
@@ -305,7 +305,16 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
 	 */
 	public void rename(Person usr, String newName) throws SecurityException {
-		log.warn("TS2Authenticator does not support renames");
+		log.warn("Rename not supported");
+	}
+	
+	/**
+	 * Disables a user's account. <i>This merely deletes the user.</i>
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		remove(usr);
 	}
 
 	/**
@@ -313,7 +322,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if a JDBC error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
+	public void remove(Person usr) throws SecurityException {
 
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM ");

@@ -173,10 +173,10 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
 				sqlAuth.setConnection(con);
-				sqlAuth.addUser(a, a.getPassword());
+				sqlAuth.add(a, a.getPassword());
 				sqlAuth.clearConnection();
 			} else
-				auth.addUser(a, a.getPassword());
+				auth.add(a, a.getPassword());
 			
 			// Commit the transactions
 			ctx.commitTX();

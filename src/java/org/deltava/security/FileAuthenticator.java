@@ -30,12 +30,15 @@ public class FileAuthenticator implements Authenticator {
 		private String _dn;
 		private String _uid;
 		private String _pwd;
+		private boolean _enabled = true;
 
 		UserInfo(String rawInput) {
 			StringTokenizer tokens = new StringTokenizer(rawInput, ",");
 			_dn = tokens.nextToken();
 			_pwd = tokens.nextToken();
 			_uid = tokens.nextToken();
+			if (tokens.hasMoreTokens())
+				_enabled = Boolean.valueOf(tokens.nextToken()).booleanValue();
 		}
 
 		UserInfo(String dn, String pwd, String uid) {
@@ -52,6 +55,14 @@ public class FileAuthenticator implements Authenticator {
 
 		public String getPassword() {
 			return _pwd;
+		}
+		
+		public boolean isEnabled() {
+			return _enabled;
+		}
+		
+		public void setEnabled(boolean enabled) {
+			_enabled = enabled;
 		}
 
 		public void setPassword(String pwd) {
@@ -78,8 +89,7 @@ public class FileAuthenticator implements Authenticator {
 		}
 
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(new File(
-					_props.getProperty("file.name"))));
+			BufferedReader br = new BufferedReader(new FileReader(new File(_props.getProperty("file.name"))));
 			while (br.ready()) {
 				UserInfo info = new UserInfo(br.readLine());
 				_users.put(info.getDN(), info);
@@ -141,16 +151,15 @@ public class FileAuthenticator implements Authenticator {
 	 * Writes the user list out to the data file.
 	 */
 	private void save() throws SecurityException {
-
-		// Create the file
 		try {
-			PrintWriter pw = new PrintWriter(new FileWriter(new File(_props
-					.getProperty("file.name"))));
+			PrintWriter pw = new PrintWriter(new FileWriter(new File(_props.getProperty("file.name"))));
 			for (Iterator i = _users.values().iterator(); i.hasNext();) {
 				UserInfo user = (UserInfo) i.next();
 				pw.print(user.getDN());
 				pw.print(',');
 				pw.println(user.getPassword());
+				pw.print(',');
+				pw.print(String.valueOf(user.isEnabled()));
 			}
 
 			// Close the file
@@ -179,6 +188,7 @@ public class FileAuthenticator implements Authenticator {
 
 		// Update the password
 		usrInfo.setPassword(pwd);
+		usrInfo.setEnabled(true);
 		save();
 	}
 
@@ -188,12 +198,11 @@ public class FileAuthenticator implements Authenticator {
 	 * @param pwd the user's password
 	 * @throws SecurityException if an error occurs
 	 */
-	public void addUser(Person usr, String pwd) throws SecurityException {
+	public void add(Person usr, String pwd) throws SecurityException {
 
 		// Check if the user exists
 		if (contains(usr))
-			throw new SecurityException("User " + usr.getDN()
-					+ " already exists");
+			throw new SecurityException("User " + usr.getDN() + " already exists");
 
 		// Create the user object
 		UserInfo usrInfo = new UserInfo(usr.getDN(), pwd, "usrID");
@@ -208,16 +217,28 @@ public class FileAuthenticator implements Authenticator {
 	 * @param usr the User bean
 	 * @throws SecurityException if an error occurs
 	 */
-	public void removeUser(Person usr) throws SecurityException {
-
-		// Check for the user
+	public void remove(Person usr) throws SecurityException {
 		if (!contains(usr))
 			throw new SecurityException("User " + usr.getDN() + " not found");
 
 		_users.remove(usr.getDN());
 		save();
 	}
-
+	
+	/**
+	 * Disables a user's account.
+	 * @param usr the user bean
+	 * @throws SecurityException if an error occurs
+	 */
+	public void disable(Person usr) throws SecurityException {
+		UserInfo usrInfo = _users.get(usr.getDN());
+		if ((usrInfo != null) && (usrInfo.isEnabled())) {
+			usrInfo.setEnabled(false);
+			save();
+		} else if (usrInfo == null)
+			throw new SecurityException("User " + usr.getDN() + " not found");
+	}
+	
 	/**
 	 * Renames a user in the Directory. <i>NOT IMPLEMENTED</i>
 	 * @param usr the User bean

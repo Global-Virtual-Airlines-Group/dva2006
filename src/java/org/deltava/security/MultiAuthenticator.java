@@ -150,7 +150,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 	/**
 	 * Synchronizes user information between the source and destination authenticators. If the supplied credentials
 	 * cannot be used to authenticate against the destination authenticator, then they are called via an
-	 * {@link Authenticator#addUser} or {@link Authenticator#updatePassword} call to syncrhonize the two authenticators.
+	 * {@link Authenticator#add} or {@link Authenticator#updatePassword} call to syncrhonize the two authenticators.
 	 * <i>This should only be called from a subclass' {@link Authenticator#authenticate} method since the credentials
 	 * are presumed to be valid in the source authenticator.</i>
 	 * @param usr the Person bean
@@ -174,14 +174,14 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 						dst.updatePassword(usr, pwd);
 					} else {
 						log.warn("Adding " + usr.getName() + " in " + authName);
-						dst.addUser(usr, pwd);
+						dst.add(usr, pwd);
 					}
 				}
 			} else {
 				try {
 					if (dst.contains(usr)) {
 						log.warn(authName + " contains " + usr.getName() + ", removing");
-						dst.removeUser(usr);
+						dst.remove(usr);
 					}
 				} catch (SecurityException se) {
 					log.warn("Error removing " + usr.getName() + " from " + authName + " - " + se.getMessage());
@@ -202,7 +202,7 @@ public abstract class MultiAuthenticator implements SQLAuthenticator {
 			Authenticator auth = i.next();
 			setConnection(auth);
 			if (auth.contains(usr))
-				auth.removeUser(usr);
+				auth.remove(usr);
 			
 			clearConnection(auth);
 		}

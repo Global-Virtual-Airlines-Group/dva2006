@@ -43,9 +43,9 @@ public class TestLDAPAuthenticator extends TestCase {
     
     public void testAddRemove() throws Exception {
     	Person usr2 = new AuthPerson("Test", "User", "cn=Test User,ou=dva,o=sce");
-    	_auth.addUser(usr2, "test");
+    	_auth.add(usr2, "test");
     	assertTrue(_auth.contains(usr2));
     	_auth.authenticate(usr2, "test");
-    	_auth.removeUser(usr2);
+    	_auth.remove(usr2);
     }
 }

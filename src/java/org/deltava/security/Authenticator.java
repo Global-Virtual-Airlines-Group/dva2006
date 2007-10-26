@@ -6,7 +6,7 @@ import org.deltava.beans.Person;
 /**
  * An interface for user authenticators.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -51,7 +51,8 @@ public interface Authenticator {
     public boolean accepts(Person usr);
     
     /**
-     * Updates a user's password.
+     * Updates a user's password. If the authenticator supports the {@link Authenticator#accepts(Person)}
+     * method, then the user account should be re-enabled.
      * @param usr the user bean
      * @param pwd the new password
      * @throws SecurityException if an error occurs
@@ -64,7 +65,15 @@ public interface Authenticator {
      * @param pwd the user's password
      * @throws SecurityException if an error occurs
      */
-    public void addUser(Person usr, String pwd) throws SecurityException;
+    public void add(Person usr, String pwd) throws SecurityException;
+    
+    /**
+     * Disables a user's account in the Directory. This is an optional operation, if an implementation
+     * does not support this operation it should call {@link Authenticator#remove(Person)} instead.
+     * @param usr the user bean
+     * @throws SecurityException if an error occurs
+     */
+    public void disable(Person usr) throws SecurityException;
     
     /**
      * Renames a user in the Directory.
@@ -79,5 +88,5 @@ public interface Authenticator {
      * @param usr the user bean
      * @throws SecurityException if an error occurs
      */
-    public void removeUser(Person usr) throws SecurityException;
+    public void remove(Person usr) throws SecurityException;
 }
