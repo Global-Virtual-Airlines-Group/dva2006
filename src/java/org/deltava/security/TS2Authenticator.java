@@ -70,7 +70,6 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			rs.close();
 			ps.close();
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(c);
@@ -117,7 +116,6 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			rs.close();
 			ps.close();
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(c);
@@ -153,7 +151,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
 		sqlBuf.append(".ts2_clients SET s_client_password=");
 		sqlBuf.append(_props.getProperty("ts2.cryptFunc", ""));
-		sqlBuf.append("(?) WHERE (s_client_name=?)");
+		sqlBuf.append("(?), b_enabled=? WHERE (s_client_name=?)");
 
 		Connection c = null;
 		try {
@@ -162,13 +160,13 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			// Prepare the statement
 			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
 			ps.setString(1, pwd);
-			ps.setString(2, ((Pilot) usr).getPilotCode());
+			ps.setBoolean(2, true);
+			ps.setString(3, ((Pilot) usr).getPilotCode());
 
 			// Execute the update and clean up
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(c);
@@ -194,7 +192,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Connection con = null;
 		try {
 			con = getConnection();
-			
+
 			// Get the DAO and the active server
 			GetTS2Data dao = new GetTS2Data(con);
 			Collection<Server> srvs = dao.getServers(usr.getRoles());
@@ -204,12 +202,11 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 					return true;
 			}
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(con);
 		}
-	
+
 		return false;
 	}
 
@@ -238,7 +235,7 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			log.info("Cannot add " + usr.getName() + " - no pilot code");
 			return;
 		}
-		
+
 		// Build the SQL query
 		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
 		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
@@ -249,11 +246,11 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 		Connection con = null;
 		try {
 			con = getConnection();
-			
+
 			// Get the servers that this person may access
 			GetTS2Data dao = new GetTS2Data(con);
 			Collection<Server> srvs = dao.getServers(usr.getRoles());
-			
+
 			// Create the client entries
 			Collection<Client> usrs = new HashSet<Client>();
 			for (Iterator<Server> i = srvs.iterator(); i.hasNext();) {
@@ -277,24 +274,23 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 				closeConnection(con);
 				return;
 			}
-				
+
 			// Log addition
 			log.warn("Adding " + p.getName() + " to " + StringUtils.listConcat(srvs, ", "));
-			
+
 			// Get the DAO and update
 			SetTS2Data wdao = new SetTS2Data(con);
 			wdao.write(usrs);
-			
+
 			// Encrypt the password
 			PreparedStatement ps = con.prepareStatement(sqlBuf.toString());
 			ps.setString(1, pwd);
 			ps.setString(2, ((Pilot) usr).getPilotCode());
-			
+
 			// Execute the update and clean up
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(con);
@@ -307,14 +303,42 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 	public void rename(Person usr, String newName) throws SecurityException {
 		log.warn("Rename not supported");
 	}
-	
+
 	/**
-	 * Disables a user's account. <i>This merely deletes the user.</i>
+	 * Disables a user's account.
 	 * @param usr the user bean
 	 * @throws SecurityException if an error occurs
 	 */
 	public void disable(Person usr) throws SecurityException {
-		remove(usr);
+		
+		// Ensure we are a Pilot, not a Person
+		if (!(usr instanceof Pilot)) {
+			log.warn("Cannot disable " + usr.getName() + " - " + usr.getClass().getName());
+			return;
+		}
+		
+		// Build the SQL query
+		StringBuilder sqlBuf = new StringBuilder("UPDATE ");
+		sqlBuf.append(_props.getProperty("ts2.db", "teamspeak"));
+		sqlBuf.append(".ts2_clients SET b_enabled=? WHERE (s_client_name=?)");
+		
+		Connection c = null;
+		try {
+			c = getConnection();
+			
+			// Prepare the statement
+			PreparedStatement ps = c.prepareStatement(sqlBuf.toString());
+			ps.setBoolean(1, false);
+			ps.setString(2, ((Pilot) usr).getPilotCode());
+
+			// Execute the update and clean up
+			ps.executeUpdate();
+			ps.close();
+		} catch (Exception e) {
+			throw new SecurityException(e.getMessage(), e);
+		} finally {
+			closeConnection(c);
+		}
 	}
 
 	/**
@@ -341,7 +365,6 @@ public class TS2Authenticator extends ConnectionPoolAuthenticator {
 			ps.executeUpdate();
 			ps.close();
 		} catch (Exception e) {
-			log.error(e.getMessage(), e);
 			throw new SecurityException(e.getMessage(), e);
 		} finally {
 			closeConnection(c);
