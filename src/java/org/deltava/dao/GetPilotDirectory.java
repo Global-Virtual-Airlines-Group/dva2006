@@ -245,17 +245,14 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	/**
 	 * Searches for a Pilot name (or fragment thereof) and returns the database IDs of Pilots matching the name.
 	 * @param fullName the full name or fragment
-	 * @param dbName the database name
 	 * @param doFragment TRUE if a partial match will be accepted, otherwise FALSE
 	 * @return a Collection of database IDs as Integers
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Integer> search(String fullName, String dbName, boolean doFragment) throws DAOException {
+	public Collection<Integer> search(String fullName, boolean doFragment) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT P.ID FROM ");
-		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P WHERE (UPPER(CONCAT_WS(' ', P.FIRSTNAME, P.LASTNAME))");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID FROM common.PILOTNAMES WHERE (UPPER(CONCAT_WS(' ', FIRSTNAME, LASTNAME))");
 		sqlBuf.append(doFragment ? " LIKE ?)" : "=?)");
 
 		try {
