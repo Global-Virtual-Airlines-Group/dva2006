@@ -4,6 +4,8 @@ package org.deltava.jdbc;
 import java.sql.*;
 import java.util.*;
 
+import org.apache.log4j.Logger;
+
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
@@ -12,6 +14,8 @@ import java.util.*;
  */
 
 class ConnectionPoolEntry implements java.io.Serializable, Comparable<ConnectionPoolEntry> {
+	
+	private static transient final Logger log = Logger.getLogger(ConnectionPoolEntry.class);
 
 	private transient Connection _c;
 	private StackTrace _stackInfo;
@@ -85,7 +89,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		// Create the connection
 		_c = DriverManager.getConnection(_props.getProperty("url"), _props);
 		_c.setAutoCommit(_autoCommit);
-		_c.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+		_c.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
 		_lastUsed = System.currentTimeMillis();
 	}
 
@@ -111,8 +115,12 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 
 		// Reset auto-commit property
 		try {
+			if (_c.getAutoCommit() != _autoCommit)
+				log.info("Resetting autoCommit to " + String.valueOf(_autoCommit));
+				
 			_c.setAutoCommit(_autoCommit);
 		} catch (Exception e) {
+			log.error("Error resetting autoCommit - " + e.getMessage());
 		}
 
 		// Add the usage time to the total for this connection
