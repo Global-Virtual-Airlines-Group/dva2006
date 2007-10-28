@@ -22,6 +22,7 @@ public abstract class ConnectionContext {
 	
 	private final ConnectionPool _pool = (ConnectionPool) SystemData.getObject(SystemData.JDBC_POOL);
 	private Connection _con;
+	private boolean _autoCommit;
 	
     /**
      * Reserves a JDBC Connection from the connection pool.
@@ -75,6 +76,7 @@ public abstract class ConnectionContext {
     public void startTX() throws TransactionException {
        checkConnection();
        try {
+    	   _autoCommit =_con.getAutoCommit();
           _con.setAutoCommit(false);
        } catch (Exception e) {
           throw new TransactionException(e);
@@ -92,6 +94,7 @@ public abstract class ConnectionContext {
        checkConnection();
        try {
           _con.commit();
+          _con.setAutoCommit(_autoCommit);
        } catch (Exception e) {
           throw new TransactionException(e);
        }
@@ -105,6 +108,7 @@ public abstract class ConnectionContext {
     public void rollbackTX() {
        try {
           _con.rollback();
+          _con.setAutoCommit(_autoCommit);
        } catch (Exception e) {
     	   log.error("Error rolling back transaction - " + e.getMessage(), e);
        }
