@@ -326,11 +326,16 @@ public class GetCoolerThreads extends DAO {
 				+ "IF(T.IMAGE_ID=0, COUNT(I.URL), T.IMAGE_ID) AS IMGID FROM common.COOLER_POSTSEARCH SIDX, "
 				+ "common.COOLER_THREADS T LEFT JOIN common.COOLER_POSTS P ON (T.ID=P.THREAD_ID) LEFT JOIN "
 				+ "common.COOLER_POLLS O ON (T.ID=O.ID) LEFT JOIN common.COOLER_IMGURLS I ON (T.ID=I.ID) WHERE "
-				+ "(SIDX.THREAD_ID=T.ID) AND ((MATCH(SIDX.MSGBODY) AGAINST (?)) ");
-		if (criteria.getSearchSubject())
-			sqlBuf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
-		else
-			sqlBuf.append(") ");
+				+ "(SIDX.THREAD_ID=T.ID) ");
+		
+		// Check for text / subject search
+		if (!StringUtils.isEmpty(criteria.getSearchTerm())) {
+			sqlBuf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (?)) ");
+			if (criteria.getSearchSubject())
+				sqlBuf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
+			else
+				sqlBuf.append(") ");
+		}
 
 		// Add channel/author criteria
 		if (!Channel.ALL.equals(criteria.getChannel()))
@@ -341,17 +346,20 @@ public class GetCoolerThreads extends DAO {
 			sqlBuf.append(")) ");
 		}
 
-		sqlBuf.append(" GROUP BY T.ID ORDER BY SD DESC");
+		sqlBuf.append("GROUP BY T.ID ORDER BY SD DESC");
 
 		try {
 			prepareStatement(sqlBuf.toString());
 			int psOfs = 0;
-			_ps.setQueryTimeout(25);
-			_ps.setString(++psOfs, criteria.getSearchTerm());
+			_ps.setQueryTimeout(30);
+			if (!StringUtils.isEmpty(criteria.getSearchTerm())) {
+				_ps.setString(++psOfs, criteria.getSearchTerm());
+				if (criteria.getSearchSubject())
+					_ps.setString(++psOfs, criteria.getSearchTerm());
+			}
+			
 			if (!Channel.ALL.equals(criteria.getChannel()))
 				_ps.setString(++psOfs, criteria.getChannel());
-			if (criteria.getSearchSubject())
-				_ps.setString(++psOfs, criteria.getSearchTerm());
 			
 			return execute();
 		} catch (SQLException se) {
