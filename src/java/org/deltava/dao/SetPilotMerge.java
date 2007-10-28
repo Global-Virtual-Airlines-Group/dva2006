@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -45,7 +45,7 @@ public class SetPilotMerge extends DAO {
             log.info("Moved " + rowsUpdated + " Flight Reports from " + oldUser.getName() + " to " + newUser.getName());
          
          // Merge Examinations
-         prepareStatementWithoutLimits("UPDATE EXAMS SET PILOT_ID=? WHERE (PILOT_ID=?)");
+         prepareStatementWithoutLimits("UPDATE exams.EXAMS SET PILOT_ID=? WHERE (PILOT_ID=?)");
          _ps.setInt(1, newUser.getID());
          _ps.setInt(2, oldUser.getID());
          rowsUpdated = executeUpdate(0);
@@ -53,7 +53,7 @@ public class SetPilotMerge extends DAO {
             log.info("Moved " + rowsUpdated + " Examinations from " + oldUser.getName() + " to " + newUser.getName());
          
          // Merge Check Rides
-         prepareStatementWithoutLimits("UPDATE CHECKRIDES SET PILOT_ID=? WHERE (PILOT_ID=?)");
+         prepareStatementWithoutLimits("UPDATE exams.CHECKRIDES SET PILOT_ID=? WHERE (PILOT_ID=?)");
          _ps.setInt(1, newUser.getID());
          _ps.setInt(2, oldUser.getID());
          rowsUpdated = executeUpdate(0);
