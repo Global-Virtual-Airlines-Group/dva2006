@@ -111,8 +111,8 @@ public class EventCommand extends AbstractCommand {
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
 				String tableName = i.next();
 				Collection<UserData> ids = udm.getByTable(tableName);
-				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName); 
-				pilots.putAll(pdao.getByID(ids, tableName));
+				Collection<FlightReport> flights = frdao.getByEvent(e.getID(), tableName);
+				frdao.getCaptEQType(flights);
 				pireps.addAll(flights);
 				
 				// Load pilots who may have logged the flight but not signed up
@@ -133,7 +133,7 @@ public class EventCommand extends AbstractCommand {
 			}
 			
 			// Save the pilots and flight reports
-			ctx.setAttribute("pilots", pilots, REQUEST);
+			ctx.setAttribute("pilots", pdao.get(udm), REQUEST);
 			ctx.setAttribute("pireps", pireps, REQUEST);
 			ctx.setAttribute("certs", certs, REQUEST);
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -29,7 +29,6 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 	 * @throws CommandException if an error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 
@@ -47,7 +46,8 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 
 			// Get the Flight Reports
 			GetFlightReports frdao = new GetFlightReports(con);
-			List<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
+			Collection<FlightReport> pireps = frdao.getByAssignment(ctx.getID(), SystemData.get("airline.db"));
+			frdao.getCaptEQType(pireps);
 
 			// Get the PIREP write DAO and init counters
 			SetFlightReport fwdao = new SetFlightReport(con);
@@ -71,8 +71,8 @@ public class AssignmentReleaseCommand extends AbstractCommand {
 			}
 
 			// Save the totals
-			ctx.setAttribute("flightsDeleted", new Integer(flightsDeleted), REQUEST);
-			ctx.setAttribute("flightsUpdated", new Integer(flightsUpdated), REQUEST);
+			ctx.setAttribute("flightsDeleted", Integer.valueOf(flightsDeleted), REQUEST);
+			ctx.setAttribute("flightsUpdated",Integer.valueOf(flightsUpdated), REQUEST);
 
 			// Delete or release the Assignment
 			SetAssignment wdao = new SetAssignment(con);

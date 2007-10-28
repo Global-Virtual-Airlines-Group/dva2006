@@ -62,6 +62,7 @@ public class EventCancelCommand extends AbstractCommand {
          for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext(); ) {
         	 String tableName = i.next();
         	 Collection<FlightReport> pireps = frdao.getByEvent(e.getID(), tableName.substring(0, tableName.indexOf('.')));
+        	 frdao.getCaptEQType(pireps);
         	 for (Iterator<FlightReport> pi = pireps.iterator(); pi.hasNext();) {
         		 FlightReport fr = pi.next();
                  if (fr.getStatus() == FlightReport.DRAFT) {
