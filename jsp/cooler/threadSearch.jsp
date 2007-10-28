@@ -21,7 +21,10 @@
 function validate(form)
 {
 if (!checkSubmit()) return false;
-if (!validateText(form.searchStr, 3, 'Search Term')) return false;
+if ((form.searchStr.value.length < 3) && (form.pilotName.value.length < 3)) {
+	if (!validateText(form.searchStr, 3, 'Search Term')) return false;
+	if (!validateText(form.pilotName, 3, 'Pilot Name')) return false;
+}
 
 setSubmit();
 disableButton('SearchButton');
@@ -37,7 +40,7 @@ return true;
 </script>
 </head>
 <content:copyright visible="false" />
-<body onload="enableElement('SearchButton', true); clearSubmit()">
+<body>
 <content:page>
 <%@ include file="/jsp/cooler/header.jspf" %> 
 <%@ include file="/jsp/cooler/sideMenu.jspf" %>
@@ -51,7 +54,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Search String</td>
- <td class="data"><el:text name="searchStr" idx="*" size="20" className="pri bld req" max="34" value="${param.searchStr}" /></td>
+ <td class="data"><el:text name="searchStr" idx="*" size="20" className="pri bld" max="34" value="${param.searchStr}" /></td>
 </tr>
 <tr>
  <td class="label">Cooler Channel</td>
@@ -59,7 +62,7 @@ return true;
 </tr>
 <tr>
  <td class="label">Pilot Name</td>
- <td class="data"><el:text name="pilotName" idx="*" size="16" max="32" value="${param.pilotName}" /></td>
+ <td class="data"><el:text name="pilotName" idx="*" size="20" max="36" value="${param.pilotName}" /></td>
 </tr>
 <tr>
  <td class="label">&nbsp;</td>

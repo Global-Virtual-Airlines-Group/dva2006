@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -43,7 +43,8 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 
 			// Get the channel names
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")), ctx.getRoles()), REQUEST);
+			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")), ctx
+					.getRoles()), REQUEST);
 
 			// Check if we're doing a GET, and redirect to the results JSP
 			if (ctx.getParameter("searchStr") == null) {
@@ -52,7 +53,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 				result.setSuccess(true);
 				return;
 			}
-			
+
 			// Build the search criteria
 			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
 			criteria.setChannel(ctx.getParameter("channel"));
@@ -63,12 +64,12 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
 			if (!StringUtils.isEmpty(ctx.getParameter("pilotName"))) {
 				pdao.setQueryMax(50);
-				criteria.addIDs(pdao.search(ctx.getParameter("pilotName"), SystemData.get("airline.db"), 
-						criteria.getSearchNameFragment()));
+				criteria.addIDs(pdao.search(ctx.getParameter("pilotName"), criteria.getSearchNameFragment()));
+				pdao.setQueryMax(0);
 			}
-			
+
 			// Get the DAO and search
-			List<MessageThread> threads = null;
+			Collection<MessageThread> threads = null;
 			synchronized (CoolerSearchCommand.class) {
 				GetCoolerThreads dao = new GetCoolerThreads(con);
 				dao.setQueryStart(vc.getStart());
@@ -77,7 +78,7 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			}
 
 			// Filter out the threads based on our access
-			Set<Integer> pilotIDs = new HashSet<Integer>();
+			Collection<Integer> pilotIDs = new HashSet<Integer>();
 			CoolerThreadAccessControl access = new CoolerThreadAccessControl(ctx);
 			for (Iterator<MessageThread> i = threads.iterator(); i.hasNext();) {
 				MessageThread mt = i.next();
@@ -86,12 +87,11 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 				access.validate();
 
 				// Remove the thread if we cannot access it
-				if (!access.getCanRead()) {
-					i.remove();
-				} else {
+				if (access.getCanRead()) {
 					pilotIDs.add(new Integer(mt.getAuthorID()));
 					pilotIDs.add(new Integer(mt.getLastUpdateID()));
-				}
+				} else
+					i.remove();
 			}
 
 			// Get the location of all the Pilots
@@ -104,24 +104,21 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 			GetApplicant adao = new GetApplicant(con);
 			for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
 				String tableName = i.next();
-				if (tableName.endsWith("APPLICANTS")) {
+				if (tableName.endsWith("APPLICANTS"))
 					authors.putAll(adao.getByID(udm.getByTable(tableName), tableName));
-				} else {
+				else
 					authors.putAll(pdao.getByID(udm.getByTable(tableName), tableName));
-				}
 			}
-
-			// Get the pilot IDs in the returned threads
-			ctx.setAttribute("pilots", authors, REQUEST);
 
 			// Save the threads in the request
 			vc.setResults(threads);
+			ctx.setAttribute("pilots", authors, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
 		}
-		
+
 		// Set search attribute
 		ctx.setAttribute("doSearch", Boolean.TRUE, REQUEST);
 
