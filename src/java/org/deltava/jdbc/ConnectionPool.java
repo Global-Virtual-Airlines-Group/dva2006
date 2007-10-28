@@ -19,7 +19,7 @@ import org.deltava.util.*;
 
 public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExceptionHandler {
 
-	private static final Logger log = Logger.getLogger(ConnectionPool.class);
+	private static transient final Logger log = Logger.getLogger(ConnectionPool.class);
 
 	// The maximum amount of time a connection can be reserved before we consider
 	// it to be stale and return it anyways
@@ -264,8 +264,10 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 
 		// Since this connection may have been given to us with pending writes, ROLL THEM BACK
 		try {
-			if (!c.getAutoCommit())
+			if (!c.getAutoCommit()) {
 				c.rollback();
+				log.info("Rolling back open transaction");
+			}
 		} catch (SQLException se) {
 			log.warn("Error rolling back transaction - " + se.getMessage());
 			_monitor.execute();
@@ -277,7 +279,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 				ConnectionPoolEntry cpe = i.next();
 
 				// If we find the connection, release it
-				if (cpe.equals(c)) {
+				if (cpe.getConnection() == c) {
 					cpe.free();
 					
 					// If this is a dynamic connection, such it down

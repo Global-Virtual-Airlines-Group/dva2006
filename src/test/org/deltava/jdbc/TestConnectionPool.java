@@ -8,7 +8,7 @@ import java.util.concurrent.Semaphore;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.*;
 
 public class TestConnectionPool extends TestCase {
 
@@ -20,18 +20,19 @@ public class TestConnectionPool extends TestCase {
         PropertyConfigurator.configure("etc/log4j.properties");
         _props = new Properties();
         _props.load(new FileInputStream("data/jdbc.properties"));
-        _pool = new ConnectionPool(2);
+        _pool = new ConnectionPool(3);
     }
 
     protected void tearDown() throws Exception {
         _pool.close();
         _props = null;
+        LogManager.shutdown();
         super.tearDown();
     }
     
     public void testProperties() throws ClassNotFoundException {
         assertEquals(-1, _pool.getSize());
-        assertEquals(2, _pool.getMaxSize());
+        assertEquals(3, _pool.getMaxSize());
         _pool.setProperties(_props);
         _pool.setCredentials(_props.getProperty("user"), _props.getProperty("password"));
         _pool.setDriver(_props.getProperty("driver"));
@@ -54,7 +55,7 @@ public class TestConnectionPool extends TestCase {
         } catch (IllegalArgumentException iae) { }
         
         try {
-            _pool.connect(3);
+            _pool.connect(4);
             fail("IllegalArgumentException expected");
         } catch (IllegalArgumentException iae) { }
     }
@@ -72,11 +73,11 @@ public class TestConnectionPool extends TestCase {
     public void testConnections() throws Exception {
         _pool.setProperties(_props);
         _pool.connect(1);
-        assertEquals(1, _pool.getSize());
+        assertEquals(2, _pool.getSize());
         Connection c1 = _pool.getConnection();
         assertNotNull(c1);
         Connection c2 = _pool.getConnection();
-        assertEquals(2, _pool.getSize());
+        assertEquals(3, _pool.getSize());
         assertEquals(_pool.getMaxSize(), _pool.getSize());
         try {
             Connection c3 = _pool.getConnection();
