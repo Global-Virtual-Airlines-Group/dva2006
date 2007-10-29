@@ -279,11 +279,11 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 			else
 				log.error(usrName + " executing " + cmd.getName() + " - " + e.getMessage(), logStackDump ? e : null);
 
-			// Redirect to the error page
-			RequestDispatcher rd = req.getRequestDispatcher(errPage);
-			req.setAttribute("servlet_error", e.getMessage());
-			req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 			try {
+				// Redirect to the error page
+				RequestDispatcher rd = req.getRequestDispatcher(errPage);
+				req.setAttribute("servlet_error", e.getMessage());
+				req.setAttribute("servlet_exception", (e.getCause() == null) ? e : e.getCause());
 				rd.forward(req, rsp);
 			} catch (Exception fe) {
 				try {

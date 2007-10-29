@@ -26,6 +26,10 @@ Oops. You attempted to access something that you're not allowed to.<br />
 <br />
 To log in to the <content:airline /> web site, <el:cmd url="login" className="sec bld">Click Here</el:cmd>.<br />
 </content:filter>
+<content:filter roles="!Anonymous">
+<br />
+<span class="bld">${servlet_error}</span><br />
+</content:filter>
 <br />
 <content:copyright />
 </content:region>
