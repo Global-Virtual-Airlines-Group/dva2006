@@ -40,6 +40,12 @@
  N<sub>1</sub>, <fmt:int value="${pirep.takeoffWeight}" /> lbs total, <fmt:int value="${pirep.takeoffFuel}" />
  lbs fuel</td>
 </tr>
+<c:if test="${!empty flightInfo.altitude}">
+<tr>
+ <td class="label">Cruise Altitude</td>
+ <td class="data">${flightInfo.altitude}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Landing Time</td>
  <td class="data" colspan="${cspan}"><fmt:date className="bld" date="${pirep.landingTime}" />, 
