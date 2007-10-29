@@ -50,6 +50,9 @@ public class DuplicatePilotMergeCommand extends AbstractCommand {
 			Pilot usr = dao.get(ctx.getID());
 			if (usr == null)
 				throw notFoundException("Invalid User - " + ctx.getID());
+			
+			// Save the pilot
+			mctxt.addData("pilot", usr);
 
 			// Validate our access
 			Collection<String> pilotIDs = new HashSet<String>();
