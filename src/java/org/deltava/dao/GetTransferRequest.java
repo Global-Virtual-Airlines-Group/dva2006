@@ -161,8 +161,8 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getAll(String orderBy) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
-				+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM (TXREQUESTS TX, common.PILOTNAMES P) "
+				+ "LEFT JOIN exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
@@ -183,8 +183,9 @@ public class GetTransferRequest extends DAO {
 	public List<TransferRequest> getByEQ(String eqType, String orderBy) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN "
-				+ "exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.EQTYPE=?) ORDER BY ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT TX.*, CR.STATUS FROM (TXREQUESTS TX, common.PILOTNAMES P) "
+				+ "LEFT JOIN exams.CHECKRIDES CR ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.ID=P.ID) AND (TX.EQTYPE=?) "
+				+ "ORDER BY ");
 		sqlBuf.append((orderBy != null) ? orderBy : "TX.STATUS DESC, CR.STATUS DESC, TX.CREATED DESC");
 		
 		try {
