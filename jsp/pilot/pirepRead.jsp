@@ -109,11 +109,20 @@ return true;
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
 </tr>
+<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.airportL)}">
+<tr>
+ <td class="label">Alternate</td>
+ <td class="data">${flightInfo.airportL.name} (<fmt:airport airport="${flightInfo.airportL}" />)</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Flight Simulator</td>
 <c:choose>
 <c:when test="${pirep.FSVersion == 0}">
  <td class="data sec bld">UNKNOWN</td>
+</c:when>
+<c:when test="${pirep.FSVersion == 2006}">
+ <td class="data sec bld">Microsoft Flight Simulator X</td>
 </c:when>
 <c:when test="${fn:isMSFS(pirep)}">
  <td class="data sec bld">Microsoft Flight Simulator ${pirep.FSVersion}</td>
