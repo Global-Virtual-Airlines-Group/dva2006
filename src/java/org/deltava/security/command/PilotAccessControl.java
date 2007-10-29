@@ -1,10 +1,9 @@
 // Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
-import org.deltava.security.SecurityContext;
+import org.deltava.beans.*;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.Pilot;
+import org.deltava.security.SecurityContext;
 
 /**
  * An access controller for Pilot profile operations.
@@ -59,7 +58,6 @@ public class PilotAccessControl extends AccessControl {
 
 		// Sets basic role variables
 		_isOurs = (_ctx.getUser().getID() == _p.getID());
-		boolean isPIREP = _ctx.isUserInRole("PIREP");
 		boolean isHR = _ctx.isUserInRole("HR");
 		int status = _p.getStatus();
 
@@ -67,8 +65,7 @@ public class PilotAccessControl extends AccessControl {
 		_canEdit = (_isOurs || isHR);
 		_canChangeSignature = _canEdit || _ctx.isUserInRole("Signature");
 		_canViewEmail = (_p.getEmailAccess() == Person.HIDE_EMAIL) ? (_canEdit) : true;
-		_canPromote = (isPIREP || isHR);
-		_canViewExams = _isOurs || _canPromote || _ctx.isUserInRole("Instructor");
+		_canViewExams = _isOurs || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("Instructor");
 		_canAssignRide = (isHR || _ctx.isUserInRole("Examination")) && (_p.getStatus() == Pilot.ACTIVE);
 		_canChangeStatus = isHR;
 		_canTakeLeave = (status == Pilot.ACTIVE) && (_isOurs || _canChangeStatus);
@@ -77,6 +74,11 @@ public class PilotAccessControl extends AccessControl {
 		_canSuspend = _canChangeStatus && ((status == Pilot.ACTIVE) || (status == Pilot.ON_LEAVE)); 
 		_canActivate = _canChangeStatus && ((status == Pilot.INACTIVE) || (status == Pilot.RETIRED) || 
 				(status == Pilot.SUSPENDED));
+
+		// Check Promotion access
+		boolean isSameProgram = _ctx.getUser().getEquipmentType().equals(_p.getEquipmentType());
+		boolean isCP = Ranks.RANK_CP.equals(_ctx.getUser().getRank()) || Ranks.RANK_ACP.equals(_ctx.getUser().getRank());
+		_canPromote = (isHR || (isCP && isSameProgram));
 
 		// Check if there is a staff profile in the request
 		Object sProfile = _ctx.getRequest().getAttribute("staff");
