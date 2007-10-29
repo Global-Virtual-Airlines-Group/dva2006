@@ -33,6 +33,7 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 
 	private Airport _airportD;
 	private Airport _airportA;
+	private Airport _airportL;
 
 	private String _route;
 	private String _remarks;
@@ -154,6 +155,15 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public Airport getAirportD() {
 		return _airportD;
+	}
+	
+	/**
+	 * Returns the divert Airport for this flight.
+	 * @return the alternate Airport bean
+	 * @see FlightInfo#setAirportL(Airport)
+	 */
+	public Airport getAirportL() {
+		return _airportL;
 	}
 
 	/**
@@ -377,6 +387,15 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public void setAirportD(Airport a) {
 		_airportD = a;
+	}
+	
+	/**
+	 * Updates the alternate Airport for this flight.
+	 * @param a an Airport bean
+	 * @see FlightInfo#getAirportL()
+	 */
+	public void setAirportL(Airport a) {
+		_airportL = a;
 	}
 
 	/**

@@ -288,6 +288,7 @@ public class GetACARSData extends DAO {
 			info.setAltitude(rs.getString(7));
 			info.setAirportD(SystemData.getAirport(rs.getString(8)));
 			info.setAirportA(SystemData.getAirport(rs.getString(9)));
+			info.setAirportL(SystemData.getAirport(rs.getString(10)));
 			info.setRoute(rs.getString(11));
 			info.setRemarks(rs.getString(12));
 			info.setFSVersion(rs.getInt(13));
