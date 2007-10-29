@@ -75,7 +75,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			} else if (cr.getStatus() == Test.SUBMITTED) {
 				if (cr.getFlightID() != 0) {
 					ACARSFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
-					if (ofr != null)
+					if ((ofr != null) && (ofr.getDatabaseID(FlightReport.DBID_ACARS) != cr.getFlightID()))
 						throw securityException("Check Ride ACARS ID #" + cr.getFlightID() + " already has PIREP");
 				}
 						
