@@ -37,8 +37,14 @@
 
 <!-- Table Pilot Data -->
 <c:forEach var="pilot" items="${queue}">
+<c:set var="access" value="${accessMap[pilot.ID]}" scope="request" />
 <view:row entry="${pilot}">
+<c:if test="${access.canPromote}">
  <td><el:cmdbutton url="promote" link="${pilot}" label="PROMOTE" /></td>
+</c:if>
+<c:if test="${!access.canPromote}">
+ <td>&nbsp;</td>
+</c:if>
  <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}" className="bld">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pilot.equipmentType}</td>
