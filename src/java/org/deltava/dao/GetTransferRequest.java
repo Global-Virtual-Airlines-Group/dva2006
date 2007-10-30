@@ -139,8 +139,8 @@ public class GetTransferRequest extends DAO {
 	 */
 	public Collection<TransferRequest> getAged(int minAge) throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN CHECKRIDES CR ON "
-					+ "(TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND "
+			prepareStatementWithoutLimits("SELECT TX.*, CR.STATUS FROM TXREQUESTS TX LEFT JOIN exams.CHECKRIDES CR "
+					+ "ON (TX.CHECKRIDE_ID=CR.ID) WHERE (TX.CREATED < DATE_SUB(NOW(), INTERVAL ? DAY)) AND "
 					+ "(TX.STATUS<>?) AND (CR.STATUS<>?) AND (CR.STATUS<>?) ORDER BY TX.CREATED");
 			_ps.setInt(1, minAge);
 			_ps.setInt(2, TransferRequest.OK);
