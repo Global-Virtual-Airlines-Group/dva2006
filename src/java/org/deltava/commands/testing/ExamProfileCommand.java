@@ -45,8 +45,11 @@ public class ExamProfileCommand extends AbstractFormCommand {
             
             // Update the exam name
             ep.setName(ctx.getParameter("examName"));
-         } else
+            ep.setOwner(SystemData.getApp(ctx.getParameter("owner")));
+         } else {
             ep = new ExamProfile(ctx.getParameter("examName"));
+            ep.setOwner(SystemData.getApp(ctx.getParameter("owner")));
+         }
          
          // Check our access level
          ExamProfileAccessControl access = new ExamProfileAccessControl(ctx, ep);
@@ -63,7 +66,6 @@ public class ExamProfileCommand extends AbstractFormCommand {
          ep.setTime(StringUtils.parse(ctx.getParameter("time"), 15));
          ep.setActive(Boolean.valueOf(ctx.getParameter("active")).booleanValue());
        	 ep.setAcademy(Boolean.valueOf(ctx.getParameter("isAcademy")).booleanValue());
-       	 ep.setOwner(SystemData.getApp(ctx.getParameter("owner")));
        	 Collection<String> airlines = ctx.getParameters("airlines");
        	 if (airlines != null) {
        		 Collection<AirlineInformation> ai = new ArrayList<AirlineInformation>();
