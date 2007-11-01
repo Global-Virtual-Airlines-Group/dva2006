@@ -31,7 +31,7 @@ disableButton('SaveButton');
 return true;
 }
 
-function tooggleAnswerBox()
+function toggleAnswerBox()
 {
 var f = document.forms[0];
 if (f.isMultiChoice) {
