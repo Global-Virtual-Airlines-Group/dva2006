@@ -18,6 +18,7 @@ public class QuestionProfileAccessControl extends AccessControl {
 
 	private QuestionProfile _qp;
 
+	private boolean _canCreate;
 	private boolean _canRead;
 	private boolean _canInclude;
 	private boolean _canEdit;
@@ -40,12 +41,14 @@ public class QuestionProfileAccessControl extends AccessControl {
 		validateContext();
 
 		// Calculate access variables
-		boolean isHR = _ctx.isUserInRole("HR");
-		boolean isOurs = (_qp == null) || SystemData.get("airline.code").equals(_qp.getOwner().getCode());
+		final boolean isHR = _ctx.isUserInRole("HR");
+		final boolean isTestAdmin = _ctx.isUserInRole("TestAdmin");
+		final boolean isOurs = (_qp == null) || SystemData.get("airline.code").equals(_qp.getOwner().getCode());
 
-		_canRead = isHR || _ctx.isUserInRole("Examination") || _ctx.isUserInRole("TestAdmin");
-		_canInclude = (_qp != null) && _qp.getAirlines().contains(SystemData.getApp(SystemData.get("airline.code"))) && (isHR || _ctx.isUserInRole("TestAdmin"));
-		_canEdit = isOurs && _canInclude;
+		_canCreate = isHR || isTestAdmin;
+		_canRead = isHR || _ctx.isUserInRole("Examination") || isTestAdmin;
+		_canInclude = (_qp != null) && _qp.getAirlines().contains(SystemData.getApp(SystemData.get("airline.code"))) && (isHR || isTestAdmin);
+		_canEdit = (_qp == null) ? _canCreate : (isOurs && _canInclude);
 		_canDelete = isHR && isOurs && (_qp != null) && (_qp.getTotalAnswers() == 0);
 		if (!_canRead)
 			throw new AccessControlException("Cannot view Question Profile");
@@ -59,6 +62,14 @@ public class QuestionProfileAccessControl extends AccessControl {
 		return _canRead;
 	}
 
+	/**
+	 * Returns if a new profile can be created.
+	 * @return TRUE if a new Question can be created, otherwise FALSE
+	 */
+	public boolean getCanCreate() {
+		return _canCreate;
+	}
+	
 	/**
 	 * Returns if the profile can be edited.
 	 * @return TRUE if it can be edited, otherwise FALSE
