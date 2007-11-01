@@ -84,7 +84,7 @@ public class SetExamProfile extends DAO {
 			startTransaction();
 
 			// Write the exam profile
-			prepareStatement("INSERT INTO EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, "
+			prepareStatement("INSERT INTO exams.EXAMINFO (NAME, STAGE, QUESTIONS, PASS_SCORE, TIME, ACTIVE, "
 					+ "EQTYPE, MIN_STAGE, ACADEMY, AIRLINE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 			_ps.setString(1, ep.getName());
 			_ps.setInt(2, ep.getStage());
