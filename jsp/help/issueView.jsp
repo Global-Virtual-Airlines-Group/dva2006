@@ -96,9 +96,9 @@ return ${access.canComment};
 </c:if>
 <c:if test="${!empty issue.comments}">
 <c:forEach var="comment" items="${issue.comments}">
-<c:set var="author" value="${pilots[comment.authorID]}" scope="request" />
+<c:set var="cAuthor" value="${pilots[comment.authorID]}" scope="request" />
 <tr>
- <td class="label" valign="top">${author.name} (${author.pilotCode})<br />
+ <td class="label" valign="top">${cAuthor.name} (${cAuthor.pilotCode})<br />
  <fmt:date date="${comment.createdOn}" /><c:if test="${access.canUpdateContent}"><br />
 <el:box name="deleteID" value="${comment.createdOn.time}" checked="false" label="Delete" /><br />
 <el:radio name="faqID" value="${comment.createdOn.time}" checked="${comment.FAQ}" label="FAQ Answer" /></c:if></td>
