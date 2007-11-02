@@ -121,8 +121,9 @@ public class PIREPSubmitCommand extends AbstractCommand {
 			}
 
 			// Check the schedule database and check the route pair
+			boolean isAssignment = (pirep.getDatabaseID(FlightReport.DBID_ASSIGN) != 0);
 			int avgHours = sdao.getFlightTime(pirep.getAirportD(), pirep.getAirportA());
-			if ((avgHours == 0) && (!isAcademy)) {
+			if ((avgHours == 0) && (!isAcademy) && (!isAssignment)) {
 				pirep.setAttribute(FlightReport.ATTR_ROUTEWARN, true);
 				ctx.setAttribute("unknownRoute", Boolean.TRUE, REQUEST);
 			} else {
