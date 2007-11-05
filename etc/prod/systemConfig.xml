@@ -471,7 +471,7 @@
 
 		<auto_reject type="Integer">5</auto_reject>
 		<ip_interval type="Integer">7</ip_interval>
-		<from>David Keech</from>
+		<from>Jim Pray</from>
 		<list name="email.ok" attr="addr" unique="true">
 			<addr>luke@sce.net</addr>
 			<addr>luke@deltava.org</addr>
@@ -545,7 +545,7 @@
 		</pirep>
 		
 		<!-- This controls whose user ID the Scheduled Tasks will operate as -->
-		<tasks_by>David Keech</tasks_by>
+		<tasks_by>Jim Pray</tasks_by>
 	</users>
 	
 	<!-- ACARS Server Properties -->
