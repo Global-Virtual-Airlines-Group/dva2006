@@ -10,19 +10,17 @@
 <head>
 <c:if test="${!empty pirep}">
 <title><content:airline /> Flight ${pirep.flightCode}</title>
+<c:set var="isAssign" value="${(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
 </c:if>
 <c:if test="${empty pirep}">
 <title>New <content:airline /> Flight Report</title>
 </c:if>
-<c:set var="isAssign" value="{(fn:AssignID(pirep) > 0) && (!empty pirep.airportA) && (!empty pirep.airportD)}" scope="request" />
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <content:js name="hourCalc" />
-<c:if test="${!isAssign}">
-<content:js name="airportRefresh" />
-</c:if>
+<c:if test="${!isAssign}"><content:js name="airportRefresh" /></c:if>
 <content:sysdata var="minDays" name="users.pirep.minDays" />
 <script language="JavaScript" type="text/javascript">
 function validate(form)
@@ -107,12 +105,22 @@ var bwdLimit = new Date(${backwardDateLimit});
 </tr>
 <tr>
  <td class="label">Status</td>
- <td class="data bld sec">${!empty pirep ? pirep.statusName : 'NEW'}</td>
+ <td class="data bld sec">${!empty pirep ? pirep.statusName : 'NEW'} <c:if test="${fn:AssignID(pirep) > 0}"><span class="ter bld">FLIGHT ASSIGNMENT</span></c:if></td>
 </tr>
+<c:choose>
+<c:when test="${!isAssign}">
 <tr>
  <td class="label">Airline Name</td>
  <td class="data"><el:combo name="airline" idx="*" size="1" options="${airlines}" value="${pirep.airline}" onChange="void changeAirline(this, false)" className="req" firstEntry="< AIRLINE >" /></td>
 </tr>
+</c:when>
+<c:otherwise>
+<tr>
+ <td class="label">Airline Name</td>
+ <td class="data"><el:combo name="airline" idx="*" size="1" firstEntry="${pirep.airline}" options="${emptyList}" /></td>
+</tr>
+</c:otherwise>
+</c:choose>
 <tr>
  <td class="label">Flight Number / Leg</td>
  <td class="data"><el:text name="flightNumber" idx="*" size="3" max="4" className="req" value="${pirep.flightNumber}" />
