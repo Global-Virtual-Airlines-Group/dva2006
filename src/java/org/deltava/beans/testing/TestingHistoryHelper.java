@@ -112,7 +112,7 @@ public class TestingHistoryHelper {
 	}
 
 	/**
-	 * Returns wether a Pilot qualifies for Captain's rank in a particular stage.
+	 * Returns whether a Pilot qualifies for Captain's rank in a particular stage.
 	 * @return TRUE if the Pilot has passed the Captain's exam and flown the necessary legs in <i>ANY</i> equipment
 	 *         program in a particular stage.
 	 */
@@ -149,9 +149,10 @@ public class TestingHistoryHelper {
 			return CP_STAGE;
 
 		int maxStage = 1;
-		for (Iterator i = _tests.iterator(); i.hasNext();) {
-			Test t = (Test) i.next();
-			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && (t.getPassFail()))
+		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
+			Test t = i.next();
+			if ((t instanceof Examination) && (!_qName.equals(t.getName())) && t.getPassFail()
+					&& SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
@@ -165,11 +166,10 @@ public class TestingHistoryHelper {
 	 * @see EquipmentType#getStage()
 	 */
 	public int getMaxCheckRideStage() {
-
 		int maxStage = _myEQ.getStage();
 		for (Iterator<Test> i = _tests.iterator(); i.hasNext();) {
 			Test t = i.next();
-			if ((t instanceof CheckRide) && t.getPassFail())
+			if ((t instanceof CheckRide) && t.getPassFail() && SystemData.get("airline.code").equals(t.getOwner().getCode()))
 				maxStage = Math.max(maxStage, t.getStage());
 		}
 
