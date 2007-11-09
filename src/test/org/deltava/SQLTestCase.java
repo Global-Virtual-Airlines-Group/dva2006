@@ -7,7 +7,7 @@ import java.util.*;
 
 import junit.framework.TestCase;
 
-import org.apache.log4j.PropertyConfigurator;
+import org.apache.log4j.*;
 
 import org.deltava.jdbc.ConnectionPool;
 
@@ -24,29 +24,38 @@ public abstract class SQLTestCase extends TestCase {
 
 		// Load SystemData object
 		SystemData.init("org.deltava.util.system.XMLSystemDataLoader", true);
+		
+		// Load database properties
+        Properties props = new Properties();
+        props.load(new FileInputStream("data/jdbc.properties"));
 
 		// Init the connection Pool
 		_jdbcPool = new ConnectionPool(1);
-		_jdbcPool.setCredentials("sa", "");
-		_jdbcPool.setProperty("url", "jdbc:hsqldb:mem:test");
-		_jdbcPool.setDriver("org.hsqldb.jdbcDriver");
+        _jdbcPool.setProperties(props);
+        _jdbcPool.setCredentials(props.getProperty("user"), props.getProperty("password"));
+        _jdbcPool.setDriver(props.getProperty("driver"));
 		_jdbcPool.connect(1);
 		SystemData.add(SystemData.JDBC_POOL, _jdbcPool);
+		
+		// Create the database
+		executeSQL("DROP DATABASE IF EXISTS test");
+		executeSQL("CREATE DATABASE IF NOT EXISTS test");
+		executeSQL("USE test");
+	}
+	
+	protected void tearDown() throws Exception {
+		executeSQL("DROP DATABASE IF EXISTS test");
+		executeSQL("CREATE DATABASE IF NOT EXISTS test");
+		_jdbcPool.close();
+		LogManager.shutdown();
+		super.tearDown();
 	}
 
-	protected Connection getHSQLConnection() throws SQLException {
+	protected Connection getSQLConnection() throws SQLException {
 		try {
 			return _jdbcPool.getConnection();
 		} catch (Exception e) {
 			throw new SQLException(e.getMessage());
-		}
-	}
-
-	protected void closeConnection(Connection c) {
-		try {
-			c.close();
-		} catch (Exception e) {
-			// nothing
 		}
 	}
 
@@ -67,25 +76,29 @@ public abstract class SQLTestCase extends TestCase {
 		br.close();
 
 		// Execute the DDL
-		Connection c = getHSQLConnection();
+		Connection c = getSQLConnection();
 		PreparedStatement ps = c.prepareStatement(buf.toString());
 		ps.executeUpdate();
 		ps.close();
-		_jdbcPool.release(c);
+		returnConnection(c);
 	}
 
 	protected void executeSQL(String sql) throws SQLException {
-		Connection c = getHSQLConnection();
+		Connection c = getSQLConnection();
 		Statement s = c.createStatement();
 		s.execute(sql);
 		s.close();
-		_jdbcPool.release(c);
+		returnConnection(c);
 	}
 
 	protected void insertRow(String table, String csvEntry) throws SQLException {
-		Connection c = getHSQLConnection();
+		Connection c = getSQLConnection();
 		insertRow(c, table, csvEntry);
-		closeConnection(c);
+		returnConnection(c);
+	}
+	
+	protected void returnConnection(Connection c) {
+		_jdbcPool.release(c);
 	}
 
 	protected void insertRow(Connection c, String table, String csvEntry) throws SQLException {
@@ -106,7 +119,7 @@ public abstract class SQLTestCase extends TestCase {
 		// Prepare the statement
 		PreparedStatement ps = c.prepareStatement(buf.toString());
 		for (int x = 1; x <= values.size(); x++)
-			ps.setString(x, values.get(x));
+			ps.setString(x, values.get(x - 1));
 
 		// Execute the statement and clean up
 		ps.executeUpdate();
