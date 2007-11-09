@@ -1,10 +1,12 @@
 package org.deltava.security;
 
+import java.sql.Connection;
+
 import org.deltava.SQLTestCase;
 
 public class TestApacheSQLAuthenticator extends SQLTestCase {
 	
-	private Authenticator _auth;
+	private SQLAuthenticator _auth;
 
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -15,7 +17,7 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 		
 		// Add a dummy Airline record
 		createTable("sql/system/create_airline_info.sql");
-		insertRow("AIRLINEINFO", "DVA,Delta Virtual,dva,deltava.org,FALSE");
+		insertRow("AIRLINEINFO", "DVA,Delta Virtual,dva,deltava.org,0");
 		
 		// Add a dummy ID
 		createTable("sql/system/create_userdata.sql");
@@ -36,11 +38,17 @@ public class TestApacheSQLAuthenticator extends SQLTestCase {
 		
 		// Create a user
 		AuthPerson usr = new AuthPerson("Luke", "Kolin", "luke");
-		usr.setID(1);
+		usr.setID(8027);
+		Connection c = getSQLConnection();
+		assertNotNull(c);
+		_auth.setConnection(c);
 		
 		// Add a user
 		assertFalse(_auth.contains(usr));
 		_auth.add(usr, "password");
 		assertTrue(_auth.contains(usr));
+		_auth.authenticate(usr, "password");
+		_auth.clearConnection();
+		returnConnection(c);
 	}
 }

@@ -35,7 +35,7 @@ public abstract class ConnectionPoolAuthenticator implements SQLAuthenticator {
 	 * Clears the explicit JDBC connection for an Authenticator to use, reverting to default behavior.
 	 */
 	public void clearConnection() {
-		_con.set(null);
+		_con.remove();
 	}
 
 	/**
@@ -72,7 +72,5 @@ public abstract class ConnectionPoolAuthenticator implements SQLAuthenticator {
 	protected void closeConnection(Connection c) {
 		if (_con.get() == null)
 			_pool.release(c);
-		else
-			clearConnection();
 	}
 }
