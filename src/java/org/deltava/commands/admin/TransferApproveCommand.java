@@ -96,7 +96,7 @@ public class TransferApproveCommand extends AbstractCommand {
 				usr.setRank(rank);
 
 				// Write the promotion status update
-				if (rCmp.compare() > 0) {
+				if (rCmp.compare() >= 0) {
 					boolean eqChange = !usr.getEquipmentType().equals(newEQ.getName());
 					int promoType = eqChange ? StatusUpdate.EXTPROMOTION : StatusUpdate.INTPROMOTION;
 					StatusUpdate upd = new StatusUpdate(usr.getID(), promoType);
@@ -126,6 +126,7 @@ public class TransferApproveCommand extends AbstractCommand {
 				upd.setAuthorID(ctx.getUser().getID());
 				upd.setDescription("Ratings added: " + StringUtils.listConcat(addedRatings, ", "));
 				updates.add(upd);
+				mctxt.addData("addedRatings", StringUtils.listConcat(addedRatings, ", "));
 			}
 
 			// Figure out what ratings have been removed
@@ -149,7 +150,7 @@ public class TransferApproveCommand extends AbstractCommand {
 
 			// Get the message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
-			mctxt.setTemplate(mtdao.get("XFERAPPROVE"));
+			mctxt.setTemplate(mtdao.get(txreq.getRatingOnly() ? "XFERADDRATING" : "XFERAPPROVE"));
 
 			// Use a SQL Transaction
 			ctx.startTX();

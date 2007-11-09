@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.comparators;
 
 import java.util.*;
@@ -23,7 +23,7 @@ public class RankComparator {
       _ranks = new ArrayList<String>(ranks);
    }
    
-   protected class RankStage implements Comparable {
+   protected class RankStage implements Comparable<RankStage> {
       
       private String _rank;
       private int _stage;
@@ -34,11 +34,9 @@ public class RankComparator {
          _stage = stage;
       }
       
-      public int compareTo(Object o2) {
-         RankStage rs2 = (RankStage) o2;
-
+      public int compareTo(RankStage rs2) {
          // Compare stages, and only ranks if stages are equal
-         int tmpResult = new Integer(_stage).compareTo(new Integer(rs2._stage));
+         int tmpResult = Integer.valueOf(_stage).compareTo(Integer.valueOf(rs2._stage));
          return (tmpResult == 0) ? compareRanks(_rank, rs2._rank) : tmpResult;
       }
    }
