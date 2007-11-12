@@ -58,19 +58,6 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Initializes the list of airlines.
-	 * @param airlines a Collection of Airline beans
-	 * @see ScheduleLoadDAO#setAirports(Collection)
-	 */
-	public void setAirlines(Collection<Airline> airlines) {
-		super.setAirlines(airlines);
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
-			Airline a = i.next();
-			_aCodes.addAll(a.getCodes());
-		}
-	}
-
-	/**
 	 * Sets primary airline codes.
 	 * @param codes the primary airline codes
 	 */
@@ -173,15 +160,15 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 			CSVTokens entries = i.next();
 
 			// Load the Airports
-			Airport airportD = _airports.get(entries.get(14).toUpperCase());
-			Airport airportA = _airports.get(entries.get(22).toUpperCase());
+			Airport airportD = SystemData.getAirport(entries.get(14));
+			Airport airportA = SystemData.getAirport(entries.get(22));
 
 			// Look up the equipment type
 			String eqType = getEquipmentType(entries.get(27));
 
 			// Validate the data
 			boolean isOK = true;
-			Airline a = _airlines.get(entries.get(0));
+			Airline a = SystemData.getAirline(entries.get(0));
 			String flightCode = entries.get(0) + entries.get(1);
 			if (eqType == null) {
 				isOK = false;
