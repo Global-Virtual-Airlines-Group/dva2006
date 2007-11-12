@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -8,6 +8,8 @@ import java.text.*;
 import org.deltava.beans.schedule.*;
 
 import org.deltava.dao.DAOException;
+
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load an exported Flight Schedule.
@@ -32,7 +34,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 	 * Helper method to load an airport bean.
 	 */
 	private Airport getAirport(String code, int line) {
-		Airport a = _airports.get(code.toUpperCase());
+		Airport a = SystemData.getAirport(code);
 		if (a == null) {
 			_invalidAP.add(code.toUpperCase());
 			_errors.add("Unknown Airport at Line " + line + " - " + code);
@@ -64,7 +66,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 						
 						// Get the airline
 						String aCode = tkns.nextToken();
-						Airline a = _airlines.get(aCode.toUpperCase());
+						Airline a = SystemData.getAirline(aCode);
 						if (a == null)
 							throw new ParseException("Invalid Airline Code - " + aCode, 0);
 

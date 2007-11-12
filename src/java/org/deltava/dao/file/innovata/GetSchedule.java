@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file.innovata;
 
 import java.io.*;
@@ -13,6 +13,7 @@ import org.deltava.dao.DAOException;
 import org.deltava.dao.file.*;
 
 import org.deltava.util.*;
+import org.deltava.util.system.SystemData;
 
 /**
  * A Data Access Object to load CSV-format direct flight schedules from Innovata LLC.
@@ -65,29 +66,11 @@ public class GetSchedule extends ScheduleLoadDAO {
 	}
 
 	/**
-	 * Initializes the aircraft codes.
-	 * @throws DAOException if an I/O error occurs
-	 */
-	public void initAircraft() throws DAOException {
-
-		// Load aircraft types from disk
-		_acTypes = new Properties();
-		try {
-			_acTypes.load(ConfigLoader.getStream("/etc/iata_aircraft.properties"));
-		} catch (IOException ie) {
-			DAOException de = new DAOException("Cannot load IATA aircraft codes!");
-			de.setLogStackDump(false);
-			throw de;
-		}
-	}
-
-	/**
 	 * Loads the schedule entries from the Input stream.
 	 * @throws DAOException if an I/O error occurs
 	 * @return a Collection of CSVTokens beans
 	 */
 	public Collection<CSVTokens> load() throws DAOException {
-		initAircraft();
 		LineNumberReader br = null;
 		try {
 			br = new LineNumberReader(getReader());
@@ -140,8 +123,8 @@ public class GetSchedule extends ScheduleLoadDAO {
 			String eqType = _acTypes.getProperty(tkns.get(8));
 
 			// Load the Airports
-			Airport airportD = _airports.get(tkns.get(3).toUpperCase());
-			Airport airportA = _airports.get(tkns.get(5).toUpperCase());
+			Airport airportD = SystemData.getAirport(tkns.get(3));
+			Airport airportA = SystemData.getAirport(tkns.get(5));
 
 			// Get the effective dates
 			boolean includeFlight = true;
@@ -157,7 +140,7 @@ public class GetSchedule extends ScheduleLoadDAO {
 			}
 
 			// Load the airline
-			Airline a = _airlines.get(flightID.getAirlineCode());
+			Airline a = SystemData.getAirline(flightID.getAirlineCode());
 			if (a == null) {
 				log.warn("Unknown Airline " + flightID.getAirlineCode());
 				_errors.add("Unknown Airline " + flightID.getAirlineCode());
