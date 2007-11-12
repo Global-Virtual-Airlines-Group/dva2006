@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -9,7 +9,6 @@ import org.deltava.beans.schedule.*;
 import org.deltava.comparators.AirportComparator;
 
 import org.deltava.dao.DAOException;
-import org.deltava.util.CollectionUtils;
 
 /**
  * An abstract class to store common methods for Flight Schedule import Data Access Objects.
@@ -20,8 +19,6 @@ import org.deltava.util.CollectionUtils;
 
 public abstract class ScheduleLoadDAO extends DAO {
 
-	protected Map<String, Airline> _airlines;
-	protected Map<String, Airport> _airports;
 	protected final Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
 	protected final Collection<String> _errors = new ArrayList<String>();
 	
@@ -42,8 +39,6 @@ public abstract class ScheduleLoadDAO extends DAO {
 	/**
 	 * Initializes the IATA aircraft code mappings.
 	 * @param acInfo a collection of Aircraft profile beans
-	 * @see ScheduleLoadDAO#setAirlines(Collection)
-	 * @see ScheduleLoadDAO#setAirports(Collection)
 	 */
 	public void setAircraft(Collection<Aircraft> acInfo) {
 		for (Iterator<Aircraft> i = acInfo.iterator(); i.hasNext(); ) {
@@ -55,31 +50,6 @@ public abstract class ScheduleLoadDAO extends DAO {
 		}
 	}
 	
-	/**
-	 * Initializes the list of airlines.
-	 * @param airlines a Collection of Airline beans
-	 * @see ScheduleLoadDAO#setAirports(Collection)
-	 * @see ScheduleLoadDAO#setAircraft(Collection)
-	 */
-	public void setAirlines(Collection<Airline> airlines) {
-		_airlines = new HashMap<String, Airline>();
-		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
-			Airline a = i.next();
-			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext();)
-				_airlines.put(ci.next(), a);
-		}
-	}
-
-	/**
-	 * Initalizes the list of airports.
-	 * @param airports a Collection of Airport beans
-	 * @see ScheduleLoadDAO#setAirlines(Collection)
-	 * @see ScheduleLoadDAO#setAircraft(Collection)
-	 */
-	public void setAirports(Collection<Airport> airports) {
-		_airports = CollectionUtils.createMap(airports, "IATA");
-	}
-
 	/**
 	 * Clears and initializes the list of partner airlines.
 	 * @param airlines a Collection of PartnerAirline beans
