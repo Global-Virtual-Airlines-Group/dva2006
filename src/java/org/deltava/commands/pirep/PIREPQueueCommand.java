@@ -18,7 +18,7 @@ import org.deltava.dao.*;
 
 public class PIREPQueueCommand extends AbstractViewCommand {
 	
-	private static final Integer PENDING[] = { Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD) };
+	private static final Collection<Integer> PENDING = Arrays.asList(Integer.valueOf(FlightReport.SUBMITTED), Integer.valueOf(FlightReport.HOLD));
 
     /**
      * Executes the command.
@@ -27,13 +27,8 @@ public class PIREPQueueCommand extends AbstractViewCommand {
      */
 	public void execute(CommandContext ctx) throws CommandException {
 		
-		// Check our access level
-		if (!ctx.getRequest().isUserInRole("PIREP"))
-			throw securityException("Cannot access PIREP queue");
-		
         // Get/set start/count parameters
         ViewContext vc = initView(ctx);
-
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -43,11 +38,11 @@ public class PIREPQueueCommand extends AbstractViewCommand {
 			dao.setQueryMax(vc.getCount());
 			
 			// Get the PIREPs and load the promotion type
-			Collection<FlightReport> pireps = dao.getByStatus(Arrays.asList(PENDING));
+			Collection<FlightReport> pireps = dao.getByStatus(PENDING);
 			dao.getCaptEQType(pireps);
 			
 			// Check if we display the scroll bar
-			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() == vc.getCount()), REQUEST);
+			ctx.setAttribute("doScroll", Boolean.valueOf(pireps.size() >= vc.getCount()), REQUEST);
 			
 			// Split into my held PIREPs
 			int id = ctx.getUser().getID();
