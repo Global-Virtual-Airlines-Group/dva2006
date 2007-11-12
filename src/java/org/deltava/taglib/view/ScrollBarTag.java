@@ -1,7 +1,6 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
-import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 
 import org.deltava.commands.ViewContext;
@@ -19,7 +18,7 @@ public class ScrollBarTag extends TagSupport {
 	private boolean _forceDisplay;
 
 	/**
-	 * Sets wether the tag body should be always included. 
+	 * Sets wether the tag body should be always included.
 	 * @param doForce TRUE if the body should be always rendered, otherwise FALSE
 	 */
 	public void setForce(boolean doForce) {
@@ -51,7 +50,7 @@ public class ScrollBarTag extends TagSupport {
 	boolean hasView() {
 		return (_vctx != null);
 	}
-	
+
 	/**
 	 * Returns the view context.
 	 * @return the view context
@@ -61,27 +60,26 @@ public class ScrollBarTag extends TagSupport {
 	}
 
 	/**
-	 * Loads the view context from the page context, and determines wether to include the
-	 * tag body. The tag body will only be included if the view context is present and we are
-	 * not simaltaneously at the start and end of the view.
+	 * Loads the view context from the page context, and determines wether to include the tag body. The tag body will
+	 * only be included if the view context is present and we are not simaltaneously at the start and end of the view.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
-	 * @throws JspException if an error occurs
 	 */
-	public int doStartTag() throws JspException {
+	public int doStartTag() {
 
 		// Get the view context
 		_vctx = (ViewContext) pageContext.findAttribute(ViewContext.VIEW_CONTEXT);
 
 		// Check if we force display, otherwise display only if at start or end, or neither
-		if (_forceDisplay) {
-			return EVAL_BODY_INCLUDE;
-		} else if (_vctx == null) {
-			return SKIP_BODY;
-		} else if (isViewStart() && isViewEnd()) {
-			return SKIP_BODY;
-		}
+		int result = EVAL_BODY_INCLUDE;
+		if (_forceDisplay)
+			result = EVAL_BODY_INCLUDE;
+		else if (_vctx == null)
+			result = SKIP_BODY;
+		else if (isViewStart() && isViewEnd())
+			result = SKIP_BODY;
 
-		return EVAL_BODY_INCLUDE;
+		release();
+		return result;
 	}
 
 	/**
