@@ -168,12 +168,17 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			SetInactivity idao = new SetInactivity(con);
 			idao.setInactivity(a.getPilotID(), SystemData.getInt("users.inactive_new_days", 21), true);
 			
+			// Get the Pilot
+			GetPilot pdao = new GetPilot(con);
+			Pilot p = pdao.get(a.getPilotID());
+			
 			// Get the authenticator and add the user
 			Authenticator auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
 				sqlAuth.setConnection(con);
 				sqlAuth.add(a, a.getPassword());
+				sqlAuth.authenticate(p, a.getPassword());
 				sqlAuth.clearConnection();
 			} else
 				auth.add(a, a.getPassword());
