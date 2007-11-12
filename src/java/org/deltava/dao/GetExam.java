@@ -203,7 +203,7 @@ public class GetExam extends DAO {
 			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
 					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
 					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) "
-					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) AND ((CR.ACADEMY=?) OR (EQ.AIRLNE=?)) "
+					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) AND ((CR.ACADEMY=?) OR (EQ.AIRLINE=?)) "
 					+ "ORDER BY CR.CREATED");
 			_ps.setInt(1, Test.SUBMITTED);
 			_ps.setBoolean(2, isAcademy);
