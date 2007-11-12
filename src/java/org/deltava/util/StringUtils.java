@@ -148,7 +148,7 @@ public final class StringUtils {
 	}
 
 	/**
-	 * Parses a string and converts into a number.
+	 * Parses a string and converts into an integer.
 	 * @param value the value to convert
 	 * @param defaultValue the default value
 	 * @return the value parsed into a number, or the default value if conversion fails
@@ -159,6 +159,23 @@ public final class StringUtils {
 
 		try {
 			return Integer.parseInt(value);
+		} catch (NumberFormatException nfe) {
+			return defaultValue;
+		}
+	}
+	
+	/**
+	 * Parses a string and converts into a floating-point number.
+	 * @param value the value to convert
+	 * @param defaultValue the default value
+	 * @return the value parsed into a number, or the default value if conversion fails
+	 */
+	public static double parse(String value, double defaultValue) {
+		if (isEmpty(value))
+			return defaultValue;
+		
+		try {
+			return Double.parseDouble(value);
 		} catch (NumberFormatException nfe) {
 			return defaultValue;
 		}
