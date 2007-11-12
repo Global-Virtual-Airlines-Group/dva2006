@@ -221,6 +221,7 @@ return true;
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
  <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
+ <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pirep.equipmentType}</td>
  <td>${pirep.flightCode}</td>
@@ -236,6 +237,7 @@ return true;
 </c:if>
 
 <!-- Signup Section -->
+<c:if test="${access.canSignup || (!event.canSignup)}">
 <tr class="title caps">
  <td colspan="6" class="left">SIGN UP FOR THIS EVENT</td>
 </tr>
@@ -256,6 +258,7 @@ return true;
  <td colspan="6" class="pri bld">This Online Event is posted for informational purposes only, and signups
  are not currently available.</td>
 </tr>
+</c:if>
 </c:if>
 </el:table>
 
