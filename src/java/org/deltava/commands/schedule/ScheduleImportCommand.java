@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -20,7 +20,6 @@ import org.deltava.dao.file.innovata.*;
 import org.deltava.security.command.ScheduleAccessControl;
 
 import org.deltava.util.*;
-import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to import Flight Schedule data.
@@ -132,8 +131,6 @@ public class ScheduleImportCommand extends AbstractCommand {
 			Connection con = ctx.getConnection();
 			GetAircraft acdao = new GetAircraft(con);
 			dao.setAircraft(acdao.getAircraftTypes());
-			dao.setAirlines(SystemData.getAirlines().values());
-			dao.setAirports(SystemData.getAirports().values());
 			dao.setPartners(getPartners(csvData.getName()));
 
 			// Load the data
