@@ -42,7 +42,11 @@
 </tr>
 
 <!-- Table Data Section -->
-<c:forEach var="doc" items="${docs}">
+<c:forEach var="airline" items="${airlines}">
+<tr class="title caps">
+ <td colspan="6" class="left">${airline.name}</td>
+</tr>
+<c:forEach var="doc" items="${docs[airline]}">
 <view:row entry="${doc}">
 <c:if test="${isFleetMgr}">
  <td class="pri bld"><el:cmd url="doclib" linkID="${doc.fileName}" op="edit">${doc.name}</el:cmd></td>
@@ -56,8 +60,9 @@
  <td class="small left" colspan="2"><fmt:text value="${doc.description}" /></td>
 </view:row>
 </c:forEach>
+</c:forEach>
 
-<!-- Download Acrobat -->
+<!-- Download Adobe Acrobat Reader -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
  <td colspan="5">All manuals within the <content:airline /> Document Library require <span class="pri bld">Adobe 
