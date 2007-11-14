@@ -131,7 +131,7 @@
 	<command id="validate">
 		<name>E-Mail Validation</name>
 		<class>org.deltava.commands.security.ValidateEmailCommand</class>
-		<roles>*</roles>
+		<roles>Pilot</roles>
 	</command>
 	
 	<command id="invalidate">
@@ -1227,7 +1227,7 @@
 		<class>org.deltava.commands.register.QuestionnaireSubmitCommand</class>
 		<roles>Anonymous</roles>
 	</command>
-	
+
 	<command id="qscore">
 		<name>Score Questionnaire</name>
 		<class>org.deltava.commands.register.QuestionnaireScoreCommand</class>
@@ -1286,6 +1286,18 @@
 		<name>Delete Registration Blacklist Entry</name>
 		<class>org.deltava.commands.system.RegistrationBlockDeleteCommand</class>
 		<roles>HR</roles>
+	</command>
+
+	<command id="appvalidate">
+		<name>Applicant E-Mail Validation</name>
+		<class>org.deltava.commands.register.ValidateEMailCommand</class>
+		<roles>Anonymous</roles>
+	</command>
+
+	<command id="appresendvalidate">
+		<name>Resend Applicant E-Mail Validation</name>
+		<class>org.deltava.commands.register.ResendValidationCommand</class>
+		<roles>Anonymous</roles>
 	</command>
 
 	<command id="welcome">
