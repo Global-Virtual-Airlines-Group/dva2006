@@ -139,6 +139,23 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	}
 
 	/**
+	 * Returns Applicant objects which may be in another Airline's database.
+	 * @param udm the UserDataMap bean containg the Pilot locations
+	 * @return a Map of Pilots indexed by database ID
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Map<Integer, Applicant> get(UserDataMap udm) throws DAOException {
+		Map<Integer, Applicant> results = new HashMap<Integer, Applicant>();
+		for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext(); ) {
+			String tableName = i.next();
+			if (!UserDataMap.isPilotTable(tableName))
+				results.putAll(getByID(udm.getByTable(tableName), tableName));
+		}
+		
+		return results;
+	}
+	
+	/**
 	 * Loads an applicant based on a directory name.
 	 * @param directoryName the directory name.
 	 * @return an Applicant, or null if not found

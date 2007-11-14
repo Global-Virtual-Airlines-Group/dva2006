@@ -55,7 +55,7 @@ return true;
 
 <!-- Pilot Information -->
 <tr class="title">
- <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.name}</span></td>
+ <td colspan="2">PILOT CENTER - <span class="caps">${pilot.rank} ${pilot.name}<c:if test="${!empty pilot.pilotCode}"> (${pilot.pilotCode})</c:if></span></td>
 </tr>
 <tr>
  <td width="350" class="mid"><el:cmd className="bld" url="profile" link="${pilot}" op="edit">Edit My Profile</el:cmd></td>
@@ -63,6 +63,11 @@ return true;
 <c:if test="${!empty pilot.pilotCode}"> Your pilot code is <span class="pri bld">${pilot.pilotCode}</span>.</c:if><br />
  You signed up on <fmt:date date="${pilot.createdOn}" fmt="d" /> and have visited <fmt:quantity value="${pilot.loginCount}" single="time" />.<br />
  You are visiting today from <b>${pageContext.request.remoteHost}</b> (${pageContext.request.remoteAddr}).</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd url="emailupd" className="bld">Change E-mail Address</el:cmd></td>
+ <td class="data">Your e-mail address is <span class="sec bld">${pilot.email}</span>. Membership at <content:airline /> is contingent on providing
+ a valid, verified e-mail address. You may update your e-mail address and start the validation process.</td>
 </tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="geolocate">Update Location</el:cmd></td>
@@ -555,6 +560,9 @@ Academy students.</td>
 </tr>
 </content:filter> 
 <content:filter roles="HR,Examination,TestAdmin">
+<tr class="title caps">
+ <td colspan="2">PILOT EXAMINATIONS</td>
+</tr>
 <tr>
  <td class="mid"><el:cmd className="bld" url="eprofiles">Examination Profiles</el:cmd></td>
  <td class="data">You can add new written examinations or modify the examinations to

@@ -98,6 +98,7 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
 <c:set var="cspan" value="${(!empty exams) || (!empty statusUpdates) ? 6 : 1}" scope="request" />
 <content:sysdata var="db" name="airline.db" />
 <content:sysdata var="ranks" name="ranks" />
@@ -206,10 +207,20 @@ return true;
 <tr class="title">
  <td colspan="${cspan + 1}">E-MAIL / INSTANT MESSAGING INFORMATION</td>
 </tr>
+<c:choose>
+<c:when test="${isHR && (user.ID != pilot.ID)}">
 <tr>
  <td class="label">E-Mail Address</td>
  <td colspan="${cspan}" class="data"><el:text name="email" value="${pilot.email}" idx="*" size="48" max="64" className="req" /></td>
 </tr>
+</c:when>
+<c:otherwise>
+<tr>
+ <td class="label">E-Mail Address</td>
+ <td colspan="${cspan}" class="data">${pilot.email} <el:cmd url="emailupd" className="pri small">Change my e-mail Address</el:cmd></td>
+</tr>
+</c:otherwise>
+</c:choose>
 <tr>
  <td class="label" valign="top">E-Mail Notifications</td>
  <td colspan="${cspan}" class="data"><el:check name="notifyOption" idx="*" width="215" cols="2" newLine="true" options="${notifyOptions}" checked="${pilot.notifyOptions}" /></td>
