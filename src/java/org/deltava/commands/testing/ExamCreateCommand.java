@@ -82,6 +82,9 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 			// Get the Message template
 			GetMessageTemplate mtdao = new GetMessageTemplate(con);
 			mctxt.setTemplate(mtdao.get("EXAMCREATE"));
+			
+			// Save the exam profile
+			mctxt.addData("eProfile", ep);
 
 			// Create the examination
 			ex = new Examination(examName);
@@ -128,6 +131,9 @@ public class ExamCreateCommand extends AbstractTestHistoryCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the examination
+		mctxt.addData("exam", ex);
 
 		// Send notification message
 		Mailer mailer = new Mailer(ctx.getUser());
