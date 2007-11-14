@@ -38,8 +38,7 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 
 		// Calculate access for adding content
 		FleetEntryAccessControl access = null;
-		
-		List<Manual> results = new ArrayList<Manual>();
+		Map<AirlineInformation, Collection<Manual>> results = new LinkedHashMap<AirlineInformation, Collection<Manual>>();
 		try {
 			Connection con = ctx.getConnection();
 
@@ -49,21 +48,20 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 			for (Iterator i = apps.values().iterator(); i.hasNext();) {
 				AirlineInformation info = (AirlineInformation) i.next();
 				if (info.getDB().equalsIgnoreCase(SystemData.get("airline.db")))
-					results.addAll(0, dao.getManuals(info.getDB(), false));
+					results.put(info, dao.getManuals(info.getDB(), false));
 				else {
 					Collection<Manual> entries = dao.getManuals(info.getDB(), false);
 					appendDB(entries, info.getDB());
-					results.addAll(entries);
+					results.put(info, entries);
 				}
 			}
-			
+
 			// Load the user's Flight Academy courses
 			if (SystemData.getBoolean("academy.enabled")) {
 				GetAcademyCourses cdao = new GetAcademyCourses(con);
 				access = new ManualAccessControl(ctx, cdao.getByPilot(ctx.getUser().getID()));
-			} else {
+			} else
 				access = new ManualAccessControl(ctx, new HashSet<Course>());
-			}
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
@@ -71,22 +69,26 @@ public class DocumentLibraryCommand extends AbstractLibraryCommand {
 		}
 
 		// Validate our access to the results
-		for (Iterator<Manual> i = results.iterator(); i.hasNext();) {
-			Manual e = i.next();
-			access.setEntry(e);
-			access.validate();
+		for (Iterator<Collection<Manual>> ci = results.values().iterator(); ci.hasNext();) {
+			Collection<Manual> manuals = ci.next();
+			for (Iterator<Manual> i = manuals.iterator(); i.hasNext();) {
+				Manual e = i.next();
+				access.setEntry(e);
+				access.validate();
 
-			// Check that the resource exists
-			if (e.getSize() == 0) {
-				log.warn(e.getFullName() + " not found in file system!");
-				if (!ctx.isUserInRole("Fleet"))
+				// Check that the resource exists
+				if (e.getSize() == 0) {
+					log.warn(e.getFullName() + " not found in file system!");
+					if (!ctx.isUserInRole("Fleet"))
+						i.remove();
+				} else if (!access.getCanView()) {
 					i.remove();
-			} else if (!access.getCanView()) {
-				i.remove();
+				}
 			}
 		}
 
 		// Save the results in the request
+		ctx.setAttribute("airlines", results.keySet(), REQUEST);
 		ctx.setAttribute("docs", results, REQUEST);
 		ctx.setAttribute("access", access, REQUEST);
 
