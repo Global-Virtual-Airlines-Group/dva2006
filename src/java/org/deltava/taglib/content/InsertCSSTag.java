@@ -52,7 +52,7 @@ public class InsertCSSTag extends InsertContentTag {
 	 * @see InsertCSSTag#getScheme()
 	 */
 	public void setScheme(String name) {
-		_scheme = name.toLowerCase().replace(' ', '_');
+		_scheme = (name == null) ? null : name.toLowerCase().replace(' ', '_');
 	}
 	
 	/**
@@ -145,7 +145,7 @@ public class InsertCSSTag extends InsertContentTag {
 	}
 
 	/**
-	 * Release's the tag's state.
+	 * Releases the tag's state.
 	 */
 	public void release() {
 		super.release();
