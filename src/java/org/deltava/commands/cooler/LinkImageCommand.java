@@ -73,7 +73,8 @@ public class LinkImageCommand extends AbstractCommand {
 			
 			// Get the linked images
 			GetCoolerLinks ldao = new GetCoolerLinks(con);
-			Collection<Object> imgURLs = CollectionUtils.createMap(ldao.getURLs(mt.getID()), "URL").keySet();
+			Map<String, LinkedImage> urlMap = CollectionUtils.createMap(ldao.getURLs(mt.getID()), "URL");
+			Collection<String> imgURLs = new LinkedHashSet<String>(urlMap.keySet());
 			
 			// Validate the image
 			LinkedImage img = null;
@@ -101,7 +102,7 @@ public class LinkImageCommand extends AbstractCommand {
 					else {
 						img = new LinkedImage(imgURLs.size() + 1, url.toString());
 						img.setDescription(ctx.getParameter("desc"));
-						imgURLs.add(img);
+						imgURLs.add(url.toString());
 					}
 				} else
 					ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
