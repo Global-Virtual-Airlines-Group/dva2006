@@ -134,18 +134,12 @@ public class RegisterCommand extends AbstractCommand {
 		a.setTimeFormat(ctx.getParameter("tf"));
 		a.setNumberFormat(ctx.getParameter("nf"));
 		a.setSimVersion(ctx.getParameter("fsVersion"));
+		a.setLegacyHours(StringUtils.parse(ctx.getParameter("legacyHours"), 0.0));
 
 		// Save the registration host name
 		String hostName = ctx.getRequest().getRemoteHost();
 		a.setRegisterAddress(ctx.getRequest().getRemoteAddr());
 		a.setRegisterHostName(StringUtils.isEmpty(hostName) ? a.getRegisterAddress() : hostName);
-
-		// Parse legacy hours
-		try {
-			a.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
-		} catch (NumberFormatException nfe) {
-			a.setLegacyHours(0);
-		}
 
 		// Set Notification Options
 		Collection<String> notifyOptions = ctx.getParameters("notifyOption");
@@ -317,8 +311,13 @@ public class RegisterCommand extends AbstractCommand {
 		ctx.setAttribute("applicant", a, REQUEST);
 
 		// Send an e-mail notification to the user
-		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? a : eMailFrom);
+		boolean isSMTPDebug = SystemData.getBoolean("smtp.testMode");
+		Mailer mailer = new Mailer(isSMTPDebug ? a : eMailFrom);
 		mailer.setContext(mctxt);
+		if (!isSMTPDebug)
+			mailer.setCC(Mailer.makeAddress(SystemData.get("airline.mail.hr")));
+		
+		// Send the message
 		mailer.send(a);
 
 		// Forward to the welcome page

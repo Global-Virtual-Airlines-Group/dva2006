@@ -181,7 +181,6 @@ public class LoginCommand extends AbstractCommand {
 			if (av != null) {
 				log.info("Invalidated e-mail address for " + p.getName());
 				s.setAttribute("addr", av);
-				s.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE);
 				s.setAttribute("next_url", "validate.do");
 			} else if (!StringUtils.isEmpty(ctx.getParameter("redirectTo")))
 				s.setAttribute("next_url", ctx.getParameter("redirectTo"));

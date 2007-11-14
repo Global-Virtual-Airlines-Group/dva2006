@@ -4,13 +4,11 @@ package org.deltava.commands.pilot;
 import java.util.*;
 import java.sql.Connection;
 
-import javax.servlet.http.HttpSession;
-
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.academy.Course;
 import org.deltava.beans.schedule.ScheduleSearchCriteria;
-import org.deltava.beans.system.TransferRequest;
+import org.deltava.beans.system.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -41,21 +39,20 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 
 		// Get the command results
 		CommandResult result = ctx.getResult();
-
-		// Check if we have a invalid address session attribute
-		HttpSession s = ctx.getSession();
-		Boolean attrValue = (Boolean) s.getAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
-		boolean invalidAddr = (attrValue == null) ? false : attrValue.booleanValue();
-		if (invalidAddr) {
-			result.setType(CommandResult.REDIRECT);
-			result.setURL("validate.do");
-			result.setSuccess(true);
-			return;
-		}
-
 		Pilot p = null;
 		try {
 			Connection con = ctx.getConnection();
+			
+			// Check if we have an address validation entry
+			GetAddressValidation avdao = new GetAddressValidation(con);
+			AddressValidation av = avdao.get(ctx.getUser().getID());
+			if (av != null) {
+				ctx.release();
+				result.setType(CommandResult.REDIRECT);
+				result.setURL("validate.do");
+				result.setSuccess(true);
+				return;	
+			}
 			
 			// Get the User data object
 			GetUserData uddao = new GetUserData(con);
@@ -231,7 +228,7 @@ public class PilotCenterCommand extends AbstractTestHistoryCommand {
 		// Get latest acars version
 		if (ctx.isUserInRole("Admin") && SystemData.getBoolean("acars.enabled")) {
 			ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
-			ctx.setAttribute("latestBuild", new Integer(cInfo.getLatest()), REQUEST);
+			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
 		}
 
 		// Figure out the image to display

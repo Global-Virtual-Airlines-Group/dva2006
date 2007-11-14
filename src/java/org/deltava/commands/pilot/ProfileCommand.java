@@ -16,7 +16,6 @@ import org.deltava.comparators.RankComparator;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
-import org.deltava.mail.*;
 
 import org.deltava.security.*;
 import org.deltava.security.command.*;
@@ -397,69 +396,11 @@ public class ProfileCommand extends AbstractFormCommand {
 				}
 			}
 
-			// Check if we're updating the e-mail address
-			String newEMail = ctx.getParameter("email");
-			boolean isEMailUpdate = !p.getEmail().equals(newEMail);
-			if (StringUtils.isEmpty(newEMail))
-				isEMailUpdate = false;
-
-			// Update e-mail address
-			if (isEMailUpdate && ctx.isUserInRole("HR") && (p.getID() != ctx.getUser().getID())) {
-				p.setEmail(newEMail);
+			// Only allow e-mail updates if in HR
+			if (ctx.isUserInRole("HR") && (ctx.getUser().getID() != p.getID())) {
+				p.setEmail(ctx.getParameter("email"));
 				SetAddressValidation avwdao = new SetAddressValidation(con);
 				avwdao.delete(p.getID());
-			} else if (isEMailUpdate) {
-				AddressValidation av = new AddressValidation(p.getID(), newEMail);
-				AddressValidationHelper.calculateCRC32(av);
-
-				// Get the databases
-				GetUserData uddao = new GetUserData(con);
-				Collection<AirlineInformation> airlines = uddao.getAirlines(true).values();
-
-				// Make sure the address is unique
-				boolean isOK = true;
-				Pilot p2 = p.cloneExceptID();
-				p2.setEmail(newEMail);
-				for (Iterator<AirlineInformation> i = airlines.iterator(); isOK && i.hasNext();) {
-					AirlineInformation info = i.next();
-
-					// Check Pilots & applicants
-					Collection<Integer> dupeResults = rdao.checkUniqueEMail(p2, info.getDB());
-					if (!dupeResults.isEmpty()) {
-						log.warn("Duplicate E-mail addresses " + dupeResults.toString() + " found for " + p.getName());
-						isOK = false;
-					}
-				}
-
-				if (isOK) {
-					p.setEmail(newEMail);
-
-					// Initialize the message context
-					MessageContext mctxt = new MessageContext();
-					mctxt.addData("addrValid", av);
-					mctxt.addData("user", p);
-
-					// Send the validation code via e-mail
-					GetMessageTemplate mtdao = new GetMessageTemplate(con);
-					mctxt.setTemplate(mtdao.get("EMAILUPDATE"));
-
-					// Send the message
-					Mailer mailer = new Mailer(null);
-					mailer.setContext(mctxt);
-					mailer.send(Mailer.makeAddress(newEMail, p.getName()));
-
-					// Set the session flag
-					if (p.getID() == ctx.getUser().getID())
-						ctx.setAttribute(CommandContext.ADDRINVALID_ATTR_NAME, Boolean.TRUE, SESSION);
-
-					// Save the address validation entry
-					SetAddressValidation avwdao = new SetAddressValidation(con);
-					avwdao.write(av);
-					ctx.setAttribute("addrValid", av, REQUEST);
-				} else {
-					ctx.setAttribute("eMailUpdateDupe", Boolean.TRUE, REQUEST);
-					ctx.setAttribute("newEmail", newEMail, REQUEST);
-				}
 			}
 
 			// Update the pilot name
@@ -521,18 +462,10 @@ public class ProfileCommand extends AbstractFormCommand {
 					ctx.setAttribute("newName", p.getName(), REQUEST);
 				} else {
 					// Load the Pilot profiles
-					Collection<Person> users = new LinkedHashSet<Person>();
+					Map<Integer, Person> users = new LinkedHashMap<Integer, Person>();
 					UserDataMap udm = uddao.get(dupeResults);
-					for (Iterator<String> i = udm.getTableNames().iterator(); i.hasNext();) {
-						String dbTableName = i.next();
-
-						// Get the pilots/applicants from each table
-						if (UserDataMap.isPilotTable(dbTableName)) {
-							users.addAll(rdao.getByID(udm.getByTable(dbTableName), dbTableName).values());
-						} else {
-							users.addAll(adao.getByID(udm.getByTable(dbTableName), dbTableName).values());
-						}
-					}
+					users.putAll(rdao.get(udm));
+					users.putAll(adao.get(udm));
 
 					// Save the Pilot profiles
 					ctx.setAttribute("userData", udm, REQUEST);
@@ -853,8 +786,7 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get TeamSpeak2 data
 			if (SystemData.getBoolean("airline.voice.ts2.enabled") && !crossDB) {
 				GetTS2Data ts2dao = new GetTS2Data(con);
-				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"),
-						REQUEST);
+				ctx.setAttribute("ts2Servers", CollectionUtils.createMap(ts2dao.getServers(p.getRoles()), "ID"), REQUEST);
 				ctx.setAttribute("ts2Clients", ts2dao.getUsers(p.getID()), REQUEST);
 			}
 

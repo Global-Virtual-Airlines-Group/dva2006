@@ -3,10 +3,6 @@ package org.deltava.security;
 
 import java.util.zip.CRC32;
 
-import javax.servlet.http.HttpSession;
-
-import org.deltava.beans.system.AddressValidation;
-import org.deltava.commands.CommandContext;
 import org.deltava.crypt.*;
 
 import org.deltava.util.Base64;
@@ -42,15 +38,6 @@ public final class AddressValidationHelper {
    }
    
    /**
-    * Calculates the hash code for an Address Validation bean with a populated e-mail address.
-    * @param av the AddressValidation bean
-    * @throws NullPointerException if av is null
-    */
-   public static void calculateHashCode(AddressValidation av) {
-      av.setHash(calculateHashCode(av.getAddress()));
-   }
-   
-   /**
     * Calculates the validate hash code for an e-mail address using CRC32, converted to hexadecimal.
     * @param addr the e-mail address
     * @return the hash code
@@ -65,15 +52,6 @@ public final class AddressValidationHelper {
 	   StringBuilder buf = new StringBuilder(Long.toHexString(crc.getValue()));
 	   buf.append('=');
 	   return buf.toString();
-   }
-   
-   /**
-    * Calculates the hash code using CRC32 for an Address Validation bean with a populated e-mail address.
-    * @param av the AddressValidation bean
-    * @throws NullPointerException if av is null
-    */
-   public static void calculateCRC32(AddressValidation av) {
-      av.setHash(calculateCRC32(av.getAddress()));
    }
    
    /**
@@ -96,15 +74,5 @@ public final class AddressValidationHelper {
 		   buf.append('=');
 	   
 	   return buf.toString();
-   }
-   
-   /**
-    * Removes the <i>address invalid</i> flag from an HTTP session.
-    * @param s the HTTP session
-    * @see CommandContext#ADDRINVALID_ATTR_NAME
-    */
-   public static void clearSessionFlag(HttpSession s) {
-	   if (s != null)
-		   s.removeAttribute(CommandContext.ADDRINVALID_ATTR_NAME);
    }
 }
