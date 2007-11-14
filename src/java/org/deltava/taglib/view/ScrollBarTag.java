@@ -86,7 +86,6 @@ public class ScrollBarTag extends TagSupport {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
-		super.release();
 		_forceDisplay = false;
 	}
 }
