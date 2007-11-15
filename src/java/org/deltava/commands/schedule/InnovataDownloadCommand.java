@@ -9,6 +9,7 @@ import org.deltava.beans.schedule.*;
 import org.deltava.commands.*;
 
 import org.deltava.dao.GetAircraft;
+import org.deltava.dao.GetAirline;
 import org.deltava.dao.DAOException;
 import org.deltava.dao.file.innovata.*;
 
@@ -65,9 +66,11 @@ public class InnovataDownloadCommand extends ScheduleImportCommand {
 			Connection con = ctx.getConnection();
 
 			// Initialize the DAO
+			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setAircraft(acdao.getAircraftTypes());
+			dao.setAirlines(adao.getActive().values());
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setBufferSize(65536);
 			ctx.release();

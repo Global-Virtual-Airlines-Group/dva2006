@@ -56,6 +56,18 @@ public class GetFullSchedule extends ScheduleLoadDAO {
 				_data.add(tkn);
 		}
 	}
+	
+	/**
+	 * Initializes the list of airlines.
+	 * @param airlines a Collection of Airline beans
+	 */
+	public void setAirlines(Collection<Airline> airlines) {
+		super.setAirlines(airlines);
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
+			Airline a = i.next();
+			_aCodes.addAll(a.getCodes());
+		}
+	}
 
 	/**
 	 * Sets primary airline codes.
