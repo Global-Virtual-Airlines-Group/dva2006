@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -13,6 +13,7 @@ import org.deltava.mail.*;
 
 import org.deltava.security.command.CourseAccessControl;
 
+import org.deltava.util.CollectionUtils;
 import org.deltava.util.system.SystemData;
 
 /**
@@ -62,27 +63,31 @@ public class CourseCommentCommand extends AbstractCommand {
 			mctxt.addData("comment", cc);
 			mctxt.addData("course", c);
 			
-			// Get Pilot IDs from comments
+			// Get instructors
+			GetPilotDirectory pddao = new GetPilotDirectory(con);
+			Map<Integer, Pilot> ins = CollectionUtils.createMap(pddao.getByRole("Instructor", SystemData.get("airline.db")), "ID");
+			
+			// Get Pilot IDs from comments - only add instructors
 			Collection<Integer> IDs = new HashSet<Integer>();
 			IDs.add(new Integer(c.getPilotID()));
 			for (Iterator<CourseComment> i = c.getComments().iterator(); i.hasNext(); ) {
 				CourseComment comment = i.next();
-				IDs.add(new Integer(comment.getAuthorID()));
+				Integer id = new Integer(comment.getAuthorID());
+				if (ins.containsKey(id))
+					IDs.add(id);
 			}
 			
 			// Load Pilot Information
 			GetPilot pdao = new GetPilot(con);
 			addrs = new ArrayList<Pilot>(pdao.getByID(IDs, "PILOTS").values());
 			
-			// Get instructors
-			GetPilotDirectory pddao = new GetPilotDirectory(con);
-			Collection<Pilot> ins = pddao.getByRole("Instructor", SystemData.get("airline.db"));
-			for (Iterator<Pilot> i = ins.iterator(); i.hasNext(); ) {
-				Pilot p = i.next();
-				if (!IDs.contains(new Integer(p.getID())))
-					addrs.add(p);
+			// Add additional instructors 
+			for (Iterator<Integer> i = ins.keySet().iterator(); i.hasNext(); ) {
+				Integer id = i.next();
+				if (!IDs.contains(id))
+					addrs.add(ins.get(id));
 			}
-			
+
 			// Get the write DAO and write the comment
 			SetAcademy wdao = new SetAcademy(con);
 			wdao.comment(cc);
