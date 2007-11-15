@@ -19,6 +19,7 @@ import org.deltava.dao.DAOException;
 
 public abstract class ScheduleLoadDAO extends DAO {
 
+	protected Map<String, Airline> _airlines;
 	protected final Collection<PartnerAirline> _partners = new ArrayList<PartnerAirline>();
 	protected final Collection<String> _errors = new ArrayList<String>();
 	
@@ -47,6 +48,20 @@ public abstract class ScheduleLoadDAO extends DAO {
 				String iata = ci.next();
 				_iataMappings.put(iata, a);
 			}
+		}
+	}
+	
+	/**
+	 * Initializes the list of airlines.
+	 * @param airlines a Collection of Airline beans
+	 * @see ScheduleLoadDAO#setAircraft(Collection)
+	 */
+	public void setAirlines(Collection<Airline> airlines) {
+		_airlines = new HashMap<String, Airline>();
+		for (Iterator<Airline> i = airlines.iterator(); i.hasNext();) {
+			Airline a = i.next();
+			for (Iterator<String> ci = a.getCodes().iterator(); ci.hasNext();)
+				_airlines.put(ci.next(), a);
 		}
 	}
 	

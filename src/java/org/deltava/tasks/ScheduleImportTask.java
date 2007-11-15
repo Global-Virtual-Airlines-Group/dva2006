@@ -67,10 +67,12 @@ public class ScheduleImportTask extends Task {
 			Connection con = ctx.getConnection();
 
 			// Initialize the DAOs
+			GetAirline adao = new GetAirline(con);
 			GetAircraft acdao = new GetAircraft(con);
 			GetFullSchedule dao = new GetFullSchedule(is);
 			dao.setPrimaryCodes((List) SystemData.getObject("schedule.innovata.primary_codes"));
 			dao.setAircraft(acdao.getAircraftTypes());
+			dao.setAirlines(adao.getActive().values());
 			dao.setBufferSize(65536);
 			ctx.release();
 
