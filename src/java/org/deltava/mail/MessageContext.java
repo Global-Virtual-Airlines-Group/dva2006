@@ -224,7 +224,11 @@ public class MessageContext {
                     return "";
                 }
             } else {
-            	log.warn("Cannot evaluate " + objName + " at " + methodName);
+            	if (_mt == null)
+            		log.warn("Cannot evaluate " + objName + " at " + methodName);
+            	else
+            		log.warn("Cannot evaluate " + objName + " at " + methodName + " in " + _mt.getName());
+            	
                 return "";
             }
             
