@@ -207,9 +207,10 @@ public class ApacheSQLAuthenticator extends ConnectionPoolAuthenticator {
 			}
 			
 			// Commit the transaction
-			con.commit();
-			if (isAutoCommit)
+			if (isAutoCommit) {
+				con.commit();
 				con.setAutoCommit(true);
+			}
 		} catch (Exception e) {
 			throw new SecurityException(e);
 		} finally {
