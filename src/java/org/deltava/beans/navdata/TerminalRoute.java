@@ -1,10 +1,12 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
+
+import org.deltava.beans.schedule.Airport;
 
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -36,6 +38,16 @@ public class TerminalRoute extends Airway {
       _airport = icao.trim().toUpperCase();
       setName(name);
       setType(type);
+   }
+   
+   /**
+    * Creates a new Terminal Route.
+    * @param a the Airport
+    * @param name the route name
+    * @param type the type
+    */
+   public TerminalRoute(Airport a, String name, int type) {
+	   this(a.getICAO(), name, type);
    }
    
    /**
@@ -129,11 +141,12 @@ public class TerminalRoute extends Airway {
     * Compares two terminal routes by comparing their names and transition waypoints.
     * @see Comparable#compareTo(Object)
     */
-   public final int compareTo(Object o) {
-      TerminalRoute tr2 = (TerminalRoute) o;
-      int tmpResult = _name.compareTo(tr2.getName());
-      if (tmpResult == 0)
+   public final int compareTo(Airway a2) {
+      int tmpResult = super.compareTo(a2);
+      if (tmpResult == 0) {
+    	  TerminalRoute tr2 = (TerminalRoute) a2;
          tmpResult = _transition.compareTo(tr2.getTransition());
+      }
       
       return tmpResult;
    }
@@ -142,6 +155,6 @@ public class TerminalRoute extends Airway {
     * Checks for equality by comparing names.
     */
    public boolean equals(Object o) {
-      return (o instanceof TerminalRoute) ? (compareTo(o) == 0) : false;
+      return (o instanceof TerminalRoute) ? (compareTo((TerminalRoute) o) == 0) : false;
    }
 }
