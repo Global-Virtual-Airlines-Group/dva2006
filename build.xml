@@ -3,15 +3,15 @@
 	<!-- Buld the JavaDoc -->
     <target name="javadoc">
 		<mkdir dir="${java.io.tmpdir}/javadoc" />
-        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.5" use="false"
+        <javadoc destdir="${java.io.tmpdir}/javadoc" access="package" source="1.6" use="false"
     		useexternalfile="true" notree="false" nonavbar="false" noindex="false" splitindex="true" 
         	author="true" version="true" nodeprecatedlist="false" nodeprecated="false">
         	<fileset dir=".">
         		<include name="src/java/**/*.java" />
         		<include name="../DVA ACARS/src/java/**/*.java" />
         	</fileset>
-            <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
-        	<link href="http://java.sun.com/j2ee/sdk_1.3/techdocs/api" />
+            <link href="http://java.sun.com/javase/6/docs/api/" />
+        	<link href="http://java.sun.com/j2ee/1.4/docs/api/" />
         	<link href="http://www.jdom.org/docs/apidocs" />
         	<link href="http://logging.apache.org/log4j/docs/api" />
         	<link href="http://www.servlets.com/cos/javadoc" />
@@ -27,11 +27,6 @@
 	   			<prefixlines prefix="javadoc." />
    			</filterchain>
    		</loadproperties>
-    	
-    	<!-- Clean out the JavaDoc -->
-    	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
-    		host="${javadoc.ssh.server}" timeout="7500" failonerror="no"
-    		command="rm -Rd ${javadoc.ssh.path.javadoc}/*" />
     	
     	<!-- Clean out the JavaDoc -->
     	<sshexec password="${javadoc.ssh.pwd}" username="${javadoc.ssh.user}" trust="yes"
