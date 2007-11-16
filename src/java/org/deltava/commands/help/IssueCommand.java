@@ -150,7 +150,6 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	protected void execEdit(CommandContext ctx) throws CommandException {
-
 		boolean isNew = (ctx.getID() == 0);
 		try {
 			Connection con = ctx.getConnection();
@@ -195,6 +194,7 @@ public class IssueCommand extends AbstractFormCommand {
 			assignees.addAll(pdao.getByRole("PIREP", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Examination", SystemData.get("airline.db")));
 			assignees.addAll(pdao.getByRole("Signature", SystemData.get("airline.db")));
+			assignees.addAll(pdao.getByRole("HelpDesk", SystemData.get("airline.db")));
 			ctx.setAttribute("assignees", assignees, REQUEST);
 			
 			// Get options for issue conversion
@@ -225,7 +225,6 @@ public class IssueCommand extends AbstractFormCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	protected void execRead(CommandContext ctx) throws CommandException {
-
 		try {
 			Connection con = ctx.getConnection();
 			
