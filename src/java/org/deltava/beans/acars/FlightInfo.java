@@ -3,10 +3,8 @@ package org.deltava.beans.acars;
 
 import java.util.*;
 
-import org.deltava.beans.DatabaseBean;
-import org.deltava.beans.ViewEntry;
-
-import org.deltava.beans.navdata.NavigationDataBean;
+import org.deltava.beans.*;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.CollectionUtils;
@@ -14,7 +12,7 @@ import org.deltava.util.CollectionUtils;
 /**
  * A bean to store ACARS Flight Information records.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -34,6 +32,9 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	private Airport _airportD;
 	private Airport _airportA;
 	private Airport _airportL;
+	
+	private TerminalRoute _sid;
+	private TerminalRoute _star;
 
 	private String _route;
 	private String _remarks;
@@ -164,6 +165,26 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public Airport getAirportL() {
 		return _airportL;
+	}
+	
+	/**
+	 * Returns the Departure Route for this flight.
+	 * @return the SID TerminalRoute bean
+	 * @see FlightInfo#setSID(TerminalRoute)
+	 * @see FlightInfo#getSTAR()
+	 */
+	public TerminalRoute getSID() {
+		return _sid;
+	}
+	
+	/**
+	 * Returns the Arrival Route for this flight. 
+	 * @return the STAR TerminalRoute bean
+	 * @see FlightInfo#setSTAR(TerminalRoute)
+	 * @see FlightInfo#getSID()
+	 */
+	public TerminalRoute getSTAR() {
+		return _star;
 	}
 
 	/**
@@ -398,6 +419,26 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 		_airportL = a;
 	}
 
+	/**
+	 * Updates the Departure route used on this flight.
+	 * @param sid the SID TerminalRoute bean
+	 * @see FlightInfo#getSID()
+	 * @see FlightInfo#setSTAR(TerminalRoute)
+	 */
+	public void setSID(TerminalRoute sid) {
+		_sid = sid;
+	}
+	
+	/**
+	 * Updates the Arrival Route used on this flight.
+	 * @param star the STAR TerminalRoute bean
+	 * @see FlightInfo#getSTAR()
+	 * @see FlightInfo#setSID(TerminalRoute)
+	 */
+	public void setSTAR(TerminalRoute star) {
+		_star = star;
+	}
+	
 	/**
 	 * Updates the filed altitude for this flight.
 	 * @param alt the altitude in feet or as a flight level

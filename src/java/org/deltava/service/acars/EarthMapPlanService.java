@@ -62,7 +62,14 @@ public class EarthMapPlanService extends GoogleEarthService {
 				int flightID = i.next().intValue();
 				FlightInfo info = dao.getInfo(flightID);
 				if (info != null) {
-					List<String> routeEntries = StringUtils.split(info.getRoute(), " ");
+					Collection<String> routeEntries = new LinkedHashSet<String>();
+					if (info.getSID() != null)
+						routeEntries.addAll(info.getSID().getWaypoints());
+					routeEntries.addAll(StringUtils.split(info.getRoute(), " "));
+					if (info.getSTAR() != null)
+						routeEntries.addAll(info.getSTAR().getWaypoints());
+					
+					// Load the navaids
 					NavigationDataMap navaids = navdao.getByID(routeEntries);
 					GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
 					int distance = lastWaypoint.distanceTo(info.getAirportA());

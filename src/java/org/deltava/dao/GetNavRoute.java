@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
+import org.deltava.beans.schedule.Airport;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
@@ -99,6 +100,49 @@ public class GetNavRoute extends GetNavData {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?) LIMIT 1");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
+
+			// Execute the query
+			List<TerminalRoute> results = executeSIDSTAR();
+			result = results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+
+		// Add to the cache
+		_rCache.add(result);
+		return (TerminalRoute) result;
+	}
+	
+	/**
+	 * Retrieves a specifc SID/STAR.
+	 * @param a the Airport
+	 * @param type the route type
+	 * @param name the name of the Terminal Route, as NAME.TRANSITION.RWY
+	 * @return a TerminalRoute bean, or null if not found
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public TerminalRoute getRoute(Airport a, int type, String name) throws DAOException {
+
+		// Chceck the cache
+		Route result = _rCache.get(name);
+		if ((result != null) && (result instanceof TerminalRoute)) {
+			TerminalRoute tr = (TerminalRoute) result;
+			if ((tr.getType() == type) && (tr.getICAO().equals(a.getICAO())))
+				return tr;
+		}
+			
+		// Split the name
+		StringTokenizer tkns = new StringTokenizer(name, ".");
+		if (tkns.countTokens() != 3)
+			return null;
+
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME=?) "
+					+ "AND (TRANSITION=?) AND (RUNWAY=?) LIMIT 1");
+			_ps.setString(1, a.getICAO());
+			_ps.setString(2, tkns.nextToken().toUpperCase());
+			_ps.setString(3, tkns.nextToken().toUpperCase());
+			_ps.setString(4, tkns.nextToken().toUpperCase());
 
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
@@ -233,7 +277,7 @@ public class GetNavRoute extends GetNavData {
 	}
 
 	/**
-	 * Returns all waypoints for a route, expanding SIDs/STARs and Airways.
+	 * Returns all waypoints for a route, expanding Airways but <i>NOT</i> SID/STARs.
 	 * @param route the space-delimited route
 	 * @return an ordered List of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
@@ -256,58 +300,27 @@ public class GetNavRoute extends GetNavData {
 		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);
-
-			// Check for an SID/STAR
-			if (x == 1) {
-				TerminalRoute tr = null;
-				if (wp.indexOf('.') != -1)
-					tr = getRoute(wp);
-				else if (x < (tkns.size() - 1))
-					tr = getRoute(tkns.get(0) + "." + wp);
-					
-				// If we've found something, load the waypoints
-				if (tr != null) {
-					NavigationDataMap ndMap = getByID(tr.getWaypoints());
-					routePoints.addAll(tr.getWaypoints(ndMap));
-					wp = null;
-				}
-			} else if (x == (tkns.size() - 2)) {
-				TerminalRoute tr = null;
-				if (wp.indexOf('.') != -1)
-					tr = getRoute(wp);
-				else if (x > 1)
-					tr = getRoute(tkns.get(tkns.size() - 1) + "." + wp);
-
-				// If we've found something, load the waypoints
-				if (tr != null) {
-					NavigationDataMap ndMap = getByID(tr.getWaypoints());
-					routePoints.addAll(tr.getWaypoints(ndMap));
-					wp = null;
-				}
-			} 
 			
-			// We do the null check because if we did a SID/STAR check with no hits, we need to run this
-			if (wp != null) {
-				Airway aw = getAirway(wp); // Check if we're referencing an airway
-				if (aw != null) {
-					String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
-					Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
-					NavigationDataMap ndMap = getByID(awPoints);
-					for (Iterator<String> i = awPoints.iterator(); i.hasNext();) {
-						String awp = i.next();
-						NavigationDataBean nd = ndMap.get(awp, lastPosition);
-						if (nd != null) {
-							routePoints.add(nd);
-							lastPosition = nd;
-						}
-					}
-				} else {
-					NavigationDataMap navaids = get(wp);
-					NavigationDataBean nd = navaids.get(wp, lastPosition);
+//			 Check if we're referencing an airway
+			Airway aw = getAirway(wp); 
+			if (aw != null) {
+				String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
+				Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
+				NavigationDataMap ndMap = getByID(awPoints);
+				for (Iterator<String> i = awPoints.iterator(); i.hasNext();) {
+					String awp = i.next();
+					NavigationDataBean nd = ndMap.get(awp, lastPosition);
 					if (nd != null) {
 						routePoints.add(nd);
 						lastPosition = nd;
 					}
+				}
+			} else {
+				NavigationDataMap navaids = get(wp);
+				NavigationDataBean nd = navaids.get(wp, lastPosition);
+				if (nd != null) {
+					routePoints.add(nd);
+					lastPosition = nd;
 				}
 			}
 		}

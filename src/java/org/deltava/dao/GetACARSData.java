@@ -6,7 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.acars.*;
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.schedule.*;
+import org.deltava.beans.navdata.TerminalRoute;
 
 import org.deltava.util.system.SystemData;
 
@@ -180,18 +181,21 @@ public class GetACARSData extends DAO {
 	 */
 	public FlightInfo getInfo(int flightID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C WHERE (F.CON_ID=C.ID) "
-					+ "AND (F.ID=?)");
+			prepareStatementWithoutLimits("SELECT F.*, C.PILOT_ID FROM acars.FLIGHTS F, acars.CONS C "
+					+ "WHERE (F.CON_ID=C.ID) AND (F.ID=?) LIMIT 1");
 			_ps.setInt(1, flightID);
 
 			// Get the first entry, or null
 			List<FlightInfo> results = executeFlightInfo();
-			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
 			if (info == null)
 				return null;
-
+			
+			// Get the terminal routes
+			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
+			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
+			info.setSTAR(routes.get(Integer.valueOf(TerminalRoute.STAR)));
+			
 			// Count the number of position records
 			prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
 					+ " WHERE (FLIGHT_ID=?)");
@@ -227,6 +231,11 @@ public class GetACARSData extends DAO {
 			List<FlightInfo> results = executeFlightInfo();
 			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
+			
+			// Get the terminal routes
+			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
+			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
+			info.setSTAR(routes.get(Integer.valueOf(TerminalRoute.STAR)));
 
 			// Count the number of position records
 			prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
@@ -264,6 +273,40 @@ public class GetACARSData extends DAO {
 			List<ConnectionEntry> results = executeConnectionInfo();
 			setQueryMax(0);
 			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads the Terminal Routes used on a particular ACARS flight.
+	 * @param id the ACARS flight ID
+	 * @return a Map of TerminalRoutes, keyed by route type
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	protected Map<Integer, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
+		try {
+			prepareStatement("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, "
+					+ "acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
+			_ps.setInt(1, TerminalRoute.SID);
+			_ps.setInt(2, id);
+			
+			// Execute the query
+			Map<Integer, TerminalRoute> results = new HashMap<Integer, TerminalRoute>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				Airport a = SystemData.getAirport(rs.getString(1));
+				TerminalRoute tr = new TerminalRoute(a, rs.getString(4), rs.getInt(3));
+				tr.setTransition(rs.getString(5));
+				tr.setRunway(rs.getString(6));
+				tr.setRoute(rs.getString(7));
+				results.put(Integer.valueOf(tr.getType()), tr);
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

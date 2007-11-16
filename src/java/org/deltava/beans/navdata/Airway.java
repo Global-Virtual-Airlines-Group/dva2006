@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -10,11 +10,11 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A bean to store Airway names and waypoints.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
-public class Airway implements Comparable, Cacheable, Route {
+public class Airway implements Comparable<Airway>, Cacheable, Route {
 
 	private String _code;
 	private final List<String> _waypoints = new ArrayList<String>();
@@ -172,8 +172,7 @@ public class Airway implements Comparable, Cacheable, Route {
 	/**
 	 * Compares two airways by comparing their names.
 	 */
-	public int compareTo(Object o) {
-		Airway a2 = (Airway) o;
+	public int compareTo(Airway a2) {
 		return _code.compareTo(a2._code);
 	}
 
