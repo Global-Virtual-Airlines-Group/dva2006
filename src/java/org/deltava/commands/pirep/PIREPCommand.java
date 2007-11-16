@@ -422,7 +422,11 @@ public class PIREPCommand extends AbstractFormCommand {
 				if (info != null) {
 					Collection<String> wps = new LinkedHashSet<String>();
 					wps.add(info.getAirportD().getICAO());
+					if (info.getSID() != null)
+						wps.addAll(info.getSID().getWaypoints());
 					wps.addAll(StringUtils.split(info.getRoute(), " "));
+					if (info.getSTAR() != null)
+						wps.addAll(info.getSTAR().getWaypoints());
 					wps.add(info.getAirportA().getICAO());
 					
 					// Save ACARS info

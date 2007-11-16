@@ -55,15 +55,18 @@ public class MapProgressService extends WebService {
 			if ((info != null) && doRoute) {
 				Collection<String> wps = new LinkedHashSet<String>();
 				wps.add(info.getAirportD().getICAO());
+				if (info.getSID() != null)
+					wps.addAll(info.getSID().getWaypoints());
 				wps.addAll(StringUtils.split(info.getRoute(), " "));
+				if (info.getSTAR() != null)
+					wps.addAll(info.getSTAR().getWaypoints());
 				wps.add(info.getAirportA().getICAO());
 
 				// Load the route
 				GetNavRoute navdao = new GetNavRoute(con);
 				routeWaypoints = navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "));
-			} else {
-				routeWaypoints = new HashSet<MapEntry>();
-			}
+			} else
+				routeWaypoints = Collections.emptySet();
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {
