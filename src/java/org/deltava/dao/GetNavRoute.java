@@ -96,14 +96,12 @@ public class GetNavRoute extends GetNavData {
 			return null;
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?) LIMIT 1");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
 
 			// Execute the query
 			List<TerminalRoute> results = executeSIDSTAR();
-			setQueryMax(0);
 			result = results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -112,6 +110,21 @@ public class GetNavRoute extends GetNavData {
 		// Add to the cache
 		_rCache.add(result);
 		return (TerminalRoute) result;
+	}
+	
+	/**
+	 * Returns all SIDs/STARs in the database.
+	 * @return a Collection of TerminalRoute beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TerminalRoute> getAll() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR ORDER BY ICAO, NAME, TRANSITION");
+			List<TerminalRoute> results = executeSIDSTAR();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 	
 	/**
