@@ -12,7 +12,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 	<listener>
 		<listener-class>org.deltava.servlet.lifecycle.UserListener</listener-class>
 	</listener>
-	
+
 	<!-- Browser Type Detection Filter -->
 	<filter>
 		<filter-name>BrowserTypeFilter</filter-name>
@@ -22,7 +22,7 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 			<param-value>MSIE 6.0</param-value>
 		</init-param>
 	</filter>
-	
+
 	<!-- Servlet Security Cookie/Wrapper Filters -->
 	<filter>
 		<filter-name>SecurityCookieFilter</filter-name>
@@ -32,13 +32,17 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<filter-class>org.deltava.servlet.filter.RequestWrapperFilter</filter-class>
 	</filter>
-	
+
 	<!-- File Upload Filter -->
 	<filter>
 		<filter-name>FileUploadFilter</filter-name>
 		<filter-class>org.deltava.servlet.filter.FileUploadFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
 	</filter>
-	
+
 	<!-- Web Services servlet -->
 	<servlet>
 		<servlet-name>webService</servlet-name>
