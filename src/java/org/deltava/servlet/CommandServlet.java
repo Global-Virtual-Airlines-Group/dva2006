@@ -177,7 +177,6 @@ public class CommandServlet extends GenericServlet implements Thread.UncaughtExc
 	 */
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws IOException, ServletException {
 		long startTime = System.currentTimeMillis();
-		req.setCharacterEncoding("UTF-8");
 
 		// Get the command
 		Command cmd = getCommand(req.getRequestURI());

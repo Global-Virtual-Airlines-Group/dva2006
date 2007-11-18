@@ -1,8 +1,10 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.util.Enumeration;
 import java.io.IOException;
+
+import java.nio.charset.Charset;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
@@ -14,9 +16,9 @@ import com.oreilly.servlet.multipart.*;
 import org.deltava.beans.FileUpload;
 
 /**
- * A servlet filter to support saving multi-part form upload data into the servlet request.
+ * A servlet filter to support saving multi-part form upload data into the servlet request, and
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0 
  */
 
@@ -24,12 +26,22 @@ public class FileUploadFilter implements Filter {
 
 	private static final Logger log = Logger.getLogger(FileUploadFilter.class);
 	private static final String CONTENT_TYPE = "multipart/form-data";
+	
+	private String _encoding = "UTF-8";
 
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message.
 	 * @param cfg the Filter Configuration
 	 */
 	public void init(FilterConfig cfg) throws ServletException {
+		String encoding = cfg.getInitParameter("encoding");
+		if (encoding != null) {
+			if (!Charset.availableCharsets().containsKey(encoding))
+				log.error("Unknown character set - " + encoding);
+			else
+				_encoding = encoding;
+		}
+		
 		log.info("Started");
 	}
 
@@ -43,16 +55,20 @@ public class FileUploadFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc) throws IOException, ServletException {
 
-		// Convert the request type
+		// Convert the request type and encoding
 		HttpServletRequest hreq = (HttpServletRequest) req;
+		hreq.setCharacterEncoding(_encoding);
+		
+		// Check if we're doing a POST
 		if (("POST".equalsIgnoreCase(hreq.getMethod())) && (hreq.getContentType().startsWith(CONTENT_TYPE))) {
-			log.debug("Processing form upload request");
 			FileUploadRequestWrapper reqWrap = new FileUploadRequestWrapper(hreq);
+			if (log.isDebugEnabled())
+				log.debug("Processing form upload request");
 
 			// Parse the request
 			MultipartParser parser = null;
 			try {
-			   parser = new MultipartParser(hreq, 8192000, true, true);
+			   parser = new MultipartParser(hreq, 8192000, true, true, _encoding);
 			} catch (IOException ie) {
 			   log.warn(ie.getMessage());
 			}
@@ -64,7 +80,9 @@ public class FileUploadFilter implements Filter {
 
 					// Save the file data in the request
 					if (fp.getFileName() != null) {
-						log.debug("Found File element " + p.getName() + ", file=" + fp.getFileName());
+						if (log.isDebugEnabled())
+							log.debug("Found File element " + p.getName() + ", file=" + fp.getFileName());
+						
 						FileUpload upload = new FileUpload(fp.getFileName());
 						try {
 							upload.load(fp.getInputStream());
@@ -73,27 +91,28 @@ public class FileUploadFilter implements Filter {
 							log.warn("Cannot load attachment - " + ie.getMessage());
 						}
 					}
-				} else if (p.isParam()) {
-					ParamPart pp = (ParamPart) p;
-					reqWrap.addParameter(p.getName(), pp.getStringValue());
-				}
+				} else if (p.isParam())
+					reqWrap.addParameter(p.getName(), ((ParamPart) p).getStringValue());
 
 				// Get next part
 				p = parser.readNextPart();
 			}
 
-			// Add requests from the command line
+			// Add requests from the command line and convert to the proper character set
 			Enumeration pNames = hreq.getParameterNames();
 			while (pNames.hasMoreElements()) {
 				String pName = (String) pNames.nextElement();
-				reqWrap.addParameter(pName, hreq.getParameterValues(pName));
+				String[] rawValues = hreq.getParameterValues(pName);
+				for (int x = 0; x < rawValues.length; x++)
+					rawValues[x] = new String(rawValues[x].getBytes("ISO-8859-1"), _encoding);
+				
+				reqWrap.addParameter(pName, rawValues);
 			}
 
 			// Filter with the new request
 			fc.doFilter(reqWrap, rsp);
-		} else {
+		} else
 			fc.doFilter(req, rsp);
-		}
 	}
 
 	/**
