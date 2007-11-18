@@ -15,7 +15,7 @@ public class TerminalRoute extends Airway {
    public static final int SID = 0;
    public static final int STAR = 1;
    
-   public static final String[] TYPES = {"SID", "STAR"};
+   private static final String[] TYPES = {"SID", "STAR"};
    
    private String _airport;
    private int _type;
@@ -131,7 +131,7 @@ public class TerminalRoute extends Airway {
     * @throws IllegalArgumentException if type is negative or invalid
     */
    public void setType(int type) {
-      if ((type < 1) || (type > TYPES.length))
+      if ((type < 0) || (type >= TYPES.length))
          throw new IllegalArgumentException("Invalid Terminal Route type - " + type);
       
       _type = type;
