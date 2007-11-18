@@ -19,8 +19,8 @@
 <map:api version="2" />
 <map:vml-ie />
 </c:if>
-<script language="JavaScript" type="text/javascript">
 <c:if test="${scoreCR}">
+<script language="JavaScript" type="text/javascript">
 function validate(form)
 {
 if (!checkSubmit()) return false;
@@ -30,12 +30,11 @@ setSubmit();
 disableButton('CRButton');
 return true;
 }
-</c:if>
+</script></c:if>
 <c:if test="${fn:isACARS(pirep)}">
 <content:sysdata var="imgPath" name="path.img" />
+<content:js name="acarsFlightMap" />
 </c:if>
-</script>
-<c:if test="${fn:isACARS(pirep)}"><content:js name="acarsFlightMap" /></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -105,10 +104,22 @@ return true;
  <td class="label">Departed from</td>
  <td class="data">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />)</td>
 </tr>
+<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.SID)}">
+<tr>
+ <td class="label">Departure Route</td>
+ <td class="data">${flightInfo.SID.name}.${flightInfo.SID.transition}</td>
+</tr>
+</c:if>
 <tr>
  <td class="label">Arrived at</td>
  <td class="data">${pirep.airportA.name} (<fmt:airport airport="${pirep.airportA}" />)</td>
 </tr>
+<c:if test="${fn:isACARS(pirep) && (!empty flightInfo.STAR)}">
+<tr>
+ <td class="label">Arrival Route</td>
+ <td class="data">${flightInfo.STAR.name}.${flightInfo.STAR.transition}</td>
+</tr>
+</c:if>
 <c:if test="${fn:isACARS(pirep) && (!empty flightInfo.airportL)}">
 <tr>
  <td class="label">Alternate</td>
