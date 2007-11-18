@@ -101,7 +101,7 @@ following accomplishments:<br />
  <td colspan="3" class="left">PILOTS OBTAINING FLIGHT ACADEMY RATINGS</td>
 </tr>
 <c:forEach var="cert" items="${academyCerts}">
-<c:set var="pilot" value="${pilots[promotion.ID]}" scope="request" />
+<c:set var="pilot" value="${pilots[cert.ID]}" scope="request" />
 <tr>
  <td class="pri bld"><fmt:date fmt="d" date="${cert.createdOn}" /></td>
  <td class="bld"><el:cmd url="profile" link="${promotion}">${pilot.name}</el:cmd></td>
