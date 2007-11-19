@@ -31,14 +31,12 @@ public class GetChart extends DAO {
 	 */
 	public List<Airport> getAirports() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT DISTINCT C.IATA FROM common.CHARTS C, common.AIRPORTS A "
-					+ "WHERE (C.IATA=A.IATA) ORDER BY A.NAME");
+			prepareStatementWithoutLimits("SELECT DISTINCT C.ICAO FROM common.CHARTS C, common.AIRPORTS A "
+					+ "WHERE (C.ICAO=A.ICAO) ORDER BY A.NAME");
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
 			List<Airport> results = new ArrayList<Airport>();
-
-			// Iterate through the results
 			while (rs.next()) {
 				Airport a = SystemData.getAirport(rs.getString(1));
 				if (a != null)
@@ -55,34 +53,23 @@ public class GetChart extends DAO {
 	}
 
 	/**
-	 * Returns all Charts for a particular Airport code.
-	 * @param iataCode the Airport's IATA code
+	 * Returns all Chart metadata for a particular Airport.
+	 * @param a the Airport bean
 	 * @return a List of Chart objects
 	 * @throws DAOException if a JDBC error occurs
 	 * @see GetChart#getCharts(Airport)
 	 */
-	public List<Chart> getCharts(String iataCode) throws DAOException {
+	public List<Chart> getCharts(Airport a) throws DAOException {
 		try {
 			// Prepare the statement
-			prepareStatement("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (IATA=?) ORDER BY NAME");
-			_ps.setString(1, iataCode);
+			prepareStatement("SELECT * FROM common.CHARTS WHERE (ICAO=?) ORDER BY NAME");
+			_ps.setString(1, a.getICAO());
 
 			// Execute the query
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
-	}
-
-	/**
-	 * Returns all Charts for a particular Airport.
-	 * @param a the Airport object
-	 * @return a List of Chart objects
-	 * @throws DAOException if a JDBC error occurs
-	 * @see GetChart#getCharts(String)
-	 */
-	public List<Chart> getCharts(Airport a) throws DAOException {
-		return getCharts(a.getIATA());
 	}
 
 	/**
@@ -93,8 +80,8 @@ public class GetChart extends DAO {
 	 */
 	public List<Chart> getChartsByEvent(int eventID) throws DAOException {
 		try {
-			prepareStatement("SELECT C.ID, C.NAME, C.IATA, C.TYPE, C.IMGFORMAT, C.SIZE FROM common.CHARTS C, "
-					+ "events.EVENT_CHARTS EC WHERE (EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
+			prepareStatement("SELECT C.* FROM common.CHARTS C, events.EVENT_CHARTS EC WHERE "
+					+ "(EC.ID=?) AND (C.ID=EC.CHART) ORDER BY C.NAME");
 			_ps.setInt(1, eventID);
 
 			// Execute the query
@@ -112,13 +99,11 @@ public class GetChart extends DAO {
 	 */
 	public Chart get(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM common.CHARTS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Execute the query
 			List<Chart> results = execute();
-			setQueryMax(0);
 			return (results.isEmpty()) ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -134,7 +119,7 @@ public class GetChart extends DAO {
 	public Collection<Chart> getByIDs(Collection<Integer> IDs) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ID, NAME, IATA, TYPE, IMGFORMAT, SIZE FROM common.CHARTS WHERE (ID IN (");
+		StringBuilder sqlBuf = new StringBuilder("SELECT * FROM common.CHARTS WHERE (ID IN (");
 		for (Iterator<Integer> i = IDs.iterator(); i.hasNext();) {
 			Integer id = i.next();
 			sqlBuf.append(String.valueOf(id));
@@ -164,10 +149,10 @@ public class GetChart extends DAO {
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
-			Chart c = new Chart(rs.getString(2), SystemData.getAirport(rs.getString(3)));
+			Chart c = new Chart(rs.getString(5), SystemData.getAirport(rs.getString(2)));
 			c.setID(rs.getInt(1));
-			c.setType(rs.getInt(4));
-			c.setImgType(rs.getInt(5));
+			c.setType(rs.getInt(3));
+			c.setImgType(rs.getInt(4));
 			c.setSize(rs.getInt(6));
 			results.add(c);
 		}
