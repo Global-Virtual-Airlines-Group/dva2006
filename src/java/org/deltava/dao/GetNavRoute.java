@@ -357,7 +357,7 @@ public class GetNavRoute extends GetNavData {
 		ResultSet rs = _ps.executeQuery();
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
 		while (rs.next()) {
-			TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2) + 1);
+			TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
 			tr.setTransition(rs.getString(4));
 			tr.setRunway(rs.getString(5));
 			tr.setRoute(rs.getString(6));

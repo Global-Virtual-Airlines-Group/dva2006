@@ -95,7 +95,7 @@ public class TerminalRoute extends Airway {
     * @return the route type name
     */
    public String getTypeName() {
-      return TYPES[_type - 1];
+      return TYPES[_type];
    }
    
    /**
