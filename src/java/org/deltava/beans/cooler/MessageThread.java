@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -290,9 +290,9 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 	 * @see MessageThread#getStickyUntil()
 	 */
 	public void setStickyUntil(Date dt) {
-		if (dt == null)
+		if ((dt == null) || (dt.getTime() <= System.currentTimeMillis()))
 			_stickyUntil = null;
-		else if (dt.getTime() > System.currentTimeMillis())
+		else
 			_stickyUntil = dt;
 	}
 

@@ -30,7 +30,7 @@ public class TestMessageThread extends AbstractBeanTestCase {
         assertEquals("Subject", _t.getSubject());
         checkProperty("channel", "ChannelName");
         checkProperty("lastUpdatedOn", new Date());
-        checkProperty("stickyUntil", new Date());
+        checkProperty("stickyUntil", new Date(System.currentTimeMillis() + 50));
         checkProperty("ID", new Integer(1212));
         checkProperty("authorID", new Integer(1213));
         checkProperty("lastUpdateID", new Integer(1215));
@@ -52,8 +52,10 @@ public class TestMessageThread extends AbstractBeanTestCase {
        assertFalse(_t.getStickyInChannelOnly());
        _t.setStickyInChannelOnly(true);
        assertFalse(_t.getStickyInChannelOnly());
-       _t.setStickyUntil(new Date());
+       _t.setStickyUntil(new Date(System.currentTimeMillis() + 50));
        assertTrue(_t.getStickyInChannelOnly());
+       _t.setStickyUntil(new Date());
+       assertNull(_t.getStickyUntil());
     }
     
     public void testValidation() {
