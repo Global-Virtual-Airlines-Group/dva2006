@@ -10,6 +10,7 @@ put afv_sched.sql.bz2
 put afv_sys.sql.bz2
 put afv_gallery_inc.sql.bz2
 put common.sql.bz2
+put navdata.sql.bz2
 put cooler.sql.bz2
 put events.sql.bz2
 put exams.sql.bz2
