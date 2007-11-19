@@ -13,8 +13,8 @@ alias mysqldump='/usr/local/mysql5/bin/mysqldump --socket=/var/run/mysql5/mysql.
 cd /home/backup/db
 
 # Dump Navigation Data
-echo `date +%H:%M:%S`' Writing Navigation Data'
-mysqldump -C -n -t -K -q --single-transaction -h mysql.deltava.org `cat /usr/local/etc/sqlbackup` common NAVDATA SID_STAR AIRWAYS CHARTS | bzip2 -9 > old/navdata.sql.bz2
+echo `date +%H:%M:%S`' Writing Approach Charts'
+mysqldump -C -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` common CHARTS CHARTIMGS | bzip2 -6 > old/charts.sql.bz2
 
 # Write last backup time
 echo `date +%H:%M:%S`' Write last backup time'
