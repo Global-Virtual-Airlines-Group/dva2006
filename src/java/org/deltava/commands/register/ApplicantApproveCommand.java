@@ -186,7 +186,6 @@ public class ApplicantApproveCommand extends AbstractCommand {
 			Pilot p = pdao.get(a.getPilotID());
 
 			// Get the authenticator and chcek
-			auth = (Authenticator) SystemData.getObject(SystemData.AUTHENTICATOR);
 			if (auth instanceof SQLAuthenticator) {
 				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
 				sqlAuth.setConnection(con);
