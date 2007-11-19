@@ -142,6 +142,15 @@ public class PilotActivationCommand extends AbstractCommand {
 
 			// Commit the transaction
 			ctx.commitTX();
+			
+			// Get the authenticator and chcek
+			if (auth instanceof SQLAuthenticator) {
+				SQLAuthenticator sqlAuth = (SQLAuthenticator) auth;
+				sqlAuth.setConnection(con);
+				sqlAuth.authenticate(p, p.getPassword());
+				sqlAuth.clearConnection();
+			} else
+				auth.authenticate(p, p.getPassword());
 
 			// Set JSP result
 			result.setType(CommandResult.REQREDIRECT);
