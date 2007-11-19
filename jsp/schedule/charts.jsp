@@ -48,14 +48,14 @@ return true;
 </tr>
 <tr>
  <td class="priB right" style="color: #FFFFFF; font-size: 8pt;">Filter Options</td>
- <td colspan="3" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${param.chartType}" />
+ <td colspan="3" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${selectedTypes}" />
  <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
 </tr>
 <tr class="title">
  <td colspan="2">CHART NAME</td>
  <td width="25%">CHART TYPE</td>
  <td class="right" width="40%">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" />
- <el:text name="airportDCode" idx="*" size="3" max="4" value="${airport.ICAO}" onBlur="void setAirportCode(this.value)" /></td>
+ <el:text name="airportDCode" idx="*" size="4" max="4" value="${airport.ICAO}" onBlur="void setAirportCode(this.value)" /></td>
 </tr>
 
 <!-- Table Pilot Data -->

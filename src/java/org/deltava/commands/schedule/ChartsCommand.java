@@ -58,6 +58,7 @@ public class ChartsCommand extends AbstractCommand {
         // Filter charts
         Collection<String> chartTypes = ctx.getParameters("chartType");
         if (!CollectionUtils.isEmpty(chartTypes)) {
+        	ctx.setAttribute("selectedTypes", chartTypes, REQUEST);
         	for (Iterator<Chart> i = results.iterator(); i.hasNext(); ) {
         		Chart c = i.next();
         		if (!chartTypes.contains(String.valueOf(c.getType())))
