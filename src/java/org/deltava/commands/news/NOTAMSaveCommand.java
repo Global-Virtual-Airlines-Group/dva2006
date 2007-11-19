@@ -1,7 +1,7 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.news;
 
-import java.util.List;
+import java.util.Collection;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
@@ -35,9 +35,8 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		mctxt.addData("user", ctx.getUser());
 		
 		// Check if we're notifiying users 
-		boolean doNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
-		List<? extends EMailAddress> pilots = null;
-		
+		boolean noNotify = Boolean.valueOf(ctx.getParameter("noNotify")).booleanValue();
+		Collection<? extends EMailAddress> pilots = null;
 		try {
 			Connection con = ctx.getConnection();
 
@@ -92,7 +91,7 @@ public class NOTAMSaveCommand extends AbstractCommand {
 		}
 		
 		// Send the message
-		if (doNotify && (pilots != null)) {
+		if (!noNotify && (pilots != null)) {
 			Mailer mailer = new Mailer(ctx.getUser());
 			mailer.setContext(mctxt);
 			mailer.send(pilots);
