@@ -129,7 +129,8 @@ public class GetNavRoute extends GetNavData {
 			TerminalRoute tr = (TerminalRoute) result;
 			if ((tr.getType() == type) && (tr.getICAO().equals(a.getICAO())))
 				return tr;
-		}
+		} else if (name == null)
+			return null;
 			
 		// Split the name
 		StringTokenizer tkns = new StringTokenizer(name, ".");
