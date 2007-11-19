@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Approach Charts</title>
+<title><content:airline /> Approach / Procedure Charts</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
@@ -17,8 +17,7 @@
 <script language="JavaScript" type="text/javascript">
 function updateAirport(combo)
 {
-var ac = combo.options[combo.selectedIndex].value;
-self.location = '/charts.do?id=' + ac.toUpperCase();
+document.forms[0].submit();
 return true;
 }
 
@@ -40,29 +39,38 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="charts.do" method="get" validate="return false">
+<el:form action="charts.do" method="post" validate="return true">
 <view:table className="view" pad="default" space="default" cmd="charts">
 
-<!-- Table Header Bar-->
+<!-- Table Header/Filter Bars-->
+<tr class="title caps">
+ <td colspan="4" class="left"><content:airline /> AIRPORT / APPROACH / PROCEDURE CHARTS</td>
+</tr>
+<tr>
+ <td class="priB right" style="color: #FFFFFF; font-size: 8pt;">Filter Options</td>
+ <td colspan="3" width="90%" class="left"><el:check name="chartType" className="small" idx="*" width="180" options="${chartTypes}" checked="${param.chartType}" />
+ <el:button type="submit" className="BUTTON" label="UPDATE" /></td>
+</tr>
 <tr class="title">
- <td width="30%">CHART NAME</td>
- <td width="30%">CHART TYPE</td>
- <td class="right">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" />
- <el:text name="airportDCode" idx="*" size="2" max="3" value="${airport.IATA}" onBlur="void setAirportCode(this.value)" /></td>
+ <td colspan="2">CHART NAME</td>
+ <td width="25%">CHART TYPE</td>
+ <td class="right" width="40%">AIRPORT <el:combo name="airport" onChange="void updateAirport(this)" size="1" idx="1" options="${airports}" value="${airport}" />
+ <el:text name="airportDCode" idx="*" size="3" max="4" value="${airport.ICAO}" onBlur="void setAirportCode(this.value)" /></td>
 </tr>
 
 <!-- Table Pilot Data -->
 <c:forEach var="chart" items="${charts}">
 <c:set var="hasPDF" value="${chart.imgTypeName == 'PDF'}" scope="request" />
+<c:set var="anyPDF" value="${anyPDF || hasPDF}" scope="request" />
 <view:row entry="${chart}">
 <c:choose>
 <c:when test="${hasPDF}">
- <td><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
+ <td colspan="2"><el:link url="/charts/${chart.hexID}.pdf" className="bld" target="chartView">${chart.name}</el:link></td>
  <td class="sec">${chart.typeName}</td>
  <td>Adobe PDF document, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
 </c:when>
 <c:otherwise>
- <td><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
+ <td colspan="2"><el:cmd className="bld" url="chart" link="${chart}">${chart.name}</el:cmd></td>
  <td class="sec">${chart.typeName}</td>
  <td>${chart.imgTypeName} image, <fmt:int fmt="###,###" value="${chart.size}" /> bytes</td>
 </c:otherwise>
@@ -70,20 +78,19 @@ return true;
 </view:row>
 </c:forEach>
 
-<c:if test="${hasPDF}">
+<c:if test="${anyPDF}">
 <!-- Download Acrobat -->
 <tr valign="middle">
  <td><a href="http://www.adobe.com/products/acrobat/readstep2.html" rel="external"><el:img src="library/getacro.png" border="0" caption="Download Adobe Acrobat Reader" /></a></td>
- <td colspan="2">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 6</span> or newer 
+ <td colspan="3">Some approach charts require <span class="pri bld">Adobe Acrobat Reader 6</span> or newer 
 in order to be viewed. If you are having difficulties viewing our charts, please click on the link to the 
-left to download the latest version of Adobe Acrobat Reader.<br />
-This is a free download.</td>
+left to download the latest version of Adobe Acrobat Reader. This is a free download.</td>
 </tr>
 </c:if>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="3">&nbsp;</td>
+ <td colspan="4">&nbsp;</td>
 </tr>
 </view:table>
 </el:form>

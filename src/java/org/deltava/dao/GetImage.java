@@ -73,7 +73,7 @@ public class GetImage extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public byte[] getChart(int id) throws DAOException {
-        return execute(id, "SELECT IMG FROM common.CHARTS WHERE (ID=?)");
+        return execute(id, "SELECT IMG FROM common.CHARTIMGS WHERE (ID=?)");
     }
     
     /**
