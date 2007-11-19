@@ -184,13 +184,19 @@ public class MessageContext {
      * @return the value of the argument macro, or an empty String ("") if execution fails
      */
     String execute(String arg) {
-    	log.debug("Evaluating " + arg);
+    	if (log.isDebugEnabled())
+    		log.debug("Evaluating " + arg);
+    	
         StringTokenizer tkns = new StringTokenizer(arg, ".");
         
         // Get the object name
         String objName = tkns.nextToken();
         if (!hasData(objName)) {
-        	log.warn("Cannot evaluate " + objName);
+        	if (_mt == null)
+        		log.warn("Cannot evaluate " + objName);
+        	else
+        		log.warn("Cannot evaluate " + objName + " in " + _mt.getName());
+        	
         	return "";
         }
         
