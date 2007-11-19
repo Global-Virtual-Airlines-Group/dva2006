@@ -122,12 +122,13 @@ return true;
 </tr>
 <tr>
  <td class="label" valign="top">New Image URL</td>
- <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${param.imgURL}" />
+ <td class="data"><el:text name="imgURL" className="small" idx="*" size="64" max="192" value="${(!empty system_message) ? param.imgURL : ''}" />
 <c:if test="${!empty system_message}"><div class="small error bld">${system_message}</div></c:if></td>
 </tr>
 <tr>
  <td class="label">Description</td>
- <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${param.desc}" /> <el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void submitImage()" /></td>
+ <td class="data"><el:text name="desc" idx="*" size="64" max="192" value="${(!empty system_message) ? param.desc : ''}" /> 
+<el:button ID="LinkButton" className="BUTTON" label="LINK IMAGE" onClick="void submitImage()" /></td>
 </tr>
 <c:if test="${!empty sessionScope.imageURLs}">
 <tr>
