@@ -52,8 +52,13 @@ public class AIRACImportCommand extends AbstractCommand {
 			return;
 		}
 		
+		// Strip out .gz extension
+		String name = navData.getName();
+		if (name.endsWith(".gz"))
+			name = name.substring(0, name.lastIndexOf('.'));
+		
 		// Get the navaid type
-		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName().toLowerCase());
+		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if (navaidType == -1)
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
@@ -68,7 +73,7 @@ public class AIRACImportCommand extends AbstractCommand {
 			dao.purge(navaidType);
 			
 			// Get the file - skipping the first line
-			InputStream is = new ByteArrayInputStream(navData.getBuffer());
+			InputStream is = navData.getInputStream();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 
 			// Iterate through the file

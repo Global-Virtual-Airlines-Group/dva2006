@@ -468,12 +468,6 @@
 		<roles>Pilot</roles>
 	</command>
 
-	<command id="navpurge">
-		<name>Purge AIRAC data</name>
-		<class>org.deltava.commands.navdata.AIRACPurgeCommand</class>
-		<roles>Schedule</roles>
-	</command>
-
 	<command id="sched">
 		<name>Update Schedule</name>
 		<class>org.deltava.commands.schedule.ScheduleEntryCommand</class>
