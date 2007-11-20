@@ -52,7 +52,7 @@ public class AirwayImportCommand extends AbstractCommand {
 		int entryCount = 0;
 		try {
 			// Get the file
-			InputStream is = new ByteArrayInputStream(navData.getBuffer());
+			InputStream is = navData.getInputStream();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 			
 			// Iterate through the file

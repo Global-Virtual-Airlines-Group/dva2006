@@ -21,7 +21,7 @@ if (!checkSubmit()) return false;
 isOK = false;
 fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == dataFiles[x]);
+	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz'));
 	
 if (!isOK) {
 	alert('This does not appear to be a valid PSS AIRAC data file.');
@@ -55,7 +55,7 @@ return true;
 </tr>
 <tr>
  <td class="label">&nbsp;</td>
- <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge Airway Data before import" /></td>
+ <td class="data"><el:box name="doPurge" idx="*" className="small" value="true" label="Purge Airway Data before import" /></td>
 </tr>
 </el:table>
 

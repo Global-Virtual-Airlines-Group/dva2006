@@ -21,7 +21,7 @@ if (!checkSubmit()) return false;
 isOK = false;
 fName = form.navData.value.substring(form.navData.value.lastIndexOf('\\') + 1).toLowerCase();
 for (x = 0; x < dataFiles.length && !isOK; x++)
-	isOK = isOK || (fName == dataFiles[x]);
+	isOK = isOK || (fName == dataFiles[x]) || (fName == (dataFiles[x] + '.gz'));
 	
 if (!isOK) {
 	alert('This does not appear to be a valid PSS AIRAC data file.');
@@ -31,7 +31,6 @@ if (!isOK) {
 
 setSubmit();
 disableButton('SaveButton');
-disableButton('PurgeButton');
 return true;
 }
 </script>
@@ -59,8 +58,7 @@ return true;
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC NAVIGATION DATA" />&nbsp;
- <el:cmdbutton ID="PurgeButton" url="navpurge" label="PURGE NAVIGATION DATA" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC NAVIGATION DATA" /></td>
 </tr>
 </el:table>
 </el:form>

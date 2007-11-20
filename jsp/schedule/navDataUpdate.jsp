@@ -31,11 +31,13 @@ Navigation Database. This data will be available for all pilots.<br />
 </c:when>
 <c:when test="${airway}">
 Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
-Navigation Database. This data will be available for all pilots.<br />
+Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The Airway 
+table was purged prior to the import.</span></c:if><br />
 </c:when>
 <c:when test="${terminalRoute}">
 SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
-Navigation Database. This data will be available for all pilots.<br />
+Navigation Database. This data will be available for all pilots.<c:if test="${doPurge}"> <span class="bld">The SID/STAR 
+table was purged prior to the import.</span></c:if><br />
 </c:when>
 </c:choose>
 <c:if test="${!empty errors}">
