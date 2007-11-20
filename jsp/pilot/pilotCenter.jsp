@@ -628,9 +628,12 @@ data file. You may also export entries from the Flight Schedule into a CSV data 
  Flight Schedule so that their servicing Airlines may be updated.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="navimport">Navigation Data</el:cmd><br />
+<el:cmd className="bld" url="awyimport">Airway Data</el:cmd><br />
+<el:cmd className="bld" url="trouteimport">Terminal Routes</el:cmd></td>
  <td class="data">You can import and purge AIRAC data stored within the <content:airline /> Navigation Data
-database.</td>
+database. AIRAC data can be imported in one of three ways - Navigation Aids, Airways and Terminal Routes 
+(SIDs / STARs).</td>
 </tr>
 </content:filter>
 <c:if test="${acarsEnabled}">
@@ -726,11 +729,6 @@ and database usage times here.</td>
 <tr>
  <td class="mid"><el:cmd className="bld" url="cmdlog">Command Log</el:cmd></td>
  <td class="data">You can view and search for entries in the Command Log database.</td>
-</tr>
-<tr>
- <td class="mid"><el:cmd className="bld" url="acarsempty">Empty ACARS Log Entries</el:cmd></td>
- <td class="data">You can view empty ACARS Connection Log and Flight Information Log entries here, as
-well as pruning empty entries from the logs.</td>
 </tr>
 <c:if test="${ts2enabled}">
 <tr>
