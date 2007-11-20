@@ -6,13 +6,13 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Navigation Data Import</title>
+<title><content:airline /> Airway Data Import</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
 <script language="JavaScript" type="text/javascript">
-var dataFiles = ['pssapt.dat','pssndb.dat','pssrwy.dat','pssvor.dat','psswpt.dat'];
+var dataFiles = ['pssawy.dat'];
 
 function validate(form)
 {
@@ -31,7 +31,6 @@ if (!isOK) {
 
 setSubmit();
 disableButton('SaveButton');
-disableButton('PurgeButton');
 return true;
 }
 </script>
@@ -44,23 +43,26 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="navimport.do" method="post" allowUpload="true" validate="return validate(this)">
+<el:form action="awyimport.do" method="post" allowUpload="true" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2">PSS AIRAC NAVIGATION DATA UPLOAD</td>
 </tr>
 <tr>
- <td class="label" valign="top">Upload Data File</td>
+ <td class="label">Upload Data File</td>
  <td class="data"><el:file name="navData" idx="*" className="small req" size="80" max="144" />&nbsp;
 <span class="small">AIRAC data must be in PSS Format.</span></td>
+</tr>
+<tr>
+ <td class="label">&nbsp;</td>
+ <td class="data"><el:box name="doPurge" idx="*" value="true" label="Purge Airway Data before import" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC NAVIGATION DATA" />&nbsp;
- <el:cmdbutton ID="PurgeButton" url="navpurge" label="PURGE NAVIGATION DATA" /></td>
+ <td><el:button ID="SaveButton" type="submit" className="BUTTON" label="UPLOAD AIRAC AIRWAY DATA" /></td>
 </tr>
 </el:table>
 </el:form>

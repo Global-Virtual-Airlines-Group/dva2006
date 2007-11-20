@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.util.StringUtils;
@@ -6,7 +6,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store runway information.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -62,7 +62,9 @@ public class Runway extends NavigationFrequencyBean {
 	 * @see Runway#getHeading()
 	 */
 	public void setHeading(int hdg) {
-		if ((hdg < 0) || (hdg > 360))
+		while (hdg > 360)
+			hdg -= 360;
+		if (hdg < 0)
 			throw new IllegalArgumentException("Invalid Heading - " + hdg);
 
 		_heading = hdg;

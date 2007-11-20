@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import org.deltava.util.StringUtils;
 
 public class SetNavData extends DAO {
    
-   private static final String[] TABLES = {"NAVDATA", "SID_STAR", "AIRWWAYS"};
+   private static final String[] TABLES = {"NAVDATA", "SID_STAR", "AIRWAYS"};
 
 	/**
 	 * Initializes the Data Access Object.
@@ -117,6 +117,22 @@ public class SetNavData extends DAO {
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
+	}
+	
+	/**
+	 * Purges Navigation Aid records from the database.
+	 * @param navaidType the navaid type
+	 * @return the number of records deleted
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public int purge(int navaidType) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("DELETE FROM common.NAVDATA WHERE (ITEMTYPE=?)");
+			_ps.setInt(1, navaidType);
+			return executeUpdate(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**

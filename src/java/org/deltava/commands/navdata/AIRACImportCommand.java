@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -18,9 +18,9 @@ import org.deltava.security.command.ScheduleAccessControl;
 import org.deltava.util.StringUtils;
 
 /**
- * A Web Site Command to import Navigation data.
+ * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -53,7 +53,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		}
 		
 		// Get the navaid type
-		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName());
+		int navaidType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName().toLowerCase());
 		if (navaidType == -1)
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
@@ -61,9 +61,11 @@ public class AIRACImportCommand extends AbstractCommand {
 		int entryCount = 0;
 		try {
 			Connection con = ctx.getConnection();
+			ctx.startTX();
 
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
+			dao.purge(navaidType);
 			
 			// Get the file - skipping the first line
 			InputStream is = new ByteArrayInputStream(navData.getBuffer());
@@ -83,7 +85,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							lon = Double.parseDouble(txtData.substring(15, 26).trim());
 							
 							AirportLocation al = new AirportLocation(lat, lon);
-							al.setCode(txtData.substring(0, 6));
+							al.setCode(txtData.substring(0, 5));
 							al.setAltitude(Integer.parseInt(txtData.substring(27, 32).trim()));
 							al.setName(txtData.substring(34));
 							nd = al;
@@ -113,7 +115,7 @@ public class AIRACImportCommand extends AbstractCommand {
 							rwy.setHeading(Integer.parseInt(txtData.substring(31, 34).trim()));
 							rwy.setLength((int) Math.round(lenM * 3.2808399));
 							rwy.setFrequency("-");
-							if (txtData.length() > 40)
+							if (txtData.length() > 46) 
 								rwy.setFrequency(txtData.substring(41, 47).trim());
 							
 							nd = rwy;
@@ -152,11 +154,14 @@ public class AIRACImportCommand extends AbstractCommand {
 				}
 			}
 			
-			// Close down the stream
+			// Commit and Close down the stream
+			ctx.commitTX();
 			is.close();
 		} catch (IOException ie) {
+			ctx.rollbackTX();
 			throw new CommandException(ie);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();
@@ -165,6 +170,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		// Set status attributes
 		ctx.setAttribute("entryCount", new Integer(entryCount), REQUEST);
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
+		ctx.setAttribute("navData", Boolean.TRUE, REQUEST);
 		
 		// Save error messages
 		if (!errors.isEmpty())

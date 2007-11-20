@@ -24,8 +24,20 @@
 <br />
 <fmt:int value="${entryCount}" /> records loaded.<br />
 <br />
-The latest AIRAC Navigation Data cycle has been imported into the <content:airline /> Navigation Database. This
-data will be available for all pilots.<br />
+<c:choose>
+<c:when test="${navData}">
+Navigation aid data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
+Navigation Database. This data will be available for all pilots.<br />
+</c:when>
+<c:when test="${airway}">
+Airway data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
+Navigation Database. This data will be available for all pilots.<br />
+</c:when>
+<c:when test="${terminalRoute}">
+SID/STAR data from the latest PSS AIRAC Navigation Data cycle has been imported into the <content:airline /> 
+Navigation Database. This data will be available for all pilots.<br />
+</c:when>
+</c:choose>
 <c:if test="${!empty errors}">
 <br />
 The following errors occurred during the import of this AIRAC data file:<br />
@@ -44,7 +56,9 @@ The <content:airline /> Navigation Database has been purged. <fmt:int value="${r
 been deleted from the database. You may now import a new AIRAC cycle's data.<br />
 </c:if>
 <br />
-To return to the AIRAC Navigation Data import page, <el:cmd url="navimport">click here</el:cmd>.<br />
+To return to the AIRAC Navigation Data import page, <el:cmd url="navimport" className="sec bld">Click Here</el:cmd>.<br />
+To return to the AIRAC Airway import page, <el:cmd url="awyimport" className="sec bld">Click Here</el:cmd>.<br />
+To return to the AIRAC Terminal Route import page, <el:cmd url="trouteimport" className="sec bld">Click Here</el:cmd>.<br />
 <br />
 <content:copyright />
 </content:region>
