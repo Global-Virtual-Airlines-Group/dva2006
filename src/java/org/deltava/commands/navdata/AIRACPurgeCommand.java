@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.sql.*;
@@ -25,6 +25,7 @@ public class AIRACPurgeCommand extends AbstractCommand {
 	public void execute(CommandContext ctx) throws CommandException {
 		try {
 			Connection con = ctx.getConnection();
+			ctx.startTX();
 			
 			// Get the DAO and purge the database
 			SetNavData dao = new SetNavData(con);
@@ -33,8 +34,10 @@ public class AIRACPurgeCommand extends AbstractCommand {
 			rowsDeleted += dao.purge("AIRWAYS");
 			
 			// Save the rows deleted
+			ctx.commitTX();
 			ctx.setAttribute("rowsDeleted", new Integer(rowsDeleted), REQUEST);
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

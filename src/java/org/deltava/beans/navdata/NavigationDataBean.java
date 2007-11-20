@@ -1,10 +1,7 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 20007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
-import java.io.Serializable;
-
-import org.deltava.beans.GeoLocation;
-import org.deltava.beans.MapEntry;
+import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.util.StringUtils;
@@ -12,11 +9,11 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
-public abstract class NavigationDataBean implements Comparable, Serializable, GeoLocation, MapEntry {
+public abstract class NavigationDataBean implements Comparable<NavigationDataBean>, GeoLocation, MapEntry {
 
    /**
     * Object type names.
@@ -156,14 +153,13 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
     * are compared.
     * @see Comparable#compareTo(Object)
     */
-   public int compareTo(Object o2) {
-      NavigationDataBean nb2 = (NavigationDataBean) o2;
+   public int compareTo(NavigationDataBean nb2) {
       int tmpResult = _code.compareTo(nb2.getCode());
       if (tmpResult == 0) {
          GeoPosition gp = new GeoPosition(0, 0);
          int d1 = gp.distanceTo(this);
          int d2 = gp.distanceTo(nb2);
-         tmpResult = new Integer(d1).compareTo(new Integer(d2));
+         tmpResult = Integer.valueOf(d1).compareTo(Integer.valueOf(d2));
       }
       
       return tmpResult;
@@ -208,7 +204,7 @@ public abstract class NavigationDataBean implements Comparable, Serializable, Ge
     * Checks for equality by comparing the codes. 
     */
    public boolean equals(Object o2) {
-      return (o2 instanceof NavigationDataBean) ? (compareTo(o2) == 0) : false;
+      return (o2 instanceof NavigationDataBean) ? (compareTo((NavigationDataBean) o2) == 0) : false;
    }
    
    /**

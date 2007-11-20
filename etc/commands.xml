@@ -450,6 +450,18 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="awyimport">
+		<name>Import Airway data</name>
+		<class>org.deltava.commands.navdata.AirwayImportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
+	<command id="trouteimport">
+		<name>Import SID/STAR data</name>
+		<class>org.deltava.commands.navdata.TerminalRouteImportCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="navsearch">
 		<name>Navigation Data Search</name>
 		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>
