@@ -7,6 +7,7 @@ import java.sql.Connection;
 
 import org.deltava.beans.FileUpload;
 import org.deltava.beans.navdata.*;
+import static org.deltava.beans.navdata.NavigationDataBean.*;
 
 import org.deltava.commands.*;
 
@@ -27,6 +28,7 @@ import org.deltava.util.StringUtils;
 public class AIRACImportCommand extends AbstractCommand {
 
 	private static final String[] UPLOAD_NAMES = {"pssapt.dat", "pssndb.dat", "pssrwy.dat", "pssvor.dat", "psswpt.dat"};
+	private static final int[] NAVAID_TYPES = { AIRPORT, NDB, RUNWAY, VOR, INT };
 	
 	/**
 	 * Executes the command.
@@ -70,7 +72,7 @@ public class AIRACImportCommand extends AbstractCommand {
 
 			// Get the write DAO
 			SetNavData dao = new SetNavData(con);
-			dao.purge(navaidType);
+			dao.purge(NAVAID_TYPES[navaidType]);
 			
 			// Get the file - skipping the first line
 			InputStream is = navData.getInputStream();
