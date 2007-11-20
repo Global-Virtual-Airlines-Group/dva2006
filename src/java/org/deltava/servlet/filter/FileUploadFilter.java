@@ -14,6 +14,7 @@ import org.apache.log4j.Logger;
 import com.oreilly.servlet.multipart.*;
 
 import org.deltava.beans.FileUpload;
+import org.deltava.util.StringUtils;
 
 /**
  * A servlet filter to support saving multi-part form upload data into the servlet request, and
@@ -28,6 +29,7 @@ public class FileUploadFilter implements Filter {
 	private static final String CONTENT_TYPE = "multipart/form-data";
 	
 	private String _encoding = "UTF-8";
+	private int _maxReqSize;
 
 	/**
 	 * Called by the servlet container when the filter is started. Logs a message.
@@ -42,6 +44,7 @@ public class FileUploadFilter implements Filter {
 				_encoding = encoding;
 		}
 		
+		_maxReqSize = StringUtils.parse(cfg.getInitParameter("maxRequestSize"), 10240000);
 		log.info("Started");
 	}
 
@@ -68,7 +71,7 @@ public class FileUploadFilter implements Filter {
 			// Parse the request
 			MultipartParser parser = null;
 			try {
-			   parser = new MultipartParser(hreq, 8192000, true, true, _encoding);
+			   parser = new MultipartParser(hreq, _maxReqSize, true, true, _encoding);
 			} catch (IOException ie) {
 			   log.warn(ie.getMessage());
 			}

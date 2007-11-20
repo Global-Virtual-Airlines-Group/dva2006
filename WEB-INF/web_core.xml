@@ -41,6 +41,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 			<param-name>encoding</param-name>
 			<param-value>UTF-8</param-value>
 		</init-param>
+		<init-param>
+			<param-name>maxRequestSize</param-name>
+			<param-value>16384000</param-value>
+		</init-param>
 	</filter>
 
 	<!-- Web Services servlet -->
