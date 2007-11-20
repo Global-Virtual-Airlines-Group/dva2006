@@ -52,16 +52,22 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			return;
 		}
 		
+		// Strip out .gz extension
+		String name = navData.getName();
+		if (name.endsWith(".gz"))
+			name = name.substring(0, name.lastIndexOf('.'));
+		
 		// Get the navaid type
-		int routeType = StringUtils.arrayIndexOf(UPLOAD_NAMES, navData.getName().toLowerCase());
+		int routeType = StringUtils.arrayIndexOf(UPLOAD_NAMES, name);
 		if (routeType == -1)
 			throw notFoundException("Unknown Data File - " + navData.getName());
 
+		List<String> errors = new ArrayList<String>();
 		boolean doPurge = Boolean.valueOf(ctx.getParameter("doPurge")).booleanValue();
 		int entryCount = 0;
 		try {
 			// Get the file
-			InputStream is = new ByteArrayInputStream(navData.getBuffer());
+			InputStream is = navData.getInputStream();
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 
 			// Iterate through the file
@@ -80,9 +86,12 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 					}
 				} else if ((tr != null) && (txtData.length() > 5)) {
 					List<String> wptParts = StringUtils.split(txtData.replace(" ", ""), ",");
-					tr.addWaypoint(wptParts.get(3));
-					if (tr.getTransition() == null)
-						tr.setTransition(wptParts.get(3));
+					String wpt = wptParts.get(3);
+					if (!StringUtils.isEmpty(wpt)) {
+						tr.addWaypoint(wptParts.get(3));
+						if (tr.getTransition() == null)
+							tr.setTransition(wptParts.get(3));
+					}
 				}
 			}
 			
@@ -101,8 +110,11 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 			// Write the entries
 			for (Iterator<TerminalRoute> i = results.iterator(); i.hasNext(); ) {
 				tr = i.next();
-				dao.writeRoute(tr);
-				entryCount++;
+				if (tr.getTransition() != null) {
+					dao.writeRoute(tr);
+					entryCount++;
+				} else
+					errors.add(tr.getName() + " (" + tr.getICAO() + ") has no transition");
 			}
 			
 			// Commit
@@ -122,6 +134,10 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 		ctx.setAttribute("isImport", Boolean.TRUE, REQUEST);
 		ctx.setAttribute("doPurge", Boolean.valueOf(doPurge), REQUEST);
 		ctx.setAttribute("terminalRoute", Boolean.TRUE, REQUEST);
+		
+		// Save error messages
+		if (!errors.isEmpty())
+			ctx.setAttribute("errors", errors, REQUEST);
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
