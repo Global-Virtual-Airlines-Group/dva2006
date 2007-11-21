@@ -34,7 +34,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	private boolean _logStack;
 
 	private transient ConnectionMonitor _monitor;
-	private SortedSet<ConnectionPoolEntry> _cons;
+	private SortedMap<Integer, ConnectionPoolEntry> _cons;
 	private transient Thread _monitorThread;
 
 	private transient final Properties _props = new Properties();
@@ -73,7 +73,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 * Get first available connection ID.
 	 */
 	private int getNextID() {
-		return CollectionUtils.isEmpty(_cons) ? 1 : _cons.last().getID() + 1;
+		return ((_cons == null) || _cons.isEmpty()) ? 1 : _cons.lastKey().intValue() + 1;
 	}
 
 	/**
@@ -201,7 +201,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 		// Loop through the connection pool, if we find one not in use then get it
 		int sysConSize = 0;
 		synchronized (_cons) {
-			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
 				ConnectionPoolEntry cpe = i.next();
 				if (cpe.isSystemConnection())
 					sysConSize++;
@@ -236,16 +236,16 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			cpe.setDynamic(true);
 			_monitor.addConnection(cpe);
 			synchronized (_cons) {
-				_cons.add(cpe);
-			}
+				_cons.put(Integer.valueOf(cpe.getID()), cpe);
 
-			// Return back the new connection
-			_totalRequests++;
-			_expandCount++;
-			if (log.isDebugEnabled())
-				log.debug("Reserving dynamic JDBC Connection " + cpe);
-			
-			return cpe.reserve(_logStack);
+				// Return back the new connection
+				_totalRequests++;
+				_expandCount++;
+				if (log.isDebugEnabled())
+					log.debug("Reserving dynamic JDBC Connection " + cpe);
+				
+				return cpe.reserve(_logStack);
+			}
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
 		}
@@ -272,57 +272,59 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			log.warn("Error rolling back transaction - " + se.getMessage());
 			_monitor.execute();
 		}
+		
+		// Check that we got a connection wrapper
+		if (!(c instanceof ConnectionWrapper)) {
+			log.warn("Invalid JDBC Connection returned");
+			return 0;
+		}
 
 		// Find the connection pool entry and free it
+		ConnectionWrapper cw = (ConnectionWrapper) c;
 		synchronized (_cons) {
-			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
-				ConnectionPoolEntry cpe = i.next();
-
-				// If we find the connection, release it
-				if (cpe.getConnection() == c) {
-					cpe.free();
+			ConnectionPoolEntry cpe = _cons.get(cw.getID());
+			if (cpe != null) {
+				cpe.free();
+				
+				// If this is a dynamic connection, such it down
+				if (cpe.isDynamic()) {
+					_monitor.removeConnection(cpe);
+					cpe.close();
+					_cons.remove(cw.getID());
 					
-					// If this is a dynamic connection, such it down
-					if (cpe.isDynamic()) {
+					// If it's stale, log the stack dump
+					if (cpe.getUseCount() < MAX_USE_TIME)
+						log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+					else
+						log.error("Closed stale dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms", cpe.getStackInfo());
+				} else {
+					if (log.isDebugEnabled())
+						log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+
+					// Check if we need to restart
+					if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
+						log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
 						_monitor.removeConnection(cpe);
 						cpe.close();
-						i.remove();
-						
-						// If it's stale, log the stack dump
-						if (cpe.getUseCount() < MAX_USE_TIME)
-							log.info("Closed dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
-						else
-							log.error("Closed stale dynamic JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms", cpe.getStackInfo());
-					} else {
-						if (log.isDebugEnabled())
-							log.debug("Released JDBC Connection " + cpe + " after " + cpe.getUseTime() + "ms");
+						_cons.remove(Integer.valueOf(cpe.getID()));
 
-						// Check if we need to restart
-						if ((_maxRequests > 0) && (cpe.getUseCount() > _maxRequests)) {
-							log.warn("Restarting JDBC Connection " + cpe + " after " + cpe.getUseCount() + " reservations");
-							_monitor.removeConnection(cpe);
-							cpe.close();
-							i.remove();
-
-							// Create the new Connection
-							try {
-								cpe = createConnection(cpe.isSystemConnection(), cpe.getID());
-								_monitor.addConnection(cpe);
-								_cons.add(cpe);
-							} catch (SQLException se) {
-								log.error("Cannot reconnect JDBC Connection " + cpe, se);
-							}
+						// Create the new Connection
+						try {
+							cpe = createConnection(cpe.isSystemConnection(), cpe.getID());
+							_monitor.addConnection(cpe);
+							_cons.put(Integer.valueOf(cpe.getID()), cpe);
+						} catch (SQLException se) {
+							log.error("Cannot reconnect JDBC Connection " + cpe, se);
 						}
 					}
-
-					// Return use time
-					return cpe.getUseTime();
 				}
+				
+				return cpe.getUseTime();
 			}
 		}
 
 		// If we got this far, the connection was not part of the pool.
-		log.warn("Invalid JDBC Connection returned");
+		log.warn("Invalid JDBC Connection returned - " + cw.getID());
 		return 0;
 	}
 
@@ -337,18 +339,18 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 			throw new IllegalArgumentException("Invalid pool size - " + initialSize);
 
 		// Create connections
-		_cons = new TreeSet<ConnectionPoolEntry>();
+		_cons = new TreeMap<Integer, ConnectionPoolEntry>();
 		try {
 			for (int x = 0; x < initialSize; x++) {
 				ConnectionPoolEntry cpe = createConnection(false, x + 1);
 				_monitor.addConnection(cpe);
-				_cons.add(cpe);
+				_cons.put(Integer.valueOf(cpe.getID()), cpe);
 			}
 
 			// Create a system connection
 			ConnectionPoolEntry sysc = createConnection(true, getNextID());
 			_monitor.addConnection(sysc);
-			_cons.add(sysc);
+			_cons.put(Integer.valueOf(sysc.getID()), sysc);
 		} catch (SQLException se) {
 			throw new ConnectionPoolException(se);
 		}
@@ -367,7 +369,7 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 
 		// Disconnect the regular connections
 		synchronized (_cons) {
-			for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
 				ConnectionPoolEntry cpe = i.next();
 				if (cpe.inUse())
 					log.warn("Forcibly closing JDBC Connection " + cpe);
@@ -392,9 +394,11 @@ public class ConnectionPool implements java.io.Serializable, Thread.UncaughtExce
 	 */
 	public Collection<ConnectionInfo> getPoolInfo() {
 		Collection<ConnectionInfo> results = new ArrayList<ConnectionInfo>(_cons.size());
-		for (Iterator<ConnectionPoolEntry> i = _cons.iterator(); i.hasNext();) {
-			ConnectionPoolEntry cpe = i.next();
-			results.add(new ConnectionInfo(cpe));
+		synchronized (_cons) {
+			for (Iterator<ConnectionPoolEntry> i = _cons.values().iterator(); i.hasNext();) {
+				ConnectionPoolEntry cpe = i.next();
+				results.add(new ConnectionInfo(cpe));
+			}
 		}
 
 		return results;
