@@ -9,7 +9,7 @@ import org.apache.log4j.Logger;
 /**
  * A class to store JDBC connections in a connection pool and track usage.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -87,9 +87,10 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 			throw new IllegalStateException("Connection " + toString() + " already Connected");
 
 		// Create the connection
-		_c = DriverManager.getConnection(_props.getProperty("url"), _props);
-		_c.setAutoCommit(_autoCommit);
-		_c.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+		Connection c = DriverManager.getConnection(_props.getProperty("url"), _props);
+		c.setAutoCommit(_autoCommit);
+		c.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+		_c = new ConnectionWrapper(_id, c);
 		_lastUsed = System.currentTimeMillis();
 	}
 
@@ -152,7 +153,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * @see ConnectionPoolEntry#equals(Object)
 	 */
 	Connection getConnection() {
-		return _c;
+		return new ConnectionWrapper(_id, _c);
 	}
 
 	/**
@@ -275,12 +276,7 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 	 * ConnectionPoolEntry from the pool when all we get back is the SQL Connection.
 	 */
 	public boolean equals(Object o2) {
-		if (o2 instanceof Connection)
-			return (_c == ((Connection) o2));
-		else if (o2 instanceof ConnectionPoolEntry)
-			return (compareTo((ConnectionPoolEntry) o2) == 0);
-		else
-			return false;
+		return (o2 instanceof ConnectionPoolEntry) ? (compareTo((ConnectionPoolEntry) o2) == 0) : false;
 	}
 
 	/**
@@ -290,12 +286,8 @@ class ConnectionPoolEntry implements java.io.Serializable, Comparable<Connection
 		return Integer.valueOf(_id).compareTo(Integer.valueOf(e2._id));
 	}
 
-	/**
-	 * This overrides hashcode behavior by returning the hashcode of the underlying JDBC connection.
-	 * @see ConnectionPoolEntry#equals(Object)
-	 */
 	public int hashCode() {
-		return _c.hashCode();
+		return toString().hashCode();
 	}
 
 	/**
