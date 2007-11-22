@@ -1306,6 +1306,12 @@
 		<roles>Anonymous</roles>
 	</command>
 
+	<command id="appfind">
+		<name>Pending Applicant Search</name>
+		<class>org.deltava.commands.register.ApplicantFindCommand</class>
+		<roles>Anonymous</roles>
+	</command>
+
 	<command id="welcome">
 		<name>Resend Welcome E-Mail</name>
 		<class>org.deltava.commands.register.WelcomeMessageCommand</class>

@@ -33,8 +33,14 @@ public class ValidateEMailCommand extends AbstractCommand {
 			// Get the applicant
 			GetApplicant adao = new GetApplicant(con);
 			Applicant a = adao.get(ctx.getID());
-			if ((a == null) || (a.getStatus() != Applicant.PENDING))
-				throw notFoundException("Invalid Applicant - " + ctx.getID());
+			if ((a == null) || (a.getStatus() != Applicant.PENDING)) {
+				ctx.release();
+				
+				// Redirect to the applicant find page
+				result.setURL("/jsp/register/applicantSearch.jsp");
+				result.setSuccess(true);
+				return;
+			}
 			
 			// Save the applicant
 			ctx.setAttribute("applicant", a, REQUEST);

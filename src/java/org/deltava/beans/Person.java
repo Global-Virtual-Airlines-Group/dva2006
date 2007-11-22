@@ -205,6 +205,17 @@ public abstract class Person extends DatabaseBlobBean implements Principal, EMai
 	public int getEmailAccess() {
 		return _emailAccess;
 	}
+	
+	/**
+	 * Returns this person's e-mail domain.
+	 * @return the domain part of the e-mail address, or null if no address.
+	 */
+	public String getEmailDomain() {
+		if (_email == null)
+			return null;
+		
+		return _email.contains("@") ? _email.substring(_email.indexOf('@') + 1) : null;
+	}
 
 	/**
 	 * Return the Person's rank. In the case of an Applicant not yet hired this will be null.
