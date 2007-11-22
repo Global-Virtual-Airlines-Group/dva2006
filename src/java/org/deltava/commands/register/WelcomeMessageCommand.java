@@ -18,7 +18,7 @@ import org.deltava.util.PasswordGenerator;
 import org.deltava.util.system.SystemData;
 
 /**
- * A Web Site Command to resent the applicant welcome message.
+ * A Web Site Command to resent the Applicant welcome message.
  * @author Luke
  * @version 1.0
  * @since 1.0
@@ -61,9 +61,10 @@ public class WelcomeMessageCommand extends AbstractCommand {
 			   mctxt.setTemplate(mtdao.get("USERREGISTER"));
 			   mctxt.addData("questionnaire", ex);
 			   mctxt.addData("applicant", a);
-			} else if (a.getStatus() == Applicant.PENDING) {
-			   mctxt.setTemplate(mtdao.get("ADDRVALIDATE"));
-			   mctxt.addData("person", a);
+			} else if ((a.getStatus() == Applicant.PENDING) && (addrValid != null)) {
+				mctxt.setTemplate(mtdao.get("APPEMAILUPDATE"));
+				mctxt.addData("applicant", a);
+				mctxt.addData("addrValid", addrValid);
 			} else if (a.getStatus() == Applicant.APPROVED) {
 				mctxt.addData("applicant", a);
 				mctxt.setTemplate(mtdao.get("APPAPPROVE"));
