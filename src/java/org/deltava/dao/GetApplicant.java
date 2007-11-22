@@ -45,14 +45,32 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			return a;
 
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Get results, return first or null
-			List results = execute();
-			setQueryMax(0);
+			List<Applicant> results = execute();
 			return results.isEmpty() ? null : (Applicant) results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Searches for pending Applicants by first/last name. 
+	 * @param fName the first name
+	 * @param lName the last name
+	 * @return a Collection of Applicants
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Applicant> getByName(String fName, String lName) throws DAOException {
+		try {
+			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (STATUS=?) AND "
+					+ "(FIRSTNAME LIKE ?) AND (LASTNAME LIKE ?)");
+			_ps.setInt(1, Applicant.PENDING);
+			_ps.setString(2, fName);
+			_ps.setString(3, lName);
+			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -66,14 +84,12 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getByPilotID(int pilotID) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?)");
+			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (PILOT_ID=?) LIMIT 1");
 			_ps.setInt(1, pilotID);
 
 			// Get results, return first or null
-			List results = execute();
-			setQueryMax(0);
-			return results.isEmpty() ? null : (Applicant) results.get(0);
+			List<Applicant> results = execute();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -163,14 +179,12 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	 */
 	public Applicant getFromDirectory(String directoryName) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?)");
+			prepareStatementWithoutLimits("SELECT *, INET_NTOA(REGADDR) FROM APPLICANTS WHERE (LDAP_DN=?) LIMIT 1");
 			_ps.setString(1, directoryName);
 
 			// Get results, return first or null
-			List results = execute();
-			setQueryMax(0);
-			return results.isEmpty() ? null : (Applicant) results.get(0);
+			List<Applicant> results = execute();
+			return results.isEmpty() ? null : results.get(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

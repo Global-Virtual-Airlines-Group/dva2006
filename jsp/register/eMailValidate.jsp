@@ -68,7 +68,7 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="appvalidate.do" link="${person}" method="post" validate="return validate(this)">
+<el:form action="appvalidate.do" link="${addr}" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <c:choose>
 <c:when test="${validationFailure}">
