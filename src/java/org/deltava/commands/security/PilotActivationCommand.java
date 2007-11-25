@@ -131,7 +131,6 @@ public class PilotActivationCommand extends AbstractCommand {
 				else
 					sqlAuth.add(p, p.getPassword());
 				
-				sqlAuth.authenticate(p, p.getPassword());
 				sqlAuth.clearConnection();
 			} else {
 				if (auth.contains(p))
