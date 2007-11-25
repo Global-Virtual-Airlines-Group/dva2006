@@ -31,11 +31,12 @@ public class Issue extends DatabaseBean implements AuthoredBean, ViewEntry {
 	public static final int AREA_ACARS = 4;
 	public static final int AREA_SERVER = 5;
 	public static final int AREA_SCHEDULE = 6;
+	public static final int AREA_DISPATCH = 7;
 	
 	/**
 	 * Area Names
 	 */
-	public static final String[] AREA = {"Web Site", "Fleet Library", "Manuals", "Examinations", "ACARS", "Server Admin", "Schedule"};
+	public static final String[] AREA = {"Web Site", "Fleet Library", "Manuals", "Examinations", "ACARS", "Server Admin", "Schedule", "Dispatch"};
 	
 	public static final int STATUS_OPEN = 0;
 	public static final int STATUS_FIXED = 1;
