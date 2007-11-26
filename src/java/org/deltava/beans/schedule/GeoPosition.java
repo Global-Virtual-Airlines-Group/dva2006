@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.schedule;
 
 import org.deltava.beans.GeoLocation;
@@ -7,7 +7,7 @@ import org.deltava.beans.GeospaceLocation;
 /**
  * A class for working with latitude/longitude pairs.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -132,7 +132,7 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	}
 
 	/**
-	 * Sets the latitude and ensures its validity
+	 * Sets the latitude and ensures its validity.
 	 * @param lat The latitude to set in degrees (values < 0 are South of the Equator)
 	 * @throws IllegalArgumentException The latitude is < 90 or > -90 degrees
 	 */
@@ -247,5 +247,15 @@ public class GeoPosition implements GeospaceLocation, java.io.Serializable {
 	 */
 	public boolean equals(Object o2) {
 		return (o2 instanceof GeoPosition) ? (distanceTo((GeoPosition) o2) < 1) : false;
+	}
+	
+	/**
+	 * Returns the latitude/longitude of the point.
+	 */
+	public String toString() {
+		StringBuilder buf = new StringBuilder(String.valueOf(_lat));
+		buf.append(',');
+		buf.append(String.valueOf(_lon));
+		return buf.toString();
 	}
 }
