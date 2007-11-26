@@ -29,6 +29,7 @@ of this Check Ride.<br />
 <br />
 To view the Pilot Profile, <el:cmd url="profile" link="${pilot}">Click here</el:cmd>.<br />
 To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.<br />
+To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld" sort="TX.EQTYPE,TX.STATUS">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isAssign}">
 <!-- Check Ride Assigned -->
@@ -36,12 +37,16 @@ To return to the Examination Queue, <el:cmd url="examqueue">Click Here</el:cmd>.
 <br />
 This <content:airline /> ${checkRide.name} Check Ride has been assigned to ${pilot.name}, 
 and an e-mail message has been sent to the Pilot.<br />
+<br />
+To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld" sort="TX.EQTYPE,TX.STATUS">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${isRideAlreadyAssigned && (empty tx)}">
 <div class="updateHdr">Check Ride Pending</div>
 <br />
 A ${checkRide.equipmentType} Check Ride is currently pending for ${pilot.name}. No new Check Rides can 
 be assigned while one is currently pending.<br />
+<br />
+To return to the list of pending equipment program transfer requests, <el:cmd url="txrequests" className="sec bld" sort="TX.EQTYPE,TX.STATUS">Click Here</el:cmd>.<br />
 </c:when>
 <c:when test="${!empty txt}">
 <div class="updateHdr">Transfer Request Pending</div>
