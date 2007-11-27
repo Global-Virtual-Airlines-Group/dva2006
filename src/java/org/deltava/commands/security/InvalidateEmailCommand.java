@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.security;
 
 import java.sql.Connection;
@@ -13,7 +13,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -81,7 +81,7 @@ public class InvalidateEmailCommand extends AbstractCommand {
 
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setURL("/jsp/register/eMailInvalidate.jsp");
+      result.setURL("/jsp/pilot/eMailInvalidate.jsp");
       result.setSuccess(true);
    }
 }
