@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to update a registered Pilot's e-mail address.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -70,8 +70,8 @@ public class UpdateEmailCommand extends AbstractCommand {
 			av = avdao.get(p.getID());
 			if (av == null)
 				av = new AddressValidation(p.getID(), addr);
-			if (!EMailAddress.INVALID_ADDR.equals(av.getAddress()))
-				ctx.setAttribute("addr", av, REQUEST);
+			else
+				av.setAddress(addr);
 			
 			// Calculate the hash code
 			av.setHash(AddressValidationHelper.calculateHashCode(av.getAddress()));
@@ -91,7 +91,7 @@ public class UpdateEmailCommand extends AbstractCommand {
 		}
 		
 		// Set message attributes
-		mctxt.addData("addrValid", av);
+		mctxt.addData("addr", av);
 		mctxt.addData("user", p);
 		
 		// Send the e-mail message
