@@ -93,7 +93,6 @@ public class WebServiceServlet extends BasicAuthServlet {
     * @throws IOException if a network I/O error occurs
     */
 	public void doGet(HttpServletRequest req, HttpServletResponse rsp) throws ServletException, IOException {
-		req.setCharacterEncoding("UTF-8");
 
 		// Get the web service
 		WebService svc = getService(req.getRequestURI());
