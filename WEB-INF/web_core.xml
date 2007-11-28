@@ -160,6 +160,10 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
 		<filter-name>SecurityRequestWrapperFilter</filter-name>
 		<servlet-name>webService</servlet-name>
 	</filter-mapping>
+	<filter-mapping>
+		<filter-name>FileUploadFilter</filter-name>
+		<servlet-name>webService</servlet-name>
+	</filter-mapping>
 	
 	<!-- Servlet URL mappings -->
 	<servlet-mapping>
