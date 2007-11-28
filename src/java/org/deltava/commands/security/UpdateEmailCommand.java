@@ -91,15 +91,17 @@ public class UpdateEmailCommand extends AbstractCommand {
 		}
 		
 		// Set message attributes
-		mctxt.addData("addr", av);
+		mctxt.addData("addrValid", av);
 		mctxt.addData("user", p);
 		
 		// Send the e-mail message
-		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? p : null);
+		EMailAddress newAddr = Mailer.makeAddress(av.getAddress(), p.getName());
+		Mailer mailer = new Mailer(SystemData.getBoolean("smtp.testMode") ? newAddr : null);
 		mailer.setContext(mctxt);
-		mailer.send(Mailer.makeAddress(av.getAddress(), p.getName()));
+		mailer.send(newAddr);
 
 		// Set status attribute
+		ctx.setAttribute("addr", av, REQUEST);
 		ctx.setAttribute("addrUpdate", Boolean.TRUE, REQUEST);
 		
 		// Forward to the JSP
