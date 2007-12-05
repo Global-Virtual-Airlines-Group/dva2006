@@ -1513,7 +1513,7 @@
 	<command id="hdclose">
 		<name>Help Desk Issue Close</name>
 		<class>org.deltava.commands.help.IssueCloseCommand</class>
-		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin</roles>
+		<roles>HR,Examination,PIREP,Signature,Instructor,AcademyAdmin,HelpDesk</roles>
 	</command>
 
 	<command id="hdcomment">
