@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -86,7 +86,14 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 			// Execute the query and get return value
 			List<Pilot> results = execute();
-			return results.isEmpty() ? null : results.get(0);
+			Pilot result = (results.size() == 0) ? null : (Pilot) results.get(0);
+			if (result == null)
+				return null;
+			
+			// Add roles/ratings
+			addRatings(result, SystemData.get("airline.db"));
+			addRoles(result, SystemData.get("airline.db"));
+			return result;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
