@@ -67,7 +67,6 @@ var routes;
 
 // Save airports in JS array
 var airports = new Array();
-updateAirports(getElement('airlineCode'));
 </script>
 <content:googleAnalytics />
 </body>
