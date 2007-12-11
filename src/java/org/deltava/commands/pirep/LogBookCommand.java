@@ -17,14 +17,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display a Pilot's Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
 public class LogBookCommand extends AbstractViewCommand {
 	
     // List of query columns we can order by
-    private static final String[] SORT_CODE = {"DATE DESC, PR.ID DESC", "EQTYPE", "DISTANCE DESC", "AIRPORT_D",
+    private static final String[] SORT_CODE = {"DATE DESC, PR.SUBMITTED DESC", "EQTYPE", "DISTANCE DESC", "AIRPORT_D",
     	"AIRPORT_A", "FLIGHT_TIME DESC"};
     private static final String[] SORT_NAMES = {"Flight Date", "Equipment", "Distance", "Origin", "Destination", "Flight Time"};
     private static final List<ComboAlias> SORT_OPTIONS = ComboUtils.fromArray(SORT_NAMES, SORT_CODE);
