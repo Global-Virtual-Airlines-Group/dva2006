@@ -104,11 +104,13 @@ public class SetCoolerMessage extends DAO {
 			
 			// If we have poll options, write them to the database
 			if (!t.getOptions().isEmpty()) {
-				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, NAME) VALUES (?, ?)");
+				prepareStatementWithoutLimits("INSERT INTO common.COOLER_POLLS (ID, OPT_ID, NAME) VALUES (?, ?, ?)");
 				_ps.setInt(1, t.getID());
+				int seqID = -1;
 				for (Iterator<PollOption> i = t.getOptions().iterator(); i.hasNext(); ) {
 					PollOption opt = i.next();
-					_ps.setString(2, opt.getName());
+					_ps.setInt(2, ++seqID);
+					_ps.setString(3, opt.getName());
 					_ps.addBatch();
 				}
 				
