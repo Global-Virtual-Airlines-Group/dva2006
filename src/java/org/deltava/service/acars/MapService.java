@@ -20,7 +20,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Service to provide XML-formatted ACARS position data for Google Maps.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -37,17 +37,17 @@ public class MapService extends WebService {
 	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 
+		// Get the pool
+		ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
+		if (acarsPool == null)
+			return SC_NOT_FOUND;
+		
 		// Get the ACARS connection data
-		CacheableList<RouteEntry> entries = _cache.get(MapService.class);
+		CacheableList<RouteEntry> entries = null;
 		synchronized (_cache) {
+			entries = _cache.get(MapService.class);
 			if (entries == null) {
 				entries = new CacheableList<RouteEntry>(MapService.class);
-			
-				// Get the pool
-				ACARSAdminInfo<RouteEntry> acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-				if (acarsPool == null)
-					return SC_NOT_FOUND;
-			
 				entries.addAll(IPCUtils.deserialize(acarsPool));
 				_cache.add(entries);
 			}
@@ -56,6 +56,7 @@ public class MapService extends WebService {
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
+		re.setAttribute("dispatch", String.valueOf(acarsPool.isDispatchOnline()));
 		doc.setRootElement(re);
 
 		// Add the items

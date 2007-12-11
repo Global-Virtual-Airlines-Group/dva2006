@@ -117,6 +117,10 @@ return true;
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
 </tr>
 <tr>
+ <td class="label">Dispatch Service</td>
+ <td class="data"><span id="dispatchStatus" class="err bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
+</tr>
+<tr>
  <td class="label" valign="top">Live Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="sec bld"></div></td>
 </tr>
@@ -186,6 +190,7 @@ var routeWaypoints;
 var acPositions = new Array();
 
 // Reload ACARS data
+document.dispatchOnline = false;
 document.doRefresh = true;
 reloadData(true);
 <c:if test="${!empty tileHost}">

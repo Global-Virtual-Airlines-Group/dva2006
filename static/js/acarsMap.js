@@ -17,9 +17,11 @@ xmlreq.onreadystatechange = function() {
 	acPositions.length = 0;
 
 	// Parse the XML
-	var xmlDoc = xmlreq.responseXML;
-	if (!xmlDoc) return false;
-	var ac = xmlDoc.documentElement.getElementsByTagName("aircraft");
+	var xml = xmlreq.responseXML;
+	if (!xml) return false;
+	var xe = xml.documentElement;
+	document.dispatchOnline = (xe.getAttribute("dispatch") == "true");
+	var ac = xe.getElementsByTagName("aircraft");
 	for (var i = 0; i < ac.length; i++) {
 		var a = ac[i];
 		var p = new GLatLng(parseFloat(a.getAttribute("lat")), parseFloat(a.getAttribute("lng")));
@@ -49,6 +51,16 @@ xmlreq.onreadystatechange = function() {
 
 	// Enable the Google Earth button depending on if we have any aircraft
 	enableElement('EarthButton', (ac.length > 0));
+
+	// Display dispatch status
+	var de = getElement('dispatchStatus');
+	if ((de) && document.dispatchOnline) {
+		de.class = 'ter bld caps';
+		de.innerText = 'Dispatcher Currently Online';
+	} else if (de) {
+		de.class = 'err bld caps';	
+		de.innerText = 'Dispatcher Currently Offline';
+	}
 
 	// Focus on the map
 	if (isLoading)
