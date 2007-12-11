@@ -27,6 +27,7 @@ xmlreq.onreadystatechange = function() {
 	isLoading.innerHTML = ' - REDRAWING...';
 	var aps = new Array();
 	var f = document.forms[0];
+	var isIE = (document.all);
 
 	// Parse the XML
 	var xdoc = xmlreq.responseXML;
@@ -40,7 +41,7 @@ xmlreq.onreadystatechange = function() {
 		mrk.iata = a.getAttribute("iata");
 		mrk.infoShow = showRoutes;
 		GEvent.addListener(mrk, 'infowindowclose', function() { removeMarkers(map, 'routes'); });
-		var label = a.childNodes[1];
+		var label = a.childNodes[isIE ? 0 : 1];
 		mrk.infoLabel = label.data;
 		GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
 		document.lastAirport = a;
