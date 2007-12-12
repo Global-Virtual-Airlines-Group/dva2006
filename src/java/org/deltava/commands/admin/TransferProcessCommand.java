@@ -13,10 +13,12 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.TransferAccessControl;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to display a Transfer Request for processing.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -62,7 +64,7 @@ public class TransferProcessCommand extends AbstractCommand {
 			
 			// Get the requested equipment type
 			GetEquipmentType eqdao = new GetEquipmentType(con);
-			EquipmentType newEQ = eqdao.get(txreq.getEquipmentType());
+			EquipmentType newEQ = eqdao.get(txreq.getEquipmentType(), SystemData.get("airline.db"));
 			EquipmentType currEQ = eqdao.get(usr.getEquipmentType(), ud.getDB());
 			ctx.setAttribute("currentEQ", currEQ, REQUEST);
 			ctx.setAttribute("eqType", newEQ, REQUEST);
