@@ -20,6 +20,8 @@ public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
 	private String _flightNumber;
 	private Airport _airportD;
 	private Airport _airportA;
+	private boolean _checkRide;
+	private boolean _dispatchRoute;
 
 	public NamedRouteEntry(Date dt, GeoLocation gl, Pilot usr, String eqType) {
 		super(dt, gl.getLatitude(), gl.getLongitude());
@@ -29,6 +31,14 @@ public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
 
 	public void setClientBuild(int buildNumber) {
 		_clientBuild = buildNumber;
+	}
+	
+	public void setCheckRide(boolean isCR) {
+		_checkRide = isCR;
+	}
+	
+	public void setDispatchPlan(boolean isDP) {
+		_dispatchRoute = isDP;
 	}
 
 	public void setFlightNumber(String flightNumber) {
@@ -119,7 +129,18 @@ public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
 		buf.append(_airportA.getICAO());
 		buf.append(")<br /><br />ACARS Flight <b>");
 		buf.append(StringUtils.format(getID(), "#,##0"));
-		buf.append("</b></div>");
+		buf.append("</b>");
+		if (_checkRide || _dispatchRoute) {
+			buf.append("<br />");
+			if (_checkRide)
+				buf.append("<span class=\"pri bld\">CHECK RIDE</span>");
+			if (_checkRide && _dispatchRoute)
+				buf.append(' ');
+			if (_dispatchRoute)
+				buf.append("<span class=\"sec bld\">USING DISPATCH</span>");
+		}
+		
+		buf.append("</div>");
 		results.add(buf.toString());
 		
 		// Add Flight information

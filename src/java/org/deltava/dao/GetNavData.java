@@ -14,13 +14,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
 public class GetNavData extends DAO implements CachingDAO {
 	
-	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(2560);
+	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(4096);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -86,13 +86,29 @@ public class GetNavData extends DAO implements CachingDAO {
 		
 		// Get all entries with the code
 		NavigationDataMap results = get(code);
-		for (Iterator i = results.getAll().iterator(); i.hasNext(); ) {
-			NavigationDataBean nd = (NavigationDataBean) i.next();
+		for (Iterator<NavigationDataBean> i = results.getAll().iterator(); i.hasNext(); ) {
+			NavigationDataBean nd = i.next();
 			if (nd instanceof AirportLocation)
 				return (AirportLocation) nd;
 		}
 		
 		return null;
+	}
+	
+	/**
+	 * Returns all navaids of a particular type in the database.
+	 * @param type the Navigation aid code
+	 * @return a Collection of NavigationDataBeans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<NavigationDataBean> getAll(int type) throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE=?)");
+			_ps.setInt(1, type);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
 	}
 
 	/**
@@ -233,9 +249,7 @@ public class GetNavData extends DAO implements CachingDAO {
 					break;
 
 				case NavigationDataBean.INT:
-					Intersection i = new Intersection(rs.getDouble(3), rs.getDouble(4));
-					i.setCode(rs.getString(2));
-					obj = i;
+					obj = new Intersection(rs.getString(2), rs.getDouble(3), rs.getDouble(4));
 					break;
 
 				case NavigationDataBean.VOR:
@@ -280,9 +294,9 @@ public class GetNavData extends DAO implements CachingDAO {
 	/**
 	 * Helper method to filter objects based on distance from a certain point
 	 */
-	private void distanceFilter(Collection entries, GeoLocation loc, int distance) {
-		for (Iterator i = entries.iterator(); i.hasNext();) {
-			NavigationDataBean ndb = (NavigationDataBean) i.next();
+	private void distanceFilter(Collection<NavigationDataBean> entries, GeoLocation loc, int distance) {
+		for (Iterator<NavigationDataBean> i = entries.iterator(); i.hasNext();) {
+			NavigationDataBean ndb = i.next();
 			if (ndb.getPosition().distanceTo(loc) > distance)
 				i.remove();
 		}

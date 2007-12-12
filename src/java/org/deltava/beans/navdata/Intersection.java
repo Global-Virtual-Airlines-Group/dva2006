@@ -4,7 +4,7 @@ package org.deltava.beans.navdata;
 /**
  * A bean to store Intersection data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -12,11 +12,13 @@ public class Intersection extends NavigationDataBean {
 
 	/**
 	 * Creates a new Intersection object.
+	 * @param code the intersection code
 	 * @param lat the latitude in degrees
 	 * @param lon the longitude in degrees
 	 */
-	public Intersection(double lat, double lon) {
+	public Intersection(String code, double lat, double lon) {
 		super(INT, lat, lon);
+		setCode(code);
 	}
 
 	/**
@@ -69,9 +71,7 @@ public class Intersection extends NavigationDataBean {
 		} else if (code.endsWith("N") && (code.length() == 5)) {
 			double lat = Double.parseDouble(code.substring(0, 2));
 			double lng = Double.parseDouble(code.substring(2, 4)) * -1;
-			Intersection i = new Intersection(lat, lng);
-			i.setCode(code);
-			return i;
+			return new Intersection(code, lat, lng);
 		} else
 			throw new IllegalArgumentException("Invalid NAT waypoint - " + code);
 	}

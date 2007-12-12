@@ -2,6 +2,7 @@
 package org.deltava.dao;
 
 import java.sql.*;
+import java.util.*;
 
 import org.deltava.beans.navdata.*;
 
@@ -10,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -88,10 +89,26 @@ public class SetNavData extends DAO {
 	 */
 	public void write(Airway a) throws DAOException {
 	   try {
-	      prepareStatement("REPLACE INTO common.AIRWAYS (NAME, ROUTE) VALUES (?, ?)");
+		   prepareStatement("INSERT INTO common.AIRWAYS (NAME, ID, SEQ, WAYPOINT, LATITUDE, LONGITUDE, HIGH, LOW) "
+				   + "VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, a.getCode());
-	      _ps.setString(2, a.getRoute());
-	      executeUpdate(1);
+	      _ps.setInt(2, a.getSequence());
+	      _ps.setBoolean(7, a.isHighLevel());
+	      _ps.setBoolean(8, a.isLowLevel());
+	      
+	      // Write the waypoints
+	      for (Iterator<NavigationDataBean> i = a.getWaypoints().iterator(); i.hasNext(); ) {
+	    	  Airway.AirwayIntersection ai = (Airway.AirwayIntersection) i.next();
+	    	  _ps.setInt(3, ai.getSequence());
+	    	  _ps.setString(4, ai.getCode());
+	    	  _ps.setDouble(5, ai.getLatitude());
+	    	  _ps.setDouble(6, ai.getLongitude());
+	    	  _ps.addBatch();
+	      }
+
+	      // Write and clean up
+	      _ps.executeBatch();
+	      _ps.close();
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -105,15 +122,27 @@ public class SetNavData extends DAO {
 	 */
 	public void writeRoute(TerminalRoute tr) throws DAOException {
 	   try {
-	      prepareStatement("REPLACE INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, ROUTE) "
-	            + "VALUES (?, ?, ?, ?, ?, ?)");
+	      prepareStatement("INSERT INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, SEQ, WAYPOINT, "
+	    		  + "LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, tr.getICAO());
 	      _ps.setInt(2, tr.getType());
 	      _ps.setString(3, tr.getName());
 	      _ps.setString(4, tr.getTransition());
 	      _ps.setString(5, tr.getRunway());
-	      _ps.setString(6, tr.getRoute());
-	      executeUpdate(1);
+	      
+	      // Write the waypoints
+	      for (Iterator<NavigationDataBean> i = tr.getWaypoints().iterator(); i.hasNext(); ) {
+	    	  Airway.AirwayIntersection ai = (Airway.AirwayIntersection) i.next();
+	    	  _ps.setInt(6, ai.getSequence());
+	    	  _ps.setString(7, ai.getCode());
+	    	  _ps.setDouble(8, ai.getLatitude());
+	    	  _ps.setDouble(9, ai.getLongitude());
+	    	  _ps.addBatch();
+	      }
+	      
+	      // Write and clean up
+	      _ps.executeBatch();
+	      _ps.close();
 	   } catch (SQLException se) {
 	      throw new DAOException(se);
 	   }
@@ -147,7 +176,7 @@ public class SetNavData extends DAO {
 	      throw new DAOException("Invalid Table - " + tableName);	
 	   
 		try {
-			prepareStatementWithoutLimits("DELETE FROM common." + tableName);
+			prepareStatementWithoutLimits("TRUNCATE common." + tableName);
 			return executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
