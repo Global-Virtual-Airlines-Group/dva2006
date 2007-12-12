@@ -62,7 +62,7 @@ public class PIREPAccessControl extends AccessControl {
 		final boolean isHeld = (status == FlightReport.HOLD);
 
 		// Check if held by us
-		final boolean isHeldByMe = (isHeld && (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID()));
+		final boolean isHeldByMe = (isHeld && _ctx.isAuthenticated() && (_pirep.getDatabaseID(FlightReport.DBID_DISPOSAL) == _ctx.getUser().getID()));
 		final boolean canReleaseHold = !isHeld || isHR || isHeldByMe;
 
 		// Check if we can submit/hold/approve/reject/edit the PIREP
