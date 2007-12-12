@@ -16,7 +16,7 @@ public class TestIntersection extends AbstractBeanTestCase {
    
    protected void setUp() throws Exception {
       super.setUp();
-      _int = new Intersection(12.345, -23.456);
+      _int = new Intersection("ABC", 12.345, -23.456);
       setBean(_int);
    }
 

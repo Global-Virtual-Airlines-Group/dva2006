@@ -56,7 +56,10 @@ public class TestGetNavRoute extends AbstractDAOTestCase {
 			assertNotNull(ndmap);
 			NavigationDataBean ndb = ndmap.get(wp);
 			if (ndb == null) {
-				Airway a = _dao.getAirway(wp);
+				Collection<Airway> aws = _dao.getAirways(wp);
+				assertNotNull(aws);
+				assertFalse(aws.isEmpty());
+				Airway a = aws.iterator().next();
 				assertNotNull(a);
 				assertEquals(wp, a.getCode());
 				System.out.println("Loaded Airway " + wp);
@@ -70,6 +73,5 @@ public class TestGetNavRoute extends AbstractDAOTestCase {
 		// Load the entire route
 		NavigationDataMap ndmap = _dao.getByID(entries);
 		assertNotNull(ndmap);
-
 	}
 }

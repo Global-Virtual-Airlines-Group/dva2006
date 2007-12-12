@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Preferred/Oceanic Routes.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -252,9 +252,7 @@ public class GetRoute extends DAO {
     			}
     			
     			// Add the waypoint
-    			Intersection i = new Intersection(rs.getDouble(6), rs.getDouble(7));
-    			i.setCode(rs.getString(5));
-    			wp.addWaypoint(i);
+    			wp.addWaypoint(new Intersection(rs.getString(5), rs.getDouble(6), rs.getDouble(7)));
     		}
     		
     		// Clean up and return

@@ -142,10 +142,7 @@ public class AIRACImportCommand extends AbstractCommand {
 						case 4: // Intersection
 							lat = Double.parseDouble(txtData.substring(5, 15).trim());
 							lon = Double.parseDouble(txtData.substring(16).trim());
-							
-							Intersection i = new Intersection(lat, lon);
-							i.setCode(txtData.substring(0, 5));
-							nd = i;
+							nd = new Intersection(txtData.substring(0, 5), lat, lon);
 							break;
 					}
 					

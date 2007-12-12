@@ -5,8 +5,9 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FileUpload;
+import org.deltava.beans.*;
 import org.deltava.beans.navdata.Airway;
+import org.deltava.beans.schedule.GeoPosition;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -56,20 +57,28 @@ public class AirwayImportCommand extends AbstractCommand {
 			LineNumberReader br = new LineNumberReader(new InputStreamReader(is));
 			
 			// Iterate through the file
-			Map<String, Airway> results = new TreeMap<String, Airway>();
+			Airway a = null; int lastSeq = -1; String lastCode = "";
+			Collection<Airway> results = new ArrayList<Airway>();
 			while (br.ready()) {
 				String txtData = br.readLine().replace(" ", "");
 				if ((!txtData.startsWith(";")) && (txtData.length() > 5)) {
 					List<String> codes = StringUtils.split(txtData, ",");
 					String code = codes.get(1);
-					Airway a = results.get(code);
-					if (a == null) {
-						a = new Airway(code);
-						results.put(code, a);
+					if ((!code.equals(lastCode)) || ("0".equals(codes.get(6)))) {
+						if (!code.equals(lastCode))
+							lastSeq = -1;
+						
+						lastCode = code;
+						char type = Character.toUpperCase(codes.get(9).charAt(0));
+						a = new Airway(code, ++lastSeq);
+						a.setHighLevel((type == 'H') || (type == 'B'));
+						a.setLowLevel((type == 'L') || (type == 'B'));
+						results.add(a);
 					}
 					
 					// Add a waypoint
-					a.addWaypoint(codes.get(3));
+					GeoLocation loc = new GeoPosition(StringUtils.parse(codes.get(4), 0.0d), StringUtils.parse(codes.get(5), 0.0d));
+					a.addWaypoint(codes.get(3), loc);
 				}
 			}
 			
@@ -86,8 +95,8 @@ public class AirwayImportCommand extends AbstractCommand {
 				dao.purge("AIRWAYS");
 			
 			// Write the airways
-			for (Iterator<Airway> i = results.values().iterator(); i.hasNext(); ) {
-				Airway a = i.next();
+			for (Iterator<Airway> i = results.iterator(); i.hasNext(); ) {
+				a = i.next();
 				dao.write(a);
 				entryCount++;
 			}

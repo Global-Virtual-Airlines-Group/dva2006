@@ -32,6 +32,14 @@
 	<!-- ACARS Offline PIREP Service -->
 	<service id="acarspirep" class="org.deltava.service.acars.FlightReportService" />
 
+	<!-- XACARS Offline PIREP Services -->
+	<service id="xacarspirep" class="org.deltava.service.acars.XACARSFlightReportService" />
+
+	<!-- ACARS Dispatch Services -->
+	<service id="navaids" class="org.deltava.service.navdata.NavigationAidService" />
+	<service id="airways" class="org.deltava.service.navdata.AirwayService" />
+	<service id="sidstar" class="org.deltava.service.navdata.TerminalRouteService" />
+
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />
 	<service id="acars_error" class="org.deltava.service.acars.ErrorLogService" />

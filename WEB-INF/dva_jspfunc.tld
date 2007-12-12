@@ -168,6 +168,13 @@
 		<function-signature>boolean isAcademy(org.deltava.beans.FlightReport)</function-signature>
 	</function>
 
+	<!-- Check for Dispatch-planned Flight -->
+	<function>
+		<name>isDispatch</name>
+		<function-class>org.deltava.taglib.functions.FlightReportFunctions</function-class>
+		<function-signature>boolean isDispatch(org.deltava.beans.FlightReport)</function-signature>
+	</function>
+
 	<!-- Check for Online Flight Report -->
 	<function>
 		<name>isOnline</name>

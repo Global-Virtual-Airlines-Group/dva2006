@@ -27,7 +27,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Service to display ACARS flight plan data in Google Earth.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -41,7 +41,6 @@ public class EarthMapPlanService extends GoogleEarthService {
 	 * @return the HTTP status code
 	 * @throws ServiceException if an error occurs
 	 */
-	@SuppressWarnings("unchecked")
 	public int execute(ServiceContext ctx) throws ServiceException {
 		
 		// Get the ACARS flights currently in progress
@@ -50,7 +49,7 @@ public class EarthMapPlanService extends GoogleEarthService {
 			return SC_NOT_FOUND;
 
 		// Load the flight information
-		Collection<Integer> ids = acarsPool.getFlightIDs();
+		Collection ids = acarsPool.getFlightIDs();
 		Collection<FlightInfo> flights = new TreeSet<FlightInfo>();
 		try {
 			Connection con = ctx.getConnection();
@@ -58,37 +57,37 @@ public class EarthMapPlanService extends GoogleEarthService {
 			GetNavData navdao = new GetNavData(con);
 
 			// Loop through the flights
-			for (Iterator<Integer> i = ids.iterator(); i.hasNext(); ) {
-				int flightID = i.next().intValue();
+			for (Iterator i = ids.iterator(); i.hasNext(); ) {
+				int flightID = ((Integer) i.next()).intValue();
 				FlightInfo info = dao.getInfo(flightID);
 				if (info != null) {
-					Collection<String> routeEntries = new LinkedHashSet<String>();
+					Collection<NavigationDataBean> route = new LinkedHashSet<NavigationDataBean>();
 					if (info.getSID() != null)
-						routeEntries.addAll(info.getSID().getWaypoints());
-					routeEntries.addAll(StringUtils.split(info.getRoute(), " "));
-					if (info.getSTAR() != null)
-						routeEntries.addAll(info.getSTAR().getWaypoints());
-					
+						route.addAll(info.getSID().getWaypoints());
+
 					// Load the navaids
-					NavigationDataMap navaids = navdao.getByID(routeEntries);
+					Collection<String> rPoints = StringUtils.split(info.getRoute(), " ");
 					GeoPosition lastWaypoint = new GeoPosition(info.getAirportD());
 					int distance = lastWaypoint.distanceTo(info.getAirportA());
+					NavigationDataMap navaids = navdao.getByID(rPoints);
 
 					// Filter out navaids and put them in the correct order
-					Collection<NavigationDataBean> routeInfo = new LinkedHashSet<NavigationDataBean>();
-					for (Iterator<String> ri = routeEntries.iterator(); ri.hasNext();) {
+					for (Iterator<String> ri = rPoints.iterator(); ri.hasNext();) {
 						String navCode = ri.next();
 						NavigationDataBean wPoint = navaids.get(navCode, lastWaypoint);
 						if (wPoint != null) {
 							if (lastWaypoint.distanceTo(wPoint) < distance) {
-								routeInfo.add(wPoint);
+								route.add(wPoint);
 								lastWaypoint.setLatitude(wPoint.getLatitude());
 								lastWaypoint.setLongitude(wPoint.getLongitude());
 							}
 						}
 					}
 
-					info.setPlanData(routeInfo);
+					if (info.getSTAR() != null)
+						route.addAll(info.getSTAR().getWaypoints());
+					
+					info.setPlanData(route);
 					flights.add(info);
 				}
 			}
