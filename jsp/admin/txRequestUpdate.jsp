@@ -30,6 +30,8 @@ Your request for additional ratings from the <span class="pri bld">${txReq.equip
 Your request to be transferred to the <span class="pri bld">${txReq.equipmentType}</span></c:if>
  program has been submitted. A Check Ride may be required in order to complete the process. If this is the case, 
 you will be notified via e-mail within the next 24 to 72 hours regarding the requirements for your Check Ride.<br />
+<br />
+To return to the <content:airline /> Pilot Center, <el:cmd url="pilotcenter" className="sec bld">Click Here</el:cmd>.<br />
 </c:if>
 <c:if test="${isApprove}">
 <c:if test="${txReq.ratingOnly}">
