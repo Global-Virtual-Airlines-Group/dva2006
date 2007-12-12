@@ -75,6 +75,10 @@ public class PollOption extends DatabaseBean implements ComboAlias {
 		return (tmpResult == 0) ? Integer.valueOf(_optID).compareTo(Integer.valueOf(po2._optID)) : tmpResult;
 	}
 	
+	public int hashCode() {
+		return _name.hashCode();
+	}
+	
 	public String toString() {
 		return _name;
 	}
