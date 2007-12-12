@@ -5,9 +5,9 @@ import java.io.*;
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.FileUpload;
+import org.deltava.beans.*;
+import org.deltava.beans.schedule.*;
 import org.deltava.beans.navdata.TerminalRoute;
-import org.deltava.beans.schedule.Airport;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -72,25 +72,40 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 
 			// Iterate through the file
 			TerminalRoute tr = null;
+			Collection<String> IDs = new HashSet<String>();
 			Collection<TerminalRoute> results = new ArrayList<TerminalRoute>();
 			while (br.ready()) {
 				String txtData = br.readLine();
 				if (txtData.startsWith("[")) {
+					IDs.clear();
 					String id = txtData.substring(1, txtData.indexOf(']')).replace(" ", "");
 					List<String> idParts = StringUtils.split(id, "/");
 					Airport a = SystemData.getAirport(idParts.get(0));
 					if (a != null) {
 						tr = new TerminalRoute(a, idParts.get(1), routeType);
 						tr.setRunway(idParts.get(2));
+						if (routeType == TerminalRoute.SID)
+							tr.setTransition(idParts.get(3));
+						
 						results.add(tr);
-					}
+					} else
+						tr = null;
 				} else if ((tr != null) && (txtData.length() > 5)) {
 					List<String> wptParts = StringUtils.split(txtData.replace(" ", ""), ",");
 					String wpt = wptParts.get(3);
-					if (!StringUtils.isEmpty(wpt)) {
-						tr.addWaypoint(wptParts.get(3));
-						if (tr.getTransition() == null)
-							tr.setTransition(wptParts.get(3));
+					if (!StringUtils.isEmpty(wpt) && !IDs.contains(wpt)) {
+						IDs.add(wpt);
+						GeoLocation loc = new GeoPosition(StringUtils.parse(wptParts.get(4), 0.0d), StringUtils.parse(wptParts.get(5), 0.0d));
+						tr.addWaypoint(wpt, loc);
+						
+						// Use code #1 if wptParts.get(1) == ALL or Runway name
+						if (tr.getTransition() == null) {
+							String tx = wptParts.get(1);
+							if ("ALL".equals(tx) || tr.getRunway().equals(tx))
+								tr.setTransition(wpt);
+							else
+								tr.setTransition(tx);
+						}
 					}
 				}
 			}

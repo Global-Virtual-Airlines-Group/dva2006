@@ -34,7 +34,7 @@ public class TerminalRoute extends Airway {
     * @see TerminalRoute#setType(int)
     */
    public TerminalRoute(String icao, String name, int type) {
-      super(name);
+      super(name, 0);
       _airport = icao.trim().toUpperCase();
       setName(name);
       setType(type);
@@ -156,5 +156,26 @@ public class TerminalRoute extends Airway {
     */
    public boolean equals(Object o) {
       return (o instanceof TerminalRoute) ? (compareTo((TerminalRoute) o) == 0) : false;
+   }
+   
+   /**
+    * Returns the hash code.
+    */
+   public int hashCode() {
+	   return toString().hashCode();
+   }
+   
+   /**
+    * Returns the name, transition and runway.
+    */
+   public String toString() {
+	   StringBuilder buf = new StringBuilder(_airport);
+	   buf.append('.');
+	   buf.append(_name);
+	   buf.append('.');
+	   buf.append(_transition);
+	   buf.append('.');
+	   buf.append(_runway);
+	   return buf.toString();
    }
 }

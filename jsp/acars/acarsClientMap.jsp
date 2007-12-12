@@ -14,14 +14,17 @@
 <content:js name="common" />
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
-<content:js name="wms236" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="radarImg" name="acars.livemap.radar" />
+<content:sysdata var="radarImg" name="weather.radar" />
+<content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
+<c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
+<c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
+<c:if test="${!empty tileHost}">document.tileHost = '${tileHost}';</c:if>
 
 function reloadData(isAuto)
 {
@@ -42,6 +45,7 @@ if (doRefresh && isAuto)
 return true;
 }
 </script>
+<c:if test="${!empty tileHost}"><script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script></c:if>
 </head>
 <content:copyright visible="false" />
 <body onunload="GUnload()">
@@ -62,7 +66,7 @@ return true;
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
 </tr>
 <tr>
- <td class="data"><map:div ID="googleMap" x="100%" y="510" /></td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="510" /><div id="copyright" class="sec bld"></div></td>
 </tr>
 </el:table>
 </el:form>
@@ -90,6 +94,19 @@ var rsat = new GMapType([G_SATELLITE_TYPE.getTileLayers()[0],tileRadar], G_SATEL
 map.addMapType(rmap);
 map.addMapType(rsat);
 </c:if>
+<c:if test="${!empty tileHost}">
+// Build the layer controls
+var xPos = 70;
+var rC = new WXOverlayControl(getTileOverlay("radar", 0.5), "Radar", new GSize(70, 7));
+var srC = new WXOverlayControl(getTileOverlay("satrad", 0.4), "Sat/Rad", new GSize((xPos += 72), 7));
+var sC = new WXOverlayControl(getTileOverlay("sat", 0.4), "Infrared", new GSize((xPos += 72), 7));
+var tC = new WXOverlayControl(getTileOverlay("temp", 0.3), "Temparture", new GSize((xPos += 72), 7));
+map.addControl(rC);
+map.addControl(srC);
+map.addControl(sC);
+map.addControl(tC);
+map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
+</c:if>
 // Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
@@ -106,7 +123,15 @@ var acPositions = new Array();
 // Reload ACARS data
 document.doRefresh = true;
 reloadData(true);
-</script>
+<c:if test="${!empty tileHost}">
+// Display the copyright notice
+var d = new Date();
+var cp = document.getElementById("copyright");
+cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
+var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 12));
+cpos.apply(cp);
+map.getContainer().appendChild(cp);
+</c:if></script>
 <content:googleAnalytics />
 </body>
 </map:xhtml>

@@ -103,9 +103,7 @@ public class NATDownloadTask extends Task {
 					String code = wi.next();
 					NavigationDataBean ndb = (lastLoc == null) ? ndmap.get(code) : ndmap.get(code, lastLoc);
 					if (ndb != null) {
-						Intersection wp = new Intersection(ndb.getLatitude(), ndb.getLongitude());
-						wp.setCode(code);
-						ot.addWaypoint(wp);
+						ot.addWaypoint(new Intersection(code, ndb.getLatitude(), ndb.getLongitude()));
 						lastLoc = ndb;
 					} else if (code.contains("/")) {
 						try {

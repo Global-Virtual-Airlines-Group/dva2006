@@ -16,7 +16,7 @@ import static org.gvagroup.acars.ACARSFlags.*;
 /**
  * A Data Access Object to load ACARS information.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -111,8 +111,7 @@ public class GetACARSData extends DAO {
 				entry.setFlags(rs.getInt(22));
 
 				// Add to results - or just log a GeoPosition if we're on the ground
-				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN)
-						&& !includeOnGround) {
+				if (entry.isFlagSet(FLAG_ONGROUND) && !entry.isFlagSet(FLAG_TOUCHDOWN) && !includeOnGround) {
 					results.add(new GeoPosition(entry));
 				} else {
 					entry.setAltitude(rs.getInt(5));
@@ -190,12 +189,12 @@ public class GetACARSData extends DAO {
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
 			if (info == null)
 				return null;
-			
+
 			// Get the terminal routes
 			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
 			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
 			info.setSTAR(routes.get(Integer.valueOf(TerminalRoute.STAR)));
-			
+
 			// Count the number of position records
 			prepareStatement("SELECT COUNT(*) FROM acars." + (info.getArchived() ? "POSITION_ARCHIVE" : "POSITIONS")
 					+ " WHERE (FLIGHT_ID=?)");
@@ -231,7 +230,7 @@ public class GetACARSData extends DAO {
 			List<FlightInfo> results = executeFlightInfo();
 			setQueryMax(0);
 			FlightInfo info = results.isEmpty() ? null : results.get(0);
-			
+
 			// Get the terminal routes
 			Map<Integer, TerminalRoute> routes = getTerminalRoutes(info.getID());
 			info.setSID(routes.get(Integer.valueOf(TerminalRoute.SID)));
@@ -277,7 +276,7 @@ public class GetACARSData extends DAO {
 			throw new DAOException(se);
 		}
 	}
-	
+
 	/**
 	 * Loads the Terminal Routes used on a particular ACARS flight.
 	 * @param id the ACARS flight ID
@@ -286,23 +285,37 @@ public class GetACARSData extends DAO {
 	 */
 	protected Map<Integer, TerminalRoute> getTerminalRoutes(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, "
+			prepareStatementWithoutLimits("SELECT IF(FS.TYPE=?, F.AIRPORT_D, F.AIRPORT_A), FS.* FROM acars.FLIGHTS F, "
 					+ "acars.FLIGHT_SIDSTAR FS WHERE (F.ID=?) AND (F.ID=FS.ID)");
 			_ps.setInt(1, TerminalRoute.SID);
 			_ps.setInt(2, id);
-			
+
 			// Execute the query
 			Map<Integer, TerminalRoute> results = new HashMap<Integer, TerminalRoute>();
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				Airport a = SystemData.getAirport(rs.getString(1));
-				TerminalRoute tr = new TerminalRoute(a, rs.getString(4), rs.getInt(3));
+				TerminalRoute tr = new TerminalRoute(SystemData.getAirport(rs.getString(1)), rs.getString(4), rs
+						.getInt(3));
 				tr.setTransition(rs.getString(5));
 				tr.setRunway(rs.getString(6));
-				tr.setRoute(rs.getString(7));
 				results.put(Integer.valueOf(tr.getType()), tr);
 			}
-			
+
+			// Clean up
+			rs.close();
+			_ps.close();
+
+			// Load the waypoint data
+			prepareStatementWithoutLimits("SELECT TYPE, CODE, LATITUDE, LONGITUDE FROM acars.FLIGHT_SIDSTAR_WP WHERE "
+					+ "(ID=?) ORDER BY TYPE, SEQ");
+			_ps.setInt(1, id);
+			rs = _ps.executeQuery();
+			while (rs.next()) {
+				TerminalRoute tr = results.get(Integer.valueOf(rs.getInt(1)));
+				if (tr != null)
+					tr.addWaypoint(rs.getString(2), new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
+			}
+
 			// Clean up and return
 			rs.close();
 			_ps.close();
@@ -339,7 +352,8 @@ public class GetACARSData extends DAO {
 			info.setHasPIREP(rs.getBoolean(15));
 			info.setArchived(rs.getBoolean(16));
 			info.setScheduleValidated(rs.getBoolean(17));
-			info.setPilotID(rs.getInt(18));
+			info.setDispatchPlan(rs.getBoolean(18));
+			info.setPilotID(rs.getInt(19));
 
 			// Add to results
 			results.add(info);

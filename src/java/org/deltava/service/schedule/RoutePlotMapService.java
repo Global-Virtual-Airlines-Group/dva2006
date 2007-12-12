@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -57,10 +57,8 @@ public class RoutePlotMapService extends RouteMapService {
 			// Check if we have a SID
 			if (!StringUtils.isEmpty(ctx.getParameter("sid"))) {
 				TerminalRoute sid = dao.getRoute(ctx.getParameter("sid"));
-				if ((sid != null) && (aD != null) && (sid.getICAO().equals(aD.getCode()))) {
-					NavigationDataMap sidMap = dao.getByID(sid.getWaypoints());
-					routePoints.addAll(sid.getWaypoints(sidMap, aD));
-				}
+				if (sid != null)
+					routePoints.addAll(sid.getWaypoints());
 			}
 
 			// Add the route waypoints
@@ -72,10 +70,8 @@ public class RoutePlotMapService extends RouteMapService {
 			// Check if we have a STAR
 			if (!StringUtils.isEmpty(ctx.getParameter("star"))) {
 				TerminalRoute star = dao.getRoute(ctx.getParameter("star"));
-				if ((star != null) && (aA != null) && (star.getICAO().equals(aA.getCode()))) {
-					NavigationDataMap starMap = dao.getByID(star.getWaypoints());
-					routePoints.addAll(star.getWaypoints(starMap, aA));
-				}
+				if (star != null)
+					routePoints.addAll(star.getWaypoints());
 			}
 
 			// Add the arrival airport

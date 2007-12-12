@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -420,20 +420,23 @@ public class PIREPCommand extends AbstractFormCommand {
 				GetACARSData ardao = new GetACARSData(con);
 				FlightInfo info = ardao.getInfo(flightID);
 				if (info != null) {
-					Collection<String> wps = new LinkedHashSet<String>();
-					wps.add(info.getAirportD().getICAO());
-					if (info.getSID() != null)
-						wps.addAll(info.getSID().getWaypoints());
-					wps.addAll(StringUtils.split(info.getRoute(), " "));
-					if (info.getSTAR() != null)
-						wps.addAll(info.getSTAR().getWaypoints());
-					wps.add(info.getAirportA().getICAO());
-					
-					// Save ACARS info
-					GetNavRoute navdao = new GetNavRoute(con);
-					ctx.setAttribute("filedRoute", navdao.getRouteWaypoints(StringUtils.listConcat(wps, " ")), REQUEST);
 					ctx.setAttribute("flightInfo", info, REQUEST);
 					ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
+
+					// Build the route
+					GetNavRoute navdao = new GetNavRoute(con);
+					Collection<MapEntry> route = new LinkedHashSet<MapEntry>();
+					route.add(info.getAirportD());
+					if (info.getSID() != null)
+						route.addAll(info.getSID().getWaypoints());
+					route.addAll(navdao.getRouteWaypoints(info.getRoute()));
+					if (info.getSTAR() != null)
+						route.addAll(info.getSTAR().getWaypoints());
+					
+					route.add(info.getAirportA());
+					
+					// Save ACARS route
+					ctx.setAttribute("filedRoute", route, REQUEST);
 				}
 
 				// Get the check ride

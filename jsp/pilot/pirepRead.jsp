@@ -149,6 +149,9 @@ return true;
 <c:if test="${fn:isACARS(pirep)}">
 <div class="sec bld caps">Flight Leg data logged using <content:airline /> ACARS</div>
 </c:if>
+<c:if test="${fn:isDispatch(pirep)}">
+<div class="pri bld caps">Flight Leg planned using <content:airline /> Dispatch</div>
+</c:if>
 <c:if test="${!fn:isRated(pirep)}">
 <div class="warn bld caps">Flight Leg flown without Aircraft type rating</div>
 </c:if>

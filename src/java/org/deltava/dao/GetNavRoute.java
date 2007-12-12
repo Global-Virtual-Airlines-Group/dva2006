@@ -6,7 +6,8 @@ import java.util.*;
 
 import org.deltava.beans.GeoLocation;
 import org.deltava.beans.navdata.*;
-import org.deltava.beans.schedule.Airport;
+import org.deltava.beans.schedule.*;
+import org.deltava.comparators.GeoComparator;
 
 import org.deltava.util.*;
 import org.deltava.util.cache.*;
@@ -14,31 +15,32 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
 public class GetNavRoute extends GetNavData {
 	
-	private static final Cache<Route> _rCache = new AgingCache<Route>(1024);
+	private static final Cache<Route> _rCache = new AgingCache<Route>(512);
+	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(512); 
 
 	private class CacheableRoute implements Route {
 
 		private String _route;
-		private LinkedList<NavigationDataBean> _waypoints;
+		private final LinkedList<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 
 		CacheableRoute(String route, LinkedList<NavigationDataBean> waypoints) {
 			super();
 			_route = route.toUpperCase();
-			_waypoints = waypoints;
-		}
-
-		public Collection<String> getWaypoints() {
-			return StringUtils.split(_route, " ");
+			_waypoints.addAll(waypoints);
 		}
 		
-		public LinkedList<NavigationDataBean> getEntries() {
-			return _waypoints;
+		public void addWaypoint(String code, GeoLocation loc) {
+			_waypoints.add(new Intersection(code, loc.getLatitude(), loc.getLongitude()));
+		}
+
+		public LinkedList<NavigationDataBean> getWaypoints() {
+			return new LinkedList<NavigationDataBean>(_waypoints);
 		}
 		
 		public String getRoute() {
@@ -97,7 +99,7 @@ public class GetNavRoute extends GetNavData {
 			return null;
 
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?) LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (NAME=?) AND (TRANSITION=?) ORDER BY SEQ");
 			_ps.setString(1, tkns.nextToken().toUpperCase());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
 
@@ -139,7 +141,7 @@ public class GetNavRoute extends GetNavData {
 
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (NAME=?) "
-					+ "AND (TRANSITION=?) AND (RUNWAY=?) LIMIT 1");
+					+ "AND (TRANSITION=?) AND (RUNWAY=?) ORDER BY SEQ");
 			_ps.setString(1, a.getICAO());
 			_ps.setString(2, tkns.nextToken().toUpperCase());
 			_ps.setString(3, tkns.nextToken().toUpperCase());
@@ -158,13 +160,29 @@ public class GetNavRoute extends GetNavData {
 	}
 	
 	/**
+	 * Returns all SIDs/STARs in the database. <i>This does not populate waypoint data.</i>
+	 * @return a Collection of TerminalRoute beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<TerminalRoute> getRouteNames() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT ICAO, TYPE, NAME, TRANSITION, RUNWAY FROM common.SID_STAR "
+					+ "ORDER BY ICAO, NAME, TRANSITION");
+			List<TerminalRoute> results = executeSIDSTAR();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Returns all SIDs/STARs in the database.
 	 * @return a Collection of TerminalRoute beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<TerminalRoute> getAll() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR ORDER BY ICAO, NAME, TRANSITION");
+			prepareStatementWithoutLimits("SELECT * FROM common.SID_STAR ORDER BY ICAO, NAME, TRANSITION, RUNWAY, SEQ");
 			List<TerminalRoute> results = executeSIDSTAR();
 			return results;
 		} catch (SQLException se) {
@@ -184,7 +202,7 @@ public class GetNavRoute extends GetNavData {
 	public Collection<TerminalRoute> getRoutes(String code, int type) throws DAOException {
 		List<TerminalRoute> results = null;
 		try {
-			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION");
+			prepareStatement("SELECT * FROM common.SID_STAR WHERE (ICAO=?) AND (TYPE=?) ORDER BY NAME, TRANSITION, RUNWAY, SEQ");
 			_ps.setString(1, code.toUpperCase());
 			_ps.setInt(2, type);
 			results = executeSIDSTAR();
@@ -198,72 +216,37 @@ public class GetNavRoute extends GetNavData {
 	}
 
 	/**
-	 * Loads an Airway definition from the database.
+	 * Loads a Airway definitions from the database.
 	 * @param name the airway code
-	 * @return an Airway bean, or null if not found
+	 * @return a Collection of Airway beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Airway getAirway(String name) throws DAOException {
+	public Collection<Airway> getAirways(String name) throws DAOException {
 
 		// Check the cache
-		Route result = _rCache.get(name);
-		if ((result != null) && (result instanceof Airway))
-			result = null;
+		CacheableList<Airway> results = _aCache.get(name);
+		if (results != null)
+			return results;
 
+		results = new CacheableList<Airway>(name);
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM common.AIRWAYS WHERE (NAME=?)");
+			prepareStatement("SELECT ID, WAYPOINT, LATITUDE, LONGITUDE, HIGH, LOW FROM common.AIRWAYS WHERE "
+					+ "(NAME=?) ORDER BY ID, SEQ");
 			_ps.setString(1, name.toUpperCase());
 
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			setQueryMax(0);
-
-			// Populate the airway bean
-			if (rs.next())
-				result = new Airway(rs.getString(1), rs.getString(2));
-
-			// Clean up
-			rs.close();
-			_ps.close();
-		} catch (SQLException se) {
-			throw new DAOException(se);
-		}
-
-		// Add to cache and return
-		_rCache.add(result);
-		return (Airway) result;
-	}
-
-	/**
-	 * Loads multiple Airway definitions from the database.
-	 * @param names a Collection of airway names
-	 * @return a Map of Airways, indexed by name
-	 * @throws DAOException if a JDBC error occurs
-	 */
-	public Map<String, Airway> getAirways(Collection<String> names) throws DAOException {
-
-		// Build the SQL statement
-		StringBuilder buf = new StringBuilder("SELECT * FROM common.AIRWAYS WHERE (NAME IN (");
-		for (Iterator i = names.iterator(); i.hasNext();) {
-			String code = (String) i.next();
-			buf.append(code.toUpperCase());
-			if (i.hasNext())
-				buf.append(',');
-		}
-
-		// Close the SQL statement
-		buf.append("))");
-
-		Map<String, Airway> results = new HashMap<String, Airway>();
-		try {
-			prepareStatement(buf.toString());
-
-			// Execute the query
+			Airway a = null; int lastID = -1;
 			ResultSet rs = _ps.executeQuery();
 			while (rs.next()) {
-				Airway a = new Airway(rs.getString(1), rs.getString(2));
-				results.put(a.getCode(), a);
+				int id = rs.getInt(1);
+				if (id != lastID) {
+					a = new Airway(name, id);
+					a.setHighLevel(rs.getBoolean(5));
+					a.setLowLevel(rs.getBoolean(6));
+					results.add(a);
+				}
+				
+				a.addWaypoint(rs.getString(2), new GeoPosition(rs.getDouble(3), rs.getDouble(4)));
 			}
 
 			// Clean up
@@ -273,10 +256,48 @@ public class GetNavRoute extends GetNavData {
 			throw new DAOException(se);
 		}
 
-		// Return results
+		// Add to cache and return
+		_aCache.add(results);
 		return results;
 	}
-
+	
+	/**
+	 * Loads all Airways from the database.
+	 * @return a Collection of Airways
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airway> getAirways() throws DAOException {
+		try {
+			Collection<Airway> results = new ArrayList<Airway>();
+			prepareStatementWithoutLimits("SELECT * FROM common.AIRWAYS ORDER BY NAME, ID, SEQ");
+			
+			// Execute the query
+			Airway a = null; int lastID = -1; String lastCode = "";
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt(2);
+				String code = rs.getString(1).toUpperCase();
+				if ((lastID != id) || (!lastCode.equals(code))) {
+					lastID = id;
+					lastCode = code;
+					a = new Airway(code, id);
+					a.setHighLevel(rs.getBoolean(7));
+					a.setLowLevel(rs.getBoolean(8));
+					results.add(a);
+				}
+					
+				a.addWaypoint(rs.getString(4), new GeoPosition(rs.getDouble(5), rs.getDouble(6)));
+			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
 	/**
 	 * Returns all waypoints for a route, expanding Airways but <i>NOT</i> SID/STARs.
 	 * @param route the space-delimited route
@@ -291,7 +312,7 @@ public class GetNavRoute extends GetNavData {
 		Route obj = _rCache.get(route);
 		if (obj instanceof CacheableRoute) {
 			CacheableRoute cr = (CacheableRoute) obj;
-			return cr.getEntries();
+			return cr.getWaypoints();
 		} else if (obj != null)
 			obj = null;
 
@@ -302,20 +323,24 @@ public class GetNavRoute extends GetNavData {
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);
 			
-//			 Check if we're referencing an airway
-			Airway aw = getAirway(wp); 
-			if (aw != null) {
+			// Check if we're referencing an airway
+			Collection<Airway> aws = getAirways(wp); 
+			if (aws.size() > 0) {
+				Airway aw = null;
+				
+				// Find the closest one if there's more than one
+				if (aws.size() > 1) {
+					GeoComparator gp = new GeoComparator(lastPosition);
+					SortedSet<Airway> airways = new TreeSet<Airway>(gp);
+					airways.addAll(aws);
+					aw = airways.first();
+				} else
+					aw = aws.iterator().next();
+				
+				// Get the waypoints
 				String endPoint = (x < (tkns.size() - 1)) ? tkns.get(x + 1) : "";
-				Collection<String> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
-				NavigationDataMap ndMap = getByID(awPoints);
-				for (Iterator<String> i = awPoints.iterator(); i.hasNext();) {
-					String awp = i.next();
-					NavigationDataBean nd = ndMap.get(awp, lastPosition);
-					if (nd != null) {
-						routePoints.add(nd);
-						lastPosition = nd;
-					}
-				}
+				Collection<Intersection> awPoints = aw.getWaypoints((x == 0) ? wp : tkns.get(x - 1), endPoint);
+				routePoints.addAll(awPoints);
 			} else {
 				NavigationDataMap navaids = get(wp);
 				NavigationDataBean nd = navaids.get(wp, lastPosition);
@@ -353,16 +378,24 @@ public class GetNavRoute extends GetNavData {
 	 * Helper method to iterate through a SID_STAR result set.
 	 */
 	private List<TerminalRoute> executeSIDSTAR() throws SQLException {
-
+		
 		// Execute the Query
+		TerminalRoute tr = null;
 		ResultSet rs = _ps.executeQuery();
+		int columnCount = rs.getMetaData().getColumnCount();
 		List<TerminalRoute> results = new ArrayList<TerminalRoute>();
 		while (rs.next()) {
-			TerminalRoute tr = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
-			tr.setTransition(rs.getString(4));
-			tr.setRunway(rs.getString(5));
-			tr.setRoute(rs.getString(6));
-			results.add(tr);
+			TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
+			tr2.setTransition(rs.getString(4));
+			tr2.setRunway(rs.getString(5));
+			if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
+				results.add(tr2);
+				tr = tr2;
+			}
+			
+			// Add the waypoint if present
+			if (columnCount > 8)
+				tr.addWaypoint(rs.getString(7), new GeoPosition(rs.getDouble(8), rs.getDouble(9)));
 		}
 
 		// Clean up and return

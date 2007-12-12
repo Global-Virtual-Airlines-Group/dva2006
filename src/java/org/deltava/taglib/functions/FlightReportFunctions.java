@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.Iterator;
@@ -8,7 +8,7 @@ import org.deltava.beans.*;
 /**
  * A JSP Function Library to define Flight Report-related functions.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -47,7 +47,7 @@ public class FlightReportFunctions {
      * @return the Pilot database ID
      */
     public static int pilotID(FlightReport fr) {
-    	return fr.getDatabaseID(FlightReport.DBID_PILOT);
+    	return (fr == null) ? 0 : fr.getDatabaseID(FlightReport.DBID_PILOT);
     }
     
     /**
@@ -76,7 +76,7 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_ONLINE_MASK
      */
     public static boolean isOnline(FlightReport fr) {
-        return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK);
+        return (fr != null) && fr.hasAttribute(FlightReport.ATTR_ONLINE_MASK);
     }
     
     /**
@@ -86,7 +86,17 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_CHECKRIDE
      */
     public static boolean isCheckRide(FlightReport fr) {
-       return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+       return (fr != null) && fr.hasAttribute(FlightReport.ATTR_CHECKRIDE);
+    }
+    
+    /**
+     * Returns if this Flight was planned by a Dispatcher.
+     * @param fr the Flight report
+     * @return TRUE if the ATTR_DISPATCH attribute is present, otherwise FALSE
+     * @see FlightReport#ATTR_DISPATCH
+     */
+    public static boolean isDispatch(FlightReport fr) {
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_DISPATCH);
     }
     
     /**
@@ -96,7 +106,7 @@ public class FlightReportFunctions {
      * @see FlightReport#DRAFT 
      */
     public static boolean isDraft(FlightReport fr) {
-    	return (fr == null) ? false : (fr.getStatus() == FlightReport.DRAFT);
+    	return (fr != null) && (fr.getStatus() == FlightReport.DRAFT);
     }
     
     /**
@@ -106,7 +116,7 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_HISTORIC
      */
     public static boolean isHistoric(FlightReport fr) {
-    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_HISTORIC);
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_HISTORIC);
     }
     
     /**
@@ -116,7 +126,7 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_CHARTER
      */
     public static boolean isCharter(FlightReport fr) {
-    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_CHARTER);
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_CHARTER);
     }
     
     /**
@@ -126,7 +136,7 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_ACADEMY
      */
     public static boolean isAcademy(FlightReport fr) {
-    	return (fr == null) ? false : fr.hasAttribute(FlightReport.ATTR_ACADEMY);
+    	return (fr != null) && fr.hasAttribute(FlightReport.ATTR_ACADEMY);
     }
     
     /**
@@ -136,7 +146,7 @@ public class FlightReportFunctions {
      * @see FlightReport#ATTR_NOTRATED
      */
     public static boolean isRated(FlightReport fr) {
-        return !fr.hasAttribute(FlightReport.ATTR_NOTRATED);
+        return (fr == null) || !fr.hasAttribute(FlightReport.ATTR_NOTRATED);
     }
     
     /**

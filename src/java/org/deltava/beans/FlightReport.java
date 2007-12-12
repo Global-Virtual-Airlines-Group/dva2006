@@ -8,7 +8,7 @@ import org.deltava.beans.schedule.Airline;
 /**
  * A class for dealing with PIREP data.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -105,6 +105,11 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * Flight flown with non-ETOPS-rated aircraft.
 	 */
 	public static final int ATTR_ETOPSWARN = 0x2000;
+	
+	/**
+	 * Flight flown using a Dispatcher-generated flight plan.
+	 */
+	public static final int ATTR_DISPATCH = 0x4000;
 
 	/**
 	 * Attribute mask for VATSIM/IVAO/FPI online flights.

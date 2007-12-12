@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 1.0
+ * @version 2.0
  * @since 1.0
  */
 
@@ -44,7 +44,7 @@ public class MapProgressService extends WebService {
 		// Get the DAO and the route data
 		FlightInfo info = null;
 		Collection<GeoLocation> routePoints = null;
-		Collection<? extends MapEntry> routeWaypoints = null;
+		Collection<MapEntry> routeWaypoints = new LinkedHashSet<MapEntry>();
 		try {
 			Connection con = ctx.getConnection();
 			GetACARSData dao = new GetACARSData(con);
@@ -53,20 +53,15 @@ public class MapProgressService extends WebService {
 			// Load the route and the route waypoints
 			info = dao.getInfo(id);
 			if ((info != null) && doRoute) {
-				Collection<String> wps = new LinkedHashSet<String>();
-				wps.add(info.getAirportD().getICAO());
-				if (info.getSID() != null)
-					wps.addAll(info.getSID().getWaypoints());
-				wps.addAll(StringUtils.split(info.getRoute(), " "));
-				if (info.getSTAR() != null)
-					wps.addAll(info.getSTAR().getWaypoints());
-				wps.add(info.getAirportA().getICAO());
-
-				// Load the route
 				GetNavRoute navdao = new GetNavRoute(con);
-				routeWaypoints = navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "));
-			} else
-				routeWaypoints = Collections.emptySet();
+				routeWaypoints.add(info.getAirportD());
+				if (info.getSID() != null)
+					routeWaypoints.addAll(info.getSID().getWaypoints());
+				routeWaypoints.addAll(navdao.getRouteWaypoints(info.getRoute()));
+				if (info.getSTAR() != null)
+					routeWaypoints.addAll(info.getSTAR().getWaypoints());
+				routeWaypoints.add(info.getAirportA());
+			}
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {

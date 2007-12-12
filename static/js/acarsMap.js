@@ -54,12 +54,12 @@ xmlreq.onreadystatechange = function() {
 
 	// Display dispatch status
 	var de = getElement('dispatchStatus');
-	if ((de) && document.dispatchOnline) {
-		de.class = 'ter bld caps';
-		de.innerText = 'Dispatcher Currently Online';
-	} else if (de) {
-		de.class = 'err bld caps';	
-		de.innerText = 'Dispatcher Currently Offline';
+	if (document.dispatchOnline) {
+		de.className = 'ter bld caps';
+		de.innerHTML = 'Dispatcher Currently Online';
+	} else {
+		de.className = 'err bld caps';	
+		de.innerHTML = 'Dispatcher Currently Offline';
 	}
 
 	// Focus on the map

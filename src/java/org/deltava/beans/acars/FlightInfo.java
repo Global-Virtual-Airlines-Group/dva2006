@@ -42,6 +42,7 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	private int _fsVersion;
 	private boolean _offline;
 	private boolean _scheduleValidated;
+	private boolean _dispatchPlan;
 	private boolean _hasPIREP;
 	private boolean _archived;
 
@@ -308,6 +309,14 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	public boolean isScheduleValidated() {
 		return _scheduleValidated;
 	}
+	
+	/**
+	 * Returns if this flight was planned by a Dispatcher.
+	 * @return TRUE if planned by a Dispatcher, otherwise FALSE
+	 */
+	public boolean isDispatchPlan() {
+		return _dispatchPlan;
+	}
 
 	/**
 	 * Updates the ACARS Connection ID used for this flight.
@@ -368,6 +377,14 @@ public class FlightInfo extends DatabaseBean implements ViewEntry {
 	 */
 	public void setScheduleValidated(boolean isOK) {
 		_scheduleValidated = isOK;
+	}
+	
+	/**
+	 * Marks this Flight as being planned by a Dispatcher.
+	 * @param isDP TRUE if planned by a Dispatcher, otherwise FALSE
+	 */
+	public void setDispatchPlan(boolean isDP) {
+		_dispatchPlan = isDP;
 	}
 
 	/**
