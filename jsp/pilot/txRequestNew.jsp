@@ -28,30 +28,28 @@ return true;
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
+<c:set var="reqType" value="${isRating ? 'ADDITIONAL RATING' : 'EQUIPMENT PROGRAM TRANSFER'}" scope="request" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
 <el:form action="txrequest.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="2">NEW ${isRating ? 'ADDITIONAL RATING' : 'EQUIPMENT PROGRAM TRANSFER'} REQUEST</td>
+ <td colspan="2">NEW ${reqType} REQUEST</td>
 </tr>
 <tr>
  <td class="label">Equipment Program</td>
  <td class="data"><el:combo name="eqType" idx="*" size="1" options="${availableEQ}" className="req" firstEntry="-" /></td>
-</tr>
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data"><el:box name="ratingOnly" idx="*" checked="${isRating}" value="true" label="Request equipment type ratings only" /></td>
 </tr>
 </el:table>
 
 <!-- Button Bar -->
 <el:table className="bar" space="default" pad="default">
 <tr>
- <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT TRANSFER/RATING REQUEST" /></td>
+ <td><el:button ID="SubmitButton" type="submit" className="BUTTON" label="SUBMIT ${reqType} REQUEST" /></td>
 </tr>
 </el:table>
+<c:if test="${isRating}"><el:text name="ratingOnly" type="hidden" value="true" /></c:if>
 </el:form>
 <br />
 <content:copyright />
