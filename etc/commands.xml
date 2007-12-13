@@ -1542,6 +1542,12 @@
 		<roles>Admin</roles>
 	</command>
 
+	<command id="dispatchmap">
+		<name>ACARS Dispatch Map</name>
+		<class>org.deltava.commands.acars.DispatchMapCommand</class>
+		<roles>Pilot,Dispatch</roles>
+	</command>
+
 	<command id="acarsinfo">
 		<name>ACARS Flight Info</name>
 		<class>org.deltava.commands.acars.FlightInfoCommand</class>

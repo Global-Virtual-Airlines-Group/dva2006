@@ -1,0 +1,83 @@
+/* Dispatch Map Cascading Style Sheet (C) 2005, 2006, 2007 Global Virtual Airlines Group. */
+
+/* Google Maps infobox font */
+.mapInfoBox {
+	font-size: 8pt;
+}
+
+BODY {
+	margin-left: 1px;
+	margin-right: 1px;
+	margin-top:1px;
+	font-family: Tahoma, Verdana, sans-serif;
+	font-size: 9pt;
+}
+
+a, a:visited {
+	color: #0000A1;
+	text-decoration: underline;
+	font-size: 9pt;
+}
+
+a:hover {
+	color: #0080D1;
+	text-decoration: underline;
+	font-size: 9pt;
+}
+
+.bld {
+	font-weight: bold;
+}
+
+.pri {
+	color: #0000A1;
+}
+
+.sec {
+	color: #008080;
+}
+
+.ter {
+	color: #008000;
+}
+
+.error {
+	color: #E02010;
+}
+
+.warn {
+	color: #FF8040;
+}
+
+.small {
+	font-size: 8pt;
+}
+
+.caps {
+	text-transform: uppercase;
+}
+
+.mid {
+	text-align: center;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+.visible {
+	visibility: visible;
+}
+
+*.small A {
+	font-size: 8pt;
+	co
+}
