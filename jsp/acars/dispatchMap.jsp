@@ -6,7 +6,7 @@
 <map:xhtml>
 <head>
 <title><content:airline /> ACARS Dispatch Map</title>
-<content:css name="dispatchMap" scheme="${null}" />
+<content:css name="dispatchMap" scheme="legacy" />
 <content:pics />
 <map:api version="2" />
 <content:js name="googleMaps" />
