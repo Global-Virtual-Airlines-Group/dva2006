@@ -107,8 +107,10 @@ public abstract class ConnectionContext {
      */
     public void rollbackTX() {
        try {
-          _con.rollback();
-          _con.setAutoCommit(_autoCommit);
+    	   if (_con != null) {
+    		   _con.rollback();
+    		   _con.setAutoCommit(_autoCommit);
+    	   }
        } catch (Exception e) {
     	   log.error("Error rolling back transaction - " + e.getMessage(), e);
        }
