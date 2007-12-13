@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to approve Flight Reports and Check Rides across Airlines.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -112,6 +112,7 @@ public class ExternalPIREPApprovalCommand extends AbstractCommand {
 			
 			// If we are approving the checkride, then approve the transfer request
 			if (txreq != null) {
+				mctx.addData("txReq", txreq);
 				if (cr.getPassFail())
 					txreq.setStatus(TransferRequest.OK);
 				else
