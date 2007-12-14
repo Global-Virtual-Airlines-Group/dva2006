@@ -301,7 +301,7 @@ getACARSData(${fn:ACARS_ID(pirep)}, '${imgPath}');
 <map:line var="gfRoute" src="filedPoints" color="#80800F" width="2" transparency="0.65" geodesic="true" />
 </c:if>
 // Build the map
-var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${pirep.distance}));

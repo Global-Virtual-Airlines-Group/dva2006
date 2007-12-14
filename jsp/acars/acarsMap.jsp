@@ -53,7 +53,11 @@ function saveSettings()
 var myLat = map.getCenter().lat();
 var myLng = map.getCenter().lng();
 var myZoom = map.getZoom();
-var myType = (map.getCurrentMapType() == G_SATELLITE_TYPE) ? 'sat' : 'map';
+var myType = 'terrain';
+if (map.getCurrentMapType() == G_SATELLITE_MAP)
+	myType = 'sat';
+else if (map.getCurrentMapType() == G_NORMAL_MAP)
+	myType = 'map';
 
 // Save the cookies
 var expiryDate = new Date(${cookieExpiry});
@@ -143,7 +147,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 // Create the map
-var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty radarImg}">
 // Add US Radar layer
 var tileRadar = new GTileLayer(new GCopyrightCollection(""), 1, 12);
@@ -180,9 +184,13 @@ map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<c:choose>
+<c:when test="${gMapType == 'map'}">map.setMapType(G_NORMAL_MAP);</c:when>
+<c:when test="${gMapType == 'sat'}">map.setMapType(G_SATELLITE_MAP);</c:when>
+<c:otherwise>map.setMapType(G_PHYSICAL_MAP);</c:otherwise>
+</c:choose>
 
 // Placeholder for route
 var routeData;
