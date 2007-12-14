@@ -18,14 +18,7 @@
 <script language="JavaScript" type="text/javascript">
 document.imgPath = '${imgPath}';
 document.tileHost = '${tileHost}';
-
-function mapZoom()
-{
-var b = map.getBounds();
-window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
-return true;
-}
-
+<c:if test="${isDispatch}">
 function addWaypoint(code)
 {
 document.currentmarker.closeInfoWindow();
@@ -56,24 +49,6 @@ for (var idx in mrks)
 return true;
 }
 
-function clickIcon()
-{
-if (this.uniqueID)
-	this.openInfoWindowHtml(window.external.GetMarkerMessage(this.uniqueID));
-
-document.currentmarker = this;
-return true;
-}
-
-function externalMarker(color, point, id)
-{
-var mrk = googleMarker(document.imgPath, color, point, null);
-mrk.uniqueID = id;
-mrk.infoShow = clickIcon;
-GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
-return mrk;
-}
-
 function clickLine(latlng)
 {
 var newLine;
@@ -95,14 +70,39 @@ airways[this.AirwayID] = newLine;
 GEvent.bind(newLine, 'click', newLine, newLine.infoShow)
 return true;
 }
+</c:if>
+function mapZoom()
+{
+var b = map.getBounds();
+window.external.doPan(b.getNorthEast().lat(), b.getSouthWest().lng(), b.getSouthWest().lat(), b.getNorthEast().lng(), map.getZoom());
+return true;
+}
+
+function clickIcon()
+{
+if (this.uniqueID)
+	this.openInfoWindowHtml(window.external.GetMarkerMessage(this.uniqueID));
+
+document.currentmarker = this;
+return true;
+}
+
+function externalMarker(color, point, id)
+{
+var mrk = googleMarker(document.imgPath, color, point, null);
+mrk.uniqueID = id;
+mrk.infoShow = clickIcon;
+GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
+return mrk;
+}
 </script>
 </head>
 <body onunload="GUnload()">
 <map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="sec bld"></div>
 <script language="JavaScript" type="text/javascript">
 // Load the map
-map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP]});
-map.addControl(new GSmallMapControl());
+map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 
 // Display the map
