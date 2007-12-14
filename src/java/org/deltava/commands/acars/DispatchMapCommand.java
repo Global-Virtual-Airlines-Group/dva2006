@@ -19,6 +19,9 @@ public class DispatchMapCommand extends AbstractCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
+		// Check if we're getting this from a pilot or dispatch client
+		ctx.setAttribute("isDispatch", Boolean.valueOf(ctx.getParameter("dispatchClient")), REQUEST);
+		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
 		result.setURL("/jsp/acars/dispatchMap.jsp");
