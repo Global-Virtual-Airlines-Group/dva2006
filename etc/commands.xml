@@ -1545,7 +1545,7 @@
 	<command id="dispatchmap">
 		<name>ACARS Dispatch Map</name>
 		<class>org.deltava.commands.acars.DispatchMapCommand</class>
-		<roles>Pilot,Dispatch</roles>
+		<roles>*</roles>
 	</command>
 
 	<command id="acarsinfo">
