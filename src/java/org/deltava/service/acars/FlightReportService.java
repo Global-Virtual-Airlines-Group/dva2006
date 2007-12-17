@@ -29,7 +29,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to handle posting of offline ACARS Flight Reports.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -55,6 +55,8 @@ public class FlightReportService extends WebService {
 		// Get the SHA hash and XML
 		String xml = ctx.getParameter("xml");
 		String sha = ctx.getParameter("hashCode");
+		if (xml == null)
+			throw error(SC_BAD_REQUEST, "No Flight Information");
 
 		// Validate the SHA
 		MessageDigester md = new MessageDigester("SHA-256");
