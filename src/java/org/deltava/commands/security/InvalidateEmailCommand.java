@@ -3,8 +3,7 @@ package org.deltava.commands.security;
 
 import java.sql.Connection;
 
-import org.deltava.beans.Pilot;
-import org.deltava.beans.EMailAddress;
+import org.deltava.beans.*;
 import org.deltava.beans.system.AddressValidation;
 
 import org.deltava.commands.*;
@@ -13,7 +12,7 @@ import org.deltava.dao.*;
 /**
  * A Web Site Command to invalidate a user's e-mail address.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -44,12 +43,21 @@ public class InvalidateEmailCommand extends AbstractCommand {
    			addrValid = new AddressValidation(p.getID(), EMailAddress.INVALID_ADDR);
             addrValid.setHash(EMailAddress.INVALID_ADDR);
             
+            // Create the status entry
+            StatusUpdate upd = new StatusUpdate(p.getID(), StatusUpdate.COMMENT);
+            upd.setAuthorID(ctx.getUser().getID());
+            upd.setDescription("E-Mail Address Invalidated");
+            
             // Start the transaction
             ctx.startTX();
             
             // Write the e-mail address
             SetPilot pwdao = new SetPilot(con);
             pwdao.write(p);
+            
+            // Write the status update
+            SetStatusUpdate updao = new SetStatusUpdate(con);
+            updao.write(upd);
             
             // Write the address validation entry
             SetAddressValidation avwdao = new SetAddressValidation(con);
