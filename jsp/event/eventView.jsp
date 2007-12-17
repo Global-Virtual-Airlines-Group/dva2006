@@ -221,11 +221,10 @@ return true;
 <c:set var="pilot" value="${pilots[fn:PilotID(pirep)]}" scope="request" />
 <view:row entry="${pirep}">
  <td class="bld"><el:cmd url="pirep" link="${pirep}"><fmt:date fmt="d" date="${pirep.date}" default="NOT FLOWN" /></el:cmd></td>
- <td class="pri bld">${pilot.pilotCode}</td>
  <td><el:cmd url="profile" link="${pilot}">${pilot.name}</el:cmd></td>
  <td class="sec bld">${pirep.equipmentType}</td>
  <td>${pirep.flightCode}</td>
- <td colspan="2">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
+ <td colspan="2" class="small">${pirep.airportD.name} (<fmt:airport airport="${pirep.airportD}" />) - ${pirep.airportA.name}
  (<fmt:airport airport="${pirep.airportA}" />)</td>
 </view:row>
 </c:forEach>
