@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet.filter;
 
 import java.security.Principal;
@@ -10,9 +10,10 @@ import org.deltava.commands.CommandContext;
 /**
  * A custom HTTP request wrapper to allow access to custom security information via standard Servlet API calls.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
+
 public class CustomRequestWrapper extends HttpServletRequestWrapper {
 
     /**
@@ -27,6 +28,7 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
      * Returns the authentication type.
      * @return HttpServletRequest.FORM_AUTH
      */
+    @Override
     public final String getAuthType() {
         return HttpServletRequest.FORM_AUTH;
     }
@@ -36,6 +38,7 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
      * @return the User name, or null if not authenticated
      * @see CustomRequestWrapper#getUserPrincipal()
      */
+    @Override
     public final String getRemoteUser() {
         Principal p = getUserPrincipal();
         return (p == null) ? null : p.getName();
@@ -49,8 +52,9 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
      * @see Person
      * @see CommandContext#USER_ATTR_NAME
      */
+    @Override
     public final Principal getUserPrincipal() {
-        HttpSession s = getSession(false);
+        HttpSession s = super.getSession(false);
         return (s == null) ? null : (Person) s.getAttribute(CommandContext.USER_ATTR_NAME);
     }
     
@@ -60,12 +64,13 @@ public class CustomRequestWrapper extends HttpServletRequestWrapper {
      * @return TRUE if the user is a member of the role, otherwise FALSE
      * @see Person#isInRole(String)
      */
+    @Override
     public final boolean isUserInRole(String roleName) {
     	// Always match the wildcard
     	if ("*".equals(roleName))
     		return true;
     	
-        HttpSession s = getSession(false);
+        HttpSession s = super.getSession(false);
         if (s == null)
             return ("Anonymous".equals(roleName));
         
