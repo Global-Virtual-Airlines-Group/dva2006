@@ -33,7 +33,7 @@
 	<service id="acarspirep" class="org.deltava.service.acars.FlightReportService" />
 
 	<!-- XACARS Offline PIREP Services -->
-	<service id="xacarspirep" class="org.deltava.service.acars.XACARSFlightReportService" />
+	<service id="xacarspirep" class="org.deltava.service.acars.XFlightReportService" />
 
 	<!-- ACARS Dispatch Services -->
 	<service id="navaids" class="org.deltava.service.navdata.NavigationAidService" />
