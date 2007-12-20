@@ -430,8 +430,8 @@ public class FlightReport extends Flight implements CalendarEntry, ViewEntry {
 	 * @param length the length of the flight, in <i>hours multiplied by 10</i>.
 	 */
 	public void setLength(int length) {
-		if ((length < 0) || (length > 180))
-			length = 180;
+		if ((length < 0) || (length > 195))
+			length = 195;
 
 		_length = length;
 	}
