@@ -103,9 +103,14 @@ public class NamedRouteEntry extends RouteEntry implements TabbedMapEntry {
 		// Build Pilot information
 		StringBuilder buf = new StringBuilder("<div class=\"mapInfoBox\"><span class=\"pri bld\">");
 		buf.append(_usr.getName());
-		buf.append("</span> (");
-		buf.append(_usr.getPilotCode());
-		buf.append(")<br />");
+		buf.append("</span>");
+		if (!StringUtils.isEmpty(_usr.getPilotCode())) {
+			buf.append(" (");
+			buf.append(_usr.getPilotCode());
+			buf.append(')');
+		}
+		
+		buf.append("<br />");
 		buf.append(_usr.getRank());
 		buf.append(", ");
 		buf.append(_usr.getEquipmentType());
