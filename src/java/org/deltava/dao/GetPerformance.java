@@ -1,19 +1,20 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.*;
 
-import static org.deltava.beans.FlightReport.OK;
-import static org.deltava.beans.FlightReport.ATTR_ACARS;
+import static org.deltava.beans.FlightReport.*;
 import static org.deltava.beans.testing.Test.SCORED;
 
 import org.deltava.beans.stats.PerformanceMetrics;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Data Access Object to load performance data from the database.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -81,19 +82,21 @@ public class GetPerformance extends DAO {
 	public List<PerformanceMetrics> getExamGrading(int startDays, int endDays) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT E.");
 		sqlBuf.append(_categorySQL);
-		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(GRADED_ON, SUBMITTED_ON)) / 3600) AS AV, "
-				+ "MIN(TIME_TO_SEC(TIMEDIFF(GRADED_ON, SUBMITTED_ON)) / 3600) AS MN, "
-				+ "MAX(TIME_TO_SEC(TIMEDIFF(GRADED_ON, SUBMITTED_ON)) / 3600) AS MX, COUNT(*) AS CNT FROM "
-				+ "EXAMS WHERE (STATUS=?) AND (CREATED_ON >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
-				+ "(CREATED_ON <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY CATNAME ORDER BY CATNAME");
+		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(E.GRADED_ON, E.SUBMITTED_ON)) / 3600) AS AV, "
+				+ "MIN(TIME_TO_SEC(TIMEDIFF(E.GRADED_ON, E.SUBMITTED_ON)) / 3600) AS MN, "
+				+ "MAX(TIME_TO_SEC(TIMEDIFF(E.GRADED_ON, E.SUBMITTED_ON)) / 3600) AS MX, COUNT(E.ID) AS CNT FROM "
+				+ "exams.EXAMS E, exams.EXAMINFO EP WHERE (E.NAME=EP.NAME) AND (E.STATUS=?) AND "
+				+ "(EP.AIRLINE=?) AND (E.CREATED_ON >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
+				+ "(E.CREATED_ON <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) GROUP BY CATNAME");
 		
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, SCORED);
-			_ps.setInt(2, startDays);
-			_ps.setInt(3, endDays);
+			_ps.setString(2, SystemData.get("airline.code"));
+			_ps.setInt(3, startDays);
+			_ps.setInt(4, endDays);
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -110,21 +113,22 @@ public class GetPerformance extends DAO {
 	public List<PerformanceMetrics> getCheckRideGrading(int startDays, int endDays) throws DAOException {
 		
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT CR.");
 		sqlBuf.append(_categorySQL);
-		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(GRADED, SUBMITTED)) / 3600) AS AV, "
-				+ "MIN(TIME_TO_SEC(TIMEDIFF(GRADED, SUBMITTED)) / 3600) AS MN, "
-				+ "MAX(TIME_TO_SEC(TIMEDIFF(GRADED, SUBMITTED)) / 3600) AS MX, COUNT(*) AS CNT FROM "
-				+ "CHECKRIDES WHERE (STATUS=?) AND (CREATED >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
-				+ "(CREATED <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND (LOCATE(?, NAME) = 0) GROUP BY "
-				+ "CATNAME ORDER BY CATNAME");
+		sqlBuf.append(" AS CATNAME, AVG(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS AV, "
+				+ "MIN(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS MN, "
+				+ "MAX(TIME_TO_SEC(TIMEDIFF(CR.GRADED, CR.SUBMITTED)) / 3600) AS MX, COUNT(CR.ID) AS CNT FROM "
+				+ "exams.CHECKRIDES CR, common.EQPROGRAMS EP WHERE (CR.STATUS=?) AND (CR.EQTYPE=EP.EQTYPE) AND "
+				+ "(EP.AIRLINE=?) AND (CR.CREATED >= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND "
+				+ "(CR.CREATED <= DATE_SUB(CURDATE(), INTERVAL ? DAY)) AND (LOCATE(?, CR.NAME) = 0) GROUP BY CATNAME");
 
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, SCORED);
-			_ps.setInt(2, startDays);
-			_ps.setInt(3, endDays);
-			_ps.setString(4, "Initial Hire");
+			_ps.setString(2, SystemData.get("airline.code"));
+			_ps.setInt(3, startDays);
+			_ps.setInt(4, endDays);
+			_ps.setString(5, "Initial Hire");
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
