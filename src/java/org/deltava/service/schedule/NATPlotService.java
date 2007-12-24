@@ -3,6 +3,7 @@ package org.deltava.service.schedule;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
+import java.text.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to return North Atlantic Track data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -77,6 +78,7 @@ public class NATPlotService extends WebService {
 		re.setAttribute("date", ctx.getParameter("date"));
 
 		// Build the track data
+		final NumberFormat nf = new DecimalFormat("##0.0000");
 		tracks.addAll(CONC_ROUTES);
 		for (Iterator<OceanicWaypoints> i = tracks.iterator(); i.hasNext();) {
 			OceanicWaypoints ow = i.next();
@@ -90,8 +92,8 @@ public class NATPlotService extends WebService {
 				NavigationDataBean ndb = wi.next();
 				Element we = XMLUtils.createElement("waypoint", ndb.getInfoBox(), true);
 				we.setAttribute("code", ndb.getCode());
-				we.setAttribute("lat", String.valueOf(ndb.getLatitude()));
-				we.setAttribute("lng", String.valueOf(ndb.getLongitude()));
+				we.setAttribute("lat", nf.format(ndb.getLatitude()));
+				we.setAttribute("lng", nf.format(ndb.getLongitude()));
 				we.setAttribute("color", ow.isFixed() ? MapEntry.BLUE : (isEast ? MapEntry.WHITE : MapEntry.ORANGE));
 				te.addContent(we);
 			}
