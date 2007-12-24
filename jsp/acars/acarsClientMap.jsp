@@ -61,10 +61,12 @@ return true;
 <el:box name="showInfo" idx="*" value="1" label="Show Flight Data" checked="true" />&nbsp;
 <el:box name="showRoute" idx="*" value="1" label="Show Flight Plan" checked="false" /></span></td>
 </tr>
+<c:if test="${!isDispatch}">
 <tr>
  <td class="data"><map:legend color="blue" legend="Cruising" /> <map:legend color="white" legend="On Ground" />
  <map:legend color="orange" legend="Climbing" /> <map:legend color="yellow" legend="Descending" /></td>
 </tr>
+</c:if>
 <tr>
  <td class="data"><map:div ID="googleMap" x="100%" y="510" /><div id="copyright" class="sec bld"></div></td>
 </tr>
