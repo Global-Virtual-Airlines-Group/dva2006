@@ -17,7 +17,7 @@ import org.deltava.security.SecurityContext;
  * Connections, since by doing so we can easily return connections back to the pool in a <b>finally</b> block without
  * nasty scope issues.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  * @see Command
  */
@@ -262,7 +262,7 @@ public class CommandContext extends ConnectionContext implements SecurityContext
 	 * @see CommandContext#getCache()
 	 */
 	public void setCacheHeaders() {
-		_rsp.setHeader("Cache-Control", _cache.isPublic() ? "public" : "private");
+		_rsp.setHeader("Cache-Control", _cache.isPublic() && !isAuthenticated() ? "public" : "private");
 		if (_cache.getMaxAge() != CacheControl.DEFAULT_CACHE) {
 			_rsp.setIntHeader("max-age", _cache.getMaxAge());
 			_rsp.setDateHeader("Expires", System.currentTimeMillis() + _cache.getMaxAge());
