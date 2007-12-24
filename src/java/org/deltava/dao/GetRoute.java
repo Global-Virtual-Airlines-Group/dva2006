@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object for Preferred/Oceanic Routes.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -233,11 +233,21 @@ public class GetRoute extends DAO {
      * @throws DAOException if a JDBC error occurs
      */
     public Map<String, OceanicWaypoints> getOceanicTrakcs(int routeType, java.util.Date dt) throws DAOException {
+    	
+    	// Build the SQL statement
+    	StringBuilder buf = new StringBuilder("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND ");
+    	if (dt == null)
+    		buf.append("(VALID_DATE = (SELECT MAX(VALID_DATE) FROM common.OCEANIC_ROUTES))");
+    	else
+    		buf.append("(VALID_DATE=?)");
+    	
+    	buf.append(" ORDER BY TRACK, SEQ");
+    	
     	try {
-    		prepareStatementWithoutLimits("SELECT * FROM common.OCEANIC_ROUTES WHERE (ROUTETYPE=?) AND "
-    				+ "(VALID_DATE=?) ORDER BY TRACK, SEQ");
+    		prepareStatementWithoutLimits(buf.toString());
     		_ps.setInt(1, routeType);
-    		_ps.setTimestamp(2, createTimestamp(dt));
+    		if (dt != null)
+    			_ps.setTimestamp(2, createTimestamp(dt));
     		
     		// Execute the query
     		OceanicWaypoints wp = null;
