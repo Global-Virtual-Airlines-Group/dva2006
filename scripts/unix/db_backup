@@ -68,7 +68,7 @@ fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` acars CONS FLIGHTS FLIGHT_SIDSTAR POSITIONS ERRORS MESSAGES | bzip2 -9 > acars.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` acars CONS FLIGHTS FLIGHT_SIDSTAR FLIGHT_SIDSTAR_WP ROUTES ROUTE_WP POSITIONS ERRORS MESSAGES | bzip2 -9 > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
