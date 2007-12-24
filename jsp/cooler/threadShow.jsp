@@ -332,7 +332,10 @@ notification each time a reply is posted in this Thread.
 <c:if test="${access.canReply}">
 <!-- Message Thread Response -->
 <tr class="title caps">
- <td colspan="3">${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
+ <td>${doEdit ? 'EDIT MY POST' : 'NEW RESPONSE'}</td>
+ <td colspan="2" class="right"><el:cmd className="title" url="channels"><content:airline /> WATER COOLER</el:cmd> |
+ <el:cmd className="title" url="channel" linkID="${thread.channel}">${thread.channel}</el:cmd> |
+ <fmt:text value="${thread.subject}" /></td>
 </tr>
 <tr class="mid">
  <td colspan="3"><el:textbox name="msgText" width="90%" height="8">${lastPost.body}</el:textbox></td>
