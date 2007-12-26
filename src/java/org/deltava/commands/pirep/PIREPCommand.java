@@ -429,7 +429,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					route.add(info.getAirportD());
 					if (info.getSID() != null)
 						route.addAll(info.getSID().getWaypoints());
-					route.addAll(navdao.getRouteWaypoints(info.getRoute()));
+					route.addAll(navdao.getRouteWaypoints(info.getAirportD().getICAO() + " " + info.getRoute()));
 					if (info.getSTAR() != null)
 						route.addAll(info.getSTAR().getWaypoints());
 					
