@@ -22,12 +22,14 @@ mysqldump -e `cat /usr/local/etc/sqlbackup` mysql | bzip2 -9 > mysql.sql.bz2
 
 # Dump table definitions
 echo `date +%H:%M:%S`' Writing table definitions'
-mysqldump -e -K -d --skip-triggers `cat /usr/local/etc/sqlbackup` common > common.sql
-mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` events > event.sql
-mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` acars > acars.sql
-mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` exams > exams.sql
-mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` dva > dva.sql
-mysqldump -e -K -d `cat /usr/local/etc/sqlbackup` afv > afv.sql
+mysqldump -e -K -d --single-transaction --skip-triggers `cat /usr/local/etc/sqlbackup` --ignore-table=common.EQPROGRAMS common > common.sql
+mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` events > event.sql
+mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` acars > acars.sql
+mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` exams > exams.sql
+mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` dva > dva.sql
+mysqldump -e -K -d --single-transaction `cat /usr/local/etc/sqlbackup` afv > afv.sql
+mysqldump -e -K -d -n -t --single-transaction `cat /usr/local/etc/sqlbackup` common > common_triggers.sql
+mysqldump -e -K -d -n --single-transaction `cat /usr/local/etc/sqlbackup` common EQPROGRAMS > common_eqprograms.sql
 tar cfj create_tables.tar.bz2 *.sql
 rm *.sql
 
@@ -68,7 +70,7 @@ fi
 
 # Dump ACARS data
 echo `date +%H:%M:%S`' Writing ACARS data'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` acars CONS FLIGHTS FLIGHT_SIDSTAR FLIGHT_SIDSTAR_WP ROUTES ROUTE_WP POSITIONS ERRORS MESSAGES | bzip2 -9 > acars.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=acars.POSITION_ARCHIVE acars | bzip2 -9 > acars.sql.bz2
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
