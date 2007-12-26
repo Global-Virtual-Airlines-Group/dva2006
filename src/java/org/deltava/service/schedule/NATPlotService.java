@@ -59,9 +59,14 @@ public class NATPlotService extends WebService {
 	public int execute(ServiceContext ctx) throws ServiceException {
 
 		// Get the date
-		Date dt = StringUtils.parseDate(ctx.getParameter("date"), ctx.getUser().getDateFormat());
+		Date dt = null;
+		try {
+			dt = StringUtils.parseDate(ctx.getParameter("date"), ctx.getUser().getDateFormat());
+		} catch (Exception e) {
+			// empty
+		}
 
-		Collection<OceanicWaypoints> tracks = null;
+		List<OceanicWaypoints> tracks = null;
 		try {
 			GetRoute dao = new GetRoute(ctx.getConnection());
 			tracks = new ArrayList<OceanicWaypoints>(dao.getOceanicTrakcs(OceanicRoute.NAT, dt).values());
@@ -70,12 +75,17 @@ public class NATPlotService extends WebService {
 		} finally {
 			ctx.release();
 		}
+		
+		// Get the date from the tracks
+		if ((dt == null) && !tracks.isEmpty())
+			dt = tracks.get(0).getDate();
 
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("wsdata");
 		doc.setRootElement(re);
-		re.setAttribute("date", ctx.getParameter("date"));
+		if (dt != null)
+			re.setAttribute("date", StringUtils.format(dt, "MM/dd/yyyy"));
 
 		// Build the track data
 		final NumberFormat nf = new DecimalFormat("##0.0000");
