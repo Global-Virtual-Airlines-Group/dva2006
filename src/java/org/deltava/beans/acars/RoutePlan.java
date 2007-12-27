@@ -10,7 +10,7 @@ import org.deltava.beans.schedule.*;
 /**
  * A bean to store saved ACARS dispatch routes.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -103,6 +103,22 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public String getComments() {
 		return _comments;
+	}
+	
+	/**
+	 * Returns the route.
+	 * @return a space-separated list of waypoints
+	 */
+	public String getRoute() {
+		StringBuilder buf = new StringBuilder();
+		for (Iterator<NavigationDataBean> i = _route.keySet().iterator(); i.hasNext(); ) {
+			NavigationDataBean nd = i.next();
+			buf.append(nd.getCode());
+			if (i.hasNext())
+				buf.append(' ');
+		}
+		
+		return buf.toString();
 	}
 	
 	/**
