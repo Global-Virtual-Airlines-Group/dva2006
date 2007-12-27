@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load stored ACARS dispatch routes.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -37,35 +37,55 @@ public class GetACARSRoute extends DAO {
 	 */
 	public RoutePlan getRoute(int id) throws DAOException {
 		try {
-			prepareStatement("SELECT * FROM acars.ROUTES WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM acars.ROUTES WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 			
 			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			if (!rs.next()) {
-				rs.close();
-				_ps.close();
+			List<RoutePlan> results = execute();
+			if (results.isEmpty())
 				return null;
-			}
-			
-			RoutePlan result = new RoutePlan(id);
-			result.setAuthorID(rs.getInt(2));
-			result.setAirportD(SystemData.getAirport(rs.getString(3)));
-			result.setAirportA(SystemData.getAirport(rs.getString(4)));
-			result.setAirportL(SystemData.getAirport(rs.getString(5)));
-			result.setCreatedOn(rs.getTimestamp(6));
-			result.setUseCount(rs.getInt(7));
-			result.setSID(rs.getString(8));
-			result.setSTAR(rs.getString(9));
-			result.setComments(rs.getString(10));
-			
-			// Clean up 
-			rs.close();
-			_ps.close();
 			
 			// Load routes and return
-			loadRoutes(Collections.singleton(result));
-			return result;
+			loadRoutes(results);
+			return results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all saved routes from the database.
+	 * @return a Collection of RoutePlan beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<RoutePlan> getAll() throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM acars.ROUTES ORDER BY CREATEDON");
+
+			// Execute the Query and load routes
+			Collection<RoutePlan> results = execute();
+			loadRoutes(results);
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Loads all saved routes from a particular Dispatcher.
+	 * @param authorID the Dispatcher database ID
+	 * @return a Collection of RoutePlan beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<RoutePlan> getByAuthor(int authorID) throws DAOException {
+		try {
+			prepareStatement("SELECT * FROM acars.ROUTES WHERE (AUTHOR=?) ORDER BY CREATEDON");
+			_ps.setInt(1, authorID);
+			
+			// Execute the Query and load routes
+			Collection<RoutePlan> results = execute();
+			loadRoutes(results);
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -84,31 +104,39 @@ public class GetACARSRoute extends DAO {
 			_ps.setString(1, aD.getIATA());
 			_ps.setString(2, aA.getIATA());
 			
-			// Execute the Query
-			Collection<RoutePlan> results = new ArrayList<RoutePlan>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next()) {
-				RoutePlan rp = new RoutePlan(rs.getInt(1));
-				rp.setAuthorID(rs.getInt(2));
-				rp.setAirportD(SystemData.getAirport(rs.getString(3)));
-				rp.setAirportA(SystemData.getAirport(rs.getString(4)));
-				rp.setAirportL(SystemData.getAirport(rs.getString(5)));
-				rp.setCreatedOn(rs.getTimestamp(6));
-				rp.setUseCount(rs.getInt(7));
-				rp.setSID(rs.getString(8));
-				rp.setSTAR(rs.getString(9));
-				rp.setComments(rs.getString(10));
-				results.add(rp);
-			}
-			
-			// Clean up and load routes
-			rs.close();
-			_ps.close();
+			// Execute the Query and load routes
+			Collection<RoutePlan> results = execute();
 			loadRoutes(results);
 			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
+	}
+	
+	/**
+	 * Helper method to parse result sets.
+	 */
+	private List<RoutePlan> execute() throws SQLException {
+		List<RoutePlan> results = new ArrayList<RoutePlan>();
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next()) {
+			RoutePlan rp = new RoutePlan(rs.getInt(1));
+			rp.setAuthorID(rs.getInt(2));
+			rp.setAirportD(SystemData.getAirport(rs.getString(3)));
+			rp.setAirportA(SystemData.getAirport(rs.getString(4)));
+			rp.setAirportL(SystemData.getAirport(rs.getString(5)));
+			rp.setCreatedOn(rs.getTimestamp(6));
+			rp.setUseCount(rs.getInt(7));
+			rp.setSID(rs.getString(8));
+			rp.setSTAR(rs.getString(9));
+			rp.setComments(rs.getString(10));
+			results.add(rp);
+		}
+		
+		// Clean up
+		rs.close();
+		_ps.close();
+		return results;
 	}
 	
 	/**
