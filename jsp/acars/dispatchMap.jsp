@@ -59,7 +59,7 @@ if (this.isSelected) {
 		return;
 	newLine = new GPolyline(aw_points, "#8090A0", 1.5, 0.45, {geodesic:false});
 } else {
-	newLine = new GPolyline(aw_points, "#a0c0ff", 2.25, 0.8, {geodesic:false});
+	newLine = new GPolyline(aw_points, "#A0C0FF", 2.25, 0.8, {geodesic:false});
 	newLine.isSelected = true;
 }
 
@@ -99,7 +99,7 @@ return mrk;
 </script>
 </head>
 <body onunload="GUnload()">
-<map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="sec bld"></div>
+<map:div ID="googleMap" x="100%" y="625" /><div id="copyright" class="bld"></div>
 <script language="JavaScript" type="text/javascript">
 // Load the map
 map = new GMap2(document.getElementById('googleMap'), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
@@ -112,6 +112,7 @@ map.setMapType(G_SATELLITE_MAP);
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 map.enableScrollWheelZoom();
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Build the layer controls
 var xPos = 70;
@@ -131,6 +132,7 @@ var cp = document.getElementById("copyright");
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 8));
 cpos.apply(cp);
+mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
 
 // Initialize arrays and collection

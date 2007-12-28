@@ -125,8 +125,8 @@ return true;
  <td class="data"><span id="dispatchStatus" class="err bld caps">DISPATCH CURRENTLY OFFLINE</span></td>
 </tr>
 <tr>
- <td class="label" valign="top">Live Map</td>
- <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="sec bld"></div></td>
+ <td class="label" valign="top">Live Flight Map</td>
+ <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld"></div></td>
 </tr>
 </el:table>
 
@@ -186,11 +186,8 @@ map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
-<c:choose>
-<c:when test="${gMapType == 'map'}">map.setMapType(G_NORMAL_MAP);</c:when>
-<c:when test="${gMapType == 'sat'}">map.setMapType(G_SATELLITE_MAP);</c:when>
-<c:otherwise>map.setMapType(G_PHYSICAL_MAP);</c:otherwise>
-</c:choose>
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Placeholder for route
 var routeData;
@@ -208,6 +205,7 @@ var cp = document.getElementById("copyright");
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 12));
 cpos.apply(cp);
+mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
 </c:if></script>
 <content:googleAnalytics />
