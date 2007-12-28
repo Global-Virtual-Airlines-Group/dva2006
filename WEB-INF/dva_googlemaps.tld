@@ -78,6 +78,28 @@
 		</attribute>
 	</tag>
 
+	<!-- MapType Tag, to set the Map type -->
+	<tag>
+		<name>type</name>
+		<tag-class>org.deltava.taglib.googlemap.MapTypeTag</tag-class>
+		<body-content>empty</body-content>
+		<attribute>
+			<name>map</name>
+			<required>true</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>type</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>default</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+
 	<!-- Marker Tag, to generate a GMarker -->
 	<tag>
 		<name>marker</name>
