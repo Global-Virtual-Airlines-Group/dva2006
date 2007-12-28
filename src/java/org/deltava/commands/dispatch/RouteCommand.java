@@ -47,6 +47,10 @@ public class RouteCommand extends AbstractCommand {
 			UserData ud = uddao.get(rp.getAuthorID());
 			Pilot p = pdao.get(ud);
 			
+			// Calculate the mid-point and distance
+			ctx.setAttribute("distance", new Integer(rp.getAirportD().getPosition().distanceTo(rp.getAirportA())), REQUEST);
+			ctx.setAttribute("mapCenter", rp.getAirportD().getPosition().midPoint(rp.getAirportA()), REQUEST);
+			
 			// Save in the request
 			ctx.setAttribute("route", rp, REQUEST);
 			ctx.setAttribute("author", p, REQUEST);
