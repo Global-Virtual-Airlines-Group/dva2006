@@ -54,6 +54,30 @@ public class GetACARSRoute extends DAO {
 	}
 	
 	/**
+	 * Returns the database IDs of all dispatchers who have saved a Route.
+	 * @return a Collection of Database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getAuthorIDs() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM acars.ROUTES");
+			
+			// Execute the query
+			Collection<Integer> results = new HashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
 	 * Loads all saved routes from the database.
 	 * @return a Collection of RoutePlan beans
 	 * @throws DAOException if a JDBC error occurs

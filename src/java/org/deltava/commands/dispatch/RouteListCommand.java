@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.acars.RoutePlan;
 
+import org.deltava.comparators.*;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
@@ -28,31 +29,36 @@ public class RouteListCommand extends AbstractViewCommand {
 		
 		// Get the view context
 		ViewContext vc = initView(ctx);
+		int authorID = ctx.getID();
 		try {
 			Connection con = ctx.getConnection();
 			
-			// Get the routes
+			// Load the Author IDs and check if valid
 			GetACARSRoute rdao = new GetACARSRoute(con);
+			Collection<Integer> IDs = rdao.getAuthorIDs();
+			if (!IDs.contains(new Integer(authorID)))
+				authorID = 0;
+			
+			// Get the routes
 			rdao.setQueryStart(vc.getStart());
 			rdao.setQueryMax(vc.getCount());
-			Collection<RoutePlan> plans = rdao.getAll();
-			
-			// Load the Author IDs
-			Collection<Integer> IDs = new HashSet<Integer>();
-			for (Iterator<RoutePlan> i = plans.iterator(); i.hasNext(); ) {
-				RoutePlan rp = i.next();
-				IDs.add(new Integer(rp.getAuthorID()));
-			}
-
-			// Save the results
+			Collection<RoutePlan> plans = (authorID == 0) ? rdao.getAll() : rdao.getByAuthor(authorID);
 			vc.setResults(plans);
 			
 			// Get the user data
 			GetPilot pdao = new GetPilot(con);
 			GetUserData uddao = new GetUserData(con);
 			UserDataMap udm = uddao.get(IDs);
-			ctx.setAttribute("authors", pdao.get(udm), REQUEST);
-			ctx.setAttribute("userData", udm, REQUEST);
+			Map<Integer, Pilot> authors = pdao.get(udm);
+			
+			// Sort authors by name
+			Collection<Pilot> pilots = new TreeSet<Pilot>(new PilotComparator(PersonComparator.LASTNAME));
+			pilots.addAll(authors.values());
+			
+			// Save in the request
+			ctx.setAttribute("authors", authors, REQUEST);
+			ctx.setAttribute("author", authors.get(new Integer(authorID)), REQUEST);
+			ctx.setAttribute("authorNames", pilots, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {

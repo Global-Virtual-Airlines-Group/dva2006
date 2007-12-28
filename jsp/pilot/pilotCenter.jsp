@@ -637,6 +637,16 @@ database. AIRAC data can be imported in one of three ways - Navigation Aids, Air
 </tr>
 </content:filter>
 <c:if test="${acarsEnabled}">
+<content:filter roles="HR,Dispatch">
+<!-- ACARS Dispatch Section -->
+<tr class="title caps">
+ <td colspan="2">ACARS DISPATCH ROUTES</td>
+</tr>
+<tr>
+ <td class="mid"><el:cmd className="bld" url="dsproutes">Dispatcher Routes</el:cmd></td>
+ <td class="data">You can view or delete flight routes previously created by <content:airline /> dispatchers.</td>
+</tr>
+</content:filter>
 <content:filter roles="HR,Developer">
 <!-- ACARS Logging Section -->
 <tr class="title caps">

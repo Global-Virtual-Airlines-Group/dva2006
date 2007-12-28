@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <%@ taglib uri="/WEB-INF/dva_googlemaps.tld" prefix="map" %>
 <map:xhtml>
 <head>
@@ -24,6 +25,7 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="imgPath" name="path.img" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -51,7 +53,7 @@
 </c:if>
 <tr>
  <td class="label">Dispatcher Name</td>
- <td class="data">${author.pilotCode} ${author.name}</td>
+ <td class="data">${author.name} (${author.pilotCode})</td>
  <td class="label">Created on</td>
  <td class="data bld"><fmt:date date="${route.createdOn}" /> (used <fmt:int value="${route.useCount}" /> times)</td>
 </tr>
@@ -66,6 +68,41 @@
  <td class="data" colspan="3">${route.route}</td>
 </tr>
 <tr>
-
-
+ <td class="label" valign="top">Route Map</td>
+ <td class="data" colspan="3"><map:div ID="googleMap" x="100%" y="500" /></td>
 </tr>
+</el:table>
+
+<!-- Button Bar -->
+<el:table className="bar" space="default" pad="default">
+<tr>
+ <td>&nbsp;<c:if test="${access.canDelete}"><el:cmdbutton url="dsproutedelete" link="${route}" label="DELETE DISPATCHER ROUTE" /></c:if></td>
+</tr>
+</el:table>
+<content:copyright />
+</content:region>
+</content:page>
+<c:if test="${fn:sizeof(route.waypoints) > 0}">
+<script language="JavaScript" type="text/javascript">
+// Build the route line and map center
+<map:point var="mapC" point="${mapCenter}" />
+<map:points var="pnts" items="${route.waypoints}" />
+<map:markers var="mrks" items="${route.waypoints}" />
+<map:line var="route" src="pnts" color="#4080AF" width="2" transparency="0.7" geodesic="true" />
+
+// Build the map
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
+map.addControl(new GLargeMapControl());
+map.addControl(new GMapTypeControl());
+map.setCenter(mapC, getDefaultZoom(${distance}));
+map.enableDoubleClickZoom();
+map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+
+// Add the route and markers
+addMarkers(map, 'route');
+addMarkers(map, 'mrks');
+</script></c:if>
+<content:googleAnalytics />
+</body>
+</map:xhtml>
