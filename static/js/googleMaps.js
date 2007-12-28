@@ -1,4 +1,5 @@
 var displayedMarkers = new Array();
+var mapTextElements = new Array();
 
 function googleMarker(imgPath, color, point, label)
 {
@@ -89,6 +90,17 @@ if (isToggled)
 	removeMarkers(map, arrayName);
 else
 	addMarkers(map, arrayName);
+
+return true;
+}
+
+function updateMapText()
+{
+var newColor = this.getCurrentMapType().getTextColor();
+for (var x = 0; x < mapTextElements.length; x++) {
+	var el = mapTextElements[x];
+	el.style.color = newColor;
+}
 
 return true;
 }
