@@ -8,12 +8,24 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> ACARS Dispatcher Routes</title>
+<title><content:airline /> ACARS Dispatcher Routes<c:if test="${!empty author}"> - ${author.name}</c:if></title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<script language="JavaScript" type="text/javascript">
+function update(combo)
+{
+combo.enabled = false;
+if (combo.selectedIndex == 0)
+	self.location = '/dsproutes.do';
+else
+	self.location = '/dsproutes.do?id=' + combo.options[combo.selectedIndex].value;
+
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -23,38 +35,43 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="dsproutes.do" method="post" validate="return false">
 <view:table className="view" space="default" pad="default" cmd="dsproutes">
 <!-- Table Header Bar -->
+<tr class="title">
+ <td colspan="4" class="left caps"><content:airline /> ACARS DISPATCHER ROUTES<c:if test="${!empty author}"> - ${author.name}</c:if></td>
+ <td colspan="2" class="right">DISPATCHER <el:combo name="id" idx="*" size="1" options="${authorNames}" firstEntry="-" value="${author}" onChange="update(this)" /></td>
+</tr>
 <tr class="title caps">
  <td width="5%">ID</td>
  <td width="15%">DEPARTING FROM</td>
  <td width="15%">ARRIVING AT</td>
- <td width="10%">CREATED ON</td>
- <td width="20%">CREATED BY</td>
+<c:if test="${empty author}"><td width="20%">CREATED BY</td></c:if>
+<c:if test="${!empty author}"><td width="8%">CREATED ON</td></c:if>
  <td width="5%">USED</td>
  <td class="left">WAYPOINTS</td>
 </tr>
 
 <!-- Routes -->
 <c:forEach var="route" items="${viewContext.results}">
-<c:set var="author" value="${authors[entry.authorID]}" scope="request" />
-<c:set var="authorLoc" value="${userData[entry.authorID]}" scope="request" />
+<c:set var="author" value="${authors[route.authorID]}" scope="request" />
 <tr>
- <td><el:cmd url="dsproute" linkID="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
+ <td><el:cmd url="dsproute" link="${route}" className="pri bld"><fmt:int value="${route.ID}" /></el:cmd></td>
  <td class="small">${route.airportD.name} (<fmt:airport airport="${route.airportD}" />)</td>
- <td class="small">${route.airportD.name} (<fmt:airport airport="${route.airportA}" />)</td>
- <td><fmt:date date="${route.createdOn}" fmt="d" /></td>
- <td><el:profile location="${authorLoc}" className="pri bld">${author.name}</el:profile></td>
- <td class="bld"><fmt:int value="${route.useCount}" /></td>
+ <td class="small">${route.airportA.name} (<fmt:airport airport="${route.airportA}" />)</td>
+ <td><c:if test="${empty author}"><el:cmd url="dsproutes" link="${author}" className="pri bld">${author.name}</el:cmd> (${author.pilotCode}) on </c:if><fmt:date date="${route.createdOn}" fmt="d" /></td>
+ <td class="sec bld"><fmt:int value="${route.useCount}" /></td>
  <td class="left small">${route.route}</td>
 </tr>
 </c:forEach>
 
 <!-- Scroll Bar -->
 <tr class="title">
- <td colspan="9"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
+ <td colspan="6"><view:scrollbar><view:pgUp />&nbsp;<view:pgDn /></view:scrollbar>&nbsp;</td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
