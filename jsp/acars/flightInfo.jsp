@@ -26,6 +26,7 @@
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="imgPath" name="path.img" />
+<content:getCookie name="acarsMapType" default="map" var="gMapType" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -138,15 +139,16 @@ getACARSData(${info.ID}, '${imgPath}');
 <map:point var="mapC" point="${mapCenter}" />
 <map:points var="filedPoints" items="${filedRoute}" />
 <map:markers var="filedMarkers" items="${filedRoute}" />
-<map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.7" />
+<map:line var="gfRoute" src="filedPoints" color="#A0400F" width="2" transparency="0.7" geodesic="true" />
 
 // Build the map
-var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, getDefaultZoom(${pirep.distance}));
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
 
 // Add the filed route and markers
 addMarkers(map, 'gfRoute');
