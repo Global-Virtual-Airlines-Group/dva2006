@@ -1,5 +1,5 @@
 // Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
-package org.deltava.commands.acars;
+package org.deltava.commands.dispatch;
 
 import org.deltava.commands.*;
 
@@ -10,7 +10,7 @@ import org.deltava.commands.*;
  * @since 2.1
  */
 
-public class DispatchMapCommand extends AbstractCommand {
+public class MapCommand extends AbstractCommand {
 
 	/**
 	 * Executes the command.

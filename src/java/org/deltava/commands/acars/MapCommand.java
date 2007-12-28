@@ -19,7 +19,7 @@ import org.deltava.util.system.SystemData;
  * @since 1.0
  */
 
-public class ACARSMapCommand extends AbstractCommand {
+public class MapCommand extends AbstractCommand {
 
 	/**
 	 * Executes the command.
