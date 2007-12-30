@@ -134,6 +134,7 @@ var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 8)
 cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
+updateMapText();
 
 // Initialize arrays and collection
 var route = new Array();
