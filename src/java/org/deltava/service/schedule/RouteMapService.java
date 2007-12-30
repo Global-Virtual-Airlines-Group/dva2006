@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.service.schedule;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to display flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -35,7 +35,7 @@ public class RouteMapService extends WebService {
 		LinkedList<NavigationDataBean> routePoints = null;
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
-			routePoints = dao.getRouteWaypoints(ctx.getParameter("route"));
+			routePoints = dao.getRouteWaypoints(ctx.getParameter("route"), null);
 		} catch (DAOException de) {
 			throw error(SC_INTERNAL_SERVER_ERROR, de.getMessage());
 		} finally {

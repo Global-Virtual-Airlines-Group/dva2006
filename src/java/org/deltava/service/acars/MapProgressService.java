@@ -19,7 +19,7 @@ import org.deltava.util.*;
 /**
  * A Web Service to provide XML-formatted ACARS progress data for Google Maps.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class MapProgressService extends WebService {
 				routeWaypoints.add(info.getAirportD());
 				if (info.getSID() != null)
 					routeWaypoints.addAll(info.getSID().getWaypoints());
-				routeWaypoints.addAll(navdao.getRouteWaypoints(info.getRoute()));
+				routeWaypoints.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
 				if (info.getSTAR() != null)
 					routeWaypoints.addAll(info.getSTAR().getWaypoints());
 				routeWaypoints.add(info.getAirportA());

@@ -23,7 +23,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Flight Reports.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -429,7 +429,7 @@ public class PIREPCommand extends AbstractFormCommand {
 					route.add(info.getAirportD());
 					if (info.getSID() != null)
 						route.addAll(info.getSID().getWaypoints());
-					route.addAll(navdao.getRouteWaypoints(info.getAirportD().getICAO() + " " + info.getRoute()));
+					route.addAll(navdao.getRouteWaypoints(info.getRoute(), info.getAirportD()));
 					if (info.getSTAR() != null)
 						route.addAll(info.getSTAR().getWaypoints());
 					

@@ -301,10 +301,11 @@ public class GetNavRoute extends GetNavData {
 	/**
 	 * Returns all waypoints for a route, expanding Airways but <i>NOT</i> SID/STARs.
 	 * @param route the space-delimited route
+	 * @param start the starting point
 	 * @return an ordered List of NavigationDataBeans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public LinkedList<NavigationDataBean> getRouteWaypoints(String route) throws DAOException {
+	public LinkedList<NavigationDataBean> getRouteWaypoints(String route, GeoLocation start) throws DAOException {
 		if (route == null)
 			return new LinkedList<NavigationDataBean>();
 
@@ -318,7 +319,7 @@ public class GetNavRoute extends GetNavData {
 
 		// Get the route text
 		List<String> tkns = StringUtils.split(route, " ");
-		GeoLocation lastPosition = null;
+		GeoLocation lastPosition = start;
 		Set<NavigationDataBean> routePoints = new LinkedHashSet<NavigationDataBean>();
 		for (int x = 0; x < tkns.size(); x++) {
 			String wp = tkns.get(x);

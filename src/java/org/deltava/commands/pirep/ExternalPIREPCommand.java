@@ -17,7 +17,7 @@ import org.deltava.util.*;
 /**
  * A Web Site Command to allow cross-Airline Check Ride PIREPs to be viewed and evaluated.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -97,7 +97,7 @@ public class ExternalPIREPCommand extends AbstractCommand {
 				
 				// Save ACARS info
 				GetNavRoute navdao = new GetNavRoute(con);
-				ctx.setAttribute("filedRoute", navdao.getRouteWaypoints(StringUtils.listConcat(wps, " ")), REQUEST);
+				ctx.setAttribute("filedRoute", navdao.getRouteWaypoints(StringUtils.listConcat(wps, " "), info.getAirportD()), REQUEST);
 				ctx.setAttribute("flightInfo", info, REQUEST);
 				ctx.setAttribute("conInfo", ardao.getConnection(info.getConnectionID()), REQUEST);
 			}
