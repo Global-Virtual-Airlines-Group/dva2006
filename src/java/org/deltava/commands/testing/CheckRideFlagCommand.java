@@ -16,7 +16,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to retroactively flag a Flight Report as a Check Ride.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -57,7 +57,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				cr.setDate(fr.getDate());
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
-				cr.setSubmittedOn(new java.util.Date());
+				cr.setSubmittedOn(fr.getSubmittedOn());
 				cr.setScorerID(ctx.getUser().getID());
 				cr.setPilotID(fr.getDatabaseID(FlightReport.DBID_PILOT));
 				
@@ -72,6 +72,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 			} else if (cr.getStatus() == Test.NEW) {
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
 				cr.setStatus(Test.SUBMITTED);
+				cr.setSubmittedOn(fr.getSubmittedOn());
 			} else if (cr.getStatus() == Test.SUBMITTED) {
 				if (cr.getFlightID() != 0) {
 					ACARSFlightReport ofr = frdao.getACARS(SystemData.get("airline.db"), cr.getFlightID()); 
@@ -80,6 +81,7 @@ public class CheckRideFlagCommand extends AbstractCommand {
 				}
 						
 				cr.setFlightID(fr.getDatabaseID(FlightReport.DBID_ACARS));
+				cr.setSubmittedOn(fr.getSubmittedOn());
 			} else
 				throw securityException("Cannot update " + cr.getStatusName() + " Check Ride");
 			
