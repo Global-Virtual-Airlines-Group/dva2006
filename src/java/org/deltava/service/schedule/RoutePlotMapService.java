@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Service to display plotted flight routes with SID/STAR/Airway data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class RoutePlotMapService extends RouteMapService {
 
 			// Add the route waypoints
 			if (!StringUtils.isEmpty(ctx.getParameter("route"))) {
-				List<NavigationDataBean> points = dao.getRouteWaypoints(ctx.getParameter("route"));
+				List<NavigationDataBean> points = dao.getRouteWaypoints(ctx.getParameter("route"), aD);
 				routePoints.addAll(points);
 			}
 
