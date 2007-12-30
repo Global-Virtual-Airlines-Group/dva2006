@@ -214,8 +214,8 @@
 		<pwd>m4n3l5</pwd>
 		
 		<map name="connectProperties">
-			<useNewIO>true</useNewIO>
 			<useCompression>false</useCompression>
+			<connectTimeout>1000</connectTimeout>
 			<autoReconnect>false</autoReconnect>
 			<cachePrepStmts>true</cachePrepStmts>
 			<cacheResultSetMetadata>false</cacheResultSetMetadata>
@@ -223,7 +223,9 @@
 			<useServerPrepStmts>true</useServerPrepStmts>
 			<dontTrackOpenResources>true</dontTrackOpenResources>
 			<useLocalSessionState>true</useLocalSessionState>
-			<useCursorFetch>true</useCursorFetch>
+			<useCursorFetch>false</useCursorFetch>
+			<maintainTimeStats>false</maintainTimeStats>
+			<validationQuery>/* ping */</validationQuery>
 		</map>
 		
 		<pool_size type="Integer">1</pool_size>
