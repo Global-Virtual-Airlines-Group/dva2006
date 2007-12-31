@@ -43,5 +43,5 @@ public abstract class AbstractStatsCommand extends AbstractViewCommand {
 	/**
 	 * SQL used to display friendly month/year.
 	 */
-	public static final String MONTH_SQL = "DATE_FORMAT(F.DATE, '%M %x')";
+	public static final String MONTH_SQL = "DATE_FORMAT(F.DATE, '%M %Y')";
 }
