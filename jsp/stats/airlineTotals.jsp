@@ -11,6 +11,7 @@
 <content:css name="main" browserSpecific="true" />
 <content:css name="form" />
 <content:css name="view" />
+<content:js name="swfobject" />
 <content:pics />
 </head>
 <content:copyright visible="false" />
@@ -18,6 +19,7 @@
 <content:page>
 <%@include file="/jsp/main/header.jspf" %> 
 <%@include file="/jsp/main/sideMenu.jspf" %>
+<content:sysdata var="swfPath" name="path.swf" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -75,6 +77,10 @@
  <td class="data"><fmt:int className="sec bld" value="${totals.DBRows}" /> rows / 
  <fmt:int className="sec bld" value="${totals.DBSize}" /> bytes</td>
 </tr>
+<tr>
+ <td class="label" valign="top">Flight Totals Graph</td>
+ <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
+</tr>
 <tr class="title caps mid">
  <td colspan="2"><content:airline /> STATISTICS COMMENCE <fmt:int value="${totals.age}" /> DAYS AGO</td>
 </tr>
@@ -110,6 +116,16 @@
 <content:copyright />
 </content:region>
 </content:page>
+<script language="JavaScript" type="text/javascript">
+var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 275, '8', '#ffffff', 'high');
+so.addVariable('preloader_color', '#999999');
+so.addVariable('path', '/');
+so.addVariable('chart_id', 'linechart');
+so.addVariable('settings_file', escape('/${swfPath}/xml/allstats_settings.xml'));
+so.addVariable('data_file', escape('/allstats.ws'));
+so.write('flashcontent');
+</script>
+
 <content:googleAnalytics />
 </body>
 </html>
