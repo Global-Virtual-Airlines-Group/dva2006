@@ -104,6 +104,9 @@
  <td><el:cmd url="centuryclub">CENTURY CLUB</el:cmd></td>
 </tr>
 <tr class="MenuItem">
+ <td><el:cmd url="landingstats">LANDING STATISTICS</el:cmd></td>
+</tr>
+<tr class="MenuItem">
  <td><el:cmd url="landings">GREASED LANDINGS</el:cmd></td>
 </tr>
 <tr class="MenuItem">
