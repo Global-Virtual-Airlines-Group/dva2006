@@ -207,7 +207,7 @@ var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 12
 cpos.apply(cp);
 mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
-updateMapText();
+GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 <content:googleAnalytics />
 </body>
