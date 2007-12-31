@@ -56,6 +56,7 @@ return true;
 <%@ include file="/jsp/main/sideMenu.jspf" %>
 <content:sysdata var="locations" name="locations" />
 <content:sysdata var="schemes" name="html.schemes" />
+<content:sysdata var="airlineDomain" name="airline.domain" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -130,9 +131,10 @@ return true;
 </tr>
 <tr>
  <td class="label">E-Mail Address</td>
- <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" />
-<c:if test="${notUnique}"><div class="small error">Another <content:airline /> Pilot or Applicant is 
-currently registed with this e-mail address.</div></c:if>
+ <td class="data" colspan="${cspan}"><el:text name="email" className="req" idx="*" size="48" max="64" value="${param.email}" /> 
+<span class="small"><i>Please ensure that your spam blockers are set to accept email from ${airlineDomain}.</i></span>
+<c:if test="${notUnique}"><div class="small error">Another <content:airline /> Pilot or Applicant is currently registed with 
+this e-mail address.</div></c:if>
  </td>
 </tr>
 <tr>
