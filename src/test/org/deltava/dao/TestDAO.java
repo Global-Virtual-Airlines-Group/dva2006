@@ -25,12 +25,21 @@ public class TestDAO extends AbstractBeanTestCase {
             prepareStatement("SELECT COUNT(*) FROM STAFF");
         }
         
+        public void initStatement(String sql) throws SQLException {
+        	prepareStatement(sql);
+        }
+        
         public int getQueryStart() {
             return _queryStart;
         }
         
         public int getQueryMax() {
             return _queryMax;
+        }
+        
+        public void execute() throws SQLException {
+        	_ps.execute();
+        	_ps.close();
         }
     }
     
@@ -53,14 +62,22 @@ public class TestDAO extends AbstractBeanTestCase {
 
     public void testQueryTimeout() {
         try {
-            _dao.initStatement();
+        	_dao.setQueryTimeout(1);
+            _dao.initStatement("DO SLEEP(3)");
         } catch (SQLException se) {
             fail("Cannot prepare statement - " + se.getMessage());
         }
         
-        _dao.setQueryTimeout(35);
-        assertEquals(35, _dao.getQueryTimeout());
+        assertEquals(1, _dao.getQueryTimeout());
         validateInput("queryTimeout", new Integer(-1), IllegalArgumentException.class);
+        
+        // Execute and check for failure
+        try {
+        	_dao.execute();
+        	fail("SQLException expected");
+        } catch (SQLException se) {
+        	assertEquals(23, se.getErrorCode());
+        }
     }
     
     public void testLimits() {
