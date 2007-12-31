@@ -34,8 +34,20 @@
 
 	<command id="landings">
 		<name>Greased Landings</name>
-		<class>org.deltava.commands.pilot.GreasedLandingCommand</class>
+		<class>org.deltava.commands.stats.GreasedLandingCommand</class>
 		<roles>*</roles>
+	</command>
+
+	<command id="landingstats">
+		<name>Landing Statistics</name>
+		<class>org.deltava.commands.stats.LandingStatsCommand</class>
+		<roles>*</roles>
+	</command>
+
+	<command id="mystats">
+		<name>Pilot Flight Statistics</name>
+		<class>org.deltava.commands.stats.MyFlightStatsCommand</class>
+		<roles>Pilot</roles>
 	</command>
 
 	<command id="acarsprsearch">

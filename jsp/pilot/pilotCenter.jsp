@@ -158,14 +158,19 @@ You have flown <fmt:int value="${pilot.totalLegs}" /> flights and <fmt:dec value
 <content:airline /> and our partner airlines.<br /></c:if>
 <c:if test="${!empty lastFlight}">
 <br />
- Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
- <el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
+Your last flight was on <fmt:date date="${lastFlight.date}" fmt="d" />:<br />
+<el:cmd url="pirep" link="${lastFlight}" className="pri bld">${lastFlight}</el:cmd> - ${lastFlight.airportD.name}
  (<fmt:airport airport="${lastFlight.airportD}" />) to ${lastFlight.airportA.name} (<fmt:airport airport="${lastFlight.airportA}" />)
- in a ${lastFlight.equipmentType}.<br />
- <br />
- To view a map of the routes you have flown, <el:cmd className="sec bld" url="myroutemap">Click Here</el:cmd>.</c:if></td>
+ in a ${lastFlight.equipmentType}.</c:if></td>
 </tr>
-
+<c:if test="${pilot.legs > 0}">
+<tr>
+ <td class="mid bld">Flight Information</td>
+ <td class="data">To view a map of the routes you have flown, <el:cmd className="sec bld" url="myroutemap">Click Here</el:cmd>.<br />
+<c:if test="${acarsEnabled && (pilot.ACARSLegs > 0)}"><br />
+To view statistics about your flights, <el:cmd className="sec bld" url="mystats">Click Here</el:cmd>.</c:if></td>
+</tr>
+</c:if>
 <content:filter roles="PIREP">
 <c:if test="${pirepQueueSize > 15}">
 <c:set var="queueClass" value="sec bld" scope="request" />

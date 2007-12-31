@@ -36,38 +36,7 @@ return true;
  <td colspan="5" class="right">GROUP BY <el:combo name="groupType" size="1" idx="*" options="${groupTypes}" value="${param.groupType}" onChange="void updateSort()" />
  SORT BY <el:combo name="sortType" size="1" idx="*" options="${sortTypes}" value="${viewContext.sortType}" onChange="void updateSort()" /></td>
 </tr>
-
-<!-- Table Header Bar-->
-<tr class="title caps">
- <td width="5%">#</td>
- <td width="20%">ENTRY</td>
- <td width="8%">HOURS</td>
- <td width="7%">LEGS</td>
- <td width="10%">ACARS</td>
- <td width="10%">ONLINE</td>
- <td width="10%">HISTORIC</td>
- <td width="10%">MILES</td>
- <td>AVERAGE</td>
-</tr>
-
-<!-- Table Statistics Data -->
-<c:set var="entryNumber" value="${viewStart}" scope="request" />
-<c:forEach var="stat" items="${viewContext.results}">
-<view:row entry="${stat}">
-<c:set var="entryNumber" value="${entryNumber + 1}" scope="request" />
- <td class="sec bld small">${entryNumber}</td>
- <td class="pri bld">${stat.label}</td>
- <td class="bld"><fmt:dec value="${stat.hours}" /></td>
- <td class="pri bld"><fmt:int value="${stat.legs}" /></td>
- <td class="sec bld small"><fmt:int value="${stat.ACARSLegs}" /> (<fmt:dec value="${stat.ACARSPercent * 100}" fmt="##0.0" />%)</td>
- <td class="bld small"><fmt:int value="${stat.onlineLegs}" /> (<fmt:dec value="${(stat.onlineLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="sec small"><fmt:int value="${stat.historicLegs}" /> (<fmt:dec value="${(stat.historicLegs * 100.0) / stat.legs}" fmt="##0.0" />%)</td>
- <td class="small"><fmt:int value="${stat.miles}" /></td>
- <td class="bld small"><fmt:dec value="${stat.avgHours}" fmt="#,##0.00" /> Hours, 
-<fmt:int value="${stat.avgMiles}" /> Miles</td>
-</view:row>
-</c:forEach>
-
+<%@ include file="/jsp/stats/pirepStats.jspf" %>
 <!-- Table Footer Bar -->
 <tr class="title">
  <td colspan="9"><view:scrollbar><view:pgUp /> <view:pgDn /></view:scrollbar>&nbsp;</td>

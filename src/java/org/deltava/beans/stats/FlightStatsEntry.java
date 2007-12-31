@@ -1,16 +1,16 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved. 
+// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved. 
 package org.deltava.beans.stats;
 
 /**
  * A bean to store airline statistics entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class FlightStatsEntry implements java.io.Serializable, Comparable {
+public class FlightStatsEntry implements Comparable<FlightStatsEntry> {
 
-	private Comparable _label;
+	private String _label;
 	
 	private int _legs;
 	private int _acarsLegs;
@@ -26,7 +26,7 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	 * @param hours the number of hours for this entry <i>multiplied by 10</i> 
 	 * @param miles the number of miles for this entry
 	 */
-	public FlightStatsEntry(Comparable entryLabel, int legs, double hours, int miles) {
+	public FlightStatsEntry(String entryLabel, int legs, double hours, int miles) {
 		super();
 		_label = entryLabel;
 		_legs = legs;
@@ -38,7 +38,7 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	 * Returns the entry label.
 	 * @return the label
 	 */
-	public Object getLabel() {
+	public String getLabel() {
 		return _label;
 	}
 	
@@ -151,12 +151,24 @@ public class FlightStatsEntry implements java.io.Serializable, Comparable {
 	}
 	
 	/**
+	 * Returns the entry label.
+	 */
+	public String toString() {
+		return _label;
+	}
+	
+	/**
+	 * Returns the label's hash code.
+	 */
+	public int hashCode() {
+		return _label.hashCode();
+	}
+	
+	/**
 	 * Compares the entries by using the natural sort order of the labels.
 	 * @see Comparable#compareTo(Object)
 	 */
-	@SuppressWarnings("unchecked")
-	public int compareTo(Object o2) {
-		FlightStatsEntry e2 = (FlightStatsEntry) o2;
+	public int compareTo(FlightStatsEntry e2) {
 		return (_label.compareTo(e2._label));
 	}
 }
