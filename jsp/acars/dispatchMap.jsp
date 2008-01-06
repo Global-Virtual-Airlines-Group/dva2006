@@ -160,6 +160,7 @@ var mrks_star = new Array();
 
 // Initialize event listeners
 GEvent.addListener(map, "moveend", mapZoom);
+GEvent.trigger(map, "moveend");
 </script>
 </body>
 </map:xhtml>
