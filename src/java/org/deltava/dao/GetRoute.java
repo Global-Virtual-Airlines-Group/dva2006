@@ -239,7 +239,7 @@ public class GetRoute extends DAO {
     	if (dt == null)
     		buf.append("(VALID_DATE = (SELECT MAX(VALID_DATE) FROM common.OCEANIC_ROUTES))");
     	else
-    		buf.append("(VALID_DATE=?)");
+    		buf.append("(VALID_DATE=DATE(?))");
     	
     	buf.append(" ORDER BY TRACK, SEQ");
     	
