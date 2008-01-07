@@ -1,9 +1,8 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.blog;
 
 import java.sql.Connection;
 import java.util.Collection;
-import java.util.Map;
 
 import org.deltava.beans.blog.Entry;
 
@@ -15,7 +14,7 @@ import org.deltava.security.command.BlogAccessControl;
 /**
  * A Web Site Command to handle blog entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -148,9 +147,7 @@ public class BlogEntryCommand extends AbstractFormCommand {
 			
 			// Load the author names
 			GetPilot pdao = new GetPilot(con);
-			Map authors = pdao.getByID(authorIDs, "PILOTS");
-			ctx.setAttribute("authorIDs", authors.keySet(), REQUEST);
-			ctx.setAttribute("authors", authors, REQUEST);
+			ctx.setAttribute("authors", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
 			
 			// Get our access
 			BlogAccessControl ac = new BlogAccessControl(ctx, e);

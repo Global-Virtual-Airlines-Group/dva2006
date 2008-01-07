@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.academy;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to list busy time for a Flight Academy Instructor.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -51,7 +51,6 @@ public class InstructorBusyTimeCommand extends AbstractCalendarCommand {
 				accessMap.put(ib, access);
 			}
 			
-			ctx.setAttribute("busyTime", accessMap.keySet(), REQUEST);
 			ctx.setAttribute("accessMap", accessMap, REQUEST);
 			
 			// Get the Flight Instructors

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.stats;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to display membership statistics.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -58,7 +58,6 @@ public class MembershipStatsCommand extends AbstractCommand {
 		ctx.setAttribute("maxCount", new Integer(maxJoinCount), REQUEST);
 		
 		// Save quantiles
-		ctx.setAttribute("qLabels", qResults.keySet(), REQUEST);
 		ctx.setAttribute("quantiles", qResults, REQUEST);
 		ctx.setAttribute("quantileCount", new Integer(quantiles), REQUEST);
 

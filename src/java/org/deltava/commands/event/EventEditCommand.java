@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.event;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to edit Online Events.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -111,10 +111,8 @@ public class EventEditCommand extends AbstractCommand {
 			ctx.setAttribute("allEQ", acdao.getAircraftTypes(), REQUEST);
 			
 			// Save the charts
-			if (!charts.isEmpty()) {
+			if (!charts.isEmpty())
 			   ctx.setAttribute("charts", charts, REQUEST);
-			   ctx.setAttribute("chartAirports", charts.keySet(), REQUEST);
-			}
 			
 			// Save the access controller
 			ctx.setAttribute("access", access, REQUEST);

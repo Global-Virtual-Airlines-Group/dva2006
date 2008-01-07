@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -29,7 +29,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display diagnostic infomration.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -122,9 +122,7 @@ public class DiagnosticCommand extends AbstractCommand {
 			
 			// Dump the Servinfo thread map after cleaning up
 			ServInfoLoader.isLoading("?");
-			Map loaders = ServInfoLoader.getLoaders();
-			ctx.setAttribute("servInfoLoaders", loaders, REQUEST);
-			ctx.setAttribute("servInfoLoaderNets", loaders.keySet(), REQUEST);
+			ctx.setAttribute("servInfoLoaders", ServInfoLoader.getLoaders(), REQUEST);
 		}
 		
 		// Get DAO cache properties
