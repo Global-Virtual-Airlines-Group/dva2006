@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.functions;
 
 import java.util.*;
@@ -9,7 +9,7 @@ import org.deltava.util.*;
 /**
  * A JSP Function Library to store miscellaneous functions.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -23,6 +23,15 @@ public class MiscFunctions {
 	 */
 	public static int sizeof(Collection c) {
 		return (c != null) ? c.size() : 0;
+	}
+	
+	/**
+	 * A JSP function to return a Map's keys.
+	 * @param m the Map
+	 * @return a Collection of keys, or null if m is null
+	 */
+	public static <T> Collection<T> keys(Map<T, Object> m) {
+		return (m == null) ? null : m.keySet();
 	}
 
 	/**

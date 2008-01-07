@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Statistics - ${user.name}</title>
@@ -58,9 +59,9 @@ return true;
 <!-- Touchdown Speed statistics -->
 <el:table className="form" space="default" pad="default">
 <tr class="title">
- <td colspan="6" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${user.legs}" /> LANDINGS</td>
+ <td colspan="6" class="left caps">TOUCHDOWN SPEED STATISTICS - <fmt:int value="${user.ACARSLegs}" /> LANDINGS</td>
 </tr>
-<c:forEach var="vs" items="${vSpeeds}">
+<c:forEach var="vs" items="${fn:keys(landingStats)}">
 <c:set var="vsCount" value="${landingStats[vs]}" scope="request" />
 <c:choose>
 <c:when test="${vs < -600}"><c:set var="barColor" value="red" scope="request" /></c:when>

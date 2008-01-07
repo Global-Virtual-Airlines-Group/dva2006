@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_calendar.tld" prefix="calendar" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Flight Academy Instructor Busy Time Calendar</title>
@@ -62,7 +63,7 @@ return true;
 </tr>
 </el:table>
 <div class="mid">
-<calendar:month date="cDate" startDate="${startDate}" entries="${busyTime}" topBarClass="dayHdr"
+<calendar:month date="cDate" startDate="${startDate}" entries="${fn:keys(accessMap)}" topBarClass="dayHdr"
 	dayBarClass="dayHdr" tableClass="calendar" contentClass="contentW" scrollClass="scroll" cmd="busycalendar">
 <calendar:entry name="busy">
 <c:set var="ins" value="${pilots[busy.ID]}" scope="request" />

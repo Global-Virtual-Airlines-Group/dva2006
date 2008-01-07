@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Document Library</title>
@@ -42,7 +43,7 @@
 </tr>
 
 <!-- Table Data Section -->
-<c:forEach var="airline" items="${airlines}">
+<c:forEach var="airline" items="${fn:keys(docs)}">
 <tr class="title caps">
  <td colspan="6" class="left">${airline.name}</td>
 </tr>

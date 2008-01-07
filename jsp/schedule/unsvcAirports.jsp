@@ -42,7 +42,7 @@ return true;
 <div class="pri bld">There are no Airports listed for an Airline without at least one corresponding entry in the <content:airline /> 
 Flight Schedule.</div>
 </c:if>
-<c:forEach var="airline" items="${airlines}">
+<c:forEach var="airline" items="${fn:keys(results)}">
 <c:set var="airports" value="${results[airline]}" scope="request" />
 The following <fmt:int value="${fn:sizeof(airports)}" /> airports are no longer served by 
 <span class="pri bld">${airline.name}</span>:<br />
