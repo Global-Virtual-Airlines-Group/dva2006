@@ -50,7 +50,7 @@
  <td class="sec bld">${pilot.equipmentType}</td>
  <td class="bld">${pilot.rank}</td>
  <td><fmt:int value="${pilot.legs}" /></td>
- <td><fmt:int value="${pilot.hours}" /></td>
+ <td><fmt:dec value="${pilot.hours}" /></td>
  <td><fmt:date fmt="d" date="${pilot.lastFlight}" /></td>
 </view:row>
 </c:forEach>
