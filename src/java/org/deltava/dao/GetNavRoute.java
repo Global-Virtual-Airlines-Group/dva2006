@@ -240,6 +240,7 @@ public class GetNavRoute extends GetNavData {
 			while (rs.next()) {
 				int id = rs.getInt(1);
 				if (id != lastID) {
+					lastID = id;
 					a = new Airway(name, id);
 					a.setHighLevel(rs.getBoolean(5));
 					a.setLowLevel(rs.getBoolean(6));
