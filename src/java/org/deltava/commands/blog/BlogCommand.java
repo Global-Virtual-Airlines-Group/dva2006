@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.blog;
 
 import java.util.*;
@@ -12,7 +12,7 @@ import org.deltava.security.command.BlogAccessControl;
 /**
  * A Web Site Command to display a blog.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -47,9 +47,7 @@ public class BlogCommand extends AbstractViewCommand {
 			
 			// Load the author names
 			GetPilot pdao = new GetPilot(con);
-			Map authors = pdao.getByID(authorIDs, "PILOTS");
-			ctx.setAttribute("authorIDs", authors.keySet(), REQUEST);
-			ctx.setAttribute("authors", authors, REQUEST);
+			ctx.setAttribute("authors", pdao.getByID(authorIDs, "PILOTS"), REQUEST);
 			if (!showAll)
 				ctx.setAttribute("authorID", new Integer(ctx.getID()), REQUEST);
 			

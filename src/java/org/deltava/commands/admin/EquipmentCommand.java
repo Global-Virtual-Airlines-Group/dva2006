@@ -156,7 +156,6 @@ public class EquipmentCommand extends AbstractFormCommand {
 				sudao.write(updates);
 				
 				// Save the updated pilots list
-				ctx.setAttribute("updatedPilots", updatedRatings.keySet(), REQUEST);
 				ctx.setAttribute("updatedRatings", updatedRatings, REQUEST);
 			}
 			
