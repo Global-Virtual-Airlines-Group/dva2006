@@ -54,7 +54,6 @@ public class MyFlightStatsCommand extends AbstractStatsCommand {
 			GetFlightReportStatistics dao = new GetFlightReportStatistics(con);
 			dao.setDayFilter(daysBack);
 			Map<Integer, Integer> vsStats = dao.getLandingCounts(ctx.getUser().getID(), 50);
-			ctx.setAttribute("vSpeeds", vsStats.keySet(), REQUEST);
 			ctx.setAttribute("landingStats", vsStats, REQUEST);
 			ctx.setAttribute("eqLandingStats", dao.getLandings(ctx.getUser().getID()), REQUEST);
 			
