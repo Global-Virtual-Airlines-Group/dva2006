@@ -5,7 +5,7 @@
 <c:if test="${!empty acarsPool}">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
- <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION</td>
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
 </tr>
 
 <!-- Table Header Bar-->
