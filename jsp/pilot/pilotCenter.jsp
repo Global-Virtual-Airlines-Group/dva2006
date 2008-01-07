@@ -118,6 +118,13 @@ Your Assistant Chief Pilots are
 You are also qualified to file Flight Reports using the following aircraft:<br />
 <fmt:list value="${pilot.ratings}" delim=", " /></td>
 </tr>
+<content:filter roles="HR,Examination">
+<tr>
+ <td class="mid"><el:cmd url="prgroster" className="bld">Program Roster</el:cmd></td>
+ <td class="data">You can view statistics about the ${pilot.equipmentType} program, and view the pilot roster for
+ this equipment program.</td>
+</tr>
+</content:filter>
 <tr>
  <td class="mid"><el:cmd className="bld" url="pilotsearch">Pilot Search</el:cmd></td>
  <td class="data">You can search the <content:airline /> Pilot Roster based on a Pilot's name or
