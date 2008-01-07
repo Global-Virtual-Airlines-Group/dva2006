@@ -1,18 +1,19 @@
-// Copyright 2004, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2004, 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
 
 import org.deltava.beans.system.AirlineInformation;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A class for storing equipment program information.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class EquipmentType implements Comparable<EquipmentType>, ComboAlias, ViewEntry {
+public class EquipmentType implements Cacheable, Comparable<EquipmentType>, ComboAlias, ViewEntry {
 	
 	// Database constants
 	public static final int SECONDARY_RATING = 0;
@@ -145,11 +146,26 @@ public class EquipmentType implements Comparable<EquipmentType>, ComboAlias, Vie
      * Return the name of the examination required for promotion into a rank
      * @param rank The rank to be promoted <i>into</i>. Use Ranks.ENTRY for an entrance exam.
      * @return The names of the examinations
+     * @see EquipmentType#getExamNames()
      * @see EquipmentType#setExamNames(String, Collection)
      */
     public Collection<String> getExamNames(String rank) {
     	Collection<String> names = _examNames.get(rank);
     	return (names == null) ? new HashSet<String>() : names;
+    }
+    
+    /**
+     * Returns all exams associated with this equipment program.
+     * @return a Collection of exam names
+     * @see EquipmentType#getExamNames(String)
+     * @see EquipmentType#setExamNames(String, Collection)
+     */
+    public Collection<String> getExamNames() {
+    	Collection<String> names = new LinkedHashSet<String>();
+    	for (Iterator<Collection<String>> i = _examNames.values().iterator(); i.hasNext(); )
+    		names.addAll(i.next());
+    	
+    	return names;
     }
     
     /**
@@ -508,6 +524,10 @@ public class EquipmentType implements Comparable<EquipmentType>, ComboAlias, Vie
 
     public String getComboName() {
         return getName();
+    }
+    
+    public Object cacheKey() {
+    	return _owner.getCode() + "!!" + _name;
     }
     
     public String getRowClassName() {

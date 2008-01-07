@@ -6,6 +6,7 @@ import java.util.*;
 import org.deltava.beans.*;
 
 import org.deltava.util.CalendarUtils;
+import org.deltava.util.cache.Cacheable;
 
 /**
  * A bean to store equipment program-specific statistics.
@@ -14,13 +15,18 @@ import org.deltava.util.CalendarUtils;
  * @since 2.1
  */
 
-public class ProgramMetrics implements Comparable<ProgramMetrics> {
+public class ProgramMetrics implements Cacheable, Comparable<ProgramMetrics> {
 
 	private EquipmentType _eq;
 	
-	private final Collection<Pilot> _pilots = new LinkedHashSet<Pilot>();
 	private final Map<String, Integer> _rankCounts = new LinkedHashMap<String, Integer>();
 	private final Map<Date, Integer> _hireCounts = new LinkedHashMap<Date, Integer>();
+	private final Map<String, Integer> _statusCounts = new TreeMap<String, Integer>();
+	
+	private int _size;
+	private int _maxRankCount = 1;
+	private int _maxHireCount = 1;
+	private int _maxStatusCount = 1;
 	
 	/**
 	 * Initializes the bean.
@@ -36,12 +42,20 @@ public class ProgramMetrics implements Comparable<ProgramMetrics> {
 	 * @param pilots the Pilots in the equipment program
 	 */
 	public void addPilots(Collection<Pilot> pilots) {
-		for (Pilot p : pilots) {
-			if (_eq.getName().equals(p.getEquipmentType())) {
-				_pilots.add(p);
-				addRank(p.getRank());
-				addHireDate(p.getCreatedOn());
-			}
+		for (Pilot p : pilots) 
+			addPilot(p);
+	}
+
+	/**
+	 * Adds a pilot to this bean.
+	 * @param p the Pilot to add
+	 */
+	public void addPilot(Pilot p) {
+		if (_eq.getName().equals(p.getEquipmentType())) {
+			addRank(p.getRank());
+			addHireDate(p.getCreatedOn());
+			addStatus(p.getStatusName());
+			_size++;
 		}
 	}
 	
@@ -50,9 +64,10 @@ public class ProgramMetrics implements Comparable<ProgramMetrics> {
 	 */
 	private void addRank(String rank) {
 		Integer cnt = _rankCounts.get(rank);
-		if (cnt != null)
+		if (cnt != null) {
 			_rankCounts.put(rank, Integer.valueOf(cnt.intValue() + 1));
-		else
+			_maxRankCount = Math.max(_maxRankCount, cnt.intValue() + 1);
+		} else
 			_rankCounts.put(rank, Integer.valueOf(1));
 	}
 	
@@ -63,18 +78,55 @@ public class ProgramMetrics implements Comparable<ProgramMetrics> {
 		Calendar cld = CalendarUtils.getInstance(dt, true);
 		cld.set(Calendar.DAY_OF_MONTH, 1);
 		Integer cnt = _hireCounts.get(cld.getTime());
-		if (cnt != null)
+		if (cnt != null) {
 			_hireCounts.put(cld.getTime(), Integer.valueOf(cnt.intValue() + 1));
-		else
+			_maxHireCount = Math.max(_maxHireCount, cnt.intValue() + 1);
+		} else
 			_hireCounts.put(cld.getTime(), Integer.valueOf(1));
 	}
 	
 	/**
-	 * Returns all the Pilots in this program.
-	 * @return a Collection of Pilots
+	 * Helper method to increment status count.
 	 */
-	public Collection<Pilot> getPilots() {
-		return new ArrayList<Pilot>(_pilots);
+	private void addStatus(String status) {
+		Integer cnt = _statusCounts.get(status);
+		if (cnt != null) {
+			_statusCounts.put(status, Integer.valueOf(cnt.intValue() + 1));
+			_maxStatusCount = Math.max(_maxStatusCount, cnt.intValue() + 1);
+		} else
+			_statusCounts.put(status, Integer.valueOf(1));
+	}
+	
+	/**
+	 * Returns the number of Pilots in the program.
+	 * @return the number of Pilots
+	 */
+	public int getSize() {
+		return _size;
+	}
+	
+	public Map<String, Integer> getRankCounts() {
+		return _rankCounts;
+	}
+	
+	public int getMaxRankCount() {
+		return _maxRankCount;
+	}
+	
+	public Map<Date, Integer> getHireCounts() {
+		return _hireCounts;
+	}
+	
+	public int getMaxHireCount() {
+		return _maxHireCount;
+	}
+	
+	public Map<String, Integer> getStatusCounts() {
+		return _statusCounts;
+	}
+	
+	public int getMaxStatusCount() {
+		return _maxStatusCount;
 	}
 	
 	public int hashCode() {
@@ -82,6 +134,10 @@ public class ProgramMetrics implements Comparable<ProgramMetrics> {
 	}
 	
 	public String toString() {
+		return _eq.getName();
+	}
+	
+	public Object cacheKey() {
 		return _eq.getName();
 	}
 
