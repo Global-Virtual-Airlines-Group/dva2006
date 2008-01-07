@@ -80,7 +80,7 @@ fi
 
 if [ -f "/var/run/postfix-master.pid" ]
 then
-  if [ -d "/proc/`pidof postfix/master`" ]
+  if [ -d "/proc/`pidof master`" ]
   then
    echo "PostFix (SMTP Server) is alive"
   else
