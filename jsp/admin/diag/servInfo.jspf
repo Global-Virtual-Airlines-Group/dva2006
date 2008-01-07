@@ -51,7 +51,7 @@
  <td class="left">LOADER STACK TRACE</td>
 </tr>
 
-<c:forEach var="netName" items="${servInfoLoaderNets}">
+<c:forEach var="netName" items="${fn:keys(servInfoLoaders)}">
 <c:set var="loader" value="${servInfoLoaders[netName]}" scope="request" />
 <tr>
  <td class="pri bld">${fn:upper(netName)}</td>

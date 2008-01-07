@@ -12,11 +12,19 @@
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>int sizeof(java.util.Collection)</function-signature>
 	</function>
-	
+
+	<!-- Get a subset of a collection -->
 	<function>
 		<name>subset</name>
 		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
 		<function-signature>java.util.Collection subset(java.util.Collection, int)</function-signature>
+	</function>
+
+	<!-- Get a Map's keys -->
+	<function>
+		<name>keys</name>
+		<function-class>org.deltava.taglib.functions.MiscFunctions</function-class>
+		<function-signature>java.util.Set keys(java.util.Map)</function-signature>
 	</function>
 
 	<!-- Get a list entry -->

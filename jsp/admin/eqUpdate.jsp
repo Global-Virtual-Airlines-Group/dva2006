@@ -5,6 +5,7 @@
 <%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title>Equipment Program Updated</title>
@@ -32,7 +33,7 @@ program, and all Pilots in this program have been updated.<br />
 <c:if test="${!empty updatedPilots}">
 The following <content:airline /> Pilots have had their equipment type ratings updated:<br />
 <br />
-<c:forEach var="pilot" items="${updatedPilots}">
+<c:forEach var="pilot" items="${fn:keys(updatedRatings)}">
 <c:set var="ratings" value="${updatedRatings[pilot]}" scope="request" />
 ${pilot.rank} <el:cmd url="profile" link="${pilot}" className="pri bld">${pilot.name}</el:cmd> - 
 added <fmt:list value="${ratings}" delim=", " />.<br />

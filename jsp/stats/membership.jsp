@@ -6,6 +6,7 @@
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <title><content:airline /> Membership Statistics</title>
@@ -57,7 +58,7 @@ return true;
  <td colspan="3" class="left caps">MEMBERSHIP QUANTILES</td>
 </tr>
 <c:set var="qCount" value="${0}" scope="request" />
-<c:forEach var="qLabel" items="${qLabels}">
+<c:forEach var="qLabel" items="${fn:keys(quantiles)}">
 <c:set var="qJoinDate" value="${quantiles[qLabel]}" scope="request" />
 <c:set var="qCount" value="${qCount + 1}" scope="request" />
 <tr>
