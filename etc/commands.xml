@@ -26,6 +26,12 @@
 		<roles>HR,PIREP,Examination</roles>
 	</command>
 
+	<command id="prgroster">
+		<name>Program Metrics</name>
+		<class>org.deltava.commands.admin.ProgramRosterCommand</class>
+		<roles>HR,Examination</roles>
+	</command>
+
 	<command id="centuryclub">
 		<name>Century Club</name>
 		<class>org.deltava.commands.main.CenturyClubCommand</class>
