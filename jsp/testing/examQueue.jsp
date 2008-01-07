@@ -23,7 +23,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" pad="default" space="default" cmd="eprofiles">
+<view:table className="view" pad="default" space="default" cmd="examqueue">
 <!-- Table Header Bar -->
 <tr class="title caps">
  <td width="25%">EXAMINATION NAME</td>
