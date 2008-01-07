@@ -156,7 +156,7 @@ to a specific set of equipment.</span><br />
 <tr class="title caps">
  <td colspan="2">APPROACH CHARTS</td>
 </tr>
-<c:forEach var="chartAirport" items="${chartAirports}">
+<c:forEach var="chartAirport" items="${fn:keys(charts)}">
 <c:set var="apCharts" value="${charts[chartAirport]}" scope="request" />
 <tr>
  <td class="label" valign="top">${chartAirport.name} (<fmt:airport airport="${chartAirport}" />)</td>
