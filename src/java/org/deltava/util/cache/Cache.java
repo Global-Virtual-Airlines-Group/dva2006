@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.cache;
 
 import java.util.*;
@@ -6,11 +6,11 @@ import java.util.*;
 /**
  * An an abstract class to store common cache operations.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public abstract class Cache<T extends Cacheable> implements java.io.Serializable {
+public abstract class Cache<T extends Cacheable> {
    
    protected Map<Object, CacheEntry<T>> _cache;
    private int _maxSize;
@@ -45,6 +45,13 @@ public abstract class Cache<T extends Cacheable> implements java.io.Serializable
     */
    public synchronized boolean contains(Object key) {
       return _cache.containsKey(key);
+   }
+   
+   /**
+    * Clears the cache.
+    */
+   public synchronized void clear() {
+	   _cache.clear();
    }
    
    /**
