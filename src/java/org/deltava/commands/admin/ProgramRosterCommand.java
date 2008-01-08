@@ -7,6 +7,7 @@ import java.sql.Connection;
 import org.deltava.beans.*;
 import org.deltava.beans.testing.*;
 import org.deltava.beans.stats.ProgramMetrics;
+import org.deltava.beans.system.TransferRequest;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -58,11 +59,19 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 				ctx.setAttribute("eqTypes", eqdao.getActive(), REQUEST);
 			
 			// Load the program statistics
+			Collection<Integer> IDs = new HashSet<Integer>();
 			GetProgramStatistics stdao = new GetProgramStatistics(con);
 			ProgramMetrics pm = stdao.getMetrics(eq);
 			
+			// Load pending transfer
+			GetTransferRequest txdao = new GetTransferRequest(con);
+			Collection<TransferRequest> txs = txdao.getByEQ(eq.getName(), "CREATED");
+			for (Iterator<TransferRequest> i = txs.iterator(); i.hasNext(); ) {
+				TransferRequest tx = i.next();
+				IDs.add(new Integer(tx.getID()));
+			}
+			
 			// Load pending checkrides
-			Collection<Integer> IDs = new HashSet<Integer>();
 			GetExam exdao = new GetExam(con);
 			Collection<CheckRide> rides = exdao.getCheckRideQueue(false);
 			for (Iterator<CheckRide> i = rides.iterator(); i.hasNext(); ) {
@@ -94,6 +103,7 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			ctx.setAttribute("metrics", pm, REQUEST);
 			ctx.setAttribute("examQueue", exams, REQUEST);
 			ctx.setAttribute("crQueue", rides, REQUEST);
+			ctx.setAttribute("txQueue", txs, REQUEST);
 		} catch (DAOException de) {
 			throw new CommandException(de);
 		} finally {
