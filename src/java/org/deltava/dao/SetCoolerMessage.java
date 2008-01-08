@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to handle writing Water Cooler message threads and posts.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class SetCoolerMessage extends DAO {
+public class SetCoolerMessage extends CoolerThreadDAO {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -53,6 +53,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Message msg) throws DAOException {
+		invalidate(msg.getThreadID());
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET MSGBODY=?, REMOTE_HOST=?, "
 					+ "REMOTE_ADDR=INET_ATON(?), CONTENTWARN=? WHERE (THREAD_ID=?) AND (POST_ID=?)");
@@ -127,6 +128,8 @@ public class SetCoolerMessage extends DAO {
 		try {
 			write(msg);
 			commitTransaction();
+			_tCache.add(t);
+			GetCoolerChannels.invalidate(t.getChannel());
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -177,6 +180,8 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void setChannel(int id, String newChannel) throws DAOException {
+		invalidate(id);
+		GetCoolerChannels.invalidate(newChannel);
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET CHANNEL=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, newChannel);
@@ -194,6 +199,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void updateSubject(int id, String subj) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET SUBJECT=? WHERE (ID=?) LIMIT 1");
 			_ps.setString(1, subj);
@@ -212,6 +218,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void moderateThread(int id, boolean doHide, boolean doLock) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_THREADS SET HIDDEN=?, LOCKED=? WHERE "
 					+ "(ID=?) LIMIT 1");
@@ -231,6 +238,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int threadID, int postID) throws DAOException {
+		invalidate(threadID);
 		try {
 			prepareStatement("DELETE FROM common.COOLER_POSTS WHERE (THREAD_ID=?) AND (POST_ID=?)");
 			_ps.setInt(1, threadID);
@@ -247,6 +255,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void delete(int id) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatement("DELETE FROM common.COOLER_THREADS WHERE (ID=?)");
 			_ps.setInt(1, id);
@@ -262,6 +271,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void synchThread(MessageThread mt) throws DAOException {
+		invalidate(mt.getID());
 		try {
 			startTransaction();
 			prepareStatementWithoutLimits("SELECT COUNT(DISTINCT P.POST_ID), (SELECT P.AUTHOR_ID FROM common.COOLER_POSTS P "
@@ -301,6 +311,7 @@ public class SetCoolerMessage extends DAO {
 
 			// Commit the transaction
 			commitTransaction();
+			_tCache.add(mt);
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
@@ -313,6 +324,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void unstickThread(int id) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=NULL, STICKY_CHANNEL=? WHERE (ID=?)");
 			_ps.setBoolean(1, false);
@@ -335,6 +347,7 @@ public class SetCoolerMessage extends DAO {
 		if ((sDate == null) || (sDate.before(new java.util.Date())))
 			unstickThread(id);
 		
+		invalidate(id);
 		try {
 			prepareStatement("UPDATE common.COOLER_THREADS SET STICKY=? WHERE (ID=?)");
 			_ps.setTimestamp(1, createTimestamp(sDate));
@@ -352,6 +365,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void report(MessageThread mt, int id) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatement("REPLACE INTO common.COOLER_REPORTS (THREAD_ID, AUTHOR_ID) VALUES (?, ?)");
 			_ps.setInt(1, mt.getID());
@@ -368,6 +382,7 @@ public class SetCoolerMessage extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void vote(PollVote vote) throws DAOException {
+		invalidate(vote.getID());
 		try {
 			prepareStatement("REPLACE INTO common.COOLER_VOTES (ID, PILOT_ID, OPT_ID) VALUES (?, ?, ?)");
 			_ps.setInt(1, vote.getID());
@@ -381,14 +396,15 @@ public class SetCoolerMessage extends DAO {
 	
 	/**
 	 * Clears content warnings from all posts in a Water Cooler discussion thread.
-	 * @param threadID the thread ID
+	 * @param id the thread ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void clearWarning(int threadID) throws DAOException {
+	public void clearWarning(int id) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET CONTENTWARN=? WHERE (THREAD_ID=?)");
 			_ps.setBoolean(1, false);
-			_ps.setInt(2, threadID);
+			_ps.setInt(2, id);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -397,13 +413,14 @@ public class SetCoolerMessage extends DAO {
 	
 	/**
 	 * Clears content reports from a Water Cooler discussion thread.
-	 * @param threadID the thread ID
+	 * @param id the thread ID
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public void clearReport(int threadID) throws DAOException {
+	public void clearReport(int id) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatementWithoutLimits("DELETE FROM common.COOLER_REPORTS WHERE (THREAD_ID=?)");
-			_ps.setInt(1, threadID);
+			_ps.setInt(1, id);
 			executeUpdate(0);
 		} catch (SQLException se) {
 			throw new DAOException(se);

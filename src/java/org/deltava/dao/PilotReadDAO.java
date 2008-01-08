@@ -167,7 +167,7 @@ abstract class PilotReadDAO extends PilotDAO {
 		if (ofs != -1)
 			tableName = tableName.substring(ofs + 1);
 
-		List<Pilot> results = new ArrayList<Pilot>();
+		List<Pilot> results = new ArrayList<Pilot>(ids.size());
 		if (log.isDebugEnabled())
 			log.debug("Raw set size = " + ids.size());
 

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load Water Cooler channel profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -66,6 +66,14 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			_subject = subj;
 		}
 	}
+	
+	/**
+	 * Invalidates a cached Channel.
+	 * @param channelName the Channel name
+	 */
+	static void invalidate(String channelName) {
+		_cache.remove(channelName);
+	}
 
 	/**
 	 * Retrieves a specific Channel profile. This populate the roles and airlines.
@@ -75,8 +83,9 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 	 */
 	public Channel get(String channelName) throws DAOException {
 		// Check if we're in the cache
-		if (_cache.contains(channelName))
-			_cache.get(channelName);
+		Channel c = _cache.get(channelName);
+		if (c != null)
+			return c;
 
 		try {
 			prepareStatementWithoutLimits("SELECT * FROM common.COOLER_CHANNELS WHERE (CHANNEL=?) LIMIT 1");
@@ -91,7 +100,7 @@ public class GetCoolerChannels extends DAO implements CachingDAO {
 			}
 
 			// Initialize the channel
-			Channel c = new Channel(channelName);
+			c = new Channel(channelName);
 			c.setDescription(rs.getString(2));
 			c.setActive(rs.getBoolean(3));
 
