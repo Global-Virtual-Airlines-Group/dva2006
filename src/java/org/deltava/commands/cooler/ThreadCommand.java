@@ -205,6 +205,7 @@ public class ThreadCommand extends AbstractCommand {
 			// Mark the thread as being read
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
 			wdao.viewThread(thread.getID());
+			thread.view();
 
 			// Save all channels in the thread for the move combobox
 			if (ctx.isUserInRole("Moderator")) {
