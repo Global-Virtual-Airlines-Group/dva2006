@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,11 +9,11 @@ import org.deltava.beans.cooler.*;
 /**
  * A Data Access Object to write and update Water Cooler image URLs.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class SetCoolerLinks extends DAO {
+public class SetCoolerLinks extends CoolerThreadDAO {
 
 	/**
 	 * Initializes the Data Access Object.
@@ -29,9 +29,10 @@ public class SetCoolerLinks extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(MessageThread t) throws DAOException {
-		if (t.getImageURLs().isEmpty())
+		if ((t == null) || (t.getImageURLs().isEmpty()))
 			return;
 		
+		invalidate(t.getID());
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, t.getID());
@@ -58,6 +59,7 @@ public class SetCoolerLinks extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void add(int threadID, LinkedImage img) throws DAOException {
+		invalidate(threadID);
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_IMGURLS (ID, SEQ, URL, COMMENTS) VALUES (?, ?, ?, ?)");
 			_ps.setInt(1, threadID);
@@ -78,6 +80,7 @@ public class SetCoolerLinks extends DAO {
 	 * @see SetCoolerLinks#delete(int, int)
 	 */
 	public void delete(int id, String url) throws DAOException {
+		invalidate(id);
 		
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?)");
@@ -104,6 +107,7 @@ public class SetCoolerLinks extends DAO {
 	 * @see SetCoolerLinks#delete(int, String)
 	 */
 	public void delete(int id, int seq) throws DAOException {
+		invalidate(id);
 		try {
 			prepareStatement("DELETE FROM common.COOLER_IMGURLS WHERE (ID=?) AND (SEQ=?)");
 			_ps.setInt(1, id);

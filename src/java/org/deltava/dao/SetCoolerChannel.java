@@ -73,6 +73,7 @@ public class SetCoolerChannel extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Channel c, String newName) throws DAOException {
+		CoolerThreadDAO.invalidateAll();
 		try {
 			startTransaction();
 			
