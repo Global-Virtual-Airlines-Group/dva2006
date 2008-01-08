@@ -175,11 +175,11 @@ public class GetExamProfiles extends DAO implements CachingDAO {
 			qp.setOwner(SystemData.getApp(rs.getString(5)));
 
 			// Load image data
-			if (rs.getInt(7) > 0) {
-				qp.setType(rs.getInt(6));
-				qp.setSize(rs.getInt(7));
-				qp.setWidth(rs.getInt(8));
-				qp.setHeight(rs.getInt(9));
+			if (rs.getInt(8) > 0) {
+				qp.setType(rs.getInt(7));
+				qp.setSize(rs.getInt(8));
+				qp.setWidth(rs.getInt(9));
+				qp.setHeight(rs.getInt(10));
 			}
 
 			// Clean up
