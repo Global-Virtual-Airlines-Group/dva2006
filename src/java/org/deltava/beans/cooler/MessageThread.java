@@ -365,6 +365,13 @@ public class MessageThread extends DatabaseBean implements AuthoredBean, ViewEnt
 
 		_views = views;
 	}
+	
+	/**
+	 * Increments the view counter.
+	 */
+	public synchronized void view() {
+		_views++;
+	}
 
 	/**
 	 * Updates the number of messages in this thread.
