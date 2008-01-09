@@ -25,7 +25,7 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 
 	private static final Logger log = Logger.getLogger(CoolerThreadDAO.class);
 	
-	protected static final Cache<MessageThread> _tCache = new ExpiringCache<MessageThread>(512, 900); 
+	protected static final Cache<MessageThread> _tCache = new ExpiringCache<MessageThread>(320, 900); 
 
 	/**
 	 * Initializes the Data Access Object.
@@ -69,7 +69,7 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 			return Collections.emptyList();
 		
 		// Build the comparator
-		// IDs = new LinkedHashSet<Integer>(IDs);
+		int size = IDs.size();
 		Comparator<DatabaseBean> cmp = new ArbitraryComparator(IDs);
 		if (log.isDebugEnabled())
 			log.debug("Raw set size = " + IDs.size());
@@ -107,11 +107,14 @@ public abstract class CoolerThreadDAO extends DAO implements CachingDAO {
 		sqlBuf.append(") GROUP BY T.ID");
 		try {
 			prepareStatementWithoutLimits(sqlBuf.toString());
-			List<MessageThread> threads = execute();
+			results.addAll(execute());
 			
 			// Sort and return
-			Collections.sort(threads, cmp);
-			return threads;
+			Collections.sort(results, cmp);
+			if (results.size() != size)
+				log.warn("Raw = " + size + ", IDs = " + IDs.size() + ", threads = " + results.size());
+				
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
