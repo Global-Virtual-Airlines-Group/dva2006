@@ -1,14 +1,16 @@
-// Copyright (c) 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.deltava.util.StringUtils;
+
 /**
  * A bean to store scrollable view page parameters.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -40,7 +42,7 @@ public class ViewContext {
     private static final String[] RESERVED_PARAMS = {START, COUNT, SORTBY};
 
     private Map<String, Object> _params;
-    private Collection _results;
+    private Collection<? extends Object> _results;
     
     private int _start;
     private int _count;
@@ -53,8 +55,8 @@ public class ViewContext {
     @SuppressWarnings("unchecked")
     public ViewContext(HttpServletRequest req, int size) {
         super();
-        _start = getNumericParameter(req, START, 0);
-        _count = getNumericParameter(req, COUNT, size);
+        _start = StringUtils.parse(req.getParameter(START), 0);
+        _count = StringUtils.parse(req.getParameter(COUNT), size);
         _sortType = req.getParameter(SORTBY);
         
         // Remove the reserved parameters
@@ -63,17 +65,6 @@ public class ViewContext {
             String rParam = ViewContext.RESERVED_PARAMS[x];
             if (_params.containsKey(rParam))
                 _params.remove(rParam);
-        }
-    }
-    
-    /**
-     * Helper method to return a request parameter as an integer.
-     */
-    private int getNumericParameter(HttpServletRequest hreq, String paramName, int defaultValue) {
-        try {
-            return Integer.parseInt(hreq.getParameter(paramName));
-        } catch (NumberFormatException nfe) {
-            return defaultValue;
         }
     }
     
@@ -154,7 +145,7 @@ public class ViewContext {
      * @param results a List of beans
      * @see ViewContext#getResults()
      */
-    public void setResults(Collection results) {
+    public void setResults(Collection<? extends Object> results) {
         _results = results;
     }
     
