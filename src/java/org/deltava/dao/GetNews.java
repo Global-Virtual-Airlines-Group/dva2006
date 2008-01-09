@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.beans.Notice;
 /**
  * A Data Access Object to read System News entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class GetNews extends DAO {
 	 * @return a List of News beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getNews() throws DAOException {
+	public List<? extends News> getNews() throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NEWS N, PILOTS P "
 					+ "WHERE (N.PILOT_ID=P.ID) ORDER BY N.DATE DESC");
@@ -84,7 +84,7 @@ public class GetNews extends DAO {
 	 * @return a List of Notice beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getNOTAMs() throws DAOException {
+	public List<? extends News> getNOTAMs() throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
 					+ "WHERE (N.PILOT_ID=P.ID) ORDER BY N.EFFDATE DESC");
@@ -99,7 +99,7 @@ public class GetNews extends DAO {
 	 * @return a List of Notice beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public List getActiveNOTAMs() throws DAOException {
+	public List<? extends News> getActiveNOTAMs() throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, N.* FROM NOTAMS N, PILOTS P "
 					+ "WHERE (N.PILOT_ID=P.ID) AND (N.ACTIVE=?) ORDER BY N.EFFDATE DESC");
@@ -114,14 +114,14 @@ public class GetNews extends DAO {
 	 * Helper method to iterate through the result set.
 	 */
 	@SuppressWarnings("unchecked")
-	private List execute() throws SQLException {
+	private List<? extends News> execute() throws SQLException {
 
 		// Execute the query
 		ResultSet rs = _ps.executeQuery();
 		boolean isNOTAM = (rs.getMetaData().getColumnCount() > 7);
 
 		// Iterate through the results
-		List results = new ArrayList();
+		List<News> results = new ArrayList();
 		while (rs.next()) {
 			String authorName = rs.getString(1) + " " + rs.getString(2);
 
