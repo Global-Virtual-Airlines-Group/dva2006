@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -12,7 +12,7 @@ import org.deltava.util.CalendarUtils;
 /**
  * A JDBC Data Access Object. DAOs are used to read and write persistent data to JDBC data sources.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -91,39 +91,27 @@ public abstract class DAO {
 	}
 
 	/**
-	 * Sets the timeout for any SQL operations
+	 * Sets the timeout for any SQL operations.
 	 * @param timeout the timeout, in seconds
-	 * @throws NullPointerException if the prepared statement has not been initialized
 	 */
 	public void setQueryTimeout(int timeout) {
-		if (timeout < 1)
-			throw new IllegalArgumentException("Query Timeout cannot be zero or negative");
-
-		_queryTimeout = timeout;
+		_queryTimeout = Math.max(1, timeout);
 	}
 
 	/**
-	 * Sets the first row of the results to return. <i>mySQL uses 0 as its first row. </i>
+	 * Sets the first row of the results to return. <i>mySQL uses 0 as its first row.</i>
 	 * @param rowStart the first row number of the unfiltered resultset to return
-	 * @throws IllegalArgumentException if rowStart is negative
 	 */
 	public final void setQueryStart(int rowStart) {
-		if (rowStart < 0)
-			throw new IllegalArgumentException("DAO Start Row cannot be negative");
-
-		_queryStart = rowStart;
+		_queryStart = Math.max(0, rowStart);
 	}
 
 	/**
 	 * Sets the maximum number of rows in the returned result set.
 	 * @param maxRows the maximum number of rows to return
-	 * @throws IllegalArgumentException if maxRows is negative
 	 */
 	public final void setQueryMax(int maxRows) {
-		if (maxRows < 0)
-			throw new IllegalArgumentException("DAO Query Max cannot be negative");
-
-		_queryMax = maxRows;
+		_queryMax = Math.max(1, maxRows);
 	}
 
 	/**
@@ -151,13 +139,12 @@ public abstract class DAO {
 
 			// Prepare the statement
 			_ps = _c.prepareStatement(buf.toString());
-		} else {
+		} else
 			_ps = _c.prepareStatement(sql);
-		}
 
 		// Set the query timeout and fetch size
 		_ps.setQueryTimeout(_queryTimeout);
-		_ps.setFetchSize(_queryMax > 100 ? 100 : _queryMax);
+		_ps.setFetchSize(Math.min(100, _queryMax));
 		_queryCount.incrementAndGet();
 	}
 
