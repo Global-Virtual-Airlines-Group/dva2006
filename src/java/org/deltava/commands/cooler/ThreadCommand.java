@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
@@ -21,15 +21,17 @@ import org.deltava.util.system.SystemData;
 /**
  * A web site command for viewing Water Cooler discussion threads.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ThreadCommand extends AbstractCommand {
 
-	private static final List<String> SCORES = Arrays.asList(new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" });
-	private static final List<String> COLORS = Arrays.asList(new String[] {"blue", "black", "green", "red", "purple", "grey", 
-			"brown", "orange", "pink", "yellow"});
+	private static final List<String> SCORES = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9", "10");
+	private static final List<String> COLORS = Arrays.asList("blue", "black", "green", "red", "purple", "grey", 
+			"brown", "orange", "pink", "yellow");
+	
+	private static final int MIN_GALLERY_ID = 100;
 
 	/**
 	 * Executes the command.
@@ -92,7 +94,7 @@ public class ThreadCommand extends AbstractCommand {
 				ctx.setAttribute("lastPost", thread.getLastPost(), REQUEST);
 
 			// If we have an image, load its metadata
-			if (thread.getImage() != 0) {
+			if (thread.getImage() >= MIN_GALLERY_ID) {
 				// Figure out who started the thread, since the image will be in their gallery
 				UserData aUsrData = uddao.get(thread.getAuthorID());
 				String imgDB = (aUsrData == null) ? SystemData.get("airline.db") : aUsrData.getDB();
@@ -106,7 +108,7 @@ public class ThreadCommand extends AbstractCommand {
 				GalleryAccessControl imgAccess = new GalleryAccessControl(ctx, img);
 				imgAccess.validate();
 				ctx.setAttribute("imgAccess", imgAccess, REQUEST);
-			} else {
+			} else if (thread.getImageURLs().isEmpty()) {
 				GetCoolerLinks ldao = new GetCoolerLinks(con);
 				Collection<LinkedImage> imgURLs = ldao.getURLs(thread.getID());
 				for (Iterator<LinkedImage> li = imgURLs.iterator(); li.hasNext(); )
