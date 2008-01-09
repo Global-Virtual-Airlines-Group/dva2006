@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands;
 
 import org.deltava.util.system.SystemData;
@@ -6,7 +6,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A class to support web site commands for pageable table views.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -24,8 +24,8 @@ public abstract class AbstractViewCommand extends AbstractCommand {
         ViewContext vctx = new ViewContext(ctx.getRequest(), defaultSize);
         
         // Save the start/end values
-        ctx.setAttribute("viewStart", new Integer(vctx.getStart()), REQUEST);
-        ctx.setAttribute("viewCount", new Integer(vctx.getCount()), REQUEST);
+        ctx.setAttribute("viewStart", Integer.valueOf(vctx.getStart()), REQUEST);
+        ctx.setAttribute("viewCount", Integer.valueOf(vctx.getCount()), REQUEST);
         
         // Save the view context in the request
         ctx.setAttribute(ViewContext.VIEW_CONTEXT, vctx, REQUEST);
