@@ -169,9 +169,8 @@ public class ThreadReplyCommand extends AbstractCommand {
 				}
 				
 				wdao.synchThread(thread);
-			} else {
+			} else
 				notifyList.clear();
-			}
 			
 			// Get our vote on the thread
 			if (ac.getCanVote() && (!StringUtils.isEmpty(ctx.getParameter("pollVote")))) {
