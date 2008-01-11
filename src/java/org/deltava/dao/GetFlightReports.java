@@ -320,11 +320,11 @@ public class GetFlightReports extends DAO {
 	public void getOnlineTotals(Map<Integer, Pilot> pilots, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder("SELECT F.PILOT_ID, COUNT(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, NULL)) AS OC, "
-				+ "ROUND(SUM(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, NULL)) "
-				+ "AS AC, ROUND(SUM(IF((F.ATTR & ?) != 0, F.FLIGHT_TIME, 0)), 1) AS AH FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT PILOT_ID, COUNT(IF((ATTR & ?) != 0, FLIGHT_TIME, NULL)) AS OC, "
+				+ "ROUND(SUM(IF((ATTR & ?) != 0, FLIGHT_TIME, 0)), 1) AS OH, COUNT(IF((ATTR & ?) != 0, FLIGHT_TIME, NULL)) "
+				+ "AS AC, ROUND(SUM(IF((ATTR & ?) != 0, FLIGHT_TIME, 0)), 1) AS AH FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PIREPS F WHERE ((F.ATTR & ?) != 0) AND (F.STATUS=?) AND F.PILOT_ID IN (");
+		sqlBuf.append(".PIREPS WHERE (STATUS=?) AND PILOT_ID IN (");
 
 		// Append the Pilot IDs
 		int setSize = 0;
@@ -338,7 +338,8 @@ public class GetFlightReports extends DAO {
 		}
 
 		// If we are not querying any pilots, abort
-		log.debug("Uncached set size = " + setSize);
+		if (log.isDebugEnabled())
+			log.debug("Uncached set size = " + setSize);
 		if (setSize == 0)
 			return;
 
@@ -347,17 +348,16 @@ public class GetFlightReports extends DAO {
 			sqlBuf.setLength(sqlBuf.length() - 1);
 
 		// Close the SQL statement
-		sqlBuf.append(") GROUP BY F.PILOT_ID LIMIT ?");
+		sqlBuf.append(") GROUP BY PILOT_ID LIMIT ?");
 
 		try {
-			prepareStatement(sqlBuf.toString());
+			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, FlightReport.ATTR_ONLINE_MASK);
 			_ps.setInt(2, FlightReport.ATTR_ONLINE_MASK);
 			_ps.setInt(3, FlightReport.ATTR_ACARS);
 			_ps.setInt(4, FlightReport.ATTR_ACARS);
-			_ps.setInt(5, (FlightReport.ATTR_ONLINE_MASK | FlightReport.ATTR_ACARS));
-			_ps.setInt(6, FlightReport.OK);
-			_ps.setInt(7, setSize);
+			_ps.setInt(5, FlightReport.OK);
+			_ps.setInt(6, setSize);
 
 			// Execute the query
 			ResultSet rs = _ps.executeQuery();
