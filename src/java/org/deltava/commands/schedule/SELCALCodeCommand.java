@@ -1,4 +1,4 @@
-// Copyright 2005 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.schedule;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to display aircraft SELCAL codes.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -40,9 +40,8 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 		if (StringUtils.arrayIndexOf(SORT_CODES, vc.getSortType()) == -1)
 			vc.setSortType(SORT_CODES[0]);
 		
-		// Save the sort options
-		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
-		
+		// Get the equipment type
+		String eqType = ctx.getParameter("eqType");
 		try {
 			Connection con = ctx.getConnection();
 			
@@ -55,10 +54,14 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			Collection<SelectCall> codes = null;
 			if (SORT_CODES[4].equals(vc.getSortType()))
 				codes = dao.getReserved(ctx.getUser().getID());
+			else if (eqType != null)
+				codes = dao.getByEquipmentType(eqType);
 			else 
 				codes = dao.getCodes(vc.getSortType());
 			
+			// Save codes and equipment types
 			vc.setResults(codes);
+			ctx.setAttribute("eqTypes", dao.getEquipmentTypes(), REQUEST);
 			
 			// Check if we can reserve new codes
 			int maxCodes = SystemData.getInt("users.selcal.max", 2);
@@ -89,9 +92,9 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 			ctx.setAttribute("releaseDates", releaseDates, REQUEST);
 			
 			// Load the Pilots
-			Set<Integer> ids = new HashSet<Integer>();
-			for (Iterator i = codes.iterator(); i.hasNext(); ) {
-				SelectCall sc = (SelectCall) i.next();
+			Collection<Integer> ids = new HashSet<Integer>();
+			for (Iterator<SelectCall> i = codes.iterator(); i.hasNext(); ) {
+				SelectCall sc = i.next();
 				if (sc.getReservedBy() != 0)
 					ids.add(new Integer(sc.getReservedBy()));
 			}
@@ -104,6 +107,9 @@ public class SELCALCodeCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Save the sort options
+		ctx.setAttribute("sortOptions", SORT_OPTIONS, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
