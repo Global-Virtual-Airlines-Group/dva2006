@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -9,7 +9,7 @@ import org.deltava.beans.schedule.SelectCall;
 /**
  * A Data Access Object to read aircraft SELCAL data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -32,14 +32,34 @@ public class GetSELCAL extends DAO {
 	 */
 	public SelectCall get(String code) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM SELCAL WHERE (UPPER(CODE)=?)");
+			prepareStatementWithoutLimits("SELECT * FROM SELCAL WHERE (UPPER(CODE)=?) LIMIT 1");
 			_ps.setString(1, code.toUpperCase());
 			
 			// Return result or null if empty
-			List results = execute();
-			setQueryMax(0);
-			return results.isEmpty() ? null : (SelectCall) results.get(0);
+			List<SelectCall> results = execute();
+			return results.isEmpty() ? null : results.get(0);
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all aircraft types that have a SELCAL code.
+	 * @return a Collection of aircraft types
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<String> getEquipmentTypes() throws DAOException {
+		try {
+			Collection<String> results = new LinkedHashSet<String>();
+			prepareStatementWithoutLimits("SELECT DISTINCT EQTYPE FROM SELCAL ORDER BY EQTYPE");
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(rs.getString(1));
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -97,8 +117,6 @@ public class GetSELCAL extends DAO {
 	 * Helper method to parse result sets.
 	 */
 	private List<SelectCall> execute() throws SQLException {
-		
-		// Execute the query
 		List<SelectCall> results = new ArrayList<SelectCall>();
 		ResultSet rs = _ps.executeQuery();
 		while (rs.next()) {
@@ -106,8 +124,6 @@ public class GetSELCAL extends DAO {
 			sc.setEquipmentType(rs.getString(3));
 			sc.setReservedBy(rs.getInt(4));
 			sc.setReservedOn(rs.getTimestamp(5));
-			
-			// Add to results
 			results.add(sc);
 		}
 		
