@@ -45,11 +45,11 @@ public class ProgramRosterCommand extends AbstractViewCommand {
 			pdao.setQueryStart(vc.getStart());
 			pdao.setQueryMax(vc.getCount());
 			Map<Integer, Pilot> pilots = CollectionUtils.createMap(pdao.getPilotsByEQ(eqType, true), "ID");
-			vc.setResults(pilots.values());
 			
 			// Load Online/ACARS totals
 			GetFlightReports frdao = new GetFlightReports(con);
 			frdao.getOnlineTotals(pilots, SystemData.get("airline.db"));
+			vc.setResults(pilots.values());
 			
 			// Load the Equipment program
 			GetEquipmentType eqdao = new GetEquipmentType(con);
