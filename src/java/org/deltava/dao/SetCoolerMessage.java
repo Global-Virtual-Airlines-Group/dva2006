@@ -29,6 +29,7 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Message msg) throws DAOException {
+		invalidate(msg.getThreadID());
 		try {
 			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, "
 					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
