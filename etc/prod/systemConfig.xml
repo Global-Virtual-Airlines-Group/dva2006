@@ -286,7 +286,6 @@
 
 	<!-- Weather map tile sources -->	
 	<weather>
-		<!-- <radar>http://www.deltava.org/prx/nexrad/n0r.cgi?</radar> -->
 		<tileHost>gima.weather.com</tileHost>
 	</weather>
 
