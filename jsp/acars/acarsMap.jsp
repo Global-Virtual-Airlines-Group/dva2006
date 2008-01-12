@@ -15,10 +15,8 @@
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="radarImg" name="weather.radar" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
@@ -148,25 +146,6 @@ return true;
 <map:point var="mapC" point="${mapCenter}" />
 // Create the map
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
-<c:if test="${!empty radarImg}">
-// Add US Radar layer
-var tileRadar = new GTileLayer(new GCopyrightCollection(""), 1, 12);
-tileRadar.myLayers = 'nexrad-n0r';
-tileRadar.myFormat = 'image/png';
-tileRadar.myBaseURL = '${radarImg}';
-tileRadar.getTileUrl = CustomGetTileUrl;
-tileRadar.myMercZoomLevel = 0;
-tileRadar.getOpacity = function() { return 0.25; }
-tileRadar.isPng = function() { return true; }
-
-// Build Radar+Map, Radar+Sat map types
-var rmap = new GMapType([G_MAP_TYPE.getTileLayers()[0],tileRadar], G_MAP_TYPE.getProjection(), "Radar/Map");
-var rsat = new GMapType([G_SATELLITE_TYPE.getTileLayers()[0],tileRadar], G_SATELLITE_TYPE.getProjection(), "Radar/Sat");
-
-// Add the custom map types
-map.addMapType(rmap);
-map.addMapType(rsat);
-</c:if>
 <c:if test="${!empty tileHost}">
 // Build the layer controls
 var xPos = 70;

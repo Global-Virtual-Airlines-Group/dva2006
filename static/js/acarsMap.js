@@ -57,7 +57,7 @@ xmlreq.onreadystatechange = function() {
 	if (document.dispatchOnline) {
 		de.className = 'ter bld caps';
 		de.innerHTML = 'Dispatcher Currently Online';
-	} else {
+	} else if (de) {
 		de.className = 'err bld caps';	
 		de.innerHTML = 'Dispatcher Currently Offline';
 	}
