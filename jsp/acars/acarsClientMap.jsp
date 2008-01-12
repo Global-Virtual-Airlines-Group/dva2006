@@ -15,10 +15,8 @@
 <content:js name="googleMaps" />
 <content:js name="acarsMap" />
 <content:sysdata var="imgPath" name="path.img" />
-<content:sysdata var="radarImg" name="weather.radar" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <content:sysdata var="refreshInterval" name="acars.livemap.reload" />
-<c:if test="${!empty radarImg}"><content:js name="wms236" /></c:if>
 <map:api version="2" />
 <map:vml-ie />
 <c:if test="${!empty tileHost}"><content:js name="acarsMapWX" /></c:if>
@@ -76,26 +74,7 @@ return true;
 <script language="JavaScript" type="text/javascript">
 <map:point var="mapC" point="${mapCenter}" />
 // Create the map
-var map = new GMap2(getElement("googleMap"), G_DEFAULT_MAP_TYPES);
-<c:if test="${!empty radarImg}">
-// Add US Radar layer
-var tileRadar = new GTileLayer(new GCopyrightCollection(""), 1, 12);
-tileRadar.myLayers = 'nexrad-n0r';
-tileRadar.myFormat = 'image/png';
-tileRadar.myBaseURL = '${radarImg}';
-tileRadar.getTileUrl = CustomGetTileUrl;
-tileRadar.myMercZoomLevel = 0;
-tileRadar.getOpacity = function() { return 0.25; }
-tileRadar.isPng = function() { return true; }
-
-// Build Radar+Map, Radar+Sat map types
-var rmap = new GMapType([G_MAP_TYPE.getTileLayers()[0],tileRadar], G_MAP_TYPE.getProjection(), "Radar/Map");
-var rsat = new GMapType([G_SATELLITE_TYPE.getTileLayers()[0],tileRadar], G_SATELLITE_TYPE.getProjection(), "Radar/Sat");
-
-// Add the custom map types
-map.addMapType(rmap);
-map.addMapType(rsat);
-</c:if>
+var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 <c:if test="${!empty tileHost}">
 // Build the layer controls
 var xPos = 70;
@@ -113,9 +92,10 @@ map.addControl(new WXClearControl(new GSize((xPos += 72), 7)));
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, ${zoomLevel});
-map.setMapType(${gMapType == 'map' ? 'G_MAP_TYPE' : 'G_SATELLITE_TYPE'});
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
+<map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+GEvent.addListener(map, 'maptypechanged', updateMapText);
 
 // Placeholder for route
 var routeData;
@@ -132,7 +112,9 @@ var cp = document.getElementById("copyright");
 cp.innerHTML = 'Weather Data &copy; ' + d.getFullYear() + ' The Weather Channel.'
 var cpos = new GControlPosition(G_ANCHOR_BOTTOM_LEFT, new GSize((xPos += 72), 12));
 cpos.apply(cp);
+mapTextElements.push(cp);
 map.getContainer().appendChild(cp);
+GEvent.trigger(map, 'maptypechanged');
 </c:if></script>
 <content:googleAnalytics />
 </body>
