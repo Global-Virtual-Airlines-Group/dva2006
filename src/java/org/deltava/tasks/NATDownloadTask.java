@@ -1,4 +1,4 @@
-// Copyright 2002, 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2002, 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -66,7 +66,7 @@ public class NATDownloadTask extends Task {
 
 			// Get the DAO and the NAT data
 			log.info("Loading NAT track data from " + url.toString());
-			GetNATs dao = new GetNATs(sslcon);
+			GetNATs dao = new GetNATs(sslcon.getInputStream());
 			or.setRoute(dao.getTrackInfo());
 			
 			// Get the waypoint data

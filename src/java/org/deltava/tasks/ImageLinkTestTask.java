@@ -9,10 +9,10 @@ import java.sql.Connection;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.params.HttpConnectionParams;
 
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.system.VersionInfo;
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
 
@@ -28,7 +28,6 @@ import org.deltava.util.system.SystemData;
 
 public class ImageLinkTestTask extends Task {
 
-	private final HttpConnectionParams _hcp = new HttpConnectionParams();
 	private Collection _mimeTypes;
 
 	/**
@@ -37,9 +36,6 @@ public class ImageLinkTestTask extends Task {
 	public ImageLinkTestTask() {
 		super("Image URL Test", ImageLinkTestTask.class);
 		_mimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
-		_hcp.setConnectionTimeout(8250);
-		_hcp.setTcpNoDelay(false);
-		_hcp.setSoTimeout(8250);
 	}
 
 	/**
@@ -65,6 +61,13 @@ public class ImageLinkTestTask extends Task {
 
 			// Loop through the threads
 			HttpClient hc = new HttpClient();
+			hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+			hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+			hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
+			hc.getParams().setParameter("http.socket.timeout", new Integer(8250));
+			hc.getParams().setParameter("http.connection.timeout", new Integer(8250));
+			
+			// Check the images
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
 

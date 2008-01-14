@@ -1,8 +1,7 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.net.URLConnection;
 
 import org.deltava.beans.servinfo.Pilot;
 
@@ -11,7 +10,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Data Access Object to read VATSIM CERT data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -19,11 +18,10 @@ public class GetVATSIMData extends DAO {
 
 	/**
 	 * Initializes the Data Access Object.
-	 * @param c the URLConnection to use
-	 * @throws DAOException if an I/O error occurs
+	 * @param is the stream to use
 	 */
-	public GetVATSIMData(URLConnection c) throws DAOException {
-		super(c);
+	public GetVATSIMData(InputStream is) {
+		super(is);
 	}
 
 	private String getSubstring(String s, char start, char end) {

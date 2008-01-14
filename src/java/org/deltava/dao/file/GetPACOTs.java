@@ -1,26 +1,25 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
-import java.net.URLConnection;
 
 import org.deltava.dao.DAOException;
 
 /**
  * A Data Access Object to loac Pacific Track data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class GetPACOTs extends DAO implements TrackDAO {
 
 	/**
-	 * Initializes the DAO with a particular HTTP connection.
-	 * @param c the HTTP connection
+	 * Initializes the DAO with a particular stream.
+	 * @param is the stream
 	 */
-	public GetPACOTs(URLConnection c) throws DAOException {
-		super(c);
+	public GetPACOTs(InputStream is) throws DAOException {
+		super(is);
 	}
 
 	/**

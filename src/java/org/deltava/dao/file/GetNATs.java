@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
@@ -13,19 +13,20 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to get North Atlantic Track data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
+
 public class GetNATs extends DAO implements TrackDAO {
 	
 	private String _notam;
 
 	/**
-	 * Initializes the DAO with a particular HTTP connection.
-	 * @param c the HTTP connection
+	 * Initializes the DAO with a particular stream.
+	 * @param is the stream
 	 */
-	public GetNATs(java.net.URLConnection c) throws DAOException {
-		super(c);
+	public GetNATs(InputStream is) {
+		super(is);
 	}
 	
 	/**
@@ -33,7 +34,7 @@ public class GetNATs extends DAO implements TrackDAO {
 	 * @param notam the NOTAM text
 	 */
 	public GetNATs(String notam) {
-		super((InputStream) null);
+		super(null);
 		_notam = notam;
 	}
 	

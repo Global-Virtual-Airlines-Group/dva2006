@@ -9,10 +9,6 @@ import junit.framework.TestCase;
 
 import org.apache.log4j.PropertyConfigurator;
 
-import org.deltava.dao.DAOException;
-import org.deltava.dao.file.GetNATs;
-import org.deltava.dao.file.GetPACOTs;
-import org.deltava.dao.file.TrackDAO;
 import org.deltava.util.http.SSLUtils;
 
 public class TestTrackDAO extends TestCase {
@@ -47,11 +43,11 @@ public class TestTrackDAO extends TestCase {
 	public void testInvalidKeyNAT() {
 		init("https://www.notams.jcs.mil/common/nat.html");
 		try {
-			_dao = new GetNATs(_con);
+			_dao = new GetNATs(_con.getInputStream());
 			String natInfo = _dao.getTrackInfo();
 			assertNull(natInfo);
 			fail("DAOException expected");
-		} catch (DAOException de) {
+		} catch (Exception e) {
 			// valid
 		}
 	}
@@ -69,7 +65,7 @@ public class TestTrackDAO extends TestCase {
 		_con.setSSLSocketFactory(ctx.getSocketFactory());
 		
 		// Pull down the data
-		_dao = new GetNATs(_con);
+		_dao = new GetNATs(_con.getInputStream());
 		String natInfo = _dao.getTrackInfo();
 		assertNotNull(natInfo);
 	}
@@ -77,11 +73,11 @@ public class TestTrackDAO extends TestCase {
 	public void testInvalidKeyPACOT() {
 		init("https://www.notams.jcs.mil/tracks/pTracks.html?advsw=PAC");
 		try {
-			_dao = new GetPACOTs(_con);
+			_dao = new GetPACOTs(_con.getInputStream());
 			String pacotInfo = _dao.getTrackInfo();
 			assertNull(pacotInfo);
 			fail("DAOException expected");
-		} catch (DAOException de) {
+		} catch (Exception e) {
 			// valid
 		}
 	}
@@ -99,7 +95,7 @@ public class TestTrackDAO extends TestCase {
 		_con.setSSLSocketFactory(ctx.getSocketFactory());
 
 		// Pull down the data
-		_dao = new GetPACOTs(_con);
+		_dao = new GetPACOTs(_con.getInputStream());
 		String pacotInfo = _dao.getTrackInfo();
 		assertNotNull(pacotInfo);
 	}

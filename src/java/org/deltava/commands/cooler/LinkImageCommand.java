@@ -9,9 +9,9 @@ import java.sql.Connection;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.HeadMethod;
-import org.apache.commons.httpclient.params.HttpConnectionParams;
 
 import org.deltava.beans.cooler.*;
+import org.deltava.beans.system.VersionInfo;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -31,7 +31,6 @@ import org.deltava.util.system.SystemData;
 public class LinkImageCommand extends AbstractCommand {
 	
 	private Collection _imgMimeTypes;
-	private final HttpConnectionParams _hcp = new HttpConnectionParams();
 	
 	/**
 	 * Initializes this command.
@@ -42,9 +41,6 @@ public class LinkImageCommand extends AbstractCommand {
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		_imgMimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
-		_hcp.setConnectionTimeout(2000);
-		_hcp.setTcpNoDelay(false);
-		_hcp.setSoTimeout(2500);
 	}
 
 	/**
@@ -93,8 +89,15 @@ public class LinkImageCommand extends AbstractCommand {
 				else if (imgURLs.contains(url.toString()))
 					throw new MalformedURLException("Duplicate Image URL");
 				
-				// Open the connection
+				// Init the HTTP client
 				HttpClient hc = new HttpClient();
+				hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+				hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
+				hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
+				hc.getParams().setParameter("http.socket.timeout", new Integer(2500));
+				hc.getParams().setParameter("http.connection.timeout", new Integer(1500));
+				
+				// Open the connection
 				HeadMethod hm = new HeadMethod(url.toExternalForm());
 				hm.setFollowRedirects(false);
 				
