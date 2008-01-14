@@ -1,8 +1,7 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.util.servinfo;
 
 import java.io.*;
-import java.net.*;
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -17,13 +16,14 @@ import org.deltava.util.ThreadUtils;
 /**
  * A worker thread to asynchronously load ServInfo data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ServInfoLoader implements Runnable {
 
 	private static final Logger log = Logger.getLogger(ServInfoLoader.class);
+
 	private static final Map<String, LoaderThread> LOADERS = new LinkedHashMap<String, LoaderThread>();
 
 	private String _network;
@@ -74,19 +74,19 @@ public class ServInfoLoader implements Runnable {
 		if (!loaderThread.isAlive())
 			loaderThread.start();
 	}
-	
+
 	/**
 	 * Returns all running ServInfo loader threads.
 	 * @return a Map of Threads, keyed by network name
 	 */
 	public static final synchronized Map<String, Thread> getLoaders() {
 		Map<String, Thread> results = new LinkedHashMap<String, Thread>();
-		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext(); ) {
+		for (Iterator<String> i = LOADERS.keySet().iterator(); i.hasNext();) {
 			String networkName = i.next();
 			LoaderThread lt = LOADERS.get(networkName);
 			results.put(networkName, lt.getThread());
 		}
-		
+
 		return results;
 	}
 
@@ -97,14 +97,6 @@ public class ServInfoLoader implements Runnable {
 	public ServInfoLoader(String networkName) {
 		super();
 		_network = networkName;
-	}
-
-	/**
-	 * Helper method to disconnect HTTP connections only.
-	 */
-	private void disconnect(URLConnection con) {
-		if (con instanceof HttpURLConnection)
-			((HttpURLConnection) con).disconnect();
 	}
 
 	/**
@@ -120,64 +112,44 @@ public class ServInfoLoader implements Runnable {
 	 * @see Runnable#run()
 	 */
 	public void run() {
-
-		// Get a connection to the network info
-		URLConnection con = ConnectionFactory.getStatus(_network);
-		if (con == null)
-			return;
-
-		// Get the network URLs
 		NetworkStatus status = null;
 		try {
-			GetServInfo sdao = new GetServInfo(con);
+			// Get a connection to the network info
+			InputStream is = ConnectionFactory.getStatus(_network);
+
+			// Load the data
+			GetServInfo sdao = new GetServInfo(is);
 			sdao.setUseCache(true);
 			status = sdao.getStatus(_network);
 			if (status.getCached())
 				log.info("Using cached " + _network + " network status");
+		} catch (IOException ie) {
+			log.error("Error loading " + _network.toUpperCase() + " status - " + ie.getMessage());
 		} catch (DAOException de) {
 			log.error("Error loading " + _network.toUpperCase() + " status - " + de.getMessage(),
 					de.getLogStackDump() ? de : null);
-		} finally {
-			disconnect(con);
 		}
 
 		// If we received nothing, abort
 		if (status == null)
 			return;
 
-		// Get network status
-		NetworkDataURL nd = ConnectionFactory.getInfo(status);
-		con = ConnectionFactory.getURL(nd.getURL());
-		if (con == null)
-			return;
-
 		// Get the network info
 		try {
-			GetServInfo idao = new GetServInfo(con);
-			idao.setUseCache(nd != status.getLocal());
+			InputStream is = ConnectionFactory.getInfo(status);
+			GetServInfo idao = new GetServInfo(is);
+			idao.setUseCache(is instanceof FileInputStream);
 			idao.setBufferSize(30720);
 			_info = idao.getInfo(_network);
 			if (_info.getCached())
 				log.info("Using cached " + _network + " connection data");
-			else
-				nd.logUsage(true);
+		} catch (IOException ie) {
+			
 		} catch (DAOException de) {
-			nd.logUsage(false);
-			Throwable re = de.getCause();
-			if (re instanceof SocketTimeoutException) {
-				log.warn("HTTP Timeout connecting to " + con.getURL().toString());
-			} else if (re instanceof ConnectException) {
-				log.warn("Connection to " + con.getURL().toString() + " refused");
-			} else if (re instanceof FileNotFoundException) {
-				log.error("File not found " + re.getMessage());
-			} else {
-				log.error("Error loading " + _network.toUpperCase() + " info - " + de.getMessage(), de);
-			}
-		} finally {
-			disconnect(con);
+			log.error("Error loading " + _network.toUpperCase() + " info - " + de.getMessage(), de);
 		}
 
 		// Log status info
-		log.info("ServInfo load complete - " + nd);
+		log.info("ServInfo load complete");
 	}
 }

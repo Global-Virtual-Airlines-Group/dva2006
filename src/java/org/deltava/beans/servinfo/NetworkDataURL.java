@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.servinfo;
 
 import java.util.*;
@@ -6,11 +6,11 @@ import java.util.*;
 /**
  * A bean to track ServInfo data locations and their reliability.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public class NetworkDataURL implements java.io.Serializable, Comparable {
+public class NetworkDataURL implements Comparable<NetworkDataURL> {
 	
 	private static final int MAX_LAST_USES = 8;
 
@@ -126,8 +126,7 @@ public class NetworkDataURL implements java.io.Serializable, Comparable {
 	 * @see Comparable#compareTo(Object)
 	 * @see NetworkDataURL#getSuccessPercentage()
 	 */
-	public int compareTo(Object o) {
-		NetworkDataURL nd2 = (NetworkDataURL) o;
+	public int compareTo(NetworkDataURL nd2) {
 		int tmpResult = new Integer(getRecentSuccessPercentage()).compareTo(new Integer(nd2.getRecentSuccessPercentage()));
 		if (tmpResult == 0)
 			tmpResult = new Integer(_success).compareTo(new Integer(nd2._success)) * -1;
