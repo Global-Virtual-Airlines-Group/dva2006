@@ -63,7 +63,7 @@ public class PACOTDownloadTask extends Task {
 
 			// Get the DAO and the NAT data
 			log.info("Loading PACOT track data from " + url.toString());
-			TrackDAO dao = new GetPACOTs(con);
+			TrackDAO dao = new GetPACOTs(con.getInputStream());
 			or.setRoute(dao.getTrackInfo());
 
 			// Write the route data to the database

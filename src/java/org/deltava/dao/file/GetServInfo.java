@@ -1,12 +1,9 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.io.*;
 import java.util.*;
-import java.net.URLConnection;
-
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
+import java.text.*;
 
 import org.apache.log4j.Logger;
 
@@ -31,7 +28,7 @@ import org.deltava.util.system.SystemData;
  * 31 planned_depairport_lat 32 planned_depairport_lon 33 planned_destairport_lat 34 planned_destairport_lon 35
  * atis_message 36 time_last_atis_received 37 time_logon 38 heading 39 QNH_iHg 40 QNH_Mb
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -45,11 +42,11 @@ public class GetServInfo extends DAO {
 	private boolean _useCache = true;
 
 	/**
-	 * Initializes the DAO with a particular HTTP connection.
-	 * @param c the HTTP connection
+	 * Initializes the DAO with a particular stream.
+	 * @param is the stream to use
 	 */
-	public GetServInfo(URLConnection c) throws DAOException {
-		super(c);
+	public GetServInfo(InputStream is) {
+		super(is);
 	}
 
 	/**
@@ -200,7 +197,7 @@ public class GetServInfo extends DAO {
 			info = new NetworkInfo(networkName);
 
 			// Initialize date formatter
-			SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
+			final SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
 
 			String iData = br.readLine();
 			while ((iData != null) && (!Thread.currentThread().isInterrupted())) {
@@ -228,14 +225,14 @@ public class GetServInfo extends DAO {
 									DateTime dt = new DateTime(info.getValidDate(), TZInfo.UTC);
 									dt.convertTo(TZInfo.local());
 									info.setValidDate(dt.getDate());
-									log.debug("Valid as of " + dt.toString());
+									if (log.isDebugEnabled())
+										log.debug("Valid as of " + dt.toString());
 								}
 							}
 
 							// Get next line
 							iData = br.readLine();
 						} while ((iData != null) && (iData.indexOf(" = ") != -1));
-
 						// Parse the pilot/ATC list
 					} else if ("CLIENTS".equalsIgnoreCase(sectionName)) {
 						iData = br.readLine();

@@ -1,4 +1,3 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
 package org.deltava.dao.file;
 
 import java.util.*;
@@ -15,7 +14,7 @@ public class TestServInfo extends AbstractURLConnectionTestCase {
 		super.setUp("data/satnet-data.txt");
 		SystemData.init("org.deltava.util.system.TagTestSystemDataLoader", true);
 		SystemData.add("airports", new HashMap());
-		_dao = new GetServInfo(_con);
+		_dao = new GetServInfo(_is);
 	}
 
 	protected void tearDown() throws Exception {

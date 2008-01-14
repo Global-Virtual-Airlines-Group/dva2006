@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taskman;
 
 import java.util.*;
@@ -11,11 +11,11 @@ import org.deltava.util.*;
  * A class to support Scheduled Tasks. Scheduled Tasks are similar to UNIX cron jobs, and are scheduled for
  * execution in much the same way.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
-public abstract class Task implements Runnable, Comparable {
+public abstract class Task implements Runnable, Comparable<Task> {
 	
 	/**
 	 * Time interval options.
@@ -27,7 +27,7 @@ public abstract class Task implements Runnable, Comparable {
 	/**
 	 * Wildcard for &quot;All Intervals&quot;
 	 */
-	static final Integer ANY = new Integer(-1);
+	static final Integer ANY = Integer.valueOf(-1);
 	private static final String ALL_TIMES = "*";
 
     protected final Logger log;
@@ -225,10 +225,8 @@ public abstract class Task implements Runnable, Comparable {
     
     /**
      * Compares two Tasks by comparing their names.
-     * @see Comparable#compareTo(Object)
      */
-    public int compareTo(Object o2) {
-    	Task t2 = (Task) o2;
+    public int compareTo(Task t2) {
     	return _name.compareTo(t2._name);
     }
     
