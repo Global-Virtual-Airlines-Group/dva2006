@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.tasks;
 
 import java.net.*;
@@ -7,22 +7,28 @@ import java.io.IOException;
 
 import java.sql.Connection;
 
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
+
 import org.deltava.beans.Pilot;
 import org.deltava.beans.cooler.*;
 import org.deltava.dao.*;
 import org.deltava.taskman.*;
 
+import org.deltava.util.ThreadUtils;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Scheduled Task to validate the integrity of Water Cooler Image URLs.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class ImageLinkTestTask extends Task {
 
+	private final HttpConnectionParams _hcp = new HttpConnectionParams();
 	private Collection _mimeTypes;
 
 	/**
@@ -31,6 +37,9 @@ public class ImageLinkTestTask extends Task {
 	public ImageLinkTestTask() {
 		super("Image URL Test", ImageLinkTestTask.class);
 		_mimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+		_hcp.setConnectionTimeout(8250);
+		_hcp.setTcpNoDelay(false);
+		_hcp.setSoTimeout(8250);
 	}
 
 	/**
@@ -55,9 +64,9 @@ public class ImageLinkTestTask extends Task {
 			Collection<String> invalidHosts = new HashSet<String>();
 
 			// Loop through the threads
+			HttpClient hc = new HttpClient();
 			for (Iterator<Integer> i = ids.iterator(); i.hasNext();) {
 				Integer id = i.next();
-				long lastUpdateTime = (System.currentTimeMillis() / 1000);
 
 				// Get the images
 				final Collection<LinkedImage> urls = dao.getURLs(id.intValue());
@@ -70,25 +79,22 @@ public class ImageLinkTestTask extends Task {
 						url = new URL(img.getURL());
 						if (invalidHosts.contains(url.getHost()))
 							throw new IllegalArgumentException("Bad Host!");
-
-						HttpURLConnection urlcon = (HttpURLConnection) url.openConnection();
-						urlcon.setRequestMethod("HEAD");
-						urlcon.setReadTimeout(8250);
-						urlcon.setConnectTimeout(8250);
-						urlcon.connect();
+						
+						// Open the connection
+						HeadMethod hm = new HeadMethod(url.toExternalForm());
+						hm.setFollowRedirects(false);
 
 						// Validate the result code
-						int resultCode = urlcon.getResponseCode();
+						int resultCode = hc.executeMethod(hm);
 						if (resultCode != HttpURLConnection.HTTP_OK)
 							log.warn("Invalid Image HTTP result code - " + resultCode);
 						else {
-							String cType = urlcon.getHeaderField("Content-Type");
+							Header[] hdrs = hm.getResponseHeaders("Content-Type");
+							String cType = (hdrs.length == 0) ? "unknown" : hdrs[0].getValue();
 							isOK = _mimeTypes.contains(cType);
 							if (!isOK)
 								log.warn("Invalid MIME type for " + img + " - " + cType);
 						}
-
-						urlcon.disconnect();
 					} catch (IllegalArgumentException iae) {
 						log.warn("Known bad host - " + url.getHost());
 					} catch (MalformedURLException mue) {
@@ -104,10 +110,7 @@ public class ImageLinkTestTask extends Task {
 						ThreadUpdate upd = new ThreadUpdate(id.intValue());
 						upd.setMessage("Removed linked image " + img.getURL());
 						upd.setAuthorID(taskBy.getID());
-						if ((upd.getDate().getTime() / 1000) <= lastUpdateTime) {
-							lastUpdateTime++;
-							upd.setDate(new Date(lastUpdateTime * 1000));
-						}
+						upd.setDate(new Date());
 						
 						// Get a connection
 						con = ctx.getConnection();
@@ -124,6 +127,7 @@ public class ImageLinkTestTask extends Task {
 						// Commit
 						ctx.commitTX();
 						ctx.release();
+						ThreadUtils.sleep(1000);
 					}
 				}
 			}
