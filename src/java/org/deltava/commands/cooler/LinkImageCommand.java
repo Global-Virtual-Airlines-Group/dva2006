@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.net.*;
@@ -6,6 +6,10 @@ import java.util.*;
 import java.io.IOException;
 
 import java.sql.Connection;
+
+import org.apache.commons.httpclient.*;
+import org.apache.commons.httpclient.methods.HeadMethod;
+import org.apache.commons.httpclient.params.HttpConnectionParams;
 
 import org.deltava.beans.cooler.*;
 
@@ -20,13 +24,14 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to link an Image to a Water Cooler discussion thread.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class LinkImageCommand extends AbstractCommand {
 	
 	private Collection _imgMimeTypes;
+	private final HttpConnectionParams _hcp = new HttpConnectionParams();
 	
 	/**
 	 * Initializes this command.
@@ -37,6 +42,9 @@ public class LinkImageCommand extends AbstractCommand {
 	public void init(String id, String cmdName) throws CommandException {
 		super.init(id, cmdName);
 		_imgMimeTypes = (Collection) SystemData.getObject("cooler.imgurls.mime_types");
+		_hcp.setConnectionTimeout(2000);
+		_hcp.setTcpNoDelay(false);
+		_hcp.setSoTimeout(2500);
 	}
 
 	/**
@@ -80,23 +88,21 @@ public class LinkImageCommand extends AbstractCommand {
 			LinkedImage img = null;
 			try {
 				URL url = new URL(ctx.getParameter("imgURL"));
-				URLConnection urlc = url.openConnection();
-				if (!(urlc instanceof HttpURLConnection))
+				if (!(url.getProtocol().startsWith("http")))
 					throw new MalformedURLException();
 				else if (imgURLs.contains(url.toString()))
 					throw new MalformedURLException("Duplicate Image URL");
 				
 				// Open the connection
-				HttpURLConnection urlcon = (HttpURLConnection) urlc;
-				urlcon.setRequestMethod("HEAD");
-				urlcon.setConnectTimeout(2000);
-				urlcon.setReadTimeout(2500);
-				urlcon.connect();
-
+				HttpClient hc = new HttpClient();
+				HeadMethod hm = new HeadMethod(url.toExternalForm());
+				hm.setFollowRedirects(false);
+				
 				// Validate the result code
-				int resultCode = urlcon.getResponseCode();
+				int resultCode = hc.executeMethod(hm);
 				if (resultCode == HttpURLConnection.HTTP_OK) {
-					String cType = urlcon.getHeaderField("Content-Type");
+					Header[] hdrs = hm.getResponseHeaders("Content-Type");
+					String cType = (hdrs.length == 0) ? "unknown" : hdrs[0].getValue();
 					if (!_imgMimeTypes.contains(cType))
 						ctx.setMessage("Invalid MIME type for " + url + " - " + cType);
 					else {
@@ -106,8 +112,6 @@ public class LinkImageCommand extends AbstractCommand {
 					}
 				} else
 					ctx.setMessage("Invalid Image HTTP result code - " + resultCode);
-
-				urlcon.disconnect();
 			} catch (MalformedURLException mue) {
 				ctx.setMessage("Invalid linked Image URL - " + ctx.getParameter("imageURL"));
 			} catch (IOException ie) {
