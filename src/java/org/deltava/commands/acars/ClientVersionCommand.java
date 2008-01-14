@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.acars;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to control minimum ACARS client versions.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -34,20 +34,28 @@ public class ClientVersionCommand extends AbstractCommand {
 		// Load the client versions
 		ACARSClientInfo cInfo = (ACARSClientInfo) SharedData.get(SharedData.ACARS_CLIENT_BUILDS);
 		Collection<String> versions = cInfo.getVersions();
+		Collection<Integer> betas = cInfo.getBetas();
 		
 		// Get Command results
 		CommandResult result = ctx.getResult();
 		if (ctx.getParameter("latestBuild") == null) {
-			Map<String, Integer> versionMap = new HashMap<String, Integer>();
+			Map<String, Integer> versionMap = new LinkedHashMap<String, Integer>();
 			for (Iterator<String> i = versions.iterator(); i.hasNext(); ) {
 				String ver = i.next();
-				versionMap.put(ver, new Integer(cInfo.getMinimumBuild(ver)));
+				versionMap.put(ver, Integer.valueOf(cInfo.getMinimumBuild(ver)));
+			}
+			
+			// Get beta builds
+			Map<Integer, Integer> betaMap = new TreeMap<Integer, Integer>();
+			for (Iterator<Integer> i = betas.iterator(); i.hasNext(); ) {
+				Integer build = i.next();
+				betaMap.put(build, Integer.valueOf(cInfo.getMinimumBetaBuild(build.intValue())));
 			}
 			
 			// Save in the request
-			ctx.setAttribute("versions", versions, REQUEST);
 			ctx.setAttribute("versionInfo", versionMap, REQUEST);
-			ctx.setAttribute("latestBuild", new Integer(cInfo.getLatest()), REQUEST);
+			ctx.setAttribute("betaInfo", betaMap, REQUEST);
+			ctx.setAttribute("latestBuild", Integer.valueOf(cInfo.getLatest()), REQUEST);
 			
 			// Redirect to the JSP
 			result.setURL("/jsp/acars/clientVersion.jsp");
@@ -61,6 +69,13 @@ public class ClientVersionCommand extends AbstractCommand {
 			String ver = i.next();
 			String paramName = "min_" + ver.replace('.', '_') + "_build";
 			cInfo.setMinimumBuild(ver, StringUtils.parse(ctx.getParameter(paramName), cInfo.getMinimumBuild(ver)));
+		}
+		
+		// Get the minimum beta versions
+		for (Iterator<Integer> i = betas.iterator(); i.hasNext(); ) {
+			Integer build = i.next();
+			String paramName = "min_" + build.toString() + "_beta";
+			cInfo.setMinimumBetaBuild(build.intValue(), StringUtils.parse(ctx.getParameter(paramName), 0));
 		}
 		
 		// Return to success page

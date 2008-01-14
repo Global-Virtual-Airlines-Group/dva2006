@@ -27,7 +27,7 @@
  <td class="small"><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
 </tr>
 <tr>
- <td class="small">Build <fmt:int value="${con.clientBuild}" /></td>
+ <td class="small">Build <fmt:int value="${con.clientBuild}" /><c:if test="${con.beta > 0}"> (b${con.beta})</c:if></td>
 <c:choose>
 <c:when test="${empty con.flightInfo || empty con.flightInfo.flightCode}">
  <td class="sec bld">N/A</td>
