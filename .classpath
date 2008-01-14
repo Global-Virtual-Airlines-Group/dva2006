@@ -15,7 +15,8 @@
 	<classpathentry kind="lib" path="lib/deploy/mysql-connector-java-5.0.8-bin.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/javamail-1.4.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/log4j-1.2.15.jar"/>
-	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.1.jar"/>
 	<classpathentry kind="lib" path="lib/deploy/jdom-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/golgotha_ipc-1.11.jar"/>
+	<classpathentry kind="lib" path="lib/deploy/commons-httpclient-3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

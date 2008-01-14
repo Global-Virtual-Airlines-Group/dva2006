@@ -17,9 +17,12 @@ function validate(form)
 {
 if (!checkSubmit()) return false;
 if (!validateNumber(form.latestBuild, 1, 'Latest Build')) return false;
-<c:forEach var="ver" items="${versions}">
+<c:forEach var="ver" items="${fn:keys(versionInfo)}">
 <c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
 if (!validateNumber(form.min_${versionCode}_Build, 1, 'Minimum ${ver} Build')) return false;
+</c:forEach>
+<c:forEach var="build" items="${fn:keys(betaInfo)}">
+if (!validateNumber(form.min_${build}_beta, 0, 'Minimum Build ${build} beta version')) return false;
 </c:forEach>
 setSubmit();
 disableButton('SaveButton');
@@ -38,9 +41,9 @@ return true;
 <el:form action="acarsversion.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
- <td colspan="4">GLOBAL ACARS CLIENT VERSION CONTROL</td>
+ <td colspan="2">GLOBAL ACARS CLIENT VERSION CONTROL</td>
 </tr>
-<c:forEach var="ver" items="${versions}">
+<c:forEach var="ver" items="${fn:keys(versionInfo)}">
 <c:set var="versionCode" value="${fn:replace(ver, '.', '_')}" scope="request" />
 <c:set var="minBuild" value="${versionInfo[ver]}" scope="request" />
 <tr>
@@ -52,11 +55,17 @@ return true;
  <td class="label">Latest Build</td>
  <td class="data"><el:text className="req" name="latestBuild" idx="*" size="3" max="4" value="${latestBuild}" /></td>
 </tr>
-<c:if test="${!empty system_message}">
-<tr>
- <td class="label">&nbsp;</td>
- <td class="data error bld">${system_message}</td>
+<c:if test="${!empty betaInfo}">
+<tr class="title caps">
+ <td colspan="2">ACARS BETA VERSION CONTROL</td>
 </tr>
+<c:forEach var="build" items="${fn:keys(betaInfo)}">
+<c:set var="minBeta" value="${betaInfo[build]}" scope="request" />
+<tr>
+ <td class="label">Minimum Build ${build} beta</td>
+ <td class="data"><el:text className="pri bld req" name="min_${build}_beta" idx="*" size="3" max="4" value="${minBeta}" /></td>
+</tr>
+</c:forEach>
 </c:if>
 
 <!-- Button Bar -->
