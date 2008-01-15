@@ -7,7 +7,15 @@
 <tr class="title">
  <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
 </tr>
-
+<c:if test="${!empty acarsBW}">
+<tr>
+ <td class="left" colspan="6">Latest Bandwidth data: <fmt:int value="${acarsBW.connections}" /> connections,
+ <fmt:int value="${acarsBW.bytesIn}" /> bytes (<fmt:dec value="${acarsBW.bytesIn / 60}" /> bytes/sec) in,
+ <fmt:int value="${acarsBW.bytesOut}" /> bytes (<fmt:dec value="${acarsBW.bytesOut / 60}" /> bytes/sec) out.
+ <fmt:int value="${acarsBW.msgsIn}" /> msgs (<fmt:dec value="${acarsBW.msgsIn / 60}" /> msgs/sec) in,
+ <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.</td>
+</tr>
+</c:if>
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
