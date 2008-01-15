@@ -84,6 +84,8 @@ public class DiagnosticCommand extends AbstractCommand {
 				Connection con = ctx.getConnection();
 				GetACARSLog addao = new GetACARSLog(con);
 				ctx.setAttribute("acarsCmdStats", addao.getCommandStats(), REQUEST);
+				GetACARSBandwidth bwdao = new GetACARSBandwidth(con);
+				ctx.setAttribute("acarsBW", bwdao.getLatest(), REQUEST);
 			} catch (DAOException de) {
 				log.error("Error loading ACARS command statistics - " + de.getMessage(), de);
 			} finally {
@@ -142,7 +144,7 @@ public class DiagnosticCommand extends AbstractCommand {
 		
 		// Get Virtual Machine properties
 		Runtime rt = Runtime.getRuntime();
-		ctx.setAttribute("cpuCount", new Integer(rt.availableProcessors()), REQUEST);
+		ctx.setAttribute("cpuCount", Integer.valueOf(rt.availableProcessors()), REQUEST);
 		ctx.setAttribute("totalMemory", new Long(rt.totalMemory()), REQUEST);
 		ctx.setAttribute("maxMemory", new Long(rt.maxMemory()), REQUEST);
 		ctx.setAttribute("freeMemory", new Long(rt.freeMemory()), REQUEST);
@@ -158,8 +160,8 @@ public class DiagnosticCommand extends AbstractCommand {
 		ctx.setAttribute("serverInfo", _ctx.getServerInfo(), REQUEST);
 		ctx.setAttribute("serverStart", startDate, REQUEST);
 		ctx.setAttribute("servletContextName", _ctx.getServletContextName(), REQUEST);
-		ctx.setAttribute("majorServletAPI", new Integer(_ctx.getMajorVersion()), REQUEST);
-		ctx.setAttribute("minorServletAPI", new Integer(_ctx.getMinorVersion()), REQUEST);
+		ctx.setAttribute("majorServletAPI", Integer.valueOf(_ctx.getMajorVersion()), REQUEST);
+		ctx.setAttribute("minorServletAPI", Integer.valueOf(_ctx.getMinorVersion()), REQUEST);
 		
 		// Calculate DAO usage count
 		ctx.setAttribute("execTime", new Long((System.currentTimeMillis() - startDate.getTime()) / 1000), REQUEST);
