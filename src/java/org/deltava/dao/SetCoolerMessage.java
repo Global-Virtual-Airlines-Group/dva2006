@@ -29,20 +29,18 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void write(Message msg) throws DAOException {
-		invalidate(msg.getThreadID());
 		try {
-			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, CREATED, "
-					+ "REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, ?, INET_ATON(?), ?, ?, ?)");
+			prepareStatementWithoutLimits("INSERT INTO common.COOLER_POSTS (THREAD_ID, AUTHOR_ID, "
+					+ "CREATED, REMOTE_ADDR, REMOTE_HOST, MSGBODY, CONTENTWARN) VALUES (?, ?, NOW(),"
+					+ " INET_ATON(?), ?, ?, ?)");
 			_ps.setInt(1, msg.getThreadID());
 			_ps.setInt(2, msg.getAuthorID());
-			_ps.setTimestamp(3, createTimestamp(msg.getCreatedOn()));
-			_ps.setString(4, msg.getRemoteAddr());
-			_ps.setString(5, msg.getRemoteHost());
-			_ps.setString(6, msg.getBody());
-			_ps.setBoolean(7, msg.getContentWarning());
-
-			// Update the database
+			_ps.setString(3, msg.getRemoteAddr());
+			_ps.setString(4, msg.getRemoteHost());
+			_ps.setString(5, msg.getBody());
+			_ps.setBoolean(6, msg.getContentWarning());
 			executeUpdate(1);
+			msg.setID(getNewID());
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -54,7 +52,6 @@ public class SetCoolerMessage extends CoolerThreadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public void update(Message msg) throws DAOException {
-		invalidate(msg.getThreadID());
 		try {
 			prepareStatementWithoutLimits("UPDATE common.COOLER_POSTS SET MSGBODY=?, REMOTE_HOST=?, "
 					+ "REMOTE_ADDR=INET_ATON(?), CONTENTWARN=? WHERE (THREAD_ID=?) AND (POST_ID=?)");
