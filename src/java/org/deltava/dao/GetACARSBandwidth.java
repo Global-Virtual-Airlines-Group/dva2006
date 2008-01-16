@@ -30,8 +30,8 @@ public class GetACARSBandwidth extends DAO {
 	 */
 	public Bandwidth getLatest() throws DAOException {
 		try {
-			prepareStatementWithoutLimits("SELECT * FROM BANDWIDTH WHERE (DURATION=?) ORDER BY "
-					+ "PERIOD DESC LIMIT 1");
+			prepareStatementWithoutLimits("SELECT * FROM acars.BANDWIDTH WHERE (DURATION=?) "
+					+ "ORDER BY PERIOD DESC LIMIT 1");
 			_ps.setInt(1, 1);
 			List<Bandwidth> results = execute();
 			return results.isEmpty() ? null : results.get(0);
