@@ -40,7 +40,8 @@ This ${exam.name} Pilot Examination for ${pilot.name} has been successfully scor
 message has been sent to ${pilot.rank} ${pilot.lastName} notifying him or her of the scoring of this Examination.</c:if><br />
 <br />
 To view the Pilot Profile, <el:cmd url="profile" link="${pilot}" className="sec bld">Click Here</el:cmd>.<br />
-To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br />
+<content:filter roles="Examination">
+To return to the Examination Queue, <el:cmd url="examqueue" className="sec bld">Click Here</el:cmd>.<br /></content:filter>
 </c:when>
 <c:when test="${isDelete}">
 <!-- Examination/Check Ride Deleted -->
