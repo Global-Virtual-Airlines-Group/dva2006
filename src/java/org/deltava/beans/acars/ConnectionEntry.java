@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.Date;
@@ -9,7 +9,7 @@ import org.deltava.beans.Pilot;
 /**
  * A bean to store an ACARS Connection record.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -24,6 +24,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    private String _remoteAddr;
    
    private int _clientBuild;
+   private int _beta;
    
    private int _msgCount;
    private int _infoCount;
@@ -116,6 +117,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
     */
    public int getClientBuild() {
       return _clientBuild;
+   }
+   
+   /**
+    * Returns the ACARS beta build number.
+    * @return the beta number
+    * @see ConnectionEntry#setBeta(int)
+    */
+   public int getBeta() {
+	   return _beta;
    }
    
    /**
@@ -312,6 +322,15 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    }
    
    /**
+    * Updates the ACARS beta build number.
+    * @param beta the beta number
+    * @see ConnectionEntry#getBeta()
+    */
+   public void setBeta(int beta) {
+	   _beta = Math.max(0, beta);
+   }
+   
+   /**
     * Updates the Pilot bean for the user who created this connection.
     * @param usr the Pilot bean
     * @see ConnectionEntry#getUser()
@@ -342,46 +361,34 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    /**
     * Updates the number of text messages sent by this connection.
     * @param msgs the number of messages
-    * @throws IllegalArgumentException if msgs is negative
     * @see ConnectionEntry#getMessageCount()
     * @see ConnectionEntry#setFlightInfoCount(int)
     * @see ConnectionEntry#setPositionCount(int)
     */
    public void setMessageCount(int msgs) {
-      if (msgs < 0)
-         throw new IllegalArgumentException("Invalid message count - " + msgs);
-      
-      _msgCount = msgs;
+      _msgCount = Math.max(0, msgs);
    }
    
    /**
     * Updates the number of flight information messages sent by this connection.
     * @param msgs the number of messages
-    * @throws IllegalArgumentException if msgs is negative
     * @see ConnectionEntry#getFlightInfoCount()
     * @see ConnectionEntry#setMessageCount(int)
     * @see ConnectionEntry#setPositionCount(int)
     */
    public void setFlightInfoCount(int msgs) {
-      if (msgs < 0)
-         throw new IllegalArgumentException("Invalid information count - " + msgs);
-      
-      _infoCount = msgs;
+      _infoCount = Math.max(0, msgs);
    }
    
    /**
     * Updates the number of aircraft position messages sent by this connection.
     * @param msgs the number of messages
-    * @throws IllegalArgumentException if msgs is negative
     * @see ConnectionEntry#getPositionCount()
     * @see ConnectionEntry#setFlightInfoCount(int)
     * @see ConnectionEntry#setMessageCount(int)
     */
    public void setPositionCount(int msgs) {
-      if (msgs < 0)
-         throw new IllegalArgumentException("Invalid position count - " + msgs);
-      
-      _posCount = msgs;
+      _posCount = Math.max(0, msgs);
    }
    
    /**
