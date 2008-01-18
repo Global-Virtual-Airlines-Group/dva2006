@@ -8,6 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/dva_jspfunc.tld" prefix="fn" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<content:sysdata var="acarsEnabled" name="acars.enabled" />
 <head>
 <title><content:airline /> System Diagnostics</title>
 <content:css name="main" browserSpecific="true" />
@@ -15,13 +16,13 @@
 <content:css name="view" />
 <content:pics />
 <content:js name="common" />
+<c:if test="${acarsEnabled}"><content:js name="swfobject" /></c:if>
 </head>
 <content:copyright visible="false" />
 <body>
 <content:page>
 <%@ include file="/jsp/main/header.jspf" %> 
 <%@ include file="/jsp/main/sideMenu.jspf" %>
-<content:sysdata var="acarsEnabled" name="acars.enabled" />
 
 <!-- Main Body Frame -->
 <content:region id="main">
@@ -75,7 +76,7 @@
 </tr>
 <tr>
  <td class="label">CPU Count</td>
- <td class="data"><fmt:int value="${cpuCount}" /></td>
+ <td class="data">${cpuCount} processors</td>
 </tr>
 <tr>
  <td class="label">JVM Memory</td>
