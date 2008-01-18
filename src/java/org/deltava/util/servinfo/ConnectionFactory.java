@@ -51,11 +51,12 @@ class ConnectionFactory {
 		
 		// Get the URL to the online version
 		HttpClient hc = new HttpClient();
-		hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+		hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_0);
 		hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
 		hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
 		hc.getParams().setParameter("http.socket.timeout", new Integer(2500));
 		hc.getParams().setParameter("http.connection.timeout", new Integer(1500));
+		hc.getParams().setParameter("http.protocol.allow-circular-redirects", Boolean.FALSE);
 		
 		// Open the connection
 		GetMethod gm = new GetMethod(SystemData.get("online." + networkName.toLowerCase() + ".status_url"));
@@ -66,7 +67,7 @@ class ConnectionFactory {
 		if (resultCode != 200)
 			throw new IOException(gm.getStatusText());
 		
-		return gm.getResponseBodyAsStream();
+		return new ByteArrayInputStream(gm.getResponseBody(65536));
 	}
 	
 	/**
@@ -83,11 +84,12 @@ class ConnectionFactory {
 		// Get the URL to the online version
 		NetworkDataURL remote = status.getDataURL(true);
 		HttpClient hc = new HttpClient();
-		hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_1);
+		hc.getParams().setParameter("http.protocol.version", HttpVersion.HTTP_1_0);
 		hc.getParams().setParameter("http.useragent",  VersionInfo.USERAGENT);
 		hc.getParams().setParameter("http.tcp.nodelay", Boolean.TRUE);
 		hc.getParams().setParameter("http.socket.timeout", new Integer(2500));
 		hc.getParams().setParameter("http.connection.timeout", new Integer(1500));
+		hc.getParams().setParameter("http.protocol.allow-circular-redirects", Boolean.FALSE);
 		
 		// Open the connection
 		GetMethod gm = new GetMethod(remote.getURL());
@@ -99,6 +101,6 @@ class ConnectionFactory {
 			throw new IOException(gm.getStatusText());
 		
 		remote.logUsage(true);
-		return gm.getResponseBodyAsStream();
+		return new ByteArrayInputStream(gm.getResponseBody(524288));
 	}
 }
