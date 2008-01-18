@@ -74,17 +74,11 @@ mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --igno
 
 # Dump DVA database
 echo `date +%H:%M:%S`' Writing DVA database'
-mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` dva PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE NEWSLETTERS EQTYPES EQRATINGS EQAIRLINES EQEXAMS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES BLOG BLOGCOMMENTS GALLERYSCORE | bzip2 -9 > dva.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CR_DESCS TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > dva_test.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > dva_sys.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` dva SCHEDULE ROUTES SELCAL | bzip2 -9 > dva_sched.sql.bz2
+mysqldump -e -n -t -K -q --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=dva.GALLERY dva | bzip2 -9 > dva.sql.bz2
 
 # Dump AFV database
 echo `date +%H:%M:%S`' Writing AFV database'
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv PILOTS RATINGS ROLES PIREPS PIREP_COMMENT ACARS_PIREPS PROMO_EQ ASSIGNMENTS ASSIGNLEGS DOCS FLEET FLEET_AIRLINE EQTYPES EQRATINGS EQAIRLINES EQEXAMS NEWS NOTAMS PILOT_MAP SIGNATURES STAFF STATUS_UPDATES GALLERYSCORE | bzip2 -9 > afv.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv APPLICANTS APPEXAMS APPQUESTIONS APPQUESTIONSM CR_DESCS TXREQUESTS HELPDESK HELPDESK_COMMENTS | bzip2 -9 > afv_test.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv DOWNLOADS INACTIVITY HELP LOG_APP LOG_TASK MSG_TEMPLATES EMAIL_VALIDATION SYS_COMMANDS SYS_HTTPLOG SYS_LOGINS SYS_TASKS | bzip2 -9 > afv_sys.sql.bz2
-mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` afv SCHEDULE ROUTES SELCAL | bzip2 -9 > afv_sched.sql.bz2
+mysqldump -e -n -t -K --single-transaction `cat /usr/local/etc/sqlbackup` --ignore-table=afv.GALLERY afv | bzip2 -9 > afv.sql.bz2
 
 # Dump Galleries if we're doing a full backup
 if [ "$1" = "full" ]
