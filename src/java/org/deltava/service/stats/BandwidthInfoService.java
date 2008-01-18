@@ -63,7 +63,7 @@ public class BandwidthInfoService extends WebService {
 		re.addContent(xae);
 		
 		// Generate Y- axes
-		Element[] axes = new Element[4];
+		Element[] axes = new Element[8];
 		Element ae = new Element("graphs");
 		re.addContent(ae);
 		for (int x = 1; x <= maxCols; x++) {
