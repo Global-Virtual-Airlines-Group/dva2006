@@ -4,16 +4,12 @@ put mysql.sql.bz2
 put create_tables.tar.bz2
 put awstats.tar.bz2
 put afv.sql.bz2
-put afv_sched.sql.bz2
-put afv_sys.sql.bz2
 put common.sql.bz2
 put navdata.sql.bz2
 put cooler.sql.bz2
 put events.sql.bz2
 put exams.sql.bz2
 put dva.sql.bz2
-put dva_sched.sql.bz2
-put dva_sys.sql.bz2
 put events.sql.bz2
 put postfix.sql.bz2
 put sqmail.sql.bz2
