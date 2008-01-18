@@ -22,8 +22,8 @@ import org.deltava.util.*;
 
 public class BandwidthInfoService extends WebService {
 	
-	private static final String[] TITLES = {"Connections", "Messages In", "Messages Out", "Bytes In",
-		"Bytes Out", "Max Connections", "Max Messages", "Max Bytes"};
+	private static final String[] TITLES = {"Connections", "Messages In (1000)", "Messages Out (1000)", 
+		"Bytes In (MB)", "Bytes Out (MB)", "Max Connections", "Max Messages (1000)", "Max Bytes (MB)"};
 
 	/**
 	 * Executes the Web Service.
@@ -99,22 +99,22 @@ public class BandwidthInfoService extends WebService {
 			
 			// Add Messages In
 			Element ve3 = (Element) ve.clone();
-			ve3.setText(String.valueOf(bw.getMsgsIn()));
+			ve3.setText(String.valueOf(bw.getMsgsIn() / 1000));
 			axes[1].addContent(ve3);
 			
 			// Add Messages Out
 			Element ve4 = (Element) ve.clone();
-			ve4.setText(String.valueOf(bw.getMsgsOut()));
+			ve4.setText(String.valueOf(bw.getMsgsOut() / 1000));
 			axes[2].addContent(ve4);
 			
 			// Add Bytes In
 			Element ve5 = (Element) ve.clone();
-			ve5.setText(String.valueOf(bw.getBytesIn() / 1000));
+			ve5.setText(String.valueOf(bw.getBytesIn() / 1000000));
 			axes[3].addContent(ve5);
 
 			// Add Bytes Out
 			Element ve6 = (Element) ve.clone();
-			ve6.setText(String.valueOf(bw.getBytesOut() / 1000));
+			ve6.setText(String.valueOf(bw.getBytesOut() / 1000000));
 			axes[4].addContent(ve6);
 			
 			if (!isRaw) {
@@ -125,12 +125,12 @@ public class BandwidthInfoService extends WebService {
 
 				// Add Max Messages
 				Element ve8 = (Element) ve.clone();
-				ve8.setText(String.valueOf(bw.getMaxMsgs()));
+				ve8.setText(String.valueOf(bw.getMaxMsgs() / 1000));
 				axes[6].addContent(ve8);
 
 				// Add Max Bytes
 				Element ve9 = (Element) ve.clone();
-				ve9.setText(String.valueOf(bw.getMaxBytes() / 1000));
+				ve9.setText(String.valueOf(bw.getMaxBytes() / 1000000));
 				axes[7].addContent(ve9);
 			}
 			
