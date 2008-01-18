@@ -154,7 +154,7 @@ public class RegisterCommand extends AbstractCommand {
 
 		// Determine if we do a uniqueness check
 		List okAddrs = (List) SystemData.getObject("registration.email.ok");
-		boolean checkAddr = (okAddrs != null) && (!okAddrs.contains(a.getEmail()));
+		boolean checkAddr = (okAddrs == null) || (!okAddrs.contains(a.getEmail()));
 		if (!checkAddr)
 			log.warn("Skipping address uniqueness checks for " + a.getEmail());
 		
