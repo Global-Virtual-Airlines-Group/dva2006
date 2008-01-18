@@ -1,21 +1,44 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
 <%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
 <%@ taglib uri="/WEB-INF/dva_view.tld" prefix="view" %>
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
-<c:if test="${!empty acarsPool}">
-<el:table className="view" pad="default" space="default">
-<tr class="title">
- <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
-</tr>
 <c:if test="${!empty acarsBW}">
+<content:sysdata var="swfPath" name="path.swf" />
+<el:table className="form" pad="default" space="default">
+<tr class="title caps">
+ <td colspan="2">ACARS SERVER BANDWIDTH USAGE</td>
+</tr>
 <tr>
- <td class="left" colspan="6">Bandwidth: <fmt:int value="${acarsBW.connections}" /> connections,
+ <td class="label">Last Minute</td>
+ <td class="data"><fmt:int value="${acarsBW.connections}" /> connections,
  <fmt:int value="${acarsBW.bytesIn}" /> bytes (<fmt:dec value="${acarsBW.bytesIn / 60}" /> bytes/sec) in,
  <fmt:int value="${acarsBW.bytesOut}" /> bytes (<fmt:dec value="${acarsBW.bytesOut / 60}" /> bytes/sec) out.
  <fmt:int value="${acarsBW.msgsIn}" /> msgs (<fmt:dec value="${acarsBW.msgsIn / 60}" /> msgs/sec) in,
  <fmt:int value="${acarsBW.msgsOut}" /> msgs (<fmt:dec value="${acarsBW.msgsOut / 60}" /> msgs/sec) out.</td>
 </tr>
+<tr>
+ <td class="label" valign="top">Bandwidth Graph</td>
+ <td class="data"><div id="flashcontent"><span class="bld">You need to upgrade your Flash Player.</span></div></td>
+</tr>
+</el:table>
+<script language="JavaScript" type="text/javascript">
+var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 225, '8', '#ffffff', 'high');
+so.addVariable('preloader_color', '#999999');
+so.addVariable('path', '/');
+so.addVariable('chart_id', 'linechart');
+so.addVariable('settings_file', escape('/${swfPath}/xml/allstats_settings.xml'));
+so.addVariable('data_file', escape('/bwstats.ws'));
+so.write('flashcontent');
+</script>
+
 </c:if>
+<c:if test="${!empty acarsPool}">
+<el:table className="view" pad="default" space="default">
+<tr class="title">
+ <td class="left caps" colspan="6">ACARS CONNECTION POOL INFORMATION - ${fn:sizeof(acarsPool)} CONNECTIONS</td>
+</tr>
+
 <!-- Table Header Bar-->
 <tr class="title">
  <td width="10%">ID</td>
@@ -51,7 +74,6 @@
 </c:forEach>
 </el:table>
 </c:if>
-
 <c:if test="${!empty acarsBans}">
 <el:table className="view" pad="default" space="default">
 <tr class="title">
@@ -84,7 +106,6 @@
 </c:forEach>
 </el:table>
 </c:if>
-
 <c:if test="${!empty workers}">
 <!-- ACARS Server Worker threads -->
 <el:table className="view" pad="default" space="default">
@@ -111,7 +132,6 @@
 </c:forEach>
 </el:table>
 </c:if>
-
 <c:if test="${!empty acarsCmdStats}">
 <!-- ACARS Server Command Statistics -->
 <el:table className="view" pad="default" space="default">
