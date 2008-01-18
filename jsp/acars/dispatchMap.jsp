@@ -143,6 +143,7 @@ var sidLine;
 var starLine;
 var routeLine;
 var aL;
+var findMrk;
 
 // Marker managers for navigation aids
 var mm_vor = new GMarkerManager(map);
