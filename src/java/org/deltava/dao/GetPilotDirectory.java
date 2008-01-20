@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to obtain user Directory information for Pilots.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -118,17 +118,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			_ps.setString(1, p.getFirstName());
 			_ps.setString(2, p.getLastName());
 			_ps.setString(3, p.getEmail());
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			Collection<Integer> results = new HashSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -152,17 +142,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 			prepareStatementWithoutLimits(sqlBuf.toString());
 			_ps.setInt(1, usr.getID());
 			_ps.setString(2, usr.getEmail());
-			
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			Collection<Integer> results = new HashSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -199,7 +179,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 	}
 
 	/**
-	 * Performs a soundex search on a Person's full name to detect possible matches. The soundex implementation is
+	 * Performs a soundex search on a Person's last name to detect possible matches. The soundex implementation is
 	 * dependent on the capabilities of the underlying database engine, and is not guaranteed to be consistent (or even
 	 * supported) across different database servers.
 	 * @param usr the Person to check for
@@ -210,9 +190,9 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) " + "AS SX FROM ");
+				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".PILOTS P WHERE (ID<>?)");
+		sqlBuf.append(".PILOTS WHERE (ID<>?)");
 
 		// If we're checking for an applicant, remove its PilotID
 		int appPilotID = 0;
@@ -227,23 +207,12 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, usr.getName());
+			_ps.setString(1, usr.getLastName());
 			_ps.setInt(2, usr.getID());
 			if (appPilotID > 0)
 				_ps.setInt(3, appPilotID);
 
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			Collection<Integer> results = new ArrayList<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -265,17 +234,7 @@ public class GetPilotDirectory extends PilotReadDAO implements PersonUniquenessD
 		try {
 			prepareStatement(sqlBuf.toString());
 			_ps.setString(1, doFragment ? "%" + fullName.toUpperCase() + "%" : fullName.toUpperCase());
-
-			// Execute the query
-			Collection<Integer> results = new ArrayList<Integer>();
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.cache.*;
 /**
  * A Data Acccess Object to read Pilots that have achieved certain accomplishments.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -97,17 +97,7 @@ public class GetPilotRecognition extends PilotReadDAO {
           _ps.setInt(4, Pilot.ACTIVE);
           _ps.setString(5, Ranks.RANK_FO);
           _ps.setInt(6, EquipmentType.EXAM_CAPT);
-          
-          // Execute the query
-          Collection<Integer> results = new LinkedHashSet<Integer>();
-          ResultSet rs = _ps.executeQuery();
-          while (rs.next())
-        	  results.add(new Integer(rs.getInt(1)));
-          
-          // Clean up
-          rs.close();
-          _ps.close();
-          return results;
+          return executeIDs();
        } catch (SQLException se) {
           throw new DAOException(se);
        }

@@ -306,19 +306,7 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			_ps.setString(2, p.getFirstName());
 			_ps.setString(3, p.getLastName());
 			_ps.setString(4, p.getEmail());
-
-			// Build result collection
-			Set<Integer> results = new HashSet<Integer>();
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
@@ -348,26 +336,14 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 			_ps.setString(2, addr);
 			_ps.setString(3, maskAddr);
 			_ps.setString(4, maskAddr);
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			Collection<Integer> results = new HashSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
 
 	/**
-	 * Performs a soundex search on a Person's full name to detect possible matches. The soundex implementation is
+	 * Performs a soundex search on a Person's last name to detect possible matches. The soundex implementation is
 	 * dependent on the capabilities of the underlying database engine, and is not guaranteed to be consistent (or even
 	 * supported) across different database servers.
 	 * @param usr the Person to check for
@@ -378,37 +354,38 @@ public class GetApplicant extends PilotDAO implements PersonUniquenessDAO {
 	public Collection<Integer> checkSoundex(Person usr, String dbName) throws DAOException {
 
 		// Build the SQL statement
-		StringBuilder sqlBuf = new StringBuilder(
-				"SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(CONCAT(FIRSTNAME, LASTNAME)) " + "AS SX FROM ");
+		StringBuilder sqlBuf = new StringBuilder("SELECT ID, SOUNDEX(?) AS TARGET, SOUNDEX(LASTNAME) AS SX FROM ");
 		sqlBuf.append(formatDBName(dbName));
-		sqlBuf.append(".APPLICANTS A WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
+		sqlBuf.append(".APPLICANTS WHERE (ID<>?) AND (STATUS<>?) HAVING ((LEFT(SX, LENGTH(TARGET))=TARGET) OR "
 				+ "(LEFT(TARGET, LENGTH(SX))=SX)) ORDER BY ID");
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setString(1, usr.getName());
+			_ps.setString(1, usr.getLastName());
 			_ps.setInt(2, usr.getID());
 			_ps.setInt(3, Applicant.REJECTED);
-
-			// Execute the query
-			ResultSet rs = _ps.executeQuery();
-
-			// Iterate through the results
-			Collection<Integer> results = new TreeSet<Integer>();
-			while (rs.next())
-				results.add(new Integer(rs.getInt(1)));
-
-			// Clean up and return
-			rs.close();
-			_ps.close();
-			return results;
+			return executeIDs();
 		} catch (SQLException se) {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Helper method to extract database ID data from the result set.
+	 */
+	private List<Integer> executeIDs() throws SQLException {
+		Collection<Integer> results = new LinkedHashSet<Integer>();
+		ResultSet rs = _ps.executeQuery();
+		while (rs.next())
+			results.add(new Integer(rs.getInt(1)));
+		
+		rs.close();
+		_ps.close();
+		return new ArrayList<Integer>(results);
+	}
 
 	/**
-	 * Helper method to extract data from the result set.
+	 * Helper method to extract appliacnt data from the result set.
 	 */
 	private List<Applicant> execute() throws SQLException {
 
