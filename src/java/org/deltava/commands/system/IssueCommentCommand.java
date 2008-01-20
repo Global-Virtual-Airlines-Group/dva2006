@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.system;
 
 import java.util.*;
@@ -17,7 +17,7 @@ import org.deltava.security.command.IssueAccessControl;
 /**
  * A web site command to save new Issue Comments.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -29,13 +29,14 @@ public class IssueCommentCommand extends AbstractCommand {
     * @throws CommandException if an unhandled error occurs
     */
    public void execute(CommandContext ctx) throws CommandException {
-
       try {
          Connection con = ctx.getConnection();
 
          // Load the Issue we are attempting to comment on
          GetIssue rdao = new GetIssue(con);
          Issue i = rdao.get(ctx.getID());
+         if (i == null)
+        	 throw notFoundException("Invalid Issue ID - " + ctx.getID());
 
          // Check our access level
          IssueAccessControl access = new IssueAccessControl(ctx, i);
@@ -47,16 +48,28 @@ public class IssueCommentCommand extends AbstractCommand {
          IssueComment ic = new IssueComment(ctx.getParameter("comment"));
          ic.setIssueID(i.getID());
          ic.setAuthorID(ctx.getUser().getID());
-
-         // Initialize the write DAO and write the comment
+         
+         // Start a transaction
+         ctx.startTX();
+         
+         // If the Issue is closed, reopen it
          SetIssue wdao = new SetIssue(con);
+         if (i.getStatus() != Issue.STATUS_OPEN) {
+        	 i.setStatus(Issue.STATUS_OPEN);
+        	 wdao.write(i);
+         }
+
+         // Write the comment
          wdao.writeComment(ic);
+         
+         // Commit
+         ctx.commitTX();
 
          // Check if we're sending this comment via e-mail
          boolean sendComment = Boolean.valueOf(ctx.getParameter("emailComment")).booleanValue();
          if (sendComment) {
             ctx.setAttribute("sendComment", Boolean.TRUE, REQUEST);
-            Set<Integer> pilotIDs = new HashSet<Integer>();
+            Collection<Integer> pilotIDs = new HashSet<Integer>();
             
             // Create and populate the message context
             MessageContext mctx = new MessageContext();
@@ -67,8 +80,8 @@ public class IssueCommentCommand extends AbstractCommand {
             // Check if we're sending to all commenters
             boolean sendAll = Boolean.valueOf(ctx.getParameter("emailAll")).booleanValue();
             if (sendAll) {
-            	for (Iterator ci = i.getComments().iterator(); ci.hasNext(); ) {
-            		IssueComment c = (IssueComment) ci.next();
+            	for (Iterator<IssueComment> ci = i.getComments().iterator(); ci.hasNext(); ) {
+            		IssueComment c = ci.next();
             		pilotIDs.add(new Integer(c.getAuthorID()));
             	}
             }
@@ -96,6 +109,7 @@ public class IssueCommentCommand extends AbstractCommand {
             mailer.send(pilots);
          }
       } catch (DAOException de) {
+    	  ctx.rollbackTX();
          throw new CommandException(de);
       } finally {
          ctx.release();
