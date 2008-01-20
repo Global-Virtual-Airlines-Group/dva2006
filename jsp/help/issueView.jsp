@@ -48,8 +48,8 @@ return ${access.canComment};
 <content:copyright visible="false" />
 <body onload="void initLinks()">
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/help/header.jspf" %> 
+<%@ include file="/jsp/help/sideMenu.jspf" %>
 <c:set var="author" value="${pilots[issue.authorID]}" scope="request" />
 
 <!-- Main Body Frame -->

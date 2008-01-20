@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.security.command;
 
 import org.deltava.beans.Person;
@@ -10,7 +10,7 @@ import org.deltava.security.SecurityContext;
 /**
  * An Access Controller for Help Desk Issues.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -61,7 +61,7 @@ public class HelpDeskAccessControl extends AccessControl {
 		if (!_i.getPublic() && !isMine && !isAdmin && !isHelpDesk)
 			throw new AccessControlException("Not Authorized");
 		
-		_canComment = (isMine && isOpen) || (_i.getPublic() && isOpen) || isHelpDesk || isAdmin;
+		_canComment = isMine || (_i.getPublic() && isOpen) || isHelpDesk || isAdmin;
 		_canUpdateStatus = isAdmin || isHelpDesk;
 		_canClose = _canUpdateStatus && (_i.getStatus() != Issue.CLOSED);
 		_canUpdateContent = isHR;

@@ -1516,6 +1516,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="hdissuefilter">
+		<name>Help Desk Issue Filter</name>
+		<class>org.deltava.commands.help.IssueFilterCommand</class>
+		<roles>HR,Instructor,Examiner,AcademyAdmin,PIREP,Examination,Signature</roles>
+	</command>
+
 	<command id="myhdissues">
 		<name>My Help Desk Issues</name>
 		<class>org.deltava.commands.help.MyIssueListCommand</class>

@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -16,7 +16,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to save Flight Academy Issue comments.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -74,15 +74,28 @@ public class IssueCommentCommand extends AbstractCommand {
             // Get the message template
             GetMessageTemplate mtdao = new GetMessageTemplate(con);
             mctx.setTemplate(mtdao.get("HDISSUECOMMENT"));
+            
+            // Start a transaction
+            ctx.startTX();
+            
+            // If the Issue is closed, reopen it
+            SetHelp iwdao = new SetHelp(con);
+            if (i.getStatus() == Issue.CLOSED) {
+            	i.setStatus(Issue.OPEN);
+            	iwdao.write(i);
+            }
 			
 			// Save the comment
-			SetHelp iwdao = new SetHelp(con);
 			iwdao.write(ic);
+			
+			// Commit
+			ctx.commitTX();
 			
 			// Load the recipients
 			GetPilot pdao = new GetPilot(con);
 			recipients = pdao.getByID(IDs, "PILOTS").values();
 		} catch (DAOException de) {
+			ctx.rollbackTX();
 			throw new CommandException(de);
 		} finally {
 			ctx.release();

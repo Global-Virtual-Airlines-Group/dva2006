@@ -27,8 +27,8 @@ return true;
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %>
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/help/header.jspf" %>
+<%@ include file="/jsp/help/sideMenu.jspf" %>
 
 <!-- Main Body Frame -->
 <content:region id="main">

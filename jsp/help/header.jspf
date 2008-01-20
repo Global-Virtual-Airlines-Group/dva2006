@@ -1,0 +1,10 @@
+<%@ taglib uri="/WEB-INF/dva_content.tld" prefix="content" %>
+<%@ taglib uri="/WEB-INF/dva_html.tld" prefix="el" %>
+<content:sysdata var="airlineName" name="airline.name" />
+<content:banner var="airlineBanner" />
+<!-- Header Frame -->
+<content:region id="header" cols="2" closeRow="true">
+<el:link url="/"><el:img className="header" src="${airlineBanner}" caption="${airlineName}" border="0" /></el:link>
+<h1 class="header caps"><content:airline /><br />
+HELP DESK</h1>
+</content:region>

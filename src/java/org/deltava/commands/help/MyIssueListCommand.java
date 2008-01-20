@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -11,8 +11,9 @@ import org.deltava.dao.*;
 import org.deltava.security.command.HelpDeskAccessControl;
 
 /**
+ * A Web Site Command to display a Pilot's Help Desk issues.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -24,6 +25,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		int myID = ctx.getUser().getID();
 
 		// Get the view start/end
 		ViewContext vc = initView(ctx);
@@ -34,7 +36,7 @@ public class MyIssueListCommand extends AbstractViewCommand {
 			GetHelp idao = new GetHelp(con);
 			idao.setQueryStart(vc.getStart());
 			idao.setQueryMax(vc.getCount());
-			Collection<Issue> results = idao.getByPilot(ctx.getUser().getID(), true);
+			Collection<Issue> results = idao.getByPilot(myID, myID, true);
 			vc.setResults(results);
 			
 			// Get Author IDs
@@ -46,11 +48,6 @@ public class MyIssueListCommand extends AbstractViewCommand {
 				IDs.add(new Integer(is.getLastCommentAuthorID()));
 			}
 
-			// Set creation access control
-			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
-			ac.validate();
-			ctx.setAttribute("access", ac, REQUEST);
-
 			// Load Pilot IDs
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
@@ -59,6 +56,11 @@ public class MyIssueListCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set creation access control
+		HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();

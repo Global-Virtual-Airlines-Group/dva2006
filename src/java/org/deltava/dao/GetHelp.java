@@ -68,13 +68,11 @@ public class GetHelp extends DAO {
 	 */
 	public Issue getIssue(int id) throws DAOException {
 		try {
-			setQueryMax(1);
-			prepareStatement("SELECT * FROM HELPDESK WHERE (ID=?)");
+			prepareStatementWithoutLimits("SELECT * FROM HELPDESK WHERE (ID=?) LIMIT 1");
 			_ps.setInt(1, id);
 
 			// Do the query and return the first result
 			List<Issue> results = executeIssue();
-			setQueryMax(0);
 			if (results.isEmpty())
 				return null;
 
@@ -117,14 +115,57 @@ public class GetHelp extends DAO {
 			throw new DAOException(se);
 		}
 	}
+	
+	/**
+	 * Returns all Help Desk Issue authors.
+	 * @return a Collection of Database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getAuthors() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT AUTHOR FROM HELPDESK");
+			Collection<Integer> results = new HashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Help Desk Issue assignees.
+	 * @return a Collection of Database IDs
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Integer> getAssignees() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT ASSIGNEDTO FROM HELPDESK WHERE (ASSIGNEDTO<>0)");
+			Collection<Integer> results = new HashSet<Integer>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(new Integer(rs.getInt(1)));
+			
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
 
 	/**
 	 * Returns all Help Desk Issues for a Pilot, or Public Issues.
-	 * @param id the Pilot's database ID
+	 * @param authorID the author's database ID
+	 * @param assigneeID the assignee's database ID
 	 * @return a Collection of Issue beans
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public Collection<Issue> getByPilot(int id, boolean showPublic) throws DAOException {
+	public Collection<Issue> getByPilot(int authorID, int assigneeID, boolean showPublic) throws DAOException {
 
 		// Build the SQL statement
 		StringBuilder sqlBuf = new StringBuilder("SELECT I.*, COUNT(IC.ID), MAX(IC.CREATED_ON), (SELECT AUTHOR "
@@ -138,8 +179,8 @@ public class GetHelp extends DAO {
 
 		try {
 			prepareStatement(sqlBuf.toString());
-			_ps.setInt(1, id);
-			_ps.setInt(2, id);
+			_ps.setInt(1, authorID);
+			_ps.setInt(2, assigneeID);
 			if (showPublic)
 				_ps.setBoolean(3, true);
 

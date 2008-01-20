@@ -1,4 +1,4 @@
-// Copyright 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.RoleUtils;
 /**
  * A Web Site Command to display the Help Desk.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -29,12 +29,13 @@ public class HelpDeskCommand extends AbstractCommand {
      * @throws CommandException if an unhandled error occurs
      */
 	public void execute(CommandContext ctx) throws CommandException {
+		int myID = ctx.getUser().getID();
 		try {
 			Connection con = ctx.getConnection();
 			
 			// Get the DAO and my issue list
 			GetHelp idao = new GetHelp(con);
-			Collection<Issue> myIssues = idao.getByPilot(ctx.getUser().getID(), false); 
+			Collection<Issue> myIssues = idao.getByPilot(myID, myID, false); 
 			for (Iterator<Issue> i = myIssues.iterator(); i.hasNext(); ) {
 				Issue is = i.next();
 				if (is.getStatus() == Issue.CLOSED)
@@ -44,7 +45,7 @@ public class HelpDeskCommand extends AbstractCommand {
 			// Add Active issues
 			Collection<Issue> allIssues = new HashSet<Issue>(myIssues);
 			if (RoleUtils.hasAccess(ctx.getRoles(), ADMIN_ROLES)) {
-				idao.setQueryMax(20);
+				idao.setQueryMax(30);
 				Collection<Issue> activeIssues = idao.getActive();
 				allIssues.addAll(activeIssues);
 				ctx.setAttribute("activeIssues", activeIssues, REQUEST);

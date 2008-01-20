@@ -50,11 +50,6 @@ public class IssueListCommand extends AbstractViewCommand {
 				IDs.add(new Integer(is.getLastCommentAuthorID()));
 			}
 			
-			// Set creation access control
-			HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
-			ac.validate();
-			ctx.setAttribute("access", ac, REQUEST);
-
 			// Load Pilot IDs
 			GetPilot pdao = new GetPilot(con);
 			ctx.setAttribute("pilots", pdao.getByID(IDs, "PILOTS"), REQUEST);
@@ -63,6 +58,11 @@ public class IssueListCommand extends AbstractViewCommand {
 		} finally {
 			ctx.release();
 		}
+		
+		// Set creation access control
+		HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
+		ac.validate();
+		ctx.setAttribute("access", ac, REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
