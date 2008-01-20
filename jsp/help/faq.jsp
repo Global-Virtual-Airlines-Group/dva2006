@@ -18,8 +18,8 @@
 <content:copyright visible="false" />
 <body>
 <content:page>
-<%@ include file="/jsp/main/header.jspf" %> 
-<%@ include file="/jsp/main/sideMenu.jspf" %>
+<%@ include file="/jsp/help/header.jspf" %> 
+<%@ include file="/jsp/help/sideMenu.jspf" %>
 <content:filter roles="HR"><c:set var="isHR" value="${true}" scope="request" /></content:filter>
 
 <!-- Main Body Frame -->
