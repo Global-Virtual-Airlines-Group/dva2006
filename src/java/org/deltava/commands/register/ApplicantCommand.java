@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.register;
 
 import java.net.*;
@@ -21,7 +21,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command for processing Applicant Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -83,6 +83,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 			try {
 				a.setLegacyHours(Double.parseDouble(ctx.getParameter("legacyHours")));
 			} catch (NumberFormatException nfe) {
+				a.setLegacyHours(0.0);
 			}
 
 			// Set Notification Options
@@ -307,8 +308,11 @@ public class ApplicantCommand extends AbstractFormCommand {
 		}
 		
 		// Save the persons in the request
-		Collection<Person> users = new TreeSet<Person>(new PersonComparator<Person>(PersonComparator.CREATED));
-		users.addAll(persons.values());
+		List<Person> users = new ArrayList<Person>(persons.values());
+		Collections.sort(users, new PersonComparator<Person>(PersonComparator.CREATED));
+		if (users.size() > 25)
+			users.subList(0, users.size() - 25).clear();
+		
 		ctx.setAttribute("netmaskUsers", users, REQUEST);
 		return udmap;
 	}
@@ -323,7 +327,7 @@ public class ApplicantCommand extends AbstractFormCommand {
 		GetPilotDirectory pdao = new GetPilotDirectory(c);
 
 		// Do a soundex check on the applicant against each database
-		Collection<Integer> soundexIDs = new HashSet<Integer>();
+		Collection<Integer> soundexIDs = new LinkedHashSet<Integer>();
 		Collection airlines = ((Map) SystemData.getObject("apps")).values();
 		for (Iterator i = airlines.iterator(); i.hasNext();) {
 			AirlineInformation info = (AirlineInformation) i.next();
@@ -344,11 +348,10 @@ public class ApplicantCommand extends AbstractFormCommand {
 		for (Iterator<String> i = udmap.getTableNames().iterator(); i.hasNext();) {
 			String tableName = i.next();
 			Collection<UserData> IDs = udmap.getByTable(tableName);
-			if (UserDataMap.isPilotTable(tableName)) {
+			if (UserDataMap.isPilotTable(tableName))
 				persons.putAll(pdao.getByID(IDs, tableName));
-			} else {
+			else
 				persons.putAll(dao.getByID(IDs, tableName));
-			}
 		}
 
 		// Filter out applicants where the pilot already matches
