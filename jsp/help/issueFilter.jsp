@@ -10,9 +10,17 @@
 <head>
 <title><content:airline /> Help Desk</title>
 <content:css name="main" browserSpecific="true" />
+<content:css name="form" />
 <content:css name="view" />
 <content:js name="common" />
 <content:pics />
+<script language="JavaScript" type="text/javascript">
+function update(combo)
+{
+self.location = '/hdissuefilter.do?op=${param.op}&id=' + combo.options[combo.selectedIndex].value;
+return true;
+}
+</script>
 </head>
 <content:copyright visible="false" />
 <body>
@@ -22,9 +30,12 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
+<el:form action="hdissuefilter.do" method="post" validate="return false">
 <view:table className="view" space="default" pad="default" cmd="hdissues">
 <tr class="title">
- <td colspan="6" class="left caps"><content:airline /> HELP DESK</td>
+ <td colspan="3" class="left caps"><content:airline /> HELP DESK</td>
+ <td colspan="3" class="right">FILTER BY ${isAuthor ? 'AUTHOR' : 'ASSIGNEE'}
+ <el:combo name="id" idx="*" size="1" options="${authors}" firstEntry="-" value="${param.id}" onChange="void update(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->
@@ -65,6 +76,8 @@
 <view:legend width="95" labels="Open,Assigned,Resolved,FAQ Entry" classes=" ,opt2,opt1,opt3" /></td>
 </tr>
 </view:table>
+</el:form>
+<br />
 <content:copyright />
 </content:region>
 </content:page>
