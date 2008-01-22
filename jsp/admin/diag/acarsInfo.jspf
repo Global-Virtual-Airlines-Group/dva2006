@@ -67,9 +67,10 @@ so.write('flashcontent');
  <td class="sec bld">${con.flightInfo.flightCode}</td>
 </c:otherwise>
 </c:choose>
- <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
-<fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> writes per message, 
-<fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> average bytes per write</td>
+ <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferReads}" /> reads, 
+<fmt:dec value="${con.bytesIn / con.bufferReads}" fmt="###0.0" /> bytes / read, 
+<fmt:int value="${con.bufferWrites}" /> writes, <fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> 
+writes / message, <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> bytes / write</td>
 </view:row>
 </c:forEach>
 </el:table>
