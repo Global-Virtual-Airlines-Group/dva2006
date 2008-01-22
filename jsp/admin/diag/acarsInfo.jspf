@@ -27,7 +27,7 @@ var so = new SWFObject('/${swfPath}/amline.swf', 'linechart', '100%', 225, '8', 
 so.addVariable('preloader_color', '#999999');
 so.addVariable('path', '/');
 so.addVariable('chart_id', 'linechart');
-so.addVariable('settings_file', escape('/${swfPath}/xml/allstats_settings.xml'));
+so.addVariable('settings_file', escape('/${swfPath}/xml/bwstats_settings.xml'));
 so.addVariable('data_file', escape('/bwstats.ws'));
 so.write('flashcontent');
 </script>
@@ -50,14 +50,14 @@ so.write('flashcontent');
 
 <!-- Table Connection Data -->
 <c:forEach var="con" items="${acarsPool}">
-<tr>
+<view:row entry="${con}">
  <td class="priB"><fmt:hex value="${con.ID}" /></td>
  <td class="pri bld"><el:cmd url="profile" link="${con.user}">${con.user.name}</el:cmd></td>
  <td class="small">${con.remoteAddr} (${con.remoteHost})</td>
  <td><fmt:int value="${con.msgsIn}" /> in, <fmt:int value="${con.msgsOut}" /> out</td>
  <td class="small"><fmt:int value="${con.bytesIn}" /> in, <fmt:int value="${con.bytesOut}" /> out</td>
-</tr>
-<tr>
+</view:row>
+<view:row entry="${con}">
  <td class="small">Build <fmt:int value="${con.clientBuild}" /><c:if test="${con.beta > 0}"> (b${con.beta})</c:if></td>
 <c:choose>
 <c:when test="${empty con.flightInfo || empty con.flightInfo.flightCode}">
@@ -70,7 +70,7 @@ so.write('flashcontent');
  <td colspan="4" class="small">Buffer: <fmt:int value="${con.bufferWrites}" /> writes, 
 <fmt:dec value="${con.bufferWrites / con.msgsOut}" fmt="#0.00" /> writes per message, 
 <fmt:dec value="${con.bytesOut / con.bufferWrites}" fmt="###0.0" /> average bytes per write</td>
-</tr>
+</view:row>
 </c:forEach>
 </el:table>
 </c:if>
