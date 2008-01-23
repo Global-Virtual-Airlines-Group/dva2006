@@ -65,6 +65,10 @@ return true;
  <td class="data"><el:text name="pilotName" idx="*" size="20" max="36" value="${param.pilotName}" /></td>
 </tr>
 <tr>
+ <td class="label">Last Post</td>
+ <td class="data">Within the previous <el:combo name="daysBack" idx="*" size="1" value="${param.daysBack}" options="${days}" /> days</td>
+</tr>
+<tr>
  <td class="label">&nbsp;</td>
  <td class="data"><el:box name="checkSubject" idx="*" value="true" label="Check Subjects as well as Message Body" checked="${param.checkSubject}" /><br />
 <el:box name="nameMatch" idx="*" value="true" label="Partial Pilot Name match" checked="${param.nameMatch}" /></td>

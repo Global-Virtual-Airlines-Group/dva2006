@@ -1,4 +1,4 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.cooler;
 
 import java.util.*;
@@ -6,7 +6,7 @@ import java.util.*;
 /**
  * A bean to store Water Cooler search criteria.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -14,11 +14,12 @@ public class SearchCriteria {
 
 	private String _searchStr;
 	private String _channel;
+	private Date _threadDate;
 	
 	private boolean _doSubject;
 	private boolean _doNameFragment;
 	
-	private Collection<Integer> _ids;
+	private final Collection<Integer> _ids = new LinkedHashSet<Integer>();
 	
 	/**
 	 * Creates a new search criteria bean.
@@ -27,17 +28,36 @@ public class SearchCriteria {
 	public SearchCriteria(String searchStr) {
 		super();
 		_searchStr = searchStr;
-		_ids = new HashSet<Integer>();
 	}
 
+	/**
+	 * Returns the channel to search in.
+	 * @return the channel name
+	 */
 	public String getChannel() {
 		return _channel;
 	}
 	
+	/**
+	 * Returns the earliest thread update date to include.
+	 * @return the minimum thread last update date/time
+	 */
+	public Date getMinimumDate() {
+		return _threadDate;
+	}
+	
+	/**
+	 * Returns the search string.
+	 * @return the search string
+	 */
 	public String getSearchTerm() {
 		return _searchStr;
 	}
 	
+	/**
+	 * Returns whether thread subjects should also be searched.
+	 * @return TRUE if subjects should be searched, otherwise FALSE
+	 */
 	public boolean getSearchSubject() {
 		return _doSubject;
 	}
@@ -60,6 +80,10 @@ public class SearchCriteria {
 	
 	public void setChannel(String c) {
 		_channel = c;
+	}
+	
+	public void setMinimumDate(Date dt) {
+		_threadDate = dt;
 	}
 	
 	public void setSearchSubject(boolean doSearch) {
