@@ -109,7 +109,7 @@ return true;
 <c:set var="postIdx" value="${postIdx + 1}" scope="request" />
 <c:set var="canEdit" value="${access.canEdit && (postIdx == postCount)}" scope="request" />
 <c:set var="contentWarn" value="${contentWarn || msg.contentWarning}" scope="request" />
-<tr>
+<tr id="post${msg.createdOn.time}">
  <td rowspan="2" class="postInfo small">
 <c:if test="${isPilot}">
  <el:profile location="${pilotLoc}">${pilot.name}</el:profile><br />
