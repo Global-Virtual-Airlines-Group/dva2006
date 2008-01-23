@@ -34,6 +34,7 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    private int _msgsOut;
    private long _bytesIn;
    private long _bytesOut;
+   private int _bufferReads;
    private int _bufferWrites;
    
    private FlightInfo _fInfo;
@@ -185,6 +186,14 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    public long getBytesOut() {
 	 return _bytesOut;  
    }
+
+   /**
+    * Returns the number of input I/O buffer reads completed by the server.
+    * @return the number of reads
+    */
+   public int getBufferReads() {
+	   return _bufferReads;
+   }
    
    /**
     * Returns the number of output I/O buffer writes completed by the server.
@@ -277,9 +286,18 @@ public class ConnectionEntry implements java.io.Serializable, ACARSLogEntry {
    public void setRemoteHost(String host) {
       _remoteHost = host;
    }
+
+   /**
+    * Updates the number of network I/O buffer reads for this connection.
+    * @param reads the number of reads
+    * @see ConnectionEntry#getBufferReads()
+    */
+   public void setBufferReads(int reads) {
+	   _bufferReads = reads;
+   }
    
    /**
-    * Updates the number of network I/O buffer writes
+    * Updates the number of network I/O buffer writes for this connection.
     * @param writes the number of writes
     * @see ConnectionEntry#getBufferWrites()
     */
