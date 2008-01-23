@@ -249,8 +249,6 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public ThreadNotifications getNotifications(int id) throws DAOException {
-
-		// Build the result bean
 		ThreadNotifications result = new ThreadNotifications(id);
 		try {
 			prepareStatementWithoutLimits("SELECT USER_ID FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?)");
@@ -286,7 +284,7 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		
 		// Check for text / subject search
 		if (hasQuery) {
-			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (? WITH QUERY EXPANSION))  ");
+			buf.append("AND ((MATCH(SIDX.MSGBODY) AGAINST (?))  ");
 			if (criteria.getSearchSubject())
 				buf.append("OR (LOCATE(?, T.SUBJECT) > 0)) ");
 			else
@@ -296,6 +294,8 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 		// Add channel/author criteria
 		if (!Channel.ALL.equals(criteria.getChannel()))
 			buf.append("AND (T.CHANNEL=?) ");
+		if (criteria.getMinimumDate() != null)
+			buf.append("AND (T.LASTUPDATE > ?)");
 		if (!CollectionUtils.isEmpty(criteria.getIDs())) {
 			buf.append("AND (T.AUTHOR IN (");
 			buf.append(StringUtils.listConcat(criteria.getIDs(), ","));
@@ -316,6 +316,8 @@ public class GetCoolerThreads extends CoolerThreadDAO {
 			
 			if (!Channel.ALL.equals(criteria.getChannel()))
 				_ps.setString(++psOfs, criteria.getChannel());
+			if (criteria.getMinimumDate() != null)
+				_ps.setTimestamp(++psOfs, createTimestamp(criteria.getMinimumDate()));
 			
 			// Get the thread IDs
 			return getByID(executeIDs());

@@ -1,11 +1,10 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.cooler;
 
 import java.util.*;
 import java.sql.Connection;
 
-import org.deltava.beans.Person;
-import org.deltava.beans.UserDataMap;
+import org.deltava.beans.*;
 import org.deltava.beans.cooler.*;
 import org.deltava.commands.*;
 
@@ -13,17 +12,19 @@ import org.deltava.dao.*;
 
 import org.deltava.security.command.CoolerThreadAccessControl;
 
-import org.deltava.util.StringUtils;
+import org.deltava.util.*;
 import org.deltava.util.system.SystemData;
 
 /**
  * A Web Site Command to search the Water Cooler.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class CoolerSearchCommand extends AbstractViewCommand {
+	
+	private Collection<String> DAY_OPTS = Arrays.asList("15", "30", "60", "90", "180", "365", "720");
 
 	/**
 	 * Executes the command.
@@ -32,19 +33,19 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
 
-		// Get the command result
+		// Save days option
+		ctx.setAttribute("days", DAY_OPTS, REQUEST);
+		
+		// Get the command result and view context
 		CommandResult result = ctx.getResult();
-
-		// Get/set start/count parameters and channel name
 		ViewContext vc = initView(ctx);
-
 		try {
 			Connection con = ctx.getConnection();
 
 			// Get the channel names
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")), ctx
-					.getRoles()), REQUEST);
+			ctx.setAttribute("channels", cdao.getChannels(SystemData.getApp(SystemData.get("airline.code")),
+					ctx.getRoles()), REQUEST);
 
 			// Check if we're doing a GET, and redirect to the results JSP
 			if (ctx.getParameter("searchStr") == null) {
@@ -53,12 +54,17 @@ public class CoolerSearchCommand extends AbstractViewCommand {
 				result.setSuccess(true);
 				return;
 			}
+			
+			// Get last update date
+			int daysBack = StringUtils.parse(ctx.getParameter("daysBack"), 90);
+			Date lud = CalendarUtils.getInstance(null, false, daysBack * -1).getTime();
 
 			// Build the search criteria
 			SearchCriteria criteria = new SearchCriteria(ctx.getParameter("searchStr"));
 			criteria.setChannel(ctx.getParameter("channel"));
 			criteria.setSearchSubject(Boolean.valueOf(ctx.getParameter("checkSubject")).booleanValue());
 			criteria.setSearchNameFragment(Boolean.valueOf(ctx.getParameter("nameMatch")).booleanValue());
+			criteria.setMinimumDate(lud);
 
 			// If we're doing a Pilot name search, start that first
 			GetPilotDirectory pdao = new GetPilotDirectory(con);
