@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.main;
 
 import java.util.*;
@@ -22,7 +22,7 @@ import org.gvagroup.common.SharedData;
 /**
  * A Web Site Command to display the home page.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -83,7 +83,7 @@ public class HomeCommand extends AbstractCommand {
 
 		// Check if ACARS has anyone connected
 		ACARSAdminInfo acarsPool = (ACARSAdminInfo) SharedData.get(SharedData.ACARS_POOL);
-		if ((acarsPool == null) || acarsPool.isEmpty()) {
+		if ((acarsPool == null) || (acarsPool.size() == 0)) {
 			ctx.setAttribute("noACARSUsers", Boolean.TRUE, REQUEST);
 			cList.remove(Integer.valueOf(ACARS_USERS));
 		}
