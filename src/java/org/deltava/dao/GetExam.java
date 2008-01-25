@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -13,7 +13,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Acces Object for loading Examination/Check Ride data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -199,15 +199,25 @@ public class GetExam extends DAO {
 	 * @throws DAOException if a JDBC error occurs
 	 */
 	public Collection<CheckRide> getCheckRideQueue(boolean isAcademy) throws DAOException {
+		
+		// Build the SQL statement
+		StringBuilder sqlBuf = new StringBuilder("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, "
+				+ "CRR.COURSE FROM (exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN "
+				+ "exams.CHECKRIDE_FLIGHTS CF ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR "
+				+ "ON (CRR.CHECKRIDE=CR.ID) WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) AND ");
+		if (isAcademy)
+			sqlBuf.append("(CR.ACADEMY=?)");
+		else
+			sqlBuf.append("(EQ.AIRLINE=?)");
+		sqlBuf.append(" ORDER BY CR.CREATED");
+		
 		try {
-			prepareStatement("SELECT CR.*, CF.ACARS_ID, EQ.STAGE, EQ.AIRLINE, CRR.COURSE FROM "
-					+ "(exams.CHECKRIDES CR, common.EQPROGRAMS EQ) LEFT JOIN exams.CHECKRIDE_FLIGHTS CF "
-					+ "ON (CR.ID=CF.ID) LEFT JOIN exams.COURSERIDES CRR ON (CRR.CHECKRIDE=CR.ID) "
-					+ "WHERE (CR.EQTYPE=EQ.EQTYPE) AND (CR.STATUS=?) AND ((CR.ACADEMY=?) OR (EQ.AIRLINE=?)) "
-					+ "ORDER BY CR.CREATED");
+			prepareStatement(sqlBuf.toString());
 			_ps.setInt(1, Test.SUBMITTED);
-			_ps.setBoolean(2, isAcademy);
-			_ps.setString(3, SystemData.get("airline.code"));
+			if (isAcademy)
+				_ps.setBoolean(2, isAcademy);
+			else
+				_ps.setString(2, SystemData.get("airline.code"));
 			return executeCheckride();
 		} catch (SQLException se) {
 			throw new DAOException(se);
@@ -226,8 +236,6 @@ public class GetExam extends DAO {
 					+ "EP.AIRLINE FROM exams.EXAMS E, exams.EXAMQUESTIONS Q, exams.EXAMINFO EP WHERE (E.PILOT_ID=?) "
 					+ "AND (EP.NAME=E.NAME) AND (E.ID=Q.EXAM_ID) GROUP BY E.ID");
 			_ps.setInt(1, id);
-
-			// Execute the query
 			List<Test> results = new ArrayList<Test>(execute());
 
 			// Load Check Rides
