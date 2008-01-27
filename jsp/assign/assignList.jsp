@@ -46,10 +46,10 @@ return true;
 <view:table className="view" space="default" pad="default" cmd="assignments">
 <!-- Table Select Bar -->
 <tr class="title">
- <td colspan="2" class="left caps">FLIGHT ASSIGNMENTS</td>
- <td colspan="4" class="right"><el:cmd url="myassign">MY ASSIGNMENTS</el:cmd>&nbsp;|&nbsp;EQUIPMENT TYPE&nbsp;
-<el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void setEQType(this)" />
-&nbsp;|&nbsp;STATUS&nbsp;<el:combo name="status" idx="*" size="1" options="${statuses}" firstEntry="-" value="${param.status}" onChange="void setStatus(this)" /></td>
+ <td colspan="2" class="left caps"><content:airline /> FLIGHT ASSIGNMENTS</td>
+ <td colspan="4" class="right"><el:cmd url="findflight">FIND FLIGHTS</el:cmd>&nbsp;|&nbsp;<el:cmd url="myassign">MY ASSIGNMENTS</el:cmd>&nbsp;|
+&nbsp;EQUIPMENT <el:combo name="eqType" idx="*" size="1" options="${eqTypes}" firstEntry="-" value="${param.eqType}" onChange="void setEQType(this)" />
+&nbsp;|&nbsp;STATUS <el:combo name="status" idx="*" size="1" options="${statuses}" firstEntry="-" value="${param.status}" onChange="void setStatus(this)" /></td>
 </tr>
 
 <!-- Table Header Bar -->
