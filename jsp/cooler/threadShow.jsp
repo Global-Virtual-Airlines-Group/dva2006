@@ -102,7 +102,7 @@ return true;
 <c:set var="postIdx" value="${0}" scope="request" />
 <c:set var="contentWarn" value="${false}" scope="request" />
 <c:forEach var="msg" items="${thread.posts}">
-<!-- Response 0x${msg.hexID} -->
+<!-- Response ${msg.hexID} -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
@@ -357,5 +357,10 @@ notification each time a reply is posted in this Thread.
 </content:region>
 </content:page>
 <content:googleAnalytics />
+<c:if test="${!empty firstUnreadTime}">
+<script language="JavaScript" type="text/javascript">
+var postRow = getElement('post${firstUnreadTime.time}');
+postRow.scrollIntoView();
+</script></c:if>
 </body>
 </html>
