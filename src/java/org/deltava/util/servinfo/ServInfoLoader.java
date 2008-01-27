@@ -150,6 +150,6 @@ public class ServInfoLoader implements Runnable {
 		}
 
 		// Log status info
-		log.info("ServInfo load complete");
+		log.info(_network + " ServInfo load complete");
 	}
 }
