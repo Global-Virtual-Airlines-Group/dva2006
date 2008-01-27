@@ -44,6 +44,7 @@ public class ThreadCommand extends AbstractCommand {
 		boolean doEdit = "edit".equals(ctx.getCmdParameter(OPERATION, null));
 
 		// Get the default airline
+		MessageThread mt = null;
 		AirlineInformation airline = SystemData.getApp(SystemData.get("airline.code"));
 		try {
 			Connection con = ctx.getConnection();
@@ -58,21 +59,21 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Get the Message Thread
 			GetCoolerThreads tdao = new GetCoolerThreads(con);
-			MessageThread thread = tdao.getThread(ctx.getID());
-			if (thread == null)
+			mt = tdao.getThread(ctx.getID());
+			if (mt == null)
 				throw notFoundException("Unknown Message Thread - " + ctx.getID());
 
 			// Get the channel profile
 			GetCoolerChannels cdao = new GetCoolerChannels(con);
-			Channel c = cdao.get(thread.getChannel());
+			Channel c = cdao.get(mt.getChannel());
 			
 			// Load the poll options (if any)
 			GetCoolerPolls tpdao = new GetCoolerPolls(con);
-			thread.addOptions(tpdao.getOptions(thread.getID()));
-			thread.addVotes(tpdao.getVotes(thread.getID()));
-			if (!thread.getOptions().isEmpty()) {
+			mt.addOptions(tpdao.getOptions(mt.getID()));
+			mt.addVotes(tpdao.getVotes(mt.getID()));
+			if (!mt.getOptions().isEmpty()) {
 				int maxVotes = 0;
-				for (Iterator<PollOption> i = thread.getOptions().iterator(); i.hasNext(); ) {
+				for (Iterator<PollOption> i = mt.getOptions().iterator(); i.hasNext(); ) {
 					PollOption opt = i.next();
 					maxVotes = Math.max(maxVotes, opt.getVotes());
 				}
@@ -83,7 +84,7 @@ public class ThreadCommand extends AbstractCommand {
 
 			// Check user access
 			CoolerThreadAccessControl ac = new CoolerThreadAccessControl(ctx);
-			ac.updateContext(thread, c);
+			ac.updateContext(mt, c);
 			ac.validate();
 			if (!ac.getCanRead())
 				throw securityException("Cannot read Message Thread " + ctx.getID());
@@ -91,16 +92,16 @@ public class ThreadCommand extends AbstractCommand {
 			// Make sure we can edit the thread and save the last post content
 			doEdit &= ac.getCanEdit();
 			if (doEdit)
-				ctx.setAttribute("lastPost", thread.getLastPost(), REQUEST);
+				ctx.setAttribute("lastPost", mt.getLastPost(), REQUEST);
 
 			// If we have an image, load its metadata
-			if (thread.getImage() >= MIN_GALLERY_ID) {
+			if (mt.getImage() >= MIN_GALLERY_ID) {
 				// Figure out who started the thread, since the image will be in their gallery
-				UserData aUsrData = uddao.get(thread.getAuthorID());
+				UserData aUsrData = uddao.get(mt.getAuthorID());
 				String imgDB = (aUsrData == null) ? SystemData.get("airline.db") : aUsrData.getDB();
 
 				GetGallery irdao = new GetGallery(con);
-				Image img = irdao.getImageData(thread.getImage(), imgDB);
+				Image img = irdao.getImageData(mt.getImage(), imgDB);
 				ctx.setAttribute("img", img, REQUEST);
 				ctx.setAttribute("imgDB", imgDB, REQUEST);
 
@@ -108,23 +109,23 @@ public class ThreadCommand extends AbstractCommand {
 				GalleryAccessControl imgAccess = new GalleryAccessControl(ctx, img);
 				imgAccess.validate();
 				ctx.setAttribute("imgAccess", imgAccess, REQUEST);
-			} else if (thread.getImageURLs().isEmpty()) {
+			} else if (mt.getImageURLs().isEmpty()) {
 				GetCoolerLinks ldao = new GetCoolerLinks(con);
-				Collection<LinkedImage> imgURLs = ldao.getURLs(thread.getID());
+				Collection<LinkedImage> imgURLs = ldao.getURLs(mt.getID());
 				for (Iterator<LinkedImage> li = imgURLs.iterator(); li.hasNext(); )
-					thread.addImageURL(li.next());
+					mt.addImageURL(li.next());
 			}
 			
 			// Get the locations of the pilots writing updates
 			Collection<Integer> updateIDs = new HashSet<Integer>();
-			for (Iterator<ThreadUpdate> ui = thread.getUpdates().iterator(); ui.hasNext(); ) {
+			for (Iterator<ThreadUpdate> ui = mt.getUpdates().iterator(); ui.hasNext(); ) {
 				ThreadUpdate upd = ui.next();
 				updateIDs.add(new Integer(upd.getAuthorID()));
 			}
 
 			// Get the location of all the Pilots reporting/updating/posting in the thread and load all cross
-			updateIDs.addAll(thread.getReportIDs());
-			UserDataMap udm = uddao.getByThread(thread.getID());
+			updateIDs.addAll(mt.getReportIDs());
+			UserDataMap udm = uddao.getByThread(mt.getID());
 			Collection<Integer> xdbIDs = udm.getAllIDs();
 			xdbIDs.removeAll(udm.getIDs());
 			udm.putAll(uddao.get(xdbIDs));
@@ -199,15 +200,15 @@ public class ThreadCommand extends AbstractCommand {
 			}
 			
 			// Get the thread notifications
-			ThreadNotifications nt =  tdao.getNotifications(thread.getID());
+			ThreadNotifications nt =  tdao.getNotifications(mt.getID());
 			ctx.setAttribute("notify", nt, REQUEST);
 			if (ctx.isAuthenticated())
 				ctx.setAttribute("doNotify", Boolean.valueOf(nt.contains(ctx.getUser().getID())), REQUEST);
 
 			// Mark the thread as being read
 			SetCoolerMessage wdao = new SetCoolerMessage(con);
-			wdao.viewThread(thread.getID());
-			thread.view();
+			wdao.viewThread(mt.getID());
+			mt.view();
 
 			// Save all channels in the thread for the move combobox
 			if (ctx.isUserInRole("Moderator")) {
@@ -219,13 +220,13 @@ public class ThreadCommand extends AbstractCommand {
 			}
 			
 			// Save the sticky date
-			if (ctx.isUserInRole("Moderator") && (thread.getStickyUntil() != null)) {
+			if (ctx.isUserInRole("Moderator") && (mt.getStickyUntil() != null)) {
 				DateFormat df = new SimpleDateFormat(ctx.getUser().getDateFormat());
-				ctx.setAttribute("stickyDate", df.format(thread.getStickyUntil()), REQUEST);
+				ctx.setAttribute("stickyDate", df.format(mt.getStickyUntil()), REQUEST);
 			}
 
 			// Save the thread, pilots and access controller in the request
-			ctx.setAttribute("thread", thread, REQUEST);
+			ctx.setAttribute("thread", mt, REQUEST);
 			ctx.setAttribute("access", ac, REQUEST);
 			ctx.setAttribute("pilots", users, REQUEST);
 		} catch (DAOException de) {
@@ -241,6 +242,22 @@ public class ThreadCommand extends AbstractCommand {
 			if (threadIDs == null) {
 				threadIDs = new HashMap<Integer, Date>();
 				ctx.setAttribute(CommandContext.THREADREAD_ATTR_NAME, threadIDs, SESSION);
+			}
+			
+			// Determine the post to scroll to
+			Date cutoff = threadIDs.get(new Integer(ctx.getID()));
+			if (cutoff == null)
+				cutoff = (Date) ctx.getSession().getAttribute(CommandContext.THREADREADOV_ATTR_NAME);
+			if (cutoff == null)
+				cutoff = ctx.getUser().getLastLogoff();
+			
+			// Find the first unread post
+			for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
+				Message msg = i.next();
+				if (msg.getCreatedOn().after(cutoff)) {
+					ctx.setAttribute("firstUnreadTime", msg.getCreatedOn(), REQUEST);
+					break;
+				}
 			}
 			
 			// Add thread and save
