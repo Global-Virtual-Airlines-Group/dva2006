@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.taglib.view;
 
 import javax.servlet.jsp.tagext.TagSupport;
@@ -8,7 +8,7 @@ import org.deltava.commands.ViewContext;
 /**
  * A JSP tag to selectively display view table scroll tags.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -18,7 +18,7 @@ public class ScrollBarTag extends TagSupport {
 	private boolean _forceDisplay;
 
 	/**
-	 * Sets wether the tag body should be always included.
+	 * Sets whether the tag body should be always included.
 	 * @param doForce TRUE if the body should be always rendered, otherwise FALSE
 	 */
 	public void setForce(boolean doForce) {
@@ -26,7 +26,7 @@ public class ScrollBarTag extends TagSupport {
 	}
 
 	/**
-	 * Returns wether we are at the start of the view.
+	 * Returns whether we are at the start of the view.
 	 * @return TRUE if at the start of a view, otherwise FALSE
 	 * @see ScrollBarTag#hasView()
 	 */
@@ -35,7 +35,7 @@ public class ScrollBarTag extends TagSupport {
 	}
 
 	/**
-	 * Returns wether we are at the end of the view.
+	 * Returns whether we are at the end of the view.
 	 * @return TRUE if at the end of a view, otherwise FALSE
 	 * @see ScrollBarTag#hasView()
 	 */
@@ -44,11 +44,19 @@ public class ScrollBarTag extends TagSupport {
 	}
 
 	/**
-	 * Returns wether a view context is present in the requeust.
+	 * Returns whether a view context is present in the requeust.
 	 * @return TRUE if a view context is present, otherwise FALSE
 	 */
 	boolean hasView() {
 		return (_vctx != null);
+	}
+	
+	/**
+	 * Returns whether display of the scroll bar has been forced.
+	 * @return TRUE if the body should always be rendered
+	 */
+	boolean isForced() {
+		return _forceDisplay;
 	}
 
 	/**
@@ -60,7 +68,7 @@ public class ScrollBarTag extends TagSupport {
 	}
 
 	/**
-	 * Loads the view context from the page context, and determines wether to include the tag body. The tag body will
+	 * Loads the view context from the page context, and determines whether to include the tag body. The tag body will
 	 * only be included if the view context is present and we are not simaltaneously at the start and end of the view.
 	 * @return TagSupport.EVAL_BODY_INCLUDE or TagSupport.SKIP_BODY
 	 */
@@ -86,6 +94,7 @@ public class ScrollBarTag extends TagSupport {
 	 * Releases the tag's state variables.
 	 */
 	public void release() {
+		super.release();
 		_forceDisplay = false;
 	}
 }
