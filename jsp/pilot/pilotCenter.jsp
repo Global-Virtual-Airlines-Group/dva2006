@@ -304,7 +304,7 @@ partners currently serve.</td>
 including Standard Instrument Departure (SID) and Standard Terminal Arrival Route (STAR) data and waypoints.</td>
 </tr>
 <tr>
- <td class="mid"><el:cmd className="bld" url="assignments" linkID="open">Flight Assignments</el:cmd></td>
+ <td class="mid"><el:cmd className="bld" url="myassign">Flight Assignments</el:cmd></td>
  <td class="data">While <content:airline /> doesn't have a formal flight bidding system, we do have 
  'Flight Assigments': routes of 2 to 6 flight legs created by our staff as suggested routes to fly, or you
  can have our automated system <el:cmd url="findflight">randomly select flights</el:cmd> for you to fly.</td>
