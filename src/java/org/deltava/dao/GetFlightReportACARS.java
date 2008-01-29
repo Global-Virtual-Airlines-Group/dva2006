@@ -1,15 +1,15 @@
-// Copyright (c) 2005 Global Virtual Airline Group. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
 import java.util.List;
 
-import org.deltava.beans.FlightReport;
+import org.deltava.beans.*;
 
 /**
  * A Data Access Object to retrieve ACARS Flight Reports from the database.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -29,7 +29,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public final List<FlightReport> getByEvent(int id) throws DAOException {
+	public List<FlightReport> getByEvent(int id) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
 					+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE "
@@ -47,7 +47,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public final List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
+	public List<FlightReport> getByDate(java.util.Date dt) throws DAOException {
 		try {
 			prepareStatement("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM PILOTS P, "
 				+ "PIREPS PR, ACARS_PIREPS APR LEFT JOIN PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) "
@@ -66,7 +66,7 @@ public class GetFlightReportACARS extends GetFlightReports {
 	 * @return a List of FlightReports
 	 * @throws DAOException if a JDBC error occurs
 	 */
-	public final List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
+	public List<FlightReport> getByPilot(int id, String orderBy) throws DAOException {
 
 		// Build the statement
 		StringBuilder buf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, APR.* FROM "
@@ -80,6 +80,46 @@ public class GetFlightReportACARS extends GetFlightReports {
 		try {
 			prepareStatement(buf.toString());
 			_ps.setInt(1, id);
+			return execute();
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Checks for duplicate ACARS flight submissions.
+	 * @param dbName the database name
+	 * @param f the Flight information
+	 * @param pilotID the Pilot's database ID
+	 * @return a List of FlightReport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public List<FlightReport>  checkDupes(String dbName, Flight f, int pilotID) throws DAOException {
+		
+		// Build the SQL statement
+		dbName = formatDBName(dbName);
+		StringBuilder sqlBuf = new StringBuilder("SELECT P.FIRSTNAME, P.LASTNAME, PR.*, PC.COMMENTS, "
+			+ "APR.* FROM ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PILOTS P, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREPS PR, ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".ACARS_PIREPS APR LEFT JOIN ");
+		sqlBuf.append(dbName);
+		sqlBuf.append(".PIREP_COMMENT PC ON (APR.ID=PC.ID) WHERE (PR.ID=APR.ID) AND (PR.PILOT_ID=P.ID) "
+				+ "AND (P.ID=?) AND (PR.DATE=CURDATE()) AND (PR.AIRLINE=?) AND (PR.FLIGHT=?) AND (PR.LEG=?) "
+				+ "AND (PR.AIRPORT_D=?) AND (PR.AIRPORT_A=?) AND (PR.EQTYPE=?)");
+		
+		try {
+			prepareStatement(sqlBuf.toString());
+			_ps.setInt(1, pilotID);
+			_ps.setString(2, f.getAirline().getCode());
+			_ps.setInt(3, f.getFlightNumber());
+			_ps.setInt(4, f.getLeg());
+			_ps.setString(5, f.getAirportD().getIATA());
+			_ps.setString(6, f.getAirportA().getIATA());
+			_ps.setString(7, f.getEquipmentType());
 			return execute();
 		} catch (SQLException se) {
 			throw new DAOException(se);
