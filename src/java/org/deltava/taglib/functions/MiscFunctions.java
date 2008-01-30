@@ -42,7 +42,7 @@ public class MiscFunctions {
 	 * @throws IndexOutOfBoundsException if the index is out of range
 	 */
 	public static <T> T get(List<T> l, int idx) {
-		return l.get(idx);
+		return (l == null) ? null : l.get(idx);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class MiscFunctions {
 	 * @return TRUE if c is not null and c.contains(obj), otherwise FALSE
 	 * @see Collection#contains(Object)
 	 */
-	public static boolean contains(Collection c, Object obj) {
+	public static <T> boolean contains(Collection<T> c, T obj) {
 		return (c == null) ? false : c.contains(obj);
 	}
 

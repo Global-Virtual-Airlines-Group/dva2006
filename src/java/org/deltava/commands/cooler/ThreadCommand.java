@@ -236,7 +236,9 @@ public class ThreadCommand extends AbstractCommand {
 		}
 		
 		// Mark this thread as read
-		if (ctx.isAuthenticated()) {
+		if (ctx.isAuthenticated() && ctx.isUserInRole("Pilot")) {
+			Pilot p = (Pilot) ctx.getUser();
+			
 			@SuppressWarnings("unchecked")
 			Map<Integer, Date> threadIDs = (Map<Integer, Date>) ctx.getSession().getAttribute(CommandContext.THREADREAD_ATTR_NAME);
 			if (threadIDs == null) {
@@ -249,17 +251,28 @@ public class ThreadCommand extends AbstractCommand {
 			if (cutoff == null)
 				cutoff = (Date) ctx.getSession().getAttribute(CommandContext.THREADREADOV_ATTR_NAME);
 			if (cutoff == null)
-				cutoff = ctx.getUser().getLastLogoff();
+				cutoff = p.getLastLogoff();
 			
-			// Find the first unread post
-			if (mt.getPostCount() > 2) {
-				for (Iterator<Message> i = mt.getPosts().subList(2, mt.getPostCount()).iterator(); i.hasNext(); ) {
-					Message msg = i.next();
-					if (msg.getCreatedOn().after(cutoff)) {
+			// Save unread list
+			List<Boolean> unRead = new ArrayList<Boolean>(mt.getPostCount());
+			ctx.setAttribute("unread", unRead, REQUEST);
+			
+			// Find the first unread post if we've read some
+			boolean hasFirstUnread = false;
+			Message msg = mt.getPosts().get(0);
+			if (p.getShowNewPosts() && msg.getCreatedOn().before(cutoff)) {
+				for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
+					msg = i.next();
+					boolean isUnread = msg.getCreatedOn().after(cutoff);
+					unRead.add(Boolean.valueOf(isUnread));
+					if (isUnread && !hasFirstUnread) {
 						ctx.setAttribute("firstUnreadTime", msg.getCreatedOn(), REQUEST);
-						break;
+						hasFirstUnread = true;
 					}
 				}
+			} else {
+				for (int x = 0; x < mt.getPostCount(); x++)
+					unRead.add(Boolean.FALSE);
 			}
 			
 			// Add thread and save
