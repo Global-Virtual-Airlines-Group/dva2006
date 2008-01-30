@@ -104,6 +104,7 @@ return true;
 <c:forEach var="msg" items="${thread.posts}">
 <!-- Response ${msg.hexID} -->
 <c:set var="pilot" value="${pilots[msg.authorID]}" scope="request" />
+<c:set var="isUnread" value="${fn:get(unread, postIdx)}" scope="request" />
 <c:set var="isPilot" value="${fn:contains(pilot.roles, 'Pilot')}" scope="request" />
 <c:set var="pilotLoc" value="${userData[msg.authorID]}" scope="request" />
 <c:set var="postIdx" value="${postIdx + 1}" scope="request" />
@@ -204,7 +205,7 @@ Joined on <fmt:date d="MMMM dd yyyy" fmt="d" date="${pilot.createdOn}" /><br />
 <a href="aim:goim?screenname=${pilot.IMHandle['AOL']}"><img border="0" src="http://big.oscar.aol.com/${pilot.IMHandle['AOL']}?on_url=http://${serverName}/${imgPath}/im/aimonline.png&off_url=http://${serverName}/${imgPath}/im/aimoffline.png" alt="AIM Status" /></a>
 </c:if>
 </el:showaddr></td>
- <td class="postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
+ <td class="${isUnread ? 'unread_' : ''}postDate" colspan="${((access.canDelete && (postCount > 1)) || canEdit) ? '1' : '2'}">Post created on <fmt:date date="${msg.createdOn}" d="MMMM dd yyyy" />
 <content:filter roles="Moderator,HR">
  from ${msg.remoteAddr} (${msg.remoteHost}) <c:if test="${msg.contentWarning}"><span class="error bld">CONTENT WARNING</span></c:if>
 </content:filter></td>
