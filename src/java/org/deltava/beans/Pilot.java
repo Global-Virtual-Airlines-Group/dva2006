@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans;
 
 import java.util.*;
@@ -10,7 +10,7 @@ import org.deltava.util.cache.Cacheable;
 /**
  * A class for storing Pilot entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -82,6 +82,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	private boolean _showSigs;
 	private boolean _showSSThreads;
 	private boolean _showDefaultSignature;
+	private boolean _showNewPosts;
 	private boolean _noExams;
 	private boolean _noVoice;
 	private boolean _noCooler;
@@ -147,7 +148,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Returns wether the pilot will see Water Cooler signatures.
+	 * Returns whether the pilot will see Water Cooler signatures.
 	 * @return TRUE if the Pilot views signature images, otherwise FALSE
 	 * @see Pilot#setShowSignatures(boolean)
 	 */
@@ -156,12 +157,21 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Returns wether the Pilot will see Water Cooler screen shot message threads.
+	 * Returns whether the Pilot will see Water Cooler screen shot message threads.
 	 * @return TRUE if the Pilot sees screen shot threads, otherwise FALSE
 	 * @see Pilot#setShowSSThreads(boolean)
 	 */
 	public boolean getShowSSThreads() {
 		return _showSSThreads;
+	}
+	
+	/**
+	 * Returns whether new Water Cooler posts will be scrolled to.
+	 * @return TRUE if new posts are scrolled to, otherwise FALSE
+	 * @see Pilot#setShowNewPosts(boolean)
+	 */
+	public boolean getShowNewPosts() {
+		return _showNewPosts;
 	}
 
 	/**
@@ -194,7 +204,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Returns wether the Pilot has been locked out of the Voice server.
+	 * Returns whether the Pilot has been locked out of the Voice server.
 	 * @return TRUE if the Pilot has been locked out of the Voice server, otherwise FALSE
 	 * @see Pilot#setNoVoice(boolean)
 	 */
@@ -203,7 +213,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 	
 	/**
-	 * Returns wether the Pilot has been locked out of the Water Cooler.
+	 * Returns whether the Pilot has been locked out of the Water Cooler.
 	 * @return TRUE if the Pilot has been locked out of the Water Cooler, otherwise FALSE
 	 * @see Pilot#setNoCooler(boolean)
 	 */
@@ -383,7 +393,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Queries wether this Pilot is rated in a particular equipment type.
+	 * Queries whether this Pilot is rated in a particular equipment type.
 	 * @param eqType the name of the equipment type
 	 * @return TRUE if the Pilot is rated for this equipment type, otherwise FALSE
 	 */
@@ -433,7 +443,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Queries wether this Pilot is a member of a particular security role.
+	 * Queries whether this Pilot is a member of a particular security role.
 	 * @param roleName the name of the role
 	 * @return TRUE if the Pilot is a member of this role, otherwise FALSE
 	 */
@@ -462,9 +472,18 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	public void setShowSignatures(boolean showSigs) {
 		_showSigs = showSigs;
 	}
+	
+	/**
+	 * Updates whether new Water Cooler posts will be scrolled to.
+	 * @param newPosts TRUE if new posts are scrolled to, otherwise FALSE
+	 * @see Pilot#getShowNewPosts()
+	 */
+	public void setShowNewPosts(boolean newPosts) {
+		_showNewPosts = newPosts;
+	}
 
 	/**
-	 * Updates wether the Pilot is locked out of the ACARS server.
+	 * Updates whether the Pilot is locked out of the ACARS server.
 	 * @param code a valid ACARS restriction code
 	 * @throws IllegalArgumentException if code is negative or invalid
 	 * @see Pilot#getACARSRestriction()
@@ -478,7 +497,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Updates wether this Pilot is locked out from taking new Examinations.
+	 * Updates whether this Pilot is locked out from taking new Examinations.
 	 * @param noExams TRUE if the Testing Center is locked out, otherwise FALSE
 	 * @see Pilot#getNoExams()
 	 */
@@ -487,7 +506,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Updates wether the Pilot is locked out from the Voice server.
+	 * Updates whether the Pilot is locked out from the Voice server.
 	 * @param noVoice TRUE if the Pilot cannot access the voice server, otherwise FALSE
 	 * @see Pilot#getNoVoice()
 	 */
@@ -496,7 +515,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 	
 	/**
-	 * Updates wether the Pilot is locked out from the Water Cooler.
+	 * Updates whether the Pilot is locked out from the Water Cooler.
 	 * @param noCooler TRUE if the Pilot cannot access the Water Cooler, otherwise FALSE
 	 * @see Pilot#getNoCooler()
 	 */
@@ -505,7 +524,7 @@ public class Pilot extends Person implements Cacheable, ComboAlias {
 	}
 
 	/**
-	 * Updates wether this Pilot will see Water Cooler screen shot threads.
+	 * Updates whether this Pilot will see Water Cooler screen shot threads.
 	 * @param showThreads TRUE if screen show threads will be displayed, otherwise FALSE
 	 * @see Pilot#getShowSSThreads()
 	 */

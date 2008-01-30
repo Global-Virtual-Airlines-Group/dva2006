@@ -258,8 +258,8 @@ pixels, and the maximum file size is <fmt:int value="${sigSize}" /> bytes.</span
 <tr>
  <td class="label" valign="top">Display Options</td>
  <td colspan="${cspan}" class="data"><el:box name="showSigs" value="true" checked="${pilot.showSignatures}" label="Show ${forumName} Signature Images" /><br />
- <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" />
- </td>
+ <el:box name="showImageThreads" value="true" checked="${pilot.showSSThreads}" label="Show ${forumName} screen shot Message Threads" /><br />
+ <el:box name="scrollToNewPosts" value="true" checked="${pilot.showNewPosts}" label="Scroll to new ${forumName} Message Thread posts" /></td>
 </tr>
 
 <!-- Pilot Preferences -->
