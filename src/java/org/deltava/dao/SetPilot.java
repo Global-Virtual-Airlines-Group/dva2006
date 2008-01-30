@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -10,7 +10,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to support updating Pilot profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -63,10 +63,10 @@ public class SetPilot extends PilotWriteDAO {
 		sqlBuf.append(formatDBName(db));
 		sqlBuf.append(".PILOTS SET EMAIL=?, LOCATION=?, LEGACY_HOURS=?, HOME_AIRPORT=?, VATSIM_ID=?, "
 				+ "IVAO_ID=?, TZ=?, FILE_NOTIFY=?, EVENT_NOTIFY=?, NEWS_NOTIFY=?, PIREP_NOTIFY=?, SHOW_EMAIL=?, "
-				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, UISCHEME=?, DFORMAT=?, "
-				+ "TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, RANK=?, "
-				+ "EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, MOTTO=?, "
-				+ "FIRSTNAME=?, LASTNAME=? WHERE (ID=?)");
+				+ "SHOW_WC_SIG=?, SHOW_WC_SSHOTS=?, SHOW_DEF_SIG=?, SHOW_NEW_POSTS=?, UISCHEME=?, "
+				+ "DFORMAT=?, TFORMAT=?, NFORMAT=?, AIRPORTCODE=?, MAPTYPE=?, IMHANDLE=?, MSNHANDLE=?, "
+				+ "RANK=?, EQTYPE=?, STATUS=?, NOEXAMS=?, NOVOICE=?, NOCOOLER=?, ACARS_RESTRICT=?, UID=?, "
+				+ "MOTTO=?, FIRSTNAME=?, LASTNAME=? WHERE (ID=?) LIMIT 1");
 
 		// Invalidate the cache entry
 		invalidate(p);
@@ -90,26 +90,27 @@ public class SetPilot extends PilotWriteDAO {
 			_ps.setBoolean(13, p.getShowSignatures());
 			_ps.setBoolean(14, p.getShowSSThreads());
 			_ps.setBoolean(15, p.getHasDefaultSignature());
-			_ps.setString(16, p.getUIScheme());
-			_ps.setString(17, p.getDateFormat());
-			_ps.setString(18, p.getTimeFormat());
-			_ps.setString(19, p.getNumberFormat());
-			_ps.setInt(20, p.getAirportCodeType());
-			_ps.setInt(21, p.getMapType());
-			_ps.setString(22, p.getIMHandle(InstantMessage.AIM));
-			_ps.setString(23, p.getIMHandle(InstantMessage.MSN));
-			_ps.setString(24, p.getRank());
-			_ps.setString(25, p.getEquipmentType());
-			_ps.setInt(26, p.getStatus());
-			_ps.setBoolean(27, p.getNoExams());
-			_ps.setBoolean(28, p.getNoVoice());
-			_ps.setBoolean(29, p.getNoCooler());
-			_ps.setInt(30, p.getACARSRestriction());
-			_ps.setString(31, p.getLDAPName());
-			_ps.setString(32, p.getMotto());
-			_ps.setString(33, p.getFirstName());
-			_ps.setString(34, p.getLastName());
-			_ps.setInt(35, p.getID());
+			_ps.setBoolean(16, p.getShowNewPosts());
+			_ps.setString(17, p.getUIScheme());
+			_ps.setString(18, p.getDateFormat());
+			_ps.setString(19, p.getTimeFormat());
+			_ps.setString(20, p.getNumberFormat());
+			_ps.setInt(21, p.getAirportCodeType());
+			_ps.setInt(22, p.getMapType());
+			_ps.setString(23, p.getIMHandle(InstantMessage.AIM));
+			_ps.setString(24, p.getIMHandle(InstantMessage.MSN));
+			_ps.setString(25, p.getRank());
+			_ps.setString(26, p.getEquipmentType());
+			_ps.setInt(27, p.getStatus());
+			_ps.setBoolean(28, p.getNoExams());
+			_ps.setBoolean(29, p.getNoVoice());
+			_ps.setBoolean(30, p.getNoCooler());
+			_ps.setInt(31, p.getACARSRestriction());
+			_ps.setString(32, p.getLDAPName());
+			_ps.setString(33, p.getMotto());
+			_ps.setString(34, p.getFirstName());
+			_ps.setString(35, p.getLastName());
+			_ps.setInt(36, p.getID());
 			executeUpdate(1);
 
 			// Update the roles/ratings
@@ -117,7 +118,7 @@ public class SetPilot extends PilotWriteDAO {
 			writeRatings(p.getID(), p.getRatings(), db, true);
 			writeAlias(p.getID(), p.getLDAPName());
 
-			// Commit the changes and update the cache
+			// Commit the changes
 			commitTransaction();
 		} catch (SQLException se) {
 			rollbackTransaction();
@@ -187,8 +188,6 @@ public class SetPilot extends PilotWriteDAO {
 		} catch (SQLException se) {
 			rollbackTransaction();
 			throw new DAOException(se);
-		} finally {
-			setQueryMax(0);
 		}
 	}
 	
