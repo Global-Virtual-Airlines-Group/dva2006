@@ -252,11 +252,13 @@ public class ThreadCommand extends AbstractCommand {
 				cutoff = ctx.getUser().getLastLogoff();
 			
 			// Find the first unread post
-			for (Iterator<Message> i = mt.getPosts().iterator(); i.hasNext(); ) {
-				Message msg = i.next();
-				if (msg.getCreatedOn().after(cutoff)) {
-					ctx.setAttribute("firstUnreadTime", msg.getCreatedOn(), REQUEST);
-					break;
+			if (mt.getPostCount() > 2) {
+				for (Iterator<Message> i = mt.getPosts().subList(2, mt.getPostCount()).iterator(); i.hasNext(); ) {
+					Message msg = i.next();
+					if (msg.getCreatedOn().after(cutoff)) {
+						ctx.setAttribute("firstUnreadTime", msg.getCreatedOn(), REQUEST);
+						break;
+					}
 				}
 			}
 			

@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.pilot;
 
 import java.util.*;
@@ -26,7 +26,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to handle editing/saving Pilot Profiles.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -90,17 +90,17 @@ public class ProfileCommand extends AbstractFormCommand {
 			// Get Discussion Forum option checkboxes
 			p.setShowSignatures(Boolean.valueOf(ctx.getParameter("showSigs")).booleanValue());
 			p.setShowSSThreads(Boolean.valueOf(ctx.getParameter("showImageThreads")).booleanValue());
+			p.setShowNewPosts(Boolean.valueOf(ctx.getParameter("scrollToNewPosts")).booleanValue());
 			p.setHasDefaultSignature(Boolean.valueOf(ctx.getParameter("useDefaultSig")).booleanValue());
 
 			// Set Notification Options
 			Collection<String> notifyOpts = ctx.getParameters("notifyOption");
-			if (notifyOpts != null) {
+			if (notifyOpts != null)
 				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
 					p.setNotifyOption(Person.NOTIFY_CODES[x], notifyOpts.contains(Person.NOTIFY_CODES[x]));
-			} else {
+			else
 				for (int x = 0; x < Person.NOTIFY_CODES.length; x++)
 					p.setNotifyOption(Person.NOTIFY_CODES[x], false);
-			}
 
 			// Determine if we are changing the pilot's status
 			String newStatus = ctx.getParameter("status");
