@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -146,14 +146,16 @@ public class GetACARSRoute extends DAO {
 		while (rs.next()) {
 			RoutePlan rp = new RoutePlan(rs.getInt(1));
 			rp.setAuthorID(rs.getInt(2));
-			rp.setAirportD(SystemData.getAirport(rs.getString(3)));
-			rp.setAirportA(SystemData.getAirport(rs.getString(4)));
-			rp.setAirportL(SystemData.getAirport(rs.getString(5)));
-			rp.setCreatedOn(rs.getTimestamp(6));
-			rp.setUseCount(rs.getInt(7));
-			rp.setSID(rs.getString(8));
-			rp.setSTAR(rs.getString(9));
-			rp.setComments(rs.getString(10));
+			rp.setAirline(SystemData.getAirline(rs.getString(3)));
+			rp.setAirportD(SystemData.getAirport(rs.getString(4)));
+			rp.setAirportA(SystemData.getAirport(rs.getString(5)));
+			rp.setAirportL(SystemData.getAirport(rs.getString(6)));
+			rp.setCreatedOn(rs.getTimestamp(7));
+			rp.setUseCount(rs.getInt(8));
+			rp.setSID(rs.getString(9));
+			rp.setSTAR(rs.getString(10));
+			rp.setCruiseAltitude(rs.getString(11));
+			rp.setComments(rs.getString(12));
 			results.add(rp);
 		}
 		
