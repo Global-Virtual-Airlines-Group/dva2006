@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.acars;
 
 import java.util.*;
@@ -18,11 +18,13 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	
 	private int _authorID;
 	private Date _createdOn;
+	private Airline _a;
 	private Airport _airportD;
 	private Airport _airportA;
 	private Airport _airportL;
 	private String _sid;
 	private String _star;
+	private String _altitude;
 	private String _comments;
 	private int _useCount;
 	
@@ -55,6 +57,14 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public Date getCreatedOn() {
 		return _createdOn;
+	}
+	
+	/**
+	 * Returns the Airline for this Route.
+	 * @return the Airline
+	 */
+	public Airline getAirline() {
+		return _a;
 	}
 	
 	/**
@@ -95,6 +105,14 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public String getSTAR() {
 		return _star;
+	}
+	
+	/**
+	 * Returns the Cruise Altitude.
+	 * @return the altitude
+	 */
+	public String getCruiseAltitude() {
+		return _altitude;
 	}
 	
 	/**
@@ -164,6 +182,14 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	}
 	
 	/**
+	 * Updates the Airline.
+	 * @param a the Airline
+	 */
+	public void setAirline(Airline a) {
+		_a = a;
+	}
+	
+	/**
 	 * Updates the departure Airport.
 	 * @param a the Airport
 	 */
@@ -206,6 +232,14 @@ public class RoutePlan extends DatabaseBean implements AuthoredBean {
 	 */
 	public void setSTAR(String star) {
 		_star = star;
+	}
+	
+	/**
+	 * Updates the cruise altitude for this route.
+	 * @param alt the cruise altitude
+	 */
+	public void setCruiseAltitude(String alt) {
+		_altitude = alt;
 	}
 	
 	/**
