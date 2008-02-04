@@ -425,7 +425,7 @@ to withdraw this Transfer Request.</span></c:if></td>
  <td class="data">On <fmt:date fmt="d" date="${txreq.date}" />, you have requested additional equipment type
  ratings in the <span class="bld">${txreq.equipmentType}</span> program.<c:if test="${!empty checkRide}"> A
 ${checkRide.equipmentType} Check Ride was assigned on <fmt:date date="${checkRide.date}" fmt="d" />.</c:if>
-<c:if test="${txaccess.canDelete}"> <span class="small"> <el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
+<c:if test="${txAccess.canDelete}"> <span class="small"><el:cmd className="bld" url="txreqdelete" link="${txreq}">CLICK HERE</el:cmd> 
 to withdraw this Transfer Request.</span></c:if></td>
 </tr>
 </c:if>
