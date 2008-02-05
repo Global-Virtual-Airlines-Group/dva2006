@@ -1,4 +1,4 @@
-// Copyright 2005, 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.assign;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to save a Flight Assignment.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -27,11 +27,19 @@ public class AssignmentSaveCommand extends AbstractCommand {
     * @throws CommandException if an error (typically database) occurs
     */
    public void execute(CommandContext ctx) throws CommandException {
+	   
+	   // Get command results
+	   CommandResult result = ctx.getResult();
 
       // Check for the flight assignment
       AssignmentInfo info = (AssignmentInfo) ctx.getSession().getAttribute("buildAssign");
-      if (info == null)
-    	  throw notFoundException("Flight Assignment data not in session");
+      if (info == null) {
+    	  ctx.setMessage("Flight Assignment data not found - Session Timeout?");
+    	  result.setURL("/jsp/schedule/findAflight.jsp");
+          result.setType(CommandResult.REQREDIRECT);
+          result.setSuccess(true);
+          return;
+      }
 
       try {
           Connection con = ctx.getConnection();
@@ -77,7 +85,6 @@ public class AssignmentSaveCommand extends AbstractCommand {
       ctx.getSession().removeAttribute("fafCriteria");
 
       // Redirect to the update page
-      CommandResult result = ctx.getResult();
       result.setURL("/jsp/assign/assignUpdate.jsp");
       result.setType(CommandResult.REQREDIRECT);
       result.setSuccess(true);

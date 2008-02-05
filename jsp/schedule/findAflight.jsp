@@ -172,6 +172,11 @@ return true;
 </el:table>
 </el:form>
 </c:if>
+<c:if test="${!empty system_message}">
+<tr class="error caps bld">
+ <td colspan="5">${system_message}</td>
+</tr>
+</c:if>
 <c:if test="${!empty buildAssign}">
 <br />
 <el:table className="view" space="default" pad="default">
@@ -189,7 +194,7 @@ return true;
  <td>DURATION</td>
 </tr>
 
-<!-- Search Results -->
+<!-- Flighrt Assignment Legs -->
 <c:forEach var="flight" items="${buildAssign.flights}">
 <tr>
  <td class="pri bld">${flight.flightCode}</td>
