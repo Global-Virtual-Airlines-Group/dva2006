@@ -730,6 +730,12 @@
 		<roles>Pilot</roles>
 	</command>
 
+	<command id="notifyupdate">
+		<name>Update Water Cooler Notification List</name>
+		<class>org.deltava.commands.cooler.NotificationListUpdateCommand</class>
+		<roles>Pilot</roles>
+	</command>
+
 	<command id="notifyclear">
 		<name>Clear Thread Notification</name>
 		<class>org.deltava.commands.cooler.NotificationClearCommand</class>

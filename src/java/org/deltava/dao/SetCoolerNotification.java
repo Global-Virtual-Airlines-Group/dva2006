@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -6,7 +6,7 @@ import java.sql.*;
 /**
  * A Data Access Object to update Water Cooler thread notification entries.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -63,7 +63,7 @@ public class SetCoolerNotification extends DAO {
          prepareStatement("DELETE FROM common.COOLER_NOTIFY WHERE (THREAD_ID=?) AND (USER_ID=?)");
          _ps.setInt(1, threadID);
          _ps.setInt(2, userID);
-         executeUpdate(1);
+         executeUpdate(0);
       } catch (SQLException se) {
          throw new DAOException(se);
       }
