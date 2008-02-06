@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import org.deltava.beans.schedule.Airport;
@@ -6,7 +6,7 @@ import org.deltava.beans.schedule.Airport;
 /**
  * A bean to store SID/STAR data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -19,6 +19,7 @@ public class TerminalRoute extends Airway {
    
    private String _airport;
    private int _type;
+   private boolean _canPurge;
    
    private String _name;
    private String _transition;
@@ -67,6 +68,14 @@ public class TerminalRoute extends Airway {
    }
    
    /**
+    * Returns whether this route can be purged from the database.
+    * @return TRUE if it can be purged, otherwise FALSE
+    */
+   public boolean getCanPurge() {
+	   return _canPurge;
+   }
+   
+   /**
     * Returns the name of the transition waypoint.
     * @return the transition waypoint
     */
@@ -105,6 +114,14 @@ public class TerminalRoute extends Airway {
     */
    public void setName(String name) {
       _name = name.toUpperCase();
+   }
+   
+   /**
+    * Updates whether this route can be purged from the database.
+    * @param canPurge TRUE if the route can be purged, otherwise FALSE
+    */
+   public void setCanPurge(boolean canPurge) {
+	   _canPurge = canPurge;
    }
    
    /**

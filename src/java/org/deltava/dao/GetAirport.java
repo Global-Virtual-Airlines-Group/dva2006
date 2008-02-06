@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.util.*;
@@ -14,7 +14,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Data Access Object to load Airport data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -146,6 +146,28 @@ public class GetAirport extends DAO {
 				results.add(SystemData.getAirport(rs.getString(1)));
 				results.add(SystemData.getAirport(rs.getString(2)));
 			}
+			
+			// Clean up and return
+			rs.close();
+			_ps.close();
+			return results;
+		} catch (SQLException se) {
+			throw new DAOException(se);
+		}
+	}
+	
+	/**
+	 * Returns all Airports with Terminal Routes.
+	 * @return a Collection of Airport beans
+	 * @throws DAOException if a JDBC error occurs
+	 */
+	public Collection<Airport> getWithTerminalRoutes() throws DAOException {
+		try {
+			prepareStatementWithoutLimits("SELECT DISTINCT ICAO FROM common.SID_STAR");
+			Collection<Airport> results = new LinkedHashSet<Airport>();
+			ResultSet rs = _ps.executeQuery();
+			while (rs.next())
+				results.add(SystemData.getAirport(rs.getString(1)));
 			
 			// Clean up and return
 			rs.close();

@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.dao.DAOException;
 /**
  * A Web Site Command to search Naivgation Data.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -68,7 +68,7 @@ public class NavaidSearchCommand extends AbstractCommand {
       
       // Forward to the JSP
       CommandResult result = ctx.getResult();
-      result.setURL("/jsp/schedule/navaidInfo.jsp");
+      result.setURL("/jsp/navdata/navaidInfo.jsp");
       result.setSuccess(true);
    }
 }
