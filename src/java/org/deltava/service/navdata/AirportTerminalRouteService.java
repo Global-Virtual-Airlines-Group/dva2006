@@ -9,7 +9,7 @@ import static javax.servlet.http.HttpServletResponse.*;
 
 import org.jdom.*;
 
-import org.deltava.beans.navdata.TerminalRoute;
+import org.deltava.beans.navdata.*;
 import org.deltava.beans.schedule.Airport;
 
 import org.deltava.dao.*;
@@ -63,13 +63,31 @@ public class AirportTerminalRouteService extends WebService {
 		for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext(); ) {
 			TerminalRoute tr = i.next();
 			Element te = new Element("route");
+			te.setAttribute("type", tr.getTypeName());
+			te.setAttribute("id", tr.toString());
+			te.addContent(XMLUtils.createElement("name", tr.getName()));
+			te.addContent(XMLUtils.createElement("transition", tr.getTransition()));
+			te.addContent(XMLUtils.createElement("runway", tr.getRunway()));
+			Element twe = new Element("waypoints");
+			for (Iterator<NavigationDataBean> wi = tr.getWaypoints().iterator(); wi.hasNext(); ) {
+				NavigationDataBean nd = wi.next();
+				Element we = new Element("waypoint");
+				we.setAttribute("lat", df.format(nd.getLatitude()));
+				we.setAttribute("lng", df.format(nd.getLongitude()));
+				we.setAttribute("code", nd.getCode());
+				we.setAttribute("color", nd.getIconColor());
+				we.addContent(new CDATA(nd.getInfoBox()));
+				twe.addContent(we);
+			}
 			
+			te.addContent(twe);
 		}
 		
 		// Dump the XML to the output stream
 		try {
 			ctx.getResponse().setContentType("text/xml");
-			ctx.println(XMLUtils.format(doc, "ISO-8859-1"));
+			ctx.getResponse().setCharacterEncoding("UTF-8");
+			ctx.println(XMLUtils.format(doc, "UTF-8"));
 			ctx.commit();
 		} catch (IOException ie) {
 			throw error(SC_CONFLICT, "I/O Error");
