@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -21,7 +21,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import Navigation data in PSS format.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -49,7 +49,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
 		if (navData == null) {
-			result.setURL("/jsp/schedule/navDataImport.jsp");
+			result.setURL("/jsp/navdata/navDataImport.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -182,7 +182,7 @@ public class AIRACImportCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/schedule/navDataUpdate.jsp");
+		result.setURL("/jsp/navdata/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

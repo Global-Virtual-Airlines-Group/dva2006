@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -15,14 +15,14 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to load navigation route and airway data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class GetNavRoute extends GetNavData {
 	
-	private static final Cache<Route> _rCache = new AgingCache<Route>(512);
-	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(512); 
+	private static final Cache<Route> _rCache = new AgingCache<Route>(640);
+	private static final Cache<CacheableList<Airway>> _aCache = new AgingCache<CacheableList<Airway>>(640); 
 
 	private class CacheableRoute implements Route {
 
@@ -390,6 +390,7 @@ public class GetNavRoute extends GetNavData {
 			TerminalRoute tr2 = new TerminalRoute(rs.getString(1), rs.getString(3), rs.getInt(2));
 			tr2.setTransition(rs.getString(4));
 			tr2.setRunway(rs.getString(5));
+			tr2.setCanPurge(rs.getBoolean(10));
 			if ((tr == null) || (tr2.hashCode() != tr.hashCode())) {
 				results.add(tr2);
 				tr = tr2;

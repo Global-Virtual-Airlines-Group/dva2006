@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -20,7 +20,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A Web Site Command to import Terminal Routes in PSS format.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -47,7 +47,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
 		if (navData == null) {
-			result.setURL("/jsp/schedule/tRouteImport.jsp");
+			result.setURL("/jsp/navdata/tRouteImport.jsp");
 			result.setSuccess(true);
 			return;
 		}
@@ -156,7 +156,7 @@ public class TerminalRouteImportCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/schedule/navDataUpdate.jsp");
+		result.setURL("/jsp/navdata/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

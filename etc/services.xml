@@ -44,6 +44,10 @@
 	<service id="navaids" class="org.deltava.service.navdata.NavigationAidService" />
 	<service id="airways" class="org.deltava.service.navdata.AirwayService" />
 	<service id="sidstar" class="org.deltava.service.navdata.TerminalRouteService" />
+	<service id="navaidsearch" class="org.deltava.service.navdata.NavaidSearchService" />
+
+	<!-- SID/STAR updating -->
+	<service id="apsidstar" class="org.deltava.service.navdata.AirportTerminalRouteService" />
 
 	<!-- ACARS/Google Maps Services -->
 	<service id="acars_data" class="org.deltava.service.acars.FlightDataExportService" />

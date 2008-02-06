@@ -44,7 +44,7 @@ public class AirwayImportCommand extends AbstractCommand {
 		// If we're doing a GET, then redirect to the JSP
 		FileUpload navData = ctx.getFile("navData");
 		if (navData == null) {
-			result.setURL("/jsp/schedule/airwayImport.jsp");
+			result.setURL("/jsp/navdata/airwayImport.jsp");
 			result.setSuccess(true);
 			return;
 		}
