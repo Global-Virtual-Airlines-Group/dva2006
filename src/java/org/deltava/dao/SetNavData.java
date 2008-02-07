@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -11,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Data Access Object to update Navigation data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -123,12 +123,13 @@ public class SetNavData extends DAO {
 	public void writeRoute(TerminalRoute tr) throws DAOException {
 	   try {
 	      prepareStatement("INSERT INTO common.SID_STAR (ICAO, TYPE, NAME, TRANSITION, RUNWAY, SEQ, WAYPOINT, "
-	    		  + "LATITUDE, LONGITUDE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+	    		  + "LATITUDE, LONGITUDE, CAN_PURGE) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 	      _ps.setString(1, tr.getICAO());
 	      _ps.setInt(2, tr.getType());
 	      _ps.setString(3, tr.getName());
 	      _ps.setString(4, tr.getTransition());
 	      _ps.setString(5, tr.getRunway());
+	      _ps.setBoolean(10, tr.getCanPurge());
 	      
 	      // Write the waypoints
 	      for (Iterator<NavigationDataBean> i = tr.getWaypoints().iterator(); i.hasNext(); ) {

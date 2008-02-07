@@ -40,6 +40,7 @@ public class AirportTerminalRouteService extends WebService {
 		if (a == null)
 			throw error(SC_NOT_FOUND, "Unknown Airport - " + ctx.getParameter("airport"));
 
+		final NumberFormat df = new DecimalFormat("#0.000000");
 		Collection<TerminalRoute> routes = new ArrayList<TerminalRoute>();
 		try {
 			GetNavRoute dao = new GetNavRoute(ctx.getConnection());
@@ -54,12 +55,19 @@ public class AirportTerminalRouteService extends WebService {
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("routes");
-		re.setAttribute("icao", a.getICAO());
-		re.setAttribute("iata", a.getIATA());
 		doc.setRootElement(re);
 		
+		// Generate the airport
+		Element ae = new Element("airport");
+		ae.setAttribute("icao", a.getICAO());
+		ae.setAttribute("iata", a.getIATA());
+		ae.setAttribute("lat", df.format(a.getLatitude()));
+		ae.setAttribute("lng", df.format(a.getLongitude()));
+		ae.setAttribute("color", a.getIconColor());
+		ae.addContent(new CDATA(a.getInfoBox()));
+		re.addContent(ae);
+		
 		// Format routes
-		final NumberFormat df = new DecimalFormat("#0.000000");
 		for (Iterator<TerminalRoute> i = routes.iterator(); i.hasNext(); ) {
 			TerminalRoute tr = i.next();
 			Element te = new Element("route");
