@@ -55,6 +55,7 @@ public class AirportTerminalRouteService extends WebService {
 		// Generate the XML document
 		Document doc = new Document();
 		Element re = new Element("routes");
+		re.setAttribute("icao", a.getICAO());
 		doc.setRootElement(re);
 		
 		// Generate the airport
@@ -89,6 +90,7 @@ public class AirportTerminalRouteService extends WebService {
 			}
 			
 			te.addContent(twe);
+			re.addContent(te);
 		}
 		
 		// Dump the XML to the output stream

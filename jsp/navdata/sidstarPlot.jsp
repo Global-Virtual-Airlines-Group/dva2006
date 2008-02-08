@@ -12,98 +12,34 @@
 <content:css name="form" />
 <content:pics />
 <content:js name="common" />
-<content:js name="googleMaps" />
 <map:api version="2" />
+<content:js name="markermanager" />
+<content:js name="googleMaps" />
+<content:js name="sidstarPlot" />
 <map:vml-ie />
 <content:sysdata var="imgPath" name="path.img" />
 <content:getCookie name="acarsMapType" default="map" var="gMapType" />
 <script language="JavaScript" type="text/javascript">
-function getRoutes(combo)
+document.imgPath = '${imgPath}';
+
+function clickIcon()
 {
-// Build the XML Requester
-var d = new Date();
-var xmlreq = GXmlHttp.create();
-xmlreq.open("GET", "apsidstar.ws?time=" + d.getTime(), true);
-xmlreq.onreadystatechange = function() {
-	if (xmlreq.readyState != 4) return false;
-	removeMarkers(map, 'routeWaypoints');
-	removeMarkers(map, 'apMarker');
-	removeMarkers(map, 'routeTrack');
-	var cbo = document.forms[0].route;
-	cbo.selectedIndex = 0;
-	cbo.options.length = 1;
-	routes.length = 0;
-
-	// Parse the XML
-	var xml = xmlreq.responseXML;
-	if (!xml) return false;
-	var xe = xml.documentElement;
-
-	// Get the Airport and center on it
-	var ap = xe.getElementsByTagName("airport")[0];
-	var apLoc = new GLatLng(parseFloat(ap.getAttribute('lat')), parseFloat(ap.getAttribute('lng')));
-	apMarker = googleMarker(document.imgPath, ap.getAttribute("color"), apLoc, ap.firstChild.data);
-	map.setCenter(apLoc, map.getZoom());
-	map.addOverlay(apMarker);
-
-	// Get the routes
-	var rt = xe.getElementsByTagName("route");
-	for (var i = 0; i < rt.length; i++) {
-		var tr = rt[i];
-		var id = tr.getAttribute('id');
-		var label = id + ' (' + tr.getAttribute('type') + ')';
-		cbo.options.push(new Option(label, id));
-
-		// Add waypoints
-		tr.waypoints = new Array();
-		var wps = rt.getElementsByTagName('waypoint');
-		for (var j = 0; j < wps.length; j++) {
-			var wp = wps[j];
-			var p = new GLatLng(parseFloat(wp.getAttribute("lat")), parseFloat(wp.getAttribute("lng")));
-			var mrk = googleMarker(document.imgPath, wp.getAttribute("color"), p, null);
-			mrk.infoShow = clickIcon;
-			mrk.infoLabel = wp.firstChild.data;
-			
-			// Set the the click handler
-			GEvent.bind(mrk, 'click', mrk, mrk.infoShow);
-			tr.waypoints.push(mrk);
-		}
-		
-		// Add the route
-		routes.push(tr);
-	}
-
-	return true;
-} // function
-
+this.openInfoWindowHtml(this.infoLabel);
 return true;
 }
 
-function plotRoute(combo)
+function validate(form)
 {
-var id = combo.options[combo.selectedIndex].value;
-var tr = routes[id];
-if (tr == null) {
-	alert('Unknown Terminal Route - ' + id);
-	return;
-}
+if (!checkSubmit()) return false;
+if (!validateText(form.name, 5, 'Route Name')) return false;
+if (!validateText(form.transition, 3, 'Transition Name')) return false;
+if (!validateText(form.runway, 2, 'Runway Name')) return false;
+if (!validateText(form.route, 2, 'Route Waypoints')) return false;
 
-// Plot the markers
-removeOverlays(map, 'routeTrack');
-routeWaypoints.length = 0;
-var mrks = tr.waypoints;
-var track = new Array();
-for (var i = 0; i < mrks.length; i++) {
-	var mrk = mrks[i];
-	track.push(mrk.getLatLng());
-	routeWaypoints.push(mrk);
-}
-
-// Display the route and the markers
-routeTrack = new GPolyline(track, map.getCurrentMapType().getTextColor(), 2.0, 0.8);
-map.addOverlay(routeTrack);
-addOverlays(map, 'routeWaypoints');
-return true;
+setSubmit();
+disableButton('SaveButton');
+disableButton('ToggleButton');
+return false;
 }
 </script>
 </head>
@@ -115,45 +51,50 @@ return true;
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<el:form action="sidstarplot.do" method="get" validate="return false">
+<el:form action="sidstarplot.do" method="post" validate="return validate(this)">
 <el:table className="form" space="default" pad="default">
 <tr class="title caps">
  <td colspan="2"><content:airline /> TERMINAL ROUTE PLOTTER</td>
 </tr>
 <tr>
  <td class="label">Departing from</td>
- <td class="data"><el:combo name="airport" size="1" idx="*" options="${airports}" firstEntry="-" onChange="void getRoutes(this)" /></td>
+ <td class="data"><el:combo name="airport" size="1" idx="*" options="${airports}" value="${mapCenter}" firstEntry="-" onChange="void getRoutes(this)" /></td>
 </tr>
 <tr>
  <td class="label">Terminal Route</td>
- <td class="data"><el:combo name="route" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotRoute(this)" /></td>
+ <td class="data"><el:combo name="tRoutes" size="1" idx="*" options="${emptyList}" firstEntry="-" onChange="void plotRoute(this)" /></td>
 </tr>
 <tr>
- <td class="label">Route Map</td>
+ <td class="label" valign="top">Route Map</td>
  <td class="data"><map:div ID="googleMap" x="100%" y="550" /><div id="copyright" class="bld"></div></td>
 </tr>
-<tr>
- <td class="title caps" colspan="2">NEW TERMINAL ROUTE</td>
+<tr class="title caps doPlot" style="visibility:hidden;">
+ <td colspan="2">NEW TERMINAL ROUTE</td>
 </tr>
-<tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Route Name</td>
  <td class="data"><el:text name="name" size="12" max="16" idx="*" value="" className="pri bld req" /></td>
 </tr>
-<tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Transition</td>
  <td class="data"><el:text name="transition" size="5" max="5" idx="*" value="" className="bld req" /></td>
 </tr>
-<tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Runway</td>
  <td class="data"><el:text name="runway" size="8" max="8" idx="*" value="" className="req" /></td>
 </tr>
-<tr>
+<tr class="doPlot" style="visibility:hidden;">
+ <td class="label">Route</td>
+ <td class="data"><el:text name="route" size="128" max="192" value="" readOnly="true" /></td>
+</tr>
+<tr class="doPlot" style="visibility:hidden;">
  <td class="label">Find Navigation Aid</td>
  <td class="data"><el:text name="navaidCode" size="4" max="6" idx="*" value="" />
  <el:button ID="FindButton" className="BUTTON" onClick="void findNavaid(document.forms[0].navaidCode.value)" label="FIND" /></td>
 </tr>
-<tr>
- <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ROUTE" /></td>
+<tr class="title doPlot">
+ <td colspan="2" class="mid"><el:button ID="SaveButton" type="submit" className="BUTTON" label="SAVE ROUTE" />
+ <el:button ID="ToggleButton" className="BUTTON" onClick="void toggleRows(true)" label="NEW ROUTE" /></td>
 </tr>
 </el:table>
 </el:form>
@@ -162,23 +103,30 @@ return true;
 </content:region>
 </content:page>
 <script language="JavaScript" type="text/javascript">
+<map:point var="mapC" point="${mapCenter}" />
 var map = new GMap2(getElement("googleMap"), {mapTypes:[G_NORMAL_MAP, G_SATELLITE_MAP, G_PHYSICAL_MAP]});
 
+// Global airport/waypoint markers
+var airports = new Array();
+var waypoints = new Array();
+
 // Add routes
-var apMarker;
 var routeTrack;
 var routes = new Array();
-var routeWaypoints = new Array();
 
 // Add map controls
 map.addControl(new GLargeMapControl());
 map.addControl(new GMapTypeControl());
 map.setCenter(mapC, 7);
+map.currentAirport = '${mapCenter.ICAO}';
 map.enableDoubleClickZoom();
 map.enableContinuousZoom();
 <map:type map="map" type="${gMapType}" default="G_PHYSICAL_MAP" />
+var mm = new MarkerManager(map, {maxZoom:14, borderPadding:32});
 GEvent.addListener(map, 'maptypechanged', updateMapText);
+GEvent.addListener(map, 'moveend', loadWaypoints);
 GEvent.trigger(map, 'maptypechanged');
+getRoutes(document.forms[0].airport);
 </script>
 <content:googleAnalytics />
 </body>

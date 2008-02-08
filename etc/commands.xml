@@ -480,6 +480,12 @@
 		<roles>Schedule</roles>
 	</command>
 
+	<command id="trouteplot">
+		<name>SID/STAR Plot</name>
+		<class>org.deltava.commands.navdata.TerminalRoutePlotCommand</class>
+		<roles>Schedule</roles>
+	</command>
+
 	<command id="navsearch">
 		<name>Navigation Data Search</name>
 		<class>org.deltava.commands.navdata.NavaidSearchCommand</class>

@@ -44,6 +44,7 @@ public class NavaidSearchService extends WebService {
 		Map<String, NavigationDataBean> results = new HashMap<String, NavigationDataBean>();
 		try {
 			GetNavData dao = new GetNavData(ctx.getConnection());
+			dao.setQueryMax(500);
           	results.putAll(dao.getObjects(loc, range));
           	results.putAll(dao.getIntersections(loc, range / 2));
 		} catch (DAOException de) {
@@ -61,13 +62,16 @@ public class NavaidSearchService extends WebService {
 		final NumberFormat df = new DecimalFormat("#0.000000");
 		for (Iterator<NavigationDataBean> i = results.values().iterator(); i.hasNext(); ) {
 			NavigationDataBean nd = i.next();
-			Element we = new Element("waypoint");
-			we.setAttribute("lat", df.format(nd.getLatitude()));
-			we.setAttribute("lng", df.format(nd.getLongitude()));
-			we.setAttribute("code", nd.getCode());
-			we.setAttribute("color", nd.getIconColor());
-			we.addContent(new CDATA(nd.getInfoBox()));
-			re.addContent(we);
+			if (nd.getType() != NavigationDataBean.AIRPORT) {
+				Element we = new Element("waypoint");
+				we.setAttribute("lat", df.format(nd.getLatitude()));
+				we.setAttribute("lng", df.format(nd.getLongitude()));
+				we.setAttribute("code", nd.getCode());
+				we.setAttribute("color", nd.getIconColor());
+				we.setAttribute("type", nd.getTypeName());
+				we.addContent(new CDATA(nd.getInfoBox()));
+				re.addContent(we);
+			}
 		}
 		
 		// Dump the XML to the output stream
