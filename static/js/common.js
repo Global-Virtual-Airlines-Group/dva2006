@@ -15,6 +15,19 @@ for (var x = 0; x < all.length; x++) {
 return elements;
 }
 
+function getElementsByClass(cName)
+{
+var elements = new Array();
+var all = (typeof document.all != 'undefined') ? document.all : document.getElementsByTagName('*');
+for (var x = 0; x < all.length; x++) {
+	var c = all[x].className;
+	if ((c.indexOf(' ' + cName) > -1) || (c.indexOf(cName + ' ') > -1) || (c == cName))
+		elements.push(all[x]);
+}
+
+return elements;
+}
+
 function disableButton(btnName)
 {
 return enableElement(btnName, false);
