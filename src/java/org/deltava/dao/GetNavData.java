@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.dao;
 
 import java.sql.*;
@@ -14,13 +14,13 @@ import org.deltava.util.cache.*;
 /**
  * A Data Access Object to read Navigation data.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class GetNavData extends DAO implements CachingDAO {
 	
-	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(4096);
+	protected static final Cache<NavigationDataMap> _cache = new AgingCache<NavigationDataMap>(6144);
 
 	/**
 	 * Initializes the Data Access Object.
@@ -162,15 +162,15 @@ public class GetNavData extends DAO implements CachingDAO {
 	 * @param distance the distance in miles
 	 * @return a Map of Intersections, with the code as the key
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws IllegalArgumentException if distance is negative or > 300
+	 * @throws IllegalArgumentException if distance is negative or > 1000
 	 */
 	public Map<String, NavigationDataBean> getIntersections(GeoLocation loc, int distance) throws DAOException {
-		if ((distance < 0) || (distance > 300))
+		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
-		// Calculate the height/width of the square in degrees (use 70% of the value of a lon degree)
+		// Calculate the height/width of the square in degrees (use 85% of the value of a lon degree)
 		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
-		double width = (height * 0.7);
+		double width = (height * 0.85);
 
 		Collection<NavigationDataBean> results = null;
 		try {
@@ -197,20 +197,20 @@ public class GetNavData extends DAO implements CachingDAO {
 	 * @param distance the distance in miles
 	 * @return a Map of NavigationDataBeans, with the code as the key
 	 * @throws DAOException if a JDBC error occurs
-	 * @throws IllegalArgumentException if distance is negative or > 300
+	 * @throws IllegalArgumentException if distance is negative or > 1000
 	 */
 	public Map<String, NavigationDataBean> getObjects(GeoLocation loc, int distance) throws DAOException {
-		if ((distance < 0) || (distance > 300))
+		if ((distance < 0) || (distance > 1000))
 			throw new IllegalArgumentException("Invalid distance -  " + distance);
 
-		// Calculate the height/width of the square in degrees (use 70% of the value of a lon degree)
+		// Calculate the height/width of the square in degrees (use 85% of the value of a lon degree)
 		double height = (distance / GeoLocation.DEGREE_MILES) / 2;
-		double width = (height * 0.7);
+		double width = (height * 0.85);
 
 		Collection<NavigationDataBean> results = null;
 		try {
 			prepareStatement("SELECT * FROM common.NAVDATA WHERE (ITEMTYPE <> ?) AND (ITEMTYPE <> ?) AND "
-					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?))");
+					+ "((LATITUDE > ?) AND (LATITUDE < ?)) AND ((LONGITUDE > ?) AND (LONGITUDE < ?)) ORDER BY ITEMTYPE");
 			_ps.setInt(1, NavigationDataBean.INT);
 			_ps.setInt(2, NavigationDataBean.RUNWAY);
 			_ps.setDouble(3, loc.getLatitude() - height);
