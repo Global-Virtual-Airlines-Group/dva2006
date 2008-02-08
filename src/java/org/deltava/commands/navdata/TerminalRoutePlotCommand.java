@@ -9,6 +9,8 @@ import org.deltava.comparators.AirportComparator;
 import org.deltava.commands.*;
 import org.deltava.dao.*;
 
+import org.deltava.util.system.SystemData;
+
 /**
  * A Web Site Command to plot Terminal Routes.
  * @author Luke
@@ -24,6 +26,7 @@ public class TerminalRoutePlotCommand extends AbstractCommand {
 	 * @throws CommandException if an unhandled error occurs
 	 */
 	public void execute(CommandContext ctx) throws CommandException {
+		
 		Collection<Airport> airports = new TreeSet<Airport>(new AirportComparator(AirportComparator.NAME));
 		try {
 			GetAirport dao = new GetAirport(ctx.getConnection());
@@ -34,9 +37,15 @@ public class TerminalRoutePlotCommand extends AbstractCommand {
 			ctx.release();
 		}
 		
-		// Save in session
+		// Get the airport
+		Airport a = SystemData.getAirport(ctx.getParameter("airport"));
+		if (a == null)
+			a = SystemData.getAirport(ctx.getUser().getHomeAirport());
+		
+		// Save in request
 		ctx.setAttribute("airports", airports, REQUEST);
 		ctx.setAttribute("emptyList", Collections.emptyList(), REQUEST);
+		ctx.setAttribute("mapCenter", a, REQUEST);
 		
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
