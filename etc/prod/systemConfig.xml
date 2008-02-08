@@ -24,6 +24,9 @@
 			<list name="categories" attr="category" unique="true">
 				<category>Fuel Planners</category>
 			</list>
+
+			<!-- Use mod_xsendfile -->
+			<sendfile type="Boolean">true</sendfile>
 		</files>
 		
 		<!-- Do we have newsletters? -->

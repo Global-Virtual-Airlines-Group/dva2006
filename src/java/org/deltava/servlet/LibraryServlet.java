@@ -1,4 +1,4 @@
-// Copyright 2005, 2006, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2006, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.servlet;
 
 import java.io.*;
@@ -24,7 +24,7 @@ import org.deltava.util.system.SystemData;
 /**
  * A servlet to serve Fleet/Document/File/Video Library files.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -115,7 +115,6 @@ public class LibraryServlet extends GenericServlet {
 		log.info("Downloading " + url.getFileName().toLowerCase() + ", " + entry.getSize() + " bytes");
 
 		// Set the response headers
-		rsp.setBufferSize(BUFFER_SIZE);
 		rsp.setStatus(HttpServletResponse.SC_OK);
 		rsp.setContentLength((int) entry.file().length());
 		if ("pdf".equals(url.getExtension()))
@@ -126,8 +125,18 @@ public class LibraryServlet extends GenericServlet {
 			rsp.setContentType("video/x-ms-wmv");
 		else
 			rsp.setContentType("application/octet-stream");
+		
+		// Check if we stream via mod_xsendfile
+		boolean doSendFile = SystemData.getBoolean("airline.files.sendfile");
+		if (doSendFile && entry.file().exists()) {
+			log.info("Sending " + entry.getFileName() + " via mod_xsendfile");
+			rsp.addHeader("X-Sendfile", entry.file().getAbsolutePath());
+			return;
+		}
 
 		// Stream the file
+		boolean isComplete = false;
+		rsp.setBufferSize(BUFFER_SIZE);
 		long startTime = System.currentTimeMillis();
 		try {
 			byte[] buf = new byte[BUFFER_SIZE];
@@ -141,8 +150,9 @@ public class LibraryServlet extends GenericServlet {
 
 			is.close();
 			out.flush();
+			isComplete = true;
 		} catch (IOException ie) {
-			// NOOP
+			log.info("Download canceled");
 		} catch (Exception e) {
 			log.error("Error downloading " + entry.getName(), e);
 		}
@@ -152,7 +162,8 @@ public class LibraryServlet extends GenericServlet {
 		if (totalTime == 0)
 			totalTime++;
 
-		log.info(entry.getFileName().toLowerCase() + " download complete, " + (totalTime / 1000) + "s, "
+		if (isComplete)
+			log.info(entry.getFileName().toLowerCase() + " download complete, " + (totalTime / 1000) + "s, "
 				+ (entry.getSize() * 1000 / totalTime) + " bytes/sec");
 	}
 }
