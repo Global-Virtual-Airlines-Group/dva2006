@@ -12,6 +12,7 @@
 <map:api version="2" />
 <content:js name="googleMaps" />
 <content:js name="acarsMapWX" />
+<content:js name="markermanager" />
 <content:sysdata var="imgPath" name="path.img" />
 <content:sysdata var="tileHost" name="weather.tileHost" />
 <script src="http://${tileHost}/TileServer/jserieslist.do?function=loadSeries&amp;id=wx" type="text/javascript"></script>
@@ -146,9 +147,9 @@ var aL;
 var findMrk;
 
 // Marker managers for navigation aids
-var mm_vor = new GMarkerManager(map);
-var mm_ndb = new GMarkerManager(map);
-var mm_int = new GMarkerManager(map);
+var mm_vor = new MarkerManager(map);
+var mm_ndb = new MarkerManager(map);
+var mm_int = new MarkerManager(map);
 
 // Navaid marker arrays
 var airways = new Array();
