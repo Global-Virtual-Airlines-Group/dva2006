@@ -110,6 +110,7 @@ public class FlightPreapproveCommand extends AbstractCommand {
             awdao.assign(info, info.getPilotID(), SystemData.get("airline.db"));
             
             // Write the Flight leg
+            fr.setDatabaseID(FlightReport.DBID_ASSIGN, info.getID());
             SetFlightReport fwdao = new SetFlightReport(con);
             fwdao.write(fr);
 
