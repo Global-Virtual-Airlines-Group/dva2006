@@ -85,6 +85,7 @@ public class AirportTerminalRouteService extends WebService {
 				we.setAttribute("lng", df.format(nd.getLongitude()));
 				we.setAttribute("code", nd.getCode());
 				we.setAttribute("color", nd.getIconColor());
+				we.setAttribute("id", nd.toString());
 				we.addContent(new CDATA(nd.getInfoBox()));
 				twe.addContent(we);
 			}

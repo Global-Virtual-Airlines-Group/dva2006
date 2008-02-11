@@ -1,4 +1,4 @@
-// Copyright 2005 Luke J. Kolin. All Rights Reserved.
+// Copyright 2005, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -12,13 +12,13 @@ import org.deltava.util.cache.Cacheable;
  * A &quot;map-like&quot; class to support multiple navigation data objects with the same code, and
  * return back a single bean based on distance from an arbitrary point. 
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
 public class NavigationDataMap implements java.io.Serializable, Cacheable {
    
-   private Map<String, Set<NavigationDataBean>> _entries = new HashMap<String, Set<NavigationDataBean>>();
+   private final Map<String, Set<NavigationDataBean>> _entries = new HashMap<String, Set<NavigationDataBean>>();
    private Object _key;
 
    /**
@@ -102,7 +102,6 @@ public class NavigationDataMap implements java.io.Serializable, Cacheable {
     * @return a NavigationDataBean, or null if not found
     * @see NavigationDataMap#get(String)
     */
-   @SuppressWarnings("unchecked")
    public NavigationDataBean get(String code, GeoLocation loc) {
       Set<NavigationDataBean> codes = new TreeSet<NavigationDataBean>(new GeoComparator(loc));
       codes.addAll(getEntries(code));

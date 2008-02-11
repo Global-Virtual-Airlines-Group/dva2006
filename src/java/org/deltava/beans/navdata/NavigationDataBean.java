@@ -1,5 +1,7 @@
-// Copyright 2005, 20007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
+
+import java.util.*;
 
 import org.deltava.beans.*;
 import org.deltava.beans.schedule.GeoPosition;
@@ -9,7 +11,7 @@ import org.deltava.util.StringUtils;
 /**
  * A bean to store common properties for Navigation Database objects.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -158,12 +160,12 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	}
 
 	/**
-	 * Compares two objects by comparing their codes. If the codes are equal, then their distances from point 0,0 are
-	 * compared.
-	 * @see Comparable#compareTo(Object)
+	 * Compares two objects by comparing their codes. If the codes are equal, then their item types and then 
+	 * distances from point 0,0 are compared.
 	 */
 	public int compareTo(NavigationDataBean nb2) {
-		int tmpResult = _code.compareTo(nb2.getCode());
+		int tmpResult = _code.compareTo(nb2._code);
+		if (tmpResult == 0) tmpResult = Integer.valueOf(_type).compareTo(Integer.valueOf(nb2._type));
 		if (tmpResult == 0) {
 			GeoPosition gp = new GeoPosition(0, 0);
 			int d1 = gp.distanceTo(this);
@@ -244,21 +246,53 @@ public abstract class NavigationDataBean implements Comparable<NavigationDataBea
 	 * @param lat the latitude in degrees
 	 * @param lng the longitude in degrees
 	 * @return a NavigationDataBean, or null if the type is unknown
+	 * @see NavigationDataBean#create(int, double, double)
 	 */
 	public static NavigationDataBean create(String typeName, double lat, double lng) {
-		int type = StringUtils.arrayIndexOf(NAVTYPE_NAMES, typeName);
+		return create(StringUtils.arrayIndexOf(NAVTYPE_NAMES, typeName), lat, lng);
+	}
+	
+	/**
+	 * Creates a bean from a type, latitude and longitude.
+	 * @param type the navigation aid type
+	 * @param lat the latitude in degrees
+	 * @param lng the longitude in degrees
+	 * @return a NavigationDataBean, or null if the type is unknown
+	 * @see NavigationDataBean#create(String, double, double)
+	 */
+	public static NavigationDataBean create(int type, double lat, double lng) {
 		switch (type) {
-			case VOR:
-				return new VOR(lat, lng);
-				
-			case NDB:
-				return new NDB(lat, lng);
-				
-			case INT:
-				return new Intersection(null, lat, lng);
+		case VOR:
+			return new VOR(lat, lng);
+			
+		case NDB:
+			return new NDB(lat, lng);
+			
+		case INT:
+			return new Intersection(null, lat, lng);
+			
+		case RUNWAY:
+			return new Runway(lat, lng);
+			
+		case AIRPORT:
+			return new AirportLocation(lat, lng);
 
-			default:
-				return null;
-		}
+		default:
+			return null;
+	}
+		
+	}
+	
+	/**
+	 * Creats a bean from a unique ID that matches the ACARS dispatch client.
+	 * @param id the ID.
+	 * @return a NavigationDataBean
+	 */
+	public static NavigationDataBean create(String id) {
+		StringTokenizer tkns = new StringTokenizer(id, "!");
+		String code = tkns.nextToken();
+		NavigationDataBean nd = create(StringUtils.parse(tkns.nextToken(), INT), StringUtils.parse(tkns.nextToken(), 0.0), StringUtils.parse(tkns.nextToken(), 0.0));
+		nd.setCode(code);
+		return nd;
 	}
 }

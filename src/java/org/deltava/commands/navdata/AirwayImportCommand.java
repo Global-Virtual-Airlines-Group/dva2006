@@ -1,4 +1,4 @@
-// Copyright 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.navdata;
 
 import java.io.*;
@@ -6,8 +6,7 @@ import java.util.*;
 import java.sql.Connection;
 
 import org.deltava.beans.*;
-import org.deltava.beans.navdata.Airway;
-import org.deltava.beans.schedule.GeoPosition;
+import org.deltava.beans.navdata.*;
 
 import org.deltava.commands.*;
 import org.deltava.dao.*;
@@ -19,7 +18,7 @@ import org.deltava.util.StringUtils;
 /**
  * A Web Site Command to import airway data in PSS format.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 2.0
  */
 
@@ -77,8 +76,10 @@ public class AirwayImportCommand extends AbstractCommand {
 					}
 					
 					// Add a waypoint
-					GeoLocation loc = new GeoPosition(StringUtils.parse(codes.get(4), 0.0d), StringUtils.parse(codes.get(5), 0.0d));
-					a.addWaypoint(codes.get(3), loc);
+					NavigationDataBean nd = NavigationDataBean.create(NavigationDataBean.INT, StringUtils.parse(codes.get(4), 0.0),
+							StringUtils.parse(codes.get(5), 0.0));
+					nd.setCode(codes.get(3));
+					a.addWaypoint(nd);
 				}
 			}
 			
@@ -92,7 +93,7 @@ public class AirwayImportCommand extends AbstractCommand {
 			// Get the write DAO and purge the table
 			SetNavData dao = new SetNavData(con);
 			if (doPurge)
-				dao.purge("AIRWAYS");
+				dao.purge("AIRWAYS", false);
 			
 			// Write the airways
 			for (Iterator<Airway> i = results.iterator(); i.hasNext(); ) {
@@ -100,6 +101,9 @@ public class AirwayImportCommand extends AbstractCommand {
 				dao.write(a);
 				entryCount++;
 			}
+			
+			// Update the waypoint types
+			dao.updateAirwayWaypoints();
 			
 			// Commit
 			ctx.commitTX();
@@ -121,7 +125,7 @@ public class AirwayImportCommand extends AbstractCommand {
 		
 		// Forward to the JSP
 		result.setType(CommandResult.REQREDIRECT);
-		result.setURL("/jsp/schedule/navDataUpdate.jsp");
+		result.setURL("/jsp/navdata/navDataUpdate.jsp");
 		result.setSuccess(true);
 	}
 }

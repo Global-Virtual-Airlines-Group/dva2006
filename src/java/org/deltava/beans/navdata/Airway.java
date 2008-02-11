@@ -1,4 +1,4 @@
-// Copyright 2005, 2007 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2005, 2007, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.beans.navdata;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.util.cache.Cacheable;
  * the same code, each intersection can be flagged as "end of sequence" deliniating the end of a particular airway
  * sequence.
  * @author Luke
- * @version 2.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -25,21 +25,8 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	private boolean _highLevel;
 	private boolean _lowLevel;
 	
-	private final List<AirwayIntersection> _waypoints = new LinkedList<AirwayIntersection>();
+	private final List<NavigationDataBean> _waypoints = new LinkedList<NavigationDataBean>();
 	
-	public class AirwayIntersection extends Intersection {
-		private int _seq;
-		
-		AirwayIntersection(String code, GeoLocation loc, int sequence) {
-			super(code, loc.getLatitude(), loc.getLongitude());
-			_seq = Math.max(1, sequence);
-		}
-		
-		public int getSequence() {
-			return _seq;
-		}
-	}
-
 	/**
 	 * Creates a new Airway bean.
 	 * @param code the airway code
@@ -96,7 +83,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 * Returns the waypoints for this Airway. <i>The returned collection is mutable.</i>
 	 * @return an ordered Collection of waypoints
 	 * @see Airway#getRoute()
-	 * @see Airway#addWaypoint(String, GeoLocation)
+	 * @see Airway#addWaypoint(NavigationDataBean)
 	 */
 	public LinkedList<NavigationDataBean> getWaypoints() {
 		return new LinkedList<NavigationDataBean>(_waypoints);
@@ -149,19 +136,19 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 * @return a List of waypoint codes
 	 * @throws NullPointerException if start or end are null
 	 */
-	public Collection<Intersection> getWaypoints(String start, String end) {
+	public List<NavigationDataBean> getWaypoints(String start, String end) {
 		int st = find(start);
 		int ed = find(end);
 		if ((st == -1) || (ed == -1))
-			return new ArrayList<Intersection>();
+			return new ArrayList<NavigationDataBean>();
 		else if (ed < st) {
 			// If ed is before sd then reverse the waypoints
-			List<Intersection> wp2 = new ArrayList<Intersection>(_waypoints.subList(ed, st));
+			List<NavigationDataBean> wp2 = new ArrayList<NavigationDataBean>(_waypoints.subList(ed, st));
 			Collections.reverse(wp2);
 			return wp2;
 		}
 
-		return new ArrayList<Intersection>(_waypoints.subList(st, ed));
+		return new ArrayList<NavigationDataBean>(_waypoints.subList(st, ed));
 	}
 
 	/**
@@ -170,7 +157,7 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 	 */
 	public String getRoute() {
 		StringBuilder buf = new StringBuilder();
-		for (Iterator<? extends Intersection> i = _waypoints.iterator(); i.hasNext();) {
+		for (Iterator<NavigationDataBean> i = _waypoints.iterator(); i.hasNext();) {
 			buf.append(i.next().getCode());
 			if (i.hasNext())
 				buf.append(' ');
@@ -181,14 +168,12 @@ public class Airway implements Comparable<Airway>, Cacheable, Route, GeoLocation
 
 	/**
 	 * Adds a waypoint to the Airway route.
-	 * @param code the waypoint code
+	 * @param nd the waypoint
 	 * @see Airway#getWaypoints()
 	 */
-	public void addWaypoint(String code, GeoLocation loc) {
-		if ((code != null) && (loc != null)) {
-			_waypoints.add(new AirwayIntersection(code, loc, _waypoints.size() + 1));
-			_pos = null;
-		}
+	public void addWaypoint(NavigationDataBean nd) {
+		_waypoints.add(nd);
+		_pos = null;
 	}
 	
 	/**
