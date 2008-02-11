@@ -8,7 +8,7 @@
 <%@ taglib uri="/WEB-INF/dva_format.tld" prefix="fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-<title><content:airline /> Help Desk</title>
+<title><content:airline /> Help Desk Issues</title>
 <content:css name="main" browserSpecific="true" />
 <content:css name="view" />
 <content:js name="common" />
@@ -22,7 +22,7 @@
 
 <!-- Main Body Frame -->
 <content:region id="main">
-<view:table className="view" space="default" pad="default" cmd="hdissues">
+<view:table className="view" space="default" pad="default" cmd="${cmdName}">
 <tr class="title">
  <td colspan="6" class="left caps"><content:airline /> HELP DESK</td>
 </tr>
