@@ -1,4 +1,4 @@
-// Copyright 2006 Global Virtual Airlines Group. All Rights Reserved.
+// Copyright 2006, 2008 Global Virtual Airlines Group. All Rights Reserved.
 package org.deltava.commands.help;
 
 import java.util.*;
@@ -13,7 +13,7 @@ import org.deltava.security.command.HelpDeskAccessControl;
 /**
  * A Web Site Command to display Flight Academy Issues.
  * @author Luke
- * @version 1.0
+ * @version 2.1
  * @since 1.0
  */
 
@@ -63,6 +63,7 @@ public class IssueListCommand extends AbstractViewCommand {
 		HelpDeskAccessControl ac = new HelpDeskAccessControl(ctx, null);
 		ac.validate();
 		ctx.setAttribute("access", ac, REQUEST);
+		ctx.setAttribute("cmdName", getID(), REQUEST);
 
 		// Forward to the JSP
 		CommandResult result = ctx.getResult();
