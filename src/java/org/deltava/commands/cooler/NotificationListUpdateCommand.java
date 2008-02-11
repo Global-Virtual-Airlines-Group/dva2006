@@ -27,10 +27,9 @@ public class NotificationListUpdateCommand extends AbstractCommand {
 		// Get the threads to clear
 		Collection<String> IDs = ctx.getParameters("threadID");
 		try {
-			ctx.startTX();
-			
 			// Get the DAO and clear the notifications
 			SetCoolerNotification ndao = new SetCoolerNotification(ctx.getConnection());
+			ctx.startTX();
 			for (Iterator<String> i = IDs.iterator(); i.hasNext(); ) {
 				String id = i.next();
 				try {
